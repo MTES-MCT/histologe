@@ -1,0 +1,23 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div style="position: absolute;z-index: 10000;overflow: hidden" class="fr-rounded fr-background--white fr-m-2v">
+        {% include '_partials/_search_filter_form.html.twig' %}
+    </div>
+    <section class="fr-grid-row fr-pt-0 fr-h-100">
+        <div class="fr-col-12 signalement-invalid" id="container">
+            <div class="fr-h-100 fr-w-100" id="map-signalements-view"></div>
+        </div>
+    </section>
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('js/maps.js') }}" data-token="{{ csrf_token('load_markers_'~''|date('dmYhi')) }}"
+            id="carto__js"></script>
+    <script>
+        window.onload = async () => {
+            await getMarkers(0);
+        }
+    </script>
+{% endblock %}

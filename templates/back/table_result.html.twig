@@ -1,0 +1,80 @@
+{% for index,signalement in signalements.list %}
+
+    {# {% set signalement = signalement[0] %} #}
+    {% if not is_granted('ROLE_ADMIN_TERRITORY') or filters.partners or filters.affectations %}
+        {% set signalement = signalement.signalement %}
+    {% endif %}
+    {% set affectations = signalement.affectations %}
+    <tr class="{% if signalement.statut is same as(1) or signalement.statut is same as(3) %}fr-background-contrast--orange-terre-battue{% endif %} signalement-row"
+        data-score="{{ signalement.scoreCreation }}">
+        <td>
+            <a href="{{ path('back_signalement_view',{uuid:signalement.uuid}) }}"
+               class="fr-ws-nowrap">{{ signalement.reference }}</a>
+        </td>
+        <td>{{ signalement.createdAt|date('d/m/Y') }}</td>
+        <td>
+            <canvas id="gauge-signalement-{{ signalement.id }}"
+                    class="fr-col-12 fr-col-md-10 fr-col-lg-6 gauge-signalement"></canvas>
+        </td>
+        <td>
+            {{ signalement.nomOccupant|upper }}<br>{{ signalement.prenomOccupant|capitalize }}
+        </td>
+        <td>{{ signalement.villeOccupant|upper }} <br>
+            <small>[{{ signalement.adresseOccupant }}]</small>
+        </td>
+        <td>
+            {% for affectation in signalement.affectations %}
+                {% set classe = '' %}
+                {% if affectation.statut is same as (0) %}
+                    {% set classe = 'fr-badge fr-badge--info' %}
+                {% elseif affectation.statut is same as (1) %}
+                    {% set classe = 'fr-badge fr-badge--success' %}
+                {% elseif affectation.statut is same as (2) or affectation.statut is same as (3) %}
+                    {% set classe = 'fr-badge fr-badge--error' %}
+                {% endif %}
+                <small class="{{ classe }} fr-ws-nowrap fr-badge--sm fr-my-1v fr-text--bold fr-display-block"><span
+                    > {{ affectation.partner.nom }}</span></small>
+            {% else %}
+                Aucune
+            {% endfor %}
+        </td>
+        <td>
+            {% set suivi = (signalement.lastSuivi) %}
+            {% if suivi %}
+                <strong>{{ suivi.createdAt|date('d.m.Y') }}</strong> <br>
+                <small>{{ suivi.createdBy ? suivi.createdBy.partner.nom|upper : '<small class="fr-badge fr-badge--warning">DECLARANT</small>'|raw }}</small>
+            {% else %}
+                Aucun
+            {% endif %}
+        </td>
+        <td>
+            {% if signalement.statut is same as(1) %}
+                <strong class="fr-text-label--red-marianne">A valider</strong>
+            {% elseif signalement.statut is same as(2) %}
+                En cours
+            {% elseif signalement.statut is same as(3) %}
+                <strong class="fr-text-label--red-marianne">En attente</strong>
+            {% elseif signalement.statut is same as(6) %}
+                Fermé
+            {% endif %}
+        </td>
+        <td class="fr-text--right fr-ws-nowrap">
+            <a href="{{ path('back_signalement_view',{uuid:signalement.uuid}) }}"
+               class="fr-btn fr-btn--sm fr-fi-eye-fill"></a>
+            <a href="{{ path('back_signalement_edit',{uuid:signalement.uuid}) }}"
+               class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-edit-fill"></a>
+            {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+                <button data-delete="{{ path('back_signalement_delete',{uuid:signalement.uuid}) }}"
+                        data-token="{{ csrf_token('signalement_delete_'~signalement.id) }}"
+                        class="fr-btn fr-btn--sm fr-btn--danger fr-fi-delete-fill signalement-row-delete"></button>
+            {% endif %}
+        </td>
+    </tr>
+{% endfor %}
+{#
+<script type="module">
+    {% for signalement in signalements.list %}
+    gauge = new Gauge(document.getElementById('gauge-signalement-{{ signalement.id }}')).setOptions(opts); // create sexy gauge!
+    gauge.set({{ signalement.scoreCreation }}); // set actual value
+    {% endfor %}
+</script> #}

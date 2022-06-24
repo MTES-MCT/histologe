@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <main class="fr-container--fluid">
+        <header class="fr-grid-row fr-background--blue-france fr-py-5w fr-py-md-10w">
+            <div class="fr-col-12 fr-text--center">
+                <h1 class="fr-h2 fr-mb-0 fr-text--white">Une question ? Une précision ? <br> N'hésitez pas à nous
+                    envoyer un message !</h1>
+            </div>
+        </header>
+        <section class="fr-container fr-grid-row fr-pb-5w">
+            <div class="fr-col-12 fr-py-5w">
+                {{ form_start(form) }}
+                <div class="fr-grid-row fr-grid-row--gutters">
+
+                    {{ form_row(form.nom) }}
+                    {{ form_row(form.email) }}
+                    {{ form_row(form.message) }}
+                </div>
+                {{ form_end(form) }}
+            </div>
+            <div class="fr-col-12 fr-text--center">
+                <button class="fr-btn fr-rounded fr-fi-mail-fill fr-btn--icon-left" form="front_contact"> Envoyer le
+                    message
+                </button>
+            </div>
+            <div class="fr-col-12 fr-text--center fr-py-5w">
+                <strong>Par téléphone</strong>
+                <br>
+                <br>
+                {% if config.get.telContact %}
+                    <a href="tel:{{ config.get.telContact|replace({'.':''}) }}"
+                       class="fr-badge fr-badge--success fr-badge fr-p-3v fr-text--md"
+                       rel="noreferrer noopener">{{ config.get.telContact }}</a>
+                {% else %}
+                    <span class="fr-badge fr-badge--error fr-badge fr-p-3v fr-text--md">indisponible</span>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+{% endblock %}

@@ -1,0 +1,48 @@
+<header role="banner" class="fr-header">
+    <div class="fr-header__body">
+        <div class="fr-container">
+            <div class="fr-header__body-row">
+                <div class="fr-header__brand fr-enlarge-link">
+                    <div class="fr-header__brand-top">
+                        <div class="fr-header__logo">
+                            <div class="fr-logo">
+                                ministère <br> de la transition <br>écologique
+                            </div>
+                        </div>
+                        <div class="fr-header__operator">
+                            {% if config.get ? config.get.logotype is not empty %}
+                                <img src="{{ asset('img/'~config.get.logotype) }}" class="fr-responsive-img"
+                                     alt="HISTOLOGE" style="max-height: 75px">
+                            {% else %}
+                                <img src={{ asset('img/logo_145.png') }} class="fr-responsive-img" width="100%"
+                                     alt="HISTOLOGE">
+                            {% endif %}
+                        </div>
+
+
+                        <div class="fr-header__navbar">
+                            <button class="fr-btn--menu fr-btn" data-fr-opened="false" aria-controls="modal-833"
+                                    aria-haspopup="menu" title="Menu" id="fr-btn-menu-mobile">
+                                Menu
+                            </button>
+                        </div>
+                    </div>
+                    <div class="fr-header__service fr-displayed-md">
+                        <a href="{{ path('home') }}" title="Accueil - HISTOLOGE" class="fr-header__service-title">
+                            <small class="fr-text--light d-block fr-text--sm fr-m-0">Signaler vos problèmes de
+                                logement</small>
+                        </a>
+                    </div>
+                </div>
+                {% include 'nav.html.twig' %}
+            </div>
+        </div>
+    </div>
+    <!-- Navigation principale -->
+    <div class="fr-header__menu fr-modal" id="modal-833" aria-labelledby="fr-btn-menu-mobile">
+        <div class="fr-container">
+            <button class="fr-link--close fr-link" aria-controls="modal-833">Fermer</button>
+            <div class="fr-header__menu-links"></div>
+        </div>
+    </div>
+</header>

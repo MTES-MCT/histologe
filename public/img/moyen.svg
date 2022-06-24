@@ -1,0 +1,59 @@
+<svg id="etat-moyen" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="40" height="40" viewBox="0 0 40 40">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_10" data-name="Rectangle 10" width="40" height="40" fill="#fff" stroke="#707070" stroke-width="1"/>
+    </clipPath>
+  </defs>
+  <g id="etat-moyen-2" data-name="etat-moyen" clip-path="url(#clip-path)">
+    <g id="_001-confusing" data-name="001-confusing" transform="translate(0 1.988)">
+      <g id="BG" transform="translate(0)">
+        <g id="Groupe_64" data-name="Groupe 64">
+          <path id="Tracé_107" data-name="Tracé 107" d="M39.311,26.155C35.077,19.672,35.527,13.027,33.487,9.9s-8.123-8.511-22.494.875S.277,30.369,2.523,33.8C13.033,49.894,46.811,37.636,39.311,26.155Z" transform="translate(-0.387 -5.507)" fill="#e5e5f4"/>
+        </g>
+      </g>
+      <g id="effect" transform="translate(5.179 2.733)">
+        <g id="Groupe_68" data-name="Groupe 68" transform="translate(0 0)">
+          <g id="Groupe_65" data-name="Groupe 65" transform="translate(4.552 0.198)">
+            <path id="Tracé_108" data-name="Tracé 108" d="M0,0H2.239V1.119H0Z" transform="translate(0 1.583) rotate(-45)" fill="#1e1e1e"/>
+          </g>
+          <g id="Groupe_66" data-name="Groupe 66" transform="translate(0 4.748)">
+            <path id="Tracé_109" data-name="Tracé 109" d="M0,0H2.239V1.119H0Z" transform="translate(0 1.583) rotate(-45)" fill="#1e1e1e"/>
+          </g>
+          <g id="Groupe_67" data-name="Groupe 67" transform="translate(0.001)">
+            <path id="Tracé_110" data-name="Tracé 110" d="M0,0H1.119V2.239H0Z" transform="translate(0 0.791) rotate(-45)" fill="#1e1e1e"/>
+          </g>
+        </g>
+      </g>
+      <g id="color" transform="translate(7.406 5.418)">
+        <g id="Groupe_69" data-name="Groupe 69">
+          <circle id="Ellipse_11" data-name="Ellipse 11" cx="12.594" cy="12.594" r="12.594" fill="#e7e7e7"/>
+        </g>
+        <g id="Groupe_70" data-name="Groupe 70" transform="translate(5.597 7.909)">
+          <circle id="Ellipse_12" data-name="Ellipse 12" cx="1.399" cy="1.399" r="1.399" fill="#e7e7e7"/>
+        </g>
+        <g id="Groupe_71" data-name="Groupe 71" transform="translate(16.792 7.909)">
+          <circle id="Ellipse_13" data-name="Ellipse 13" cx="1.399" cy="1.399" r="1.399" fill="#e7e7e7"/>
+        </g>
+      </g>
+      <g id="shadow" transform="translate(7.406 5.418)">
+        <g id="Groupe_72" data-name="Groupe 72">
+          <path id="Tracé_111" data-name="Tracé 111" d="M21.977,32.052a12.594,12.594,0,0,1,11.335-12.53c-.414-.041-.834-.064-1.259-.064a12.594,12.594,0,0,0,0,25.188c.425,0,.845-.022,1.259-.064A12.594,12.594,0,0,1,21.977,32.052Z" transform="translate(-19.458 -19.458)" fill="#cecece"/>
+        </g>
+      </g>
+      <g id="regular" transform="translate(6.566 4.578)">
+        <g id="Groupe_73" data-name="Groupe 73">
+          <path id="Tracé_112" data-name="Tracé 112" d="M30.73,44.163A13.434,13.434,0,1,1,44.163,30.73,13.449,13.449,0,0,1,30.73,44.163Zm0-25.188A11.754,11.754,0,1,0,42.484,30.73,11.767,11.767,0,0,0,30.73,18.975Z" transform="translate(-17.296 -17.296)"/>
+        </g>
+        <g id="Groupe_74" data-name="Groupe 74" transform="translate(5.597 7.909)">
+          <path id="Tracé_113" data-name="Tracé 113" d="M33.948,42.14A2.239,2.239,0,1,1,36.187,39.9,2.241,2.241,0,0,1,33.948,42.14Zm0-2.8a.56.56,0,1,0,.56.56A.56.56,0,0,0,33.948,39.341Z" transform="translate(-31.709 -37.662)"/>
+        </g>
+        <g id="Groupe_75" data-name="Groupe 75" transform="translate(16.792 7.909)">
+          <path id="Tracé_114" data-name="Tracé 114" d="M62.775,42.14A2.239,2.239,0,1,1,65.014,39.9,2.241,2.241,0,0,1,62.775,42.14Zm0-2.8a.56.56,0,1,0,.56.56A.56.56,0,0,0,62.775,39.341Z" transform="translate(-60.536 -37.662)"/>
+        </g>
+        <g id="Groupe_76" data-name="Groupe 76" transform="translate(8.406 16.667)">
+          <path id="Tracé_115" data-name="Tracé 115" d="M0,0H10.033V1.68H0Z" transform="matrix(0.949, -0.316, 0.316, 0.949, 0, 3.17)"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

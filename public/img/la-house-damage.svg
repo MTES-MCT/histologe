@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36" viewBox="0 0 36 36">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_50" data-name="Rectangle 50" width="36" height="36" transform="translate(0.413)" fill="none"/>
+    </clipPath>
+  </defs>
+  <g id="la-house-damage" transform="translate(-0.413)" clip-path="url(#clip-path)">
+    <path id="house-damage-solid" d="M20.99,3.4l-.945.9L2.99,21.357l1.891,1.891,1.678-1.681V36.733H18.144l2.847-7.871H16.242L21,20.714l-.013,5.524h4.658l-2.114,10.5H35.421V21.567L37.1,23.248l1.891-1.891L21.936,4.3Zm0,3.738L32.8,18.943V34.109h-6.06l2.124-10.5H23.614V15.743H20.86L13.119,29.005v2.48h4.133l-.945,2.624H9.183V18.943Z" transform="translate(-2.99 -2.065)" fill="#ff9940"/>
+  </g>
+</svg>

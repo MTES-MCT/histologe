@@ -1,0 +1,406 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <main class="fr-container--fluid">
+        <section
+                class="fr-container--fluid fr-artwork-decorative--blue-france fr-background--blue-france fr-py-5w fr-py-md-10w">
+            <div class="fr-container">
+                <div class="fr-grid-row">
+                    <div class="fr-col-md-12">
+                        <h1 class="fr-h3 fr-text--white">Signalez votre problème de logement</h1>
+                        {# <figure class="fr-hidden-md">
+                            <img src={{asset('img/icon-house-alert.svg') }} alt="Histologe mal logement"
+                                 class="fr-responsive-img fr-px-5w">
+                        </figure> #}
+                        {# <h2 class="fr-h6 fr-text--white fr-text--xx-light">Histologe est un service public permettant
+                            d'accélérer <br> la prise
+                            en charge du “mal logement”.
+                        </h2> #}
+                        <a role="button" href="{{ path('front_signalement') }}"
+                           class="fr-btn fr-btn--orange fr-text-label--blue-france fr-mb-5v fr-fi-arrow-right-line fr-btn--icon-right fr-rounded fr-py-5v">Je
+                            signale mon ou mes problèmes de logement</a>
+                        <div class="fr-hidden-md fr-py-5v">
+                            <div class="fr-grid-row fr-grid-row--center">
+                                <div class="fr-text--center fr-text--white">
+                                    <div class="fr-grid-row fr-grid-row--center" id="homeslider">
+                                        <figure class="fr-col-12 histoslider--items">
+                                            <img src="{{ asset('img/icon-house-alert.svg') }}" width="150" alt="">
+                                            <figcaption>
+                                                Vous avez repéré un ou des problèmes dans votre logement ?
+                                            </figcaption>
+                                        </figure>
+                                        <figure class="fr-col-12 histoslider--items fr-hidden">
+                                            <img src="{{ asset('img/icon-house-touch.svg') }}" width="150" alt="">
+                                            <figcaption>
+                                                Saisissez votre problème en quelques clics sur le service Histologe.
+                                            </figcaption>
+
+                                        </figure>
+                                        <figure class="fr-col-12 histoslider--items fr-hidden">
+                                            <img src="{{ asset('img/icon-house-bar-graph.svg') }}" width="150" alt="">
+                                            <figcaption>
+                                                Histologe qualifie votre problème et le renvoie vers le service adapté.
+                                            </figcaption>
+
+                                        </figure>
+                                        <figure class="fr-col-12 histoslider--items fr-hidden">
+                                            <img src="{{ asset('img/icon-user-favorite.svg') }}" width="150" alt="">
+                                            <figcaption>
+                                                Votre problème est traité par le bon partner et vous gagnez du temps
+                                                !
+                                            </figcaption>
+
+                                        </figure>
+                                    </div>
+                                    <div class="fr-grid-row fr-grid-row--center fr-hidden-md">
+                                        <div class="fr-col-12">
+                                            <figure class="fr-pagination" id="homeslider_pagination">
+                                                <img src="{{ asset('img/bulle.PNG') }}" alt="bulle">
+                                                <img src="{{ asset('img/bulle_v.PNG') }}" alt="bulle">
+                                                <img src="{{ asset('img/bulle_v.PNG') }}" alt="bulle">
+                                                <img src="{{ asset('img/bulle_v.PNG') }}" alt="bulle">
+                                            </figure>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fr-displayed-md">
+                            <div class="fr-grid-row">
+                                <div class="fr-col-12">
+                                    <h2 class=" fr-text--white">Comment ça marche ?</h2>
+                                </div>
+                            </div>
+                            <div class="fr-grid-row">
+                                <div class="fr-col-12 fr-text--white fr-text--center">
+                                    <div class="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
+                                        <figure class="fr-col fr-m-0">
+                                            <img src="{{ asset('img/icon-house-alert.svg') }}" width="100" height="100"
+                                                 alt="">
+                                            <figcaption>
+                                                Vous avez repéré un ou des problèmes dans votre logement ?
+                                            </figcaption>
+                                        </figure>
+                                        <figure class="fr-col fr-m-0">
+                                            <img src="{{ asset('img/icon-house-touch.svg') }}" width="100" height="100"
+                                                 alt="">
+                                            <figcaption>
+                                                Saisissez votre problème en quelques clics sur le service Histologe.
+                                            </figcaption>
+
+                                        </figure>
+                                        <figure class="fr-col fr-m-0">
+                                            <img src="{{ asset('img/icon-house-bar-graph.svg') }}" width="100"
+                                                 height="100" alt="">
+                                            <figcaption>
+                                                Histologe qualifie votre problème et le renvoie vers la bonne
+                                                administration.
+                                            </figcaption>
+
+                                        </figure>
+                                        <figure class="fr-col fr-m-0">
+                                            <img src="{{ asset('img/icon-user-favorite.svg') }}" width="100"
+                                                 height="100" alt="">
+                                            <figcaption>
+                                                Le service adapté reçoit votre signalement !
+                                            </figcaption>
+
+                                        </figure>
+                                    </div>
+                                    <div class="fr-grid-row fr-grid-row--center">
+                                        <figure class="fr-col bar-bulle bar-bulle-right">
+                                            <img src="{{ asset('img/bulle.PNG') }}" alt="bulle">
+                                        </figure>
+                                        <figure class="fr-col bar-bulle bar-bulle-middle">
+                                            <img src="{{ asset('img/bulle.PNG') }}" alt="bulle">
+                                        </figure>
+                                        <figure class="fr-col bar-bulle bar-bulle-middle">
+                                            <img src="{{ asset('img/bulle.PNG') }}" alt="bulle">
+                                        </figure>
+                                        <figure class="fr-col bar-bulle bar-bulle-left">
+                                            <img src="{{ asset('img/bulle.PNG') }}" alt="bulle">
+                                        </figure>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {# <div class="fr-grid-row">
+                            <div class="fr-col-md-6">
+                                <a href="{{ path('front_signalement') }}" role="button"
+                                   class="fr-btn fr-btn--orange fr-rounded fr-text-label--blue-france fr-btn--icon-right fr-fi-arrow-right-line">
+                                    Signaler mon ou mes problèmes de logement
+                                </a>
+                            </div>
+                        </div> #}
+                    </div>
+                    {# <div class="fr-col-2 fr-col-offset-2 fr-displayed-md">
+                        <img src={{asset('img/icon-house-alert.svg') }} alt="Histologe mal logement"
+                             class="fr-responsive-img">
+                    </div> #}
+                </div>
+
+            </div>
+        </section>
+        <section class="fr-container--fluid fr-py-5v fr-background-alt--blue-france">
+            <div class="fr-container fr-py-5w">
+                <header class="fr-grid-row">
+                    <h3 class="fr-col-12 fr-text-label--blue-france fr-text--center">Les types de problèmes pris en
+                        charge</h3>
+                    <p class="fr-hint-text fr-text--center fr-w-100"><strong>Cliquez sur les cartes ci-dessous</strong>
+                        pour afficher des exemples</p>
+                </header>
+                <div class="fr-grid-row fr-grid-row--gutters fr-mt-5v">
+                    <div class="fr-col-12 fr-col-md-4" role="button">
+                        <div class="fr-rounded fr-background--white fr-border--bottom--orange fr-p-3v"
+                             aria-controls="problemes-securite" aria-expanded="false">
+                            <figure class="fr-m-0 fr-grid-row fr-grid-row--middle fr-grid-row--gutters  fr-text--center">
+                                <img src="{{ asset('img/la-house-damage.svg') }}" alt="La sécurité des occupants"
+                                     width="50%" class="fr-col-3">
+                                <text class="fr-col-9 fr-text--bold fr-h6 fr-mb-0">Sécurité des occupants</text>
+                            </figure>
+                            <div class="fr-col-12 fr-collapse fr-pl-3v" id="problemes-securite">
+                                Par exemple
+                                <ul>
+                                    <li>Les planchers sont dangereux</li>
+                                    <li>L'installation du réseau de gaz a un problème</li>
+                                    <li>Le bâtiment n'est pas sécurisé contre les chutes</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fr-col-12 fr-col-md-4" role="button">
+                        <div class="fr-rounded fr-background--white fr-border--bottom--orange fr-p-3v"
+                             aria-controls="problemes-proprete" aria-expanded="false">
+                            <figure class="fr-m-0 fr-grid-row fr-grid-row--middle fr-grid-row--gutters  fr-text--center">
+                                <img src="{{ asset('img/la-tint.svg') }}" alt="La propreté du logement" width="50%"
+                                     class="fr-col-3">
+                                <text class="fr-col-9 fr-text--bold fr-h6 fr-mb-0">Propreté du logement</text>
+                            </figure>
+                            <div class="fr-col-12 fr-collapse fr-pl-3v" id="problemes-proprete">
+                                Par exemple
+                                <ul>
+                                    <li>Il y a des traces importantes de moisissures</li>
+                                    <li>De l'eau s'infiltre dans mon logement</li>
+                                    <li>Il y a des nuisibles dans mon appartement (blattes, punaises de lit,
+                                        rongeurs...)
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fr-col-12 fr-col-md-4" role="button">
+                        <div class="fr-rounded fr-background--white fr-border--bottom--orange fr-p-3v"
+                             aria-controls="problemes-confort" aria-expanded="false">
+                            <figure class="fr-m-0 fr-grid-row fr-grid-row--middle fr-grid-row--gutters  fr-text--center">
+                                <img src="{{ asset('img/la-temperature-low.svg') }}" alt="La propreté du logement"
+                                     width="50%" class="fr-col-3">
+                                <text class="fr-col-9 fr-text--bold fr-h6 fr-mb-0">Confort du logement</text>
+                            </figure>
+                            <div class="fr-col-12 fr-collapse fr-pl-3v" id="problemes-confort">
+                                Par exemple
+                                <ul>
+                                    <li>Mon logement est mal isolé</li>
+                                    <li>Le chauffage ne fonctionne pas bien</li>
+                                    <li>Les installations électriques ne sont pas en bon état</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fr-col-12 fr-col-md-4" role="button">
+                        <div class="fr-rounded fr-background--white fr-border--bottom--orange fr-p-3v"
+                             aria-controls="problemes-batiment" aria-expanded="false">
+                            <figure class="fr-m-0 fr-grid-row fr-grid-row--middle fr-grid-row--gutters  fr-text--center">
+                                <img src="{{ asset('img/la-building.svg') }}" alt="La propreté du logement" width="50%"
+                                     class="fr-col-3">
+                                <text class="fr-col-9 fr-text--bold fr-h6 fr-mb-0">Etat du bâtiment</text>
+                            </figure>
+                            <div class="fr-col-12 fr-collapse fr-pl-3v" id="problemes-batiment">
+                                Par exemple
+                                <ul>
+                                    <li>Les escaliers du bâtiment sont abîmés</li>
+                                    <li>La toiture n'est pas en bon état</li>
+                                    <li>Les façades du bâtiment ne sont pas en bon état</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fr-col-12 fr-col-md-4" role="button">
+                        <div class="fr-rounded fr-background--white fr-border--bottom--orange fr-p-3v"
+                             aria-controls="problemes-espace" aria-expanded="false">
+                            <figure class="fr-m-0 fr-grid-row fr-grid-row--middle fr-grid-row--gutters  fr-text--center">
+                                <img src="{{ asset('img/la-sun.svg') }}" alt="La propreté du logement" width="50%"
+                                     class="fr-col-3">
+                                <text class="fr-col-9 fr-text--bold fr-h6 fr-mb-0">Espaces de vie</text>
+                            </figure>
+                            <div class="fr-col-12 fr-collapse fr-pl-3v" id="problemes-espace">
+                                Par exemple
+                                <ul>
+                                    <li>Mon logement est en sous-sol</li>
+                                    <li>Il n'y a pas de fenêtre dans mon salon ou ma salle à manger</li>
+                                    <li>Les plafonds sont trop bas (moins de 2,20m)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fr-col-12 fr-col-md-4" role="button">
+                        <div class="fr-rounded fr-background--white fr-border--bottom--orange fr-p-3v"
+                             aria-controls="problemes-vie" aria-expanded="false">
+                            <figure class="fr-m-0 fr-grid-row fr-grid-row--middle fr-grid-row--gutters  fr-text--center">
+                                <img src="{{ asset('img/la-users.svg') }}" alt="La propreté du logement" width="50%"
+                                     class="fr-col-3">
+                                <text class="fr-col-9 fr-text--bold fr-h6 fr-mb-0">Vie commune</text>
+                            </figure>
+                            <div class="fr-col-12 fr-collapse fr-pl-3v" id="problemes-vie">
+                                Par exemple
+                                <ul>
+                                    <li>Le bruit extérieur est gênant</li>
+                                    <li>L'usage des lieux n'est pas respecté</li>
+                                    <li>Les déchets sont mal stockés</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="fr-container fr-py-5w">
+            <div class="fr-grid-row fr-grid-row--center">
+                <header>
+                    <h4 class="fr-pb-5w fr-text--center fr-text-label--blue-france">Histologe améliore la prise en
+                        charge du mal-logement</h4>
+                </header>
+                <div class="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
+                    <div class="fr-col-md-6">
+                        <figure class="fr-grid-row">
+                            <div>
+                                <img src="{{ asset('img/icon-user-comment.PNG') }}" alt="commentaire">
+                            </div>
+                            <figcaption class="fr-col">
+                                <blockquote class="fr-pl-5v fr-blockquote fr-text--alt">
+                                    Logement plein de moisissures et mes vêtements ne sentent pas bon. J'ai honte
+                                    d'inviter des amis et du coup j'ai tendance à m'isoler car je n'ai pas envie d'aller
+                                    crier mon problème sur les toits. Avec Histologe j'ai pu de chez moi sortir de
+                                    l'ombre en quelques clics via mon téléphone portable. Je suis maintenant accompagné
+                                    pour m'aider à résoudre ces problèmes.
+                                    <strong class="fr-display-block fr-mt-3v">Mathieu F.</strong>
+                                </blockquote>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="fr-col-md-6">
+                        <figure class="fr-grid-row">
+                            <div>
+                                <img src="{{ asset('img/icon-user-comment.PNG') }}" alt="commentaire">
+                            </div>
+                            <figcaption class="fr-col">
+                                <blockquote class="fr-pl-5v fr-blockquote fr-text--alt">
+                                    1 an et 11 mois que j'occupe un appartement sans chauffage malgré les promesses de
+                                    mon propriétaire de résoudre ce problème. En déposant un signalement sur la
+                                    plateforme Histologe et accompagnée par les bons acteurs, le propriétaire a
+                                    finalement missionné un artisan pour m'installer les équipements de chauffage. Avec
+                                    mon mari nous n'avons plus froid ! Merci
+                                    <strong class="fr-display-block fr-mt-3v">Suzanne R.</strong>
+                                </blockquote>
+                            </figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="fr-container--fluid fr-background--blue-france fr-py-5w">
+            <div class="fr-container">
+                <header class="fr-pb-5w">
+                    <h5 class="fr-text--white fr-text--center">Histologe en quelques chiffres</h5>
+                </header>
+                <div class="fr-grid-row fr-grid-row--center fr-text--white">
+                    <div class="fr-col-12 fr-col-md-4 fr-py-2v fr-py-md-0">
+                        <figure class="fr-grid-row fr-grid-row--middle">
+                            <img src="{{ asset('img/icon-house-info.svg') }}" alt="Info" class="fr-col-2">
+                            <figcaption class="fr-col-10 text-white fr-pl-2v">
+                                <strong class="fr-display-block">{{ stats.total }}</strong>
+                                signalements enregistrés
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="fr-col-12 fr-col-md-4 fr-py-2v fr-py-md-0">
+                        <figure class="fr-grid-row fr-grid-row--middle">
+                            <img src="{{ asset('img/icon-chart-bubble.svg') }}" alt="Info" class="fr-col-2">
+                            <figcaption class="fr-col-10 text-white fr-pl-2v">
+                                <strong class="fr-display-block">{{ stats.pec }}%</strong>
+                                des signalements pris en charge
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="fr-col-12 fr-col-md-4 fr-py-2v fr-py-md-0">
+                        <figure class="fr-grid-row fr-grid-row--middle">
+                            <img src="{{ asset('img/icon-pass.svg') }}" alt="Info" class="fr-col-2">
+                            <figcaption class="fr-col-10 text-white fr-pl-2v">
+                                <strong class="fr-display-block">{{ stats.res }}%</strong>
+                                de résolutions déclenchées
+                            </figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="fr-container--fluid fr-background-alt--blue-france fr-py-5w">
+            <div class="fr-container">
+                <header class="fr-pb-5w">
+                    <h4 class="fr-text-label--blue-france fr-text--center">Une solution reconnue !</h4>
+                </header>
+                <div class="fr-grid-row fr-grid-row--center fr-grid-row--gutters fr-text--center">
+                    <div class="fr-col-md-3">
+                        <figure class="fr-m-2v">
+                            <img src="{{ asset('img/Logo_label_2021.png') }}" alt="label_innovant">
+                            <figcaption class="fr-col fr-mt-5w">
+                                <div class="fr-text--bold">Lauréat du label Territoire Innovant (interconnectés 2021)
+                                </div>
+                                <small>Le label « Territoire Innovant » est décerné aux collectivités qui ont mis en
+                                    œuvre des initiatives marquantes en termes d’usages ou de services, ce label se
+                                    différencie en reposant sur des valeurs comme critères d’attribution.</small>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="fr-col-md-3">
+                        <figure class="fr-m-2v">
+                            <img src="{{ asset('img/gazette.png') }}" alt="gazette">
+                            <figcaption class="fr-col fr-mt-5w">
+                                <div class="fr-text--bold">Prix Territorial 2020 de la Gazette des Communes.</div>
+                                <small>Ce prix récompense les projets locaux impliquant plusieurs métiers et
+                                    services.</small>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="fr-col-md-3">
+                        <figure class="fr-m-2v">
+                            <img src="{{ asset('img/exclusion-energetique.png') }}" alt="exclusion_energetique">
+                            <figcaption class="fr-col fr-mt-5w">
+                                <div class="fr-text--bold">Lauréat National de Stop Exclusion énergétique !</div>
+                                <small>Ce prix récompense les solutions qui améliorent la qualité des logements des
+                                    précaires (énergétique ou sanitaire).</small>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="fr-col-md-3">
+                        <figure class="fr-m-2v">
+                            <img src="{{ asset('img/itheasfp.png') }}" alt="inititive_locale">
+                            <figcaption class="fr-col fr-mt-5w">
+                                <div class="fr-text--bold">Prix de la grande enquête Initiatives Locales 2020</div>
+                                <small>Histologe a été primé dans la catégorie "Cadre de vie" parmi plus de 400
+                                    candidatures.</small>
+                            </figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+{% endblock %}
+{% block javascripts %}
+    <script type="text/javascript" src={{ asset('js/slider.js') }}></script>
+    <script>
+        new HistoSlider.init('#homeslider');
+    </script>
+{% endblock %}

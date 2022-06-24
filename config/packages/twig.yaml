@@ -1,0 +1,10 @@
+twig:
+    default_path: '%kernel.project_dir%/templates'
+    globals:
+        config: '@App\Service\ConfigurationService'
+    paths:
+        # point this wherever your images live
+        '%kernel.project_dir%/public/img': images
+when@test:
+    twig:
+        strict_variables: true

@@ -1,0 +1,57 @@
+    # This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    uploads_dir: '%kernel.project_dir%/uploaded_files/signalement/'
+    uploads_tmp_dir: '%kernel.project_dir%/var/temp/'
+    capture_dir: '%kernel.project_dir%/uploaded_files/capture/'
+    images_dir: '%kernel.project_dir%/public/img/'
+    mail_attachment_dir: '%kernel.project_dir%/templates/emails/attachment/'
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+            - '../src/Tests/'
+    App\EventListener\ActivityListener:
+        tags:
+            - name: 'doctrine.event_subscriber'
+        arguments:
+            - '@App\Service\NotificationService'
+            - '@Symfony\Component\Routing\Generator\UrlGeneratorInterface'
+    App\EventListener\LoginListener:
+        tags:
+            - { name: 'kernel.event_listener', event: 'security.interactive_login' }
+    App\EventListener\RequestListener:
+        tags:
+            - { name: 'kernel.event_listener', event: 'kernel.request' }
+#            - { name: 'kernel.event_listener', event: 'kernel.controller', method: onKernelController }
+        arguments:
+            - '@security.untracked_token_storage'
+            - '@Symfony\Component\Routing\Generator\UrlGeneratorInterface'
+    App\EventListener\ExceptionListener:
+        tags:
+            - { name: 'kernel.event_listener', event: 'kernel.exception' }
+        arguments:
+            - '@App\Service\NotificationService'
+    App\Command\ActivationReminderCommand:
+        arguments:
+            $loginLinkHandler: '@security.authenticator.login_link_handler.main'
+    App\Command\GetGeolocCommand:
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@Symfony\Contracts\HttpClient\HttpClientInterface'
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones

@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    {% include '_partials/_modal_closed_territory.html.twig' %}
+    {% include '_partials/_modal_cgu.html.twig' %}
+    {% include '_partials/_modal_pictures_restrictions.html.twig' %}
+    <main class="fr-container fr-py-5w">
+        <header class="fr-callout bg-light fr-mb-5v fr-hidden" id="signalement-success">
+            <p class="fr-callout__title">
+                Merci de votre signalement.</p>
+            <p class="fr-callout__text fr-mb-5v">
+                L'équipe Histologe vous recontactera très rapidement.
+            </p>
+            <em class="fr-fi-information-line fr-text--light fr-text-label--blue-france"> Un courriel de confirmation va
+                vous être transmis.</em>
+            <p class="fr-text--center fr-mt-5v">
+                <a href="https://voxusagers.numerique.gouv.fr/Demarches/3104?&amp;view-mode=formulaire-avis&amp;nd_mode=en-ligne-enti%C3%A8rement&amp;nd_source=button&amp;key=8a6945494dbe7dd6e52d3dd28d667c1d">
+                    <img src="https://voxusagers.numerique.gouv.fr/static/bouton-bleu.svg" alt="Je donne mon avis">
+                </a>
+            </p>
+        </header>
+        {% include '_partials/_signalement_steps_tabs.html.twig' %}
+    </main>
+{% endblock %}

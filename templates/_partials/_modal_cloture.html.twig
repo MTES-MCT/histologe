@@ -1,0 +1,53 @@
+<dialog aria-labelledby="cloture-modal-title" id="cloture-modal" class="fr-modal" role="dialog">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                        <h1 id="cloture-modal-title" class="fr-modal__title">
+                            <span class="fr-fi-arrow-right-line fr-fi--sm"></span>
+                            Clôture signalement #{{ signalement.reference }}
+                        </h1>
+                        <a href="#" class="fr-link--close fr-link" aria-controls="cloture-modal">Fermer</a>
+                    </div>
+                    <div class="fr-modal__content">
+                        {{ form_start(clotureForm,{attr:{
+                            'class': 'tinyCheck'
+                        }}) }}
+                        {{ form_label(clotureForm.motif) }}
+                        {{ form_help(clotureForm.motif) }}
+                        {{ form_widget(clotureForm.motif) }}
+                        <div class="fr-input-group fr-mt-2v">
+                            <label for="cloture_suivi" class="fr-label required">Détails de la clôture</label>
+                            <p class="fr-hint-text">Précisez le contexte et les raisons de la clôture <em>(10 caractères
+                                    minimum)</em></p>
+                            <textarea class="fr-input fr-input--no-resize editor" name="cloture[suivi]"
+                                      id="cloture_suivi"></textarea>
+                            <p class="fr-error-text fr-hidden">Vous devez préciser votre motif de cloture.</p>
+                        </div>
+                        {{ form_end(clotureForm) }}
+                    </div>
+                    <div class="fr-modal__footer">
+                        <ul class="fr-btns-group fr-btns-group--right fr-btns-group--icon-left">
+                            {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+                                <li>
+                                    <button class="fr-btn fr-btn--danger fr-fi-checkbox-line fr-w-100"
+                                            form="cloture_form" name="cloture[type]" value="all" type="submit" disabled>
+                                        Cloturer pour tous les partners
+                                    </button>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <button class="fr-btn fr-fi-checkbox-line fr-w-100" form="cloture_form"
+                                            name="cloture[type]" value="partner" type="submit" disabled>
+                                        Cloturer pour {{ app.user.partner ? app.user.partner.nom }}
+                                    </button>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>

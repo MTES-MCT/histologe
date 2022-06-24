@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36" viewBox="0 0 36 36">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_50" data-name="Rectangle 50" width="36" height="36" transform="translate(0.413)" fill="none"/>
+    </clipPath>
+  </defs>
+  <g id="la-building" transform="translate(-0.413)" clip-path="url(#clip-path)">
+    <path id="building" d="M5.538,4.154v36H20.769V34.615h2.769v5.538H38.769v-36ZM8.308,6.923H36V37.385H26.308V31.846H18v5.538H8.308Zm2.769,2.769v2.769h5.538V9.692Zm8.308,0v2.769h5.538V9.692Zm8.308,0v2.769h5.538V9.692ZM11.077,15.231V18h5.538V15.231Zm8.308,0V18h5.538V15.231Zm8.308,0V18h5.538V15.231ZM11.077,20.769v2.769h5.538V20.769Zm8.308,0v2.769h5.538V20.769Zm8.308,0v2.769h5.538V20.769ZM11.077,26.308v2.769h5.538V26.308Zm8.308,0v2.769h5.538V26.308Zm8.308,0v2.769h5.538V26.308ZM11.077,31.846v2.769h5.538V31.846Zm16.615,0v2.769h5.538V31.846Z" transform="translate(-4.154 -4.154)" fill="#ff9940"/>
+  </g>
+</svg>

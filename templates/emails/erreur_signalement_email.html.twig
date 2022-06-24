@@ -1,0 +1,12 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+
+    <p>Plateforme: {{ url }}</p>
+    <p>Code erreur: {{ code }}</p>
+    <p>Message erreur: {{ error }}</p>
+    <p>Documents: {{ attachment.documents }}</p>
+    <p>Photos: {{ attachment.photos }}</p>
+    <p>{{ req|json_encode() }}</p>
+    <p>{{ signalement|json_encode()|replace({',':',<br>'})|raw }}</p>
+{% endblock %}

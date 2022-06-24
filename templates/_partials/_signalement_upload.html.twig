@@ -1,0 +1,73 @@
+<div class="fr-form-group">
+    <fieldset class="fr-fieldset fr-fieldset--inline">
+        <legend class="fr-label fr-pl-0">Joindre des photos du/des problème(s)</legend>
+        <span class="fr-hint-text">Les photos <u>ne doivent pas contenir de vues de personnes ou d'objets personnels</u>. <br> Pour les photos des parties communes, <u
+                    role="button" aria-controls="modal-photos-restrictions" data-fr-opened="false">certaines restrictions sont à respecter</u>.</span>
+        <div class="fr-fieldset__content fr-grid-row fr-grid-row--gutters">
+            {% for i in 0..limit ?? 5 %}
+                <div class="fr-col-6 fr-col-md fr-text--center">
+                    <label class="fr-btn fr-btn--secondary fr-btn--lg fr-rounded fr-fi-instagram-line">
+                        <img class="fr-hidden fr-rounded fr-display-block" width="100">
+                        <input type="file" accept="image/*" name="signalement[photos]"
+                               class="fr-hidden photo-file" id="signalement_photos_{{ i }}"
+                               data-handle-url="{{ path('handle_upload') }}">
+                    </label>
+                    <small class="fr-text-label--red-marianne fr-icon--sm fr-hidden fr-display-block"
+                           id="signalement_photos_error_{{ i }}"></small>
+                    <div class="fr-grid-row">
+                        <div class="fr-col">
+                            <progress max="100" id="progress_signalement_photos_{{ i }}" value="0"
+                                      class="fr-hidden"></progress>
+                        </div>
+                    </div>
+                    <div class="fr-grid-row">
+                        <div class="fr-col fr-text--center">
+                            <button class="fr-mt-2v fr-btn fr-btn--sm fr-btn--danger signalement-uploadedfile-delete fr-hidden">
+                                Supprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <small class="fr-col-12 fr-fi-information-fill fr-text-label--blue-france fr-display-block">
+                Cliquez
+                sur l'icone
+                photo pour joindre une photo.</small>
+        </div>
+    </fieldset>
+</div>
+<div class="fr-form-group">
+    <fieldset class="fr-fieldset fr-fieldset--inline">
+        <legend class="fr-label fr-pl-0">Joindre des documents complémentaires</legend>
+        <span class="fr-hint-text">Les documents ne doivent pas excéder <u>10Mo par document</u></span>
+        <div class="fr-fieldset__content fr-grid-row fr-grid-row--gutters">
+            {% for i in 0..limit ?? 3 %}
+                <div class="fr-col-6 fr-col-md fr-text--center">
+                    <label class="fr-btn fr-btn--secondary fr-btn--lg fr-rounded fr-fi-attachment-fill">
+                        <input type="file" name="signalement[documents]" id="signalement_documents_{{ i }}"
+                               class="fr-hidden doc-file"
+                               accept=".pdf,.doc,.docx" data-handle-url="{{ path('handle_upload') }}">
+                    </label>
+                    <small class="fr-text-label--red-marianne fr-icon--sm fr-hidden fr-display-block"
+                           id="signalement_documents_error_{{ i }}"></small>
+                    <div class="fr-grid-row">
+                        <div class="fr-col">
+                            <progress max="100" id="progress_signalement_documents_{{ i }}" value="0"
+                                      class="fr-hidden"></progress>
+                        </div>
+                    </div>
+                    <div class="fr-grid-row">
+                        <div class="fr-col fr-text--center">
+                            <button class="fr-mt-2v fr-btn fr-btn--sm fr-btn--danger signalement-uploadedfile-delete fr-hidden">
+                                Supprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <small class="fr-fi-information-fill fr-text-label--blue-france fr-display-block fr-col-12">
+                Cliquez
+                sur l'icone pour joindre un document.</small>
+        </div>
+    </fieldset>
+</div>

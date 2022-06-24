@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <main class="fr-container--fluid">
+        <header class="fr-background--blue-france fr-py-5w fr-py-md-10w">
+            <div class="fr-container fr-grid-row fr-grid-row--middle">
+                <div class="fr-col-12 fr-col-md-8">
+                    <h1 class="fr-h2 fr-text--white">
+                        Qui sommes-nous ?
+                    </h1>
+                    <h2 class="fr-h6 fr-text--xx-light fr-text--white">
+                        Histologe est un service public permettant de faciliter la détection, le signalement,
+                        l’évaluation, l’envoi d’alertes et le suivi des logements pour accélérer la prise en charge du
+                        “mal logement”.
+                        <br>
+                        <br>
+                        Histologe est une start-up d’Etat portée par <a
+                                href="https://agence-cohesion-territoires.gouv.fr/">l'Agence Nationale de la Cohésion
+                            des Territoires</a> et accompagnée par le dispositif
+                        <a href="https://beta.gouv.fr">Beta.gouv.fr</a>.
+                        <br>Après une expérimentation réussie, la plateforme est aujourd'hui déployée sur plusieurs
+                        territoires partout en France.
+                    </h2>
+                </div>
+                <div class="fr-hidden fr-displayed-md fr-col-md-4 fr-text--center">
+                    <figure>
+                        <img src="{{ asset('img/Logohistologe.png') }}" alt="Logo Histologe" width="75%">
+                    </figure>
+                </div>
+            </div>
+        </header>
+    </main>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Partenaire{% endblock %}
+
+{% block content %}
+    {% if is_granted('ROLE_ADMIN_TERRITORY') and app.request.get('_route') is not same as('back_partner_new') %}
+        {% include '_partials/_modal_user_switcher.html.twig' %}
+    {% endif %}
+    <section class="fr-col-12 fr-p-5v">
+        <h2 class="fr-h2 fr-mb-0">Partenaire {{ partner.nom ? '"'~partner.nom~'"' : '' }}</h2>
+        <span class="fr-hint-text">Ci dessous les informations du partenaire, vous pouvez les éditer si nécessaire.</span>
+        <div class="fr-pt-5v">
+            {{ include('back/partner/_form.html.twig') }}
+        </div>
+    </section>
+{% endblock %}
+{% block javascripts %}
+    <script>
+        document.querySelectorAll('.partner_users_switch_btn').forEach(swbtn => {
+            swbtn.addEventListener('click', (evt => {
+                console.log(evt)
+                let target = evt.target;
+                document.querySelector('#fr-modal-user-switcher_username').innerHTML = target.getAttribute('data-username');
+                document.querySelector('#fr-modal-user-switcher_userid').value = target.getAttribute('data-userid');
+                document.querySelector('#user_switch_form').addEventListener('submit', (e) => {
+                    document.querySelector('#user_switch_form_submit').innerHTML = "Transfert en cours...";
+                    document.querySelector('#user_switch_form_submit').disabled = true;
+                })
+            }))
+        })
+    </script>
+{% endblock %}

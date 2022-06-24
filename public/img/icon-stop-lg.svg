@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="190" height="190" viewBox="0 0 190 190">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_163" data-name="Rectangle 163" width="190" height="190" transform="translate(625 270)" fill="#fff" stroke="#707070" stroke-width="1"/>
+    </clipPath>
+  </defs>
+  <g id="icon-stop-lg" transform="translate(-625 -270)" clip-path="url(#clip-path)">
+    <g id="icon-stop" transform="translate(622.637 266.669)">
+      <g id="Calque_2">
+        <path id="Tracé_231" data-name="Tracé 231" d="M106.216,11.689C75.724,36.845,43.452,40.657,28.968,52.6s-39.641,45.231,9.148,103.929,97.069,32.78,113.331,19.566C226.917,113.331,160.087-33.034,106.216,11.689Z" fill="#e5e5f4"/>
+        <circle id="Ellipse_80" data-name="Ellipse 80" cx="43.96" cy="43.96" r="43.96" transform="translate(58.953 62.764)" fill="#ff9940"/>
+        <path id="Tracé_232" data-name="Tracé 232" d="M73.945,105.708a44.861,44.861,0,0,1,36.083-43.96,44.826,44.826,0,0,0-17.533,87.921,50.381,50.381,0,0,0,8.894.762,47.522,47.522,0,0,0,8.64-.762A45.114,45.114,0,0,1,73.945,105.708Z" fill="#ff6f4c"/>
+      </g>
+      <g id="Calque_4">
+        <path id="Tracé_233" data-name="Tracé 233" d="M77.5,51.075h84.363v84.363H77.5Z" fill="none"/>
+        <path id="Tracé_234" data-name="Tracé 234" d="M63.781,146.619a55.006,55.006,0,1,1,77.757-2.287A55.006,55.006,0,0,1,63.781,146.619Zm7.623-7.877a44.04,44.04,0,1,0-1.779-62.256C52.854,94.019,53.871,121.971,71.4,138.742ZM134.422,111.3l-65.051,1.779a31.587,31.587,0,0,1-.254-10.927l65.051-1.779A39.376,39.376,0,0,1,134.422,111.3Z"/>
+        <g id="Groupe_163" data-name="Groupe 163" transform="translate(139.189 21.947)">
+          <g id="Groupe_159" data-name="Groupe 159" transform="translate(1.009)">
+            <path id="Tracé_235" data-name="Tracé 235" d="M2.033,3.557,6.1-.508,14.23,7.623l-4.066,3.812Z" fill="#9a9aff"/>
+          </g>
+          <g id="Groupe_160" data-name="Groupe 160" transform="translate(24.135 23.129)">
+            <path id="Tracé_236" data-name="Tracé 236" d="M2.033,3.557,6.1-.508,14.23,7.623l-4.066,3.812Z" fill="#9a9aff"/>
+          </g>
+          <g id="Groupe_161" data-name="Groupe 161" transform="translate(0 23.129)">
+            <path id="Tracé_237" data-name="Tracé 237" d="M2.033,7.623,10.164-.508,14.23,3.557,6.1,11.435Z" fill="#9a9aff"/>
+          </g>
+          <g id="Groupe_162" data-name="Groupe 162" transform="translate(23.129 0.003)">
+            <path id="Tracé_238" data-name="Tracé 238" d="M2.033,7.623,10.164-.508,14.23,3.557,6.1,11.435Z" fill="#9a9aff"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

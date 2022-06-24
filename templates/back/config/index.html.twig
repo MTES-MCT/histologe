@@ -1,0 +1,21 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <section class="fr-grid-row fr-grid-row--middle fr-p-5v ">
+        <div class="fr-col-6">
+            <h1 class="fr-h2 fr-mb-0">Configuration Histologe</h1>
+        </div>
+        <div class="fr-col-6 fr-text--right">
+            <img src="{{ asset('img/'~logotype) }}" alt="Logo territoire" height="75px">
+        </div>
+    </section>
+    <section class="fr-col-12 fr-px-5v fr-mb-5v">
+        {{ form_start(form) }}
+        {{ form_end(form) }}
+        <button type="submit" class="fr-btn fr-fi-check-line fr-btn--icon-left" form="config-form">Enregistrer</button>
+    </section>
+
+
+{% endblock %}

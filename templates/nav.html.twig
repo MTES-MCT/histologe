@@ -1,0 +1,26 @@
+<nav class="fr-header__tools">
+    <div class="fr-header__tools-links">
+        <ul class="fr-links-group">
+            <li>
+                <a class="fr-link" href="{{ path('home') }}">Accueil</a>
+            </li>
+            <li>
+                <a class="fr-link" href="{{ path('front_signalement') }}">Signalement</a>
+            </li>
+            <li>
+                <a class="fr-link" href="{{ path('front_about') }}">A propos</a>
+            </li>
+            <li>
+                <a class="fr-link" href="{{ path('front_contact') }}">Contact</a>
+            </li>
+            <li>
+
+                {% if app.user %}
+                    <a class="fr-link fr-fi-user-line" href="{{ path('back_index') }}">Tableau de bord</a>
+                {% else %}
+                    <a class="fr-link fr-fi-lock-line" href="{{ path('app_login') }}">Espace pro</a>
+                {% endif %}
+            </li>
+        </ul>
+    </div>
+</nav>

@@ -1,0 +1,8 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour,</p>
+    <p>Vous avez reçu un nouveau message depuis le formulaire de contact</p>
+    De: <strong>{{ nom }}</strong> - ({{ mail }}) <br>
+    Message: <p>{{ message|raw }}</p>
+{% endblock %}

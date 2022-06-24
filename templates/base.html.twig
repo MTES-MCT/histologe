@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr"{# data-fr-scheme="light" #}>
+<head>
+    <meta charset="UTF-8">
+    {% if 'back_' in app.request.get('_route') or 'front_suivi_signalement' in app.request.get('_route') %}
+        <meta name="robots" content="noindex, nofollow">
+    {% else %}
+        <meta name="robots" content="index, follow">
+    {% endif %}
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Histologe - {% block title %}{% endblock %}</title>
+    <meta name="description" content="Signaler vos problèmes de logement.">
+    <!-- Facebook Meta Tags -->
+    <meta property="og:url" content="\\{{ config.get.urlTerritoire }}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Histologe">
+    <meta property="og:description" content="Signaler vos problèmes de logement.">
+    <meta property="og:image" content={{ asset('img/Logohistologe.png') }}>
+    <meta property="og:site_name" content="Histologe">
+
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="histologe.bzez.dev">
+    <meta property="twitter:url" content="\\{{ config.get.urlTerritoire }}">
+    <meta name="twitter:title" content="Histologe">
+    <meta name="twitter:description" content="Signaler vos problèmes de logement.">
+    <meta name="twitter:image" content={{ asset('img/Logohistologe.png') }}>
+    <meta name="twitter:title" content="Histologe">
+    <meta name="twitter:description" content="Signaler vos problèmes de logement.">
+    <meta name="apple-mobile-web-app-title" content="Histologe">
+    <link rel="icon" href={{ asset('img/favicon.ico') }}>
+    <link rel="stylesheet" href={{ asset('dsfr/dsfr.min.css') }}>
+    <link rel="stylesheet" href={{ asset('css/histologe.css?v='~''|date('YW')) }}>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light-border.css"/>
+    {% block stylesheets %}{% endblock %}
+    {{ config.get.trackingCode ? config.get.tagManagerCode|raw : '' }}
+    {{ config.get.tagManagerCode ? config.get.tagManagerCode|raw :'' }}
+</head>
+
+{% set statuses = {
+    1:'Nouveau',
+    2:'En cours',
+    6:'Fermés'
+} %}
+{% set allocations = {
+    'CAF':'CAF',
+    'MSA':'MSA',
+    0:'NON',
+} %}
+{% set statuts_affectation = {
+    0:'EN ATTENTE',
+    1:'ACCEPTEE',
+    2:'REFUSEE',
+    3:'CLOTUREE',
+} %}
+<body{# onbeforeunload="return preload()" #}>
+{% if 'back_' not in app.request.get('_route') %}
+    {% include "header.html.twig" %}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div role="alert" class="fr-alert fr-alert--{{ label }} fr-alert--sm">
+                {% if label is same as('error') %}
+                    <strong>Erreur...</strong>
+                {% endif %}
+                <p>{{ message }}</p>
+            </div>
+        {% endfor %}
+    {% endfor %}
+{% endif %}
+{% block body %}{% endblock %}
+{% if 'back_' not in app.request.get('_route') %}
+    {% include "footer.html.twig" %}
+{% endif %}
+<script type="module" src={{ asset('dsfr/dsfr.module.min.js') }}></script>
+<script type="text/javascript" nomodule src={{ asset('dsfr/dsfr.nomodule.min.js') }}></script>
+<script type="text/javascript" src={{ asset('js/screencapture.js') }}></script>
+<script src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
+<script src="{{ asset('js/const.min.js?v='~''|date('YW')) }}"></script>
+<script src="{{ asset('js/app.js?v='~''|date('YW')) }}"></script>
+<script src={{ asset('js/img_box.js') }}></script>
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+<script src={{ asset('js/gauge.min.js') }}></script>
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/tippy.js@6"></script>
+<script>
+    tinymce.init({
+        selector: 'textarea.editor',
+        plugins: 'lists',
+        toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist | mybutton',
+        menubar: false,
+        height: 320,
+        {% if 'back_' in app.request.get('_route') %}
+        setup: function (editor) {
+            editor.on('input', function (e) {
+                if (editor.formElement.classList.contains('tinyCheck')) {
+                    let isOk = true,
+                        submitters = document.querySelectorAll('button[form="' + editor.formElement.id + '"]')
+                    isOk = editor.getContent().length <= 17;
+                    !isOk && document.querySelector('#' + editor.id).parentElement.classList.add('fr-input-group--error'), document.querySelector('#' + editor.id).parentElement.querySelector('.fr-error-text').classList.remove('fr-hidden');
+                    submitters.forEach(sbmt => {
+                        sbmt.disabled = isOk;
+                    })
+                    if (isOk !== true)
+                        document.querySelector('#' + editor.id).parentElement.classList.remove('fr-input-group--error'), document.querySelector('#' + editor.id).parentElement.querySelector('.fr-error-text').classList.add('fr-hidden');
+                }
+            });
+            {% if 'back_signalement_view' in app.request.get('_route') %}
+            editor.ui.registry.addMenuButton('mybutton', {
+                text: 'Partager un document',
+                fetch: function (callback) {
+                    var items = [
+                        {% for doc in signalement.documents %}
+                        {
+                            type: 'menuitem',
+                            text: '{{ doc.titre }}',
+                            onAction: function () {
+                                editor.insertContent('&nbsp;<a href="{{ asset('_up/'~doc.file) }}?t=___TOKEN___" class="fr-btn fr-fi-eye-fill fr-btn--icon-left" title="Afficher le document" target="_blank">Consulter "{{ doc.titre }}"</a>');
+                            }
+                        },
+                        {% endfor %}
+                    ];
+                    callback(items);
+                }
+            });
+            {% endif %}
+        }
+        {% endif %}
+    });
+</script>
+{% block javascripts %}{% endblock %}
+</body>
+</html>

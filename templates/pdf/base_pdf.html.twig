@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <title>{% block title %}{% endblock %}</title></head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap" rel="stylesheet">
+<style>
+    * {
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    table.border, table.border > tr, table.border td {
+        border: 1px solid rgba(0, 0, 0, .5);
+    }
+
+    .page:not(:last-child) {
+        page-break-after: always;
+        page-break-inside: avoid;
+    }
+
+    .fr-stripped tr:nth-child(odd) {
+        border: none;
+        background-color: rgba(191, 204, 251, 0.37);
+    }
+</style>
+<body style="padding: 3rem">
+{% block body %}{% endblock %}
+</body>
+</html>

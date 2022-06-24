@@ -1,0 +1,564 @@
+<form action="#" name="bo-filters-form" id="bo_filters_form" method="POST" class="fr-accordion fr-background--white"
+      style="overflow: hidden">
+    <div class="fr-p-5v">
+        <label class="fr-label" for="header-search-input"><strong>Rechercher</strong></label>
+        <div class="fr-search-bar fr-mt-2v" id="header-search">
+            <input class="fr-input" placeholder="Rechercher" type="search" id="header-search-input"
+                   name="bo-filters-searchterms" value="{{ filters.searchterms ?? '' }}">
+            <button class="fr-btn" title="Rechercher">
+                Rechercher
+            </button>&nbsp;
+        </div>
+        <span data-fr-opened="false" aria-controls="bo-modal-filters"
+              class="fr-badge fr-fi-equalizer-line fr-mt-1v">Filtres avancés</span>
+    </div>
+    <dialog aria-labelledby="fr-modal-2-title" id="bo-modal-filters" class="fr-modal" role="dialog" >
+        <div class="fr-container fr-container--fluid fr-container-md">
+            <div class="fr-grid-row fr-grid-row--center">
+                <div class="fr-col-12 fr-col-md-8">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <h1 id="fr-modal-2-title" class="fr-modal__title">
+                                <span class="fr-fi-search-line fr-fi--sm" aria-hidden="true"></span>
+                                Filtres avancés
+                            </h1>
+                        </div>
+                        <div class="fr-modal__content">
+                            <div class="fr-grid-row fr-grid-row--gutters fr-p-3v">
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <div class="fr-col-12 fr-col-md-6">
+                                        <label class="fr-label" for="bo-filters-territories"><strong>Filtrer par territoire</strong></label>
+                                        <select id="bo-filters-territories" class="fr-select" onchange="setBadge(this)">
+                                            <option value="">TOUS</option>
+                                            {% for territory in territories %}
+                                                <option value="{{ territory.id }}"
+                                                        class="{% if territory.id in filters.territories %}fr-hidden{% endif %}">{{ territory.name|upper }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="selected__value">
+                                            <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                            {% set visible = 'fr-hidden' %}
+                                            {% for territory in filters.territories %}
+                                                <input type="hidden" name="bo-filters-territories[]" value="{{ territory }}">
+                                                <span class="fr-badge fr-badge--success fr-m-1v" data-value="{{ territory }}"
+                                                      data-removable="true">{{ territories[territory] is defined ? territories[territory].name|upper : 'AUCUN' }}</span>
+                                            {% else %}
+                                                {% set visible = 0 %}
+                                            {% endfor %}
+                                            <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUTES</span>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <div class="fr-col-12 fr-col-md-6">
+                                    <label class="fr-label" for="bo-filters-cities"><strong>Filtrer par ville</strong></label>
+                                    <select id="bo-filters-cities" class="fr-select" onchange="setBadge(this)">
+                                        <option value="">TOUTES</option>
+                                        {% for city in cities %}
+                                            <option value="{{ city.city }}"
+                                                    class="{% if city.city in filters.cities %}fr-hidden{% endif %}">{{ city.city|upper }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="selected__value">
+                                        <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                        {% set visible = 'fr-hidden' %}
+                                        {% for city in filters.cities %}
+                                            <input type="hidden" name="bo-filters-cities[]" value="{{ city }}">
+                                            <span class="fr-badge fr-badge--success fr-m-1v" data-value="{{ city }}"
+                                                  data-removable="true">{{ city }}</span>
+                                        {% else %}
+                                            {% set visible = 0 %}
+                                        {% endfor %}
+                                        <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUTES</span>
+                                    </div>
+                                </div>
+                                <div class="fr-col-12 fr-col-md-6">
+                                    <label class="fr-label" for="bo-filters-statuses"><strong>Filtrer par statut</strong></label>
+                                    <select id="bo-filters-statuses" class="fr-select" onchange="setBadge(this)">
+                                        <option value="">TOUS</option>
+                                        {% for status,wording in statuses %}
+                                            <option value="{{ status }}"
+                                                    class="{% if status in  filters.statuses %}fr-hidden{% endif %}">{{ wording|upper }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="selected__value">
+                                        <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                        {% set visible = 'fr-hidden' %}
+                                        {% for status in filters.statuses %}
+                                            <input type="hidden" name="bo-filters-statuses[]" value="{{ status }}">
+                                            <span class="fr-badge fr-badge--success fr-m-1v" data-value="{{ status }}"
+                                                  data-removable="true">{{ statuses[status] }}</span>
+                                        {% else %}
+                                            {% set visible = 0 %}
+                                        {% endfor %}
+                                        <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
+                                    </div>
+                                </div>
+                                {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+                                    <div class="fr-col-12 fr-col-md-6">
+                                        <label class="fr-label" for="bo-filters-partners"><strong>Filtrer par
+                                                partenaire</strong></label>
+                                        <select id="bo-filters-partners" class="fr-select" onchange="setBadge(this)">
+                                            <option value="">TOUS</option>
+                                            <option value="AUCUN">AUCUN</option>
+                                            <optgroup label="COMMUNES">
+                                                {% for partner in partners|filter(v=> v.isCommune == 1) %}
+                                                    <option value="{{ partner.id }}"
+                                                            class="{% if partner.id in filters.partners %}fr-hidden{% endif %}">{{ partner.nom|upper }}</option>
+                                                {% endfor %}
+                                            </optgroup>
+                                            <optgroup label="PARTNERS">
+                                                {% for partner in partners|filter(v=> v.isCommune == 0) %}
+                                                    <option value="{{ partner.id }}"
+                                                            class="{% if partner.id in filters.partners %}fr-hidden{% endif %}">{{ partner.nom|upper }}</option>
+                                                {% endfor %}
+                                            </optgroup>
+
+                                        </select>
+                                        <div class="selected__value">
+                                            <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                            {% set visible = 'fr-hidden' %}
+                                            {% for partner in filters.partners %}
+                                                <input type="hidden" name="bo-filters-partners[]" value="{{ partner }}">
+                                                <span class="fr-badge fr-badge--success fr-m-1v" data-value="{{ partner }}"
+                                                      data-removable="true">{{ partners[partner] is defined ? partners[partner].nom : 'AUCUN' }}</span>
+                                            {% else %}
+                                                {% set visible = 0 %}
+                                            {% endfor %}
+                                            <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <div class="fr-col-12 fr-col-md-6">
+                                    <label class="fr-label" for="bo-filters-criteres"><strong>Critères</strong></label>
+                                    <select id="bo-filters-criteres" class="fr-select" onchange="setBadge(this)">
+                                        <option value="">TOUS</option>
+                                        {% for critere in criteres %}
+                                            <option value="{{ critere.id }}"
+                                                    class="{% if critere.id in filters.criteres %}fr-hidden{% endif %}">{{ critere.label|upper }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="selected__value">
+                                        <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                        {% set visible = 'fr-hidden' %}
+                                        {% for critere in filters.criteres %}
+                                            <input type="hidden" name="bo-filters-criteres[]" value="{{ critere }}">
+                                            <span class="fr-badge fr-badge--success fr-m-1v" data-value="{{ critere }}"
+                                                  data-removable="true">{{ criteres[critere].label }}</span>
+                                        {% else %}
+                                            {% set visible = 0 %}
+                                        {% endfor %}
+                                        <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
+                                    </div>
+                                </div>
+                                <div class="fr-col-12 fr-col-md-6">
+                                    <label class="fr-label" for="bo-filters-tags"><strong>Etiquettes</strong></label>
+                                    <select id="bo-filters-tags" class="fr-select" onchange="setBadge(this)">
+                                        <option value="">TOUS</option>
+                                        {% for tag in tags %}
+                                            <option value="{{ tag.id }}"
+                                                    class="{% if tag.id in filters.tags %}fr-hidden{% endif %}">{{ tag.label|upper }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="selected__value">
+                                        <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                        {% set visible = 'fr-hidden' %}
+                                        {% for tag in filters.tags %}
+                                            <input type="hidden" name="bo-filters-tags[]" value="{{ tag }}">
+                                            <span class="fr-badge fr-badge--success fr-m-1v" data-value="{{ tag }}"
+                                                  data-removable="true">{{ tags[tag].label }}</span>
+                                        {% else %}
+                                            {% set visible = 0 %}
+                                        {% endfor %}
+                                        <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
+                                    </div>
+                                </div>
+
+                                <div class="fr-col-12 fr-col-md-6">
+                                    <div class="fr-grid-row fr-grid-row--gutters">
+                                        <div class="fr-col-6">
+                                            <label class="fr-label" for="bo-filters-allocs"><strong>Bénéficiaire</strong></label>
+                                            <select id="bo-filters-allocs" class="fr-select" onchange="setBadge(this)">
+                                                <option value="">TOUS</option>
+                                                {% for v,allocation in allocations %}
+                                                    <option value="{{ v }}"
+                                                            class="{% if allocation in filters.allocs %}fr-hidden{% endif %}"> {{ allocation }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <div class="selected__value">
+                                                <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                                {% set visible = 'fr-hidden' %}
+                                                {% for alloc in filters.allocs %}
+                                                    <input type="hidden" name="bo-filters-allocs[]" value="{{ alloc }}">
+                                                    <span class="fr-badge fr-badge--success fr-m-1v" data-removable="true"
+                                                          data-value="{{ alloc }}">{{ alloc ? alloc : 'NON' }}</span>
+                                                {% else %}
+                                                    {% set visible = 0 %}
+                                                {% endfor %}
+                                                <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
+                                            </div>
+
+                                        </div>
+                                        <div class="fr-col-6">
+                                            <label class="fr-label" for="bo-filters-housetypes"><strong>Logement</strong></label>
+                                            <select id="bo-filters-housetypes" class="fr-select" onchange="setBadge(this)">
+                                                <option value="">TOUS</option>
+                                                <option value="0" class="{% if 0 in filters.housetypes %}fr-hidden{% endif %}">PRIVE
+                                                </option>
+                                                <option value="1" class="{% if 1 in filters.housetypes %}fr-hidden{% endif %}">PUBLIC
+                                                </option>
+                                            </select>
+                                            <div class="selected__value">
+                                                <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                                {% set visible = 'fr-hidden' %}
+                                                {% for housetype in filters.housetypes %}
+                                                    <input type="hidden" name="bo-filters-housetypes[]" value="{{ housetype }}">
+                                                    <span class="fr-badge fr-badge--success fr-m-1v" data-removable="true"
+                                                          data-value="{{ housetype }}">{{ housetype ? 'PUBLIC':'PRIVE' }}</span>
+                                                {% else %}
+                                                    {% set visible = 0 %}
+                                                {% endfor %}
+                                                <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="fr-col-12 fr-col-md-6">
+                                    <div class="fr-grid-row fr-grid-row--gutters">
+                                        <div class="fr-col-6">
+                                            <label class="fr-label" for="bo-filters-declarants"><strong>Déclarant</strong></label>
+                                            <select id="bo-filters-declarants" class="fr-select" onchange="setBadge(this)">
+                                                <option value="">TOUS</option>
+                                                <option value="0" class="{% if 0 in filters.declarants %}fr-hidden{% endif %}">OCCUPANT
+                                                </option>
+                                                <option value="1" class="{% if 1 in filters.declarants %}fr-hidden{% endif %}">TIERS
+                                                </option>
+                                            </select>
+                                            <div class="selected__value">
+                                                <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                                {% set visible = 'fr-hidden' %}
+                                                {% for declarant in filters.declarants %}
+                                                    <input type="hidden" name="bo-filters-declarants[]" value="{{ declarant }}">
+                                                    <span class="fr-badge fr-badge--success fr-m-1v" data-value="{{ declarant }}"
+                                                          data-removable="true">{{ declarant ? 'TIERS' : 'OCCUPANT' }}</span>
+                                                {% else %}
+                                                    {% set visible = 0 %}
+                                                {% endfor %}
+                                                <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
+                                            </div>
+
+                                        </div>
+                                        <div class="fr-col-6">
+                                            <label class="fr-label" for="bo-filters-proprios"><strong>Proprio. averti</strong></label>
+                                            <select id="bo-filters-proprios" class="fr-select" onchange="setBadge(this)">
+                                                <option value="">TOUS</option>
+                                                <option value="0" class="{% if 0 in filters.proprios %}fr-hidden{% endif %}">NON</option>
+                                                <option value="1" class="{% if 1 in filters.proprios %}fr-hidden{% endif %}">OUI</option>
+                                            </select>
+                                            <div class="selected__value">
+                                                <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                                {% set visible = 'fr-hidden' %}
+                                                {% for proprio in filters.proprios %}
+                                                    <input type="hidden" name="bo-filters-proprios[]" value="{{ proprio }}">
+                                                    <span class="fr-badge fr-badge--success fr-m-1v"
+                                                          data-value="{{ proprio }}" data-removable="true"
+                                                          data-value="{{ proprio }}">{{ proprio ? 'OUI':'NON' }}</span>
+                                                {% else %}
+                                                    {% set visible = 0 %}
+                                                {% endfor %}
+                                                <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="fr-col-12 fr-col-md-6">
+                                    <div class="fr-grid-row fr-grid-row--gutters">
+                                        <div class="fr-col-6">
+                                            <label class="fr-label" for="bo-filters-interventions"><strong>Accepte
+                                                    visite</strong></label>
+                                            <select id="bo-filters-interventions" class="fr-select" onchange="setBadge(this)">
+                                                <option value="">TOUS</option>
+                                                <option value="0" class="{% if 0 in filters.interventions %}fr-hidden{% endif %}">OUI
+                                                </option>
+                                                <option value="1" class="{% if 1 in filters.interventions %}fr-hidden{% endif %}">NON
+                                                </option>
+                                            </select>
+                                            <div class="selected__value">
+                                                <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                                {% set visible = 'fr-hidden' %}
+                                                {% for intervention in filters.interventions %}
+                                                    <input type="hidden" name="bo-filters-interventions[]" value="{{ intervention }}">
+                                                    <span class="fr-badge fr-badge--success fr-m-1v" data-value="{{ intervention }}"
+                                                          data-removable="true">{{ intervention ? 'NON' : 'OUI' }}</span>
+                                                {% else %}
+                                                    {% set visible = 0 %}
+                                                {% endfor %}
+                                                <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
+                                            </div>
+
+                                        </div>
+                                        <div class="fr-col-6">
+                                            <label class="fr-label" for="bo-filters-visites"><strong>Visite effectuée</strong></label>
+                                            <select id="bo-filters-visites" class="fr-select" onchange="setBadge(this)">
+                                                <option value="">TOUS</option>
+                                                <option value="0" class="{% if 0 in filters.visites %}fr-hidden{% endif %}">NON</option>
+                                                <option value="1" class="{% if 1 in filters.visites %}fr-hidden{% endif %}">OUI</option>
+                                            </select>
+                                            <div class="selected__value">
+                                                <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                                {% set visible = 'fr-hidden' %}
+                                                {% for visite in filters.visites %}
+                                                    <input type="hidden" name="bo-filters-visites[]" value="{{ visite }}">
+                                                    <span class="fr-badge fr-badge--success fr-m-1v"
+                                                          data-value="{{ visite }}" data-removable="true"
+                                                          data-value="{{ visite }}">{{ visite ? 'OUI':'NON' }}</span>
+                                                {% else %}
+                                                    {% set visible = 0 %}
+                                                {% endfor %}
+                                                <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="fr-col-12 fr-col-md-6">
+                                    <div class="fr-grid-row fr-grid-row--gutters">
+                                        <div class="fr-col-6">
+                                            <label class="fr-label" for="bo-filters-enfantsM6"><strong>Enfants - de 6ans</strong></label>
+                                            <select id="bo-filters-enfantsM6" class="fr-select" onchange="setBadge(this)">
+                                                <option value="">TOUS</option>
+                                                <option value="0" class="{% if 0 in filters.enfantsM6 %}fr-hidden{% endif %}">NON</option>
+                                                <option value="1" class="{% if 1 in filters.enfantsM6 %}fr-hidden{% endif %}">OUI</option>
+                                            </select>
+                                            <div class="selected__value">
+                                                <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                                {% set visible = 'fr-hidden' %}
+                                                {% for enfantsM6 in filters.enfantsM6 %}
+                                                    <input type="hidden" name="bo-filters-enfantsM6[]" value="{{ enfantsM6 }}">
+                                                    <span class="fr-badge fr-badge--success fr-m-1v"
+                                                          data-value="{{ enfantsM6 }}" data-removable="true"
+                                                          data-value="{{ enfantsM6 }}">{{ enfantsM6 ? 'OUI':'NON' }}</span>
+                                                {% else %}
+                                                    {% set visible = 0 %}
+                                                {% endfor %}
+                                                <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
+                                            </div>
+                                        </div>
+                                        <div class="fr-col-6">
+                                            <label class="fr-label" for="bo-filters-handicaps"><strong>Situation handicap</strong></label>
+                                            <select id="bo-filters-handicaps" class="fr-select" onchange="setBadge(this)">
+                                                <option value="">TOUS</option>
+                                                <option value="0" class="{% if 0 in filters.handicaps %}fr-hidden{% endif %}">NON</option>
+                                                <option value="1" class="{% if 1 in filters.handicaps %}fr-hidden{% endif %}">OUI</option>
+                                            </select>
+                                            <div class="selected__value">
+                                                <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                                {% set visible = 'fr-hidden' %}
+                                                {% for handicap in filters.handicaps %}
+                                                    <input type="hidden" name="bo-filters-handicaps[]" value="{{ handicap }}">
+                                                    <span class="fr-badge fr-badge--success fr-m-1v"
+                                                          data-value="{{ handicap }}" data-removable="true"
+                                                          data-value="{{ handicap }}">{{ handicap ? 'OUI':'NON' }}</span>
+                                                {% else %}
+                                                    {% set visible = 0 %}
+                                                {% endfor %}
+                                                <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="fr-col-12 fr-col-md-6">
+                                    <div class="fr-grid-row fr-grid-row--gutters">{#
+                                        <div class="fr-col-6">
+                                            <label class="fr-label" for="bo-filters-affectations"><strong>Affectations</strong></label>
+                                            <select id="bo-filters-affectations" class="fr-select" onchange="setBadge(this)">
+                                                <option value="">TOUS</option>
+                                                <option value="1" class="{% if 0 in filters.affectations %}fr-hidden{% endif %}">EN
+                                                    ATTENTE
+                                                </option>
+                                                <option value="1" class="{% if 1 in filters.affectations %}fr-hidden{% endif %}">ACCEPTEE
+                                                </option>
+                                                <option value="2" class="{% if 1 in filters.affectations %}fr-hidden{% endif %}">REFUSEE
+                                                </option>
+                                                <option value="3" class="{% if 1 in filters.affectations %}fr-hidden{% endif %}">CLOTUREE
+                                                </option>
+                                            </select>
+                                            <div class="selected__value">
+                                                <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                                {% set visible = 'fr-hidden' %}
+                                                {% for affectation in filters.affectations %}
+                                                    <input type="hidden" name="bo-filters-affectations[]" value="{{ affectation }}">
+                                                    <span class="fr-badge fr-badge--success fr-m-1v"
+                                                          data-value="{{ affectation }}" data-removable="true"
+                                                          data-value="{{ affectation }}">{{ statuts_affectation[affectation] }}</span>
+                                                {% else %}
+                                                    {% set visible = 0 %}
+                                                {% endfor %}
+                                                <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
+                                            </div>
+                                        </div>#}
+                                        <div class="fr-col-6">
+                                            <label class="fr-label" for="bo-filters-delays"><strong>Dernier suivi </strong>
+                                                <small>(jours)</small></label>
+                                            <input type="number" min="0" max="9999" step="1" id="bo-filters-delays" name="bo-filters-delays"
+                                                   class="fr-input" value="{{ filters.delays ?? '' }}">
+                                            <div class="selected__value">
+                                                <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                                {% set visible = 'fr-hidden' %}
+                                                {% if filters.delays %}
+                                                    <input type="hidden" name="bo-filters-delays" value="{{ filters.delays }}">
+                                                    <span class="fr-badge fr-badge--success fr-m-1v" data-value="{{ filters.delays }}"
+                                                          data-removable="true">PLUS {{ filters.delays }} JOUR(S)</span>
+                                                {% else %}
+                                                    {% set visible = 0 %}
+                                                {% endif %}
+                                                <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="fr-col-12 fr-col-md-6">
+                                    <div class="fr-grid-row fr-grid-row--gutters">
+                                        <div class="fr-col-6">
+                                            <label class="fr-label" for="bo-filters-avant1949"><strong>Construction av.
+                                                    1949</strong></label>
+                                            <select id="bo-filters-avant1949" class="fr-select" onchange="setBadge(this)">
+                                                <option value="">TOUS</option>
+                                                <option value="1" class="{% if 0 in filters.avant1949 %}fr-hidden{% endif %}">OUI</option>
+                                                <option value="0" class="{% if 1 in filters.avant1949 %}fr-hidden{% endif %}">NON</option>
+                                            </select>
+                                            <div class="selected__value">
+                                                <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                                {% set visible = 'fr-hidden' %}
+                                                {% for avant1949 in filters.avant1949 %}
+                                                    <input type="hidden" name="bo-filters-avant1949[]" value="{{ avant1949 }}">
+                                                    <span class="fr-badge fr-badge--success fr-m-1v" data-value="{{ avant1949 }}"
+                                                          data-removable="true">{{ avant1949 ? 'OUI' : 'NON' }}</span>
+                                                {% else %}
+                                                    {% set visible = 0 %}
+                                                {% endfor %}
+                                                <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="fr-col-6">
+                                            <label class="fr-label" for="bo-filters-scores-on"><strong>Score criticité </strong><small>(> ou
+                                                    =)</small></label>
+                                            <div class="fr-grid-row">
+                                                <div class="fr-col-6">
+                                                    <input type="number" min="0" max="100" step="1" id="bo-filters-scores-on"
+                                                           name="bo-filters-scores[on]"
+                                                           class="fr-input" value="{{ filters.scores.on ?? 0 }}">
+                                                    <div class="selected__value">
+                                                        <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                                        {% set visible = 'fr-hidden' %}
+                                                        {% if filters.scores and filters.scores.on %}
+                                                            <span class="fr-badge fr-badge--success fr-m-1v"
+                                                                  data-value="{{ filters.scores.on }}"
+                                                                  data-removable="true">{{ filters.scores.on }}%</span>
+                                                        {% else %}
+                                                            {% set visible = 0 %}
+                                                        {% endif %}
+                                                        <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
+                                                    </div>
+
+                                                </div>
+                                                <div class="fr-col-6">
+                                                    <label>
+                                                        <input type="number" min="0" max="100" step="1" id="bo-filters-scores-off"
+                                                               name="bo-filters-scores[off]"
+                                                               class="fr-input" value="{{ filters.scores.off ?? 100 }}">
+                                                    </label>
+                                                    <div class="selected__value">
+                                                        <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                                        {% set visible = 'fr-hidden' %}
+                                                        {% if filters.scores and filters.scores.off %}
+                                                            <span class="fr-badge fr-badge--success fr-m-1v"
+                                                                  data-value="{{ filters.scores.off }}"
+                                                                  data-removable="true">{{ filters.scores.off }}%</span>
+                                                        {% else %}
+                                                            {% set visible = 0 %}
+                                                        {% endif %}
+                                                        <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="fr-col-12 fr-col-md-6">
+                                    <div class="fr-grid-row fr-grid-row--gutters">
+                                        <div class="fr-col-6">
+                                            <label class="fr-label" for="bo-filters-dates-on"><strong>Du</strong>
+                                                <small>(Création/Visite)</small></label>
+                                            <input type="date" id="bo-filters-dates-on" name="bo-filters-dates[on]"
+                                                   class="fr-input" value="{{ filters.dates.on ?? '' }}">
+                                            <div class="selected__value">
+                                                <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                                {% set visible = 'fr-hidden' %}
+                                                {% if filters.dates and filters.dates.on %}
+                                                    <span class="fr-badge fr-badge--success fr-m-1v"
+                                                          data-value="{{ filters.dates.on }}" data-removable="true"
+                                                          data-value="{{ filters.dates.on }}">{{ filters.dates.on ?filters.dates.on:'AUCUNE' }}</span>
+                                                {% else %}
+                                                    {% set visible = 0 %}
+                                                {% endif %}
+                                                <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">AUCUNE</span>
+                                            </div>
+                                        </div>
+                                        <div class="fr-col-6">
+                                            <label class="fr-label" for="bo-filters-dates-off"><strong>Au</strong>
+                                                <small>(Création/Visite)</small></label>
+                                            <input type="date" id="bo-filters-dates-off" name="bo-filters-dates[off]"
+                                                   class="fr-input" value="{{ filters.dates.off ?? '' }}">
+                                            <div class="selected__value">
+                                                <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                                {% set visible = 'fr-hidden' %}
+                                                {% if filters.dates and filters.dates.off %}
+                                                    <span class="fr-badge fr-badge--success fr-m-1v"
+                                                          data-value="{{ filters.dates.off }}" data-removable="true"
+                                                          data-value="{{ filters.dates.off }}">{{ filters.dates.off ?filters.dates.off:'AUCUNE' }}</span>
+                                                {% else %}
+                                                    {% set visible = 0 %}
+                                                {% endif %}
+                                                <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">AUCUNE</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {# <div class="fr-col-12 fr-col-md-6">
+                <div class="fr-p-3v">
+                    <div class=" fr-border--bottom--orange">
+                        <label class="fr-label">&nbsp;</label>
+                        <button class="fr-btn fr-btn--secondary fr-fi-search-line fr-btn--icon-left fr-col-12">Recherche avancée</button>
+                    </div>
+                </div>
+            </div> #}
+                            </div>
+
+                        </div>
+                        <div class="fr-modal__footer">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-sm">
+                                <li>
+                                    <button class="fr-btn" >
+                                        Rechercher
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="fr-btn fr-btn--secondary " aria-controls="bo-modal-filters">
+                                        Annuler
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dialog>
+
+</form>

@@ -1,0 +1,263 @@
+{% extends 'pdf/base_pdf.html.twig' %}
+
+{% block title %}Signalement #{{ signalement.reference }}{% endblock %}
+{% set picto_yes = "OUI" %}
+{% set picto_no = "NON" %}
+{% block body %}
+
+    <div class="page">
+        <section>
+            <h1 style="text-align: right">Signalement #{{ signalement.reference }}</h1>
+            {% if signalement.isNotOccupant %}
+                <h3 style="text-align: right">Signalement par un tiers</h3>
+
+            {% else %}
+                <h3 style="text-align: right">Signalement par l'occupant</h3>
+            {% endif %}
+            <table style="width: 100%">
+                <tr>
+                    <td style="width: 50%">
+                        <h3 style="margin-bottom: 0"> Informations de
+                            l'occupant</h3>
+                        <ul style="list-style:none; margin-left:0px;padding-left:0px;">
+                            <li><b>Nom: </b> {{ signalement.nomOccupant }} -
+                                <b>Prénom: </b> {{ signalement.prenomOccupant }}</li>
+                            <li><b>Courriel: </b><a
+                                        href="mailto:{{ signalement.mailOccupant }}">{{ signalement.mailOccupant }}</a>
+                            </li>
+                            <li><b>Téléphone: </b><a
+                                        href="tel:{{ signalement.telOccupant }}">{{ signalement.telOccupant }}</a></li>
+                            <li>
+                                <b>Adresse: </b> {{ signalement.adresseOccupant ~', '~signalement.cpOccupant ~' '~ signalement.villeOccupant|upper }}
+                            </li>
+                            <li><b>Occupant(s): </b> {{ signalement.nbAdultes }}
+                                <b>Adulte(s)</b>{% if signalement.nbEnfantsM6 %} - {{ signalement.nbEnfantsM6 }} Enfant(s)
+                                <u><b>moins</b></u> 6 ans{% endif %}{% if signalement.nbEnfantsP6 %} - {{ signalement.nbEnfantsP6 }} Enfant(s)
+                                    <u><b>plus</b></u> 6 ans{% endif %}</li>
+                            <li><b>Date
+                                    d'entrée: </b> {{ signalement.dateEntree ? signalement.dateEntree|date('d/m/Y') : 'N/R' }}
+                            </li>
+                            <li>
+                                <b>Logement: </b> {{ signalement.typeLogement }}
+                                de {{ signalement.superficie }}m² -
+                                <b>Loyer: </b> {{ signalement.loyer }} €/mois
+                            </li>
+                            <li>
+                                <b>Allocataire: </b>
+                                {% if signalement.isAllocataire %}
+                                    <small class="fr-background-alt--green-emeraude fr-rounded fr-p-1v fr-text--bold fr-valid-text fr-display-inline-flex fr-mt-0 fr-px-3v">{{ signalement.isAllocataire }}</small>
+                                {% else %}
+                                    {{ picto_no|raw }}
+                                {% endif %}
+                            </li>
+                            {% if signalement.isAllocataire %}
+                                <li>
+                                    <b>N° allocataire: </b> {{ signalement.numAllocataire }}
+                                </li>
+                                <li>
+                                    <b>Montant allocation: </b> {{ signalement.montantAllocation ?? 'N/R' }}
+                                    €/mois
+                                </li>
+                            {% endif %}
+                            <li>
+                                <b>Situation de handicap: </b>
+                                {% if signalement.isSituationHandicap %}
+                                    {{ picto_yes|raw }}
+                                {% else %}
+                                    {{ picto_no|raw }}
+                                {% endif %}
+
+                            </li>
+                        </ul>
+                    </td>
+                    {% if signalement.isNotOccupant %}
+                        <td>
+                            <h3 style="margin-bottom: 0"> Informations du déclarant</h3>
+                            <ul style="list-style:none; margin-left:0px;padding-left:0px;">
+                                <li><b>Nom: </b> {{ signalement.nomDeclarant }} -
+                                    <b>Prénom: </b> {{ signalement.prenomDeclarant }}</li>
+                                <li><b>Courriel: </b><a
+                                            href="mailto:{{ signalement.mailDeclarant }}">{{ signalement.mailDeclarant }}</a>
+                                </li>
+                                <li><b>Téléphone: </b>{{ signalement.telDeclarant }}</li>
+                                <li><b>Structure: </b> {{ signalement.structureDeclarant }}</li>
+                                <li>&nbsp;</li>
+                                <li>&nbsp;</li>
+                                <li>&nbsp;</li>
+                                <li>&nbsp;</li>
+                                <li>&nbsp;</li>
+                            </ul>
+                        </td>
+                    {% endif %}
+                </tr>
+            </table>
+        </section>
+        <section>
+            <h3>Description par l'occupant</h3>
+            <text>{{ signalement.details|raw }}</text>
+        </section>
+        <section>
+            <table style="width: 100%">
+                <tr>
+                    <td style="width: 50%">
+                        <h3>Informations propriétaire</h3>
+                        <ul style="list-style:none; margin-left:0px;padding-left:0px;">
+                            <li>
+                                <b>Propriétaire averti: </b>
+                                {% if signalement.isProprioAverti %}
+                                    {{ picto_yes|raw }}
+                                {% else %}
+                                    {{ picto_no|raw }}
+                                {% endif %}
+                            </li>
+                            <li><b>Nom: </b> {{ signalement.nomProprio ?? 'N/R' }}
+                            <li><b>Courriel: </b><a
+                                        href="mailto:{{ signalement.mailProprio }}">{{ signalement.mailProprio ?? 'N/R' }}</a>
+                            </li>
+                            <li><b>Téléphone: </b><a
+                                        href="tel:{{ signalement.telProprio }}">{{ signalement.telProprio ?? 'N/R' }}</a>
+                            </li>
+                            <li><b>Adresse: </b> {{ signalement.adresseProprio ?? 'N/R' }}</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <h3>Informations logement</h3>
+                        <ul style="list-style:none; margin-left:0px;padding-left:0px;">
+                            <li>
+                                <b>Bail en cours: </b>
+                                {% if signalement.isBailEnCours %}
+                                    {{ picto_yes|raw }}
+                                {% else %}
+                                    {{ picto_no|raw }}
+                                {% endif %}
+                            </li>
+                            <li>
+                                <b>Logement social: </b>
+                                {% if signalement.isLogementSocial %}
+                                    {{ picto_yes|raw }}
+                                {% else %}
+                                    {{ picto_no|raw }}
+                                {% endif %}
+                            </li>
+                            <li>
+                                <b>Demande de relogement: </b>
+                                {% if signalement.isRelogement %}
+                                    {{ picto_yes|raw }}
+                                {% else %}
+                                    {{ picto_no|raw }}
+                                {% endif %}
+                            </li>
+                            <li>
+                                <b>Preavis de départ: </b>
+                                {% if signalement.isPreavisDepart %}
+                                    {{ picto_yes|raw }}
+                                {% else %}
+                                    {{ picto_no|raw }}
+                                {% endif %}
+                            </li>
+                            <li>&nbsp;</li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+        </section>
+        <section>
+            <h2>Prise en charge partenaire</h2>
+            <table style="width: 100%;text-align: center;" class="border">
+                <tr>
+                    <td style="width: 33%"><b>En attente</b></td>
+                    <td style="width: 34%"><b>Accepté</b></td>
+                    <td style="width: 33%"><b>Refusé</b></td>
+                </tr>
+                {% for affectation in signalement.affectations %}
+                    <tr>
+                        <td>
+                            {% if affectation.statut is same as(0) %}
+                                {{ affectation.partner ? affectation.partner.nom }}
+                                <br>
+                                {{ affectation.createdAt|date('d.m.Y') }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if affectation.statut is same as(1) %}
+                                {{ affectation.partner ? affectation.partner.nom }}
+                                <br>
+                                {{ affectation.answeredAt|date('d.m.Y') }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if affectation.statut is same as(2) %}
+                                {{ affectation.partner ? affectation.partner.nom }}
+                                <br>
+                                {{ affectation.answeredAt|date('d.m.Y') }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </section>
+    </div>
+
+    <div class="page" style="padding-top: 25px!important;">
+        <section>
+            <h2>Problème(s) signalé(s)</h2>
+            <ul style="list-style:none; margin-left:0px;padding-left:0px;">
+                {% for situation,criteres in situations %}
+                    <li>
+                        <h3><b>{{ situation|capitalize }}</b></h3>
+                        <ul style="list-style:none;">
+                            {% for critere,criticite in criteres %}
+                                {% if criticite.score is same as(1) %}
+                                    {% set icon = 'moyen' %}
+                                {% elseif criticite.score is same as(2) %}
+                                    {% set icon = 'grave' %}
+                                {% else %}
+                                    {% set icon = 'tres-grave' %}
+                                {% endif %}
+                                <li>{% if criticite.critere.isDanger %}<p class="fr-badge fr-badge--warning">
+                                    danger</p>&nbsp;&nbsp;{% endif %}<b>{{ critere }}</b>
+                                    <ul style="list-style:none;">
+                                        <li class="fr-grid-row fr-grid-row--middle fr-w-100">
+                                            <div class="fr-col-md-2 fr-col-lg-1 fr-col--middle">
+                                                {# <img src={{asset('img/{{ icon }}-actif.svg') }} alt=""
+                                                 width="50"
+                                                 class=" fr-text--center"> #}
+                                            </div>
+                                            <div class="fr-col-md-10 fr-col-lg-11 fr-pl-5v fr-rounded">
+                                                {{ criticite.label|capitalize }}
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+
+    {% if signalement.suivis|length %}
+        <div class="page" style="padding-top: 25px!important;">
+            <section>
+                <h2>Suivi(s)</h2>
+                <table class="fr-stripped" style="width: 100%">
+                    {% for suivi in signalement.suivis|reverse %}
+                        <tr>
+                            <td style="padding:.5rem;width: 15%">
+                                <b> {{ suivi.createdBy.nom|upper~'. '~ suivi.createdBy.prenom|capitalize }}</b>
+                                <br>
+                                <small>[{{ suivi.createdBy.partner ? suivi.createdBy.partner.nom : 'Aucun' }}
+                                    ]</small>
+                                <br>
+                                <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
+                            </td>
+                            <td style="padding:.5rem;width:85%">  {{ suivi.description|raw }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+
+            </section>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Suivre mon signalement #{{ signalement.reference }}{% endblock %}
+
+{% block body %}
+
+    <main class="fr-container--fluid">
+        <section class="fr-container fr-p-5v fr-p-md-5w">
+            <header>
+                <div class="fr-grid-row fr-grid-row--middle">
+                    <div class="fr-col-12 fr-col-md-6">
+                        <h1 class="fr-h2 fr-mb-2v">Signalement #{{ signalement.reference }} </h1>
+                        {% if signalement.isNotOccupant %}
+                            <small class="fr-background-contrast--red-marianne fr-text-default--error fr-rounded fr-p-1v fr-text--bold fr-fi-information-fill fr-link--icon-right fr-pr-3v">&nbsp;
+                                Signalement par un tiers</small>
+                        {% else %}
+                            <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold fr-fi-information-fill fr-link--icon-right fr-pr-3v">&nbsp;
+                                Signalement par l'occupant</small>
+                        {% endif %}
+                        <text><strong>Déposé le:</strong> {{ signalement.createdAt|format_datetime(locale='fr') }}
+                        </text>
+                    </div>
+
+                </div>
+            </header>
+            <hr>
+            {% for suivi in signalement.suivis|reverse %}
+                {% if loop.first and suivi.createdBy %}
+                    <div class="fr-grid-row fr-grid-row--middle fr-rounded fr-p-5v">
+                        <div class="fr-col-12">
+                            <form action="{{ path('front_suivi_signalement_user_response',{code:signalement.codeSuivi}) }}"
+                                  class="needs-validation" novalidate method="POST">
+                                <div class="fr-input-group">
+                                    <label for="signalement_front_response_content" class="fr-label">Votre
+                                        message:</label>
+                                    <p class="fr-hint-text">Dix (10) caractères minimum</p>
+                                    <textarea name="signalement_front_response[content]"
+                                              id="signalement_front_response_content" rows="10" class="fr-input"
+                                              required minlength="10"></textarea>
+                                    <p class="fr-error-text fr-hidden">Veuillez composez un message d'au moins 10
+                                        caratères.</p>
+                                </div>
+                                {% include '_partials/_signalement_upload.html.twig' with {
+                                    limit:1
+                                } %}
+                                <div class="fr-grid-row">
+                                    <div class="fr-col-12 fr-text--center">
+                                        <progress max="100" id="form_global_file_progress" value="0"
+                                                  class="final-progress fr-hidden"></progress>
+                                    </div>
+                                </div>
+                                <div class="fr-grid-row">
+                                    <div class="fr-col-12 fr-text--center">
+                                        <button class="fr-btn fr-fi-checkbox-circle-fill fr-btn--icon-right"
+                                                type="submit" id="form_finish_submit">Confirmer
+                                        </button>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="_token"
+                                       value="{{ csrf_token('signalement_front_response_'~signalement.uuid) }}">
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-5v {% if not suivi.createdBy %}fr-background-alt--orange-terre-battue{% endif %}">
+                    <div class="fr-col-12 fr-col-md-2">
+                        <small>[{{ suivi.createdBy ? (suivi.createdBy.partner ? suivi.createdBy.partner.nom : 'Aucun'): 'Vous' }}
+                            ]</small> <br>
+                        <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
+                    </div>
+                    <div class="fr-col-12 fr-col-md-10">
+                        {{ suivi.description|replace({'___TOKEN___':csrf_token('suivi_signalement_ext_file_view')})|raw }}
+                    </div>
+                </div>
+            {% endfor %}
+            <hr>
+            <h2 class="fr-mb-0">Photo(s) liée(s) à votre signalement</h2>
+            <p class="fr-hint-text">Ci-dessous, les photos ajoutées lors du dépôt de votre signalement ainsi que celles
+                ajoutées par le(s) partenaire(s) en charge de votre dossier.</p>
+            {% for photo in signalement.photos %}
+                <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-5v">
+                    <div class="fr-col-10">
+                        Photos N°{{ loop.index }}
+                    </div>
+                    <div class="fr-col-2 fr-text--right">
+                        <a href="{{ asset('_up/'~photo.file) }}?t={{ csrf_token('suivi_signalement_ext_file_view') }}"
+                           class="fr-btn fr-fi-eye-fill fr-btn--icon-left" title="Afficher la photos">Afficher</a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="fr-grid-row fr-grid-row--middle fr-background-contrast--red-marianne fr-rounded fr-p-5v">
+                    <div class="fr-col-12">
+                        Aucune photo à afficher
+                    </div>
+                </div>
+            {% endfor %}
+            {# <hr>
+            <h2 class="fr-mb-0">Document(s) lié(s) à votre signalement</h2>
+            <p class="fr-hint-text">Ci-dessous, les documents ajoutés lors du dépôt de votre signalement ainsi que ceux ajoutés par le(s) partner(s) en charge de votre dossier.</p>
+            {% for doc in signalement.documents %}
+                <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-5v">
+                    <div class="fr-col-10">
+                        {{ doc.title }}
+                    </div>
+                    <div class="fr-col-2 fr-text--right">
+                        <a href="{{ asset('_up/'~doc.file) }}?t={{ csrf_token('suivi_signalement_'~''|date('dmy')) }}" class="fr-btn fr-fi-eye-fill fr-btn--icon-left" title="Afficher le document" target="_blank">Consulter</a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="fr-grid-row fr-grid-row--middle fr-background-contrast--red-marianne fr-rounded fr-p-5v">
+                    <div class="fr-col-12">
+                        Aucun document à afficher
+                    </div>
+                </div>
+            {% endfor %} #}
+        </section>
+    </main>
+{% endblock %}

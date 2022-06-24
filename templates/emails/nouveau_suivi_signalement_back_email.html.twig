@@ -1,0 +1,31 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour, <br>un nouveau suivi est disponible pour le signalement
+        <strong>#{{ entity.signalement.reference }}</strong> sur votre plateforme
+        Histologe.</p>
+    <p><strong>Extrait du suivi :</strong></p>
+    <p style="background: rgba(0,0,0,0.08);border-radius: .25rem;padding: 1rem"> {{ (entity.description|replace({'&t=___TOKEN___':''})|replace({'?t=___TOKEN___':''}))|raw }}
+        ...
+        <br>
+        <small>Par <strong>{{ entity.createdBy ? entity.createdBy.nomComplet : 'Déclarant' }}</strong></small></p>
+
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary"
+           style="text-align: center">
+        <tbody>
+        <tr>
+            <td align="left">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                    <tbody>
+                    <tr style="text-align: center;width: 100%">
+                        <td>
+                            <a href="{{ link|raw }}" target="_blank">{{ btntext }}</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p>Si le bouton ne fonctionne pas <a href="{{ link|raw }}">cliquez ici</a></p>
+{% endblock %}

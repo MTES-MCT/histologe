@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36" viewBox="0 0 36 36">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_50" data-name="Rectangle 50" width="36" height="36" transform="translate(0.413)" fill="#ff9940" stroke="#707070" stroke-width="1"/>
+    </clipPath>
+  </defs>
+  <g id="la-temperature-low" transform="translate(-0.413)" clip-path="url(#clip-path)">
+    <path id="temperature-low-solid" d="M29.5,16.667v17.2a10.271,10.271,0,0,0-4.5,8.3,10.5,10.5,0,0,0,21,0,10.271,10.271,0,0,0-4.5-8.3v-2.2h3v-3h-3v-3h3v-3h-3v-3h3v-3Zm23.25,0A5.25,5.25,0,1,0,58,21.917,5.256,5.256,0,0,0,52.75,16.667Zm-20.25,3h6V35.276l.75.422a7.5,7.5,0,1,1-7.5,0l.75-.422Zm20.25,0a2.25,2.25,0,1,1-2.25,2.25A2.253,2.253,0,0,1,52.75,19.667ZM34,34.667v3.281a4.5,4.5,0,1,0,3,0V34.667Z" transform="translate(-23.5 -16.667)" fill="#ff9940"/>
+  </g>
+</svg>

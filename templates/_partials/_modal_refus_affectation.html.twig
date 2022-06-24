@@ -1,0 +1,43 @@
+<dialog aria-labelledby="refus-affectation-modal-title" id="refus-affectation-modal" class="fr-modal" role="dialog">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                        <h1 id="refus-affectation-modal-title" class="fr-modal__title">
+                            <span class="fr-fi-arrow-right-line fr-fi--sm"></span>
+                            Refus signalement #{{ signalement.reference }}
+                        </h1>
+                        <a href="#" class="fr-link--close fr-link" aria-controls="refus-affectation-modal">Fermer</a>
+                    </div>
+                    <div class="fr-modal__content">
+                        <div class="fr-input-group fr-mt-2v fr-text--left">
+                            <label for="refus_affectation_suivi" class="fr-label required">Motif du refus</label>
+                            <p class="fr-hint-text">Veuillez préciser le motif de ce refus <em>(10 caractères
+                                    minimum)</em></p>
+                            <textarea class="fr-input fr-input--no-resize editor"
+                                      name="signalement-affectation-response[suivi]"
+                                      id="refus_affectation_suivi"></textarea>
+                            <p class="fr-error-text fr-hidden">Vous devez indiquer le motif de votre refus.</p>
+                        </div>
+                    </div>
+                    <div class="fr-modal__footer">
+                        <ul class="fr-btns-group fr-btns-group--right fr-btns-group--icon-left">
+                            <li>
+                                <button class="fr-btn fr-btn--danger fr-fi-checkbox-line fr-w-100"
+                                        form="signalement-affectation-response-form" type="submit"
+                                        name="signalement-affectation-response[deny]" value="1" disabled
+                                        onclick="return confirm('Êtes-vous certain de vouloir refuser ce signalement ?')">
+                                    Ce
+                                    n'est pas
+                                    pour
+                                    moi
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>

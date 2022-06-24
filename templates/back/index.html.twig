@@ -1,0 +1,156 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block content %}
+
+    {# {{ dump(signalements.counts) }} #}
+    <section class="fr-background-alt--blue-france fr-p-2v">
+        <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
+            <span class="fr-text-default--info">{{ signalements.counts.total }}</span>
+            <strong class="fr-hint-text">&nbsp;SIGNALEMENTS</strong>
+        </div>
+        |
+        <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
+            <span class="fr-text-default--info">{% if signalements.counts[1] is defined %}{{ signalements.counts[1].count }}{% else %}0{% endif %}</span>
+            <strong class="fr-hint-text">&nbsp;Nouveaux</strong>
+        </div>
+        <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
+            <span class="fr-text-default--info">{% if signalements.counts[2] is defined %}{{ signalements.counts[2].count }}{% else %}0{% endif %}</span>
+            <strong class="fr-hint-text">&nbsp;En cours</strong>
+        </div>
+        <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
+            <span class="fr-text-default--info">{% if signalements.counts[6] is defined %}{{ signalements.counts[6].count }}{% else %}0{% endif %}</span>
+            <strong class="fr-hint-text">&nbsp;Fermés</strong>
+        </div>
+        {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+            |
+            <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
+                <span class="fr-text-default--info">{{ users.active+users.inactive }}</span>
+                <strong class="fr-hint-text">&nbsp;COMPTES</strong>
+            </div>
+            <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
+                <span class="fr-text-default--info">{{ users.active }}</span>
+                <strong class="fr-hint-text">&nbsp;ACTIFS</strong>
+            </div>
+            <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
+                <span class="fr-text-default--info">{{ users.inactive }}</span>
+                <strong class="fr-hint-text">&nbsp;INACTIFS</strong>
+            </div>
+            |
+            <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
+                <span class="fr-text-default--info">{{ partners|filter(v=> v.isCommune == 0)|length }}</span>
+                <strong class="fr-hint-text">&nbsp;PARTNERS</strong>
+            </div>
+            <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
+                <span class="fr-text-default--info">{{ partners|filter(v=> v.isCommune == 1  and not v.isArchive)|length }}</span>
+                <strong class="fr-hint-text">&nbsp;COMMUNES</strong>
+            </div>
+        {% endif %}
+    </section>
+    {% include '_partials/_search_filter_form.html.twig' %}
+    <section class="fr-col-12 fr-table fr-table--bordered fr-background-alt--blue-france">
+        <table class="fr-display-inline-table fr-display-md-block sortable fr-mb-0">
+            <caption class="fr-w-100 fr-px-3v fr-pt-3v fr-pb-0">
+                <div class="fr-grid-row">
+                    <div class="fr-col">
+                        {{ signalements.total }} signalement(s)
+                    </div>
+                    <div class="fr-col fr-text--right">
+                        <a href="{{ path('back_index') }}" class="fr-link fr-link--icon-left fr-fi-close-circle-line">Réinitialiser
+                            les résultats</a>
+                        <a href="{{ path('back_index') }}?export={{ signalements.total }}&{{ app.request.content|replace({'%5B':'['})|replace({'%5D':']'}) }}&_token={{ csrf_token('export_token_'~app.user.id) }}"
+                           class="fr-link fr-link--icon-left fr-fi-download-line">Exporter
+                            les résultats</a>
+                    </div>
+                </div>
+            </caption>
+            <thead class="fr-background-alt--blue-france">
+            <tr>
+                <th>#Ref.</th>
+                <th>Date</th>
+                {# <th>Situation(s)</th> #}
+                {# <th>Alert.</th> #}
+                {# <th>Criticité</th> #}
+                <th>Criticité</th>
+                <th>Occupant</th>
+                <th>Adresse</th>
+                <th>Affectation</th>
+                <th>Dernier suivi</th>
+                <th>Statut</th>
+                <th class="fr-text--right ">Actions</th>
+            </tr>
+            </thead>
+            <tbody id="signalements-result">
+            {% include 'back/table_result.html.twig' %}
+            </tbody>
+        </table>
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+            <nav role="navigation" class="fr-pagination" aria-label="Pagination">
+                <ul class="fr-pagination__list">
+                    <li>
+                        <a class="fr-pagination__link fr-pagination__link--first" aria-disabled="true">
+                            Première page
+                        </a>
+                    </li>
+                    <li>
+                        <a class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+                           aria-disabled="true" role="link">
+                            Page précédente
+                        </a>
+                    </li>
+                    <li>
+                        <a class="fr-pagination__link" aria-current="page" title="Page 1" data-page="1">
+                            1
+                        </a>
+                    </li>
+                    {% if signalements.pages > 1 %}
+                        {% for i in 2..signalements.pages %}
+                            <li class="{% if loop.index > 2 and loop.index < signalements.pages-3 %}fr-hidden{% endif %}">
+                                <a class="fr-pagination__link" href="#" title="Page {{ i }}" data-page="{{ i }}">
+                                    {{ i }}
+                                </a>
+                            </li>
+                            {% if loop.index is same as(3) %}
+                                <li>
+                                    <a class="fr-pagination__link" title="placeholder">
+                                        ...
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    <li>
+                        <a class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+                           {% if signalements.pages > 1 %}href="#" {% else %}aria-disabled="true" {% endif %}>
+                            Page suivante
+                        </a>
+                    </li>
+                    <li>
+                        <a class="fr-pagination__link fr-pagination__link--last" {% if signalements.pages > 1 %}href="#"
+                           {% else %}aria-disabled="true" {% endif %} data-page="{{ signalements.pages }}">
+                            Dernière page
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </section>
+{% endblock %}
+{% block javascripts %}
+
+    <script>
+        opts.pointer = {
+            length: 0.49,
+            strokeWidth: 0.1,
+            color: '#000000'
+        }
+        let ids = [{% if not is_granted('ROLE_ADMIN_TERRITORY')  or filters.partners or filters.affectations %}{{ signalements.list|map(p => "#{p.signalement.id}")|join(', ') }}{% else %}{{ signalements.list|map(p => "#{p.id}")|join(', ') }}{% endif %}],
+            scores = [{% if not is_granted('ROLE_ADMIN_TERRITORY')  or filters.partners or filters.affectations %}{{ signalements.list|map(p => "#{p.signalement.scoreCreation}")|join(', ') }}{% else %}{{ signalements.list|map(p => "#{p.scoreCreation}")|join(', ') }}{% endif %}];
+        ids.map((id, index) => {
+            gauge = new Gauge(document.getElementById(`gauge-signalement-${id}`)).setOptions(opts);
+            gauge.set(scores[index]);
+            gauge.maxValue = 100;
+            gauge.setMinValue(0);
+            gauge.animationSpeed = 32;
+        })
+    </script>
+{% endblock %}

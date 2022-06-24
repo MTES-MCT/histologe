@@ -1,0 +1,272 @@
+<template id="partner_add_user_row">
+    <div class="fr-col-12">
+        <h4 class="fr-mb-0">Nouvel utilisateur</h4>
+    </div>
+    <div class="fr-input-group fr-col">
+        <label for="partner_users_nom_new__ID__" class="fr-label">Nom<sup class="fr-text-label--red-marianne">*</sup></label>
+        <input type="text" id="partner_users_nom_new__ID__" name="partner[users][new][__ID__][nom]"
+               required="required" class="fr-input">
+        <p class="fr-error-text fr-hidden">
+            Vous devez renseigner le nom du nouveau partenaire.
+        </p>
+    </div>
+    <div class="fr-input-group fr-col">
+        <label for="partner_users_prenom_new__ID__" class="fr-label">Prénom<sup
+                    class="fr-text-label--red-marianne">*</sup></label>
+        <input type="text" id="partner_users_prenom_new__ID__" name="partner[users][new][__ID__][prenom]"
+               required="required" class="fr-input">
+        <p class="fr-error-text fr-hidden">
+            Vous devez renseigner le prénom de l'utilisateur
+        </p>
+    </div>
+    <div class="fr-input-group fr-col">
+        <label for="partner_users_email_new__ID__" class="fr-label">Courriel<sup class="fr-text-label--red-marianne">*</sup></label>
+        <input type="email" id="partner_users_email_new__ID__" name="partner[users][new][__ID__][email]"
+               required="required" class="fr-input" onchange="checkUserMail(this)"
+               data-token="{{ csrf_token('partner_checkmail') }}">
+        <p class="fr-error-text fr-hidden">
+            Courriel invalide
+        </p>
+    </div>
+    <div class="fr-input-group fr-col">
+        <label for="partner_users_roles_new__ID__" class="fr-label">Role<sup
+                    class="fr-text-label--red-marianne">*</sup></label>
+        <select id="partner_users_roles_new__ID__" name="partner[users][new][__ID__][roles]" required="required"
+                class="fr-select">
+            <option value="" selected="selected">--- Selectionnez ---</option>
+            {% if is_granted('ROLE_ADMIN') %}
+                <option value="ROLE_ADMIN">
+                    Super Admin
+                </option>
+            {% endif %}
+            {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+                <option value="ROLE_ADMIN_TERRITORY">
+                    Responsable Territoire
+                </option>
+            {% endif %}
+            <option value="ROLE_ADMIN_PARTNER">Administrateur</option>
+            <option value="ROLE_USER_PARTNER">Utilisateur</option>
+        </select>
+        <p class="fr-error-text fr-hidden">
+            Vous devez selectionner le role de l'utilisateur
+        </p>
+    </div>
+    <div class="fr-input-group fr-col">
+        <label for="partner_users_is_generique_new__ID__" class="fr-label">Type compte<sup
+                    class="fr-text-label--red-marianne">*</sup></label>
+        <select id="partner_users_is_generique_new__ID__" name="partner[users][new][__ID__][isGenerique]"
+                required="required"
+                class="fr-select">
+            <option value="0" selected>Utilisateur</option>
+            <option value="1">Générique</option>
+        </select>
+        <p class="fr-error-text fr-hidden">
+            Vous devez definir le type d'adresse.
+        </p>
+    </div>
+    <div class="fr-input-group fr-col">
+        <label for="partner_users_is_mailing_active_new__ID__" class="fr-label">Notification<sup
+                    class="fr-text-label--red-marianne">*</sup></label>
+        <select id="partner_users_is_mailing_active_new__ID__" name="partner[users][new][__ID__][isMailingActive]"
+                required="required"
+                class="fr-select">
+            <option value="0" selected>Non</option>
+            <option value="1">Oui</option>
+        </select>
+        <p class="fr-error-text fr-hidden">
+            Vous devez definir le type d'adresse.
+        </p>
+    </div>
+    <div class="fr-input-group">
+        <label for="partner_users_delete__ID__" class="fr-label">Suppr.</label>
+        <button class="fr-btn fr-btn--danger fr-fi-delete-line fr-mt-3v partner-user-delete"
+                id="partner_users_delete__ID__"></button>
+    </div>
+    <div class="fr-input-group fr-hidden"></div>
+</template>
+{{ form_start(form,{attr:{'class':'needs-validation','novalidate':true}}) }}
+<fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v fr-mb-md-0">
+    <div class="fr-fieldset__content fr-grid-row fr-grid-row--gutters">
+        <div class="fr-input-group fr-col-12 fr-col-md-3 fr-col-lg-6 fr-pl-0 fr-pl-md-0">
+            <label for="{{ form.nom.vars.id }}" class="fr-label">Nom<sup
+                        class="fr-text-label--red-marianne">*</sup></label>
+            {{ form_widget(form.nom) }}
+            <p class="fr-error-text fr-hidden">
+                Vous devez renseigner le nom du partner.
+            </p>
+        </div>
+        <div class="fr-select-group fr-col-12 fr-col-md-3 fr-col-lg-2 ">
+            <label for="{{ form.isCommune.vars.id }}" class="fr-label">Type<sup
+                        class="fr-text-label--red-marianne">*</sup></label>
+            {{ form_widget(form.isCommune) }}
+            <p class="fr-error-text fr-hidden">
+                Vous devez renseigner le type de partner.
+            </p>
+        </div>
+        <div class="fr-input-group fr-col-12 fr-col-md-3 fr-col-lg-2">
+            <label for="{{ form.insee.vars.id }}" class="fr-label">INSEE (si commune)</label>
+            {{ form_widget(form.insee) }}
+        </div>
+        <div class="fr-input-group fr-col-12 fr-col-md-3 fr-col-lg-2 fr-p-0 fr-pr-md-0">
+            <label for="{{ form.insee.vars.id }}" class="fr-label">Email (si générique)</label>
+            {{ form_widget(form.email) }}
+        </div>
+        <div class="fr-col-12 fr-mb-5v">
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-md-4 fr-pl-0 fr-pl-md-0">
+                    <label for="{{ form.esaboraUrl.vars.id }}" class="fr-label">URL Esabora (optionel)</label>
+                    {{ form_widget(form.esaboraUrl) }}
+                </div>
+                <div class="fr-col-12 fr-col-md-8 fr-pr-md-0">
+                    <label for="{{ form.esaboraToken.vars.id }}" class="fr-label">Token Esabora (optionel)</label>
+                    {{ form_widget(form.esaboraToken) }}</div>
+            </div>
+        </div>
+    </div>
+</fieldset>
+<div class="fr-grid-row">
+    <h4 class="fr-mb-0">Utilisateurs</h4>
+</div>
+{% for user in partner.users %}
+    <div class="partner-row-user fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
+        <div class="fr-input-group fr-col">
+            <label for="partner_users_nom_{{ user.id }}" class="fr-label">Nom<sup
+                        class="fr-text-label--red-marianne">*</sup></label>
+            <input type="text" id="partner_users_nom_{{ user.id }}" name="partner[users][{{ user.id }}][nom]"
+                   required="required" class="fr-input" value="{{ user.nom|upper }}">
+            <p class="fr-error-text fr-hidden">
+                Vous devez renseigner le nom de l'utilisateur.
+            </p>
+        </div>
+        <div class="fr-input-group fr-col">
+            <label for="partner_users_prenom_{{ user.id }}" class="fr-label">Prénom<sup
+                        class="fr-text-label--red-marianne">*</sup></label>
+            <input type="text" id="partner_users_prenom_{{ user.id }}"
+                   name="partner[users][{{ user.id }}][prenom]" required="required" class="fr-input"
+                   value="{{ user.prenom|capitalize }}">
+            <p class="fr-error-text fr-hidden">
+                Vous devez renseigner le prénom de l'utilisateur.
+            </p>
+        </div>
+        <div class="fr-input-group fr-col">
+            <label for="partner_users_email_{{ user.id }}" class="fr-label">Courriel<sup
+                        class="fr-text-label--red-marianne">*</sup></label>
+            <input type="email" id="partner_users_email_{{ user.id }}" name="partner[users][{{ user.id }}][email]"
+                   required="required" class="fr-input" value="{{ user.email }}">
+            <p class="fr-error-text fr-hidden">
+                Vous devez renseigner le courriel de l'utilisateur.
+            </p>
+        </div>
+        <div class="fr-input-group fr-col">
+            <label for="partner_users_roles_{{ user.id }}" class="fr-label">Role<sup
+                        class="fr-text-label--red-marianne">*</sup></label>
+            <select id="partner_users_roles_{{ user.id }}" name="partner[users][{{ user.id }}][roles]"
+                    required="required" class="fr-select">
+                {% if is_granted('ROLE_ADMIN') %}
+                    <option value="ROLE_ADMIN" {% if 'ROLE_ADMIN' in user.roles %}selected{% endif %}>
+                        Super Admin
+                    </option>
+                {% endif %}
+                {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+                    <option value="ROLE_ADMIN_TERRITORY"
+                            {% if 'ROLE_ADMIN_TERRITORY' in user.roles %}selected{% endif %}>
+                        Responsable Territoire
+                    </option>
+                {% endif %}
+                <option value="ROLE_ADMIN_PARTNER" {% if 'ROLE_ADMIN_PARTNER' in user.roles %}selected{% endif %}>
+                    Administrateur
+                </option>
+                <option value="ROLE_USER_PARTNER" {% if 'ROLE_USER_PARTNER' in user.roles %}selected{% endif %}>
+                    Utilisateur
+                </option>
+            </select>
+            <p class="fr-error-text fr-hidden">
+                Vous devez selectionner le role de l'utilisateur
+            </p>
+        </div>
+        <div class="fr-input-group fr-col">
+            <label for="partner_users_is_generique_{{ user.id }}" class="fr-label">Type compte<sup
+                        class="fr-text-label--red-marianne">*</sup></label>
+            <select id="partner_users_is_generique_{{ user.id }}"
+                    name="partner[users][{{ user.id }}][isGenerique]"
+                    required="required" class="fr-select">
+                <option value="0" {% if not user.isGenerique %}selected{% endif %}>
+                    Utilisateur
+                </option>
+                <option value="1" {% if user.isGenerique %}selected{% endif %}>
+                    Générique
+                </option>
+            </select>
+            <p class="fr-error-text fr-hidden">
+                Vous devez spécifiez le type de compte.
+            </p>
+        </div>
+        <div class="fr-input-group fr-col">
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-6">
+                    <label for="partner_users_is_mailing_active_{{ user.id }}" class="fr-label">Notif.<sup
+                                class="fr-text-label--red-marianne">*</sup></label>
+                    <select id="partner_users_is_mailing_active_{{ user.id }}"
+                            name="partner[users][{{ user.id }}][isMailingActive]"
+                            required="required" class="fr-select">
+                        <option value="0" {% if not user.isMailingActive %}selected{% endif %}>
+                            Non
+                        </option>
+                        <option value="1" {% if user.isMailingActive %}selected{% endif %}>
+                            Oui
+                        </option>
+                    </select>
+                </div>
+                <div class="fr-col-6">
+                    <label for="partner_users_is_active_{{ user.id }}" class="fr-label">Activé<sup
+                                class="fr-text-label--red-marianne">*</sup></label>
+                    <input id="partner_users_is_active_{{ user.id }}" type="text"
+                           class="fr-input {% if user.statut is same as(1) %}fr-input--valid{% else %}fr-input--error{% endif %}"
+                           value="{% if user.statut is same as(1) %}Oui{% else %}Non{% endif %}" readonly>
+                </div>
+            </div>
+        </div>
+        {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+            <div class="fr-input-group">
+                <label for="partner_users_switch_{{ user.id }}" class="fr-label">Trans.</label>
+                <a href="#" class="fr-btn fr-btn--orange fr-fi-upload-2-fill fr-mt-3v partner_users_switch_btn"
+                   id="partner_users_switch_{{ user.id }}" aria-controls="fr-modal-user-switcher"
+                   data-fr-opened="false" data-username="{{ user.nomComplet }}" data-userid="{{ user.id }}"{#
+                data-delete="{{ path('back_partner_user_delete',{user:user.id}) }}"
+                data-token="{{ csrf_token('partner_user_delete_'~user.id) }}" #}></a>
+            </div> &nbsp;
+        {% endif %}
+        <div class="fr-input-group">
+            <label for="partner_users_delete_{{ user.id }}" class="fr-label">Suppr.</label>
+            <button class="fr-btn fr-btn--danger fr-fi-delete-line fr-mt-3v partner-user-delete"
+                    id="partner_users_delete_{{ user.id }}"
+                    data-delete="{{ path('back_partner_user_delete',{user:user.id}) }}"
+                    data-token="{{ csrf_token('partner_user_delete_'~user.id) }}"></button>
+        </div>
+        <div class="fr-input-group fr-hidden"></div>
+    </div>
+{% endfor %}
+<hr>
+<div id="partner_add_user_placeholder"></div>
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-text--center">
+        <button class="fr-btn fr-btn--secondary fr-fi-add-circle-line fr-btn--icon-left" id="partner_add_user">
+            Ajouter un utilisateur
+        </button>
+    </div>
+</div>
+{{ form_row(form.territory,{
+}) }}
+<hr style="visibility: hidden">
+<hr>
+<div class="fr-grid-row">
+    <div class="fr-col-6">
+        <a class="fr-btn fr-btn--secondary fr-fi-arrow-left-line fr-btn--icon-left"
+           href="{{ path('back_partner_index') }}">Retourner à la
+            liste</a>
+    </div>
+    <div class="fr-col-6 fr-text--right">
+        <button class="fr-btn fr-fi-check-line fr-btn--icon-left" id="submit_btn_partner"> Enregistrer</button>
+    </div>
+</div>
+{{ form_end(form) }}

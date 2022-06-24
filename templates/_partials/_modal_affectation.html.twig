@@ -1,0 +1,86 @@
+<dialog aria-labelledby="fr-modal-affectation-title" id="fr-modal-affectation" class="fr-modal" role="dialog">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-10 fr-col-lg-10">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                        <h1 id="fr-modal-affectation-title" class="fr-modal__title">
+                            <span class="fr-fi-arrow-right-line"></span>
+                            Affectation de partenaires
+                        </h1>
+                        <button class="fr-link--close fr-link" aria-controls="fr-modal-affectation">Fermer</button>
+                    </div>
+                    <div class="fr-modal__content">
+                        <div class="fr-grid-row fr-grid-row--center fr-grid-row--middle fr-h-100 fr-hidden fr-mt-5w"
+                             id="signalement-affectation-loader-row">
+                            <div class="fr-col-12 fr-text--center">
+                                <div class="lds-histologe">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle"
+                             id="signalement-affectation-form-row">
+                            <div class="fr-col-5">
+                                <label for="signalement-affectation-select-disponible" class="fr-label fr-text--bold">Partenaires
+                                    disponibles</label>
+                                <select class="fr-select" aria-multiselectable="true"
+                                        id="signalement-affectation-select-disponible"
+                                        size="10" multiple>
+                                    {% for partner in partners %}
+                                        {% if not partner.isAffected(signalement) %}
+                                            <option value="{{ partner.id }}">{{ partner.nom|upper }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="fr-col-2 fr-text--center">
+                                <button class="fr-btn fr-btn--secondary fr-fi-arrow-left-s-line-double"
+                                        data-fr-select-source="signalement-affectation-select-affecte"
+                                        data-fr-select-target="signalement-affectation-select-disponible"></button>
+                                <button class="fr-btn fr-fi-arrow-right-s-line-double"
+                                        data-fr-select-source="signalement-affectation-select-disponible"
+                                        data-fr-select-target="signalement-affectation-select-affecte"></button>
+                            </div>
+                            <div class="fr-col-5">
+                                <form method="POST" name="signalement-affectation" id="signalement-affectation-form">
+                                    <label for="signalement-affectation-select-affecte" class="fr-label fr-text--bold">Partenaire(s)
+                                        affecté(s)</label>
+                                    <select id="signalement-affectation-select-affecte" multiple
+                                            class="fr-select" aria-multiselectable="true"
+                                            size="10" data-fr-select-count="fr-modal-affectation-count"
+                                            name="signalement-affectation[partners][]">
+                                        {% for affectation in affectations %}
+                                            <option value="{{ affectation.partner.id }}">{{ affectation.partner.nom|upper }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <input type="hidden" name="_token"
+                                           value="{{ csrf_token('signalement_affectation_'~signalement.id) }}">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fr-modal__footer">
+                        <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                            <li>
+                                <button class="fr-btn fr-fi-checkbox-line" type="submit"
+                                        form="signalement-affectation-form" id="signalement-affectation-form-submit"
+                                        formaction="{{ path('back_signalement_toggle_affectation',{uuid:signalement.uuid}) }}">
+                                    Affecter partenaire(s)
+                                </button>
+                            </li>
+                            <li>
+                                <button class="fr-btn fr-fi-checkbox-line fr-btn--secondary"
+                                        aria-controls="fr-modal-affectation">
+                                    Annuler
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>

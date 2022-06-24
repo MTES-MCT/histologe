@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Une erreur est survenue...{% endblock %}
+{% block body %}
+
+    <main class="fr-container--fluid">
+        <section class="fr-container fr-py-5w">
+            <div class="fr-grid-row">
+                <div class="fr-col-12 fr-text--center">
+                    <figure>
+                        <img src="{{ asset('img/Logohistologe.png') }}" alt="Logo HISTOLOGE" width="200">
+                    </figure>
+                    <figure class="fr-my-5w fr-mx-0">
+                        <figcaption>
+                            <h1>Une erreur est survenue...</h1>
+                        </figcaption>
+                        <img src="{{ asset('img/icon-bug-lg.svg') }}" alt="Erreur 500" class="fr-my-5v">
+                        <figcaption>
+                            Une erreur inattendue s'est produite !<br>
+                            Notre équipe fait tout pour la corriger au plus vite.
+                            <br>Veuillez réessayer plus tard ou cliquer sur le bouton ci-dessous pour retourner à
+                            l'accueil.
+                        </figcaption>
+                    </figure>
+                    <a href="{{ path('home') }}"
+                       class="fr-btn fr-btn--orange fr-fi-arrow-right-line fr-btn--icon-right fr-text-label--blue-france fr-rounded fr-text--bold">Aller
+                        à l'accueil</a>
+                </div>
+            </div>
+        </section>
+    </main>
+{% endblock %}
