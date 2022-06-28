@@ -61,7 +61,7 @@ class NotificationService
         $notification->markAsPublic();
         return $notification->htmlTemplate('emails/' . $config['template'] . '.html.twig')
             ->context(array_merge($params, $config))
-            ->subject('HISTOLOGE ' . mb_strtoupper($territory->getName() ?? 'ALERTE') . ' - ' . $config['subject']);
+            ->subject('HISTOLOGE ' . mb_strtoupper((!empty($territory) && $territory->getName())? 'ALERTE':$territory->getName()) . ' - ' . $config['subject']);
     }
 
     private function config(int $type): array
