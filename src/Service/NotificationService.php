@@ -43,7 +43,7 @@ class NotificationService
         $message->from(new Address('histologe-' . str_replace(' ', '-', mb_strtolower($territoryName)) . '@histologe.fr', 'HISTOLOGE - ' . mb_strtoupper($territoryName)));
         if (!empty($params['attach']))
             $message->attachFromPath($params['attach']);
-        if ($territory->getConfig()?->getEmailReponse() ?? isset($params['reply']))
+        if (null !== $territory->getConfig() && $territory->getConfig()?->getEmailReponse() ?? isset($params['reply']))
             $message->replyTo($params['reply'] ?? $territory->getConfig()->getEmailReponse());
         try {
             $this->mailer->send($message);
