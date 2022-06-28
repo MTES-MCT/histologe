@@ -37,7 +37,7 @@ class NotificationService
         $message = $this->renderMailContentWithParamsByType($type, $params, $territory ?? null);
         is_array($to) ? $emails = $to : $emails = [$to];
         $territoryName = \Transliterator::create('NFD; [:Nonspacing Mark:] Remove; NFC')
-            ->transliterate($territory->getName() ?? 'ALERTE');
+            ->transliterate((!empty($territory) && null !== $territory->getName())?$territory->getName():'ALERTE');
         foreach ($emails as $email)
             $email && $message->addTo($email);
         $message->from(new Address('histologe-' . str_replace(' ', '-', mb_strtolower($territoryName)) . '@histologe.fr', 'HISTOLOGE - ' . mb_strtoupper($territoryName)));
