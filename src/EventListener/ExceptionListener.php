@@ -25,14 +25,14 @@ class ExceptionListener
                     }
                 }
             }
-            $this->notificationService->send(NotificationService::TYPE_ERROR_SIGNALEMENT, 'sam@bzez.dev', [
+            $this->notificationService->send(NotificationService::TYPE_ERROR_SIGNALEMENT, 'denis.baudot.beta@gmail.com', [
                 'url' => $_SERVER['SERVER_NAME'],
                 'code' => $event->getThrowable()->getCode(),
                 'error' => $event->getThrowable()->getMessage(),
                 'req' => $event->getRequest()->getContent(),
                 'signalement' => $event->getRequest()->get('signalement'),
                 'attachment' => $attachment
-            ],$event->getRequest()->get('signalement')->getTerritory() ?? null);
+            ],$event->getRequest()->get('signalement')?->getTerritory() ?? null);
         }
     }
 }
