@@ -86,7 +86,7 @@ class AffectationRepository extends ServiceEntityRepository
         $qb = $this->searchFilterService->applyFilters($qb, $options);
         if ($user && $user->getTerritory())
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $user->getTerritory());
-        elseif ($user && !$user->isSuperAdmin() && !$user->isTerritoryAdmin())
+        if ($user && !$user->isSuperAdmin() && !$user->isTerritoryAdmin())
             $qb->andWhere(':partner IN (partner)')
                 ->setParameter('partner', $user->getPartner());
 
