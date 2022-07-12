@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Form\ContactType;
+use App\Form\PostalCodeSearchType;
 use App\Repository\AffectationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
@@ -19,7 +20,7 @@ class FrontController extends AbstractController
 {
 
     #[Route('/', name: 'home')]
-    public function index(SignalementRepository $signalementRepository, EntityManagerInterface $entityManager, TerritoryRepository $territoryRepository, AffectationRepository $affectationRepository, EntityManagerInterface $doctrine, NotificationService $notificationService): Response
+    public function index(Request $request, SignalementRepository $signalementRepository, EntityManagerInterface $entityManager, TerritoryRepository $territoryRepository, AffectationRepository $affectationRepository, EntityManagerInterface $doctrine, NotificationService $notificationService): Response
     {
         $title = 'Un service public pour les locataires et propriétaires';
         $year = (new DateTimeImmutable())->format('Y');
@@ -27,8 +28,21 @@ class FrontController extends AbstractController
         $stats['total'] = count($total);
         $stats['pec'] = $stats['total'] !== 0 ? floor(($affectationRepository->createQueryBuilder('a')->select('COUNT(DISTINCT a.signalement)')->join('a.signalement', 'signalement', 'WITH', 'signalement.statut != 7 AND YEAR(signalement.createdAt) = ' . $year)->getQuery()->getSingleScalarResult() / $stats['total']) * 100) : 0;
         $stats['res'] = $stats['total'] !== 0 ? floor(($affectationRepository->createQueryBuilder('a')->select('COUNT(DISTINCT a.signalement)')->where('a.statut = 1')->join('a.signalement', 'signalement', 'WITH', 'signalement.statut != 7 AND YEAR(signalement.createdAt) = ' . $year)->getQuery()->getSingleScalarResult() / $stats['total']) * 100) : 0;
+        
+        $form = $this->createForm(PostalCodeSearchType::class, []);
+        $form->handleRequest($request);
+        if ($form->isSubmitted()) {
+            if ($form->isValid() && $form->get('postalcode')->getData() == '44') {
+                return $this->redirectToRoute('home');
+            } else {
+                $this->addFlash('error', "Ce territoire n'est pas encore disponible sur Histologe. Merci de réessayer ultérieurement.");
+                return $this->redirectToRoute('home');
+            }
+        }
+        
         return $this->render('front/index.html.twig', [
             'title' => $title,
+            'form_postalcode' => $form->createView(),
             'stats' => $stats
         ]);
     }

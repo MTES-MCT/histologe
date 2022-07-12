@@ -336,3 +336,12 @@ small {
         height: 32px;
     }
 }
+
+h2.home {
+    font: normal normal lighter 24px/32px Marianne;
+}
+
+.form-home-text-field {
+    font: normal normal normal 20px/30px Marianne;
+    color: #FFFFFF;
+}
