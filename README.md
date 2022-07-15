@@ -4,7 +4,7 @@
 
 ### Cloner
 
-    `git clone https://github.com/MTES-MCT/histologe`
+    git clone https://github.com/MTES-MCT/histologe
 
 ### Initialisation base de données
 
@@ -15,11 +15,11 @@ Insérer le jeu de données (export sql) existant (voir avec l'équipe).
 
 Créer le fichier env.local à la racine avec les informations suivantes :
 
-    `APP_ENV=dev`
-    `DATABASE_URL="mysql://URL_LOCALE"`
-    `MAILER_DSN=sendinblue+api://SENDINBLUE_KEY@default`
+    APP_ENV=dev
+    DATABASE_URL="mysql://URL_LOCALE"
+    MAILER_DSN=sendinblue+api://SENDINBLUE_KEY@default
 
 ### Lancement local
 
-    `composer install`
-    `symfony server:start`
+    composer install
+    symfony server:start
