@@ -9,6 +9,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\ConfigurationService;
 use App\Service\NotificationService;
+use App\Service\PostalCodeHomeCheckerService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,7 +21,7 @@ class FrontController extends AbstractController
 {
 
     #[Route('/', name: 'home')]
-    public function index(Request $request, SignalementRepository $signalementRepository, EntityManagerInterface $entityManager, TerritoryRepository $territoryRepository, AffectationRepository $affectationRepository, EntityManagerInterface $doctrine, NotificationService $notificationService): Response
+    public function index(Request $request, SignalementRepository $signalementRepository, AffectationRepository $affectationRepository): Response
     {
         $title = 'Un service public pour les locataires et propriétaires';
         $year = (new DateTimeImmutable())->format('Y');
@@ -31,8 +32,10 @@ class FrontController extends AbstractController
         
         $form = $this->createForm(PostalCodeSearchType::class, []);
         $form->handleRequest($request);
-        if ($form->isSubmitted()) {
-            if ($form->isValid() && $form->get('postalcode')->getData() == '44') {
+        if ($form->isSubmitted() && $form->isValid()) {
+            $redirect = PostalCodeHomeCheckerService::getRedirection( $form->get('postalcode')->getData() );
+            if ( $redirect ) {
+                $this->addFlash('success', "Redirection en cours...");
                 return $this->redirectToRoute('home');
             } else {
                 $this->addFlash('error', "Ce territoire n'est pas encore disponible sur Histologe. Merci de réessayer ultérieurement.");
