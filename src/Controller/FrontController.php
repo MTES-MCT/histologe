@@ -21,7 +21,7 @@ class FrontController extends AbstractController
 {
 
     #[Route('/', name: 'home')]
-    public function index(Request $request, SignalementRepository $signalementRepository, AffectationRepository $affectationRepository): Response
+    public function index(Request $request, SignalementRepository $signalementRepository, AffectationRepository $affectationRepository, PostalCodeHomeCheckerService $postalCodeHomeCheckerService): Response
     {
         $title = 'Un service public pour les locataires et propriétaires';
         $year = (new DateTimeImmutable())->format('Y');
@@ -34,8 +34,11 @@ class FrontController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $inputPostalCode = $form->get('postalcode')->getData();
-            $redirectUrl = PostalCodeHomeCheckerService::getRedirection( $inputPostalCode );
+            $redirectUrl = $postalCodeHomeCheckerService->getRedirection( $inputPostalCode );
             if ( $redirectUrl ) {
+                if ( $redirectUrl == 'local' ) {
+                    return $this->redirectToRoute('front_signalement');
+                }
                 return $this->redirect($redirectUrl);
             } else {
                 $this->addFlash('error', "Le territoire ".$inputPostalCode." n'est pas encore disponible sur Histologe. Merci de réessayer ultérieurement.");
