@@ -33,12 +33,12 @@ class FrontController extends AbstractController
         $form = $this->createForm(PostalCodeSearchType::class, []);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $redirect = PostalCodeHomeCheckerService::getRedirection( $form->get('postalcode')->getData() );
-            if ( $redirect ) {
-                $this->addFlash('success', "Redirection en cours...");
-                return $this->redirectToRoute('home');
+            $inputPostalCode = $form->get('postalcode')->getData();
+            $redirectUrl = PostalCodeHomeCheckerService::getRedirection( $inputPostalCode );
+            if ( $redirectUrl ) {
+                return $this->redirect($redirectUrl);
             } else {
-                $this->addFlash('error', "Ce territoire n'est pas encore disponible sur Histologe. Merci de réessayer ultérieurement.");
+                $this->addFlash('error', "Le territoire ".$inputPostalCode." n'est pas encore disponible sur Histologe. Merci de réessayer ultérieurement.");
                 return $this->redirectToRoute('home');
             }
         }
