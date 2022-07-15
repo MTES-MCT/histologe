@@ -14,7 +14,7 @@ class PostalCodeSearchType extends AbstractType
         $builder
             ->add('postalcode', TextType::class, [
                 'row_attr' => [
-                    'class' => 'fr-input-group fr-col-12 fr-col-md-6'
+                    'class' => 'fr-input-group fr-col-12 fr-col-md-6 fr-mb-0'
                 ],
                 'attr' => [
                     'class' => 'fr-input',
@@ -22,10 +22,7 @@ class PostalCodeSearchType extends AbstractType
                     'minlength' => 2,
                     'maxlength' => 5,
                 ],
-                'label' => 'Votre code postal',
-                'label_attr' => [
-                    'class' => 'form-home-text-field',
-                ]
+                'label' => 'Votre code postal'
             ])
         ;
     }

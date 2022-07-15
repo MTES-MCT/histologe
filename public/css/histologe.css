@@ -341,7 +341,16 @@ h2.home {
     font: normal normal lighter 24px/32px Marianne;
 }
 
-.form-home-text-field {
+.home-form label {
     font: normal normal normal 20px/30px Marianne;
     color: #FFFFFF;
+}
+
+@media (min-width: 768px) {
+    .home-form button {
+        position: relative;
+        display: block;
+        top: 100%;
+        margin-top: -40px;
+    }
 }
