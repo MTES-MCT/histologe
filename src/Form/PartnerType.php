@@ -19,6 +19,12 @@ class PartnerType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $territory = false;
+        if ($options['territory']) {
+            $territory = $options['territory'];
+        } else {
+            $territory = $options['data']->getTerritory();
+        }
 
         $builder
             ->add('nom', TextType::class, [
@@ -39,7 +45,7 @@ class PartnerType extends AbstractType
                 'label_attr' => [
                     'class' => 'fr-label'
                 ],
-                'label' => 'Type de partner'
+                'label' => 'Type de partenaire'
             ])
             ->add('insee', TextType::class, [
                 'attr' => [
@@ -67,18 +73,11 @@ class PartnerType extends AbstractType
             ])
             ->add('territory', EntityType::class, [
                 'class' => Territory::class,
-                'query_builder' => function (TerritoryRepository $tr) use ($options) {
-                    if ($options['route'] === 'back_partner_new')
-                        return $tr->createQueryBuilder('t')->orderBy('t.id', 'ASC');
-                    else if ($options['territory'])
-                        $territory = $options['territory'];
-                    else
-                        $territory = $options['data']->getTerritory();
-                    return $tr->createQueryBuilder('t')
-                        ->where('t.id = :id')
-                        ->setParameter('id', $territory->getId());
-
+                'query_builder' => function (TerritoryRepository $tr) {
+                    return $tr->createQueryBuilder('t')->orderBy('t.id', 'ASC');
                 },
+                'data' => !empty( $territory ) ? $territory : null,
+                'disabled' => !$options['can_edit_territory'],
                 'choice_label' => 'name',
                 'attr' => [
                     'class' => 'fr-select'
@@ -108,6 +107,7 @@ class PartnerType extends AbstractType
             'allow_extra_fields' => true,
             'territory' => null,
             'route' => null,
+            'can_edit_territory' => true,
         ]);
     }
 
