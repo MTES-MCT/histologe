@@ -10,6 +10,10 @@
                     <div class="fr-col-md-12">
                         <h1 class="fr-h3 fr-text--white">Signalez votre problème de logement</h1>
 
+                        {% if display_modal != '' %}
+                            {% include '_partials/_modal_closed_territory.html.twig' with { 'autoopen': '1' } %}
+                        {% endif %}
+
                         <!-- form code postal -->
                         {{ form_start(form_postalcode) }}
                         <div class="fr-grid-row fr-grid-row--gutters fr-text--white fr-mb-5v home-form">
