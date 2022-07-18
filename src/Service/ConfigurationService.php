@@ -8,15 +8,20 @@ class ConfigurationService
 {
     private array $config;
 
-    public function __construct(ConfigRepository $configRepository)
+    public function __construct(private ConfigRepository $configRepository)
     {
-        $this->config = $configRepository->findLast();
     }
 
     public function get()
     {
-        if (isset($this->config[0]))
+        if ( empty( $this->config ) ) {
+            $this->config = $this->configRepository->findLast();
+        }
+
+        if (isset($this->config[0])) {
             return $this->config[0];
+        }
+        
         return false;
     }
 }
