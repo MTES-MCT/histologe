@@ -347,24 +347,22 @@ forms.forEach((form) => {
                     if (nextTabBtn) {
                         if (nextTabBtn.hasAttribute('data-fr-last-step')) {
                             let docs, photos;
-                            docs = photos = 0;
                             document.querySelector('#recap-signalement-situation').innerHTML = '';
-                            /*   for (var value of imgData.entries()) {
-                                   photos += 1;
-                               }*/
                             forms.forEach((form) => {
+                                docs = photos = 0;
                                 form.querySelectorAll('[type="file"]').forEach(file => {
-                                    if (file.classList.contains("doc-file"))
+                                    if (file.classList.contains("doc-file")) {
                                         docs += file.files.length
-                                    if (file.classList.contains("photo-file"))
+                                    }
+                                    if (file.classList.contains("photo-file")) {
                                         photos += file.files.length;
+                                    }
                                 })
 
-                                document.querySelector('#recap-signalement_photos').innerHTML = photos + ' Photo(s) transmise(s)';
-                                document.querySelector('#recap-signalement_documents').innerHTML = docs + ' Document(s) transmis';
+                                document.querySelector('#recap-signalement_photos').innerHTML = photos + ' photo(s) transmise(s)';
+                                document.querySelector('#recap-signalement_documents').innerHTML = docs + ' document(s) transmis';
                                 form.querySelectorAll('input,textarea,select').forEach((input) => {
                                     if (document.querySelector('#recap-' + input.id)) {
-                                        console.log(document.querySelector('#recap-' + input.id))
                                         document.querySelector('#recap-' + input.id).innerHTML = `${input.value}`;
                                     } else if (input.classList.contains('signalement-situation') && input.checked)
                                         document.querySelector('#recap-signalement-situation').innerHTML += '- ' + input.value + '<br>';
