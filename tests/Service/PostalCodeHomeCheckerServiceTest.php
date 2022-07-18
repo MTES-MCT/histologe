@@ -16,6 +16,18 @@ class PostalCodeHomeCheckerServiceTest extends KernelTestCase
         $this->postalCodeHomeCheckerService = $container->get(PostalCodeHomeCheckerService::class);
     }
 
+    public function testEmptyPostalCode(): void
+    {
+        $result = $this->postalCodeHomeCheckerService->getRedirection( '' );
+        $this->assertFalse($result);
+    }
+
+    public function testNullPostalCode(): void
+    {
+        $result = $this->postalCodeHomeCheckerService->getRedirection( 'null' );
+        $this->assertFalse($result);
+    }
+
     public function testNotExistingPostalCode(): void
     {
         $result = $this->postalCodeHomeCheckerService->getRedirection('57070');
@@ -50,5 +62,17 @@ class PostalCodeHomeCheckerServiceTest extends KernelTestCase
         $this->assertStringContainsString('signalement', $result);
     }
 
-    // TODO : test dans la DB
+    public function testExistingPostalCodeInDB1(): void
+    {
+        $result = $this->postalCodeHomeCheckerService->getRedirection('01000');
+        $this->assertIsString($result);
+        $this->assertStringContainsString('local', $result);
+    }
+
+    public function testExistingPostalCodeInDB2(): void
+    {
+        $result = $this->postalCodeHomeCheckerService->getRedirection('01100');
+        $this->assertIsString($result);
+        $this->assertStringContainsString('local', $result);
+    }
 }
