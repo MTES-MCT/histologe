@@ -40,10 +40,9 @@ class FrontController extends AbstractController
                     return $this->redirectToRoute('front_signalement');
                 }
                 return $this->redirect($redirectUrl);
-            } else {
-                $this->addFlash('error', "Le territoire ".$inputPostalCode." n'est pas encore disponible sur Histologe. Merci de réessayer ultérieurement.");
-                return $this->redirectToRoute('home');
             }
+
+            $this->addFlash('error', "Le territoire ".$inputPostalCode." n'est pas encore disponible sur Histologe. Merci de réessayer ultérieurement.");
         }
         
         return $this->render('front/index.html.twig', [
