@@ -268,7 +268,6 @@ const searchAddress = (form, autocomplete) => {
                     suggestion.classList.add('fr-col-12', 'fr-p-3v', 'fr-text-label--blue-france', 'fr-adresse-suggestion');
                     suggestion.innerHTML = feature.properties.label;
                     suggestion.addEventListener('click', () => {
-                        // console.log(feature.geometry.coordinates)
                         form.querySelector('#signalement_adresseOccupant').value = feature.properties.name;
                         form.querySelector('#signalement_cpOccupant').value = feature.properties.postcode;
                         form.querySelector('#signalement_villeOccupant').value = feature.properties.city;

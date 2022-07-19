@@ -94,25 +94,6 @@
                     </div>
                 </div>
             {% endfor %}
-            {# <hr>
-            <h2 class="fr-mb-0">Document(s) lié(s) à votre signalement</h2>
-            <p class="fr-hint-text">Ci-dessous, les documents ajoutés lors du dépôt de votre signalement ainsi que ceux ajoutés par le(s) partner(s) en charge de votre dossier.</p>
-            {% for doc in signalement.documents %}
-                <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-5v">
-                    <div class="fr-col-10">
-                        {{ doc.title }}
-                    </div>
-                    <div class="fr-col-2 fr-text--right">
-                        <a href="{{ asset('_up/'~doc.file) }}?t={{ csrf_token('suivi_signalement_'~''|date('dmy')) }}" class="fr-btn fr-fi-eye-fill fr-btn--icon-left" title="Afficher le document" target="_blank">Consulter</a>
-                    </div>
-                </div>
-            {% else %}
-                <div class="fr-grid-row fr-grid-row--middle fr-background-contrast--red-marianne fr-rounded fr-p-5v">
-                    <div class="fr-col-12">
-                        Aucun document à afficher
-                    </div>
-                </div>
-            {% endfor %} #}
         </section>
     </main>
 {% endblock %}

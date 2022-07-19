@@ -49,28 +49,14 @@ class TerritoryRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-//    /**
-//     * @return Territory[] Returns an array of Territory objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Territory
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findByZip($zip)
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->select('PARTIAL t.{id,name}')
+            ->where('t.isActive = 1')
+            ->andWhere('t.zip = \'' .$zip. '\'');
+        return $qb->indexBy('t', 't.id')
+            ->getQuery()
+            ->getResult();
+    }
 }

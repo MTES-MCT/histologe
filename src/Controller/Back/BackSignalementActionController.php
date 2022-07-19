@@ -99,7 +99,7 @@ class BackSignalementActionController extends AbstractController
                 $signalement->getAffectations()->filter(function (Affectation $affectation) use ($signalement, $doctrine) {
                     $affectation->setStatut(Affectation::STATUS_WAIT) && $doctrine->getManager()->persist($affectation);
                 });
-                $reopenFor = 'tous les partners';
+                $reopenFor = 'tous les partenaires';
             } else {
                 $this->getUser()->getPartner()->getAffectations()->filter(function (Affectation $affectation) use ($signalement, $doctrine) {
                     if ($affectation->getSignalement()->getId() === $signalement->getId())

@@ -3,7 +3,7 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
-    {% include '_partials/_modal_closed_territory.html.twig' %}
+    {% include '_partials/_modal_closed_territory.html.twig' with { 'autoopen': '0' } %}
     {% include '_partials/_modal_cgu.html.twig' %}
     {% include '_partials/_modal_pictures_restrictions.html.twig' %}
     <main class="fr-container fr-py-5w">
