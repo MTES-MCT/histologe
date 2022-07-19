@@ -75,7 +75,7 @@ class BackSignalementController extends AbstractController
                 $signalement->setStatut(Signalement::STATUS_CLOSED);
                 $signalement->setMotifCloture($motifCloture);
                 $signalement->setClosedAt(new DateTimeImmutable());
-                $sujet = 'tous les partners';
+                $sujet = 'tous les partenaires';
                 $signalement->getAffectations()->map(function (Affectation $affectation) use ($entityManager,$motifCloture) {
                     $affectation->setStatut(Affectation::STATUS_CLOSED);
                     $affectation->setMotifCloture($motifCloture);
@@ -161,7 +161,7 @@ class BackSignalementController extends AbstractController
             $suivi->setCreatedBy($this->getUser());
             $suivi->setSignalement($signalement);
             $suivi->setIsPublic(false);
-            $suivi->setDescription('Modification du signalement par un partner');
+            $suivi->setDescription('Modification du signalement par un partenaire');
             $doctrine->getManager()->persist($suivi);
             /*if (!$signalement->getInseeOccupant() || !isset($signalement->getGeoloc()['lat']) || !isset($signalement->getGeoloc()['lat'])) {
                 $adresse = $signalement->getAdresseOccupant() . ' ' . $signalement->getCpOccupant() . ' ' . $signalement->getVilleOccupant();
