@@ -346,28 +346,41 @@ forms.forEach((form) => {
                 } else {
                     if (nextTabBtn) {
                         if (nextTabBtn.hasAttribute('data-fr-last-step')) {
-                            let docs, photos;
+                            var nbDocs = 0;
+                            var nbPhotos = 0;
                             document.querySelector('#recap-signalement-situation').innerHTML = '';
                             forms.forEach((form) => {
-                                docs = photos = 0;
                                 form.querySelectorAll('[type="file"]').forEach(file => {
                                     if (file.classList.contains("doc-file")) {
-                                        docs += file.files.length
+                                        if (file.parentElement.classList.contains('fr-fi-checkbox-circle-fill')) {
+                                            nbDocs ++;
+                                        }
                                     }
                                     if (file.classList.contains("photo-file")) {
-                                        photos += file.files.length;
+                                        if (file.previousElementSibling != undefined && file.previousElementSibling.src != undefined && file.previousElementSibling.src != '') {
+                                            nbPhotos ++;
+                                        }
                                     }
                                 })
 
-                                document.querySelector('#recap-signalement_photos').innerHTML = photos + ' photo(s) transmise(s)';
-                                document.querySelector('#recap-signalement_documents').innerHTML = docs + ' document(s) transmis';
                                 form.querySelectorAll('input,textarea,select').forEach((input) => {
                                     if (document.querySelector('#recap-' + input.id)) {
                                         document.querySelector('#recap-' + input.id).innerHTML = `${input.value}`;
                                     } else if (input.classList.contains('signalement-situation') && input.checked)
                                         document.querySelector('#recap-signalement-situation').innerHTML += '- ' + input.value + '<br>';
-                                })
+                                });
+                                let compAddress = Array( 'signalement_etageOccupant', 'signalement_escalierOccupant', 'signalement_numAppartOccupant', 'signalement_adresseAutreOccupant' );
+                                for (const str of compAddress) {
+                                    if ( document.querySelector('#recap-' + str).innerHTML == '' ) {
+                                        document.querySelector('#recap-container-' + str).style.display = 'none';
+                                    } else {
+                                        document.querySelector('#recap-container-' + str).style.display = 'inline';
+                                    }
+                                }
                             })
+
+                            document.querySelector('#recap-signalement_documents').innerHTML = nbDocs + ' document(s) transmis';
+                            document.querySelector('#recap-signalement_photos').innerHTML = nbPhotos + ' photo(s) transmise(s)';
                         }
                         nextTabBtn.disabled = false;
                         nextTabBtn.click();
