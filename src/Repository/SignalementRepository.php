@@ -32,7 +32,7 @@ class SignalementRepository extends ServiceEntityRepository
         $this->searchFilterService = new SearchFilterService();
     }
 
-    public function findAllWithGeoData($user, $options, int $offset,Territory|null $territory)
+    public function findAllWithGeoData($user, $options, int $offset, Territory|null $territory)
     {
         $firstResult = $offset;
         $qb = $this->createQueryBuilder('s');
@@ -41,16 +41,17 @@ class SignalementRepository extends ServiceEntityRepository
             PARTIAL criteres.{id,label},
             PARTIAL partner.{id,nom}');
 
-        $qb->leftJoin('s.affectations', 'a');
-        $qb->leftJoin('s.criteres', 'criteres')
+        $qb->leftJoin('s.affectations', 'a')
+            ->leftJoin('s.criteres', 'criteres')
             ->leftJoin('a.partner', 'partner');
         if ($user)
             $qb->andWhere('partner = :partner')->setParameter('partner', $user->getPartner());
         if ($territory)
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+
         $qb = $this->searchFilterService->applyFilters($qb, $options);
         $qb->addSelect('a', 'partner', 'criteres');
-        $qb->groupBy('s.id');
+        
         return $qb->andWhere("JSON_EXTRACT(s.geoloc,'$.lat') != ''")
             ->andWhere("JSON_EXTRACT(s.geoloc,'$.lng') != ''")
             ->andWhere('s.statut != 7')
