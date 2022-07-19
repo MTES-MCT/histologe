@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Form\ContactType;
+use App\Form\PostalCodeSearchType;
 use App\Repository\AffectationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\ConfigurationService;
 use App\Service\NotificationService;
+use App\Service\PostalCodeHomeCheckerService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,7 +21,7 @@ class FrontController extends AbstractController
 {
 
     #[Route('/', name: 'home')]
-    public function index(SignalementRepository $signalementRepository, EntityManagerInterface $entityManager, TerritoryRepository $territoryRepository, AffectationRepository $affectationRepository, EntityManagerInterface $doctrine, NotificationService $notificationService): Response
+    public function index(Request $request, SignalementRepository $signalementRepository, AffectationRepository $affectationRepository, PostalCodeHomeCheckerService $postalCodeHomeCheckerService): Response
     {
         $title = 'Un service public pour les locataires et propriétaires';
         $year = (new DateTimeImmutable())->format('Y');
@@ -27,9 +29,29 @@ class FrontController extends AbstractController
         $stats['total'] = count($total);
         $stats['pec'] = $stats['total'] !== 0 ? floor(($affectationRepository->createQueryBuilder('a')->select('COUNT(DISTINCT a.signalement)')->join('a.signalement', 'signalement', 'WITH', 'signalement.statut != 7 AND YEAR(signalement.createdAt) = ' . $year)->getQuery()->getSingleScalarResult() / $stats['total']) * 100) : 0;
         $stats['res'] = $stats['total'] !== 0 ? floor(($affectationRepository->createQueryBuilder('a')->select('COUNT(DISTINCT a.signalement)')->where('a.statut = 1')->join('a.signalement', 'signalement', 'WITH', 'signalement.statut != 7 AND YEAR(signalement.createdAt) = ' . $year)->getQuery()->getSingleScalarResult() / $stats['total']) * 100) : 0;
+        
+        $display_modal = '';
+
+        $form = $this->createForm(PostalCodeSearchType::class, []);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $inputPostalCode = $form->get('postalcode')->getData();
+            $redirectUrl = $postalCodeHomeCheckerService->getRedirection( $inputPostalCode );
+            if ( $redirectUrl ) {
+                if ( $redirectUrl == 'local' ) {
+                    return $this->redirectToRoute('front_signalement');
+                }
+                return $this->redirect($redirectUrl);
+            }
+
+            $display_modal = $inputPostalCode;
+        }
+        
         return $this->render('front/index.html.twig', [
-            'title' => $title,
-            'stats' => $stats
+            'title'             => $title,
+            'form_postalcode'   => $form->createView(),
+            'stats'             => $stats,
+            'display_modal'     => $display_modal,
         ]);
     }
 
@@ -49,12 +71,17 @@ class FrontController extends AbstractController
         $form = $this->createForm(ContactType::class, []);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $notificationService->send(NotificationService::TYPE_CONTACT_FORM, ['notifications@histologe.fr', $configurationService->get()->getEmailReponse()], [
-                'nom' => $form->get('nom')->getData(),
-                'mail' => $form->get('email')->getData(),
-                'reply' => $form->get('email')->getData(),
-                'message' => nl2br($form->get('message')->getData()),
-            ]);
+            $notificationService->send(
+                NotificationService::TYPE_CONTACT_FORM,
+                ['notifications@histologe.fr', $configurationService->get()->getEmailReponse()],
+                [
+                    'nom' => $form->get('nom')->getData(),
+                    'mail' => $form->get('email')->getData(),
+                    'reply' => $form->get('email')->getData(),
+                    'message' => nl2br($form->get('message')->getData()),
+                ],
+                null
+            );
             $this->addFlash('success', 'Votre message à bien été envoyé !');
             return $this->redirectToRoute('front_contact');
         }

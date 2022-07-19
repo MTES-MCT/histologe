@@ -4,23 +4,34 @@
 
 {% block body %}
     <main class="fr-container--fluid">
-        <section
-                class="fr-container--fluid fr-artwork-decorative--blue-france fr-background--blue-france fr-py-5w fr-py-md-10w">
+        <section class="fr-container--fluid fr-artwork-decorative--blue-france fr-background--blue-france fr-py-5w fr-py-md-10w">
             <div class="fr-container">
                 <div class="fr-grid-row">
                     <div class="fr-col-md-12">
                         <h1 class="fr-h3 fr-text--white">Signalez votre problème de logement</h1>
-                        {# <figure class="fr-hidden-md">
-                            <img src={{asset('img/icon-house-alert.svg') }} alt="Histologe mal logement"
-                                 class="fr-responsive-img fr-px-5w">
-                        </figure> #}
-                        {# <h2 class="fr-h6 fr-text--white fr-text--xx-light">Histologe est un service public permettant
-                            d'accélérer <br> la prise
-                            en charge du “mal logement”.
-                        </h2> #}
-                        <a role="button" href="{{ path('front_signalement') }}"
+
+                        {% if display_modal != '' %}
+                            {% include '_partials/_modal_closed_territory.html.twig' with { 'autoopen': '1' } %}
+                        {% endif %}
+
+                        <!-- form code postal -->
+                        {{ form_start(form_postalcode) }}
+                        <div class="fr-grid-row fr-grid-row--gutters fr-text--white fr-mb-5v home-form">
+                            {{ form_row(form_postalcode.postalcode) }}
+
+                            <div class="fr-col-12 fr-col-md-6 fr-col-xl-4 fr-pr-md-2v">
+                                <button 
+                                    class="fr-col-12 fr-btn fr-btn--orange fr-text-label--blue-france fr-rounded"
+                                    form="front_postalcodesearch">Accéder au service</button>
+                            </div>
+                        </div>
+                        {{ form_end(form_postalcode) }}
+                        
+                        {# <a role="button" href="{{ path('front_signalement') }}"
                            class="fr-btn fr-btn--orange fr-text-label--blue-france fr-mb-5v fr-fi-arrow-right-line fr-btn--icon-right fr-rounded fr-py-5v">Je
-                            signale mon ou mes problèmes de logement</a>
+                            signale mon ou mes problèmes de logement</a> #}
+
+                        <!-- responsive icons -->
                         <div class="fr-hidden-md fr-py-5v">
                             <div class="fr-grid-row fr-grid-row--center">
                                 <div class="fr-text--center fr-text--white">
@@ -67,10 +78,12 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- full size icons -->
                         <div class="fr-displayed-md">
                             <div class="fr-grid-row">
                                 <div class="fr-col-12">
-                                    <h2 class=" fr-text--white">Comment ça marche ?</h2>
+                                    <h2 class="fr-text--white home">Comment ça marche ?</h2>
                                 </div>
                             </div>
                             <div class="fr-grid-row">
@@ -126,19 +139,7 @@
                                 </div>
                             </div>
                         </div>
-                        {# <div class="fr-grid-row">
-                            <div class="fr-col-md-6">
-                                <a href="{{ path('front_signalement') }}" role="button"
-                                   class="fr-btn fr-btn--orange fr-rounded fr-text-label--blue-france fr-btn--icon-right fr-fi-arrow-right-line">
-                                    Signaler mon ou mes problèmes de logement
-                                </a>
-                            </div>
-                        </div> #}
                     </div>
-                    {# <div class="fr-col-2 fr-col-offset-2 fr-displayed-md">
-                        <img src={{asset('img/icon-house-alert.svg') }} alt="Histologe mal logement"
-                             class="fr-responsive-img">
-                    </div> #}
                 </div>
 
             </div>
