@@ -336,3 +336,25 @@ small {
         height: 32px;
     }
 }
+
+h2.home {
+    font-weight: lighter;
+    font-size: 24px;
+    line-height: 32px;
+}
+
+.home-form label {
+    font-weight: normal;
+    font-size: 20px;
+    line-height: 30px;
+    color: #FFFFFF;
+}
+
+@media (min-width: 768px) {
+    .home-form button {
+        position: relative;
+        display: block;
+        top: 100%;
+        margin-top: -40px;
+    }
+}

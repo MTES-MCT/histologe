@@ -667,6 +667,11 @@ document.querySelector('#modal-dpe-opener')?.addEventListener('click', (event) =
         })
     })
 })
+
+document.addEventListener("DOMContentLoaded", function() {
+    dsfr(document.querySelector('.fr-modal.autoopen')).modal.disclose();
+});
+
 document.querySelectorAll('.value-switcher').forEach(sw => {
     sw.addEventListener(sw.getAttribute('data-action') ?? 'change', (evt => {
         let url = evt.target.getAttribute('data-url'), formData = new FormData();
