@@ -18,12 +18,15 @@
         <header>
             <div class="fr-grid-row fr-grid-row--middle ">
                 <div class="fr-col-12 fr-col-md-6">
-                    <h1 class="fr-h2 fr-mb-2v">Signalement #{{ signalement.reference }} <a
-                                href="{{ path('back_signalement_edit',{uuid:signalement.uuid}) }}"
-                                class="fr-btn fr-btn--sm fr-fi-edit-fill" title="Editer le signalement"></a>&nbsp;<a
-                                href="{{ path('back_signalement_gen_pdf',{uuid:signalement.uuid}) }}"
-                                class="fr-btn fr-btn--sm fr-btn--success fr-fi-file-pdf-fill"
-                                title="Exporter en PDF"></a></h1>
+                    <h1 class="fr-h2 fr-mb-2v">
+                        Signalement #{{ signalement.reference }}
+                        {% if isAccepted %}
+                            <a  href="{{ path('back_signalement_edit',{uuid:signalement.uuid}) }}"
+                                class="fr-btn fr-btn--sm fr-fi-edit-fill" title="Editer le signalement"></a>&nbsp;
+                            <a href="{{ path('back_signalement_gen_pdf',{uuid:signalement.uuid}) }}"
+                                class="fr-btn fr-btn--sm fr-btn--success fr-fi-file-pdf-fill" title="Exporter en PDF"></a>
+                        {% endif %}
+                    </h1>
                     {% if signalement.isNotOccupant %}
                         <small class="fr-background-contrast--red-marianne fr-text-default--error fr-rounded fr-p-1v fr-text--bold {# fr-fi-information-fill fr-badge--icon-left #} fr-pr-3v">&nbsp;
                             Signalement par un tiers</small>
