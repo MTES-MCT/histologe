@@ -681,14 +681,18 @@ document.querySelector('#modal-dpe-opener')?.addEventListener('click', (event) =
 
 document.addEventListener("DOMContentLoaded", function() {
     // Interval to check if dsfr javascript is loaded
-    const intervalValue = setInterval( histologe_autoopen_modal, 10 );
-    function histologe_autoopen_modal() {
+    const intervalValue = setInterval( histologeAutoopenModal, 200 );
+    function histologeAutoopenModal() {
         const htmlElement = document.documentElement;
-        const attributeJS = htmlElement.getAttribute("data-fr-js");
+        const attributeJS = htmlElement.getAttribute('data-fr-js');
         // When loaded, kills the interval and trigger what is needed
-        if (attributeJS == 'true') {
+        if (attributeJS === 'true') {
             clearInterval( intervalValue );
-            dsfr(document.querySelector('.fr-modal.autoopen')).modal.disclose();
+            // Open modals if they exist
+            const modalElements = document.getElementsByClassName('fr-modal autoopen');
+            if ( modalElements.length > 0 ){
+                dsfr(document.querySelector('.fr-modal.autoopen')).modal.disclose();
+            }
         }
 
     }
