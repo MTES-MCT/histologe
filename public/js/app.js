@@ -680,7 +680,18 @@ document.querySelector('#modal-dpe-opener')?.addEventListener('click', (event) =
 })
 
 document.addEventListener("DOMContentLoaded", function() {
-    dsfr(document.querySelector('.fr-modal.autoopen')).modal.disclose();
+    // Interval to check if dsfr javascript is loaded
+    const intervalValue = setInterval( histologe_autoopen_modal, 10 );
+    function histologe_autoopen_modal() {
+        const htmlElement = document.documentElement;
+        const attributeJS = htmlElement.getAttribute("data-fr-js");
+        // When loaded, kills the interval and trigger what is needed
+        if (attributeJS == 'true') {
+            clearInterval( intervalValue );
+            dsfr(document.querySelector('.fr-modal.autoopen')).modal.disclose();
+        }
+
+    }
 });
 
 document.querySelectorAll('.value-switcher').forEach(sw => {
