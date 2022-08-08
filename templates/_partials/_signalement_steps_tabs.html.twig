@@ -279,12 +279,17 @@
                         <span class="fr-hint-text">Si vous disposez des informations suivantes concernant le propriétaire, merci de les renseigner.</span>
                     </legend>
                     <div class="fr-fieldset__content">
-                        {{ form_label(form.nomProprio) }}
-                        {% if 'back_' not in app.request.get('_route') %}
-                            {{ form_widget(form.nomProprio) }}
-                        {% else %}
-                            {{ form_widget(form.nomProprio,{required:false}) }}
-                        {% endif %}
+                        <div class="fr-input-group">
+                            {{ form_label(form.nomProprio) }}
+                            {% if 'back_' not in app.request.get('_route') %}
+                                {{ form_widget(form.nomProprio) }}
+                            {% else %}
+                                {{ form_widget(form.nomProprio,{required:false}) }}
+                            {% endif %}
+                            <p class="fr-error-text fr-hidden">
+                                Merci de renseigner le nom ou la raison sociale du propriétaire du logement.
+                            </p>
+                        </div>
                         {{ form_row(form.adresseProprio) }}
                         {{ form_row(form.telProprio) }}
                         {{ form_row(form.mailProprio) }}
