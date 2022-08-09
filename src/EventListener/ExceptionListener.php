@@ -2,6 +2,7 @@
 
 namespace App\EventListener;
 
+use App\Entity\Signalement;
 use App\Service\NotificationService;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 
@@ -26,7 +27,10 @@ class ExceptionListener
                 }
             }
 
-            $territory = (!is_array($event->getRequest()->get('signalement'))) ? $event->getRequest()->get('signalement')?->getTerritory() ?? null : null;
+            $territory = null;
+            if ( $event->getRequest()->get('signalement') instanceof Signalement ) {
+                $territory = $event->getRequest()->get('signalement')->getTerritory();
+            }
             $this->notificationService->send(
                 NotificationService::TYPE_ERROR_SIGNALEMENT,
                 'denis.baudot.beta@gmail.com',

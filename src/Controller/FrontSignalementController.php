@@ -120,7 +120,7 @@ class FrontSignalementController extends AbstractController
                     case 'geoloc':
                         $signalement->setGeoloc(["lat" => $data[$key]['lat'], "lng" => $data[$key]['lng']]);
                         break;
-
+                        
                     default:
                         if ($method !== 'setSignalement') {
                             if ($value === "" || $value === " ")
@@ -137,8 +137,7 @@ class FrontSignalementController extends AbstractController
                 $signalement->setTelDeclarant(null);
             }
             $zip = strlen($signalement->getCpOccupant()) > 3 ? substr($signalement->getCpOccupant(), 0, 2) : $signalement->getCpOccupant();
-            $territory = $territoryRepository->findOneBy(['zip' => $zip, 'isActive' => 1]);
-            $signalement->setTerritory($territory);
+            $signalement->setTerritory($territoryRepository->findOneBy(['zip' => $zip, 'isActive' => 1]));
             $year = (new DateTime())->format('Y');
             $reqId = $doctrine->getRepository(Signalement::class)->createQueryBuilder('s')
                 ->select('s.reference')
