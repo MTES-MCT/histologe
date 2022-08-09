@@ -33,7 +33,6 @@ class NotificationService
 
     public function send(int $type, string|array $to, array $params, Territory|null $territory): TransportExceptionInterface|Exception|bool
     {
-        $params['url'] = $_SERVER['SERVER_NAME'] ?? null;
         $message = $this->renderMailContentWithParamsByType($type, $params, $territory ?? null);
         is_array($to) ? $emails = $to : $emails = [$to];
         $territoryName = \Transliterator::create('NFD; [:Nonspacing Mark:] Remove; NFC')
