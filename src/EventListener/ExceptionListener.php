@@ -4,15 +4,14 @@ namespace App\EventListener;
 
 use App\Entity\Signalement;
 use App\Service\NotificationService;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 
 class ExceptionListener
 {
-    private NotificationService $notificationService;
 
-    public function __construct(NotificationService $notificationService)
+    public function __construct(private NotificationService $notificationService, private ParameterBagInterface $params)
     {
-        $this->notificationService = $notificationService;
     }
 
     public function onKernelException(ExceptionEvent $event)
@@ -33,7 +32,7 @@ class ExceptionListener
             }
             $this->notificationService->send(
                 NotificationService::TYPE_ERROR_SIGNALEMENT,
-                'denis.baudot.beta@gmail.com',
+                $this->params->get('admin_email'),
                 [
                     'url' => $_SERVER['SERVER_NAME'],
                     'code' => $event->getThrowable()->getCode(),
