@@ -2,6 +2,8 @@
 
 namespace App\Service;
 
+use DateInterval;
+use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -156,9 +158,12 @@ class SearchFilterService
             if (!empty($filters['dates']['on'])) {
                 $qb->andWhere($field . ' >= :date_in')
                     ->setParameter('date_in', $filters['dates']['on']);
-            } elseif (!empty($filters['dates']['off'])) {
+            }
+            if (!empty($filters['dates']['off'])) {
+                $date_off_p1d = new DateTime( $filters['dates']['off'] );
+                $date_off_p1d->add( new DateInterval( 'P1D') );
                 $qb->andWhere($field . ' <= :date_off')
-                    ->setParameter('date_off', $filters['dates']['off']);
+                    ->setParameter('date_off', $date_off_p1d->format('Y-m-d'));
             }
         }
 
