@@ -7,6 +7,8 @@
 !/.env.sample
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
+/uploaded_files/signalement/*
+!/uploaded_files/signalement/file.txt
 /var/
 /vendor/
 ###< symfony/framework-bundle ###

@@ -111,15 +111,16 @@ class FrontSignalementController extends AbstractController
                             }
                         }
                         break;
-                    case
-                    'dateEntree':
+
+                    case 'dateEntree':
                         $value = new DateTimeImmutable($value);
                         $signalement->$method($value);
                         break;
-                    case
-                    'geoloc':
+
+                    case 'geoloc':
                         $signalement->setGeoloc(["lat" => $data[$key]['lat'], "lng" => $data[$key]['lng']]);
                         break;
+
                     default:
                         if ($method !== 'setSignalement') {
                             if ($value === "" || $value === " ")
@@ -136,7 +137,8 @@ class FrontSignalementController extends AbstractController
                 $signalement->setTelDeclarant(null);
             }
             $zip = strlen($signalement->getCpOccupant()) > 3 ? substr($signalement->getCpOccupant(), 0, 2) : $signalement->getCpOccupant();
-            $signalement->setTerritory($territoryRepository->findOneBy(['zip' => $zip, 'isActive' => 1]));
+            $territory = $territoryRepository->findOneBy(['zip' => $zip, 'isActive' => 1]);
+            $signalement->setTerritory($territory);
             $year = (new DateTime())->format('Y');
             $reqId = $doctrine->getRepository(Signalement::class)->createQueryBuilder('s')
                 ->select('s.reference')
@@ -155,7 +157,6 @@ class FrontSignalementController extends AbstractController
 
             $score = new CriticiteCalculatorService($signalement, $doctrine);
             $signalement->setScoreCreation($score->calculate());
-//            $signalement->setReference(null);
 
             $em->persist($signalement);
             $em->flush();

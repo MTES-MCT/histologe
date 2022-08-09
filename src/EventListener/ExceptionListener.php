@@ -25,14 +25,21 @@ class ExceptionListener
                     }
                 }
             }
-            $this->notificationService->send(NotificationService::TYPE_ERROR_SIGNALEMENT, 'denis.baudot.beta@gmail.com', [
-                'url' => $_SERVER['SERVER_NAME'],
-                'code' => $event->getThrowable()->getCode(),
-                'error' => $event->getThrowable()->getMessage(),
-                'req' => $event->getRequest()->getContent(),
-                'signalement' => $event->getRequest()->get('signalement'),
-                'attachment' => $attachment
-            ],$event->getRequest()->get('signalement')?->getTerritory() ?? null);
+
+            $territory = (!is_array($event->getRequest()->get('signalement'))) ? $event->getRequest()->get('signalement')?->getTerritory() ?? null : null;
+            $this->notificationService->send(
+                NotificationService::TYPE_ERROR_SIGNALEMENT,
+                'denis.baudot.beta@gmail.com',
+                [
+                    'url' => $_SERVER['SERVER_NAME'],
+                    'code' => $event->getThrowable()->getCode(),
+                    'error' => $event->getThrowable()->getMessage(),
+                    'req' => $event->getRequest()->getContent(),
+                    'signalement' => $event->getRequest()->get('signalement'),
+                    'attachment' => $attachment
+                ],
+                $territory
+            );
         }
     }
 }
