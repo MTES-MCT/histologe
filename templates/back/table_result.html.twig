@@ -1,6 +1,5 @@
 {% for index,signalement in signalements.list %}
 
-    {# {% set signalement = signalement[0] %} #}
     {% if not is_granted('ROLE_ADMIN_TERRITORY') or filters.partners or filters.affectations %}
         {% set signalement = signalement.signalement %}
     {% endif %}
@@ -71,10 +70,3 @@
         </td>
     </tr>
 {% endfor %}
-{#
-<script type="module">
-    {% for signalement in signalements.list %}
-    gauge = new Gauge(document.getElementById('gauge-signalement-{{ signalement.id }}')).setOptions(opts); // create sexy gauge!
-    gauge.set({{ signalement.scoreCreation }}); // set actual value
-    {% endfor %}
-</script> #}
