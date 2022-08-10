@@ -1,0 +1,51 @@
+# docker-compose.yml
+version: "3.8"
+
+services:
+  histologe_mysql:
+    image: 'mysql:5.7.38'
+    container_name: histologe_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: histologe_db
+      MYSQL_USER: histologe
+      MYSQL_PASSWORD: histologe
+    ports:
+      - 3306:3306
+
+  histologe_adminer:
+    image: adminer
+    depends_on:
+      - histologe_db
+    restart: always
+    container_name: histologe_adminer
+    ports:
+      - 8081:8080
+
+  histologe_phpfpm:
+    build: .docker/php-fpm
+    container_name: histologe_phpfpm
+    working_dir: /app
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      MAILER_DSN: ${MAILER_DSN}
+    volumes:
+      - .:/app/
+
+  histologe_nginx:
+    build: .docker/nginx
+    depends_on:
+      - histologe_phpfpm
+    container_name: histologe_nginx
+    working_dir: /app
+    volumes:
+      - .:/app/
+    ports:
+      - 8080:80
+
+  histologe_mailer:
+    image: schickling/mailcatcher
+    ports:
+      - 1025:1025
+      - 1080:1080
