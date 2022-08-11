@@ -43,7 +43,12 @@ MailCatcher  | [localhost:1080](http://localhost:1080)
 
 Insérer un jeu de données (export sql) existant dans le repertoire data (voir avec l'équipe).
 
-### Execution
+### Usage
+```
+make help
+```
+
+### Lancement
 ```
 cp .env.sample .env
 make build
