@@ -14,6 +14,8 @@ services:
       MYSQL_TCP_PORT: 3307
     ports:
       - 3307:3307
+    volumes:
+      - dbdata:/var/lib/mysql
 
   histologe_adminer:
     image: adminer
@@ -50,3 +52,6 @@ services:
     ports:
       - 1025:1025
       - 1080:1080
+
+volumes:
+  dbdata:
