@@ -17,14 +17,17 @@ services:
     volumes:
       - dbdata:/var/lib/mysql
 
-  histologe_adminer:
-    image: adminer
+  histologe_phpmyadmin:
+    image: phpmyadmin/phpmyadmin
     depends_on:
       - histologe_mysql
     restart: always
-    container_name: histologe_adminer
+    container_name: histologe_phpmyadmin
+    environment:
+      PMA_HOST: histologe_mysql
+      PMA_PORT: 3307
     ports:
-      - 8081:8080
+      - 8081:80
 
   histologe_phpfpm:
     build: .docker/php-fpm
