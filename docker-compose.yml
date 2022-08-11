@@ -11,8 +11,9 @@ services:
       MYSQL_DATABASE: histologe_db
       MYSQL_USER: histologe
       MYSQL_PASSWORD: histologe
+      MYSQL_TCP_PORT: 3307
     ports:
-      - 3307:3306
+      - 3307:3307
 
   histologe_adminer:
     image: adminer
