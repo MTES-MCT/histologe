@@ -12,6 +12,7 @@ help:
 	| sed -n 's/^\(.*\): \(.*\)##\(.*\)/\1\3/p' \
 	| column -t  -s ':' \
 
+build: .check .destroy .setup run .sleep composer load-data
 
 run: ## : Start containers
 	@echo -e '\e[1;32mStart containers\032'
@@ -42,3 +43,23 @@ drop-db: ## : Drop database
 
 load-data: ## : Drop database
 	@$(DOCKER_COMP) exec -T histologe_mysql mysql -u $(DATABASE_USER) -phistologe $(DATABASE_NAME) < $(PATH_DUMP_SQL)
+
+composer: ## : Install composer dependencies
+	@$(DOCKER_COMP) exec -it histologe_phpfpm composer install --dev --no-interaction --optimize-autoloader
+
+.check:
+	@echo "\033[31mWARNING!!!\033[0m Executing this script will reinitialize the project and all of its data"
+	@( read -p "Are you sure you wish to continue? [y/N]: " sure && case "$$sure" in [yY]) true;; *) false;; esac )
+
+.destroy:
+	@echo "\033[33mRemoving containers ...\033[0m"
+	@$(DOCKER_COMP) rm -v --force --stop || true
+	@echo "\033[32mContainers removed!\033[0m"
+
+.setup:
+	@echo "\033[33mBuilding containers ...\033[0m"
+	@$(DOCKER_COMP) build
+	@echo "\033[32mContainers built!\033[0m"
+
+.sleep:
+	@sleep 30
