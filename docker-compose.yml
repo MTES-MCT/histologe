@@ -17,7 +17,7 @@ services:
   histologe_adminer:
     image: adminer
     depends_on:
-      - histologe_db
+      - histologe_mysql
     restart: always
     container_name: histologe_adminer
     ports:
