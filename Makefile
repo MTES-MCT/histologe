@@ -27,6 +27,9 @@ sh: ## : Log to phpfpm container
 	@echo -e '\e[1;32mLog to phpfpm container\032'
 	@bash -l -c '$(DOCKER_COMP) exec -it histologe_phpfpm sh'
 
+mysql: ## : Log to mysql container
+	@echo -e '\e[1;32mLog to mysql container\032[0m'
+	@bash -l -c '$(DOCKER_COMP) exec -it histologe_mysql mysql -u histologe -phistologe histologe_db'
 
 test: ##  : Run all tests
 	@$(PHPUNIT) --stop-on-failure
