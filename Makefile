@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := help
 .PHONY: help
 
-DOCKER_COMP   = docker compose
+DOCKER_COMP   = docker-compose
 PHPUNIT       = ./vendor/bin/phpunit
 DATABASE_USER = histologe
 DATABASE_NAME = histologe_db
