@@ -5,8 +5,8 @@
 Requirements|Release
 ------------|--------
 Docker client|
-Version| 20.10.12
-API Version | 1.14
+Version (minimum) | 20.10.12
+API Version (minimum) | 1.14
 
 ## Versions des dépendances
 Service|Version
