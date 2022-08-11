@@ -19,6 +19,7 @@ Créer le fichier env.local à la racine avec les informations suivantes :
     DATABASE_URL="mysql://URL_LOCALE"
     MAILER_DSN=sendinblue+api://SENDINBLUE_KEY@default
     ADMIN_EMAIL=YOUR_EMAIL_ADDRESS
+    NOTIFICATIONS_EMAIL=YOUR_EMAIL_ADDRESS
 
 ### Lancement local
 
