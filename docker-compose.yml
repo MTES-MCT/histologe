@@ -12,7 +12,7 @@ services:
       MYSQL_USER: histologe
       MYSQL_PASSWORD: histologe
     ports:
-      - 3306:3306
+      - 3307:3306
 
   histologe_adminer:
     image: adminer
