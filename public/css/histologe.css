@@ -366,11 +366,14 @@ label.fr-toggle__label[for="signalement-accept-cgu"] a {
     font-weight: bold;
 }
 
-.cgu table {
+.cgu-bo .title {
+    font-size: 1.1em;
+}
+.cgu table, .cgu-bo table {
     border: 1px solid black;
     border-spacing: 0;
     border-collapse: collapse;
 }
-.cgu table th, .cgu table td {
+.cgu table th, .cgu table td, .cgu-bo table th, .cgu-bo table td {
     border: 1px solid black;
 }
