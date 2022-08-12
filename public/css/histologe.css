@@ -358,3 +358,10 @@ h2.home {
         margin-top: -40px;
     }
 }
+
+label.fr-toggle__label[for="signalement-accept-cgu"] {
+    display: inline;
+}
+label.fr-toggle__label[for="signalement-accept-cgu"] a {
+    font-weight: bold;
+}
