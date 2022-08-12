@@ -56,5 +56,8 @@ services:
       - 1025:1025
       - 1080:1080
 
+  cypress:
+    image: cypress/base:latest
+
 volumes:
   dbdata:

@@ -17,7 +17,7 @@ build: .check .destroy .setup run .sleep composer load-data
 run: ## : Start containers
 	@echo -e '\e[1;32mStart containers\032'
 	@bash -l -c '$(DOCKER_COMP) up -d'
-	@echo -e '\e[1;32mContainers runnung\032'
+	@echo -e '\e[1;32mContainers running\032'
 
 down: ## : Shutdown containers
 	@echo -e '\e[1;32mStop containers\032'
