@@ -108,11 +108,17 @@ class BackSignalementController extends AbstractController
             $criticitesArranged[$criticite->getCritere()->getSituation()->getLabel()][$criticite->getCritere()->getLabel()] = $criticite;
         }
 
+        $canEditSignalement = false;
+        if ($signalement->getStatut() === Signalement::STATUS_ACTIVE || $signalement->getStatut() === Signalement::STATUS_NEED_PARTNER_RESPONSE) {
+            $canEditSignalement = ( $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY') || $isAccepted );
+        }
+
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
             'situations' => $criticitesArranged,
             'affectations' => $signalement->getAffectations(),
             'needValidation' => $signalement->getStatut() === Signalement::STATUS_NEED_VALIDATION,
+            'canEditSignalement' => $canEditSignalement,
             'isAffected' => $isAffected,
             'isAccepted' => $isAccepted,
             'isClosed' => $signalement->getStatut() === Signalement::STATUS_CLOSED,

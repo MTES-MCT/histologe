@@ -20,7 +20,7 @@
                 <div class="fr-col-12 fr-col-md-6">
                     <h1 class="fr-h2 fr-mb-2v">
                         Signalement #{{ signalement.reference }}
-                        {% if isAccepted %}
+                        {% if canEditSignalement %}
                             <a  href="{{ path('back_signalement_edit',{uuid:signalement.uuid}) }}"
                                 class="fr-btn fr-btn--sm fr-fi-edit-fill" title="Editer le signalement"></a>&nbsp;
                             <a href="{{ path('back_signalement_gen_pdf',{uuid:signalement.uuid}) }}"
