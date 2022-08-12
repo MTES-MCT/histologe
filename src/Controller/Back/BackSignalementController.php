@@ -110,7 +110,7 @@ class BackSignalementController extends AbstractController
 
         $canEditSignalement = false;
         if ($signalement->getStatut() === Signalement::STATUS_ACTIVE || $signalement->getStatut() === Signalement::STATUS_NEED_PARTNER_RESPONSE) {
-            $canEditSignalement = ( $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY') || $isAccepted );
+            $canEditSignalement = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY') || $isAccepted;
         }
 
         return $this->render('back/signalement/view.html.twig', [
