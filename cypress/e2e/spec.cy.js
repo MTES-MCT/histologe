@@ -1,6 +1,15 @@
+const disableSmoothScroll = () => {
+  cy.document().then(document => {
+    const node = document.createElement('style');
+    node.innerHTML = 'html { scroll-behavior: inherit !important; }';
+    document.body.appendChild(node);
+  });
+};
+
 describe('Simple test for the Signalement interface', () => {
   it('Displays the form for Signalement', () => {
     cy.visit('http://localhost:8080/signalement')
+    disableSmoothScroll();
     cy.get('#signalement-step-1')
   })
 
