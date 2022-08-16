@@ -6,7 +6,7 @@
         <p>{{ config.get.mailAr|raw }}</p>
     {% else %}
         <p>Nous avons bien reçu votre signalement concernant le logement situé <br>
-            <b>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</b>
+            <strong>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</strong>
             <br>Vous recevrez par email les mises à jour concernant votre signalement.</p>
         {% if not signalement.isProprioAverti %}
             <p>
