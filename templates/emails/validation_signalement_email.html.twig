@@ -6,7 +6,7 @@
         <p>{{ config.get.mailValidation|raw }}</p>
     {% else %}
         <p>Nous vous informons que votre signalement concernant le logement situé <br>
-            <b>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</b>
+            <strong>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</strong>
             <br>a bien été validé par le service Histologe.</p>
     {% endif %}
     <p>Vous pouvez désormais suivre l'avancée de son traitement en cliquant sur le bouton ci-dessous :</p>
