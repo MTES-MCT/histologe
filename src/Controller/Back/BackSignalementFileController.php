@@ -76,6 +76,9 @@ class BackSignalementFileController extends AbstractController
                     dd($e);
                 }
                 $list[] = '<li><a class="fr-link" target="_blank" href="' . $this->generateUrl('show_uploaded_file', ['folder' => '_up', 'file' => $newFilename]) . '">' . $titre . '</a></li>';
+                if (is_null($$type)) {
+                    $$type = array();
+                }
                 array_push($$type, [
                     'file' => $newFilename,
                     'titre' => $titre,
