@@ -1,1 +1,1 @@
-postdeploy: bash migration.sh
+postdeploy: php bin/console d:m:m --no-interaction

@@ -1,7 +1,0 @@
-{
-  "env": {
-    "SKIP_FIRST_MIGRATION": {
-      "value": 1
-    }
-  }
-}
