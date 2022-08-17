@@ -421,7 +421,7 @@ forms.forEach((form) => {
                                         event.target.querySelector('[type="submit"]').disabled = false;
                                         event.target.querySelector('[type="submit"]').innerHTML = "Confirmer";
                                         ['fr-fi-checkbox-circle-fill', 'fr-fi-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
-                                        alert('Erreur lors de l\'enregistrement du  signalement !')
+                                        alert('Erreur lors de l\'enregistrement du signalement !')
 
                                     }
                                 })
@@ -432,7 +432,7 @@ forms.forEach((form) => {
                                 event.target.querySelector('[type="submit"]').disabled = false;
                                 event.target.querySelector('[type="submit"]').innerHTML = "Confirmer";
                                 ['fr-fi-checkbox-circle-fill', 'fr-fi-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
-                                alert('Erreur lors de l\'enregistrement du  signalement ! Nos équipes ont été informées du problème.')
+                                alert('Erreur lors de l\'enregistrement du signalement ! Nos équipes ont été informées du problème.')
                             }
                         })
                     }

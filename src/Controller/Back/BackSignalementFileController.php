@@ -61,7 +61,7 @@ class BackSignalementFileController extends AbstractController
             $setMethod = 'set' . ucfirst($type);
             $getMethod = 'get' . ucfirst($type);
             $list = [];
-            $$type = $signalement->$getMethod();
+            $type_list = $signalement->$getMethod();
             foreach ($files[$type] as $file) {
                 $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
                 $titre = $originalFilename . '.' . $file->guessExtension();
@@ -76,7 +76,10 @@ class BackSignalementFileController extends AbstractController
                     dd($e);
                 }
                 $list[] = '<li><a class="fr-link" target="_blank" href="' . $this->generateUrl('show_uploaded_file', ['folder' => '_up', 'file' => $newFilename]) . '">' . $titre . '</a></li>';
-                array_push($$type, [
+                if (is_null($type_list)) {
+                    $type_list = array();
+                }
+                array_push($type_list, [
                     'file' => $newFilename,
                     'titre' => $titre,
                     'user' => $this->getUser()->getId(),
@@ -88,7 +91,7 @@ class BackSignalementFileController extends AbstractController
             $suivi->setCreatedBy($this->getUser());
             $suivi->setDescription('Ajout de ' . $type . ' au signalement<ul>' . implode("", $list) . '</ul>');
             $suivi->setSignalement($signalement);
-            $signalement->$setMethod($$type);
+            $signalement->$setMethod($type_list);
             $doctrine->getManager()->persist($suivi);
             $doctrine->getManager()->persist($signalement);
             $doctrine->getManager()->flush();
@@ -105,15 +108,15 @@ class BackSignalementFileController extends AbstractController
         if ($this->isCsrfTokenValid('signalement_delete_file_' . $signalement->getId(), $request->get('_token'))) {
             $setMethod = 'set' . ucfirst($type);
             $getMethod = 'get' . ucfirst($type);
-            $$type = $signalement->$getMethod();
-            foreach ($$type as $k => $v) {
+            $type_list = $signalement->$getMethod();
+            foreach ($type_list as $k => $v) {
                 if ($file === $v['file']) {
                     if (file_exists($this->getParameter('uploads_dir') . $file))
                         unlink($this->getParameter('uploads_dir') . $file);
-                    unset($$type[$k]);
+                    unset($type_list[$k]);
                 }
             }
-            $signalement->$setMethod($$type);
+            $signalement->$setMethod($type_list);
             $doctrine->getManager()->persist($signalement);
             $doctrine->getManager()->flush();
             return $this->json(['response' => 'success']);
