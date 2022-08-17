@@ -66,3 +66,10 @@ cp .env.sample .env
 make build
 ```
 
+### Tests
+
+#### Tests e2e
+```
+npx cypress open
+```
+
