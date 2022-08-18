@@ -14,7 +14,7 @@ class NotificationVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return in_array($attribute, [self::DELETE, self::MARK_AS_READ])
+        return \in_array($attribute, [self::DELETE, self::MARK_AS_READ])
             && $subject instanceof Notification;
     }
 
@@ -24,14 +24,15 @@ class NotificationVoter extends Voter
         if (!$user instanceof UserInterface) {
             return false;
         }
-        if ($user->isSuperAdmin())
+        if ($user->isSuperAdmin()) {
             return true;
+        }
+
         return match ($attribute) {
             self::DELETE => $this->canDelete($subject, $user),
             self::MARK_AS_READ => $this->canMarkAsRead($subject, $user),
             default => false,
         };
-
     }
 
     private function canDelete(Notification $notification, UserInterface $user): bool

@@ -44,6 +44,7 @@ class TerritoryRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('t')
             ->select('PARTIAL t.{id,name}')
             ->where('t.isActive = 1');
+
         return $qb->indexBy('t', 't.id')
             ->getQuery()
             ->getResult();
@@ -54,7 +55,8 @@ class TerritoryRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('t')
             ->select('PARTIAL t.{id,name}')
             ->where('t.isActive = 1')
-            ->andWhere('t.zip = \'' .$zip. '\'');
+            ->andWhere('t.zip = \''.$zip.'\'');
+
         return $qb->indexBy('t', 't.id')
             ->getQuery()
             ->getResult();

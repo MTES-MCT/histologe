@@ -21,7 +21,6 @@
         "scienta/doctrine-json-functions": "^5.0",
         "sendinblue/api-v3-sdk": "^8.0",
         "sensio/framework-extra-bundle": "^6.1",
-        "squizlabs/php_codesniffer": "*",
         "symfony/apache-pack": "^1.0",
         "symfony/asset": "6.0.*",
         "symfony/console": "6.0.*",
@@ -107,6 +106,13 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "cs-check": "tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run -v",
+        "cs-fix": "tools/php-cs-fixer/vendor/bin/php-cs-fixer fix",
+        "stan": "vendor/bin/phpstan analyse --memory-limit 1G",
+        "check-quality": [
+            "@composer cs-check",
+            "@composer stan"
         ]
     },
     "conflict": {

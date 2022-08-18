@@ -21,18 +21,20 @@ class SignalementVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::VALIDATE, self::REOPEN, self::CLOSE,self::EXPORT])
+        return \in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::VALIDATE, self::REOPEN, self::CLOSE, self::EXPORT])
             && ($subject instanceof Signalement || $subject instanceof ArrayCollection);
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
-        if (!$user instanceof UserInterface ) {
+        if (!$user instanceof UserInterface) {
             return false;
         }
-        if ($user->isSuperAdmin())
+        if ($user->isSuperAdmin()) {
             return true;
+        }
+
         return match ($attribute) {
             self::VALIDATE => $this->canValidate($subject, $user),
             self::CLOSE => $this->canClose($subject, $user),
@@ -40,15 +42,14 @@ class SignalementVoter extends Voter
             self::REOPEN => $this->canReopen($subject, $user),
             self::EDIT => $this->canEdit($subject, $user),
             self::VIEW => $this->canView($subject, $user),
-            self::EXPORT=> $this->canExport($subject, $user),
+            self::EXPORT => $this->canExport($subject, $user),
             default => false,
         };
-
     }
 
     private function canValidate(Signalement $signalement, UserInterface $user): bool
     {
-        return $signalement->getStatut() === Signalement::STATUS_NEED_VALIDATION && $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
+        return Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut() && $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
     }
 
     private function canClose(Signalement $signalement, UserInterface $user): bool
@@ -58,19 +59,19 @@ class SignalementVoter extends Voter
 
     private function canDelete(Signalement $signalement, UserInterface $user): bool
     {
-        return $user->isTerritoryAdmin()&& $user->getTerritory() === $signalement->getTerritory();
+        return $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
     }
 
     private function canReopen(Signalement $signalement, UserInterface $user): bool
     {
-        return $signalement->getStatut() === Signalement::STATUS_CLOSED && $user->isTerritoryAdmin()&& $user->getTerritory() === $signalement->getTerritory();
+        return Signalement::STATUS_CLOSED === $signalement->getStatut() && $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
     }
 
     private function canEdit(Signalement $signalement, UserInterface $user): bool
     {
         return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
-                return $affectation->getPartner()->getId() === $user->getPartner()->getId();
-            })->count() > 0 || $user->isTerritoryAdmin()&& $user->getTerritory() === $signalement->getTerritory();
+            return $affectation->getPartner()->getId() === $user->getPartner()->getId();
+        })->count() > 0 || $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
     }
 
     private function canView(Signalement $signalement, UserInterface $user): bool
@@ -78,13 +79,14 @@ class SignalementVoter extends Voter
         if ($this->canEdit($signalement, $user)) {
             return true;
         }
+
         return false;
     }
 
     public function canExport(ArrayCollection $signalements, UserInterface $user): bool
     {
-        return $user->isTerritoryAdmin()&& $signalements->filter(function (Signalement $signalement) use ($user) {
-                return $signalement->getTerritory() !== $user->getTerritory();
-            })->count() == 0;
+        return $user->isTerritoryAdmin() && 0 == $signalements->filter(function (Signalement $signalement) use ($user) {
+            return $signalement->getTerritory() !== $user->getTerritory();
+        })->count();
     }
 }

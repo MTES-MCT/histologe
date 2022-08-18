@@ -33,7 +33,6 @@ class GetGeolocCommand extends Command
         parent::__construct();
     }
 
-
     protected function configure(): void
     {
         $this
@@ -56,27 +55,29 @@ class GetGeolocCommand extends Command
             $this->setGeolocAndInsee($io, $signalement);
             $em->persist($signalement);
             $em->flush();
-            $i++;
-        } else
-            foreach ($signalements as $signalement)
+            ++$i;
+        } else {
+            foreach ($signalements as $signalement) {
                 if (!$signalement->getGeoloc() || empty($signalement->getGeoloc()['lat']) || empty($signalement->getGeoloc()['lng'])) {
                     $this->setGeolocAndInsee($io, $signalement);
                     $em->persist($signalement);
-                    $i++;
-                    if ($i % 100 === 0) {
+                    ++$i;
+                    if (0 === $i % 100) {
                         $em->flush();
                     }
                 }
-        $io->success($i . ' signalement(s) corrigé(s)');
+            }
+        }
+        $io->success($i.' signalement(s) corrigé(s)');
 
         return Command::SUCCESS;
     }
 
     protected function setGeolocAndInsee($io, Signalement $signalement)
     {
-        $adresse = $signalement->getAdresseOccupant() . ' ' . $signalement->getCpOccupant() . ' ' . $signalement->getVilleOccupant();
+        $adresse = $signalement->getAdresseOccupant().' '.$signalement->getCpOccupant().' '.$signalement->getVilleOccupant();
 
-        $response = json_decode($this->httpClient->request('GET', 'https://api-adresse.data.gouv.fr/search/?q=' . $adresse)->getContent(), true);
+        $response = json_decode($this->httpClient->request('GET', 'https://api-adresse.data.gouv.fr/search/?q='.$adresse)->getContent(), true);
         if (!empty($response['features'][0])) {
             $io->note($adresse);
             $coordinates = $response['features'][0]['geometry']['coordinates'];
@@ -84,6 +85,7 @@ class GetGeolocCommand extends Command
             $signalement->setGeoloc(['lat' => $coordinates[0], 'lng' => $coordinates[1]]);
             $signalement->setInseeOccupant($insee);
         }
+
         return $signalement;
     }
 }

@@ -14,14 +14,14 @@ class ConfigurationService
 
     public function get()
     {
-        if ( empty( $this->config ) ) {
+        if (empty($this->config)) {
             $this->config = $this->configRepository->findLast();
         }
 
         if (isset($this->config[0])) {
             return $this->config[0];
         }
-        
+
         return false;
     }
 }

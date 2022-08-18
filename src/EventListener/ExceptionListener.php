@@ -9,25 +9,24 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 
 class ExceptionListener
 {
-
     public function __construct(private NotificationService $notificationService, private ParameterBagInterface $params)
     {
     }
 
     public function onKernelException(ExceptionEvent $event)
     {
-        if ($event->getRequest()->get('signalement') !== null) {
+        if (null !== $event->getRequest()->get('signalement')) {
             $attachment = ['documents' => 0, 'photos' => 0];
             if ($files = $event->getRequest()->files->get('signalement')) {
                 foreach ($files as $k => $file) {
                     foreach ($file as $file_) {
-                        $attachment[$k]++;
+                        ++$attachment[$k];
                     }
                 }
             }
 
             $territory = null;
-            if ( $event->getRequest()->get('signalement') instanceof Signalement ) {
+            if ($event->getRequest()->get('signalement') instanceof Signalement) {
                 $territory = $event->getRequest()->get('signalement')->getTerritory();
             }
             $this->notificationService->send(
@@ -39,7 +38,7 @@ class ExceptionListener
                     'error' => $event->getThrowable()->getMessage(),
                     'req' => $event->getRequest()->getContent(),
                     'signalement' => $event->getRequest()->get('signalement'),
-                    'attachment' => $attachment
+                    'attachment' => $attachment,
                 ],
                 $territory
             );

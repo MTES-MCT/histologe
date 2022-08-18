@@ -59,7 +59,9 @@ jobs:
            restore-keys: ${{ runner.os }}-composer-
 
       - name: Install Composer dependencies
-        run: composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
+        run: | 
+          composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
+          composer install--working-dir=tools/php-cs-fixer --no-progress --no-suggest --prefer-dist --optimize-autoloader
 
       # https://github.com/sensiolabs/security-checker
       - name: Security check installed dependencies
@@ -70,4 +72,8 @@ jobs:
 
       # https://github.com/phpstan/phpstan
       - name: Analyse PHP Code (PHPStan)
-        run: vendor/bin/phpstan analyse src
+        run: vendor/bin/phpstan analyse
+
+      # https://github.com/FriendsOfPHP/PHP-CS-Fixer
+      - name: Check PHP coding standard (PHP-CS-Fixer)
+        run: composer cs-check

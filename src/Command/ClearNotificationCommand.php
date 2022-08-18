@@ -18,7 +18,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class ClearNotificationCommand extends Command
 {
-
     private EntityManagerInterface $em;
 
     public function __construct(EntityManagerInterface $entityManager)
@@ -48,7 +47,7 @@ class ClearNotificationCommand extends Command
         }
         $this->em->flush();
 
-        $io->success(count($notifications) . ' notification(s) deleted !');
+        $io->success(\count($notifications).' notification(s) deleted !');
 
         return Command::SUCCESS;
     }

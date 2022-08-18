@@ -14,7 +14,6 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/bo')]
 class BackNotificationController extends AbstractController
 {
-
     private ArrayCollection $signalements;
     private ArrayCollection $affectations;
     private ArrayCollection $suivis;
@@ -30,23 +29,26 @@ class BackNotificationController extends AbstractController
     public function newsActivitiesSinceLastLogin(Request $request, NotificationRepository $notificationRepository, EntityManagerInterface $entityManager): Response
     {
         $title = 'Administration - Nouveauté(s)';
-        if ($this->isCsrfTokenValid('mark_as_read_' . $this->getUser()->getId(), $request->get('mark_as_read'))) {
+        if ($this->isCsrfTokenValid('mark_as_read_'.$this->getUser()->getId(), $request->get('mark_as_read'))) {
             $this->markAllAsRead($entityManager);
             $this->addFlash('success', 'Toutes les notifications marquées comme lues.');
+
             return $this->redirectToRoute('back_news_activities');
-        } else if ($this->isCsrfTokenValid('delete_all_notifications_' . $this->getUser()->getId(), $request->get('delete_all_notifications'))) {
+        } elseif ($this->isCsrfTokenValid('delete_all_notifications_'.$this->getUser()->getId(), $request->get('delete_all_notifications'))) {
             $this->deleteAllNotifications($entityManager);
             $this->addFlash('success', 'Toutes les notifications ont été supprimées.');
+
             return $this->redirectToRoute('back_news_activities');
         }
         $notifications = new ArrayCollection($notificationRepository->findAllForUser($this->getUser()));
         $notifications->filter(function (Notification $notification) {
-            if ($notification->getType() === Notification::TYPE_AFFECTATION && $notification->getAffectation())
+            if (Notification::TYPE_AFFECTATION === $notification->getType() && $notification->getAffectation()) {
                 $this->affectations->add($notification);
-            elseif ($notification->getType() === Notification::TYPE_SUIVI && $notification->getSuivi())
+            } elseif (Notification::TYPE_SUIVI === $notification->getType() && $notification->getSuivi()) {
                 $this->suivis->add($notification);
-            elseif ($notification->getType() === Notification::TYPE_NEW_SIGNALEMENT && $notification->getSignalement())
+            } elseif (Notification::TYPE_NEW_SIGNALEMENT === $notification->getType() && $notification->getSignalement()) {
                 $this->signalements->add($notification);
+            }
         });
 
         return $this->render('back/notifications/index.html.twig', [
@@ -82,13 +84,14 @@ class BackNotificationController extends AbstractController
     public function deleteNotification(Notification $notification, EntityManagerInterface $em, Request $request): Response
     {
         $this->denyAccessUnlessGranted('NOTIF_DELETE', $notification);
-        if ($this->isCsrfTokenValid('back_delete_notification_' . $notification->getId(), $request->get('_token'))) {
+        if ($this->isCsrfTokenValid('back_delete_notification_'.$notification->getId(), $request->get('_token'))) {
             $em->remove($notification);
             $em->flush();
             $this->addFlash('success', 'Notification supprimée avec succès');
         } else {
             $this->addFlash('error', 'Erreur lors de la suppression de la notification.');
         }
+
         return $this->redirectToRoute('back_news_activities');
     }
 }

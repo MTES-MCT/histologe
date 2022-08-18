@@ -3,7 +3,6 @@
 namespace App\Controller\Security;
 
 use App\Entity\User;
-use App\Notifier\CustomLoginLinkNotification;
 use App\Repository\UserRepository;
 use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,21 +26,21 @@ class UserAccountController extends AbstractController
             if ($user) {
                 $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
                 $loginLink = $loginLinkDetails->getUrl();
-                $notificationService->send(NotificationService::TYPE_ACCOUNT_ACTIVATION, $email, ['link' => $loginLink],$user->getTerritory());
+                $notificationService->send(NotificationService::TYPE_ACCOUNT_ACTIVATION, $email, ['link' => $loginLink], $user->getTerritory());
+
                 return $this->render('security/login_link_sent.html.twig', [
                     'title' => 'Lien de connexion envoyé !',
-                    'email' => $email
+                    'email' => $email,
                 ]);
-            } else {
-                $this->addFlash('error', "Cette adresse ne correspond à aucun compte, verifiez votre saisie");
             }
+            $this->addFlash('error', 'Cette adresse ne correspond à aucun compte, verifiez votre saisie');
         }
 
         // if it's not submitted, render the "login" form
         return $this->render('security/login_activation.html.twig', [
             'title' => $title,
-            'actionTitle' => "Activation de votre compte",
-            'actionText' => "afin d'activer"
+            'actionTitle' => 'Activation de votre compte',
+            'actionText' => "afin d'activer",
         ]);
     }
 
@@ -53,16 +52,18 @@ class UserAccountController extends AbstractController
         foreach ($userRepository->findAll() as $user) {
             $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
             $loginLink = $loginLinkDetails->getUrl();
-            $notificationService->send(NotificationService::TYPE_ACCOUNT_ACTIVATION, $user->getEmail(), ['link' => $loginLink],$user->getTerritory());
-            $count++;
+            $notificationService->send(NotificationService::TYPE_ACCOUNT_ACTIVATION, $user->getEmail(), ['link' => $loginLink], $user->getTerritory());
+            ++$count;
         }
-        return $this->json(['response' => $count . ' Mails envoyés']);
+
+        return $this->json(['response' => $count.' Mails envoyés']);
     }
 
     #[Route('/activation-incorrecte', name: 'login_activation_fail')]
     public function activationFail(): Response
     {
         $this->addFlash('error', 'Le lien utilisé est invalide ou expiré, veuillez en generer un nouveau');
+
         return $this->forward('App\Controller\Security\UserAccountController::requestLoginLink');
     }
 
@@ -74,19 +75,19 @@ class UserAccountController extends AbstractController
             $user = $userRepository->findOneBy(['email' => $email]);
             $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
             $loginLink = $loginLinkDetails->getUrl();
-            $notificationService->send(NotificationService::TYPE_ACCOUNT_ACTIVATION, $email, ['link' => $loginLink],$user->getTerritory());
-            //END NOTIFICATION
+            $notificationService->send(NotificationService::TYPE_ACCOUNT_ACTIVATION, $email, ['link' => $loginLink], $user->getTerritory());
+            // END NOTIFICATION
             return $this->render('security/login_link_sent.html.twig', [
                 'title' => 'Lien de récupération envoyé !',
-                'email' => $email
+                'email' => $email,
             ]);
         }
 
         // if it's not submitted, render the "login" form
         return $this->render('security/login_activation.html.twig', [
             'title' => $title,
-            'actionTitle' => "Récupération de mot de passe",
-            'actionText' => "afin de récupèrer l'accès à"
+            'actionTitle' => 'Récupération de mot de passe',
+            'actionText' => "afin de récupèrer l'accès à",
         ]);
     }
 
@@ -94,7 +95,7 @@ class UserAccountController extends AbstractController
     public function createPassword(Request $request, PasswordHasherFactoryInterface $hasherFactory, EntityManagerInterface $entityManager): RedirectResponse|Response
     {
         $title = 'Création de votre mot de passe';
-        if ($request->isMethod('POST') && $this->isCsrfTokenValid('create_password_' . $this->getUser()->getId(), $request->get('_csrf_token'))) {
+        if ($request->isMethod('POST') && $this->isCsrfTokenValid('create_password_'.$this->getUser()->getId(), $request->get('_csrf_token'))) {
             $user = $this->getUser();
             $password = $hasherFactory->getPasswordHasher($user)->hash($request->get('password'));
             $user->setPassword($password);
@@ -102,10 +103,12 @@ class UserAccountController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
             $this->addFlash('success', 'Votre compte est maintenant activé !');
+
             return $this->redirectToRoute('back_index');
         }
+
         return $this->render('security/login_creation_mdp.html.twig', [
-            'title' => $title
+            'title' => $title,
         ]);
     }
 }

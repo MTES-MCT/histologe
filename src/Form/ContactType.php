@@ -16,26 +16,26 @@ class ContactType extends AbstractType
         $builder
             ->add('nom', TextType::class, [
                 'row_attr' => [
-                    'class' => 'fr-input-group fr-col-6'
+                    'class' => 'fr-input-group fr-col-6',
                 ], 'attr' => [
-                    'class' => 'fr-input'
-                ], 'label' => 'Votre nom'
+                    'class' => 'fr-input',
+                ], 'label' => 'Votre nom',
             ])
             ->add('email', EmailType::class, [
                 'row_attr' => [
-                    'class' => 'fr-input-group fr-col-6'
+                    'class' => 'fr-input-group fr-col-6',
                 ], 'attr' => [
-                    'class' => 'fr-input'
-                ], 'label' => 'Votre adresse courriel'
+                    'class' => 'fr-input',
+                ], 'label' => 'Votre adresse courriel',
             ])
             ->add('message', TextareaType::class, [
                 'row_attr' => [
-                    'class' => 'fr-input-group fr-col-12'
+                    'class' => 'fr-input-group fr-col-12',
                 ], 'attr' => [
                     'class' => 'fr-input',
                     'rows' => 10,
-                    'minlength' => 10
-                ], 'label' => 'Votre message'
+                    'minlength' => 10,
+                ], 'label' => 'Votre message',
             ]);
     }
 
@@ -46,7 +46,7 @@ class ContactType extends AbstractType
                 'id' => 'front_contact',
                 'class' => 'needs-validation',
                 'novalidate' => 'true',
-            ]
+            ],
             // Configure your form options here
         ]);
     }

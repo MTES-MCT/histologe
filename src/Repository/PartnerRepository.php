@@ -23,15 +23,17 @@ class PartnerRepository extends ServiceEntityRepository
     // /**
     //  * @return Partner[] Returns an array of Partner objects
     //  */
-    public function findAllOrByInseeIfCommune(int|null $insee,Territory|null $territory)
+    public function findAllOrByInseeIfCommune(int|null $insee, Territory|null $territory)
     {
         $qb = $this->createQueryBuilder('p')
             ->where('p.isArchive != 1');
-        if ($insee)
-            $qb->andWhere("p.isCommune = 0 OR p.isCommune = 1 AND p.insee LIKE :insee")
+        if ($insee) {
+            $qb->andWhere('p.isCommune = 0 OR p.isCommune = 1 AND p.insee LIKE :insee')
                 ->setParameter('insee', '%'.$insee.'%');
-        if($territory)
+        }
+        if ($territory) {
             $qb->andWhere('p.territory = :territory')->setParameter('territory', $territory);
+        }
         $qb
             ->leftJoin('p.affectations', 'affectations')
             ->addSelect('affectations');
@@ -46,13 +48,14 @@ class PartnerRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('p')
             ->select('PARTIAL p.{id,nom,isCommune}')
             ->where('p.isArchive != 1');
-        if ($territory)
+        if ($territory) {
             $qb->andWhere('p.territory = :territory')->setParameter('territory', $territory);
+        }
+
         return $qb->indexBy('p', 'p.id')
             ->getQuery()
             ->getResult();
     }
-
 
     /*
     public function findOneBySomeField($value): ?Partner

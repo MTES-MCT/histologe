@@ -13,7 +13,7 @@ class ConfigVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return $attribute == self::EDIT
+        return self::EDIT == $attribute
             && $subject instanceof Config;
     }
 
@@ -23,14 +23,14 @@ class ConfigVoter extends Voter
         if (!$user instanceof UserInterface) {
             return false;
         }
-        if($user->isSuperAdmin())
+        if ($user->isSuperAdmin()) {
             return true;
+        }
 
         return match ($attribute) {
             self::EDIT => $this->canEdit($user, $subject),
             default => false,
         };
-
     }
 
     private function canEdit(UserInterface $user, Config $config): bool

@@ -26,7 +26,7 @@ class BackAssignmentController extends AbstractController
     public function toggleAffectationSignalement(Signalement $signalement, EsaboraService $esaboraService, ManagerRegistry $doctrine, Request $request, PartnerRepository $partnerRepository, NotificationService $notificationService): RedirectResponse|JsonResponse
     {
         $this->denyAccessUnlessGranted('ASSIGN_TOGGLE', $signalement);
-        if ($this->isCsrfTokenValid('signalement_affectation_' . $signalement->getId(), $request->get('_token'))) {
+        if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), $request->get('_token'))) {
             $data = $request->get('signalement-affectation');
             if (isset($data['partners'])) {
                 $postedPartner = $data['partners'];
@@ -43,14 +43,16 @@ class BackAssignmentController extends AbstractController
                     $affectation->setAffectedBy($this->getUser());
                     $affectation->setTerritory($partner->getTerritory());
                     $doctrine->getManager()->persist($affectation);
-                    if ($partner->getEsaboraToken() && $partner->getEsaboraUrl())
+                    if ($partner->getEsaboraToken() && $partner->getEsaboraUrl()) {
                         $esaboraService->post($affectation);
+                    }
                 }
                 foreach ($partnersToRemove as $partnerIdToRemove) {
                     $partner = $partnerRepository->find($partnerIdToRemove);
                     $signalement->getAffectations()->filter(function (Affectation $affectation) use ($doctrine, $partner) {
-                        if ($affectation->getPartner()->getId() === $partner->getId())
+                        if ($affectation->getPartner()->getId() === $partner->getId()) {
                             $doctrine->getManager()->remove($affectation);
+                        }
                     });
                 }
             } else {
@@ -61,29 +63,31 @@ class BackAssignmentController extends AbstractController
 
             $doctrine->getManager()->flush();
             $this->addFlash('success', 'Les affectations ont bien été effectuées.');
+
             return $this->json(['status' => 'success']);
         }
+
         return $this->json(['status' => 'denied'], 400);
     }
 
-    #[Route('/{signalement}/{affectation}/{user}/response', name: 'back_signalement_affectation_response', methods: "POST")]
+    #[Route('/{signalement}/{affectation}/{user}/response', name: 'back_signalement_affectation_response', methods: 'POST')]
     #[ParamConverter('signalement', class: Signalement::class)]
     #[ParamConverter('affectation', class: Affectation::class)]
     #[ParamConverter('user', class: User::class)]
-    public function affectationResponseSignalement(Signalement $signalement,Affectation $affectation, User $user, Request $request, ManagerRegistry $doctrine): Response
+    public function affectationResponseSignalement(Signalement $signalement, Affectation $affectation, User $user, Request $request, ManagerRegistry $doctrine): Response
     {
         $this->denyAccessUnlessGranted('ASSIGN_ANSWER', $affectation);
-        if ($this->isCsrfTokenValid('signalement_affectation_response_' . $signalement->getId(), $request->get('_token'))
+        if ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), $request->get('_token'))
             && $response = $request->get('signalement-affectation-response')) {
-            if (isset($response['accept']))
+            if (isset($response['accept'])) {
                 $statut = Affectation::STATUS_ACCEPTED;
-            else {
+            } else {
                 $motifRefus = $response['suivi'];
                 $statut = Affectation::STATUS_REFUSED;
                 $motifRefus = preg_replace('/<p[^>]*>/', '', $motifRefus); // Remove the start <p> or <p attr="">
                 $motifRefus = str_replace('</p>', '<br>', $motifRefus); // Replace the end
                 $suivi = new Suivi();
-                $suivi->setDescription('Le signalement à été refusé avec le motif suivant:<br> ' . $motifRefus);
+                $suivi->setDescription('Le signalement à été refusé avec le motif suivant:<br> '.$motifRefus);
                 $suivi->setCreatedBy($user);
                 $suivi->setSignalement($signalement);
                 $doctrine->getManager()->persist($suivi);
@@ -94,9 +98,10 @@ class BackAssignmentController extends AbstractController
             $doctrine->getManager()->persist($affectation);
             $doctrine->getManager()->flush();
             $this->addFlash('success', 'Affectation mise à jour avec succès !');
-        } else
+        } else {
             $this->addFlash('error', "Une erreur est survenu lors de l'affectation");
+        }
+
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
-
 }

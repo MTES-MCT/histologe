@@ -36,7 +36,6 @@ class SituationRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-
     public function findAllWithCritereAndCriticite()
     {
         return $this->createQueryBuilder('s')
@@ -50,7 +49,6 @@ class SituationRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-
 
     /*
     public function findOneBySomeField($value): ?Situation

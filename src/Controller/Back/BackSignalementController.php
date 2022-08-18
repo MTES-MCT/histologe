@@ -2,7 +2,6 @@
 
 namespace App\Controller\Back;
 
-
 use App\Entity\Affectation;
 use App\Entity\Critere;
 use App\Entity\Criticite;
@@ -28,19 +27,19 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 #[Route('/bo/s')]
 class BackSignalementController extends AbstractController
 {
-
     #[Route('/{uuid}', name: 'back_signalement_view')]
     public function viewSignalement($uuid, Request $request, EntityManagerInterface $entityManager, TagRepository $tagsRepository, PartnerRepository $partnerRepository): Response
     {
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findByUuid($uuid);
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
-        if ($signalement->getStatut() === Signalement::STATUS_ARCHIVED) {
-            $this->addFlash("error", "Ce signalement à été archivé et n'est pas consultable.");
+        if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
+            $this->addFlash('error', "Ce signalement à été archivé et n'est pas consultable.");
+
             return $this->redirectToRoute('back_index');
         }
 
-        //TODO REPLACE THIS
+        // TODO REPLACE THIS
         $this->getUser()->getNotifications()->filter(function (Notification $notification) use ($signalement, $entityManager) {
             if ($notification->getSignalement()->getId() === $signalement->getId()) {
                 $notification->setIsSeen(true);
@@ -64,30 +63,30 @@ class BackSignalementController extends AbstractController
                     break;
             }
         }
-        $isClosedForMe = $isClosedForMe ?? $signalement->getStatut() === Signalement::STATUS_CLOSED;
+        $isClosedForMe = $isClosedForMe ?? Signalement::STATUS_CLOSED === $signalement->getStatut();
         $clotureForm = $this->createForm(ClotureType::class);
         $clotureForm->handleRequest($request);
         if ($clotureForm->isSubmitted() && $clotureForm->isValid()) {
             $motifCloture = $clotureForm->get('motif')->getData();
             $motifSuivi = $clotureForm->getExtraData()['suivi'];
             $sujet = $this->getUser()?->getPartner()?->getNom();
-            if ($clotureForm->get('type')->getData() === 'all') {
+            if ('all' === $clotureForm->get('type')->getData()) {
                 $signalement->setStatut(Signalement::STATUS_CLOSED);
                 $signalement->setMotifCloture($motifCloture);
                 $signalement->setClosedAt(new DateTimeImmutable());
                 $sujet = 'tous les partenaires';
-                $signalement->getAffectations()->map(function (Affectation $affectation) use ($entityManager,$motifCloture) {
+                $signalement->getAffectations()->map(function (Affectation $affectation) use ($entityManager, $motifCloture) {
                     $affectation->setStatut(Affectation::STATUS_CLOSED);
                     $affectation->setMotifCloture($motifCloture);
                     $affectation->setAnsweredBy($this->getUser());
-                    /*   $entityManager->getConnection()->connect();*/
+                    /*   $entityManager->getConnection()->connect(); */
                     $entityManager->persist($affectation);
                 });
             }
             $motifSuivi = preg_replace('/<p[^>]*>/', '', $motifSuivi); // Remove the start <p> or <p attr="">
             $motifSuivi = str_replace('</p>', '<br>', $motifSuivi); // Replace the end
             $suivi = new Suivi();
-            $suivi->setDescription('Le signalement à été cloturé pour ' . $sujet . ' avec le motif suivant: <br> <strong>' . $motifCloture . '</strong><br><strong>Desc.: </strong>' . $motifSuivi);
+            $suivi->setDescription('Le signalement à été cloturé pour '.$sujet.' avec le motif suivant: <br> <strong>'.$motifCloture.'</strong><br><strong>Desc.: </strong>'.$motifSuivi);
             $suivi->setCreatedBy($this->getUser());
             $signalement->addSuivi($suivi);
             /** @var Affectation $isAffected */
@@ -101,6 +100,7 @@ class BackSignalementController extends AbstractController
             $entityManager->persist($suivi);
             $entityManager->flush();
             $this->addFlash('success', 'Signalement cloturé avec succès !');
+
             return $this->redirectToRoute('back_index');
         }
         $criticitesArranged = [];
@@ -109,7 +109,7 @@ class BackSignalementController extends AbstractController
         }
 
         $canEditSignalement = false;
-        if ($signalement->getStatut() === Signalement::STATUS_ACTIVE || $signalement->getStatut() === Signalement::STATUS_NEED_PARTNER_RESPONSE) {
+        if (Signalement::STATUS_ACTIVE === $signalement->getStatut() || Signalement::STATUS_NEED_PARTNER_RESPONSE === $signalement->getStatut()) {
             $canEditSignalement = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY') || $isAccepted;
         }
 
@@ -117,30 +117,30 @@ class BackSignalementController extends AbstractController
             'title' => 'Signalement',
             'situations' => $criticitesArranged,
             'affectations' => $signalement->getAffectations(),
-            'needValidation' => $signalement->getStatut() === Signalement::STATUS_NEED_VALIDATION,
+            'needValidation' => Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut(),
             'canEditSignalement' => $canEditSignalement,
             'isAffected' => $isAffected,
             'isAccepted' => $isAccepted,
-            'isClosed' => $signalement->getStatut() === Signalement::STATUS_CLOSED,
+            'isClosed' => Signalement::STATUS_CLOSED === $signalement->getStatut(),
             'isClosedForMe' => $isClosedForMe,
             'isRefused' => $isRefused,
             'signalement' => $signalement,
-            'partners' => $partnerRepository->findAllOrByInseeIfCommune($signalement->getInseeOccupant(),$signalement->getTerritory()),
+            'partners' => $partnerRepository->findAllOrByInseeIfCommune($signalement->getInseeOccupant(), $signalement->getTerritory()),
             'clotureForm' => $clotureForm->createView(),
-            'tags' => $tagsRepository->findAllActive($signalement->getTerritory())
+            'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
         ]);
     }
 
     #[Route('/{uuid}/edit', name: 'back_signalement_edit', methods: ['GET', 'POST'])]
     public function editSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine, SituationRepository $situationRepository, HttpClientInterface $httpClient): Response
     {
-        $title = 'Administration - Edition signalement #' . $signalement->getReference();
-        $etats = ["Etat moyen", "Mauvais état", "Très mauvais état"];
-        $etats_classes = ["moyen", "grave", "tres-grave"];
+        $title = 'Administration - Edition signalement #'.$signalement->getReference();
+        $etats = ['Etat moyen', 'Mauvais état', 'Très mauvais état'];
+        $etats_classes = ['moyen', 'grave', 'tres-grave'];
         $form = $this->createForm(SignalementType::class, $signalement);
         $form->handleRequest($request);
-        if ($form->isSubmitted() /*&& $form->isValid()*/) {
-            //TODO INSEE AP
+        if ($form->isSubmitted() /* && $form->isValid() */) {
+            // TODO INSEE AP
             $signalement->setModifiedBy($this->getUser());
             $signalement->setModifiedAt(new DateTimeImmutable());
             $score = new CriticiteCalculatorService($signalement, $doctrine);
@@ -186,12 +186,12 @@ class BackSignalementController extends AbstractController
             $doctrine->getManager()->persist($signalement);
             $doctrine->getManager()->flush();
             $this->addFlash('success', 'Signalement modifié avec succés !');
+
             return $this->json(['response' => 'success_edited']);
-        } else if ($form->isSubmitted()) {
+        } elseif ($form->isSubmitted()) {
 //            dd($form->getErrors()[0]);
             return $this->json(['response' => $form->getErrors()]);
         }
-
 
         return $this->render('back/signalement/edit.html.twig', [
             'title' => $title,
@@ -199,22 +199,23 @@ class BackSignalementController extends AbstractController
             'signalement' => $signalement,
             'situations' => $situationRepository->findAllActive(),
             'etats' => $etats,
-            'etats_classes' => $etats_classes
+            'etats_classes' => $etats_classes,
         ]);
     }
 
-    #[Route('/{uuid}/delete', name: 'back_signalement_delete', methods: "POST")]
+    #[Route('/{uuid}/delete', name: 'back_signalement_delete', methods: 'POST')]
     public function deleteSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine): Response
     {
         $this->denyAccessUnlessGranted('SIGN_DELETE', $signalement);
-        if ($this->isCsrfTokenValid('signalement_delete_' . $signalement->getId(), $request->get('_token'))) {
+        if ($this->isCsrfTokenValid('signalement_delete_'.$signalement->getId(), $request->get('_token'))) {
             $signalement->setStatut(Signalement::STATUS_ARCHIVED);
             $doctrine->getManager()->persist($signalement);
             $doctrine->getManager()->flush();
             $this->addFlash('success', 'Signalement supprimé avec succès !');
-        } else
+        } else {
             $this->addFlash('error', 'Une erreur est survenu lors de la suppression');
+        }
+
         return $this->redirectToRoute('back_index');
     }
-
 }

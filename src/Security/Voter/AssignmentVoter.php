@@ -17,7 +17,7 @@ class AssignmentVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return in_array($attribute, [self::TOGGLE,self::ANSWER, self::CLOSE, self::REOPEN])
+        return \in_array($attribute, [self::TOGGLE, self::ANSWER, self::CLOSE, self::REOPEN])
             && ($subject instanceof Affectation || $subject instanceof Signalement);
     }
 
@@ -27,6 +27,7 @@ class AssignmentVoter extends Voter
         if (!$user instanceof UserInterface || !$user->isSuperAdmin() && $subject->getTerritory() !== $user->getTerritory()) {
             return false;
         }
+
         return match ($attribute) {
             self::TOGGLE => $this->canToggle($subject, $user),
             self::ANSWER => $this->canAnswer($subject, $user),
@@ -34,28 +35,25 @@ class AssignmentVoter extends Voter
             self::REOPEN => $this->canReopen($subject, $user),
             default => false,
         };
-
     }
-
 
     private function canToggle(Signalement $signalement, UserInterface $user)
     {
-        return ($user->isSuperAdmin() || $user->isTerritoryAdmin()) && $signalement->getStatut() === Signalement::STATUS_ACTIVE;
+        return ($user->isSuperAdmin() || $user->isTerritoryAdmin()) && Signalement::STATUS_ACTIVE === $signalement->getStatut();
     }
 
     private function canAnswer(Affectation $assignment, UserInterface $user): bool
     {
-        return $assignment->getPartner() === $user->getPartner() && $assignment->getSignalement()->getStatut() === Signalement::STATUS_ACTIVE;
+        return $assignment->getPartner() === $user->getPartner() && Signalement::STATUS_ACTIVE === $assignment->getSignalement()->getStatut();
     }
 
     private function canClose(Affectation $assignment, UserInterface $user): bool
     {
-        return $this->canAnswer($assignment, $user) && $assignment->getStatut() === Affectation::STATUS_ACCEPTED;
+        return $this->canAnswer($assignment, $user) && Affectation::STATUS_ACCEPTED === $assignment->getStatut();
     }
 
     private function canReopen(Affectation $assignment, UserInterface $user): bool
     {
-        return $this->canAnswer($assignment, $user) && $assignment->getStatut() === Affectation::STATUS_CLOSED;
+        return $this->canAnswer($assignment, $user) && Affectation::STATUS_CLOSED === $assignment->getStatut();
     }
-
 }

@@ -44,6 +44,8 @@ load-data: ## : Drop database
 
 composer: ## : Install composer dependencies
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer install --dev --no-interaction --optimize-autoloader
+	@echo "\033[33mInstall tools dependencies ...\033[0m"
+	@$(DOCKER_COMP) exec -it histologe_phpfpm composer install --working-dir=tools/php-cs-fixer --dev --no-interaction --optimize-autoloader
 
 ## Tests
 
@@ -53,7 +55,13 @@ test: ##  : Run all tests
 ## Coding standards
 
 stan: ## : Run PHPStan
-	@$(DOCKER_COMP) exec -it histologe_phpfpm $(PHPSTAN) analyse --memory-limit 1G
+	@$(DOCKER_COMP) exec -it histologe_phpfpm composer stan
+
+cs-check: ## : Check source code with PHP-CS-Fixer
+	@$(DOCKER_COMP) exec -it histologe_phpfpm composer cs-check
+
+cs-fix: ## : Fix source ode with PHP-CS-Fixer
+	@$(DOCKER_COMP) exec -it histologe_phpfpm composer cs-fix
 
 .check:
 	@echo "\033[31mWARNING!!!\033[0m Executing this script will reinitialize the project and all of its data"
