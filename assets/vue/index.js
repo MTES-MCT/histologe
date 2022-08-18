@@ -1,4 +1,4 @@
 import { createApp } from 'vue';
-import App from './components/App';
+import HistoAppStats from './components/stats/HistoAppStats';
 
-createApp(App).mount('#app-stats')
+createApp(HistoAppStats).mount('#app-stats')
