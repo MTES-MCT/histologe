@@ -36,6 +36,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light-border.css"/>
     {% block stylesheets %}{% endblock %}
+    {% block customscripts %}{% endblock %}
     {{ config.get.trackingCode ? config.get.tagManagerCode|raw : '' }}
     {{ config.get.tagManagerCode ? config.get.tagManagerCode|raw :'' }}
 </head>

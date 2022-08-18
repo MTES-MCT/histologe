@@ -66,6 +66,12 @@ cp .env.sample .env
 make build
 ```
 
+#### Compilation des fichiers Vue.js en cours de développement
+```
+npm install
+npm run watch
+```
+
 ### Tests
 
 #### Tests e2e
