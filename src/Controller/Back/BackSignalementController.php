@@ -49,7 +49,7 @@ class BackSignalementController extends AbstractController
         });
         $entityManager->flush();
         $isRefused = $isAccepted = $isClosedForMe = null;
-        if ($isAffected = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($isClosedForMe) {
+        if ($isAffected = $signalement->getAffectations()->filter(function (Affectation $affectation) {
             return $affectation->getPartner() === $this->getUser()->getPartner();
         })->first()) {
             switch ($isAffected->getStatut()) {

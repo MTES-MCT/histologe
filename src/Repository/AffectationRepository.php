@@ -52,7 +52,7 @@ class AffectationRepository extends ServiceEntityRepository
 
         $page = (int)$options['page'];
         $pageSize = $export ?? self::ARRAY_LIST_PAGE_SIZE;
-        $firstResult = (($page ?? 1) - 1) * $pageSize;
+        $firstResult = (($page ? $page : 1) - 1) * $pageSize;
         $qb = $this->createQueryBuilder('a');
         $qb->where('s.statut != :status')
             ->setParameter('status', Signalement::STATUS_ARCHIVED);

@@ -54,6 +54,7 @@ class BackSignalementFileController extends AbstractController
     {
         $this->denyAccessUnlessGranted('FILE_CREATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_add_file_' . $signalement->getId(), $request->get('_token')) && $files = $request->files->get('signalement-add-file')) {
+            $type = '';
             if (isset($files['documents']))
                 $type = 'documents';
             if (isset($files['photos']))

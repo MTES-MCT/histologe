@@ -13,14 +13,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class NewsActivitiesSinceLastLoginService
 {
-    private RequestStack $requestStack;
     private array $activities;
 
-    public function __construct(RequestStack $requestStack, AffectationRepository $affectationRepository)
-    {
-        $this->requestStack = $requestStack;
-        $this->affectationRepo = $affectationRepository;
-    }
+    public function __construct(
+        private RequestStack $requestStack,
+        private AffectationRepository $affectationRepo
+    ) {}
 
 
     public function getAffectationsAndSuivis($user)
@@ -29,7 +27,7 @@ class NewsActivitiesSinceLastLoginService
         $results = $this->affectationRepo->findByPartenaire($user->getPartner());
         $affectations = new ArrayCollection();
         $suivis = new ArrayCollection();
-        $results->filter(function (Affectation $affectation) use ($affectations, $suivis, $lastActivity) {
+        $results->filter(function (Affectation $affectation) use ($affectations, $lastActivity) {
             $signalement = $affectation->getSignalement();
             if (!$affectations->contains($signalement) && $affectation->getStatut() === Affectation::STATUS_CLOSED)
                 $affectations->add($signalement);

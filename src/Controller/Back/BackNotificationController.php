@@ -6,7 +6,6 @@ use App\Entity\Notification;
 use App\Repository\NotificationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use JetBrains\PhpStorm\Pure;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +19,7 @@ class BackNotificationController extends AbstractController
     private ArrayCollection $affectations;
     private ArrayCollection $suivis;
 
-    #[Pure] public function __construct()
+    public function __construct()
     {
         $this->suivis = new ArrayCollection();
         $this->affectations = new ArrayCollection();
@@ -31,7 +30,6 @@ class BackNotificationController extends AbstractController
     public function newsActivitiesSinceLastLogin(Request $request, NotificationRepository $notificationRepository, EntityManagerInterface $entityManager): Response
     {
         $title = 'Administration - Nouveauté(s)';
-//        dd($newsActivitiesSinceLastLoginService->getAll());
         if ($this->isCsrfTokenValid('mark_as_read_' . $this->getUser()->getId(), $request->get('mark_as_read'))) {
             $this->markAllAsRead($entityManager);
             $this->addFlash('success', 'Toutes les notifications marquées comme lues.');

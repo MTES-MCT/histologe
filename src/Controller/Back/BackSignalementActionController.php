@@ -96,7 +96,7 @@ class BackSignalementActionController extends AbstractController
             if ($this->isGranted('ROLE_ADMIN_TERRITORY') && isset($response['reopenAll'])) {
                 $signalement->setStatut(Signalement::STATUS_ACTIVE);
                 $doctrine->getManager()->persist($signalement);
-                $signalement->getAffectations()->filter(function (Affectation $affectation) use ($signalement, $doctrine) {
+                $signalement->getAffectations()->filter(function (Affectation $affectation) use ($doctrine) {
                     $affectation->setStatut(Affectation::STATUS_WAIT) && $doctrine->getManager()->persist($affectation);
                 });
                 $reopenFor = 'tous les partenaires';

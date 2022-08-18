@@ -344,7 +344,6 @@ class Signalement
         $this->isOccupantPresentVisite = false;
         $this->suivis = new ArrayCollection();
         $this->scoreCreation = 0;
-        $this->clotures = new ArrayCollection();
         $this->affectations = new ArrayCollection();
         $this->tags = new ArrayCollection();
     }
@@ -1594,17 +1593,6 @@ class Signalement
         }
 
         return $this;
-    }
-
-    public function isClosedFor(Partner $partner)
-    {
-        $isClosedFor = $this->clotures->filter(function (Cloture $cloture) use ($partner) {
-            if ($cloture->getPartner()->getId() === $partner->getId())
-                return $cloture;
-        });
-        if (!$isClosedFor->isEmpty())
-            return true;
-        return false;
     }
 
     public function getMotifCloture(): ?string

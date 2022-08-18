@@ -2,10 +2,11 @@
 .PHONY: help
 
 DOCKER_COMP   = docker-compose
-PHPUNIT       = ./vendor/bin/phpunit
 DATABASE_USER = histologe
 DATABASE_NAME = histologe_db
 PATH_DUMP_SQL = data/dump.sql
+PHPSTAN       = ./vendor/bin/phpstan
+PHPUNIT       = ./vendor/bin/phpunit
 
 help:
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -32,9 +33,6 @@ mysql: ## : Log to mysql container
 	@echo -e '\e[1;32mLog to mysql container\032[0m'
 	@bash -l -c '$(DOCKER_COMP) exec -it histologe_mysql mysql -u histologe -phistologe histologe_db'
 
-test: ##  : Run all tests
-	@$(PHPUNIT) --stop-on-failure
-
 create-db: ## : Create database
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "php bin/console --env=dev doctrine:database:create --no-interaction"
 
@@ -46,6 +44,16 @@ load-data: ## : Drop database
 
 composer: ## : Install composer dependencies
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer install --dev --no-interaction --optimize-autoloader
+
+## Tests
+
+test: ##  : Run all tests
+	@$(PHPUNIT) --stop-on-failure
+
+## Coding standards
+
+stan: ## : Run PHPStan
+	@$(DOCKER_COMP) exec -it histologe_phpfpm $(PHPSTAN) analyse --memory-limit 1G
 
 .check:
 	@echo "\033[31mWARNING!!!\033[0m Executing this script will reinitialize the project and all of its data"

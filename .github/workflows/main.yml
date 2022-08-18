@@ -1,11 +1,16 @@
 # https://help.github.com/en/actions
-name: Full CI process for Symfony 6
+name: Histologe CI
 on:
   push:
     branches:
-      - master
-env:
-  ES_HTTP_PORT: 9209
+      - main
+      - develop
+      - 'feature/**'
+  pull_request:
+    branches:
+      - main
+      - develop
+
 jobs:
   symfony:
     name: Symfony 6 (PHP ${{ matrix.php-versions }})
@@ -21,22 +26,11 @@ jobs:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       # https://hub.docker.com/_/elasticsearch/
-      elasticsearch:
-        image: elasticsearch:6.8.10
-        ports:
-          - 9209:9200
-        options: -e="discovery.type=single-node" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
     strategy:
       fail-fast: true
       matrix:
         php-versions: ['8.0', '8.1']
     steps:
-      # —— Check Elasticsearch 🔎 ——————————————————————————————————————————————
-      - name: Check the Elasticsearch connection from runner host
-        run: |
-          curl -fsSL "http://localhost:$ES_HTTP_PORT"
-          curl -fsSL "http://localhost:$ES_HTTP_PORT/_cluster/health?pretty"
-
       # —— Setup Github actions 🐙 —————————————————————————————————————————————
       # https://github.com/actions/checkout (official)
       - name: Checkout
