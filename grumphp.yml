@@ -4,7 +4,8 @@ grumphp:
         keywords:
           - 'var_dump('
           - 'dump('
-          - 'dd('
+          - ' dd('
+          - ';dd('
           - 'die('
           - 'exit('
       phpstan: ~
