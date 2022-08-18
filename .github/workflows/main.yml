@@ -61,7 +61,7 @@ jobs:
       - name: Install Composer dependencies
         run: | 
           composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
-          composer install--working-dir=tools/php-cs-fixer --no-progress --no-suggest --prefer-dist --optimize-autoloader
+          composer install --working-dir=tools/php-cs-fixer --no-progress --no-suggest --prefer-dist --optimize-autoloader
 
       # https://github.com/sensiolabs/security-checker
       - name: Security check installed dependencies
