@@ -55,10 +55,10 @@ Encore
         config.corejs = 3;
     })
 
-    // enables Sass/SCSS support
-    //.enableSassLoader()
+    .enableSassLoader()
 
     .enableTypeScriptLoader()
+
     .enableVueLoader(() => {}, {
         version: 3
     })
