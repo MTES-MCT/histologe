@@ -5,7 +5,6 @@ DOCKER_COMP   = docker-compose
 DATABASE_USER = histologe
 DATABASE_NAME = histologe_db
 PATH_DUMP_SQL = data/dump.sql
-PHPSTAN       = ./vendor/bin/phpstan
 PHPUNIT       = ./vendor/bin/phpunit
 
 help:
@@ -50,7 +49,7 @@ composer: ## : Install composer dependencies
 ## Tests
 
 test: ##  : Run all tests
-	@$(PHPUNIT) --stop-on-failure
+	@$(PHPUNIT) --stop-on-failure --testdox
 
 ## Coding standards
 

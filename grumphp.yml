@@ -1,0 +1,10 @@
+grumphp:
+    tasks:
+      git_blacklist:
+        keywords:
+          - 'var_dump('
+          - 'dump('
+          - 'dd('
+          - 'die('
+          - 'exit('
+      phpstan: ~
