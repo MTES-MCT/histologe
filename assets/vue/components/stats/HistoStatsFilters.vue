@@ -13,7 +13,7 @@
   </section>
 </template>
 
-<script>
+<script lang="ts">
 import HistoSelect from '../common/HistoSelect.vue';
 
 export default {

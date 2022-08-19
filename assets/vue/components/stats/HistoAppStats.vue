@@ -7,7 +7,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import HistoBOTabHeader from '../common/HistoBOTabHeader.vue'
 import HistoStatsFilters from './HistoStatsFilters.vue'
 

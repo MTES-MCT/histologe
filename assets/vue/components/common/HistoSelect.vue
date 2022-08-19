@@ -6,25 +6,30 @@
   </span>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent( {
   name: 'HistoSelect',
   props: {
     id: { type: String, default: '' },
     innerLabel: { type: String, default: '' },
     value: { type: String, default: '' },
-    optionItems: { type: Array, default: [] },
+    optionItems: {
+		type: Array as () => Array<{ Id: string, Text: string }>,
+		default: () => [] 
+	},
   },
-  data () {
+  data: function () {
     return {
       valueReturn: this.value,
-	  displayedItems: []
+	  displayedItems: [] as Object[]
     }
   },
   methods: {
     onSelectedEvent () {
-      // Retour de valeur
-      this.$emit('update:valueReturn', this.valueReturn)
+      // Retour de valeur -> TODO : corriger pour vue3/typescript
+      // this.$emit('update:valueReturn', this.valueReturn)
       if (this.onSelect !== undefined) {
         this.onSelect(this.valueReturn)
       }
@@ -52,7 +57,7 @@ export default {
   mounted () {
 	this.refreshDisplayedItems()
   }
-}
+} )
 </script>
 
 <style>
