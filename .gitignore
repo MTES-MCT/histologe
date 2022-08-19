@@ -10,7 +10,7 @@
 /uploaded_files/signalement/*
 !/uploaded_files/signalement/file.txt
 /var/
-/vendor/
+**/vendor/
 ###< symfony/framework-bundle ###
 /.idea/
 ###> symfony/phpunit-bridge ###
@@ -22,10 +22,12 @@
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
-/data/
+
 ###> symfony/webpack-encore-bundle ###
 /node_modules/
 /public/build/
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
+
+/data/

@@ -11,10 +11,10 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: AffectationRepository::class)]
 class Affectation
 {
-    const STATUS_WAIT = 0;
-    const STATUS_ACCEPTED = 1;
-    const STATUS_REFUSED = 2;
-    const STATUS_CLOSED = 3;
+    public const STATUS_WAIT = 0;
+    public const STATUS_ACCEPTED = 1;
+    public const STATUS_REFUSED = 2;
+    public const STATUS_CLOSED = 3;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -55,7 +55,7 @@ class Affectation
 
     public function __construct()
     {
-        $this->statut = Affectation::STATUS_WAIT;
+        $this->statut = self::STATUS_WAIT;
         $this->createdAt = new DateTimeImmutable();
         $this->notifications = new ArrayCollection();
     }
@@ -136,7 +136,6 @@ class Affectation
 
         return $this;
     }
-
 
     public function getAffectedBy(): ?User
     {

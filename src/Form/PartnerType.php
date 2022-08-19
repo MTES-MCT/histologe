@@ -29,45 +29,45 @@ class PartnerType extends AbstractType
         $builder
             ->add('nom', TextType::class, [
                 'attr' => [
-                    'class' => 'fr-input'
-                ]
+                    'class' => 'fr-input',
+                ],
             ])
             ->add('isCommune', ChoiceType::class, [
                 'row_attr' => [
-                    'class' => 'fr-select-group'
+                    'class' => 'fr-select-group',
                 ], 'attr' => [
-                    'class' => 'fr-select'
+                    'class' => 'fr-select',
                 ],
                 'choices' => [
                     'Commune' => 1,
-                    'Partner' => 0
+                    'Partner' => 0,
                 ],
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
-                'label' => 'Type de partenaire'
+                'label' => 'Type de partenaire',
             ])
             ->add('insee', TextType::class, [
                 'attr' => [
-                    'class' => 'fr-input'
+                    'class' => 'fr-input',
                 ],
                 'required' => false,
             ])
             ->add('email', EmailType::class, [
                 'attr' => [
-                    'class' => 'fr-input'
+                    'class' => 'fr-input',
                 ],
                 'required' => false,
             ])
             ->add('esaboraUrl', UrlType::class, [
                 'attr' => [
-                    'class' => 'fr-input'
+                    'class' => 'fr-input',
                 ],
                 'required' => false,
             ])
             ->add('esaboraToken', TextType::class, [
                 'attr' => [
-                    'class' => 'fr-input'
+                    'class' => 'fr-input',
                 ],
                 'required' => false,
             ])
@@ -76,14 +76,14 @@ class PartnerType extends AbstractType
                 'query_builder' => function (TerritoryRepository $tr) {
                     return $tr->createQueryBuilder('t')->orderBy('t.id', 'ASC');
                 },
-                'data' => !empty( $territory ) ? $territory : null,
+                'data' => !empty($territory) ? $territory : null,
                 'disabled' => !$options['can_edit_territory'],
                 'choice_label' => 'name',
                 'attr' => [
-                    'class' => 'fr-select'
+                    'class' => 'fr-select',
                 ],
                 'row_attr' => [
-                    'class' => 'fr-input-group'
+                    'class' => 'fr-input-group',
                 ],
                 'label' => 'Territoire',
                 'required' => true,
@@ -110,5 +110,4 @@ class PartnerType extends AbstractType
             'can_edit_territory' => true,
         ]);
     }
-
 }

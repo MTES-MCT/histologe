@@ -9,7 +9,7 @@ class PostalCodeHomeCheckerServiceTest extends KernelTestCase
 {
     private $postalCodeHomeCheckerService;
 
-    protected function setUp():void
+    protected function setUp(): void
     {
         self::bootKernel();
         $container = static::getContainer();
@@ -18,13 +18,13 @@ class PostalCodeHomeCheckerServiceTest extends KernelTestCase
 
     public function testEmptyPostalCode(): void
     {
-        $result = $this->postalCodeHomeCheckerService->getRedirection( '' );
+        $result = $this->postalCodeHomeCheckerService->getRedirection('');
         $this->assertFalse($result);
     }
 
     public function testNullPostalCode(): void
     {
-        $result = $this->postalCodeHomeCheckerService->getRedirection( 'null' );
+        $result = $this->postalCodeHomeCheckerService->getRedirection('null');
         $this->assertFalse($result);
     }
 

@@ -20,7 +20,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class AffectationRepository extends ServiceEntityRepository
 {
-    const ARRAY_LIST_PAGE_SIZE = 30;
+    public const ARRAY_LIST_PAGE_SIZE = 30;
     private SearchFilterService $searchFilterService;
 
     public function __construct(ManagerRegistry $registry)
@@ -38,9 +38,11 @@ class AffectationRepository extends ServiceEntityRepository
             ->andWhere('s.statut != 7')
             ->setParameter('partner', $user->getPartner())
             ->addSelect('a.statut');
-        if ($territory)
+        if ($territory) {
             $qb->andWhere('s.territory = :territory')
                 ->setParameter('territory', $territory);
+        }
+
         return $qb->indexBy('a', 'a.statut')
             ->groupBy('a.statut')
             ->getQuery()
@@ -49,10 +51,9 @@ class AffectationRepository extends ServiceEntityRepository
 
     public function findByStatusAndOrCityForUser(User|UserInterface|null $user, array $options, int|null $export): Paginator|array
     {
-
-        $page = (int)$options['page'];
+        $page = (int) $options['page'];
         $pageSize = $export ?? self::ARRAY_LIST_PAGE_SIZE;
-        $firstResult = (($page ?? 1) - 1) * $pageSize;
+        $firstResult = (($page ?: 1) - 1) * $pageSize;
         $qb = $this->createQueryBuilder('a');
         $qb->where('s.statut != :status')
             ->setParameter('status', Signalement::STATUS_ARCHIVED);
@@ -69,26 +70,29 @@ class AffectationRepository extends ServiceEntityRepository
         $stat = $statOr = null;
         if ($options['statuses']) {
             foreach ($options['statuses'] as $k => $statu) {
-                if ($statu === (string)Signalement::STATUS_CLOSED) {
+                if ($statu === (string) Signalement::STATUS_CLOSED) {
                     $options['statuses'][$k] = Affectation::STATUS_CLOSED;
-                    $options['statuses'][count($options['statuses'])] = Affectation::STATUS_REFUSED;
-                } else if ($statu === (string)Signalement::STATUS_ACTIVE)
+                    $options['statuses'][\count($options['statuses'])] = Affectation::STATUS_REFUSED;
+                } elseif ($statu === (string) Signalement::STATUS_ACTIVE) {
                     $options['statuses'][$k] = Affectation::STATUS_ACCEPTED;
-                else if ($statu === (string)Signalement::STATUS_NEED_VALIDATION)
+                } elseif ($statu === (string) Signalement::STATUS_NEED_VALIDATION) {
                     $options['statuses'][$k] = Affectation::STATUS_WAIT;
+                }
             }
             $qb->andWhere('a.statut IN (:statuses)');
-           /* if ($statOr)
-                $qb->orWhere('a.statut IN (:statuses)');*/
+            /* if ($statOr)
+                 $qb->orWhere('a.statut IN (:statuses)');*/
             $qb->setParameter('statuses', $options['statuses']);
             unset($options['statuses']);
         }
         $qb = $this->searchFilterService->applyFilters($qb, $options);
-        if ($user && $user->getTerritory())
+        if ($user && $user->getTerritory()) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $user->getTerritory());
-        if ($user && !$user->isSuperAdmin() && !$user->isTerritoryAdmin())
+        }
+        if ($user && !$user->isSuperAdmin() && !$user->isTerritoryAdmin()) {
             $qb->andWhere(':partner IN (partner)')
                 ->setParameter('partner', $user->getPartner());
+        }
 
         $qb->orderBy('s.createdAt', 'DESC');
         if (!$export) {
@@ -98,7 +102,7 @@ class AffectationRepository extends ServiceEntityRepository
 
             return new Paginator($qb, true);
         }
+
         return $qb->getQuery()->getResult();
     }
-
 }

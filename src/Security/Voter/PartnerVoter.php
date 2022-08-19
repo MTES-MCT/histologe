@@ -17,7 +17,7 @@ class PartnerVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return in_array($attribute, [self::LIST, self::CREATE, self::EDIT, self::VIEW, self::DELETE])
+        return \in_array($attribute, [self::LIST, self::CREATE, self::EDIT, self::VIEW, self::DELETE])
             && ($subject instanceof Partner || !$subject);
     }
 
@@ -27,8 +27,10 @@ class PartnerVoter extends Voter
         if (!$user instanceof UserInterface) {
             return false;
         }
-        if ($user->isSuperAdmin())
+        if ($user->isSuperAdmin()) {
             return true;
+        }
+
         return match ($attribute) {
             self::EDIT => $this->canEdit($subject, $user),
             self::CREATE => $this->canCreate($subject, $user),
@@ -41,8 +43,10 @@ class PartnerVoter extends Voter
 
     private function canEdit(Partner $partner, UserInterface $user): bool
     {
-        if ($this->canList($user))
+        if ($this->canList($user)) {
             return true;
+        }
+
         return $user->getPartner()->getId() === $partner->getId() && $user->isPartnerAdmin();
     }
 
@@ -53,15 +57,19 @@ class PartnerVoter extends Voter
 
     private function canView(Partner $partner, UserInterface $user): bool
     {
-        if ($this->canList($user))
+        if ($this->canList($user)) {
             return true;
+        }
+
         return $user->getPartner()->getId() === $partner->getId();
     }
 
     private function canDelete(Partner $partner, UserInterface $user): bool
     {
-        if ($this->canList($user))
+        if ($this->canList($user)) {
             return true;
+        }
+
         return $user->getPartner()->getId() === $partner->getId() && $user->isPartnerAdmin();
     }
 

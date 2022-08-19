@@ -45,7 +45,6 @@ class Territory
     #[ORM\OneToOne(targetEntity: Config::class, cascade: ['persist', 'remove'])]
     private $config;
 
-
     public function __construct()
     {
         $this->users = new ArrayCollection();

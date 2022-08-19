@@ -10,12 +10,10 @@ use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 class LoginListener
 {
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $em, RequestStack $requestStack)
-    {
-        $this->em = $em;
-        $this->requestStack = $requestStack;
+    public function __construct(
+        private EntityManagerInterface $em,
+        private RequestStack $requestStack
+    ) {
     }
 
     public function onSecurityInteractiveLogin(InteractiveLoginEvent $event)
@@ -28,5 +26,4 @@ class LoginListener
         $this->em->persist($user);
         $this->em->flush();
     }
-
 }

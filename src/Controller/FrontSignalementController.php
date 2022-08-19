@@ -31,12 +31,13 @@ class FrontSignalementController extends AbstractController
     #[Route('/signalement', name: 'front_signalement')]
     public function index(SituationRepository $situationRepository, Request $request): Response
     {
-        $title = "Signalez vos problèmes de logement";
-        $etats = ["Etat moyen", "Mauvais état", "Très mauvais état"];
-        $etats_classes = ["moyen", "grave", "tres-grave"];
+        $title = 'Signalez vos problèmes de logement';
+        $etats = ['Etat moyen', 'Mauvais état', 'Très mauvais état'];
+        $etats_classes = ['moyen', 'grave', 'tres-grave'];
         $signalement = new Signalement();
         $form = $this->createForm(SignalementType::class);
         $form->handleRequest($request);
+
         return $this->render('front/signalement.html.twig', [
             'title' => $title,
             'situations' => $situationRepository->findAllActive(),
@@ -51,29 +52,31 @@ class FrontSignalementController extends AbstractController
     public function checkTerritory(Request $request, TerritoryRepository $territoryRepository): Response
     {
         $cp = $request->get('cp');
-        $zip = strlen($cp) > 3 ? substr($cp, 0, 2) : $cp;
+        $zip = \strlen($cp) > 3 ? substr($cp, 0, 2) : $cp;
         $territory = $territoryRepository->findOneBy(['zip' => $zip, 'isActive' => 1]);
-        if (!$territory)
+        if (!$territory) {
             return $this->json(['success' => false, 'message' => 'Closed territory']);
-        else
-            return $this->json(['success' => true, 'message' => 'Open territory']);
+        }
+
+        return $this->json(['success' => true, 'message' => 'Open territory']);
     }
 
-    #[Route('/signalement/handle', name: 'handle_upload', methods: "POST")]
+    #[Route('/signalement/handle', name: 'handle_upload', methods: 'POST')]
     public function handleUpload(UploadHandlerService $uploadHandlerService, Request $request, RequestStack $requestStack)
     {
         if ($files = $request->files->get('signalement')) {
-            foreach ($files as $key => $file)
+            foreach ($files as $key => $file) {
                 return $this->json($uploadHandlerService->toTempFolder($file)->setKey($key));
+            }
         }
-        return $this->json(['error' => 'Aucun fichiers'], 400);
 
+        return $this->json(['error' => 'Aucun fichiers'], 400);
     }
 
     /**
      * @throws Exception
      */
-    #[Route('/signalement/envoi', name: 'envoi_signalement', methods: "POST")]
+    #[Route('/signalement/envoi', name: 'envoi_signalement', methods: 'POST')]
     public function envoi(Request $request, ManagerRegistry $doctrine, TerritoryRepository $territoryRepository, NotificationService $notificationService, UploadHandlerService $uploadHandlerService): Response
     {
         if ($data = $request->get('signalement')) {
@@ -90,12 +93,14 @@ class FrontSignalementController extends AbstractController
                 }
                 unset($data['files']);
             }
-            if (isset($files_array['documents']))
+            if (isset($files_array['documents'])) {
                 $signalement->setDocuments($files_array['documents']);
-            if (isset($files_array['photos']))
+            }
+            if (isset($files_array['photos'])) {
                 $signalement->setPhotos($files_array['photos']);
+            }
             foreach ($data as $key => $value) {
-                $method = 'set' . ucfirst($key);
+                $method = 'set'.ucfirst($key);
                 switch ($key) {
                     case 'situation':
                         foreach ($data[$key] as $idSituation => $criteres) {
@@ -118,13 +123,14 @@ class FrontSignalementController extends AbstractController
                         break;
 
                     case 'geoloc':
-                        $signalement->setGeoloc(["lat" => $data[$key]['lat'], "lng" => $data[$key]['lng']]);
+                        $signalement->setGeoloc(['lat' => $data[$key]['lat'], 'lng' => $data[$key]['lng']]);
                         break;
-                        
+
                     default:
-                        if ($method !== 'setSignalement') {
-                            if ($value === "" || $value === " ")
+                        if ('setSignalement' !== $method) {
+                            if ('' === $value || ' ' === $value) {
                                 $value = null;
+                            }
                             $signalement->$method($value);
                         }
                 }
@@ -136,7 +142,7 @@ class FrontSignalementController extends AbstractController
                 $signalement->setStructureDeclarant(null);
                 $signalement->setTelDeclarant(null);
             }
-            $zip = strlen($signalement->getCpOccupant()) > 3 ? substr($signalement->getCpOccupant(), 0, 2) : $signalement->getCpOccupant();
+            $zip = \strlen($signalement->getCpOccupant()) > 3 ? substr($signalement->getCpOccupant(), 0, 2) : $signalement->getCpOccupant();
             $signalement->setTerritory($territoryRepository->findOneBy(['zip' => $zip, 'isActive' => 1]));
             $year = (new DateTime())->format('Y');
             $reqId = $doctrine->getRepository(Signalement::class)->createQueryBuilder('s')
@@ -148,47 +154,49 @@ class FrontSignalementController extends AbstractController
                 ->orderBy('s.createdAt', 'DESC')
                 ->setMaxResults(1)
                 ->getQuery()->getOneOrNullResult();
-            if ($reqId)
-                $id = (int)explode('-', $reqId['reference'])[1] + 1;
-            else
+            if ($reqId) {
+                $id = (int) explode('-', $reqId['reference'])[1] + 1;
+            } else {
                 $id = 1;
-            $signalement->setReference($year . '-' . $id);
+            }
+            $signalement->setReference($year.'-'.$id);
 
             $score = new CriticiteCalculatorService($signalement, $doctrine);
             $signalement->setScoreCreation($score->calculate());
 
             $em->persist($signalement);
             $em->flush();
-            !$signalement->getIsProprioAverti() && $attachment = file_exists($this->getParameter('mail_attachment_dir') . 'ModeleCourrier.pdf') ? $this->getParameter('mail_attachment_dir') . 'ModeleCourrier.pdf' : null;
-            $notificationService->send(NotificationService::TYPE_CONFIRM_RECEPTION, [$signalement->getMailDeclarant(), $signalement->getMailOccupant()], ['signalement' => $signalement, 'attach' => $attachment ?? null],$signalement->getTerritory());
+            !$signalement->getIsProprioAverti() && $attachment = file_exists($this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf') ? $this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf' : null;
+            $notificationService->send(NotificationService::TYPE_CONFIRM_RECEPTION, [$signalement->getMailDeclarant(), $signalement->getMailOccupant()], ['signalement' => $signalement, 'attach' => $attachment ?? null], $signalement->getTerritory());
+
             return $this->json(['response' => 'success']);
         }
+
         return $this->json(['response' => 'error'], 400);
     }
 
-
-    #[Route('/suivre-mon-signalement/{code}', name: 'front_suivi_signalement', methods: "GET")]
+    #[Route('/suivre-mon-signalement/{code}', name: 'front_suivi_signalement', methods: 'GET')]
     public function suiviSignalement(string $code, SignalementRepository $signalementRepository)
     {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
-            //TODO: Verif info perso pour plus de sécu
+            // TODO: Verif info perso pour plus de sécu
             return $this->render('front/suivi_signalement.html.twig', [
-                'signalement' => $signalement
+                'signalement' => $signalement,
             ]);
         }
         $this->addFlash('error', 'Le lien utilisé est expiré ou invalide, verifier votre saisie.');
+
         return $this->redirectToRoute('front_signalement');
     }
 
-
-    #[Route('/suivre-mon-signalement/{code}/response', name: 'front_suivi_signalement_user_response', methods: "POST")]
+    #[Route('/suivre-mon-signalement/{code}/response', name: 'front_suivi_signalement_user_response', methods: 'POST')]
     public function postUserResponse(string $code, SignalementRepository $signalementRepository, NotificationService $notificationService, UploadHandlerService $uploadHandlerService, Request $request, EntityManagerInterface $entityManager)
     {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
-            if ($this->isCsrfTokenValid('signalement_front_response_' . $signalement->getUuid(), $request->get('_token'))) {
+            if ($this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {
                 $suivi = new Suivi();
                 $suivi->setIsPublic(true);
-                $description = nl2br(filter_var($request->get('signalement_front_response')['content'], FILTER_SANITIZE_STRING));
+                $description = nl2br(filter_var($request->get('signalement_front_response')['content'], \FILTER_SANITIZE_STRING));
                 $files_array = [
                     'documents' => $signalement->getDocuments(),
                     'photos' => $signalement->getPhotos(),
@@ -200,12 +208,12 @@ class FrontSignalementController extends AbstractController
                         foreach ($dataFiles as $key => $files) {
                             foreach ($files as $titre => $file) {
                                 $files_array[$key][] = ['file' => $uploadHandlerService->toUploadFolder($file), 'titre' => $titre, 'date' => (new DateTimeImmutable())->format('d.m.Y')];
-                                $list[] = '<li><a class="fr-link" target="_blank" href="' . $this->generateUrl('show_uploaded_file', ['folder' => '_up', 'file' => $file]) . '&t=___TOKEN___">' . $titre . '</a></li>';
+                                $list[] = '<li><a class="fr-link" target="_blank" href="'.$this->generateUrl('show_uploaded_file', ['folder' => '_up', 'file' => $file]).'&t=___TOKEN___">'.$titre.'</a></li>';
                             }
                         }
                         unset($data['files']);
                     }
-                    $description .= '<br>Ajout de pièces au signalement<ul>' . implode("", $list) . '</ul>';
+                    $description .= '<br>Ajout de pièces au signalement<ul>'.implode('', $list).'</ul>';
                 }
 
                 $signalement->setDocuments($files_array['documents']);
@@ -219,6 +227,7 @@ class FrontSignalementController extends AbstractController
         } else {
             $this->addFlash('error', 'Une erreur est survenue...');
         }
+
         return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
     }
 }

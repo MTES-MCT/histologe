@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\SignalementRepository;
-use App\Validator\IsOpenedTerritory;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -13,13 +12,12 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: SignalementRepository::class)]
 class Signalement
 {
-
-    const STATUS_NEED_VALIDATION = 1;
-    const STATUS_ACTIVE = 2;
-    const STATUS_NEED_PARTNER_RESPONSE = 3;
-    const STATUS_CLOSED = 6;
-    const STATUS_ARCHIVED = 7;
-    const STATUS_REFUSED = 8;
+    public const STATUS_NEED_VALIDATION = 1;
+    public const STATUS_ACTIVE = 2;
+    public const STATUS_NEED_PARTNER_RESPONSE = 3;
+    public const STATUS_CLOSED = 6;
+    public const STATUS_ARCHIVED = 7;
+    public const STATUS_REFUSED = 8;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -158,7 +156,6 @@ class Signalement
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private $modifiedAt;
 
-
     #[ORM\Column(type: 'integer')]
     private $statut;
 
@@ -180,7 +177,7 @@ class Signalement
     #[ORM\Column(type: 'float', nullable: true)]
     private $montantAllocation;
 
-    #[ORM\Column(type: 'boolean',nullable: true)]
+    #[ORM\Column(type: 'boolean', nullable: true)]
     private $isSituationHandicap;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'signalementsModified')]
@@ -224,7 +221,6 @@ class Signalement
 
     #[ORM\Column(type: 'boolean', nullable: true)]
     private $isConsentementTiers;
-
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private $validatedAt;
@@ -332,7 +328,6 @@ class Signalement
     #[ORM\JoinColumn(nullable: true)]
     private $territory;
 
-
     public function __construct()
     {
         $this->situations = new ArrayCollection();
@@ -344,11 +339,9 @@ class Signalement
         $this->isOccupantPresentVisite = false;
         $this->suivis = new ArrayCollection();
         $this->scoreCreation = 0;
-        $this->clotures = new ArrayCollection();
         $this->affectations = new ArrayCollection();
         $this->tags = new ArrayCollection();
     }
-
 
     public function getId(): ?int
     {
@@ -462,7 +455,6 @@ class Signalement
 
         return $this;
     }
-
 
     public function getIsProprioAverti(): ?bool
     {
@@ -944,7 +936,6 @@ class Signalement
         return $this;
     }
 
-
     public function getJsonContent(): ?array
     {
         return $this->jsonContent;
@@ -1029,9 +1020,6 @@ class Signalement
         return $this;
     }
 
-    /**
-     * @return Collection
-     */
     public function getSuivis(): Collection
     {
         return $this->suivis;
@@ -1071,18 +1059,19 @@ class Signalement
         return $this;
     }
 
-
     public function getAffectationStatusByPartner()
     {
         $result = [];
         foreach ($this->affectations as $affectation) {
-            if (!array_keys($result, $affectation->getPartner()->getNom()))
+            if (!array_keys($result, $affectation->getPartner()->getNom())) {
                 if (!isset($result[$affectation->getPartner()->getNom()]['statut'])) {
                     $result[$affectation->getPartner()->getId()]['partner'] = $affectation->getPartner()->getNom();
                     $result[$affectation->getPartner()->getId()]['statuses'][] = $affectation->getStatut();
                 }
+            }
             $result[$affectation->getPartner()->getId()]['statut'] = max($result[$affectation->getPartner()->getId()]['statuses']);
         }
+
         return $result;
     }
 
@@ -1566,9 +1555,6 @@ class Signalement
         return $this;
     }
 
-    /**
-     * @return Collection
-     */
     public function getAffectations(): Collection
     {
         return $this->affectations;
@@ -1594,17 +1580,6 @@ class Signalement
         }
 
         return $this;
-    }
-
-    public function isClosedFor(Partner $partner)
-    {
-        $isClosedFor = $this->clotures->filter(function (Cloture $cloture) use ($partner) {
-            if ($cloture->getPartner()->getId() === $partner->getId())
-                return $cloture;
-        });
-        if (!$isClosedFor->isEmpty())
-            return true;
-        return false;
     }
 
     public function getMotifCloture(): ?string
@@ -1643,7 +1618,7 @@ class Signalement
         return $this;
     }
 
-    //This function return the last suivis
+    // This function return the last suivis
     public function getLastSuivi()
     {
         return $this->suivis->last();

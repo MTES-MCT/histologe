@@ -31,8 +31,10 @@ class BackOfficeAuthenticator extends AbstractLoginFormAuthenticator
 
     public function supports(Request $request): bool
     {
-        if ($request->isMethod('POST') && $request->get('email') && $request->get('password'))
+        if ($request->isMethod('POST') && $request->get('email') && $request->get('password')) {
             return true;
+        }
+
         return false;
     }
 

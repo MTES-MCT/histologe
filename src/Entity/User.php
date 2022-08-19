@@ -14,9 +14,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    const STATUS_INACTIVE = 0;
-    const STATUS_ACTIVE = 1;
-    const STATUS_ARCHIVE = 2;
+    public const STATUS_INACTIVE = 0;
+    public const STATUS_ACTIVE = 1;
+    public const STATUS_ARCHIVE = 2;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -31,15 +31,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'string', nullable: true)]
     #[Assert\NotBlank]
-    #[Assert\Length(min: 8, max: 200, minMessage: "Votre mot de passe doit contenir au moins {{ limit }} caratères")]
-    #[Assert\NotCompromisedPassword(message: "Ce mot de passe est compromis, veuillez en choisir un autre.")]
-    #[Assert\NotEqualTo(propertyPath: 'email', message: "Votre mot de passe ne doit pas contenir votre email.")]
+    #[Assert\Length(min: 8, max: 200, minMessage: 'Votre mot de passe doit contenir au moins {{ limit }} caratères')]
+    #[Assert\NotCompromisedPassword(message: 'Ce mot de passe est compromis, veuillez en choisir un autre.')]
+    #[Assert\NotEqualTo(propertyPath: 'email', message: 'Votre mot de passe ne doit pas contenir votre email.')]
     #[Assert\NotEqualTo(propertyPath: 'histologe', message: "Votre mot de passe ne doit pas contenir 'histologe'")]
     private $password;
 
     #[ORM\OneToMany(mappedBy: 'modifiedBy', targetEntity: Signalement::class)]
     private $signalementsModified;
-
 
     #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Suivi::class, orphanRemoval: true)]
     private $suivis;
@@ -52,7 +51,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $prenom;
-
 
     #[ORM\Column(type: 'integer')]
     private $statut;
@@ -117,7 +115,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string)$this->email;
+        return (string) $this->email;
     }
 
     /**
@@ -242,7 +240,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getNomComplet()
     {
-        return mb_strtoupper($this->nom) . ' ' . ucfirst($this->prenom);
+        return mb_strtoupper($this->nom).' '.ucfirst($this->prenom);
     }
 
     public function getStatut(): ?int
@@ -325,7 +323,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function isPartnerAdmin(): bool
     {
-        return in_array('ROLE_ADMIN_PARTNER', $this->getRoles());
+        return \in_array('ROLE_ADMIN_PARTNER', $this->getRoles());
 //        return count(array_intersect(['ROLE_ADMIN_TERRITOIRE','ROLE_ADMIN_PARTNER'], $this->roles)) > 0;
     }
 
@@ -350,12 +348,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function isSuperAdmin(): bool
     {
-        return in_array('ROLE_ADMIN', $this->roles);
+        return \in_array('ROLE_ADMIN', $this->roles);
     }
 
     public function isTerritoryAdmin(): bool
     {
-        return in_array('ROLE_ADMIN_TERRITORY', $this->roles);
+        return \in_array('ROLE_ADMIN_TERRITORY', $this->roles);
     }
 
     public function getTerritory(): ?Territory

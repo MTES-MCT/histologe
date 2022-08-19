@@ -14,7 +14,7 @@ class TagVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return in_array($attribute, [self::CREATE, self::DELETE])
+        return \in_array($attribute, [self::CREATE, self::DELETE])
             && ($subject instanceof Tag || !$subject);
     }
 
@@ -24,15 +24,15 @@ class TagVoter extends Voter
         if (!$user instanceof UserInterface) {
             return false;
         }
-        if ($user->isSuperAdmin())
+        if ($user->isSuperAdmin()) {
             return true;
+        }
 
         return match ($attribute) {
             self::CREATE => $this->canCreate($subject, $user),
             self::DELETE => $this->canDelete($subject, $user),
             default => false,
         };
-
     }
 
     private function canCreate($subject, UserInterface $user): bool

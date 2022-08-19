@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-
 use App\Entity\Signalement;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -13,7 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class   SignalementType extends AbstractType
+class SignalementType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -21,16 +20,16 @@ class   SignalementType extends AbstractType
             ->add('details', TextareaType::class, [
                 'attr' => [
                     'class' => 'fr-input',
-                    'minlength' => 10
+                    'minlength' => 10,
                 ],
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
                 'label' => 'Décrivez le ou les problème(s) rencontré(s)',
-                'help' => "Proposer une rapide description du ou des problème(s) en 10 caractères minimum.",
+                'help' => 'Proposer une rapide description du ou des problème(s) en 10 caractères minimum.',
                 'help_attr' => [
-                    'class' => 'fr-hint-text'
-                ]
+                    'class' => 'fr-hint-text',
+                ],
             ])
             ->add('isProprioAverti', ChoiceType::class, [
                 'choice_attr' => [
@@ -39,17 +38,17 @@ class   SignalementType extends AbstractType
                 'choices' => [
                     'Oui' => 1,
                     'Non' => 0,
-                    'Ne sais pas' => ''
+                    'Ne sais pas' => '',
                 ],
                 'expanded' => true,
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
                 'label' => 'Avez-vous informé le propriétaire ou gestionnaire de ces nuisances ?',
 //                'help' => 'Le cas échéant merci de préciser la ou les méthodes de contact.',
                 'help_attr' => [
-                    'class' => 'fr-hint-text'
-                ]
+                    'class' => 'fr-hint-text',
+                ],
             ])
             /*->add('modeContactProprio', ChoiceType::class, [
                 'choices' => [
@@ -68,65 +67,71 @@ class   SignalementType extends AbstractType
             ])*/
             ->add('nbAdultes', ChoiceType::class, [
                 'attr' => [
-                    'class' => 'fr-select'
+                    'class' => 'fr-select',
                 ],
                 'choices' => [1, 2, 3, 4, '4+'],
                 'choice_label' => function ($choice, $key, $value) {
-                    if (1 === $choice)
-                        return $value . ' Adulte';
-                    elseif ('4+' === $choice)
+                    if (1 === $choice) {
+                        return $value.' Adulte';
+                    } elseif ('4+' === $choice) {
                         return 'Plus de 4 Adultes';
-                    return $value . ' Adultes';
+                    }
+
+                    return $value.' Adultes';
                 },
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
                 'row_attr' => [
-                    'class' => 'fr-select-group'
+                    'class' => 'fr-select-group',
                 ], 'label' => "Nombre d'adultes (personnes majeures occupant le logement)",
-                'placeholder' => '--- Selectionnez ---'
+                'placeholder' => '--- Selectionnez ---',
             ])
             ->add('nbEnfantsM6', ChoiceType::class, [
                 'attr' => [
-                    'class' => 'fr-select'
+                    'class' => 'fr-select',
                 ],
-                'choices' => ["0", 1, 2, 3, 4, '4+'],
+                'choices' => ['0', 1, 2, 3, 4, '4+'],
                 'choice_label' => function ($choice, $key, $value) {
-                    if (1 === $choice)
-                        return $value . ' Enfant';
-                    elseif ('4+' === $choice)
+                    if (1 === $choice) {
+                        return $value.' Enfant';
+                    } elseif ('4+' === $choice) {
                         return 'Plus de 4 Enfants';
-                    return $value . ' Enfants';
+                    }
+
+                    return $value.' Enfants';
                 },
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
                 'row_attr' => [
-                    'class' => 'fr-select-group'
+                    'class' => 'fr-select-group',
                 ], 'label' => "Nombre d'enfants de moins de 6 ans",
                 'required' => false,
-                'placeholder' => '--- Selectionnez ---'
+                'placeholder' => '--- Selectionnez ---',
             ])
             ->add('nbEnfantsP6', ChoiceType::class, [
                 'attr' => [
-                    'class' => 'fr-select'
+                    'class' => 'fr-select',
                 ],
-                'choices' => ["0", 1, 2, 3, 4, '4+'],
+                'choices' => ['0', 1, 2, 3, 4, '4+'],
                 'choice_label' => function ($choice, $key, $value) {
-                    if (1 === $choice)
-                        return $value . ' Enfant';
-                    elseif ('4+' === $choice)
+                    if (1 === $choice) {
+                        return $value.' Enfant';
+                    } elseif ('4+' === $choice) {
                         return 'Plus de 4 Enfants';
-                    return $value . ' Enfants';
+                    }
+
+                    return $value.' Enfants';
                 },
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
                 'row_attr' => [
-                    'class' => 'fr-select-group'
+                    'class' => 'fr-select-group',
                 ], 'label' => "Nombre d'enfants de plus de 6 ans",
                 'required' => false,
-                'placeholder' => '--- Selectionnez ---'
+                'placeholder' => '--- Selectionnez ---',
             ])
             ->add('isSituationHandicap', ChoiceType::class, [
                 'choice_attr' => [
@@ -135,401 +140,404 @@ class   SignalementType extends AbstractType
                 'choices' => [
                     'Oui' => 1,
                     'Non' => 0,
-                    'Ne sais pas' => ''
+                    'Ne sais pas' => '',
                 ],
                 'expanded' => true,
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
-                'label' => 'Il y a-t-il des personnes en situation de handicap dans le logement ?'
+                'label' => 'Il y a-t-il des personnes en situation de handicap dans le logement ?',
             ])
             ->add('isAllocataire', ChoiceType::class, [
                 'choices' => [
                     'CAF' => 'CAF',
                     'MSA' => 'MSA',
                     'Non' => 0,
-                    'Ne sais pas' => ''
+                    'Ne sais pas' => '',
                 ],
                 'choice_attr' => function ($choice, $key, $value) {
                     $attr['class'] = 'fr-radio';
-                    if ($key === 'Ne sais pas' || $key === 'Non')
-                        $attr['data-fr-toggle-hide'] = "signalement-num-alloc-bloc";
-                    else
-                        $attr['data-fr-toggle-show'] = "signalement-num-alloc-bloc";
+                    if ('Ne sais pas' === $key || 'Non' === $key) {
+                        $attr['data-fr-toggle-hide'] = 'signalement-num-alloc-bloc';
+                    } else {
+                        $attr['data-fr-toggle-show'] = 'signalement-num-alloc-bloc';
+                    }
+
                     return $attr;
                 },
                 'expanded' => true,
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
                 'label' => 'Recevez-vous une allocation logement de la CAF ou de la MSA ?',
                 'help' => "Le cas échéant, merci de renseigner votre numéro d'allocataire.",
                 'help_attr' => [
-                    'class' => 'fr-hint-text'
+                    'class' => 'fr-hint-text',
                 ],
-                "required" => false,
-                'placeholder' => false
+                'required' => false,
+                'placeholder' => false,
             ])
             ->add('numAllocataire', TextType::class, [
                 'attr' => [
-                    'class' => 'fr-input'
+                    'class' => 'fr-input',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
                     'maxlength' => '25',
                 ],
                 'row_attr' => [
-                    'class' => 'fr-form-group fr-col-2'
+                    'class' => 'fr-form-group fr-col-2',
                 ],
                 'label' => "Numéro d'allocataire",
                 'help' => "Merci de renseigner votre numéro d'allocataire tel qu'il apparait sur vos documents.",
                 'help_attr' => [
-                    'class' => 'fr-hint-text'
+                    'class' => 'fr-hint-text',
                 ],
-                'required' => false
+                'required' => false,
             ])
             ->add('isLogementSocial', ChoiceType::class, [
                 'choices' => [
                     'Oui' => 1,
                     'Non' => 0,
-                    'Ne sais pas' => ''
+                    'Ne sais pas' => '',
                 ],
                 'expanded' => true,
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
                 'label' => 'Le logement est-il un logement social ?',
-                'help' => "Cette information nous aide à optimiser le temps de traitement de votre signalement.",
+                'help' => 'Cette information nous aide à optimiser le temps de traitement de votre signalement.',
                 'help_attr' => [
-                    'class' => 'fr-hint-text'
-                ]
+                    'class' => 'fr-hint-text',
+                ],
             ])
             ->add('isPreavisDepart', ChoiceType::class, [
                 'choices' => [
                     'Oui' => 1,
                     'Non' => 0,
-                    'Ne sais pas' => ''
+                    'Ne sais pas' => '',
                 ],
                 'expanded' => true,
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
                 'label' => 'Avez-vous déposé un préavis de départ pour ce logement ?',
-                'help' => "Cette information nous aide également à optimiser le temps de traitement de votre signalement.",
+                'help' => 'Cette information nous aide également à optimiser le temps de traitement de votre signalement.',
                 'help_attr' => [
-                    'class' => 'fr-hint-text'
-                ]
+                    'class' => 'fr-hint-text',
+                ],
             ])
             ->add('nomOccupant', TextType::class, [
                 'attr' => [
-                    'class' => 'fr-input'
+                    'class' => 'fr-input',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
                     'maxlength' => '50',
                 ],
-                'label' => "Nom de l'occupant"
+                'label' => "Nom de l'occupant",
             ])
             ->add('prenomOccupant', TextType::class, [
                 'attr' => [
-                    'class' => 'fr-input'
+                    'class' => 'fr-input',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
                     'maxlength' => '50',
                 ],
-                'label' => "Prénom de l'occupant"
+                'label' => "Prénom de l'occupant",
             ])
             ->add('telOccupant', TelType::class, [
                 'attr' => [
                     'class' => 'fr-input',
-                    'pattern' => "[0-9]{10}"
+                    'pattern' => '[0-9]{10}',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
                     'minlength' => '10',
-                    'maxlength' => '10'
+                    'maxlength' => '10',
                 ],
                 'label' => "N° téléphone de l'occupant",
-                'required' => false
+                'required' => false,
             ])
             ->add('telOccupantBis', TelType::class, [
                 'attr' => [
                     'class' => 'fr-input',
-                    'pattern' => "[0-9]{10}"
+                    'pattern' => '[0-9]{10}',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
                     'minlength' => '10',
-                    'maxlength' => '10'
+                    'maxlength' => '10',
                 ],
                 'label' => "N° téléphone secondaire de l'occupant",
-                'required' => false
+                'required' => false,
             ])
             ->add('mailOccupant', EmailType::class, [
                 'attr' => [
-                    'class' => 'fr-input'
+                    'class' => 'fr-input',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
-                    'maxlength' => '50'
+                    'maxlength' => '50',
                 ],
                 'label' => "Courriel de l'occupant",
-                'required' => false
+                'required' => false,
             ])
             ->add('adresseOccupant', TextType::class, [
                 'attr' => [
                     'class' => 'fr-input',
-                    'data-fr-adresse-autocomplete' => "true"
+                    'data-fr-adresse-autocomplete' => 'true',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
-                    'maxlength' => '100'
+                    'maxlength' => '100',
                 ],
-                'label' => "Adresse du logement",
+                'label' => 'Adresse du logement',
                 'help' => "Commencez à entrer votre adresse et cliquez sur l'une des suggestion. Si vous ne trouvez pas votre adresse entrez-la manuellement",
                 'help_attr' => [
-                    'class' => 'fr-hint-text'
-                ]
+                    'class' => 'fr-hint-text',
+                ],
             ])
             ->add('cpOccupant', TextType::class, [
                 'attr' => [
                     'class' => 'fr-input',
-                    'pattern' => "[0-9]{5}"
+                    'pattern' => '[0-9]{5}',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
                     'maxlength' => '5',
-                    'minlength' => '5'
+                    'minlength' => '5',
                 ],
-                'label' => "Code postal du logement",
+                'label' => 'Code postal du logement',
             ])
             ->add('villeOccupant', TextType::class, [
                 'attr' => [
                     'class' => 'fr-input',
-                    'maxlength' => '100'
+                    'maxlength' => '100',
                 ],
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
-                'label' => "Ville du logement"
+                'label' => 'Ville du logement',
             ])
             ->add('etageOccupant', TextType::class, [
                 'row_attr' => [
-                    'class' => 'fr-input-group'
+                    'class' => 'fr-input-group',
                 ],
                 'attr' => [
                     'class' => 'fr-input',
-                    'maxlength' => '200'
+                    'maxlength' => '200',
                 ],
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
-                'label' => "Etage",
-                'required' => false
+                'label' => 'Etage',
+                'required' => false,
             ])
             ->add('escalierOccupant', TextType::class, [
                 'row_attr' => [
-                    'class' => 'fr-input-group'
+                    'class' => 'fr-input-group',
                 ],
                 'attr' => [
                     'class' => 'fr-input',
-                    'maxlength' => '200'
+                    'maxlength' => '200',
                 ],
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
-                'label' => "Escalier",
-                'required' => false
+                'label' => 'Escalier',
+                'required' => false,
             ])
             ->add('numAppartOccupant', TextType::class, [
                 'row_attr' => [
-                    'class' => 'fr-input-group'
+                    'class' => 'fr-input-group',
                 ],
                 'attr' => [
                     'class' => 'fr-input',
-                    'maxlength' => '200'
+                    'maxlength' => '200',
                 ],
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
                 'label' => "N° d'appartement",
-                'required' => false
+                'required' => false,
             ])
             ->add('adresseAutreOccupant', TextType::class, [
                 'row_attr' => [
-                    'class' => 'fr-input-group'
+                    'class' => 'fr-input-group',
                 ],
                 'attr' => [
                     'class' => 'fr-input',
-                    'maxlength' => '200'
+                    'maxlength' => '200',
                 ],
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
-                'label' => "Autre (ex: Residence, lieu-dit,...)",
-                'required' => false
+                'label' => 'Autre (ex: Residence, lieu-dit,...)',
+                'required' => false,
             ])
             ->add('nomProprio', TextType::class, [
                 'row_attr' => [
-                    'class' => 'fr-input-group'
+                    'class' => 'fr-input-group',
                 ],
                 'attr' => [
                     'class' => 'fr-input',
-                    'maxlength' => '200'
+                    'maxlength' => '200',
                 ],
                 'label_attr' => [
-                    'class' => 'fr-label required'
+                    'class' => 'fr-label required',
                 ],
-                'label' => "Nom ou raison sociale du propriétaire",
-                'required' => true
+                'label' => 'Nom ou raison sociale du propriétaire',
+                'required' => true,
             ])
             ->add('adresseProprio', TextType::class, [
                 'row_attr' => [
-                    'class' => 'fr-input-group'
+                    'class' => 'fr-input-group',
                 ],
                 'attr' => [
                     'class' => 'fr-input',
-                    'maxlength' => '200'
+                    'maxlength' => '200',
                 ],
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
-                'label' => "Adresse du propriétaire",
-                'required' => false
+                'label' => 'Adresse du propriétaire',
+                'required' => false,
             ])
             ->add('telProprio', TelType::class, [
                 'row_attr' => [
-                    'class' => 'fr-input-group'
+                    'class' => 'fr-input-group',
                 ],
                 'attr' => [
                     'class' => 'fr-input',
-                    'pattern' => "[0-9]{10}"
+                    'pattern' => '[0-9]{10}',
                 ],
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
-                'label' => "N° de téléphone du propriétaire",
-                'required' => false
+                'label' => 'N° de téléphone du propriétaire',
+                'required' => false,
             ])
             ->add('mailProprio', EmailType::class, [
                 'row_attr' => [
-                    'class' => 'fr-input-group'
+                    'class' => 'fr-input-group',
                 ],
                 'attr' => [
                     'class' => 'fr-input',
-                    'maxlength' => '200'
+                    'maxlength' => '200',
                 ],
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
-                'label' => "Courriel du propriétaire",
-                'required' => false
+                'label' => 'Courriel du propriétaire',
+                'required' => false,
             ])
             ->add('isNotOccupant', ChoiceType::class, [
                 'choice_attr' => function ($choice, $key, $value) {
                     $attr['class'] = 'fr-radio';
-                    "Oui" === $key ?
+                    'Oui' === $key ?
                         $attr = [
-                            "data-fr-toggle-hide" => "signalement-pas-occupant|signalement-consentement-tiers-bloc",
-                            "data-fr-toggle-show" => "signalement-occupant|signalement-infos-proprio|signalement-consentement-tiers-bloc",
-                            "data-fr-toggle-unrequire" => "signalement_telOccupantBis|signalement-consentement-tiers|signalement_adresseProprio|signalement_telProprio|signalement_mailProprio|signalement_etageOccupant|signalement_escalierOccupant|signalement_numAppartOccupant|signalement_adresseAutreOccupant|signalement_lienDeclarantOccupant_0",
-                            "data-fr-toggle-require" => "signalement_mailOccupant|signalement_telOccupant",
+                            'data-fr-toggle-hide' => 'signalement-pas-occupant|signalement-consentement-tiers-bloc',
+                            'data-fr-toggle-show' => 'signalement-occupant|signalement-infos-proprio|signalement-consentement-tiers-bloc',
+                            'data-fr-toggle-unrequire' => 'signalement_telOccupantBis|signalement-consentement-tiers|signalement_adresseProprio|signalement_telProprio|signalement_mailProprio|signalement_etageOccupant|signalement_escalierOccupant|signalement_numAppartOccupant|signalement_adresseAutreOccupant|signalement_lienDeclarantOccupant_0',
+                            'data-fr-toggle-require' => 'signalement_mailOccupant|signalement_telOccupant',
                         ]
                         :
                         $attr = [
-                            "data-fr-toggle-show" => "signalement-consentement-tiers-bloc|signalement-occupant|signalement-pas-occupant|signalement-infos-proprio",
-                            "data-fr-toggle-unrequire" => "signalement_telOccupantBis|signalement_adresseProprio|signalement_telProprio|signalement_mailProprio|signalement_nomProprio|signalement_structureDeclarant|signalement_mailOccupant|signalement_telOccupant|signalement_etageOccupant|signalement_escalierOccupant|signalement_numAppartOccupant|signalement_adresseAutreOccupant",
+                            'data-fr-toggle-show' => 'signalement-consentement-tiers-bloc|signalement-occupant|signalement-pas-occupant|signalement-infos-proprio',
+                            'data-fr-toggle-unrequire' => 'signalement_telOccupantBis|signalement_adresseProprio|signalement_telProprio|signalement_mailProprio|signalement_nomProprio|signalement_structureDeclarant|signalement_mailOccupant|signalement_telOccupant|signalement_etageOccupant|signalement_escalierOccupant|signalement_numAppartOccupant|signalement_adresseAutreOccupant',
                         ];
+
                     return $attr;
                 },
                 'choices' => [
                     'Oui' => 0,
-                    'Non' => 1
+                    'Non' => 1,
                 ],
                 'expanded' => true,
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
                 'label' => "Êtes-vous l'occupant du logement ?",
                 'help' => "Si vous déposez ce signalement pour le compte de quelqu'un d'autres, merci de nous le faire savoir.",
                 'help_attr' => [
-                    'class' => 'fr-hint-text'
-                ]
+                    'class' => 'fr-hint-text',
+                ],
             ])
             ->add('nomDeclarant', TextType::class, [
                 'attr' => [
-                    'class' => 'fr-input'
+                    'class' => 'fr-input',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
-                    'maxlength' => '200'
+                    'maxlength' => '200',
                 ],
-                'label' => "Nom déclarant",
-                'required' => false
+                'label' => 'Nom déclarant',
+                'required' => false,
             ])
             ->add('prenomDeclarant', TextType::class, [
                 'attr' => [
-                    'class' => 'fr-input'
+                    'class' => 'fr-input',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
-                    'maxlength' => '200'
+                    'maxlength' => '200',
                 ],
-                'label' => "Prénom déclarant",
-                'required' => false
+                'label' => 'Prénom déclarant',
+                'required' => false,
             ])
             ->add('telDeclarant', TelType::class, [
                 'attr' => [
                     'class' => 'fr-input',
-                    'pattern' => "[0-9]{10}"
+                    'pattern' => '[0-9]{10}',
                 ],
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
-                'label' => "N° de téléphone déclarant",
-                'required' => false
+                'label' => 'N° de téléphone déclarant',
+                'required' => false,
             ])
             ->add('mailDeclarant', EmailType::class, [
                 'attr' => [
-                    'class' => 'fr-input fr-fi-mail-line fr-input-wrap'
+                    'class' => 'fr-input fr-fi-mail-line fr-input-wrap',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
-                    'maxlength' => '200'
+                    'maxlength' => '200',
                 ],
-                'label' => "Courriel déclarant",
-                'required' => false
+                'label' => 'Courriel déclarant',
+                'required' => false,
             ])
             ->add('lienDeclarantOccupant', ChoiceType::class, [
                 'choices' => [
-                    'Proche' => "PROCHE",
-                    'Professionnel' => "PROFESSIONNEL",
-                    'Tuteur / Tutrice' => "TUTEUR",
-                    'Voisin / Voisine' => "VOISIN",
-                    'Autre' => "AUTRE",
+                    'Proche' => 'PROCHE',
+                    'Professionnel' => 'PROFESSIONNEL',
+                    'Tuteur / Tutrice' => 'TUTEUR',
+                    'Voisin / Voisine' => 'VOISIN',
+                    'Autre' => 'AUTRE',
                 ],
                 'expanded' => true,
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
                 'label' => "Lien avec l'occupant",
                 'required' => false,
-                'placeholder' => false
+                'placeholder' => false,
             ])
             ->add('structureDeclarant', TextType::class, [
                 'attr' => [
-                    'class' => 'fr-input'
+                    'class' => 'fr-input',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
-                    'maxlength' => '50'
+                    'maxlength' => '50',
                 ],
                 'row_attr' => [
-                    'class' => 'fr-form-group'
+                    'class' => 'fr-form-group',
                 ],
                 'label' => 'Structure déclarant',
-                'required' => false
+                'required' => false,
             ]);
     }
 
@@ -541,7 +549,7 @@ class   SignalementType extends AbstractType
             'allow_extra_fields' => true,
             'attr' => [
                 'class' => 'needs-validation',
-                'novalidate' => true
+                'novalidate' => true,
             ],
         ]);
     }

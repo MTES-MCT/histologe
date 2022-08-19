@@ -21,8 +21,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class SignalementRepository extends ServiceEntityRepository
 {
-    const ARRAY_LIST_PAGE_SIZE = 30;
-    const MARKERS_PAGE_SIZE = 300;
+    public const ARRAY_LIST_PAGE_SIZE = 30;
+    public const MARKERS_PAGE_SIZE = 300;
 
     private SearchFilterService $searchFilterService;
 
@@ -44,14 +44,16 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->leftJoin('s.affectations', 'a')
             ->leftJoin('s.criteres', 'criteres')
             ->leftJoin('a.partner', 'partner');
-        if ($user)
+        if ($user) {
             $qb->andWhere('partner = :partner')->setParameter('partner', $user->getPartner());
-        if ($territory)
+        }
+        if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
 
         $qb = $this->searchFilterService->applyFilters($qb, $options);
         $qb->addSelect('a', 'partner', 'criteres');
-        
+
         return $qb->andWhere("JSON_EXTRACT(s.geoloc,'$.lat') != ''")
             ->andWhere("JSON_EXTRACT(s.geoloc,'$.lng') != ''")
             ->andWhere('s.statut != 7')
@@ -64,7 +66,7 @@ class SignalementRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('s')
             ->where('s.statut != 7')
-            ->andWhere('YEAR(s.createdAt) = ' . $year)
+            ->andWhere('YEAR(s.createdAt) = '.$year)
             ->leftJoin('s.affectations', 'affectations')
             ->addSelect('affectations', 's')
             ->getQuery()
@@ -76,10 +78,12 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
             ->addSelect('s.statut');
-        if ($territory)
+        if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
         $qb->indexBy('s', 's.statut');
         $qb->groupBy('s.statut');
+
         return $qb->getQuery()
             ->getResult();
     }
@@ -91,6 +95,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->addSelect('s.villeOccupant');
         $qb->indexBy('s', 's.villeOccupant');
         $qb->groupBy('s.villeOccupant');
+
         return $qb->getQuery()
             ->getResult();
     }
@@ -111,6 +116,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->leftJoin('criteres.criticites', 'criticites')
             ->leftJoin('affectations.partner', 'partner')
             ->addSelect('situations', 'affectations', 'criteres', 'criticites', 'partner');
+
         return $qb->getQuery()->getOneOrNullResult();
     }
 
@@ -130,42 +136,45 @@ class SignalementRepository extends ServiceEntityRepository
             $qb->leftJoin('s.criteres', 'criteres');
             $qb->addSelect('affectations', 'partner', 'suivis');
         }
-        if (!$user->isSuperAdmin())
+        if (!$user->isSuperAdmin()) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $user->getTerritory());
+        }
         $qb = $this->searchFilterService->applyFilters($qb, $options);
         $qb->orderBy('s.createdAt', 'DESC');
         if (!$export) {
             $qb->setFirstResult($firstResult)
                 ->setMaxResults($pageSize);
             $qb->getQuery();
+
             return new Paginator($qb, true);
         }
+
         return $qb->getQuery()->getResult();
     }
 
-    public
-    function findCities(User|UserInterface|null $user, Territory|null $territory): array|int|string
+    public function findCities(User|UserInterface|null $user, Territory|null $territory): array|int|string
     {
         $qb = $this->createQueryBuilder('s')
             ->select('s.villeOccupant city')
             ->where('s.statut != :status')
             ->setParameter('status', Signalement::STATUS_ARCHIVED);
-        if ($user)
+        if ($user) {
             $qb->leftJoin('s.affectations', 'affectations')
                 ->leftJoin('affectations.partner', 'partner')
                 ->andWhere('partner = :partner')
                 ->setParameter('partner', $user->getPartner());
-        if ($territory)
+        }
+        if ($territory) {
             $qb->andWhere('s.territory = :territory')
                 ->setParameter('territory', $territory);
+        }
+
         return $qb->groupBy('s.villeOccupant')
             ->getQuery()
             ->getResult();
     }
 
-
-    public
-    function findOneByCodeForPublic($code): ?Signalement
+    public function findOneByCodeForPublic($code): ?Signalement
     {
         return $this->createQueryBuilder('s')
             ->andWhere('s.codeSuivi = :code')
@@ -175,5 +184,4 @@ class SignalementRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
-
 }
