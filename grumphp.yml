@@ -9,3 +9,6 @@ grumphp:
           - 'die('
           - 'exit('
       phpstan: ~
+      eslint:
+        bin: node_modules/.bin/eslint
+        config: .eslintrc.js

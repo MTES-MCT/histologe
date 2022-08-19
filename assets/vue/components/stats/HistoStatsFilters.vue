@@ -14,21 +14,21 @@
 </template>
 
 <script lang="ts">
-import HistoSelect from '../common/HistoSelect.vue';
+import HistoSelect from '../common/HistoSelect.vue'
 
 export default {
   name: 'HistoStatsFilters',
   components: {
     HistoSelect
   },
-	data () {
-		return {
-			statusList: [
-				{ Id: 'all', Text: 'Tous' },
-				{ Id: 'new', Text: 'Nouveau' },
-				{ Id: 'active', Text: 'En cours' },
-				{ Id: 'closed', Text: 'Fermé' },
-			]
+  data () {
+    return {
+      statusList: [
+        { Id: 'all', Text: 'Tous' },
+        { Id: 'new', Text: 'Nouveau' },
+        { Id: 'active', Text: 'En cours' },
+        { Id: 'closed', Text: 'Fermé' }
+      ]
     }
   }
 }

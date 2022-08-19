@@ -8,56 +8,59 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import HistoInterfaceSelectOption from './HistoInterfaceSelectOption'
 
-export default defineComponent( {
+export default defineComponent({
   name: 'HistoSelect',
   props: {
     id: { type: String, default: '' },
     innerLabel: { type: String, default: '' },
     value: { type: String, default: '' },
     optionItems: {
-		type: Array as () => Array<{ Id: string, Text: string }>,
-		default: () => [] 
-	},
+      type: Array as () => Array<HistoInterfaceSelectOption>,
+      default: () => []
+    }
   },
   data: function () {
     return {
       valueReturn: this.value,
-	  displayedItems: [] as Object[]
+      displayedItems: new Array<HistoInterfaceSelectOption>()
     }
   },
   methods: {
     onSelectedEvent () {
-      // Retour de valeur -> TODO : corriger pour vue3/typescript
-      // this.$emit('update:valueReturn', this.valueReturn)
+      // Retour de valeur
+      this.$emit('update:valueReturn', this.valueReturn)
       if (this.onSelect !== undefined) {
         this.onSelect(this.valueReturn)
       }
-	  // Rafraichissement des items
-	  this.refreshDisplayedItems()
-	},
+      // Rafraichissement des items
+      this.refreshDisplayedItems()
+    },
 
-	/**
-	 * Mise à jour des items en plaçant le label devant si sélection
-	 */
-	refreshDisplayedItems () {
-		this.displayedItems = []
-		const nbItems = this.optionItems.length
-		for (let i = 0; i < nbItems; i++) {
-			let itemText = this.optionItems[i].Text
-			// Préfixe du texte avec le innerLabel
-			if (this.innerLabel !== '' && this.valueReturn !== '' && this.valueReturn === this.optionItems[i].Id) {
-				itemText = this.innerLabel + ' : ' + this.optionItems[i].Text
-			}
-			const item = { Id: this.optionItems[i].Id, Text: itemText }
-			this.displayedItems.push(item)
-		}
-	}
+    /**
+     * Mise à jour des items en plaçant le label devant si sélection
+     */
+    refreshDisplayedItems () {
+      this.displayedItems = new Array<HistoInterfaceSelectOption>()
+      const nbItems = this.optionItems.length
+      for (let i = 0; i < nbItems; i++) {
+        let itemText = this.optionItems[i].Text
+        // Préfixe du texte avec le innerLabel
+        if (this.innerLabel !== '' && this.valueReturn !== '' && this.valueReturn === this.optionItems[i].Id) {
+          itemText = this.innerLabel + ' : ' + this.optionItems[i].Text
+        }
+        const item = new HistoInterfaceSelectOption()
+        item.Id = this.optionItems[i].Id
+        item.Text = itemText
+        this.displayedItems.push(item)
+      }
+    }
   },
   mounted () {
-	this.refreshDisplayedItems()
+    this.refreshDisplayedItems()
   }
-} )
+})
 </script>
 
 <style>
