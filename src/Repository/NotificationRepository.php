@@ -68,9 +68,8 @@ class NotificationRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('n')
             ->andWhere('n.createdAt <= :date')
-            ->setParameter('date', new DateTime('-' . $diff . ' days'))
+            ->setParameter('date', new DateTime('-'.$diff.' days'))
             ->getQuery()
             ->getResult();
     }
-
 }

@@ -10,7 +10,7 @@
 /uploaded_files/signalement/*
 !/uploaded_files/signalement/file.txt
 /var/
-/vendor/
+**/vendor/
 ###< symfony/framework-bundle ###
 /.idea/
 ###> symfony/phpunit-bridge ###

@@ -42,10 +42,11 @@ class TagRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('t')
             ->andWhere('t.isArchive != 1')
             ->indexBy('t', 't.id');
-        if($territory)
+        if ($territory) {
             $qb->andWhere('t.territory = :territory')->setParameter('territory', $territory);
+        }
+
         return $qb->getQuery()
             ->getResult();
     }
-
 }

@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Entity\Affectation;
 use App\Entity\Signalement;
-use App\Entity\SignalementUserAffectation;
 use App\Entity\Suivi;
 use App\Repository\AffectationRepository;
 use DateTimeImmutable;
@@ -13,15 +12,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class NewsActivitiesSinceLastLoginService
 {
-    private RequestStack $requestStack;
     private array $activities;
 
-    public function __construct(RequestStack $requestStack, AffectationRepository $affectationRepository)
-    {
-        $this->requestStack = $requestStack;
-        $this->affectationRepo = $affectationRepository;
+    public function __construct(
+        private RequestStack $requestStack,
+        private AffectationRepository $affectationRepo
+    ) {
     }
-
 
     public function getAffectationsAndSuivis($user)
     {
@@ -29,17 +26,18 @@ class NewsActivitiesSinceLastLoginService
         $results = $this->affectationRepo->findByPartenaire($user->getPartner());
         $affectations = new ArrayCollection();
         $suivis = new ArrayCollection();
-        $results->filter(function (Affectation $affectation) use ($affectations, $suivis, $lastActivity) {
+        $results->filter(function (Affectation $affectation) use ($affectations, $lastActivity) {
             $signalement = $affectation->getSignalement();
-            if (!$affectations->contains($signalement) && $affectation->getStatut() === Affectation::STATUS_CLOSED)
+            if (!$affectations->contains($signalement) && Affectation::STATUS_CLOSED === $affectation->getStatut()) {
                 $affectations->add($signalement);
+            }
             $signalement->getSuivis()->filter(function (Suivi $suivi) use ($lastActivity) {
                 return $suivi->getCreatedAt() > $lastActivity;
             });
         });
+
         return ['affectations' => $affectations, 'suivis' => $suivis];
     }
-
 
     public function set($user)
     {
@@ -51,18 +49,21 @@ class NewsActivitiesSinceLastLoginService
         $activities = [];
         $newsActivitiesSinceLastLogin->filter(function (Affectation $affectation) use ($activities, $lastActiviy) {
             $affectation->getSignalement()->getSuivis()->filter(function (Suivi $suivi) use ($activities, $lastActiviy) {
-                if ($suivi->getCreatedAt() > $lastActiviy)
+                if ($suivi->getCreatedAt() > $lastActiviy) {
                     $activities[] = $suivi;
+                }
             });
         });
-        return $activities;
 
+        return $activities;
     }
 
     public function count(): int
     {
-        if ($this->getAll())
-            return count($this->getAll());
+        if ($this->getAll()) {
+            return \count($this->getAll());
+        }
+
         return 0;
     }
 
@@ -78,9 +79,11 @@ class NewsActivitiesSinceLastLoginService
         $this->requestStack->getSession()->set('lastActionTime', $activities);
         $news = $this->getAll();
         $news?->filter(function (Suivi|Affectation $new) use ($news, $signalement) {
-            if ($signalement->getId() === $new->getSignalement()->getId() && $new instanceof Suivi)
+            if ($signalement->getId() === $new->getSignalement()->getId() && $new instanceof Suivi) {
                 $news->removeElement($new);
+            }
         });
+
         return $news;
     }
 
@@ -91,6 +94,7 @@ class NewsActivitiesSinceLastLoginService
         $news?->filter(function (Suivi|Affectation $new) use ($news) {
             $news->removeElement($new);
         });
+
         return $news;
     }
 }

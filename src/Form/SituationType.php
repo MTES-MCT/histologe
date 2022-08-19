@@ -16,23 +16,23 @@ class SituationType extends AbstractType
         $builder
             ->add('label', TextType::class, [
                 'attr' => [
-                    'class' => 'fr-input'
-                ]
+                    'class' => 'fr-input',
+                ],
             ])
             ->add('isActive', ChoiceType::class, [
                 'row_attr' => [
-                    'class' => 'fr-select-group'
+                    'class' => 'fr-select-group',
                 ], 'attr' => [
-                    'class' => 'fr-select'
+                    'class' => 'fr-select',
                 ],
                 'choices' => [
                     'Active' => 1,
-                    'Desactivée' => 0
+                    'Desactivée' => 0,
                 ],
                 'label_attr' => [
-                    'class' => 'fr-label'
+                    'class' => 'fr-label',
                 ],
-                'label' => 'Active'
+                'label' => 'Active',
             ]);
     }
 
@@ -40,7 +40,7 @@ class SituationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Situation::class,
-            'allow_extra_fields' => true
+            'allow_extra_fields' => true,
         ]);
     }
 }

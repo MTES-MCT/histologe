@@ -13,8 +13,8 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/bo/s')]
 class BackTagController extends AbstractController
 {
-    #[Route('/{uuid}/newtag', name: "back_tag_create", methods: "POST")]
-    public function createTag(Signalement $signalement,Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/{uuid}/newtag', name: 'back_tag_create', methods: 'POST')]
+    public function createTag(Signalement $signalement, Request $request, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('TAG_CREATE', null);
         $label = $request->get('new-tag-label');
@@ -23,16 +23,18 @@ class BackTagController extends AbstractController
         $tag->setLabel($label);
         $entityManager->persist($tag);
         $entityManager->flush();
+
         return $this->json(['response' => 'success', 'tag' => ['id' => $tag->getId(), 'label' => $tag->getLabel()]]);
     }
 
-    #[Route('/deltag/{id}', name: "back_tag_delete", defaults: ["id" => null], methods: "GET")]
+    #[Route('/deltag/{id}', name: 'back_tag_delete', defaults: ['id' => null], methods: 'GET')]
     public function deleteTag(Tag $tag, Request $request, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('TAG_DELETE', $tag);
         $tag->setIsArchive(true);
         $entityManager->persist($tag);
         $entityManager->flush();
+
         return $this->json(['response' => 'success']);
     }
 }

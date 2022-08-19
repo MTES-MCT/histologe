@@ -9,7 +9,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ConfigRepository::class)]
 class Config
 {
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -37,7 +36,7 @@ class Config
     private $adresseDpo;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\File(maxSize: '2048k', mimeTypes: "image/*")]
+    #[Assert\File(maxSize: '2048k', mimeTypes: 'image/*')]
     private $logotype;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]

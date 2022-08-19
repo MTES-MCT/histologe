@@ -22,6 +22,7 @@ class BackPartnerController extends AbstractController
     public function index(PartnerRepository $partnerRepository): Response
     {
         $this->denyAccessUnlessGranted('PARTNER_LIST', null);
+
         return $this->render('back/partner/index.html.twig', [
             'partners' => $partnerRepository->findAllOrByInseeIfCommune(null, $this->getUser()->getTerritory()),
         ]);
@@ -33,21 +34,22 @@ class BackPartnerController extends AbstractController
         $this->denyAccessUnlessGranted('PARTNER_CREATE', null);
         $partner = new Partner();
         $form = $this->createForm(PartnerType::class, $partner, [
-            'can_edit_territory'    => $this->getUser()->isSuperAdmin(),
-            'territory'             => $this->getUser()->getTerritory(),
-            'route'                 => 'back_partner_new',
+            'can_edit_territory' => $this->getUser()->isSuperAdmin(),
+            'territory' => $this->getUser()->getTerritory(),
+            'route' => 'back_partner_new',
         ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Si la personne identifiée n'est pas super admin (donc qu'elle ne peut pas éditer),
             // on redéfinit le territoire avec celui de l'utilisateur en cours
-            if ( !$this->getUser()->isSuperAdmin() ) {
-                $partner->setTerritory( $this->getUser()->getTerritory() );
+            if (!$this->getUser()->isSuperAdmin()) {
+                $partner->setTerritory($this->getUser()->getTerritory());
             }
             self::checkFormExtraData($form, $partner, $entityManager, $loginLinkHandler, $notificationService);
             $entityManager->persist($partner);
             $entityManager->flush();
+
             return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -62,7 +64,7 @@ class BackPartnerController extends AbstractController
     {
         $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
         $form = $this->createForm(PartnerType::class, $partner, [
-            'can_edit_territory'  => $this->getUser()->isSuperAdmin(),
+            'can_edit_territory' => $this->getUser()->isSuperAdmin(),
         ]);
         $form->handleRequest($request);
 
@@ -91,19 +93,20 @@ class BackPartnerController extends AbstractController
 //            $user->setStatut(User::STATUS_ARCHIVE);
             $entityManager->persist($user);
             $entityManager->flush();
-            $this->addFlash('success', $user->getNomComplet() . ' transféré avec succès !');
+            $this->addFlash('success', $user->getNomComplet().' transféré avec succès !');
+
             return $this->redirectToRoute('back_partner_edit', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         }
         $this->addFlash('error', 'Une erreur est survenue lors du transfert...');
+
         return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
     }
-
 
     #[Route('/{user}/delete', name: 'back_partner_user_delete', methods: ['POST'])]
     public function deleteUser(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('USER_DELETE', $this->getUser());
-        if ($this->isCsrfTokenValid('partner_user_delete_' . $user->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('partner_user_delete_'.$user->getId(), $request->request->get('_token'))) {
             $user->setStatut(User::STATUS_ARCHIVE);
             $entityManager->persist($user);
             $entityManager->flush();
@@ -112,15 +115,16 @@ class BackPartnerController extends AbstractController
         return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
     }
 
-
     #[Route('/checkmail', name: 'back_partner_check_user_email', methods: ['POST'])]
     public function checkMail(Request $request, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('USER_CHECKMAIL', $this->getUser());
         if ($this->isCsrfTokenValid('partner_checkmail', $request->request->get('_token'))) {
-            if ($entityManager->getRepository(User::class)->findOneBy(['email' => $request->get('email')]))
+            if ($entityManager->getRepository(User::class)->findOneBy(['email' => $request->get('email')])) {
                 return $this->json(['error' => 'email_exist'], 400);
+            }
         }
+
         return $this->json(['success' => 'email_ok']);
     }
 
@@ -128,10 +132,11 @@ class BackPartnerController extends AbstractController
     public function delete(Request $request, Partner $partner, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('PARTNER_DELETE', $partner);
-        if ($this->isCsrfTokenValid('partner_delete_' . $partner->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('partner_delete_'.$partner->getId(), $request->request->get('_token'))) {
             $partner->setIsArchive(true);
-            foreach ($partner->getUsers() as $user)
+            foreach ($partner->getUsers() as $user) {
                 $user->setStatut(User::STATUS_ARCHIVE) && $entityManager->persist($user);
+            }
             $entityManager->persist($partner);
             $entityManager->flush();
         }
@@ -141,12 +146,13 @@ class BackPartnerController extends AbstractController
 
     private static function checkFormExtraData(FormInterface $form, Partner $partner, EntityManagerInterface $entityManager, LoginLinkHandlerInterface $loginLinkHandler, NotificationService $notificationService)
     {
-        if (isset($form->getExtraData()['users']))
+        if (isset($form->getExtraData()['users'])) {
             foreach ($form->getExtraData()['users'] as $id => $userData) {
-                if ($id !== 'new') {
+                if ('new' !== $id) {
                     $userPartner = $partner->getUsers()->filter(function (User $user) use ($id) {
-                        if ($user->getId() === $id)
+                        if ($user->getId() === $id) {
                             return $user;
+                        }
                     });
                     if (!$userPartner->isEmpty()) {
                         $user = $userPartner->first();
@@ -163,10 +169,10 @@ class BackPartnerController extends AbstractController
                         $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
                         $loginLink = $loginLinkDetails->getUrl();
                         $notificationService->send(NotificationService::TYPE_ACCOUNT_ACTIVATION, $user->getEmail(), ['link' => $loginLink], $user->getTerritory());
-
                     }
                 }
             }
+        }
     }
 
     private static function setUserData(User $user, mixed $nom, mixed $prenom, mixed $roles, mixed $email, bool $isGenerique, bool $isMailingActive)

@@ -15,6 +15,7 @@ class SearchFilterService
     public function setRequest(Request $request): static
     {
         $this->request = $request;
+
         return $this;
     }
 
@@ -23,7 +24,7 @@ class SearchFilterService
         return $this->filters ?? null;
     }
 
-    public function setFilters(): SearchFilterService
+    public function setFilters(): self
     {
         $request = $this->getRequest();
         $this->filters = [
@@ -47,7 +48,7 @@ class SearchFilterService
             'scores' => $request->get('bo-filters-scores') ?? null,
             'dates' => $request->get('bo-filters-dates') ?? null,
             'tags' => $request->get('bo-filters-tags') ?? null,
-            'page' => $request->get('page') ?? 1
+            'page' => $request->get('page') ?? 1,
         ];
 
         return $this;
@@ -77,8 +78,9 @@ class SearchFilterService
     {
         $filters = [];
         foreach ($this->filters as $filterName => $filterValue) {
-            $filters[] = $filterName . '=' . $filterValue;
+            $filters[] = $filterName.'='.$filterValue;
         }
+
         return implode('&', $filters);
     }
 
@@ -86,7 +88,6 @@ class SearchFilterService
     {
         return $this->filters;
     }
-
 
     public function applyFilters(QueryBuilder $qb, array $filters): QueryBuilder
     {
@@ -98,26 +99,27 @@ class SearchFilterService
                 $qb->andWhere('s.cpOccupant = :searchterms');
                 $qb->setParameter('searchterms', $filters['searchterms']);
             } else {
-                $qb->andWhere('LOWER(s.nomOccupant) LIKE :searchterms 
-                OR LOWER(s.prenomOccupant) LIKE :searchterms 
-                OR LOWER(s.reference) LIKE :searchterms 
+                $qb->andWhere('LOWER(s.nomOccupant) LIKE :searchterms
+                OR LOWER(s.prenomOccupant) LIKE :searchterms
+                OR LOWER(s.reference) LIKE :searchterms
                 OR LOWER(s.adresseOccupant) LIKE :searchterms
                 OR LOWER(s.villeOccupant) LIKE :searchterms
                 OR LOWER(s.nomProprio) LIKE :searchterms');
-                $qb->setParameter('searchterms', "%" . strtolower($filters['searchterms']) . "%");
+                $qb->setParameter('searchterms', '%'.strtolower($filters['searchterms']).'%');
             }
         }
-        if (!empty($filters['affectations']) && !!empty($filters['partners'])) {
+        if (!empty($filters['affectations']) && (bool) empty($filters['partners'])) {
             $qb->andWhere('a.statut IN (:affectations)')
                 ->setParameter('affectations', $filters['affectations']);
         }
         if (!empty($filters['partners'])) {
-            if (in_array('AUCUN', $filters['partners']))
+            if (\in_array('AUCUN', $filters['partners'])) {
                 $qb->andWhere('affectations IS NULL');
-            else {
+            } else {
                 $qb->andWhere('partner IN (:partners)');
-                if (!empty($filters['affectations']))
+                if (!empty($filters['affectations'])) {
                     $qb->andWhere('a.statut IN (:affectations)')->setParameter('affectations', $filters['affectations']);
+                }
                 $qb->setParameter('partners', $filters['partners']);
             }
         }
@@ -156,13 +158,13 @@ class SearchFilterService
                 $field = 's.dateVisite';
             }
             if (!empty($filters['dates']['on'])) {
-                $qb->andWhere($field . ' >= :date_in')
+                $qb->andWhere($field.' >= :date_in')
                     ->setParameter('date_in', $filters['dates']['on']);
             }
             if (!empty($filters['dates']['off'])) {
-                $date_off_p1d = new DateTime( $filters['dates']['off'] );
-                $date_off_p1d->add( new DateInterval( 'P1D') );
-                $qb->andWhere($field . ' <= :date_off')
+                $date_off_p1d = new DateTime($filters['dates']['off']);
+                $date_off_p1d->add(new DateInterval('P1D'));
+                $qb->andWhere($field.' <= :date_off')
                     ->setParameter('date_off', $date_off_p1d->format('Y-m-d'));
             }
         }
@@ -206,12 +208,11 @@ class SearchFilterService
                     ->setParameter('score_off', $filters['scores']['off']);
             }
         }
-        if (!empty($filters['territories']))
+        if (!empty($filters['territories'])) {
             $qb->andWhere('s.territory IN (:territories)')
                 ->setParameter('territories', $filters['territories']);
+        }
 
         return $qb;
     }
-
-
 }

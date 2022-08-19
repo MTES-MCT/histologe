@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: CriticiteRepository::class)]
 class Criticite
 {
-    const SCORE_MAX = 3;
+    public const SCORE_MAX = 3;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -39,7 +39,6 @@ class Criticite
 
     #[ORM\Column(type: 'boolean')]
     private $isArchive;
-
 
     #[ORM\Column(type: 'boolean')]
     private $isDefault;
@@ -153,7 +152,6 @@ class Criticite
 
         return $this;
     }
-
 
     public function getIsDefault(): ?bool
     {

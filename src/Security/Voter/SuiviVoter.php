@@ -16,7 +16,7 @@ class SuiviVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return in_array($attribute, [self::CREATE, self::VIEW])
+        return \in_array($attribute, [self::CREATE, self::VIEW])
             && ($subject instanceof Suivi || $subject instanceof Signalement);
     }
 
@@ -26,28 +26,30 @@ class SuiviVoter extends Voter
         if (!$user instanceof UserInterface || !$user->isSuperAdmin() && $subject->getTerritory() !== $user->getTerritory()) {
             return false;
         }
-        if ($user->isSuperAdmin())
+        if ($user->isSuperAdmin()) {
             return true;
+        }
 
         return match ($attribute) {
             self::CREATE => $this->canCreate($subject, $user),
             self::VIEW => $this->canView($subject, $user),
             default => false,
         };
-
     }
 
     private function canCreate(Signalement $signalement, UserInterface $user): bool
     {
-        return $signalement->getStatut() === Signalement::STATUS_ACTIVE && $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
-                return $affectation->getPartner()->getId() === $user->getPartner()->getId();
-            })->count() > 0 || $user->isTerritoryAdmin();
+        return Signalement::STATUS_ACTIVE === $signalement->getStatut() && $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
+            return $affectation->getPartner()->getId() === $user->getPartner()->getId();
+        })->count() > 0 || $user->isTerritoryAdmin();
     }
 
     private function canView(mixed $comment, UserInterface $user): bool
     {
-        if ($this->canCreate($comment->getSignalement(), $user))
+        if ($this->canCreate($comment->getSignalement(), $user)) {
             return true;
+        }
+
         return true;
     }
 }

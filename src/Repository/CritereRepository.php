@@ -50,7 +50,6 @@ class CritereRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-
     public function findAllList()
     {
         return $this->createQueryBuilder('c')

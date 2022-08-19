@@ -30,7 +30,6 @@ class Partner
     #[ORM\Column(type: 'json')]
     private $insee = [];
 
-
     #[ORM\OneToMany(mappedBy: 'partner', targetEntity: Affectation::class, orphanRemoval: true)]
     private $affectations;
 
@@ -76,14 +75,12 @@ class Partner
         return $this;
     }
 
-    /**
-     * @return Collection
-     */
     public function getUsers(): Collection
     {
         return $this->users->filter(function (User $user) {
-            if ($user->getStatut() !== User::STATUS_ARCHIVE)
+            if (User::STATUS_ARCHIVE !== $user->getStatut()) {
                 return $user;
+            }
         });
     }
 
@@ -108,7 +105,6 @@ class Partner
 
         return $this;
     }
-
 
     public function getIsArchive(): ?bool
     {
@@ -149,9 +145,11 @@ class Partner
     public function isAffected(Signalement $signalement)
     {
         $isAffected = $this->getAffectations()->filter(function (Affectation $affectation) use ($signalement) {
-            if ($affectation->getSignalement()->getId() === $signalement->getId())
+            if ($affectation->getSignalement()->getId() === $signalement->getId()) {
                 return $signalement;
+            }
         });
+
         return !$isAffected->isEmpty();
     }
 
@@ -165,9 +163,12 @@ class Partner
 
     public function hasGeneriqueUsers(): bool
     {
-        foreach ($this->users as $user)
-            if ($user->getIsGenerique())
+        foreach ($this->users as $user) {
+            if ($user->getIsGenerique()) {
                 return true;
+            }
+        }
+
         return false;
     }
 
@@ -240,5 +241,4 @@ class Partner
 
         return $this;
     }
-
 }

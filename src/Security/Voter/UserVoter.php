@@ -17,7 +17,7 @@ class UserVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return in_array($attribute, [self::CHECKMAIL,self::CREATE, self::EDIT, self::SWITCH, self::DELETE])
+        return \in_array($attribute, [self::CHECKMAIL, self::CREATE, self::EDIT, self::SWITCH, self::DELETE])
             && $subject instanceof User;
     }
 
@@ -27,8 +27,9 @@ class UserVoter extends Voter
         if (!$user instanceof UserInterface) {
             return false;
         }
-        if ($user->isSuperAdmin())
+        if ($user->isSuperAdmin()) {
             return true;
+        }
 
         return match ($attribute) {
             self::CHECKMAIL => $this->canCheckMail($subject, $user),
@@ -38,13 +39,14 @@ class UserVoter extends Voter
             self::DELETE => $this->canDelete($subject, $user),
             default => false,
         };
-
     }
 
     private function canCreate(User $subject, UserInterface $user): bool
     {
-        if ($this->canDelete($subject, $user))
+        if ($this->canDelete($subject, $user)) {
             return true;
+        }
+
         return false;
     }
 
@@ -55,8 +57,10 @@ class UserVoter extends Voter
 
     private function canEdit(User $subject, UserInterface $user): bool
     {
-        if ($this->canDelete($subject, $user))
+        if ($this->canDelete($subject, $user)) {
             return true;
+        }
+
         return $subject->getId() === $user->getId();
     }
 

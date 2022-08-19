@@ -15,7 +15,7 @@ class PostalCodeHomeCheckerService
 
         '20' => [
             'list' => [
-                '20000', '20090', '20167'
+                '20000', '20090', '20167',
             ],
             'url' => 'https://signalicasa.histologe.fr',
         ],
@@ -83,33 +83,31 @@ class PostalCodeHomeCheckerService
 
     public function __construct(private TerritoryRepository $territoryRepository)
     {
-        
     }
 
     /**
-     * Vérifie dans la liste si un code postal peut déjà être redirigé vers un service existant
+     * Vérifie dans la liste si un code postal peut déjà être redirigé vers un service existant.
      */
-    public function getRedirection( string $postal_code )
+    public function getRedirection(string $postal_code)
     {
         // Découpe pour avoir les deux premiers caractères saisis
-        $zip = substr( $postal_code, 0, 2 );
-        if ( !empty( self::$list[ $zip ] ) ) {
-            
+        $zip = substr($postal_code, 0, 2);
+        if (!empty(self::$list[$zip])) {
             // Si il n'y a pas de sous-liste pour ce département, on retourne directement le résultat
-            if ( empty( self::$list[ $zip ][ 'list' ] ) ) {
-                return self::$list[ $zip ] . '/signalement';
+            if (empty(self::$list[$zip]['list'])) {
+                return self::$list[$zip].'/signalement';
             }
 
             // Si il y a une sous-liste, on vérifie que c'est dans celle-ci et on retourne l'url
-            if ( in_array( $postal_code, self::$list[ $zip ][ 'list' ] ) ) {
-                return self::$list[ $zip ][ 'url' ] . '/signalement';
+            if (\in_array($postal_code, self::$list[$zip]['list'])) {
+                return self::$list[$zip]['url'].'/signalement';
             }
         }
 
         // Vérifie si le territoire existe et est activé dans la base de données
-        $territoryItems = $this->territoryRepository->findByZip( $zip );
+        $territoryItems = $this->territoryRepository->findByZip($zip);
         // Si c'est le cas, on redirige sur le site lui-même
-        if ( !empty( $territoryItems ) ) {
+        if (!empty($territoryItems)) {
             return 'local';
         }
 

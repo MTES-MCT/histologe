@@ -55,10 +55,10 @@ class ActivationReminderCommand extends Command
                 'link' => $loginLinkDetails->getUrl(),
 //                'reminder' => true
             ]);
-            $i++;
+            ++$i;
         }
         $em->flush();
-        $io->success($i . ' user(s) notifié(s) pour activation');
+        $io->success($i.' user(s) notifié(s) pour activation');
 
         return Command::SUCCESS;
     }

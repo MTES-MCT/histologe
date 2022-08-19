@@ -9,9 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: NotificationRepository::class)]
 class Notification
 {
-    const TYPE_AFFECTATION = 0;
-    const TYPE_SUIVI = 1;
-    const TYPE_NEW_SIGNALEMENT = 2;
+    public const TYPE_AFFECTATION = 0;
+    public const TYPE_SUIVI = 1;
+    public const TYPE_NEW_SIGNALEMENT = 2;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -33,7 +33,6 @@ class Notification
 
     #[ORM\ManyToOne(targetEntity: Suivi::class)]
     private ?Suivi $suivi;
-
 
     #[ORM\Column(type: 'datetime_immutable')]
     private ?DateTimeImmutable $createdAt;
@@ -75,7 +74,6 @@ class Notification
 
         return $this;
     }
-
 
     public function getType(): ?int
     {
@@ -125,7 +123,6 @@ class Notification
         return $this;
     }
 
-
     public function getAffectation(): ?Affectation
     {
         return $this->affectation;
@@ -137,6 +134,4 @@ class Notification
 
         return $this;
     }
-
-
 }

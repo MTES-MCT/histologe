@@ -101,5 +101,4 @@ class Suivi
 
         return $this;
     }
-
 }

@@ -66,14 +66,13 @@ class ActivityListener implements EventSubscriberInterface
                     $this->notifyPartner($partner, $entity, Notification::TYPE_SUIVI);
                 });
                 $this->sendMail($entity, NotificationService::TYPE_NEW_COMMENT_BACK);
-                if ($entity->getIsPublic() && $entity->getSignalement()->getStatut() !== Signalement::STATUS_REFUSED ) {
+                if ($entity->getIsPublic() && Signalement::STATUS_REFUSED !== $entity->getSignalement()->getStatut()) {
                     $this->notifier->send(NotificationService::TYPE_NEW_COMMENT_FRONT, [$entity->getSignalement()->getMailDeclarant(), $entity->getSignalement()->getMailOccupant()], [
                         'signalement' => $entity->getSignalement(),
-                        'lien_suivi' => $this->urlGenerator->generate('front_suivi_signalement', ['code' => $entity->getSignalement()->getCodeSuivi()], 0)
+                        'lien_suivi' => $this->urlGenerator->generate('front_suivi_signalement', ['code' => $entity->getSignalement()->getCodeSuivi()], 0),
                     ], $entity->getSignalement()->getTerritory());
                 }
             }
-
         }
     }
 
@@ -85,11 +84,11 @@ class ActivityListener implements EventSubscriberInterface
             ->setParameter('role', '"ROLE_ADMIN"')
             ->setParameter('role2', '"ROLE_ADMIN_TERRITORY"');
         foreach ($admins->getQuery()->getResult() as $admin) {
-            if($admin->isSuperAdmin() || $admin->isTerritoryAdmin() && $territory->getId() === $admin->getTerritory()->getId())
-            {
+            if ($admin->isSuperAdmin() || $admin->isTerritoryAdmin() && $territory->getId() === $admin->getTerritory()->getId()) {
                 $this->createInAppNotification($admin, $entity, $inAppType);
-                if ($admin->getIsMailingActive())
+                if ($admin->getIsMailingActive()) {
                     $this->tos[] = $admin->getEmail();
+                }
             }
         }
 //        dd($this->tos);
@@ -125,15 +124,16 @@ class ActivityListener implements EventSubscriberInterface
         $options = [];
         $options['entity'] = $entity;
         if (!$this->tos->isEmpty()) {
-            if ($entity instanceof Signalement)
+            if ($entity instanceof Signalement) {
                 $signalement = $entity;
-            else
+            } else {
                 $signalement = $entity->getSignalement();
+            }
             $uuid = $signalement->getUuid();
             $options = array_merge($options, [
                 'link' => $this->urlGenerator->generate('back_signalement_view', [
-                    'uuid' => $uuid
-                ], 0)
+                    'uuid' => $uuid,
+                ], 0),
             ]);
             $this->notifier->send($mailType, array_unique($this->tos->toArray()), $options, $signalement->getTerritory());
         }
@@ -145,10 +145,11 @@ class ActivityListener implements EventSubscriberInterface
             $this->tos->add($partner->getEmail());
         }
         $partner->getUsers()->filter(function (User $user) use ($inAppType, $entity) {
-            if ($user->getStatut() === User::STATUS_ACTIVE && !$user->isSuperAdmin() && !$user->isTerritoryAdmin()) {
+            if (User::STATUS_ACTIVE === $user->getStatut() && !$user->isSuperAdmin() && !$user->isTerritoryAdmin()) {
                 $this->createInAppNotification($user, $entity, $inAppType);
-                if ($user->getIsMailingActive())
+                if ($user->getIsMailingActive()) {
                     $this->tos->add($user->getEmail());
+                }
             }
         });
     }
@@ -163,6 +164,4 @@ class ActivityListener implements EventSubscriberInterface
             $args->getObjectManager()->flush();
         }
     }
-
 }
-

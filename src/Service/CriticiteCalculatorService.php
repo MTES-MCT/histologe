@@ -28,16 +28,21 @@ class CriticiteCalculatorService
         $scoreMax = $this->doctrine->getRepository(Critere::class)->getMaxScore() * Criticite::SCORE_MAX;
         $signalement->getCriticites()->map(function (Criticite $criticite) {
             $this->scoreSignalement += ($criticite->getScore() * $criticite->getCritere()->getCoef());
-            if ($criticite->getCritere()->getIsDanger())
+            if ($criticite->getCritere()->getIsDanger()) {
                 $this->isDanger = true;
+            }
         });
         $score = ($this->scoreSignalement / $scoreMax) * 1000;
-        if ($signalement->getNbEnfantsM6() || $signalement->getNbEnfantsP6())
+        if ($signalement->getNbEnfantsM6() || $signalement->getNbEnfantsP6()) {
             $score = $score * 1.1;
-        if ($this->isDanger)
+        }
+        if ($this->isDanger) {
             $score = 100;
-        if ($score > 100)
+        }
+        if ($score > 100) {
             $score = 100;
+        }
+
         return $score;
     }
 }
