@@ -13,7 +13,14 @@ export const store = {
 			countSignalement: 1,
 			averageCriticite: 5,
 			averageDaysValidation: 4,
-			averageDaysClosure: 3
+			averageDaysClosure: 3,
+			countSignalementPerMonth: [],
+			countSignalementPerPartenaire: [],
+			countSignalementPerSituation: [],
+			countSignalementPerCriticite: [],
+			countSignalementPerStatut: [],
+			countSignalementPerCriticitePercent: [],
+			countSignalementPerVisite: []
 		}
 	},
 	props: {

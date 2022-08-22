@@ -1,0 +1,88 @@
+<template>
+  <div class="histo-chart-line histo-chart-item">
+    <span class="histo-chart-item-title"><slot name="title"></slot></span>
+    <Line
+      :chart-options="chartOptions"
+      :chart-data="chartData"
+      :chart-id="chartId"
+      :plugins="plugins"
+      :css-classes="cssClasses"
+      :styles="styles"
+      :width="width"
+      :height="height"
+      />
+  </div>
+</template>
+
+<script>
+import { defineComponent } from 'vue'
+import { Line } from 'vue-chartjs'
+import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale, Plugin } from 'chart.js'
+
+ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale)
+
+export default defineComponent({
+  name: 'HistoChartLine',
+  components: { Line },
+  props: {
+    chartId: {
+      type: String,
+      default: 'line-chart'
+    },
+    width: {
+      type: Number,
+      default: 400
+    },
+    height: {
+      type: Number,
+      default: 300
+    },
+    cssClasses: {
+      default: '',
+      type: String
+    },
+    styles: {
+      type: Object,
+      default: () => {}
+    },
+    plugins: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  data() {
+    return {
+      chartData: {
+        labels: [ 'January', 'February', 'March' ],
+        datasets: [
+          {
+            data: [20, 50, 10],
+            pointBackgroundColor: '#000091',
+            borderColor: '#000091',
+            backgroundColor: '#CACAFB',
+            fill: {value: 0},
+            cubicInterpolationMode: 'monotone'
+          }
+        ]
+      },
+      chartOptions: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    }
+  }
+})
+</script>
+
+<style>
+</style>
