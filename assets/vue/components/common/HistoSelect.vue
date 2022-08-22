@@ -14,12 +14,14 @@ export default defineComponent({
   name: 'HistoSelect',
   props: {
     id: { type: String, default: '' },
+    onSelect: { type: Function },
     innerLabel: { type: String, default: '' },
     value: { type: String, default: '' },
     optionItems: {
       type: Array as () => Array<HistoInterfaceSelectOption>,
       default: () => []
-    }
+    },
+    multiselect: { type: Boolean, default: false }
   },
   data: function () {
     return {
