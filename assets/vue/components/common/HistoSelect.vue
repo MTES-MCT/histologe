@@ -1,6 +1,12 @@
 <template>
   <span class="histo-select">
-    <select class="fr-select" v-model="valueReturn" :id="id" :name="id" @change="onSelectedEvent">
+    <select
+      class="fr-select"
+      :id="id"
+      :name="id"
+      :value="modelValue"
+      @change="onSelectedEvent"
+      >
       <option v-for="item in displayedItems" :value="item.Id" :key="item.Id">{{ item.Text }}</option>
     </select>
   </span>
@@ -14,9 +20,9 @@ export default defineComponent({
   name: 'HistoSelect',
   props: {
     id: { type: String, default: '' },
+    modelValue: { type: String, default: '' },
     onSelect: { type: Function },
     innerLabel: { type: String, default: '' },
-    value: { type: String, default: '' },
     optionItems: {
       type: Array as () => Array<HistoInterfaceSelectOption>,
       default: () => []
@@ -25,31 +31,31 @@ export default defineComponent({
   },
   data: function () {
     return {
-      valueReturn: this.value,
       displayedItems: new Array<HistoInterfaceSelectOption>()
     }
   },
+  emits: ['update:modelValue'],
   methods: {
-    onSelectedEvent () {
+    onSelectedEvent (e: any) {
       // Retour de valeur
-      this.$emit('update:valueReturn', this.valueReturn)
+			this.$emit('update:modelValue', e.target.value)
       if (this.onSelect !== undefined) {
-        this.onSelect(this.valueReturn)
+        this.onSelect(e.target.value)
       }
       // Rafraichissement des items
-      this.refreshDisplayedItems()
+      this.refreshDisplayedItems(e.target.value)
     },
 
     /**
      * Mise à jour des items en plaçant le label devant si sélection
      */
-    refreshDisplayedItems () {
+    refreshDisplayedItems (selectedValue: string) {
       this.displayedItems = new Array<HistoInterfaceSelectOption>()
       const nbItems = this.optionItems.length
       for (let i = 0; i < nbItems; i++) {
         let itemText = this.optionItems[i].Text
         // Préfixe du texte avec le innerLabel
-        if (this.innerLabel !== '' && this.valueReturn !== '' && this.valueReturn === this.optionItems[i].Id) {
+        if (this.innerLabel !== '' && selectedValue !== '' && selectedValue === this.optionItems[i].Id) {
           itemText = this.innerLabel + ' : ' + this.optionItems[i].Text
         }
         const item = new HistoInterfaceSelectOption()
@@ -60,7 +66,10 @@ export default defineComponent({
     }
   },
   mounted () {
-    this.refreshDisplayedItems()
+    this.refreshDisplayedItems(this.modelValue)
+  },
+  updated () {
+    this.refreshDisplayedItems(this.modelValue)
   }
 })
 </script>

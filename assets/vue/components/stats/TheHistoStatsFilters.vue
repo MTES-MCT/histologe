@@ -11,7 +11,7 @@
         <div class="fr-col-12 fr-col-lg-3">
           <HistoSelect
             id="filter-communes"
-            :on-select=onChange
+            @update:modelValue="onChange"
             inner-label="Communes"
             :multiselect=true
             />
@@ -19,17 +19,16 @@
         <div class="fr-col-12 fr-col-lg-3">
           <HistoSelect 
             id="filter-statut"
-            :on-select=onChange
+            v-model="sharedState.filters.statut"
+            @update:modelValue="onChange"
             inner-label="Statut"
             :option-items=statusList
-            :value=sharedState.filters.statut
-            v-bind:valueReturn.sync="sharedState.filters.statut"
             />
         </div>
         <div class="fr-col-12 fr-col-lg-3">
           <HistoSelect
             id="filter-etiquettes"
-            :on-select=onChange
+            @update:modelValue="onChange"
             inner-label="Etiquettes"
             :multiselect=true
             />
@@ -37,23 +36,26 @@
         <div class="fr-col-12 fr-col-lg-3">
           <HistoSelect
             id="filter-type"
-            :on-select=onChange
+            v-model="sharedState.filters.type"
+            @update:modelValue="onChange"
             inner-label="Type"
             :option-items=typesList
-            :value=sharedState.filters.type
-            v-bind:valueReturn.sync="sharedState.filters.type"
             />
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-4">
           Sélecteur de dates
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-5">
-          <HistoCheckbox id="count-refused" :value="sharedState.filters.countRefused" v-bind:valueReturn.sync="sharedState.filters.countRefused">
+          <HistoCheckbox
+            id="count-refused"
+            v-model="sharedState.filters.countRefused"
+            @update:modelValue="onChange"
+            >
             <template #label>Cocher la case pour comptabiliser les signalements refusés</template>
           </HistoCheckbox>
         </div>
         <div class="fr-col-12 fr-col-lg-12 fr-col-xl-3">
-          <a href="#">Lien pour réinitialiser</a>
+          <a href="#" @click="onReinitLocalEvent">Tout réinitialiser</a>
         </div>
       </div>
     </div>
@@ -74,10 +76,19 @@ export default defineComponent({
   components: {
     HistoSelect,
     HistoCheckbox
-},
+  },
   data () {
     return {
 			sharedState: store.state,
+      initFilters: {
+        communes: store.state.filters.communes,
+        statut: store.state.filters.statut,
+        etiquette: store.state.filters.etiquette,
+        type: store.state.filters.type,
+        startDate: store.state.filters.startDate,
+        endDate: store.state.filters.endDate,
+        countRefused: store.state.filters.countRefused
+      },
       statusList: [
         { Id: 'all', Text: 'Tous' },
         { Id: 'new', Text: 'Nouveau' },
@@ -91,6 +102,21 @@ export default defineComponent({
         { Id: 'unset', Text: 'Non renseigné' }
       ]
     }
-  }
+  },
+	methods: {
+		onReinitLocalEvent () {
+      this.sharedState.filters.communes = this.initFilters.communes
+      this.sharedState.filters.statut = this.initFilters.statut
+      this.sharedState.filters.etiquette = this.initFilters.etiquette
+      this.sharedState.filters.type = this.initFilters.type
+      this.sharedState.filters.startDate = this.initFilters.startDate
+      this.sharedState.filters.endDate = this.initFilters.endDate
+      this.sharedState.filters.countRefused = this.initFilters.countRefused
+
+      if (this.onChange !== undefined) {
+			  this.onChange()
+      }
+		}
+	}
 })
 </script>
