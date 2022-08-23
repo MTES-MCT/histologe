@@ -48,7 +48,9 @@
           Sélecteur de dates
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-5">
-          Cocher la case pour comptabiliser les signalements refusés
+          <HistoCheckbox id="count-refused" :value="sharedState.filters.countRefused" v-bind:valueReturn.sync="sharedState.filters.countRefused">
+            <template #label>Cocher la case pour comptabiliser les signalements refusés</template>
+          </HistoCheckbox>
         </div>
         <div class="fr-col-12 fr-col-lg-12 fr-col-xl-3">
           <a href="#">Lien pour réinitialiser</a>
@@ -62,6 +64,7 @@
 import { defineComponent } from 'vue'
 import { store } from './store.js'
 import HistoSelect from '../common/HistoSelect.vue'
+import HistoCheckbox from '../common/HistoCheckbox.vue'
 
 export default defineComponent({
   name: 'TheHistoStatsFilters',
@@ -69,8 +72,9 @@ export default defineComponent({
     onChange: { type: Function }
   },
   components: {
-    HistoSelect
-  },
+    HistoSelect,
+    HistoCheckbox
+},
   data () {
     return {
 			sharedState: store.state,
