@@ -53,8 +53,6 @@ Mailcatcher|   histologe_mailer| **1025** et **1080**
 
 ## Installation
 
-Insérer un jeu de données (export sql) existant dans le repertoire data (voir avec l'équipe).
-
 ### Usage
 ```
 make help
@@ -80,8 +78,6 @@ Bouches-du-Rhône       | Admin Histologe 13 | admin-territoire-13@histologe.fr 
 Ain                    | Admin Histologe 01 | admin-territoire-01@histologe.fr | ROLE_ADMIN_TERRITORY
 Bouches-du-Rhône       | Partenaire 13      | partenaire-13-01@histologe.fr    | ROLE_USER_PARTNER
 Ain                    | Partenaire 01      | partenaire-01-01@histologe.fr    | ROLE_USER_PARTNER
-
-
 
 
 ### Tests
