@@ -6,13 +6,14 @@ DATABASE_USER = histologe
 DATABASE_NAME = histologe_db
 PATH_DUMP_SQL = data/dump.sql
 PHPUNIT       = ./vendor/bin/phpunit
+SYMFONY       = php bin/console
 
 help:
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
 	| sed -n 's/^\(.*\): \(.*\)##\(.*\)/\1\3/p' \
 	| column -t  -s ':' \
 
-build: .check .destroy .setup run .sleep composer load-data
+build: .check .destroy .setup run .sleep composer create-db load-fixtures
 
 run: ## : Start containers
 	@echo -e '\e[1;32mStart containers\032'
@@ -33,13 +34,18 @@ mysql: ## : Log to mysql container
 	@bash -l -c '$(DOCKER_COMP) exec -it histologe_mysql mysql -u histologe -phistologe histologe_db'
 
 create-db: ## : Create database
-	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "php bin/console --env=dev doctrine:database:create --no-interaction"
+	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:database:drop --force --no-interaction"
+	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:database:create --no-interaction"
+	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:migration:migrate --no-interaction"
 
 drop-db: ## : Drop database
-	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "php bin/console --env=dev doctrine:database:drop --force --no-interaction"
+	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:database:drop --force --no-interaction"
 
 load-data: ## : Drop database
 	@$(DOCKER_COMP) exec -T histologe_mysql mysql -u $(DATABASE_USER) -phistologe $(DATABASE_NAME) < $(PATH_DUMP_SQL)
+
+load-fixtures: ## : Load fixtures
+	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:fixtures:load --no-interaction"
 
 composer: ## : Install composer dependencies
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer install --dev --no-interaction --optimize-autoloader
@@ -77,4 +83,4 @@ cs-fix: ## : Fix source ode with PHP-CS-Fixer
 	@echo "\033[32mContainers built!\033[0m"
 
 .sleep:
-	@sleep 30
+	@sleep 10

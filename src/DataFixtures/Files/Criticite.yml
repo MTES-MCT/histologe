@@ -1,0 +1,847 @@
+criticites:
+  -
+    critere: "J'ai un problème de ventilation dans mon logement."
+    label: "Il n’y a pas de ventilation dans ma salle de bain, mon WC ou ma cuisine."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "J'ai un problème de ventilation dans mon logement."
+    label: "il n’y a pas de ventilation dans au moins deux pièces parmi : les WC, la salle de bain et la cuisine."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "J'ai un problème de ventilation dans mon logement."
+    label: "il n'y a aucune ventilation dans mon logement."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "L'entrée du bâtiment est abîmée ou mal sécurisée"
+    label: "La porte ferme à clef mais difficilement."
+    is_archive: 0
+    is_default: 1
+    score: 1
+  -
+    critere: "L'entrée du bâtiment est abîmée ou mal sécurisée"
+    label: "La porte ferme difficilement et laisse passer l’air. La porte est facile à crocheter, il y a un espace entre le cadre et la porte, et pas d’isolation thermique. "
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "L'entrée du bâtiment est abîmée ou mal sécurisée"
+    label: "La porte ne se ferme pas ou pas complètement ou s'ouvre difficilement. Il n'y a pas de vitre, les matériaux sont dégradés, le digicode est hors service..."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Le sol est abîmé."
+    label: "je circule difficilement."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Le sol est abîmé."
+    label: "certaines lames de parquet bougent ou sont mal fixées. Il y a des fissures sur le carrelage..."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Le sol est abîmé."
+    label: "le sol risque de s’effondrer. Il est déformé ou attaqué par des parasites (champignon lignivores, termites)."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Le bâtiment n’est pas sécurisé contre les chutes."
+    label: "les garde-corps sont insuffisants "
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Le bâtiment n’est pas sécurisé contre les chutes."
+    label: "les garde-corps et mains-courantes sont mal fixées et légèrement instables."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Le bâtiment n’est pas sécurisé contre les chutes."
+    label: "Il n'y a pas de garde-corps, ils sont très abîmés ou mesurent moins de 1 mètre de hauteur."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Les murs et plafonds intérieurs sont mal entretenus"
+    label: "la peinture est sale et non entretenue. "
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Les murs et plafonds intérieurs sont mal entretenus"
+    label: "la peinture est écaillée et présente quelques traces d'humidité..."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Les murs et plafonds intérieurs sont mal entretenus"
+    label: "les surfaces sont encrassées, très dégradées et très difficiles à entretenir."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Les sols sont humides."
+    label: "il y a de temps en temps des traces d’humidité qui ne restent pas."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Les sols sont humides."
+    label: "il y a régulièrement des traces d’humidité."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Les sols sont humides."
+    label: "le sol ou la base des murs est très humide."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "L’installation du réseau électrique a un problème."
+    label: "l’installation est récente mais pas terminée."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "L’installation du réseau électrique a un problème."
+    label: "l’installation est vétuste mais sans risque pour les personnes."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "L’installation du réseau électrique a un problème."
+    label: "l’installation n’est pas protégée, pas bien fixée. Les fils électriques sont apparents et dénudés. Elle représente un risque pour les personnes."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "La protection incendie n’est pas adaptée."
+    label: "il y a un détecteur mais l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "La protection incendie n’est pas adaptée."
+    label: "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "La protection incendie n’est pas adaptée."
+    label: "il n’y a pas de détecteur ET l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Le chauffage collectif est obsolète."
+    label: "l’équipement est obsolète mais fonctionne encore."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Le chauffage collectif est obsolète."
+    label: "l’équipement est obsolète et ne fonctionne plus correctement. "
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Le chauffage collectif est obsolète."
+    label: "l’équipement est obsolète, mal entretenu, non accessible. Les locaux de chauffage sont mal entretenus et présentent un risque manifeste."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Les déchets sont mal stockés."
+    label: "il n’y a pas de local poubelle mais les déchets sont stockés dans des récipients corrects."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Les déchets sont mal stockés."
+    label: "il n’y a ni local poubelle, ni bac pour les ordures mais pas de dépôt sauvage d’ordures."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Les déchets sont mal stockés."
+    label: "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "L’usage des lieux n’est pas respecté."
+    label: "les parties communes sont négligées mais peuvent être utilisées."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "L’usage des lieux n’est pas respecté."
+    label: "les parties communes sont mal utilisées, ce qui gêne leur utilisation. "
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "L’usage des lieux n’est pas respecté."
+    label: "les parties communes et équipements sont mal utilisés ou négligés ce qui empêche régulièrement de les utiliser (locaux encombrés, amoncellement de déchets, graffitis, équipements volontairement dégradés, éclairage mis hors d'usage, ascenseurs volontairement bloqués, portes enfoncées…). "
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Fils électriques dénudés"
+    label: "Les fils électriques mal fixés et risquent de se dénuder ou de se détacher."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Fils électriques dénudés"
+    label: "Les fils électriques sont apparents et mal isolés par endroits."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Fils électriques dénudés"
+    label: "Le réseau électrique semble “bricolé”, anarchique et non protégé. Il n'y a pas de prise de terre. Des fils dénudés sont apparents. "
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Les installations électriques ne sont pas en bon état."
+    label: "L’installation électrique est ancienne mais fonctionne sans danger."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Les installations électriques ne sont pas en bon état."
+    label: "L’installation électrique est obsolète et présente des risques de contacts directs."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Les installations électriques ne sont pas en bon état."
+    label: "L’installation électrique intérieure semble “bricolée”, anarchique, non protégée. Il n'y a pas de prise de terre."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Les murs ont des fissures."
+    label: "Une ou plusieurs fissures mineures sont visibles, uniquement à l'intérieur."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Les murs ont des fissures."
+    label: "Fissures mineures à l'extérieur du logement."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Les murs ont des fissures."
+    label: "Fissures importantes à l'extérieur ou d'éclatements profonds sur les murs porteurs."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Les planchers sont dangereux."
+    label: "Les sols ou planchers sont abîmés ou ont des défauts."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Les planchers sont dangereux."
+    label: "Les sols ou planchers bougent, sont mal fixés ou fissurés."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Les planchers sont dangereux."
+    label: "Les sols ou planchers sont affaissés ou déformés. Il y a un risque d'effondrement."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Les garde-corps ou rambardes sont dangereuses."
+    label: "Les garde-corps ou rambardes sont abîmées mais stables."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Les garde-corps ou rambardes sont dangereuses."
+    label: "Les garde-corps, mains courantes ou rambardes sont mal fixées et légèrement instables."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Les garde-corps ou rambardes sont dangereuses."
+    label: "Il n'y a pas de garde-corps ou rambardes, elles sont très abîmées ou mesurent moins de 1 mètre de hauteur. "
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "L'accès au logement est mal éclairé."
+    label: "L’éclairage est insuffisant depuis l’accès de la porte d’entrée jusqu'à 10m de distance. "
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "L'accès au logement est mal éclairé."
+    label: "Seuls l’accès à la porte d’entrée et les parties communes sont éclairées."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "L'accès au logement est mal éclairé."
+    label: "Il n’y a pas d’éclairage sur l’ensemble de l’accès au logement."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "La protection incendie du logement n’est pas adaptée."
+    label: "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "La protection incendie du logement n’est pas adaptée."
+    label: "il n’y a pas de détecteur ET l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "La protection incendie du logement n’est pas adaptée."
+    label: "il y a un détecteur mais l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "De l’air s’infiltre dans mon logement."
+    label: "Infiltration ou fuite d'air dans le toit, la charpente, les façades, les murs extérieurs. Parfois sensation de courant d'air."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "De l’air s’infiltre dans mon logement."
+    label: "Infiltration ou fuite d'air dans deux des éléments suivants : toit, charpente, façades, murs extérieurs. Sensation de courant d'air régulièrement ou ponctuellement."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "De l’air s’infiltre dans mon logement."
+    label: "Infiltration ou fuite d'air dans plus de deux des éléments suivants : toit, charpente, façades, murs extérieurs. Sensation de courant d'air régulière ou très fréquente."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Mes factures de chauffage sont anormalement élevées."
+    label: "Ma facture stable mais je limite mon chauffage."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Mes factures de chauffage sont anormalement élevées."
+    label: "Ma facture en hausse et je limite mon chauffage. "
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Mes factures de chauffage sont anormalement élevées."
+    label: "Ma facture est trop élevée et le chauffage est limité dans le logement. "
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Mon logement est mal isolé."
+    label: "Le DPE indique une étiquette énergie B ou C. J’ai rarement ou parfois la sensation d'avoir froid en hiver et/ou très chaud en été."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Mon logement est mal isolé."
+    label: "Le DPE indique une étiquette énergie D ou E. J’ai souvent la sensation d'avoir froid en hiver et/ou très chaud en été."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Mon logement est mal isolé."
+    label: "Le DPE indique une étiquette énergie F ou G ou n’a pas été fait. J’ai tout le temps la sensation d'avoir froid en hiver et/ou très chaud en été."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "De l'eau s’infiltre dans mon logement."
+    label: "Il y a de l'humidité mais pas de traces de d'eau."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "De l'eau s’infiltre dans mon logement."
+    label: "Il y a des traces d'eau dans les pièces d’eau uniquement."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "De l'eau s’infiltre dans mon logement."
+    label: "Il y a des traces d'eau dans plusieurs des pièces à vivre du logement."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Il y a des traces importantes de moisissures."
+    label: "une ou des pièces sont humides, mais sans trace de moisissures."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Il y a des traces importantes de moisissures."
+    label: "il y a des traces de moisissures dans les pièces d’eau uniquement ou de petites traces de moisissures dans l’ensemble du logement. "
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Il y a des traces importantes de moisissures."
+    label: "il y a d’importantes traces de moisissures dans l’ensemble des pièces à vivre. "
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "La peinture est écaillée par endroits."
+    label: "la peinture est abîmée dans une pièce du logement et il n'y a pas de plomb dans les peintures (cf DPE)."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "La peinture est écaillée par endroits."
+    label: "la peinture abîmée dans plusieurs pièces du logement et il n'y a pas de plomb dans les peintures (cf DPE)."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "La peinture est écaillée par endroits."
+    label: "la peinture est abîmée dans au moins une pièce du logement et la présence de plomb dans les peintures a été détectée (cf DPE)."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Les toilettes du logement sont abîmées ou inexistantes."
+    label: "Il y a des toilettes mais elles sont mal isolées par rapport aux pièces à vivre."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Les toilettes du logement sont abîmées ou inexistantes."
+    label: "Les toilettes sont défaillantes ou inutilisables. Les toilettes sont accessibles à l’extérieur du logement."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Les toilettes du logement sont abîmées ou inexistantes."
+    label: "il n’y a pas de toilettes accessibles dans le logement (et éventuellement dans l’immeuble)."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "La salle de bain est abîmée ou inexistante."
+    label: "il y a une salle de bain ou salle d’eau mais elle est mal isolée par rapport aux pièces à vivre."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "La salle de bain est abîmée ou inexistante."
+    label: "il y a une salle de bain ou salle d’eau avec une douche ou une baignoire, mais elle présente de gros défauts de fonctionnement ou d'hygiène."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Mon logement est en sous-sol."
+    label: "Non concerné"
+    is_archive: 1
+    is_default: 0
+    score: 1
+  -
+    critere: "Mon logement est en sous-sol."
+    label: "mon logement est situé en sous-sol avec éclairage naturel limité."
+    is_archive: 1
+    is_default: 0
+    score: 2
+  -
+    critere: "Mon logement est en sous-sol."
+    label: "mon logement situé en sous-sol sans éclairage naturel."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Mon logement est sous les combles."
+    label: "mon logement est peu fonctionnel mais je peux vivre dedans."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Mon logement est sous les combles."
+    label: "mon logement est mal isolé et j'ai du mal à y vivre."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Mon logement est sous les combles."
+    label: "on logement n’est pas isolé (ou presque) et il est très difficile d’y vivre."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Il n'y a pas de fenêtre dans mon salon ou ma salle à manger."
+    label: "Non concerné"
+    is_archive: 1
+    is_default: 0
+    score: 1
+  -
+    critere: "Il n'y a pas de fenêtre dans mon salon ou ma salle à manger."
+    label: "Il y a une petite ouverture, ou pas du tout de fenêtre soit dans mon salon soit dans ma salle à manger."
+    is_archive: 1
+    is_default: 0
+    score: 2
+  -
+    critere: "Il n'y a pas de fenêtre dans mon salon ou ma salle à manger."
+    label: "il n’y a pas de fenêtre ni dans mon salon, ni dans ma salle à manger."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Mon logement est une pièce unique, de moins de 9m²."
+    label: "Non concerné"
+    is_archive: 1
+    is_default: 0
+    score: 1
+  -
+    critere: "Mon logement est une pièce unique, de moins de 9m²."
+    label: "Non concerné"
+    is_archive: 1
+    is_default: 0
+    score: 2
+  -
+    critere: "Mon logement est une pièce unique, de moins de 9m²."
+    label: "Pièce unique du logement de moins de 9m2"
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Mon salon ou ma salle à manger mesure moins de 7m²."
+    label: "Non concerné"
+    is_archive: 1
+    is_default: 0
+    score: 1
+  -
+    critere: "Mon salon ou ma salle à manger mesure moins de 7m²."
+    label: "Non concerné"
+    is_archive: 1
+    is_default: 0
+    score: 2
+  -
+    critere: "Mon salon ou ma salle à manger mesure moins de 7m²."
+    label: "Salon ou salle à manger du logement de moins de 7m2"
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Les plafonds sont trop bas (moins de 2.20 m)."
+    label: "Non concerné"
+    is_archive: 1
+    is_default: 0
+    score: 1
+  -
+    critere: "Les plafonds sont trop bas (moins de 2.20 m)."
+    label: "Non concerné"
+    is_archive: 1
+    is_default: 0
+    score: 2
+  -
+    critere: "Les plafonds sont trop bas (moins de 2.20 m)."
+    label: "Hauteur sous plafond du logement de moins de 2.20m"
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "La lumière naturelle en pleine journée est insuffisante."
+    label: "L’éclairage naturel est suffisant dans les pièces à vivre seulement."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "La lumière naturelle en pleine journée est insuffisante."
+    label: "L’éclairage naturel est insuffisant dans une des pièces à vivre."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "La lumière naturelle en pleine journée est insuffisante."
+    label: "L’éclairage naturel est insuffisant dans plusieurs pièces à vivre."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Le bruit à l’intérieur du logement ou du bâtiment est gênant."
+    label: "J’entends ponctuellement les bruits générés par la présence des voisins et/ou par les équipements (VMC, évacuation des eaux, climatisation). C’est supportable."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Le bruit à l’intérieur du logement ou du bâtiment est gênant."
+    label: "J’entends souvent les bruits générés par la présence des voisins et/ou par les équipements."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Le bruit à l’intérieur du logement ou du bâtiment est gênant."
+    label: "Les bruits générés par la présence des voisins et/ou les équipements sont importants : ils me gênent pour dormir ou le travail (scolaire, à domicile)."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Le bruit extérieur est gênant."
+    label: "J’entends du bruit en journée uniquement (y compris circulation routière). Le bruit est modéré."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Le bruit extérieur est gênant."
+    label: "J’entends du bruit en journée ou en soirée. Ça ne me gêne pas si les fenêtres fermées. "
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Le bruit extérieur est gênant."
+    label: "J’entends du bruit en journée ou en soirée, même avec les fenêtres fermées. Le bruit est gênant."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Les escaliers intérieurs sont dangereux."
+    label: "Les escaliers sont stables mais déformés ou il manque des éléments (marches, barreaux, main courante, …). "
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Les escaliers intérieurs sont dangereux."
+    label: "Les escaliers sont instables. Ils sont déformés ou il manque des éléments (marches, barreaux, main courante, …). "
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Les escaliers intérieurs sont dangereux."
+    label: "Les escaliers sont instables ou risquent de s’effondrer. Ils sont affaissés avec de grosses déformations. "
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Les escaliers sont abîmés."
+    label: "Présence de déformations."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Les escaliers sont abîmés."
+    label: "Les escaliers sont instables. Ils sont déformés ou il manque des éléments (marches, barreaux, main courante, …)."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Les escaliers sont abîmés."
+    label: "Les escaliers sont instables ou risquent de s’effondrer. Ils sont affaissés avec de grosses déformations."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Réseau de gaz"
+    label: "Installation fonctionnelle mais manque d'entretien visible"
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Réseau de gaz"
+    label: "Installation ancienne et manque d'entretien"
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Réseau de gaz"
+    label: "Installation présentant un manque d'entretien manifeste et/ou des risques évidents."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Le chauffage ne fonctionne pas bien."
+    label: "le chauffage est insuffisant, la chaleur ressentie est trop faible. "
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Le chauffage ne fonctionne pas bien."
+    label: "le chauffage est insuffisant j'utilise des appareils d’appoint pour me tenir chaud."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Le chauffage ne fonctionne pas bien."
+    label: "il fait très chaud dans mon logement l’été (ex : baies vitrées avec forte exposition au soleil, absence de stores…) ou le système de chauffage ne fonctionne pas en hiver."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "J'ai un problème avec l’eau potable."
+    label: "j'ai accès à l’eau potable et à l’eau chaude dans le logement mais avec débit limité."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "J'ai un problème avec l’eau potable."
+    label: "j’ai accès à l’eau potable avec risque de plomb dans les canalisations ou je n'ai pas d'eau chaude."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "J'ai un problème avec l’eau potable."
+    label: "je n’ai pas accès à l’eau potable ni/ou à l’eau chaude."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Il y a des nuisibles dans mon logement (blattes, punaises de lit, rongeurs...)."
+    label: "il n’y a pas de nuisible ni de foyers, mais il y a des voies d’accès potentielles."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Il y a des nuisibles dans mon logement (blattes, punaises de lit, rongeurs...)."
+    label: "il n’y a pas de nuisible ni de foyers, mais il y a d’anciens foyers et des voies d’accès potentielles."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Il y a des nuisibles dans mon logement (blattes, punaises de lit, rongeurs...)."
+    label: "il y a des traces de nuisibles dans mon logement ce qui est très gênant."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "J’ai un problème d'évacuation des eaux usées."
+    label: "j’ai remarqué un reflux ou des odeurs au niveau des points d’eau qui montrent que le système d’évacuation fonctionne mal. "
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "J’ai un problème d'évacuation des eaux usées."
+    label: "le système d’évacuation est incomplet ou défaillant (exemple : absence de siphon) ou il y a problèmes récurrents de mauvais fonctionnement. "
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "J’ai un problème d'évacuation des eaux usées."
+    label: "il n’y a pas de système d’évacuation des eaux usées."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "J’utilise un appareil d'appoint pour le chauffage."
+    label: "J’utilise ponctuellement un chauffage d'appoint."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "J’utilise un appareil d'appoint pour le chauffage."
+    label: "J’utilise régulièrement un chauffage d'appoint."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "J’utilise un appareil d'appoint pour le chauffage."
+    label: "J’utilise plusieurs chauffages d'appoint et/ou des pièces principales ne possèdent pas de moyen de chauffage."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "L'installation de gaz n’est pas en bon état"
+    label: "L’installation de gaz est ancienne mais fonctionne sans danger."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "L'installation de gaz n’est pas en bon état"
+    label: "L’installation gaz est obsolète et présente des risques potentiels."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "L'installation de gaz n’est pas en bon état"
+    label: "’installation gaz est endommagée et présente des risques évidents."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "L’installation du réseau gaz a un problème."
+    label: "l’installation est vétuste mais ne présente pas de risque pour les personnes."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "L’installation du réseau gaz a un problème."
+    label: "l’installation est vétuste avec des signes d'usures évidents."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "L’installation du réseau gaz a un problème."
+    label: "l’installation est vétuste et présente un risque pour les personnes."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "La salle de bain est abîmée ou inexistante."
+    label: "mon logement n’a pas de salle de bain ou salle d’eau avec une douche ou une baignoire dans le logement."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "Les façades ne sont pas en bon état."
+    label: "l’état des façades est correct avec de petites fissures extérieures ou de légers défauts apparents."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "Les façades ne sont pas en bon état."
+    label: "il y a des fissures et/ou traces d'humidité sur les façades, et/ou des défaut d'isolation extérieure. "
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "Les façades ne sont pas en bon état."
+    label: "l’état des façades très préoccupant. Il y a des risques de chute d'éléments de façades et/ou de gouttières et/ou de balcon."
+    is_archive: 0
+    is_default: 0
+    score: 3
+  -
+    critere: "La toiture n’est pas en bon état."
+    label: "La toiture présente de légères traces d'humidité ou de manque d'isolation. Des éléments de couverture sont déplacés ou décalés."
+    is_archive: 0
+    is_default: 0
+    score: 1
+  -
+    critere: "La toiture n’est pas en bon état."
+    label: "La toiture n’est pas étanche et manque d'isolation. Il y a un risque potentiel de chute d'éléments."
+    is_archive: 0
+    is_default: 0
+    score: 2
+  -
+    critere: "La toiture n’est pas en bon état."
+    label: "La toiture présente des fuites d'étanchéité et/ou des manques manifeste d'isolation. Des éléments de couverture sont tombés."
+    is_archive: 0
+    is_default: 0
+    score: 3

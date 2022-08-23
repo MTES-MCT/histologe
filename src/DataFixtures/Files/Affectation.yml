@@ -1,0 +1,24 @@
+affectations:
+  -
+    signalement: 2022-1
+    partner: "partenaire-13-01@histologe.fr"
+    statut: 1
+    answered_by: "admin-13-01@histologe.fr"
+    affected_by: "admin-13-01@histologe.fr"
+    territory: "Bouches-du-Rhône"
+  -
+    signalement: 2022-2
+    partner: "partenaire-01-01@histologe.fr"
+    statut: 0
+    answered_by: "admin-territoire-01@histologe.fr"
+    affected_by: "admin-territoire-01@histologe.fr"
+    motif_cloture: "LOCATAIRE PARTI"
+    territory: "Ain"
+  -
+    signalement: 2022-3
+    partner: "partenaire-13-02@histologe.fr"
+    statut: 1
+    answered_by: "admin-territoire-01@histologe.fr"
+    affected_by: "admin-territoire-01@histologe.fr"
+    motif_cloture: "LOCATAIRE PARTI"
+    territory: "Ain"

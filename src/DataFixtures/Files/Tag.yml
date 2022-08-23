@@ -1,0 +1,25 @@
+tags:
+  -
+    label: "Urgent"
+    is_archive: 0
+    territory: "Bouches-du-Rhône"
+  -
+    label: "Commission du "
+    is_archive: 0
+    territory: "Bouches-du-Rhône"
+  -
+    label: "Péril"
+    is_archive: 0
+    territory: "Bouches-du-Rhône"
+  -
+    label: "Urgent"
+    is_archive: 0
+    territory: "Ain"
+  -
+    label: "Péril"
+    is_archive: 0
+    territory: "Ain"
+  -
+    label: "Commission du 12/08"
+    is_archive: 0
+    territory: "Ain"
