@@ -29,8 +29,8 @@ export default defineComponent({
   },
   methods: {
     onFilterChange () {
-      /*console.log('onFilterChange')
-      console.log(this.sharedState)*/
+      console.log('onFilterChange')
+      console.log(this.sharedState)
     }
   }
 })

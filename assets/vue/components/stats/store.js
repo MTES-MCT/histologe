@@ -5,8 +5,7 @@ export const store = {
 			statut: 'all',
 			etiquette: [],
 			type: 'all',
-			startDate: '',
-			endDate: '',
+			dateRange: [],
 			countRefused: false
 		},
 		stats: {

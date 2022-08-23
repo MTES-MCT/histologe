@@ -43,7 +43,10 @@
             />
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-4">
-          Sélecteur de dates
+          <HistoDatePicker
+            v-model="sharedState.filters.dateRange"
+            @update:modelValue="onChange"
+            />
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-5">
           <HistoCheckbox
@@ -67,6 +70,7 @@ import { defineComponent } from 'vue'
 import { store } from './store.js'
 import HistoSelect from '../common/HistoSelect.vue'
 import HistoCheckbox from '../common/HistoCheckbox.vue'
+import HistoDatePicker from '../common/external/HistoDatePicker.vue'
 
 export default defineComponent({
   name: 'TheHistoStatsFilters',
@@ -75,7 +79,8 @@ export default defineComponent({
   },
   components: {
     HistoSelect,
-    HistoCheckbox
+    HistoCheckbox,
+    HistoDatePicker
   },
   data () {
     return {
@@ -85,8 +90,7 @@ export default defineComponent({
         statut: store.state.filters.statut,
         etiquette: store.state.filters.etiquette,
         type: store.state.filters.type,
-        startDate: store.state.filters.startDate,
-        endDate: store.state.filters.endDate,
+        dateRange: store.state.filters.dateRange,
         countRefused: store.state.filters.countRefused
       },
       statusList: [
@@ -109,8 +113,7 @@ export default defineComponent({
       this.sharedState.filters.statut = this.initFilters.statut
       this.sharedState.filters.etiquette = this.initFilters.etiquette
       this.sharedState.filters.type = this.initFilters.type
-      this.sharedState.filters.startDate = this.initFilters.startDate
-      this.sharedState.filters.endDate = this.initFilters.endDate
+      this.sharedState.filters.dateRange = this.initFilters.dateRange
       this.sharedState.filters.countRefused = this.initFilters.countRefused
 
       if (this.onChange !== undefined) {

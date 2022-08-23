@@ -84,11 +84,11 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { store } from './store.js'
-import HistoDataTable from '../common/HistoDataTable.vue'
-import HistoChartLine from '../common/HistoChartLine.vue'
-import HistoChartBar from '../common/HistoChartBar.vue'
-import HistoChartPie from '../common/HistoChartPie.vue'
-import HistoChartDoughnut from '../common/HistoChartDoughnut.vue'
+import HistoDataTable from '../common/external/HistoDataTable.vue'
+import HistoChartLine from '../common/external/chartjs/HistoChartLine.vue'
+import HistoChartBar from '../common/external/chartjs/HistoChartBar.vue'
+import HistoChartPie from '../common/external/chartjs/HistoChartPie.vue'
+import HistoChartDoughnut from '../common/external/chartjs/HistoChartDoughnut.vue'
 
 export default defineComponent({
   name: 'TheHistoStatsDetails',

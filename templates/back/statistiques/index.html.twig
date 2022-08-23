@@ -2,7 +2,10 @@
 
 {% block title %}{{ title }}{% endblock %}
 
-{% block customscripts %}{{ encore_entry_script_tags('app') }}{% endblock %}
+{% block customscripts %}
+    {{ encore_entry_script_tags('app') }}
+    {{ encore_entry_link_tags('app') }}
+{% endblock %}
 
 {% block content %}
     <div id="app-stats"></div>
