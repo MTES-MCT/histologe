@@ -1,31 +1,51 @@
 <template>
   <div class="histo-data-table">
-    <span class="histo-data-table-title"><slot name="title"></slot></span>
-    <EasyDataTable
-      :headers="headers"
-      :items="items"
-      />
+    <span class="histo-data-table-title"><slot name="title"></slot></span><br>
+    <span class="histo-data-table-description"><slot name="description"></slot></span>
+    <DataTable :data=items class="display" :options=options>
+      <thead>
+        <tr>
+          <th>A</th>
+          <th>B</th>
+        </tr>
+      </thead>
+    </DataTable>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import DataTable from 'datatables.net-vue3'
 
 export default defineComponent({
   name: 'HistoDataTable',
+  components: { DataTable },
   data() {
     return {
-      headers: [
-        { text: "Name", value: "name" },
-        { text: "Height (cm)", value: "height", sortable: true },
-        { text: "Weight (kg)", value: "weight", sortable: true },
-        { text: "Age", value: "age", sortable: true }
-      ],
       items: [
-        { "name": "Curry", "height": 178, "weight": 77, "age": 20 },
-        { "name": "James", "height": 180, "weight": 75, "age": 21 },
-        { "name": "Jordan", "height": 181, "weight": 73, "age": 22 }
-      ]
+        [1, 2],
+        [3, 4],
+        [1, 2],
+        [3, 4],
+        [1, 2],
+        [3, 4],
+        [1, 2],
+        [3, 4],
+        [1, 2],
+        [3, 4],
+        [1, 2],
+        [3, 4],
+        [1, 2],
+        [3, 4],
+        [1, 2],
+        [3, 4],
+        [1, 2],
+        [3, 4]
+      ],
+      options: {
+        lengthChange: false,
+        searching :  false
+      }
     }
   }
 })

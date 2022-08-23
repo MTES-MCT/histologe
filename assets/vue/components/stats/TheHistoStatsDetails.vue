@@ -40,6 +40,7 @@
           <div class="fr-mb-3w">
             <HistoDataTable items=sharedState.stats.countSignalementPerPartenaire>
               <template #title>Répartition par partenaires</template>
+              <template #description>Cliquez sur l'en-tête d'une colonne pour trier les résultats</template>
             </HistoDataTable>
           </div>
 
@@ -133,6 +134,11 @@ export default defineComponent({
 
   .histo-chart-item .histo-chart-item-title, .histo-data-table .histo-data-table-title {
     font-weight: bold;
+    font-size: 0.8rem;
+  }
+
+  .histo-data-table .histo-data-table-description {
+    font-style: italic;
     font-size: 0.8rem;
   }
 </style>
