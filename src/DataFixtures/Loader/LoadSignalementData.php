@@ -81,7 +81,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setCodeSuivi($faker->uuid())
             ->setUuid($faker->uuid())
             ->setSituationOccupant($row['situation_occupant'])
-            ->setValidatedAt($row['statut'] === Signalement::STATUS_ACTIVE ? new \DateTimeImmutable() : null)
+            ->setValidatedAt(Signalement::STATUS_ACTIVE === $row['statut'] ? new \DateTimeImmutable() : null)
             ->setOrigineSignalement($row['origine_signalement'])
             ->setCreatedAt(new \DateTimeImmutable());
 
