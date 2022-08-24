@@ -3,7 +3,7 @@
   "env": {
     "LOAD_FIXTURES": {
       "description": "Variable used to check if fixtures should be loaded",
-      "value": 1
+      "value": "1"
     }
   }
 }

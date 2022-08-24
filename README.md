@@ -69,7 +69,7 @@ make build
 - Site internet: http://localhost:8080
 - BackOffice: http://localhost:8080/connexion
 
-Pour tous les utilisateurs, le mot de passe est `histologe`
+Pour tous les utilisateurs, le mot de passe est `histologe`00.00000000000000000000000000000000000
 
 Territoire             | Partenaire         | Email                            | Rôle       
 -----------------------|--------------------|----------------------------------|----------------------
