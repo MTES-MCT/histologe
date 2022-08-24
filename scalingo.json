@@ -1,10 +1,6 @@
 {
   "//": "https://developers.scalingo.com/scalingo-json-schema",
   "env": {
-    "LOAD_FIXTURES": {
-      "description": "Variable used to check if fixtures should be loaded",
-      "value": "1"
-    },
     "COMPOSER_DEV": {
       "description": "Install composer dev dependencies",
       "value": "true"
