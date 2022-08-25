@@ -12,13 +12,8 @@ NPX           = npx
 help:
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
 
-
-##
-## Docker
-## ------
-##
-
-build: .check .destroy .setup run .sleep composer create-db
+build: ## Install local environement
+	@bash -l -c 'make .check .env .destroy .setup run .sleep composer create-db'
 
 run: ## Start containers
 	@echo -e '\e[1;32mStart containers\032'
@@ -41,20 +36,11 @@ mysql: ## Log to mysql container
 logs: ## Show container logs
 	@$(DOCKER_COMP) logs --follow
 
-##
-## Composer
-## ------
-##
-
 composer: ## Install composer dependencies
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer install --dev --no-interaction --optimize-autoloader
 	@echo "\033[33mInstall tools dependencies ...\033[0m"
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer install --working-dir=tools/php-cs-fixer --dev --no-interaction --optimize-autoloader
 
-##
-## Project
-## ------
-##
 
 create-db: ## Create database
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:database:drop --force --no-interaction"
@@ -77,24 +63,16 @@ create-db-test: ## Create test database
 	@$(SYMFONY) --env=test doctrine:migration:migrate --no-interaction
 	@$(SYMFONY) --env=test doctrine:fixtures:load --no-interaction
 
-##
-## Tests
-## ------
-##
 
-test: ##  Run all tests
+test: ## Run all tests
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(PHPUNIT) --stop-on-failure --testdox"
 
 test-coverage: ## Generate phpunit coverage report in html
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "XDEBUG_MODE=coverage $(PHPUNIT) --coverage-html coverage"
 
-e2e: ##  Run E2E tests
+e2e: ## Run E2E tests
 	@$(NPX) cypress open
 
-##
-## Coding standards
-## ------
-##
 
 stan: ## Run PHPStan
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer stan
@@ -104,6 +82,9 @@ cs-check: ## Check source code with PHP-CS-Fixer
 
 cs-fix: ## Fix source ode with PHP-CS-Fixer
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer cs-fix
+
+.env:
+	@bash -l -c 'cp .env.sample .env'
 
 .check:
 	@echo "\033[31mWARNING!!!\033[0m Executing this script will reinitialize the project and all of its data"
