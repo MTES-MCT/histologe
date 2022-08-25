@@ -80,7 +80,7 @@ stan: ## Run PHPStan
 cs-check: ## Check source code with PHP-CS-Fixer
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer cs-check
 
-cs-fix: ## Fix source ode with PHP-CS-Fixer
+cs-fix: ## Fix source code with PHP-CS-Fixer
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer cs-fix
 
 .env:
