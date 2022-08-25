@@ -9,3 +9,6 @@ grumphp:
           - 'die('
           - 'exit('
       phpstan: ~
+      shell:
+        scripts:
+          - ["-c", "make cs-check"]
