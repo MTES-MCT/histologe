@@ -77,7 +77,7 @@ test-coverage                  Generate phpunit coverage report in html
 e2e                            Run E2E tests
 stan                           Run PHPStan
 cs-check                       Check source code with PHP-CS-Fixer
-cs-fix                         Fix source ode with PHP-CS-Fixer
+cs-fix                         Fix source code with PHP-CS-Fixer
 ```
 
 ### Lancement
