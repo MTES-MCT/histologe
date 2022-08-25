@@ -19,4 +19,13 @@ class BackStatistiquesController extends AbstractController
             'title' => $title,
         ]);
     }
+
+    #[Route('/filter', name: 'back_statistiques_filter')]
+    public function filter(): Response
+    {
+        if (true) {
+            return $this->json(['response' => 'success']);
+        }
+        return $this->json(['response' => 'error'], 400);
+    }
 }
