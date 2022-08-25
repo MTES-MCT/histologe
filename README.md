@@ -69,7 +69,7 @@ make build
 - Site internet: http://localhost:8080
 - BackOffice: http://localhost:8080/connexion
 
-Pour tous les utilisateurs, le mot de passe est `histologe`00.00000000000000000000000000000000000
+Pour tous les utilisateurs, le mot de passe est `histologe`
 
 Territoire             | Partenaire         | Email                            | Rôle       
 -----------------------|--------------------|----------------------------------|----------------------
@@ -82,8 +82,13 @@ Ain                    | Partenaire 01      | partenaire-01-01@histologe.fr    |
 
 ### Tests
 
-#### Tests e2e
+#### Unit & Functial tests
 ```
-npx cypress open
+make test
+```
+
+#### E2E Tests
+```
+make e2e
 ```
 

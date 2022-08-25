@@ -7,6 +7,7 @@ DATABASE_NAME = histologe_db
 PATH_DUMP_SQL = data/dump.sql
 PHPUNIT       = ./vendor/bin/phpunit
 SYMFONY       = php bin/console
+NPX           = npx
 
 help:
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
@@ -70,13 +71,25 @@ load-data: ## Load database from dump
 load-fixtures: ## Load database from fixtures
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:fixtures:load --no-interaction"
 
+create-db-test: ## Create test database
+	@$(SYMFONY) --env=test doctrine:database:drop --force --no-interaction
+	@$(SYMFONY) --env=test doctrine:database:create --no-interaction
+	@$(SYMFONY) --env=test doctrine:migration:migrate --no-interaction
+	@$(SYMFONY) --env=test doctrine:fixtures:load --no-interaction
+
 ##
 ## Tests
 ## ------
 ##
 
 test: ##  Run all tests
-	@$(PHPUNIT) --stop-on-failure --testdox
+	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(PHPUNIT) --stop-on-failure --testdox"
+
+test-coverage: ## Generate phpunit coverage report in html
+	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "XDEBUG_MODE=coverage $(PHPUNIT) --coverage-html coverage"
+
+e2e: ##  Run E2E tests
+	@$(NPX) cypress open
 
 ##
 ## Coding standards
