@@ -10,5 +10,7 @@ grumphp:
           - 'exit('
       phpstan: ~
       shell:
+        metadata:
+          label: 'php-cs-fixer'
         scripts:
           - ["-c", "make cs-check"]
