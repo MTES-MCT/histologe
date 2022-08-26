@@ -8,8 +8,11 @@ use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Snappy\Pdf;
-use PHPUnit\Exception;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\FilesystemOperator;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,7 +52,13 @@ class BackSignalementFileController extends AbstractController
     }
 
     #[Route('/{uuid}/file/add', name: 'back_signalement_add_file')]
-    public function addFileSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine, SluggerInterface $slugger): RedirectResponse
+    public function addFileSignalement(
+        Signalement $signalement,
+        Request $request,
+        ManagerRegistry $doctrine,
+        SluggerInterface $slugger,
+        FilesystemOperator $fileStorage,
+        LoggerInterface $logger): RedirectResponse
     {
         $this->denyAccessUnlessGranted('FILE_CREATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token')) && $files = $request->files->get('signalement-add-file')) {
@@ -64,20 +73,19 @@ class BackSignalementFileController extends AbstractController
             $getMethod = 'get'.ucfirst($type);
             $list = [];
             $type_list = $signalement->$getMethod();
+
+            /** @var UploadedFile $file */
             foreach ($files[$type] as $file) {
                 $originalFilename = pathinfo($file->getClientOriginalName(), \PATHINFO_FILENAME);
                 $titre = $originalFilename.'.'.$file->guessExtension();
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
                 try {
-                    $file->move(
-                        $this->getParameter('uploads_dir'),
-                        $newFilename
-                    );
-                } catch (Exception $e) {
-                    dd($e);
+                    $fileStorage->writeStream($newFilename, fopen($file->getPathname(), 'r'));
+                } catch (FilesystemException $exception) {
+                    $logger->error($exception->getMessage());
                 }
-                $list[] = '<li><a class="fr-link" target="_blank" href="'.$this->generateUrl('show_uploaded_file', ['folder' => '_up', 'file' => $newFilename]).'">'.$titre.'</a></li>';
+                $list[] = '<li><a class="fr-link" target="_blank" href="'.$this->generateUrl('show_uploaded_file', ['folder' => '_up', 'filename' => $newFilename]).'">'.$titre.'</a></li>';
                 if (null === $type_list) {
                     $type_list = [];
                 }
@@ -105,8 +113,14 @@ class BackSignalementFileController extends AbstractController
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]).'#documents');
     }
 
-    #[Route('/{uuid}/file/{type}/{file}/delete', name: 'back_signalement_delete_file')]
-    public function deleteFileSignalement(Signalement $signalement, $type, $file, Request $request, ManagerRegistry $doctrine): JsonResponse
+    #[Route('/{uuid}/file/{type}/{filename}/delete', name: 'back_signalement_delete_file')]
+    public function deleteFileSignalement(
+        Signalement $signalement,
+        string $type,
+        string $filename,
+        Request $request,
+        ManagerRegistry $doctrine,
+        FilesystemOperator $fileStorage): JsonResponse
     {
         $this->denyAccessUnlessGranted('FILE_DELETE', $signalement);
         if ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))) {
@@ -114,9 +128,9 @@ class BackSignalementFileController extends AbstractController
             $getMethod = 'get'.ucfirst($type);
             $type_list = $signalement->$getMethod();
             foreach ($type_list as $k => $v) {
-                if ($file === $v['file']) {
-                    if (file_exists($this->getParameter('uploads_dir').$file)) {
-                        unlink($this->getParameter('uploads_dir').$file);
+                if ($filename === $v['file']) {
+                    if ($fileStorage->fileExists($filename)) {
+                        $fileStorage->delete($filename);
                     }
                     unset($type_list[$k]);
                 }

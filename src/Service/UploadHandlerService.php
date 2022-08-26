@@ -2,6 +2,9 @@
 
 namespace App\Service;
 
+use League\Flysystem\FilesystemException;
+use League\Flysystem\FilesystemOperator;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -10,20 +13,19 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class UploadHandlerService
 {
-    private ParameterBagInterface $params;
-    private SluggerInterface $slugger;
     private $file;
-    private Filesystem $fs;
 
-    public function __construct(ParameterBagInterface $parameterBag, SluggerInterface $slugger, Filesystem $filesystem)
-    {
-        $this->params = $parameterBag;
-        $this->slugger = $slugger;
+    public function __construct(
+        private FilesystemOperator $fileStorage,
+        private ParameterBagInterface $parameterBag,
+        private SluggerInterface $slugger,
+        private Filesystem $filesystem,
+        private LoggerInterface $logger
+    ) {
         $this->file = null;
-        $this->fs = $filesystem;
     }
 
-    public function toTempFolder(UploadedFile $file)
+    public function toTempFolder(UploadedFile $file): self|array
     {
         $originalFilename = pathinfo($file->getClientOriginalName(), \PATHINFO_FILENAME);
         $titre = $originalFilename.'.'.$file->guessExtension();
@@ -31,13 +33,14 @@ class UploadHandlerService
         $safeFilename = $this->slugger->slug($originalFilename);
         $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
 
-//        return ['error'=>'Erreur lors du téléversement.','message'=>'TEST','status'=>500];
         try {
             $file->move(
-                $this->params->get('uploads_tmp_dir'),
+                $this->parameterBag->get('uploads_tmp_dir'),
                 $newFilename
             );
         } catch (FileException $e) {
+            $this->logger->error($e->getMessage());
+
             return ['error' => 'Erreur lors du téléversement.', 'message' => $e->getMessage(), 'status' => 500];
         }
         if ($newFilename && '' !== $newFilename && $titre && '' !== $titre) {
@@ -47,16 +50,20 @@ class UploadHandlerService
         return $this;
     }
 
-    public function toUploadFolder($file)
+    public function toUploadFolder(string $filename): string
     {
-        $tempFile = $this->params->get('uploads_tmp_dir').$file;
-        $newFile = $this->params->get('uploads_dir').$file;
-        $this->fs->rename($tempFile, $newFile);
+        $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
 
-        return $file;
+        try {
+            $this->fileStorage->writeStream($filename, fopen($tmpFilepath, 'r'));
+        } catch (FilesystemException $exception) {
+            $this->logger->error($exception->getMessage());
+        }
+
+        return $filename;
     }
 
-    public function setKey(string $key)
+    public function setKey(string $key): ?array
     {
         $this->file['key'] = $key;
 

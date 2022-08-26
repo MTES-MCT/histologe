@@ -81,7 +81,12 @@ class FrontSignalementController extends AbstractController
      * @throws Exception
      */
     #[Route('/signalement/envoi', name: 'envoi_signalement', methods: 'POST')]
-    public function envoi(Request $request, ManagerRegistry $doctrine, TerritoryRepository $territoryRepository, NotificationService $notificationService, UploadHandlerService $uploadHandlerService): Response
+    public function envoi(
+        Request $request,
+        ManagerRegistry $doctrine,
+        TerritoryRepository $territoryRepository,
+        NotificationService $notificationService,
+        UploadHandlerService $uploadHandlerService): Response
     {
         if ($data = $request->get('signalement')) {
             $em = $doctrine->getManager();
@@ -194,7 +199,13 @@ class FrontSignalementController extends AbstractController
     }
 
     #[Route('/suivre-mon-signalement/{code}/response', name: 'front_suivi_signalement_user_response', methods: 'POST')]
-    public function postUserResponse(string $code, SignalementRepository $signalementRepository, NotificationService $notificationService, UploadHandlerService $uploadHandlerService, Request $request, EntityManagerInterface $entityManager)
+    public function postUserResponse(
+        string $code,
+        SignalementRepository $signalementRepository,
+        NotificationService $notificationService,
+        UploadHandlerService $uploadHandlerService,
+        Request $request,
+        EntityManagerInterface $entityManager)
     {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
             if ($this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {
