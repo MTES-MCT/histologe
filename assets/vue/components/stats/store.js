@@ -3,7 +3,8 @@ export const store = {
 		filters: {
 			communes: [],
 			statut: 'all',
-			etiquette: [],
+			etiquettesList: [],
+			etiquettes: [],
 			type: 'all',
 			dateRange: [],
 			countRefused: false

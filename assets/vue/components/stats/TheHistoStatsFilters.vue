@@ -28,8 +28,10 @@
         <div class="fr-col-12 fr-col-lg-3">
           <HistoSelect
             id="filter-etiquettes"
+            v-model="sharedState.filters.etiquettes"
             @update:modelValue="onChange"
             inner-label="Etiquettes"
+            :option-items=sharedState.filters.etiquettesList
             :multiselect=true
             />
         </div>
@@ -88,7 +90,7 @@ export default defineComponent({
       initFilters: {
         communes: store.state.filters.communes,
         statut: store.state.filters.statut,
-        etiquette: store.state.filters.etiquette,
+        etiquettes: store.state.filters.etiquettes,
         type: store.state.filters.type,
         dateRange: store.state.filters.dateRange,
         countRefused: store.state.filters.countRefused
@@ -111,7 +113,7 @@ export default defineComponent({
 		onReinitLocalEvent () {
       this.sharedState.filters.communes = this.initFilters.communes
       this.sharedState.filters.statut = this.initFilters.statut
-      this.sharedState.filters.etiquette = this.initFilters.etiquette
+      this.sharedState.filters.etiquettes = this.initFilters.etiquettes
       this.sharedState.filters.type = this.initFilters.type
       this.sharedState.filters.dateRange = this.initFilters.dateRange
       this.sharedState.filters.countRefused = this.initFilters.countRefused

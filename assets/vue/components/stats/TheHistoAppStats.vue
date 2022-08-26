@@ -25,6 +25,7 @@ import { defineComponent } from 'vue'
 import { store } from './store.js'
 import { requests } from './requests.js'
 import HistoBOTabHeader from '../common/HistoBOTabHeader.vue'
+import HistoInterfaceSelectOption from '../common/HistoInterfaceSelectOption'
 import TheHistoStatsFilters from './TheHistoStatsFilters.vue'
 import TheHistoStatsDetails from './TheHistoStatsDetails.vue'
 const initElements:any = document.querySelector('#app-stats')
@@ -70,7 +71,14 @@ export default defineComponent({
       requests.filter(this.handleRefresh)
       this.loadingFilters = true
     },
-    handleRefresh () {
+    handleRefresh (requestResponse: any) {
+      this.sharedState.filters.etiquettesList = []
+      for (let id in requestResponse.list_etiquettes) {
+        let optionItem = new HistoInterfaceSelectOption()
+        optionItem.Id = id
+        optionItem.Text = requestResponse.list_etiquettes[id]
+        // this.sharedState.filters.etiquettesList.push(optionItem)
+      }
       this.loadingInit = false
       this.loadingFilters = false
     }

@@ -1,4 +1,4 @@
-// import axios from 'axios'
+import axios from 'axios'
 import { store } from './store.js'
 
 export const requests = {
@@ -8,8 +8,6 @@ export const requests = {
 	filter(functionReturn) {
 		let data = new FormData()
 
-		setTimeout(functionReturn, 2000)
-		/*
 		axios
 			.post(store.props.ajaxurl, data, { timeout: 10000 })
 			.then(response => {
@@ -22,9 +20,7 @@ export const requests = {
 				console.log('error.toJSON')
 				console.log(error.toJSON())
 				console.log(error.config)
-				this.logRequestError('getCurrentUserInfo >> error >> ' + error.toString() + ' >>>> ' + JSON.stringify(error))
 				functionReturn('error')
 			})
-			*/
 	}
 }
