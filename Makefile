@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := help
 .PHONY: help
 
-DOCKER_COMP   = docker-compose 2> /dev/null || docker compose
+DOCKER_COMP   = docker-compose
 DATABASE_USER = histologe
 DATABASE_NAME = histologe_db
 PATH_DUMP_SQL = data/dump.sql
@@ -45,7 +45,7 @@ composer: ## Install composer dependencies
 create-db: ## Create database
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:database:drop --force --no-interaction"
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:database:create --no-interaction"
-	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:migration:migrate --no-interaction"
+	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:migrations:migrate --no-interaction"
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:fixtures:load --no-interaction"
 
 drop-db: ## Drop database
@@ -53,6 +53,9 @@ drop-db: ## Drop database
 
 load-data: ## Load database from dump
 	@$(DOCKER_COMP) exec -T histologe_mysql mysql -u $(DATABASE_USER) -phistologe $(DATABASE_NAME) < $(PATH_DUMP_SQL)
+
+load-migrations: ## Play migrations
+	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:migrations:migrate --no-interaction"
 
 load-fixtures: ## Load database from fixtures
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:fixtures:load --no-interaction"

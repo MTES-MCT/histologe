@@ -70,6 +70,7 @@ composer                       Install composer dependencies
 create-db                      Create database
 drop-db                        Drop database
 load-data                      Load database from dump
+load-migrations                Play migrations
 load-fixtures                  Load database from fixtures
 create-db-test                 Create test database
 test                           Run all tests
