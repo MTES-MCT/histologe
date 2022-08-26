@@ -1,0 +1,64 @@
+partners:
+  -
+    nom: "Administrateurs Histologe ALL"
+    email: "admin@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: null
+  -
+    nom: "Partenaire 1"
+    email: "partenaire-1@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Ain"
+  -
+    nom: "Admin Histologe 13"
+    email: "partenaire-13-01@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Bouches-du-Rhône"
+  -
+    nom: "Marseille"
+    email: "partenaire-13-02@histologe.fr"
+    is_archive: 0
+    is_commune: 1
+    insee: "[\"13215\",\" 13205\"]"
+    territory: "Bouches-du-Rhône"
+  -
+    nom: "Istres"
+    email: "partenaire-13-03@histologe.fr"
+    is_archive: 0
+    is_commune: 1
+    insee: "[\"13047\"]"
+    territory: "Bouches-du-Rhône"
+  -
+    nom: "Partenaire 13"
+    email: "partenaire-13-03@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Bouches-du-Rhône"
+  -
+    nom: "Admins Histologe Ain"
+    email: "partenaire-01-01@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Ain"
+  -
+    nom: "Gex"
+    email: "partenaire-01-02@histologe.fr"
+    is_archive: 0
+    is_commune: 1
+    insee: "[\"01173\"]"
+    territory: "Ain"
+  -
+    nom: "Test Ain 2"
+    email: "partenaire-01-03@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Ain"

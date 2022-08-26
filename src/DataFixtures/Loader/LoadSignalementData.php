@@ -1,0 +1,111 @@
+<?php
+
+namespace App\DataFixtures\Loader;
+
+use App\Entity\Signalement;
+use App\Repository\CritereRepository;
+use App\Repository\CriticiteRepository;
+use App\Repository\SituationRepository;
+use App\Repository\TagRepository;
+use App\Repository\TerritoryRepository;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
+use Symfony\Component\Yaml\Yaml;
+
+class LoadSignalementData extends Fixture implements OrderedFixtureInterface
+{
+    public function __construct(
+        private TerritoryRepository $territoryRepository,
+        private SituationRepository $situationRepository,
+        private CritereRepository $critereRepository,
+        private CriticiteRepository $criticiteRepository,
+        private TagRepository $tagRepository
+    ) {
+    }
+
+    public function load(ObjectManager $manager): void
+    {
+        $signalementRows = Yaml::parseFile(__DIR__.'/../Files/Signalement.yml');
+        foreach ($signalementRows['signalements'] as $row) {
+            $this->loadSignalements($manager, $row);
+        }
+
+        $manager->flush();
+    }
+
+    private function loadSignalements(ObjectManager $manager, array $row)
+    {
+        $faker = Factory::create('fr_FR');
+        $phoneNumber = $row['phone_number'];
+
+        $signalement = (new Signalement())
+            ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
+            ->setNomOccupant($faker->lastName())
+            ->setPrenomOccupant($faker->firstName())
+            ->setTelOccupant($phoneNumber)
+            ->setAdresseOccupant($faker->streetAddress())
+            ->setVilleOccupant($row['ville_occupant'])
+            ->setCpOccupant($row['cp_occupant'])
+            ->setNbOccupantsLogement($row['nb_occupants_logement'])
+            ->setMailOccupant($faker->email())
+            ->setEtageOccupant($row['etage_occupant'])
+            ->setNumAppartOccupant($faker->randomNumber(3))
+            ->setNatureLogement($row['nature_logement'])
+            ->setTypeLogement($row['type_logement'])
+            ->setSuperficie($row['superficie'])
+            ->setLoyer($row['loyer'])
+            ->setDetails($row['details'])
+            ->setIsSituationHandicap(false)
+            ->setIsProprioAverti($row['is_proprio_averti'])
+            ->setModeContactProprio(json_decode($row['mode_contact_proprio'], true))
+            ->setNomProprio($faker->company())
+            ->setMailProprio($faker->companyEmail)
+            ->setTelProprio($phoneNumber)
+            ->setAdresseProprio($faker->address())
+            ->setIsCguAccepted(true)
+            ->setIsAllocataire($row['is_allocataire'])
+            ->setNumAllocataire($faker->randomNumber(6))
+            ->setStatut($row['statut'])
+            ->setScoreCreation($row['score_creation'])
+            ->setReference($row['reference'])
+            ->setIsBailEnCours(false)
+            ->setIsRelogement(false)
+            ->setIsLogementSocial(false)
+            ->setIsPreavisDepart(false)
+            ->setDocuments([])
+            ->setPhotos([])
+            ->setGeoloc(json_decode($row['geoloc'], true))
+            ->setIsRsa(false)
+            ->setCodeSuivi($faker->uuid())
+            ->setUuid($faker->uuid())
+            ->setSituationOccupant($row['situation_occupant'])
+            ->setValidatedAt(Signalement::STATUS_ACTIVE === $row['statut'] ? new \DateTimeImmutable() : null)
+            ->setOrigineSignalement($row['origine_signalement'])
+            ->setCreatedAt(new \DateTimeImmutable());
+
+        foreach ($row['tags'] as $tag) {
+            $signalement->addTag($this->tagRepository->findOneBy(['label' => $tag]));
+        }
+
+        foreach ($row['situations'] as $situation) {
+            $signalement->addSituation($this->situationRepository->findOneBy(['label' => $situation]));
+        }
+
+        foreach ($row['criteres'] as $critere) {
+            $signalement->addCritere($this->critereRepository->findOneBy(['label' => $critere]));
+        }
+
+        foreach ($row['criticites'] as $criticite) {
+            $signalement->addCriticite($this->criticiteRepository->findOneBy(['label' => $criticite]));
+        }
+
+        $manager->persist($signalement);
+    }
+
+    public function getOrder(): int
+    {
+        return 9;
+    }
+}

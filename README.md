@@ -5,8 +5,8 @@
 Requirements|Release
 ------------|--------
 Docker client|
-Version (minimum) | 20.10.12
-API Version (minimum) | 1.14
+Version (minimum) | 20.10.17
+API Version (minimum) | 1.41
 
 ## Versions des dépendances
 Service|Version
@@ -53,23 +53,50 @@ Mailcatcher|   histologe_mailer| **1025** et **1080**
 
 ## Installation
 
-Insérer un jeu de données (export sql) existant dans le repertoire data (voir avec l'équipe).
+### Commandes
 
-### Usage
+Un [Makefile](Makefile) est disponible, qui sert de point d’entrée aux différents outils :
+
 ```
-make help
+$ make help
+
+build                          Install local environement
+run                            Start containers
+down                           Shutdown containers
+sh                             Log to phpfpm container
+mysql                          Log to mysql container
+logs                           Show container logs
+composer                       Install composer dependencies
+create-db                      Create database
+drop-db                        Drop database
+load-data                      Load database from dump
+load-migrations                Play migrations
+load-fixtures                  Load database from fixtures
+create-db-test                 Create test database
+test                           Run all tests
+test-coverage                  Generate phpunit coverage report in html
+e2e                            Run E2E tests
+stan                           Run PHPStan
+cs-check                       Check source code with PHP-CS-Fixer
+cs-fix                         Fix source code with PHP-CS-Fixer
 ```
 
 ### Lancement
 ```
-cp .env.sample .env
 make build
 ```
 
-### Tests
+### Accès
 
-#### Tests e2e
-```
-npx cypress open
-```
+- En local sur http://localhost:8080
+
+Pour tous les utilisateurs, le mot de passe est `histologe`
+
+Territoire             | Partenaire         | Email                            | Rôle       
+-----------------------|--------------------|----------------------------------|----------------------
+N/A                    | Admin Histologe    | admin-01@histologe.fr            | ROLE_ADMIN 
+Bouches-du-Rhône       | Admin Histologe 13 | admin-territoire-13@histologe.fr | ROLE_ADMIN_TERRITORY
+Ain                    | Admin Histologe 01 | admin-territoire-01@histologe.fr | ROLE_ADMIN_TERRITORY
+Bouches-du-Rhône       | Partenaire 13      | partenaire-13-01@histologe.fr    | ROLE_USER_PARTNER
+Ain                    | Partenaire 01      | partenaire-01-01@histologe.fr    | ROLE_USER_PARTNER
 

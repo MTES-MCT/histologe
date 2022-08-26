@@ -1,0 +1,26 @@
+suivis:
+-
+  created_by: admin-01@histologe.fr
+  description: "Signalement validé"
+  is_public: 1
+  signalement: "2022-1"
+-
+  created_by: admin-01@histologe.fr
+  description: "Signalement validé"
+  is_public: 1
+  signalement: "2022-1"
+-
+  created_by: admin-01@histologe.fr
+  description: "Signalement validé"
+  is_public: 1
+  signalement: "2022-2"
+-
+  created_by: admin-01@histologe.fr
+  description: "Signalement validé"
+  is_public: 1
+  signalement: "2022-3"
+-
+  created_by: admin-01@histologe.fr
+  description: "Signalement validé par l'équipe Histologe"
+  is_public: 0
+  signalement: "2022-3"
