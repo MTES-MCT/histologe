@@ -47,7 +47,7 @@ export default defineComponent({
 	created () {
     if (initElements !== null) {
 		  this.sharedProps.ajaxurl = initElements.dataset.ajaxurl
-
+      this.initDates()
       requests.filter(this.handleRefresh)
 
     } else {
@@ -55,6 +55,14 @@ export default defineComponent({
     }
   },
   methods: {
+    /**
+     * Initialisation de la date de début et de fin de filtres
+     */
+    initDates () {
+      this.sharedState.filters.dateRange = []
+      // Par défaut, on prend le semestre précédent
+      // Soit la période JAN-JUIN précédente, soit la période JUIL-DEC
+    },
     handleFilterChange () {
       console.log('onFilterChange')
       console.log(this.sharedState)
