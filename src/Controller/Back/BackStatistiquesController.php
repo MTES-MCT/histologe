@@ -55,8 +55,6 @@ class BackStatistiquesController extends AbstractController
             $buffer['countSignalementPerCriticitePercent'] = [];
             $buffer['countSignalementPerVisite'] = [];
 
-
-
             return $this->json(['response' => 'success']);
         }
         return $this->json(['response' => 'error'], 400);

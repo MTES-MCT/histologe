@@ -1,0 +1,66 @@
+situations:
+  -
+    label: "Extérieur"
+    menu_label: "Extérieurs"
+    is_active: 0
+    is_archive: 0
+  -
+    label: "les parties communes"
+    menu_label: "Parties Communes"
+    is_active: 0
+    is_archive: 0
+  -
+    label: "Logement"
+    menu_label: "Logement"
+    is_active: 0
+    is_archive: 0
+  -
+    label: "l'espace habitable"
+    menu_label: "Espace Habitable"
+    is_active: 0
+    is_archive: 0
+  -
+    label: "l'hygiène du logement"
+    menu_label: "Hygiène Logement"
+    is_active: 0
+    is_archive: 0
+  -
+    label: "la sécurité du logement"
+    menu_label: "Sécurité Logement"
+    is_active: 0
+    is_archive: 0
+  -
+    label: "les performances énergétiques"
+    menu_label: "Performances énergétiques"
+    is_active: 0
+    is_archive: 0
+  -
+    label: "la sécurité des occupants"
+    menu_label: "Sécurité des occupants"
+    is_active: 1
+    is_archive: 0
+  -
+    label: "l'état et propreté du logement"
+    menu_label: "Etat et propreté du logement"
+    is_active: 1
+    is_archive: 0
+  -
+    label: "le confort du logement"
+    menu_label: "confort du logement"
+    is_active: 1
+    is_archive: 0
+  -
+    label: "l'état du bâtiment"
+    menu_label: "Etat du bâtiment"
+    is_active: 1
+    is_archive: 0
+  -
+    label: "les espaces de vie"
+    menu_label: "Les espaces de vie"
+    is_active: 1
+    is_archive: 0
+  -
+    label: "la vie commune et le voisinage"
+    menu_label: "Vie commune et voisinage"
+    is_active: 1
+    is_archive: 0

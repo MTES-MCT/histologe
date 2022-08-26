@@ -1,1 +1,1 @@
-postdeploy: php bin/console d:m:m --no-interaction
+postdeploy: ./scripts/update-db.sh

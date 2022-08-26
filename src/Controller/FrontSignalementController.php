@@ -51,6 +51,10 @@ class FrontSignalementController extends AbstractController
     #[Route('/checkterritory', name: 'front_signalement_check_territory', methods: ['GET'])]
     public function checkTerritory(Request $request, TerritoryRepository $territoryRepository): Response
     {
+        if (empty($request->get('cp'))) {
+            return $this->json(['success' => false, 'message' => 'cp parameter is missing']);
+        }
+
         $cp = $request->get('cp');
         $zip = \strlen($cp) > 3 ? substr($cp, 0, 2) : $cp;
         $territory = $territoryRepository->findOneBy(['zip' => $zip, 'isActive' => 1]);

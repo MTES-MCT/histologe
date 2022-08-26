@@ -1,0 +1,121 @@
+signalements:
+  -
+    details: "Absence d’isolation toiture<br><br>Courrier adressé non pas à la mairie mais au bailleur social"
+    is_proprio_averti: 1
+    nb_adultes: "2"
+    is_allocataire: "CAF"
+    nature_logement: "Appartement"
+    type_logement: "T2"
+    superficie: 40
+    loyer: 500
+    phone_number: 0621127284
+    cp_occupant: "13013"
+    ville_occupant: "Marseille"
+    statut: 1
+    reference: "2022-1"
+    geoloc: "{\"lat\":\"5.415151\",\"lng\":\"43.358246\"}"
+    score_creation: 100
+    etage_occupant: "A"
+    escalier_occupant: "1"
+    insee_occupant: "13213"
+    territory: "Bouches-du-Rhône"
+    nb_occupants_logement: 5
+    situation_occupant: "1"
+    origine_signalement: "Guichet Unique"
+    type_energie_logement: "Electrique"
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    tags:
+      - "Urgent"
+    situations:
+      - "la vie commune et le voisinage"
+      - "la sécurité des occupants"
+      - "l'état et propreté du logement"
+    criteres:
+      - "Les déchets sont mal stockés."
+      - "La protection incendie n’est pas adaptée."
+      -  "Les sols sont humides."
+    criticites:
+      - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
+      - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
+      - "le sol ou la base des murs est très humide."
+  -
+    details: "Première personne à s’identifier (pour rappel l’A.S. nous a donner le signalement de ce lotissement ou plusieurs désordres mais locataires non volontaires pour procédure)<br><br>Demande à la mairie, par mail, de visiter les logements de ce lotissement (tous concernés)<br><br>Le 11/09/20 Mme FUCHS est dans l’attente d’un nouveau logement (DALO) la commission doit se tenir dans le mois. Aucun travaux n’a été réalisé dans son logement"
+    is_proprio_averti: 1
+    nb_adultes: "3"
+    is_allocataire: "CAF"
+    nature_logement: "Appartement"
+    type_logement: "T5"
+    superficie: 100
+    loyer: 1000
+    phone_number: 0621127285
+    cp_occupant: "04700"
+    ville_occupant: "Gex"
+    etage_occupant: "5"
+    statut: 6
+    reference: "2022-2"
+    geoloc: "[]"
+    score_creation: 5.420054200542
+    insee_occupant: "01173"
+    type_energie_logement: "Electrique"
+    origine_signalement: "Guichet Unique"
+    situation_occupant: "1"
+    nb_pieces_logement: 0
+    nb_chambres_logement: 0
+    nb_niveaux_logement: 0
+    nb_occupants_logement: 2
+    territory: "Ain"
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    tags:
+      - "Peril"
+    situations:
+      - "la vie commune et le voisinage"
+      - "la sécurité des occupants"
+      - "l'état et propreté du logement"
+    criteres:
+      - "Les déchets sont mal stockés."
+      - "La protection incendie n’est pas adaptée."
+      - "Les sols sont humides."
+    criticites:
+      - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
+      - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
+      - "le sol ou la base des murs est très humide."
+  -
+    details: "appartement insalubre avec des..."
+    is_proprio_averti: 1
+    nb_adultes: "2"
+    is_allocataire: ""
+    nature_logement: "Appartement"
+    type_logement: "T2"
+    superficie: 30
+    loyer: 300
+    phone_number: 0621127286
+    cp_occupant: "13003"
+    ville_occupant: "Marseille"
+    statut: 2
+    reference: "2022-3"
+    geoloc: "{\"lat\":\"5.371573\",\"lng\":\"43.313719\"}"
+    score_creation: 100
+    etage_occupant: "0"
+    escalier_occupant: ""
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    insee_occupant: "13203"
+    is_rsa: 0
+    type_energie_logement: "Electrique"
+    origine_signalement: ""
+    nb_occupants_logement: 3
+    situation_occupant: "1"
+    territory: "Bouches-du-Rhône"
+    tags:
+      - "Urgent"
+    situations:
+      - "la vie commune et le voisinage"
+      - "la sécurité des occupants"
+      - "l'état et propreté du logement"
+    criteres:
+      - "Les déchets sont mal stockés."
+      - "La protection incendie n’est pas adaptée."
+      - "Les sols sont humides."
+    criticites:
+      - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
+      - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
+      - "le sol ou la base des murs est très humide."

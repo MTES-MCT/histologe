@@ -13,3 +13,8 @@ grumphp:
         bin: node_modules/.bin/eslint
         config: .eslintrc.js
         whitelist_patterns: ["vue/**/*.ts", "vue/**/*.vue"]
+      shell:
+        metadata:
+          label: 'php-cs-fixer'
+        scripts:
+          - ["-c", "make cs-check"]
