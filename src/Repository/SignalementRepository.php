@@ -189,7 +189,7 @@ class SignalementRepository extends ServiceEntityRepository
     /**
      * Query called by statistics with filters.
      */
-    public function findByFilters(string $statut, bool $countRefused, DateTime $dateStart, DateTime $dateEnd): array
+    public function findByFilters(string $statut, bool $countRefused, DateTime $dateStart, DateTime $dateEnd, string $type): array
     {
         $qb = $this->createQueryBuilder('s');
 
@@ -229,10 +229,30 @@ class SignalementRepository extends ServiceEntityRepository
             }
         }
 
+        // Filter on creation date
         $qb->andWhere('s.createdAt >= :dateStart')
         ->setParameter('dateStart', $dateStart)
         ->andWhere('s.createdAt <= :dateEnd')
         ->setParameter('dateEnd', $dateEnd);
+
+        // Filter on Signalement type (logement social)
+        if ('' != $type && 'all' != $type) {
+            switch ($type) {
+                case 'public':
+                    $qb->andWhere('s.isLogementSocial = :statutLogementSocial');
+                    $qb->setParameter('statutLogementSocial', true);
+                    break;
+                case 'private':
+                    $qb->andWhere('s.isLogementSocial = :statutLogementSocial');
+                    $qb->setParameter('statutLogementSocial', false);
+                    break;
+                case 'unset':
+                    $qb->andWhere('s.isLogementSocial is NULL');
+                    break;
+                default:
+                    break;
+            }
+        }
 
         return $qb->getQuery()
             ->getResult();

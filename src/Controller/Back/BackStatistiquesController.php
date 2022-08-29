@@ -74,7 +74,7 @@ class BackStatistiquesController extends AbstractController
             $countRefused = $request->get('countRefused');
             $hasCountRefused = '1' == $countRefused;
 
-            $result = $signalementRepository->findByFilters($statut, $hasCountRefused, $filterDateStart, $filterDateEnd);
+            $result = $signalementRepository->findByFilters($statut, $hasCountRefused, $filterDateStart, $filterDateEnd, $type);
 
             $totalCriticite = 0;
             $countHasDaysValidation = 0;
