@@ -65,11 +65,15 @@ class UploadHandlerService
         return $filename;
     }
 
-    public function uploadFromFile(UploadedFile $file, $newFilename)
+    public function uploadFromFile(UploadedFile $file, $newFilename): void
     {
-        $fileResource = fopen($file->getPathname(), 'r');
-        $this->fileStorage->writeStream($newFilename, $fileResource);
-        fclose($fileResource);
+        try {
+            $fileResource = fopen($file->getPathname(), 'r');
+            $this->fileStorage->writeStream($newFilename, $fileResource);
+            fclose($fileResource);
+        } catch (FilesystemException $exception) {
+            $this->logger->error($exception->getMessage());
+        }
     }
 
     public function setKey(string $key): ?array
