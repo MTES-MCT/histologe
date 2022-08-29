@@ -55,7 +55,9 @@ class UploadHandlerService
         $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
 
         try {
-            $this->fileStorage->writeStream($filename, fopen($tmpFilepath, 'r'));
+            $resourceFile = fopen($tmpFilepath, 'r');
+            $this->fileStorage->writeStream($filename, $resourceFile);
+            fclose($resourceFile);
         } catch (FilesystemException $exception) {
             $this->logger->error($exception->getMessage());
         }
