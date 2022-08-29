@@ -8,6 +8,15 @@
 
     <div class="fr-container--fluid">
       <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-lg-3" v-if="this.sharedState.filters.canFilterTerritoires">
+          <HistoSelect
+            id="filter-territoires"
+            v-model="sharedState.filters.territoire"
+            @update:modelValue="onChange"
+            inner-label="Territoire"
+            :option-items=sharedState.filters.territoiresList
+            />
+        </div>
         <div class="fr-col-12 fr-col-lg-3">
           <HistoSelect
             id="filter-communes"
@@ -88,6 +97,7 @@ export default defineComponent({
     return {
 			sharedState: store.state,
       initFilters: {
+        territoire: store.state.filters.territoire,
         communes: store.state.filters.communes,
         statut: store.state.filters.statut,
         etiquettes: store.state.filters.etiquettes,
@@ -111,6 +121,7 @@ export default defineComponent({
   },
 	methods: {
 		onReinitLocalEvent () {
+      this.sharedState.filters.territoire = this.initFilters.territoire
       this.sharedState.filters.communes = this.initFilters.communes
       this.sharedState.filters.statut = this.initFilters.statut
       this.sharedState.filters.etiquettes = this.initFilters.etiquettes

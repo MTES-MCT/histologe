@@ -9,13 +9,16 @@ export const store = {
 			etiquettes: '',
 			type: 'all',
 			dateRange: new Array<Date>(),
-			countRefused: false
+			countRefused: false,
+			territoire: 'all',
+			canFilterTerritoires: false,
+			territoiresList: new Array<HistoInterfaceSelectOption>()
 		},
 		stats: {
-			countSignalement: 1,
-			averageCriticite: 5,
-			averageDaysValidation: 4,
-			averageDaysClosure: 3,
+			countSignalement: 0,
+			averageCriticite: 0,
+			averageDaysValidation: 0,
+			averageDaysClosure: 0,
 			countSignalementPerMonth: [],
 			countSignalementPerPartenaire: [],
 			countSignalementPerSituation: [],

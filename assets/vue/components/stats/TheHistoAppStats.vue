@@ -100,6 +100,21 @@ export default defineComponent({
         this.sharedState.filters.etiquettesList.push(optionItem)
       }
 
+      this.sharedState.filters.canFilterTerritoires = requestResponse.can_filter_territoires === '1'
+      if (this.sharedState.filters.canFilterTerritoires) {
+        this.sharedState.filters.territoiresList = []
+        let optionAllItem = new HistoInterfaceSelectOption()
+        optionAllItem.Id = 'all'
+        optionAllItem.Text = 'Tous'
+        this.sharedState.filters.territoiresList.push(optionAllItem)
+        for (let id in requestResponse.list_territoires) {
+          let optionItem = new HistoInterfaceSelectOption()
+          optionItem.Id = id
+          optionItem.Text = requestResponse.list_territoires[id]
+          this.sharedState.filters.territoiresList.push(optionItem)
+        }
+      }
+
       this.sharedState.stats.countSignalement = requestResponse.count_signalement
       this.sharedState.stats.averageCriticite = requestResponse.average_criticite
       this.sharedState.stats.averageDaysValidation = requestResponse.average_days_validation

@@ -189,7 +189,7 @@ class SignalementRepository extends ServiceEntityRepository
     /**
      * Query called by statistics with filters.
      */
-    public function findByFilters(string $statut, bool $countRefused, DateTime $dateStart, DateTime $dateEnd, string $type): array
+    public function findByFilters(string $statut, bool $countRefused, DateTime $dateStart, DateTime $dateEnd, string $type, ?int $territory): array
     {
         $qb = $this->createQueryBuilder('s');
 
@@ -239,12 +239,12 @@ class SignalementRepository extends ServiceEntityRepository
         if ('' != $type && 'all' != $type) {
             switch ($type) {
                 case 'public':
-                    $qb->andWhere('s.isLogementSocial = :statutLogementSocial');
-                    $qb->setParameter('statutLogementSocial', true);
+                    $qb->andWhere('s.isLogementSocial = :statutLogementSocial')
+                    ->setParameter('statutLogementSocial', true);
                     break;
                 case 'private':
-                    $qb->andWhere('s.isLogementSocial = :statutLogementSocial');
-                    $qb->setParameter('statutLogementSocial', false);
+                    $qb->andWhere('s.isLogementSocial = :statutLogementSocial')
+                    ->setParameter('statutLogementSocial', false);
                     break;
                 case 'unset':
                     $qb->andWhere('s.isLogementSocial is NULL');
@@ -252,6 +252,11 @@ class SignalementRepository extends ServiceEntityRepository
                 default:
                     break;
             }
+        }
+
+        if ($territory) {
+            $qb->andWhere('s.territory = :territoryId')
+            ->setParameter('territoryId', $territory);
         }
 
         return $qb->getQuery()

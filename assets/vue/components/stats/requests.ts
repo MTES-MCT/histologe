@@ -7,6 +7,9 @@ export const requests = {
 	 */
 	filter(functionReturn: Function) {
 		let data = new FormData()
+		if (store.state.filters.canFilterTerritoires) {
+			data.append('territoire', store.state.filters.territoire)
+		}
 		data.append('communes', JSON.stringify(store.state.filters.communes))
 		data.append('statut', store.state.filters.statut)
 		data.append('etiquettes', JSON.stringify(store.state.filters.etiquettes))

@@ -3,9 +3,11 @@
 namespace App\Controller\Back;
 
 use App\Entity\Tag;
+use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
+use App\Repository\TerritoryRepository;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,22 +23,18 @@ class BackStatistiquesController extends AbstractController
     #[Route('/', name: 'back_statistiques')]
     public function index(): Response
     {
-        if ($this->getUser()) {
-            $title = 'Statistiques';
+        $title = 'Statistiques';
 
-            return $this->render('back/statistiques/index.html.twig', [
-                'title' => $title,
-            ]);
-        }
-
-        return $this->redirectToRoute('home');
+        return $this->render('back/statistiques/index.html.twig', [
+            'title' => $title,
+        ]);
     }
 
     /**
      * Route called by Ajax requests (filters filtered by user type, statistics filtered by filters).
      */
     #[Route('/filter', name: 'back_statistiques_filter')]
-    public function filter(Request $request, TagRepository $tagsRepository, SignalementRepository $signalementRepository): Response
+    public function filter(Request $request, TagRepository $tagsRepository, SignalementRepository $signalementRepository, TerritoryRepository $territoryRepository): Response
     {
         if ($this->getUser()) {
             $buffer = [];
@@ -46,6 +44,25 @@ class BackStatistiquesController extends AbstractController
              */
             $user = $this->getUser();
             $territory = $user->getTerritory();
+
+            // Tells Vue component if a user can filter through Territoire
+            $buffer['can_filter_territoires'] = $this->isGranted('ROLE_ADMIN') ? '1' : '0';
+            if ($this->isGranted('ROLE_ADMIN')) {
+                // Returns the list of available Territoire
+                $buffer['list_territoires'] = [];
+                $territoryList = $territoryRepository->findAllList();
+                /**
+                 * @var Territory $territoryItem
+                 */
+                foreach ($territoryList as $territoryItem) {
+                    $buffer['list_territoires'][$territoryItem->getId()] = $territoryItem->getName();
+                }
+
+                $request_territoire = $request->get('territoire');
+                if ($request_territoire !== '' && $request_territoire !== 'all') {
+                    $territory = $territoryRepository->findOneBy(['id' => $request_territoire]);
+                }
+            }
 
             // List of the Communnes linked to a User
             // - if user/admin of Territoire: only Communes from a Territoire (in the BAN)
@@ -59,10 +76,12 @@ class BackStatistiquesController extends AbstractController
             /**
              * @var Tag $tagItem
              */
+            $buffer['list_etiquettes'] = [];
             foreach ($tagList as $tagItem) {
                 $buffer['list_etiquettes'][$tagItem->getId()] = $tagItem->getLabel();
             }
 
+            // Query list of Signalement, filtered with params
             $communes = $request->get('communes');
             $statut = $request->get('statut');
             $etiquettes = $request->get('etiquettes');
@@ -73,9 +92,10 @@ class BackStatistiquesController extends AbstractController
             $filterDateEnd = new DateTime($dateEnd);
             $countRefused = $request->get('countRefused');
             $hasCountRefused = '1' == $countRefused;
+            $territoryFilter = $territory ? $territory->getId() : NULL;
+            $result = $signalementRepository->findByFilters($statut, $hasCountRefused, $filterDateStart, $filterDateEnd, $type, $territoryFilter);
 
-            $result = $signalementRepository->findByFilters($statut, $hasCountRefused, $filterDateStart, $filterDateEnd, $type);
-
+            // Count stats
             $totalCriticite = 0;
             $countHasDaysValidation = 0;
             $totalDaysValidation = 0;
