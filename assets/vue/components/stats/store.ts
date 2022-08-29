@@ -8,7 +8,7 @@ export const store = {
 			etiquettesList: new Array<HistoInterfaceSelectOption>(),
 			etiquettes: '',
 			type: 'all',
-			dateRange: [],
+			dateRange: new Array<Date>(),
 			countRefused: false
 		},
 		stats: {

@@ -57,13 +57,28 @@ export default defineComponent({
   },
   methods: {
     /**
-     * Initialisation de la date de début et de fin de filtres
+     * Initializes the start and end date used in the filters
      */
     initDates () {
-      this.sharedState.filters.dateRange = []
-      // Par défaut, on prend le semestre précédent
-      // Soit la période JAN-JUIN précédente, soit la période JUIL-DEC
+      // Default value: last month
+      // Starts on the first day of last month
+      const date = new Date()
+      const prevMonth = date.getMonth() - 1
+      const firstDay = 1
+      const startDate = new Date(date.getFullYear(), prevMonth, firstDay)
+      // Ends on the last day of the previous month
+      const endDate = new Date()
+      endDate.setDate(0)
+      endDate.setHours(23)
+      endDate.setMinutes(59)
+      endDate.setSeconds(59)
+
+      this.sharedState.filters.dateRange = [startDate, endDate]
     },
+
+    /**
+     * One of the filters has changed, a query needs to be executed
+     */
     handleFilterChange () {
       console.log('onFilterChange')
       console.log(this.sharedState)
@@ -71,6 +86,11 @@ export default defineComponent({
       requests.filter(this.handleRefresh)
       this.loadingFilters = true
     },
+
+    /**
+     * The query has finished its execution, we refresh the UI
+     * @param requestResponse 
+     */
     handleRefresh (requestResponse: any) {
       this.sharedState.filters.etiquettesList = []
       for (let id in requestResponse.list_etiquettes) {
@@ -79,6 +99,12 @@ export default defineComponent({
         optionItem.Text = requestResponse.list_etiquettes[id]
         this.sharedState.filters.etiquettesList.push(optionItem)
       }
+
+      this.sharedState.stats.countSignalement = requestResponse.count_signalement
+      this.sharedState.stats.averageCriticite = requestResponse.average_criticite
+      this.sharedState.stats.averageDaysValidation = requestResponse.average_days_validation
+      this.sharedState.stats.averageDaysClosure = requestResponse.average_days_closure
+
       this.loadingInit = false
       this.loadingFilters = false
     }

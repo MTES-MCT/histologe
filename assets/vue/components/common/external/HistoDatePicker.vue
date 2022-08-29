@@ -1,7 +1,7 @@
 <template>
   <div class="histo-date-picker">
     <Datepicker
-      :v-model="date"
+      v-model="modelValue"
       @update:modelValue="handleDate"
       locale="fr"
       range
