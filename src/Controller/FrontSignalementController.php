@@ -97,7 +97,7 @@ class FrontSignalementController extends AbstractController
                 $dataFiles = $data['files'];
                 foreach ($dataFiles as $key => $files) {
                     foreach ($files as $titre => $file) {
-                        $files_array[$key][] = ['file' => $uploadHandlerService->toUploadFolder($file), 'titre' => $titre, 'date' => (new DateTimeImmutable())->format('d.m.Y')];
+                        $files_array[$key][] = ['file' => $uploadHandlerService->uploadFromFilename($file), 'titre' => $titre, 'date' => (new DateTimeImmutable())->format('d.m.Y')];
                     }
                 }
                 unset($data['files']);
@@ -222,7 +222,7 @@ class FrontSignalementController extends AbstractController
                         $dataFiles = $data['files'];
                         foreach ($dataFiles as $key => $files) {
                             foreach ($files as $titre => $file) {
-                                $files_array[$key][] = ['file' => $uploadHandlerService->toUploadFolder($file), 'titre' => $titre, 'date' => (new DateTimeImmutable())->format('d.m.Y')];
+                                $files_array[$key][] = ['file' => $uploadHandlerService->uploadFromFilename($file), 'titre' => $titre, 'date' => (new DateTimeImmutable())->format('d.m.Y')];
                                 $list[] = '<li><a class="fr-link" target="_blank" href="'.$this->generateUrl('show_uploaded_file', ['folder' => '_up', 'file' => $file]).'&t=___TOKEN___">'.$titre.'</a></li>';
                             }
                         }

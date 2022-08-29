@@ -4,6 +4,7 @@ namespace App\Controller\Back;
 
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Service\UploadHandlerService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -57,8 +58,8 @@ class BackSignalementFileController extends AbstractController
         Request $request,
         ManagerRegistry $doctrine,
         SluggerInterface $slugger,
-        FilesystemOperator $fileStorage,
-        LoggerInterface $logger): RedirectResponse
+        LoggerInterface $logger,
+        UploadHandlerService $uploadHandler): RedirectResponse
     {
         $this->denyAccessUnlessGranted('FILE_CREATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token')) && $files = $request->files->get('signalement-add-file')) {
@@ -81,9 +82,7 @@ class BackSignalementFileController extends AbstractController
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
                 try {
-                    $fileResource = fopen($file->getPathname(), 'r');
-                    $fileStorage->writeStream($newFilename, $fileResource);
-                    fclose($fileResource);
+                    $uploadHandler->uploadFromFile($file, $newFilename);
                 } catch (FilesystemException $exception) {
                     $logger->error($exception->getMessage());
                 }

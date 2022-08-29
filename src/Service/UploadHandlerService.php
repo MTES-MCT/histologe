@@ -50,7 +50,7 @@ class UploadHandlerService
         return $this;
     }
 
-    public function toUploadFolder(string $filename): string
+    public function uploadFromFilename(string $filename): string
     {
         $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
 
@@ -63,6 +63,13 @@ class UploadHandlerService
         }
 
         return $filename;
+    }
+
+    public function uploadFromFile(UploadedFile $file, $newFilename)
+    {
+        $fileResource = fopen($file->getPathname(), 'r');
+        $this->fileStorage->writeStream($newFilename, $fileResource);
+        fclose($fileResource);
     }
 
     public function setKey(string $key): ?array
