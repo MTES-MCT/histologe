@@ -1,10 +1,12 @@
+import HistoInterfaceSelectOption from '../common/HistoInterfaceSelectOption'
+
 export const store = {
 	state: {
 		filters: {
 			communes: [],
 			statut: 'all',
-			etiquettesList: [],
-			etiquettes: [],
+			etiquettesList: new Array<HistoInterfaceSelectOption>(),
+			etiquettes: '',
 			type: 'all',
 			dateRange: [],
 			countRefused: false
@@ -27,3 +29,4 @@ export const store = {
 		ajaxurl: ''
 	}
 }
+  

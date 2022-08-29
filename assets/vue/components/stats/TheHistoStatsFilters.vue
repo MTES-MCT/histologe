@@ -69,7 +69,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { store } from './store.js'
+import { store } from './store'
 import HistoSelect from '../common/HistoSelect.vue'
 import HistoCheckbox from '../common/HistoCheckbox.vue'
 import HistoDatePicker from '../common/external/HistoDatePicker.vue'

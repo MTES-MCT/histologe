@@ -1,11 +1,11 @@
 import axios from 'axios'
-import { store } from './store.js'
+import { store } from './store'
 
 export const requests = {
 	/**
 	 * Filtre les statistiques
 	 */
-	filter(functionReturn) {
+	filter(functionReturn: Function) {
 		let data = new FormData()
 
 		axios

@@ -83,7 +83,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { store } from './store.js'
+import { store } from './store'
 import HistoDataTable from '../common/external/HistoDataTable.vue'
 import HistoChartLine from '../common/external/chartjs/HistoChartLine.vue'
 import HistoChartBar from '../common/external/chartjs/HistoChartBar.vue'

@@ -36,7 +36,7 @@ class BackStatistiquesController extends AbstractController
 
             /**
              * @var User $user
-            */
+             */
             $user = $this->getUser();
             $territory = $user->getTerritory();
 

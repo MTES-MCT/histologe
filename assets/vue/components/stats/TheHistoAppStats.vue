@@ -22,8 +22,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { store } from './store.js'
-import { requests } from './requests.js'
+import { store } from './store'
+import { requests } from './requests'
 import HistoBOTabHeader from '../common/HistoBOTabHeader.vue'
 import HistoInterfaceSelectOption from '../common/HistoInterfaceSelectOption'
 import TheHistoStatsFilters from './TheHistoStatsFilters.vue'
@@ -77,7 +77,7 @@ export default defineComponent({
         let optionItem = new HistoInterfaceSelectOption()
         optionItem.Id = id
         optionItem.Text = requestResponse.list_etiquettes[id]
-        // this.sharedState.filters.etiquettesList.push(optionItem)
+        this.sharedState.filters.etiquettesList.push(optionItem)
       }
       this.loadingInit = false
       this.loadingFilters = false
