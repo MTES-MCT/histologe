@@ -69,4 +69,9 @@ class UploadHandlerService
 
         return $this->file;
     }
+
+    public function getFile(): array
+    {
+        return $this->file;
+    }
 }
