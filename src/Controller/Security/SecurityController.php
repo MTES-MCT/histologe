@@ -3,9 +3,11 @@
 namespace App\Controller\Security;
 
 use App\Entity\Signalement;
+use League\Flysystem\FilesystemOperator;
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,14 +41,24 @@ class SecurityController extends AbstractController
         throw new LogicException('This code should never be reached');
     }
 
-    #[Route('/_up/{file}', name: 'show_uploaded_file')]
-    public function showUploadedFile($file, Signalement|null $signalement = null): BinaryFileResponse|RedirectResponse
+    #[Route('/_up/{filename}', name: 'show_uploaded_file')]
+    public function showUploadedFile(
+        string $filename,
+        Signalement|null $signalement = null,
+        FilesystemOperator $fileStorage): BinaryFileResponse|RedirectResponse
     {
         $request = Request::createFromGlobals();
-        $this->denyAccessUnlessGranted('FILE_VIEW', $this->isCsrfTokenValid('suivi_signalement_ext_file_view', $request->get('t')));
-        $folder = $this->getParameter('uploads_dir');
+        $this->denyAccessUnlessGranted(
+            'FILE_VIEW',
+            $this->isCsrfTokenValid('suivi_signalement_ext_file_view', $request->get('t'))
+        );
 
-        return new BinaryFileResponse($folder.$file);
+        $tmpFilepath = $this->getParameter('uploads_tmp_dir').$filename;
+        $bucketFilepath = $this->getParameter('url_bucket').'/'.$filename;
+        file_put_contents($tmpFilepath, file_get_contents($bucketFilepath));
+        $file = new File($tmpFilepath);
+
+        return new BinaryFileResponse($file);
     }
 
     /**
