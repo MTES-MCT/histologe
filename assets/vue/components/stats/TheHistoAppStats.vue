@@ -60,10 +60,10 @@ export default defineComponent({
      * Initializes the start and end date used in the filters
      */
     initDates () {
-      // Default value: last month
-      // Starts on the first day of last month
+      // Default value: last 6 months
+      // Starts on the first day of 6 months before
       const date = new Date()
-      const prevMonth = date.getMonth() - 1
+      const prevMonth = date.getMonth() - 6
       const firstDay = 1
       const startDate = new Date(date.getFullYear(), prevMonth, firstDay)
       // Ends on the last day of the previous month

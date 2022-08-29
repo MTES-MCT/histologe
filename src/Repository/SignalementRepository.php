@@ -6,6 +6,7 @@ use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\SearchFilterService;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
@@ -188,7 +189,7 @@ class SignalementRepository extends ServiceEntityRepository
     /**
      * Query called by statistics with filters.
      */
-    public function findByFilters(string $statut, bool $countRefused): array
+    public function findByFilters(string $statut, bool $countRefused, DateTime $dateStart, DateTime $dateEnd): array
     {
         $qb = $this->createQueryBuilder('s');
 
@@ -227,6 +228,11 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('statutRefused', Signalement::STATUS_REFUSED);
             }
         }
+
+        $qb->andWhere('s.createdAt >= :dateStart')
+        ->setParameter('dateStart', $dateStart)
+        ->andWhere('s.createdAt <= :dateEnd')
+        ->setParameter('dateEnd', $dateEnd);
 
         return $qb->getQuery()
             ->getResult();

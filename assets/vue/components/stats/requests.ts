@@ -12,9 +12,14 @@ export const requests = {
 		data.append('etiquettes', JSON.stringify(store.state.filters.etiquettes))
 		data.append('type', store.state.filters.type)
 		if (store.state.filters.dateRange.length > 0) {
-			data.append('dateStart', store.state.filters.dateRange[0].toString())
+			const phpDateStart = new Date(store.state.filters.dateRange[0])
+			phpDateStart.setMinutes(phpDateStart.getMinutes() - phpDateStart.getTimezoneOffset())
+			data.append('dateStart', phpDateStart.toISOString())
+
 			if (store.state.filters.dateRange.length > 1) {
-				data.append('dateEnd', store.state.filters.dateRange[1].toString())
+				const phpDateEnd = new Date(store.state.filters.dateRange[1])
+				phpDateEnd.setMinutes(phpDateEnd.getMinutes() - phpDateEnd.getTimezoneOffset())
+				data.append('dateEnd', phpDateEnd.toISOString())
 			}
 		}
 		data.append('countRefused', store.state.filters.countRefused ? '1' : '0')

@@ -6,6 +6,7 @@ use App\Entity\Tag;
 use App\Entity\User;
 use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -67,11 +68,13 @@ class BackStatistiquesController extends AbstractController
             $etiquettes = $request->get('etiquettes');
             $type = $request->get('type');
             $dateStart = $request->get('dateStart');
+            $filterDateStart = new DateTime($dateStart);
             $dateEnd = $request->get('dateEnd');
+            $filterDateEnd = new DateTime($dateEnd);
             $countRefused = $request->get('countRefused');
             $hasCountRefused = '1' == $countRefused;
 
-            $result = $signalementRepository->findByFilters($statut, $hasCountRefused);
+            $result = $signalementRepository->findByFilters($statut, $hasCountRefused, $filterDateStart, $filterDateEnd);
 
             $totalCriticite = 0;
             $countHasDaysValidation = 0;
