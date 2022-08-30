@@ -24,3 +24,5 @@
 ###< phpunit/phpunit ###
 /data/
 /coverage/
+tmp/*
+!tmp/.gitgnore
