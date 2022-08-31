@@ -1,12 +1,18 @@
 # Histologe.beta.gouv.fr
 
+Histologe, une solution pour détecter et accélérer la prise en charge du “mal logement”
+
+
 ## Pré-requis
 
 Requirements|Release
 ------------|--------
-Docker client|
-Version (minimum) | 20.10.17
-API Version (minimum) | 1.41
+Docker engine (minimum)| [20.10.17](https://www.docker.com/)
+Scalingo CLI (minimum) | [1.24](https://doc.scalingo.com/platform/cli/start)
+AWS CLI OVH Object storage (optionnel) | [1.25](https://docs.ovh.com/fr/storage/s3/debuter-avec-s3/#utilisation-de-aws-cli)
+PHP (optinnel)| [8.0.*](https://www.php.net/)
+Composer (optinnel) | [2.4.*](https://getcomposer.org/download/)
+Node (optinnel)| [16.*](https://nodejs.org/en/)
 
 ## Versions des dépendances
 Service|Version
@@ -67,6 +73,7 @@ sh                             Log to phpfpm container
 mysql                          Log to mysql container
 logs                           Show container logs
 composer                       Install composer dependencies
+clear-cache                    Clear cache prod: make-clear-cache env=[dev|prod|test]
 create-db                      Create database
 drop-db                        Drop database
 load-data                      Load database from dump
@@ -82,15 +89,28 @@ cs-fix                         Fix source code with PHP-CS-Fixer
 ```
 
 ### Lancement
+1. Configurer les variables d'environnements du service object storage S3 d'OVH Cloud
+
+```
+# .env.local
+### object storage S3 ###
+S3_ENDPOINT=
+S3_KEY=
+S3_SECRET=
+S3_BUCKET=
+S3_URL_BUCKET=
+### object storage S3 ###
+```
+
+2. Executer la commande
 ```
 make build
 ```
 
-### Accès
 
-- En local sur http://localhost:8080
+3. Se rendre sur http://localhost:8080
 
-Pour tous les utilisateurs, le mot de passe est `histologe`
+> Pour tous les utilisateurs, le mot de passe est `histologe`
 
 Territoire             | Partenaire         | Email                            | Rôle       
 -----------------------|--------------------|----------------------------------|----------------------
@@ -100,3 +120,6 @@ Ain                    | Admin Histologe 01 | admin-territoire-01@histologe.fr |
 Bouches-du-Rhône       | Partenaire 13      | partenaire-13-01@histologe.fr    | ROLE_USER_PARTNER
 Ain                    | Partenaire 01      | partenaire-01-01@histologe.fr    | ROLE_USER_PARTNER
 
+## Documentaton
+
+[Wiki](https://github.com/MTES-MCT/histologe/wiki)

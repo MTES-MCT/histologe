@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional;
+namespace App\Tests\Functional\Service;
 
 use App\Service\PostalCodeHomeCheckerService;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;

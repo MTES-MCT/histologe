@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional;
+namespace App\Tests\Functional\Service;
 
 use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemOperator;
