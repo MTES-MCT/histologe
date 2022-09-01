@@ -5,7 +5,8 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     uploads_dir: '%kernel.project_dir%/uploaded_files/signalement/'
-    uploads_tmp_dir: '%kernel.project_dir%/var/temp/'
+    uploads_tmp_dir: '%kernel.project_dir%/tmp/'
+    url_bucket: '%env(resolve:S3_URL_BUCKET)%'
     capture_dir: '%kernel.project_dir%/uploaded_files/capture/'
     images_dir: '%kernel.project_dir%/public/img/'
     mail_attachment_dir: '%kernel.project_dir%/templates/emails/attachment/'
@@ -55,5 +56,11 @@ services:
             - '@doctrine.orm.entity_manager'
             - '@Symfony\Contracts\HttpClient\HttpClientInterface'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    Aws\S3\S3Client:
+        arguments:
+            - endpoint: '%env(resolve:S3_ENDPOINT)%'
+              version: 'latest'
+              region: 'GRA'
+              credentials:
+                  key: '%env(resolve:S3_KEY)%'
+                  secret: '%env(resolve:S3_SECRET)%'

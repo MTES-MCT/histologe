@@ -555,7 +555,7 @@
                         {% if is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted) %}
                             {% if photo.user is not defined or photo.user is same as(app.user.id) %}
                                 <button title="Supprimer la photo"
-                                        data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'photos',file:photo.file}) }}"
+                                        data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'photos',filename:photo.file}) }}"
                                         data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
                                         class="fr-btn fr-btn--sm fr-btn--danger fr-fi-delete-line signalement-file-delete"></button>
                             {% endif %}
@@ -580,7 +580,7 @@
                     <a href="{{ asset('_up/'~doc.file) }}"
                        class="fr-btn fr-fi-eye-fill fr-btn--icon-left" title="Afficher le document" target="_blank">Consulter</a>
                     <button title="Supprimer le document"
-                            data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'documents',file:doc.file}) }}"
+                            data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'documents',filename:doc.file}) }}"
                             data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
                             class="fr-btn fr-btn--danger fr-fi-delete-line signalement-file-delete"></button>
                 </div>
