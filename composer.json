@@ -23,6 +23,7 @@
         "scienta/doctrine-json-functions": "^5.0",
         "sendinblue/api-v3-sdk": "^8.0",
         "sensio/framework-extra-bundle": "^6.1",
+        "sentry/sentry-symfony": "^4.3",
         "symfony/apache-pack": "^1.0",
         "symfony/asset": "6.0.*",
         "symfony/console": "6.0.*",

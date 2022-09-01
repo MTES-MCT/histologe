@@ -11,6 +11,7 @@ grumphp:
       phpstan: ~
       shell:
         metadata:
-          label: 'php-cs-fixer'
+          label: 'php-cs-fixer && phpunit'
         scripts:
           - ["-c", "make cs-check"]
+          - ["-c", "make test"]
