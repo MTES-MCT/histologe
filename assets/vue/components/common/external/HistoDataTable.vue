@@ -5,8 +5,7 @@
     <DataTable :data=items class="display" :options=options>
       <thead>
         <tr>
-          <th>A</th>
-          <th>B</th>
+          <th v-for="headerText in headers">{{ headerText }}</th>
         </tr>
       </thead>
     </DataTable>
@@ -20,28 +19,18 @@ import DataTable from 'datatables.net-vue3'
 export default defineComponent({
   name: 'HistoDataTable',
   components: { DataTable },
+  props: {
+    headers: {
+      type: Array,
+      default: []
+    },
+    items: {
+      type: Object,
+      default: {}
+    }
+  },
   data() {
     return {
-      items: [
-        [1, 2],
-        [3, 4],
-        [1, 2],
-        [3, 4],
-        [1, 2],
-        [3, 4],
-        [1, 2],
-        [3, 4],
-        [1, 2],
-        [3, 4],
-        [1, 2],
-        [3, 4],
-        [1, 2],
-        [3, 4],
-        [1, 2],
-        [3, 4],
-        [1, 2],
-        [3, 4]
-      ],
       options: {
         lengthChange: false,
         searching :  false

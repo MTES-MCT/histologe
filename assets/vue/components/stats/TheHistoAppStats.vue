@@ -131,6 +131,8 @@ export default defineComponent({
       this.sharedState.stats.averageDaysClosure = requestResponse.average_days_closure
 
       this.sharedState.stats.countSignalementPerMonth = requestResponse.countSignalementPerMonth
+      
+      this.makePartenaireArray(requestResponse.countSignalementPerPartenaire)
       this.sharedState.stats.countSignalementPerSituation = requestResponse.countSignalementPerSituation
       this.sharedState.stats.countSignalementPerCriticite = requestResponse.countSignalementPerCriticite
       
@@ -138,6 +140,20 @@ export default defineComponent({
       this.sharedState.stats.countSignalementPerCriticitePercent = requestResponse.countSignalementPerCriticitePercent
       this.sharedState.stats.countSignalementPerVisite = requestResponse.countSignalementPerVisite
       
+    },
+
+    makePartenaireArray (countSignalementPerPartenaire: Object) {
+      this.sharedState.stats.countSignalementPerPartenaire = []
+      for (const [nomPartenaire, dataPartenaire] of Object.entries(countSignalementPerPartenaire)) {
+        let item = [
+          nomPartenaire,
+          dataPartenaire.total,
+          dataPartenaire.wait,
+          dataPartenaire.accepted,
+          dataPartenaire.closed,
+        ]
+        this.sharedState.stats.countSignalementPerPartenaire.push(item)
+      }
     }
   }
 })

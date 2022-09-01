@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Affectation;
 use App\Entity\Signalement;
 use App\Entity\Tag;
 use App\Entity\Territory;
@@ -85,6 +86,7 @@ class BackStatistiquesController extends AbstractController
             $countSignalementPerVisite['Non'] = 0;
             $countSignalementPerSituation = [];
             $countSignalementPerCriticite = [];
+            $countSignalementPerPartenaire = [];
 
             for ($year = $this->filterDateStart->format('Y'); $year <= $this->filterDateEnd->format('Y'); ++$year) {
                 $monthStart = 0;
@@ -168,6 +170,39 @@ class BackStatistiquesController extends AbstractController
                         }
                         ++$countSignalementPerCriticite[$criticiteStr];
                     }
+
+                    $listAffectations = $signalementItem->getAffectations();
+                    $countListAffectations = \count($listAffectations);
+                    for ($i = 0; $i < $countListAffectations; ++$i) {
+                        $affecationItem = $listAffectations[$i];
+                        $partenaire = $listAffectations[$i]->getPartner();
+                        $partenaireStr = $partenaire->getNom();
+                        if (empty($countSignalementPerPartenaire[$partenaireStr])) {
+                            $countSignalementPerPartenaire[$partenaireStr] = [
+                                'total' => 0,
+                                'wait' => 0,
+                                'accepted' => 0,
+                                'refused' => 0,
+                                'closed' => 0,
+                            ];
+                        }
+                        $countSignalementPerPartenaire[$partenaireStr]['total'];
+                        switch ($affecationItem->getStatut()) {
+                            case Affectation::STATUS_ACCEPTED:
+                                ++$countSignalementPerPartenaire[$partenaireStr]['accepted'];
+                                break;
+                            case Affectation::STATUS_REFUSED:
+                                ++$countSignalementPerPartenaire[$partenaireStr]['refused'];
+                                break;
+                            case Affectation::STATUS_CLOSED:
+                                ++$countSignalementPerPartenaire[$partenaireStr]['closed'];
+                                break;
+                            case Affectation::STATUS_WAIT:
+                            default:
+                                ++$countSignalementPerPartenaire[$partenaireStr]['wait'];
+                                break;
+                        }
+                    }
                 }
             }
 
@@ -184,7 +219,7 @@ class BackStatistiquesController extends AbstractController
             $this->filterResult['average_days_closure'] = $averageDaysClosure;
 
             $this->filterResult['countSignalementPerMonth'] = $countSignalementPerMonth;
-            $this->filterResult['countSignalementPerPartenaire'] = [];
+            $this->filterResult['countSignalementPerPartenaire'] = $countSignalementPerPartenaire;
             $this->filterResult['countSignalementPerSituation'] = $countSignalementPerSituation;
             $this->filterResult['countSignalementPerCriticite'] = $countSignalementPerCriticite;
             $this->filterResult['countSignalementPerStatut'] = $countSignalementPerStatut;

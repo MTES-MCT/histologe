@@ -26,7 +26,7 @@
 
         <div class="fr-col-12 fr-col-lg-8">
           <div class="fr-mb-3w">
-            <HistoDataTable items=sharedState.stats.countSignalementPerPartenaire>
+            <HistoDataTable :headers=countSignalementPerPartenaireHeaders :items=sharedState.stats.countSignalementPerPartenaire>
               <template #title>Répartition par partenaires</template>
               <template #description>Cliquez sur l'en-tête d'une colonne pour trier les résultats</template>
             </HistoDataTable>
@@ -94,7 +94,14 @@ export default defineComponent({
   },
   data () {
     return {
-			sharedState: store.state
+			sharedState: store.state,
+      countSignalementPerPartenaireHeaders: [
+        'Partenaire',
+        'Signalements',
+        'En attente',
+        'En cours',
+        'Clôturés'
+      ]
     }
   },
   computed: {
