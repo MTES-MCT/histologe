@@ -1,6 +1,6 @@
 # Histologe.beta.gouv.fr
 
-Une solution pour détecter et accélérer la prise en charge du “mal logement”
+Une solution pour détecter et accélérer la prise en charge du “mal logement”.
 
 Histologe est une application web écrite en PHP et utilisant le framework Symfony, avec une base de données MySQL.
 
