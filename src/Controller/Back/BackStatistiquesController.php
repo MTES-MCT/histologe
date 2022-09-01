@@ -54,9 +54,16 @@ class BackStatistiquesController extends AbstractController
              * @var User $user
              */
             $user = $this->getUser();
-            $territory = $user->getTerritory();
 
-            $this->buildLists($request, $territory, $tagsRepository, $territoryRepository);
+            $territory = $user->getTerritory();
+            if ($this->isGranted('ROLE_ADMIN')) {
+                $request_territoire = $request->get('territoire');
+                if ('' !== $request_territoire && 'all' !== $request_territoire) {
+                    $territory = $territoryRepository->findOneBy(['id' => $request_territoire]);
+                }
+            }
+
+            $this->buildLists($territory, $tagsRepository, $territoryRepository);
             $result = $this->buildQuery($request, $signalementRepository, $territory);
 
             // Count stats
@@ -195,7 +202,7 @@ class BackStatistiquesController extends AbstractController
     /**
      * Build lists of data that will be returned as filters.
      */
-    private function buildLists(Request $request, ?Territory $territory, TagRepository $tagsRepository, TerritoryRepository $territoryRepository)
+    private function buildLists(?Territory $territory, TagRepository $tagsRepository, TerritoryRepository $territoryRepository)
     {
         // Tells Vue component if a user can filter through Territoire
         $this->filterResult['can_filter_territoires'] = $this->isGranted('ROLE_ADMIN') ? '1' : '0';
@@ -210,11 +217,6 @@ class BackStatistiquesController extends AbstractController
              */
             foreach ($territoryList as $territoryItem) {
                 $this->filterResult['list_territoires'][$territoryItem->getId()] = $territoryItem->getName();
-            }
-
-            $request_territoire = $request->get('territoire');
-            if ('' !== $request_territoire && 'all' !== $request_territoire) {
-                $territory = $territoryRepository->findOneBy(['id' => $request_territoire]);
             }
         }
 
