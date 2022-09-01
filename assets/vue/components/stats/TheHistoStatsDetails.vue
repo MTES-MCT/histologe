@@ -33,13 +33,13 @@
           </div>
 
           <div class="fr-mb-3w">
-            <HistoChartBar items=sharedState.stats.countSignalementPerSituation>
+            <HistoChartBar :items=sharedState.stats.countSignalementPerSituation>
               <template #title>Répartition par famille de désordres</template>
             </HistoChartBar>
           </div>
 
           <div>
-            <HistoChartBar items=sharedState.stats.countSignalementPerCriticite>
+            <HistoChartBar :items=sharedState.stats.countSignalementPerCriticite>
               <template #title>Désordres les plus renseignés</template>
             </HistoChartBar>
           </div>

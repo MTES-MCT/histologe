@@ -33,13 +33,17 @@ export default {
       type: String,
       default: 'label'
     },
+    items: {
+      type: Object,
+      default: {}
+    },
     width: {
       type: Number,
       default: 400
     },
     height: {
       type: Number,
-      default: 300
+      default: 250
     },
     cssClasses: {
       default: '',
@@ -55,14 +59,25 @@ export default {
     }
   },
   data() {
+    let inLabels = []
+    let inData = []
+    for (let i in this.items) {
+      inLabels.push(i)
+      inData.push(this.items[i])
+    }
     return {
       chartData: {
-        labels: [ 'January', 'February', 'March' ],
-        datasets: [ { data: [40, 20, 12] } ]
+        labels: inLabels,
+        datasets: [ { data: inData } ]
       },
       chartOptions: {
         responsive: true,
-		indexAxis: 'y'
+		    indexAxis: 'y',
+        plugins: {
+         legend: {
+            display: false
+         }
+        }
       }
     }
   }

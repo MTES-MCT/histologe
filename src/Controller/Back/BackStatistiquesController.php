@@ -76,6 +76,8 @@ class BackStatistiquesController extends AbstractController
             $countSignalementPerVisite = [];
             $countSignalementPerVisite['Oui'] = 0;
             $countSignalementPerVisite['Non'] = 0;
+            $countSignalementPerSituation = [];
+            $countSignalementPerCriticite = [];
 
             for ($year = $this->filterDateStart->format('Y'); $year <= $this->filterDateEnd->format('Y'); ++$year) {
                 $monthStart = 0;
@@ -139,6 +141,26 @@ class BackStatistiquesController extends AbstractController
                     } else {
                         ++$countSignalementPerVisite['Oui'];
                     }
+
+                    $listSituations = $signalementItem->getSituations();
+                    $countListSituations = \count($listSituations);
+                    for ($i = 0; $i < $countListSituations; ++$i) {
+                        $situationStr = $listSituations[$i]->getMenuLabel();
+                        if (empty($countSignalementPerSituation[$situationStr])) {
+                            $countSignalementPerSituation[$situationStr] = 0;
+                        }
+                        ++$countSignalementPerSituation[$situationStr];
+                    }
+
+                    $listCriticite = $signalementItem->getCriticites();
+                    $countListCriticite = \count($listCriticite);
+                    for ($i = 0; $i < $countListCriticite; ++$i) {
+                        $criticiteStr = $listCriticite[$i]->getLabel();
+                        if (empty($countSignalementPerCriticite[$criticiteStr])) {
+                            $countSignalementPerCriticite[$criticiteStr] = 0;
+                        }
+                        ++$countSignalementPerCriticite[$criticiteStr];
+                    }
                 }
             }
 
@@ -146,6 +168,8 @@ class BackStatistiquesController extends AbstractController
             $averageCriticite = $countSignalement > 0 ? round($totalCriticite / $countSignalement) : '-';
             $averageDaysValidation = $countHasDaysValidation > 0 ? round($totalDaysValidation * 10 / $countHasDaysValidation) / 10 : '-';
             $averageDaysClosure = $countHasDaysClosure > 0 ? round($totalDaysClosure * 10 / $countHasDaysClosure) / 10 : '-';
+            arsort($countSignalementPerCriticite);
+            $countSignalementPerCriticite = \array_slice($countSignalementPerCriticite, 0, 5);
 
             $this->filterResult['count_signalement'] = $countSignalement;
             $this->filterResult['average_criticite'] = $averageCriticite;
@@ -154,8 +178,8 @@ class BackStatistiquesController extends AbstractController
 
             $this->filterResult['countSignalementPerMonth'] = $countSignalementPerMonth;
             $this->filterResult['countSignalementPerPartenaire'] = [];
-            $this->filterResult['countSignalementPerSituation'] = [];
-            $this->filterResult['countSignalementPerCriticite'] = [];
+            $this->filterResult['countSignalementPerSituation'] = $countSignalementPerSituation;
+            $this->filterResult['countSignalementPerCriticite'] = $countSignalementPerCriticite;
             $this->filterResult['countSignalementPerStatut'] = $countSignalementPerStatut;
             $this->filterResult['countSignalementPerCriticitePercent'] = $countSignalementPerCriticitePercent;
             $this->filterResult['countSignalementPerVisite'] = $countSignalementPerVisite;

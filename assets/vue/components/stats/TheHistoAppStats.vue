@@ -131,6 +131,9 @@ export default defineComponent({
       this.sharedState.stats.averageDaysClosure = requestResponse.average_days_closure
 
       this.sharedState.stats.countSignalementPerMonth = requestResponse.countSignalementPerMonth
+      this.sharedState.stats.countSignalementPerSituation = requestResponse.countSignalementPerSituation
+      this.sharedState.stats.countSignalementPerCriticite = requestResponse.countSignalementPerCriticite
+      
       this.sharedState.stats.countSignalementPerStatut = requestResponse.countSignalementPerStatut
       this.sharedState.stats.countSignalementPerCriticitePercent = requestResponse.countSignalementPerCriticitePercent
       this.sharedState.stats.countSignalementPerVisite = requestResponse.countSignalementPerVisite

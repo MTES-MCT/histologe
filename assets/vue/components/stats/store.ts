@@ -21,8 +21,8 @@ export const store = {
 			averageDaysClosure: 0,
 			countSignalementPerMonth: Object,
 			countSignalementPerPartenaire: [],
-			countSignalementPerSituation: [],
-			countSignalementPerCriticite: [],
+			countSignalementPerSituation: Object,
+			countSignalementPerCriticite: Object,
 			countSignalementPerStatut: Object,
 			countSignalementPerCriticitePercent: Object,
 			countSignalementPerVisite: Object
