@@ -134,6 +134,28 @@ Ain                    | Admin Histologe 01 | admin-territoire-01@histologe.fr |
 Bouches-du-Rhône       | Partenaire 13      | partenaire-13-01@histologe.fr    | ROLE_USER_PARTNER
 Ain                    | Partenaire 01      | partenaire-01-01@histologe.fr    | ROLE_USER_PARTNER
 
+4. Vous pouvez ajouter vos e-mails:
+
+> En tant qu'administrateur
+
+```
+php bin/console app:add-user ROLE_ADMIN john.doe.1@histologe.fr John Doe
+```
+
+> En tant qu'administrateur territoire
+
+```
+php bin/console app:add-user ROLE_ADMIN_TERRITORY joe.doe.2@histologe.fr John Doe Marseille 13
+```
+
+> En tant que partenaire
+> 
+```
+php bin/console app:add-user ROLE_USER_PARTNER joe.doe.3@histologe.fr John Doe Marseille 13
+```
+
+[Une activation de compte sera nécéssaire](http://localhost:8080/activation)
+
 ## Bases de données scalingo
 
 ### Pré-requis
@@ -144,7 +166,7 @@ Des pre-requis sont nécéssaire pour communiquer avec SCALINGO depuis la CLI
 
 ### Accès aux bases de données [scalingo](https://doc.scalingo.com/platform/databases/access)
 
-En exécutant la commande suivante, un tunnel SSH chiffré sera construit entre vous et votre base de données
+En exécutant la commande suivante, un tunnel SSH chiffré sera construit entre vous et votre base de données.
 
 ```
 $ scalingo --app <nom_application> db-tunnel DSN_MYSQL
@@ -155,12 +177,12 @@ You can access your database on:
 ```
 
 Une fois le tunnel construit, à partir d'un autre terminal que celui du tunnel vous pouvez vous connecter à l'hôte 
-`127.0.0.1:10000` et faire votre export
+`127.0.0.1:10000` et faire votre export de données.
 
 ```
 mysqldump --column-statistics=0 --no-tablespaces -u <database_user>  -h 127.0.0.1 -p <database_name> -P 10000 > data/dump.sql
 ```
-Vous pouvez ensuite executé la commande
+Vous pouvez ensuite executer la commande.
 
 ```
 make load-data  

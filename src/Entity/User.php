@@ -7,11 +7,13 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[UniqueEntity('email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const STATUS_INACTIVE = 0;
@@ -24,6 +26,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: false)]
+    #[Assert\Email]
     private $email;
 
     #[ORM\Column(type: 'json')]
@@ -34,7 +37,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Length(min: 8, max: 200, minMessage: 'Votre mot de passe doit contenir au moins {{ limit }} caratères')]
     #[Assert\NotCompromisedPassword(message: 'Ce mot de passe est compromis, veuillez en choisir un autre.')]
     #[Assert\NotEqualTo(propertyPath: 'email', message: 'Votre mot de passe ne doit pas contenir votre email.')]
-    #[Assert\NotEqualTo(propertyPath: 'histologe', message: "Votre mot de passe ne doit pas contenir 'histologe'")]
     private $password;
 
     #[ORM\OneToMany(mappedBy: 'modifiedBy', targetEntity: Signalement::class)]
@@ -79,12 +81,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->statut = self::STATUS_INACTIVE;
         $this->notifications = new ArrayCollection();
     }
-
-    /*public function setId($id): ?self
-    {
-        $this->id = $id;
-        return $this;
-    }*/
 
     public function getId(): ?int
     {

@@ -1,0 +1,195 @@
+<?php
+
+namespace App\Command;
+
+use App\Entity\Partner;
+use App\Entity\Territory;
+use App\Entity\User;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
+#[AsCommand(
+    name: 'app:add-user',
+    description: 'Creates users and stores them in the database'
+)]
+class AddUserCommand extends Command
+{
+    private SymfonyStyle $io;
+
+    private const FIELDS = [
+        'ROLE' => 'role',
+        'EMAIL' => 'email',
+        'FIRSTNAME' => 'firstname',
+        'LASTNAME' => 'lastname',
+        'PARTNER' => 'partner',
+        'TERRITORY' => 'territory',
+    ];
+
+    public const ROLES = [
+        'ROLE_USER_PARTNER',
+        'ROLE_ADMIN_PARTNER',
+        'ROLE_ADMIN_TERRITORY',
+        'ROLE_ADMIN',
+    ];
+
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private ValidatorInterface $validator,
+        private UserRepository $users,
+        private UserPasswordHasherInterface $hasher,
+    ) {
+        parent::__construct();
+    }
+
+    protected function configure(): void
+    {
+        $this
+            ->addArgument(self::FIELDS['ROLE'], InputArgument::REQUIRED, 'The role of the new user')
+            ->addArgument(self::FIELDS['EMAIL'], InputArgument::REQUIRED, 'The email of the new user')
+            ->addArgument(self::FIELDS['FIRSTNAME'], InputArgument::REQUIRED, 'The firstname of the new user')
+            ->addArgument(self::FIELDS['LASTNAME'], InputArgument::REQUIRED, 'The lastname of the new user')
+            ->addArgument(self::FIELDS['PARTNER'], InputArgument::OPTIONAL, 'If set, the user will belong partner', Partner::DEFAULT_PARTNER)
+            ->addArgument(self::FIELDS['TERRITORY'], InputArgument::OPTIONAL, 'If set, the user will belong territory');
+    }
+
+    protected function initialize(InputInterface $input, OutputInterface $output): void
+    {
+        // See https://symfony.com/doc/current/console/style.html
+        $this->io = new SymfonyStyle($input, $output);
+    }
+
+    protected function interact(InputInterface $input, OutputInterface $output): void
+    {
+        if (null !== $input->getArgument(self::FIELDS['ROLE']) &&
+            null !== $input->getArgument(self::FIELDS['EMAIL']) &&
+            null !== $input->getArgument(self::FIELDS['FIRSTNAME']) &&
+            null !== $input->getArgument(self::FIELDS['LASTNAME'])
+        ) {
+            return;
+        }
+
+        $this->io->title('Add User Command Interactive Wizard');
+        $this->io->text([
+            'If you prefer to not use this interactive wizard, provide the',
+            'arguments required by this command as follows:',
+            '',
+            ' $ php bin/console app:add-user role email firstname lastname partner territory',
+            '',
+            'Now we\'ll ask you for the value of all the missing command arguments.',
+        ]);
+
+        $role = $input->getArgument(self::FIELDS['ROLE']);
+        if (null !== $role) {
+            $this->io->text(' > <info>'.ucfirst(self::FIELDS['ROLE']).'</info>: '.$role);
+        } else {
+            $helper = $this->getHelper('question');
+            $question = new ChoiceQuestion(
+                'Please select a role (default: ROLE_USER_PARTNER)',
+                self::ROLES,
+                self::ROLES[0]
+            );
+
+            $role = $helper->ask($input, $output, $question);
+            $this->io->text(' > <info> You have just selected: </info>'.$role);
+            $input->setArgument(self::FIELDS['ROLE'], $role);
+        }
+
+        $email = $input->getArgument(self::FIELDS['EMAIL']);
+        if (null !== $email) {
+            $this->io->text(' > <info>'.ucfirst(self::FIELDS['EMAIL']).'</info>: '.$email);
+        } else {
+            $email = $this->io->ask(ucfirst(self::FIELDS['EMAIL']));
+            $input->setArgument(self::FIELDS['EMAIL'], $email);
+        }
+
+        $firstname = $input->getArgument(self::FIELDS['FIRSTNAME']);
+        if (null !== $firstname) {
+            $this->io->text(' > <info>'.ucfirst(self::FIELDS['FIRSTNAME']).'</info>: '.$firstname);
+        } else {
+            $firstname = $this->io->ask(ucfirst(self::FIELDS['FIRSTNAME']));
+            $input->setArgument(self::FIELDS['FIRSTNAME'], $firstname);
+        }
+
+        $lastname = $input->getArgument(self::FIELDS['LASTNAME']);
+        if (null !== $lastname) {
+            $this->io->text(' > <info>'.ucfirst(self::FIELDS['LASTNAME']).'</info>: '.$lastname);
+        } else {
+            $lastname = $this->io->ask(ucfirst(self::FIELDS['LASTNAME']));
+            $input->setArgument(self::FIELDS['LASTNAME'], $lastname);
+        }
+
+        $partner = $this->io->ask(ucfirst(self::FIELDS['PARTNER']));
+        $input->setArgument(self::FIELDS['PARTNER'], $partner);
+
+        $territory = $input->getArgument(self::FIELDS['TERRITORY']);
+        if (null !== $territory) {
+            $this->io->text(' > <info>'.ucfirst(self::FIELDS['TERRITORY']).'</info>: '.$territory);
+        } else {
+            $territory = $this->io->ask(ucfirst(self::FIELDS['TERRITORY']));
+            $input->setArgument(self::FIELDS['TERRITORY'], $territory);
+        }
+    }
+
+    /**
+     * This method is executed after interact() and initialize(). It usually
+     * contains the logic to execute to complete this command task.
+     */
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $role = $input->getArgument('role');
+        $email = $input->getArgument('email');
+        $lastname = $input->getArgument('lastname');
+        $firstname = $input->getArgument('firstname');
+        $partner = $input->getArgument('partner');
+        $territory = $input->getArgument('territory');
+
+        if (!empty($partner)) {
+            $partner = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => $partner]);
+        }
+
+        if (!empty($territory)) {
+            $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => $territory]);
+        }
+
+        $user = (new User())
+            ->setPrenom(ucfirst($firstname))
+            ->setNom(ucfirst($lastname))
+            ->setEmail(mb_strtolower($email))
+            ->setRoles([$role])
+            ->setPartner($partner)
+            ->setTerritory($territory)
+            ->setIsGenerique(false)
+            ->setIsMailingActive(true);
+
+        $password = $this->hasher->hashPassword($user, uniqid());
+
+        $user->setPassword($password);
+
+        $errors = $this->validator->validate($user);
+
+        if (\count($errors) > 0) {
+            $this->io->error((string) $errors);
+
+            return Command::FAILURE;
+        }
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        $this->io->success(sprintf('%s was successfully created: %s',
+            $user->getNomComplet(),
+            $user->getEmail()
+        ));
+
+        return Command::SUCCESS;
+    }
+}

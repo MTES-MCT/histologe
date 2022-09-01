@@ -10,6 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: PartnerRepository::class)]
 class Partner
 {
+    public const DEFAULT_PARTNER = 'Administrateurs Histologe ALL';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
