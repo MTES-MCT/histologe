@@ -134,7 +134,7 @@ Ain                    | Admin Histologe 01 | admin-territoire-01@histologe.fr |
 Bouches-du-Rhône       | Partenaire 13      | partenaire-13-01@histologe.fr    | ROLE_USER_PARTNER
 Ain                    | Partenaire 01      | partenaire-01-01@histologe.fr    | ROLE_USER_PARTNER
 
-## Données d'environnements Scalingo
+## Bases de données scalingo
 
 ### Pré-requis
 
@@ -159,6 +159,11 @@ Une fois le tunnel construit, à partir d'un autre terminal que celui du tunnel 
 
 ```
 mysqldump --column-statistics=0 --no-tablespaces -u <database_user>  -h 127.0.0.1 -p <database_name> -P 10000 > data/dump.sql
+```
+Vous pouvez ensuite executé la commande
+
+```
+make load-data  
 ```
 
 ## Documentaton projet
