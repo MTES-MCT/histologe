@@ -139,10 +139,6 @@ class AddUserCommand extends Command
         }
     }
 
-    /**
-     * This method is executed after interact() and initialize(). It usually
-     * contains the logic to execute to complete this command task.
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $role = $input->getArgument('role');
