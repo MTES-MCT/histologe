@@ -2,36 +2,24 @@
   <section class="histo-stats-details">
     <div class="fr-container--fluid fr-my-10v">
       <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-col-6 fr-col-lg-3 fr-col-xl-2">
-          <div class="stat-general">
-            <p>Nb. signalements</p>
-            <p>{{ sharedState.stats.countSignalement }}</p>
-          </div>
-        </div>
+        <TheHistoStatsDetailsItem :data=strCountSignalement>
+          <template #title>Nb. signalements</template>
+        </TheHistoStatsDetailsItem>
 
-        <div class="fr-col-6 fr-col-lg-3 fr-col-xl-2">
-          <div class="stat-general">
-            <p>Criticité moyenne</p>
-            <p>{{ sharedState.stats.averageCriticite }} %</p>
-          </div>
-        </div>
+        <TheHistoStatsDetailsItem :data=strAverageCriticite>
+          <template #title>Criticité moyenne</template>
+        </TheHistoStatsDetailsItem>
 
-        <div class="fr-col-6 fr-col-lg-3 fr-col-xl-2">
-          <div class="stat-general">
-            <p>Délai validation moy.</p>
-            <p>{{ sharedState.stats.averageDaysValidation }} jours</p>
-          </div>
-        </div>
+        <TheHistoStatsDetailsItem :data=strAverageDaysValidation>
+          <template #title>Délai validation moy.</template>
+        </TheHistoStatsDetailsItem>
 
-        <div class="fr-col-6 fr-col-lg-3 fr-col-xl-2">
-          <div class="stat-general">
-            <p>Délai clôture moy.</p>
-            <p>{{ sharedState.stats.averageDaysClosure }} jours</p>
-          </div>
-        </div>
+        <TheHistoStatsDetailsItem :data=strAverageDaysClosure>
+          <template #title>Délai clôture moy.</template>
+        </TheHistoStatsDetailsItem>
 
         <div class="fr-col-12">
-          <HistoChartLine items=sharedState.stats.countSignalementPerMonth>
+          <HistoChartLine :items=sharedState.stats.countSignalementPerMonth>
             <template #title>Nombre total de signalements</template>
           </HistoChartLine>
         </div>
@@ -89,6 +77,7 @@ import HistoChartLine from '../common/external/chartjs/HistoChartLine.vue'
 import HistoChartBar from '../common/external/chartjs/HistoChartBar.vue'
 import HistoChartPie from '../common/external/chartjs/HistoChartPie.vue'
 import HistoChartDoughnut from '../common/external/chartjs/HistoChartDoughnut.vue'
+import TheHistoStatsDetailsItem from './TheHistoStatsDetailsItem.vue'
 
 export default defineComponent({
   name: 'TheHistoStatsDetails',
@@ -100,11 +89,26 @@ export default defineComponent({
     HistoChartLine,
     HistoChartBar,
     HistoChartPie,
-    HistoChartDoughnut
+    HistoChartDoughnut,
+    TheHistoStatsDetailsItem
   },
   data () {
     return {
 			sharedState: store.state
+    }
+  },
+  computed: {
+    strCountSignalement () {
+      return this.sharedState.stats.countSignalement.toString()
+    },
+    strAverageCriticite () {
+      return this.sharedState.stats.averageCriticite + ' %'
+    },
+    strAverageDaysValidation () {
+      return this.sharedState.stats.averageDaysValidation + ' jours'
+    },
+    strAverageDaysClosure () {
+      return this.sharedState.stats.averageDaysClosure + ' jours'
     }
   }
 })

@@ -126,7 +126,7 @@ export default defineComponent({
       this.sharedState.filters.statut = this.initFilters.statut
       this.sharedState.filters.etiquettes = this.initFilters.etiquettes
       this.sharedState.filters.type = this.initFilters.type
-      this.sharedState.filters.dateRange = this.initFilters.dateRange
+      this.sharedState.filters.dateRange = this.initFilters.dateRange // TODO: reinit in component
       this.sharedState.filters.countRefused = this.initFilters.countRefused
 
       if (this.onChange !== undefined) {

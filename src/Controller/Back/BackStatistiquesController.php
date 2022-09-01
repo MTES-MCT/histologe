@@ -17,6 +17,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/bo/statistiques')]
 class BackStatistiquesController extends AbstractController
 {
+    private array $filterResult;
+    private DateTime $filterDateStart;
+    private DateTime $filterDateEnd;
+
     /**
      * Route to access Statistiques in the back-office.
      */
@@ -37,7 +41,7 @@ class BackStatistiquesController extends AbstractController
     public function filter(Request $request, TagRepository $tagsRepository, SignalementRepository $signalementRepository, TerritoryRepository $territoryRepository): Response
     {
         if ($this->getUser()) {
-            $buffer = [];
+            $this->filterResult = [];
 
             /**
              * @var User $user
@@ -45,55 +49,8 @@ class BackStatistiquesController extends AbstractController
             $user = $this->getUser();
             $territory = $user->getTerritory();
 
-            // Tells Vue component if a user can filter through Territoire
-            $buffer['can_filter_territoires'] = $this->isGranted('ROLE_ADMIN') ? '1' : '0';
-            if ($this->isGranted('ROLE_ADMIN')) {
-                // Returns the list of available Territoire
-                $buffer['list_territoires'] = [];
-                $territoryList = $territoryRepository->findAllList();
-                /**
-                 * @var Territory $territoryItem
-                 */
-                foreach ($territoryList as $territoryItem) {
-                    $buffer['list_territoires'][$territoryItem->getId()] = $territoryItem->getName();
-                }
-
-                $request_territoire = $request->get('territoire');
-                if ($request_territoire !== '' && $request_territoire !== 'all') {
-                    $territory = $territoryRepository->findOneBy(['id' => $request_territoire]);
-                }
-            }
-
-            // List of the Communnes linked to a User
-            // - if user/admin of Territoire: only Communes from a Territoire (in the BAN)
-            // - if super admin: every Communes
-            $buffer['list_communes'] = [];
-
-            // List of the Etiquettes linked to a User
-            // - if user/admin of Territoire: only Etiquettes from a Territoire
-            // - if super admin: every Etiquettes of the platform
-            $tagList = $tagsRepository->findAllActive($territory);
-            /**
-             * @var Tag $tagItem
-             */
-            $buffer['list_etiquettes'] = [];
-            foreach ($tagList as $tagItem) {
-                $buffer['list_etiquettes'][$tagItem->getId()] = $tagItem->getLabel();
-            }
-
-            // Query list of Signalement, filtered with params
-            $communes = $request->get('communes');
-            $statut = $request->get('statut');
-            $etiquettes = $request->get('etiquettes');
-            $type = $request->get('type');
-            $dateStart = $request->get('dateStart');
-            $filterDateStart = new DateTime($dateStart);
-            $dateEnd = $request->get('dateEnd');
-            $filterDateEnd = new DateTime($dateEnd);
-            $countRefused = $request->get('countRefused');
-            $hasCountRefused = '1' == $countRefused;
-            $territoryFilter = $territory ? $territory->getId() : NULL;
-            $result = $signalementRepository->findByFilters($statut, $hasCountRefused, $filterDateStart, $filterDateEnd, $type, $territoryFilter);
+            $this->buildLists($request, $territory, $tagsRepository, $territoryRepository);
+            $result = $this->buildQuery($request, $signalementRepository, $territory);
 
             // Count stats
             $totalCriticite = 0;
@@ -101,6 +58,21 @@ class BackStatistiquesController extends AbstractController
             $totalDaysValidation = 0;
             $countHasDaysClosure = 0;
             $totalDaysClosure = 0;
+            $listMonthName = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+            $countSignalementPerMonth = [];
+            for ($year = $this->filterDateStart->format('Y'); $year <= $this->filterDateEnd->format('Y'); ++$year) {
+                $monthStart = 0;
+                if ($year == $this->filterDateStart->format('Y')) {
+                    $monthStart = $this->filterDateStart->format('m') - 1;
+                }
+                $monthEnd = 11;
+                if ($year == $this->filterDateEnd->format('Y')) {
+                    $monthEnd = $this->filterDateEnd->format('m') - 1;
+                }
+                for ($month = $monthStart; $month <= $monthEnd; ++$month) {
+                    $countSignalementPerMonth[$listMonthName[$month].' '.$year] = 0;
+                }
+            }
             /**
              * @var Signalement $signalementItem
              */
@@ -120,6 +92,12 @@ class BackStatistiquesController extends AbstractController
                         $dateDiff = $dateCreatedAt->diff($dateClosedAt);
                         $totalDaysClosure += $dateDiff->d;
                     }
+
+                    $month_name = $listMonthName[$dateCreatedAt->format('m') - 1].' '.$dateCreatedAt->format('Y');
+                    if (empty($countSignalementPerMonth[$month_name])) {
+                        $countSignalementPerMonth[$month_name] = 0;
+                    }
+                    ++$countSignalementPerMonth[$month_name];
                 }
             }
 
@@ -128,24 +106,88 @@ class BackStatistiquesController extends AbstractController
             $averageDaysValidation = $countHasDaysValidation > 0 ? round($totalDaysValidation * 10 / $countHasDaysValidation) / 10 : '-';
             $averageDaysClosure = $countHasDaysClosure > 0 ? round($totalDaysClosure * 10 / $countHasDaysClosure) / 10 : '-';
 
-            $buffer['count_signalement'] = $countSignalement;
-            $buffer['average_criticite'] = $averageCriticite;
-            $buffer['average_days_validation'] = $averageDaysValidation;
-            $buffer['average_days_closure'] = $averageDaysClosure;
+            $this->filterResult['count_signalement'] = $countSignalement;
+            $this->filterResult['average_criticite'] = $averageCriticite;
+            $this->filterResult['average_days_validation'] = $averageDaysValidation;
+            $this->filterResult['average_days_closure'] = $averageDaysClosure;
 
-            $buffer['countSignalementPerMonth'] = [];
-            $buffer['countSignalementPerPartenaire'] = [];
-            $buffer['countSignalementPerSituation'] = [];
-            $buffer['countSignalementPerCriticite'] = [];
-            $buffer['countSignalementPerStatut'] = [];
-            $buffer['countSignalementPerCriticitePercent'] = [];
-            $buffer['countSignalementPerVisite'] = [];
+            $this->filterResult['countSignalementPerMonth'] = $countSignalementPerMonth;
+            $this->filterResult['countSignalementPerPartenaire'] = [];
+            $this->filterResult['countSignalementPerSituation'] = [];
+            $this->filterResult['countSignalementPerCriticite'] = [];
+            $this->filterResult['countSignalementPerStatut'] = [];
+            $this->filterResult['countSignalementPerCriticitePercent'] = [];
+            $this->filterResult['countSignalementPerVisite'] = [];
 
-            $buffer['response'] = 'success';
+            $this->filterResult['response'] = 'success';
 
-            return $this->json($buffer);
+            return $this->json($this->filterResult);
         }
 
         return $this->json(['response' => 'error'], 400);
+    }
+
+    /**
+     * Build lists of data that will be returned as filters.
+     */
+    private function buildLists(Request $request, Territory $territory, TagRepository $tagsRepository, TerritoryRepository $territoryRepository)
+    {
+        // Tells Vue component if a user can filter through Territoire
+        $this->filterResult['can_filter_territoires'] = $this->isGranted('ROLE_ADMIN') ? '1' : '0';
+
+        // If Super Admin
+        // Returns the list of available Territoire
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $this->filterResult['list_territoires'] = [];
+            $territoryList = $territoryRepository->findAllList();
+            /**
+             * @var Territory $territoryItem
+             */
+            foreach ($territoryList as $territoryItem) {
+                $this->filterResult['list_territoires'][$territoryItem->getId()] = $territoryItem->getName();
+            }
+
+            $request_territoire = $request->get('territoire');
+            if ('' !== $request_territoire && 'all' !== $request_territoire) {
+                $territory = $territoryRepository->findOneBy(['id' => $request_territoire]);
+            }
+        }
+
+        // List of the Communnes linked to a User
+        // - if user/admin of Territoire: only Communes from a Territoire (in the BAN)
+        // - if super admin: every Communes
+        $this->filterResult['list_communes'] = [];
+
+        // List of the Etiquettes linked to a User
+        // - if user/admin of Territoire: only Etiquettes from a Territoire
+        // - if super admin: every Etiquettes of the platform
+        $tagList = $tagsRepository->findAllActive($territory);
+        /*
+        * @var Tag $tagItem
+        */
+        $this->filterResult['list_etiquettes'] = [];
+        foreach ($tagList as $tagItem) {
+            $this->filterResult['list_etiquettes'][$tagItem->getId()] = $tagItem->getLabel();
+        }
+    }
+
+    /**
+     * Query list of Signalement, filtered with params.
+     */
+    private function buildQuery(Request $request, SignalementRepository $signalementRepository, Territory $territory)
+    {
+        $communes = $request->get('communes');
+        $statut = $request->get('statut');
+        $etiquettes = $request->get('etiquettes');
+        $type = $request->get('type');
+        $dateStart = $request->get('dateStart');
+        $this->filterDateStart = new DateTime($dateStart);
+        $dateEnd = $request->get('dateEnd');
+        $this->filterDateEnd = new DateTime($dateEnd);
+        $countRefused = $request->get('countRefused');
+        $hasCountRefused = '1' == $countRefused;
+        $territoryFilter = $territory ? $territory->getId() : null;
+
+        return $signalementRepository->findByFilters($statut, $hasCountRefused, $this->filterDateStart, $this->filterDateEnd, $type, $territoryFilter);
     }
 }

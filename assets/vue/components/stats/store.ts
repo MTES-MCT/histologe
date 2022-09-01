@@ -19,7 +19,7 @@ export const store = {
 			averageCriticite: 0,
 			averageDaysValidation: 0,
 			averageDaysClosure: 0,
-			countSignalementPerMonth: [],
+			countSignalementPerMonth: Object,
 			countSignalementPerPartenaire: [],
 			countSignalementPerSituation: [],
 			countSignalementPerCriticite: [],

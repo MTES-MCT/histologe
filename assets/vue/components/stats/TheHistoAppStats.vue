@@ -92,6 +92,14 @@ export default defineComponent({
      * @param requestResponse 
      */
     handleRefresh (requestResponse: any) {
+      this.refreshFilters(requestResponse)
+      this.refreshStats(requestResponse)
+
+      this.loadingInit = false
+      this.loadingFilters = false
+    },
+
+    refreshFilters (requestResponse: any) {
       this.sharedState.filters.etiquettesList = []
       for (let id in requestResponse.list_etiquettes) {
         let optionItem = new HistoInterfaceSelectOption()
@@ -114,14 +122,15 @@ export default defineComponent({
           this.sharedState.filters.territoiresList.push(optionItem)
         }
       }
+    },
 
+    refreshStats (requestResponse: any) {
       this.sharedState.stats.countSignalement = requestResponse.count_signalement
       this.sharedState.stats.averageCriticite = requestResponse.average_criticite
       this.sharedState.stats.averageDaysValidation = requestResponse.average_days_validation
       this.sharedState.stats.averageDaysClosure = requestResponse.average_days_closure
 
-      this.loadingInit = false
-      this.loadingFilters = false
+      this.sharedState.stats.countSignalementPerMonth = requestResponse.countSignalementPerMonth
     }
   }
 })

@@ -37,8 +37,7 @@ export const requests = {
 			})
 			.catch(error => {
 				console.log('error.toJSON')
-				console.log(error.toJSON())
-				console.log(error.config)
+				console.log(error)
 				functionReturn('error')
 			})
 	}

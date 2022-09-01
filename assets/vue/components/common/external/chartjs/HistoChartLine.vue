@@ -29,6 +29,10 @@ export default defineComponent({
       type: String,
       default: 'line-chart'
     },
+    items: {
+      type: Object,
+      default: {}
+    },
     width: {
       type: Number,
       default: 400
@@ -51,12 +55,18 @@ export default defineComponent({
     }
   },
   data() {
+    let inLabels = []
+    let inData = []
+    for (let i in this.items) {
+      inLabels.push(i)
+      inData.push(this.items[i])
+    }
     return {
       chartData: {
-        labels: [ 'January', 'February', 'March' ],
+        labels: inLabels,
         datasets: [
           {
-            data: [20, 50, 10],
+            data: inData,
             pointBackgroundColor: '#000091',
             borderColor: '#000091',
             backgroundColor: '#CACAFB',
