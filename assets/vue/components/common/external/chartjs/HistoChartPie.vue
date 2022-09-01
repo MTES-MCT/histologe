@@ -40,6 +40,10 @@ export default defineComponent({
       type: String,
       default: 'pie-chart'
     },
+    datasetIdKey: {
+      type: String,
+      default: 'label'
+    },
     items: {
       type: Object,
       default: {}

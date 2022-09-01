@@ -44,6 +44,10 @@ export default defineComponent({
       type: String,
       default: 'label'
     },
+    items: {
+      type: Object,
+      default: {}
+    },
     width: {
       type: Number,
       default: 400
@@ -66,13 +70,19 @@ export default defineComponent({
     }
   },
   data() {
+    let inLabels = []
+    let inData = []
+    for (let i in this.items) {
+      inLabels.push(i)
+      inData.push(this.items[i])
+    }
     return {
       chartData: {
-        labels: ['VueJs', 'EmberJs', 'ReactJs'],
+        labels: inLabels,
         datasets: [
           {
-            backgroundColor: ['#41B883', '#E46651', '#00D8FF'],
-            data: [40, 20, 80]
+            backgroundColor: ['#21AB8EA6', '#000091A6', '#E4794AA6', '#A558A0A6', '#CACAFBBF'],
+            data: inData
           }
         ]
       },

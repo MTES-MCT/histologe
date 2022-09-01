@@ -132,6 +132,9 @@ export default defineComponent({
 
       this.sharedState.stats.countSignalementPerMonth = requestResponse.countSignalementPerMonth
       this.sharedState.stats.countSignalementPerStatut = requestResponse.countSignalementPerStatut
+      this.sharedState.stats.countSignalementPerCriticitePercent = requestResponse.countSignalementPerCriticitePercent
+      this.sharedState.stats.countSignalementPerVisite = requestResponse.countSignalementPerVisite
+      
     }
   }
 })

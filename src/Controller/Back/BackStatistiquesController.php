@@ -23,6 +23,11 @@ class BackStatistiquesController extends AbstractController
     private DateTime $filterDateStart;
     private DateTime $filterDateEnd;
 
+    private const CRITICITE_VERY_WEAK = '< 25 %';
+    private const CRITICITE_WEAK = 'De 25 à 50 %';
+    private const CRITICITE_STRONG = 'De 51 à 75 %';
+    private const CRITICITE_VERY_STRONG = '> 75 %';
+
     /**
      * Route to access Statistiques in the back-office.
      */
@@ -63,6 +68,15 @@ class BackStatistiquesController extends AbstractController
             $listMonthName = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
             $countSignalementPerMonth = [];
             $countSignalementPerStatut = [];
+            $countSignalementPerCriticitePercent = [];
+            $countSignalementPerCriticitePercent[self::CRITICITE_VERY_WEAK] = 0;
+            $countSignalementPerCriticitePercent[self::CRITICITE_WEAK] = 0;
+            $countSignalementPerCriticitePercent[self::CRITICITE_STRONG] = 0;
+            $countSignalementPerCriticitePercent[self::CRITICITE_VERY_STRONG] = 0;
+            $countSignalementPerVisite = [];
+            $countSignalementPerVisite['Oui'] = 0;
+            $countSignalementPerVisite['Non'] = 0;
+
             for ($year = $this->filterDateStart->format('Y'); $year <= $this->filterDateEnd->format('Y'); ++$year) {
                 $monthStart = 0;
                 if ($year == $this->filterDateStart->format('Y')) {
@@ -80,7 +94,8 @@ class BackStatistiquesController extends AbstractController
              * @var Signalement $signalementItem
              */
             foreach ($result as $signalementItem) {
-                $totalCriticite += $signalementItem->getScoreCreation();
+                $criticite = $signalementItem->getScoreCreation();
+                $totalCriticite += $criticite;
                 $dateCreatedAt = $signalementItem->getCreatedAt();
                 if (null !== $dateCreatedAt) {
                     $dateValidatedAt = $signalementItem->getValidatedAt();
@@ -107,6 +122,23 @@ class BackStatistiquesController extends AbstractController
                         $countSignalementPerStatut[$statutStr] = 0;
                     }
                     ++$countSignalementPerStatut[$statutStr];
+
+                    if ($criticite > 75) {
+                        ++$countSignalementPerCriticitePercent[self::CRITICITE_VERY_STRONG];
+                    } elseif ($criticite >= 51) {
+                        ++$countSignalementPerCriticitePercent[self::CRITICITE_STRONG];
+                    } elseif ($criticite >= 25) {
+                        ++$countSignalementPerCriticitePercent[self::CRITICITE_WEAK];
+                    } else {
+                        ++$countSignalementPerCriticitePercent[self::CRITICITE_VERY_WEAK];
+                    }
+
+                    $dateVisite = $signalementItem->getDateVisite();
+                    if (empty($dateVisite)) {
+                        ++$countSignalementPerVisite['Non'];
+                    } else {
+                        ++$countSignalementPerVisite['Oui'];
+                    }
                 }
             }
 
@@ -125,8 +157,8 @@ class BackStatistiquesController extends AbstractController
             $this->filterResult['countSignalementPerSituation'] = [];
             $this->filterResult['countSignalementPerCriticite'] = [];
             $this->filterResult['countSignalementPerStatut'] = $countSignalementPerStatut;
-            $this->filterResult['countSignalementPerCriticitePercent'] = [];
-            $this->filterResult['countSignalementPerVisite'] = [];
+            $this->filterResult['countSignalementPerCriticitePercent'] = $countSignalementPerCriticitePercent;
+            $this->filterResult['countSignalementPerVisite'] = $countSignalementPerVisite;
 
             $this->filterResult['response'] = 'success';
 
