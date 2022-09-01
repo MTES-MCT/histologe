@@ -109,7 +109,7 @@ make build
 
 2. Configurer les variables d'environnements du service object storage S3 d'OVH Cloud
 
-> Se rapprocher de l'équipe afin de vous fournir les accès aux storage de dev
+> Se rapprocher de l'équipe afin de vous fournir les accès au bucket de dev
 
 ```
 # .env.local
