@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Signalement;
 use App\Entity\Tag;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -18,6 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class BackStatistiquesController extends AbstractController
 {
     private array $filterResult;
+    private string $filterStatut;
     private DateTime $filterDateStart;
     private DateTime $filterDateEnd;
 
@@ -60,6 +62,7 @@ class BackStatistiquesController extends AbstractController
             $totalDaysClosure = 0;
             $listMonthName = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
             $countSignalementPerMonth = [];
+            $countSignalementPerStatut = [];
             for ($year = $this->filterDateStart->format('Y'); $year <= $this->filterDateEnd->format('Y'); ++$year) {
                 $monthStart = 0;
                 if ($year == $this->filterDateStart->format('Y')) {
@@ -98,6 +101,12 @@ class BackStatistiquesController extends AbstractController
                         $countSignalementPerMonth[$month_name] = 0;
                     }
                     ++$countSignalementPerMonth[$month_name];
+
+                    $statutStr = self::getStatutStrByValue($signalementItem->getStatut());
+                    if (empty($countSignalementPerStatut[$statutStr])) {
+                        $countSignalementPerStatut[$statutStr] = 0;
+                    }
+                    ++$countSignalementPerStatut[$statutStr];
                 }
             }
 
@@ -115,7 +124,7 @@ class BackStatistiquesController extends AbstractController
             $this->filterResult['countSignalementPerPartenaire'] = [];
             $this->filterResult['countSignalementPerSituation'] = [];
             $this->filterResult['countSignalementPerCriticite'] = [];
-            $this->filterResult['countSignalementPerStatut'] = [];
+            $this->filterResult['countSignalementPerStatut'] = $countSignalementPerStatut;
             $this->filterResult['countSignalementPerCriticitePercent'] = [];
             $this->filterResult['countSignalementPerVisite'] = [];
 
@@ -130,7 +139,7 @@ class BackStatistiquesController extends AbstractController
     /**
      * Build lists of data that will be returned as filters.
      */
-    private function buildLists(Request $request, Territory $territory, TagRepository $tagsRepository, TerritoryRepository $territoryRepository)
+    private function buildLists(Request $request, ?Territory $territory, TagRepository $tagsRepository, TerritoryRepository $territoryRepository)
     {
         // Tells Vue component if a user can filter through Territoire
         $this->filterResult['can_filter_territoires'] = $this->isGranted('ROLE_ADMIN') ? '1' : '0';
@@ -174,10 +183,10 @@ class BackStatistiquesController extends AbstractController
     /**
      * Query list of Signalement, filtered with params.
      */
-    private function buildQuery(Request $request, SignalementRepository $signalementRepository, Territory $territory)
+    private function buildQuery(Request $request, SignalementRepository $signalementRepository, ?Territory $territory)
     {
         $communes = $request->get('communes');
-        $statut = $request->get('statut');
+        $this->filterStatut = $request->get('statut');
         $etiquettes = $request->get('etiquettes');
         $type = $request->get('type');
         $dateStart = $request->get('dateStart');
@@ -188,6 +197,29 @@ class BackStatistiquesController extends AbstractController
         $hasCountRefused = '1' == $countRefused;
         $territoryFilter = $territory ? $territory->getId() : null;
 
-        return $signalementRepository->findByFilters($statut, $hasCountRefused, $this->filterDateStart, $this->filterDateEnd, $type, $territoryFilter);
+        return $signalementRepository->findByFilters($this->filterStatut, $hasCountRefused, $this->filterDateStart, $this->filterDateEnd, $type, $territoryFilter);
+    }
+
+    private static function getStatutStrByValue($statut)
+    {
+        switch ($statut) {
+            case Signalement::STATUS_ACTIVE:
+            case Signalement::STATUS_NEED_PARTNER_RESPONSE:
+                return 'En cours';
+                break;
+            case Signalement::STATUS_CLOSED:
+                return 'Fermé';
+                break;
+            case Signalement::STATUS_ARCHIVED:
+                return 'Archivé';
+                break;
+            case Signalement::STATUS_REFUSED:
+                return 'Refusé';
+                break;
+            case Signalement::STATUS_NEED_VALIDATION:
+            default:
+                return 'Nouveau';
+                break;
+        }
     }
 }

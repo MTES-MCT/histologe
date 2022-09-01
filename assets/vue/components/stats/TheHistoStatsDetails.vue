@@ -47,7 +47,7 @@
 
         <div class="fr-col-12 fr-col-lg-4">
           <div class="fr-mb-3w">
-            <HistoChartPie items=sharedState.stats.countSignalementPerStatut>
+            <HistoChartPie :items=sharedState.stats.countSignalementPerStatut>
               <template #title>Répartition par statut</template>
             </HistoChartPie>
           </div>
@@ -99,16 +99,20 @@ export default defineComponent({
   },
   computed: {
     strCountSignalement () {
-      return this.sharedState.stats.countSignalement.toString()
+      let countSignalement:string = this.sharedState.stats.countSignalement != undefined ? this.sharedState.stats.countSignalement.toString() : '0'
+      return countSignalement
     },
     strAverageCriticite () {
-      return this.sharedState.stats.averageCriticite + ' %'
+      let averageCriticite:string = this.sharedState.stats.averageCriticite != undefined ? this.sharedState.stats.averageCriticite.toString() : '-'
+      return averageCriticite + ' %'
     },
     strAverageDaysValidation () {
-      return this.sharedState.stats.averageDaysValidation + ' jours'
+      let averageDaysValidation:string = this.sharedState.stats.averageDaysValidation != undefined ? this.sharedState.stats.averageDaysValidation.toString() : '-'
+      return averageDaysValidation + ' jours'
     },
     strAverageDaysClosure () {
-      return this.sharedState.stats.averageDaysClosure + ' jours'
+      let averageDaysClosure:string = this.sharedState.stats.averageDaysClosure != undefined ? this.sharedState.stats.averageDaysClosure.toString() : '-'
+      return averageDaysClosure + ' jours'
     }
   }
 })

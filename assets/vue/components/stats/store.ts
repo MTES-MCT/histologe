@@ -23,7 +23,7 @@ export const store = {
 			countSignalementPerPartenaire: [],
 			countSignalementPerSituation: [],
 			countSignalementPerCriticite: [],
-			countSignalementPerStatut: [],
+			countSignalementPerStatut: Object,
 			countSignalementPerCriticitePercent: [],
 			countSignalementPerVisite: []
 		}
