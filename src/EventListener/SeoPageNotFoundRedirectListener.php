@@ -16,6 +16,7 @@ class SeoPageNotFoundRedirectListener
         '/Contact' => 'front_contact',
         '/Statistiques' => 'front_statistiques',
         '/Chiffres' => 'front_statistiques',
+        '/CGU' => 'front_cgu',
     ];
 
     public function __construct(private RouterInterface $router)
