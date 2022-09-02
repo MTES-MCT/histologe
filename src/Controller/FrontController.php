@@ -9,7 +9,6 @@ use App\Repository\SignalementRepository;
 use App\Service\ConfigurationService;
 use App\Service\NotificationService;
 use App\Service\PostalCodeHomeCheckerService;
-use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,11 +20,11 @@ class FrontController extends AbstractController
     public function index(Request $request, SignalementRepository $signalementRepository, AffectationRepository $affectationRepository, PostalCodeHomeCheckerService $postalCodeHomeCheckerService): Response
     {
         $title = 'Un service public pour les locataires et propriétaires';
-        $year = (new DateTimeImmutable())->format('Y');
-        $total = $signalementRepository->findAllWithAffectations($year);
-        $stats['total'] = \count($total);
-        $stats['pec'] = 0 !== $stats['total'] ? floor(($affectationRepository->createQueryBuilder('a')->select('COUNT(DISTINCT a.signalement)')->join('a.signalement', 'signalement', 'WITH', 'signalement.statut != 7 AND YEAR(signalement.createdAt) = '.$year)->getQuery()->getSingleScalarResult() / $stats['total']) * 100) : 0;
-        $stats['res'] = 0 !== $stats['total'] ? floor(($affectationRepository->createQueryBuilder('a')->select('COUNT(DISTINCT a.signalement)')->where('a.statut = 1')->join('a.signalement', 'signalement', 'WITH', 'signalement.statut != 7 AND YEAR(signalement.createdAt) = '.$year)->getQuery()->getSingleScalarResult() / $stats['total']) * 100) : 0;
+
+        $stats = [];
+        $stats['total'] = 11979;
+        $stats['pris_en_compte'] = '99,8';
+        $stats['clotures'] = '68,9';
 
         $display_modal = '';
 
