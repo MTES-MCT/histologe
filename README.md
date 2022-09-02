@@ -4,9 +4,15 @@ Une solution pour détecter et accélérer la prise en charge du “mal logement
 
 Histologe est une application web écrite en PHP et utilisant le framework Symfony, avec une base de données MySQL.
 
-Cette application est déployé sur [histologe.beta.gouv.fr](histologe.beta.gouv.fr) chez Scalingo, hébergé par Outscale.
+Cette application est déployé chez Scalingo, hébergé par Outscale.
 
-Les ressources telles que les images et documents sont hébergés par OVH Cloud à travers le service Object Storage.  
+- Production: [https://histologe.beta.gouv.fr](histologe.beta.gouv.fr)
+
+- Staging: [https://histologe-staging.incubateur.net](histologe-staging.incubateur.net)
+
+Les ressources statiques telles que les images et documents sont hébergés par OVH Cloud à travers le service Object Storage.  
+
+- https://horizon.cloud.ovh.net
 
 ## Pré-requis
 
