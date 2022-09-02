@@ -22,7 +22,7 @@ class SeoPageNotFoundRedirectListener
     {
     }
 
-    public function onKernelException(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
         $uri = $request->getRequestUri();

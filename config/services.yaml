@@ -51,7 +51,7 @@ services:
 
     App\EventListener\SeoPageNotFoundRedirectListener:
         tags:
-            - { name: 'kernel.event_listener', event: 'kernel.exception' }
+            - { name: 'kernel.event_listener', event: 'kernel.request' }
 
     App\Command\ActivationReminderCommand:
         arguments:
