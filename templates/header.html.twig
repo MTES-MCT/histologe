@@ -10,6 +10,7 @@
                             </div>
                         </div>
                         <div class="fr-header__operator">
+                            <a href="{{ path('home') }}" title="Accueil - HISTOLOGE">
                             {% if config.get ? config.get.logotype is not empty %}
                                 <img src="{{ asset('img/'~config.get.logotype) }}" class="fr-responsive-img"
                                      alt="HISTOLOGE" style="max-height: 75px">
@@ -17,6 +18,7 @@
                                 <img src={{ asset('img/logo_145.png') }} class="fr-responsive-img" width="100%"
                                      alt="HISTOLOGE">
                             {% endif %}
+                            </a>
                         </div>
 
 
@@ -26,12 +28,6 @@
                                 Menu
                             </button>
                         </div>
-                    </div>
-                    <div class="fr-header__service fr-displayed-md">
-                        <a href="{{ path('home') }}" title="Accueil - HISTOLOGE" class="fr-header__service-title">
-                            <small class="fr-text--light d-block fr-text--sm fr-m-0">Signaler vos problèmes de
-                                logement</small>
-                        </a>
                     </div>
                 </div>
                 {% include 'nav.html.twig' %}
