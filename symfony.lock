@@ -22,6 +22,9 @@
     "beberlei/doctrineextensions": {
         "version": "v1.3.0"
     },
+    "clue/stream-filter": {
+        "version": "v1.6.0"
+    },
     "composer/package-versions-deprecated": {
         "version": "1.11.99.4"
     },
@@ -141,6 +144,12 @@
     "guzzlehttp/psr7": {
         "version": "2.1.0"
     },
+    "http-interop/http-factory-guzzle": {
+        "version": "1.2.0"
+    },
+    "jean85/pretty-package-versions": {
+        "version": "2.0.5"
+    },
     "knplabs/knp-snappy": {
         "version": "v1.4.1"
     },
@@ -213,6 +222,24 @@
     },
     "phar-io/version": {
         "version": "3.1.0"
+    },
+    "php-http/client-common": {
+        "version": "2.5.0"
+    },
+    "php-http/discovery": {
+        "version": "1.14.3"
+    },
+    "php-http/httplug": {
+        "version": "2.3.0"
+    },
+    "php-http/message": {
+        "version": "1.13.0"
+    },
+    "php-http/message-factory": {
+        "version": "v1.0.2"
+    },
+    "php-http/promise": {
+        "version": "1.1.0"
     },
     "phpdocumentor/reflection-common": {
         "version": "2.2.0"
@@ -355,6 +382,24 @@
         },
         "files": [
             "./config/packages/sensio_framework_extra.yaml"
+        ]
+    },
+    "sentry/sdk": {
+        "version": "3.2.0"
+    },
+    "sentry/sentry": {
+        "version": "3.7.0"
+    },
+    "sentry/sentry-symfony": {
+        "version": "4.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "4.0",
+            "ref": "3d8dc8c0f689e2e94f860d2e36f81fcc26348069"
+        },
+        "files": [
+            "config/packages/sentry.yaml"
         ]
     },
     "symfony/apache-pack": {
@@ -586,6 +631,9 @@
     "symfony/polyfill-php81": {
         "version": "v1.23.0"
     },
+    "symfony/polyfill-uuid": {
+        "version": "v1.26.0"
+    },
     "symfony/process": {
         "version": "v6.0.2"
     },
@@ -597,6 +645,9 @@
     },
     "symfony/proxy-manager-bridge": {
         "version": "v6.0.2"
+    },
+    "symfony/psr-http-message-bridge": {
+        "version": "v2.1.2"
     },
     "symfony/routing": {
         "version": "6.0",

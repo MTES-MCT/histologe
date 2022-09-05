@@ -16,6 +16,7 @@ services:
       - 3307:3307
     volumes:
       - dbdata:/var/lib/mysql
+      - ./.docker/mysql:/docker-entrypoint-initdb.d
 
   histologe_phpmyadmin:
     image: phpmyadmin/phpmyadmin

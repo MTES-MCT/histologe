@@ -15,6 +15,7 @@ grumphp:
         whitelist_patterns: ["vue/**/*.ts", "vue/**/*.vue"]
       shell:
         metadata:
-          label: 'php-cs-fixer'
+          label: 'php-cs-fixer && phpunit'
         scripts:
           - ["-c", "make cs-check"]
+          - ["-c", "make test"]

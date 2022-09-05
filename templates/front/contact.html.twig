@@ -26,18 +26,6 @@
                     message
                 </button>
             </div>
-            <div class="fr-col-12 fr-text--center fr-py-5w">
-                <strong>Par téléphone</strong>
-                <br>
-                <br>
-                {% if config.get.telContact %}
-                    <a href="tel:{{ config.get.telContact|replace({'.':''}) }}"
-                       class="fr-badge fr-badge--success fr-badge fr-p-3v fr-text--md"
-                       rel="noreferrer noopener">{{ config.get.telContact }}</a>
-                {% else %}
-                    <span class="fr-badge fr-badge--error fr-badge fr-p-3v fr-text--md">indisponible</span>
-                {% endif %}
-            </div>
         </section>
     </main>
 {% endblock %}
