@@ -1,5 +1,5 @@
 <template>
-  <section class="histo-stats-filters">
+  <section id="histo-stats-filters" class="histo-stats-filters">
     <h2 class="fr-h3 fr-mb-0">Statistiques détaillées</h2>
     <p class="fr-mb-5w">
       Modifiez les filtres et / ou la plage de dates pour mettre les données à jour.

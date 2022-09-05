@@ -14,7 +14,8 @@
       <TheHistoStatsGlobal :on-change="handleFilterChange" />
       <TheHistoStatsFilters :on-change="handleFilterChange" />
       <div v-if="loadingFilters" class="loading fr-m-10w">
-        Mise à jour des statistiques
+        Mise à jour des statistiques...
+        <br><br><br><br><br><br><br><br><br><br><br><br>
       </div>
       <TheHistoStatsDetails v-else />
     </div>
@@ -95,12 +96,27 @@ export default defineComponent({
      * The query has finished its execution, we refresh the UI
      * @param requestResponse 
      */
-    handleRefresh (requestResponse: any) {
+    async handleRefresh (requestResponse: any) {
       this.refreshFilters(requestResponse)
       this.refreshStats(requestResponse)
 
+      const wasInit = this.loadingInit
       this.loadingInit = false
       this.loadingFilters = false
+
+      await this.$nextTick()
+
+      let el = document.getElementById('histo-stats-filters')
+      if (wasInit) {
+        el = document.getElementById('app-stats')
+      }
+      if (el) {
+        window.scrollTo({
+          top: el.offsetTop,
+          left: 0,
+          behavior: "smooth",
+        })
+      }
     },
 
     refreshFilters (requestResponse: any) {
