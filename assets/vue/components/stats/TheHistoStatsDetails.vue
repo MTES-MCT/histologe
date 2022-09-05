@@ -2,20 +2,12 @@
   <section class="histo-stats-details">
     <div class="fr-container--fluid fr-my-10v">
       <div class="fr-grid-row fr-grid-row--gutters">
-        <TheHistoStatsDetailsItem :data=strCountSignalement>
+        <TheHistoStatsDetailsItem :data=strCountSignalement color="blue">
           <template #title>Nb. signalements</template>
         </TheHistoStatsDetailsItem>
 
-        <TheHistoStatsDetailsItem :data=strAverageCriticite>
+        <TheHistoStatsDetailsItem :data=strAverageCriticite color="blue">
           <template #title>Criticité moyenne</template>
-        </TheHistoStatsDetailsItem>
-
-        <TheHistoStatsDetailsItem :data=strAverageDaysValidation>
-          <template #title>Délai validation moy.</template>
-        </TheHistoStatsDetailsItem>
-
-        <TheHistoStatsDetailsItem :data=strAverageDaysClosure>
-          <template #title>Délai clôture moy.</template>
         </TheHistoStatsDetailsItem>
 
         <div class="fr-col-12">
@@ -112,14 +104,6 @@ export default defineComponent({
     strAverageCriticite () {
       let averageCriticite:string = this.sharedState.stats.averageCriticite != undefined ? this.sharedState.stats.averageCriticite.toString() : '-'
       return averageCriticite + ' %'
-    },
-    strAverageDaysValidation () {
-      let averageDaysValidation:string = this.sharedState.stats.averageDaysValidation != undefined ? this.sharedState.stats.averageDaysValidation.toString() : '-'
-      return averageDaysValidation + ' jours'
-    },
-    strAverageDaysClosure () {
-      let averageDaysClosure:string = this.sharedState.stats.averageDaysClosure != undefined ? this.sharedState.stats.averageDaysClosure.toString() : '-'
-      return averageDaysClosure + ' jours'
     }
   }
 })

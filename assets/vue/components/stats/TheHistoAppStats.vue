@@ -11,6 +11,7 @@
       Initialisation des filtres...
     </div>
     <div v-else>
+      <TheHistoStatsGlobal :on-change="handleFilterChange" />
       <TheHistoStatsFilters :on-change="handleFilterChange" />
       <div v-if="loadingFilters" class="loading fr-m-10w">
         Mise à jour des statistiques
@@ -26,6 +27,7 @@ import { store } from './store'
 import { requests } from './requests'
 import HistoBOTabHeader from '../common/HistoBOTabHeader.vue'
 import HistoInterfaceSelectOption from '../common/HistoInterfaceSelectOption'
+import TheHistoStatsGlobal from './TheHistoStatsGlobal.vue'
 import TheHistoStatsFilters from './TheHistoStatsFilters.vue'
 import TheHistoStatsDetails from './TheHistoStatsDetails.vue'
 const initElements:any = document.querySelector('#app-stats')
@@ -34,6 +36,7 @@ export default defineComponent({
   name: 'TheHistoAppStats',
   components: {
     HistoBOTabHeader,
+    TheHistoStatsGlobal,
     TheHistoStatsFilters,
     TheHistoStatsDetails
   },
@@ -42,7 +45,7 @@ export default defineComponent({
 			sharedState: store.state,
 			sharedProps: store.props,
       loadingInit: true,
-      loadingFilters: false
+      loadingFilters: false,
     }
   },
 	created () {
@@ -79,11 +82,12 @@ export default defineComponent({
     /**
      * One of the filters has changed, a query needs to be executed
      */
-    handleFilterChange () {
+    handleFilterChange (reinit:boolean) {
       console.log('onFilterChange')
       console.log(this.sharedState)
 
       requests.filter(this.handleRefresh)
+      this.loadingInit = reinit
       this.loadingFilters = true
     },
 

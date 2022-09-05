@@ -1,6 +1,6 @@
 <template>
   <div class="histo-stats-details-item fr-col-6 fr-col-lg-3 fr-col-xl-2">
-    <div>
+    <div :class="[ 'color-' + color ]">
       <p><slot name="title"></slot></p>
       <p>{{ data }}</p>
     </div>
@@ -13,7 +13,8 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'TheHistoStatsDetailsItem',
   props: {
-    data: String
+    data: String,
+    color: String
   }
 })
 </script>
@@ -32,5 +33,8 @@ export default defineComponent({
   .histo-stats-details-item div p:last-child {
     font-size: 2rem;
     color: var(--blue-france-sun-113-625);
+  }
+  .histo-stats-details-item div.color-purple p:last-child {
+    color: var(--purple-glycine-main-494);
   }
 </style>

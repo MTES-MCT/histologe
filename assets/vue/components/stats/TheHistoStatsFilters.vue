@@ -1,5 +1,6 @@
 <template>
   <section class="histo-stats-filters">
+    <h2 class="fr-h3 fr-mb-0">Statistiques détaillées</h2>
     <p class="fr-mb-5w">
       Modifiez les filtres et / ou la plage de dates pour mettre les données à jour.
       <br>
@@ -8,19 +9,10 @@
 
     <div class="fr-container--fluid">
       <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-col-12 fr-col-lg-3" v-if="this.sharedState.filters.canFilterTerritoires">
-          <HistoSelect
-            id="filter-territoires"
-            v-model="sharedState.filters.territoire"
-            @update:modelValue="onChange"
-            inner-label="Territoire"
-            :option-items=sharedState.filters.territoiresList
-            />
-        </div>
         <div class="fr-col-12 fr-col-lg-3">
           <HistoSelect
             id="filter-communes"
-            @update:modelValue="onChange"
+            @update:modelValue="onChange(false)"
             inner-label="Communes"
             :multiselect=true
             />
@@ -29,7 +21,7 @@
           <HistoSelect 
             id="filter-statut"
             v-model="sharedState.filters.statut"
-            @update:modelValue="onChange"
+            @update:modelValue="onChange(false)"
             inner-label="Statut"
             :option-items=statusList
             />
@@ -38,7 +30,7 @@
           <HistoSelect
             id="filter-etiquettes"
             v-model="sharedState.filters.etiquettes"
-            @update:modelValue="onChange"
+            @update:modelValue="onChange(false)"
             inner-label="Etiquettes"
             :option-items=sharedState.filters.etiquettesList
             :multiselect=true
@@ -48,7 +40,7 @@
           <HistoSelect
             id="filter-type"
             v-model="sharedState.filters.type"
-            @update:modelValue="onChange"
+            @update:modelValue="onChange(false)"
             inner-label="Type"
             :option-items=typesList
             />
@@ -56,14 +48,14 @@
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-4">
           <HistoDatePicker
             v-model="sharedState.filters.dateRange"
-            @update:modelValue="onChange"
+            @update:modelValue="onChange(false)"
             />
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-5">
           <HistoCheckbox
             id="count-refused"
             v-model="sharedState.filters.countRefused"
-            @update:modelValue="onChange"
+            @update:modelValue="onChange(false)"
             >
             <template #label>Cocher la case pour comptabiliser les signalements refusés</template>
           </HistoCheckbox>
