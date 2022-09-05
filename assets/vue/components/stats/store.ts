@@ -19,6 +19,8 @@ export const store = {
 			averageCriticite: 0,
 			averageDaysValidation: 0,
 			averageDaysClosure: 0,
+			countSignalementFiltered: 0,
+			averageCriticiteFiltered: 0,
 			countSignalementPerMonth: Object,
 			countSignalementPerPartenaire: new Array<any>(),
 			countSignalementPerSituation: Object,

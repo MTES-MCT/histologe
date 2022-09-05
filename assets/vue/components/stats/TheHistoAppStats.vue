@@ -133,6 +133,9 @@ export default defineComponent({
       this.sharedState.stats.averageCriticite = requestResponse.average_criticite
       this.sharedState.stats.averageDaysValidation = requestResponse.average_days_validation
       this.sharedState.stats.averageDaysClosure = requestResponse.average_days_closure
+      
+      this.sharedState.stats.countSignalementFiltered = requestResponse.count_signalement_filtered
+      this.sharedState.stats.averageCriticiteFiltered = requestResponse.average_criticite_filtered
 
       this.sharedState.stats.countSignalementPerMonth = requestResponse.countSignalementPerMonth
       

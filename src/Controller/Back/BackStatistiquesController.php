@@ -65,7 +65,53 @@ class BackStatistiquesController extends AbstractController
             }
 
             $this->buildLists($territory, $tagsRepository, $territoryRepository);
-            $result = $this->buildQuery($request, $signalementRepository, $territory);
+
+            // *****
+            // Returns global results
+            $resultGlobal = $this->buildGlobalQuery($signalementRepository, $territory);
+
+            $totalCriticite = 0;
+            $countHasDaysValidation = 0;
+            $totalDaysValidation = 0;
+            $countHasDaysClosure = 0;
+            $totalDaysClosure = 0;
+            /**
+             * @var Signalement $signalementItem
+             */
+            foreach ($resultGlobal as $signalementItem) {
+                $criticite = $signalementItem->getScoreCreation();
+                $totalCriticite += $criticite;
+                $dateCreatedAt = $signalementItem->getCreatedAt();
+                if (null !== $dateCreatedAt) {
+                    $dateValidatedAt = $signalementItem->getValidatedAt();
+                    if (null !== $dateValidatedAt) {
+                        ++$countHasDaysValidation;
+                        $dateDiff = $dateCreatedAt->diff($dateValidatedAt);
+                        $totalDaysValidation += $dateDiff->d;
+                    }
+                    $dateClosedAt = $signalementItem->getClosedAt();
+                    if (null !== $dateClosedAt) {
+                        ++$countHasDaysClosure;
+                        $dateDiff = $dateCreatedAt->diff($dateClosedAt);
+                        $totalDaysClosure += $dateDiff->d;
+                    }
+                }
+            }
+
+            $countSignalement = \count($resultGlobal);
+            $averageCriticite = $countSignalement > 0 ? round($totalCriticite / $countSignalement) : '-';
+            $averageDaysValidation = $countHasDaysValidation > 0 ? round($totalDaysValidation * 10 / $countHasDaysValidation) / 10 : '-';
+            $averageDaysClosure = $countHasDaysClosure > 0 ? round($totalDaysClosure * 10 / $countHasDaysClosure) / 10 : '-';
+
+            $this->filterResult['count_signalement'] = $countSignalement;
+            $this->filterResult['average_criticite'] = $averageCriticite;
+            $this->filterResult['average_days_validation'] = $averageDaysValidation;
+            $this->filterResult['average_days_closure'] = $averageDaysClosure;
+            // *****
+
+            // *****
+            // Returns filtered results
+            $resultFiltered = $this->buildQuery($request, $signalementRepository, $territory);
 
             // Count stats
             $totalCriticite = 0;
@@ -104,7 +150,7 @@ class BackStatistiquesController extends AbstractController
             /**
              * @var Signalement $signalementItem
              */
-            foreach ($result as $signalementItem) {
+            foreach ($resultFiltered as $signalementItem) {
                 $criticite = $signalementItem->getScoreCreation();
                 $totalCriticite += $criticite;
                 $dateCreatedAt = $signalementItem->getCreatedAt();
@@ -206,17 +252,13 @@ class BackStatistiquesController extends AbstractController
                 }
             }
 
-            $countSignalement = \count($result);
-            $averageCriticite = $countSignalement > 0 ? round($totalCriticite / $countSignalement) : '-';
-            $averageDaysValidation = $countHasDaysValidation > 0 ? round($totalDaysValidation * 10 / $countHasDaysValidation) / 10 : '-';
-            $averageDaysClosure = $countHasDaysClosure > 0 ? round($totalDaysClosure * 10 / $countHasDaysClosure) / 10 : '-';
+            $countSignalementFiltered = \count($resultFiltered);
+            $averageCriticiteFiltered = $countSignalementFiltered > 0 ? round($totalCriticite / $countSignalementFiltered) : '-';
             arsort($countSignalementPerCriticite);
             $countSignalementPerCriticite = \array_slice($countSignalementPerCriticite, 0, 5);
 
-            $this->filterResult['count_signalement'] = $countSignalement;
-            $this->filterResult['average_criticite'] = $averageCriticite;
-            $this->filterResult['average_days_validation'] = $averageDaysValidation;
-            $this->filterResult['average_days_closure'] = $averageDaysClosure;
+            $this->filterResult['count_signalement_filtered'] = $countSignalementFiltered;
+            $this->filterResult['average_criticite_filtered'] = $averageCriticiteFiltered;
 
             $this->filterResult['countSignalementPerMonth'] = $countSignalementPerMonth;
             $this->filterResult['countSignalementPerPartenaire'] = $countSignalementPerPartenaire;
@@ -225,6 +267,7 @@ class BackStatistiquesController extends AbstractController
             $this->filterResult['countSignalementPerStatut'] = $countSignalementPerStatut;
             $this->filterResult['countSignalementPerCriticitePercent'] = $countSignalementPerCriticitePercent;
             $this->filterResult['countSignalementPerVisite'] = $countSignalementPerVisite;
+            // *****
 
             $this->filterResult['response'] = 'success';
 
@@ -291,6 +334,13 @@ class BackStatistiquesController extends AbstractController
         $territoryFilter = $territory ? $territory->getId() : null;
 
         return $signalementRepository->findByFilters($this->filterStatut, $hasCountRefused, $this->filterDateStart, $this->filterDateEnd, $type, $territoryFilter);
+    }
+
+    private function buildGlobalQuery(SignalementRepository $signalementRepository, ?Territory $territory)
+    {
+        $territoryFilter = $territory ? $territory->getId() : null;
+
+        return $signalementRepository->findByFilters('', false, null, null, '', $territoryFilter);
     }
 
     private static function getStatutStrByValue($statut)

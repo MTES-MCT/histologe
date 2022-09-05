@@ -189,7 +189,7 @@ class SignalementRepository extends ServiceEntityRepository
     /**
      * Query called by statistics with filters.
      */
-    public function findByFilters(string $statut, bool $countRefused, DateTime $dateStart, DateTime $dateEnd, string $type, ?int $territory): array
+    public function findByFilters(string $statut, bool $countRefused, ?DateTime $dateStart, ?DateTime $dateEnd, string $type, ?int $territory): array
     {
         $qb = $this->createQueryBuilder('s');
 
@@ -230,10 +230,12 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         // Filter on creation date
-        $qb->andWhere('s.createdAt >= :dateStart')
-        ->setParameter('dateStart', $dateStart)
-        ->andWhere('s.createdAt <= :dateEnd')
-        ->setParameter('dateEnd', $dateEnd);
+        if (null !== $dateStart) {
+            $qb->andWhere('s.createdAt >= :dateStart')
+            ->setParameter('dateStart', $dateStart)
+            ->andWhere('s.createdAt <= :dateEnd')
+            ->setParameter('dateEnd', $dateEnd);
+        }
 
         // Filter on Signalement type (logement social)
         if ('' != $type && 'all' != $type) {

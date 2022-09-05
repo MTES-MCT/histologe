@@ -86,8 +86,10 @@ export default defineComponent({
 </script>
 
 <style>
-  .filter-territories {
-    margin-top: -65px;
+  @media (min-width: 768px) {
+    .filter-territories {
+      margin-top: -65px;
+    }
   }
 
   .loading {
