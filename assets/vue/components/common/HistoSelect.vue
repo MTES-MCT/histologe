@@ -26,8 +26,7 @@ export default defineComponent({
     optionItems: {
       type: Array as () => Array<HistoInterfaceSelectOption>,
       default: () => []
-    },
-    multiselect: { type: Boolean, default: false }
+    }
   },
   data: function () {
     return {
@@ -75,4 +74,7 @@ export default defineComponent({
 </script>
 
 <style>
+  .histo-select select {
+    background-color: #FFF;
+  }
 </style>

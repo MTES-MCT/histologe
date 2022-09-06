@@ -9,15 +9,14 @@
 
     <div class="fr-container--fluid">
       <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-col-12 fr-col-lg-3">
+        <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
           <HistoSelect
             id="filter-communes"
             @update:modelValue="onChange(false)"
             inner-label="Communes"
-            :multiselect=true
             />
         </div>
-        <div class="fr-col-12 fr-col-lg-3">
+        <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
           <HistoSelect 
             id="filter-statut"
             v-model="sharedState.filters.statut"
@@ -26,17 +25,16 @@
             :option-items=statusList
             />
         </div>
-        <div class="fr-col-12 fr-col-lg-3">
-          <HistoSelect
+        <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
+          <HistoMultiSelect
             id="filter-etiquettes"
             v-model="sharedState.filters.etiquettes"
             @update:modelValue="onChange(false)"
             inner-label="Etiquettes"
             :option-items=sharedState.filters.etiquettesList
-            :multiselect=true
             />
         </div>
-        <div class="fr-col-12 fr-col-lg-3">
+        <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
           <HistoSelect
             id="filter-type"
             v-model="sharedState.filters.type"
@@ -74,6 +72,7 @@
 import { defineComponent, ref } from 'vue'
 import { store } from './store'
 import HistoSelect from '../common/HistoSelect.vue'
+import HistoMultiSelect from '../common/HistoMultiSelect.vue'
 import HistoCheckbox from '../common/HistoCheckbox.vue'
 import HistoDatePicker from '../common/external/HistoDatePicker.vue'
 
@@ -84,6 +83,7 @@ export default defineComponent({
   },
   components: {
     HistoSelect,
+    HistoMultiSelect,
     HistoCheckbox,
     HistoDatePicker
   },

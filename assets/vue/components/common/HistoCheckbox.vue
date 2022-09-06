@@ -29,4 +29,7 @@ export default defineComponent({
 </script>
 
 <style>
+  .histo-checkbox input {
+    background: #FFF;
+  }
 </style>
