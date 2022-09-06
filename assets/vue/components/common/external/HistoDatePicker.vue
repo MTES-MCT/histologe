@@ -10,6 +10,7 @@
       format="dd/MM/yyyy"
       selectText="Appliquer"
       cancelText="Annuler"
+      :ref="id"
       />
   </div>
 </template>
@@ -21,6 +22,7 @@ import Datepicker from '@vuepic/vue-datepicker'
 export default defineComponent({
   name: 'HistoDatePicker',
   components: { Datepicker },
+  expose: ['updateDate'],
 	props: {
 		id: { type: String, default: null },
     modelValue: { type: Array, default: [] }
@@ -32,10 +34,10 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   methods: {
+    updateDate: function(newDate: Array<Date>) {
+      this.date = newDate
+    },
     handleDate: function(modelData: any) {
-      console.log('handleDate')
-      console.log(modelData)
-      console.log(this.date)
       if (this.date !== undefined && this.date !== null) {
         this.date = modelData
       }

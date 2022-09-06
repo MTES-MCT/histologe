@@ -47,6 +47,8 @@
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-4">
           <HistoDatePicker
+            id="histofiltersdatepicker"
+            ref="histofiltersdatepicker"
             v-model="sharedState.filters.dateRange"
             @update:modelValue="onChange(false)"
             />
@@ -69,7 +71,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { store } from './store'
 import HistoSelect from '../common/HistoSelect.vue'
 import HistoCheckbox from '../common/HistoCheckbox.vue'
@@ -113,12 +115,16 @@ export default defineComponent({
   },
 	methods: {
 		onReinitLocalEvent () {
+      // Date management
+      (this.$refs['histofiltersdatepicker'] as any).updateDate(this.initFilters.dateRange)
+      this.sharedState.filters.dateRange = this.initFilters.dateRange
+
+      // Other simple data
       this.sharedState.filters.territoire = this.initFilters.territoire
       this.sharedState.filters.communes = this.initFilters.communes
       this.sharedState.filters.statut = this.initFilters.statut
       this.sharedState.filters.etiquettes = this.initFilters.etiquettes
       this.sharedState.filters.type = this.initFilters.type
-      this.sharedState.filters.dateRange = this.initFilters.dateRange // TODO: reinit in component
       this.sharedState.filters.countRefused = this.initFilters.countRefused
 
       if (this.onChange !== undefined) {
