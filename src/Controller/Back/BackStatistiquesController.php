@@ -122,14 +122,8 @@ class BackStatistiquesController extends AbstractController
             $listMonthName = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
             $countSignalementPerMonth = [];
             $countSignalementPerStatut = [];
-            $countSignalementPerCriticitePercent = [];
-            $countSignalementPerCriticitePercent[self::CRITICITE_VERY_WEAK] = 0;
-            $countSignalementPerCriticitePercent[self::CRITICITE_WEAK] = 0;
-            $countSignalementPerCriticitePercent[self::CRITICITE_STRONG] = 0;
-            $countSignalementPerCriticitePercent[self::CRITICITE_VERY_STRONG] = 0;
-            $countSignalementPerVisite = [];
-            $countSignalementPerVisite['Oui'] = 0;
-            $countSignalementPerVisite['Non'] = 0;
+            $countSignalementPerCriticitePercent = self::initPerCriticitePercent();
+            $countSignalementPerVisite = self::initPerVisite();
             $countSignalementPerSituation = [];
             $countSignalementPerCriticite = [];
             $countSignalementPerPartenaire = [];
@@ -174,27 +168,27 @@ class BackStatistiquesController extends AbstractController
                     }
                     ++$countSignalementPerMonth[$month_name];
 
-                    $statutStr = self::getStatutStrByValue($signalementItem->getStatut());
-                    if (empty($countSignalementPerStatut[$statutStr])) {
-                        $countSignalementPerStatut[$statutStr] = 0;
+                    $statut = $signalementItem->getStatut();
+                    if (empty($countSignalementPerStatut[$statut])) {
+                        $countSignalementPerStatut[$statut] = self::initStatutByValue($statut);
                     }
-                    ++$countSignalementPerStatut[$statutStr];
+                    ++$countSignalementPerStatut[$statut]['count'];
 
                     if ($criticite > 75) {
-                        ++$countSignalementPerCriticitePercent[self::CRITICITE_VERY_STRONG];
+                        ++$countSignalementPerCriticitePercent[self::CRITICITE_VERY_STRONG]['count'];
                     } elseif ($criticite >= 51) {
-                        ++$countSignalementPerCriticitePercent[self::CRITICITE_STRONG];
+                        ++$countSignalementPerCriticitePercent[self::CRITICITE_STRONG]['count'];
                     } elseif ($criticite >= 25) {
-                        ++$countSignalementPerCriticitePercent[self::CRITICITE_WEAK];
+                        ++$countSignalementPerCriticitePercent[self::CRITICITE_WEAK]['count'];
                     } else {
-                        ++$countSignalementPerCriticitePercent[self::CRITICITE_VERY_WEAK];
+                        ++$countSignalementPerCriticitePercent[self::CRITICITE_VERY_WEAK]['count'];
                     }
 
                     $dateVisite = $signalementItem->getDateVisite();
                     if (empty($dateVisite)) {
-                        ++$countSignalementPerVisite['Non'];
+                        ++$countSignalementPerVisite['Non']['count'];
                     } else {
-                        ++$countSignalementPerVisite['Oui'];
+                        ++$countSignalementPerVisite['Oui']['count'];
                     }
 
                     $listSituations = $signalementItem->getSituations();
@@ -343,26 +337,81 @@ class BackStatistiquesController extends AbstractController
         return $signalementRepository->findByFilters('', false, null, null, '', $territoryFilter);
     }
 
-    private static function getStatutStrByValue($statut)
+    private static function initStatutByValue($statut)
     {
+        $buffer = [
+            'label' => '',
+            'color' => '',
+            'count' => 0,
+        ];
+
         switch ($statut) {
             case Signalement::STATUS_ACTIVE:
             case Signalement::STATUS_NEED_PARTNER_RESPONSE:
-                return 'En cours';
+                $buffer['label'] = 'En cours';
+                $buffer['color'] = '#000091A6';
                 break;
             case Signalement::STATUS_CLOSED:
-                return 'Fermé';
+                $buffer['label'] = 'Fermé';
+                $buffer['color'] = '#21AB8EA6';
                 break;
             case Signalement::STATUS_ARCHIVED:
-                return 'Archivé';
+                $buffer['label'] = 'Archivé';
+                $buffer['color'] = '#A558A0';
                 break;
             case Signalement::STATUS_REFUSED:
-                return 'Refusé';
+                $buffer['label'] = 'Refusé';
+                $buffer['color'] = '#A558A0';
                 break;
             case Signalement::STATUS_NEED_VALIDATION:
             default:
-                return 'Nouveau';
+                $buffer['label'] = 'Nouveau';
+                $buffer['color'] = '#E4794A';
                 break;
         }
+
+        return $buffer;
+    }
+
+    private static function initPerCriticitePercent()
+    {
+        return [
+            self::CRITICITE_VERY_WEAK => [
+                'label' => self::CRITICITE_VERY_WEAK,
+                'color' => '#21AB8E',
+                'count' => 0,
+            ],
+            self::CRITICITE_WEAK => [
+                'label' => self::CRITICITE_WEAK,
+                'color' => '#417DC4',
+                'count' => 0,
+            ],
+            self::CRITICITE_STRONG => [
+                'label' => self::CRITICITE_STRONG,
+                'color' => '#A558A0',
+                'count' => 0,
+            ],
+            self::CRITICITE_VERY_STRONG => [
+                'label' => self::CRITICITE_VERY_STRONG,
+                'color' => '#E4794A',
+                'count' => 0,
+            ],
+        ];
+    }
+
+    private static function initPerVisite()
+    {
+        return [
+            'Oui' => [
+                'label' => 'Oui',
+                'color' => '#21AB8E',
+                'count' => 0,
+            ],
+            'Non' => [
+                'label' => 'Non',
+                'color' => '#E4794A',
+                'count' => 0,
+            ],
+        ];
     }
 }

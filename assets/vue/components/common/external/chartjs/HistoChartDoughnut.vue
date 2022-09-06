@@ -72,16 +72,18 @@ export default defineComponent({
   data() {
     let inLabels = []
     let inData = []
+    let inColors = []
     for (let i in this.items) {
-      inLabels.push(i)
-      inData.push(this.items[i])
+      inLabels.push(this.items[i].label)
+      inData.push(this.items[i].count)
+      inColors.push(this.items[i].color)
     }
     return {
       chartData: {
         labels: inLabels,
         datasets: [
           {
-            backgroundColor: ['#21AB8EA6', '#000091A6', '#E4794AA6', '#A558A0A6', '#CACAFBBF'],
+            backgroundColor: inColors,
             data: inData
           }
         ]
