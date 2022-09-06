@@ -171,9 +171,9 @@ export default defineComponent({
         let item = [
           nomPartenaire,
           dataPartenaire.total,
-          dataPartenaire.wait,
-          dataPartenaire.accepted,
-          dataPartenaire.closed,
+          dataPartenaire.wait + ' (' + dataPartenaire.wait_percent + ' %)',
+          dataPartenaire.accepted + ' (' + dataPartenaire.accepted_percent + ' %)',
+          dataPartenaire.closed + ' (' + dataPartenaire.closed_percent + ' %)',
         ]
         this.sharedState.stats.countSignalementPerPartenaire.push(item)
       }

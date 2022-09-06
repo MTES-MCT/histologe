@@ -141,6 +141,7 @@ class BackStatistiquesController extends AbstractController
                     $countSignalementPerMonth[$listMonthName[$month].' '.$year] = 0;
                 }
             }
+
             /**
              * @var Signalement $signalementItem
              */
@@ -226,7 +227,7 @@ class BackStatistiquesController extends AbstractController
                                 'closed' => 0,
                             ];
                         }
-                        $countSignalementPerPartenaire[$partenaireStr]['total'];
+                        ++$countSignalementPerPartenaire[$partenaireStr]['total'];
                         switch ($affecationItem->getStatut()) {
                             case Affectation::STATUS_ACCEPTED:
                                 ++$countSignalementPerPartenaire[$partenaireStr]['accepted'];
@@ -244,6 +245,14 @@ class BackStatistiquesController extends AbstractController
                         }
                     }
                 }
+            }
+
+            foreach ($countSignalementPerPartenaire as $partenaireStr => $partnerStats) {
+                $totalPerPartner = $partnerStats['total'];
+                $countSignalementPerPartenaire[$partenaireStr]['accepted_percent'] = round($partnerStats['accepted'] / $totalPerPartner * 100);
+                $countSignalementPerPartenaire[$partenaireStr]['refused_percent'] = round($partnerStats['refused'] / $totalPerPartner * 100);
+                $countSignalementPerPartenaire[$partenaireStr]['closed_percent'] = round($partnerStats['closed'] / $totalPerPartner * 100);
+                $countSignalementPerPartenaire[$partenaireStr]['wait_percent'] = round($partnerStats['wait'] / $totalPerPartner * 100);
             }
 
             $countSignalementFiltered = \count($resultFiltered);
