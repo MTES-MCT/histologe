@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[AsCommand(
     name: 'app:add-user',
-    description: 'Creates users and stores them in the database'
+    description: 'Create a user'
 )]
 class AddUserCommand extends Command
 {
