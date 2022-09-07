@@ -6,7 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 
 abstract class AbstractManager implements ManagerInterface
 {
-    public function __construct(protected ManagerRegistry $managerRegistry, protected string $entityName)
+    public function __construct(protected ManagerRegistry $managerRegistry, protected string $entityName = '')
     {
     }
 

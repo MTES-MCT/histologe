@@ -2,13 +2,10 @@
 
 namespace App\Command;
 
-use App\Factory\PartnerFactory;
-use App\Factory\UserFactory;
-use App\Manager\PartnerManager;
+use App\Entity\Territory;
 use App\Manager\TerritoryManager;
-use App\Manager\UserManager;
+use App\Service\GridAffectationLoader;
 use App\Service\Parser\CsvParser;
-use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -19,21 +16,17 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
-    name: 'app:import-grille-affectation',
+    name: 'app:import-grid-affectation',
     description: 'Import grille affectation based on storage S3',
 )]
-class ImportGrilleAffectationTerritoryCommand extends Command
+class ImportGridAffectationCommand extends Command
 {
     public function __construct(
         private FilesystemOperator $fileStorage,
         private ParameterBagInterface $parameterBag,
         private CsvParser $csvParser,
-        private EntityManagerInterface $entityManager,
-        private UserFactory $userFactory,
-        private PartnerFactory $partnerFactory,
-        private UserManager $userManager,
-        private PartnerManager $partnerManager,
-        private TerritoryManager $territoryManager
+        private TerritoryManager $territoryManager,
+        private GridAffectationLoader $gridAffectationLoader
     ) {
         parent::__construct();
     }
@@ -47,13 +40,19 @@ class ImportGrilleAffectationTerritoryCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $territoryZip = $input->getArgument('territory_zip');
-
         $fromFile = 'csv/grille_affectation_'.$territoryZip.'.csv';
         $toFile = $this->parameterBag->get('uploads_tmp_dir').'grille.csv';
 
+        /** @var Territory $territory */
         $territory = $this->territoryManager->findOneBy(['zip' => $territoryZip]);
         if (null === $territory) {
             $io->error('Territory does not exists');
+
+            return Command::FAILURE;
+        }
+
+        if ($territory->isIsActive()) {
+            $io->warning('Partner(s) and user(s) from this repository has already been added');
 
             return Command::FAILURE;
         }
@@ -65,42 +64,13 @@ class ImportGrilleAffectationTerritoryCommand extends Command
         }
 
         $this->createTmpFileFromBucket($fromFile, $toFile);
-        $data = $this->csvParser->parse($toFile);
+        $this->gridAffectationLoader->load($this->csvParser->parse($toFile), $territory);
 
-        $nbUser = 0;
-        $nbPartner = 0;
-        foreach ($data as $lineNumber => $row) {
-            $partner = null;
-            if (0 === $lineNumber || $data[$lineNumber][0] !== $data[$lineNumber - 1][0]) {
-                $partner = $this->partnerFactory->createInstanceFrom(
-                    territory: $territory,
-                    name: $row[0],
-                    email: !empty($row[3]) ? $row[3] : null,
-                    isCommune: !empty($row[1]) ? true : false,
-                    insee: !empty($row[1]) ? [$row[2]] : [],
-                );
-                $this->partnerManager->save($partner, false);
-                ++$nbPartner;
-            }
-
-            $user = $this->userFactory->createInstanceFrom(
-                roleLabel: $row[4],
-                territory: $territory,
-                partner: $partner,
-                firstname: $row[5],
-                lastname: $row[6],
-                email: $row[7]
-            );
-            $this->partnerManager->save($user, false);
-            ++$nbUser;
-        }
-
-        $this->entityManager->flush();
-        $io->success($nbPartner.' partner(s) created, '.$nbUser.' user(s) created');
+        $metadata = $this->gridAffectationLoader->getMetadata();
+        $io->success($metadata['nb_partners'].' partner(s) created, '.$metadata['nb_users'].' user(s) created');
 
         $territory->setIsActive(true);
         $this->territoryManager->save($territory);
-
         $io->success($territory->getName().' has been activated');
 
         return Command::SUCCESS;
