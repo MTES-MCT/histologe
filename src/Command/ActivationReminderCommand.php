@@ -50,10 +50,8 @@ class ActivationReminderCommand extends Command
             $this->notificationService->send(
                 NotificationService::TYPE_ACCOUNT_ACTIVATION,
                 $user->getEmail(),
-                [
-                    'link' => $loginLinkDetails->getUrl(),
-//                'reminder' => true
-                ], $input->getArgument('territory'));
+                ['link' => $loginLinkDetails->getUrl()],
+                $input->getArgument('territory'));
             ++$i;
         }
         $io->success($i.' user(s) notifié(s) pour activation');

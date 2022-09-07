@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Parser;
 
 class CsvParser
 {
     public function __construct(
-        private string $filepath,
         private array $options = [
             'first_line' => 1,
             'delimiter' => ',',
@@ -15,11 +14,11 @@ class CsvParser
     ) {
     }
 
-    public function parse(): array
+    public function parse($filepath): array
     {
         $rows = [];
 
-        if (($fileResource = fopen($this->filepath, 'r')) !== false) {
+        if (($fileResource = fopen($filepath, 'r')) !== false) {
             $i = 0;
             while (($row = fgetcsv($fileResource, 0, $this->options['delimiter'], $this->options['enclosure'], $this->options['escape'])) !== false) {
                 if ($i >= $this->options['first_line']) {

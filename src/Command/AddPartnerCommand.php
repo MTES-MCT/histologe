@@ -2,8 +2,10 @@
 
 namespace App\Command;
 
-use App\Entity\Partner;
 use App\Entity\Territory;
+use App\Factory\PartnerFactory;
+use App\Manager\PartnerManager;
+use App\Manager\TerritoryManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -33,7 +35,10 @@ class AddPartnerCommand extends Command
 
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private ValidatorInterface $validator
+        private ValidatorInterface $validator,
+        private PartnerFactory $partnerFactory,
+        private PartnerManager $partnerManager,
+        private TerritoryManager $territoryManager,
     ) {
         parent::__construct();
     }
@@ -104,7 +109,7 @@ class AddPartnerCommand extends Command
             $helper = $this->getHelper('question');
             $question = new ChoiceQuestion(
                 'Is the partner a commune ?',
-                ['yes', 'no'],
+                ['no', 'yes'],
                 'no',
             );
 
@@ -137,7 +142,7 @@ class AddPartnerCommand extends Command
         $isCommune = $input->getArgument('is_commune');
         $insee = (array) $input->getArgument('insee');
 
-        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => $territory]);
+        $territory = $this->territoryManager->findOneBy(['zip' => $territory]);
 
         if (!$territory instanceof Territory) {
             $this->io->error('Territory does not exists');
@@ -145,39 +150,34 @@ class AddPartnerCommand extends Command
             return Command::FAILURE;
         }
 
-        $partner = (new Partner())
-            ->setTerritory($territory)
-            ->setNom($name)
-            ->setEmail(mb_strtolower($email))
-            ->setIsCommune($isCommune)
-            ->setInsee($insee);
-
+        $partner = $this->partnerFactory->createInstanceFrom($territory, $name, $email, $isCommune, $insee);
         $errors = $this->validator->validate($partner);
 
         if (\count($errors) > 0) {
-            $errorMessages = [];
-            foreach ($errors as $constraint) {
-                $property = $constraint->getPropertyPath();
-                $errorMessages[$property][] = $constraint->getMessage();
-            }
-            foreach ($errorMessages as $key => $errorMessage) {
-                $this->io->error(sprintf('%s : %s', $key, implode(',', $errorMessage)));
-            }
+            $this->showErrors($errors);
 
             return Command::FAILURE;
         }
 
-        $this->entityManager->persist($partner);
-        $this->entityManager->flush();
+        $this->partnerManager->save($partner);
 
         $this->io->success(sprintf('%s was successfully created: %s',
             $partner->getNom(),
             $partner->getTerritory()?->getName()
         ));
 
-        $this->entityManager->persist($partner);
-        $this->entityManager->flush();
-
         return Command::SUCCESS;
+    }
+
+    private function showErrors(array $errors): void
+    {
+        $errorMessages = [];
+        foreach ($errors as $constraint) {
+            $property = $constraint->getPropertyPath();
+            $errorMessages[$property][] = $constraint->getMessage();
+        }
+        foreach ($errorMessages as $key => $errorMessage) {
+            $this->io->error(sprintf('%s : %s', $key, implode(',', $errorMessage)));
+        }
     }
 }

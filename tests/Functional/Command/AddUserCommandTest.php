@@ -2,8 +2,8 @@
 
 namespace App\Tests\Functional\Command;
 
-use App\Command\AddUserCommand;
 use App\Entity\Partner;
+use App\Entity\User;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -19,7 +19,6 @@ class AddUserCommandTest extends KernelTestCase
         $command = $application->find('app:add-user');
 
         $commandTester = new CommandTester($command);
-        $roles = AddUserCommand::ROLES;
 
         $faker = Factory::create();
         $email = $faker->email();
@@ -27,7 +26,7 @@ class AddUserCommandTest extends KernelTestCase
         $lastname = $faker->lastName();
 
         $commandTester->execute([
-            'role' => $roles[array_rand(AddUserCommand::ROLES)],
+            'role' => array_rand(User::ROLES),
             'email' => $email,
             'firstname' => $firstname,
             'lastname' => $lastname,

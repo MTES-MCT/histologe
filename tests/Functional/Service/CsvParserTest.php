@@ -2,7 +2,7 @@
 
 namespace App\Tests\Functional\Service;
 
-use App\Service\CsvParser;
+use App\Service\Parser\CsvParser;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -23,8 +23,8 @@ class CsvParserTest extends KernelTestCase
     {
         $options = ['first_line' => 0, 'delimiter' => ',', 'enclosure' => '"', 'escape' => '\\'];
 
-        $csvParser = new CsvParser($this->projectDir.'/tmp/data.csv', $options);
-        $data = $csvParser->parse();
+        $csvParser = new CsvParser($options);
+        $data = $csvParser->parse($this->projectDir.'/tmp/data.csv');
 
         $this->assertIsArray($data);
         $this->assertCount(11, $data);
