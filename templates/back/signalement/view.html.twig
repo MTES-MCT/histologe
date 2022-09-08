@@ -290,7 +290,7 @@
                             d'entrée: </strong> {{ signalement.dateEntree ? signalement.dateEntree|date('d/m/Y') : 'N/R' }}
                     </li>
                     <li>
-                        <strong>Logement: </strong> {{ signalement.typeLogement }} de {{ signalement.superficie }}m² -
+                        <strong>Logement: </strong> {{ signalement.natureLogement }} de {{ signalement.superficie }}m² -
                         <strong>Loyer: </strong> {{ signalement.loyer }} €/mois
                     </li>
                     <li>
@@ -478,7 +478,9 @@
                 <ul class="fr-list--icon-img">
                     <li>
                         <strong>Bail en cours: </strong>
-                        {% if signalement.isBailEnCours %}
+                        {% if signalement.isBailEnCours is null %}
+                            {{ picto_nsp|format('IsBailEnCours')|raw }}
+                        {% elseif signalement.isBailEnCours %}
                             {{ picto_yes|format('IsBailEnCours')|raw }}
                         {% else %}
                             {{ picto_no|format('IsBailEnCours')|raw }}
@@ -486,7 +488,9 @@
                     </li>
                     <li>
                         <strong>Logement social: </strong>
-                        {% if signalement.isLogementSocial %}
+                        {% if signalement.isLogementSocial is null %}
+                            {{ picto_nsp|format('IsLogementSocial')|raw }}
+                        {% elseif signalement.isLogementSocial %}
                             {{ picto_yes|format('IsLogementSocial')|raw }}
                         {% else %}
                             {{ picto_no|format('IsLogementSocial')|raw }}
@@ -494,7 +498,9 @@
                     </li>
                     <li>
                         <strong>Demande de relogement: </strong>
-                        {% if signalement.isRelogement %}
+                        {% if signalement.isRelogement is null %}
+                            {{ picto_nsp|format('IsRelogement')|raw }}
+                        {% elseif signalement.isRelogement %}
                             {{ picto_yes|format('IsRelogement')|raw }}
                         {% else %}
                             {{ picto_no|format('IsRelogement')|raw }}
@@ -502,7 +508,9 @@
                     </li>
                     <li>
                         <strong>Preavis de départ: </strong>
-                        {% if signalement.isPreavisDepart %}
+                        {% if signalement.isPreavisDepart is null %}
+                            {{ picto_nsp|format('IsPreavisDepart')|raw }}
+                        {% elseif signalement.isPreavisDepart %}
                             {{ picto_yes|format('IsPreavisDepart')|raw }}
                         {% else %}
                             {{ picto_no|format('IsPreavisDepart')|raw }}
