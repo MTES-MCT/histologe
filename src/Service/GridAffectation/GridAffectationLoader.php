@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\GridAffectation;
 
 use App\Entity\Territory;
 use App\Factory\PartnerFactory;
@@ -36,25 +36,25 @@ class GridAffectationLoader
             if (0 === $lineNumber || $data[$lineNumber][0] !== $data[$lineNumber - 1][0]) {
                 $partner = $this->partnerFactory->createInstanceFrom(
                     territory: $territory,
-                    name: $row[0],
-                    email: !empty($row[3]) ? $row[3] : null,
-                    isCommune: !empty($row[1]) ? true : false,
-                    insee: explode(';', $row[2]),
+                    name: $row[GridAffectationHeader::PARTNER_NAME_INSTITUTION],
+                    email: !empty($row[GridAffectationHeader::PARTNER_EMAIL]) ? $row[GridAffectationHeader::PARTNER_EMAIL] : null,
+                    isCommune: !empty($row[GridAffectationHeader::PARTNER_TYPE]) ? true : false,
+                    insee: explode(';', $row[GridAffectationHeader::PARTNER_CODE_INSEE]),
                 );
                 $this->partnerManager->save($partner, false);
                 ++$this->metadata['nb_partners'];
             }
 
-            $roleLbal = $row[4];
-            $email = $row[7];
+            $roleLbal = $row[GridAffectationHeader::USER_ROLE];
+            $email = $row[GridAffectationHeader::USER_EMAIL];
             if (!empty($roleLbal) && !empty($email)) {
                 $user = $this->userFactory->createInstanceFrom(
-                    roleLabel: $row[4],
+                    roleLabel: $row[GridAffectationHeader::USER_ROLE],
                     territory: $territory,
                     partner: $partner,
-                    firstname: $row[5],
-                    lastname: $row[6],
-                    email: $row[7]
+                    firstname: $row[GridAffectationHeader::USER_FIRSTNAME],
+                    lastname: $row[GridAffectationHeader::USER_LASTNAME],
+                    email: $row[GridAffectationHeader::USER_EMAIL]
                 );
 
                 $this->userManager->save($user, false);

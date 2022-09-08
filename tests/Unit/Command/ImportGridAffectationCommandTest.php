@@ -5,7 +5,7 @@ namespace App\Tests\Unit\Command;
 use App\Command\ImportGridAffectationCommand;
 use App\Entity\Territory;
 use App\Manager\TerritoryManager;
-use App\Service\GridAffectationLoader;
+use App\Service\GridAffectation\GridAffectationLoader;
 use App\Service\Parser\CsvParser;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Bundle\FrameworkBundle\Console\Application;

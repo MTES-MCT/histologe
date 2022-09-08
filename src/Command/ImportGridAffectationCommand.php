@@ -4,7 +4,7 @@ namespace App\Command;
 
 use App\Entity\Territory;
 use App\Manager\TerritoryManager;
-use App\Service\GridAffectationLoader;
+use App\Service\GridAffectation\GridAffectationLoader;
 use App\Service\Parser\CsvParser;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
