@@ -154,6 +154,7 @@ class SignalementType extends AbstractType
             ->add('superficie', TextType::class, [
                 'attr' => [
                     'class' => 'fr-input',
+                    'pattern' => '^[0-9]*$',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
