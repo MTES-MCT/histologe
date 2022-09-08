@@ -27,7 +27,7 @@ class GridAffectationLoader
     ) {
     }
 
-    public function load(array $data, Territory $territory)
+    public function load(array $data, Territory $territory): void
     {
         $partner = null;
         foreach ($data as $lineNumber => $row) {
@@ -37,7 +37,7 @@ class GridAffectationLoader
                     name: $row[0],
                     email: !empty($row[3]) ? $row[3] : null,
                     isCommune: !empty($row[1]) ? true : false,
-                    insee: !empty($row[1]) ? [$row[2]] : [],
+                    insee: explode(';', $row[2]),
                 );
                 $this->partnerManager->save($partner, false);
                 ++$this->metadata['nb_partners'];

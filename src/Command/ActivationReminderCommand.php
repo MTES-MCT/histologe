@@ -2,7 +2,8 @@
 
 namespace App\Command;
 
-use App\Entity\User;
+use App\Manager\TerritoryManager;
+use App\Manager\UserManager;
 use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -22,36 +23,34 @@ class ActivationReminderCommand extends Command
     public function __construct(
         private EntityManagerInterface $entityManager,
         private NotificationService $notificationService,
-        private LoginLinkHandlerInterface $loginLinkHandler
+        private LoginLinkHandlerInterface $loginLinkHandler,
+        private UserManager $userManager,
+        private TerritoryManager $territoryManager
     ) {
-        // best practices recommend to call the parent constructor first and
-        // then set your own properties. That wouldn't work in this case
-        // because configure() needs the properties set in this constructor
-        $this->entityManager = $entityManager;
-        $this->notificationService = $notificationService;
-        $this->loginLinkHandler = $loginLinkHandler;
-
         parent::__construct();
     }
 
     protected function configure(): void
     {
         $this
-            ->addArgument('territory', InputArgument::OPTIONAL);
+            ->addArgument('zip', InputArgument::OPTIONAL);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $i = 0;
         $io = new SymfonyStyle($input, $output);
-        $users = $this->entityManager->getRepository(User::class)->findAllInactive();
+
+        $territory = $this->territoryManager->findOneBy(['zip' => $input->getArgument('zip')]);
+        $users = $this->userManager->getRepository()->findALlInactive($territory);
+
         foreach ($users as $user) {
             $loginLinkDetails = $this->loginLinkHandler->createLoginLink($user);
             $this->notificationService->send(
                 NotificationService::TYPE_ACCOUNT_ACTIVATION,
                 $user->getEmail(),
                 ['link' => $loginLinkDetails->getUrl()],
-                $input->getArgument('territory'));
+                $territory);
             ++$i;
         }
         $io->success($i.' user(s) notifié(s) pour activation');
