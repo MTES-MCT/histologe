@@ -14,24 +14,28 @@
     <div v-if="isExpanded" class="selector-items">
       <div class="selector-items-selected">
         <ul>
-          <li
-            v-for="item in selectedItems"
-            :data-optionid="item.Id"
-            @click="handleRemoveItem"
-            >
-            {{ item.Text }}
-          </li>
+          <template v-for="item in optionItems">
+            <li
+              v-if="modelValue.indexOf(item.Id) > -1"
+              :data-optionid="item.Id"
+              @click="handleRemoveItem"
+              >
+              {{ item.Text }}
+            </li>
+          </template>
         </ul>
       </div>
       <div class="selector-items-remaining">
         <ul>
-          <li
-            v-for="item in remainingItems"
-            :data-optionid="item.Id"
-            @click="handleClickItem"
-            >
-            {{ item.Text }}
-          </li>
+          <template v-for="item in optionItems">
+            <li
+              v-if="modelValue.indexOf(item.Id) == -1"
+              :data-optionid="item.Id"
+              @click="handleClickItem"
+              >
+              {{ item.Text }}
+            </li>
+          </template>
         </ul>
       </div>
     </div>
@@ -46,9 +50,12 @@ export default defineComponent({
   name: 'HistoMultiSelect',
   props: {
     id: { type: String, default: '' },
-    modelValue: { type: String, default: '' },
     onChange: { type: Function },
     innerLabel: { type: String, default: '' },
+    modelValue: {
+      type: Array as () => Array<string>,
+      default: () => []
+    },
     optionItems: {
       type: Array as () => Array<HistoInterfaceSelectOption>,
       default: () => []
@@ -66,52 +73,32 @@ export default defineComponent({
     handleClickItem (event:any) {
       const clickedElement:any = event.target
       const clickedOptionId:string = clickedElement.dataset.optionid
-      // add item in selected ones
-      for (const element of this.optionItems) {
-        if (element.Id == clickedOptionId) {
-          this.selectedItems.push(element)
-          break
-        }
-      }
-      // remove item from remaining ones
-      for (let i:number = 0; i < this.remainingItems.length; i++) {
-        if (this.remainingItems[i].Id == clickedOptionId) {
-          this.remainingItems.splice(i, 1)
-          break
-        }
+      this.modelValue.push(clickedOptionId)
+			this.$emit('update:modelValue', this.modelValue)
+      if (this.onChange !== undefined) {
+        this.onChange()
       }
     },
     handleRemoveItem (event:any) {
       const clickedElement:any = event.target
       const clickedOptionId:string = clickedElement.dataset.optionid
-      // add item in selected ones
-      for (const element of this.optionItems) {
-        if (element.Id == clickedOptionId) {
-          this.remainingItems.push(element)
-          break
+      for (let i:number = this.modelValue.length; i >= 0; i--) {
+        if (this.modelValue[i] == clickedOptionId) {
+          this.modelValue.splice(i, 1)
         }
       }
-      // remove item from remaining ones
-      for (let i:number = 0; i < this.selectedItems.length; i++) {
-        if (this.selectedItems[i].Id == clickedOptionId) {
-          this.selectedItems.splice(i, 1)
-          break
-        }
+			this.$emit('update:modelValue', this.modelValue)
+      if (this.onChange !== undefined) {
+        this.onChange()
       }
     }
   },
   computed: {
     strCountSelectedItems() {
-      if (this.selectedItems.length > 1) {
-        return this.selectedItems.length + ' sélectionnées'
+      if (this.modelValue.length > 1) {
+        return this.modelValue.length + ' sélectionnées'
       }
-      return this.selectedItems.length + ' sélectionnée'
-    }
-  },
-  mounted () {
-    this.remainingItems = []
-    for (const element of this.optionItems) {
-      this.remainingItems.push(element)
+      return this.modelValue.length + ' sélectionnée'
     }
   }/*,
   updated () {

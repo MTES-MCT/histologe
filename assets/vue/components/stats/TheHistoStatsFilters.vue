@@ -88,13 +88,18 @@ export default defineComponent({
     HistoDatePicker
   },
   data () {
+    let etiquettes = new Array<string>()
+    for (const element of store.state.filters.etiquettes) {
+      etiquettes.push(element)
+    }
+
     return {
 			sharedState: store.state,
       initFilters: {
         territoire: store.state.filters.territoire,
         communes: store.state.filters.communes,
         statut: store.state.filters.statut,
-        etiquettes: store.state.filters.etiquettes,
+        etiquettes: etiquettes,
         type: store.state.filters.type,
         dateRange: store.state.filters.dateRange,
         countRefused: store.state.filters.countRefused
@@ -119,13 +124,20 @@ export default defineComponent({
       (this.$refs['histofiltersdatepicker'] as any).updateDate(this.initFilters.dateRange)
       this.sharedState.filters.dateRange = this.initFilters.dateRange
 
+      this.sharedState.filters.etiquettes = new Array<string>()
+      for (const element of store.state.filters.etiquettes) {
+        this.sharedState.filters.etiquettes.push(element)
+      }
+
       // Other simple data
       this.sharedState.filters.territoire = this.initFilters.territoire
       this.sharedState.filters.communes = this.initFilters.communes
       this.sharedState.filters.statut = this.initFilters.statut
-      this.sharedState.filters.etiquettes = this.initFilters.etiquettes
       this.sharedState.filters.type = this.initFilters.type
       this.sharedState.filters.countRefused = this.initFilters.countRefused
+
+      console.log('this.sharedState.filters.etiquettes')
+      console.log(this.sharedState.filters.etiquettes)
 
       if (this.onChange !== undefined) {
 			  this.onChange()

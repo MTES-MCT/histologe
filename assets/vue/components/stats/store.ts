@@ -6,7 +6,7 @@ export const store = {
 			communes: [],
 			statut: 'all',
 			etiquettesList: new Array<HistoInterfaceSelectOption>(),
-			etiquettes: '',
+			etiquettes: new Array<string>(),
 			type: 'all',
 			dateRange: new Array<Date>(),
 			countRefused: false,
