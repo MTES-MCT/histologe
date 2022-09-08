@@ -133,6 +133,38 @@ class SignalementType extends AbstractType
                 'required' => false,
                 'placeholder' => '--- Selectionnez ---',
             ])
+            ->add('natureLogement', ChoiceType::class, [
+                'attr' => [
+                    'class' => 'fr-select',
+                ],
+                'choices' => [
+                    'Maison' => 'maison',
+                    'Appartement' => 'appartement',
+                    'Autre' => 'autre',
+                ],
+                'label_attr' => [
+                    'class' => 'fr-label',
+                ],
+                'row_attr' => [
+                    'class' => 'fr-select-group',
+                ],
+                'label' => 'Quelle est la nature du logement ?',
+                'placeholder' => '--- Selectionnez ---',
+            ])
+            ->add('superficie', TextType::class, [
+                'attr' => [
+                    'class' => 'fr-input',
+                ],
+                'label_attr' => [
+                    'class' => 'fr-label',
+                    'maxlength' => '25',
+                ],
+                'row_attr' => [
+                    'class' => 'fr-form-group fr-col-2',
+                ],
+                'label' => 'Quelle est la superficie du logement (en m²) ?',
+                'required' => false,
+            ])
             ->add('isSituationHandicap', ChoiceType::class, [
                 'choice_attr' => [
                     'class' => 'fr-radio',
@@ -222,7 +254,23 @@ class SignalementType extends AbstractType
                     'class' => 'fr-label',
                 ],
                 'label' => 'Avez-vous déposé un préavis de départ pour ce logement ?',
-                'help' => 'Cette information nous aide également à optimiser le temps de traitement de votre signalement.',
+                'help' => 'Cette information nous aide à optimiser le temps de traitement de votre signalement.',
+                'help_attr' => [
+                    'class' => 'fr-hint-text',
+                ],
+            ])
+            ->add('isRelogement', ChoiceType::class, [
+                'choices' => [
+                    'Oui' => 1,
+                    'Non' => 0,
+                    'Ne sais pas' => '',
+                ],
+                'expanded' => true,
+                'label_attr' => [
+                    'class' => 'fr-label',
+                ],
+                'label' => 'Avez-vous fait une demande de relogement ou de logement social ?',
+                'help' => 'Cette information nous aide à optimiser le temps de traitement de votre signalement.',
                 'help_attr' => [
                     'class' => 'fr-hint-text',
                 ],
