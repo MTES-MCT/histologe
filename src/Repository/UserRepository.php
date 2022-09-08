@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Territory;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -48,12 +49,19 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
     }
 
-    public function findAllInactive()
+    public function findAllInactive(Territory|null $territory)
     {
-        return $this->createQueryBuilder('u')
+        $queryBuilder = $this->createQueryBuilder('u');
+        $queryBuilder
             ->where('u.statut = :inactive')
-            ->setParameter('inactive', User::STATUS_INACTIVE)
-            ->getQuery()
-            ->getResult();
+            ->setParameter('inactive', User::STATUS_INACTIVE);
+
+        if (!empty($territory)) {
+            $queryBuilder
+                ->andWhere('u.territory = :territory')
+                ->setParameter('territory', $territory);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }

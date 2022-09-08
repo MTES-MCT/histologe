@@ -6,8 +6,11 @@ use App\Repository\PartnerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PartnerRepository::class)]
+#[UniqueEntity('email')]
 class Partner
 {
     public const DEFAULT_PARTNER = 'Administrateurs Histologe ALL';
@@ -18,6 +21,7 @@ class Partner
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank]
     private $nom;
 
     #[ORM\OneToMany(mappedBy: 'partner', targetEntity: User::class)]
@@ -36,6 +40,7 @@ class Partner
     private $affectations;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    #[Assert\Email]
     private $email;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]

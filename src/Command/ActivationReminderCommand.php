@@ -2,14 +2,14 @@
 
 namespace App\Command;
 
-use App\Entity\User;
+use App\Manager\TerritoryManager;
+use App\Manager\UserManager;
 use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
@@ -20,44 +20,39 @@ use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 )]
 class ActivationReminderCommand extends Command
 {
-    private EntityManagerInterface $em;
-    private NotificationService $notificationService;
-    private LoginLinkHandlerInterface $loginLinkHandler;
-
-    public function __construct(EntityManagerInterface $entityManager, NotificationService $notificationService, LoginLinkHandlerInterface $loginLinkHandler)
-    {
-        // best practices recommend to call the parent constructor first and
-        // then set your own properties. That wouldn't work in this case
-        // because configure() needs the properties set in this constructor
-        $this->em = $entityManager;
-        $this->notificationService = $notificationService;
-        $this->loginLinkHandler = $loginLinkHandler;
-
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private NotificationService $notificationService,
+        private LoginLinkHandlerInterface $loginLinkHandler,
+        private UserManager $userManager,
+        private TerritoryManager $territoryManager
+    ) {
         parent::__construct();
     }
 
     protected function configure(): void
     {
         $this
-            ->addArgument('arg1', InputArgument::OPTIONAL, 'Argument description')
-            ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description');
+            ->addArgument('zip', InputArgument::OPTIONAL);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $i = 0;
-        $em = $this->em;
         $io = new SymfonyStyle($input, $output);
-        $users = $em->getRepository(User::class)->findAllInactive();
+
+        $territory = $this->territoryManager->findOneBy(['zip' => $input->getArgument('zip')]);
+        $users = $this->userManager->getRepository()->findALlInactive($territory);
+
         foreach ($users as $user) {
             $loginLinkDetails = $this->loginLinkHandler->createLoginLink($user);
-            $this->notificationService->send(NotificationService::TYPE_ACCOUNT_ACTIVATION, $user->getEmail(), [
-                'link' => $loginLinkDetails->getUrl(),
-//                'reminder' => true
-            ]);
+            $this->notificationService->send(
+                NotificationService::TYPE_ACCOUNT_ACTIVATION,
+                $user->getEmail(),
+                ['link' => $loginLinkDetails->getUrl()],
+                $territory);
             ++$i;
         }
-        $em->flush();
         $io->success($i.' user(s) notifié(s) pour activation');
 
         return Command::SUCCESS;

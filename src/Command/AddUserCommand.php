@@ -5,6 +5,10 @@ namespace App\Command;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Factory\UserFactory;
+use App\Manager\PartnerManager;
+use App\Manager\TerritoryManager;
+use App\Manager\UserManager;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -19,7 +23,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[AsCommand(
     name: 'app:add-user',
-    description: 'Creates users and stores them in the database'
+    description: 'Create a user'
 )]
 class AddUserCommand extends Command
 {
@@ -46,6 +50,10 @@ class AddUserCommand extends Command
         private ValidatorInterface $validator,
         private UserRepository $users,
         private UserPasswordHasherInterface $hasher,
+        private UserFactory $userFactory,
+        private UserManager $userManager,
+        private PartnerManager $partnerManager,
+        private TerritoryManager $territoryManager
     ) {
         parent::__construct();
     }
@@ -94,8 +102,8 @@ class AddUserCommand extends Command
             $helper = $this->getHelper('question');
             $question = new ChoiceQuestion(
                 'Please select a role (default: ROLE_USER_PARTNER)',
-                self::ROLES,
-                self::ROLES[0]
+                User::ROLES,
+                User::ROLES[0]
             );
 
             $role = $helper->ask($input, $output, $question);
@@ -141,30 +149,27 @@ class AddUserCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $role = $input->getArgument('role');
-        $email = $input->getArgument('email');
-        $lastname = $input->getArgument('lastname');
-        $firstname = $input->getArgument('firstname');
         $partner = $input->getArgument('partner');
         $territory = $input->getArgument('territory');
 
-        if (!empty($partner)) {
-            $partner = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => $partner]);
+        if (empty($partner) && empty($territory)) {
+            $this->io->error('Partner or territory is missing');
+
+            return Command::FAILURE;
         }
 
-        if (!empty($territory)) {
-            $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => $territory]);
-        }
+        $partner = $this->partnerManager->findOneBy(['nom' => $partner]);
 
-        $user = (new User())
-            ->setPrenom(ucfirst($firstname))
-            ->setNom(ucfirst($lastname))
-            ->setEmail(mb_strtolower($email))
-            ->setRoles([$role])
-            ->setPartner($partner)
-            ->setTerritory($territory)
-            ->setIsGenerique(false)
-            ->setIsMailingActive(true);
+        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => $territory]);
+
+        $user = $this->userFactory->createInstanceFrom(
+            roleLabel: $input->getArgument('role'),
+            territory: $territory,
+            partner: $partner,
+            firstname: $input->getArgument('firstname'),
+            lastname: $input->getArgument('lastname'),
+            email: $input->getArgument('email')
+        );
 
         $password = $this->hasher->hashPassword($user, uniqid());
 
