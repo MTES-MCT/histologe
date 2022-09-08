@@ -9,6 +9,7 @@ use App\Manager\ManagerInterface;
 use App\Manager\PartnerManager;
 use App\Manager\UserManager;
 use App\Service\Parser\CsvParser;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class GridAffectationLoader
 {
@@ -23,7 +24,8 @@ class GridAffectationLoader
         private PartnerManager $partnerManager,
         private UserFactory $userFactory,
         private UserManager $userManager,
-        private ManagerInterface $manager
+        private ManagerInterface $manager,
+        private ValidatorInterface $validator,
     ) {
     }
 
@@ -43,16 +45,21 @@ class GridAffectationLoader
                 ++$this->metadata['nb_partners'];
             }
 
-            $user = $this->userFactory->createInstanceFrom(
-                roleLabel: $row[4],
-                territory: $territory,
-                partner: $partner,
-                firstname: $row[5],
-                lastname: $row[6],
-                email: $row[7]
-            );
-            $this->userManager->save($user, false);
-            ++$this->metadata['nb_users'];
+            $roleLbal = $row[4];
+            $email = $row[7];
+            if (!empty($roleLbal) && !empty($email)) {
+                $user = $this->userFactory->createInstanceFrom(
+                    roleLabel: $row[4],
+                    territory: $territory,
+                    partner: $partner,
+                    firstname: $row[5],
+                    lastname: $row[6],
+                    email: $row[7]
+                );
+
+                $this->userManager->save($user, false);
+                ++$this->metadata['nb_users'];
+            }
         }
 
         $this->manager->flush();
