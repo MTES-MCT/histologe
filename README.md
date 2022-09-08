@@ -6,9 +6,9 @@ Histologe est une application web écrite en PHP et utilisant le framework Symfo
 
 Cette application est déployé chez Scalingo, hébergé par Outscale.
 
-- Production: [https://histologe.beta.gouv.fr](histologe.beta.gouv.fr)
+- Production: [histologe.beta.gouv.fr](https://histologe.beta.gouv.fr)
 
-- Staging: [https://histologe-staging.incubateur.net](histologe-staging.incubateur.net)
+- Staging: [histologe-staging.incubateur.net](https://histologe-staging.incubateur.net)
 
 Les ressources statiques telles que les images et documents sont hébergés par OVH Cloud à travers le service Object Storage.  
 
