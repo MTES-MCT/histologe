@@ -64,6 +64,7 @@ describe('Simple test for the Signalement interface', () => {
 
     cy.get('#signalement_nbAdultes').select("2")
     cy.get('#signalement_nbEnfantsP6').select("3")
+    cy.get('#signalement_natureLogement').select("appartement")
     
     cy.get('#signalement-step-4-panel .fr-grid-row button.fr-fi-arrow-right-line').should('be.visible')
   })

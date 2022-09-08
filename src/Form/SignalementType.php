@@ -269,7 +269,7 @@ class SignalementType extends AbstractType
                 'label_attr' => [
                     'class' => 'fr-label',
                 ],
-                'label' => 'AAvez-vous fait une demande de relogement ou de logement social ?',
+                'label' => 'Avez-vous fait une demande de relogement ou de logement social ?',
                 'help' => 'Cette information nous aide à optimiser le temps de traitement de votre signalement.',
                 'help_attr' => [
                     'class' => 'fr-hint-text',
