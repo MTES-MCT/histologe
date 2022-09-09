@@ -36,6 +36,9 @@ mysql: ## Log to mysql container
 logs: ## Show container logs
 	@$(DOCKER_COMP) logs --follow
 
+console: ## Execute application command
+	@$(DOCKER_COMP) exec -it histologe_phpfpm $(SYMFONY) app:$(app)
+
 composer: ## Install composer dependencies
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer install --dev --no-interaction --optimize-autoloader
 	@echo "\033[33mInstall tools dependencies ...\033[0m"
@@ -47,7 +50,7 @@ clear-cache: ## Clear cache prod: make-clear-cache env=[dev|prod|test]
 cc: clear-cache
 
 create-db: ## Create database
-	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:database:drop --force --no-interaction 2>&1"
+	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:database:drop --force --no-interaction || true"
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:database:create --no-interaction"
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:migrations:migrate --no-interaction"
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:fixtures:load --no-interaction"
@@ -65,7 +68,7 @@ load-fixtures: ## Load database from fixtures
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:fixtures:load --no-interaction"
 
 create-db-test: ## Create test database
-	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=test doctrine:database:drop --force --no-interaction 2>&1 "
+	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=test doctrine:database:drop --force --no-interaction || true"
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=test doctrine:database:create --no-interaction"
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=test doctrine:migrations:migrate --no-interaction"
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=test doctrine:fixtures:load --no-interaction"

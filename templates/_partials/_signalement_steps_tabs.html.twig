@@ -489,6 +489,32 @@
                 </fieldset>
             </div>
             <div class="fr-form-group">
+                <fieldset class="fr-fieldset">
+                    <legend class="fr-fieldset__legend fr-text--regular">
+                        {{ form_label(form.natureLogement) }}
+                    </legend>
+                    <div class="fr-select-group">
+                        {{ form_widget(form.natureLogement) }}
+                        <p class="fr-error-text fr-hidden">
+                            Veuillez renseigner la nature du logement.
+                        </p>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="fr-form-group">
+                <fieldset class="fr-fieldset">
+                    <legend class="fr-fieldset__legend fr-text--regular">
+                        {{ form_label(form.superficie) }}
+                    </legend>
+                    <div class="fr-input-group">
+                        {{ form_widget(form.superficie) }}
+                        <p class="fr-error-text fr-hidden">
+                            Veuillez saisir la superficie du logement au format numérique.
+                        </p>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="fr-form-group">
                 <fieldset class="fr-fieldset fr-fieldset--inline">
                     <legend class="fr-fieldset__legend fr-text--regular">
                         {{ form_label(form.isAllocataire) }}
@@ -572,6 +598,25 @@
                     </div>
                     <p class="fr-error-text fr-hidden">
                         Veuillez préciser si vous avez déposé un préavis de départ.
+                    </p>
+                </fieldset>
+            </div>
+            <div class="fr-form-group">
+                <fieldset class="fr-fieldset fr-fieldset--inline">
+                    <legend class="fr-fieldset__legend fr-text--regular" id='signalement-preavis'>
+                        {{ form_label(form.isRelogement) }}
+                        {{ form_help(form.isRelogement) }}
+                    </legend>
+                    <div class="fr-fieldset__content">
+                        {% for key, choice in form.isRelogement.children %}
+                            <div class="fr-radio-group">
+                                {{ form_widget(choice) }}
+                                {{ form_label(choice) }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <p class="fr-error-text fr-hidden">
+                        Veuillez préciser si vous avez fait une demande de relogement.
                     </p>
                 </fieldset>
             </div>

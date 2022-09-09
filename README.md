@@ -174,7 +174,7 @@ npm run watch
 
 ### Pré-requis
 
-Des pre-requis sont nécéssaire pour communiquer avec SCALINGO depuis la CLI
+Des pre-requis sont nécéssaires pour communiquer avec SCALINGO depuis la CLI
 
 [Configuration Scalingo CLI](https://doc.scalingo.com/platform/cli/introduction)
 
