@@ -128,6 +128,14 @@ export default defineComponent({
         this.sharedState.filters.etiquettesList.push(optionItem)
       }
 
+      this.sharedState.filters.communesList = []
+      for (let id in requestResponse.list_communes) {
+        let optionItem = new HistoInterfaceSelectOption()
+        optionItem.Id = id
+        optionItem.Text = requestResponse.list_communes[id]
+        this.sharedState.filters.communesList.push(optionItem)
+      }
+
       this.sharedState.filters.canFilterTerritoires = requestResponse.can_filter_territoires === '1'
       if (this.sharedState.filters.canFilterTerritoires) {
         this.sharedState.filters.territoiresList = []

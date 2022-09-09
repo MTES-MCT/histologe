@@ -114,19 +114,30 @@ class BackStatistiquesController extends AbstractController
 
         // List of the Communnes linked to a User
         // - if user/admin of Territoire: only Communes from a Territoire (in the BAN)
-        // - if super admin: every Communes
+        // - if super admin: only if selected Territoire
         $this->ajaxResult['list_communes'] = [];
+        if (null !== $territory) {
+            $communesList = $territory->getCommunes();
+            /**
+             * @var Commune $communeItem
+             */
+            foreach ($communesList as $communeItem) {
+                $this->ajaxResult['list_communes'][$communeItem->getId()] = $communeItem->getNom();
+            }
+        }
 
         // List of the Etiquettes linked to a User
         // - if user/admin of Territoire: only Etiquettes from a Territoire
-        // - if super admin: every Etiquettes of the platform
-        $tagList = $tagsRepository->findAllActive($territory);
-        /*
-        * @var Tag $tagItem
-        */
+        // - if super admin: only if selected Territoire
         $this->ajaxResult['list_etiquettes'] = [];
-        foreach ($tagList as $tagItem) {
-            $this->ajaxResult['list_etiquettes'][$tagItem->getId()] = $tagItem->getLabel();
+        if (null !== $territory) {
+            $tagList = $tagsRepository->findAllActive($territory);
+            /*
+            * @var Tag $tagItem
+            */
+            foreach ($tagList as $tagItem) {
+                $this->ajaxResult['list_etiquettes'][$tagItem->getId()] = $tagItem->getLabel();
+            }
         }
     }
 

@@ -12,8 +12,10 @@
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
           <HistoSelect
             id="filter-communes"
+            v-model="sharedState.filters.communes"
             @update:modelValue="onChange(false)"
             inner-label="Communes"
+            :option-items=sharedState.filters.communesList
             />
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
@@ -69,7 +71,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent } from 'vue'
 import { store } from './store'
 import HistoSelect from '../common/HistoSelect.vue'
 import HistoMultiSelect from '../common/HistoMultiSelect.vue'

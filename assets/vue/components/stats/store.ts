@@ -3,6 +3,7 @@ import HistoInterfaceSelectOption from '../common/HistoInterfaceSelectOption'
 export const store = {
 	state: {
 		filters: {
+			communesList: new Array<HistoInterfaceSelectOption>(),
 			communes: [],
 			statut: 'all',
 			etiquettesList: new Array<HistoInterfaceSelectOption>(),
