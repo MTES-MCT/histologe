@@ -153,6 +153,8 @@ export default defineComponent({
   .histo-multi-select .selector-items .selector-items-remaining ul {
     list-style: none;
     padding: 0px;
+    max-height: 250px;
+    overflow: auto;
   }
   .histo-multi-select .selector-items .selector-items-remaining ul li {
     padding: .5rem 2.5rem .5rem 1rem;

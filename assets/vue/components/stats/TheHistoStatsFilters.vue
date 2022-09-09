@@ -10,7 +10,7 @@
     <div class="fr-container--fluid">
       <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
-          <HistoSelect
+          <HistoMultiSelect
             id="filter-communes"
             v-model="sharedState.filters.communes"
             @update:modelValue="onChange(false)"

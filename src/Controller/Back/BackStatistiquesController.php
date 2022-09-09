@@ -148,7 +148,7 @@ class BackStatistiquesController extends AbstractController
     {
         $territoryFilter = $territory ? $territory->getId() : null;
 
-        return $signalementRepository->findByFilters('', false, null, null, '', $territoryFilter, null);
+        return $signalementRepository->findByFilters('', false, null, null, '', $territoryFilter, null, null);
     }
 
     /**
@@ -200,7 +200,8 @@ class BackStatistiquesController extends AbstractController
      */
     private function buildQuery(Request $request, SignalementRepository $signalementRepository, ?Territory $territory)
     {
-        $communes = $request->get('communes');
+        $strCommunes = $request->get('communes');
+        $communes = json_decode($strCommunes);
         $this->filterStatut = $request->get('statut');
         $strEtiquettes = $request->get('etiquettes');
         $etiquettes = array_map(fn ($value): int => $value * 1, json_decode($strEtiquettes));
@@ -213,7 +214,7 @@ class BackStatistiquesController extends AbstractController
         $hasCountRefused = '1' == $countRefused;
         $territoryFilter = $territory ? $territory->getId() : null;
 
-        return $signalementRepository->findByFilters($this->filterStatut, $hasCountRefused, $this->filterDateStart, $this->filterDateEnd, $type, $territoryFilter, $etiquettes);
+        return $signalementRepository->findByFilters($this->filterStatut, $hasCountRefused, $this->filterDateStart, $this->filterDateEnd, $type, $territoryFilter, $etiquettes, $communes);
     }
 
     /**
