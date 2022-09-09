@@ -189,7 +189,7 @@ class SignalementRepository extends ServiceEntityRepository
     /**
      * Query called by statistics with filters.
      */
-    public function findByFilters(string $statut, bool $countRefused, ?DateTime $dateStart, ?DateTime $dateEnd, string $type, ?int $territory): array
+    public function findByFilters(string $statut, bool $countRefused, ?DateTime $dateStart, ?DateTime $dateEnd, string $type, ?int $territory, ?array $etiquettes): array
     {
         $qb = $this->createQueryBuilder('s');
 
@@ -258,10 +258,16 @@ class SignalementRepository extends ServiceEntityRepository
 
         if ($territory) {
             $qb->andWhere('s.territory = :territoryId')
-            ->setParameter('territoryId', $territory);
+                ->setParameter('territoryId', $territory);
+        }
+
+        if ($etiquettes) {
+            $qb->leftJoin('s.tags', 'tags');
+            $qb->andWhere('tags IN (:tags)')
+                ->setParameter('tags', $etiquettes);
         }
 
         return $qb->getQuery()
-            ->getResult();
+                ->getResult();
     }
 }
