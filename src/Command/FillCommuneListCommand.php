@@ -19,7 +19,11 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class FillCommuneListCommand extends Command
 {
     // File found here: https://www.data.gouv.fr/fr/datasets/codes-postaux/
-    private const COMMUNE_LIST_JSON_URL = 'https://unpkg.com/codes-postaux@3.6.0/codes-postaux.json';
+    private const COMMUNE_LIST_CSV_URL = 'https://www.data.gouv.fr/fr/datasets/r/3b318b9e-e11b-4d57-a3e0-8fdc7bfb601a';
+
+    private const INDEX_CSV_CODE_POSTAL = 0;
+    private const INDEX_CSV_CODE_COMMUNE = 1;
+    private const INDEX_CSV_NOM_COMMUNE = 2;
 
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -35,20 +39,30 @@ class FillCommuneListCommand extends Command
         $i = 0;
         $io = new SymfonyStyle($input, $output);
 
-        $fileResult = file_get_contents(self::COMMUNE_LIST_JSON_URL);
-        $listCommunes = json_decode($fileResult);
+        $fileStream = fopen(self::COMMUNE_LIST_CSV_URL, 'r');
+        if (!$fileStream) {
+            return Command::FAILURE;
+        }
 
         $existingInseeCode = [];
         $territory = null;
 
-        foreach ($listCommunes as $itemCommune) {
+        while (($data = fgetcsv($fileStream, 500)) !== false) {
+            $itemCodePostal = $data[self::INDEX_CSV_CODE_POSTAL];
+            // Skip first line
+            if ('codePostal' === $itemCodePostal) {
+                continue;
+            }
+            $itemCodeCommune = $data[self::INDEX_CSV_CODE_COMMUNE];
+            $itemNomCommune = $data[self::INDEX_CSV_NOM_COMMUNE];
+
             // Commune has already been inserted, let's skip
-            if (!empty($existingInseeCode[$itemCommune->codeCommune])) {
+            if (!empty($existingInseeCode[$itemCodeCommune])) {
                 continue;
             }
 
             // Find the zip code as filled in Territory table
-            $codePostal = $itemCommune->codePostal;
+            $codePostal = $itemCodePostal;
             $codePostal = str_pad($codePostal, 5, '0', \STR_PAD_LEFT);
             $zipCode = substr($codePostal, 0, 2);
             if ('97' == $zipCode) {
@@ -60,12 +74,14 @@ class FillCommuneListCommand extends Command
                 $territory = $this->territoryManager->findOneBy(['zip' => $zipCode]);
             }
 
-            $commune = $this->communeFactory->createInstanceFrom($territory, $itemCommune->nomCommune, $itemCommune->codePostal, $itemCommune->codeCommune);
+            $commune = $this->communeFactory->createInstanceFrom($territory, $itemNomCommune, $itemCodePostal, $itemCodeCommune);
             $this->communeManager->save($commune);
-            $existingInseeCode[$itemCommune->codeCommune] = 1;
+            $existingInseeCode[$itemCodeCommune] = 1;
 
             ++$i;
         }
+
+        fclose($fileStream);
 
         $io->success($i.' communes créées');
 
