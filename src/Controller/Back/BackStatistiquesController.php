@@ -122,7 +122,18 @@ class BackStatistiquesController extends AbstractController
              * @var Commune $communeItem
              */
             foreach ($communesList as $communeItem) {
-                $this->ajaxResult['list_communes'][$communeItem->getId()] = $communeItem->getNom();
+                // Controls over 3 Communes with Arrondissements that we don't want
+                $nomCommune = $communeItem->getNom();
+                if (preg_match('/(Marseille)(.)*(Arrondissement)/', $nomCommune)) {
+                    $nomCommune = 'Marseille';
+                }
+                if (preg_match('/(Lyon)(.)*(Arrondissement)/', $nomCommune)) {
+                    $nomCommune = 'Lyon';
+                }
+                if (preg_match('/(Paris)(.)*(Arrondissement)/', $nomCommune)) {
+                    $nomCommune = 'Paris';
+                }
+                $this->ajaxResult['list_communes'][$nomCommune] = $nomCommune;
             }
         }
 

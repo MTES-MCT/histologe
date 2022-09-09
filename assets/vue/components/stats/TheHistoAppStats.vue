@@ -131,7 +131,7 @@ export default defineComponent({
       this.sharedState.filters.communesList = []
       for (let id in requestResponse.list_communes) {
         let optionItem = new HistoInterfaceSelectOption()
-        optionItem.Id = requestResponse.list_communes[id]
+        optionItem.Id = id
         optionItem.Text = requestResponse.list_communes[id]
         this.sharedState.filters.communesList.push(optionItem)
       }
