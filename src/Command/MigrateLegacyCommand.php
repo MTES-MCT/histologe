@@ -14,6 +14,7 @@ use App\Entity\Tag;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\EventListener\ActivityListener;
+use App\Service\NotificationService;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Statement;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,9 +24,11 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
 #[AsCommand(
     name: 'app:migrate-legacy',
@@ -47,7 +50,9 @@ class MigrateLegacyCommand extends Command
         private ManagerRegistry $managerRegistry,
         private EntityManagerInterface $entityManager,
         private EventDispatcherInterface $eventDispatcher,
-        private ActivityListener $activityListener
+        private ActivityListener $activityListener,
+        private LoginLinkHandlerInterface $loginLinkHandler,
+        private NotificationService $notificationService,
     ) {
         parent::__construct();
     }
@@ -55,6 +60,13 @@ class MigrateLegacyCommand extends Command
     protected function configure(): void
     {
         $this->addArgument('territory_zip', InputArgument::REQUIRED, 'The territory of legacy platform');
+        $this->addOption(
+            'notify',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Would you like to notify the users? (y/n)',
+            'no'
+        );
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output)
@@ -75,14 +87,14 @@ class MigrateLegacyCommand extends Command
             return Command::FAILURE;
         }
 
-        $io->note(sprintf('You passed an argument: %s', $territoryZip));
+        $io->info(sprintf('You passed an argument: %s', $territoryZip));
         $this->territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => $territoryZip]);
 
         /* @var Connection $connection */
         $this->connection = $this->managerRegistry->getConnection('legacy_'.$territoryZip);
         $this->connection->connect();
 
-        $io->writeln('Migrate table...');
+        $io->info('Migrate table...');
         $this->loadConfig();
         $this->loadPartner();
         $this->loadUser();
@@ -98,6 +110,13 @@ class MigrateLegacyCommand extends Command
         $this->table->render();
         $io->success('line has been imported');
         $this->entityManager->getEventManager()->addEventSubscriber($this->activityListener);
+
+        if ('yes' === $input->getOption('notify')) {
+            $nbUserMailSent = $this->sendMailResetPassword();
+            $io->success($nbUserMailSent.' user(s) has/have been notified');
+        } else {
+            $io->info('Users have not been notified, please add option --notify=yes');
+        }
 
         return Command::SUCCESS;
     }
@@ -201,6 +220,7 @@ class MigrateLegacyCommand extends Command
 
             $user
                 ->setEmail($legacyUser['email'])
+                ->setTerritory($this->territory)
                 ->setRoles(json_decode($legacyUser['roles']))
                 ->setPartner($partner)
                 ->setNom($legacyUser['nom'])
@@ -612,5 +632,26 @@ class MigrateLegacyCommand extends Command
             $total += \count($signalement->getTags());
         }
         $this->table->addRow(['signalement_tag', $i, $total]);
+    }
+
+    private function sendMailResetPassword(): int
+    {
+        $users = $this->entityManager->getRepository(User::class)->findBy([
+            'territory' => $this->territory,
+        ]);
+        $i = 0;
+        /** @var User $user */
+        foreach ($users as $user) {
+            $loginLinkDetails = $this->loginLinkHandler->createLoginLink($user);
+            $this->notificationService->send(
+                NotificationService::TYPE_MIGRATION_PASSWORD,
+                $user->getEmail(),
+                ['link' => $loginLinkDetails->getUrl()],
+                $user->getTerritory()
+            );
+            ++$i;
+        }
+
+        return $i;
     }
 }

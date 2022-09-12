@@ -23,6 +23,7 @@ class NotificationService
     public const TYPE_NEW_COMMENT_BACK = 10;
     public const TYPE_CONTACT_FORM = 8;
     public const TYPE_ERROR_SIGNALEMENT = 9;
+    public const TYPE_MIGRATION_PASSWORD = 13;
 
     private MailerInterface $mailer;
 
@@ -83,6 +84,11 @@ class NotificationService
             self::TYPE_LOST_PASSWORD => [
                 'template' => 'lost_pass_email',
                 'subject' => 'Récupération de votre mot de passe',
+                'btntext' => 'Je créer un nouveau mot de passe',
+            ],
+            self::TYPE_MIGRATION_PASSWORD => [
+                'template' => 'migration_pass_email',
+                'subject' => 'Nouveau mot de passe sur Histologe',
                 'btntext' => 'Je créer un nouveau mot de passe',
             ],
             self::TYPE_SIGNALEMENT_NEW => [
