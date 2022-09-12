@@ -90,7 +90,7 @@ class FillCommuneListCommand extends Command
             }
 
             // Find the zip code as filled in Territory table
-            $zipCode = $this->getZipCodeByCodeCommune($itemCodeCommune);
+            $zipCode = self::getZipCodeByCodeCommune($itemCodeCommune);
 
             // Query for Territory only if different zip code
             if (null === $territory || $zipCode != $territory->getZip()) {
@@ -109,7 +109,7 @@ class FillCommuneListCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function getZipCodeByCodeCommune($itemCodeCommune)
+    public static function getZipCodeByCodeCommune($itemCodeCommune)
     {
         $codeCommune = $itemCodeCommune;
         $codeCommune = str_pad($codeCommune, 5, '0', \STR_PAD_LEFT);
