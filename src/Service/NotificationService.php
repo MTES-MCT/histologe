@@ -84,12 +84,12 @@ class NotificationService
             self::TYPE_LOST_PASSWORD => [
                 'template' => 'lost_pass_email',
                 'subject' => 'Récupération de votre mot de passe',
-                'btntext' => 'Je créer un nouveau mot de passe',
+                'btntext' => 'Je crée un nouveau mot de passe',
             ],
             self::TYPE_MIGRATION_PASSWORD => [
                 'template' => 'migration_pass_email',
                 'subject' => 'Nouveau mot de passe sur Histologe',
-                'btntext' => 'Je créer un nouveau mot de passe',
+                'btntext' => 'Je crée un nouveau mot de passe',
             ],
             self::TYPE_SIGNALEMENT_NEW => [
                 'template' => 'new_signalement_email',
