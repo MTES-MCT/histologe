@@ -8,6 +8,7 @@ use App\Manager\TerritoryManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -25,6 +26,8 @@ class FillCommuneListCommand extends Command
     private const INDEX_CSV_CODE_COMMUNE = 1;
     private const INDEX_CSV_NOM_COMMUNE = 2;
 
+    private const READ_LENGTH = 5000;
+
     public function __construct(
         private EntityManagerInterface $entityManager,
         private TerritoryManager $territoryManager,
@@ -34,10 +37,22 @@ class FillCommuneListCommand extends Command
         parent::__construct();
     }
 
+    protected function configure(): void
+    {
+        $this->addArgument('offset', InputArgument::REQUIRED, 'The offset where to start reading the file');
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $i = 0;
+        $nb = 0;
         $io = new SymfonyStyle($input, $output);
+
+        $offset = $input->getArgument('offset');
+        if (empty($offset)) {
+            $offset = 0;
+        }
+        $start_from = (int) $offset * self::READ_LENGTH;
+        $io->info(sprintf('Insertion will start on line %s', $start_from));
 
         $fileStream = fopen(self::COMMUNE_LIST_CSV_URL, 'r');
         if (!$fileStream) {
@@ -47,12 +62,25 @@ class FillCommuneListCommand extends Command
         $existingInseeCode = [];
         $territory = null;
 
-        while (($data = fgetcsv($fileStream, 500)) !== false) {
-            $itemCodePostal = $data[self::INDEX_CSV_CODE_POSTAL];
-            // Skip first line
-            if ('codePostal' === $itemCodePostal) {
+        // Skip first line
+        fgets($fileStream);
+        // Skip offset
+        for ($i = 0; $i < $start_from; ++$i) {
+            fgets($fileStream);
+        }
+
+        // Start reading
+        while (($data = fgetcsv($fileStream, 1000)) !== false) {
+            ++$nb;
+            if ($nb > self::READ_LENGTH) {
+                break;
+            }
+
+            // Not enough data, let's skip
+            if (\count($data) < 3) {
                 continue;
             }
+            $itemCodePostal = $data[self::INDEX_CSV_CODE_POSTAL];
             $itemCodeCommune = $data[self::INDEX_CSV_CODE_COMMUNE];
             $itemNomCommune = $data[self::INDEX_CSV_NOM_COMMUNE];
 
@@ -62,14 +90,9 @@ class FillCommuneListCommand extends Command
             }
 
             // Find the zip code as filled in Territory table
-            $codePostal = $itemCodePostal;
-            $codePostal = str_pad($codePostal, 5, '0', \STR_PAD_LEFT);
-            $zipCode = substr($codePostal, 0, 2);
-            if ('97' == $zipCode) {
-                $zipCode = substr($codePostal, 0, 3);
-            }
+            $zipCode = $this->getZipCodeByCodeCommune($itemCodeCommune);
 
-            // Skip querying for Territory if same zip code
+            // Query for Territory only if different zip code
             if (null === $territory || $zipCode != $territory->getZip()) {
                 $territory = $this->territoryManager->findOneBy(['zip' => $zipCode]);
             }
@@ -77,14 +100,24 @@ class FillCommuneListCommand extends Command
             $commune = $this->communeFactory->createInstanceFrom($territory, $itemNomCommune, $itemCodePostal, $itemCodeCommune);
             $this->communeManager->save($commune);
             $existingInseeCode[$itemCodeCommune] = 1;
-
-            ++$i;
         }
 
         fclose($fileStream);
 
-        $io->success($i.' communes créées');
+        $io->success(($nb - 1).' lignes traitées');
 
         return Command::SUCCESS;
+    }
+
+    private function getZipCodeByCodeCommune($itemCodeCommune)
+    {
+        $codeCommune = $itemCodeCommune;
+        $codeCommune = str_pad($codeCommune, 5, '0', \STR_PAD_LEFT);
+        $zipCode = substr($codeCommune, 0, 2);
+        if ('97' == $zipCode) {
+            $zipCode = substr($codeCommune, 0, 3);
+        }
+
+        return $zipCode;
     }
 }
