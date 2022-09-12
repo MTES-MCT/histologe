@@ -37,6 +37,7 @@ logs: ## Show container logs
 	@$(DOCKER_COMP) logs --follow
 
 console: ## Execute application command
+	@echo $(SYMFONY) app:$(app)
 	@$(DOCKER_COMP) exec -it histologe_phpfpm $(SYMFONY) app:$(app)
 
 composer: ## Install composer dependencies
