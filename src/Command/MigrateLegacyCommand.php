@@ -40,6 +40,8 @@ class MigrateLegacyCommand extends Command
         '81', '08', '29', '69', '71', '63', '47', '19', '2A', '31', '59', '64', '04', '06', '13',
     ];
 
+    public const TERRITORIES_WITHOUT_PARTNER_HISTOLOGE = ['31', '64', '71'];
+
     private Connection|null $connection;
     private Territory $territory;
     private array $results;
@@ -207,7 +209,9 @@ class MigrateLegacyCommand extends Command
 
         $i = 0;
         foreach ($legacyUserList as $legacyUser) {
-            if ('1' === $legacyUser['partenaire_id']) {
+            if ('1' === $legacyUser['partenaire_id'] &&
+                !\in_array($this->territory->getZip(), self::TERRITORIES_WITHOUT_PARTNER_HISTOLOGE)
+            ) {
                 $partner = $partner = $this->entityManager->getRepository(Partner::class)->find((int) $legacyUser['partenaire_id']);
             } else {
                 $partner = $this->entityManager->getRepository(Partner::class)->findOneBy([
