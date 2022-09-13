@@ -10,3 +10,5 @@ else
     echo "Load data fixtures..."
     composer dump-env dev && php bin/console -e dev doctrine:fixtures:load --no-interaction
 fi
+
+npm run build
