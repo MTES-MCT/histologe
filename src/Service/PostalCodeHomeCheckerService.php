@@ -9,7 +9,6 @@ class PostalCodeHomeCheckerService
     private static $list = [
         '04' => 'https://guichetunique04.lhi.histologe.fr',
         '06' => 'https://habitat-indigne06.histologe.fr',
-        '08' => 'https://ardennes.histologe.fr',
         '13' => 'https://habitatindigne13.histologe.fr',
         '19' => 'https://habitatindigne19.histologe.fr',
 
@@ -77,8 +76,6 @@ class PostalCodeHomeCheckerService
             ],
             'url' => 'https://havreseinemetropole.histologe.fr',
         ],
-
-        '81' => 'https://habitatindigne81.histologe.fr',
     ];
 
     public function __construct(private TerritoryRepository $territoryRepository)
