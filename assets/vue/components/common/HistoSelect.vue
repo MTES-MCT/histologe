@@ -66,9 +66,6 @@ export default defineComponent({
   },
   mounted () {
     this.refreshDisplayedItems(this.modelValue)
-  },
-  updated () {
-    this.refreshDisplayedItems(this.modelValue)
   }
 })
 </script>
