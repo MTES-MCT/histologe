@@ -67,10 +67,21 @@ class ActivityListener implements EventSubscriberInterface
                 });
                 $this->sendMail($entity, NotificationService::TYPE_NEW_COMMENT_BACK);
                 if ($entity->getIsPublic() && Signalement::STATUS_REFUSED !== $entity->getSignalement()->getStatut()) {
-                    $this->notifier->send(NotificationService::TYPE_NEW_COMMENT_FRONT, [$entity->getSignalement()->getMailDeclarant(), $entity->getSignalement()->getMailOccupant()], [
-                        'signalement' => $entity->getSignalement(),
-                        'lien_suivi' => $this->urlGenerator->generate('front_suivi_signalement', ['code' => $entity->getSignalement()->getCodeSuivi()], 0),
-                    ], $entity->getSignalement()->getTerritory());
+                    $to = [];
+                    $mailDeclarant = $entity->getSignalement()->getMailDeclarant();
+                    if (!empty($mailDeclarant)) {
+                        $to[] = $mailDeclarant;
+                    }
+                    $mailOccupant = $entity->getSignalement()->getMailOccupant();
+                    if (!empty($mailOccupant)) {
+                        $to[] = $mailOccupant;
+                    }
+                    if (!empty($to)) {
+                        $this->notifier->send(NotificationService::TYPE_NEW_COMMENT_FRONT, $to, [
+                            'signalement' => $entity->getSignalement(),
+                            'lien_suivi' => $this->urlGenerator->generate('front_suivi_signalement', ['code' => $entity->getSignalement()->getCodeSuivi()], 0),
+                        ], $entity->getSignalement()->getTerritory());
+                    }
                 }
             }
         }
@@ -91,7 +102,6 @@ class ActivityListener implements EventSubscriberInterface
                 }
             }
         }
-//        dd($this->tos);
     }
 
     private function createInAppNotification($user, $entity, $type)
