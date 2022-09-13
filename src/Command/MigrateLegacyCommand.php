@@ -37,7 +37,7 @@ use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 class MigrateLegacyCommand extends Command
 {
     public const LEGACY_TERRITORY = [
-        '81', '88', '29', '69', '71', '63', '47', '19', '2A', '31', '59', '64', '04', '06', '13',
+        '81', '08', '29', '69', '71', '63', '47', '19', '2A', '31', '59', '64', '04', '06', '13',
     ];
 
     private Connection|null $connection;
@@ -166,7 +166,7 @@ class MigrateLegacyCommand extends Command
     private function loadPartner(): void
     {
         /** @var Statement $statement */
-        $statement = $this->connection->prepare("SELECT * from partenaire where nom not like 'ADMINISTRATEURS Histologe'");
+        $statement = $this->connection->prepare("SELECT * from partenaire where nom not like '%Histologe%'");
         $legacyPartnerList = $statement->executeQuery()->fetchAllAssociative();
 
         $i = 0;
@@ -202,15 +202,19 @@ class MigrateLegacyCommand extends Command
     private function loadUser(): void
     {
         /** @var Statement $statement */
-        $statement = $this->connection->prepare('SELECT * from user where partenaire_id != 1');
+        $statement = $this->connection->prepare("SELECT * from user where email not like '%beta.gouv.fr%'");
         $legacyUserList = $statement->executeQuery()->fetchAllAssociative();
 
         $i = 0;
         foreach ($legacyUserList as $legacyUser) {
-            $partner = $this->entityManager->getRepository(Partner::class)->findOneBy([
-                'nom' => $this->mapping['partner'][$legacyUser['partenaire_id']],
-                'territory' => $this->territory,
-            ]);
+            if ('1' === $legacyUser['partenaire_id']) {
+                $partner = $partner = $this->entityManager->getRepository(Partner::class)->find((int) $legacyUser['partenaire_id']);
+            } else {
+                $partner = $this->entityManager->getRepository(Partner::class)->findOneBy([
+                    'nom' => $this->mapping['partner'][$legacyUser['partenaire_id']],
+                    'territory' => $this->territory,
+                ]);
+            }
 
             $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $legacyUser['email']]);
             if (null === $user) {
@@ -220,8 +224,8 @@ class MigrateLegacyCommand extends Command
 
             $user
                 ->setEmail($legacyUser['email'])
-                ->setTerritory($this->territory)
-                ->setRoles(json_decode($legacyUser['roles']))
+                ->setTerritory('1' !== $legacyUser['partenaire_id'] ? $this->territory : null)
+                ->setRoles('1' !== $legacyUser['partenaire_id'] ? json_decode($legacyUser['roles'], true) : [User::ROLES['Super Admin']])
                 ->setPartner($partner)
                 ->setNom($legacyUser['nom'])
                 ->setPrenom($legacyUser['prenom'])
