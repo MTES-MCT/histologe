@@ -130,6 +130,11 @@
         "symfony": {
             "allow-contrib": false,
             "require": "6.0.*"
+        },
+        "paas": {
+            "compile": [
+                "npm run build"
+            ]
         }
     }
 }
