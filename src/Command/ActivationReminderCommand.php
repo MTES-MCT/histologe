@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 #[AsCommand(
     name: 'app:activation-reminder',
@@ -23,9 +23,10 @@ class ActivationReminderCommand extends Command
     public function __construct(
         private EntityManagerInterface $entityManager,
         private NotificationService $notificationService,
-        private LoginLinkHandlerInterface $loginLinkHandler,
         private UserManager $userManager,
-        private TerritoryManager $territoryManager
+        private TerritoryManager $territoryManager,
+        private RouterInterface $router,
+        private string $hostUrl
     ) {
         parent::__construct();
     }
@@ -40,16 +41,13 @@ class ActivationReminderCommand extends Command
     {
         $i = 0;
         $io = new SymfonyStyle($input, $output);
-
         $territory = $this->territoryManager->findOneBy(['zip' => $input->getArgument('zip')]);
         $users = $this->userManager->getRepository()->findALlInactive($territory);
-
         foreach ($users as $user) {
-            $loginLinkDetails = $this->loginLinkHandler->createLoginLink($user);
             $this->notificationService->send(
                 NotificationService::TYPE_ACCOUNT_ACTIVATION,
                 $user->getEmail(),
-                ['link' => $loginLinkDetails->getUrl()],
+                ['link' => $this->hostUrl.$this->router->generate('login_activation')],
                 $territory);
             ++$i;
         }

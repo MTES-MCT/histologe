@@ -28,7 +28,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 #[AsCommand(
     name: 'app:migrate-legacy',
@@ -53,8 +53,9 @@ class MigrateLegacyCommand extends Command
         private EntityManagerInterface $entityManager,
         private EventDispatcherInterface $eventDispatcher,
         private ActivityListener $activityListener,
-        private LoginLinkHandlerInterface $loginLinkHandler,
         private NotificationService $notificationService,
+        private RouterInterface $router,
+        private string $hostUrl,
     ) {
         parent::__construct();
     }
@@ -650,11 +651,10 @@ class MigrateLegacyCommand extends Command
         $i = 0;
         /** @var User $user */
         foreach ($users as $user) {
-            $loginLinkDetails = $this->loginLinkHandler->createLoginLink($user);
             $this->notificationService->send(
                 NotificationService::TYPE_MIGRATION_PASSWORD,
                 $user->getEmail(),
-                ['link' => $loginLinkDetails->getUrl()],
+                ['link' => $this->hostUrl.$this->router->generate('login_mdp_perdu')],
                 $user->getTerritory()
             );
             ++$i;

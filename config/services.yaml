@@ -55,7 +55,7 @@ services:
 
     App\Command\ActivationReminderCommand:
         arguments:
-            $loginLinkHandler: '@security.authenticator.login_link_handler.main'
+            $hostUrl: '%env(resolve:HISTOLOGE_URL)%'
 
     App\Command\GetGeolocCommand:
         arguments:
@@ -77,4 +77,4 @@ services:
 
     App\Command\MigrateLegacyCommand:
         arguments:
-            $loginLinkHandler: '@security.authenticator.login_link_handler.main'
+            $hostUrl: '%env(resolve:HISTOLOGE_URL)%'
