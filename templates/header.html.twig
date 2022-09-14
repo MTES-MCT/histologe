@@ -11,13 +11,8 @@
                         </div>
                         <div class="fr-header__operator">
                             <a href="{{ path('home') }}" title="Accueil - HISTOLOGE">
-                            {% if config.get ? config.get.logotype is not empty %}
-                                <img src="{{ asset('img/'~config.get.logotype) }}" class="fr-responsive-img"
-                                     alt="HISTOLOGE" style="max-height: 75px">
-                            {% else %}
                                 <img src={{ asset('img/logo_145.png') }} class="fr-responsive-img" width="100%"
                                      alt="HISTOLOGE">
-                            {% endif %}
                             </a>
                         </div>
 
