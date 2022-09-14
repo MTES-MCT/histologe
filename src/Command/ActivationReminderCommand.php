@@ -10,8 +10,10 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 #[AsCommand(
@@ -26,6 +28,7 @@ class ActivationReminderCommand extends Command
         private UserManager $userManager,
         private TerritoryManager $territoryManager,
         private RouterInterface $router,
+        private ParameterBagInterface $parameterBag,
         private string $hostUrl
     ) {
         parent::__construct();
@@ -34,7 +37,8 @@ class ActivationReminderCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('zip', InputArgument::OPTIONAL);
+            ->addArgument('zip', InputArgument::REQUIRED)
+            ->addOption('debug', null, InputOption::VALUE_NONE, 'Only notification user will receive the mail');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -43,10 +47,12 @@ class ActivationReminderCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $territory = $this->territoryManager->findOneBy(['zip' => $input->getArgument('zip')]);
         $users = $this->userManager->getRepository()->findALlInactive($territory);
+        $debugOption = $input->getOption('debug');
+
         foreach ($users as $user) {
             $this->notificationService->send(
                 NotificationService::TYPE_ACCOUNT_ACTIVATION,
-                $user->getEmail(),
+                !$debugOption ? $user->getEmail() : $this->parameterBag->get('admin_email'),
                 ['link' => $this->hostUrl.$this->router->generate('login_activation')],
                 $territory);
             ++$i;
