@@ -116,7 +116,7 @@ class MigrateLegacyCommand extends Command
         $this->territory->setIsActive(true);
         $this->entityManager->persist($this->territory);
         $this->entityManager->flush();
-        $io->success($this->territory->getName().' hsa been activaeted');
+        $io->success($this->territory->getName().' has been activaeted');
         $this->entityManager->getEventManager()->addEventSubscriber($this->activityListener);
 
         if ('yes' === $input->getOption('notify')) {
