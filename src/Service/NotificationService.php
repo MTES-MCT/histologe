@@ -45,9 +45,6 @@ class NotificationService
         if (!empty($params['attach'])) {
             $message->attachFromPath($params['attach']);
         }
-        if (!empty($territory) && null !== $territory->getConfig() && $territory->getConfig()?->getEmailReponse() ?? isset($params['reply'])) {
-            $message->replyTo($params['reply'] ?? $territory->getConfig()->getEmailReponse());
-        }
         try {
             $this->mailer->send($message);
 
@@ -60,6 +57,7 @@ class NotificationService
     private function renderMailContentWithParamsByType(int $type, array $params, Territory|null $territory): NotificationEmail
     {
         $config = $this->config($type);
+        $config['territory'] = $territory;
         $notification = new NotificationEmail();
         $notification->markAsPublic();
 
