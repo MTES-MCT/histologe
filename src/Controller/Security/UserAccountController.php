@@ -75,16 +75,20 @@ class UserAccountController extends AbstractController
             $user = $userRepository->findOneBy(['email' => $email]);
             $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
             $loginLink = $loginLinkDetails->getUrl();
-            $notificationService->send(NotificationService::TYPE_ACCOUNT_ACTIVATION, $email, ['link' => $loginLink], $user->getTerritory());
-            // END NOTIFICATION
+            $notificationService->send(
+                NotificationService::TYPE_LOST_PASSWORD,
+                $email,
+                ['link' => $loginLink],
+                $user->getTerritory()
+            );
+
             return $this->render('security/login_link_sent.html.twig', [
                 'title' => 'Lien de récupération envoyé !',
                 'email' => $email,
             ]);
         }
 
-        // if it's not submitted, render the "login" form
-        return $this->render('security/login_activation.html.twig', [
+        return $this->render('security/reset_password.html.twig', [
             'title' => $title,
             'actionTitle' => 'Récupération de mot de passe',
             'actionText' => "afin de récupèrer l'accès à",
