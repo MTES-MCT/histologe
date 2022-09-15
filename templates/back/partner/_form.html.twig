@@ -245,6 +245,9 @@
         </div>
         <div class="fr-input-group fr-hidden"></div>
     </div>
+    <div class="fr-input-group">
+        <span class=" partner_user_last_login_value">Dernière connexion : {{ user.getLastLoginAtStr('d/m/Y') }}</span>
+    </div>
 {% endfor %}
 <hr>
 <div id="partner_add_user_placeholder"></div>
