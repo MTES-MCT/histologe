@@ -91,7 +91,7 @@ class FrontController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $notificationService->send(
                 NotificationService::TYPE_CONTACT_FORM,
-                [$this->getParameter('notifications_email'), $configurationService->get()->getEmailReponse()],
+                $this->getParameter('notifications_email'),
                 [
                     'nom' => $form->get('nom')->getData(),
                     'mail' => $form->get('email')->getData(),

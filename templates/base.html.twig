@@ -11,7 +11,7 @@
     <title>Histologe - {% block title %}{% endblock %}</title>
     <meta name="description" content="Signaler vos problèmes de logement.">
     <!-- Facebook Meta Tags -->
-    <meta property="og:url" content="\\{{ config.get.urlTerritoire }}">
+    <meta property="og:url" content="https://histologe.beta.gouv.fr/">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Histologe">
     <meta property="og:description" content="Signaler vos problèmes de logement.">
@@ -36,8 +36,6 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light-border.css"/>
     {% block stylesheets %}{% endblock %}
-    {{ config.get.trackingCode ? config.get.tagManagerCode|raw : '' }}
-    {{ config.get.tagManagerCode ? config.get.tagManagerCode|raw :'' }}
 </head>
 
 {% set statuses = {

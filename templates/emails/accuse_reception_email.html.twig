@@ -2,19 +2,15 @@
 
 {% block body %}
     <p>Bonjour {{ signalement.nomOccupant|upper ~' '~signalement.prenomOccupant|capitalize }}</p>
-    {% if config.get.mailAr and config.get.mailAr is not null %}
-        <p>{{ config.get.mailAr|raw }}</p>
-    {% else %}
-        <p>Nous avons bien reçu votre signalement concernant le logement situé <br>
-            <strong>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</strong>
-            <br>Vous recevrez par email les mises à jour concernant votre signalement.</p>
-        {% if not signalement.isProprioAverti %}
-            <p>
-                Vous avez mentionné ne pas encore avoir alerté votre propriétaire. Il est nécessaire de l'informer de la
-                situation. Vous trouverez ci-joint un modèle de courrier pour alerter votre propriétaire.
-            </p>
-            <p><strong>Si vous êtes propriétaire occupant, merci de ne pas tenir compte de la demande d'information et
-                    du fichier ci-joint</strong></p>
-        {% endif %}
+    <p>Nous avons bien reçu votre signalement concernant le logement situé <br>
+        <strong>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</strong>
+        <br>Vous recevrez par email les mises à jour concernant votre signalement.</p>
+    {% if not signalement.isProprioAverti %}
+        <p>
+            Vous avez mentionné ne pas encore avoir alerté votre propriétaire. Il est nécessaire de l'informer de la
+            situation. Vous trouverez ci-joint un modèle de courrier pour alerter votre propriétaire.
+        </p>
+        <p><strong>Si vous êtes propriétaire occupant, merci de ne pas tenir compte de la demande d'information et
+                du fichier ci-joint</strong></p>
     {% endif %}
 {% endblock %}
