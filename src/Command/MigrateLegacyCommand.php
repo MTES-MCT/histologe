@@ -42,6 +42,12 @@ class MigrateLegacyCommand extends Command
 
     public const TERRITORIES_WITHOUT_PARTNER_HISTOLOGE = ['31', '64', '71'];
 
+    public const LEGACY_ROLES = [
+        'ROLE_ADMIN_TERRITOIRE' => 'ROLE_ADMIN_TERRITORY',
+        'ROLE_ADMIN_PARTENAIRE' => 'ROLE_ADMIN_PARTNER',
+        'ROLE_USER_PARTENAIRE' => 'ROLE_USER_PARTNER',
+    ];
+
     private Connection|null $connection;
     private Territory $territory;
     private array $results;
@@ -215,9 +221,11 @@ class MigrateLegacyCommand extends Command
 
         $i = 0;
         foreach ($legacyUserList as $legacyUser) {
-            if ('1' === $legacyUser['partenaire_id'] &&
-                !\in_array($this->territory->getZip(), self::TERRITORIES_WITHOUT_PARTNER_HISTOLOGE)
-            ) {
+            /** @var Statement $statement */
+            $statement = $this->connection->prepare("SELECT id, nom from partenaire where nom like '%histologe%'");
+            $histologePartner = $statement->executeQuery()->fetchAssociative();
+
+            if ($histologePartner['id'] === $legacyUser['partenaire_id']) {
                 $partner = $partner = $this->entityManager->getRepository(Partner::class)->find((int) $legacyUser['partenaire_id']);
             } else {
                 $partner = $this->entityManager->getRepository(Partner::class)->findOneBy([
@@ -234,8 +242,8 @@ class MigrateLegacyCommand extends Command
 
             $user
                 ->setEmail($legacyUser['email'])
-                ->setTerritory('1' !== $legacyUser['partenaire_id'] ? $this->territory : null)
-                ->setRoles('1' !== $legacyUser['partenaire_id'] ? json_decode($legacyUser['roles'], true) : [User::ROLES['Super Admin']])
+                ->setTerritory($histologePartner['id'] !== $legacyUser['partenaire_id'] ? $this->territory : null)
+                ->setRoles($histologePartner['id'] !== $legacyUser['partenaire_id'] ? $this->mapRoles($legacyUser['roles']) : [User::ROLES['Super Admin']])
                 ->setPartner($partner)
                 ->setNom($legacyUser['nom'])
                 ->setPrenom($legacyUser['prenom'])
@@ -666,5 +674,15 @@ class MigrateLegacyCommand extends Command
         }
 
         return $i;
+    }
+
+    private function mapRoles(string $roles)
+    {
+        $roleList = json_decode($roles, true);
+        $roles = array_map(function ($role) {
+            return self::LEGACY_ROLES[$role];
+        }, $roleList);
+
+        return $roles;
     }
 }
