@@ -1,6 +1,39 @@
 doctrine:
     dbal:
-        url: '%env(resolve:DATABASE_URL)%'
+        default_connection: default
+        connections:
+            default:
+                url: '%env(resolve:DATABASE_URL)%'
+            legacy_81: # Tarn
+                url: '%env(resolve:LEGACY_81_DATABASE_URL)%'
+            legacy_08: # Ardennes
+                url: '%env(resolve:LEGACY_08_DATABASE_URL)%'
+            legacy_29: # Finistere
+                url: '%env(resolve:LEGACY_29_DATABASE_URL)%'
+            legacy_69: # Rhone
+                url: '%env(resolve:LEGACY_69_DATABASE_URL)%'
+            legacy_71: # Saone et Loire
+                url: '%env(resolve:LEGACY_71_DATABASE_URL)%'
+            legacy_63: # Puy de dome
+                url: '%env(resolve:LEGACY_63_DATABASE_URL)%'
+            legacy_47: # Lot et Garonne
+                url: '%env(resolve:LEGACY_47_DATABASE_URL)%'
+            legacy_19: # Correze
+                url: '%env(resolve:LEGACY_19_DATABASE_URL)%'
+            legacy_2A: #Corse
+                url: '%env(resolve:LEGACY_2AB_DATABASE_URL)%'
+            legacy_31: #Haute Garonne
+                url: '%env(resolve:LEGACY_31_DATABASE_URL)%'
+            legacy_59:  # Metropole de lille
+                url: '%env(resolve:LEGACY_59_DATABASE_URL)%'
+            legacy_64: # Pau
+                url: '%env(resolve:LEGACY_64_DATABASE_URL)%'
+            legacy_04: # Alpes Haute Provence
+                url: '%env(resolve:LEGACY_04_DATABASE_URL)%'
+            legacy_06: # Alpes Maritime
+                url: '%env(resolve:LEGACY_06_DATABASE_URL)%'
+            legacy_13: # Bouches du Rhone
+                url: '%env(resolve:LEGACY_13_DATABASE_URL)%'
 
         # IMPORTANT: You MUST configure your server version,
         # either here or in the DATABASE_URL env var (see .env file)

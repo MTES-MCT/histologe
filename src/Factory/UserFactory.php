@@ -14,11 +14,11 @@ class UserFactory
 
     public function createInstanceFrom(
         string $roleLabel,
-        Territory $territory,
-        Partner $partner,
-        string $firstname = null,
-        string $lastname = null,
-        string $email = null): User
+        ?Partner $partner,
+        ?Territory $territory,
+        ?string $firstname,
+        ?string $lastname,
+        ?string $email): User
     {
         return (new User())
             ->setRoles([User::ROLES[$roleLabel]])

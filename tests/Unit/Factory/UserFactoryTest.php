@@ -43,4 +43,38 @@ class UserFactoryTest extends KernelTestCase
         $this->assertEquals($user->getIsGenerique(), false);
         $this->assertEquals($user->getStatut(), User::STATUS_INACTIVE);
     }
+
+    public function testCreateUserAdminInstanceWithoutPartnerAndTerritory(): void
+    {
+        self::bootKernel();
+        /** @var ValidatorInterface $validator */
+        $validator = static::getContainer()->get(ValidatorInterface::class);
+        /** @var UserPasswordHasherInterface $hasher */
+        $hasher = static::getContainer()->get(UserPasswordHasherInterface::class);
+
+        $territory = new Territory();
+        $partner = new Partner();
+
+        $user = (new UserFactory())->createInstanceFrom(
+            partner: null,
+            territory: null,
+            roleLabel: 'Super Admin',
+            firstname: 'John',
+            lastname: 'Doe',
+            email: 'john.doe@example.com'
+        );
+
+        $user->setPassword($hasher->hashPassword($user, 'password'));
+
+        $errors = $validator->validate($user);
+        $this->assertEmpty($errors, (string) $errors);
+
+        $this->assertInstanceOf(User::class, $user);
+
+        $this->assertEquals($user->getIsMailingActive(), true);
+        $this->assertEquals($user->getIsGenerique(), false);
+        $this->assertEquals($user->getStatut(), User::STATUS_INACTIVE);
+        $this->assertEquals($user->getTerritory(), null);
+        $this->assertEquals($user->getPartner(), null);
+    }
 }
