@@ -264,6 +264,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->lastLoginAt;
     }
 
+    public function getLastLoginAtStr($format): string
+    {
+        if (!empty($this->lastLoginAt)) {
+            return $this->lastLoginAt->format($format);
+        }
+
+        return '';
+    }
+
     public function setLastLoginAt(?DateTimeImmutable $lastLoginAt): self
     {
         $this->lastLoginAt = $lastLoginAt;

@@ -18,8 +18,6 @@ class PostalCodeHomeCheckerService
             ],
             'url' => 'https://signalicasa.histologe.fr',
         ],
-
-        '29' => 'https://habitatindigne29.histologe.fr',
         '31' => 'https://haute-garonne.histologe.fr',
         '38' => 'https://isere.histologe.fr',
 
@@ -55,17 +53,6 @@ class PostalCodeHomeCheckerService
             ],
             'url' => 'https://agglo-pau.histologe.fr',
         ],
-
-        '69' => [
-            'list' => [
-                '69000', '69001', '69002', '69003', '69004', '69005', '69006', '69007', '69008', '69009', '69100',
-                '69199', '69205', '69259', '69266', '69290', '69300', '69520', '69600', '69700',
-            ],
-            'url' => 'https://rhone69.histologe.fr',
-        ],
-
-        '71' => 'https://habitatindigne71.histologe.fr',
-
         '76' => [
             'list' => [
                 '76014', '76017', '76064', '76079', '76117', '76167', '76169', '76196', '76206', '76238', '76239',
