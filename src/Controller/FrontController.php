@@ -62,26 +62,6 @@ class FrontController extends AbstractController
         ]);
     }
 
-    #[Route('/statistiques', name: 'front_statistiques')]
-    public function statistiques(): Response
-    {
-        $title = 'Statistiques';
-
-        $stats = [];
-        $stats['total'] = '11 979';
-        $stats['pris_en_compte'] = '99,8';
-        $stats['clotures'] = '68,9';
-        $stats['nb_territoires'] = '15';
-        $stats['moyenne_nb_desordres_par_signalement'] = '4,4';
-        $stats['moyenne_jours_resolution'] = '225';
-        $stats['moyenne_criticite'] = '28,9';
-
-        return $this->render('front/statistiques.html.twig', [
-            'title' => $title,
-            'stats' => $stats,
-        ]);
-    }
-
     #[Route('/contact', name: 'front_contact')]
     public function contact(Request $request, NotificationService $notificationService, ConfigurationService $configurationService): Response
     {

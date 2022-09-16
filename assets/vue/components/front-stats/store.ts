@@ -11,6 +11,7 @@ export const store = {
 			countTerritory: 0,
 			percentValidation: 0,
 			percentCloture: 0,
+			countSignalementPerTerritory: Object,
 			countSignalementPerMonth: Object,
 			countSignalementPerStatut: Object,
 			countSignalementPerSituation: Object,

@@ -22,6 +22,7 @@ import { store } from './store'
 import { requests } from './requests'
 import TheHistoFrontStatsGlobal from './TheHistoFrontStatsGlobal.vue'
 import TheHistoFrontStatsTerritory from './TheHistoFrontStatsTerritory.vue'
+import HistoInterfaceSelectOption from '../common/HistoInterfaceSelectOption'
 const initElements:any = document.querySelector('#app-front-stats')
 
 export default defineComponent({
@@ -34,12 +35,13 @@ export default defineComponent({
     return {
 			sharedState: store.state,
 			sharedProps: store.props,
-      loadingInit: false,
+      loadingInit: true,
     }
   },
 	created () {
     if (initElements !== null) {
 		  this.sharedProps.ajaxurl = initElements.dataset.ajaxurl
+      requests.filter(this.handleRefresh)
 
     } else {
       alert('Error while loading front statistics')
@@ -51,14 +53,33 @@ export default defineComponent({
      * @param requestResponse 
      */
     async handleRefresh (requestResponse: any) {
+      this.refreshFilters(requestResponse)
       this.refreshStats(requestResponse)
 
       const wasInit = this.loadingInit
       this.loadingInit = false
     },
 
+    refreshFilters (requestResponse: any) {
+      this.sharedState.filters.territoiresList = []
+      let optionAllItem = new HistoInterfaceSelectOption()
+      optionAllItem.Id = 'all'
+      optionAllItem.Text = 'Tous'
+      this.sharedState.filters.territoiresList.push(optionAllItem)
+      for (let id in requestResponse.list_territoires) {
+        let optionItem = new HistoInterfaceSelectOption()
+        optionItem.Id = id
+        optionItem.Text = requestResponse.list_territoires[id]
+        this.sharedState.filters.territoiresList.push(optionItem)
+      }
+    },
+
     refreshStats (requestResponse: any) {
-      
+      this.sharedState.stats.countSignalement = requestResponse.count_signalement
+      this.sharedState.stats.countTerritory = requestResponse.count_territory
+      this.sharedState.stats.percentValidation = requestResponse.percent_validation
+      this.sharedState.stats.percentCloture = requestResponse.percent_cloture
+      this.sharedState.stats.countSignalementPerTerritory = requestResponse.signalement_per_territoire
     }
   }
 })

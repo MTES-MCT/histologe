@@ -17,7 +17,10 @@
           </TheHistoFrontStatsDetailsItem>
         </div>
         <div class="fr-col-12 fr-col-lg-9">
-          Carte
+          Carte<br><br><br>
+          <div v-for="territoryStat in sharedState.stats.countSignalementPerTerritory">
+            {{ territoryStat.name }} ({{ territoryStat.zip}}) : {{ territoryStat.count }}
+          </div>
         </div>
       </div>
     </div>

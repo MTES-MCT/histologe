@@ -3,10 +3,11 @@ import { store } from './store'
 
 export const requests = {
 	/**
-	 * Get front statistics
+	 * Filter front statistics
 	 */
-	get(functionReturn: Function) {
+	 filter(functionReturn: Function) {
 		let data = new FormData()
+		data.append('territoire', store.state.filters.territoire)
 
 		axios
 			.post(store.props.ajaxurl, data, { timeout: 10000 })
