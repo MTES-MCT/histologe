@@ -1,15 +1,17 @@
 <template>
   <div
     id="app-front-stats"
-    class="histo-app-stats fr-p-5v"
+    class="histo-app-front-stats fr-pt-5w"
 	  :data-ajaxurl="sharedProps.ajaxurl"
     >
     <h1>Histologe en quelques chiffres</h1>
     <div v-if="loadingInit" class="loading fr-m-10w">
       Initialisation des statistiques...
     </div>
+
     <div v-else>
-      Coucou !
+      <TheHistoFrontStatsGlobal />
+      <TheHistoFrontStatsTerritory />
     </div>
   </div>
 </template>
@@ -18,17 +20,21 @@
 import { defineComponent } from 'vue'
 import { store } from './store'
 import { requests } from './requests'
+import TheHistoFrontStatsGlobal from './TheHistoFrontStatsGlobal.vue'
+import TheHistoFrontStatsTerritory from './TheHistoFrontStatsTerritory.vue'
 const initElements:any = document.querySelector('#app-front-stats')
 
 export default defineComponent({
   name: 'TheHistoAppFrontStats',
   components: {
+    TheHistoFrontStatsGlobal,
+    TheHistoFrontStatsTerritory
   },
   data () {
     return {
 			sharedState: store.state,
 			sharedProps: store.props,
-      loadingInit: true,
+      loadingInit: false,
     }
   },
 	created () {
@@ -59,8 +65,12 @@ export default defineComponent({
 </script>
 
 <style>
-  .histo-app-stats {
-    background-color: var(--background-alt-grey);
+  .histo-app-front-stats {
+    background-color: '#FFF';
+  }
+  .histo-app-front-stats h1 {
+    text-align: center;
+    color: var(--blue-france-sun-113-625);
   }
 
   .histo-app-stats a {
