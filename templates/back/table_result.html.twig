@@ -64,7 +64,7 @@
                class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-edit-fill"></a>
             {% if is_granted('ROLE_ADMIN_TERRITORY') %}
                 <button data-delete="{{ path('back_signalement_delete',{uuid:signalement.uuid}) }}"
-                        data-token="{{ csrf_token('signalement_delete_'~signalement.id) }}"
+                        data-token="{{ signalements.csrfTokens[signalement.uuid] }}"
                         class="fr-btn fr-btn--sm fr-btn--danger fr-fi-delete-fill signalement-row-delete"></button>
             {% endif %}
         </td>
