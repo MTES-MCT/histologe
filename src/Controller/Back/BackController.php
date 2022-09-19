@@ -23,6 +23,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 #[Route('/bo')]
 class BackController extends AbstractController
@@ -30,8 +31,21 @@ class BackController extends AbstractController
     private $req;
     private $iterator;
 
+    public function __construct(private CsrfTokenManagerInterface $csrfTokenManager)
+    {
+    }
+
     #[Route('/', name: 'back_index')]
-    public function index(EntityManagerInterface $em, CritereRepository $critereRepository, TerritoryRepository $territoryRepository, UserRepository $userRepository, SignalementRepository $signalementRepository, Request $request, AffectationRepository $affectationRepository, PartnerRepository $partnerRepository, TagRepository $tagsRepository): Response
+    public function index(
+        EntityManagerInterface $em,
+        CritereRepository $critereRepository,
+        TerritoryRepository $territoryRepository,
+        UserRepository $userRepository,
+        SignalementRepository $signalementRepository,
+        Request $request,
+        AffectationRepository $affectationRepository,
+        PartnerRepository $partnerRepository,
+        TagRepository $tagsRepository): Response
     {
         $title = 'Administration - Tableau de bord';
         $searchService = new SearchFilterService();
@@ -90,6 +104,7 @@ class BackController extends AbstractController
             'page' => (int) $filters['page'],
             'pages' => (int) ceil(\count($this->req) / 30),
             'counts' => $signalementsCount ?? [],
+            'csrfTokens' => $this->generateCsrfToken(),
         ];
 
         if ($request->get('pagination')) {
@@ -197,5 +212,24 @@ class BackController extends AbstractController
         }
 
         return new Response('<form method="POST" style="width: 100%;height: calc(100vh - 50px)"><textarea name="json" id="" style="width: 100%;height: calc(100% - 50px)"></textarea><hr><button style="width: 100%;height: 50px;">OK</button></form>');
+    }
+
+    /**
+     * Generate csrf token in side server for ajav request
+     * Fix Twig\Error\RuntimeError in order to do not generate csrf token (session) after the headers have been sent.
+     */
+    private function generateCsrfToken(): array
+    {
+        $csrfTokens = [];
+        /** @var Signalement $signalement */
+        foreach ($this->req as $signalement) {
+            if ($signalement instanceof Signalement) {
+                $csrfTokens[$signalement->getUuid()] = $this->csrfTokenManager->getToken(
+                    'signalement_delete_'.$signalement->getId()
+                )->getValue();
+            }
+        }
+
+        return $csrfTokens;
     }
 }
