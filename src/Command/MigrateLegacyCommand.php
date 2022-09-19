@@ -446,7 +446,7 @@ class MigrateLegacyCommand extends Command
                 ]
             );
 
-            $partner = $this->entityManager->getRepository(Partner::class)->find(1);
+            $partner = $this->entityManager->getRepository(Partner::class)->find(1); // by default histologe partner
             if (\array_key_exists($legacyAffectation['partenaire_id'], $this->mapping['partner'])) {
                 $partner = $this->entityManager->getRepository(Partner::class)->findOneBy([
                         'nom' => $this->mapping['partner'][(int) $legacyAffectation['partenaire_id']],
