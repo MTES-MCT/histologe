@@ -376,7 +376,7 @@ class MigrateLegacyCommand extends Command
                 ->setNbChambresLogement((int) $legacySignalement['nb_chambres_logement'])
                 ->setNbNiveauxLogement((int) $legacySignalement['nb_niveaux_logement'])
                 ->setNbOccupantsLogement((int) $legacySignalement['nb_occupants_logement'])
-                ->setMotifCloture((int) $legacySignalement['motif_cloture'])
+                ->setMotifCloture($legacySignalement['motif_cloture'])
                 ->setClosedAt(new \DateTimeImmutable($legacySignalement['closed_at']))
                 ->setTelOccupantBis($legacySignalement['tel_occupant_bis'])
                 ->setIsFondSolidariteLogement((bool) $legacySignalement['is_fond_solidarite_logement']);
@@ -445,11 +445,15 @@ class MigrateLegacyCommand extends Command
                     'territory' => $this->territory,
                 ]
             );
-            $partner = $this->entityManager->getRepository(Partner::class)->findOneBy([
-                    'nom' => $this->mapping['partner'][(int) $legacyAffectation['partenaire_id']],
-                    'territory' => $this->territory,
-                ]
-            );
+
+            $partner = $this->entityManager->getRepository(Partner::class)->find(1);
+            if (\array_key_exists($legacyAffectation['partenaire_id'], $this->mapping['partner'])) {
+                $partner = $this->entityManager->getRepository(Partner::class)->findOneBy([
+                        'nom' => $this->mapping['partner'][(int) $legacyAffectation['partenaire_id']],
+                        'territory' => $this->territory,
+                    ]
+                );
+            }
 
             $statement = $this->connection->prepare(
                 'select email from user where id = '.(int) $legacyAffectation['answered_by_id']
