@@ -4,11 +4,12 @@ namespace App\Command;
 
 use App\Factory\CommuneFactory;
 use App\Manager\CommuneManager;
+use App\Manager\ManagerInterface;
 use App\Manager\TerritoryManager;
+use App\Service\Parser\CsvParser;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -26,68 +27,48 @@ class FillCommuneListCommand extends Command
     private const INDEX_CSV_CODE_COMMUNE = 1;
     private const INDEX_CSV_NOM_COMMUNE = 2;
 
-    private const READ_LENGTH = 5000;
+    private const FLUSH_COUNT = 500;
 
     public function __construct(
         private EntityManagerInterface $entityManager,
         private TerritoryManager $territoryManager,
         private CommuneFactory $communeFactory,
         private CommuneManager $communeManager,
+        private ManagerInterface $manager,
+        private CsvParser $csvParser,
     ) {
         parent::__construct();
     }
 
-    protected function configure(): void
-    {
-        $this->addArgument('offset', InputArgument::REQUIRED, 'The offset where to start reading the file');
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $nb = 0;
+        $nbUntilFlush = 0;
+        $total = 0;
         $io = new SymfonyStyle($input, $output);
-
-        $offset = $input->getArgument('offset');
-        if (empty($offset)) {
-            $offset = 0;
-        }
-        $start_from = (int) $offset * self::READ_LENGTH;
-        $io->info(sprintf('Insertion will start on line %s', $start_from));
-
-        $fileStream = fopen(self::COMMUNE_LIST_CSV_URL, 'r');
-        if (!$fileStream) {
-            return Command::FAILURE;
-        }
 
         $existingInseeCode = [];
         $territory = null;
 
-        // Skip first line
-        fgets($fileStream);
-        // Skip offset
-        for ($i = 0; $i < $start_from; ++$i) {
-            fgets($fileStream);
-        }
+        $csvData = $this->csvParser->parse(self::COMMUNE_LIST_CSV_URL);
 
         // Start reading
-        while (($data = fgetcsv($fileStream, 1000)) !== false) {
-            ++$nb;
-            if ($nb > self::READ_LENGTH) {
-                break;
+        foreach ($csvData as $lineNumber => $rowData) {
+            if (0 === $lineNumber) {
+                continue;
             }
 
             // Not enough data, let's skip
-            if (\count($data) < 3) {
+            if (\count($rowData) < 3) {
                 continue;
             }
-            $itemCodePostal = $data[self::INDEX_CSV_CODE_POSTAL];
-            $itemCodeCommune = $data[self::INDEX_CSV_CODE_COMMUNE];
-            $itemNomCommune = $data[self::INDEX_CSV_NOM_COMMUNE];
 
-            // Commune has already been inserted, let's skip
+            $itemCodeCommune = $rowData[self::INDEX_CSV_CODE_COMMUNE];
             if (!empty($existingInseeCode[$itemCodeCommune])) {
                 continue;
             }
+
+            $itemCodePostal = $rowData[self::INDEX_CSV_CODE_POSTAL];
+            $itemNomCommune = $rowData[self::INDEX_CSV_NOM_COMMUNE];
 
             // Find the zip code as filled in Territory table
             $zipCode = self::getZipCodeByCodeCommune($itemCodeCommune);
@@ -98,13 +79,21 @@ class FillCommuneListCommand extends Command
             }
 
             $commune = $this->communeFactory->createInstanceFrom($territory, $itemNomCommune, $itemCodePostal, $itemCodeCommune);
-            $this->communeManager->save($commune);
+            $this->communeManager->save($commune, false);
             $existingInseeCode[$itemCodeCommune] = 1;
+
+            ++$total;
+            ++$nbUntilFlush;
+            if (self::FLUSH_COUNT == $nbUntilFlush) {
+                $this->manager->flush();
+                $nbUntilFlush = 0;
+            }
         }
 
-        fclose($fileStream);
+        // Last flush for remaining communes
+        $this->manager->flush();
 
-        $io->success(($nb - 1).' lignes traitées');
+        $io->success($total.' lignes traitées');
 
         return Command::SUCCESS;
     }
