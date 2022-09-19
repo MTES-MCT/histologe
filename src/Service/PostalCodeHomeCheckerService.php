@@ -9,21 +9,15 @@ class PostalCodeHomeCheckerService
     private static $list = [
         '04' => 'https://guichetunique04.lhi.histologe.fr',
         '06' => 'https://habitat-indigne06.histologe.fr',
-        '08' => 'https://ardennes.histologe.fr',
         '13' => 'https://habitatindigne13.histologe.fr',
-        '19' => 'https://habitatindigne19.histologe.fr',
-
         '20' => [
             'list' => [
                 '20000', '20090', '20167',
             ],
             'url' => 'https://signalicasa.histologe.fr',
         ],
-
-        '29' => 'https://habitatindigne29.histologe.fr',
         '31' => 'https://haute-garonne.histologe.fr',
         '38' => 'https://isere.histologe.fr',
-
         '47' => [
             'list' => [
                 '47002', '47024', '47028', '47046', '47056', '47059', '47061', '47065', '47068', '47074', '47088',
@@ -33,7 +27,6 @@ class PostalCodeHomeCheckerService
             ],
             'url' => 'https://signaltoit.histologe.fr',
         ],
-
         '59' => [
             'list' => [
                 '59000', '59100', '59110', '59112', '59113', '59115', '59116', '59117', '59118', '59120', '59126',
@@ -45,9 +38,6 @@ class PostalCodeHomeCheckerService
             ],
             'url' => 'https://amelio.histologe.fr',
         ],
-
-        '63' => 'https://signalement-logement63.histologe.fr',
-
         '64' => [
             'list' => [
                 '64000', '64037', '64041', '64059', '64060', '64072', '64080', '64121', '64129', '64132', '64139',
@@ -56,17 +46,6 @@ class PostalCodeHomeCheckerService
             ],
             'url' => 'https://agglo-pau.histologe.fr',
         ],
-
-        '69' => [
-            'list' => [
-                '69000', '69001', '69002', '69003', '69004', '69005', '69006', '69007', '69008', '69009', '69100',
-                '69199', '69205', '69259', '69266', '69290', '69300', '69520', '69600', '69700',
-            ],
-            'url' => 'https://rhone69.histologe.fr',
-        ],
-
-        '71' => 'https://habitatindigne71.histologe.fr',
-
         '76' => [
             'list' => [
                 '76014', '76017', '76064', '76079', '76117', '76167', '76169', '76196', '76206', '76238', '76239',
@@ -77,8 +56,6 @@ class PostalCodeHomeCheckerService
             ],
             'url' => 'https://havreseinemetropole.histologe.fr',
         ],
-
-        '81' => 'https://habitatindigne81.histologe.fr',
     ];
 
     public function __construct(private TerritoryRepository $territoryRepository)

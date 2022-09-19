@@ -3,7 +3,7 @@
 {% block body %}
     <p>Bonjour {{ signalement.nomOccupant|upper ~' '~signalement.prenomOccupant|capitalize }}</p>
     <p>
-        Votre signalement sur la plateforme <strong>{{ config.get.nomTerritoire }}</strong> ne peut pas être traité par nos
+        Votre signalement sur la plateforme <strong>Histologe - {{ territory.getName() }}</strong> ne peut pas être traité par nos
         équipes pour la raison suivante :
         <br>
         <br>

@@ -55,7 +55,8 @@ services:
 
     App\Command\ActivationReminderCommand:
         arguments:
-            $loginLinkHandler: '@security.authenticator.login_link_handler.main'
+            $hostUrl: '%env(resolve:HISTOLOGE_URL)%'
+
     App\Command\GetGeolocCommand:
         arguments:
             - '@doctrine.orm.entity_manager'
@@ -73,3 +74,7 @@ services:
     App\Manager\ManagerInterface:
         alias: App\Manager\Manager
         public: true
+
+    App\Command\MigrateLegacyCommand:
+        arguments:
+            $hostUrl: '%env(resolve:HISTOLOGE_URL)%'

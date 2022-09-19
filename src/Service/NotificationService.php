@@ -23,6 +23,7 @@ class NotificationService
     public const TYPE_NEW_COMMENT_BACK = 10;
     public const TYPE_CONTACT_FORM = 8;
     public const TYPE_ERROR_SIGNALEMENT = 9;
+    public const TYPE_MIGRATION_PASSWORD = 13;
 
     private MailerInterface $mailer;
 
@@ -44,9 +45,6 @@ class NotificationService
         if (!empty($params['attach'])) {
             $message->attachFromPath($params['attach']);
         }
-        if (!empty($territory) && null !== $territory->getConfig() && $territory->getConfig()?->getEmailReponse() ?? isset($params['reply'])) {
-            $message->replyTo($params['reply'] ?? $territory->getConfig()->getEmailReponse());
-        }
         try {
             $this->mailer->send($message);
 
@@ -59,6 +57,7 @@ class NotificationService
     private function renderMailContentWithParamsByType(int $type, array $params, Territory|null $territory): NotificationEmail
     {
         $config = $this->config($type);
+        $config['territory'] = $territory;
         $notification = new NotificationEmail();
         $notification->markAsPublic();
 
@@ -82,8 +81,13 @@ class NotificationService
             ],
             self::TYPE_LOST_PASSWORD => [
                 'template' => 'lost_pass_email',
-                'subject' => 'Récupération de votre mot de passe',
-                'btntext' => 'Je créer un nouveau mot de passe',
+                'subject' => 'Nouveau mot de passe sur Histologe',
+                'btntext' => 'Créer mon mot de passe',
+            ],
+            self::TYPE_MIGRATION_PASSWORD => [
+                'template' => 'migration_pass_email',
+                'subject' => 'Transfert de votre compte Histologe',
+                'btntext' => 'Définir mon mot de passe',
             ],
             self::TYPE_SIGNALEMENT_NEW => [
                 'template' => 'new_signalement_email',
