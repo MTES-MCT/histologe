@@ -4,12 +4,12 @@ namespace App\Command;
 
 use App\Factory\CommuneFactory;
 use App\Manager\CommuneManager;
-use App\Manager\ManagerInterface;
 use App\Manager\TerritoryManager;
 use App\Service\Parser\CsvParser;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -27,14 +27,13 @@ class FillCommuneListCommand extends Command
     private const INDEX_CSV_CODE_COMMUNE = 1;
     private const INDEX_CSV_NOM_COMMUNE = 2;
 
-    private const FLUSH_COUNT = 500;
+    private const FLUSH_COUNT = 1000;
 
     public function __construct(
         private EntityManagerInterface $entityManager,
         private TerritoryManager $territoryManager,
         private CommuneFactory $communeFactory,
         private CommuneManager $communeManager,
-        private ManagerInterface $manager,
         private CsvParser $csvParser,
     ) {
         parent::__construct();
@@ -42,8 +41,9 @@ class FillCommuneListCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $nbUntilFlush = 0;
-        $total = 0;
+        // ini_set("memory_limit", "-1"); // Hack for local env: uncomment this line if you have memory limit error
+
+        $totalRead = 0;
         $io = new SymfonyStyle($input, $output);
 
         $existingInseeCode = [];
@@ -51,8 +51,14 @@ class FillCommuneListCommand extends Command
 
         $csvData = $this->csvParser->parse(self::COMMUNE_LIST_CSV_URL);
 
+        $progressBar = new ProgressBar($output, \count($csvData));
+        $progressBar->start();
+
         // Start reading
         foreach ($csvData as $lineNumber => $rowData) {
+            ++$totalRead;
+            $progressBar->advance();
+
             if (0 === $lineNumber) {
                 continue;
             }
@@ -70,30 +76,27 @@ class FillCommuneListCommand extends Command
             $itemCodePostal = $rowData[self::INDEX_CSV_CODE_POSTAL];
             $itemNomCommune = $rowData[self::INDEX_CSV_NOM_COMMUNE];
 
-            // Find the zip code as filled in Territory table
             $zipCode = self::getZipCodeByCodeCommune($itemCodeCommune);
 
-            // Query for Territory only if different zip code
             if (null === $territory || $zipCode != $territory->getZip()) {
                 $territory = $this->territoryManager->findOneBy(['zip' => $zipCode]);
             }
 
             $commune = $this->communeFactory->createInstanceFrom($territory, $itemNomCommune, $itemCodePostal, $itemCodeCommune);
-            $this->communeManager->save($commune, false);
             $existingInseeCode[$itemCodeCommune] = 1;
 
-            ++$total;
-            ++$nbUntilFlush;
-            if (self::FLUSH_COUNT == $nbUntilFlush) {
-                $this->manager->flush();
-                $nbUntilFlush = 0;
+            if (0 === $totalRead % self::FLUSH_COUNT) {
+                $this->communeManager->save($commune);
+            } else {
+                $this->communeManager->save($commune, false);
             }
         }
 
         // Last flush for remaining communes
-        $this->manager->flush();
+        $this->communeManager->flush();
 
-        $io->success($total.' lignes traitées');
+        $progressBar->finish();
+        $io->success($totalRead.' lignes traitées');
 
         return Command::SUCCESS;
     }
