@@ -10,8 +10,6 @@ class PostalCodeHomeCheckerService
         '04' => 'https://guichetunique04.lhi.histologe.fr',
         '06' => 'https://habitat-indigne06.histologe.fr',
         '13' => 'https://habitatindigne13.histologe.fr',
-        '19' => 'https://habitatindigne19.histologe.fr',
-
         '20' => [
             'list' => [
                 '20000', '20090', '20167',
@@ -20,17 +18,6 @@ class PostalCodeHomeCheckerService
         ],
         '31' => 'https://haute-garonne.histologe.fr',
         '38' => 'https://isere.histologe.fr',
-
-        '47' => [
-            'list' => [
-                '47002', '47024', '47028', '47046', '47056', '47059', '47061', '47065', '47068', '47074', '47088',
-                '47094', '47095', '47101', '47108', '47110', '47112', '47120', '47127', '47130', '47131', '47150',
-                '47156', '47157', '47159', '47163', '47165', '47191', '47200', '47216', '47231', '47232', '47233',
-                '47257', '47263', '47277', '47285', '47298', '47301', '47304', '47310', '47316', '47325', '47326',
-            ],
-            'url' => 'https://signaltoit.histologe.fr',
-        ],
-
         '59' => [
             'list' => [
                 '59000', '59100', '59110', '59112', '59113', '59115', '59116', '59117', '59118', '59120', '59126',
@@ -42,9 +29,6 @@ class PostalCodeHomeCheckerService
             ],
             'url' => 'https://amelio.histologe.fr',
         ],
-
-        '63' => 'https://signalement-logement63.histologe.fr',
-
         '64' => [
             'list' => [
                 '64000', '64037', '64041', '64059', '64060', '64072', '64080', '64121', '64129', '64132', '64139',
