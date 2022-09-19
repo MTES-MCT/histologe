@@ -29,14 +29,14 @@
         <TheHistoFrontStatsTerritoryItem sizeClass="7">
           <template #title>Répartition par famille de désordres</template>
           <template #graph>
-            <HistoChartBar :items=sharedState.stats.countSignalementPerSituation />
+            <HistoChartBar :items=sharedState.stats.countSignalementPerSituation indexAxis="x" />
           </template>
         </TheHistoFrontStatsTerritoryItem>
 
         <TheHistoFrontStatsTerritoryItem sizeClass="5">
           <template #title>Motif de clôture</template>
           <template #graph>
-            <HistoChartDoughnut :items=sharedState.stats.countSignalementPerCriticitePercent />
+            <HistoChartDoughnut :items=sharedState.stats.countSignalementPerMotifCloture />
           </template>
         </TheHistoFrontStatsTerritoryItem>
       </div>

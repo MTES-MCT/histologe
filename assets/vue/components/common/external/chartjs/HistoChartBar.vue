@@ -49,6 +49,10 @@ export default {
       default: '',
       type: String
     },
+    indexAxis: {
+      default: 'y',
+      type: String
+    },
     styles: {
       type: Object,
       default: () => {}
@@ -72,7 +76,7 @@ export default {
       },
       chartOptions: {
         responsive: true,
-		    indexAxis: 'y',
+		    indexAxis: this.indexAxis,
         plugins: {
          legend: {
             display: false

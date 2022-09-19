@@ -10,20 +10,22 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ClotureType extends AbstractType
 {
+    public const CHOICES = [
+        'Problème résolu' => 'RESOLU',
+        'Non décence' => 'NON_DECENCE',
+        'Infraction RSD' => 'INFRACTION RSD',
+        'Insalubrité' => 'INSALUBRITE',
+        'Logement décent' => 'LOGEMENT DECENT',
+        'Locataire parti' => 'LOCATAIRE PARTI',
+        'Logement vendu' => 'LOGEMENT VENDU',
+        'Autre' => 'AUTRE',
+    ];
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('motif', ChoiceType::class, [
-                'choices' => [
-                    'Problème résolu' => 'RESOLU',
-                    'Non décence' => 'NON_DECENCE',
-                    'Infraction RSD' => 'INFRACTION RSD',
-                    'Insalubrité' => 'INSALUBRITE',
-                    'Logement décent' => 'LOGEMENT DECENT',
-                    'Locataire parti' => 'LOCATAIRE PARTI',
-                    'Logement vendu' => 'LOGEMENT VENDU',
-                    'Autre' => 'AUTRE',
-                ],
+                'choices' => self::CHOICES,
                 'row_attr' => [
                     'class' => 'fr-select-group',
                 ],
