@@ -236,7 +236,6 @@ class FrontStatistiquesController extends AbstractController
 
     private static function initMotifPerValue()
     {
-        // TODO : finaliser les couleurs
         return [
             'RESOLU' => [
                 'label' => 'Problème résolu',

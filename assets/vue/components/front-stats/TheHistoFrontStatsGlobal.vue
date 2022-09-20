@@ -17,10 +17,7 @@
           </TheHistoFrontStatsDetailsItem>
         </div>
         <div class="fr-col-12 fr-col-lg-9">
-          Carte<br><br><br>
-          <div v-for="territoryStat in sharedState.stats.countSignalementPerTerritory">
-            {{ territoryStat.name }} ({{ territoryStat.zip}}) : {{ territoryStat.count }}
-          </div>
+          <HistoFranceMap :data=sharedState.stats.countSignalementPerTerritory />
         </div>
       </div>
     </div>
@@ -31,12 +28,14 @@
 import { defineComponent } from 'vue'
 import { store } from './store'
 import TheHistoFrontStatsDetailsItem from './TheHistoFrontStatsDetailsItem.vue'
+import HistoFranceMap from '../common/HistoFranceMap.vue'
 
 export default defineComponent({
   name: 'TheHistoFrontStatsGlobal',
   components: {
-    TheHistoFrontStatsDetailsItem
-  },
+    TheHistoFrontStatsDetailsItem,
+    HistoFranceMap
+},
   props: {
     data: String
   },
