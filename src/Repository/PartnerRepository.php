@@ -20,15 +20,12 @@ class PartnerRepository extends ServiceEntityRepository
         parent::__construct($registry, Partner::class);
     }
 
-    // /**
-    //  * @return Partner[] Returns an array of Partner objects
-    //  */
-    public function findAllOrByInseeIfCommune(int|null $insee, Territory|null $territory)
+    public function findAllOrByInseeIfCommune(string|null $insee, Territory|null $territory)
     {
         $qb = $this->createQueryBuilder('p')
             ->where('p.isArchive != 1');
         if ($insee) {
-            $qb->andWhere('p.isCommune = 0 OR p.isCommune = 1 AND p.insee LIKE :insee')
+            $qb->andWhere('p.insee LIKE :insee')
                 ->setParameter('insee', '%'.$insee.'%');
         }
         if ($territory) {
@@ -56,16 +53,4 @@ class PartnerRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-
-    /*
-    public function findOneBySomeField($value): ?Partner
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
