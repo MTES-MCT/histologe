@@ -93,6 +93,10 @@ class BackSignalementActionController extends AbstractController
         if ($this->isCsrfTokenValid('signalement_reopen_'.$signalement->getId(), $request->get('_token')) && $response = $request->get('signalement-action')) {
             if ($this->isGranted('ROLE_ADMIN_TERRITORY') && isset($response['reopenAll'])) {
                 $signalement->setStatut(Signalement::STATUS_ACTIVE);
+                $currentCodeSuivi = $signalement->getCodeSuivi();
+                if (empty($currentCodeSuivi)) {
+                    $signalement->setCodeSuivi(md5(uniqid()));
+                }
                 $doctrine->getManager()->persist($signalement);
                 $signalement->getAffectations()->filter(function (Affectation $affectation) use ($doctrine) {
                     $affectation->setStatut(Affectation::STATUS_WAIT) && $doctrine->getManager()->persist($affectation);
