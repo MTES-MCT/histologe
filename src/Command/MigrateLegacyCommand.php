@@ -21,6 +21,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -47,6 +48,8 @@ class MigrateLegacyCommand extends Command
         'ROLE_ADMIN_PARTENAIRE' => 'ROLE_ADMIN_PARTNER',
         'ROLE_USER_PARTENAIRE' => 'ROLE_USER_PARTNER',
     ];
+
+    public const NB_TABLES = 11;
 
     private Connection|null $connection;
     private Territory $territory;
@@ -87,6 +90,7 @@ class MigrateLegacyCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        ini_set('memory_limit', '-1');
         $this->entityManager->getEventManager()->removeEventSubscriber($this->activityListener);
         $io = new SymfonyStyle($input, $output);
         $territoryZip = $input->getArgument('territory_zip');
@@ -104,17 +108,32 @@ class MigrateLegacyCommand extends Command
         $this->connection->connect();
 
         $io->info('Migrate table...');
+
+        $progressBar = new ProgressBar($output, self::NB_TABLES);
+        $progressBar->start();
         $this->loadConfig();
+        $progressBar->advance();
         $this->loadPartner();
+        $progressBar->advance();
         $this->loadUser();
+        $progressBar->advance();
         $this->loadSignalement();
+        $progressBar->advance();
         $this->loadSuivi();
+        $progressBar->advance();
         $this->loadAffectation();
+        $progressBar->advance();
         $this->loadTag();
+        $progressBar->advance();
         $this->loadSignalementCritere();
+        $progressBar->advance();
         $this->loadSignalementCriticite();
+        $progressBar->advance();
         $this->loadSignalementSituation();
+        $progressBar->advance();
         $this->loadTagSignalement();
+        $progressBar->finish();
+        $io->newLine();
 
         $this->table->render();
         $io->success('line has been imported');
@@ -325,7 +344,10 @@ class MigrateLegacyCommand extends Command
             $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
 
             $signalement->setModifiedBy($user)
-                ->setCreatedAt(new \DateTimeImmutable($legacySignalement['created_at']))
+                ->setCreatedAt(
+                    $this->isValidDate($legacySignalement['created_at'])
+                        ? new \DateTimeImmutable($legacySignalement['created_at'])
+                        : new \DateTimeImmutable())
                 ->setModifiedAt(new \DateTimeImmutable($legacySignalement['modified_at']))
                 ->setStatut((int) $legacySignalement['statut'])
                 ->setReference($legacySignalement['reference'])
@@ -348,7 +370,10 @@ class MigrateLegacyCommand extends Command
                 ->setCodeSuivi($legacySignalement['code_suivi'])
                 ->setLienDeclarantOccupant($legacySignalement['lien_declarant_occupant'])
                 ->setIsConsentementTiers((bool) $legacySignalement['is_consentement_tiers'])
-                ->setValidatedAt(new \DateTimeImmutable($legacySignalement['validated_at']))
+                ->setValidatedAt(
+                    $this->isValidDate($legacySignalement['validated_at'])
+                        ? new \DateTimeImmutable($legacySignalement['validated_at'])
+                        : null)
                 ->setIsRsa((bool) $legacySignalement['is_rsa'])
                 ->setProprioAvertiAt(new \DateTimeImmutable($legacySignalement['prorio_averti_at']))
                 ->setAnneeConstruction((int) $legacySignalement['annee_construction'])
@@ -480,7 +505,10 @@ class MigrateLegacyCommand extends Command
                 ->setSignalement($signalement)
                 ->setPartner($partner)
                 ->setAnsweredAt(new \DateTimeImmutable($legacyAffectation['answered_at']))
-                ->setCreatedAt(new \DateTimeImmutable($legacyAffectation['created_at']))
+                ->setCreatedAt($this->isValidDate($legacyAffectation['created_at'])
+                    ? new \DateTimeImmutable($legacyAffectation['created_at'])
+                    : new \DateTimeImmutable()
+                )
                 ->setStatut($legacyAffectation['statut'])
                 ->setAnsweredBy($answerdBy)
                 ->setAffectedBy($affectedBy)
@@ -688,5 +716,14 @@ class MigrateLegacyCommand extends Command
         }, $roleList);
 
         return $roles;
+    }
+
+    private function isValidDate(string|null $date): bool
+    {
+        if ('0000-00-00 00:00:00' === $date || empty($date)) {
+            return false;
+        }
+
+        return true;
     }
 }
