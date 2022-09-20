@@ -367,7 +367,7 @@ class MigrateLegacyCommand extends Command
                 ->setCodeSuivi($legacySignalement['code_suivi'])
                 ->setLienDeclarantOccupant($legacySignalement['lien_declarant_occupant'])
                 ->setIsConsentementTiers((bool) $legacySignalement['is_consentement_tiers'])
-                ->setValidatedAt(Signalement::STATUS_NEED_VALIDATION !== $legacySignalement['statut']
+                ->setValidatedAt(Signalement::STATUS_NEED_VALIDATION !== (int) $legacySignalement['statut']
                     ? $this->getValidDate($legacySignalement['validated_at'])
                     : null)
                 ->setIsRsa((bool) $legacySignalement['is_rsa'])
