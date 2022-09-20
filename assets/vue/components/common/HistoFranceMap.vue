@@ -14,8 +14,13 @@
           </ul>
         </div>
 
-        <div class="fr-col-12 fr-col-md-9">
-          <svg width="588" height="550">
+        <div class="map fr-col-12 fr-col-md-9">
+          <div v-if="displayTerritoryCaption" class="territory-caption">
+            {{ captionTerritoryName }} ({{ captionTerritoryZip }})<br>
+            {{ captionTerritoryCount }} signalement(s)
+          </div>
+
+          <svg width="588" height="550" @mouseover="handleStateHover" @mouseout="handleStateOut">
             <path id="dpt2B" inkscape:label="Haute-Corse" class="st0" d="M562.1,441.7l-2.8,1.9l0.4,1.9l1.5,1.9l-1.7,1.3l0.8,1.5l-1.1,1.3v1.7l1.9,1.7
               v2.6l-1.1,2.5l-1.3,0.6l-1.5-2.1l-2.7,0.2l-0.6-0.4h-2.3l-2.1,1.9l-0.8,3.2l-4.9,0.9l-3.8,3.2l-0.8,2.1l-1.9-0.2l-1-1.1l-0.5,3.2
               l-1.3,0.5l-0.4,3l0.6,1.3l-2.1,1.5l-0.6,1.5l2.1,0.4l0.4,1h3.8l1,0.7l2.8-0.5l1.2,0.7l-0.5,0.8l1.9,2.6h3.6l0.9,2.6h2.5l-0.2,1.5
@@ -661,6 +666,14 @@ export default defineComponent({
       default: {}
     }
   },
+  data() {
+    return {
+      displayTerritoryCaption: false,
+      captionTerritoryName: '',
+      captionTerritoryZip: '',
+      captionTerritoryCount: '',
+    }
+  },
   mounted() {
     for (const [key, territoryItem] of Object.entries(this.data)) {
       let zipCode:string = territoryItem.zip
@@ -679,6 +692,31 @@ export default defineComponent({
     }
      // {{ territoryStat.name }} ({{ territoryStat.zip}}) : {{ territoryStat.count }}
   },
+  methods: {
+    handleStateHover(e:any) {
+      if (e.target.tagName === 'path') {
+        const territoryItem = this.getTerritoryItemByZip(e.target.id.substring(3))
+        if (territoryItem) {
+          this.displayTerritoryCaption = true
+          this.captionTerritoryName = territoryItem.name
+          this.captionTerritoryZip = territoryItem.zip
+          this.captionTerritoryCount = territoryItem.count
+        }
+      }
+    },
+    handleStateOut() {
+      this.displayTerritoryCaption = false
+    },
+    getTerritoryItemByZip(zip: string) {
+      for (const [key, territoryItem] of Object.entries(this.data)) {
+        if (zip === territoryItem.zip) {
+          return territoryItem
+        }
+      }
+      return false
+    }
+  }
+
 })
 </script>
 
@@ -725,10 +763,33 @@ export default defineComponent({
     color: #000091;
   }
 
-	.st0{fill:#CCCCCC;stroke:#FFFFFF;stroke-width:0.5;stroke-miterlimit:3.9745;}
-	.st1{fill:#CCCCCC;fill-opacity:0;}
+
+	.st0{
+    fill:#CCCCCC;
+    stroke:#FFFFFF;
+    stroke-width:0.5;
+    stroke-miterlimit:3.9745;
+  }
+	.st1{
+    fill:#CCCCCC;
+    fill-opacity:0;
+  }
 	.color-1{fill:#E3E3FD}
 	.color-51{fill:#CACAFB}
 	.color-251{fill:#6A6AF4}
 	.color-1001{fill:#000091}
+
+  .st0:hover {
+    fill:#fcc0b0;
+    stroke:#d64d00;
+  }
+
+  .territory-caption {
+    display: block;
+    position: absolute;
+    background: #000;
+    color: #FFF;
+    padding: 8px;
+    border-radius: 4px;
+  }
 </style>
