@@ -29,9 +29,12 @@ class BackStatistiquesController extends AbstractController
     private const CRITICITE_STRONG = 'De 51 à 75 %';
     private const CRITICITE_VERY_STRONG = '> 75 %';
 
-    /**
-     * Route to access Statistiques in the back-office.
-     */
+    private const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+
+    private const COMMUNE_MARSEILLE = 'Marseille';
+    private const COMMUNE_LYON = 'Lyon';
+    private const COMMUNE_PARIS = 'Paris';
+
     #[Route('/', name: 'back_statistiques')]
     public function index(): Response
     {
@@ -51,37 +54,26 @@ class BackStatistiquesController extends AbstractController
         if ($this->getUser()) {
             $this->ajaxResult = [];
 
-            /**
-             * @var User $user
-             */
+            /** @var User $user */
             $user = $this->getUser();
             // If Super Admin, we should be able to filter on Territoire
             $territory = $user->getTerritory();
             if ($this->isGranted('ROLE_ADMIN')) {
-                $request_territoire = $request->get('territoire');
-                if ('' !== $request_territoire && 'all' !== $request_territoire) {
-                    $territory = $territoryRepository->findOneBy(['id' => $request_territoire]);
+                $requestTerritoire = $request->get('territoire');
+                if ('' !== $requestTerritoire && 'all' !== $requestTerritoire) {
+                    $territory = $territoryRepository->findOneBy(['id' => $requestTerritoire]);
                 }
             }
 
-            // *****
-            // Add lists that will be used as filters to ajaxResult
-            $this->buildLists($territory, $tagsRepository, $territoryRepository);
-            // *****
+            $this->buildFilterLists($territory, $tagsRepository, $territoryRepository);
 
-            // *****
-            // Returns global results
-            $resultGlobal = $this->buildGlobalQuery($signalementRepository, $territory);
-            // Add global stats to ajaxResult
+            $resultGlobal = $this->buildQuerySignalementByTerritory($signalementRepository, $territory);
+            // This adds data to $this->ajaxResult
             $this->makeGlobalStats($resultGlobal);
-            // *****
 
-            // *****
-            // Returns filtered results
             $resultFiltered = $this->buildQuery($request, $signalementRepository, $territory);
-            // Add filtered stats to ajaxResult
+            // This adds data to $this->ajaxResult
             $this->makeFilteredStats($resultFiltered);
-            // *****
 
             $this->ajaxResult['response'] = 'success';
 
@@ -94,19 +86,15 @@ class BackStatistiquesController extends AbstractController
     /**
      * Build lists of data that will be returned as filters.
      */
-    private function buildLists(?Territory $territory, TagRepository $tagsRepository, TerritoryRepository $territoryRepository)
+    private function buildFilterLists(?Territory $territory, TagRepository $tagsRepository, TerritoryRepository $territoryRepository)
     {
         // Tells Vue component if a user can filter through Territoire
         $this->ajaxResult['can_filter_territoires'] = $this->isGranted('ROLE_ADMIN') ? '1' : '0';
 
-        // If Super Admin
-        // Returns the list of available Territoire
         if ($this->isGranted('ROLE_ADMIN')) {
             $this->ajaxResult['list_territoires'] = [];
             $territoryList = $territoryRepository->findAllList();
-            /**
-             * @var Territory $territoryItem
-             */
+            /** @var Territory $territoryItem */
             foreach ($territoryList as $territoryItem) {
                 $this->ajaxResult['list_territoires'][$territoryItem->getId()] = $territoryItem->getName();
             }
@@ -117,21 +105,19 @@ class BackStatistiquesController extends AbstractController
         // - if super admin: only if selected Territoire
         $this->ajaxResult['list_communes'] = [];
         if (null !== $territory) {
-            $communesList = $territory->getCommunes();
-            /**
-             * @var Commune $communeItem
-             */
-            foreach ($communesList as $communeItem) {
+            $communes = $territory->getCommunes();
+            /** @var Commune $commune */
+            foreach ($communes as $commune) {
                 // Controls over 3 Communes with Arrondissements that we don't want
-                $nomCommune = $communeItem->getNom();
-                if (preg_match('/(Marseille)(.)*(Arrondissement)/', $nomCommune)) {
-                    $nomCommune = 'Marseille';
+                $nomCommune = $commune->getNom();
+                if (preg_match('/('.self::COMMUNE_MARSEILLE.')(.)*(Arrondissement)/', $nomCommune)) {
+                    $nomCommune = self::COMMUNE_MARSEILLE;
                 }
-                if (preg_match('/(Lyon)(.)*(Arrondissement)/', $nomCommune)) {
-                    $nomCommune = 'Lyon';
+                if (preg_match('/('.self::COMMUNE_LYON.')(.)*(Arrondissement)/', $nomCommune)) {
+                    $nomCommune = self::COMMUNE_LYON;
                 }
-                if (preg_match('/(Paris)(.)*(Arrondissement)/', $nomCommune)) {
-                    $nomCommune = 'Paris';
+                if (preg_match('/('.self::COMMUNE_PARIS.')(.)*(Arrondissement)/', $nomCommune)) {
+                    $nomCommune = self::COMMUNE_PARIS;
                 }
                 $this->ajaxResult['list_communes'][$nomCommune] = $nomCommune;
             }
@@ -143,19 +129,14 @@ class BackStatistiquesController extends AbstractController
         $this->ajaxResult['list_etiquettes'] = [];
         if (null !== $territory) {
             $tagList = $tagsRepository->findAllActive($territory);
-            /*
-            * @var Tag $tagItem
-            */
+            /** @var Tag $tagItem */
             foreach ($tagList as $tagItem) {
                 $this->ajaxResult['list_etiquettes'][$tagItem->getId()] = $tagItem->getLabel();
             }
         }
     }
 
-    /**
-     * Query all Signalement, filtered by Territoire.
-     */
-    private function buildGlobalQuery(SignalementRepository $signalementRepository, ?Territory $territory)
+    private function buildQuerySignalementByTerritory(SignalementRepository $signalementRepository, ?Territory $territory): array
     {
         $territoryFilter = $territory ? $territory->getId() : null;
 
@@ -165,28 +146,26 @@ class BackStatistiquesController extends AbstractController
     /**
      * Fill result table with global stats.
      */
-    private function makeGlobalStats($resultGlobal)
+    private function makeGlobalStats(array $signalements): void
     {
         $totalCriticite = 0;
         $countHasDaysValidation = 0;
         $totalDaysValidation = 0;
         $countHasDaysClosure = 0;
         $totalDaysClosure = 0;
-        /**
-         * @var Signalement $signalementItem
-         */
-        foreach ($resultGlobal as $signalementItem) {
-            $criticite = $signalementItem->getScoreCreation();
+        /** @var Signalement $signalement */
+        foreach ($signalements as $signalement) {
+            $criticite = $signalement->getScoreCreation();
             $totalCriticite += $criticite;
-            $dateCreatedAt = $signalementItem->getCreatedAt();
+            $dateCreatedAt = $signalement->getCreatedAt();
             if (null !== $dateCreatedAt) {
-                $dateValidatedAt = $signalementItem->getValidatedAt();
+                $dateValidatedAt = $signalement->getValidatedAt();
                 if (null !== $dateValidatedAt) {
                     ++$countHasDaysValidation;
                     $dateDiff = $dateCreatedAt->diff($dateValidatedAt);
                     $totalDaysValidation += $dateDiff->d;
                 }
-                $dateClosedAt = $signalementItem->getClosedAt();
+                $dateClosedAt = $signalement->getClosedAt();
                 if (null !== $dateClosedAt) {
                     ++$countHasDaysClosure;
                     $dateDiff = $dateCreatedAt->diff($dateClosedAt);
@@ -195,7 +174,7 @@ class BackStatistiquesController extends AbstractController
             }
         }
 
-        $countSignalement = \count($resultGlobal);
+        $countSignalement = \count($signalements);
         $averageCriticite = $countSignalement > 0 ? round($totalCriticite / $countSignalement) : '-';
         $averageDaysValidation = $countHasDaysValidation > 0 ? round($totalDaysValidation * 10 / $countHasDaysValidation) / 10 : '-';
         $averageDaysClosure = $countHasDaysClosure > 0 ? round($totalDaysClosure * 10 / $countHasDaysClosure) / 10 : '-';
@@ -211,8 +190,7 @@ class BackStatistiquesController extends AbstractController
      */
     private function buildQuery(Request $request, SignalementRepository $signalementRepository, ?Territory $territory)
     {
-        $strCommunes = $request->get('communes');
-        $communes = json_decode($strCommunes);
+        $communes = json_decode($request->get('communes'));
         $this->filterStatut = $request->get('statut');
         $strEtiquettes = $request->get('etiquettes');
         $etiquettes = array_map(fn ($value): int => $value * 1, json_decode($strEtiquettes));
@@ -221,8 +199,7 @@ class BackStatistiquesController extends AbstractController
         $this->filterDateStart = new DateTime($dateStart);
         $dateEnd = $request->get('dateEnd');
         $this->filterDateEnd = new DateTime($dateEnd);
-        $countRefused = $request->get('countRefused');
-        $hasCountRefused = '1' == $countRefused;
+        $hasCountRefused = '1' == $request->get('countRefused');
         $territoryFilter = $territory ? $territory->getId() : null;
 
         return $signalementRepository->findByFilters($this->filterStatut, $hasCountRefused, $this->filterDateStart, $this->filterDateEnd, $type, $territoryFilter, $etiquettes, $communes);
@@ -231,15 +208,13 @@ class BackStatistiquesController extends AbstractController
     /**
      * Fill result table with filtered stats.
      */
-    private function makeFilteredStats($resultFiltered)
+    private function makeFilteredStats(array $signalements): void
     {
-        // Count stats
         $totalCriticite = 0;
         $countHasDaysValidation = 0;
         $totalDaysValidation = 0;
         $countHasDaysClosure = 0;
         $totalDaysClosure = 0;
-        $listMonthName = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
         $countSignalementPerMonth = [];
         $countSignalementPerStatut = [];
         $countSignalementPerCriticitePercent = self::initPerCriticitePercent();
@@ -258,38 +233,36 @@ class BackStatistiquesController extends AbstractController
                 $monthEnd = $this->filterDateEnd->format('m') - 1;
             }
             for ($month = $monthStart; $month <= $monthEnd; ++$month) {
-                $countSignalementPerMonth[$listMonthName[$month].' '.$year] = 0;
+                $countSignalementPerMonth[self::MONTH_NAMES[$month].' '.$year] = 0;
             }
         }
 
-        /**
-         * @var Signalement $signalementItem
-         */
-        foreach ($resultFiltered as $signalementItem) {
-            $criticite = $signalementItem->getScoreCreation();
+        /** @var Signalement $signalement */
+        foreach ($signalements as $signalement) {
+            $criticite = $signalement->getScoreCreation();
             $totalCriticite += $criticite;
-            $dateCreatedAt = $signalementItem->getCreatedAt();
+            $dateCreatedAt = $signalement->getCreatedAt();
             if (null !== $dateCreatedAt) {
-                $dateValidatedAt = $signalementItem->getValidatedAt();
+                $dateValidatedAt = $signalement->getValidatedAt();
                 if (null !== $dateValidatedAt) {
                     ++$countHasDaysValidation;
                     $dateDiff = $dateCreatedAt->diff($dateValidatedAt);
                     $totalDaysValidation += $dateDiff->d;
                 }
-                $dateClosedAt = $signalementItem->getClosedAt();
+                $dateClosedAt = $signalement->getClosedAt();
                 if (null !== $dateClosedAt) {
                     ++$countHasDaysClosure;
                     $dateDiff = $dateCreatedAt->diff($dateClosedAt);
                     $totalDaysClosure += $dateDiff->d;
                 }
 
-                $month_name = $listMonthName[$dateCreatedAt->format('m') - 1].' '.$dateCreatedAt->format('Y');
+                $month_name = self::MONTH_NAMES[$dateCreatedAt->format('m') - 1].' '.$dateCreatedAt->format('Y');
                 if (empty($countSignalementPerMonth[$month_name])) {
                     $countSignalementPerMonth[$month_name] = 0;
                 }
                 ++$countSignalementPerMonth[$month_name];
 
-                $statut = $signalementItem->getStatut();
+                $statut = $signalement->getStatut();
                 if (empty($countSignalementPerStatut[$statut])) {
                     $countSignalementPerStatut[$statut] = self::initStatutByValue($statut);
                 }
@@ -305,14 +278,14 @@ class BackStatistiquesController extends AbstractController
                     ++$countSignalementPerCriticitePercent[self::CRITICITE_VERY_WEAK]['count'];
                 }
 
-                $dateVisite = $signalementItem->getDateVisite();
+                $dateVisite = $signalement->getDateVisite();
                 if (empty($dateVisite)) {
                     ++$countSignalementPerVisite['Non']['count'];
                 } else {
                     ++$countSignalementPerVisite['Oui']['count'];
                 }
 
-                $listSituations = $signalementItem->getSituations();
+                $listSituations = $signalement->getSituations();
                 $countListSituations = \count($listSituations);
                 for ($i = 0; $i < $countListSituations; ++$i) {
                     $situationStr = $listSituations[$i]->getMenuLabel();
@@ -322,7 +295,7 @@ class BackStatistiquesController extends AbstractController
                     ++$countSignalementPerSituation[$situationStr];
                 }
 
-                $listCriticite = $signalementItem->getCriticites();
+                $listCriticite = $signalement->getCriticites();
                 $countListCriticite = \count($listCriticite);
                 for ($i = 0; $i < $countListCriticite; ++$i) {
                     $criticiteStr = $listCriticite[$i]->getLabel();
@@ -332,14 +305,14 @@ class BackStatistiquesController extends AbstractController
                     ++$countSignalementPerCriticite[$criticiteStr];
                 }
 
-                $listAffectations = $signalementItem->getAffectations();
+                $listAffectations = $signalement->getAffectations();
                 $countListAffectations = \count($listAffectations);
                 for ($i = 0; $i < $countListAffectations; ++$i) {
                     $affecationItem = $listAffectations[$i];
-                    $partenaire = $listAffectations[$i]->getPartner();
-                    $partenaireStr = $partenaire->getNom();
-                    if (empty($countSignalementPerPartenaire[$partenaireStr])) {
-                        $countSignalementPerPartenaire[$partenaireStr] = [
+                    $partner = $listAffectations[$i]->getPartner();
+                    $partnerName = $partner->getNom();
+                    if (empty($countSignalementPerPartenaire[$partnerName])) {
+                        $countSignalementPerPartenaire[$partnerName] = [
                             'total' => 0,
                             'wait' => 0,
                             'accepted' => 0,
@@ -347,20 +320,20 @@ class BackStatistiquesController extends AbstractController
                             'closed' => 0,
                         ];
                     }
-                    ++$countSignalementPerPartenaire[$partenaireStr]['total'];
+                    ++$countSignalementPerPartenaire[$partnerName]['total'];
                     switch ($affecationItem->getStatut()) {
                         case Affectation::STATUS_ACCEPTED:
-                            ++$countSignalementPerPartenaire[$partenaireStr]['accepted'];
+                            ++$countSignalementPerPartenaire[$partnerName]['accepted'];
                             break;
                         case Affectation::STATUS_REFUSED:
-                            ++$countSignalementPerPartenaire[$partenaireStr]['refused'];
+                            ++$countSignalementPerPartenaire[$partnerName]['refused'];
                             break;
                         case Affectation::STATUS_CLOSED:
-                            ++$countSignalementPerPartenaire[$partenaireStr]['closed'];
+                            ++$countSignalementPerPartenaire[$partnerName]['closed'];
                             break;
                         case Affectation::STATUS_WAIT:
                         default:
-                            ++$countSignalementPerPartenaire[$partenaireStr]['wait'];
+                            ++$countSignalementPerPartenaire[$partnerName]['wait'];
                             break;
                     }
                 }
@@ -375,7 +348,7 @@ class BackStatistiquesController extends AbstractController
             $countSignalementPerPartenaire[$partenaireStr]['wait_percent'] = round($partnerStats['wait'] / $totalPerPartner * 100);
         }
 
-        $countSignalementFiltered = \count($resultFiltered);
+        $countSignalementFiltered = \count($signalements);
         $averageCriticiteFiltered = $countSignalementFiltered > 0 ? round($totalCriticite / $countSignalementFiltered) : '-';
         arsort($countSignalementPerCriticite);
         $countSignalementPerCriticite = \array_slice($countSignalementPerCriticite, 0, 5);
@@ -395,7 +368,7 @@ class BackStatistiquesController extends AbstractController
     /**
      * Init list of Signalement by Statut, to retrieve label and color.
      */
-    private static function initStatutByValue($statut)
+    private static function initStatutByValue(string $statut): array
     {
         $buffer = [
             'label' => '',
@@ -434,7 +407,7 @@ class BackStatistiquesController extends AbstractController
     /**
      * Init list of Signalement by Criticite, to retrieve label and color.
      */
-    private static function initPerCriticitePercent()
+    private static function initPerCriticitePercent(): array
     {
         return [
             self::CRITICITE_VERY_WEAK => [
@@ -463,7 +436,7 @@ class BackStatistiquesController extends AbstractController
     /**
      * Init list of Signalement by Visite, to retrieve label and color.
      */
-    private static function initPerVisite()
+    private static function initPerVisite(): array
     {
         return [
             'Oui' => [
