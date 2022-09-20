@@ -244,23 +244,23 @@ class FrontStatistiquesController extends AbstractController
                 'count' => 0,
             ],
             'NON_DECENCE' => [
-                'label' => 'Non décence', // TODO
-                'color' => '#FF0000', // TODO
+                'label' => 'Non décence',
+                'color' => '#E4794A',
                 'count' => 0,
             ],
             'INFRACTION RSD' => [
-                'label' => 'Infraction RSD', // TODO
-                'color' => '#00FF00', // TODO
+                'label' => 'Infraction RSD',
+                'color' => '#A558A0',
                 'count' => 0,
             ],
             'INSALUBRITE' => [
                 'label' => 'Insalubrité',
-                'color' => '#E4794A',
+                'color' => '#CE0500',
                 'count' => 0,
             ],
             'LOGEMENT DECENT' => [
-                'label' => 'Logement décent', // TODO
-                'color' => '#0000FF', // TODO
+                'label' => 'Logement décent',
+                'color' => '#00A95F',
                 'count' => 0,
             ],
             'LOCATAIRE PARTI' => [
@@ -269,8 +269,8 @@ class FrontStatistiquesController extends AbstractController
                 'count' => 0,
             ],
             'LOGEMENT VENDU' => [
-                'label' => 'Logement vendu', // TODO
-                'color' => '#000000', // TODO
+                'label' => 'Logement vendu',
+                'color' => '#417DC4',
                 'count' => 0,
             ],
             'AUTRE' => [
