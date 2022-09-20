@@ -14,6 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ActivityListener implements EventSubscriberInterface
@@ -67,10 +68,21 @@ class ActivityListener implements EventSubscriberInterface
                 });
                 $this->sendMail($entity, NotificationService::TYPE_NEW_COMMENT_BACK);
                 if ($entity->getIsPublic() && Signalement::STATUS_REFUSED !== $entity->getSignalement()->getStatut()) {
-                    $this->notifier->send(NotificationService::TYPE_NEW_COMMENT_FRONT, [$entity->getSignalement()->getMailDeclarant(), $entity->getSignalement()->getMailOccupant()], [
-                        'signalement' => $entity->getSignalement(),
-                        'lien_suivi' => $this->urlGenerator->generate('front_suivi_signalement', ['code' => $entity->getSignalement()->getCodeSuivi()], 0),
-                    ], $entity->getSignalement()->getTerritory());
+                    $to = [];
+                    $mailDeclarant = $entity->getSignalement()->getMailDeclarant();
+                    if (!empty($mailDeclarant)) {
+                        $to[] = $mailDeclarant;
+                    }
+                    $mailOccupant = $entity->getSignalement()->getMailOccupant();
+                    if (!empty($mailOccupant)) {
+                        $to[] = $mailOccupant;
+                    }
+                    if (!empty($to)) {
+                        $this->notifier->send(NotificationService::TYPE_NEW_COMMENT_FRONT, $to, [
+                            'signalement' => $entity->getSignalement(),
+                            'lien_suivi' => $this->urlGenerator->generate('front_suivi_signalement', ['code' => $entity->getSignalement()->getCodeSuivi()], UrlGenerator::ABSOLUTE_URL),
+                        ], $entity->getSignalement()->getTerritory());
+                    }
                 }
             }
         }
@@ -91,7 +103,6 @@ class ActivityListener implements EventSubscriberInterface
                 }
             }
         }
-//        dd($this->tos);
     }
 
     private function createInAppNotification($user, $entity, $type)
@@ -133,7 +144,7 @@ class ActivityListener implements EventSubscriberInterface
             $options = array_merge($options, [
                 'link' => $this->urlGenerator->generate('back_signalement_view', [
                     'uuid' => $uuid,
-                ], 0),
+                ], UrlGenerator::ABSOLUTE_URL),
             ]);
             $this->notifier->send($mailType, array_unique($this->tos->toArray()), $options, $signalement->getTerritory());
         }
