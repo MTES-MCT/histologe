@@ -11,7 +11,11 @@
 
     <div v-else>
       <TheHistoFrontStatsGlobal />
-      <TheHistoFrontStatsTerritory />
+
+      <div v-if="loadingRefresh" class="loading fr-m-10w">
+        Mise à jour des statistiques...
+      </div>
+      <TheHistoFrontStatsTerritory v-else :on-update-filter="updateFilter" />
     </div>
   </div>
 </template>
@@ -36,6 +40,7 @@ export default defineComponent({
 			sharedState: store.state,
 			sharedProps: store.props,
       loadingInit: true,
+      loadingRefresh: false
     }
   },
 	created () {
@@ -48,6 +53,11 @@ export default defineComponent({
     }
   },
   methods: {
+    updateFilter() {
+      this.loadingRefresh = true
+      requests.filter(this.handleRefresh)
+    },
+
     /**
      * The query has finished its execution, we refresh the UI
      * @param requestResponse 
@@ -56,8 +66,8 @@ export default defineComponent({
       this.refreshFilters(requestResponse)
       this.refreshStats(requestResponse)
 
-      const wasInit = this.loadingInit
       this.loadingInit = false
+      this.loadingRefresh = false
     },
 
     refreshFilters (requestResponse: any) {
@@ -84,6 +94,10 @@ export default defineComponent({
       this.sharedState.stats.countSignalementPerStatut = requestResponse.signalement_per_statut
       this.sharedState.stats.countSignalementPerSituation = requestResponse.signalement_per_situation
       this.sharedState.stats.countSignalementPerMotifCloture = requestResponse.signalement_per_motif_cloture
+      this.sharedState.stats.countSignalementPerMonthThisYear = requestResponse.signalement_per_month_this_year
+      this.sharedState.stats.countSignalementPerStatutThisYear = requestResponse.signalement_per_statut_this_year
+      this.sharedState.stats.countSignalementPerSituationThisYear = requestResponse.signalement_per_situation_this_year
+      this.sharedState.stats.countSignalementPerMotifClotureThisYear = requestResponse.signalement_per_motif_cloture_this_year
     }
   }
 })

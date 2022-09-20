@@ -61,9 +61,15 @@ class FrontStatistiquesController extends AbstractController
         $this->ajaxResult['signalement_per_territoire'] = [];
         $listMonthName = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
         $countSignalementPerMonth = [];
+        $countSignalementPerMonthThisYear = [];
         $this->ajaxResult['signalement_per_statut'] = [];
+        $this->ajaxResult['signalement_per_statut_this_year'] = [];
         $countSignalementPerSituation = [];
+        $countSignalementPerSituationThisYear = [];
         $countSignalementPerMotifCloture = self::initMotifPerValue();
+        $countSignalementPerMotifClotureThisYear = self::initMotifPerValue();
+        $currentDate = new DateTime();
+        $currentYear = $currentDate->format('Y');
 
         $totalValidation = 0;
         $totalCloture = 0;
@@ -128,6 +134,41 @@ class FrontStatistiquesController extends AbstractController
                 if (null !== $dateClosedAt && !empty($motifCloture) && !empty($countSignalementPerMotifCloture[$motifCloture])) {
                     ++$countSignalementPerMotifCloture[$motifCloture]['count'];
                 }
+
+                // This year
+                if ($dateCreatedAt->format('Y') == $currentYear) {
+                    // Per month
+                    if (empty($countSignalementPerMonthThisYear[$dateCreatedAt->format('Y-m')])) {
+                        $countSignalementPerMonthThisYear[$dateCreatedAt->format('Y-m')] = 0;
+                    }
+                    ++$countSignalementPerMonthThisYear[$dateCreatedAt->format('Y-m')];
+
+                    // Per statut
+                    if (empty($this->ajaxResult['signalement_per_statut_this_year'][$statut])) {
+                        $newStatutValues = self::initStatutByValue($statut);
+                        if (!empty($newStatutValues)) {
+                            $this->ajaxResult['signalement_per_statut_this_year'][$statut] = $newStatutValues;
+                        }
+                    }
+                    if (!empty($this->ajaxResult['signalement_per_statut_this_year'][$statut])) {
+                        ++$this->ajaxResult['signalement_per_statut_this_year'][$statut]['count'];
+                    }
+
+                    // Per situation
+                    $countListSituations = \count($listSituations);
+                    for ($i = 0; $i < $countListSituations; ++$i) {
+                        $situationStr = $listSituations[$i]->getMenuLabel();
+                        if (empty($countSignalementPerSituationThisYear[$situationStr])) {
+                            $countSignalementPerSituationThisYear[$situationStr] = 0;
+                        }
+                        ++$countSignalementPerSituationThisYear[$situationStr];
+                    }
+
+                    // Per motif
+                    if (null !== $dateClosedAt && !empty($motifCloture) && !empty($countSignalementPerMotifClotureThisYear[$motifCloture])) {
+                        ++$countSignalementPerMotifClotureThisYear[$motifCloture]['count'];
+                    }
+                }
             }
         }
 
@@ -136,7 +177,9 @@ class FrontStatistiquesController extends AbstractController
         $this->ajaxResult['percent_validation'] = $percentValidation;
         $this->ajaxResult['percent_cloture'] = $percentCloture;
         $this->ajaxResult['signalement_per_situation'] = $countSignalementPerSituation;
+        $this->ajaxResult['signalement_per_situation_this_year'] = $countSignalementPerSituationThisYear;
         $this->ajaxResult['signalement_per_motif_cloture'] = $countSignalementPerMotifCloture;
+        $this->ajaxResult['signalement_per_motif_cloture_this_year'] = $countSignalementPerMotifClotureThisYear;
 
         ksort($countSignalementPerMonth);
         $this->ajaxResult['signalement_per_month'] = [];
@@ -144,6 +187,13 @@ class FrontStatistiquesController extends AbstractController
             $dateMonth = new DateTime($month);
             $strMonth = $listMonthName[$dateMonth->format('m') - 1].' '.$dateMonth->format('Y');
             $this->ajaxResult['signalement_per_month'][$strMonth] = $count;
+        }
+        ksort($countSignalementPerMonthThisYear);
+        $this->ajaxResult['signalement_per_month_this_year'] = [];
+        foreach ($countSignalementPerMonthThisYear as $month => $count) {
+            $dateMonth = new DateTime($month);
+            $strMonth = $listMonthName[$dateMonth->format('m') - 1].' '.$dateMonth->format('Y');
+            $this->ajaxResult['signalement_per_month_this_year'][$strMonth] = $count;
         }
     }
 
