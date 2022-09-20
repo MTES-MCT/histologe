@@ -344,10 +344,7 @@ class MigrateLegacyCommand extends Command
             $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
 
             $signalement->setModifiedBy($user)
-                ->setCreatedAt(
-                    $this->isValidDate($legacySignalement['created_at'])
-                        ? new \DateTimeImmutable($legacySignalement['created_at'])
-                        : new \DateTimeImmutable())
+                ->setCreatedAt($this->getValidDate($legacySignalement['created_at']))
                 ->setModifiedAt(new \DateTimeImmutable($legacySignalement['modified_at']))
                 ->setStatut((int) $legacySignalement['statut'])
                 ->setReference($legacySignalement['reference'])
@@ -370,10 +367,9 @@ class MigrateLegacyCommand extends Command
                 ->setCodeSuivi($legacySignalement['code_suivi'])
                 ->setLienDeclarantOccupant($legacySignalement['lien_declarant_occupant'])
                 ->setIsConsentementTiers((bool) $legacySignalement['is_consentement_tiers'])
-                ->setValidatedAt(
-                    $this->isValidDate($legacySignalement['validated_at'])
-                        ? new \DateTimeImmutable($legacySignalement['validated_at'])
-                        : null)
+                ->setValidatedAt(Signalement::STATUS_NEED_VALIDATION !== $legacySignalement['statut']
+                    ? $this->getValidDate($legacySignalement['validated_at'])
+                    : null)
                 ->setIsRsa((bool) $legacySignalement['is_rsa'])
                 ->setProprioAvertiAt(new \DateTimeImmutable($legacySignalement['prorio_averti_at']))
                 ->setAnneeConstruction((int) $legacySignalement['annee_construction'])
@@ -505,10 +501,7 @@ class MigrateLegacyCommand extends Command
                 ->setSignalement($signalement)
                 ->setPartner($partner)
                 ->setAnsweredAt(new \DateTimeImmutable($legacyAffectation['answered_at']))
-                ->setCreatedAt($this->isValidDate($legacyAffectation['created_at'])
-                    ? new \DateTimeImmutable($legacyAffectation['created_at'])
-                    : new \DateTimeImmutable()
-                )
+                ->setCreatedAt($this->getValidDate($legacyAffectation['created_at']))
                 ->setStatut($legacyAffectation['statut'])
                 ->setAnsweredBy($answerdBy)
                 ->setAffectedBy($affectedBy)
@@ -718,12 +711,12 @@ class MigrateLegacyCommand extends Command
         return $roles;
     }
 
-    private function isValidDate(string|null $date): bool
+    private function getValidDate(string|null $date): \DateTimeImmutable
     {
         if ('0000-00-00 00:00:00' === $date || empty($date)) {
-            return false;
+            return new \DateTimeImmutable();
         }
 
-        return true;
+        return new \DateTimeImmutable($date);
     }
 }
