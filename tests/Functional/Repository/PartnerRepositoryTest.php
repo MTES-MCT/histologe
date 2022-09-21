@@ -45,7 +45,7 @@ class PartnerRepositoryTest extends KernelTestCase
         }
     }
 
-    public function testFindPartnersByInseeWithTerritory(): void
+    public function testFindPartnersByIntInseeWithTerritory(): void
     {
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         $territory = $territoryRepository->findOneBy(['zip' => '13']);
@@ -60,11 +60,14 @@ class PartnerRepositoryTest extends KernelTestCase
         }
     }
 
-    public function testFindPartnersByInseeWithoutTerritory(): void
+    public function testFindPartnersByStringInseeWithTerritory(): void
     {
+        $territoryRepository = $this->entityManager->getRepository(Territory::class);
+        $territory = $territoryRepository->findOneBy(['zip' => '2A']);
+
         /** @var PartnerRepository $partnerRepository */
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
-        $partners = $partnerRepository->findAllOrByInseeIfCommune('2A247', null);
+        $partners = $partnerRepository->findAllOrByInseeIfCommune('2A247', $territory);
 
         /** @var Partner $partner */
         foreach ($partners as $partner) {
