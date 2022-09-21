@@ -362,7 +362,7 @@ class MigrateLegacyCommand extends Command
                 ->setEscalierOccupant($legacySignalement['escalier_occupant'])
                 ->setNumAppartOccupant($legacySignalement['num_appart_occupant'])
                 ->setAdresseAutreOccupant($legacySignalement['adresse_autre_occupant'])
-                ->setModeContactProprio(json_decode($legacySignalement['mode_contact_proprio']))
+                ->setModeContactProprio(json_decode($legacySignalement['mode_contact_proprio'], true))
                 ->setInseeOccupant($legacySignalement['insee_occupant'])
                 ->setCodeSuivi($legacySignalement['code_suivi'])
                 ->setLienDeclarantOccupant($legacySignalement['lien_declarant_occupant'])
