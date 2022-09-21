@@ -91,7 +91,7 @@ users:
   -
     email: partenaire-01-2A@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
-    partner: "Porto Vecchio"
+    partner: "Vecchio Porto"
     statut: 0
     is_generique: 0
     is_mailing_active: 0
