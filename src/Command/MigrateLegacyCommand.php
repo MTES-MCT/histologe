@@ -441,7 +441,7 @@ class MigrateLegacyCommand extends Command
             }
             $suivi
                 ->setCreatedBy($createdBy)
-                ->setCreatedAt(new \DateTimeImmutable($legacySuivi['created_at']))
+                ->setCreatedAt($this->getValidDate($legacySuivi['created_at']))
                 ->setSignalement($signalement)
                 ->setDescription($legacySuivi['description'])
                 ->setIsPublic((bool) $legacySuivi['is_public']);
