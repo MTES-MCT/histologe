@@ -48,4 +48,35 @@ export default defineComponent({
 </script>
 
 <style>
+  .dp__instance_calendar > .dp__flex_display > .dp__instance_calendar::before {
+    display: block;
+    padding: 4px 0px;
+    text-align: center;
+    background: #CACAFB;
+  }
+  .dp__instance_calendar > .dp__flex_display > .dp__instance_calendar:first-child::before {
+    content: "Date de début";
+  }
+  .dp__instance_calendar > .dp__flex_display > .dp__instance_calendar:last-child::before {
+    content: "Date de fin";
+    border-left: 10px solid #FFF;
+  }
+  .dp__calendar_item .dp__range_start, .dp__calendar_item .dp__range_end {
+    color: #333;
+    background: #CACAFB;
+  }
+
+  span.dp__action {
+    font-weight: normal;
+  }
+  span.dp__action.dp__cancel {
+    text-decoration: underline;
+    color: #333;
+  }
+  span.dp__action.dp__select {
+    margin-left: 8px;
+    padding: 5px 10px;
+    color: #FFF;
+    background-color: var(--blue-france-sun-113-625);
+  }
 </style>

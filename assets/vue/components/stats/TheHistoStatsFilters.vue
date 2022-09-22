@@ -64,8 +64,8 @@
             <template #label>Cocher la case pour comptabiliser les signalements refusés</template>
           </HistoCheckbox>
         </div>
-        <div class="fr-col-12 fr-col-lg-12 fr-col-xl-3">
-          <a href="#" @click="onReinitLocalEvent">Tout réinitialiser</a>
+        <div class="fr-col-12 fr-col-lg-12 fr-col-xl-3 align-right">
+          <a href="#" @click="onReinitLocalEvent"><span class="fr-fi-refresh-line"></span>Tout réinitialiser</a>
         </div>
       </div>
     </div>
@@ -144,3 +144,14 @@ export default defineComponent({
   }
 })
 </script>
+
+<style>
+  .align-right {
+    text-align: right;
+  }
+  .fr-fi-refresh-line::before{
+    padding-right: 5px;
+    font-size: 1rem;
+    color: var(--blue-france-sun-113-625);
+  }
+</style>
