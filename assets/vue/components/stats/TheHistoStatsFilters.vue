@@ -129,19 +129,13 @@ export default defineComponent({
       this.sharedState.filters.dateRange = this.initFilters.dateRange
 
       this.sharedState.filters.etiquettes = new Array<string>()
-      for (const element of store.state.filters.etiquettes) {
-        this.sharedState.filters.etiquettes.push(element)
-      }
+      this.sharedState.filters.communes = new Array<string>()
 
       // Other simple data
       this.sharedState.filters.territoire = this.initFilters.territoire
-      this.sharedState.filters.communes = this.initFilters.communes
       this.sharedState.filters.statut = this.initFilters.statut
       this.sharedState.filters.type = this.initFilters.type
       this.sharedState.filters.countRefused = this.initFilters.countRefused
-
-      console.log('this.sharedState.filters.etiquettes')
-      console.log(this.sharedState.filters.etiquettes)
 
       if (this.onChange !== undefined) {
         this.onChange()
