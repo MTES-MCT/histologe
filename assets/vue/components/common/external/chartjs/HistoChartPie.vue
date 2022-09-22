@@ -83,14 +83,22 @@ export default defineComponent({
         labels: inLabels,
         datasets: [
           {
+            data: inData,
             backgroundColor: inColors,
-            data: inData
+            hoverBorderWidth: 10,
+            hoverBorderColor: inColors,
+            hoverOffset: 5,
           }
         ]
       },
       chartOptions: {
         responsive: true,
-        maintainAspectRatio: false
+        maintainAspectRatio: false,
+        plugins: {
+         legend: {
+            position: 'bottom'
+         }
+        }
       }
     }
   }

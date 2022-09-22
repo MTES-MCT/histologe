@@ -17,9 +17,9 @@
 <script>
 import { defineComponent } from 'vue'
 import { Line } from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale, Plugin } from 'chart.js'
+import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale, Plugin, Filler } from 'chart.js'
 
-ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale)
+ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale, Filler)
 
 export default defineComponent({
   name: 'HistoChartLine',
@@ -67,11 +67,14 @@ export default defineComponent({
         datasets: [
           {
             data: inData,
-            pointBackgroundColor: '#000091',
+            cubicInterpolationMode: 'monotone',
             borderColor: '#000091',
-            backgroundColor: '#CACAFB',
-            fill: {value: 0},
-            cubicInterpolationMode: 'monotone'
+            fill: true,
+            backgroundColor: 'rgb(202, 202, 251, 0.7)',
+            pointBackgroundColor: '#000091',
+            pointHoverRadius: 5,
+            pointHoverBorderWidth: 3,
+            pointHoverBackgroundColor: '#FFFFFF'
           }
         ]
       },

@@ -33,6 +33,7 @@ export default defineComponent({
     return {
       options: {
         lengthChange: false,
+        // pageLength: 5,
         searching :  false,
         language: {
           "info": "Résultats _START_ - _END_ sur _TOTAL_",
@@ -73,11 +74,17 @@ export default defineComponent({
 
   .histo-data-table .dataTables_wrapper .dataTables_paginate .paginate_button {
     border: 0px;
+    color: #161616;
     background: none;
     padding: 0.2em 0.7em;
   }
   .histo-data-table .dataTables_wrapper .dataTables_paginate .paginate_button.current {
     border: 0px;
     background: var(--blue-france-850-200);
+  }
+  .histo-data-table .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    color: #161616 !important;
+    background-color: #E5E5E5;
+
   }
 </style>

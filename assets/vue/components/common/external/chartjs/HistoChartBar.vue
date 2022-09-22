@@ -62,7 +62,24 @@ export default {
     let inLabels = []
     let inData = []
     for (let i in this.items) {
-      inLabels.push(i)
+      let wordsBuffer = []
+      let labelBuffer = ''
+      const words = i.split(' ')
+      for (let j = 0; j < words.length; j++) {
+        if (labelBuffer !== '') {
+          labelBuffer += ' '
+        }
+        if (labelBuffer.length + words[j].length < 50) {
+          labelBuffer += words[j]
+        } else {
+          wordsBuffer.push(labelBuffer)
+          labelBuffer = words[j]
+        }
+      }
+      if (labelBuffer !== '') {
+        wordsBuffer.push(labelBuffer)
+      }
+      inLabels.push(wordsBuffer)
       inData.push(this.items[i])
     }
     return {
@@ -73,10 +90,18 @@ export default {
       chartOptions: {
         responsive: true,
 		    indexAxis: 'y',
+        backgroundColor: '#000091',
         plugins: {
-         legend: {
+          legend: {
             display: false
-         }
+          },
+          tooltip: {
+            callbacks: {
+              title: function(context) {
+                return context[0].label.split(' ,').join('\n')
+              }
+            }
+          },
         }
       }
     }
