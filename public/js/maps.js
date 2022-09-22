@@ -57,7 +57,7 @@ const popupTemplate = (options) => {
 
     return TEMPLATE;
 }
-const MAP_MARKERS_PAGE_SIZE = 9000; // @todo: is high cause the query findAllWithGeoData should be reviewed
+const MAP_MARKERS_PAGE_SIZE = 9000; // @todo: is high cause duplicate result the query findAllWithGeoData should be reviewed
 
 async function getMarkers(offset) {
     await fetch('?load_markers=true&offset=' + offset, {
