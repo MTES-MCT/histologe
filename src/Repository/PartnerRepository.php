@@ -25,7 +25,7 @@ class PartnerRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('p')
             ->where('p.isArchive != 1');
         if ($insee) {
-            $qb->andWhere('p.insee LIKE :insee')
+            $qb->andWhere('p.isCommune = 0 OR p.isCommune = 1 AND p.insee LIKE :insee')
                 ->setParameter('insee', '%'.$insee.'%');
         }
         if ($territory) {
