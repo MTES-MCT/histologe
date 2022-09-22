@@ -16,6 +16,7 @@
             @update:modelValue="onChange(false)"
             inner-label="Communes"
             :option-items=sharedState.filters.communesList
+            :active="sharedState.filters.territoire !== 'all'"
             />
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
@@ -34,6 +35,7 @@
             @update:modelValue="onChange(false)"
             inner-label="Etiquettes"
             :option-items=sharedState.filters.etiquettesList
+            :active="sharedState.filters.territoire !== 'all'"
             />
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">

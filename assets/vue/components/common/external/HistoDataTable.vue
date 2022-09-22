@@ -37,6 +37,8 @@ export default defineComponent({
         language: {
           "info": "Résultats _START_ - _END_ sur _TOTAL_",
           "infoEmpty": "Aucun résultat",
+          "zeroRecords": "Aucune donnée disponible",
+          "emptyTable": "Aucune donnée disponible",
           "paginate": {
             "first":      "|<",
             "last":       ">|",

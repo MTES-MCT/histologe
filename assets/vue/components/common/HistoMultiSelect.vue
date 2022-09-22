@@ -1,12 +1,12 @@
 <template>
   <div
-    class="histo-multi-select"
+    :class="['histo-multi-select', active ? 'active' : 'inactive']"
     @focusout="isExpanded = false"
     tabindex="0"
     >
     <div
       class="selector fr-select"
-      @click="isExpanded = !isExpanded"
+      @click="handleClickSelect"
       >
       {{ innerLabel }} ({{ strCountSelectedItems }})
     </div>
@@ -61,7 +61,8 @@ export default defineComponent({
     optionItems: {
       type: Array as () => Array<HistoInterfaceSelectOption>,
       default: () => []
-    }
+    },
+    active: { type: Boolean, default: true }
   },
   data: function () {
     return {
@@ -72,6 +73,11 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   methods: {
+    handleClickSelect () {
+      if (this.active) {
+        this.isExpanded = !this.isExpanded
+      }
+    },
     handleClickItem (event:any) {
       const clickedElement:any = event.target
       const clickedOptionId:string = clickedElement.dataset.optionid
@@ -112,9 +118,16 @@ export default defineComponent({
     width: 100%;
     position: relative;
   }
+  .histo-multi-select.inactive {
+    opacity: 0.5;
+  }
 
   .histo-multi-select .selector {
     background-color: #FFF;
+    cursor: pointer;
+  }
+  .histo-multi-select.inactive .selector {
+    cursor: not-allowed;
   }
 
   .histo-multi-select .selector-items {
