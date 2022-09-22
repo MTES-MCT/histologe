@@ -20,8 +20,7 @@
               :data-optionid="item.Id"
               @click="handleRemoveItem"
               >
-              {{ item.Text }}
-              <span>X</span>
+              {{ unbreakText(item.Text) }} <span>X</span>
             </li>
           </template>
         </ul>
@@ -90,7 +89,7 @@ export default defineComponent({
     handleRemoveItem (event:any) {
       const clickedElement:any = event.target
       const clickedOptionId:string = clickedElement.dataset.optionid
-      for (let i:number = this.modelValue.length; i >= 0; i--) {
+      for (let i:number = this.modelValue.length - 1; i >= 0; i--) {
         if (this.modelValue[i] == clickedOptionId) {
           this.modelValue.splice(i, 1)
         }
@@ -99,6 +98,12 @@ export default defineComponent({
       if (this.onChange !== undefined) {
         this.onChange()
       }
+    },
+    unbreakText (text:string) {
+      if (text.length > 14) {
+        return text.substring(0, 14) + '...'
+      }
+      return text
     }
   },
   computed: {
@@ -149,9 +154,10 @@ export default defineComponent({
     padding: 0px;
   }
   .histo-multi-select .selector-items .selector-items-selected ul li {
-    display: inline;
-    height: 28px;
+    display: inline-block;
+    height: 34px;
     line-height: 34px;
+    vertical-align: middle;
     margin-right: .5rem;
     margin-bottom: .2rem;
     padding: .1rem .3rem;
