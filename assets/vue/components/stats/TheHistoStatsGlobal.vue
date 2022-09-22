@@ -61,7 +61,7 @@ export default defineComponent({
   },
   data () {
     return {
-			sharedState: store.state
+      sharedState: store.state
     }
   },
   computed: {

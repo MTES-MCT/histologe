@@ -2,9 +2,6 @@ import axios from 'axios'
 import { store } from './store'
 
 export const requests = {
-	/**
-	 * Filtre les statistiques
-	 */
 	filter(functionReturn: Function) {
 		let data = new FormData()
 		if (store.state.filters.canFilterTerritoires) {

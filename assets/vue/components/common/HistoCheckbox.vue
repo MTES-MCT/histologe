@@ -17,9 +17,9 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-	name: 'WDGCheckbox',
-	props: {
-		id: { type: String, default: null },
+  name: 'WDGCheckbox',
+  props: {
+    id: { type: String, default: null },
     modelValue: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
     onChange: { type: Function }

@@ -53,6 +53,7 @@ export default defineComponent({
     id: { type: String, default: '' },
     onChange: { type: Function },
     innerLabel: { type: String, default: '' },
+    isInnerLabelFemale: { type: Boolean, default: true },
     modelValue: {
       type: Array as () => Array<string>,
       default: () => []
@@ -96,10 +97,11 @@ export default defineComponent({
   },
   computed: {
     strCountSelectedItems() {
+      const selectLabel:string = this.isInnerLabelFemale ? 'sélectionnée' : 'sélectionné'
       if (this.modelValue.length > 1) {
-        return this.modelValue.length + ' sélectionnées'
+        return this.modelValue.length + ' ' + selectLabel + 's'
       }
-      return this.modelValue.length + ' sélectionnée'
+      return this.modelValue.length + ' ' + selectLabel
     }
   }
 })

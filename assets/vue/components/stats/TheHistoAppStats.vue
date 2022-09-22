@@ -43,15 +43,15 @@ export default defineComponent({
   },
   data () {
     return {
-			sharedState: store.state,
-			sharedProps: store.props,
+      sharedState: store.state,
+      sharedProps: store.props,
       loadingInit: true,
       loadingFilters: false,
     }
   },
-	created () {
+  created () {
     if (initElements !== null) {
-		  this.sharedProps.ajaxurl = initElements.dataset.ajaxurl
+      this.sharedProps.ajaxurl = initElements.dataset.ajaxurl
       this.initDates()
       requests.filter(this.handleRefresh)
 

@@ -96,7 +96,7 @@ export default defineComponent({
     }
 
     return {
-			sharedState: store.state,
+      sharedState: store.state,
       initFilters: {
         territoire: store.state.filters.territoire,
         communes: store.state.filters.communes,
@@ -120,8 +120,8 @@ export default defineComponent({
       ]
     }
   },
-	methods: {
-		onReinitLocalEvent () {
+  methods: {
+    onReinitLocalEvent () {
       // Date management
       (this.$refs['histofiltersdatepicker'] as any).updateDate(this.initFilters.dateRange)
       this.sharedState.filters.dateRange = this.initFilters.dateRange
@@ -142,9 +142,9 @@ export default defineComponent({
       console.log(this.sharedState.filters.etiquettes)
 
       if (this.onChange !== undefined) {
-			  this.onChange()
+        this.onChange()
       }
-		}
-	}
+    }
+  }
 })
 </script>

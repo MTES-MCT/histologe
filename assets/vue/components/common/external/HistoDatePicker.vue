@@ -1,7 +1,7 @@
 <template>
   <div class="histo-date-picker">
     <Datepicker
-      v-model="date"
+      v-model="dates"
       @update:modelValue="handleDate"
       locale="fr"
       range
@@ -23,23 +23,23 @@ export default defineComponent({
   name: 'HistoDatePicker',
   components: { Datepicker },
   expose: ['updateDate'],
-	props: {
-		id: { type: String, default: null },
+  props: {
+    id: { type: String, default: null },
     modelValue: { type: Array, default: [] }
   },
   data() {
     return {
-      date: this.modelValue
+      dates: this.modelValue
     }
   },
   emits: ['update:modelValue'],
   methods: {
-    updateDate: function(newDate: Array<Date>) {
-      this.date = newDate
+    updateDate: function(newDates: Array<Date>) {
+      this.dates = newDates
     },
     handleDate: function(modelData: any) {
-      if (this.date !== undefined && this.date !== null) {
-        this.date = modelData
+      if (this.dates !== undefined && this.dates !== null) {
+        this.dates = modelData
       }
       this.$emit('update:modelValue', modelData)
     }
