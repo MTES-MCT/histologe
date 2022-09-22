@@ -53,11 +53,14 @@ class PartnerRepositoryTest extends KernelTestCase
         /** @var PartnerRepository $partnerRepository */
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
         $partners = $partnerRepository->findAllOrByInseeIfCommune(13215, $territory);
-
         /** @var Partner $partner */
+        $inseeList = [];
         foreach ($partners as $partner) {
-            $this->assertContains('13215', $partner->getInsee());
+            foreach ($partner->getInsee() as $insee) {
+                $inseeList[] = $insee;
+            }
         }
+        $this->assertContains('13215', $inseeList);
     }
 
     public function testFindPartnersByStringInseeWithTerritory(): void
