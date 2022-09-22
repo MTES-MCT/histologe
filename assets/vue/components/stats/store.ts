@@ -13,6 +13,7 @@ export const store = {
 			countRefused: false,
 			territoire: 'all',
 			canFilterTerritoires: false,
+			canSeePerPartenaire: false,
 			territoiresList: new Array<HistoInterfaceSelectOption>()
 		},
 		stats: {

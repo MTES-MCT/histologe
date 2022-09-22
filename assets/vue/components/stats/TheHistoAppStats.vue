@@ -150,6 +150,8 @@ export default defineComponent({
           this.sharedState.filters.territoiresList.push(optionItem)
         }
       }
+
+      this.sharedState.filters.canSeePerPartenaire = requestResponse.can_see_per_partenaire === '1'
     },
 
     refreshStats (requestResponse: any) {

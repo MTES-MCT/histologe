@@ -17,9 +17,9 @@
         </div>
 
         <div class="fr-col-12 fr-col-lg-8">
-          <div class="fr-mb-3w">
+          <div class="fr-mb-3w" v-if="sharedState.filters.canSeePerPartenaire">
             <HistoDataTable :headers=countSignalementPerPartenaireHeaders :items=sharedState.stats.countSignalementPerPartenaire>
-              <template #title>Répartition par partenaires</template>
+              <template #title>Répartition par partenaires (uniquement visible par les reponsables de territoires)</template>
               <template #description>Cliquez sur l'en-tête d'une colonne pour trier les résultats</template>
             </HistoDataTable>
           </div>
