@@ -22,7 +22,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class SignalementRepository extends ServiceEntityRepository
 {
     public const ARRAY_LIST_PAGE_SIZE = 30;
-    public const MARKERS_PAGE_SIZE = 9000; // @todo: is high cause duplicate result the query findAllWithGeoData should be reviewed
+    public const MARKERS_PAGE_SIZE = 9000; // @todo: is high cause duplicate result, the query findAllWithGeoData should be reviewed
 
     private SearchFilterService $searchFilterService;
 
