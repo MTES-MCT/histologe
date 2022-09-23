@@ -63,14 +63,14 @@ export default defineComponent({
     HistoChartBar,
     HistoChartDoughnut,
     HistoChartLine
-},
+  },
   props: {
     data: String,
     onUpdateFilter: Function
   },
   data () {
     return {
-			sharedState: store.state,
+      sharedState: store.state,
       isLoadingPerMonth: false,
       isLoadingPerStatut: false,
       isLoadingPerSituation: false,
@@ -85,41 +85,41 @@ export default defineComponent({
     },
     handleChangePerMonth () {
       this.isLoadingPerMonth = true
-      setTimeout(() => {this.isLoadingPerMonth = false}, 100)
+      setTimeout(() => { this.isLoadingPerMonth = false }, 100)
     },
     handleChangePerStatut () {
       this.isLoadingPerStatut = true
-      setTimeout(() => {this.isLoadingPerStatut = false}, 100)
+      setTimeout(() => { this.isLoadingPerStatut = false }, 100)
     },
     handleChangePerSituation () {
       this.isLoadingPerSituation = true
-      setTimeout(() => {this.isLoadingPerSituation = false}, 100)
+      setTimeout(() => { this.isLoadingPerSituation = false }, 100)
     },
     handleChangePerMotifCloture () {
       this.isLoadingPerMotifCloture = true
-      setTimeout(() => {this.isLoadingPerMotifCloture = false}, 100)
+      setTimeout(() => { this.isLoadingPerMotifCloture = false }, 100)
     }
   },
   computed: {
-    perMonthData() {
+    perMonthData () {
       if (this.sharedState.filters.perMonthYearType === 'year') {
         return this.sharedState.stats.countSignalementPerMonthThisYear
       }
       return this.sharedState.stats.countSignalementPerMonth
     },
-    perStatutData() {
+    perStatutData () {
       if (this.sharedState.filters.perStatutYearType === 'year') {
         return this.sharedState.stats.countSignalementPerStatutThisYear
       }
       return this.sharedState.stats.countSignalementPerStatut
     },
-    perSituationData() {
+    perSituationData () {
       if (this.sharedState.filters.perSituationYearType === 'year') {
         return this.sharedState.stats.countSignalementPerSituationThisYear
       }
       return this.sharedState.stats.countSignalementPerSituation
     },
-    perMotifClotureData() {
+    perMotifClotureData () {
       if (this.sharedState.filters.perMotifClotureYearType === 'year') {
         return this.sharedState.stats.countSignalementPerMotifClotureThisYear
       }

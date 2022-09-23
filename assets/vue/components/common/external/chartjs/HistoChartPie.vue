@@ -46,7 +46,7 @@ export default defineComponent({
     },
     items: {
       type: Object,
-      default: {}
+      default: () => {}
     },
     width: {
       type: Number,
@@ -69,11 +69,11 @@ export default defineComponent({
       default: () => []
     }
   },
-  data() {
-    let inLabels = []
-    let inData = []
-    let inColors = []
-    for (let i in this.items) {
+  data () {
+    const inLabels = []
+    const inData = []
+    const inColors = []
+    for (const i in this.items) {
       inLabels.push(this.items[i].label)
       inData.push(this.items[i].count)
       inColors.push(this.items[i].color)
@@ -87,7 +87,7 @@ export default defineComponent({
             backgroundColor: inColors,
             hoverBorderWidth: 10,
             hoverBorderColor: inColors,
-            hoverOffset: 5,
+            hoverOffset: 5
           }
         ]
       },
@@ -95,9 +95,9 @@ export default defineComponent({
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-         legend: {
+          legend: {
             position: 'bottom'
-         }
+          }
         }
       }
     }

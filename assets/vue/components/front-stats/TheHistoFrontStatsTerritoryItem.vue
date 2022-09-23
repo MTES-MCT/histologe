@@ -11,30 +11,30 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import TheHistoFrontStatsYearToggle from './TheHistoFrontStatsYearToggle.vue';
+import TheHistoFrontStatsYearToggle from './TheHistoFrontStatsYearToggle.vue'
 
 export default defineComponent({
-    name: "TheHistoFrontStatsTerritoryItem",
-    components: { TheHistoFrontStatsYearToggle },
-    props: {
-        sizeClass: { type: String, default: '' },
-        modelValue: { type: String, default: '' },
-        onChange: { type: Function }
-    },
-    emits: ['update:modelValue'],
-    data() {
-      return {
-        yearType: this.modelValue 
-      }
-    },
-    methods: {
-      onYearTypeChange(selection: string) {
-			  this.$emit('update:modelValue', selection)
-        if (this.onChange !== undefined) {
-          this.onChange(selection)
-        }
+  name: 'TheHistoFrontStatsTerritoryItem',
+  components: { TheHistoFrontStatsYearToggle },
+  props: {
+    sizeClass: { type: String, default: '' },
+    modelValue: { type: String, default: '' },
+    onChange: { type: Function }
+  },
+  emits: ['update:modelValue'],
+  data () {
+    return {
+      yearType: this.modelValue
+    }
+  },
+  methods: {
+    onYearTypeChange (selection: string) {
+      this.$emit('update:modelValue', selection)
+      if (this.onChange !== undefined) {
+        this.onChange(selection)
       }
     }
+  }
 })
 </script>
 

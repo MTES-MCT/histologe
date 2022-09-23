@@ -19,16 +19,16 @@ export default defineComponent({
   data () {
     const year = new Date().getFullYear()
     return {
-      year: year,
+      year,
       selection: this.modelValue
     }
   },
   emits: ['update:modelValue'],
   methods: {
-    handleToggle(selection:string) {
+    handleToggle (selection:string) {
       if (this.selection !== selection) {
         this.selection = selection
-			  this.$emit('update:modelValue', selection)
+        this.$emit('update:modelValue', selection)
         if (this.onChange !== undefined) {
           this.onChange(selection)
         }
@@ -36,11 +36,11 @@ export default defineComponent({
     }
   },
   computed: {
-    classSelectedYear() {
-      return 'year' === this.selection ? 'selected' : ''
+    classSelectedYear () {
+      return this.selection === 'year' ? 'selected' : ''
     },
-    classSelectedAll() {
-      return 'all' === this.selection ? 'selected' : ''
+    classSelectedAll () {
+      return this.selection === 'all' ? 'selected' : ''
     }
   }
 })

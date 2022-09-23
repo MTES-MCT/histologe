@@ -17,7 +17,7 @@
 <script>
 import { defineComponent } from 'vue'
 import { Line } from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale, Plugin, Filler } from 'chart.js'
+import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale, Filler } from 'chart.js'
 
 ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale, Filler)
 
@@ -31,7 +31,7 @@ export default defineComponent({
     },
     items: {
       type: Object,
-      default: {}
+      default: () => {}
     },
     width: {
       type: Number,
@@ -54,10 +54,10 @@ export default defineComponent({
       default: () => {}
     }
   },
-  data() {
-    let inLabels = []
-    let inData = []
-    for (let i in this.items) {
+  data () {
+    const inLabels = []
+    const inData = []
+    for (const i in this.items) {
       inLabels.push(i)
       inData.push(this.items[i])
     }

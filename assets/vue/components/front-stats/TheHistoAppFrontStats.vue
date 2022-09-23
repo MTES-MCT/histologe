@@ -2,7 +2,7 @@
   <div
     id="app-front-stats"
     class="histo-app-front-stats fr-pt-5w"
-	  :data-ajaxurl="sharedProps.ajaxurl"
+    :data-ajaxurl="sharedProps.ajaxurl"
     >
     <h1>Histologe en quelques chiffres</h1>
     <div v-if="loadingInit" class="loading fr-m-10w">
@@ -37,30 +37,29 @@ export default defineComponent({
   },
   data () {
     return {
-			sharedState: store.state,
-			sharedProps: store.props,
+      sharedState: store.state,
+      sharedProps: store.props,
       loadingInit: true,
       loadingRefresh: false
     }
   },
-	created () {
+  created () {
     if (initElements !== null) {
-		  this.sharedProps.ajaxurl = initElements.dataset.ajaxurl
+      this.sharedProps.ajaxurl = initElements.dataset.ajaxurl
       requests.filter(this.handleRefresh)
-
     } else {
       alert('Error while loading front statistics')
     }
   },
   methods: {
-    updateFilter() {
+    updateFilter () {
       this.loadingRefresh = true
       requests.filter(this.handleRefresh)
     },
 
     /**
      * The query has finished its execution, we refresh the UI
-     * @param requestResponse 
+     * @param requestResponse
      */
     async handleRefresh (requestResponse: any) {
       this.refreshFilters(requestResponse)
@@ -72,12 +71,12 @@ export default defineComponent({
 
     refreshFilters (requestResponse: any) {
       this.sharedState.filters.territoiresList = []
-      let optionAllItem = new HistoInterfaceSelectOption()
+      const optionAllItem = new HistoInterfaceSelectOption()
       optionAllItem.Id = 'all'
       optionAllItem.Text = 'Tous'
       this.sharedState.filters.territoiresList.push(optionAllItem)
-      for (let id in requestResponse.list_territoires) {
-        let optionItem = new HistoInterfaceSelectOption()
+      for (const id in requestResponse.list_territoires) {
+        const optionItem = new HistoInterfaceSelectOption()
         optionItem.Id = id
         optionItem.Text = requestResponse.list_territoires[id]
         this.sharedState.filters.territoiresList.push(optionItem)

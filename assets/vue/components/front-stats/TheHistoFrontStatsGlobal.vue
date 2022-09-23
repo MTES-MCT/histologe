@@ -35,13 +35,13 @@ export default defineComponent({
   components: {
     TheHistoFrontStatsDetailsItem,
     HistoFranceMap
-},
+  },
   props: {
     data: String
   },
   data () {
     return {
-			sharedState: store.state,
+      sharedState: store.state
     }
   },
   computed: {

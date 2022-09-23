@@ -2,7 +2,7 @@
   <div
     id="app-stats"
     class="histo-app-stats fr-p-5v"
-	  :data-ajaxurl="sharedProps.ajaxurl"
+    :data-ajaxurl="sharedProps.ajaxurl"
     >
     <HistoBOTabHeader>
       <template #title>Statistiques</template>
@@ -46,7 +46,7 @@ export default defineComponent({
       sharedState: store.state,
       sharedProps: store.props,
       loadingInit: true,
-      loadingFilters: false,
+      loadingFilters: false
     }
   },
   created () {
@@ -54,7 +54,6 @@ export default defineComponent({
       this.sharedProps.ajaxurl = initElements.dataset.ajaxurl
       this.initDates()
       requests.filter(this.handleRefresh)
-
     } else {
       alert('Error while loading statistics')
     }
@@ -94,7 +93,7 @@ export default defineComponent({
 
     /**
      * The query has finished its execution, we refresh the UI
-     * @param requestResponse 
+     * @param requestResponse
      */
     async handleRefresh (requestResponse: any) {
       this.refreshFilters(requestResponse)
@@ -114,23 +113,23 @@ export default defineComponent({
         window.scrollTo({
           top: el.offsetTop,
           left: 0,
-          behavior: "smooth",
+          behavior: 'smooth'
         })
       }
     },
 
     refreshFilters (requestResponse: any) {
       this.sharedState.filters.etiquettesList = []
-      for (let id in requestResponse.list_etiquettes) {
-        let optionItem = new HistoInterfaceSelectOption()
+      for (const id in requestResponse.list_etiquettes) {
+        const optionItem = new HistoInterfaceSelectOption()
         optionItem.Id = id
         optionItem.Text = requestResponse.list_etiquettes[id]
         this.sharedState.filters.etiquettesList.push(optionItem)
       }
 
       this.sharedState.filters.communesList = []
-      for (let id in requestResponse.list_communes) {
-        let optionItem = new HistoInterfaceSelectOption()
+      for (const id in requestResponse.list_communes) {
+        const optionItem = new HistoInterfaceSelectOption()
         optionItem.Id = id
         optionItem.Text = requestResponse.list_communes[id]
         this.sharedState.filters.communesList.push(optionItem)
@@ -139,12 +138,12 @@ export default defineComponent({
       this.sharedState.filters.canFilterTerritoires = requestResponse.can_filter_territoires === '1'
       if (this.sharedState.filters.canFilterTerritoires) {
         this.sharedState.filters.territoiresList = []
-        let optionAllItem = new HistoInterfaceSelectOption()
+        const optionAllItem = new HistoInterfaceSelectOption()
         optionAllItem.Id = 'all'
         optionAllItem.Text = 'Tous'
         this.sharedState.filters.territoiresList.push(optionAllItem)
-        for (let id in requestResponse.list_territoires) {
-          let optionItem = new HistoInterfaceSelectOption()
+        for (const id in requestResponse.list_territoires) {
+          const optionItem = new HistoInterfaceSelectOption()
           optionItem.Id = id
           optionItem.Text = requestResponse.list_territoires[id]
           this.sharedState.filters.territoiresList.push(optionItem)
@@ -159,31 +158,30 @@ export default defineComponent({
       this.sharedState.stats.averageCriticite = requestResponse.average_criticite
       this.sharedState.stats.averageDaysValidation = requestResponse.average_days_validation
       this.sharedState.stats.averageDaysClosure = requestResponse.average_days_closure
-      
+
       this.sharedState.stats.countSignalementFiltered = requestResponse.count_signalement_filtered
       this.sharedState.stats.averageCriticiteFiltered = requestResponse.average_criticite_filtered
 
       this.sharedState.stats.countSignalementPerMonth = requestResponse.countSignalementPerMonth
-      
+
       this.makePartenaireArray(requestResponse.countSignalementPerPartenaire)
       this.sharedState.stats.countSignalementPerSituation = requestResponse.countSignalementPerSituation
       this.sharedState.stats.countSignalementPerCriticite = requestResponse.countSignalementPerCriticite
-      
+
       this.sharedState.stats.countSignalementPerStatut = requestResponse.countSignalementPerStatut
       this.sharedState.stats.countSignalementPerCriticitePercent = requestResponse.countSignalementPerCriticitePercent
       this.sharedState.stats.countSignalementPerVisite = requestResponse.countSignalementPerVisite
-      
     },
 
     makePartenaireArray (countSignalementPerPartenaire: Object) {
       this.sharedState.stats.countSignalementPerPartenaire = []
       for (const [nomPartenaire, dataPartenaire] of Object.entries(countSignalementPerPartenaire)) {
-        let item = [
+        const item = [
           nomPartenaire,
           dataPartenaire.total,
           dataPartenaire.wait + ' (' + dataPartenaire.wait_percent + ' %)',
           dataPartenaire.accepted + ' (' + dataPartenaire.accepted_percent + ' %)',
-          dataPartenaire.closed + ' (' + dataPartenaire.closed_percent + ' %)',
+          dataPartenaire.closed + ' (' + dataPartenaire.closed_percent + ' %)'
         ]
         this.sharedState.stats.countSignalementPerPartenaire.push(item)
       }

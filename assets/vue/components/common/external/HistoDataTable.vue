@@ -5,7 +5,7 @@
     <DataTable :data=items class="display" :options=options>
       <thead>
         <tr>
-          <th v-for="headerText in headers">{{ headerText }}</th>
+          <th v-for="headerText in headers" v-bind:key="headerText">{{ headerText }}</th>
         </tr>
       </thead>
     </DataTable>
@@ -21,30 +21,28 @@ export default defineComponent({
   components: { DataTable },
   props: {
     headers: {
-      type: Array,
-      default: []
+      type: Array
     },
     items: {
-      type: Object,
-      default: {}
+      type: Object
     }
   },
-  data() {
+  data () {
     return {
       options: {
         lengthChange: false,
         // pageLength: 5,
-        searching :  false,
+        searching: false,
         language: {
-          "info": "Résultats _START_ - _END_ sur _TOTAL_",
-          "infoEmpty": "Aucun résultat",
-          "zeroRecords": "Aucune donnée disponible",
-          "emptyTable": "Aucune donnée disponible",
-          "paginate": {
-            "first":      "|<",
-            "last":       ">|",
-            "next":       ">",
-            "previous":   "<"
+          info: 'Résultats _START_ - _END_ sur _TOTAL_',
+          infoEmpty: 'Aucun résultat',
+          zeroRecords: 'Aucune donnée disponible',
+          emptyTable: 'Aucune donnée disponible',
+          paginate: {
+            first: '|<',
+            last: '>|',
+            next: '>',
+            previous: '<'
           }
         }
       }
@@ -69,7 +67,7 @@ export default defineComponent({
     background-color: #CACAFBA6;
   }
   .histo-data-table table.dataTable.display > tbody > tr.even > td.sorting_1, .histo-data-table table.dataTable.display > tbody > tr.odd > td.sorting_1 {
-    box-shadow: none; 
+    box-shadow: none;
   }
 
   .histo-data-table .dataTables_wrapper .dataTables_paginate .paginate_button {

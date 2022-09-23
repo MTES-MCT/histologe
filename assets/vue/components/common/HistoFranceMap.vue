@@ -654,7 +654,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'HistoFranceMap',
@@ -663,10 +663,10 @@ export default defineComponent({
   props: {
     data: {
       type: Object,
-      default: {}
+      default: () => {}
     }
   },
-  data() {
+  data () {
     return {
       displayTerritoryCaption: false,
       territoryCaptionX: 0,
@@ -674,13 +674,13 @@ export default defineComponent({
       captionTerritoryName: '',
       captionTerritoryZip: '',
       captionTerritoryCount: '',
-      captionTerritoryCountPlural: '',
+      captionTerritoryCountPlural: ''
     }
   },
-  mounted() {
-    for (const [key, territoryItem] of Object.entries(this.data)) {
-      let zipCode:string = territoryItem.zip
-      let el = this.$el.querySelector('#dpt' + zipCode)
+  mounted () {
+    for (const [, territoryItem] of Object.entries(this.data)) {
+      const zipCode:string = territoryItem.zip
+      const el = this.$el.querySelector('#dpt' + zipCode)
       if (el !== undefined) {
         if (territoryItem.count > 1000) {
           el.classList.add('color-1001')
@@ -695,7 +695,7 @@ export default defineComponent({
     }
   },
   methods: {
-    handleStateHover(e:any) {
+    handleStateHover (e:any) {
       if (e.target.tagName === 'path') {
         const territoryItem = this.getTerritoryItemByZip(e.target.id.substring(3))
         if (territoryItem) {
@@ -712,11 +712,11 @@ export default defineComponent({
         }
       }
     },
-    handleStateOut() {
+    handleStateOut () {
       this.displayTerritoryCaption = false
     },
-    getTerritoryItemByZip(zip: string) {
-      for (const [key, territoryItem] of Object.entries(this.data)) {
+    getTerritoryItemByZip (zip: string) {
+      for (const [, territoryItem] of Object.entries(this.data)) {
         if (zip === territoryItem.zip) {
           return territoryItem
         }
@@ -771,21 +771,20 @@ export default defineComponent({
     color: #000091;
   }
 
-
-	.st0{
+  .st0{
     fill:#CCCCCC;
     stroke:#FFFFFF;
     stroke-width:0.5;
     stroke-miterlimit:3.9745;
   }
-	.st1{
+  .st1{
     fill:#CCCCCC;
     fill-opacity:0;
   }
-	.color-1{fill:#E3E3FD}
-	.color-51{fill:#CACAFB}
-	.color-251{fill:#6A6AF4}
-	.color-1001{fill:#000091}
+  .color-1{fill:#E3E3FD}
+  .color-51{fill:#CACAFB}
+  .color-251{fill:#6A6AF4}
+  .color-1001{fill:#000091}
 
   .st0:hover {
     fill:#fcc0b0;

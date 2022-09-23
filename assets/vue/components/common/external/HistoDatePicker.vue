@@ -25,19 +25,19 @@ export default defineComponent({
   expose: ['updateDate'],
   props: {
     id: { type: String, default: null },
-    modelValue: { type: Array, default: [] }
+    modelValue: { type: Array }
   },
-  data() {
+  data () {
     return {
       dates: this.modelValue
     }
   },
   emits: ['update:modelValue'],
   methods: {
-    updateDate: function(newDates: Array<Date>) {
+    updateDate: function (newDates: Array<Date>) {
       this.dates = newDates
     },
-    handleDate: function(modelData: any) {
+    handleDate: function (modelData: any) {
       if (this.dates !== undefined && this.dates !== null) {
         this.dates = modelData
       }
