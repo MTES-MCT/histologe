@@ -16,6 +16,7 @@
             @update:modelValue="onChange(false)"
             inner-label="Communes"
             :option-items=sharedState.filters.communesList
+            :active="sharedState.filters.territoire !== 'all'"
             />
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
@@ -34,6 +35,7 @@
             @update:modelValue="onChange(false)"
             inner-label="Etiquettes"
             :option-items=sharedState.filters.etiquettesList
+            :active="sharedState.filters.territoire !== 'all'"
             />
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
@@ -62,8 +64,8 @@
             <template #label>Cocher la case pour comptabiliser les signalements refusés</template>
           </HistoCheckbox>
         </div>
-        <div class="fr-col-12 fr-col-lg-12 fr-col-xl-3">
-          <a href="#" @click="onReinitLocalEvent">Tout réinitialiser</a>
+        <div class="fr-col-12 fr-col-lg-12 fr-col-xl-3 align-right">
+          <a href="#" @click="onReinitLocalEvent"><span class="fr-fi-refresh-line"></span>Tout réinitialiser</a>
         </div>
       </div>
     </div>
@@ -96,7 +98,7 @@ export default defineComponent({
     }
 
     return {
-			sharedState: store.state,
+      sharedState: store.state,
       initFilters: {
         territoire: store.state.filters.territoire,
         communes: store.state.filters.communes,
@@ -120,31 +122,36 @@ export default defineComponent({
       ]
     }
   },
-	methods: {
-		onReinitLocalEvent () {
+  methods: {
+    onReinitLocalEvent () {
       // Date management
       (this.$refs['histofiltersdatepicker'] as any).updateDate(this.initFilters.dateRange)
       this.sharedState.filters.dateRange = this.initFilters.dateRange
 
       this.sharedState.filters.etiquettes = new Array<string>()
-      for (const element of store.state.filters.etiquettes) {
-        this.sharedState.filters.etiquettes.push(element)
-      }
+      this.sharedState.filters.communes = new Array<string>()
 
       // Other simple data
       this.sharedState.filters.territoire = this.initFilters.territoire
-      this.sharedState.filters.communes = this.initFilters.communes
       this.sharedState.filters.statut = this.initFilters.statut
       this.sharedState.filters.type = this.initFilters.type
       this.sharedState.filters.countRefused = this.initFilters.countRefused
 
-      console.log('this.sharedState.filters.etiquettes')
-      console.log(this.sharedState.filters.etiquettes)
-
       if (this.onChange !== undefined) {
-			  this.onChange()
+        this.onChange()
       }
-		}
-	}
+    }
+  }
 })
 </script>
+
+<style>
+  .align-right {
+    text-align: right;
+  }
+  .fr-fi-refresh-line::before{
+    padding-right: 5px;
+    font-size: 1rem;
+    color: var(--blue-france-sun-113-625);
+  }
+</style>

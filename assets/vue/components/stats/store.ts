@@ -4,7 +4,7 @@ export const store = {
 	state: {
 		filters: {
 			communesList: new Array<HistoInterfaceSelectOption>(),
-			communes: [],
+			communes: new Array<string>(),
 			statut: 'all',
 			etiquettesList: new Array<HistoInterfaceSelectOption>(),
 			etiquettes: new Array<string>(),
@@ -13,6 +13,7 @@ export const store = {
 			countRefused: false,
 			territoire: 'all',
 			canFilterTerritoires: false,
+			canSeePerPartenaire: false,
 			territoiresList: new Array<HistoInterfaceSelectOption>()
 		},
 		stats: {

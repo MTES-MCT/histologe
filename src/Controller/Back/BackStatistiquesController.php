@@ -90,6 +90,7 @@ class BackStatistiquesController extends AbstractController
     {
         // Tells Vue component if a user can filter through Territoire
         $this->ajaxResult['can_filter_territoires'] = $this->isGranted('ROLE_ADMIN') ? '1' : '0';
+        $this->ajaxResult['can_see_per_partenaire'] = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY') ? '1' : '0';
 
         if ($this->isGranted('ROLE_ADMIN')) {
             $this->ajaxResult['list_territoires'] = [];

@@ -37,29 +37,25 @@ class PostalCodeHomeCheckerServiceTest extends KernelTestCase
     public function testExistingPostalCodeInListDirect1(): void
     {
         $result = $this->postalCodeHomeCheckerService->getRedirection('04000');
-        $this->assertIsString($result);
-        $this->assertStringContainsString('signalement', $result);
+        $this->assertFalse($result);
     }
 
     public function testExistingPostalCodeInListDirect2(): void
     {
         $result = $this->postalCodeHomeCheckerService->getRedirection('04100');
-        $this->assertIsString($result);
-        $this->assertStringContainsString('signalement', $result);
+        $this->assertFalse($result);
     }
 
     public function testExistingPostalCodeInListSublist1(): void
     {
         $result = $this->postalCodeHomeCheckerService->getRedirection('59000');
-        $this->assertIsString($result);
-        $this->assertStringContainsString('signalement', $result);
+        $this->assertFalse($result);
     }
 
     public function testExistingPostalCodeInListSublist2(): void
     {
         $result = $this->postalCodeHomeCheckerService->getRedirection('59100');
-        $this->assertIsString($result);
-        $this->assertStringContainsString('signalement', $result);
+        $this->assertFalse($result);
     }
 
     public function testExistingPostalCodeInDB1(): void

@@ -1,12 +1,12 @@
 <template>
   <div
-    class="histo-multi-select"
+    :class="['histo-multi-select', active ? 'active' : 'inactive']"
     @focusout="isExpanded = false"
     tabindex="0"
     >
     <div
       class="selector fr-select"
-      @click="isExpanded = !isExpanded"
+      @click="handleClickSelect"
       >
       {{ innerLabel }} ({{ strCountSelectedItems }})
     </div>
@@ -20,8 +20,7 @@
               :data-optionid="item.Id"
               @click="handleRemoveItem"
               >
-              {{ item.Text }}
-              <span>X</span>
+              {{ unbreakText(item.Text) }} <span>X</span>
             </li>
           </template>
         </ul>
@@ -53,6 +52,7 @@ export default defineComponent({
     id: { type: String, default: '' },
     onChange: { type: Function },
     innerLabel: { type: String, default: '' },
+    isInnerLabelFemale: { type: Boolean, default: true },
     modelValue: {
       type: Array as () => Array<string>,
       default: () => []
@@ -60,7 +60,8 @@ export default defineComponent({
     optionItems: {
       type: Array as () => Array<HistoInterfaceSelectOption>,
       default: () => []
-    }
+    },
+    active: { type: Boolean, default: true }
   },
   data: function () {
     return {
@@ -71,6 +72,11 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   methods: {
+    handleClickSelect () {
+      if (this.active) {
+        this.isExpanded = !this.isExpanded
+      }
+    },
     handleClickItem (event:any) {
       const clickedElement:any = event.target
       const clickedOptionId:string = clickedElement.dataset.optionid
@@ -83,7 +89,7 @@ export default defineComponent({
     handleRemoveItem (event:any) {
       const clickedElement:any = event.target
       const clickedOptionId:string = clickedElement.dataset.optionid
-      for (let i:number = this.modelValue.length; i >= 0; i--) {
+      for (let i:number = this.modelValue.length - 1; i >= 0; i--) {
         if (this.modelValue[i] == clickedOptionId) {
           this.modelValue.splice(i, 1)
         }
@@ -92,14 +98,21 @@ export default defineComponent({
       if (this.onChange !== undefined) {
         this.onChange()
       }
+    },
+    unbreakText (text:string) {
+      if (text.length > 14) {
+        return text.substring(0, 14) + '...'
+      }
+      return text
     }
   },
   computed: {
     strCountSelectedItems() {
+      const selectLabel:string = this.isInnerLabelFemale ? 'sélectionnée' : 'sélectionné'
       if (this.modelValue.length > 1) {
-        return this.modelValue.length + ' sélectionnées'
+        return this.modelValue.length + ' ' + selectLabel + 's'
       }
-      return this.modelValue.length + ' sélectionnée'
+      return this.modelValue.length + ' ' + selectLabel
     }
   }
 })
@@ -110,9 +123,16 @@ export default defineComponent({
     width: 100%;
     position: relative;
   }
+  .histo-multi-select.inactive {
+    opacity: 0.5;
+  }
 
   .histo-multi-select .selector {
     background-color: #FFF;
+    cursor: pointer;
+  }
+  .histo-multi-select.inactive .selector {
+    cursor: not-allowed;
   }
 
   .histo-multi-select .selector-items {
@@ -134,9 +154,10 @@ export default defineComponent({
     padding: 0px;
   }
   .histo-multi-select .selector-items .selector-items-selected ul li {
-    display: inline;
-    height: 28px;
+    display: inline-block;
+    height: 34px;
     line-height: 34px;
+    vertical-align: middle;
     margin-right: .5rem;
     margin-bottom: .2rem;
     padding: .1rem .3rem;

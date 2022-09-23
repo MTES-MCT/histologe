@@ -362,7 +362,7 @@ class MigrateLegacyCommand extends Command
                 ->setEscalierOccupant($legacySignalement['escalier_occupant'])
                 ->setNumAppartOccupant($legacySignalement['num_appart_occupant'])
                 ->setAdresseAutreOccupant($legacySignalement['adresse_autre_occupant'])
-                ->setModeContactProprio(json_decode($legacySignalement['mode_contact_proprio']))
+                ->setModeContactProprio(json_decode($legacySignalement['mode_contact_proprio'], true))
                 ->setInseeOccupant($legacySignalement['insee_occupant'])
                 ->setCodeSuivi($legacySignalement['code_suivi'])
                 ->setLienDeclarantOccupant($legacySignalement['lien_declarant_occupant'])
@@ -441,7 +441,7 @@ class MigrateLegacyCommand extends Command
             }
             $suivi
                 ->setCreatedBy($createdBy)
-                ->setCreatedAt(new \DateTimeImmutable($legacySuivi['created_at']))
+                ->setCreatedAt($this->getValidDate($legacySuivi['created_at']))
                 ->setSignalement($signalement)
                 ->setDescription($legacySuivi['description'])
                 ->setIsPublic((bool) $legacySuivi['is_public']);
@@ -546,12 +546,15 @@ class MigrateLegacyCommand extends Command
     private function loadSignalementCritere(): void
     {
         /** @var Statement $statement */
-        $statement = $this->connection->prepare('SELECT * from signalement_critere');
+        $statement = $this->connection->prepare('SELECT sc.critere_id, sc.signalement_id, c.label FROM signalement_critere sc inner join critere c on c.id = sc.critere_id');
         $legacySignalementCritereList = $statement->executeQuery()->fetchAllAssociative();
         $i = 0;
         foreach ($legacySignalementCritereList as $legacySignalementCritere) {
             /** @var Critere $critere */
-            $critere = $this->entityManager->getRepository(Critere::class)->find((int) $legacySignalementCritere['critere_id']);
+            $critere = $this->entityManager->getRepository(Critere::class)->findOneBy(
+                ['label' => $legacySignalementCritere['label']]
+            );
+
             $signalementUuid = $this->mapping['signalement'][(int) $legacySignalementCritere['signalement_id']];
             /** @var Signalement $signalement */
             $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
@@ -579,13 +582,13 @@ class MigrateLegacyCommand extends Command
     private function loadSignalementCriticite(): void
     {
         /** @var Statement $statement */
-        $statement = $this->connection->prepare('SELECT * from signalement_criticite');
+        $statement = $this->connection->prepare('SELECT sc.criticite_id, sc.signalement_id, c.label FROM signalement_criticite sc inner JOIN criticite c on c.id = sc.criticite_id');
         $legacySignalementCriticiteList = $statement->executeQuery()->fetchAllAssociative();
         $i = 0;
         foreach ($legacySignalementCriticiteList as $legacySignalementCriticite) {
             /** @var Criticite criticite */
-            $criticite = $this->entityManager->getRepository(Criticite::class)->find(
-                (int) $legacySignalementCriticite['criticite_id']
+            $criticite = $this->entityManager->getRepository(Criticite::class)->findOneBy(
+                ['label' => $legacySignalementCriticite['label']]
             );
             $signalementUuid = $this->mapping['signalement'][(int) $legacySignalementCriticite['signalement_id']];
             /** @var Signalement $signalement */
@@ -614,13 +617,13 @@ class MigrateLegacyCommand extends Command
     private function loadSignalementSituation(): void
     {
         /** @var Statement $statement */
-        $statement = $this->connection->prepare('SELECT * from signalement_situation');
+        $statement = $this->connection->prepare('SELECT ss.situation_id, ss.signalement_id, s.label from signalement_situation ss inner join situation s on s.id = ss.situation_id');
         $legacySignalementSituationList = $statement->executeQuery()->fetchAllAssociative();
         $i = 0;
         foreach ($legacySignalementSituationList as $legacySignalementSituation) {
             /** @var Situation $situation */
-            $situation = $this->entityManager->getRepository(Situation::class)->find(
-                (int) $legacySignalementSituation['situation_id']
+            $situation = $this->entityManager->getRepository(Situation::class)->findOneBy(
+                ['label' => $legacySignalementSituation['label']]
             );
             $signalementUuid = $this->mapping['signalement'][(int) $legacySignalementSituation['signalement_id']];
             /** @var Signalement $signalement */

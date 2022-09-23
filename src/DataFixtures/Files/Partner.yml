@@ -56,9 +56,9 @@ partners:
     insee: "[\"01173\"]"
     territory: "Ain"
   -
-    nom: "Test Ain 2"
-    email: "partenaire-01-03@histologe.fr"
+    nom: "Vecchio Porto"
+    email: "partenaire-01-2A@histologe.fr"
     is_archive: 0
-    is_commune: 0
-    insee: "[\"\"]"
-    territory: "Ain"
+    is_commune: 1
+    insee: "[\"2A247\"]"
+    territory: "Corse-du-Sud"

@@ -36,12 +36,10 @@ export default defineComponent({
   emits: ['update:modelValue'],
   methods: {
     onSelectedEvent (e: any) {
-      // Retour de valeur
-			this.$emit('update:modelValue', e.target.value)
+      this.$emit('update:modelValue', e.target.value)
       if (this.onSelect !== undefined) {
         this.onSelect(e.target.value)
       }
-      // Rafraichissement des items
       this.refreshDisplayedItems(e.target.value)
     },
 
