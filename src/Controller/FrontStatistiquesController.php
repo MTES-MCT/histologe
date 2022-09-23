@@ -15,6 +15,8 @@ class FrontStatistiquesController extends AbstractController
 {
     private $ajaxResult;
 
+    private const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+
     #[Route('/statistiques', name: 'front_statistiques')]
     public function statistiques(): Response
     {
@@ -59,7 +61,6 @@ class FrontStatistiquesController extends AbstractController
         $this->ajaxResult['count_signalement'] = $totalSignalement;
         $this->ajaxResult['count_territory'] = \count($territoryList);
         $this->ajaxResult['signalement_per_territoire'] = [];
-        $listMonthName = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
         $countSignalementPerMonth = [];
         $countSignalementPerMonthThisYear = [];
         $this->ajaxResult['signalement_per_statut'] = [];
@@ -183,17 +184,23 @@ class FrontStatistiquesController extends AbstractController
 
         ksort($countSignalementPerMonth);
         $this->ajaxResult['signalement_per_month'] = [];
+        $previousMonth = null; // This is used to avoid blank months
         foreach ($countSignalementPerMonth as $month => $count) {
             $dateMonth = new DateTime($month);
-            $strMonth = $listMonthName[$dateMonth->format('m') - 1].' '.$dateMonth->format('Y');
+            $this->fillBlankMonths('signalement_per_month', $previousMonth, $dateMonth);
+            $strMonth = self::MONTH_NAMES[$dateMonth->format('m') - 1].' '.$dateMonth->format('Y');
             $this->ajaxResult['signalement_per_month'][$strMonth] = $count;
+            $previousMonth = $dateMonth;
         }
         ksort($countSignalementPerMonthThisYear);
         $this->ajaxResult['signalement_per_month_this_year'] = [];
+        $previousMonth = null; // This is used to avoid blank months
         foreach ($countSignalementPerMonthThisYear as $month => $count) {
             $dateMonth = new DateTime($month);
-            $strMonth = $listMonthName[$dateMonth->format('m') - 1].' '.$dateMonth->format('Y');
+            $this->fillBlankMonths('signalement_per_month_this_year', $previousMonth, $dateMonth);
+            $strMonth = self::MONTH_NAMES[$dateMonth->format('m') - 1].' '.$dateMonth->format('Y');
             $this->ajaxResult['signalement_per_month_this_year'][$strMonth] = $count;
+            $previousMonth = $dateMonth;
         }
     }
 
@@ -278,5 +285,27 @@ class FrontStatistiquesController extends AbstractController
                 'count' => 0,
             ],
         ];
+    }
+
+    private function fillBlankMonths($ajaxResultKey, $previousMonth, $currentMonth)
+    {
+        if (null !== $previousMonth) {
+            $shouldBeMonth = $previousMonth->format('m') + 1;
+            $shouldBeYear = $previousMonth->format('Y');
+            if ($shouldBeMonth > 12) {
+                $shouldBeMonth = 1;
+                ++$shouldBeYear;
+            }
+            if ($currentMonth->format('m') != $shouldBeMonth || $currentMonth->format('Y') != $shouldBeYear) {
+                for ($loopYear = $shouldBeYear; $loopYear <= $currentMonth->format('Y'); ++$loopYear) {
+                    $startMonth = ($loopYear == $shouldBeYear) ? $shouldBeMonth : 1;
+                    $endMonth = ($loopYear < $currentMonth->format('Y')) ? 12 : $shouldBeMonth;
+                    for ($loopMonth = $startMonth; $loopMonth <= $endMonth; ++$loopMonth) {
+                        $strMonth = self::MONTH_NAMES[$loopMonth - 1].' '.$loopYear;
+                        $this->ajaxResult[$ajaxResultKey][$strMonth] = 0;
+                    }
+                }
+            }
+        }
     }
 }
