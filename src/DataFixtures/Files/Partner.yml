@@ -62,3 +62,21 @@ partners:
     is_commune: 1
     insee: "[\"2A247\"]"
     territory: "Corse-du-Sud"
+  -
+    nom: "Random partner 63"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Puy-de-Dôme"
+  -
+    nom: "Random partner 06"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Alpes-Maritimes"
+  -
+    nom: "Random partner 59"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Nord"
