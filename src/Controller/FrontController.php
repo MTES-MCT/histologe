@@ -32,15 +32,9 @@ class FrontController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $inputPostalCode = $form->get('postalcode')->getData();
-            $redirectUrl = $postalCodeHomeCheckerService->getRedirection($inputPostalCode);
-            if ($redirectUrl) {
-                if ('local' == $redirectUrl) {
-                    return $this->redirectToRoute('front_signalement');
-                }
-
-                return $this->redirect($redirectUrl);
+            if ($postalCodeHomeCheckerService->isActive($inputPostalCode)) {
+                return $this->redirectToRoute('front_signalement');
             }
-
             $display_modal = $inputPostalCode;
         }
 

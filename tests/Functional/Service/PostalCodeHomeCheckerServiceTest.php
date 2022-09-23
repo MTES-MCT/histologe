@@ -16,59 +16,13 @@ class PostalCodeHomeCheckerServiceTest extends KernelTestCase
         $this->postalCodeHomeCheckerService = $container->get(PostalCodeHomeCheckerService::class);
     }
 
-    public function testEmptyPostalCode(): void
+    public function testActiveTerritory(): void
     {
-        $result = $this->postalCodeHomeCheckerService->getRedirection('');
-        $this->assertFalse($result);
+        $this->assertTrue($this->postalCodeHomeCheckerService->isActive('01270'));
     }
 
-    public function testNullPostalCode(): void
+    public function testInactiveTerritory(): void
     {
-        $result = $this->postalCodeHomeCheckerService->getRedirection('null');
-        $this->assertFalse($result);
-    }
-
-    public function testNotExistingPostalCode(): void
-    {
-        $result = $this->postalCodeHomeCheckerService->getRedirection('57070');
-        $this->assertFalse($result);
-    }
-
-    public function testExistingPostalCodeInListDirect1(): void
-    {
-        $result = $this->postalCodeHomeCheckerService->getRedirection('04000');
-        $this->assertFalse($result);
-    }
-
-    public function testExistingPostalCodeInListDirect2(): void
-    {
-        $result = $this->postalCodeHomeCheckerService->getRedirection('04100');
-        $this->assertFalse($result);
-    }
-
-    public function testExistingPostalCodeInListSublist1(): void
-    {
-        $result = $this->postalCodeHomeCheckerService->getRedirection('59000');
-        $this->assertFalse($result);
-    }
-
-    public function testExistingPostalCodeInListSublist2(): void
-    {
-        $result = $this->postalCodeHomeCheckerService->getRedirection('59100');
-        $this->assertFalse($result);
-    }
-
-    public function testExistingPostalCodeInDB1(): void
-    {
-        $result = $this->postalCodeHomeCheckerService->getRedirection('01000');
-        $this->assertIsString($result);
-        $this->assertStringContainsString('local', $result);
-    }
-
-    public function testExistingPostalCodeInDB2(): void
-    {
-        $result = $this->postalCodeHomeCheckerService->getRedirection('01100');
-        $this->assertIsString($result);
-        $this->assertStringContainsString('local', $result);
+        $this->assertFalse($this->postalCodeHomeCheckerService->isActive('75001'));
     }
 }
