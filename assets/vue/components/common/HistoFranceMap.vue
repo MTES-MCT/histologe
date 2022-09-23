@@ -14,10 +14,10 @@
           </ul>
         </div>
 
-        <div class="map fr-col-12 fr-col-md-9">
-          <div v-if="displayTerritoryCaption" class="territory-caption">
+        <div ref="francemap" class="map fr-col-12 fr-col-md-9">
+          <div v-if="displayTerritoryCaption" class="territory-caption" :style="{ left: territoryCaptionX+'px', top: territoryCaptionY+'px'}">
             {{ captionTerritoryName }} ({{ captionTerritoryZip }})<br>
-            {{ captionTerritoryCount }} signalement(s)
+            {{ captionTerritoryCount }} signalement{{ captionTerritoryCountPlural }}
           </div>
 
           <svg width="588" height="550" @mouseover="handleStateHover" @mouseout="handleStateOut">
@@ -654,7 +654,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
   name: 'HistoFranceMap',
@@ -669,9 +669,12 @@ export default defineComponent({
   data() {
     return {
       displayTerritoryCaption: false,
+      territoryCaptionX: 0,
+      territoryCaptionY: 0,
       captionTerritoryName: '',
       captionTerritoryZip: '',
       captionTerritoryCount: '',
+      captionTerritoryCountPlural: '',
     }
   },
   mounted() {
@@ -690,7 +693,6 @@ export default defineComponent({
         }
       }
     }
-     // {{ territoryStat.name }} ({{ territoryStat.zip}}) : {{ territoryStat.count }}
   },
   methods: {
     handleStateHover(e:any) {
@@ -701,6 +703,12 @@ export default defineComponent({
           this.captionTerritoryName = territoryItem.name
           this.captionTerritoryZip = territoryItem.zip
           this.captionTerritoryCount = territoryItem.count
+          this.captionTerritoryCountPlural = Number(this.captionTerritoryCount) > 1 ? 's' : ''
+          this.territoryCaptionX = e.clientX - 60
+          this.territoryCaptionY = e.clientY + 40
+          if (window !== undefined && window.top !== null && window.top.scrollY !== undefined) {
+            this.territoryCaptionY += window.top.scrollY
+          }
         }
       }
     },
