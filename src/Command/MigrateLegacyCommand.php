@@ -110,6 +110,7 @@ class MigrateLegacyCommand extends Command
         $io->info('Migrate table...');
 
         $progressBar = new ProgressBar($output, self::NB_TABLES);
+        $progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%');
         $progressBar->start();
         $this->loadConfig();
         $progressBar->advance();
@@ -351,7 +352,7 @@ class MigrateLegacyCommand extends Command
                 ->setJsonContent(json_decode($legacySignalement['json_content'], true))
                 ->setGeoloc(json_decode($legacySignalement['geoloc'], true))
                 ->setUuid($legacySignalement['uuid'])
-                ->setDateVisite(new \DateTimeImmutable($legacySignalement['date_visite']))
+                ->setDateVisite($this->getValidDate($legacySignalement['date_visite']))
                 ->setIsOccupantPresentVisite((bool) $legacySignalement['is_occupant_present_visite'])
                 ->setMontantAllocation((float) $legacySignalement['montant_allocation'])
                 ->setIsSituationHandicap($legacySignalement['is_situation_handicap'])
