@@ -90,6 +90,13 @@
                                     {{ i }}
                                 </a>
                             </li>
+                            {% if loop.index is same as(3) %}
+                                <li>
+                                    <a class="fr-pagination__link" title="placeholder">
+                                        ...
+                                    </a>
+                                </li>
+                            {% endif %}
                         {% endfor %}
                     {% endif %}
                     <li>
