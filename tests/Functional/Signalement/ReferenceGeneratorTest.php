@@ -32,7 +32,7 @@ class ReferenceGeneratorTest extends KernelTestCase
 
         $referenceGenerated = $referenceGenerator->generate($territory);
 
-        $this->assertEquals('2022-4', $referenceGenerated);
+        $this->assertEquals('2022-12', $referenceGenerated);
     }
 
     public function testGenerateReferenceFromNoSignalement()
