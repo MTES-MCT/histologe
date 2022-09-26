@@ -184,4 +184,19 @@ class SignalementRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    public function findLastReferenceByTerritory(Territory $territory): ?array
+    {
+        $year = (new \DateTime())->format('Y');
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->select('s.reference')
+            ->where('YEAR(s.createdAt) = :year')
+            ->setParameter('year', $year)
+            ->andWhere('s.territory = :territory')
+            ->setParameter('territory', $territory)
+            ->orderBy('s.reference', 'DESC')
+            ->setMaxResults(1);
+
+        return $queryBuilder->getQuery()->getOneOrNullResult();
+    }
 }

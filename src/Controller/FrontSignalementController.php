@@ -13,8 +13,8 @@ use App\Repository\SituationRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\CriticiteCalculatorService;
 use App\Service\NotificationService;
+use App\Service\Signalement\ReferenceGenerator;
 use App\Service\UploadHandlerService;
-use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -86,7 +86,8 @@ class FrontSignalementController extends AbstractController
         ManagerRegistry $doctrine,
         TerritoryRepository $territoryRepository,
         NotificationService $notificationService,
-        UploadHandlerService $uploadHandlerService): Response
+        UploadHandlerService $uploadHandlerService,
+        ReferenceGenerator $referenceGenerator): Response
     {
         if ($data = $request->get('signalement')) {
             $em = $doctrine->getManager();
@@ -153,22 +154,7 @@ class FrontSignalementController extends AbstractController
             }
             $zip = \strlen($signalement->getCpOccupant()) > 3 ? substr($signalement->getCpOccupant(), 0, 2) : $signalement->getCpOccupant();
             $signalement->setTerritory($territoryRepository->findOneBy(['zip' => $zip, 'isActive' => 1]));
-            $year = (new DateTime())->format('Y');
-            $reqId = $doctrine->getRepository(Signalement::class)->createQueryBuilder('s')
-                ->select('s.reference')
-                ->where('YEAR(s.createdAt) = :year')
-                ->setParameter('year', $year)
-                ->andWhere('s.territory = :territory')
-                ->setParameter('territory', $signalement->getTerritory())
-                ->orderBy('s.createdAt', 'DESC')
-                ->setMaxResults(1)
-                ->getQuery()->getOneOrNullResult();
-            if ($reqId) {
-                $id = (int) explode('-', $reqId['reference'])[1] + 1;
-            } else {
-                $id = 1;
-            }
-            $signalement->setReference($year.'-'.$id);
+            $signalement->setReference($referenceGenerator->generate($signalement->getTerritory()));
 
             $score = new CriticiteCalculatorService($signalement, $doctrine);
             $signalement->setScoreCreation($score->calculate());
