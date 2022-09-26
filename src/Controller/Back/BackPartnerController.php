@@ -19,12 +19,18 @@ use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 class BackPartnerController extends AbstractController
 {
     #[Route('/', name: 'back_partner_index', methods: ['GET'])]
-    public function index(PartnerRepository $partnerRepository): Response
+    public function index(Request $request, PartnerRepository $partnerRepository): Response
     {
         $this->denyAccessUnlessGranted('PARTNER_LIST', null);
+        $page = $request->get('page') ?? 1;
+        $paginatedPartners = $partnerRepository->getPartners($this->getUser()->getTerritory(), (int) $page);
+        $totalPartners = \count($paginatedPartners);
 
         return $this->render('back/partner/index.html.twig', [
-            'partners' => $partnerRepository->findAllOrByInseeIfCommune(null, $this->getUser()->getTerritory()),
+            'partners' => $paginatedPartners,
+            'total' => $totalPartners,
+            'page' => $page,
+            'pages' => (int) ceil($totalPartners / Partner::MAX_LIST_PAGINATION),
         ]);
     }
 

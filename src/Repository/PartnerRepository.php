@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -18,6 +19,30 @@ class PartnerRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Partner::class);
+    }
+
+    private function getPartnersQueryBuilder(Territory|null $territory)
+    {
+        $queryBuilder = $this->createQueryBuilder('p')->where('p.isArchive != 1');
+
+        if ($territory) {
+            $queryBuilder->andWhere('p.territory = :territory')->setParameter('territory', $territory);
+        }
+
+        return $queryBuilder;
+    }
+
+    public function getPartners(Territory|null $territory, $page)
+    {
+        $maxResult = Partner::MAX_LIST_PAGINATION;
+        $firstResult = ($page - 1) * $maxResult;
+
+        $queryBuilder = $this->getPartnersQueryBuilder($territory);
+        $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
+
+        $paginator = new Paginator($queryBuilder->getQuery(), false);
+
+        return $paginator;
     }
 
     public function findAllOrByInseeIfCommune(string|null $insee, Territory|null $territory)
