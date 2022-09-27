@@ -3,6 +3,18 @@
 {% block title %}Partenaire index{% endblock %}
 
 {% block content %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <form action="#" name="bo-filters-form" id="bo_filters_form" method="POST" class="fr-accordion fr-background--white">
+                <div class="fr-p-5v">
+                    <label class="fr-label" for="bo-filters-territories"><strong>Filtrer par territoire</strong></label>
+                    <select id="bo-filters-territories" class="fr-select" onchange="this.form.submit()" name="territory">
+                            {% for territory in territories %}
+                                <option value="{{ territory.id }}" {{territory.id == currentTerritory.id ? 'selected' : ''}}>{{ territory.name|upper }}</option>
+                            {% endfor %}
+                    </select>
+                </div>
+        </form>
+    {% endif %}
     <section class="fr-grid-row fr-grid-row--middle fr-p-5v ">
         <div class="fr-col-6">
             <h1 class="fr-h2 fr-mb-0">Partenaires</h1>
@@ -57,7 +69,7 @@
                     <li>
                         <a class="fr-pagination__link fr-pagination__link--first"
                                 {% if pages > 1 %}
-                                    href="{{ path('back_partner_index', {page : 1 }) }}"
+                                    href="{{ path('back_partner_index', {page : 1, territory: currentTerritory.id}) }}"
                                 {% else %}
                                     aria-disabled="true"
                                 {% endif %}>
@@ -67,7 +79,7 @@
                     <li>
                         <a class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
                             {% if pages > 1 and page != 1 %}
-                                href="{{ path('back_partner_index', {page : page - 1 }) }}"
+                                href="{{ path('back_partner_index', {page : page - 1, territory: currentTerritory.id}) }}"
                             {% else %}
                                 aria-disabled="true"
                             {% endif %} role="link">
@@ -77,7 +89,7 @@
                     <li>
                         <a class="fr-pagination__link"  {{ page == 1 ? 'aria-current="page"' : '' }}
                            title="Page 1"
-                           data-page="1"  href="{{ path('back_partner_index', {page : 1 }) }}">
+                           data-page="1"  href="{{ path('back_partner_index', {page : 1 , territory: currentTerritory.id}) }}">
                             1
                         </a>
                     </li>
@@ -85,7 +97,7 @@
                         {% for i in 2..pages %}
                             <li class="{% if loop.index > 2 and loop.index < pages-3 %}fr-hidden{% endif %}">
                                 <a class="fr-pagination__link" {{ page == i ? 'aria-current="page"' : '' }}
-                                   href="{{ path('back_partner_index', {page : i}) }}" title="Page {{ i }}"
+                                   href="{{ path('back_partner_index', {page : i, territory: currentTerritory.id}) }}" title="Page {{ i }}"
                                    data-page="{{ i }}" >
                                     {{ i }}
                                 </a>
@@ -102,7 +114,7 @@
                     <li>
                         <a class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
                             {% if pages > 1  and page < pages %}
-                                href="{{ path('back_partner_index', {page : page + 1 }) }}"
+                                href="{{ path('back_partner_index', {page : page + 1, territory: currentTerritory.id }) }}"
                             {% else %}
                                 aria-disabled="true"
                             {% endif %} role="link">
@@ -112,7 +124,7 @@
                     <li>
                         <a class="fr-pagination__link fr-pagination__link--last"
                            {% if pages > 1 %}
-                               href="{{ path('back_partner_index', {page : pages }) }}"
+                               href="{{ path('back_partner_index', {page : pages, territory: currentTerritory.id }) }}"
                            {% else %}
                                aria-disabled="true"
                            {% endif %}

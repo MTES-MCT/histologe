@@ -6,6 +6,7 @@ use App\Entity\Partner;
 use App\Entity\User;
 use App\Form\PartnerType;
 use App\Repository\PartnerRepository;
+use App\Repository\TerritoryRepository;
 use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,15 +19,35 @@ use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 #[Route('/bo/partner')]
 class BackPartnerController extends AbstractController
 {
-    #[Route('/', name: 'back_partner_index', methods: ['GET'])]
-    public function index(Request $request, PartnerRepository $partnerRepository): Response
+    #[Route('/', name: 'back_partner_index', methods: ['GET', 'POST'])]
+    public function index(Request $request,
+                          PartnerRepository $partnerRepository,
+                          TerritoryRepository $territoryRepository): Response
     {
         $this->denyAccessUnlessGranted('PARTNER_LIST', null);
         $page = $request->get('page') ?? 1;
-        $paginatedPartners = $partnerRepository->getPartners($this->getUser()->getTerritory(), (int) $page);
+
+        $territory = (int) $request->get('territory') ?? 1;
+
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $currentTerritory = $territoryRepository->findOneBy(['zip' => (int) $territory]);
+        } else {
+            $currentTerritory = $this->getUser()->getTerritory();
+        }
+
+        $paginatedPartners = $partnerRepository->getPartners($currentTerritory, (int) $page);
+
+        if (Request::METHOD_POST === $request->getMethod()) {
+            $currentTerritory = $territoryRepository->find((int) $request->get('territory'));
+            $paginatedPartners = $partnerRepository->getPartners($currentTerritory, (int) $page);
+        }
+
         $totalPartners = \count($paginatedPartners);
+        $territories = $territoryRepository->findAllList();
 
         return $this->render('back/partner/index.html.twig', [
+            'currentTerritory' => $currentTerritory,
+            'territories' => $territories,
             'partners' => $paginatedPartners,
             'total' => $totalPartners,
             'page' => $page,
