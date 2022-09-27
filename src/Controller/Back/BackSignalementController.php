@@ -30,7 +30,6 @@ class BackSignalementController extends AbstractController
     #[Route('/{uuid}', name: 'back_signalement_view')]
     public function viewSignalement($uuid, Request $request, EntityManagerInterface $entityManager, TagRepository $tagsRepository, PartnerRepository $partnerRepository): Response
     {
-        ini_set('memory_limit', '-1');  // temporary patch for memory leak
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findByUuid($uuid);
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
