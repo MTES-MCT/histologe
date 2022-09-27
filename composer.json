@@ -129,6 +129,11 @@
         "symfony": {
             "allow-contrib": false,
             "require": "6.0.*"
+        },
+        "pass": {
+            "php-config": [
+                "memory_limit=512M"
+            ]
         }
     }
 }
