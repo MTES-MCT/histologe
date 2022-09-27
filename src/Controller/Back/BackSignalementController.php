@@ -189,7 +189,6 @@ class BackSignalementController extends AbstractController
 
             return $this->json(['response' => 'success_edited']);
         } elseif ($form->isSubmitted()) {
-//            dd($form->getErrors()[0]);
             return $this->json(['response' => $form->getErrors()]);
         }
 
