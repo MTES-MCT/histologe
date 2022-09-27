@@ -130,7 +130,7 @@
             "allow-contrib": false,
             "require": "6.0.*"
         },
-        "pass": {
+        "paas": {
             "php-config": [
                 "memory_limit=512M"
             ]
