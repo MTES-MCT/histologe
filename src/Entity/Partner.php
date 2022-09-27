@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Partner
 {
     public const DEFAULT_PARTNER = 'Administrateurs Histologe ALL';
-    public const MAX_LIST_PAGINATION = 30;
+    public const MAX_LIST_PAGINATION = 50;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
