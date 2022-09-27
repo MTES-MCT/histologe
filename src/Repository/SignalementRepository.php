@@ -184,4 +184,38 @@ class SignalementRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    public function findLastReferenceByTerritory(Territory $territory): ?array
+    {
+        $year = (new \DateTime())->format('Y');
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->select('s.reference')
+            ->addSelect("SUBSTRING_INDEX(s.reference, '-', 1) AS year")
+            ->addSelect("CAST(SUBSTRING_INDEX(s.reference, '-', -1) AS SIGNED) AS reference_index")
+            ->where('YEAR(s.createdAt) = :year')
+            ->setParameter('year', $year)
+            ->andWhere('s.territory = :territory')
+            ->setParameter('territory', $territory)
+            ->orderBy('reference_index', 'DESC')
+            ->setMaxResults(1);
+
+        return $queryBuilder->getQuery()->getOneOrNullResult();
+    }
+
+    public function findDuplicatedReferences(Territory $territory)
+    {
+        $year = (new \DateTime())->format('Y');
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->select('s.reference')
+            ->addSelect("SUBSTRING_INDEX(s.reference, '-', 1) AS year")
+            ->addSelect("CAST(SUBSTRING_INDEX(s.reference, '-', -1) AS SIGNED) AS reference_index")
+            ->addSelect('COUNT(s.id) AS nb_signalement')
+            ->where('s.territory = :territory')
+            ->setParameter('territory', $territory)
+            ->groupBy('s.reference')
+            ->having('nb_signalement > 1')
+            ->orderBy('reference_index', 'ASC');
+
+        return $queryBuilder->getQuery()->getArrayResult();
+    }
 }

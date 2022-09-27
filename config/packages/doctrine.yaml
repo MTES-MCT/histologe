@@ -60,4 +60,6 @@ doctrine:
                 JSON_ARRAY: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mysql\JsonArray
                 JSON_OBJECT: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mysql\JsonObject
                 IF: DoctrineExtensions\Query\Mysql\IfElse
+                SUBSTRING_INDEX: DoctrineExtensions\Query\Mysql\SubstringIndex
+                CAST: DoctrineExtensions\Query\Mysql\Cast
 
