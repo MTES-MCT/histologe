@@ -132,7 +132,7 @@
         },
         "paas": {
             "php-config": [
-                "memory_limit=512M"
+                "memory_limit=-1"
             ]
         }
     }
