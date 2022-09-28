@@ -124,13 +124,13 @@ class FixSignalementTagCommand extends Command
         $i = 0;
         foreach ($legacySignalementTagList as $legacySignalementTag) {
             /** @var Tag $tag */
-            $tag = $this->entityManager->getRepository(Tag::class)->findOneBy([
+            $tag = $this->tagManager->findOneBy([
                 'label' => $legacySignalementTag['label'],
                 'territory' => $this->territory,
             ]);
 
             /** @var Signalement $signalement */
-            $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
+            $signalement = $this->signalementManager->findOneBy([
                 'uuid' => $legacySignalementTag['uuid'],
                 'territory' => $this->territory,
             ]);
