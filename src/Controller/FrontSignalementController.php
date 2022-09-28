@@ -13,6 +13,7 @@ use App\Repository\SituationRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\CriticiteCalculatorService;
 use App\Service\NotificationService;
+use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\UploadHandlerService;
 use DateTimeImmutable;
@@ -49,20 +50,18 @@ class FrontSignalementController extends AbstractController
     }
 
     #[Route('/checkterritory', name: 'front_signalement_check_territory', methods: ['GET'])]
-    public function checkTerritory(Request $request, TerritoryRepository $territoryRepository): Response
+    public function checkTerritory(Request $request, PostalCodeHomeChecker $postalCodeHomeChecker): Response
     {
-        if (empty($request->get('cp'))) {
-            return $this->json(['success' => false, 'message' => 'cp parameter is missing']);
+        $postalCode = $request->get('cp');
+        if (empty($postalCode)) {
+            return $this->json(['success' => false, 'message' => 'cp parameter is missing'], Response::HTTP_BAD_REQUEST);
         }
 
-        $cp = $request->get('cp');
-        $zip = \strlen($cp) > 3 ? substr($cp, 0, 2) : $cp;
-        $territory = $territoryRepository->findOneBy(['zip' => $zip, 'isActive' => 1]);
-        if (!$territory) {
-            return $this->json(['success' => false, 'message' => 'Closed territory']);
+        if ($postalCodeHomeChecker->isActive($postalCode)) {
+            return $this->json(['success' => true, 'message' => 'Open territory']);
         }
 
-        return $this->json(['success' => true, 'message' => 'Open territory']);
+        return $this->json(['success' => false, 'message' => 'Closed territory'], Response::HTTP_BAD_REQUEST);
     }
 
     #[Route('/signalement/handle', name: 'handle_upload', methods: 'POST')]
