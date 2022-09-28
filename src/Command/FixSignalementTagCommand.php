@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -32,6 +33,7 @@ class FixSignalementTagCommand extends Command
 
     private Connection|null $connection;
     private Territory $territory;
+    private SymfonyStyle $io;
 
     public function __construct(
         private ManagerRegistry $managerRegistry,
@@ -51,34 +53,39 @@ class FixSignalementTagCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $this->io = new SymfonyStyle($input, $output);
         $territoryZip = $input->getArgument('territory_zip');
         if (!\in_array($territoryZip, self::LEGACY_TERRITORY)) {
-            $io->error(sprintf('%s is not legacy territory', $territoryZip));
+            $this->io->error(sprintf('%s is not legacy territory', $territoryZip));
 
             return Command::FAILURE;
         }
 
-        $io->info(sprintf('You passed an argument: %s', $territoryZip));
+        $this->io->info(sprintf('You passed an argument: %s', $territoryZip));
         $this->territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => $territoryZip]);
 
         /* @var Connection $connection */
         $this->connection = $this->managerRegistry->getConnection('legacy_'.$territoryZip);
         $this->connection->connect();
 
-        $this->cleanTagSignalement($input, $output);
-        $legacySignalementTagList = $this->getLegacyTagSignalement($input, $output);
-        $nbSignalementTagAdded = $this->addTagSignalement($legacySignalementTagList);
+        $this->cleanTagSignalement($output);
+        $legacySignalementTagList = $this->getLegacyTagSignalement($output);
+        $nbSignalementTagAdded = $this->addTagSignalement($legacySignalementTagList, $output);
 
-        $io->success($nbSignalementTagAdded.' has/have been added');
+        $this->io->newLine();
+        $this->io->success($nbSignalementTagAdded.' has/have been added');
 
         return Command::SUCCESS;
     }
 
-    private function cleanTagSignalement(InputInterface $input, OutputInterface $output): void
+    private function cleanTagSignalement(OutputInterface $output): void
     {
         $signalements = $this->signalementManager->findBy(['territory' => $this->territory]);
         $nbTagRemoved = 0;
+        $progressBar = new ProgressBar($output, \count($signalements));
+        $progressBar->setMessage('Clean Tag Signalement');
+        $progressBar->setFormat(' %current%/%max% [%bar%] - %message% - %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%');
+        $progressBar->start();
         /** @var Signalement $signalement */
         foreach ($signalements as $signalement) {
             $tags = $signalement->getTags();
@@ -94,11 +101,13 @@ class FixSignalementTagCommand extends Command
                     ++$nbTagRemoved;
                 }
             }
+            $progressBar->advance();
         }
-        $output->writeln(sprintf('%s tag signalement removed', $nbTagRemoved));
+        $progressBar->finish();
+        $this->io->note(sprintf('%s tag signalement removed', $nbTagRemoved));
     }
 
-    private function getLegacyTagSignalement(InputInterface $input, OutputInterface $output): array
+    private function getLegacyTagSignalement(OutputInterface $output): array
     {
         /** @var Statement $statement */
         $statement = $this->connection->prepare('SELECT s.uuid, t.label FROM signalement s INNER JOIN tag_signalement ts ON ts.signalement_id = s.id INNER JOIN tag t ON t.id = ts.tag_id ORDER BY s.uuid');
@@ -106,8 +115,12 @@ class FixSignalementTagCommand extends Command
         return $statement->executeQuery()->fetchAllAssociative();
     }
 
-    private function addTagSignalement(array $legacySignalementTagList): int
+    private function addTagSignalement(array $legacySignalementTagList, OutputInterface $output): int
     {
+        $progressBar = new ProgressBar($output, \count($legacySignalementTagList));
+        $progressBar->setMessage('Add Tag Signalement');
+        $progressBar->setFormat(' %current%/%max% [%bar%] - %message% - %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%');
+        $progressBar->start();
         $i = 0;
         foreach ($legacySignalementTagList as $legacySignalementTag) {
             /** @var Tag $tag */
@@ -122,12 +135,14 @@ class FixSignalementTagCommand extends Command
                 'territory' => $this->territory,
             ]);
 
-            if (null !== $tag && !$signalement->getTags()->contains($tag)) {
+            if (null !== $tag && null !== $signalement && !$signalement->getTags()->contains($tag)) {
                 $signalement->addTag($tag);
                 $this->entityManager->persist($tag);
                 ++$i;
             }
+            $progressBar->advance();
         }
+        $progressBar->finish();
         $this->entityManager->flush();
 
         return $i;
