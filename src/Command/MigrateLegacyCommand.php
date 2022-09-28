@@ -653,22 +653,23 @@ class MigrateLegacyCommand extends Command
     private function loadTagSignalement(): void
     {
         /** @var Statement $statement */
-        $statement = $this->connection->prepare('SELECT * from tag_signalement');
+        $statement = $this->connection->prepare('SELECT s.uuid, t.label FROM signalement s INNER JOIN tag_signalement ts ON ts.signalement_id = s.id INNER JOIN tag t ON t.id = ts.tag_id ORDER BY s.uuid');
         $legacySignalementTagList = $statement->executeQuery()->fetchAllAssociative();
         $i = 0;
         foreach ($legacySignalementTagList as $legacySignalementTag) {
             /** @var Tag $tag */
-            $tag = $this->entityManager->getRepository(Tag::class)->find(
-                (int) $legacySignalementTag['tag_id']
-            );
-            $signalementUuid = $this->mapping['signalement'][(int) $legacySignalementTag['signalement_id']];
-            /** @var Signalement $signalement */
-            $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
-                'uuid' => $signalementUuid,
+            $tag = $this->entityManager->getRepository(Tag::class)->findOneBy([
+                'label' => $legacySignalementTag['label'],
                 'territory' => $this->territory,
             ]);
 
-            if (null !== $tag && !$signalement->getTags()->contains($tag)) {
+            /** @var Signalement $signalement */
+            $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
+                'uuid' => $legacySignalementTag['uuid'],
+                'territory' => $this->territory,
+            ]);
+
+            if (null !== $tag && null !== $signalement && !$signalement->getTags()->contains($tag)) {
                 $signalement->addTag($tag);
                 $this->entityManager->persist($tag);
                 ++$i;
