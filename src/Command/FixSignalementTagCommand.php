@@ -97,7 +97,7 @@ class FixSignalementTagCommand extends Command
                 ]);
                 if (null === $tagToCheck) {
                     $signalement->getTags()->removeElement($tag);
-                    $this->signalementManager->remove($signalement);
+                    $this->tagManager->remove($tag);
                     ++$nbTagRemoved;
                 }
             }

@@ -669,7 +669,7 @@ class MigrateLegacyCommand extends Command
                 'territory' => $this->territory,
             ]);
 
-            if (null !== $tag && !$signalement->getTags()->contains($tag)) {
+            if (null !== $tag && null !== $signalement && !$signalement->getTags()->contains($tag)) {
                 $signalement->addTag($tag);
                 $this->entityManager->persist($tag);
                 ++$i;
