@@ -1,1 +1,1 @@
-postdeploy: ./scripts/update-db.sh
+postdeploy: ./scripts/postdeploy.sh
