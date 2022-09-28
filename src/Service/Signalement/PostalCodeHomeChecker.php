@@ -26,7 +26,7 @@ class PostalCodeHomeChecker
         return false;
     }
 
-    private function mapZip(string $postalCode): string
+    public function mapZip(string $postalCode): string
     {
         $zip = substr($postalCode, 0, 2);
 

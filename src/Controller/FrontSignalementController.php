@@ -86,7 +86,8 @@ class FrontSignalementController extends AbstractController
         TerritoryRepository $territoryRepository,
         NotificationService $notificationService,
         UploadHandlerService $uploadHandlerService,
-        ReferenceGenerator $referenceGenerator): Response
+        ReferenceGenerator $referenceGenerator,
+        PostalCodeHomeChecker $postalCodeHomeChecker): Response
     {
         if ($data = $request->get('signalement')) {
             $em = $doctrine->getManager();
@@ -152,7 +153,8 @@ class FrontSignalementController extends AbstractController
                 $signalement->setTelDeclarant(null);
             }
             $zip = \strlen($signalement->getCpOccupant()) > 3 ? substr($signalement->getCpOccupant(), 0, 2) : $signalement->getCpOccupant();
-            $signalement->setTerritory($territoryRepository->findOneBy(['zip' => $zip, 'isActive' => 1]));
+
+            $signalement->setTerritory($territoryRepository->findOneBy(['zip' => $postalCodeHomeChecker->mapZip($zip), 'isActive' => 1]));
             $signalement->setReference($referenceGenerator->generate($signalement->getTerritory()));
 
             $score = new CriticiteCalculatorService($signalement, $doctrine);
