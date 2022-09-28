@@ -73,7 +73,7 @@ class FixSignalementTagCommand extends Command
         $nbSignalementTagAdded = $this->addTagSignalement($legacySignalementTagList, $output);
 
         $this->io->newLine();
-        $this->io->success($nbSignalementTagAdded.' has/have been added');
+        $this->io->success($nbSignalementTagAdded.' tag(s) signalement has/have been added');
 
         return Command::SUCCESS;
     }
@@ -91,18 +91,13 @@ class FixSignalementTagCommand extends Command
             $tags = $signalement->getTags();
 
             foreach ($tags as $tag) {
-                $tagToCheck = $this->tagManager->findOneBy([
-                    'label' => $tag->getLabel(),
-                    'territory' => $this->territory,
-                ]);
-                if (null === $tagToCheck) {
-                    $signalement->getTags()->removeElement($tag);
-                    $this->signalementManager->flush();
-                    ++$nbTagRemoved;
-                }
+                $signalement->removeTag($tag);
+                ++$nbTagRemoved;
             }
             $progressBar->advance();
+            $this->entityManager->persist($signalement);
         }
+        $this->entityManager->flush();
         $progressBar->finish();
         $this->io->note(sprintf('%s tag signalement removed', $nbTagRemoved));
     }
