@@ -53,16 +53,24 @@ class FixNotificationLegacyCommand extends Command
     protected function configure(): void
     {
         $this->addArgument('territory_zip', InputArgument::REQUIRED, 'Territory code department');
+        $this->addOption('days', null, InputArgument::OPTIONAL, 'Get only the last x days notification');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        ini_set('memory_limit', '-1');
         $this->io = new SymfonyStyle($input, $output);
         $territoryZip = $input->getArgument('territory_zip');
         if (!\in_array($territoryZip, self::LEGACY_TERRITORY)) {
             $this->io->error(sprintf('%s is not legacy territory', $territoryZip));
 
             return Command::FAILURE;
+        }
+
+        $clauseWhere = '';
+        if (null !== $input->getOption('days')) {
+            $days = (int) $input->getOption('days');
+            $clauseWhere = "WHERE DATE(n.created_at) >= (DATE(NOW()) - INTERVAL $days DAY)";
         }
 
         $this->io->info(sprintf('You passed an argument: %s', $territoryZip));
@@ -80,11 +88,13 @@ class FixNotificationLegacyCommand extends Command
                     INNER JOIN signalement s on s.id = n.signalement_id
                     LEFT JOIN suivi su on su.id = n.suivi_id
                     LEFT JOIN affectation a on a.id = n.affectation_id
+                    $clauseWhere
                     ORDER BY n.id;
         SQL;
 
         $statement = $this->connection->prepare($selectNotificationSQL);
         $legacyNotifications = $statement->executeQuery()->fetchAllAssociative();
+
         $progressBar = new ProgressBar($output, \count($legacyNotifications));
         $progressBar->start();
 
@@ -176,7 +186,6 @@ class FixNotificationLegacyCommand extends Command
 
         $statement = $this->connection->prepare($selectAffectationLegacySQL);
         $legacyAffectation = $statement->executeQuery()->fetchAssociative();
-
         $answeredBy = $this->userManager->findOneBy(['email' => $legacyAffectation['answered_by']]);
         $affectedBy = $this->userManager->findOneBy(['email' => $legacyAffectation['affected_by']]);
 
@@ -185,7 +194,6 @@ class FixNotificationLegacyCommand extends Command
         return $this->entityManager->getRepository(Affectation::class)->findOneBy([
             'signalement' => $signalement,
             'partner' => $partner,
-            'answeredAt' => new \DateTimeImmutable($legacyAffectation['answered_at']),
             'statut' => $legacyAffectation['statut'],
             'answeredBy' => $answeredBy,
             'affectedBy' => $affectedBy,
