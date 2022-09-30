@@ -58,7 +58,6 @@ class FixNotificationLegacyCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        ini_set('memory_limit', '-1');
         $this->io = new SymfonyStyle($input, $output);
         $territoryZip = $input->getArgument('territory_zip');
         if (!\in_array($territoryZip, self::LEGACY_TERRITORY)) {
