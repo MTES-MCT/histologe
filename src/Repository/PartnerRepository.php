@@ -82,4 +82,13 @@ class PartnerRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findWithCodeInseeNotNull()
+    {
+        return $this
+            ->createQueryBuilder('p')
+            ->where("p.insee NOT LIKE '[\"\"]'")
+            ->getQuery()
+            ->getResult();
+    }
 }
