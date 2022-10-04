@@ -43,7 +43,7 @@ class PartnerFactoryTest extends KernelTestCase
             name: 'HTL',
             email: 'htl@example.com',
             isCommune: true,
-            insee: ['99000']
+            insee: '99000, 99001'
         );
 
         $errors = $validator->validate($partner);

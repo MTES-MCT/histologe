@@ -29,11 +29,16 @@ class BackCartographieController extends AbstractController
             return $this->json(['signalements' => $signalementRepository->findAllWithGeoData($user ?? null, $filters, (int) $request->get('offset'), $this->getUser()->getTerritory() ?? null)]);
         }
 
+        $userToFilterCities = $this->getUser() ?? null;
+        if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY')) {
+            $userToFilterCities = null;
+        }
+
         return $this->render('back/cartographie/index.html.twig', [
             'title' => $title,
             'filters' => $filters,
             'territories' => $territoryRepository->findAllList(),
-            'cities' => $signalementRepository->findCities($this->getUser() ?? null, $this->getUser()->getTerritory() ?? null),
+            'cities' => $signalementRepository->findCities($userToFilterCities, $this->getUser()->getTerritory() ?? null),
             'partners' => $partnerRepository->findAllList($this->getUser()->getTerritory() ?? null),
             'signalements' => [/* $signalements */],
             'criteres' => $critereRepository->findAllList(),

@@ -110,6 +110,7 @@ class MigrateLegacyCommand extends Command
         $io->info('Migrate table...');
 
         $progressBar = new ProgressBar($output, self::NB_TABLES);
+        $progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%');
         $progressBar->start();
         $this->loadConfig();
         $progressBar->advance();
@@ -351,7 +352,7 @@ class MigrateLegacyCommand extends Command
                 ->setJsonContent(json_decode($legacySignalement['json_content'], true))
                 ->setGeoloc(json_decode($legacySignalement['geoloc'], true))
                 ->setUuid($legacySignalement['uuid'])
-                ->setDateVisite(new \DateTimeImmutable($legacySignalement['date_visite']))
+                ->setDateVisite($this->getValidDate($legacySignalement['date_visite']))
                 ->setIsOccupantPresentVisite((bool) $legacySignalement['is_occupant_present_visite'])
                 ->setMontantAllocation((float) $legacySignalement['montant_allocation'])
                 ->setIsSituationHandicap($legacySignalement['is_situation_handicap'])
@@ -652,22 +653,23 @@ class MigrateLegacyCommand extends Command
     private function loadTagSignalement(): void
     {
         /** @var Statement $statement */
-        $statement = $this->connection->prepare('SELECT * from tag_signalement');
+        $statement = $this->connection->prepare('SELECT s.uuid, t.label FROM signalement s INNER JOIN tag_signalement ts ON ts.signalement_id = s.id INNER JOIN tag t ON t.id = ts.tag_id ORDER BY s.uuid');
         $legacySignalementTagList = $statement->executeQuery()->fetchAllAssociative();
         $i = 0;
         foreach ($legacySignalementTagList as $legacySignalementTag) {
             /** @var Tag $tag */
-            $tag = $this->entityManager->getRepository(Tag::class)->find(
-                (int) $legacySignalementTag['tag_id']
-            );
-            $signalementUuid = $this->mapping['signalement'][(int) $legacySignalementTag['signalement_id']];
-            /** @var Signalement $signalement */
-            $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
-                'uuid' => $signalementUuid,
+            $tag = $this->entityManager->getRepository(Tag::class)->findOneBy([
+                'label' => $legacySignalementTag['label'],
                 'territory' => $this->territory,
             ]);
 
-            if (null !== $tag && !$signalement->getTags()->contains($tag)) {
+            /** @var Signalement $signalement */
+            $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
+                'uuid' => $legacySignalementTag['uuid'],
+                'territory' => $this->territory,
+            ]);
+
+            if (null !== $tag && null !== $signalement && !$signalement->getTags()->contains($tag)) {
                 $signalement->addTag($tag);
                 $this->entityManager->persist($tag);
                 ++$i;

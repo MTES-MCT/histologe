@@ -119,11 +119,16 @@ class BackController extends AbstractController
             $criteria->andWhere(Criteria::expr()->eq('territory', $territory));
         }
 
+        $userToFilterCities = $this->getUser();
+        if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY')) {
+            $userToFilterCities = null;
+        }
+
         return $this->render('back/index.html.twig', [
             'title' => $title,
             'filters' => $filters,
             'territories' => $territoryRepository->findAllList(),
-            'cities' => $signalementRepository->findCities($this->getUser(), $territory),
+            'cities' => $signalementRepository->findCities($userToFilterCities, $territory),
             'partners' => $partnerRepository->findAllList($territory),
             'signalements' => $signalements,
             'users' => $users,

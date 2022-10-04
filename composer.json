@@ -134,6 +134,9 @@
         "paas": {
             "compile": [
                 "npm run build"
+            ],
+            "php-config": [
+                "memory_limit=-1"
             ]
         }
     }

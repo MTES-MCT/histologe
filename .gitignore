@@ -36,3 +36,4 @@ yarn-error.log
 tmp/*
 !tmp/.gitgnore
 /scripts/legacy.sh
+/scripts/local/

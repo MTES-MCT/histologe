@@ -13,8 +13,9 @@ use App\Repository\SituationRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\CriticiteCalculatorService;
 use App\Service\NotificationService;
+use App\Service\Signalement\PostalCodeHomeChecker;
+use App\Service\Signalement\ReferenceGenerator;
 use App\Service\UploadHandlerService;
-use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -49,20 +50,18 @@ class FrontSignalementController extends AbstractController
     }
 
     #[Route('/checkterritory', name: 'front_signalement_check_territory', methods: ['GET'])]
-    public function checkTerritory(Request $request, TerritoryRepository $territoryRepository): Response
+    public function checkTerritory(Request $request, PostalCodeHomeChecker $postalCodeHomeChecker): Response
     {
-        if (empty($request->get('cp'))) {
-            return $this->json(['success' => false, 'message' => 'cp parameter is missing']);
+        $postalCode = $request->get('cp');
+        if (empty($postalCode)) {
+            return $this->json(['success' => false, 'message' => 'cp parameter is missing'], Response::HTTP_BAD_REQUEST);
         }
 
-        $cp = $request->get('cp');
-        $zip = \strlen($cp) > 3 ? substr($cp, 0, 2) : $cp;
-        $territory = $territoryRepository->findOneBy(['zip' => $zip, 'isActive' => 1]);
-        if (!$territory) {
-            return $this->json(['success' => false, 'message' => 'Closed territory']);
+        if ($postalCodeHomeChecker->isActive($postalCode)) {
+            return $this->json(['success' => true, 'message' => 'Open territory']);
         }
 
-        return $this->json(['success' => true, 'message' => 'Open territory']);
+        return $this->json(['success' => false, 'message' => 'Closed territory'], Response::HTTP_BAD_REQUEST);
     }
 
     #[Route('/signalement/handle', name: 'handle_upload', methods: 'POST')]
@@ -86,7 +85,9 @@ class FrontSignalementController extends AbstractController
         ManagerRegistry $doctrine,
         TerritoryRepository $territoryRepository,
         NotificationService $notificationService,
-        UploadHandlerService $uploadHandlerService): Response
+        UploadHandlerService $uploadHandlerService,
+        ReferenceGenerator $referenceGenerator,
+        PostalCodeHomeChecker $postalCodeHomeChecker): Response
     {
         if ($data = $request->get('signalement')) {
             $em = $doctrine->getManager();
@@ -152,23 +153,9 @@ class FrontSignalementController extends AbstractController
                 $signalement->setTelDeclarant(null);
             }
             $zip = \strlen($signalement->getCpOccupant()) > 3 ? substr($signalement->getCpOccupant(), 0, 2) : $signalement->getCpOccupant();
-            $signalement->setTerritory($territoryRepository->findOneBy(['zip' => $zip, 'isActive' => 1]));
-            $year = (new DateTime())->format('Y');
-            $reqId = $doctrine->getRepository(Signalement::class)->createQueryBuilder('s')
-                ->select('s.reference')
-                ->where('YEAR(s.createdAt) = :year')
-                ->setParameter('year', $year)
-                ->andWhere('s.territory = :territory')
-                ->setParameter('territory', $signalement->getTerritory())
-                ->orderBy('s.createdAt', 'DESC')
-                ->setMaxResults(1)
-                ->getQuery()->getOneOrNullResult();
-            if ($reqId) {
-                $id = (int) explode('-', $reqId['reference'])[1] + 1;
-            } else {
-                $id = 1;
-            }
-            $signalement->setReference($year.'-'.$id);
+
+            $signalement->setTerritory($territoryRepository->findOneBy(['zip' => $postalCodeHomeChecker->mapZip($zip), 'isActive' => 1]));
+            $signalement->setReference($referenceGenerator->generate($signalement->getTerritory()));
 
             $score = new CriticiteCalculatorService($signalement, $doctrine);
             $signalement->setScoreCreation($score->calculate());

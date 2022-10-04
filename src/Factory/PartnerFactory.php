@@ -16,14 +16,19 @@ class PartnerFactory
         string $name = null,
         string $email = null,
         bool $isCommune = false,
-        array $insee = [])
+        string $insee = null): Partner
     {
-        return (new Partner())
+        $partner = (new Partner())
             ->setTerritory($territory)
             ->setNom($name)
             ->setEmail(mb_strtolower($email))
             ->setIsCommune($isCommune)
-            ->setInsee($insee)
             ->setIsArchive(false);
+
+        if (!empty($insee)) {
+            $partner->setInsee(array_map('trim', explode(',', $insee)));
+        }
+
+        return $partner;
     }
 }

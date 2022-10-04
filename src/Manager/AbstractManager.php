@@ -36,6 +36,16 @@ abstract class AbstractManager implements ManagerInterface
         return $this->getRepository()->findOneBy($criteria);
     }
 
+    public function findBy(array $criteria)
+    {
+        return $this->getRepository()->findBy($criteria);
+    }
+
+    public function findAll()
+    {
+        return $this->getRepository()->findAll();
+    }
+
     public function getRepository()
     {
         return $this->managerRegistry->getRepository($this->entityName);

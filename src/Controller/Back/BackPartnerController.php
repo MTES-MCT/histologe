@@ -6,6 +6,7 @@ use App\Entity\Partner;
 use App\Entity\User;
 use App\Form\PartnerType;
 use App\Repository\PartnerRepository;
+use App\Repository\TerritoryRepository;
 use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,13 +19,43 @@ use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 #[Route('/bo/partner')]
 class BackPartnerController extends AbstractController
 {
-    #[Route('/', name: 'back_partner_index', methods: ['GET'])]
-    public function index(PartnerRepository $partnerRepository): Response
+    public const DEFAULT_TERRITORY_AIN = 1;
+
+    #[Route('/', name: 'back_partner_index', methods: ['GET', 'POST'])]
+    public function index(Request $request,
+                          PartnerRepository $partnerRepository,
+                          TerritoryRepository $territoryRepository): Response
     {
         $this->denyAccessUnlessGranted('PARTNER_LIST', null);
+        $page = $request->get('page') ?? 1;
+
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $territory = empty($request->get('territory')) ? self::DEFAULT_TERRITORY_AIN : (int) $request->get('territory');
+            $currentTerritory = $territoryRepository->find($territory);
+        } else {
+            $currentTerritory = $this->getUser()->getTerritory();
+        }
+
+        $paginatedPartners = $partnerRepository->getPartners($currentTerritory, (int) $page);
+
+        if (Request::METHOD_POST === $request->getMethod()) {
+            $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
+
+            return $this->redirect($this->generateUrl('back_partner_index', [
+                'page' => 1,
+                'territory' => $currentTerritory->getId(),
+            ]));
+        }
+
+        $totalPartners = \count($paginatedPartners);
 
         return $this->render('back/partner/index.html.twig', [
-            'partners' => $partnerRepository->findAllOrByInseeIfCommune(null, $this->getUser()->getTerritory()),
+            'currentTerritory' => $currentTerritory,
+            'territories' => $territoryRepository->findAllList(),
+            'partners' => $paginatedPartners,
+            'total' => $totalPartners,
+            'page' => $page,
+            'pages' => (int) ceil($totalPartners / Partner::MAX_LIST_PAGINATION),
         ]);
     }
 

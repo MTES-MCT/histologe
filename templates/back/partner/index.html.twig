@@ -3,6 +3,19 @@
 {% block title %}Partenaire index{% endblock %}
 
 {% block content %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <form action="#" name="bo-filters-form" id="bo_filters_form" method="POST"
+              class="fr-accordion fr-background--white">
+            <div class="fr-p-5v">
+                <label class="fr-label" for="bo-filters-territories"><strong>Filtrer par territoire</strong></label>
+                <select id="bo-filters-territories" class="fr-select" onchange="this.form.submit()" name="territory">
+                    {% for territory in territories %}
+                        <option value="{{ territory.id }}" {{ territory.id == currentTerritory.id ? 'selected' : '' }}>{{ territory.name|upper }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    {% endif %}
     <section class="fr-grid-row fr-grid-row--middle fr-p-5v ">
         <div class="fr-col-6">
             <h1 class="fr-h2 fr-mb-0">Partenaires</h1>
@@ -29,7 +42,7 @@
                 <tr class="partner-row">
                     <td>{{ partner.id }}</td>
                     <td>{{ partner.nom }}</td>
-                    <td>{{ partner.isCommune ? 'Commune':'Partner' }}</td>
+                    <td>{{ partner.isCommune ? 'Commune':'Partenaire' }}</td>
                     <td>
                         {% for insee in partner.insee %}
                             <div class="fr-badge fr-badge--blue-ecume">{{ insee }}</div>
@@ -51,6 +64,105 @@
             {% endfor %}
             </tbody>
         </table>
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+            <nav role="navigation" class="fr-pagination" aria-label="Pagination">
+                <ul class="fr-pagination__list">
+                    <li>
+                        <a class="fr-pagination__link fr-pagination__link--first"
+                                {% if pages > 1 %}
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        href="{{ path('back_partner_index', {page : 1, territory: currentTerritory.id}) }}"
+                                    {% else %}
+                                        href="{{ path('back_partner_index', {page : 1 }) }}"
+                                    {% endif %}
+                                {% else %}
+                                    aria-disabled="true"
+                                {% endif %}>
+                            Première page
+                        </a>
+                    </li>
+                    <li>
+                        <a class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+                                {% if pages > 1 and page != 1 %}
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        href="{{ path('back_partner_index', {page : page - 1, territory: currentTerritory.id}) }}"
+                                    {% else %}
+                                        href="{{ path('back_partner_index', {page : page - 1 }) }}"
+                                    {% endif %}
+                                {% else %}
+                                    aria-disabled="true"
+                                {% endif %} role="link">
+                            Page précédente
+                        </a>
+                    </li>
+                    <li>
+                        <a class="fr-pagination__link" {{ page == 1 ? 'aria-current="page"' : '' }}
+                           title="Page 1"
+                           data-page="1"
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    href="{{ path('back_partner_index', {page : 1 , territory: currentTerritory.id}) }}"
+                                {% else %}
+                                    href="{{ path('back_partner_index', {page : 1 }) }}"
+                                {% endif %}
+                        >
+                            1
+                        </a>
+                    </li>
+                    {% if pages > 1 %}
+                        {% for i in 2..pages %}
+                            <li class="{% if loop.index > 2 and loop.index < pages-3 %}fr-hidden{% endif %}">
+                                <a class="fr-pagination__link" {{ page == i ? 'aria-current="page"' : '' }}
+                                        {% if is_granted('ROLE_ADMIN') %}
+                                            href="{{ path('back_partner_index', {page : i, territory: currentTerritory.id}) }}"
+                                        {% else %}
+                                            href="{{ path('back_partner_index', {page : i }) }}"
+                                        {% endif %}
+                                   title="Page {{ i }}"
+                                   data-page="{{ i }}">
+                                    {{ i }}
+                                </a>
+                            </li>
+                            {% if loop.index is same as(3) %}
+                                <li>
+                                    <a class="fr-pagination__link" title="placeholder">
+                                        ...
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    <li>
+                        <a class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+                                {% if pages > 1  and page < pages %}
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        href="{{ path('back_partner_index', {page : page + 1, territory: currentTerritory.id }) }}"
+                                    {% else %}
+                                        href="{{ path('back_partner_index', {page : page + 1 }) }}"
+                                    {% endif %}
+                                {% else %}
+                                    aria-disabled="true"
+                                {% endif %} role="link">
+                            Page suivante
+                        </a>
+                    </li>
+                    <li>
+                        <a class="fr-pagination__link fr-pagination__link--last"
+                                {% if pages > 1 %}
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        href="{{ path('back_partner_index', {page : pages, territory: currentTerritory.id }) }}"
+                                    {% else %}
+                                        href="{{ path('back_partner_index', {page : pages }) }}"
+                                    {% endif %}
+                                {% else %}
+                                    aria-disabled="true"
+                                {% endif %}
+                           data-page="{{ pages }}">
+                            Dernière page
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </section>
 
 
