@@ -8,7 +8,7 @@ use App\Repository\AffectationRepository;
 use App\Repository\SignalementRepository;
 use App\Service\ConfigurationService;
 use App\Service\NotificationService;
-use App\Service\PostalCodeHomeCheckerService;
+use App\Service\Signalement\PostalCodeHomeChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +17,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class FrontController extends AbstractController
 {
     #[Route('/', name: 'home')]
-    public function index(Request $request, SignalementRepository $signalementRepository, AffectationRepository $affectationRepository, PostalCodeHomeCheckerService $postalCodeHomeCheckerService): Response
+    public function index(
+        Request $request,
+        SignalementRepository $signalementRepository,
+        AffectationRepository $affectationRepository,
+        PostalCodeHomeChecker $postalCodeHomeChecker): Response
     {
         $title = 'Un service public pour les locataires et propriétaires';
 
@@ -32,15 +36,9 @@ class FrontController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $inputPostalCode = $form->get('postalcode')->getData();
-            $redirectUrl = $postalCodeHomeCheckerService->getRedirection($inputPostalCode);
-            if ($redirectUrl) {
-                if ('local' == $redirectUrl) {
-                    return $this->redirectToRoute('front_signalement');
-                }
-
-                return $this->redirect($redirectUrl);
+            if ($postalCodeHomeChecker->isActive($inputPostalCode)) {
+                return $this->redirectToRoute('front_signalement');
             }
-
             $display_modal = $inputPostalCode;
         }
 

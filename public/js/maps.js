@@ -57,7 +57,7 @@ const popupTemplate = (options) => {
 
     return TEMPLATE;
 }
-const MAP_MARKERS_PAGE_SIZE = 300;
+const MAP_MARKERS_PAGE_SIZE = 9000; // @todo: is high cause duplicate result, the query findAllWithGeoData should be reviewed
 
 async function getMarkers(offset) {
     await fetch('?load_markers=true&offset=' + offset, {
@@ -94,9 +94,9 @@ async function getMarkers(offset) {
             })
             map.addLayer(markers);
             // console.log(offset,res.signalements.length)
-            if (res.signalements.length === MAP_MARKERS_PAGE_SIZE)
+            if (res.signalements.length !== 0) { // As long as we have signalement getMarkers is calling
                 getMarkers(offset + MAP_MARKERS_PAGE_SIZE)
-            else {
+            } else {
                 markers.getLayers().forEach((layer, index) => {
                     let type;
                     switch (layer.options.status) {
@@ -126,10 +126,12 @@ async function getMarkers(offset) {
                 })
             }
             let bound = markers.getBounds();
-            map.fitBounds([
-                [bound._northEast.lat, bound._northEast.lng],
-                [bound._southWest.lat, bound._southWest.lng]
-            ]);
+            if (Object.keys(bound).length !== 0) {
+                map.fitBounds([
+                    [bound._northEast.lat, bound._northEast.lng],
+                    [bound._southWest.lat, bound._southWest.lng]
+                ]);
+            }
             document?.querySelector('#container.signalement-invalid')?.classList?.remove('signalement-invalid')
         } else {
             alert('Erreur lors du chargement des signalements...')

@@ -15,6 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[AsCommand(
@@ -50,7 +51,7 @@ class AddPartnerCommand extends Command
             ->addArgument(self::FIELDS['NAME'], InputArgument::REQUIRED, 'The name of the partner')
             ->addArgument(self::FIELDS['EMAIL'], InputArgument::REQUIRED)
             ->addArgument(self::FIELDS['IS_COMMUNE'], InputArgument::OPTIONAL, 'Is the partner a commune ?')
-            ->addArgument(self::FIELDS['INSEE'], InputArgument::IS_ARRAY, 'Add insee code');
+            ->addArgument(self::FIELDS['INSEE'], InputArgument::OPTIONAL, 'Add insee code separated with comma');
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output): void
@@ -124,12 +125,9 @@ class AddPartnerCommand extends Command
                 $this->io->table([self::FIELDS['INSEE']], $insee);
             } else {
                 $helper = $this->getHelper('question');
-                $question = new Question('Enter code'.self::FIELDS['INSEE'].' separated by space ? ');
+                $question = new Question('Enter code'.self::FIELDS['INSEE'].' separated by comma ? ');
                 $insee = $helper->ask($input, $output, $question);
-
-                $inseeList = explode(' ', $insee);
-                $input->setArgument(self::FIELDS['INSEE'], $inseeList);
-                $this->io->table([strtoupper(self::FIELDS['INSEE'])], [$inseeList]);
+                $input->setArgument(self::FIELDS['INSEE'], $insee);
             }
         }
     }
@@ -140,8 +138,7 @@ class AddPartnerCommand extends Command
         $name = $input->getArgument('name');
         $email = $input->getArgument('email');
         $isCommune = $input->getArgument('is_commune');
-        $insee = (array) $input->getArgument('insee');
-
+        $insee = $input->getArgument('insee');
         $territory = $this->territoryManager->findOneBy(['zip' => $territory]);
 
         if (!$territory instanceof Territory) {
@@ -169,7 +166,7 @@ class AddPartnerCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function showErrors(array $errors): void
+    private function showErrors(ConstraintViolationList $errors): void
     {
         $errorMessages = [];
         foreach ($errors as $constraint) {
