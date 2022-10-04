@@ -83,7 +83,7 @@ class PartnerRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findWithCodeInsee()
+    public function findWithCodeInseeNotNull()
     {
         return $this
             ->createQueryBuilder('p')

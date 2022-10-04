@@ -17,6 +17,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class FixPartnerInseeCommand extends Command
 {
+    public const REGEX_DELIMITERS = '/[;, ]/';
+
     public function __construct(private PartnerManager $partnerManager)
     {
         parent::__construct();
@@ -28,18 +30,13 @@ class FixPartnerInseeCommand extends Command
 
         /** @var PartnerRepository $partnerRepository */
         $partnerRepository = $this->partnerManager->getRepository();
-        $partners = $partnerRepository->findWithCodeInsee();
+        $partners = $partnerRepository->findWithCodeInseeNotNull();
 
         $count = 0;
         /** @var Partner $partner */
         foreach ($partners as $partner) {
             if (1 === \count($partner->getInsee()) && \strlen($partner->getInsee()[0]) > 5) {
-                $inseeList = explode(',', $partner->getInsee()[0]);
-
-                if (1 === \count($inseeList)) { // with comma separator still one item
-                    $inseeList = explode(' ', $partner->getInsee()[0]); // so apply space separator
-                }
-
+                $inseeList = preg_split(self::REGEX_DELIMITERS, $partner->getInsee()[0]);
                 $partner->setInsee($inseeList);
                 $this->partnerManager->save($partner, false);
                 ++$count;
