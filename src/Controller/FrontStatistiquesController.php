@@ -33,33 +33,31 @@ class FrontStatistiquesController extends AbstractController
         $this->ajaxResult = [];
 
         $ajaxResult['list_territoires'] = [];
-        $territoryList = $territoryRepository->findAllList();
-        /**
-         * @var Territory $territoryItem
-         */
-        foreach ($territoryList as $territoryItem) {
-            $this->ajaxResult['list_territoires'][$territoryItem->getId()] = $territoryItem->getName();
+        $territories = $territoryRepository->findAllList();
+        /** @var Territory $territory */
+        foreach ($territories as $territory) {
+            $this->ajaxResult['list_territoires'][$territory->getId()] = $territory->getName();
         }
 
         $territory = null;
-        $request_territoire = $request->get('territoire');
-        if ('' !== $request_territoire && 'all' !== $request_territoire) {
-            $territory = $territoryRepository->findOneBy(['id' => $request_territoire]);
+        $requestTerritory = $request->get('territoire');
+        if ('' !== $requestTerritory && 'all' !== $requestTerritory) {
+            $territory = $territoryRepository->findOneBy(['id' => $requestTerritory]);
         }
 
-        $this->makeGlobalStats($signalementRepository, $territoryRepository, $territoryList, $territory);
+        $this->makeGlobalStats($signalementRepository, $territories, $territory);
 
         $this->ajaxResult['response'] = 'success';
 
         return $this->json($this->ajaxResult);
     }
 
-    private function makeGlobalStats(SignalementRepository $signalementRepository, TerritoryRepository $territoryRepository, $territoryList, $territory)
+    private function makeGlobalStats(SignalementRepository $signalementRepository, $territories, $territory)
     {
         $globalSignalement = $signalementRepository->findByFilters('', true, null, null, '', null, null, null);
         $totalSignalement = \count($globalSignalement);
         $this->ajaxResult['count_signalement'] = $totalSignalement;
-        $this->ajaxResult['count_territory'] = \count($territoryList);
+        $this->ajaxResult['count_territory'] = \count($territories);
         $this->ajaxResult['signalement_per_territoire'] = [];
         $countSignalementPerMonth = [];
         $countSignalementPerMonthThisYear = [];
