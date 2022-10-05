@@ -80,3 +80,10 @@ partners:
     is_commune: 0
     insee: "[\"\"]"
     territory: "Nord"
+  -
+    nom: "Partner La réunion"
+    email: "partenaire-01-974@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "La Réunion"
