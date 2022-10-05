@@ -26,6 +26,11 @@ class PostalCodeHomeCheckerTest extends KernelTestCase
         $this->assertTrue($this->postalCodeHomeChecker->isActive('20151'));
     }
 
+    public function testActiveCotedorTerritory(): void
+    {
+        $this->assertTrue($this->postalCodeHomeChecker->isActive('21000'));
+    }
+
     public function testInactiveTerritory(): void
     {
         $this->assertFalse($this->postalCodeHomeChecker->isActive('75001'));

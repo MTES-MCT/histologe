@@ -6,7 +6,7 @@ use App\Repository\TerritoryRepository;
 
 class PostalCodeHomeChecker
 {
-    public const CORSE_DEPARTMENT = ['20' => '2A', '21' => '2B'];
+    public const CORSE_DEPARTMENT = ['20' => '2A'];
 
     public const DOM_TOM_START_WITH_97 = '97';
 

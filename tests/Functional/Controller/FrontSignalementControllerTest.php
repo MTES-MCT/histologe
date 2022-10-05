@@ -74,6 +74,13 @@ class FrontSignalementControllerTest extends WebTestCase
                 'geoloc' => ['lat' => 43.774674, 'lng' => 7.502405],
                 'inseeOccupant' => '06083',
             ]],
+            'Côte-d\'Or' => [[
+                'adresseOccupant' => '15 Rue des Godrans',
+                'villeOccupant' => 'Dijon',
+                'cpOccupant' => '21000',
+                'geoloc' => ['lat' => 47.324467, 'lng' => 5.039006],
+                'inseeOccupant' => '21231',
+            ]],
         ];
     }
 
