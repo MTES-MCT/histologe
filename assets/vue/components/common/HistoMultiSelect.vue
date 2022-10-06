@@ -20,7 +20,7 @@
               :data-optionid="item.Id"
               @click="handleRemoveItem"
               >
-              {{ unbreakText(item.Text) }} <span>X</span>
+              {{ unbreakText(item.Text) }}&nbsp;&nbsp;X
             </li>
           </template>
         </ul>
@@ -165,10 +165,6 @@ export default defineComponent({
     border-radius: 4px;
     cursor: pointer;
     color: var(--blue-france-sun-113-625);
-  }
-  .histo-multi-select .selector-items .selector-items-selected ul li span {
-    display: inline-block;
-    margin-left: .1rem;
   }
 
   .histo-multi-select .selector-items .selector-items-remaining ul {

@@ -84,9 +84,6 @@ export default defineComponent({
      * One of the filters has changed, a query needs to be executed
      */
     handleFilterChange (reinit:boolean) {
-      console.log('onFilterChange')
-      console.log(this.sharedState)
-
       requests.filter(this.handleRefresh)
       this.loadingInit = reinit
       this.loadingFilters = true

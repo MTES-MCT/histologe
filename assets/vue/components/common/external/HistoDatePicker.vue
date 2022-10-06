@@ -38,6 +38,9 @@ export default defineComponent({
       this.dates = newDates
     },
     handleDate: function(modelData: any) {
+      if (modelData[1] === null) {
+        modelData[1] = new Date()
+      }
       if (this.dates !== undefined && this.dates !== null) {
         this.dates = modelData
       }
