@@ -152,9 +152,14 @@ class FrontSignalementController extends AbstractController
                 $signalement->setStructureDeclarant(null);
                 $signalement->setTelDeclarant(null);
             }
-            $zip = \strlen($signalement->getCpOccupant()) > 3 ? substr($signalement->getCpOccupant(), 0, 2) : $signalement->getCpOccupant();
 
-            $signalement->setTerritory($territoryRepository->findOneBy(['zip' => $postalCodeHomeChecker->mapZip($zip), 'isActive' => 1]));
+            $signalement->setTerritory($territoryRepository->findOneBy([
+                'zip' => $postalCodeHomeChecker->mapZip($signalement->getCpOccupant()), 'isActive' => 1, ])
+            );
+
+            if (null === $signalement->getTerritory()) {
+                return $this->json(['response' => 'Territory is inactive'], Response::HTTP_BAD_REQUEST);
+            }
             $signalement->setReference($referenceGenerator->generate($signalement->getTerritory()));
 
             $score = new CriticiteCalculatorService($signalement, $doctrine);
@@ -168,7 +173,7 @@ class FrontSignalementController extends AbstractController
             return $this->json(['response' => 'success']);
         }
 
-        return $this->json(['response' => 'error'], 400);
+        return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
     }
 
     #[Route('/suivre-mon-signalement/{code}', name: 'front_suivi_signalement', methods: 'GET')]

@@ -145,7 +145,7 @@ territories:
   -
     zip: "28"
     name: "Eure-et-Loir"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"48.941029\",\"e\":\"1.99456\",\"s\":\"47.953818\",\"w\":\"0.755676\"}"
   -
     zip: "29"
@@ -195,7 +195,7 @@ territories:
   -
     zip: "38"
     name: "Isère"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"45.883397\",\"e\":\"6.359309\",\"s\":\"44.695873\",\"w\":\"4.742594\"}"
   -
     zip: "39"
@@ -504,7 +504,7 @@ territories:
   -
     zip: "974"
     name: "La Réunion"
-    is_active: 0
+    is_active: 1
     bbox: "[]"
     
   -
