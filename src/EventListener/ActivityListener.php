@@ -14,12 +14,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ActivityListener implements EventSubscriberInterface
 {
+    private NotificationService $notifier;
+    private UrlGeneratorInterface $urlGenerator;
     /**
      * @var null
      */
@@ -30,11 +31,10 @@ class ActivityListener implements EventSubscriberInterface
     private $uow;
     private ArrayCollection $tos;
 
-    public function __construct(
-        private NotificationService $notifier,
-        private UrlGeneratorInterface $urlGenerator,
-        private LoggerInterface $logger
-    ) {
+    public function __construct(NotificationService $notificationService, UrlGeneratorInterface $urlGenerator)
+    {
+        $this->notifier = $notificationService;
+        $this->urlGenerator = $urlGenerator;
         $this->tos = new ArrayCollection();
         $this->uow = null;
         $this->em = null;
@@ -96,15 +96,11 @@ class ActivityListener implements EventSubscriberInterface
             ->setParameter('role', '"ROLE_ADMIN"')
             ->setParameter('role2', '"ROLE_ADMIN_TERRITORY"');
         foreach ($admins->getQuery()->getResult() as $admin) {
-            if (null !== $territory && null !== $admin->getTerritory()) {
-                if ($admin->isSuperAdmin() || $admin->isTerritoryAdmin() && $territory->getId() === $admin->getTerritory()->getId()) {
-                    $this->createInAppNotification($admin, $entity, $inAppType);
-                    if ($admin->getIsMailingActive()) {
-                        $this->tos[] = $admin->getEmail();
-                    }
+            if ($admin->isSuperAdmin() || $admin->isTerritoryAdmin() && $territory->getId() === $admin->getTerritory()->getId()) {
+                $this->createInAppNotification($admin, $entity, $inAppType);
+                if ($admin->getIsMailingActive()) {
+                    $this->tos[] = $admin->getEmail();
                 }
-            } else {
-                $this->logger->error(sprintf('[%s] Territory is null', $inAppType));
             }
         }
     }
