@@ -96,7 +96,7 @@ class ActivityListener implements EventSubscriberInterface
             ->setParameter('role', '"ROLE_ADMIN"')
             ->setParameter('role2', '"ROLE_ADMIN_TERRITORY"');
         foreach ($admins->getQuery()->getResult() as $admin) {
-            if (null !== $territory) {
+            if (null !== $territory && null !== $admin->getTerritory()) {
                 if ($admin->isSuperAdmin() || $admin->isTerritoryAdmin() && $territory->getId() === $admin->getTerritory()->getId()) {
                     $this->createInAppNotification($admin, $entity, $inAppType);
                     if ($admin->getIsMailingActive()) {
