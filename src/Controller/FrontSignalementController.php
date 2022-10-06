@@ -20,7 +20,6 @@ use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -88,95 +87,90 @@ class FrontSignalementController extends AbstractController
         NotificationService $notificationService,
         UploadHandlerService $uploadHandlerService,
         ReferenceGenerator $referenceGenerator,
-        PostalCodeHomeChecker $postalCodeHomeChecker,
-        LoggerInterface $logger
-    ): Response {
-        try {
-            if ($data = $request->get('signalement')) {
-                $em = $doctrine->getManager();
-                $signalement = new Signalement();
-                $files_array = [];
+        PostalCodeHomeChecker $postalCodeHomeChecker): Response
+    {
+        if ($data = $request->get('signalement')) {
+            $em = $doctrine->getManager();
+            $signalement = new Signalement();
+            $files_array = [];
 
-                if (isset($data['files'])) {
-                    $dataFiles = $data['files'];
-                    foreach ($dataFiles as $key => $files) {
-                        foreach ($files as $titre => $file) {
-                            $files_array[$key][] = ['file' => $uploadHandlerService->uploadFromFilename($file), 'titre' => $titre, 'date' => (new DateTimeImmutable())->format('d.m.Y')];
-                        }
-                    }
-                    unset($data['files']);
-                }
-                if (isset($files_array['documents'])) {
-                    $signalement->setDocuments($files_array['documents']);
-                }
-                if (isset($files_array['photos'])) {
-                    $signalement->setPhotos($files_array['photos']);
-                }
-                foreach ($data as $key => $value) {
-                    $method = 'set'.ucfirst($key);
-                    switch ($key) {
-                        case 'situation':
-                            foreach ($data[$key] as $idSituation => $criteres) {
-                                $situation = $em->getRepository(Situation::class)->find($idSituation);
-                                $signalement->addSituation($situation);
-                                foreach ($criteres as $critere) {
-                                    foreach ($critere as $idCritere => $criticites) {
-                                        $critere = $em->getRepository(Critere::class)->find($idCritere);
-                                        $signalement->addCritere($critere);
-                                        $criticite = $em->getRepository(Criticite::class)->find($data[$key][$idSituation]['critere'][$idCritere]['criticite']);
-                                        $signalement->addCriticite($criticite);
-                                    }
-                                }
-                            }
-                            break;
-
-                        case 'dateEntree':
-                            $value = new DateTimeImmutable($value);
-                            $signalement->$method($value);
-                            break;
-
-                        case 'geoloc':
-                            $signalement->setGeoloc(['lat' => $data[$key]['lat'], 'lng' => $data[$key]['lng']]);
-                            break;
-
-                        default:
-                            if ('setSignalement' !== $method) {
-                                if ('' === $value || ' ' === $value) {
-                                    $value = null;
-                                }
-                                $signalement->$method($value);
-                            }
+            if (isset($data['files'])) {
+                $dataFiles = $data['files'];
+                foreach ($dataFiles as $key => $files) {
+                    foreach ($files as $titre => $file) {
+                        $files_array[$key][] = ['file' => $uploadHandlerService->uploadFromFilename($file), 'titre' => $titre, 'date' => (new DateTimeImmutable())->format('d.m.Y')];
                     }
                 }
-                if (!$signalement->getIsNotOccupant()) {
-                    $signalement->setNomDeclarant(null);
-                    $signalement->setPrenomDeclarant(null);
-                    $signalement->setMailDeclarant(null);
-                    $signalement->setStructureDeclarant(null);
-                    $signalement->setTelDeclarant(null);
-                }
-
-                $signalement->setTerritory($territoryRepository->findOneBy([
-                    'zip' => $postalCodeHomeChecker->mapZip($signalement->getCpOccupant()), 'isActive' => 1, ])
-                );
-
-                if (null === $signalement->getTerritory()) {
-                    return $this->json(['response' => 'Territory is inactive'], Response::HTTP_BAD_REQUEST);
-                }
-                $signalement->setReference($referenceGenerator->generate($signalement->getTerritory()));
-
-                $score = new CriticiteCalculatorService($signalement, $doctrine);
-                $signalement->setScoreCreation($score->calculate());
-
-                $em->persist($signalement);
-                $em->flush();
-                !$signalement->getIsProprioAverti() && $attachment = file_exists($this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf') ? $this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf' : null;
-                $notificationService->send(NotificationService::TYPE_CONFIRM_RECEPTION, [$signalement->getMailDeclarant(), $signalement->getMailOccupant()], ['signalement' => $signalement, 'attach' => $attachment ?? null], $signalement->getTerritory());
-
-                return $this->json(['response' => 'success']);
+                unset($data['files']);
             }
-        } catch (Exception $error) {
-            $logger->critical($error->getMessage());
+            if (isset($files_array['documents'])) {
+                $signalement->setDocuments($files_array['documents']);
+            }
+            if (isset($files_array['photos'])) {
+                $signalement->setPhotos($files_array['photos']);
+            }
+            foreach ($data as $key => $value) {
+                $method = 'set'.ucfirst($key);
+                switch ($key) {
+                    case 'situation':
+                        foreach ($data[$key] as $idSituation => $criteres) {
+                            $situation = $em->getRepository(Situation::class)->find($idSituation);
+                            $signalement->addSituation($situation);
+                            foreach ($criteres as $critere) {
+                                foreach ($critere as $idCritere => $criticites) {
+                                    $critere = $em->getRepository(Critere::class)->find($idCritere);
+                                    $signalement->addCritere($critere);
+                                    $criticite = $em->getRepository(Criticite::class)->find($data[$key][$idSituation]['critere'][$idCritere]['criticite']);
+                                    $signalement->addCriticite($criticite);
+                                }
+                            }
+                        }
+                        break;
+
+                    case 'dateEntree':
+                        $value = new DateTimeImmutable($value);
+                        $signalement->$method($value);
+                        break;
+
+                    case 'geoloc':
+                        $signalement->setGeoloc(['lat' => $data[$key]['lat'], 'lng' => $data[$key]['lng']]);
+                        break;
+
+                    default:
+                        if ('setSignalement' !== $method) {
+                            if ('' === $value || ' ' === $value) {
+                                $value = null;
+                            }
+                            $signalement->$method($value);
+                        }
+                }
+            }
+            if (!$signalement->getIsNotOccupant()) {
+                $signalement->setNomDeclarant(null);
+                $signalement->setPrenomDeclarant(null);
+                $signalement->setMailDeclarant(null);
+                $signalement->setStructureDeclarant(null);
+                $signalement->setTelDeclarant(null);
+            }
+
+            $signalement->setTerritory($territoryRepository->findOneBy([
+                'zip' => $postalCodeHomeChecker->mapZip($signalement->getCpOccupant()), 'isActive' => 1, ])
+            );
+
+            if (null === $signalement->getTerritory()) {
+                return $this->json(['response' => 'Territory is inactive'], Response::HTTP_BAD_REQUEST);
+            }
+            $signalement->setReference($referenceGenerator->generate($signalement->getTerritory()));
+
+            $score = new CriticiteCalculatorService($signalement, $doctrine);
+            $signalement->setScoreCreation($score->calculate());
+
+            $em->persist($signalement);
+            $em->flush();
+            !$signalement->getIsProprioAverti() && $attachment = file_exists($this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf') ? $this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf' : null;
+            $notificationService->send(NotificationService::TYPE_CONFIRM_RECEPTION, [$signalement->getMailDeclarant(), $signalement->getMailOccupant()], ['signalement' => $signalement, 'attach' => $attachment ?? null], $signalement->getTerritory());
+
+            return $this->json(['response' => 'success']);
         }
 
         return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
