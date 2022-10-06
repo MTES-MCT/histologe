@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Service\SearchFilterService;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -27,7 +28,7 @@ class SignalementRepository extends ServiceEntityRepository
 
     private SearchFilterService $searchFilterService;
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Signalement::class);
         $this->searchFilterService = new SearchFilterService();
@@ -98,6 +99,29 @@ class SignalementRepository extends ServiceEntityRepository
 
         return $qb->getQuery()
             ->getResult();
+    }
+
+    public function countValidated()
+    {
+        $notStatus = [Signalement::STATUS_NEED_VALIDATION, Signalement::STATUS_REFUSED, Signalement::STATUS_ARCHIVED];
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id)');
+        $qb->andWhere('s.statut NOT IN (:notStatus)')
+            ->setParameter('notStatus', $notStatus);
+
+        return $qb->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countClosed()
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id)');
+        $qb->andWhere('s.statut = :closedStatus')
+            ->setParameter('closedStatus', Signalement::STATUS_CLOSED);
+
+        return $qb->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function countByCity()

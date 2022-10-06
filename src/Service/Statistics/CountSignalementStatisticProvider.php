@@ -10,7 +10,7 @@ class CountSignalementStatisticProvider
     {
     }
 
-    public function get()
+    public function getData()
     {
         return $this->signalementRepository->countAll();
     }

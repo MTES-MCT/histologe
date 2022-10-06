@@ -10,7 +10,7 @@ class CountTerritoryStatisticProvider
     {
     }
 
-    public function get()
+    public function getData()
     {
         return $this->territoryRepository->countAll();
     }

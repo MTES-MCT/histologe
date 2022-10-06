@@ -7,6 +7,9 @@ use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\Statistics\CountSignalementStatisticProvider;
 use App\Service\Statistics\CountTerritoryStatisticProvider;
+use App\Service\Statistics\ListTerritoryStatisticProvider;
+use App\Service\Statistics\PercentSignalementClosedStatisticProvider;
+use App\Service\Statistics\PercentSignalementValidatedStatisticProvider;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +24,10 @@ class FrontStatistiquesController extends AbstractController
 
     public function __construct(
         private CountSignalementStatisticProvider $countSignalementStatisticProvider,
-        private CountTerritoryStatisticProvider $countTerritoryStatisticProvider
+        private CountTerritoryStatisticProvider $countTerritoryStatisticProvider,
+        private PercentSignalementValidatedStatisticProvider $percentSignalementValidatedStatisticProvider,
+        private PercentSignalementClosedStatisticProvider $percentSignalementClosedStatisticProvider,
+        private ListTerritoryStatisticProvider $listTerritoryStatisticProvider
         ) {
     }
 
@@ -39,15 +45,12 @@ class FrontStatistiquesController extends AbstractController
     public function filter(Request $request, TerritoryRepository $territoryRepository, SignalementRepository $signalementRepository): Response
     {
         $this->ajaxResult = [];
-        $this->ajaxResult['count_signalement'] = $this->countSignalementStatisticProvider->get();
-        $this->ajaxResult['count_territory'] = $this->countTerritoryStatisticProvider->get();
-
-        $ajaxResult['list_territoires'] = [];
-        $territories = $territoryRepository->findAllList();
-        /** @var Territory $territory */
-        foreach ($territories as $territory) {
-            $this->ajaxResult['list_territoires'][$territory->getId()] = $territory->getName();
-        }
+        $this->ajaxResult['response'] = 'success';
+        $this->ajaxResult['count_signalement'] = $this->countSignalementStatisticProvider->getData();
+        $this->ajaxResult['count_territory'] = $this->countTerritoryStatisticProvider->getData();
+        $this->ajaxResult['percent_validation'] = $this->percentSignalementValidatedStatisticProvider->getData();
+        $this->ajaxResult['percent_cloture'] = $this->percentSignalementClosedStatisticProvider->getData();
+        $this->ajaxResult['list_territoires'] = $this->listTerritoryStatisticProvider->getData();
 
         $territory = null;
         $requestTerritory = $request->get('territoire');
@@ -55,17 +58,14 @@ class FrontStatistiquesController extends AbstractController
             $territory = $territoryRepository->findOneBy(['id' => $requestTerritory]);
         }
 
-        $this->makeGlobalStats($signalementRepository, $territories, $territory);
-
-        $this->ajaxResult['response'] = 'success';
+        $this->makeGlobalStats($signalementRepository, $territory);
 
         return $this->json($this->ajaxResult);
     }
 
-    private function makeGlobalStats(SignalementRepository $signalementRepository, $territories, $territory)
+    private function makeGlobalStats(SignalementRepository $signalementRepository, $territory)
     {
         $globalSignalement = $signalementRepository->findByFilters('', true, null, null, '', null, null, null);
-        $totalSignalement = \count($globalSignalement);
         $this->ajaxResult['signalement_per_territoire'] = [];
         $countSignalementPerMonth = [];
         $countSignalementPerMonthThisYear = [];
@@ -78,20 +78,11 @@ class FrontStatistiquesController extends AbstractController
         $currentDate = new DateTime();
         $currentYear = $currentDate->format('Y');
 
-        $totalValidation = 0;
-        $totalCloture = 0;
         /**
          * @var Signalement $signalementItem
          */
         foreach ($globalSignalement as $signalementItem) {
             $dateCreatedAt = $signalementItem->getCreatedAt();
-
-            if (Signalement::STATUS_NEED_VALIDATION !== $signalementItem->getStatut() && Signalement::STATUS_REFUSED !== $signalementItem->getStatut()) {
-                ++$totalValidation;
-            }
-            if (Signalement::STATUS_CLOSED === $signalementItem->getStatut()) {
-                ++$totalCloture;
-            }
 
             // Per territoire
             $territoryId = $signalementItem->getTerritory()->getId();
@@ -179,10 +170,6 @@ class FrontStatistiquesController extends AbstractController
             }
         }
 
-        $percentValidation = $totalSignalement > 0 ? round($totalValidation / $totalSignalement * 1000) / 10 : '-';
-        $percentCloture = $totalSignalement > 0 ? round($totalCloture / $totalSignalement * 1000) / 10 : '-';
-        $this->ajaxResult['percent_validation'] = $percentValidation;
-        $this->ajaxResult['percent_cloture'] = $percentCloture;
         $this->ajaxResult['signalement_per_situation'] = $countSignalementPerSituation;
         $this->ajaxResult['signalement_per_situation_this_year'] = $countSignalementPerSituationThisYear;
         $this->ajaxResult['signalement_per_motif_cloture'] = $countSignalementPerMotifCloture;
