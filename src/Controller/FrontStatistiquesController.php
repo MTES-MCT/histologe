@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Signalement;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
+use App\Service\Statistics\CountSignalementStatisticProvider;
+use App\Service\Statistics\CountTerritoryStatisticProvider;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +18,12 @@ class FrontStatistiquesController extends AbstractController
     private $ajaxResult;
 
     private const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+
+    public function __construct(
+        private CountSignalementStatisticProvider $countSignalementStatisticProvider,
+        private CountTerritoryStatisticProvider $countTerritoryStatisticProvider
+        ) {
+    }
 
     #[Route('/statistiques', name: 'front_statistiques')]
     public function statistiques(): Response
@@ -31,6 +39,8 @@ class FrontStatistiquesController extends AbstractController
     public function filter(Request $request, TerritoryRepository $territoryRepository, SignalementRepository $signalementRepository): Response
     {
         $this->ajaxResult = [];
+        $this->ajaxResult['count_signalement'] = $this->countSignalementStatisticProvider->get();
+        $this->ajaxResult['count_territory'] = $this->countTerritoryStatisticProvider->get();
 
         $ajaxResult['list_territoires'] = [];
         $territories = $territoryRepository->findAllList();
@@ -56,8 +66,6 @@ class FrontStatistiquesController extends AbstractController
     {
         $globalSignalement = $signalementRepository->findByFilters('', true, null, null, '', null, null, null);
         $totalSignalement = \count($globalSignalement);
-        $this->ajaxResult['count_signalement'] = $totalSignalement;
-        $this->ajaxResult['count_territory'] = \count($territories);
         $this->ajaxResult['signalement_per_territoire'] = [];
         $countSignalementPerMonth = [];
         $countSignalementPerMonthThisYear = [];

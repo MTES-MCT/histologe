@@ -85,7 +85,7 @@ export default defineComponent({
           {
             data: inData,
             backgroundColor: inColors,
-            hoverBorderColor: inColors,
+            hoverBorderColor: inColors
           }
         ]
       },

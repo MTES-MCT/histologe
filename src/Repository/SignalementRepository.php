@@ -74,6 +74,17 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function countAll()
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id)');
+        $qb->andWhere('s.statut != :statutArchived')
+            ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
+
+        return $qb->getQuery()
+            ->getSingleScalarResult();
+    }
+
     public function countByStatus(Territory|null $territory)
     {
         $qb = $this->createQueryBuilder('s');
