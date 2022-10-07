@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Partner;
+use App\Entity\Signalement;
 use App\Entity\Territory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -45,6 +46,9 @@ class PartnerRepository extends ServiceEntityRepository
         return $paginator;
     }
 
+    /**
+     * @deprecated
+     */
     public function findAllOrByInseeIfCommune(string|null $insee, Territory|null $territory)
     {
         $qb = $this->createQueryBuilder('p')
@@ -90,5 +94,27 @@ class PartnerRepository extends ServiceEntityRepository
             ->where("p.insee NOT LIKE '[\"\"]'")
             ->getQuery()
             ->getResult();
+    }
+
+    public function findByLocalization(Signalement $signalement, bool $affected = true): array
+    {
+        $connection = $this->getEntityManager()->getConnection();
+        $operator = $affected ? 'IN' : 'NOT IN';
+
+        $sql = '
+        SELECT id, nom as name
+        FROM partner
+        WHERE territory_id = :territory_id AND is_archive = 0 AND (is_commune = 0 OR insee LIKE :insee)
+        AND id '.$operator.' (
+            SELECT partner_id FROM affectation WHERE signalement_id = :signalement_id)
+        ';
+
+        $statement = $connection->prepare($sql);
+
+        return $statement->executeQuery([
+            'signalement_id' => $signalement->getId(),
+            'territory_id' => $signalement->getTerritory()->getId(),
+            'insee' => '%'.$signalement->getInseeOccupant().'%',
+        ])->fetchAllAssociative();
     }
 }
