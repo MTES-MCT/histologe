@@ -14,7 +14,7 @@ class CountSignalementPerSituationStatisticProvider
     public function getData(Territory|null $territory, int|null $year)
     {
         $countPerSituations = $this->signalementRepository->countBySituation($territory, $year);
-        
+
         $buffer = [];
         foreach ($countPerSituations as $countPerSituation) {
             if ($countPerSituation['menuLabel']) {

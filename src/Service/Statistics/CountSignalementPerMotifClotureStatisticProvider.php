@@ -14,7 +14,7 @@ class CountSignalementPerMotifClotureStatisticProvider
     public function getData(Territory|null $territory, int|null $year)
     {
         $countPerMotifsCloture = $this->signalementRepository->countByMotifCloture($territory, $year);
-        
+
         $buffer = self::initMotifPerValue();
         foreach ($countPerMotifsCloture as $countPerMotifCloture) {
             if ($buffer[$countPerMotifCloture['motifCloture']]) {

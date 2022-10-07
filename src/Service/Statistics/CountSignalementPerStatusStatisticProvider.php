@@ -26,7 +26,7 @@ class CountSignalementPerStatusStatisticProvider
 
         return $buffer;
     }
-    
+
     private static function initStatutByValue($statusResult)
     {
         switch ($statusResult['statut']) {
@@ -34,7 +34,7 @@ class CountSignalementPerStatusStatisticProvider
                 return [
                     'label' => 'Fermé',
                     'color' => '#21AB8E',
-                    'count' => $statusResult['count']
+                    'count' => $statusResult['count'],
                 ];
                 break;
 
@@ -43,7 +43,7 @@ class CountSignalementPerStatusStatisticProvider
                 return [
                     'label' => 'En cours',
                     'color' => '#000091',
-                    'count' => $statusResult['count']
+                    'count' => $statusResult['count'],
                 ];
                 break;
 
@@ -51,7 +51,7 @@ class CountSignalementPerStatusStatisticProvider
                 return [
                     'label' => 'Nouveau',
                     'color' => '#E4794A',
-                    'count' => $statusResult['count']
+                    'count' => $statusResult['count'],
                 ];
                 break;
 
