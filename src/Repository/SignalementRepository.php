@@ -136,6 +136,39 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function countByTerritory()
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id) AS count, t.zip, t.name, t.id');
+        $qb->leftJoin('s.territory', 't');
+        $qb->groupBy('t.id');
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
+    public function countPerMonth(Territory|null $territory, int|null $year)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id) AS count, MONTH(s.createdAt) AS month, YEAR(s.createdAt) AS year');
+
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+        if ($year) {
+            $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);
+        }
+
+        $qb->groupBy('month')
+            ->addGroupBy('year');
+
+        $qb->orderBy('year')
+            ->addOrderBy('month');
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
     /**
      * @throws NonUniqueResultException
      */

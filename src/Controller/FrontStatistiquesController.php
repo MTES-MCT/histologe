@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Signalement;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
+use App\Service\Statistics\CountSignalementPerMonthStatisticProvider;
+use App\Service\Statistics\CountSignalementPerTerritoryStatisticProvider;
 use App\Service\Statistics\CountSignalementStatisticProvider;
 use App\Service\Statistics\CountTerritoryStatisticProvider;
 use App\Service\Statistics\ListTerritoryStatisticProvider;
@@ -20,14 +22,16 @@ class FrontStatistiquesController extends AbstractController
 {
     private $ajaxResult;
 
-    private const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    // private const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
     public function __construct(
         private CountSignalementStatisticProvider $countSignalementStatisticProvider,
         private CountTerritoryStatisticProvider $countTerritoryStatisticProvider,
         private PercentSignalementValidatedStatisticProvider $percentSignalementValidatedStatisticProvider,
         private PercentSignalementClosedStatisticProvider $percentSignalementClosedStatisticProvider,
-        private ListTerritoryStatisticProvider $listTerritoryStatisticProvider
+        private ListTerritoryStatisticProvider $listTerritoryStatisticProvider,
+        private CountSignalementPerTerritoryStatisticProvider $countSignalementPerTerritoryStatisticProvider,
+        private CountSignalementPerMonthStatisticProvider $countSignalementPerMonthStatisticProvider
         ) {
     }
 
@@ -51,12 +55,18 @@ class FrontStatistiquesController extends AbstractController
         $this->ajaxResult['percent_validation'] = $this->percentSignalementValidatedStatisticProvider->getData();
         $this->ajaxResult['percent_cloture'] = $this->percentSignalementClosedStatisticProvider->getData();
         $this->ajaxResult['list_territoires'] = $this->listTerritoryStatisticProvider->getData();
+        $this->ajaxResult['signalement_per_territoire'] = $this->countSignalementPerTerritoryStatisticProvider->getData();
 
         $territory = null;
         $requestTerritory = $request->get('territoire');
         if ('' !== $requestTerritory && 'all' !== $requestTerritory) {
             $territory = $territoryRepository->findOneBy(['id' => $requestTerritory]);
         }
+        $currentDate = new DateTime();
+        $currentYear = $currentDate->format('Y');
+
+        $this->ajaxResult['signalement_per_month'] = $this->countSignalementPerMonthStatisticProvider->getData($territory, null);
+        $this->ajaxResult['signalement_per_month_this_year'] = $this->countSignalementPerMonthStatisticProvider->getData($territory, $currentYear);
 
         $this->makeGlobalStats($signalementRepository, $territory);
 
@@ -66,9 +76,6 @@ class FrontStatistiquesController extends AbstractController
     private function makeGlobalStats(SignalementRepository $signalementRepository, $territory)
     {
         $globalSignalement = $signalementRepository->findByFilters('', true, null, null, '', null, null, null);
-        $this->ajaxResult['signalement_per_territoire'] = [];
-        $countSignalementPerMonth = [];
-        $countSignalementPerMonthThisYear = [];
         $this->ajaxResult['signalement_per_statut'] = [];
         $this->ajaxResult['signalement_per_statut_this_year'] = [];
         $countSignalementPerSituation = [];
@@ -84,25 +91,8 @@ class FrontStatistiquesController extends AbstractController
         foreach ($globalSignalement as $signalementItem) {
             $dateCreatedAt = $signalementItem->getCreatedAt();
 
-            // Per territoire
-            $territoryId = $signalementItem->getTerritory()->getId();
-            if (empty($this->ajaxResult['signalement_per_territoire'][$territoryId])) {
-                $this->ajaxResult['signalement_per_territoire'][$territoryId] = [
-                    'name' => $signalementItem->getTerritory()->getName(),
-                    'zip' => $signalementItem->getTerritory()->getZip(),
-                    'count' => 0,
-                ];
-            }
-            ++$this->ajaxResult['signalement_per_territoire'][$territoryId]['count'];
-
             // Filter
             if (empty($territory) || 'all' === $territory || $territory === $signalementItem->getTerritory()) {
-                // Per month
-                if (empty($countSignalementPerMonth[$dateCreatedAt->format('Y-m')])) {
-                    $countSignalementPerMonth[$dateCreatedAt->format('Y-m')] = 0;
-                }
-                ++$countSignalementPerMonth[$dateCreatedAt->format('Y-m')];
-
                 // Per statut
                 $statut = $signalementItem->getStatut();
                 if (empty($this->ajaxResult['signalement_per_statut'][$statut])) {
@@ -135,12 +125,6 @@ class FrontStatistiquesController extends AbstractController
 
                 // This year
                 if ($dateCreatedAt->format('Y') == $currentYear) {
-                    // Per month
-                    if (empty($countSignalementPerMonthThisYear[$dateCreatedAt->format('Y-m')])) {
-                        $countSignalementPerMonthThisYear[$dateCreatedAt->format('Y-m')] = 0;
-                    }
-                    ++$countSignalementPerMonthThisYear[$dateCreatedAt->format('Y-m')];
-
                     // Per statut
                     if (empty($this->ajaxResult['signalement_per_statut_this_year'][$statut])) {
                         $newStatutValues = self::initStatutByValue($statut);
@@ -174,27 +158,6 @@ class FrontStatistiquesController extends AbstractController
         $this->ajaxResult['signalement_per_situation_this_year'] = $countSignalementPerSituationThisYear;
         $this->ajaxResult['signalement_per_motif_cloture'] = $countSignalementPerMotifCloture;
         $this->ajaxResult['signalement_per_motif_cloture_this_year'] = $countSignalementPerMotifClotureThisYear;
-
-        ksort($countSignalementPerMonth);
-        $this->ajaxResult['signalement_per_month'] = [];
-        $previousMonth = null; // This is used to avoid blank months
-        foreach ($countSignalementPerMonth as $month => $count) {
-            $dateMonth = new DateTime($month);
-            $this->fillBlankMonths('signalement_per_month', $previousMonth, $dateMonth);
-            $strMonth = self::MONTH_NAMES[$dateMonth->format('m') - 1].' '.$dateMonth->format('Y');
-            $this->ajaxResult['signalement_per_month'][$strMonth] = $count;
-            $previousMonth = $dateMonth;
-        }
-        ksort($countSignalementPerMonthThisYear);
-        $this->ajaxResult['signalement_per_month_this_year'] = [];
-        $previousMonth = null; // This is used to avoid blank months
-        foreach ($countSignalementPerMonthThisYear as $month => $count) {
-            $dateMonth = new DateTime($month);
-            $this->fillBlankMonths('signalement_per_month_this_year', $previousMonth, $dateMonth);
-            $strMonth = self::MONTH_NAMES[$dateMonth->format('m') - 1].' '.$dateMonth->format('Y');
-            $this->ajaxResult['signalement_per_month_this_year'][$strMonth] = $count;
-            $previousMonth = $dateMonth;
-        }
     }
 
     /**
@@ -278,27 +241,5 @@ class FrontStatistiquesController extends AbstractController
                 'count' => 0,
             ],
         ];
-    }
-
-    private function fillBlankMonths($ajaxResultKey, $previousMonth, $currentMonth)
-    {
-        if (null !== $previousMonth) {
-            $shouldBeMonth = $previousMonth->format('m') + 1;
-            $shouldBeYear = $previousMonth->format('Y');
-            if ($shouldBeMonth > 12) {
-                $shouldBeMonth = 1;
-                ++$shouldBeYear;
-            }
-            if ($currentMonth->format('m') != $shouldBeMonth || $currentMonth->format('Y') != $shouldBeYear) {
-                for ($loopYear = $shouldBeYear; $loopYear <= $currentMonth->format('Y'); ++$loopYear) {
-                    $startMonth = ($loopYear == $shouldBeYear) ? $shouldBeMonth : 1;
-                    $endMonth = ($loopYear < $currentMonth->format('Y')) ? 12 : $shouldBeMonth;
-                    for ($loopMonth = $startMonth; $loopMonth <= $endMonth; ++$loopMonth) {
-                        $strMonth = self::MONTH_NAMES[$loopMonth - 1].' '.$loopYear;
-                        $this->ajaxResult[$ajaxResultKey][$strMonth] = 0;
-                    }
-                }
-            }
-        }
     }
 }
