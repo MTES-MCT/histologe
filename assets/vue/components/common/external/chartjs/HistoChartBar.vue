@@ -94,6 +94,8 @@ export default {
         responsive: true,
         indexAxis: this.indexAxis,
         backgroundColor: '#000091',
+        hoverBorderColor: '#A558A0',
+        hoverBorderWidth: 3,
         plugins: {
           legend: {
             display: false
