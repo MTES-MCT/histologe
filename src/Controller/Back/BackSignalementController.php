@@ -11,6 +11,7 @@ use App\Entity\Situation;
 use App\Entity\Suivi;
 use App\Form\ClotureType;
 use App\Form\SignalementType;
+use App\Manager\SignalementManager;
 use App\Repository\PartnerRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
@@ -28,8 +29,13 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class BackSignalementController extends AbstractController
 {
     #[Route('/{uuid}', name: 'back_signalement_view')]
-    public function viewSignalement($uuid, Request $request, EntityManagerInterface $entityManager, TagRepository $tagsRepository, PartnerRepository $partnerRepository): Response
-    {
+    public function viewSignalement(string $uuid,
+                                    Request $request,
+                                    EntityManagerInterface $entityManager,
+                                    TagRepository $tagsRepository,
+                                    PartnerRepository $partnerRepository,
+                                    SignalementManager $signalementManager
+    ): Response {
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findByUuid($uuid);
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
@@ -116,7 +122,6 @@ class BackSignalementController extends AbstractController
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
             'situations' => $criticitesArranged,
-            'affectations' => $signalement->getAffectations(),
             'needValidation' => Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut(),
             'canEditSignalement' => $canEditSignalement,
             'isAffected' => $isAffected,
@@ -125,7 +130,7 @@ class BackSignalementController extends AbstractController
             'isClosedForMe' => $isClosedForMe,
             'isRefused' => $isRefused,
             'signalement' => $signalement,
-            'partners' => $partnerRepository->findAllOrByInseeIfCommune($signalement->getInseeOccupant(), $signalement->getTerritory()),
+            'partners' => $signalementManager->findAllPartners($signalement),
             'clotureForm' => $clotureForm->createView(),
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
         ]);
