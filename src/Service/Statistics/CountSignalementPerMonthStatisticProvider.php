@@ -16,7 +16,7 @@ class CountSignalementPerMonthStatisticProvider
 
     public function getData(Territory|null $territory, int|null $year)
     {
-        $countPerMonths = $this->signalementRepository->countPerMonth($territory, $year);
+        $countPerMonths = $this->signalementRepository->countByMonth($territory, $year);
 
         $monthsWithResults = [];
         foreach ($countPerMonths as $countPerMonth) {

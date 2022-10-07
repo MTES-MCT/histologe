@@ -86,13 +86,16 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function countByStatus(Territory|null $territory)
+    public function countByStatus(Territory|null $territory, int|null $year = null)
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
             ->addSelect('s.statut');
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+        if ($year) {
+            $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);
         }
         $qb->indexBy('s', 's.statut');
         $qb->groupBy('s.statut');
@@ -147,7 +150,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countPerMonth(Territory|null $territory, int|null $year)
+    public function countByMonth(Territory|null $territory, int|null $year)
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, MONTH(s.createdAt) AS month, YEAR(s.createdAt) AS year');
@@ -164,6 +167,47 @@ class SignalementRepository extends ServiceEntityRepository
 
         $qb->orderBy('year')
             ->addOrderBy('month');
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
+    public function countBySituation(Territory|null $territory, int|null $year)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id) AS count, sit.id, sit.menuLabel');
+        $qb->leftJoin('s.situations', 'sit');
+
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+        if ($year) {
+            $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);
+        }
+
+        $qb->groupBy('sit.id');
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
+    public function countByMotifCloture(Territory|null $territory, int|null $year)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id) AS count, s.motifCloture');
+
+        $qb->andWhere('s.motifCloture IS NOT NULL');
+        $qb->andWhere('s.motifCloture != \'0\'');
+        $qb->andWhere('s.closedAt IS NOT NULL');
+
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+        if ($year) {
+            $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);
+        }
+
+        $qb->groupBy('s.motifCloture');
 
         return $qb->getQuery()
             ->getResult();
