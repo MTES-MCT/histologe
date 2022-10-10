@@ -1,0 +1,12 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block customscripts %}
+    {{ encore_entry_script_tags('app') }}
+    {{ encore_entry_link_tags('app') }}
+{% endblock %}
+
+{% block content %}
+    <div id="app-stats" data-ajaxurl="{{ path('back_statistiques_filter') }}"></div>
+{% endblock %}

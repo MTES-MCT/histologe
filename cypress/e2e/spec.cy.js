@@ -6,10 +6,11 @@ const disableSmoothScroll = () => {
   });
 };
 
+/*
 describe('Simple test for the Signalement interface', () => {
   it('Displays the form for Signalement', () => {
     cy.visit('http://localhost:8080/signalement')
-    disableSmoothScroll();
+    disableSmoothScroll()
     cy.get('#signalement-step-1')
   })
 
@@ -86,4 +87,45 @@ describe('Simple test for the Signalement interface', () => {
     cy.get('#signalement-success').should('be.visible')
   })
 
+})
+*/
+
+before(() => {
+  cy.clearCookie('PHPSESSID')
+  Cypress.Cookies.defaults({
+    preserve: "PHPSESSID"
+  })
+});
+
+describe('Test a real user login', () => {
+  it('Displays the form for login', () => {
+    cy.visit('http://localhost:8080/connexion')
+    disableSmoothScroll()
+    cy.get('form[name=login-form]').should('be.visible')
+  })
+
+  it('Submits the login form', () => {
+    cy.get('#login-email').type('admin-01@histologe.fr')
+    cy.get('#login-password').type('histologe')
+    cy.get('form[name=login-form] button').click()
+    cy.get('#fr-sidemenu-wrapper').should('be.visible')
+  })
+})
+
+describe('Simple test for back-office statistics', () => {
+  it('Displays the page of the statistics', () => {
+    cy.get('#fr-sidemenu-wrapper').contains('Données chiffrées').click()
+    cy.get('#fr-sidemenu-pilotage').contains('Statistiques').click()
+    disableSmoothScroll()
+    cy.get('#app-stats').should('be.visible')
+    cy.get('#filter-territoires').should('be.visible')
+  })
+
+  it('Change select Statut and Type, then reset', () => {
+    cy.get('#filter-statut').select('new')
+    cy.get('#filter-type').select('public')
+    cy.get('#histo-stats-filters').contains('Tout réinitialiser').click()
+    cy.get('#filter-statut').should('have.value', 'all')
+    cy.get('#filter-type').should('have.value', 'all')
+  })
 })

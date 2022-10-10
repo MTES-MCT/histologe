@@ -27,6 +27,9 @@ class Territory
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Partner::class)]
     private $partners;
 
+    #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Commune::class)]
+    private $communes;
+
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Signalement::class)]
     private $signalements;
 
@@ -141,6 +144,14 @@ class Territory
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Commune>
+     */
+    public function getCommunes(): Collection
+    {
+        return $this->communes;
     }
 
     /**

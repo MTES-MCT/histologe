@@ -194,12 +194,10 @@ class SearchFilterService
                 ->setParameter('interventions', $filters['interventions']);
         }
         if (!empty($filters['delays'])) {
-//            dd(max($filters['delays']));
             $qb->andWhere('DATEDIFF(NOW(),suivis.createdAt) >= :delays')
                 ->setParameter('delays', $filters['delays']);
         }
         if (!empty($filters['scores'])) {
-//            dd(max($filters['delays']));
             if (!empty($filters['scores']['on'])) {
                 $qb->andWhere('s.scoreCreation >= :score_on')
                     ->setParameter('score_on', $filters['scores']['on']);

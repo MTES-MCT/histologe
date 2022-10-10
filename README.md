@@ -113,6 +113,8 @@ La commande permet d'installer l'environnement de developpement avec un jeu de d
 make build
 ```
 
+### Accès
+=======
 2. Configurer les variables d'environnements du service object storage S3 d'OVH Cloud
 
 > Se rapprocher de l'équipe afin de vous fournir les accès au bucket de dev
@@ -161,6 +163,12 @@ php bin/console app:add-user ROLE_USER_PARTNER joe.doe.3@histologe.fr John Doe M
 ```
 
 [Une activation de compte sera nécéssaire](http://localhost:8080/activation)
+
+### Compilation des fichiers Vue.js en cours de développement
+```
+npm install
+npm run watch
+```
 
 ## Bases de données scalingo
 

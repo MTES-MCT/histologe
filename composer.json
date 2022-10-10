@@ -51,6 +51,7 @@
         "symfony/twig-bundle": "6.0.*",
         "symfony/validator": "6.0.*",
         "symfony/web-link": "6.0.*",
+        "symfony/webpack-encore-bundle": "^1.15",
         "symfony/yaml": "6.0.*",
         "twig/cssinliner-extra": "^3.3",
         "twig/extra-bundle": "^3.3",
@@ -131,6 +132,9 @@
             "require": "6.0.*"
         },
         "paas": {
+            "compile": [
+                "npm run build"
+            ],
             "php-config": [
                 "memory_limit=-1"
             ]

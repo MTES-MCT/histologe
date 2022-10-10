@@ -6,6 +6,7 @@ use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\SearchFilterService;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
@@ -183,6 +184,96 @@ class SignalementRepository extends ServiceEntityRepository
             ->addSelect('suivis')
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * Query called by statistics with filters.
+     */
+    public function findByFilters(string $statut, bool $countRefused, ?DateTime $dateStart, ?DateTime $dateEnd, string $type, ?int $territory, ?array $etiquettes, ?array $communes): array
+    {
+        $qb = $this->createQueryBuilder('s');
+
+        // Is the status defined?
+        if ('' != $statut && 'all' != $statut) {
+            $statutParameter = [];
+            switch ($statut) {
+                case 'new':
+                    $statutParameter[] = Signalement::STATUS_NEED_VALIDATION;
+                    break;
+                case 'active':
+                    $statutParameter[] = Signalement::STATUS_NEED_PARTNER_RESPONSE;
+                    $statutParameter[] = Signalement::STATUS_ACTIVE;
+                    break;
+                case 'closed':
+                    $statutParameter[] = Signalement::STATUS_CLOSED;
+                    break;
+                default:
+                    break;
+            }
+            // If we count the Refused status
+            if ($countRefused) {
+                $statutParameter[] = Signalement::STATUS_REFUSED;
+            }
+
+            $qb->andWhere('s.statut IN (:statutSelected)')
+            ->setParameter('statutSelected', $statutParameter);
+
+        // We're supposed to keep all statuses, but we remove at least the Archived
+        } else {
+            $qb->andWhere('s.statut != :statutArchived')
+            ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
+            // If we don't want refused status
+            if (!$countRefused) {
+                $qb->andWhere('s.statut != :statutRefused')
+                ->setParameter('statutRefused', Signalement::STATUS_REFUSED);
+            }
+        }
+
+        // Filter on creation date
+        if (null !== $dateStart) {
+            $qb->andWhere('s.createdAt >= :dateStart')
+            ->setParameter('dateStart', $dateStart)
+            ->andWhere('s.createdAt <= :dateEnd')
+            ->setParameter('dateEnd', $dateEnd);
+        }
+
+        // Filter on Signalement type (logement social)
+        if ('' != $type && 'all' != $type) {
+            switch ($type) {
+                case 'public':
+                    $qb->andWhere('s.isLogementSocial = :statutLogementSocial')
+                    ->setParameter('statutLogementSocial', true);
+                    break;
+                case 'private':
+                    $qb->andWhere('s.isLogementSocial = :statutLogementSocial')
+                    ->setParameter('statutLogementSocial', false);
+                    break;
+                case 'unset':
+                    $qb->andWhere('s.isLogementSocial is NULL');
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if ($territory) {
+            $qb->andWhere('s.territory = :territoryId')
+                ->setParameter('territoryId', $territory);
+        }
+
+        if ($etiquettes) {
+            $qb->leftJoin('s.tags', 'tags');
+            $qb->andWhere('tags IN (:tags)')
+                ->setParameter('tags', $etiquettes);
+        }
+
+        if ($communes) {
+            $qb->andWhere('s.villeOccupant IN (:communes)')
+                ->setParameter('communes', $communes);
+        }
+
+        return $qb->getQuery()
+                ->getResult();
     }
 
     public function findLastReferenceByTerritory(Territory $territory): ?array
