@@ -29,10 +29,8 @@
                                 <select class="fr-select" aria-multiselectable="true"
                                         id="signalement-affectation-select-disponible"
                                         size="10" multiple>
-                                    {% for partner in partners %}
-                                        {% if not partner.isAffected(signalement) %}
-                                            <option value="{{ partner.id }}">{{ partner.nom|upper }}</option>
-                                        {% endif %}
+                                    {% for partner in partners['not_affected'] %}
+                                            <option value="{{ partner['id'] }}">{{ partner['name']|upper }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -52,8 +50,8 @@
                                             class="fr-select" aria-multiselectable="true"
                                             size="10" data-fr-select-count="fr-modal-affectation-count"
                                             name="signalement-affectation[partners][]">
-                                        {% for affectation in affectations %}
-                                            <option value="{{ affectation.partner.id }}">{{ affectation.partner.nom|upper }}</option>
+                                        {% for partner in partners['affected'] %}
+                                            <option value="{{ partner['id'] }}">{{ partner['name']|upper }}</option>
                                         {% endfor %}
                                     </select>
                                     <input type="hidden" name="_token"
