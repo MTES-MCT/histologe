@@ -329,7 +329,7 @@
                             <h3 class="fr-accordion__title">
                                 <text role="button"
                                       class="fr-accordion__btn fr-btn--icon-left fr-fi-question-fill"
-                                      aria-expanded="{% if situation in signalement.situations %}true{% else %}false{% endif %}"
+                                      aria-expanded="false"
                                       aria-controls="signalement-accordion-situation-{{ situation.id }}"
                                       id="signalement-accordion-situation-{{ situation.id }}-selector">Votre
                                     signalement
@@ -340,15 +340,14 @@
                                 <ul class="fr-toggle__list">
                                     {% for critere in situation.criteres %}
                                         <div class="{# fr-checkbox-group #}fr-pb-0 fr-mb-3v"
-                                             aria-expanded="{% if critere in signalement.criteres %}true{% else %}false{% endif %}"
+                                             aria-expanded="false"
                                              aria-controls="signalement-accordion-situation-{{ situation.id }}-critere-{{ critere.id }}"
                                              id="signalement-accordion-situation-{{ situation.id }}-critere-{{ critere.id }}-selector">
                                             <input type="checkbox"
                                                    name="signalement[situation][{{ situation.id }}]"
                                                    class="signalement-situation fr-hidden"
                                                    id="signalement-situation-{{ situation.id }}-critere-{{ critere.id }}"
-                                                   value="{{ critere.label }}"
-                                                   {% if critere in signalement.criteres %}checked{% endif %}>
+                                                   value="{{ critere.label }}">
                                             <label class="fr-toggle__label fr-text--bold "
                                                    for="signalement-situation-{{ situation.id }}-critere-{{ critere.id }}">
                                                 <div class="fr-form-group fr-mb-0 fr-btn--secondary fr-hover-critere fr-rounded fr-p-3v">
@@ -371,8 +370,7 @@
                                                                id="signalement-critere-{{ critere.id }}-criticite-{{ criticite.id }}"
                                                                name="signalement[situation][{{ situation.id }}][critere][{{ critere.id }}][criticite]"
                                                                value="{{ criticite.id }}"
-                                                               class="toggle-criticite-smiley"
-                                                               {% if criticite in signalement.criticites %}checked{% endif %}>
+                                                               class="toggle-criticite-smiley">
                                                         <label class="fr-label"
                                                                for="signalement-critere-{{ critere.id }}-criticite-{{ criticite.id }}"><strong>{{ etats[criticite.score-1] }}</strong>
                                                             <span class="fr-hint-text">{{ criticite.label }}</span>
