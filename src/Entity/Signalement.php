@@ -123,7 +123,7 @@ class Signalement
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private $mailDeclarant;
 
-    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    #[ORM\Column(type: 'string', length: 200, nullable: true)]
     private $structureDeclarant;
 
     #[ORM\Column(type: 'string', length: 50)]
