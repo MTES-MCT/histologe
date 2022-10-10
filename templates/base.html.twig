@@ -30,12 +30,13 @@
     <meta name="apple-mobile-web-app-title" content="Histologe">
     <link rel="icon" href={{ asset('img/favicon.ico') }}>
     <link rel="stylesheet" href={{ asset('dsfr/dsfr.min.css') }}>
-    <link rel="stylesheet" href={{ asset('css/histologe.css?v='~''|date('YW')) }}>
+    <link rel="stylesheet" href={{ asset('build/app.css') }}>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light-border.css"/>
     {% block stylesheets %}{% endblock %}
+    {% block customscripts %}{% endblock %}
 </head>
 
 {% set statuses = {

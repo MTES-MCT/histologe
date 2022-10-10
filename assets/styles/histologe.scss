@@ -1,4 +1,3 @@
-
 html, body {
     scroll-behavior: smooth !important;
 }
@@ -300,30 +299,29 @@ small {
     position: relative;
     width: 80px;
     height: 80px;
-}
+    div {
+        display: inline-block;
+        position: absolute;
+        left: 8px;
+        width: 16px;
+        background: #FF9940;
+        animation: lds-histologe 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+    }
 
-.lds-histologe div {
-    display: inline-block;
-    position: absolute;
-    left: 8px;
-    width: 16px;
-    background: #FF9940;
-    animation: lds-histologe 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
-}
+    div:nth-child(1) {
+        left: 8px;
+        animation-delay: -0.24s;
+    }
 
-.lds-histologe div:nth-child(1) {
-    left: 8px;
-    animation-delay: -0.24s;
-}
+    div:nth-child(2) {
+        left: 32px;
+        animation-delay: -0.12s;
+    }
 
-.lds-histologe div:nth-child(2) {
-    left: 32px;
-    animation-delay: -0.12s;
-}
-
-.lds-histologe div:nth-child(3) {
-    left: 56px;
-    animation-delay: 0;
+    div:nth-child(3) {
+        left: 56px;
+        animation-delay: 0;
+    }
 }
 
 @keyframes lds-histologe {
@@ -361,9 +359,10 @@ h2.home {
 
 label.fr-toggle__label[for="signalement-accept-cgu"] {
     display: inline;
-}
-label.fr-toggle__label[for="signalement-accept-cgu"] a {
-    font-weight: bold;
+
+    a {
+        font-weight: bold;
+    }
 }
 
 .cgu-bo .title {
@@ -373,9 +372,10 @@ label.fr-toggle__label[for="signalement-accept-cgu"] a {
     border: 1px solid black;
     border-spacing: 0;
     border-collapse: collapse;
-}
-.cgu table th, .cgu table td, .cgu-bo table th, .cgu-bo table td {
-    border: 1px solid black;
+
+    th, td {
+        border: 1px solid black;
+    }
 }
 
 span.partner_user_last_login_value {
