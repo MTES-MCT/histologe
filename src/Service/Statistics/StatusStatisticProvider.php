@@ -6,7 +6,7 @@ use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
 
-class CountSignalementPerStatusStatisticProvider
+class StatusStatisticProvider
 {
     public function __construct(private SignalementRepository $signalementRepository)
     {

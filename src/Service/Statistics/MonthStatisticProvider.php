@@ -6,7 +6,7 @@ use App\Entity\Territory;
 use App\Repository\SignalementRepository;
 use DateTime;
 
-class CountSignalementPerMonthStatisticProvider
+class MonthStatisticProvider
 {
     private const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 

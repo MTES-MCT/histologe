@@ -6,11 +6,10 @@ export const requests = {
    * Filter front statistics
    */
   filter (functionReturn: Function) {
-    const data = new FormData()
-    data.append('territoire', store.state.filters.territoire)
+    const ajaxUrl = store.props.ajaxurl + '?territoire=' + store.state.filters.territoire
 
     axios
-      .post(store.props.ajaxurl, data, { timeout: 10000 })
+      .get(ajaxUrl, { timeout: 10000 })
       .then(response => {
         const responseData = response.data
         console.log('then')

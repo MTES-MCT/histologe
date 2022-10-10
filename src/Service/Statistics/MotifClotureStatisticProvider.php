@@ -5,7 +5,7 @@ namespace App\Service\Statistics;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
 
-class CountSignalementPerMotifClotureStatisticProvider
+class MotifClotureStatisticProvider
 {
     public function __construct(private SignalementRepository $signalementRepository)
     {
