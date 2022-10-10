@@ -208,7 +208,6 @@ class EsaboraService
             ],
         ]);
         $response = json_decode($response, true);
-        var_dump($response);
         $definition = 'mis à jour';
         $change = false;
         $data = $response['rowList'][0]['columnDataList'];
