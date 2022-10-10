@@ -17,6 +17,7 @@ for (i = 0; i < tables.length; i++) {
         thead.addEventListener("click", sortTableFunction(table));
     }
 }
+localStorage.clear();
 forms.forEach((form) => {
     form?.querySelectorAll('.toggle-criticite input[type="radio"]')?.forEach((criticite) => {
         criticite.addEventListener('change', (event) => {
@@ -450,7 +451,7 @@ document?.querySelectorAll('.toggle-criticite-smiley').forEach(iptSmiley => {
 document?.querySelector('#signalement-step-2-panel')?.addEventListener('dsfr.disclose', (ev => {
     ev.target.querySelectorAll('[aria-expanded]').forEach(exp => {
         if (localStorage.getItem(exp.id)) { // noinspection CommaExpressionJS
-            localStorage.removeItem(exp.id)
+            document.querySelector('#' + exp.id).setAttribute('aria-expanded', "true"), localStorage.removeItem(exp.id)
         }
     })
 }))
