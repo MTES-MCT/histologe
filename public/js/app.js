@@ -17,6 +17,7 @@ for (i = 0; i < tables.length; i++) {
         thead.addEventListener("click", sortTableFunction(table));
     }
 }
+localStorage.clear();
 forms.forEach((form) => {
     form?.querySelectorAll('.toggle-criticite input[type="radio"]')?.forEach((criticite) => {
         criticite.addEventListener('change', (event) => {
@@ -26,7 +27,6 @@ forms.forEach((form) => {
     })
     form?.querySelectorAll('.fr-toggle')?.forEach((t) => {
         t.addEventListener('change', (event) => {
-            console.log('toggle')
             if (!event.target.checked)
                 event.currentTarget.nextElementSibling.querySelectorAll('.fr-collapse input[type="radio"]').forEach((radio) => {
                     radio.checked = false
@@ -125,10 +125,8 @@ forms.forEach((form) => {
     })
     form?.querySelectorAll('input[type="file"]')?.forEach((file) => {
         file.addEventListener('change', (event) => {
-            // console.log(file.files[0])
             if (event.target.files.length > 0) {
                 let resTextEl = event.target.parentElement.nextElementSibling;
-                console.log(resTextEl)
                 let fileData = new FormData();
                 let deleter = event.target.parentElement.parentElement.querySelector('.signalement-uploadedfile-delete'),
                     /*src = URL.createObjectURL(event.target.files[0]),*/
@@ -137,22 +135,8 @@ forms.forEach((form) => {
                 let id = event.target.id;
                 let progress = document.querySelector("#progress_" + id);
                 let totalProgress = document.querySelector('#form_global_file_progress');
-                console.log(file)
                 if (preview) {
-                    /*const MAX_SIZE = (1024 * 1024) / 2;
-                    const RATIO = (MAX_SIZE / event.target.files[0].size) / 2
-                    if (event.target.files[0].size > MAX_SIZE) {
-                        resizeImage(event.target.files[0], RATIO).then(function (blob) {
-                            // Preview
-                            // Assume that `previewEle` represents the preview image element
-                            preview.src = URL.createObjectURL(blob);
-                            fileData.append(event.target.name, blob);
-                            event.target.value = '';
-                        });
-                    } else {*/
                     preview.src = URL.createObjectURL(file);
-                    /* }*/
-                    // preview.src = src;
                     ['fr-fi-instagram-line', 'fr-py-7v', 'fr-fi-refresh-line', 'fr-disabled'].map(v => event.target.parentElement.classList.toggle(v));
                     fileIsOk = true;
                 } else if (event.target.parentElement.classList.contains('fr-fi-attachment-fill')) {
@@ -200,13 +184,9 @@ forms.forEach((form) => {
                             total_percent_completed += acp.value;
                         })
                         totalProgress.value = total_percent_completed / activeProgresses.length;
-                        console.log(id)
                         progress.value = percent_completed;
-                        console.log(percent_completed);
                     });
                     request.addEventListener('load', function (e) {
-                        console.log(request.status);
-                        console.log(request.response);
                         event.target.parentElement.classList.remove('fr-fi-refresh-line');
                         [preview, deleter].forEach(el => el?.classList?.remove('fr-hidden'));
                         progress.value = 0;
@@ -247,12 +227,10 @@ forms.forEach((form) => {
     })
     form.addEventListener('submit', (event) => {
         event.preventDefault();
-        /*    console.log(form.querySelectorAll('[type="checkbox"]:checked').length)*/
         if (!form.checkValidity() || !checkFirstStep(form) || !checkFieldset(form)) {
             event.stopPropagation();
             if (form.id === "signalement-step-2") {
                 form.querySelector('[role="alert"]').classList.remove('fr-hidden')
-                /* invalid = document.querySelector("div[role='alert']");*/
                 form?.querySelectorAll('.fr-fieldset__content.fr-collapse.fr-collapse--expanded').forEach(exp => {
                     exp.querySelector('[type="radio"]:first-of-type').required = true;
                     if (exp.querySelector('input:invalid')) {
@@ -284,7 +262,6 @@ forms.forEach((form) => {
                             invalid = field.parentElement;
                         }
                     } else if (!field.checkValidity()) {
-                        /* console.log(field)*/
                         let parent = field.parentElement;
                         if (field.type === 'radio')
                             parent = field.parentElement.parentElement.parentElement;
@@ -538,7 +515,6 @@ document?.querySelector('#signalement-affectation-form-submit')?.addEventListene
             /*})*/
         }
     })
-    //console.log(e.target.form);
 })
 document?.querySelectorAll('.fr-input--file-signalement').forEach(inputFile => {
     inputFile.addEventListener('change', evt => {
@@ -659,7 +635,6 @@ document.querySelector('#modal-dpe-opener')?.addEventListener('click', (event) =
                     agg.results.map(dpe => {
                         let classeDpe = dpe.classe_consommation_energie;
                         if (classeDpe !== "N") {
-                            console.log(dpe)
                             let classeGes = dpe.classe_estimation_ges, col = document.createElement('div'),
                                 imgDpe = document.createElement('img'), imgGes = document.createElement('img');
                             imgDpe.src = '/img/dpe_' + classeDpe + '.png';
