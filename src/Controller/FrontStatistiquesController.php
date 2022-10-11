@@ -3,13 +3,13 @@
 namespace App\Controller;
 
 use App\Repository\TerritoryRepository;
-use App\Service\Statistics\CountSignalementPerTerritoryStatisticProvider;
 use App\Service\Statistics\GlobalAnalyticsProvider;
 use App\Service\Statistics\ListTerritoryStatisticProvider;
 use App\Service\Statistics\MonthStatisticProvider;
 use App\Service\Statistics\MotifClotureStatisticProvider;
 use App\Service\Statistics\SituationStatisticProvider;
 use App\Service\Statistics\StatusStatisticProvider;
+use App\Service\Statistics\TerritoryStatisticProvider;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +23,7 @@ class FrontStatistiquesController extends AbstractController
     public function __construct(
         private GlobalAnalyticsProvider $globalAnalyticsProvider,
         private ListTerritoryStatisticProvider $listTerritoryStatisticProvider,
-        private CountSignalementPerTerritoryStatisticProvider $countSignalementPerTerritoryStatisticProvider,
+        private TerritoryStatisticProvider $territoryStatisticProvider,
         private MonthStatisticProvider $monthStatisticProvider,
         private StatusStatisticProvider $statusStatisticProvider,
         private SituationStatisticProvider $situationStatisticProvider,
@@ -54,7 +54,7 @@ class FrontStatistiquesController extends AbstractController
         $this->ajaxResult['percent_cloture'] = $globalStatistics['percent_cloture'];
 
         $this->ajaxResult['list_territoires'] = $this->listTerritoryStatisticProvider->getData();
-        $this->ajaxResult['signalement_per_territoire'] = $this->countSignalementPerTerritoryStatisticProvider->getData();
+        $this->ajaxResult['signalement_per_territoire'] = $this->territoryStatisticProvider->getData();
 
         $territory = null;
         $requestTerritory = $request->get('territoire');

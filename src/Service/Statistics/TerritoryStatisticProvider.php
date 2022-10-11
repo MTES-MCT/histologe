@@ -4,7 +4,7 @@ namespace App\Service\Statistics;
 
 use App\Repository\SignalementRepository;
 
-class CountSignalementPerTerritoryStatisticProvider
+class TerritoryStatisticProvider
 {
     public function __construct(private SignalementRepository $signalementRepository)
     {
