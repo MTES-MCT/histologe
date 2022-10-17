@@ -45,26 +45,10 @@ class SignalementType extends AbstractType
                     'class' => 'fr-label',
                 ],
                 'label' => 'Avez-vous informé le propriétaire ou gestionnaire de ces nuisances ?',
-//                'help' => 'Le cas échéant merci de préciser la ou les méthodes de contact.',
                 'help_attr' => [
                     'class' => 'fr-hint-text',
                 ],
             ])
-            /*->add('modeContactProprio', ChoiceType::class, [
-                'choices' => [
-                    'Courrier recommandé' => 'recommandé',
-                    'Courriel' => 'courriel',
-                    'SMS' => 'sms',
-                    'Message téléphonique' => 'message',
-                ],
-                'expanded' => true,
-                'multiple' => true,
-                'label_attr' => [
-                    'class' => 'fr-label required'
-                ],
-                'required' => false,
-                'label' => 'Comment avez-vous averti le propriétaire ou gestionnaire ?',
-            ])*/
             ->add('nbAdultes', ChoiceType::class, [
                 'attr' => [
                     'class' => 'fr-select',
@@ -155,10 +139,10 @@ class SignalementType extends AbstractType
                 'attr' => [
                     'class' => 'fr-input',
                     'pattern' => '^[0-9]*$',
+                    'maxlength' => '25',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
-                    'maxlength' => '25',
                 ],
                 'row_attr' => [
                     'class' => 'fr-form-group fr-col-2',
@@ -213,10 +197,10 @@ class SignalementType extends AbstractType
             ->add('numAllocataire', TextType::class, [
                 'attr' => [
                     'class' => 'fr-input',
+                    'maxlength' => '25',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
-                    'maxlength' => '25',
                 ],
                 'row_attr' => [
                     'class' => 'fr-form-group fr-col-2',
@@ -279,20 +263,20 @@ class SignalementType extends AbstractType
             ->add('nomOccupant', TextType::class, [
                 'attr' => [
                     'class' => 'fr-input',
+                    'maxlength' => '50',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
-                    'maxlength' => '50',
                 ],
                 'label' => "Nom de l'occupant",
             ])
             ->add('prenomOccupant', TextType::class, [
                 'attr' => [
                     'class' => 'fr-input',
+                    'maxlength' => '50',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
-                    'maxlength' => '50',
                 ],
                 'label' => "Prénom de l'occupant",
             ])
@@ -300,11 +284,11 @@ class SignalementType extends AbstractType
                 'attr' => [
                     'class' => 'fr-input',
                     'pattern' => '[0-9]{10}',
+                    'minlength' => '10',
+                    'maxlength' => '15',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
-                    'minlength' => '10',
-                    'maxlength' => '10',
                 ],
                 'label' => "N° téléphone de l'occupant",
                 'required' => false,
@@ -313,11 +297,11 @@ class SignalementType extends AbstractType
                 'attr' => [
                     'class' => 'fr-input',
                     'pattern' => '[0-9]{10}',
+                    'minlength' => '10',
+                    'maxlength' => '15',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
-                    'minlength' => '10',
-                    'maxlength' => '10',
                 ],
                 'label' => "N° téléphone secondaire de l'occupant",
                 'required' => false,
@@ -325,10 +309,10 @@ class SignalementType extends AbstractType
             ->add('mailOccupant', EmailType::class, [
                 'attr' => [
                     'class' => 'fr-input',
+                    'maxlength' => '50',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
-                    'maxlength' => '50',
                 ],
                 'label' => "Courriel de l'occupant",
                 'required' => false,
@@ -337,10 +321,10 @@ class SignalementType extends AbstractType
                 'attr' => [
                     'class' => 'fr-input',
                     'data-fr-adresse-autocomplete' => 'true',
+                    'maxlength' => '100',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
-                    'maxlength' => '100',
                 ],
                 'label' => 'Adresse du logement',
                 'help' => "Commencez à entrer votre adresse et cliquez sur l'une des suggestion. Si vous ne trouvez pas votre adresse entrez-la manuellement",
@@ -352,11 +336,11 @@ class SignalementType extends AbstractType
                 'attr' => [
                     'class' => 'fr-input',
                     'pattern' => '[0-9]{5}',
+                    'maxlength' => '5',
+                    'minlength' => '5',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
-                    'maxlength' => '5',
-                    'minlength' => '5',
                 ],
                 'label' => 'Code postal du logement',
             ])
@@ -517,10 +501,10 @@ class SignalementType extends AbstractType
             ->add('nomDeclarant', TextType::class, [
                 'attr' => [
                     'class' => 'fr-input',
+                    'maxlength' => '200',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
-                    'maxlength' => '200',
                 ],
                 'label' => 'Nom déclarant',
                 'required' => false,
@@ -528,10 +512,10 @@ class SignalementType extends AbstractType
             ->add('prenomDeclarant', TextType::class, [
                 'attr' => [
                     'class' => 'fr-input',
+                    'maxlength' => '200',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
-                    'maxlength' => '200',
                 ],
                 'label' => 'Prénom déclarant',
                 'required' => false,
@@ -550,10 +534,10 @@ class SignalementType extends AbstractType
             ->add('mailDeclarant', EmailType::class, [
                 'attr' => [
                     'class' => 'fr-input fr-fi-mail-line fr-input-wrap',
+                    'maxlength' => '200',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
-                    'maxlength' => '200',
                 ],
                 'label' => 'Courriel déclarant',
                 'required' => false,
@@ -577,10 +561,10 @@ class SignalementType extends AbstractType
             ->add('structureDeclarant', TextType::class, [
                 'attr' => [
                     'class' => 'fr-input',
+                    'maxlength' => '50',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
-                    'maxlength' => '50',
                 ],
                 'row_attr' => [
                     'class' => 'fr-form-group',
