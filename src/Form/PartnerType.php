@@ -40,7 +40,7 @@ class PartnerType extends AbstractType
                 ],
                 'choices' => [
                     'Commune' => 1,
-                    'Partner' => 0,
+                    'Partenaire' => 0,
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
