@@ -23,6 +23,8 @@
                         {% if canEditSignalement %}
                             <a  href="{{ path('back_signalement_edit',{uuid:signalement.uuid}) }}"
                                 class="fr-btn fr-btn--sm fr-fi-edit-fill" title="Editer le signalement"></a>&nbsp;
+                        {% endif %}
+                        {% if canExportSignalement %}
                             <a href="{{ path('back_signalement_gen_pdf',{uuid:signalement.uuid}) }}"
                                 class="fr-btn fr-btn--sm fr-btn--success fr-fi-file-pdf-fill" title="Exporter en PDF"></a>
                         {% endif %}
@@ -812,7 +814,7 @@
     </script>
     <script>
         {% if isClosedForMe or signalement.statut is same as(6) %}
-        document?.querySelector('#signalement-{{ signalement.id }}-content').querySelectorAll('button:not(.reopen,.reaffect,.img-box),.fr-btn:not(.reopen,.reaffect,.img-box)').forEach(input => {
+        document?.querySelector('#signalement-{{ signalement.id }}-content').querySelectorAll('button:not(.reopen,.reaffect,.img-box),.fr-btn:not(.reopen,.reaffect,.img-box,.fr-fi-file-pdf-fill)').forEach(input => {
             input.remove()
         })
         {% endif %}

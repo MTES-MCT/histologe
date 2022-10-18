@@ -118,12 +118,17 @@ class BackSignalementController extends AbstractController
         if (Signalement::STATUS_ACTIVE === $signalement->getStatut() || Signalement::STATUS_NEED_PARTNER_RESPONSE === $signalement->getStatut()) {
             $canEditSignalement = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY') || $isAccepted;
         }
+        $canExportSignalement = $canEditSignalement;
+        if (!$canExportSignalement && Signalement::STATUS_CLOSED === $signalement->getStatut()) {
+            $canExportSignalement = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY') || $isAccepted;
+        }
 
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
             'situations' => $criticitesArranged,
             'needValidation' => Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut(),
             'canEditSignalement' => $canEditSignalement,
+            'canExportSignalement' => $canExportSignalement,
             'isAffected' => $isAffected,
             'isAccepted' => $isAccepted,
             'isClosed' => Signalement::STATUS_CLOSED === $signalement->getStatut(),
