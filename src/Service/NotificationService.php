@@ -2,6 +2,8 @@
 
 namespace App\Service;
 
+use App\Entity\Signalement;
+use App\Entity\Suivi;
 use App\Entity\Territory;
 use Exception;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
@@ -56,7 +58,7 @@ class NotificationService
 
     private function renderMailContentWithParamsByType(int $type, array $params, Territory|null $territory): NotificationEmail
     {
-        $config = $this->config($type);
+        $config = $this->config($type, $params);
         $config['territory'] = $territory;
         $notification = new NotificationEmail();
         $notification->markAsPublic();
@@ -66,23 +68,25 @@ class NotificationService
             ->subject('HISTOLOGE '.mb_strtoupper((!empty($territory) && null !== $territory->getName()) ? $territory->getName() : 'ALERTE').' - '.$config['subject']);
     }
 
-    private function config(int $type): array
+    private function config(int $type, array $params = []): array
     {
+        $reference = $this->getValuePropertySignalementFrom($params, 'reference');
+
         return match ($type) {
             self::TYPE_ACCOUNT_ACTIVATION => [
                 'template' => 'login_link_email',
-                'subject' => 'Activation de votre compte',
-                'btntext' => "J'active mon compte",
+                'subject' => 'Activez votre compte sur Histologe',
+                'btntext' => 'Activer mon compte',
             ],
             self::TYPE_ACCOUNT_ACTIVATION_REMINDER => [
                 'template' => 'login_link_email',
-                'subject' => 'Vous n\'avez toujours pas activer votre compte',
-                'btntext' => "J'active mon compte",
+                'subject' => 'Activez votre compte sur Histologe',
+                'btntext' => 'Activer mon compte',
             ],
             self::TYPE_LOST_PASSWORD => [
                 'template' => 'lost_pass_email',
                 'subject' => 'Nouveau mot de passe sur Histologe',
-                'btntext' => 'Créer mon mot de passe',
+                'btntext' => 'Définir mon mot de passe',
             ],
             self::TYPE_MIGRATION_PASSWORD => [
                 'template' => 'migration_pass_email',
@@ -96,8 +100,8 @@ class NotificationService
             ],
             self::TYPE_ASSIGNMENT_NEW => [
                 'template' => 'affectation_email',
-                'subject' => 'Vous avez été affecté à un signalement',
-                'btntext' => 'Voir le signalement',
+                'subject' => 'Un nouveau signalement vous attend sur Histologe',
+                'btntext' => 'Accéder au signalement',
             ],
             self::TYPE_SIGNALEMENT_VALIDATION => [
                 'template' => 'validation_signalement_email',
@@ -123,13 +127,28 @@ class NotificationService
             ],
             self::TYPE_NEW_COMMENT_BACK => [
                 'template' => 'nouveau_suivi_signalement_back_email',
-                'subject' => 'Nouveau suivi sur un signalement',
-                'btntext' => 'Consulter sur la plateforme',
+                'subject' => 'Nouveau suivi sur le signalement #'.$reference,
+                'btntext' => 'Accéder au signalement',
             ],
             self::TYPE_ERROR_SIGNALEMENT => [
                 'template' => 'erreur_signalement_email',
                 'subject' => 'Une erreur est survenue lors de la création d\'un signalement !',
             ]
         };
+    }
+
+    private function getValuePropertySignalementFrom(array $params, string $value): ?string
+    {
+        if (isset($params['entity']) && $params['entity'] instanceof Suivi) {
+            $suivi = $params['entity'];
+            $signalement = $suivi->getSignalement();
+            if ($signalement instanceof Signalement && property_exists(Signalement::class, $value)) {
+                $getMethod = 'get'.ucfirst($value);
+
+                return $signalement->$getMethod();
+            }
+        }
+
+        return null;
     }
 }
