@@ -29,7 +29,8 @@ export const store = {
       countSignalementPerCriticite: Object,
       countSignalementPerStatut: Object,
       countSignalementPerCriticitePercent: Object,
-      countSignalementPerVisite: Object
+      countSignalementPerVisite: Object,
+      countSignalementPerMotifCloture: Object
     }
   },
   props: {

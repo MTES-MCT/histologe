@@ -4,6 +4,11 @@ html, body {
 
 .signalement-invalid {
     position: relative;
+
+    #signalement-toggle-situations, .reopen, .reaffect, .fr-btn--success.fr-fi-file-pdf-fill {
+        position: relative;
+        z-index: 1001;
+    }
 }
 .fr-border--light {
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -33,10 +38,6 @@ pre {
     max-width: 100%;
 }
 
-.signalement-invalid #signalement-toggle-situations, .signalement-invalid .reopen, .signalement-invalid .reaffect {
-    position: relative;
-    z-index: 1001;
-}
 
 .fr-hover-critere:hover {
     background: rgba(0, 0, 145, 0.15);

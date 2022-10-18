@@ -223,6 +223,7 @@ class BackStatistiquesController extends AbstractController
         $countSignalementPerStatut = [];
         $countSignalementPerCriticitePercent = self::initPerCriticitePercent();
         $countSignalementPerVisite = self::initPerVisite();
+        $countSignalementPerMotifCloture = self::initPerMotifCloture();
         $countSignalementPerSituation = [];
         $countSignalementPerCriticite = [];
         $countSignalementPerPartenaire = [];
@@ -258,6 +259,11 @@ class BackStatistiquesController extends AbstractController
                     ++$countHasDaysClosure;
                     $dateDiff = $dateCreatedAt->diff($dateClosedAt);
                     $totalDaysClosure += $dateDiff->d;
+
+                    $strMotifCloture = $signalement->getMotifCloture();
+                    if (!empty($strMotifCloture)) {
+                        ++$countSignalementPerMotifCloture[$strMotifCloture]['count'];
+                    }
                 }
 
                 $month_name = self::MONTH_NAMES[$dateCreatedAt->format('m') - 1].' '.$dateCreatedAt->format('Y');
@@ -367,6 +373,7 @@ class BackStatistiquesController extends AbstractController
         $this->ajaxResult['countSignalementPerStatut'] = $countSignalementPerStatut;
         $this->ajaxResult['countSignalementPerCriticitePercent'] = $countSignalementPerCriticitePercent;
         $this->ajaxResult['countSignalementPerVisite'] = $countSignalementPerVisite;
+        $this->ajaxResult['countSignalementPerMotifCloture'] = $countSignalementPerMotifCloture;
     }
 
     /**
@@ -451,6 +458,55 @@ class BackStatistiquesController extends AbstractController
             'Non' => [
                 'label' => 'Non',
                 'color' => '#E4794A',
+                'count' => 0,
+            ],
+        ];
+    }
+
+    /**
+     * Init list of Signalement per Motif cloture.
+     */
+    private static function initPerMotifCloture(): array
+    {
+        return [
+            'RESOLU' => [
+                'label' => 'Problème résolu',
+                'color' => '#21AB8E',
+                'count' => 0,
+            ],
+            'NON_DECENCE' => [
+                'label' => 'Non décence',
+                'color' => '#E4794A',
+                'count' => 0,
+            ],
+            'INFRACTION RSD' => [
+                'label' => 'Infraction RSD',
+                'color' => '#A558A0',
+                'count' => 0,
+            ],
+            'INSALUBRITE' => [
+                'label' => 'Insalubrité',
+                'color' => '#CE0500',
+                'count' => 0,
+            ],
+            'LOGEMENT DECENT' => [
+                'label' => 'Logement décent',
+                'color' => '#00A95F',
+                'count' => 0,
+            ],
+            'LOCATAIRE PARTI' => [
+                'label' => 'Départ occupant',
+                'color' => '#000091',
+                'count' => 0,
+            ],
+            'LOGEMENT VENDU' => [
+                'label' => 'Logement vendu',
+                'color' => '#417DC4',
+                'count' => 0,
+            ],
+            'AUTRE' => [
+                'label' => 'Autre',
+                'color' => '#CACAFB',
                 'count' => 0,
             ],
         ];

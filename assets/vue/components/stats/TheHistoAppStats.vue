@@ -168,6 +168,7 @@ export default defineComponent({
       this.sharedState.stats.countSignalementPerStatut = requestResponse.countSignalementPerStatut
       this.sharedState.stats.countSignalementPerCriticitePercent = requestResponse.countSignalementPerCriticitePercent
       this.sharedState.stats.countSignalementPerVisite = requestResponse.countSignalementPerVisite
+      this.sharedState.stats.countSignalementPerMotifCloture = requestResponse.countSignalementPerMotifCloture
     },
 
     makePartenaireArray (countSignalementPerPartenaire: Object) {
