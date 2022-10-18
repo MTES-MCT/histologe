@@ -34,8 +34,7 @@ export default {
       default: 'label'
     },
     items: {
-      type: Object,
-      default: {}
+      type: Object
     },
     width: {
       type: Number,
@@ -49,6 +48,10 @@ export default {
       default: '',
       type: String
     },
+    indexAxis: {
+      default: 'y',
+      type: String
+    },
     styles: {
       type: Object,
       default: () => {}
@@ -58,11 +61,11 @@ export default {
       default: () => {}
     }
   },
-  data() {
-    let inLabels = []
-    let inData = []
-    for (let i in this.items) {
-      let wordsBuffer = []
+  data () {
+    const inLabels = []
+    const inData = []
+    for (const i in this.items) {
+      const wordsBuffer = []
       let labelBuffer = ''
       const words = i.split(' ')
       for (let j = 0; j < words.length; j++) {
@@ -85,11 +88,11 @@ export default {
     return {
       chartData: {
         labels: inLabels,
-        datasets: [ { data: inData } ]
+        datasets: [{ data: inData }]
       },
       chartOptions: {
         responsive: true,
-		    indexAxis: 'y',
+        indexAxis: this.indexAxis,
         backgroundColor: '#000091',
         hoverBorderColor: '#A558A0',
         hoverBorderWidth: 3,
@@ -99,11 +102,11 @@ export default {
           },
           tooltip: {
             callbacks: {
-              title: function(context) {
+              title: function (context) {
                 return context[0].label.split(' ,').join('\n')
               }
             }
-          },
+          }
         }
       }
     }

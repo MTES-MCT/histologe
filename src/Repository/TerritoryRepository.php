@@ -42,7 +42,7 @@ class TerritoryRepository extends ServiceEntityRepository
     public function findAllList()
     {
         $qb = $this->createQueryBuilder('t')
-            ->select('PARTIAL t.{id,name}')
+            ->select('PARTIAL t.{id,name,zip}')
             ->where('t.isActive = 1');
 
         return $qb->indexBy('t', 't.id')
@@ -60,5 +60,15 @@ class TerritoryRepository extends ServiceEntityRepository
         return $qb->indexBy('t', 't.id')
             ->getQuery()
             ->getResult();
+    }
+
+    public function countAll()
+    {
+        $qb = $this->createQueryBuilder('t');
+        $qb->select('COUNT(t.id)')
+            ->where('t.isActive = 1');
+
+        return $qb->getQuery()
+            ->getSingleScalarResult();
     }
 }

@@ -11,8 +11,11 @@ grumphp:
       phpstan: ~
       eslint:
         bin: node_modules/.bin/eslint
+        triggered_by: [ts, vue]
         config: .eslintrc.js
-        whitelist_patterns: ["vue/**/*.ts", "vue/**/*.vue"]
+        whitelist_patterns:
+          - /^assets\/vue\/(.*)/
+        quiet: false
       shell:
         metadata:
           label: 'php-cs-fixer && phpunit'

@@ -10,7 +10,7 @@ module.exports = {
   ],
   overrides: [
     {
-      "files": ["./assets/tsconfig.json", "assets/vue/**/*.ts", "assets/vue/**/*.vue"]
+      "files": ["./assets/tsconfig.json", "assets/vue/*.ts", "assets/vue/**/*.ts", "assets/vue/**/*.vue"]
     }
   ],
   parser: "vue-eslint-parser",
@@ -27,6 +27,8 @@ module.exports = {
   ],
   rules: {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
-    'no-array-constructor': 'off'
+    'no-array-constructor': 'off',
+    'vue/no-mutating-props': 'off',
+    'vue/no-reserved-component-names': 'off'
   }
 }

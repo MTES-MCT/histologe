@@ -2,92 +2,11 @@
 
 {% block title %}{{ title }}{% endblock %}
 
-{% block body %}
-    <main class="fr-container--fluid fr-background--blue-france fr-py-5w">
-        <div class="fr-container fr-mb-10w">
-            <header class="fr-pb-5w">
-                <h2 class="fr-text--white fr-text--left">Histologe en quelques chiffres</h5>
-            </header>
-            <div class="fr-grid-row fr-grid-row--left fr-text--white">
-                <div class="fr-col-12 fr-col-md-4 fr-py-2v fr-py-md-0 fr-m-2w">
-                    <figure class="fr-grid-row fr-grid-row--middle">
-                        <img src="{{ asset('img/icon-house-info.svg') }}" alt="Info" class="fr-col-2">
-                        <figcaption class="fr-col-10 text-white fr-pl-2v">
-                            <strong class="fr-display-block">{{ stats.total }}</strong>
-                            signalements enregistrés
-                        </figcaption>
-                    </figure>
-                </div>
-                <div class="fr-col-12 fr-col-md-4 fr-py-2v fr-py-md-0 fr-m-2w">
-                    <figure class="fr-grid-row fr-grid-row--middle">
-                        <img src="{{ asset('img/icon-chart-bubble.svg') }}" alt="Info" class="fr-col-2">
-                        <figcaption class="fr-col-10 text-white fr-pl-2v">
-                            <strong class="fr-display-block">{{ stats.pris_en_compte }} %</strong>
-                            des signalements pris en charge
-                        </figcaption>
-                    </figure>
-                </div>
-                <div class="fr-col-12 fr-col-md-4 fr-py-2v fr-py-md-0 fr-m-2w">
-                    <figure class="fr-grid-row fr-grid-row--middle">
-                        <img src="{{ asset('img/icon-pass.svg') }}" alt="Info" class="fr-col-2">
-                        <figcaption class="fr-col-10 text-white fr-pl-2v">
-                            <strong class="fr-display-block">{{ stats.clotures }} %</strong>
-                            de signalements clôturés
-                        </figcaption>
-                    </figure>
-                </div>
-                <div class="fr-col-12 fr-col-md-4 fr-py-2v fr-py-md-0 fr-m-2w">
-                    <figure class="fr-grid-row fr-grid-row--middle">
-                        <img src="{{ asset('img/icon-house-touch.svg') }}" alt="Info" class="fr-col-2">
-                        <figcaption class="fr-col-10 text-white fr-pl-2v">
-                            <strong class="fr-display-block">{{ stats.nb_territoires }}</strong>
-                            territoires ouverts
-                        </figcaption>
-                    </figure>
-                </div>
-                <div class="fr-col-12 fr-col-md-4 fr-py-2v fr-py-md-0 fr-m-2w">
-                    <figure class="fr-grid-row fr-grid-row--middle">
-                        <img src="{{ asset('img/icon-house-alert.svg') }}" alt="Info" class="fr-col-2">
-                        <figcaption class="fr-col-10 text-white fr-pl-2v">
-                            <strong class="fr-display-block">{{ stats.moyenne_nb_desordres_par_signalement }}</strong>
-                            désordres par signalement en moyenne
-                        </figcaption>
-                    </figure>
-                </div>
-                <div class="fr-col-12 fr-col-md-4 fr-py-2v fr-py-md-0 fr-m-2w">
-                    <figure class="fr-grid-row fr-grid-row--middle">
-                        <img src="{{ asset('img/icon-house-check.svg') }}" alt="Info" class="fr-col-2">
-                        <figcaption class="fr-col-10 text-white fr-pl-2v">
-                            <strong class="fr-display-block">{{ stats.moyenne_jours_resolution }} jours</strong>
-                            en moyenne pour les délais de résolution
-                        </figcaption>
-                    </figure>
-                </div>
-                <div class="fr-col-12 fr-col-md-4 fr-py-2v fr-py-md-0 fr-m-2w">
-                    <figure class="fr-grid-row fr-grid-row--middle">
-                        <img src="{{ asset('img/icon-house-bar-graph.svg') }}" alt="Info" class="fr-col-2">
-                        <figcaption class="fr-col-10 text-white fr-pl-2v">
-                            <strong class="fr-display-block">{{ stats.moyenne_criticite }} %</strong>
-                            de criticité en moyenne
-                        </figcaption>
-                    </figure>
-                </div>
-            </div>
-        </div>
+{% block customscripts %}
+    {{ encore_entry_script_tags('app') }}
+    {{ encore_entry_link_tags('app') }}
+{% endblock %}
 
-        <div class="fr-container fr-mb-10w">
-            <header class="fr-pb-5w">
-                <h5 class="fr-text--white fr-text--left">Les 5 critères les plus fréquemment rencontrés</h5>
-            </header>
-            <div class="fr-text--white">
-                <ul>
-                    <li>De l'eau s'infiltre dans mon logement. (39,18 %)</li>
-                    <li>La peinture est écaillée par endroits. (33,77 %)</li>
-                    <li>Les sols sont humides. (30,75 %)</li>
-                    <li>Il y a des nuisibles dans mon logement (blattes, punaises de lit, rongeurs...). (27,47 %)</li>
-                    <li>J'ai un problème de ventilation dans mon logement. (26,23 %)</li>
-                </ul>
-            </div>
-        </div>
-    </main>
+{% block body %}
+    <div id="app-front-stats" data-ajaxurl="{{ path('front_statistiques_filter') }}"></div>
 {% endblock %}

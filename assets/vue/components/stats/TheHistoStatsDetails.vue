@@ -104,11 +104,11 @@ export default defineComponent({
   },
   computed: {
     strCountSignalement () {
-      let countSignalement:string = this.sharedState.stats.countSignalementFiltered != undefined ? this.sharedState.stats.countSignalementFiltered.toString() : '0'
+      const countSignalement:string = this.sharedState.stats.countSignalementFiltered !== undefined ? this.sharedState.stats.countSignalementFiltered.toString() : '0'
       return countSignalement
     },
     strAverageCriticite () {
-      let averageCriticite:string = this.sharedState.stats.averageCriticiteFiltered != undefined ? this.sharedState.stats.averageCriticiteFiltered.toString() : '-'
+      const averageCriticite:string = this.sharedState.stats.averageCriticiteFiltered !== undefined ? this.sharedState.stats.averageCriticiteFiltered.toString() : '-'
       return averageCriticite + ' %'
     }
   }

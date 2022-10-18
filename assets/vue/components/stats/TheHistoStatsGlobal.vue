@@ -66,19 +66,19 @@ export default defineComponent({
   },
   computed: {
     strCountSignalement () {
-      let countSignalement:string = this.sharedState.stats.countSignalement != undefined ? this.sharedState.stats.countSignalement.toString() : '0'
+      const countSignalement:string = this.sharedState.stats.countSignalement !== undefined ? this.sharedState.stats.countSignalement.toString() : '0'
       return countSignalement
     },
     strAverageCriticite () {
-      let averageCriticite:string = this.sharedState.stats.averageCriticite != undefined ? this.sharedState.stats.averageCriticite.toString() : '-'
+      const averageCriticite:string = this.sharedState.stats.averageCriticite !== undefined ? this.sharedState.stats.averageCriticite.toString() : '-'
       return averageCriticite + ' %'
     },
     strAverageDaysValidation () {
-      let averageDaysValidation:string = this.sharedState.stats.averageDaysValidation != undefined ? this.sharedState.stats.averageDaysValidation.toString() : '-'
+      const averageDaysValidation:string = this.sharedState.stats.averageDaysValidation !== undefined ? this.sharedState.stats.averageDaysValidation.toString() : '-'
       return averageDaysValidation + ' jours'
     },
     strAverageDaysClosure () {
-      let averageDaysClosure:string = this.sharedState.stats.averageDaysClosure != undefined ? this.sharedState.stats.averageDaysClosure.toString() : '-'
+      const averageDaysClosure:string = this.sharedState.stats.averageDaysClosure !== undefined ? this.sharedState.stats.averageDaysClosure.toString() : '-'
       return averageDaysClosure + ' jours'
     }
   }

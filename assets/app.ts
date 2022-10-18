@@ -13,3 +13,4 @@ import './styles/tooltip.scss';
 // import './bootstrap';
 
 import './vue/index';
+import './vue/front-stats';

@@ -17,6 +17,7 @@
           <template v-for="item in optionItems">
             <li
               v-if="modelValue.indexOf(item.Id) > -1"
+              v-bind:key="item.Id"
               :data-optionid="item.Id"
               @click="handleRemoveItem"
               >
@@ -30,6 +31,7 @@
           <template v-for="item in optionItems">
             <li
               v-if="modelValue.indexOf(item.Id) == -1"
+              v-bind:key="item.Id"
               :data-optionid="item.Id"
               @click="handleClickItem"
               >
@@ -81,7 +83,7 @@ export default defineComponent({
       const clickedElement:any = event.target
       const clickedOptionId:string = clickedElement.dataset.optionid
       this.modelValue.push(clickedOptionId)
-			this.$emit('update:modelValue', this.modelValue)
+      this.$emit('update:modelValue', this.modelValue)
       if (this.onChange !== undefined) {
         this.onChange()
       }
@@ -90,11 +92,11 @@ export default defineComponent({
       const clickedElement:any = event.target
       const clickedOptionId:string = clickedElement.dataset.optionid
       for (let i:number = this.modelValue.length - 1; i >= 0; i--) {
-        if (this.modelValue[i] == clickedOptionId) {
+        if (this.modelValue[i] === clickedOptionId) {
           this.modelValue.splice(i, 1)
         }
       }
-			this.$emit('update:modelValue', this.modelValue)
+      this.$emit('update:modelValue', this.modelValue)
       if (this.onChange !== undefined) {
         this.onChange()
       }
@@ -107,7 +109,7 @@ export default defineComponent({
     }
   },
   computed: {
-    strCountSelectedItems() {
+    strCountSelectedItems () {
       const selectLabel:string = this.isInnerLabelFemale ? 'sélectionnée' : 'sélectionné'
       if (this.modelValue.length > 1) {
         return this.modelValue.length + ' ' + selectLabel + 's'
@@ -180,5 +182,5 @@ export default defineComponent({
     background-color: var(--blue-france-850-200);
     cursor: pointer;
   }
-  
+
 </style>

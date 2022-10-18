@@ -6,7 +6,6 @@ const disableSmoothScroll = () => {
   });
 };
 
-/*
 describe('Simple test for the Signalement interface', () => {
   it('Displays the form for Signalement', () => {
     cy.visit('http://localhost:8080/signalement')
@@ -88,7 +87,6 @@ describe('Simple test for the Signalement interface', () => {
   })
 
 })
-*/
 
 before(() => {
   cy.clearCookie('PHPSESSID')
@@ -127,5 +125,17 @@ describe('Simple test for back-office statistics', () => {
     cy.get('#histo-stats-filters').contains('Tout réinitialiser').click()
     cy.get('#filter-statut').should('have.value', 'all')
     cy.get('#filter-type').should('have.value', 'all')
+  })
+})
+
+describe('Test front statistics page', () => {
+  it('Displays the page of statistiques', () => {
+    cy.visit('http://localhost:8080/statistiques')
+    disableSmoothScroll()
+    cy.get('#app-front-stats').should('be.visible')
+  })
+
+  it('Changes current territory', () => {
+    cy.get('#filter-territoires').select('1')
   })
 })

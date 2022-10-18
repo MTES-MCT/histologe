@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Service\SearchFilterService;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -27,7 +28,7 @@ class SignalementRepository extends ServiceEntityRepository
 
     private SearchFilterService $searchFilterService;
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Signalement::class);
         $this->searchFilterService = new SearchFilterService();
@@ -74,7 +75,18 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countByStatus(Territory|null $territory)
+    public function countAll()
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id)');
+        $qb->andWhere('s.statut != :statutArchived')
+            ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
+
+        return $qb->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countByStatus(Territory|null $territory, int|null $year = null)
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
@@ -82,11 +94,37 @@ class SignalementRepository extends ServiceEntityRepository
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
         }
+        if ($year) {
+            $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);
+        }
         $qb->indexBy('s', 's.statut');
         $qb->groupBy('s.statut');
 
         return $qb->getQuery()
             ->getResult();
+    }
+
+    public function countValidated()
+    {
+        $notStatus = [Signalement::STATUS_NEED_VALIDATION, Signalement::STATUS_REFUSED, Signalement::STATUS_ARCHIVED];
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id)');
+        $qb->andWhere('s.statut NOT IN (:notStatus)')
+            ->setParameter('notStatus', $notStatus);
+
+        return $qb->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countClosed()
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id)');
+        $qb->andWhere('s.statut = :closedStatus')
+            ->setParameter('closedStatus', Signalement::STATUS_CLOSED);
+
+        return $qb->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function countByCity()
@@ -96,6 +134,80 @@ class SignalementRepository extends ServiceEntityRepository
             ->addSelect('s.villeOccupant');
         $qb->indexBy('s', 's.villeOccupant');
         $qb->groupBy('s.villeOccupant');
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
+    public function countByTerritory()
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id) AS count, t.zip, t.name, t.id');
+        $qb->leftJoin('s.territory', 't');
+        $qb->groupBy('t.id');
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
+    public function countByMonth(Territory|null $territory, int|null $year)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id) AS count, MONTH(s.createdAt) AS month, YEAR(s.createdAt) AS year');
+
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+        if ($year) {
+            $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);
+        }
+
+        $qb->groupBy('month')
+            ->addGroupBy('year');
+
+        $qb->orderBy('year')
+            ->addOrderBy('month');
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
+    public function countBySituation(Territory|null $territory, int|null $year)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id) AS count, sit.id, sit.menuLabel');
+        $qb->leftJoin('s.situations', 'sit');
+
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+        if ($year) {
+            $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);
+        }
+
+        $qb->groupBy('sit.id');
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
+    public function countByMotifCloture(Territory|null $territory, int|null $year)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id) AS count, s.motifCloture');
+
+        $qb->andWhere('s.motifCloture IS NOT NULL');
+        $qb->andWhere('s.motifCloture != \'0\'');
+        $qb->andWhere('s.closedAt IS NOT NULL');
+
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+        if ($year) {
+            $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);
+        }
+
+        $qb->groupBy('s.motifCloture');
 
         return $qb->getQuery()
             ->getResult();
