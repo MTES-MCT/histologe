@@ -1,44 +1,46 @@
 <template>
   <div class="histo-front-stats-territory fr-px-5w fr-pt-5w">
-    <h2>Evolution territoriale du logement</h2>
-    <label for="filter-territoires">Sélectionnez un territoire pour afficher ses statistiques</label>
-    <HistoSelect
-      id="filter-territoires"
-      v-model="sharedState.filters.territoire"
-      @update:modelValue="handleChangeTerritoire"
-      inner-label="Territoire"
-      :option-items=sharedState.filters.territoiresList
-      />
+    <div class="fr-container">
+      <h2>Evolution territoriale du logement</h2>
+      <label for="filter-territoires">Sélectionnez un territoire pour afficher ses statistiques</label>
+      <HistoSelect
+        id="filter-territoires"
+        v-model="sharedState.filters.territoire"
+        @update:modelValue="handleChangeTerritoire"
+        inner-label="Territoire"
+        :option-items=sharedState.filters.territoiresList
+        />
 
-    <div class="fr-container--fluid fr-my-10v">
-      <div class="fr-grid-row fr-grid-row--gutters">
-        <TheHistoFrontStatsTerritoryItem sizeClass="7" v-model="sharedState.filters.perMonthYearType" :onChange="handleChangePerMonth">
-          <template #title>Signalements déposés</template>
-          <template #graph>
-            <HistoChartLine v-if="!isLoadingPerMonth" :items=perMonthData />
-          </template>
-        </TheHistoFrontStatsTerritoryItem>
+      <div class="fr-container--fluid fr-my-10v">
+        <div class="fr-grid-row fr-grid-row--gutters">
+          <TheHistoFrontStatsTerritoryItem sizeClass="7" v-model="sharedState.filters.perMonthYearType" :onChange="handleChangePerMonth">
+            <template #title>Signalements déposés</template>
+            <template #graph>
+              <HistoChartLine v-if="!isLoadingPerMonth" :items=perMonthData />
+            </template>
+          </TheHistoFrontStatsTerritoryItem>
 
-        <TheHistoFrontStatsTerritoryItem sizeClass="5" v-model="sharedState.filters.perStatutYearType" :onChange="handleChangePerStatut">
-          <template #title>Statut du signalement</template>
-          <template #graph>
-            <HistoChartPie v-if="!isLoadingPerStatut" :items=perStatutData />
-          </template>
-        </TheHistoFrontStatsTerritoryItem>
+          <TheHistoFrontStatsTerritoryItem sizeClass="5" v-model="sharedState.filters.perStatutYearType" :onChange="handleChangePerStatut">
+            <template #title>Statut du signalement</template>
+            <template #graph>
+              <HistoChartPie v-if="!isLoadingPerStatut" :items=perStatutData />
+            </template>
+          </TheHistoFrontStatsTerritoryItem>
 
-        <TheHistoFrontStatsTerritoryItem sizeClass="7" v-model="sharedState.filters.perSituationYearType" :onChange="handleChangePerSituation">
-          <template #title>Répartition par famille de désordres</template>
-          <template #graph>
-            <HistoChartBar v-if="!isLoadingPerSituation" :items=perSituationData indexAxis="x" />
-          </template>
-        </TheHistoFrontStatsTerritoryItem>
+          <TheHistoFrontStatsTerritoryItem sizeClass="7" v-model="sharedState.filters.perSituationYearType" :onChange="handleChangePerSituation">
+            <template #title>Répartition par famille de désordres</template>
+            <template #graph>
+              <HistoChartBar v-if="!isLoadingPerSituation" :items=perSituationData indexAxis="x" />
+            </template>
+          </TheHistoFrontStatsTerritoryItem>
 
-        <TheHistoFrontStatsTerritoryItem sizeClass="5" v-model="sharedState.filters.perMotifClotureYearType" :onChange="handleChangePerMotifCloture">
-          <template #title>Motif de clôture</template>
-          <template #graph>
-            <HistoChartDoughnut v-if="!isLoadingPerMotifCloture" :items=perMotifClotureData />
-          </template>
-        </TheHistoFrontStatsTerritoryItem>
+          <TheHistoFrontStatsTerritoryItem sizeClass="5" v-model="sharedState.filters.perMotifClotureYearType" :onChange="handleChangePerMotifCloture">
+            <template #title>Motif de clôture</template>
+            <template #graph>
+              <HistoChartDoughnut v-if="!isLoadingPerMotifCloture" :items=perMotifClotureData />
+            </template>
+          </TheHistoFrontStatsTerritoryItem>
+        </div>
       </div>
     </div>
   </div>

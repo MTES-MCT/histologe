@@ -1,5 +1,5 @@
 <template>
-  <div class="histo-front-stats-global">
+  <div class="histo-front-stats-global fr-container">
     <div class="fr-container--fluid fr-px-5w fr-my-10v">
       <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-col-lg-3">
