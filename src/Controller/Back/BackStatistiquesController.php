@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
+use Collator;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -123,6 +124,8 @@ class BackStatistiquesController extends AbstractController
                 $this->ajaxResult['list_communes'][$nomCommune] = $nomCommune;
             }
         }
+        $collator = new Collator('fr_FR');
+        $collator->asort($this->ajaxResult['list_communes']);
 
         // List of the Etiquettes linked to a User
         // - if user/admin of Territoire: only Etiquettes from a Territoire
