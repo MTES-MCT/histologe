@@ -84,6 +84,7 @@ export default defineComponent({
     },
 
     refreshStats (requestResponse: any) {
+      this.sharedState.stats.countSignalementResolus = requestResponse.count_signalement_resolus
       this.sharedState.stats.countSignalement = requestResponse.count_signalement
       this.sharedState.stats.countTerritory = requestResponse.count_territory
       this.sharedState.stats.percentValidation = requestResponse.percent_validation

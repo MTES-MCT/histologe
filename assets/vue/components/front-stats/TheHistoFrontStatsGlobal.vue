@@ -3,6 +3,9 @@
     <div class="fr-container--fluid fr-px-5w fr-my-10v">
       <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-col-lg-3">
+          <TheHistoFrontStatsDetailsItem :data="strCountSignalementResolus">
+            <template #title>foyers sortis du mal-logement</template>
+          </TheHistoFrontStatsDetailsItem>
           <TheHistoFrontStatsDetailsItem :data="strCountSignalement">
             <template #title>signalements enregistrés</template>
           </TheHistoFrontStatsDetailsItem>
@@ -45,6 +48,9 @@ export default defineComponent({
     }
   },
   computed: {
+    strCountSignalementResolus () {
+      return this.sharedState.stats.countSignalementResolus.toString()
+    },
     strCountSignalement () {
       return this.sharedState.stats.countSignalement.toString()
     },
