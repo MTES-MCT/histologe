@@ -16,12 +16,25 @@ class GlobalAnalyticsProvider
     public function getData()
     {
         $buffer = [];
+        $buffer['count_signalement_resolus'] = $this->getCountSignalementResoluData();
         $buffer['count_signalement'] = $this->getCountSignalementData();
         $buffer['count_territory'] = $this->getCountTerritoryData();
         $buffer['percent_validation'] = $this->getValidatedData();
         $buffer['percent_cloture'] = $this->getClotureData();
 
         return $buffer;
+    }
+
+    public function getCountSignalementResoluData()
+    {
+        $countPerMotifsCloture = $this->signalementRepository->countByMotifCloture(null, null);
+        foreach ($countPerMotifsCloture as $countPerMotifCloture) {
+            if ('RESOLU' == $countPerMotifCloture['motifCloture'] && !empty($countPerMotifCloture['count'])) {
+                return $countPerMotifCloture['count'];
+            }
+        }
+
+        return 0;
     }
 
     public function getCountSignalementData()

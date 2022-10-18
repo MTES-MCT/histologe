@@ -11,6 +11,7 @@ export const store = {
       territoiresList: new Array<HistoInterfaceSelectOption>()
     },
     stats: {
+      countSignalementResolus: 0,
       countSignalement: 0,
       countTerritory: 0,
       percentValidation: 0,

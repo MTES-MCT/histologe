@@ -48,6 +48,7 @@ class FrontStatistiquesController extends AbstractController
         $this->ajaxResult['response'] = 'success';
 
         $globalStatistics = $this->globalAnalyticsProvider->getData();
+        $this->ajaxResult['count_signalement_resolus'] = $globalStatistics['count_signalement_resolus'];
         $this->ajaxResult['count_signalement'] = $globalStatistics['count_signalement'];
         $this->ajaxResult['count_territory'] = $globalStatistics['count_territory'];
         $this->ajaxResult['percent_validation'] = $globalStatistics['percent_validation'];
