@@ -50,9 +50,15 @@
             </HistoChartDoughnut>
           </div>
 
-          <div>
+          <div class="fr-mb-3w">
             <HistoChartDoughnut :items=sharedState.stats.countSignalementPerVisite>
               <template #title>Visite effectuée</template>
+            </HistoChartDoughnut>
+          </div>
+
+          <div>
+            <HistoChartDoughnut :items=sharedState.stats.countSignalementPerMotifCloture>
+              <template #title>Motif de clôture</template>
             </HistoChartDoughnut>
           </div>
         </div>
