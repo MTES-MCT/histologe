@@ -72,11 +72,7 @@ class UploadHandlerServiceTest extends KernelTestCase
     {
         /** @var ParameterBagInterface $parameterBag */
         $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-
         $sluggerMock = $this->createMock(SluggerInterface::class);
-        $sluggerMock
-            ->method('slug')
-            ->willReturn((new AsciiSlugger())->slug($this->targetFilename));
 
         $uploadHandlerService = new UploadHandlerService(
             $this->createMock(FilesystemOperator::class),
