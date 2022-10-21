@@ -522,11 +522,40 @@ document?.querySelector('#signalement-affectation-form-submit')?.addEventListene
         }
     })
 })
+
 document?.querySelectorAll('.fr-input--file-signalement').forEach(inputFile => {
     inputFile.addEventListener('change', evt => {
-        evt.target.form.submit();
+        const files = evt.target.files;
+        let uploadValid = true;
+        Array.from(files).forEach((file) => {
+            console.log(file.size);
+            if (file.size > 10 * 1024 * 1024) {
+                file.value = '';
+                uploadValid = false;
+
+                const div = document.createElement('div');
+                div.setAttribute('role', 'alert');
+                div.classList.add('fr-alert','fr-alert--error','fr-alert--sm');
+
+                const p = document.createElement('p');
+                p.textContent = 'Le fichier est trop lourd. Veuillez ré-essayer avec un fichier de 10Mo maximum.';
+                div.append(p);
+
+                const parent = document.querySelector('.fr-col-12.fr-col-md-9.fr-col-lg-10');
+                parent.prepend(div);
+
+                window.scrollTo(0, 0);
+                setTimeout(() => {
+                    div.remove();
+                }, 7000);
+            }
+        });
+        if (uploadValid) {
+            evt.target.form.submit();
+        }
     })
 })
+
 document?.querySelector('#partner_add_user,#situation_add_critere')?.addEventListeners('click touchdown', (event) => {
     event.preventDefault();
     let template, container, count, row, className;

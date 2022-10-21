@@ -124,7 +124,7 @@ class BackSignalementFileController extends AbstractController
             $this->addFlash('error', 'Une erreur est survenu lors du téléchargement');
         }
 
-        return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]).'#documents');
+        return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
     }
 
     #[Route('/{uuid}/file/{type}/{filename}/delete', name: 'back_signalement_delete_file')]
