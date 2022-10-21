@@ -136,13 +136,19 @@ forms.forEach((form) => {
                 let progress = document.querySelector("#progress_" + id);
                 let totalProgress = document.querySelector('#form_global_file_progress');
                 if (preview) {
-                    preview.src = URL.createObjectURL(file);
-                    ['fr-fi-instagram-line', 'fr-py-7v', 'fr-fi-refresh-line', 'fr-disabled'].map(v => event.target.parentElement.classList.toggle(v));
-                    fileIsOk = true;
+                    if (event.target.files[0].size > 10 * 1024 * 1024) {
+                        event.target.value = "";
+                        resTextEl.innerHTML = "L'image dépasse 10MB";
+                        resTextEl.classList.remove('fr-hidden')
+                    } else {
+                        preview.src = URL.createObjectURL(file);
+                        ['fr-fi-instagram-line', 'fr-py-7v', 'fr-fi-refresh-line', 'fr-disabled'].map(v => event.target.parentElement.classList.toggle(v));
+                        fileIsOk = true;
+                    }
                 } else if (event.target.parentElement.classList.contains('fr-fi-attachment-fill')) {
                     if (event.target.files[0].size > 10 * 1024 * 1024) {
-                        /*event.target.value = "";*/
-                        // resTextEl.innerHTML = "Le document dépasse 10MB";
+                        event.target.value = "";
+                        resTextEl.innerHTML = "Le document dépasse 10MB";
                         resTextEl.classList.remove('fr-hidden')
                     } else {
                         resTextEl.classList.add('fr-hidden')
@@ -192,11 +198,11 @@ forms.forEach((form) => {
                         progress.value = 0;
                         let jsonRes = JSON.parse(request.response)
                         if (request.status !== 200) {
+                            progress.value = 0;
+                            deleter.click();
                             resTextEl.innerText = jsonRes.error;
                             resTextEl.classList.remove('fr-hidden');
                             resTextEl.classList.add('fr-text-label--red-marianne');
-                            progress.value = 0;
-                            deleter.click()
                         } else {
                             resTextEl.innerText = jsonRes.titre
                             resTextEl.classList.remove('fr-hidden');
