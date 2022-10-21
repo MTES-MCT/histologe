@@ -528,7 +528,6 @@ document?.querySelectorAll('.fr-input--file-signalement').forEach(inputFile => {
         const files = evt.target.files;
         let uploadValid = true;
         Array.from(files).forEach((file) => {
-            console.log(file.size);
             if (file.size > 10 * 1024 * 1024) {
                 file.value = '';
                 uploadValid = false;
