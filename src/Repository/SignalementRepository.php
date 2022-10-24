@@ -178,6 +178,9 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->select('COUNT(s.id) AS count, sit.id, sit.menuLabel');
         $qb->leftJoin('s.situations', 'sit');
 
+        $qb->andWhere('s.isImported = :isImported')->setParameter('isImported', false);
+        $qb->andWhere('sit.isActive = :isActive')->setParameter('isActive', true);
+
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
         }
