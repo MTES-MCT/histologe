@@ -27,7 +27,7 @@ class GlobalAnalyticsProvider
 
     public function getCountSignalementResoluData()
     {
-        $countPerMotifsCloture = $this->signalementRepository->countByMotifCloture(null, null);
+        $countPerMotifsCloture = $this->signalementRepository->countByMotifCloture(null, null, true);
         foreach ($countPerMotifsCloture as $countPerMotifCloture) {
             if ('RESOLU' == $countPerMotifCloture['motifCloture'] && !empty($countPerMotifCloture['count'])) {
                 return $countPerMotifCloture['count'];
@@ -39,7 +39,7 @@ class GlobalAnalyticsProvider
 
     public function getCountSignalementData()
     {
-        return $this->signalementRepository->countAll();
+        return $this->signalementRepository->countAll(true);
     }
 
     public function getCountTerritoryData()
@@ -49,9 +49,9 @@ class GlobalAnalyticsProvider
 
     private function getValidatedData()
     {
-        $total = $this->signalementRepository->countAll();
+        $total = $this->signalementRepository->countAll(true);
         if ($total > 0) {
-            return round($this->signalementRepository->countValidated() / $total * 1000) / 10;
+            return round($this->signalementRepository->countValidated(true) / $total * 1000) / 10;
         }
 
         return '-';
@@ -59,9 +59,9 @@ class GlobalAnalyticsProvider
 
     private function getClotureData()
     {
-        $total = $this->signalementRepository->countAll();
+        $total = $this->signalementRepository->countAll(true);
         if ($total > 0) {
-            return round($this->signalementRepository->countClosed() / $total * 1000) / 10;
+            return round($this->signalementRepository->countClosed(true) / $total * 1000) / 10;
         }
 
         return '-';

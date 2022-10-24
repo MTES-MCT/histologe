@@ -14,7 +14,7 @@ class StatusStatisticProvider
 
     public function getData(Territory|null $territory, int|null $year)
     {
-        $countPerStatuses = $this->signalementRepository->countByStatus($territory, $year);
+        $countPerStatuses = $this->signalementRepository->countByStatus($territory, $year, true);
 
         $buffer = [];
         foreach ($countPerStatuses as $countPerStatus) {

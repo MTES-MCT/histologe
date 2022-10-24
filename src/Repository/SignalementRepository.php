@@ -75,22 +75,31 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countAll()
+    public function countAll(bool $removeImported = false)
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id)');
         $qb->andWhere('s.statut != :statutArchived')
             ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
 
+        if ($removeImported) {
+            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+        }
+
         return $qb->getQuery()
             ->getSingleScalarResult();
     }
 
-    public function countByStatus(Territory|null $territory, int|null $year = null)
+    public function countByStatus(Territory|null $territory, int|null $year = null, bool $removeImported = false)
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
             ->addSelect('s.statut');
+
+        if ($removeImported) {
+            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+        }
+
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
         }
@@ -104,7 +113,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countValidated()
+    public function countValidated(bool $removeImported = false)
     {
         $notStatus = [Signalement::STATUS_NEED_VALIDATION, Signalement::STATUS_REFUSED, Signalement::STATUS_ARCHIVED];
         $qb = $this->createQueryBuilder('s');
@@ -112,16 +121,24 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->andWhere('s.statut NOT IN (:notStatus)')
             ->setParameter('notStatus', $notStatus);
 
+        if ($removeImported) {
+            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+        }
+
         return $qb->getQuery()
             ->getSingleScalarResult();
     }
 
-    public function countClosed()
+    public function countClosed(bool $removeImported = false)
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id)');
         $qb->andWhere('s.statut = :closedStatus')
             ->setParameter('closedStatus', Signalement::STATUS_CLOSED);
+
+        if ($removeImported) {
+            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+        }
 
         return $qb->getQuery()
             ->getSingleScalarResult();
@@ -139,21 +156,28 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countByTerritory()
+    public function countByTerritory(bool $removeImported = false)
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, t.zip, t.name, t.id');
         $qb->leftJoin('s.territory', 't');
+        if ($removeImported) {
+            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+        }
         $qb->groupBy('t.id');
 
         return $qb->getQuery()
             ->getResult();
     }
 
-    public function countByMonth(Territory|null $territory, int|null $year)
+    public function countByMonth(Territory|null $territory, int|null $year, bool $removeImported = false)
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, MONTH(s.createdAt) AS month, YEAR(s.createdAt) AS year');
+
+        if ($removeImported) {
+            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+        }
 
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
@@ -172,13 +196,15 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countBySituation(Territory|null $territory, int|null $year)
+    public function countBySituation(Territory|null $territory, int|null $year, bool $removeImported = false)
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, sit.id, sit.menuLabel');
         $qb->leftJoin('s.situations', 'sit');
 
-        $qb->andWhere('s.isImported = :isImported')->setParameter('isImported', false);
+        if ($removeImported) {
+            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+        }
         $qb->andWhere('sit.isActive = :isActive')->setParameter('isActive', true);
 
         if ($territory) {
@@ -194,7 +220,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countByMotifCloture(Territory|null $territory, int|null $year)
+    public function countByMotifCloture(Territory|null $territory, int|null $year, bool $removeImported = false)
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, s.motifCloture');
@@ -202,6 +228,10 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->andWhere('s.motifCloture IS NOT NULL');
         $qb->andWhere('s.motifCloture != \'0\'');
         $qb->andWhere('s.closedAt IS NOT NULL');
+
+        if ($removeImported) {
+            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+        }
 
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
