@@ -27,10 +27,10 @@
 
     <hr>
 
-    <div class="fr-mt-5w fr-mb-7w">
+    <div class="fr-mt-5w fr-mb-7w imported-data">
       <h2>Données historiques</h2>
       <p>
-        {{strCountImported}} signalements importés
+        <span>{{strCountImported}}</span> signalements importés
         <br>
         Ces données correspondent aux signalements recensés sur les territoires avant le déploiement de la plateforme Histologe.
       </p>
@@ -82,4 +82,8 @@ export default defineComponent({
 </script>
 
 <style>
+.imported-data span {
+  font-weight: bold;
+  color: var(--blue-france-sun-113-625);
+}
 </style>
