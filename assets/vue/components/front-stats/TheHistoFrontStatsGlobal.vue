@@ -24,6 +24,17 @@
         </div>
       </div>
     </div>
+
+    <hr>
+
+    <div class="fr-mt-5w fr-mb-7w">
+      <h2>Données historiques</h2>
+      <p>
+        {{strCountImported}} signalements importés
+        <br>
+        Ces données correspondent aux signalements recensés sur les territoires avant le déploiement de la plateforme Histologe.
+      </p>
+    </div>
   </div>
 </template>
 
@@ -62,6 +73,9 @@ export default defineComponent({
     },
     strPercentClosed () {
       return this.sharedState.stats.percentCloture.toString() + ' %'
+    },
+    strCountImported () {
+      return this.sharedState.stats.countImported.toString()
     }
   }
 })

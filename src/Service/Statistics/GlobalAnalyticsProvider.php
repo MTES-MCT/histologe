@@ -21,6 +21,7 @@ class GlobalAnalyticsProvider
         $buffer['count_territory'] = $this->getCountTerritoryData();
         $buffer['percent_validation'] = $this->getValidatedData();
         $buffer['percent_cloture'] = $this->getClotureData();
+        $buffer['count_imported'] = $this->getImportedData();
 
         return $buffer;
     }
@@ -65,5 +66,10 @@ class GlobalAnalyticsProvider
         }
 
         return '-';
+    }
+
+    private function getImportedData()
+    {
+        return $this->signalementRepository->countImported();
     }
 }

@@ -90,6 +90,18 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    public function countImported()
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id)');
+        $qb->andWhere('s.statut != :statutArchived')
+            ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
+        $qb->andWhere('s.isImported = 1');
+
+        return $qb->getQuery()
+            ->getSingleScalarResult();
+    }
+
     public function countByStatus(Territory|null $territory, int|null $year = null, bool $removeImported = false)
     {
         $qb = $this->createQueryBuilder('s');
