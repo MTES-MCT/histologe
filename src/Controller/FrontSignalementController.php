@@ -7,6 +7,7 @@ use App\Entity\Criticite;
 use App\Entity\Signalement;
 use App\Entity\Situation;
 use App\Entity\Suivi;
+use App\Exception\MaxUploadSizeExceededException;
 use App\Form\SignalementType;
 use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
@@ -20,6 +21,7 @@ use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -65,15 +67,22 @@ class FrontSignalementController extends AbstractController
     }
 
     #[Route('/signalement/handle', name: 'handle_upload', methods: 'POST')]
-    public function handleUpload(UploadHandlerService $uploadHandlerService, Request $request, RequestStack $requestStack)
+    public function handleUpload(UploadHandlerService $uploadHandlerService, Request $request, RequestStack $requestStack, LoggerInterface $logger)
     {
-        if ($files = $request->files->get('signalement')) {
-            foreach ($files as $key => $file) {
-                return $this->json($uploadHandlerService->toTempFolder($file)->setKey($key));
+        if (null !== ($files = $request->files->get('signalement'))) {
+            try {
+                foreach ($files as $key => $file) {
+                    return $this->json($uploadHandlerService->toTempFolder($file)->setKey($key));
+                }
+            } catch (MaxUploadSizeExceededException $exception) {
+                $logger->error($exception->getMessage());
+
+                return $this->json(['error' => $exception->getMessage()], 400);
             }
         }
+        $logger->error('Un problème lors du téléversement est survenu');
 
-        return $this->json(['error' => 'Aucun fichiers'], 400);
+        return $this->json(['error' => 'Aucun fichier n\'a été téléversé'], 400);
     }
 
     /**
@@ -220,7 +229,9 @@ class FrontSignalementController extends AbstractController
                         }
                         unset($data['files']);
                     }
-                    $description .= '<br>Ajout de pièces au signalement<ul>'.implode('', $list).'</ul>';
+                    if (!empty($list)) {
+                        $description .= '<br>Ajout de pièces au signalement<ul>'.implode('', $list).'</ul>';
+                    }
                 }
 
                 $signalement->setDocuments($files_array['documents']);

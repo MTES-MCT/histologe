@@ -67,4 +67,29 @@ class UploadHandlerServiceTest extends KernelTestCase
         $this->assertArrayHasKey('titre', $fileResult);
         $this->assertFileExists($parameterBag->get('uploads_tmp_dir').$fileResult['file']);
     }
+
+    public function testUploadBigFileShouldThrowsException(): void
+    {
+        /** @var ParameterBagInterface $parameterBag */
+        $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
+        $sluggerMock = $this->createMock(SluggerInterface::class);
+
+        $uploadHandlerService = new UploadHandlerService(
+            $this->createMock(FilesystemOperator::class),
+            $parameterBag,
+            $sluggerMock,
+            $this->filesystem,
+            $this->createMock(LoggerInterface::class)
+        );
+
+        $uploadedFileMock = $this->createMock(UploadedFile::class);
+        $uploadedFileMock
+            ->expects($this->once())
+            ->method('getSize')
+            ->willReturn(20 * 1024 * 1024);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Le fichier dépasse 10 MB');
+        $uploadHandlerService->uploadFromFile($uploadedFileMock, 'test.png');
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Exception\MaxUploadSizeExceededException;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
@@ -13,6 +14,8 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class UploadHandlerService
 {
+    public const MAX_FILESIZE = 10 * 1024 * 1024;
+
     private $file;
 
     public function __construct(
@@ -32,7 +35,9 @@ class UploadHandlerService
         // this is needed to safely include the file name as part of the URL
         $safeFilename = $this->slugger->slug($originalFilename);
         $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
-
+        if ($file->getSize() > self::MAX_FILESIZE) {
+            throw new MaxUploadSizeExceededException(self::MAX_FILESIZE);
+        }
         try {
             $file->move(
                 $this->parameterBag->get('uploads_tmp_dir'),
@@ -67,6 +72,9 @@ class UploadHandlerService
 
     public function uploadFromFile(UploadedFile $file, $newFilename): void
     {
+        if ($file->getSize() > self::MAX_FILESIZE) {
+            throw new MaxUploadSizeExceededException(self::MAX_FILESIZE);
+        }
         try {
             $fileResource = fopen($file->getPathname(), 'r');
             $this->fileStorage->writeStream($newFilename, $fileResource);

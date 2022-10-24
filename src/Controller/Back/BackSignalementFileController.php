@@ -4,6 +4,7 @@ namespace App\Controller\Back;
 
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Exception\MaxUploadSizeExceededException;
 use App\Service\UploadHandlerService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -62,7 +63,8 @@ class BackSignalementFileController extends AbstractController
         UploadHandlerService $uploadHandler): RedirectResponse
     {
         $this->denyAccessUnlessGranted('FILE_CREATE', $signalement);
-        if ($this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token')) && $files = $request->files->get('signalement-add-file')) {
+        if ($this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token'))
+            && $files = $request->files->get('signalement-add-file')) {
             $type = '';
             if (isset($files['documents'])) {
                 $type = 'documents';
@@ -84,34 +86,45 @@ class BackSignalementFileController extends AbstractController
                 try {
                     $uploadHandler->uploadFromFile($file, $newFilename);
                 } catch (FilesystemException $exception) {
+                    $newFilename = '';
                     $logger->error($exception->getMessage());
+                } catch (MaxUploadSizeExceededException $exception) {
+                    $newFilename = '';
+                    $logger->error($exception->getMessage());
+                    $this->addFlash('error', $exception->getMessage());
                 }
-                $list[] = '<li><a class="fr-link" target="_blank" href="'.$this->generateUrl('show_uploaded_file', ['folder' => '_up', 'filename' => $newFilename]).'">'.$titre.'</a></li>';
-                if (null === $type_list) {
-                    $type_list = [];
+                if (!empty($newFilename)) {
+                    $list[] = '<li><a class="fr-link" target="_blank" href="'.$this->generateUrl('show_uploaded_file',
+                        ['folder' => '_up', 'filename' => $newFilename]).'">'.$titre.'</a></li>';
+                    if (null === $type_list) {
+                        $type_list = [];
+                    }
+                    array_push($type_list, [
+                        'file' => $newFilename,
+                        'titre' => $titre,
+                        'user' => $this->getUser()->getId(),
+                        'username' => $this->getUser()->getNomComplet(),
+                        'date' => (new DateTimeImmutable())->format('d.m.Y'),
+                    ]);
                 }
-                array_push($type_list, [
-                    'file' => $newFilename,
-                    'titre' => $titre,
-                    'user' => $this->getUser()->getId(),
-                    'username' => $this->getUser()->getNomComplet(),
-                    'date' => (new DateTimeImmutable())->format('d.m.Y'),
-                ]);
             }
-            $suivi = new Suivi();
-            $suivi->setCreatedBy($this->getUser());
-            $suivi->setDescription('Ajout de '.$type.' au signalement<ul>'.implode('', $list).'</ul>');
-            $suivi->setSignalement($signalement);
-            $signalement->$setMethod($type_list);
-            $doctrine->getManager()->persist($suivi);
-            $doctrine->getManager()->persist($signalement);
-            $doctrine->getManager()->flush();
-            $this->addFlash('success', 'Envoi de '.ucfirst($type).' effectué avec succès !');
+
+            if (!empty($list)) {
+                $suivi = new Suivi();
+                $suivi->setCreatedBy($this->getUser());
+                $suivi->setDescription('Ajout de '.$type.' au signalement<ul>'.implode('', $list).'</ul>');
+                $suivi->setSignalement($signalement);
+                $signalement->$setMethod($type_list);
+                $doctrine->getManager()->persist($suivi);
+                $doctrine->getManager()->persist($signalement);
+                $doctrine->getManager()->flush();
+                $this->addFlash('success', 'Envoi de '.ucfirst($type).' effectué avec succès !');
+            }
         } else {
             $this->addFlash('error', 'Une erreur est survenu lors du téléchargement');
         }
 
-        return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]).'#documents');
+        return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
     }
 
     #[Route('/{uuid}/file/{type}/{filename}/delete', name: 'back_signalement_delete_file')]

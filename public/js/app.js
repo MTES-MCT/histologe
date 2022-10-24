@@ -136,13 +136,19 @@ forms.forEach((form) => {
                 let progress = document.querySelector("#progress_" + id);
                 let totalProgress = document.querySelector('#form_global_file_progress');
                 if (preview) {
-                    preview.src = URL.createObjectURL(file);
-                    ['fr-fi-instagram-line', 'fr-py-7v', 'fr-fi-refresh-line', 'fr-disabled'].map(v => event.target.parentElement.classList.toggle(v));
-                    fileIsOk = true;
+                    if (event.target.files[0].size > 10 * 1024 * 1024) {
+                        event.target.value = "";
+                        resTextEl.innerHTML = "L'image dépasse 10MB";
+                        resTextEl.classList.remove('fr-hidden')
+                    } else {
+                        preview.src = URL.createObjectURL(file);
+                        ['fr-fi-instagram-line', 'fr-py-7v', 'fr-fi-refresh-line', 'fr-disabled'].map(v => event.target.parentElement.classList.toggle(v));
+                        fileIsOk = true;
+                    }
                 } else if (event.target.parentElement.classList.contains('fr-fi-attachment-fill')) {
                     if (event.target.files[0].size > 10 * 1024 * 1024) {
-                        /*event.target.value = "";*/
-                        // resTextEl.innerHTML = "Le document dépasse 10MB";
+                        event.target.value = "";
+                        resTextEl.innerHTML = "Le document dépasse 10MB";
                         resTextEl.classList.remove('fr-hidden')
                     } else {
                         resTextEl.classList.add('fr-hidden')
@@ -192,11 +198,11 @@ forms.forEach((form) => {
                         progress.value = 0;
                         let jsonRes = JSON.parse(request.response)
                         if (request.status !== 200) {
+                            progress.value = 0;
+                            deleter.click();
                             resTextEl.innerText = jsonRes.error;
                             resTextEl.classList.remove('fr-hidden');
                             resTextEl.classList.add('fr-text-label--red-marianne');
-                            progress.value = 0;
-                            deleter.click()
                         } else {
                             resTextEl.innerText = jsonRes.titre
                             resTextEl.classList.remove('fr-hidden');
@@ -516,11 +522,39 @@ document?.querySelector('#signalement-affectation-form-submit')?.addEventListene
         }
     })
 })
+
 document?.querySelectorAll('.fr-input--file-signalement').forEach(inputFile => {
     inputFile.addEventListener('change', evt => {
-        evt.target.form.submit();
+        const files = evt.target.files;
+        let uploadValid = true;
+        Array.from(files).forEach((file) => {
+            if (file.size > 10 * 1024 * 1024) {
+                file.value = '';
+                uploadValid = false;
+
+                const div = document.createElement('div');
+                div.setAttribute('role', 'alert');
+                div.classList.add('fr-alert','fr-alert--error','fr-alert--sm');
+
+                const p = document.createElement('p');
+                p.textContent = 'Le fichier est trop lourd. Veuillez ré-essayer avec un fichier de 10Mo maximum.';
+                div.append(p);
+
+                const parent = document.querySelector('.fr-col-12.fr-col-md-9.fr-col-lg-10');
+                parent.prepend(div);
+
+                window.scrollTo(0, 0);
+                setTimeout(() => {
+                    div.remove();
+                }, 7000);
+            }
+        });
+        if (uploadValid) {
+            evt.target.form.submit();
+        }
     })
 })
+
 document?.querySelector('#partner_add_user,#situation_add_critere')?.addEventListeners('click touchdown', (event) => {
     event.preventDefault();
     let template, container, count, row, className;

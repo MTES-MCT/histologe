@@ -37,3 +37,4 @@ tmp/*
 !tmp/.gitgnore
 /scripts/legacy.sh
 /scripts/local/
+src/DataFixtures/sample-target.png
