@@ -4,6 +4,9 @@ namespace App\Form;
 
 use App\Entity\Partner;
 use App\Entity\Territory;
+use App\Entity\User;
+use App\Factory\UserFactory;
+use App\Manager\UserManager;
 use App\Repository\TerritoryRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -13,10 +16,16 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PartnerType extends AbstractType
 {
+    public function __construct(private UserManager $userManager, private UserFactory $userFactory)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $territory = false;
@@ -98,6 +107,39 @@ class PartnerType extends AbstractType
                 return explode(',', $tagsAsString);
             }
         ));
+
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+            /** @var Partner $partner */
+            $partner = $event->getData();
+            $form = $event->getForm();
+            if (\array_key_exists('users', $form->getExtraData())) {
+                $userList = $form->getExtraData()['users'];
+                foreach ($userList as $userId => $userData) {
+                    if ('new' !== $userId) {
+                        $partner->getUsers()->filter(function (User $user) use ($userId, $userData) {
+                            if ($user->getId() === $userId) {
+                                return $this->userManager->updateUserFromData($user, $userData);
+                            }
+                        });
+                    } else {
+                        foreach ($userData as $userDataItem) {
+                            /** @var User $user */
+                            $user = $this->userManager->findOneBy(['email' => $userDataItem['email']]);
+                            if (null !== $user && User::STATUS_ARCHIVE === $user->getStatut()) {
+                                $partner->getUsers()->filter(function (User $user) use ($userId, $userData) {
+                                    if ($user->getId() === $userId) {
+                                        return $this->userManager->updateUserFromData($user, $userData);
+                                    }
+                                });
+                            } else {
+                                $user = $this->userFactory->createInstanceFromArray($partner, $userDataItem);
+                                $partner->addUser($user);
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

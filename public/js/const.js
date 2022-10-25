@@ -76,20 +76,21 @@ const checkUserMail = (el) => {
     let formData = new FormData();
     formData.append('email', el.value)
     formData.append('_token', el.getAttribute('data-token'))
-    fetch('../checkmail', {
+    fetch('/bo/partner/checkmail', {
         method: 'POST',
         body: formData
     }).then(r => {
+        console.log(r.ok);
         if (!r.ok) {
             el.classList.add('fr-input--error');
             el.parentElement.classList.add('fr-input-group--error');
             el.parentElement.querySelector('p.fr-error-text').classList.remove('fr-hidden');
-            document.querySelector('#submit_btn_partenaire').disabled = true;
+            document.querySelector('#submit_btn_partner').disabled = true;
         } else {
             el.classList.remove('fr-input--error');
             el.parentElement.classList.remove('fr-input-group--error');
             el.parentElement.querySelector('p.fr-error-text').classList.add('fr-hidden');
-            document.querySelector('#submit_btn_partenaire').disabled = false;
+            document.querySelector('#submit_btn_partner').disabled = false;
         }
     })
 }

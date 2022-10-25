@@ -7,9 +7,10 @@ use App\Entity\User;
 use App\Form\PartnerType;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
-use App\Service\Partner\PartnerUserFormHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -58,9 +59,7 @@ class BackPartnerController extends AbstractController
     }
 
     #[Route('/new', name: 'back_partner_new', methods: ['GET', 'POST'])]
-    public function new(Request $request,
-                        EntityManagerInterface $entityManager,
-                        PartnerUserFormHandler $partnerUserFormHandler): Response
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('PARTNER_CREATE', null);
         $partner = new Partner();
@@ -70,7 +69,6 @@ class BackPartnerController extends AbstractController
             'route' => 'back_partner_new',
         ]);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             // Si la personne identifiée n'est pas super admin (donc qu'elle ne peut pas éditer),
             // on redéfinit le territoire avec celui de l'utilisateur en cours
@@ -78,16 +76,14 @@ class BackPartnerController extends AbstractController
                 $partner->setTerritory($this->getUser()->getTerritory());
             }
 
-            try {
-                $partnerUserFormHandler->handle($form, $partner);
-                $entityManager->persist($partner);
-                $entityManager->flush();
-            } catch (\Exception $exception) {
-                $this->addFlash('error', $exception->getMessage());
-            }
+            $entityManager->persist($partner);
+            $entityManager->flush();
+            $this->addFlash('success', 'Mise à jour partenaire effectuée.');
 
             return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
         }
+
+        $this->displayErrors($form);
 
         return $this->renderForm('back/partner/edit.html.twig', [
             'partner' => $partner,
@@ -99,8 +95,7 @@ class BackPartnerController extends AbstractController
     public function edit(
         Request $request,
         Partner $partner,
-        EntityManagerInterface $entityManager,
-        PartnerUserFormHandler $partnerUserFormHandler): Response
+        EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
         $form = $this->createForm(PartnerType::class, $partner, [
@@ -109,18 +104,15 @@ class BackPartnerController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            try {
-                $partnerUserFormHandler->handle($form, $partner);
-                $entityManager->flush();
-                $this->addFlash('success', 'Mise à jour partenaire effectuée.');
-            } catch (\Exception $exception) {
-                $this->addFlash('error', $exception->getMessage());
-            }
+            $entityManager->flush();
+            $this->addFlash('success', 'Mise à jour partenaire effectuée.');
 
             return $this->redirectToRoute('back_partner_edit', [
                 'id' => $partner->getId(),
             ]);
         }
+
+        $this->displayErrors($form);
 
         return $this->renderForm('back/partner/edit.html.twig', [
             'partner' => $partner,
@@ -189,5 +181,13 @@ class BackPartnerController extends AbstractController
         }
 
         return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    private function displayErrors(FormInterface $form): void
+    {
+        /** @var FormError $error */
+        foreach ($form->getErrors(true) as $error) {
+            $this->addFlash('error', $error->getMessage());
+        }
     }
 }
