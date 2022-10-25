@@ -89,6 +89,7 @@ export default defineComponent({
       this.sharedState.stats.countTerritory = requestResponse.count_territory
       this.sharedState.stats.percentValidation = requestResponse.percent_validation
       this.sharedState.stats.percentCloture = requestResponse.percent_cloture
+      this.sharedState.stats.countImported = requestResponse.count_imported
       this.sharedState.stats.countSignalementPerTerritory = requestResponse.signalement_per_territoire
       this.sharedState.stats.countSignalementPerMonth = requestResponse.signalement_per_month
       this.sharedState.stats.countSignalementPerStatut = requestResponse.signalement_per_statut

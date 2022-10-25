@@ -328,6 +328,9 @@ class Signalement
     #[ORM\JoinColumn(nullable: true)]
     private $territory;
 
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private $isImported;
+
     public function __construct()
     {
         $this->situations = new ArrayCollection();
@@ -341,6 +344,7 @@ class Signalement
         $this->scoreCreation = 0;
         $this->affectations = new ArrayCollection();
         $this->tags = new ArrayCollection();
+        $this->isImported = false;
     }
 
     public function getId(): ?int
@@ -1659,6 +1663,18 @@ class Signalement
     public function setTerritory(?Territory $territory): self
     {
         $this->territory = $territory;
+
+        return $this;
+    }
+
+    public function getIsImported(): ?bool
+    {
+        return $this->isImported;
+    }
+
+    public function setIsImported(?bool $isImported): self
+    {
+        $this->isImported = $isImported;
 
         return $this;
     }

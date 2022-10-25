@@ -53,6 +53,7 @@ class FrontStatistiquesController extends AbstractController
         $this->ajaxResult['count_territory'] = $globalStatistics['count_territory'];
         $this->ajaxResult['percent_validation'] = $globalStatistics['percent_validation'];
         $this->ajaxResult['percent_cloture'] = $globalStatistics['percent_cloture'];
+        $this->ajaxResult['count_imported'] = $globalStatistics['count_imported'];
 
         $this->ajaxResult['list_territoires'] = $this->listTerritoryStatisticProvider->getData();
         $this->ajaxResult['signalement_per_territoire'] = $this->territoryStatisticProvider->getData();

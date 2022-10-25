@@ -13,7 +13,7 @@ class SituationStatisticProvider
 
     public function getData(Territory|null $territory, int|null $year)
     {
-        $countPerSituations = $this->signalementRepository->countBySituation($territory, $year);
+        $countPerSituations = $this->signalementRepository->countBySituation($territory, $year, true);
 
         $buffer = [];
         foreach ($countPerSituations as $countPerSituation) {

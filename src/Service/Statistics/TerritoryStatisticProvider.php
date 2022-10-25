@@ -14,7 +14,7 @@ class TerritoryStatisticProvider
     {
         $buffer = [];
 
-        $countSignalementsByTerritories = $this->signalementRepository->countByTerritory();
+        $countSignalementsByTerritories = $this->signalementRepository->countByTerritory(true);
         foreach ($countSignalementsByTerritories as $countSignalementsByTerritory) {
             $buffer[$countSignalementsByTerritory['id']] = [
                 'name' => $countSignalementsByTerritory['name'],
