@@ -80,7 +80,6 @@ const checkUserMail = (el) => {
         method: 'POST',
         body: formData
     }).then(r => {
-        console.log(r.ok);
         if (!r.ok) {
             el.classList.add('fr-input--error');
             el.parentElement.classList.add('fr-input-group--error');
