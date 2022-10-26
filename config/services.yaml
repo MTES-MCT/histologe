@@ -78,3 +78,7 @@ services:
     App\Command\MigrateLegacyCommand:
         arguments:
             $hostUrl: '%env(resolve:HISTOLOGE_URL)%'
+
+    App\EventSubscriber\UserAddedSubscriber:
+        tags:
+            - name: 'doctrine.event_subscriber'

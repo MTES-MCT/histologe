@@ -3,10 +3,12 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\User;
+use App\EventSubscriber\UserAddedSubscriber;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -17,7 +19,9 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
     public function __construct(
         private TerritoryRepository $territoryRepository,
         private PartnerRepository $partnerRepository,
-        private UserPasswordHasherInterface $hasher
+        private UserPasswordHasherInterface $hasher,
+        private EntityManagerInterface $entityManager,
+        private UserAddedSubscriber $userAddedSubscriber
     ) {
     }
 
@@ -32,6 +36,9 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
 
     private function loadUsers(ObjectManager $manager, array $row): void
     {
+        // do not send activation mail on loading fixtures
+        $this->entityManager->getEventManager()->removeEventSubscriber($this->userAddedSubscriber);
+
         $faker = Factory::create();
         $user = (new User())
             ->setRoles(json_decode($row['roles'], true))
