@@ -19,6 +19,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class PartnerType extends AbstractType
 {
@@ -112,6 +114,7 @@ class PartnerType extends AbstractType
             /** @var Partner $partner */
             $partner = $event->getData();
             $form = $event->getForm();
+
             if (\array_key_exists('users', $form->getExtraData())) {
                 $userList = $form->getExtraData()['users'];
                 foreach ($userList as $userId => $userData) {
@@ -125,13 +128,7 @@ class PartnerType extends AbstractType
                         foreach ($userData as $userDataItem) {
                             /** @var User $user */
                             $user = $this->userManager->findOneBy(['email' => $userDataItem['email']]);
-                            if (null !== $user && User::STATUS_ARCHIVE === $user->getStatut()) {
-                                $partner->getUsers()->filter(function (User $user) use ($userId, $userData) {
-                                    if ($user->getId() === $userId) {
-                                        return $this->userManager->updateUserFromData($user, $userData);
-                                    }
-                                });
-                            } else {
+                            if (null === $user) {
                                 $user = $this->userFactory->createInstanceFromArray($partner, $userDataItem);
                                 $partner->addUser($user);
                             }
@@ -150,6 +147,25 @@ class PartnerType extends AbstractType
             'territory' => null,
             'route' => null,
             'can_edit_territory' => true,
+            'constraints' => [
+                new Assert\Callback([$this, 'validateUserEmailList']),
+            ],
         ]);
+    }
+
+    public function validateUserEmailList(mixed $value, ExecutionContextInterface $context)
+    {
+        if ($value instanceof Partner) {
+            $usersEmail = array_map(function ($user) {
+                /* @var User $user */
+                return $user->getEmail();
+            }, $value->getUsers()->toArray());
+            $uniqueUsersEmail = array_unique($usersEmail);
+
+            $conflictsEmail = array_diff_assoc($usersEmail, $uniqueUsersEmail);
+            if (\count($conflictsEmail) > 0) {
+                $context->addViolation('Les addresses emails doivent être unique');
+            }
+        }
     }
 }
