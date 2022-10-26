@@ -164,7 +164,7 @@ class PartnerType extends AbstractType
 
             $conflictsEmail = array_diff_assoc($usersEmail, $uniqueUsersEmail);
             if (\count($conflictsEmail) > 0) {
-                $context->addViolation('Les addresses emails doivent être unique');
+                $context->addViolation('Les addresses emails doivent être unique.');
             }
         }
     }
