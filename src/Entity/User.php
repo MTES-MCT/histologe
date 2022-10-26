@@ -57,9 +57,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $partner;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\NotBlank]
     private $nom;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\NotBlank]
     private $prenom;
 
     #[ORM\Column(type: 'integer')]
