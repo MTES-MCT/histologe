@@ -30,7 +30,7 @@ class BackPartnerControllerTest extends WebTestCase
                 'partner[nom]' => $faker->company(),
                 'partner[email]' => $faker->companyEmail(),
                 'partner[isCommune]' => 0,
-                'partner[esaboraUrl]' => 'http://api.random-partner.com',
+                'partner[esaboraUrl]' => 'https://api.random-partner.com',
                 'partner[esaboraToken]' => 'token',
             ]
         );
