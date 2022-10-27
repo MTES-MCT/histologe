@@ -46,6 +46,7 @@ class Partner
     private $email;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Url]
     private $esaboraUrl;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
