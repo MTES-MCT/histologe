@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\EventSubscriber\UserAddedSubscriber;
 use App\Factory\UserFactory;
 use App\Manager\PartnerManager;
 use App\Manager\TerritoryManager;
@@ -53,7 +54,8 @@ class AddUserCommand extends Command
         private UserFactory $userFactory,
         private UserManager $userManager,
         private PartnerManager $partnerManager,
-        private TerritoryManager $territoryManager
+        private TerritoryManager $territoryManager,
+        private UserAddedSubscriber $userAddedSubscriber,
     ) {
         parent::__construct();
     }
@@ -103,7 +105,7 @@ class AddUserCommand extends Command
             $question = new ChoiceQuestion(
                 'Please select a role (default: ROLE_USER_PARTNER)',
                 User::ROLES,
-                User::ROLES[0]
+                User::ROLES['Super Admin']
             );
 
             $role = $helper->ask($input, $output, $question);
@@ -149,6 +151,7 @@ class AddUserCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->entityManager->getEventManager()->removeEventSubscriber($this->userAddedSubscriber);
         $partner = $input->getArgument('partner');
         $territory = $input->getArgument('territory');
 

@@ -7,14 +7,13 @@ use App\Entity\User;
 use App\Form\PartnerType;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
-use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
 #[Route('/bo/partner')]
 class BackPartnerController extends AbstractController
@@ -60,7 +59,7 @@ class BackPartnerController extends AbstractController
     }
 
     #[Route('/new', name: 'back_partner_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, LoginLinkHandlerInterface $loginLinkHandler, NotificationService $notificationService): Response
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('PARTNER_CREATE', null);
         $partner = new Partner();
@@ -70,19 +69,21 @@ class BackPartnerController extends AbstractController
             'route' => 'back_partner_new',
         ]);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             // Si la personne identifiée n'est pas super admin (donc qu'elle ne peut pas éditer),
             // on redéfinit le territoire avec celui de l'utilisateur en cours
             if (!$this->getUser()->isSuperAdmin()) {
                 $partner->setTerritory($this->getUser()->getTerritory());
             }
-            self::checkFormExtraData($form, $partner, $entityManager, $loginLinkHandler, $notificationService);
+
             $entityManager->persist($partner);
             $entityManager->flush();
+            $this->addFlash('success', 'Mise à jour partenaire effectuée.');
 
             return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
         }
+
+        $this->displayErrors($form);
 
         return $this->renderForm('back/partner/edit.html.twig', [
             'partner' => $partner,
@@ -91,7 +92,10 @@ class BackPartnerController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'back_partner_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Partner $partner, EntityManagerInterface $entityManager, LoginLinkHandlerInterface $loginLinkHandler, NotificationService $notificationService): Response
+    public function edit(
+        Request $request,
+        Partner $partner,
+        EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
         $form = $this->createForm(PartnerType::class, $partner, [
@@ -100,11 +104,15 @@ class BackPartnerController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            self::checkFormExtraData($form, $partner, $entityManager, $loginLinkHandler, $notificationService);
             $entityManager->flush();
+            $this->addFlash('success', 'Mise à jour partenaire effectuée.');
 
-            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_edit', [
+                'id' => $partner->getId(),
+            ]);
         }
+
+        $this->displayErrors($form);
 
         return $this->renderForm('back/partner/edit.html.twig', [
             'partner' => $partner,
@@ -175,44 +183,11 @@ class BackPartnerController extends AbstractController
         return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    private static function checkFormExtraData(FormInterface $form, Partner $partner, EntityManagerInterface $entityManager, LoginLinkHandlerInterface $loginLinkHandler, NotificationService $notificationService)
+    private function displayErrors(FormInterface $form): void
     {
-        if (isset($form->getExtraData()['users'])) {
-            foreach ($form->getExtraData()['users'] as $id => $userData) {
-                if ('new' !== $id) {
-                    $userPartner = $partner->getUsers()->filter(function (User $user) use ($id) {
-                        if ($user->getId() === $id) {
-                            return $user;
-                        }
-                    });
-                    if (!$userPartner->isEmpty()) {
-                        $user = $userPartner->first();
-                        self::setUserData($user, $userData['nom'], $userData['prenom'], $userData['roles'], $userData['email'], $userData['isGenerique'], $userData['isMailingActive']);
-                        $entityManager->persist($user);
-                    }
-                } else {
-                    foreach ($userData as $newUserData) {
-                        $user = new User();
-                        $user->setPartner($partner);
-                        $user->setTerritory($partner->getTerritory());
-                        self::setUserData($user, $newUserData['nom'], $newUserData['prenom'], $newUserData['roles'], $newUserData['email'], $newUserData['isGenerique'], $newUserData['isMailingActive']);
-                        $entityManager->persist($user);
-                        $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
-                        $loginLink = $loginLinkDetails->getUrl();
-                        $notificationService->send(NotificationService::TYPE_ACCOUNT_ACTIVATION, $user->getEmail(), ['link' => $loginLink], $user->getTerritory());
-                    }
-                }
-            }
+        /** @var FormError $error */
+        foreach ($form->getErrors(true) as $error) {
+            $this->addFlash('error', $error->getMessage());
         }
-    }
-
-    private static function setUserData(User $user, mixed $nom, mixed $prenom, mixed $roles, mixed $email, bool $isGenerique, bool $isMailingActive)
-    {
-        $user->setNom($nom);
-        $user->setPrenom($prenom);
-        $user->setIsGenerique($isGenerique);
-        $user->setIsMailingActive($isMailingActive);
-        $user->setRoles([$roles]);
-        $user->setEmail($email);
     }
 }

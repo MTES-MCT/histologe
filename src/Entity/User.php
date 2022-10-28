@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[UniqueEntity('email')]
+#[UniqueEntity('email', message: '{{ value }} existe déja, merci de saisir un nouvel email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const STATUS_INACTIVE = 0;
@@ -57,9 +57,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $partner;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\NotBlank]
     private $nom;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\NotBlank]
     private $prenom;
 
     #[ORM\Column(type: 'integer')]

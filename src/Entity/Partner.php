@@ -25,7 +25,8 @@ class Partner
     #[Assert\NotBlank]
     private $nom;
 
-    #[ORM\OneToMany(mappedBy: 'partner', targetEntity: User::class)]
+    #[ORM\OneToMany(mappedBy: 'partner', targetEntity: User::class, cascade: ['persist'])]
+    #[Assert\Valid]
     private $users;
 
     #[ORM\Column(type: 'boolean')]
@@ -45,6 +46,7 @@ class Partner
     private $email;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Url]
     private $esaboraUrl;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]

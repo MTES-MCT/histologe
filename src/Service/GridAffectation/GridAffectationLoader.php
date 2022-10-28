@@ -3,12 +3,14 @@
 namespace App\Service\GridAffectation;
 
 use App\Entity\Territory;
+use App\Entity\User;
 use App\Factory\PartnerFactory;
 use App\Factory\UserFactory;
 use App\Manager\ManagerInterface;
 use App\Manager\PartnerManager;
 use App\Manager\UserManager;
 use App\Service\Parser\CsvParser;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class GridAffectationLoader
@@ -57,6 +59,8 @@ class GridAffectationLoader
                     email: $row[GridAffectationHeader::USER_EMAIL]
                 );
 
+                $this->throwException($user);
+
                 $this->userManager->save($user, false);
                 ++$this->metadata['nb_users'];
             }
@@ -68,5 +72,16 @@ class GridAffectationLoader
     public function getMetadata(): array
     {
         return $this->metadata;
+    }
+
+    private function throwException(User $user): void
+    {
+        /** @var ConstraintViolationList $errors */
+        $errors = $this->validator->validate($user);
+        if (\count($errors) > 0) {
+            foreach ($errors as $error) {
+                throw new \Exception($error->getMessage());
+            }
+        }
     }
 }
