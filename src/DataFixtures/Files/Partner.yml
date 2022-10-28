@@ -56,6 +56,13 @@ partners:
     insee: "[\"01173\"]"
     territory: "Ain"
   -
+    nom: "Gex 2"
+    email: "partenaire-01-03@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Ain"
+  -
     nom: "Vecchio Porto"
     email: "partenaire-01-2A@histologe.fr"
     is_archive: 0

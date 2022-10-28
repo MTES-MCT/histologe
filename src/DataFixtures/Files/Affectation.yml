@@ -22,3 +22,19 @@ affectations:
     affected_by: "admin-territoire-01@histologe.fr"
     motif_cloture: "LOCATAIRE PARTI"
     territory: "Ain"
+  -
+    signalement: 2022-12
+    partner: "partenaire-01-03@histologe.fr"
+    statut: 0
+    answered_by: ""
+    affected_by: "admin-territoire-01@histologe.fr"
+    motif_cloture: ""
+    territory: "Ain"
+  -
+    signalement: 2022-13
+    partner: "partenaire-01-03@histologe.fr"
+    statut: 0
+    answered_by: ""
+    affected_by: "admin-territoire-01@histologe.fr"
+    motif_cloture: ""
+    territory: "Ain"

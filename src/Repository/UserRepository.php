@@ -64,4 +64,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         return $queryBuilder->getQuery()->getResult();
     }
+
+    public function findInactiveWithNbAffectationPending(): array
+    {
+        $connection = $this->getEntityManager()->getConnection();
+
+        $sql = 'SELECT u.email, count(*) as nb_signalements, GROUP_CONCAT(a.signalement_id) as signalements
+                FROM user u
+                LEFT JOIN affectation a  on a.partner_id = u.partner_id and a.statut = 0
+                WHERE u.statut = 0
+                GROUP BY u.email
+                ORDER BY nb_signalements desc';
+
+        $statetment = $connection->prepare($sql);
+
+        return $statetment->executeQuery()->fetchAllAssociative();
+    }
 }

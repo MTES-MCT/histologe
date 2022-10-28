@@ -128,3 +128,19 @@ users:
     is_generique: 0
     is_mailing_active: 1
     territory: "Partner La réunion"
+  -
+    email: usager-01-01@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Gex 2"
+    statut: 0
+    is_generique: 0
+    is_mailing_active: 1
+    territory: "Ain"
+  -
+    email: usager-01-02@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Gex 2"
+    statut: 0
+    is_generique: 0
+    is_mailing_active: 1
+    territory: "Ain"
