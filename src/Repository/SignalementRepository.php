@@ -81,6 +81,8 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->select('COUNT(s.id)');
         $qb->andWhere('s.statut != :statutArchived')
             ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
+        $qb->andWhere('s.statut != :statutRefused')
+            ->setParameter('statutRefused', Signalement::STATUS_REFUSED);
 
         if ($removeImported) {
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
