@@ -1,10 +1,13 @@
 {% extends 'emails/base_email.html.twig' %}
 
 {% block body %}
-
     <p>Bonjour,</p>
-    {% if reminder is not defined %}
         <p>Votre compte Histologe vous attend !</p>
+    {% if reminder is defined %}
+        {% if nb_signalements != 0 %}
+
+            <p><strong>{{ (nb_signalements > 1) ?  nb_signalements ~ ' signalements sont ' : nb_signalements  ~' signalement est ' }} en attente sur votre compte.</strong></p>
+        {% endif %}
         <p>Cliquez sur le bouton ci-dessous pour activer votre compte et paramétrer votre mot de passe.</p>
     {% else %}
         <p>Vous n'avez toujours pas activer votre compte depuis sa création, si vous le souhaitez, cliquez sur le bouton

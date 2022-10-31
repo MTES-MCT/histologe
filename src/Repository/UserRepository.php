@@ -69,15 +69,23 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $connection = $this->getEntityManager()->getConnection();
 
-        $sql = 'SELECT u.email, count(*) as nb_signalements, GROUP_CONCAT(a.signalement_id) as signalements
+        $sql = 'SELECT u.email, count(*) as nb_signalements, u.created_at, GROUP_CONCAT(a.signalement_id) as signalements
                 FROM user u
                 LEFT JOIN affectation a  on a.partner_id = u.partner_id and a.statut = 0
-                WHERE u.statut = 0
-                GROUP BY u.email
+                WHERE u.statut = 0 AND DATE(u.created_at) <= (DATE(NOW()) - INTERVAL 10 DAY)
+                GROUP BY u.email, u.created_at
                 ORDER BY nb_signalements desc';
 
         $statetment = $connection->prepare($sql);
 
-        return $statetment->executeQuery()->fetchAllAssociative();
+        $pendingUsers = $statetment->executeQuery()->fetchAllAssociative();
+
+        return array_map(function ($pendingUser) {
+            return [
+                'email' => $pendingUser['email'],
+                'nb_signalements' => (!empty($pendingUser['signalements'])) ? (int) $pendingUser['nb_signalements'] : 0,
+                'created_at' => $pendingUser['created_at'],
+            ];
+        }, $pendingUsers);
     }
 }

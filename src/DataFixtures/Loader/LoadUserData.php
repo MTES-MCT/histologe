@@ -31,7 +31,12 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
         foreach ($userRows['users'] as $row) {
             $this->loadUsers($manager, $row);
         }
+
         $manager->flush();
+
+        $connection = $this->entityManager->getConnection();
+        $sql = 'UPDATE user SET created_at = DATE(created_at) - INTERVAL 15 DAY';
+        $connection->prepare($sql)->executeQuery();
     }
 
     private function loadUsers(ObjectManager $manager, array $row): void

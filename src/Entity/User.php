@@ -51,6 +51,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotEqualTo(propertyPath: 'email', message: 'Votre mot de passe ne doit pas contenir votre email.')]
     private $password;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $token = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $tokenExpiredAt = null;
+
     #[ORM\OneToMany(mappedBy: 'modifiedBy', targetEntity: Signalement::class)]
     private $signalementsModified;
 
@@ -383,6 +389,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTerritory(?Territory $territory): self
     {
         $this->territory = $territory;
+
+        return $this;
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(?string $token): self
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    public function getTokenExpiredAt(): ?DateTimeImmutable
+    {
+        return $this->tokenExpiredAt;
+    }
+
+    public function setTokenExpiredAt(?DateTimeImmutable $tokenExpiredAt): self
+    {
+        $this->tokenExpiredAt = $tokenExpiredAt;
 
         return $this;
     }
