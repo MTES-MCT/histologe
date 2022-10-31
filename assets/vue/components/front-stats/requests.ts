@@ -9,7 +9,7 @@ export const requests = {
     const ajaxUrl = store.props.ajaxurl + '?territoire=' + store.state.filters.territoire
 
     axios
-      .get(ajaxUrl, { timeout: 10000 })
+      .get(ajaxUrl, { timeout: 15000 })
       .then(response => {
         const responseData = response.data
         console.log('then')
