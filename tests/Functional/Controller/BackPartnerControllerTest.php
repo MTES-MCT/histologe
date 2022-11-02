@@ -4,11 +4,14 @@ namespace App\Tests\Functional\Controller;
 
 use App\Repository\UserRepository;
 use Faker\Factory;
+use Symfony\Bundle\FrameworkBundle\Test\MailerAssertionsTrait;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
 class BackPartnerControllerTest extends WebTestCase
 {
+    use MailerAssertionsTrait;
+
     public function testPartnerFormSubmit(): void
     {
         $faker = Factory::create();
@@ -34,6 +37,29 @@ class BackPartnerControllerTest extends WebTestCase
                 'partner[esaboraToken]' => 'token',
             ]
         );
+
+        $this->assertResponseRedirects('/bo/partner/');
+    }
+
+    public function testDeleteUserAccount(): void
+    {
+        $client = static::createClient();
+        $client->enableProfiler();
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $admin = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $client->loginUser($admin);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+
+        $user = $userRepository->findOneBy(['email' => 'usager-01-974@histologe.fr']);
+        $userId = $user->getId();
+
+        $crawler = $client->request('POST', $router->generate('back_partner_user_delete', [
+            'user' => $userId,
+        ]));
 
         $this->assertResponseRedirects('/bo/partner/');
     }
