@@ -23,7 +23,6 @@ class RemindInactiveUserCommandTest extends KernelTestCase
 
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('6 users has been notified', $output);
-
         $this->assertEmailCount(6);
     }
 }
