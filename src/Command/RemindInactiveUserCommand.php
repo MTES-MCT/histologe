@@ -50,7 +50,6 @@ class RemindInactiveUserCommand extends Command
             return Command::SUCCESS;
         }
 
-        /* @var User $user */
         foreach ($userList as $userItem) {
             $user = $this->userManager->loadUserToken($userItem['email']);
             $this->userManager->save($user);
