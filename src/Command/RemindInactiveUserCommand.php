@@ -43,8 +43,9 @@ class RemindInactiveUserCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $userList = $this->userManager->getRepository()->findInactiveWithNbAffectationPending();
+        $nbUsers = \count($userList);
         if ($input->getOption('debug')) {
-            $io->info(sprintf('%s users will be notified', \count($userList)));
+            $io->info(sprintf('%s users will be notified', $nbUsers));
 
             return Command::SUCCESS;
         }
@@ -67,7 +68,7 @@ class RemindInactiveUserCommand extends Command
             );
         }
 
-        $io->success(sprintf('%s users will be notified', \count($userList)));
+        $io->success(sprintf('%s users has been notified', \count($userList)));
 
         return Command::SUCCESS;
     }

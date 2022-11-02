@@ -144,3 +144,4 @@ users:
     is_generique: 0
     is_mailing_active: 1
     territory: "Ain"
+    token: 00000000-0000-0000-0000-000000000001

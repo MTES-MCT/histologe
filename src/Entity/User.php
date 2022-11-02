@@ -7,10 +7,12 @@ use App\Repository\UserRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -35,6 +37,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private $id;
+
+    #[ORM\Column(type: Types::GUID)]
+    private $uuid;
 
     #[ORM\Column(type: 'string', length: 180, unique: false)]
     #[Assert\Email]
@@ -100,6 +105,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->suivis = new ArrayCollection();
         $this->statut = self::STATUS_INACTIVE;
         $this->notifications = new ArrayCollection();
+        $this->uuid = Uuid::v4();
     }
 
     public function getId(): ?int
@@ -413,6 +419,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTokenExpiredAt(?DateTimeImmutable $tokenExpiredAt): self
     {
         $this->tokenExpiredAt = $tokenExpiredAt;
+
+        return $this;
+    }
+
+    public function getUuid(): string
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(string $uuid): self
+    {
+        $this->uuid = $uuid;
 
         return $this;
     }

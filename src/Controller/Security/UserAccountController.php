@@ -137,8 +137,17 @@ class UserAccountController extends AbstractController
         }
 
         if ($request->isMethod('POST') &&
-            $this->isCsrfTokenValid('create_password_'.$user->getId(), $request->get('_csrf_token'))
+            $this->isCsrfTokenValid('create_password_'.$user->getUuid(), $request->get('_csrf_token'))
         ) {
+            if ($request->get('password') !== $request->get('password-repeat')) {
+                $this->addFlash('error', 'Les mots de passes ne correspondent pas.');
+
+                return $this->render('security/reset_password_new.html.twig', [
+                    'email' => $user->getEmail(),
+                    'uuid' => $user->getUuid(),
+                ]);
+            }
+
             $user = $userManager->resetPassword($user, $request->get('password'));
             $this->addFlash('success', 'Votre compte est maintenant activé !');
 
@@ -151,7 +160,7 @@ class UserAccountController extends AbstractController
 
         return $this->render('security/reset_password_new.html.twig', [
             'email' => $user->getEmail(),
-            'id' => $user->getId(),
+            'uuid' => $user->getUuid(),
         ]);
     }
 }
