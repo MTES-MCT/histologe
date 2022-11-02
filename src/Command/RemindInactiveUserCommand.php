@@ -34,7 +34,7 @@ class RemindInactiveUserCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addOption('--debug', null, InputOption::VALUE_NONE, 'Check how many maisl to send')
+            ->addOption('--debug', null, InputOption::VALUE_NONE, 'Check how many emails will be send')
         ;
     }
 
