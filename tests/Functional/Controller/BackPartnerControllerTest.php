@@ -4,14 +4,11 @@ namespace App\Tests\Functional\Controller;
 
 use App\Repository\UserRepository;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\MailerAssertionsTrait;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
 class BackPartnerControllerTest extends WebTestCase
 {
-    use MailerAssertionsTrait;
-
     public function testPartnerFormSubmit(): void
     {
         $faker = Factory::create();
@@ -44,7 +41,6 @@ class BackPartnerControllerTest extends WebTestCase
     public function testDeleteUserAccount(): void
     {
         $client = static::createClient();
-        $client->enableProfiler();
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
