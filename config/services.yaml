@@ -12,6 +12,8 @@ parameters:
     mail_attachment_dir: '%kernel.project_dir%/templates/emails/attachment/'
     admin_email: '%env(resolve:ADMIN_EMAIL)%'
     notifications_email: '%env(resolve:NOTIFICATIONS_EMAIL)%'
+    host_url: '%env(resolve:HISTOLOGE_URL)%'
+    token_lifetime: '1 day'
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -82,3 +84,6 @@ services:
     App\EventSubscriber\UserAddedSubscriber:
         tags:
             - name: 'doctrine.event_subscriber'
+
+    App\Service\Token\TokenGeneratorInterface:
+        alias: App\Service\Token\TokenGenerator
