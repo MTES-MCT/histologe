@@ -4,14 +4,14 @@ namespace App\Manager;
 
 use App\Entity\Partner;
 use App\Entity\User;
+use App\Exception\User\UserEmailNotFoundException;
 use App\Service\NotificationService;
 use App\Service\Token\TokenGeneratorInterface;
-use App\Exception\User\UserEmailNotFoundException;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
 class UserManager extends AbstractManager
 {

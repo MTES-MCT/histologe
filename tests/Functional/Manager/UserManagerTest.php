@@ -41,7 +41,6 @@ class UserManagerTest extends KernelTestCase
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
 
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
-
     }
 
     public function testSwitchActiveUserToAnotherPartner()
