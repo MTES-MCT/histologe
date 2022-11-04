@@ -140,7 +140,7 @@ class UserAccountController extends AbstractController
             $this->isCsrfTokenValid('create_password_'.$user->getUuid(), $request->get('_csrf_token'))
         ) {
             if ($request->get('password') !== $request->get('password-repeat')) {
-                $this->addFlash('error', 'Les mots de passes ne correspondent pas.');
+                $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
 
                 return $this->render('security/reset_password_new.html.twig', [
                     'email' => $user->getEmail(),
