@@ -180,6 +180,8 @@ forms.forEach((form) => {
                     let finish_submit_btn = document.querySelector('#form_finish_submit');
                     request.open('POST', event.target.getAttribute('data-handle-url'));
                     request.upload.addEventListener('progress', function (e) {
+                        console.log('progress');
+                        console.log(e);
                         totalProgress.classList.remove('fr-hidden')
                         finish_submit_btn.disabled = true;
                         finish_submit_btn.innerHTML = 'Téléversement en cours, veuillez patienter....';
@@ -193,6 +195,8 @@ forms.forEach((form) => {
                         progress.value = percent_completed;
                     });
                     request.addEventListener('load', function (e) {
+                        console.log('load');
+                        console.log(e);
                         event.target.parentElement.classList.remove('fr-fi-refresh-line');
                         [preview, deleter].forEach(el => el?.classList?.remove('fr-hidden'));
                         progress.value = 0;
