@@ -166,7 +166,7 @@ class FrontSignalementController extends AbstractController
                 'zip' => $postalCodeHomeChecker->mapZip($signalement->getCpOccupant()), 'isActive' => 1, ])
             );
 
-            if (null === $signalement->getTerritory()) {
+            if (null === $signalement->getTerritory() || !$postalCodeHomeChecker->isAuthorizedInseeCode($signalement->getTerritory(), $signalement->getInseeOccupant())) {
                 return $this->json(['response' => 'Territory is inactive'], Response::HTTP_BAD_REQUEST);
             }
             $signalement->setReference($referenceGenerator->generate($signalement->getTerritory()));
