@@ -56,6 +56,7 @@ class UserManager extends AbstractManager
             $user->getEmail(), [
             'btntext' => User::STATUS_ACTIVE === $user->getStatut() ? 'Accéder à mon compte' : 'Activer mon compte',
             'link' => $link,
+            'user_status' => $user->getStatut(),
             'partner_name' => $partner->getNom(),
         ],
             $user->getTerritory()
