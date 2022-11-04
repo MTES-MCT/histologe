@@ -3,8 +3,11 @@
 namespace App\Controller\Security;
 
 use App\Entity\User;
+use App\Manager\UserManager;
 use App\Repository\UserRepository;
+use App\Security\BackOfficeAuthenticator;
 use App\Service\NotificationService;
+use App\Service\Token\ActivationTokenGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -13,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
 class UserAccountController extends AbstractController
@@ -113,6 +117,50 @@ class UserAccountController extends AbstractController
 
         return $this->render('security/login_creation_mdp.html.twig', [
             'title' => $title,
+        ]);
+    }
+
+    #[Route(path: '/activation-compte/{token}', name: 'activate_account', requirements: ['token' => '.+'])]
+    public function resetPassword(
+        Request $request,
+        UserManager $userManager,
+        ActivationTokenGenerator $activationTokenGenerator,
+        UserAuthenticatorInterface $userAuthenticator,
+        BackOfficeAuthenticator $authenticator,
+        string $token): RedirectResponse|Response
+    {
+        /** @var User $user */
+        if (false === ($user = $activationTokenGenerator->validateToken($token))) {
+            $this->addFlash('error', 'Votre lien est invalide ou expiré');
+
+            return $this->redirectToRoute('app_login');
+        }
+
+        if ($request->isMethod('POST') &&
+            $this->isCsrfTokenValid('create_password_'.$user->getUuid(), $request->get('_csrf_token'))
+        ) {
+            if ($request->get('password') !== $request->get('password-repeat')) {
+                $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
+
+                return $this->render('security/reset_password_new.html.twig', [
+                    'email' => $user->getEmail(),
+                    'uuid' => $user->getUuid(),
+                ]);
+            }
+
+            $user = $userManager->resetPassword($user, $request->get('password'));
+            $this->addFlash('success', 'Votre compte est maintenant activé !');
+
+            return $userAuthenticator->authenticateUser(
+                $user,
+                $authenticator,
+                $request
+            );
+        }
+
+        return $this->render('security/reset_password_new.html.twig', [
+            'email' => $user->getEmail(),
+            'uuid' => $user->getUuid(),
         ]);
     }
 }

@@ -2,20 +2,26 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\TimestampableTrait;
 use App\Repository\UserRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity('email', message: '{{ value }} existe déja, merci de saisir un nouvel email')]
+#[ORM\HasLifecycleCallbacks()]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    use TimestampableTrait;
+
     public const STATUS_INACTIVE = 0;
     public const STATUS_ACTIVE = 1;
     public const STATUS_ARCHIVE = 2;
@@ -32,6 +38,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'integer')]
     private $id;
 
+    #[ORM\Column(type: Types::GUID)]
+    private $uuid;
+
     #[ORM\Column(type: 'string', length: 180, unique: false)]
     #[Assert\Email]
     #[Assert\NotBlank]
@@ -46,6 +55,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotCompromisedPassword(message: 'Ce mot de passe est compromis, veuillez en choisir un autre.')]
     #[Assert\NotEqualTo(propertyPath: 'email', message: 'Votre mot de passe ne doit pas contenir votre email.')]
     private $password;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $token = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $tokenExpiredAt = null;
 
     #[ORM\OneToMany(mappedBy: 'modifiedBy', targetEntity: Signalement::class)]
     private $signalementsModified;
@@ -90,6 +105,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->suivis = new ArrayCollection();
         $this->statut = self::STATUS_INACTIVE;
         $this->notifications = new ArrayCollection();
+        $this->uuid = Uuid::v4();
     }
 
     public function getId(): ?int
@@ -379,6 +395,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTerritory(?Territory $territory): self
     {
         $this->territory = $territory;
+
+        return $this;
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(?string $token): self
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    public function getTokenExpiredAt(): ?DateTimeImmutable
+    {
+        return $this->tokenExpiredAt;
+    }
+
+    public function setTokenExpiredAt(?DateTimeImmutable $tokenExpiredAt): self
+    {
+        $this->tokenExpiredAt = $tokenExpiredAt;
+
+        return $this;
+    }
+
+    public function getUuid(): string
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(string $uuid): self
+    {
+        $this->uuid = $uuid;
 
         return $this;
     }

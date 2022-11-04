@@ -90,7 +90,7 @@ users:
   -
     email: partenaire-13-04@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
-    partner: "SCHS Istres"
+    partner: "Istres"
     statut: 0
     is_generique: 0
     is_mailing_active: 0
@@ -128,3 +128,20 @@ users:
     is_generique: 0
     is_mailing_active: 1
     territory: "Partner La réunion"
+  -
+    email: usager-01-01@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Gex 2"
+    statut: 0
+    is_generique: 0
+    is_mailing_active: 1
+    territory: "Ain"
+  -
+    email: usager-01-02@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Gex 2"
+    statut: 0
+    is_generique: 0
+    is_mailing_active: 1
+    territory: "Ain"
+    token: 00000000-0000-0000-0000-000000000001

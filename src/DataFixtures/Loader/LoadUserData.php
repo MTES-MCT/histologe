@@ -11,6 +11,7 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -21,7 +22,8 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
         private PartnerRepository $partnerRepository,
         private UserPasswordHasherInterface $hasher,
         private EntityManagerInterface $entityManager,
-        private UserAddedSubscriber $userAddedSubscriber
+        private UserAddedSubscriber $userAddedSubscriber,
+        private ParameterBagInterface $parameterBag,
     ) {
     }
 
@@ -31,7 +33,12 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
         foreach ($userRows['users'] as $row) {
             $this->loadUsers($manager, $row);
         }
+
         $manager->flush();
+
+        $connection = $this->entityManager->getConnection();
+        $sql = 'UPDATE user SET created_at = DATE(created_at) - INTERVAL 15 DAY';
+        $connection->prepare($sql)->executeQuery();
     }
 
     private function loadUsers(ObjectManager $manager, array $row): void
@@ -50,6 +57,14 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
             ->setEmail($row['email'])
             ->setPrenom($faker->firstName())
             ->setNom($faker->lastName());
+
+        if (isset($row['token'])) {
+            $user
+                ->setToken($row['token'])
+                ->setTokenExpiredAt(
+                    (new \DateTimeImmutable())->modify($this->parameterBag->get('token_lifetime'))
+                );
+        }
 
         $password = $this->hasher->hashPassword($user, 'histologe');
         $user->setPassword($password);

@@ -5,9 +5,13 @@ namespace App\Manager;
 use App\Entity\Partner;
 use App\Entity\User;
 use App\Service\NotificationService;
+use App\Service\Token\TokenGeneratorInterface;
+use App\Exception\User\UserEmailNotFoundException;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
 class UserManager extends AbstractManager
 {
@@ -15,7 +19,10 @@ class UserManager extends AbstractManager
         private LoginLinkHandlerInterface $loginLinkHandler,
         private NotificationService $notificationService,
         private UrlGeneratorInterface $urlGenerator,
-        ManagerRegistry $managerRegistry,
+        private PasswordHasherFactoryInterface $passwordHasherFactory,
+        private TokenGeneratorInterface $tokenGenerator,
+        private ParameterBagInterface $parameterBag,
+        protected ManagerRegistry $managerRegistry,
         string $entityName = User::class)
     {
         parent::__construct($managerRegistry, $entityName);
@@ -61,5 +68,35 @@ class UserManager extends AbstractManager
         ],
             $user->getTerritory()
         );
+    }
+
+    public function resetPassword(User $user, string $password): User
+    {
+        $password = $this->passwordHasherFactory->getPasswordHasher($user)->hash($password);
+        $user
+            ->setPassword($password)
+            ->setToken(null)
+            ->setStatut(User::STATUS_ACTIVE)
+            ->setTokenExpiredAt(null);
+
+        $this->save($user);
+
+        return $user;
+    }
+
+    public function loadUserToken(string $email): User
+    {
+        /** @var User $user */
+        $user = $this->findOneBy(['email' => $email]);
+        if (null === $user) {
+            throw new UserEmailNotFoundException($email);
+        }
+        $user
+            ->setToken($this->tokenGenerator->generateToken())
+            ->setTokenExpiredAt(
+                (new \DateTimeImmutable())->modify($this->parameterBag->get('token_lifetime'))
+            );
+
+        return $user;
     }
 }

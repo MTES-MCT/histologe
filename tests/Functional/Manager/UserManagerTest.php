@@ -7,9 +7,12 @@ use App\Entity\User;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Service\NotificationService;
+use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
@@ -19,6 +22,10 @@ class UserManagerTest extends KernelTestCase
     private NotificationService $notificationService;
     private UrlGeneratorInterface $urlGenerator;
     private EntityManagerInterface $entityManager;
+    private PasswordHasherFactoryInterface $passwordHasherFactory;
+    private TokenGeneratorInterface $tokenGenerator;
+    private ParameterBagInterface $parameterBag;
+
     protected ManagerRegistry $managerRegistry;
 
     protected function setUp(): void
@@ -29,7 +36,12 @@ class UserManagerTest extends KernelTestCase
         $this->notificationService = static::getContainer()->get(NotificationService::class);
         $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
+        $this->passwordHasherFactory = static::getContainer()->get(PasswordHasherFactoryInterface::class);
+        $this->tokenGenerator = static::getContainer()->get(TokenGeneratorInterface::class);
+        $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
+
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+
     }
 
     public function testSwitchActiveUserToAnotherPartner()
@@ -38,6 +50,9 @@ class UserManagerTest extends KernelTestCase
             $this->loginLinkHandler,
             $this->notificationService,
             $this->urlGenerator,
+            $this->passwordHasherFactory,
+            $this->tokenGenerator,
+            $this->parameterBag,
             $this->managerRegistry,
             User::class);
 
@@ -65,6 +80,9 @@ class UserManagerTest extends KernelTestCase
             $this->loginLinkHandler,
             $this->notificationService,
             $this->urlGenerator,
+            $this->passwordHasherFactory,
+            $this->tokenGenerator,
+            $this->parameterBag,
             $this->managerRegistry,
             User::class);
 

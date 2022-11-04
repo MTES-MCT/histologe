@@ -62,7 +62,10 @@ drop-db: ## Drop database
 load-data: ## Load database from dump
 	@$(DOCKER_COMP) exec -T histologe_mysql mysql -u $(DATABASE_USER) -phistologe $(DATABASE_NAME) < $(PATH_DUMP_SQL)
 
-generate-migrations: ## Generate migrations
+migration: ## Generate migration
+	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev make:migration --no-interaction"
+
+generate-migration: ## Generate empty migration
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:migrations:generate"
 
 load-migrations: ## Play migrations
