@@ -37,4 +37,26 @@ class BackPartnerControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/bo/partner/');
     }
+
+    public function testDeleteUserAccount(): void
+    {
+        $client = static::createClient();
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $admin = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $client->loginUser($admin);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+
+        $user = $userRepository->findOneBy(['email' => 'usager-01-974@histologe.fr']);
+        $userId = $user->getId();
+
+        $crawler = $client->request('POST', $router->generate('back_partner_user_delete', [
+            'user' => $userId,
+        ]));
+
+        $this->assertResponseRedirects('/bo/partner/');
+    }
 }

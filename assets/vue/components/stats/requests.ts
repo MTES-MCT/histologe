@@ -25,7 +25,7 @@ export const requests = {
     data.append('countRefused', store.state.filters.countRefused ? '1' : '0')
 
     axios
-      .post(store.props.ajaxurl, data, { timeout: 10000 })
+      .post(store.props.ajaxurl, data, { timeout: 15000 })
       .then(response => {
         const responseData = response.data
         console.log('then')
