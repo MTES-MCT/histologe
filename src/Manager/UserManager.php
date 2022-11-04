@@ -52,7 +52,7 @@ class UserManager extends AbstractManager
             $loginLink;
 
         $this->notificationService->send(
-            NotificationService::TYPE_ACCOUNT_SWICTH,
+            NotificationService::TYPE_ACCOUNT_SWITCH,
             $user->getEmail(), [
             'btntext' => User::STATUS_ACTIVE === $user->getStatut() ? 'Accéder à mon compte' : 'Activer mon compte',
             'link' => $link,
