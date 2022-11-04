@@ -366,6 +366,14 @@ label.fr-toggle__label[for="signalement-accept-cgu"] {
     }
 }
 
+label.fr-toggle__label[for="signalement-accept-visite"] {
+    display: inline;
+
+    a {
+        font-weight: bold;
+    }
+}
+
 .cgu-bo .title {
     font-size: 1.1em;
 }

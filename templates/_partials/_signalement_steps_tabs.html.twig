@@ -755,6 +755,19 @@
             </div>
             <div class="fr-form-group">
                 <div class="fr-toggle fr-toggle--border-bottom">
+                    <input type="checkbox" class="fr-toggle__input" id="signalement-accept-visite"
+                           name="is-visite-accepted" required>
+                    <label class="fr-toggle__label" for="signalement-accept-visite">
+                        En validant mon signalement, j'autorise les services compétents à programmer et effectuer,
+                        si nécessaire, une visite au domicile pour évaluer les désordres.
+                    </label>
+                    <p class="fr-error-text fr-hidden">
+                        Vous devez accepter l'autorisation de visite pour transmettre votre signalement.
+                    </p>
+                </div>
+            </div>
+            <div class="fr-form-group">
+                <div class="fr-toggle fr-toggle--border-bottom">
                     <input type="checkbox" class="fr-toggle__input" id="signalement-accept-cgu"
                            name="signalement[isCguAccepted]" required>
                     <label class="fr-toggle__label" for="signalement-accept-cgu">

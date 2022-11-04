@@ -1,0 +1,7 @@
+{
+  "jobs": [
+    {
+      "command": "0 7 */10 * * php bin/console app:remind-inactive-user"
+    }
+  ]
+}
