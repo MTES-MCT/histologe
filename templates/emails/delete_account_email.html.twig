@@ -1,0 +1,14 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour,</p>
+    <p>
+        Votre compte a été supprimé de la plateforme {{territory.name}} - Histologe.
+        Vous ne pouvez désormais plus vous connecter à la plateforme, ni accéder à votre compte.
+    </p>
+    <p>
+        Si vous voulez disposer d'un nouveau compte, rapprochez-vous de votre responsable de structure ou de votre référent territorial.
+    </p>
+
+    <p>Merci d'avoir utilisé Histologe !</p>
+{% endblock %}

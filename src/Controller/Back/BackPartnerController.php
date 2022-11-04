@@ -5,8 +5,10 @@ namespace App\Controller\Back;
 use App\Entity\Partner;
 use App\Entity\User;
 use App\Form\PartnerType;
+use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
+use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
@@ -142,13 +144,22 @@ class BackPartnerController extends AbstractController
     }
 
     #[Route('/{user}/delete', name: 'back_partner_user_delete', methods: ['POST'])]
-    public function deleteUser(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    public function deleteUser(
+        Request $request,
+        User $user,
+        UserManager $userManager,
+        NotificationService $notificationService): Response
     {
         $this->denyAccessUnlessGranted('USER_DELETE', $this->getUser());
         if ($this->isCsrfTokenValid('partner_user_delete_'.$user->getId(), $request->request->get('_token'))) {
             $user->setStatut(User::STATUS_ARCHIVE);
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $userManager->save($user);
+            $notificationService->send(
+                NotificationService::TYPE_ACCOUNT_DELETE,
+                $user->getEmail(),
+                [],
+                $user->getTerritory()
+            );
         }
 
         return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
