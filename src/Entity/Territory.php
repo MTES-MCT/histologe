@@ -48,6 +48,9 @@ class Territory
     #[ORM\OneToOne(targetEntity: Config::class, cascade: ['persist', 'remove'])]
     private $config;
 
+    #[ORM\Column(type: 'simple_array', nullable: true)]
+    private $authorizedCodesInsee = [];
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -283,5 +286,17 @@ class Territory
     public function __toString(): string
     {
         return $this->name;
+    }
+
+    public function getAuthorizedCodesInsee(): ?array
+    {
+        return $this->authorizedCodesInsee;
+    }
+
+    public function setAuthorizedCodesInsee(?array $authorizedCodesInsee): self
+    {
+        $this->authorizedCodesInsee = $authorizedCodesInsee;
+
+        return $this;
     }
 }
