@@ -9,6 +9,7 @@ use App\Entity\Notification;
 use App\Entity\Signalement;
 use App\Entity\Situation;
 use App\Entity\Suivi;
+use App\Event\SignalementClosedEvent;
 use App\Form\ClotureType;
 use App\Form\SignalementType;
 use App\Manager\SignalementManager;
@@ -20,6 +21,7 @@ use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,7 +36,8 @@ class BackSignalementController extends AbstractController
                                     EntityManagerInterface $entityManager,
                                     TagRepository $tagsRepository,
                                     PartnerRepository $partnerRepository,
-                                    SignalementManager $signalementManager
+                                    SignalementManager $signalementManager,
+                                    EventDispatcherInterface $eventDispatcher
     ): Response {
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findByUuid($uuid);
@@ -94,6 +97,7 @@ class BackSignalementController extends AbstractController
             $suivi = new Suivi();
             $suivi->setDescription('Le signalement à été cloturé pour '.$sujet.' avec le motif suivant: <br> <strong>'.$motifCloture.'</strong><br><strong>Desc.: </strong>'.$motifSuivi);
             $suivi->setCreatedBy($this->getUser());
+            $suivi->setIsPublic(true);
             $signalement->addSuivi($suivi);
             /** @var Affectation $isAffected */
             if ($isAffected) {
@@ -106,6 +110,8 @@ class BackSignalementController extends AbstractController
             $entityManager->persist($suivi);
             $entityManager->flush();
             $this->addFlash('success', 'Signalement cloturé avec succès !');
+
+            $eventDispatcher->dispatch(new SignalementClosedEvent($signalement), SignalementClosedEvent::NAME);
 
             return $this->redirectToRoute('back_index');
         }
