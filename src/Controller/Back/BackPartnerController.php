@@ -132,7 +132,7 @@ class BackPartnerController extends AbstractController
             && $data = $request->get('user_switch')) {
             $partner = $partnerManager->find($data['partner']);
             $user = $userManager->find($data['user']);
-            $userManager->swicthUser($user, $partner);
+            $userManager->switchUserToPartner($user, $partner);
             $this->addFlash('success', $user->getNomComplet().' transféré avec succès !');
 
             return $this->redirectToRoute('back_partner_edit', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);

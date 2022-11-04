@@ -39,7 +39,7 @@ class UserManager extends AbstractManager
         return $this->getRepository()->findOneBy(['partner' => $partner, 'id' => $userId]);
     }
 
-    public function swicthUser(User $user, Partner $partner)
+    public function switchUserToPartner(User $user, Partner $partner): void
     {
         $user->setPartner($partner);
         $this->save($user);
