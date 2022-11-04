@@ -16,6 +16,7 @@ class NotificationService
     public const TYPE_ACCOUNT_ACTIVATION = 1;
     public const TYPE_ACCOUNT_ACTIVATION_REMINDER = 11;
     public const TYPE_ACCOUNT_DELETE = 14;
+    public const TYPE_ACCOUNT_SWICTH = 15;
     public const TYPE_LOST_PASSWORD = 2;
     public const TYPE_SIGNALEMENT_NEW = 3;
     public const TYPE_ASSIGNMENT_NEW = 4;
@@ -87,6 +88,10 @@ class NotificationService
             self::TYPE_ACCOUNT_DELETE => [
                 'template' => 'delete_account_email',
                 'subject' => 'Suppression de votre compte Histologe',
+            ],
+            self::TYPE_ACCOUNT_SWICTH => [
+                'template' => 'switch_account_email',
+                'subject' => 'Transfert de votre compte Histologe',
             ],
             self::TYPE_LOST_PASSWORD => [
                 'template' => 'lost_pass_email',

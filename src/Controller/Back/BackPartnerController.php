@@ -5,6 +5,7 @@ namespace App\Controller\Back;
 use App\Entity\Partner;
 use App\Entity\User;
 use App\Form\PartnerType;
+use App\Manager\PartnerManager;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
@@ -124,16 +125,14 @@ class BackPartnerController extends AbstractController
     }
 
     #[Route('/switchuser', name: 'back_partner_user_switch', methods: ['POST'])]
-    public function switchUser(Request $request, EntityManagerInterface $entityManager): Response
+    public function switchUser(Request $request, UserManager $userManager, PartnerManager $partnerManager): Response
     {
         $this->denyAccessUnlessGranted('USER_SWITCH', $this->getUser());
-        if ($this->isCsrfTokenValid('partner_user_switch', $request->request->get('_token')) && $data = $request->get('user_switch')) {
-            $partner = $entityManager->getRepository(Partner::class)->find($data['partner']);
-            $user = $entityManager->getRepository(User::class)->find($data['user']);
-            $user->setPartner($partner);
-//            $user->setStatut(User::STATUS_ARCHIVE);
-            $entityManager->persist($user);
-            $entityManager->flush();
+        if ($this->isCsrfTokenValid('partner_user_switch', $request->request->get('_token'))
+            && $data = $request->get('user_switch')) {
+            $partner = $partnerManager->find($data['partner']);
+            $user = $userManager->find($data['user']);
+            $userManager->swicthUser($user, $partner);
             $this->addFlash('success', $user->getNomComplet().' transféré avec succès !');
 
             return $this->redirectToRoute('back_partner_edit', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);

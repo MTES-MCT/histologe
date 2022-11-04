@@ -1,0 +1,41 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour,</p>
+    {% if btntext == 'Accéder à mon compte' %}
+        <p>Votre compte a été transféré vers le partenaire {{ partner_name }} sur votre plateforme Histologe
+            - {{ territory.name }}. </p>
+        <p>Vous pouvez désormais traiter et assurer le suivi des signalements du partenaire {{ partner_name }}. <p>
+        <p> Votre adresse de connexion et mot de passe ne changent pas. <br/>
+            Cliquez ci-dessous pour vous connecter à votre compte.</p>
+    {% endif %}
+    {% if btntext == 'Activer mon compte' %}
+        <p>Votre compte a été transféré vers le partenaire {{ partner_name }} sur votre plateforme Histologe
+            - {{ partner_name }} .</p>
+        <p>Vous devez activer votre compte pour traiter les signalements du partenaire {{ partner_name }}. <br/>
+            Cliquez ci-dessous pour vous activer votre compte et définir votre mot de passe.</p>
+    {% endif %}
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary"
+           style="text-align: center">
+        <tbody>
+        <tr>
+            <td align="left">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                    <tbody>
+                    <tr style="text-align: center;width: 100%">
+                        <td>
+                            <a href="{{ link|raw }}" target="_blank">{{ btntext }}</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p>Si le bouton ne fonctionne pas <a href="{{ link|raw }}">cliquez ici</a></p>
+    <p>
+        Pour plus d'information, rapprochez vous de votre référent territorial.
+    </p>
+
+    <p>Merci d'avoir utilisé Histologe !</p>
+{% endblock %}
