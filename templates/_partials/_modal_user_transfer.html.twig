@@ -1,42 +1,42 @@
-<dialog aria-labelledby="fr-user-switcher-title" id="fr-modal-user-switcher" class="fr-modal" role="dialog">
+<dialog aria-labelledby="fr-user-transfer-title" id="fr-modal-user-transfer" class="fr-modal" role="dialog">
     <div class="fr-container fr-container--fluid fr-container-md">
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                 <div class="fr-modal__body">
                     <div class="fr-modal__header">
-                        <h1 id="fr-modal-user-switcher-title" class="fr-modal__title">
+                        <h1 id="fr-modal-user-transfer-title" class="fr-modal__title">
                             <span class="fr-fi-arrow-right-line" aria-hidden="true"></span>
-                            Transférer <span id="fr-modal-user-switcher_username"></span>
+                            Transférer <span id="fr-modal-user-transfer_username"></span>
                         </h1>
                     </div>
                     <div class="fr-modal__content">
-                        <form action="{{ path('back_partner_user_switch') }}" name="user_switch"
-                              id="user_switch_form" method="POST">
+                        <form action="{{ path('back_partner_user_transfer') }}" name="user_transfer"
+                              id="user_transfer_form" method="POST">
                             <div class="fr-select-group">
-                                <label for="user_switch_partner_select" class="fr-label">Transférer vers le
+                                <label for="user_transfer_partner_select" class="fr-label">Transférer vers le
                                     partenaire</label>
-                                <select name="user_switch[partner]" id="user_switch_partner_select"
+                                <select name="user_transfer[partner]" id="user_transfer_partner_select"
                                         class="fr-select">
                                     {% for partner in partners %}
                                         <option value="{{ partner.id }}">{{ partner.nom|upper }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
-                            <input type="hidden" name="user_switch[user]" id="fr-modal-user-switcher_userid">
-                            <input type="hidden" name="_token" value="{{ csrf_token('partner_user_switch') }}">
+                            <input type="hidden" name="user_transfer[user]" id="fr-modal-user-transfer_userid">
+                            <input type="hidden" name="_token" value="{{ csrf_token('partner_user_transfer') }}">
                         </form>
                     </div>
                     <div class="fr-modal__footer">
                         <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
                             <li>
-                                <button class="fr-btn fr-fi-checkbox-line" form="user_switch_form"
-                                        id="user_switch_form_submit">
+                                <button class="fr-btn fr-fi-checkbox-line" form="user_transfer_form"
+                                        id="user_transfer_form_submit">
                                     Transférer
                                 </button>
                             </li>
                             <li>
                                 <button class="fr-btn fr-fi-checkbox-line fr-btn--secondary"
-                                        aria-controls="fr-modal-user-switcher">
+                                        aria-controls="fr-modal-user-transfer">
                                     Annuler
                                 </button>
                             </li>

@@ -46,7 +46,7 @@ class UserManager extends AbstractManager
         return $this->getRepository()->findOneBy(['partner' => $partner, 'id' => $userId]);
     }
 
-    public function switchUserToPartner(User $user, Partner $partner): void
+    public function transferUserToPartner(User $user, Partner $partner): void
     {
         $user->setPartner($partner);
         $this->save($user);
@@ -59,7 +59,7 @@ class UserManager extends AbstractManager
             $loginLink;
 
         $this->notificationService->send(
-            NotificationService::TYPE_ACCOUNT_SWITCH,
+            NotificationService::TYPE_ACCOUNT_TRANSFER,
             $user->getEmail(), [
             'btntext' => User::STATUS_ACTIVE === $user->getStatut() ? 'Accéder à mon compte' : 'Activer mon compte',
             'link' => $link,

@@ -43,7 +43,7 @@ class UserManagerTest extends KernelTestCase
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
     }
 
-    public function testSwitchActiveUserToAnotherPartner()
+    public function testTransferActiveUserToAnotherPartner()
     {
         $userManager = new UserManager(
             $this->loginLinkHandler,
@@ -62,7 +62,7 @@ class UserManagerTest extends KernelTestCase
         $userRepository = $this->entityManager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => 'partenaire-01-01@histologe.fr']);
 
-        $userManager->switchUserToPartner($user, $partner);
+        $userManager->transferUserToPartner($user, $partner);
 
         /** @var User $userNewPartner */
         $userNewPartner = $userRepository->findOneBy(['email' => 'partenaire-01-01@histologe.fr']);
@@ -73,7 +73,7 @@ class UserManagerTest extends KernelTestCase
         $this->assertEmailHtmlBodyContains($email, ' Cliquez ci-dessous pour vous connecter à votre compte');
     }
 
-    public function testSwitchInactiveUserToAnotherPartner()
+    public function testTransferInactiveUserToAnotherPartner()
     {
         $userManager = new UserManager(
             $this->loginLinkHandler,
@@ -92,7 +92,7 @@ class UserManagerTest extends KernelTestCase
         $userRepository = $this->entityManager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => 'partenaire-13-03@histologe.fr']);
 
-        $userManager->switchUserToPartner($user, $partner);
+        $userManager->transferUserToPartner($user, $partner);
 
         /** @var User $userNewPartner */
         $userNewPartner = $userRepository->findOneBy(['email' => 'partenaire-13-03@histologe.fr']);

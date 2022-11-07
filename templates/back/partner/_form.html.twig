@@ -228,9 +228,9 @@
         </div>
         {% if is_granted('ROLE_ADMIN_TERRITORY') %}
             <div class="fr-input-group">
-                <label for="partner_users_switch_{{ user.id }}" class="fr-label">Trans.</label>
-                <a href="#" class="fr-btn fr-btn--orange fr-fi-upload-2-fill fr-mt-3v partner_users_switch_btn"
-                   id="partner_users_switch_{{ user.id }}" aria-controls="fr-modal-user-switcher"
+                <label for="partner_users_transfer_{{ user.id }}" class="fr-label">Trans.</label>
+                <a href="#" class="fr-btn fr-btn--orange fr-fi-upload-2-fill fr-mt-3v partner_users_transfer_btn"
+                   id="partner_users_transfer_{{ user.id }}" aria-controls="fr-modal-user-transfer"
                    data-fr-opened="false" data-username="{{ user.nomComplet }}" data-userid="{{ user.id }}"{#
                 data-delete="{{ path('back_partner_user_delete',{user:user.id}) }}"
                 data-token="{{ csrf_token('partner_user_delete_'~user.id) }}" #}></a>

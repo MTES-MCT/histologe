@@ -4,7 +4,7 @@
 
 {% block content %}
     {% if is_granted('ROLE_ADMIN_TERRITORY') and app.request.get('_route') is not same as('back_partner_new') %}
-        {% include '_partials/_modal_user_switcher.html.twig' %}
+        {% include '_partials/_modal_user_transfer.html.twig' %}
     {% endif %}
     <section class="fr-col-12 fr-p-5v">
         <h2 class="fr-h2 fr-mb-0">Partenaire {{ partner.nom ? '"'~partner.nom~'"' : '' }}</h2>
@@ -16,15 +16,15 @@
 {% endblock %}
 {% block javascripts %}
     <script>
-        document.querySelectorAll('.partner_users_switch_btn').forEach(swbtn => {
+        document.querySelectorAll('.partner_users_transfer_btn').forEach(swbtn => {
             swbtn.addEventListener('click', (evt => {
                 console.log(evt)
                 let target = evt.target;
-                document.querySelector('#fr-modal-user-switcher_username').innerHTML = target.getAttribute('data-username');
-                document.querySelector('#fr-modal-user-switcher_userid').value = target.getAttribute('data-userid');
-                document.querySelector('#user_switch_form').addEventListener('submit', (e) => {
-                    document.querySelector('#user_switch_form_submit').innerHTML = "Transfert en cours...";
-                    document.querySelector('#user_switch_form_submit').disabled = true;
+                document.querySelector('#fr-modal-user-transfer_username').innerHTML = target.getAttribute('data-username');
+                document.querySelector('#fr-modal-user-transfer_userid').value = target.getAttribute('data-userid');
+                document.querySelector('#user_c_form').addEventListener('submit', (e) => {
+                    document.querySelector('#user_transfer_form_submit').innerHTML = "Transfert en cours...";
+                    document.querySelector('#user_transfer_form_submit').disabled = true;
                 })
             }))
         })
