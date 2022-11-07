@@ -2,7 +2,7 @@
 
 namespace App\Entity\Enum;
 
-/** should be replace by enum with php 8.1 */
+/** Should be replaced by enum with php 8.1 */
 class MotifCloture
 {
     public const LABEL = [
