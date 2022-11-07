@@ -468,4 +468,23 @@ class SignalementRepository extends ServiceEntityRepository
 
         return $queryBuilder->getQuery()->getArrayResult();
     }
+
+    public function findUsersEmailAffectedToSignalement(int $signalementId)
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder
+            ->select('u.email')
+            ->innerJoin('s.affectations', 'a')
+            ->innerJoin('a.partner', 'p')
+            ->innerJoin('p.users', 'u')
+            ->where('s.id = :signalement_id')
+            ->setParameter('signalement_id', $signalementId)
+            ->andWhere('u.statut = '.User::STATUS_ACTIVE);
+
+        $usersEmail = array_map(function ($value) {
+            return $value['email'];
+        }, $queryBuilder->getQuery()->getArrayResult());
+
+        return $usersEmail;
+    }
 }

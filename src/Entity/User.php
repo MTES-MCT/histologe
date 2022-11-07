@@ -65,6 +65,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'modifiedBy', targetEntity: Signalement::class)]
     private $signalementsModified;
 
+    #[ORM\OneToMany(mappedBy: 'closedBy', targetEntity: Signalement::class)]
+    private $signalementsClosed;
+
     #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Suivi::class, orphanRemoval: true)]
     private $suivis;
 
@@ -433,5 +436,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->uuid = $uuid;
 
         return $this;
+    }
+
+    public function getFullname(): string
+    {
+        return $this->prenom.' '.$this->nom;
     }
 }

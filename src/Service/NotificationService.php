@@ -22,7 +22,9 @@ class NotificationService
     public const TYPE_ASSIGNMENT_NEW = 4;
     public const TYPE_SIGNALEMENT_VALIDATION = 5;
     public const TYPE_SIGNALEMENT_REFUSAL = 99;
-    public const TYPE_SIGNALEMENT_CLOSED = 98;
+    public const TYPE_SIGNALEMENT_CLOSED_TO_USAGER = 98;
+    public const TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS = 97;
+    public const TYPE_SIGNALEMENT_CLOSED_PARTNER_TO_PARTNERS = 96;
     public const TYPE_CONFIRM_RECEPTION = 6;
     public const TYPE_NEW_COMMENT_FRONT = 7;
     public const TYPE_NEW_COMMENT_BACK = 10;
@@ -123,10 +125,15 @@ class NotificationService
                 'template' => 'refus_signalement_email',
                 'subject' => 'Votre signalement ne peut pas être traité.',
             ],
-            self::TYPE_SIGNALEMENT_CLOSED => [
-                'template' => 'closed_signalement_email',
+            self::TYPE_SIGNALEMENT_CLOSED_TO_USAGER => [
+                'template' => 'closed_to_usager_signalement_email',
                 'subject' => 'Votre signalement sur Histologe est terminé.',
                 'btnText' => 'Accéder à ma page de suivi',
+            ],
+            self::TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS => [
+                'template' => 'closed_to_partners_signalement_email',
+                'subject' => 'Le signalement #'.$params['ref_signalement'].' a été cloturé',
+                'btnText' => 'Accéder au signalement',
             ],
             self::TYPE_CONTACT_FORM => [
                 'template' => 'nouveau_mail_front',

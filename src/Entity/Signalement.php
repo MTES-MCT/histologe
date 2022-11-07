@@ -318,6 +318,9 @@ class Signalement
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private $closedAt;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'signalementsClosed')]
+    private $closedBy;
+
     #[ORM\Column(type: 'string', length: 15, nullable: true)]
     private $telOccupantBis;
 
@@ -1675,6 +1678,18 @@ class Signalement
     public function setIsImported(?bool $isImported): self
     {
         $this->isImported = $isImported;
+
+        return $this;
+    }
+
+    public function getClosedBy(): ?User
+    {
+        return $this->closedBy;
+    }
+
+    public function setClosedBy(?User $closedBy): self
+    {
+        $this->closedBy = $closedBy;
 
         return $this;
     }
