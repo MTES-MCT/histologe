@@ -11,13 +11,13 @@ class UserVoter extends Voter
 {
     public const CREATE = 'USER_CREATE';
     public const EDIT = 'USER_EDIT';
-    public const SWITCH = 'USER_SWITCH';
+    public const TRANSFER = 'USER_TRANSFER';
     public const DELETE = 'USER_DELETE';
     public const CHECKMAIL = 'USER_CHECKMAIL';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::CHECKMAIL, self::CREATE, self::EDIT, self::SWITCH, self::DELETE])
+        return \in_array($attribute, [self::CHECKMAIL, self::CREATE, self::EDIT, self::TRANSFER, self::DELETE])
             && $subject instanceof User;
     }
 
@@ -35,7 +35,7 @@ class UserVoter extends Voter
             self::CHECKMAIL => $this->canCheckMail($subject, $user),
             self::CREATE => $this->canCreate($subject, $user),
             self::EDIT => $this->canEdit($subject, $user),
-            self::SWITCH => $this->canSwitch($subject, $user),
+            self::TRANSFER => $this->canTransfer($subject, $user),
             self::DELETE => $this->canDelete($subject, $user),
             default => false,
         };
@@ -64,7 +64,7 @@ class UserVoter extends Voter
         return $subject->getId() === $user->getId();
     }
 
-    private function canSwitch(User $subject, UserInterface $user): bool
+    private function canTransfer(User $subject, UserInterface $user): bool
     {
         return $user->isTerritoryAdmin() && $user->getTerritory() === $subject->getTerritory();
     }
