@@ -49,6 +49,25 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
     }
 
+    public function findAdminsEmailByTerritory(Territory $territory): array
+    {
+        $queryBuilder = $this->createQueryBuilder('u');
+        $queryBuilder
+            ->select('u.email')
+            ->where('u.roles LIKE :role OR u.roles LIKE :role2')
+            ->setParameter('role', '["ROLE_ADMIN"]')
+            ->setParameter('role2', '["ROLE_ADMIN_TERRITORY"]')
+            ->andWhere('u.territory = :territory')
+            ->setParameter('territory', $territory)
+            ->andWhere('u.statut = '.User::STATUS_ACTIVE);
+
+        $adminsEmail = array_map(function ($value) {
+            return $value['email'];
+        }, $queryBuilder->getQuery()->getArrayResult());
+
+        return $adminsEmail;
+    }
+
     public function findAllInactive(Territory|null $territory)
     {
         $queryBuilder = $this->createQueryBuilder('u');

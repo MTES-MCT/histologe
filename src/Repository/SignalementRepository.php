@@ -469,7 +469,7 @@ class SignalementRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getArrayResult();
     }
 
-    public function findUsersEmailAffectedToSignalement(int $signalementId)
+    public function findUsersPartnerEmailAffectedToSignalement(int $signalementId)
     {
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder
