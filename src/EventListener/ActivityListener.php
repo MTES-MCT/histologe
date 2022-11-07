@@ -77,7 +77,7 @@ class ActivityListener implements EventSubscriberInterface
                     if (!empty($mailOccupant)) {
                         $to[] = $mailOccupant;
                     }
-                    if (!empty($to)) {
+                    if (!empty($to) && Signalement::STATUS_CLOSED !== $entity->getSignalement()->getStatut()) {
                         $this->notifier->send(NotificationService::TYPE_NEW_COMMENT_FRONT, $to, [
                             'signalement' => $entity->getSignalement(),
                             'lien_suivi' => $this->urlGenerator->generate('front_suivi_signalement', ['code' => $entity->getSignalement()->getCodeSuivi()], UrlGenerator::ABSOLUTE_URL),
