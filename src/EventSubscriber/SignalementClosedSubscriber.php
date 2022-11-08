@@ -44,7 +44,10 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
         $params = $event->getParams();
 
         if ($signalement instanceof Signalement) {
-            $suivi = $this->suiviFactory->createInstanceFrom($params);
+            $suivi = $this->suiviFactory->createInstance(
+                params: $params,
+                isPublic: true
+            );
             $signalement
                 ->setCodeSuivi($this->tokenGenerator->generateToken())
                 ->setClosedBy($this->security->getUser())
