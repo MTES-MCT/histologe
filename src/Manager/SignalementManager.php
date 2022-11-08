@@ -3,15 +3,14 @@
 namespace App\Manager;
 
 use App\Entity\Affectation;
+use App\Entity\Partner;
 use App\Entity\Signalement;
-use App\Repository\PartnerRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Security;
 
 class SignalementManager extends AbstractManager
 {
     public function __construct(protected ManagerRegistry $managerRegistry,
-                                private PartnerRepository $partnerRepository,
                                 private Security $security,
                                 string $entityName = Signalement::class
     ) {
@@ -20,12 +19,12 @@ class SignalementManager extends AbstractManager
 
     public function findAllPartners(Signalement $signalement): array
     {
-        $partners['affected'] = $this->partnerRepository->findByLocalization(
+        $partners['affected'] = $this->managerRegistry->getRepository(Partner::class)->findByLocalization(
             signalement: $signalement,
             affected: true
         );
 
-        $partners['not_affected'] = $this->partnerRepository->findByLocalization(
+        $partners['not_affected'] = $this->managerRegistry->getRepository(Partner::class)->findByLocalization(
             signalement: $signalement,
             affected: false
         );
