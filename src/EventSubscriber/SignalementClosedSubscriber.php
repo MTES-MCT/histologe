@@ -2,9 +2,12 @@
 
 namespace App\EventSubscriber;
 
+use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Event\SignalementClosedEvent;
+use App\Factory\SuiviFactory;
 use App\Manager\SignalementManager;
 use App\Repository\UserRepository;
 use App\Service\NotificationService;
@@ -22,27 +25,9 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
                                 private UrlGeneratorInterface $urlGenerator,
                                 private ParameterBagInterface $parameterBag,
                                 private TokenGeneratorInterface $tokenGenerator,
+                                private SuiviFactory $suiviFactory,
                                 private Security $security,
     ) {
-    }
-
-    public function onSignalementClosed(SignalementClosedEvent $event): void
-    {
-        $signalement = $event->getSignalement();
-
-        if (Signalement::STATUS_CLOSED !== $signalement->getStatut()) {
-            return;
-        }
-
-        $signalement
-            ->setCodeSuivi($this->tokenGenerator->generateToken())
-            ->setClosedAt(new \DateTimeImmutable())
-            ->setClosedBy($this->security->getUser());
-
-        $this->signalementManager->save($signalement);
-
-        $this->sendMailToUsager($signalement);
-        $this->sendMailToPartners($signalement);
     }
 
     public static function getSubscribedEvents(): array
@@ -50,6 +35,34 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
         return [
             SignalementClosedEvent::NAME => 'onSignalementClosed',
         ];
+    }
+
+    public function onSignalementClosed(SignalementClosedEvent $event): void
+    {
+        $signalement = $event->getSignalement();
+        $affectation = $event->getAffectation();
+        $params = $event->getParams();
+
+        if ($signalement instanceof Signalement) {
+            $suivi = $this->suiviFactory->createInstanceFrom($params);
+            $signalement
+                ->setCodeSuivi($this->tokenGenerator->generateToken())
+                ->setClosedBy($this->security->getUser())
+                ->addSuivi($suivi);
+            $this->signalementManager->save($signalement);
+
+            $this->sendMailToUsager($signalement);
+            $this->sendMailToPartners(
+                signalement: $signalement,
+            );
+        }
+
+        if ($affectation instanceof Affectation) {
+            $this->sendMailToPartner(
+                signalement: $affectation->getSignalement(),
+                partnerToExclude: $this->security->getUser()->getPartner()
+            );
+        }
     }
 
     private function generateLinkCodeSuivi(string $codeSuivi): string
@@ -83,19 +96,43 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
 
     private function sendMailToPartners(Signalement $signalement): void
     {
-        $usersPartnerEmail = $this->signalementManager->getRepository()->findUsersPartnerEmailAffectedToSignalement(
-            $signalement->getId()
+        $sendTo = $this->signalementManager->getRepository()->findUsersPartnerEmailAffectedToSignalement(
+            $signalement->getId(),
         );
-        $usersAdminEmail = $this->userRepository->findAdminsEmailByTerritory($signalement->getTerritory());
-        $sendTo = array_merge($usersPartnerEmail, $usersAdminEmail);
+
+        if (empty($sendTo)) {
+            return;
+        }
 
         $this->notificationService->send(
             NotificationService::TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS,
             $sendTo, [
             'ref_signalement' => $signalement->getReference(),
             'motif_cloture' => MotifCloture::LABEL[$signalement->getMotifCloture()],
-            'closed_by' => $signalement->getClosedBy()->getFullname(),
+            'closed_by' => $signalement->getClosedBy()->getNomComplet(),
             'partner_name' => $signalement->getClosedBy()->getPartner()->getNom(),
+            'link' => $this->generateLinkSignalementView($signalement->getUuid()),
+        ],
+            $signalement->getTerritory()
+        );
+    }
+
+    private function sendMailToPartner(Signalement $signalement, ?Partner $partnerToExclude = null)
+    {
+        $sendTo = $this->signalementManager->getRepository()->findUsersPartnerEmailAffectedToSignalement(
+            $signalement->getId(),
+            $partnerToExclude
+        );
+
+        if (empty($sendTo)) {
+            return;
+        }
+
+        $this->notificationService->send(
+            NotificationService::TYPE_SIGNALEMENT_CLOSED_TO_PARTNER,
+            $sendTo, [
+            'ref_signalement' => $signalement->getReference(),
+            'partner_name' => $this->security->getUser()->getPartner()->getNom(),
             'link' => $this->generateLinkSignalementView($signalement->getUuid()),
         ],
             $signalement->getTerritory()

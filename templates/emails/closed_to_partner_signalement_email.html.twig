@@ -2,8 +2,10 @@
 
 {% block body %}
     <p>Bonjour,</p>
-    <p>Le signalement  a été clôturé par <strong>{{ closed_by }}</strong> - {{ partner_name }}.</p>
-    <p>Le motif et la raison de clôture sont disponibles sur le signalement. Cliquez sur le bouton ci-dessous pour y accéder.</p>
+    <p>Le partenaire {{ partner_name }} a terminé son intervention sur le signalement {{ ref_signalement }}. <br>
+        Il l'a donc clôturé pour son partenaire.</p>
+    <p>Le motif et la raison de clôture sont disponibles sur la fiche signalement.</p>
+    <p>Cliquez sur le bouton ci-dessous pour y accéder.</p>
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary"
            style="text-align: center">
         <tbody>

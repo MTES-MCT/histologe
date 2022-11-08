@@ -31,7 +31,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class BackSignalementController extends AbstractController
 {
     #[Route('/{uuid}', name: 'back_signalement_view')]
-    public function viewSignalement(string $uuid,
+    public function viewSignalement(Signalement $signalement,
                                     Request $request,
                                     EntityManagerInterface $entityManager,
                                     TagRepository $tagsRepository,
@@ -39,8 +39,6 @@ class BackSignalementController extends AbstractController
                                     SignalementManager $signalementManager,
                                     EventDispatcherInterface $eventDispatcher
     ): Response {
-        /** @var Signalement $signalement */
-        $signalement = $entityManager->getRepository(Signalement::class)->findByUuid($uuid);
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
         if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
             $this->addFlash('error', "Ce signalement à été archivé et n'est pas consultable.");
@@ -75,43 +73,25 @@ class BackSignalementController extends AbstractController
         $isClosedForMe = $isClosedForMe ?? Signalement::STATUS_CLOSED === $signalement->getStatut();
         $clotureForm = $this->createForm(ClotureType::class);
         $clotureForm->handleRequest($request);
+        $params = [];
         if ($clotureForm->isSubmitted() && $clotureForm->isValid()) {
-            $motifCloture = $clotureForm->get('motif')->getData();
-            $motifSuivi = $clotureForm->getExtraData()['suivi'];
-            $sujet = $this->getUser()?->getPartner()?->getNom();
-            if ('all' === $clotureForm->get('type')->getData()) {
-                $signalement->setStatut(Signalement::STATUS_CLOSED);
-                $signalement->setMotifCloture($motifCloture);
-                $signalement->setClosedAt(new DateTimeImmutable());
-                $sujet = 'tous les partenaires';
-                $signalement->getAffectations()->map(function (Affectation $affectation) use ($entityManager, $motifCloture) {
-                    $affectation->setStatut(Affectation::STATUS_CLOSED);
-                    $affectation->setMotifCloture($motifCloture);
-                    $affectation->setAnsweredBy($this->getUser());
-                    /*   $entityManager->getConnection()->connect(); */
-                    $entityManager->persist($affectation);
-                });
+            $params['motif_cloture'] = $clotureForm->get('motif')->getData();
+            $params['motif_suivi'] = $clotureForm->getExtraData()['suivi'];
+            $params['subject'] = $this->getUser()?->getPartner()?->getNom();
+            $params['closed_for'] = 'partner';
+
+            if ('all' === $params['closed_for'] = $clotureForm->get('type')->getData()) {
+                $params['subject'] = 'tous les partenaires';
+                $entity = $signalement = $signalementManager->closeSignalementForAllPartners($signalement, $params['motif_cloture']);
             }
-            $motifSuivi = preg_replace('/<p[^>]*>/', '', $motifSuivi); // Remove the start <p> or <p attr="">
-            $motifSuivi = str_replace('</p>', '<br>', $motifSuivi); // Replace the end
-            $suivi = new Suivi();
-            $suivi->setDescription('Le signalement à été cloturé pour '.$sujet.' avec le motif suivant: <br> <strong>'.$motifCloture.'</strong><br><strong>Desc.: </strong>'.$motifSuivi);
-            $suivi->setCreatedBy($this->getUser());
-            $suivi->setIsPublic(true);
-            $signalement->addSuivi($suivi);
+
             /** @var Affectation $isAffected */
             if ($isAffected) {
-                $isAffected->setStatut(Affectation::STATUS_CLOSED);
-                $isAffected->setAnsweredAt(new DateTimeImmutable());
-                $isAffected->setMotifCloture($motifCloture);
-                $entityManager->persist($isAffected);
+                $entity = $signalementManager->closeAffectation($isAffected, $params['motif_cloture']);
             }
-            $entityManager->persist($signalement);
-            $entityManager->persist($suivi);
-            $entityManager->flush();
-            $this->addFlash('success', 'Signalement cloturé avec succès !');
 
-            $eventDispatcher->dispatch(new SignalementClosedEvent($signalement), SignalementClosedEvent::NAME);
+            $eventDispatcher->dispatch(new SignalementClosedEvent($entity, $params), SignalementClosedEvent::NAME);
+            $this->addFlash('success', 'Signalement cloturé avec succès !');
 
             return $this->redirectToRoute('back_index');
         }

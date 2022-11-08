@@ -183,7 +183,7 @@ class Signalement
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'signalementsModified')]
     private $modifiedBy;
 
-    #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Suivi::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Suivi::class, orphanRemoval: true, cascade: ['persist'])]
     private $suivis;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]

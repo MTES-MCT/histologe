@@ -66,7 +66,11 @@ class ActivityListener implements EventSubscriberInterface
                     $partner = $affectation->getPartner();
                     $this->notifyPartner($partner, $entity, Notification::TYPE_SUIVI);
                 });
-                $this->sendMail($entity, NotificationService::TYPE_NEW_COMMENT_BACK);
+
+                if (Signalement::STATUS_CLOSED !== $entity->getSignalement()->getStatut()) {
+                    $this->sendMail($entity, NotificationService::TYPE_NEW_COMMENT_BACK);
+                }
+
                 if ($entity->getIsPublic() && Signalement::STATUS_REFUSED !== $entity->getSignalement()->getStatut()) {
                     $to = [];
                     $mailDeclarant = $entity->getSignalement()->getMailDeclarant();

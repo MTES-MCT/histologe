@@ -10,6 +10,7 @@ use App\Repository\TerritoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Security\Core\Security;
 
 class SignalementManagerTest extends KernelTestCase
 {
@@ -28,11 +29,14 @@ class SignalementManagerTest extends KernelTestCase
         $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         /** @var PartnerRepository $partnerRepository */
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
+        /** @var Security $security */
+        $security = static::getContainer()->get('security.helper');
+
         /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         $territory = $territoryRepository->find(self::TERRITORY_13);
 
-        $signalementManager = new SignalementManager($managerRegistry, $partnerRepository);
+        $signalementManager = new SignalementManager($managerRegistry, $partnerRepository, $security);
         $signalement = $signalementManager->findOneBy(['territory' => self::TERRITORY_13]);
 
         $partners = $signalementManager->findAllPartners($signalement);

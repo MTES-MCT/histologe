@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -469,7 +470,7 @@ class SignalementRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getArrayResult();
     }
 
-    public function findUsersPartnerEmailAffectedToSignalement(int $signalementId)
+    public function findUsersPartnerEmailAffectedToSignalement(int $signalementId, ?Partner $partnerToExclude = null)
     {
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder
@@ -479,7 +480,14 @@ class SignalementRepository extends ServiceEntityRepository
             ->innerJoin('p.users', 'u')
             ->where('s.id = :signalement_id')
             ->setParameter('signalement_id', $signalementId)
-            ->andWhere('u.statut = '.User::STATUS_ACTIVE);
+            ->andWhere('u.statut = '.User::STATUS_ACTIVE)
+            ->andWhere('u.isMailingActive = true');
+
+        if (null !== $partnerToExclude) {
+            $queryBuilder
+                ->andWhere('a.partner != :partner')
+                ->setParameter('partner', $partnerToExclude);
+        }
 
         $usersEmail = array_map(function ($value) {
             return $value['email'];
