@@ -145,3 +145,11 @@ users:
     is_mailing_active: 1
     territory: "Ain"
     token: 00000000-0000-0000-0000-000000000001
+  -
+    email: usager-01-03@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Admins Histologe Ain"
+    statut: 1
+    is_generique: 0
+    is_mailing_active: 1
+    territory: "Ain"

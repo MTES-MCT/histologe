@@ -775,6 +775,20 @@ class Signalement
         return $this;
     }
 
+    public function getMailUsagers(): array
+    {
+        $usagers = [];
+        if (!empty($this->getMailOccupant())) {
+            $usagers[] = $this->getMailOccupant();
+        }
+
+        if (!empty($this->getMailDeclarant())) {
+            $usagers[] = $this->getMailDeclarant();
+        }
+
+        return $usagers;
+    }
+
     public function getStructureDeclarant(): ?string
     {
         return $this->structureDeclarant;

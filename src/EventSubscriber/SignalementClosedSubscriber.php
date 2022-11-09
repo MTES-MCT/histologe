@@ -55,9 +55,7 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
             $this->signalementManager->save($signalement);
 
             $this->sendMailToUsager($signalement);
-            $this->sendMailToPartners(
-                signalement: $signalement,
-            );
+            $this->sendMailToPartners($signalement);
         }
 
         if ($affectation instanceof Affectation) {
@@ -86,15 +84,18 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
 
     private function sendMailToUsager(Signalement $signalement): void
     {
-        $this->notificationService->send(
-            NotificationService::TYPE_SIGNALEMENT_CLOSED_TO_USAGER, [
-            $signalement->getMailDeclarant(), $signalement->getMailOccupant(),
-        ], [
-            'motif_cloture' => MotifCloture::LABEL[$signalement->getMotifCloture()],
-            'link' => $this->generateLinkCodeSuivi($signalement->getCodeSuivi()),
-        ],
-            $signalement->getTerritory()
-        );
+        $sendTo = $signalement->getMailUsagers();
+        if (!empty($sendTo)) {
+            $this->notificationService->send(
+                NotificationService::TYPE_SIGNALEMENT_CLOSED_TO_USAGER,
+                $sendTo,
+                [
+                    'motif_cloture' => MotifCloture::LABEL[$signalement->getMotifCloture()],
+                    'link' => $this->generateLinkCodeSuivi($signalement->getCodeSuivi()),
+                ],
+                $signalement->getTerritory()
+            );
+        }
     }
 
     private function sendMailToPartners(Signalement $signalement): void
