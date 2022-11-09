@@ -34,7 +34,8 @@ class SignalementManager extends AbstractManager
 
     public function closeSignalementForAllPartners(Signalement $signalement, string $motif): Signalement
     {
-        $signalement->setStatut(Signalement::STATUS_CLOSED)
+        $signalement
+            ->setStatut(Signalement::STATUS_CLOSED)
             ->setMotifCloture($motif)
             ->setClosedAt(new \DateTimeImmutable());
 
@@ -59,7 +60,7 @@ class SignalementManager extends AbstractManager
             ->setMotifCloture($motif);
 
         $this->managerRegistry->getManager()->persist($affectation);
-        $this->managerRegistry->getManager()->flush($affectation);
+        $this->managerRegistry->getManager()->flush();
 
         return $affectation;
     }

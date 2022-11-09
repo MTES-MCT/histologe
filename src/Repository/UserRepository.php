@@ -59,7 +59,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('role2', '["ROLE_ADMIN_TERRITORY"]')
             ->andWhere('u.territory = :territory')
             ->setParameter('territory', $territory)
-            ->andWhere('u.statut = '.User::STATUS_ACTIVE);
+            ->andWhere('u.statut = '.User::STATUS_ACTIVE)
+            ->andWhere('u.isMailingActive = true');
 
         $adminsEmail = array_map(function ($value) {
             return $value['email'];
