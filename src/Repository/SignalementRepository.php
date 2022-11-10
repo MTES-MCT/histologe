@@ -511,7 +511,5 @@ class SignalementRepository extends ServiceEntityRepository
         }, $queryBuilder->getQuery()->getArrayResult());
 
         return $partnersEmail;
-
-        return $queryBuilder->getQuery()->getArrayResult();
     }
 }
