@@ -100,10 +100,7 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
 
     private function sendMailToPartners(Signalement $signalement): void
     {
-        $sendTo = $this->signalementManager->getRepository()->findUsersPartnerEmailAffectedToSignalement(
-            $signalement->getId(),
-        );
-
+        $sendTo = $this->signalementManager->findEmailsAffectedToSignalement($signalement);
         if (empty($sendTo)) {
             return;
         }

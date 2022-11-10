@@ -16,15 +16,15 @@ users:
     is_mailing_active: 1
     territory: null
   -
-    email: admin-13-01@histologe.fr
+    email: admin-03@histologe.fr
     roles: "[\"ROLE_ADMIN\"]"
     partner: "Administrateurs Histologe ALL"
     statut: 1
     is_generique: 0
     is_mailing_active: 0
-    territory: "Bouches-du-Rhône"
+    territory: null
   -
-    email: admin-territoire-13@histologe.fr
+    email: admin-territoire-13-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Admin Histologe 13"
     statut: 1
@@ -32,7 +32,7 @@ users:
     is_mailing_active: 1
     territory: "Bouches-du-Rhône"
   -
-    email: admin-territoire-01@histologe.fr
+    email: admin-territoire-01-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Admins Histologe Ain"
     statut: 1
@@ -40,7 +40,7 @@ users:
     is_mailing_active: 0
     territory: "Ain"
   -
-    email: admin-territoire-63@histologe.fr
+    email: admin-territoire-63-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Random partner 63"
     statut: 1
@@ -48,7 +48,7 @@ users:
     is_mailing_active: 1
     territory: "Puy-de-Dôme"
   -
-    email: admin-territoire-06@histologe.fr
+    email: admin-territoire-06-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Random partner 06"
     statut: 1
@@ -56,7 +56,7 @@ users:
     is_mailing_active: 1
     territory: "Alpes-Maritimes"
   -
-    email: admin-territoire-59@histologe.fr
+    email: admin-territoire-59-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Random partner 59"
     statut: 1
@@ -64,7 +64,7 @@ users:
     is_mailing_active: 1
     territory: "Nord"
   -
-    email: partenaire-13-01@histologe.fr
+    email: user-13-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Marseille"
     statut: 1
@@ -72,7 +72,7 @@ users:
     is_mailing_active: 1
     territory: "Bouches-du-Rhône"
   -  
-    email: partenaire-13-02@histologe.fr
+    email: user-13-02@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Istres"
     statut: 1
@@ -80,7 +80,7 @@ users:
     is_mailing_active: 1
     territory: "Bouches-du-Rhône"
   -
-    email: partenaire-13-03@histologe.fr
+    email: user-13-03@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13"
     statut: 0
@@ -88,7 +88,7 @@ users:
     is_mailing_active: 1
     territory: "Bouches-du-Rhône"
   -
-    email: partenaire-13-04@histologe.fr
+    email: user-13-04@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Istres"
     statut: 0
@@ -96,24 +96,7 @@ users:
     is_mailing_active: 0
     territory: "Bouches-du-Rhône"
   -
-    email: partenaire-01-01@histologe.fr
-    roles: "[\"ROLE_USER_PARTNER\"]"
-    partner: "Partenaire 1"
-    statut: 1
-    is_generique: 0
-    is_mailing_active: 0
-    territory: "Ain"
-  -
-    email: partenaire-01-02@histologe.fr
-    roles: "[\"ROLE_USER_PARTNER\"]"
-    partner: "Gex"
-    statut: 0
-    is_generique: 0
-    is_mailing_active: 0
-    territory: "Ain"
-
-  -
-    email: partenaire-01-2A@histologe.fr
+    email: user-2A-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Vecchio Porto"
     statut: 0
@@ -121,7 +104,7 @@ users:
     is_mailing_active: 0
     territory: "Corse-du-Sud"
   -
-    email: usager-01-974@histologe.fr
+    email: user-974-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partner La réunion"
     statut: 1
@@ -129,15 +112,15 @@ users:
     is_mailing_active: 1
     territory: "Partner La réunion"
   -
-    email: usager-01-01@histologe.fr
+    email: user-01-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
-    partner: "Gex 2"
-    statut: 0
+    partner: "Partenaire 1"
+    statut: 1
     is_generique: 0
-    is_mailing_active: 1
+    is_mailing_active: 0
     territory: "Ain"
   -
-    email: usager-01-02@histologe.fr
+    email: user-01-02@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Gex 2"
     statut: 0
@@ -146,10 +129,34 @@ users:
     territory: "Ain"
     token: 00000000-0000-0000-0000-000000000001
   -
-    email: usager-01-03@histologe.fr
+    email: user-01-03@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Admins Histologe Ain"
     statut: 1
     is_generique: 0
     is_mailing_active: 1
+    territory: "Ain"
+  -
+    email: user-01-04@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Gex 2"
+    statut: 0
+    is_generique: 0
+    is_mailing_active: 1
+    territory: "Ain"
+  -
+    email: user-01-05@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Gex 2"
+    statut: 0
+    is_generique: 0
+    is_mailing_active: 1
+    territory: "Ain"
+  -
+    email: user-01-06@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Gex"
+    statut: 1
+    is_generique: 0
+    is_mailing_active: 0
     territory: "Ain"
