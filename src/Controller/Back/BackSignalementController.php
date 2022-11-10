@@ -78,9 +78,9 @@ class BackSignalementController extends AbstractController
             $params['motif_cloture'] = $clotureForm->get('motif')->getData();
             $params['motif_suivi'] = $clotureForm->getExtraData()['suivi'];
             $params['subject'] = $this->getUser()?->getPartner()?->getNom();
-            $params['closed_for'] = 'partner';
+            $params['closed_for'] = $clotureForm->get('type')->getData();
 
-            if ('all' === $params['closed_for'] = $clotureForm->get('type')->getData()) {
+            if ('all' === $params['closed_for']) {
                 $params['subject'] = 'tous les partenaires';
                 $entity = $signalement = $signalementManager->closeSignalementForAllPartners(
                     $signalement,
