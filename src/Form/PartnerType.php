@@ -149,6 +149,7 @@ class PartnerType extends AbstractType
             'can_edit_territory' => true,
             'constraints' => [
                 new Assert\Callback([$this, 'validateUserEmailList']),
+                new Assert\Callback([$this, 'validatePartnerCanBeNotified']),
             ],
         ]);
     }
@@ -165,6 +166,26 @@ class PartnerType extends AbstractType
             $conflictsEmail = array_diff_assoc($usersEmail, $uniqueUsersEmail);
             if (\count($conflictsEmail) > 0) {
                 $context->addViolation('Les addresses emails doivent être unique.');
+            }
+        }
+    }
+
+    public function validatePartnerCanBeNotified(mixed $value, ExecutionContextInterface $context)
+    {
+        if ($value instanceof Partner) {
+            $partner = $value;
+            if (!empty($partner->getEmail()) || $partner->getUsers()->isEmpty()) {
+                return;
+            }
+
+            $users = $partner->getUsers();
+            $canBeNotified = $users->exists(function (int $i, User $user) {
+                return $user->getIsMailingActive();
+            });
+
+            if (!$canBeNotified) {
+                $context->addViolation('Email générique manquante: Il faut donc obligatoirement qu\'au moins
+                1 compte utilisateur accepte de recevoir les emails.');
             }
         }
     }
