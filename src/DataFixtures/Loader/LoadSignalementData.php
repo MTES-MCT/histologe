@@ -86,12 +86,12 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setSituationOccupant($row['situation_occupant'])
             ->setValidatedAt(Signalement::STATUS_ACTIVE === $row['statut'] ? new \DateTimeImmutable() : null)
             ->setOrigineSignalement($row['origine_signalement'])
-            ->setCreatedAt(new \DateTimeImmutable());
+            ->setCreatedAt((new \DateTimeImmutable())->modify('-15 days'));
 
         if (Signalement::STATUS_CLOSED === $row['statut']) {
             $signalement
                 ->setMotifCloture($row['motif_cloture'])
-                ->setClosedAt((new \DateTimeImmutable())->modify('+15 days'))
+                ->setClosedAt(new \DateTimeImmutable())
                 ->setClosedBy($this->userRepository->findOneBy(['statut' => User::STATUS_ACTIVE]));
         }
 
