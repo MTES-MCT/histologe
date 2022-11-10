@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -467,5 +468,48 @@ class SignalementRepository extends ServiceEntityRepository
             ->orderBy('reference_index', 'ASC');
 
         return $queryBuilder->getQuery()->getArrayResult();
+    }
+
+    public function findUsersPartnerEmailAffectedToSignalement(int $signalementId, ?Partner $partnerToExclude = null)
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder
+            ->select('u.email')
+            ->innerJoin('s.affectations', 'a')
+            ->innerJoin('a.partner', 'p')
+            ->innerJoin('p.users', 'u')
+            ->where('s.id = :signalement_id')
+            ->setParameter('signalement_id', $signalementId)
+            ->andWhere('u.statut = '.User::STATUS_ACTIVE)
+            ->andWhere('u.isMailingActive = true');
+
+        if (null !== $partnerToExclude) {
+            $queryBuilder
+                ->andWhere('a.partner != :partner')
+                ->setParameter('partner', $partnerToExclude);
+        }
+
+        $usersEmail = array_map(function ($value) {
+            return $value['email'];
+        }, $queryBuilder->getQuery()->getArrayResult());
+
+        return $usersEmail;
+    }
+
+    public function findPartnersEmailAffectedToSignalement(int $signalementId)
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder
+            ->select('p.email')
+            ->innerJoin('s.affectations', 'a')
+            ->innerJoin('a.partner', 'p')
+            ->where('s.id = :signalement_id')
+            ->setParameter('signalement_id', $signalementId);
+
+        $partnersEmail = array_map(function ($value) {
+            return $value['email'];
+        }, $queryBuilder->getQuery()->getArrayResult());
+
+        return $partnersEmail;
     }
 }

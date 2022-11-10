@@ -3,11 +3,13 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\Signalement;
+use App\Entity\User;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
+use App\Repository\UserRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -21,7 +23,8 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         private SituationRepository $situationRepository,
         private CritereRepository $critereRepository,
         private CriticiteRepository $criticiteRepository,
-        private TagRepository $tagRepository
+        private TagRepository $tagRepository,
+        private UserRepository $userRepository,
     ) {
     }
 
@@ -83,7 +86,14 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setSituationOccupant($row['situation_occupant'])
             ->setValidatedAt(Signalement::STATUS_ACTIVE === $row['statut'] ? new \DateTimeImmutable() : null)
             ->setOrigineSignalement($row['origine_signalement'])
-            ->setCreatedAt(new \DateTimeImmutable());
+            ->setCreatedAt((new \DateTimeImmutable())->modify('-15 days'));
+
+        if (Signalement::STATUS_CLOSED === $row['statut']) {
+            $signalement
+                ->setMotifCloture($row['motif_cloture'])
+                ->setClosedAt(new \DateTimeImmutable())
+                ->setClosedBy($this->userRepository->findOneBy(['statut' => User::STATUS_ACTIVE]));
+        }
 
         foreach ($row['tags'] as $tag) {
             $signalement->addTag($this->tagRepository->findOneBy(['label' => $tag]));

@@ -7,6 +7,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 class BackSignalementControllerTest extends WebTestCase
 {
@@ -48,5 +49,41 @@ class BackSignalementControllerTest extends WebTestCase
             $route = $generatorUrl->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
             yield $route => [$route, $signalement];
         }
+    }
+
+    public function testSubmitClotureSignalementWihEmailSentToPartnersAndUsager()
+    {
+        $client = static::createClient();
+
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['reference' => '2022-8']);
+        $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
+
+        /** @var UserRepository $userRepository */
+        $userRepository = self::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $client->loginUser($user);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+
+        $crawler = $client->request('GET', $route);
+        $client->submitForm('Cloturer pour tous les partenaires', [
+                'cloture[motif]' => 'INSALUBRITE',
+                'cloture[suivi]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                'cloture[type]' => 'all',
+            ]
+        );
+
+        $this->assertResponseRedirects('/bo/');
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['reference' => '2022-8']);
+        $this->assertEquals(Signalement::STATUS_CLOSED, $signalement->getStatut());
+
+        $client->enableProfiler();
+        $this->assertEmailCount(2);
     }
 }

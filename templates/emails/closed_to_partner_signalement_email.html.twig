@@ -1,0 +1,27 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour,</p>
+    <p>Le partenaire {{ partner_name }} a terminé son intervention sur le signalement {{ ref_signalement }}. <br>
+        Il l'a donc clôturé pour son partenaire.</p>
+    <p>Le motif et la raison de clôture sont disponibles sur la fiche signalement.</p>
+    <p>Cliquez sur le bouton ci-dessous pour y accéder.</p>
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary"
+           style="text-align: center">
+        <tbody>
+        <tr>
+            <td align="left">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                    <tbody>
+                    <tr style="text-align: center;width: 100%">
+                        <td>
+                            <a href="{{ link|raw }}" target="_blank" rel="noopener">{{ btnText }}</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p>Si le bouton ne fonctionne pas <a href="{{ link|raw }}">cliquez ici</a></p>
+{% endblock %}

@@ -114,7 +114,7 @@ make build
 ```
 
 ### Accès
-=======
+
 2. Configurer les variables d'environnements du service object storage S3 d'OVH Cloud
 
 > Se rapprocher de l'équipe afin de vous fournir les accès au bucket de dev
@@ -134,13 +134,15 @@ S3_URL_BUCKET=
 
 > Pour tous les utilisateurs, le mot de passe est `histologe`
 
-Territoire             | Partenaire         | Email                            | Rôle       
------------------------|--------------------|----------------------------------|----------------------
-N/A                    | Admin Histologe    | admin-01@histologe.fr            | ROLE_ADMIN 
-Bouches-du-Rhône       | Admin Histologe 13 | admin-territoire-13@histologe.fr | ROLE_ADMIN_TERRITORY
-Ain                    | Admin Histologe 01 | admin-territoire-01@histologe.fr | ROLE_ADMIN_TERRITORY
-Bouches-du-Rhône       | Partenaire 13      | partenaire-13-01@histologe.fr    | ROLE_USER_PARTNER
-Ain                    | Partenaire 01      | partenaire-01-01@histologe.fr    | ROLE_USER_PARTNER
+Territoire             | Partenaire                | Email                               | Rôle       
+-----------------------|---------------------------|-------------------------------------|----------------------
+N/A                    | Admin Histologe           | admin-01@histologe.fr               | ROLE_ADMIN 
+Bouches-du-Rhône       | Admin Histologe 13        | admin-territoire-13-01@histologe.fr | ROLE_ADMIN_TERRITORY
+Ain                    | Admin Histologe 01        | admin-territoire-01-01@histologe.fr | ROLE_ADMIN_TERRITORY
+Bouches-du-Rhône       | Utilisateur Partenaire 13 | user-13-01@histologe.fr             | ROLE_USER_PARTNER
+Ain                    | Utilisateur Partenaire 01 | user-01-01@histologe.fr             | ROLE_USER_PARTNER
+
+> Pour les mails générique partenaire, la nomenclature est la suivante: partenaire-[zip]-[index]
 
 4. Vous pouvez ajouter vos e-mails:
 
