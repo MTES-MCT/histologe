@@ -43,6 +43,13 @@ class SignalementClosedSubscriberTest extends KernelTestCase
             ->getRepository(Signalement::class)
             ->findUsersPartnerEmailAffectedToSignalement($signalementClosed->getId());
 
+        $genericMailsPartner = $this
+            ->entityManager
+            ->getRepository(Signalement::class)
+            ->findPartnersEmailAffectedToSignalement($signalementClosed->getId());
+
+        $sendToPartners = array_merge($mailsPartner, $genericMailsPartner);
+
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['statut' => User::STATUS_ACTIVE]);
 
         $notitificationServiceMock = $this->createMock(NotificationService::class);
@@ -59,7 +66,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
                     $signalementClosed->getTerritory(),
                 ], [
                     NotificationService::TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS,
-                    $mailsPartner,
+                    $sendToPartners,
                     [
                         'ref_signalement' => $signalementClosed->getReference(),
                         'motif_cloture' => MotifCloture::LABEL[$signalementClosed->getMotifCloture()],

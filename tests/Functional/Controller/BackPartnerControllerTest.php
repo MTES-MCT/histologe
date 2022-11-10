@@ -50,7 +50,7 @@ class BackPartnerControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
 
-        $user = $userRepository->findOneBy(['email' => 'usager-01-974@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-974-01@histologe.fr']);
         $userId = $user->getId();
 
         $crawler = $client->request('POST', $router->generate('back_partner_user_delete', [

@@ -60,12 +60,12 @@ class UserManagerTest extends KernelTestCase
         $partner = $partnerRepository->findOneBy(['nom' => 'Gex']);
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => 'partenaire-01-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-01-01@histologe.fr']);
 
         $userManager->transferUserToPartner($user, $partner);
 
         /** @var User $userNewPartner */
-        $userNewPartner = $userRepository->findOneBy(['email' => 'partenaire-01-01@histologe.fr']);
+        $userNewPartner = $userRepository->findOneBy(['email' => 'user-01-01@histologe.fr']);
 
         $this->assertEquals('Gex', $userNewPartner->getPartner()->getNom());
         $this->assertEmailCount(1);
@@ -90,12 +90,12 @@ class UserManagerTest extends KernelTestCase
         $partner = $partnerRepository->findOneBy(['nom' => 'Istres']);
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => 'partenaire-13-03@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-13-03@histologe.fr']);
 
         $userManager->transferUserToPartner($user, $partner);
 
         /** @var User $userNewPartner */
-        $userNewPartner = $userRepository->findOneBy(['email' => 'partenaire-13-03@histologe.fr']);
+        $userNewPartner = $userRepository->findOneBy(['email' => 'user-13-03@histologe.fr']);
 
         $this->assertEquals('Istres', $userNewPartner->getPartner()->getNom());
         $this->assertEmailCount(1);

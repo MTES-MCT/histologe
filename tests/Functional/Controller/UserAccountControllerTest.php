@@ -17,7 +17,7 @@ class UserAccountControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'usager-01-02@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-01-02@histologe.fr']);
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
@@ -42,7 +42,7 @@ class UserAccountControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'usager-01-02@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-01-02@histologe.fr']);
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);

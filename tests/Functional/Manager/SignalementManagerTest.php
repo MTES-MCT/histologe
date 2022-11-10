@@ -93,4 +93,19 @@ class SignalementManagerTest extends KernelTestCase
         $this->assertInstanceOf(\DateTimeInterface::class, $affectationClosed->getAnsweredAt());
         $this->assertTrue(str_contains($affectationClosed->getMotifCloture(), 'Non décence'));
     }
+
+    public function testFindEmailsAffectedToSignalement()
+    {
+        $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        $signalement = $signalementRepository->findOneBy(['statut' => Signalement::STATUS_ACTIVE]);
+
+        /** @var Security $security */
+        $security = static::getContainer()->get('security.helper');
+        $signalementManager = new SignalementManager($managerRegistry, $security);
+        $emails = $signalementManager->findEmailsAffectedToSignalement($signalement);
+
+        $this->assertGreaterThan(1, \count($emails));
+    }
 }
