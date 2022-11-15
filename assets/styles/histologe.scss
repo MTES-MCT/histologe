@@ -113,17 +113,19 @@ label.required::after {
     display: inline-flex !important;
 }
 
-@media (max-width: 1149px) {
-    .fr-display-inline-table {
-        display: block !important;
-    }
-
+.fr-display-inline-table {
+    display: inline-table !important;
+    display: -moz-inline-table !important;
 }
-
-@media (min-width: 1150px) {
+@media (max-width: 1250px) {
     .fr-display-inline-table {
-        display: inline-table !important;
-        display: -moz-inline-table !important;
+        tr {
+            display: flex;
+            flex-wrap: wrap;
+            td {
+                flex: 1;
+            }
+        }
     }
 }
 
@@ -139,8 +141,13 @@ small {
     font-size: smaller;
 }
 
-.fr-table td, .fr-table th {
-    line-height: 1rem;
+.fr-table {
+    td, th {
+        line-height: 1rem;
+        img {
+            max-width: 350px;
+        }
+    }
 }
 
 .fr-blockquote {
