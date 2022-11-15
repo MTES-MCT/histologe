@@ -121,7 +121,7 @@ const checkFieldset = (form) => {
         return true;
 }
 const goToStep = (step) => {
-    document.querySelector('#signalement-step-' + step).click();
+    document.querySelector('#signalement-step-' + step + '-btn').click();
 }
 const sortTableFunction = (table) => {
     return function (ev) {
