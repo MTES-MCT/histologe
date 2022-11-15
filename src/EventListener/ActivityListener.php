@@ -16,25 +16,19 @@ use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Security;
 
 class ActivityListener implements EventSubscriberInterface
 {
-    private NotificationService $notifier;
-    private UrlGeneratorInterface $urlGenerator;
-    /**
-     * @var null
-     */
     private $em;
-    /**
-     * @var null
-     */
     private $uow;
     private ArrayCollection $tos;
 
-    public function __construct(NotificationService $notificationService, UrlGeneratorInterface $urlGenerator)
-    {
-        $this->notifier = $notificationService;
-        $this->urlGenerator = $urlGenerator;
+    public function __construct(
+        private NotificationService $notifier,
+        private UrlGeneratorInterface $urlGenerator,
+        private Security $security,
+    ) {
         $this->tos = new ArrayCollection();
         $this->uow = null;
         $this->em = null;
@@ -150,8 +144,15 @@ class ActivityListener implements EventSubscriberInterface
                     'uuid' => $uuid,
                 ], UrlGenerator::ABSOLUTE_URL),
             ]);
+
+            $this->removeCurrentUserEmailForNotification();
             $this->notifier->send($mailType, array_unique($this->tos->toArray()), $options, $signalement->getTerritory());
         }
+    }
+
+    private function removeCurrentUserEmailForNotification(): void
+    {
+        $this->tos->removeElement($this->security?->getUser()?->getEmail());
     }
 
     private function notifyPartner($partner, $entity, $inAppType)
