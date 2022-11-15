@@ -139,8 +139,13 @@ small {
     font-size: smaller;
 }
 
-.fr-table td, .fr-table th {
-    line-height: 1rem;
+.fr-table {
+    td, th {
+        line-height: 1rem;
+        img {
+            max-width: 350px;
+        }
+    }
 }
 
 .fr-blockquote {
