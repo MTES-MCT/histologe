@@ -42,11 +42,12 @@ class PostalCodeHomeChecker
 
     public function isAuthorizedInseeCode(Territory $territory, string $inseeCode)
     {
-        if (0 == \count($territory->getAuthorizedCodesInsee())) {
+        $authorizedCodesInsee = $territory->getAuthorizedCodesInsee();
+        if (empty($authorizedCodesInsee) || 0 == \count($authorizedCodesInsee)) {
             return true;
         }
 
-        if (\in_array($inseeCode, $territory->getAuthorizedCodesInsee())) {
+        if (\in_array($inseeCode, $authorizedCodesInsee)) {
             return true;
         }
 
