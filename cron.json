@@ -2,6 +2,9 @@
   "jobs": [
     {
       "command": "0 7 */10 * * php bin/console app:remind-inactive-user"
+    },
+    {
+      "command": "0 0 * * 0 php bin/console app:clear-notification"
     }
   ]
 }
