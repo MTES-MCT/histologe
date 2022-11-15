@@ -6,11 +6,14 @@ use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\Token\TokenGeneratorInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class UserFactory
 {
-    public function __construct(private TokenGeneratorInterface $tokenGenerator)
-    {
+    public function __construct(
+        private TokenGeneratorInterface $tokenGenerator,
+        private ParameterBagInterface $parameterBag,
+    ) {
     }
 
     public function createInstanceFrom(
@@ -32,7 +35,11 @@ class UserFactory
             ->setIsGenerique(false)
             ->setStatut(User::STATUS_INACTIVE)
             ->setIsMailingActive($isMailActive)
-            ->setPassword($this->tokenGenerator->generateToken());
+            ->setPassword($this->tokenGenerator->generateToken())
+            ->setToken($this->tokenGenerator->generateToken())
+            ->setTokenExpiredAt(
+                (new \DateTimeImmutable())->modify($this->parameterBag->get('token_lifetime'))
+            );
     }
 
     public function createInstanceFromArray(Partner $partner, array $data): User

@@ -9,22 +9,35 @@ use App\Factory\UserFactory;
 use App\Manager\PartnerManager;
 use App\Service\Token\TokenGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserFactoryTest extends KernelTestCase
 {
-    public function testCreateUserInstance(): void
+    private TokenGeneratorInterface $tokenGenerator;
+    private ParameterBagInterface $parameterBag;
+    private ValidatorInterface $validator;
+    private PartnerManager $partnerManager;
+
+    protected function setUp(): void
     {
         self::bootKernel();
-        /** @var ValidatorInterface $validator */
-        $validator = static::getContainer()->get(ValidatorInterface::class);
-        /** @var TokenGeneratorInterface $tokenGenerator */
-        $tokenGenerator = static::getContainer()->get(TokenGeneratorInterface::class);
+        /* @var TokenGeneratorInterface tokenGenerator */
+        $this->tokenGenerator = static::getContainer()->get(TokenGeneratorInterface::class);
+        /* @var ParameterBagInterface parameterBag */
+        $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
+        /* @var ValidatorInterface validator */
+        $this->validator = static::getContainer()->get(ValidatorInterface::class);
+        /* @var PartnerManager partnerManager */
+        $this->partnerManager = static::getContainer()->get(PartnerManager::class);
+    }
 
+    public function testCreateUserInstance(): void
+    {
         $territory = new Territory();
         $partner = new Partner();
 
-        $user = (new UserFactory($tokenGenerator))->createInstanceFrom(
+        $user = (new UserFactory($this->tokenGenerator, $this->parameterBag))->createInstanceFrom(
             roleLabel: 'Utilisateur',
             territory: $territory,
             partner: $partner,
@@ -33,7 +46,7 @@ class UserFactoryTest extends KernelTestCase
             email: 'john.doe@example.com'
         );
 
-        $errors = $validator->validate($user);
+        $errors = $this->validator->validate($user);
         $this->assertEmpty($errors, (string) $errors);
 
         $this->assertInstanceOf(User::class, $user);
@@ -45,16 +58,10 @@ class UserFactoryTest extends KernelTestCase
 
     public function testCreateUserAdminInstanceWithoutPartnerAndTerritory(): void
     {
-        self::bootKernel();
-        /** @var ValidatorInterface $validator */
-        $validator = static::getContainer()->get(ValidatorInterface::class);
-        /** @var TokenGeneratorInterface $tokenGenerator */
-        $tokenGenerator = static::getContainer()->get(TokenGeneratorInterface::class);
-
         $territory = new Territory();
         $partner = new Partner();
 
-        $user = (new UserFactory($tokenGenerator))->createInstanceFrom(
+        $user = (new UserFactory($this->tokenGenerator, $this->parameterBag))->createInstanceFrom(
             partner: null,
             territory: null,
             roleLabel: 'Super Admin',
@@ -63,7 +70,7 @@ class UserFactoryTest extends KernelTestCase
             email: 'john.doe@example.com'
         );
 
-        $errors = $validator->validate($user);
+        $errors = $this->validator->validate($user);
         $this->assertEmpty($errors, (string) $errors);
 
         $this->assertInstanceOf(User::class, $user);
@@ -77,15 +84,8 @@ class UserFactoryTest extends KernelTestCase
 
     public function testCreateUserFromArray(): void
     {
-        /** @var ValidatorInterface $validator */
-        $validator = static::getContainer()->get(ValidatorInterface::class);
-        /** @var TokenGeneratorInterface $tokenGenerator */
-        $tokenGenerator = static::getContainer()->get(TokenGeneratorInterface::class);
-
-        /** @var PartnerManager $partnerManager */
-        $partnerManager = static::getContainer()->get(PartnerManager::class);
         /** @var Partner $partner */
-        $partner = $partnerManager->findOneBy(['nom' => 'Random partner 63']);
+        $partner = $this->partnerManager->findOneBy(['nom' => 'Random partner 63']);
         $data = [
             'roles' => 'ROLE_USER_PARTNER',
             'email' => 'john.doe-1@example.com',
@@ -94,9 +94,9 @@ class UserFactoryTest extends KernelTestCase
             'isMailingActive' => true,
         ];
 
-        $user = (new UserFactory($tokenGenerator))->createInstanceFromArray($partner, $data);
+        $user = (new UserFactory($this->tokenGenerator, $this->parameterBag))->createInstanceFromArray($partner, $data);
 
-        $errors = $validator->validate($user);
+        $errors = $this->validator->validate($user);
         $this->assertEmpty($errors, (string) $errors);
 
         $this->assertInstanceOf(User::class, $user);

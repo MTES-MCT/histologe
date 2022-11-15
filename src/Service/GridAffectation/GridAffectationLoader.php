@@ -80,7 +80,7 @@ class GridAffectationLoader
         $errors = $this->validator->validate($user);
         if (\count($errors) > 0) {
             foreach ($errors as $error) {
-                throw new \Exception($error->getMessage());
+                throw new \Exception(sprintf('%s (%s)', $error->getMessage(), $user->getEmail()));
             }
         }
     }

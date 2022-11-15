@@ -7,11 +7,13 @@ use App\Service\NotificationService;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
-use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class UserAddedSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private LoginLinkHandlerInterface $loginLinkHandler,
+    public function __construct(private ParameterBagInterface $parameterBag,
+                                private UrlGeneratorInterface $urlGenerator,
                                 private NotificationService $notificationService)
     {
     }
@@ -36,13 +38,18 @@ class UserAddedSubscriber implements EventSubscriberInterface
 
     private function sendNotification(User $user): void
     {
-        $loginLinkDetails = $this->loginLinkHandler->createLoginLink($user);
-        $loginLink = $loginLinkDetails->getUrl();
         $this->notificationService->send(
             NotificationService::TYPE_ACCOUNT_ACTIVATION,
             $user->getEmail(),
-            ['link' => $loginLink],
+            ['link' => $this->generateLink($user)],
             $user->getTerritory()
         );
+    }
+
+    private function generateLink(User $user): string
+    {
+        return
+            $this->parameterBag->get('host_url').
+            $this->urlGenerator->generate('activate_account', ['token' => $user->getToken()]);
     }
 }
