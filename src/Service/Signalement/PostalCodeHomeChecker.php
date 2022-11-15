@@ -15,15 +15,19 @@ class PostalCodeHomeChecker
     {
     }
 
-    public function isActive(string $postalCode): bool
+    public function isActive(string $postalCode, string $inseeCode = ''): bool
     {
-        $territoryItems = $this->territoryRepository->findOneBy([
+        $territoryItem = $this->territoryRepository->findOneBy([
             'zip' => $this->mapZip($postalCode),
             'isActive' => 1,
         ]);
 
-        if (!empty($territoryItems)) {
-            return true;
+        if (!empty($territoryItem)) {
+            if (empty($inseeCode)) {
+                return true;
+            }
+
+            return $this->isAuthorizedInseeCode($territoryItem, $inseeCode);
         }
 
         return false;
@@ -38,11 +42,12 @@ class PostalCodeHomeChecker
 
     public function isAuthorizedInseeCode(Territory $territory, string $inseeCode)
     {
-        if (0 == \count($territory->getAuthorizedCodesInsee())) {
+        $authorizedCodesInsee = $territory->getAuthorizedCodesInsee();
+        if (empty($authorizedCodesInsee) || 0 == \count($authorizedCodesInsee)) {
             return true;
         }
 
-        if (\in_array($inseeCode, $territory->getAuthorizedCodesInsee())) {
+        if (\in_array($inseeCode, $authorizedCodesInsee)) {
             return true;
         }
 

@@ -59,6 +59,23 @@ forms.forEach((form) => {
             })
         })
     })
+    form?.querySelectorAll('#signalement_cpOccupant')?.forEach((element) => {
+        element.addEventListener('change', (event) => {
+            let cpOccupant = form.querySelector('#signalement_cpOccupant').value;
+            if (cpOccupant.substr(0, 2) == '69') {
+                const RHONES_AUTHORIZED_CODES_POSTAL = [
+                    69000, 69001, 69002, 69003, 69004, 69005, 69006, 69007, 69008, 69009,
+                    69100, 69125, 69190, 69200, 69290, 69381,
+                    69520, 69600, 69700, 69800
+                ];
+                if (RHONES_AUTHORIZED_CODES_POSTAL.indexOf(Number(cpOccupant)) == -1) {
+                    form.querySelector('#fr-error-text-code-postal')?.classList?.remove('fr-hidden');
+                } else {
+                    form.querySelector('#fr-error-text-code-postal')?.classList?.add('fr-hidden');
+                }
+            }
+        })
+    })
     form?.querySelectorAll('[data-fr-toggle-show],[data-fr-toggle-hide]')?.forEach((toggle) => {
         toggle.addEventListener('change', (event) => {
             let toShow = event.target.getAttribute('data-fr-toggle-show'),
@@ -321,7 +338,11 @@ forms.forEach((form) => {
                 let currentTabBtn = document.querySelector('.fr-tabs__list>li>button[aria-selected="true"]'),
                     nextTabBtn = currentTabBtn.parentElement?.nextElementSibling?.querySelector('button');
                 if (form.id === "signalement-step-1" && form.querySelector('.checkterr')) {
-                    fetch('checkterritory?cp='+form.querySelector('#signalement_cpOccupant').value).then(r=> r.json()).then(r=> {
+                    let inseeParam = '';
+                    if (form.querySelector('#signalement-insee-occupant').value != undefined && form.querySelector('#signalement-insee-occupant').value != '') {
+                        inseeParam = '&insee='+form.querySelector('#signalement-insee-occupant').value;
+                    }
+                    fetch('checkterritory?cp='+form.querySelector('#signalement_cpOccupant').value+inseeParam).then(r=> r.json()).then(r=> {
                         if(r.success)
                         {
                             nextTabBtn.disabled = false;
