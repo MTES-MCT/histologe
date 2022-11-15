@@ -48,7 +48,7 @@ class Territory
     #[ORM\OneToOne(targetEntity: Config::class, cascade: ['persist', 'remove'])]
     private $config;
 
-    #[ORM\Column(type: 'simple_array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     private $authorizedCodesInsee = [];
 
     public function __construct()

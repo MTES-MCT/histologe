@@ -338,7 +338,11 @@ forms.forEach((form) => {
                 let currentTabBtn = document.querySelector('.fr-tabs__list>li>button[aria-selected="true"]'),
                     nextTabBtn = currentTabBtn.parentElement?.nextElementSibling?.querySelector('button');
                 if (form.id === "signalement-step-1" && form.querySelector('.checkterr')) {
-                    fetch('checkterritory?cp='+form.querySelector('#signalement_cpOccupant').value).then(r=> r.json()).then(r=> {
+                    let inseeParam = '';
+                    if (form.querySelector('#signalement-insee-occupant').value != undefined && form.querySelector('#signalement-insee-occupant').value != '') {
+                        inseeParam = '&insee='+form.querySelector('#signalement-insee-occupant').value;
+                    }
+                    fetch('checkterritory?cp='+form.querySelector('#signalement_cpOccupant').value+inseeParam).then(r=> r.json()).then(r=> {
                         if(r.success)
                         {
                             nextTabBtn.disabled = false;

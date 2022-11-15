@@ -59,7 +59,8 @@ class FrontSignalementController extends AbstractController
             return $this->json(['success' => false, 'message' => 'cp parameter is missing'], Response::HTTP_BAD_REQUEST);
         }
 
-        if ($postalCodeHomeChecker->isActive($postalCode)) {
+        $inseeCode = $request->get('insee');
+        if ($postalCodeHomeChecker->isActive($postalCode, $inseeCode)) {
             return $this->json(['success' => true, 'message' => 'Open territory']);
         }
 
