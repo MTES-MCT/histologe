@@ -10,11 +10,15 @@
             <li>
                 <a class="fr-link" href="{{ path('front_about') }}">A propos</a>
             </li>
+            {% if gitbook is defined %}
+                <li>
+                    <a class="fr-link fr-fi-external-link-line" href="{{ gitbook.faq }}" target="_blank" rel="noopener">Aide</a>
+                </li>
+            {% endif %}
             <li>
                 <a class="fr-link" href="{{ path('front_contact') }}">Contact</a>
             </li>
             <li>
-
                 {% if app.user %}
                     <a class="fr-link fr-fi-user-line" href="{{ path('back_index') }}">Tableau de bord</a>
                 {% else %}
