@@ -14,6 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Security;
@@ -28,6 +29,7 @@ class ActivityListener implements EventSubscriberInterface
         private NotificationService $notifier,
         private UrlGeneratorInterface $urlGenerator,
         private Security $security,
+        private LoggerInterface $logger,
     ) {
         $this->tos = new ArrayCollection();
         $this->uow = null;
@@ -146,7 +148,16 @@ class ActivityListener implements EventSubscriberInterface
             ]);
 
             $this->removeCurrentUserEmailForNotification();
-            $this->notifier->send($mailType, array_unique($this->tos->toArray()), $options, $signalement->getTerritory());
+            if ($this->tos->isEmpty()) {
+                $this->logger->error(
+                    sprintf('[%s][%s] Aucun utilisateur est notifiable pour ce %s. Merci de vérifier les mails partenaires',
+                        $signalement->getTerritory(),
+                        $mailType,
+                        $signalement->getReference())
+                );
+            } else {
+                $this->notifier->send($mailType, array_unique($this->tos->toArray()), $options, $signalement->getTerritory());
+            }
         }
     }
 
