@@ -21,6 +21,8 @@ jobs:
         image: mysql:5.7
         env:
           MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: histologe
+          MYSQL_DATABASE: histologe_db
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -77,3 +79,19 @@ jobs:
       # https://github.com/FriendsOfPHP/PHP-CS-Fixer
       - name: Check PHP coding standard (PHP-CS-Fixer)
         run: composer cs-check
+
+      - name: Load Doctrine fixtures
+        run: |
+          composer require --dev symfony/orm-pack
+          php bin/console --env=test doctrine:database:create --no-interaction
+          php bin/console --env=test doctrine:migrations:migrate --no-interaction
+          php bin/console --env=test doctrine:fixtures:load --no-interaction
+        env:
+          DATABASE_URL: mysql://root:histologe@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/histologe_db
+
+      - name: Run tests
+        run: |
+          composer require --dev dama/doctrine-test-bundle
+          ./vendor/bin/phpunit --stop-on-failure --testdox -d memory_limit=-1
+        env:
+          DATABASE_URL: mysql://root:histologe@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/histologe_db
