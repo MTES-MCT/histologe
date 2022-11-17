@@ -14,7 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Security;
@@ -29,7 +29,7 @@ class ActivityListener implements EventSubscriberInterface
         private NotificationService $notifier,
         private UrlGeneratorInterface $urlGenerator,
         private Security $security,
-        private LoggerInterface $logger,
+        private ParameterBagInterface $parameterBag,
     ) {
         $this->tos = new ArrayCollection();
         $this->uow = null;
@@ -149,11 +149,16 @@ class ActivityListener implements EventSubscriberInterface
 
             $this->removeCurrentUserEmailForNotification();
             if ($this->tos->isEmpty()) {
-                $this->logger->error(
-                    sprintf('[%s][%s] Aucun utilisateur est notifiable pour ce %s. Merci de vérifier les mails partenaires',
-                        $signalement->getTerritory(),
-                        $mailType,
-                        $signalement->getReference())
+                $this->notifier->send(
+                    NotificationService::TYPE_ERROR_SIGNALEMENT,
+                    $this->parameterBag->get('admin_email'),
+                    [
+                        'url' => $this->parameterBag->get('host_url'),
+                        'error' => sprintf('Aucun utilisateur est notifiable pour le signalement #%s.',
+                            $signalement->getReference()
+                        ),
+                    ],
+                    $signalement->getTerritory()
                 );
             } else {
                 $this->notifier->send($mailType, array_unique($this->tos->toArray()), $options, $signalement->getTerritory());
