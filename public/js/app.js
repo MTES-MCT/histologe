@@ -62,6 +62,7 @@ forms.forEach((form) => {
     form?.querySelectorAll('#signalement_cpOccupant')?.forEach((element) => {
         element.addEventListener('change', (event) => {
             let cpOccupant = form.querySelector('#signalement_cpOccupant').value;
+            // Only a few code postal available in territory 69
             if (cpOccupant.substr(0, 2) == '69') {
                 const RHONES_AUTHORIZED_CODES_POSTAL = [
                     69000, 69001, 69002, 69003, 69004, 69005, 69006, 69007, 69008, 69009,
@@ -74,6 +75,13 @@ forms.forEach((form) => {
                     form.querySelector('#fr-error-text-code-postal')?.classList?.add('fr-hidden');
                 }
             }
+
+            refetchAddress(form)
+        })
+    })
+    form?.querySelectorAll('#signalement_villeOccupant')?.forEach((element) => {
+        element.addEventListener('change', (event) => {
+            refetchAddress(form)
         })
     })
     form?.querySelectorAll('[data-fr-toggle-show],[data-fr-toggle-hide]')?.forEach((toggle) => {
@@ -752,3 +760,32 @@ document.querySelectorAll('.value-switcher').forEach(sw => {
 
     }))
 })
+
+const refetchAddress = (form) => {
+    // If the code postal is manually edited, we reinit the insee/geoloc and fetch the first result
+    form.querySelector('#signalement-insee-occupant').value = '';
+    form.querySelector('#signalement-geoloc-lat-occupant').value = '';
+    form.querySelector('#signalement-geoloc-lng-occupant').value = '';
+    let addressComplete = form.querySelector('#signalement_adresseOccupant').value
+    addressComplete += ' ' + form.querySelector('#signalement_cpOccupant').value
+    addressComplete += ' ' + form.querySelector('#signalement_villeOccupant').value
+    fetch('https://api-adresse.data.gouv.fr/search/?q=' + addressComplete).then((res) => {
+        res.json().then((r) => {
+            let feature = r.features[0];
+            form.querySelector('#signalement-insee-occupant').value = feature.properties.citycode;
+            if (feature.properties.citycode.substr(0, 2) == '69') {
+                const RHONES_AUTHORIZED_INSEE_CODES = [
+                    69091, 69096, 69123, 69149, 69199, 69205, 69290, 69259, 69266,
+                    69381, 69382, 69383, 69384, 69385, 69386, 69387, 69388, 69389,
+                    69901 ];
+                if (RHONES_AUTHORIZED_INSEE_CODES.indexOf(Number(feature.properties.citycode)) == -1) {
+                    form.querySelector('#fr-error-text-insee')?.classList?.remove('fr-hidden');
+                } else {
+                    form.querySelector('#fr-error-text-insee')?.classList?.add('fr-hidden');
+                }
+            }
+            form.querySelector('#signalement-geoloc-lat-occupant').value = feature.geometry.coordinates[0];
+            form.querySelector('#signalement-geoloc-lng-occupant').value = feature.geometry.coordinates[1];
+        })
+    })
+}
