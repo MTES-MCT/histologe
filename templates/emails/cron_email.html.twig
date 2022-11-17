@@ -2,5 +2,6 @@
 
 {% block body %}
     <p>Plateforme: {{ url }}</p>
-    <p>La tache planifiée <strong>{{ cron_type }}</strong> s'est éxécuté avec succès </p>
+    <p>La tache planifiée <strong>{{ cron_label }}</strong> s'est éxécutée avec succès.</p>
+    <p>{{ count }} {{ message }}.</p>
 {% endblock %}

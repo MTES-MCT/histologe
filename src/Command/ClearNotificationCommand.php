@@ -35,14 +35,17 @@ class ClearNotificationCommand extends Command
         }
         $this->entityManager->flush();
 
-        $io->success(\count($notifications).' notification(s) deleted !');
+        $nbNotifications = \count($notifications);
+        $io->success($nbNotifications.' notification(s) deleted !');
 
         $this->notificationService->send(
             NotificationService::TYPE_CRON,
             $this->parameterBag->get('admin_email'),
             [
                 'url' => $this->parameterBag->get('host_url'),
-                'cron_type' => 'SUPPRESSION DES NOTIFICATIONS',
+                'cron_label' => 'Suppression des notifications',
+                'count' => $nbNotifications,
+                'message' => $nbNotifications > 2 ? 'notifications ont été supprimées' : 'notification a été supprimée',
             ],
             null
         );
