@@ -95,3 +95,5 @@ jobs:
           ./vendor/bin/phpunit --stop-on-failure --testdox -d memory_limit=-1
         env:
           DATABASE_URL: mysql://root:histologe@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/histologe_db
+          HISTOLOGE_URL: http://localhost
+          SERVER_NAME: localhost:8080
