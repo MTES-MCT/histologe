@@ -28,7 +28,7 @@ class FixUserPasswordInactiveCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $users = $this->userManager->findBy(['statut' => User::STATUS_INACTIVE, 'password' => null]);
+        $users = $this->userManager->findBy(['password' => null]);
 
         /** @var User $user */
         foreach ($users as $user) {
