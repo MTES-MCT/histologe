@@ -97,6 +97,14 @@
                     </div>
                 {% endif %}
             </ul>
+            {% if gitbook is defined %}
+                <ul class="fr-sidemenu__list fr-sidemenu__list-bottom">
+                    <li class="fr-sidemenu__item">
+                        <a class="fr-sidemenu__link fr-fi-external-link-line"
+                           href="{{ gitbook.documentation }}" target="_blank"  rel="noopener">Documentation</a>
+                    </li>
+                </ul>
+            {% endif %}
             <ul class="fr-sidemenu__list fr-sidemenu__list-bottom">
                 <li class="fr-sidemenu__item">
                     <a class="fr-sidemenu__link fr-fi-logout-box-r-line"

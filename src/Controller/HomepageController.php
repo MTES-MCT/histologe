@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class FrontController extends AbstractController
+class HomepageController extends AbstractController
 {
     #[Route('/', name: 'home')]
     public function index(

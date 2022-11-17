@@ -2,6 +2,9 @@ twig:
     default_path: '%kernel.project_dir%/templates'
     globals:
         config: '@App\Service\ConfigurationService'
+        gitbook:
+            documentation: https://documentation.histologe.beta.gouv.fr
+            faq: https://faq.histologe.beta.gouv.fr
     paths:
         # point this wherever your images live
         '%kernel.project_dir%/public/img': images
