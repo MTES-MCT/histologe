@@ -1,0 +1,6 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Plateforme: {{ url }}</p>
+    <p>La tache planifiée <strong>{{ cron_type }}</strong> s'est éxécuté avec succès </p>
+{% endblock %}

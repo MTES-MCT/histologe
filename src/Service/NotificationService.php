@@ -31,6 +31,7 @@ class NotificationService
     public const TYPE_CONTACT_FORM = 8;
     public const TYPE_ERROR_SIGNALEMENT = 9;
     public const TYPE_MIGRATION_PASSWORD = 13;
+    public const TYPE_CRON = 100;
 
     private MailerInterface $mailer;
 
@@ -161,6 +162,10 @@ class NotificationService
             self::TYPE_ERROR_SIGNALEMENT => [
                 'template' => 'erreur_signalement_email',
                 'subject' => 'Une erreur est survenue lors de la création d\'un signalement !',
+            ],
+            self::TYPE_CRON => [
+                'template' => 'cron_email',
+                'subject' => 'La tache planifiée s\'est bien éxécutée.',
             ]
         };
     }
