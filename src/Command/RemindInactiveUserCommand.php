@@ -77,7 +77,7 @@ class RemindInactiveUserCommand extends Command
                 'url' => $this->parameterBag->get('host_url'),
                 'cron_label' => 'demande d\'activation de compte',
                 'count' => $nbUsers,
-                'message' => $nbUsers > 2 ? 'utilisateurs ont été notifiées' : 'utilisateur a été notifiée',
+                'message' => $nbUsers > 1 ? 'utilisateurs ont été notifiées' : 'utilisateur a été notifiée',
             ],
             null
         );

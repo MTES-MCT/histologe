@@ -183,7 +183,7 @@ class PartnerType extends AbstractType
             }
 
             $canBeNotified = $usersActive->exists(function (int $i, User $user) {
-                return $user->getIsMailingActive() && User::STATUS_ACTIVE === $user->getStatut();
+                return $user->getIsMailingActive();
             });
 
             if (!$canBeNotified) {

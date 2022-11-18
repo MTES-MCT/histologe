@@ -45,7 +45,7 @@ class ClearNotificationCommand extends Command
                 'url' => $this->parameterBag->get('host_url'),
                 'cron_label' => 'Suppression des notifications',
                 'count' => $nbNotifications,
-                'message' => $nbNotifications > 2 ? 'notifications ont été supprimées' : 'notification a été supprimée',
+                'message' => $nbNotifications > 1 ? 'notifications ont été supprimées' : 'notification a été supprimée',
             ],
             null
         );
