@@ -174,12 +174,15 @@ class PartnerType extends AbstractType
     {
         if ($value instanceof Partner) {
             $partner = $value;
-            if (!empty($partner->getEmail()) || $partner->getUsers()->isEmpty()) {
+            $usersActive = $partner->getUsers()->filter(function (User $user) {
+                return User::STATUS_ACTIVE === $user->getStatut();
+            });
+
+            if (!empty($partner->getEmail()) || $usersActive->isEmpty()) {
                 return;
             }
 
-            $users = $partner->getUsers();
-            $canBeNotified = $users->exists(function (int $i, User $user) {
+            $canBeNotified = $usersActive->exists(function (int $i, User $user) {
                 return $user->getIsMailingActive();
             });
 

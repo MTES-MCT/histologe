@@ -67,7 +67,20 @@ class RemindInactiveUserCommand extends Command
             );
         }
 
-        $io->success(sprintf('%s users has been notified', \count($userList)));
+        $nbUsers = \count($userList);
+        $io->success(sprintf('%s users has been notified', $nbUsers));
+
+        $this->notificationService->send(
+            NotificationService::TYPE_CRON,
+            $this->parameterBag->get('admin_email'),
+            [
+                'url' => $this->parameterBag->get('host_url'),
+                'cron_label' => 'demande d\'activation de compte',
+                'count' => $nbUsers,
+                'message' => $nbUsers > 1 ? 'utilisateurs ont été notifiées' : 'utilisateur a été notifiée',
+            ],
+            null
+        );
 
         return Command::SUCCESS;
     }
