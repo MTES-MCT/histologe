@@ -53,9 +53,6 @@ jobs:
         with:
           node-version: '18'
 
-      - name: NPM build
-        run: npm run build
-
       - name: Get composer cache directory
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
@@ -72,6 +69,9 @@ jobs:
         run: | 
           composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
           composer install --working-dir=tools/php-cs-fixer --no-progress --no-suggest --prefer-dist --optimize-autoloader
+
+      - name: NPM build
+        run: npm run build
 
       # https://github.com/symfonycorp/security-checker-action
       - name: Security check installed dependencies
