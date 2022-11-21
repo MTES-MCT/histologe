@@ -9,7 +9,8 @@ on:
     branches:
       - main
       - develop
-
+  schedule:
+    - cron: '0 7 * * *'
 jobs:
   code-quality:
     name: Histologe (PHP ${{ matrix.php-versions }})
