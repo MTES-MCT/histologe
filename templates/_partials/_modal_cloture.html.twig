@@ -26,6 +26,13 @@
                             <p class="fr-error-text fr-hidden">Vous devez préciser votre motif de cloture.</p>
                         </div>
                         {{ form_end(clotureForm) }}
+                        
+                        {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+                            <div class="fr-alert fr-alert--warning">
+                                <h3 class="fr-alert__title">Attention</h3>
+                                <p>Le motif et les détails de clôture seront également envoyés à l'usager.</p>
+                            </div>
+                        {% endif %}
                     </div>
                     <div class="fr-modal__footer">
                         <ul class="fr-btns-group fr-btns-group--right fr-btns-group--icon-left">
