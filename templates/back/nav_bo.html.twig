@@ -73,13 +73,7 @@
                                 </li>
                             {% endif %}
                             {% if is_granted('ROLE_ADMIN_TERRITORY') %}
-                                {% if app.user.territory is not null %}
-                                    <li class="fr-sidemenu__item {% if 'back_config' is same as(app.request.get('_route')) %}fr-sidemenu__item--active{% endif %}">
-                                        <a class="fr-sidemenu__link"
-                                           href="{{ path('back_config',{id:app.user.territory.id}) }}" target="_self"
-                                           {% if 'back_config' is same as(app.request.get('_route')) %}aria-current="page"{% endif %}>Configuration</a>
-                                    </li>
-                                {% elseif is_granted('ROLE_ADMIN') %}
+                                {% if is_granted('ROLE_ADMIN') %}
                                     <li class="fr-sidemenu__item {% if 'back_territory_index' is same as(app.request.get('_route')) %}fr-sidemenu__item--active{% endif %}">
                                         <a class="fr-sidemenu__link"
                                            href="#" target="_self"
@@ -91,7 +85,6 @@
                                        target="_self"
                                        {% if 'back_partner' in app.request.get('_route') %}aria-current="page"{% endif %}>Partenaires</a>
                                 </li>
-
                             {% endif %}
                         </ul>
                     </div>

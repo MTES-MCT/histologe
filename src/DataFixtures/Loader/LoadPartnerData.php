@@ -39,6 +39,6 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
 
     public function getOrder(): int
     {
-        return 7;
+        return 6;
     }
 }

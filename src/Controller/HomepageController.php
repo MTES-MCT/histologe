@@ -6,7 +6,6 @@ use App\Form\ContactType;
 use App\Form\PostalCodeSearchType;
 use App\Repository\AffectationRepository;
 use App\Repository\SignalementRepository;
-use App\Service\ConfigurationService;
 use App\Service\NotificationService;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -61,8 +60,10 @@ class HomepageController extends AbstractController
     }
 
     #[Route('/contact', name: 'front_contact')]
-    public function contact(Request $request, NotificationService $notificationService, ConfigurationService $configurationService): Response
-    {
+    public function contact(
+        Request $request,
+        NotificationService $notificationService
+    ): Response {
         $title = "Conditions Générales d'Utilisation";
         $form = $this->createForm(ContactType::class, []);
         $form->handleRequest($request);

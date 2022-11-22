@@ -45,9 +45,6 @@ class Territory
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Tag::class, orphanRemoval: true)]
     private $tags;
 
-    #[ORM\OneToOne(targetEntity: Config::class, cascade: ['persist', 'remove'])]
-    private $config;
-
     #[ORM\Column(type: 'json', nullable: true)]
     private $authorizedCodesInsee = [];
 
@@ -267,18 +264,6 @@ class Territory
                 $tag->setTerritory(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getConfig(): ?Config
-    {
-        return $this->config;
-    }
-
-    public function setConfig(?Config $config): self
-    {
-        $this->config = $config;
 
         return $this;
     }

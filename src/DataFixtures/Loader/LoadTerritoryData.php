@@ -3,7 +3,6 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\Territory;
-use App\Repository\ConfigRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -19,7 +18,7 @@ class LoadTerritoryData extends Fixture implements OrderedFixtureInterface
         '64' => 'PYRENEES-ATLANTIQUE',
     ];
 
-    public function __construct(private ConfigRepository $configRepository)
+    public function __construct()
     {
     }
 
@@ -41,17 +40,11 @@ class LoadTerritoryData extends Fixture implements OrderedFixtureInterface
             ->setIsActive($row['is_active'])
             ->setBbox(json_decode($row['bbox'], true));
 
-        if (isset($row['config'])) {
-            $territory->setConfig(
-                $this->configRepository->findOneBy(['nomTerritoire' => self::DEPARTEMENTS[$row['config']]])
-            );
-        }
-
         $manager->persist($territory);
     }
 
     public function getOrder(): int
     {
-        return 2;
+        return 1;
     }
 }
