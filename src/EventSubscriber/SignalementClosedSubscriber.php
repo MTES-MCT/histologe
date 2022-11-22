@@ -52,18 +52,22 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
                 ->setCodeSuivi($this->tokenGenerator->generateToken())
                 ->setClosedBy($this->security->getUser())
                 ->addSuivi($suivi);
-            $this->signalementManager->save($signalement);
 
             $this->sendMailToUsager($signalement);
             $this->sendMailToPartners($signalement);
         }
 
         if ($affectation instanceof Affectation) {
+            $suivi = $this->suiviFactory->createInstance(params: $params);
+            $signalement = $affectation->getSignalement();
+            $signalement->addSuivi($suivi);
             $this->sendMailToPartner(
-                signalement: $affectation->getSignalement(),
+                signalement: $signalement,
                 partnerToExclude: $this->security->getUser()->getPartner()
             );
         }
+
+        $this->signalementManager->save($signalement);
     }
 
     private function generateLinkCodeSuivi(string $codeSuivi): string
