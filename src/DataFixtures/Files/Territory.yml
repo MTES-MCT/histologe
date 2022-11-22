@@ -4,7 +4,6 @@ territories:
     name: "Ain"
     is_active: 1
     bbox: "{\"n\":\"46.519953\",\"e\":\"6.170198\",\"s\":\"45.611093\",\"w\":\"4.728067\"}"
-    config: "01"
   -
     zip: "02"
     name: "Aisne"
@@ -30,7 +29,6 @@ territories:
     name: "Alpes-Maritimes"
     is_active: 1
     bbox: "{\"n\":\"44.361155\",\"e\":\"7.718993\",\"s\":\"43.480302\",\"w\":\"6.635412\"}"
-    config: "06"
   -
     zip: "07"
     name: "Ardèche"
@@ -66,7 +64,6 @@ territories:
     name: "Bouches-du-Rhône"
     is_active: 1
     bbox: "{\"n\":\"43.924136\",\"e\":\"5.813431\",\"s\":\"43.157384\",\"w\":\"4.230207\"}"
-    config: "13"
   -
     zip: "14"
     name: "Calvados"
@@ -327,7 +324,6 @@ territories:
     name: "Pyrénées-Atlantiques"
     is_active: 1
     bbox: "{\"n\":\"43.596725\",\"s\":\"42.777531\",\"e\":\"0.029807\",\"w\":\"-1.792325\"}"
-    config: "64"
   -
     zip: "65"
     name: "Hautes-Pyrénées"

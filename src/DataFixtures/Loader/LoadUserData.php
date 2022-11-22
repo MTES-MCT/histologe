@@ -74,6 +74,6 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
 
     public function getOrder(): int
     {
-        return 8;
+        return 7;
     }
 }

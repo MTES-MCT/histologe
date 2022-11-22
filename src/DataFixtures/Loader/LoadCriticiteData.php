@@ -39,6 +39,6 @@ class LoadCriticiteData extends Fixture implements OrderedFixtureInterface
 
     public function getOrder(): int
     {
-        return 6;
+        return 5;
     }
 }

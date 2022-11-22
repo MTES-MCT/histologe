@@ -3,7 +3,6 @@
 namespace App\Command;
 
 use App\Entity\Affectation;
-use App\Entity\Config;
 use App\Entity\Critere;
 use App\Entity\Criticite;
 use App\Entity\Partner;
@@ -14,6 +13,7 @@ use App\Entity\Tag;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\EventListener\ActivityListener;
+use App\EventSubscriber\UserAddedSubscriber;
 use App\Service\NotificationService;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Statement;
@@ -62,6 +62,7 @@ class MigrateLegacyCommand extends Command
         private EntityManagerInterface $entityManager,
         private EventDispatcherInterface $eventDispatcher,
         private ActivityListener $activityListener,
+        private UserAddedSubscriber $userAddedSubscriber,
         private NotificationService $notificationService,
         private RouterInterface $router,
         private string $hostUrl,
@@ -92,6 +93,7 @@ class MigrateLegacyCommand extends Command
     {
         ini_set('memory_limit', '-1');
         $this->entityManager->getEventManager()->removeEventSubscriber($this->activityListener);
+        $this->entityManager->getEventManager()->removeEventSubscriber($this->userAddedSubscriber);
         $io = new SymfonyStyle($input, $output);
         $territoryZip = $input->getArgument('territory_zip');
         if (!\in_array($territoryZip, self::LEGACY_TERRITORY)) {
@@ -112,8 +114,6 @@ class MigrateLegacyCommand extends Command
         $progressBar = new ProgressBar($output, self::NB_TABLES);
         $progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%');
         $progressBar->start();
-        $this->loadConfig();
-        $progressBar->advance();
         $this->loadPartner();
         $progressBar->advance();
         $this->loadUser();
@@ -144,6 +144,7 @@ class MigrateLegacyCommand extends Command
         $this->entityManager->flush();
         $io->success($this->territory->getName().' has been activated');
         $this->entityManager->getEventManager()->addEventSubscriber($this->activityListener);
+        $this->entityManager->getEventManager()->addEventSubscriber($this->userAddedSubscriber);
 
         if ('yes' === $input->getOption('notify')) {
             $nbUserMailSent = $this->sendMailResetPassword();
@@ -153,48 +154,6 @@ class MigrateLegacyCommand extends Command
         }
 
         return Command::SUCCESS;
-    }
-
-    private function loadConfig(): void
-    {
-        /** @var Statement $statement */
-        $statement = $this->connection->prepare('SELECT * from config');
-        $legacyConfigList = $statement->executeQuery()->fetchAllAssociative();
-
-        $i = 0;
-        foreach ($legacyConfigList as $legacyConfig) {
-            $config = $this->entityManager->getRepository(Config::class)->findOneBy(
-                ['nomTerritoire' => mb_strtoupper($legacyConfig['nom_territoire'])]
-            );
-
-            if (null === $config) {
-                $config = new Config();
-                ++$i;
-            }
-            $config
-                ->setNomTerritoire(mb_strtoupper($legacyConfig['nom_territoire']))
-                ->setUrlTerritoire($legacyConfig['url_territoire'])
-                ->setNomDpo($legacyConfig['nom_dpo'])
-                ->setMailDpo($legacyConfig['mail_dpo'])
-                ->setNomResponsable($legacyConfig['nom_responsable'])
-                ->setMailResponsable($legacyConfig['mail_responsable'])
-                ->setAdresseDpo($legacyConfig['adresse_dpo'])
-                ->setLogotype($legacyConfig['logotype'])
-                ->setEmailReponse($legacyConfig['email_reponse'])
-                ->setTrackingCode($legacyConfig['tracking_code'])
-                ->setTagManagerCode($legacyConfig['tag_manager_code'])
-                ->setMailAr($legacyConfig['mail_ar'])
-                ->setMailValidation($legacyConfig['mail_validation'])
-                ->setEsaboraToken($legacyConfig['esabora_token'])
-                ->setEsaboraUrl($legacyConfig['esabora_url'])
-                ->setTelContact($legacyConfig['tel_contact']);
-
-            $this->entityManager->persist($config);
-        }
-
-        $this->entityManager->flush();
-        $total = $this->entityManager->getRepository(Config::class)->count([]);
-        $this->table->addRow(['config', $i, $total]);
     }
 
     private function loadPartner(): void
