@@ -55,10 +55,6 @@ services:
         tags:
             - { name: 'kernel.event_listener', event: 'kernel.request' }
 
-    App\Command\ActivationReminderCommand:
-        arguments:
-            $hostUrl: '%env(resolve:HISTOLOGE_URL)%'
-
     App\Command\GetGeolocCommand:
         arguments:
             - '@doctrine.orm.entity_manager'
