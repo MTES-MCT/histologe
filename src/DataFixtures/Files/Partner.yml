@@ -7,88 +7,88 @@ partners:
     insee: "[\"\"]"
     territory: null
   -
-    nom: "Partenaire 1"
-    email: "partenaire-1@histologe.fr"
-    is_archive: 0
-    is_commune: 0
-    insee: "[\"\"]"
-    territory: "Ain"
-  -
-    nom: "Admin Histologe 13"
+    nom: "Partenaire 13-01"
     email: "partenaire-13-01@histologe.fr"
     is_archive: 0
     is_commune: 0
     insee: "[\"\"]"
     territory: "Bouches-du-Rhône"
   -
-    nom: "Marseille"
+    nom: "Partenaire 13-02"
     email: "partenaire-13-02@histologe.fr"
     is_archive: 0
     is_commune: 1
     insee: "[\"13215\", \"13205\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\"]"
     territory: "Bouches-du-Rhône"
   -
-    nom: "Istres"
+    nom: "Partenaire 13-03"
     email: "partenaire-13-03@histologe.fr"
     is_archive: 0
     is_commune: 1
     insee: "[\"13047\"]"
     territory: "Bouches-du-Rhône"
   -
-    nom: "Partenaire 13"
+    nom: "Partenaire 13-04"
     email: "partenaire-13-04@histologe.fr"
     is_archive: 0
     is_commune: 0
     insee: "[\"\"]"
     territory: "Bouches-du-Rhône"
   -
-    nom: "Admins Histologe Ain"
+    nom: "Partenaire 01-01"
     email: "partenaire-01-01@histologe.fr"
     is_archive: 0
     is_commune: 0
     insee: "[\"\"]"
     territory: "Ain"
   -
-    nom: "Gex"
+    nom: "Partenaire 01-02"
     email: "partenaire-01-02@histologe.fr"
     is_archive: 0
     is_commune: 1
     insee: "[\"01173\"]"
     territory: "Ain"
   -
-    nom: "Gex 2"
+    nom: "Partenaire 01-03"
     email: "partenaire-01-03@histologe.fr"
     is_archive: 0
     is_commune: 0
     insee: "[\"\"]"
     territory: "Ain"
   -
-    nom: "Vecchio Porto"
-    email: "partenaire-01-2A@histologe.fr"
+    nom: "Partenaire 01-04"
+    email: "partenaire-01-04@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Ain"
+  -
+    nom: "Partenaire 2A-01"
+    email: "partenaire-2A-01@histologe.fr"
     is_archive: 0
     is_commune: 1
     insee: "[\"2A247\"]"
     territory: "Corse-du-Sud"
   -
-    nom: "Random partner 63"
+    nom: "Partenaire 63-01"
     is_archive: 0
     is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
   -
-    nom: "Random partner 06"
+    nom: "Partenaire 06-01"
     is_archive: 0
     is_commune: 0
     insee: "[\"\"]"
     territory: "Alpes-Maritimes"
   -
-    nom: "Random partner 59"
+    nom: "Partenaire 59-01"
     is_archive: 0
     is_commune: 0
     insee: "[\"\"]"
     territory: "Nord"
   -
-    nom: "Partner La réunion"
+    nom: "Partenaire 974-01"
     email: "partenaire-01-974@histologe.fr"
     is_archive: 0
     is_commune: 0

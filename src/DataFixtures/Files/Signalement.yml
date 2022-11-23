@@ -11,7 +11,7 @@ signalements:
     phone_number: 0621127284
     cp_occupant: "13013"
     ville_occupant: "Marseille"
-    statut: 1
+    statut: 2
     reference: "2022-1"
     geoloc: "{\"lat\":\"5.415151\",\"lng\":\"43.358246\"}"
     score_creation: 100

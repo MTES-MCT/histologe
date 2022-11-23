@@ -85,7 +85,7 @@ class UserFactoryTest extends KernelTestCase
     public function testCreateUserFromArray(): void
     {
         /** @var Partner $partner */
-        $partner = $this->partnerManager->findOneBy(['nom' => 'Random partner 63']);
+        $partner = $this->partnerManager->findOneBy(['nom' => 'Partenaire 63-01']);
         $data = [
             'roles' => 'ROLE_USER_PARTNER',
             'email' => 'john.doe-1@example.com',
