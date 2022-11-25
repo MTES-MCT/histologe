@@ -4,13 +4,15 @@ namespace App\Controller\Back;
 
 use App\Entity\Affectation;
 use App\Entity\Signalement;
-use App\Entity\Tag;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\SignalementRepository;
-use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
-use Collator;
+use App\Service\Statistics\FilteredBackAnalyticsProvider;
+use App\Service\Statistics\GlobalBackAnalyticsProvider;
+use App\Service\Statistics\ListCommunesStatisticProvider;
+use App\Service\Statistics\ListTagsStatisticProvider;
+use App\Service\Statistics\ListTerritoryStatisticProvider;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,9 +34,14 @@ class BackStatistiquesController extends AbstractController
 
     private const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
-    private const COMMUNE_MARSEILLE = 'Marseille';
-    private const COMMUNE_LYON = 'Lyon';
-    private const COMMUNE_PARIS = 'Paris';
+    public function __construct(
+        private ListTerritoryStatisticProvider $listTerritoryStatisticProvider,
+        private ListCommunesStatisticProvider $listCommunesStatisticProvider,
+        private ListTagsStatisticProvider $listTagStatisticProvider,
+        private GlobalBackAnalyticsProvider $globalBackAnalyticsProvider,
+        private FilteredBackAnalyticsProvider $filteredBackAnalyticsProvider,
+        ) {
+    }
 
     #[Route('/', name: 'back_statistiques')]
     public function index(): Response
@@ -50,30 +57,31 @@ class BackStatistiquesController extends AbstractController
      * Route called by Ajax requests (filters filtered by user type, statistics filtered by filters).
      */
     #[Route('/filter', name: 'back_statistiques_filter')]
-    public function filter(Request $request, TagRepository $tagsRepository, SignalementRepository $signalementRepository, TerritoryRepository $territoryRepository): Response
+    public function filter(Request $request, SignalementRepository $signalementRepository, TerritoryRepository $territoryRepository): Response
     {
         if ($this->getUser()) {
             $this->ajaxResult = [];
 
-            /** @var User $user */
-            $user = $this->getUser();
-            // If Super Admin, we should be able to filter on Territoire
-            $territory = $user->getTerritory();
-            if ($this->isGranted('ROLE_ADMIN')) {
-                $requestTerritoire = $request->get('territoire');
-                if ('' !== $requestTerritoire && 'all' !== $requestTerritoire) {
-                    $territory = $territoryRepository->findOneBy(['id' => $requestTerritoire]);
-                }
-            }
+            $territory = $this->getSelectedTerritory($request, $territoryRepository);
 
-            $this->buildFilterLists($territory, $tagsRepository, $territoryRepository);
+            $this->buildFilterLists($territory);
 
-            $resultGlobal = $this->buildQuerySignalementByTerritory($signalementRepository, $territory);
-            // This adds data to $this->ajaxResult
-            $this->makeGlobalStats($resultGlobal);
+            $globalStatistics = $this->globalBackAnalyticsProvider->getData($territory);
+            $this->ajaxResult['count_signalement'] = $globalStatistics['count_signalement'];
+            $this->ajaxResult['average_criticite'] = $globalStatistics['average_criticite'];
+            $this->ajaxResult['average_days_validation'] = $globalStatistics['average_days_validation'];
+            $this->ajaxResult['average_days_closure'] = $globalStatistics['average_days_closure'];
+
+            $this->filteredBackAnalyticsProvider->initFilters($request, $territory);
+            $filteredStatistics = $this->filteredBackAnalyticsProvider->getData();
+            $this->ajaxResult['count_signalement_filtered'] = $filteredStatistics['count_signalement_filtered'];
+            $this->ajaxResult['average_criticite_filtered'] = $filteredStatistics['average_criticite_filtered'];
+            $this->ajaxResult['countSignalementPerMonth'] = $filteredStatistics['count_signalement_per_month'];
+            $this->ajaxResult['countSignalementPerPartenaire'] = $filteredStatistics['count_signalement_per_partenaire'];
+            $this->ajaxResult['countSignalementPerSituation'] = $filteredStatistics['count_signalement_per_situation'];
+            $this->ajaxResult['countSignalementPerCriticite'] = $filteredStatistics['count_signalement_per_criticite'];
 
             $resultFiltered = $this->buildQuery($request, $signalementRepository, $territory);
-            // This adds data to $this->ajaxResult
             $this->makeFilteredStats($resultFiltered);
 
             $this->ajaxResult['response'] = 'success';
@@ -84,109 +92,38 @@ class BackStatistiquesController extends AbstractController
         return $this->json(['response' => 'error'], 400);
     }
 
+    private function getSelectedTerritory(Request $request, TerritoryRepository $territoryRepository): ?Territory
+    {
+        // If Super Admin, we should be able to filter on Territoire
+        $territory = null;
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $requestTerritoire = $request->get('territoire');
+            if ('' !== $requestTerritoire && 'all' !== $requestTerritoire) {
+                $territory = $territoryRepository->findOneBy(['id' => $requestTerritoire]);
+            }
+        } else {
+            /** @var User $user */
+            $user = $this->getUser();
+            $territory = $user->getTerritory();
+        }
+
+        return $territory;
+    }
+
     /**
      * Build lists of data that will be returned as filters.
      */
-    private function buildFilterLists(?Territory $territory, TagRepository $tagsRepository, TerritoryRepository $territoryRepository)
+    private function buildFilterLists(?Territory $territory)
     {
         // Tells Vue component if a user can filter through Territoire
         $this->ajaxResult['can_filter_territoires'] = $this->isGranted('ROLE_ADMIN') ? '1' : '0';
         $this->ajaxResult['can_see_per_partenaire'] = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY') ? '1' : '0';
 
         if ($this->isGranted('ROLE_ADMIN')) {
-            $this->ajaxResult['list_territoires'] = [];
-            $territoryList = $territoryRepository->findAllList();
-            /** @var Territory $territoryItem */
-            foreach ($territoryList as $territoryItem) {
-                $this->ajaxResult['list_territoires'][$territoryItem->getId()] = $territoryItem->getName();
-            }
+            $this->ajaxResult['list_territoires'] = $this->listTerritoryStatisticProvider->getData();
         }
-
-        // List of the Communnes linked to a User
-        // - if user/admin of Territoire: only Communes from a Territoire (in the BAN)
-        // - if super admin: only if selected Territoire
-        $this->ajaxResult['list_communes'] = [];
-        if (null !== $territory) {
-            $communes = $territory->getCommunes();
-            /** @var Commune $commune */
-            foreach ($communes as $commune) {
-                // Controls over 3 Communes with Arrondissements that we don't want
-                $nomCommune = $commune->getNom();
-                if (preg_match('/('.self::COMMUNE_MARSEILLE.')(.)*(Arrondissement)/', $nomCommune)) {
-                    $nomCommune = self::COMMUNE_MARSEILLE;
-                }
-                if (preg_match('/('.self::COMMUNE_LYON.')(.)*(Arrondissement)/', $nomCommune)) {
-                    $nomCommune = self::COMMUNE_LYON;
-                }
-                if (preg_match('/('.self::COMMUNE_PARIS.')(.)*(Arrondissement)/', $nomCommune)) {
-                    $nomCommune = self::COMMUNE_PARIS;
-                }
-                $this->ajaxResult['list_communes'][$nomCommune] = $nomCommune;
-            }
-        }
-        $collator = new Collator('fr_FR');
-        $collator->asort($this->ajaxResult['list_communes']);
-
-        // List of the Etiquettes linked to a User
-        // - if user/admin of Territoire: only Etiquettes from a Territoire
-        // - if super admin: only if selected Territoire
-        $this->ajaxResult['list_etiquettes'] = [];
-        if (null !== $territory) {
-            $tagList = $tagsRepository->findAllActive($territory);
-            /** @var Tag $tagItem */
-            foreach ($tagList as $tagItem) {
-                $this->ajaxResult['list_etiquettes'][$tagItem->getId()] = $tagItem->getLabel();
-            }
-        }
-    }
-
-    private function buildQuerySignalementByTerritory(SignalementRepository $signalementRepository, ?Territory $territory): array
-    {
-        $territoryFilter = $territory ? $territory->getId() : null;
-
-        return $signalementRepository->findByFilters('', false, null, null, '', $territoryFilter, null, null);
-    }
-
-    /**
-     * Fill result table with global stats.
-     */
-    private function makeGlobalStats(array $signalements): void
-    {
-        $totalCriticite = 0;
-        $countHasDaysValidation = 0;
-        $totalDaysValidation = 0;
-        $countHasDaysClosure = 0;
-        $totalDaysClosure = 0;
-        /** @var Signalement $signalement */
-        foreach ($signalements as $signalement) {
-            $criticite = $signalement->getScoreCreation();
-            $totalCriticite += $criticite;
-            $dateCreatedAt = $signalement->getCreatedAt();
-            if (null !== $dateCreatedAt) {
-                $dateValidatedAt = $signalement->getValidatedAt();
-                if (null !== $dateValidatedAt) {
-                    ++$countHasDaysValidation;
-                    $dateDiff = $dateCreatedAt->diff($dateValidatedAt);
-                    $totalDaysValidation += $dateDiff->d;
-                }
-                $dateClosedAt = $signalement->getClosedAt();
-                if (null !== $dateClosedAt) {
-                    ++$countHasDaysClosure;
-                    $dateDiff = $dateCreatedAt->diff($dateClosedAt);
-                    $totalDaysClosure += $dateDiff->d;
-                }
-            }
-        }
-
-        $countSignalement = \count($signalements);
-        $averageCriticite = $countSignalement > 0 ? round($totalCriticite / $countSignalement) : '-';
-        $averageDaysValidation = $countHasDaysValidation > 0 ? round($totalDaysValidation * 10 / $countHasDaysValidation) / 10 : '-';
-        $averageDaysClosure = $countHasDaysClosure > 0 ? round($totalDaysClosure * 10 / $countHasDaysClosure) / 10 : '-';
-
-        $this->ajaxResult['count_signalement'] = $countSignalement;
-        $this->ajaxResult['average_criticite'] = $averageCriticite;
-        $this->ajaxResult['average_days_validation'] = $averageDaysValidation;
-        $this->ajaxResult['average_days_closure'] = $averageDaysClosure;
+        $this->ajaxResult['list_communes'] = $this->listCommunesStatisticProvider->getData($territory);
+        $this->ajaxResult['list_etiquettes'] = $this->listTagStatisticProvider->getData($territory);
     }
 
     /**
@@ -363,13 +300,6 @@ class BackStatistiquesController extends AbstractController
         arsort($countSignalementPerCriticite);
         $countSignalementPerCriticite = \array_slice($countSignalementPerCriticite, 0, 5);
 
-        $this->ajaxResult['count_signalement_filtered'] = $countSignalementFiltered;
-        $this->ajaxResult['average_criticite_filtered'] = $averageCriticiteFiltered;
-
-        $this->ajaxResult['countSignalementPerMonth'] = $countSignalementPerMonth;
-        $this->ajaxResult['countSignalementPerPartenaire'] = $countSignalementPerPartenaire;
-        $this->ajaxResult['countSignalementPerSituation'] = $countSignalementPerSituation;
-        $this->ajaxResult['countSignalementPerCriticite'] = $countSignalementPerCriticite;
         $this->ajaxResult['countSignalementPerStatut'] = $countSignalementPerStatut;
         $this->ajaxResult['countSignalementPerCriticitePercent'] = $countSignalementPerCriticitePercent;
         $this->ajaxResult['countSignalementPerVisite'] = $countSignalementPerVisite;

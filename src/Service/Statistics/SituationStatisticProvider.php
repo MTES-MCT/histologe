@@ -11,10 +11,22 @@ class SituationStatisticProvider
     {
     }
 
+    public function getFilteredData($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes)
+    {
+        $countPerSituations = $this->signalementRepository->countBySituationFiltered($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes, true);
+
+        return $this->createFullArray($countPerSituations);
+    }
+
     public function getData(Territory|null $territory, int|null $year)
     {
         $countPerSituations = $this->signalementRepository->countBySituation($territory, $year, true);
 
+        return $this->createFullArray($countPerSituations);
+    }
+
+    private function createFullArray($countPerSituations)
+    {
         $buffer = [];
         foreach ($countPerSituations as $countPerSituation) {
             if ($countPerSituation['menuLabel']) {

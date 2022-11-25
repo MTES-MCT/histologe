@@ -76,17 +76,16 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countAll(bool $removeImported = false)
+    public function countAll(Territory|null $territory, bool $removeImported = false)
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id)');
-        $qb->andWhere('s.statut != :statutArchived')
-            ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
-        $qb->andWhere('s.statut != :statutRefused')
-            ->setParameter('statutRefused', Signalement::STATUS_REFUSED);
 
         if ($removeImported) {
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+        }
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
         }
 
         return $qb->getQuery()
@@ -159,18 +158,6 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function countByCity()
-    {
-        $qb = $this->createQueryBuilder('s');
-        $qb->select('COUNT(s.id) as count')
-            ->addSelect('s.villeOccupant');
-        $qb->indexBy('s', 's.villeOccupant');
-        $qb->groupBy('s.villeOccupant');
-
-        return $qb->getQuery()
-            ->getResult();
-    }
-
     public function countByTerritory(bool $removeImported = false)
     {
         $qb = $this->createQueryBuilder('s');
@@ -211,6 +198,23 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function countByMonthFiltered($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id) AS count, MONTH(s.createdAt) AS month, YEAR(s.createdAt) AS year');
+
+        $qb = self::addFiltersToQuery($qb, $statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes);
+
+        $qb->groupBy('month')
+            ->addGroupBy('year');
+
+        $qb->orderBy('year')
+            ->addOrderBy('month');
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
     public function countBySituation(Territory|null $territory, int|null $year, bool $removeImported = false)
     {
         $qb = $this->createQueryBuilder('s');
@@ -230,6 +234,36 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         $qb->groupBy('sit.id');
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
+    public function countBySituationFiltered($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id) AS count, sit.id, sit.menuLabel');
+        $qb->leftJoin('s.situations', 'sit');
+
+        $qb = self::addFiltersToQuery($qb, $statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes);
+
+        $qb->andWhere('sit.isActive = :isActive')->setParameter('isActive', true);
+        $qb->groupBy('sit.id');
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
+    public function countByCriticiteFiltered($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id) AS count, crit.id, crit.label');
+        $qb->leftJoin('s.criticites', 'crit');
+
+        $qb = self::addFiltersToQuery($qb, $statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes);
+
+        $qb->andWhere('crit.isArchive = :isArchive')->setParameter('isArchive', false);
+        $qb->groupBy('crit.id');
 
         return $qb->getQuery()
             ->getResult();
@@ -349,7 +383,7 @@ class SignalementRepository extends ServiceEntityRepository
     /**
      * Query called by statistics with filters.
      */
-    public function findByFilters(string $statut, bool $countRefused, ?DateTime $dateStart, ?DateTime $dateEnd, string $type, ?int $territory, ?array $etiquettes, ?array $communes): array
+    public function findByFilters(string $statut, bool $countRefused, ?DateTime $dateStart, ?DateTime $dateEnd, string $type, ?Territory $territory, ?array $etiquettes, ?array $communes): array
     {
         $qb = $this->createQueryBuilder('s');
 
@@ -417,8 +451,8 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         if ($territory) {
-            $qb->andWhere('s.territory = :territoryId')
-                ->setParameter('territoryId', $territory);
+            $qb->andWhere('s.territory = :territory')
+                ->setParameter('territory', $territory);
         }
 
         if ($etiquettes) {
@@ -511,5 +545,155 @@ class SignalementRepository extends ServiceEntityRepository
         }, $queryBuilder->getQuery()->getArrayResult());
 
         return $partnersEmail;
+    }
+
+    public function getAverageCriticite(Territory|null $territory, bool $removeImported = false)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('AVG(s.scoreCreation)');
+
+        if ($removeImported) {
+            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+        }
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+
+        return $qb->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function getAverageDaysValidation(Territory|null $territory, bool $removeImported = false)
+    {
+        return $this->getAverageDayResult('validatedAt', $territory, $removeImported);
+    }
+
+    public function getAverageDaysClosure(Territory|null $territory, bool $removeImported = false)
+    {
+        return $this->getAverageDayResult('closedAt', $territory, $removeImported);
+    }
+
+    private function getAverageDayResult(string $field, Territory|null $territory, bool $removeImported = false)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('AVG(datediff(s.'.$field.', s.createdAt))');
+
+        $qb->andWhere('s.'.$field.' IS NOT NULL');
+
+        if ($removeImported) {
+            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+        }
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+
+        return $qb->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countFiltered(string $statut, bool $countRefused, ?DateTime $dateStart, ?DateTime $dateEnd, string $type, ?Territory $territory, ?array $etiquettes, ?array $communes)
+    {
+        $qb = $this->createQueryBuilder('s');
+
+        $qb->select('COUNT(s.id)');
+        $qb = self::addFiltersToQuery($qb, $statut, $countRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes);
+
+        return $qb->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function getAverageCriticiteFiltered(string $statut, bool $countRefused, ?DateTime $dateStart, ?DateTime $dateEnd, string $type, ?Territory $territory, ?array $etiquettes, ?array $communes)
+    {
+        $qb = $this->createQueryBuilder('s');
+
+        $qb->select('AVG(s.scoreCreation)');
+        $qb->andWhere('s.scoreCreation IS NOT NULL');
+
+        $qb = self::addFiltersToQuery($qb, $statut, $countRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes);
+
+        return $qb->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public static function addFiltersToQuery($qb, string $statut, bool $countRefused, ?DateTime $dateStart, ?DateTime $dateEnd, string $type, ?Territory $territory, ?array $etiquettes, ?array $communes)
+    {
+        // Is the status defined?
+        if ('' != $statut && 'all' != $statut) {
+            $statutParameter = [];
+            switch ($statut) {
+                case 'new':
+                    $statutParameter[] = Signalement::STATUS_NEED_VALIDATION;
+                    break;
+                case 'active':
+                    $statutParameter[] = Signalement::STATUS_NEED_PARTNER_RESPONSE;
+                    $statutParameter[] = Signalement::STATUS_ACTIVE;
+                    break;
+                case 'closed':
+                    $statutParameter[] = Signalement::STATUS_CLOSED;
+                    break;
+                default:
+                    break;
+            }
+            // If we count the Refused status
+            if ($countRefused) {
+                $statutParameter[] = Signalement::STATUS_REFUSED;
+            }
+
+            $qb->andWhere('s.statut IN (:statutSelected)')
+            ->setParameter('statutSelected', $statutParameter);
+
+        // We're supposed to keep all statuses, but we remove at least the Archived
+        } else {
+            // If we don't want refused status
+            if (!$countRefused) {
+                $qb->andWhere('s.statut != :statutRefused')
+                ->setParameter('statutRefused', Signalement::STATUS_REFUSED);
+            }
+        }
+
+        // Filter on creation date
+        if (null !== $dateStart) {
+            $qb->andWhere('s.createdAt >= :dateStart')
+            ->setParameter('dateStart', $dateStart)
+            ->andWhere('s.createdAt <= :dateEnd')
+            ->setParameter('dateEnd', $dateEnd);
+        }
+
+        // Filter on Signalement type (logement social)
+        if ('' != $type && 'all' != $type) {
+            switch ($type) {
+                case 'public':
+                    $qb->andWhere('s.isLogementSocial = :statutLogementSocial')
+                    ->setParameter('statutLogementSocial', true);
+                    break;
+                case 'private':
+                    $qb->andWhere('s.isLogementSocial = :statutLogementSocial')
+                    ->setParameter('statutLogementSocial', false);
+                    break;
+                case 'unset':
+                    $qb->andWhere('s.isLogementSocial is NULL');
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')
+                ->setParameter('territory', $territory);
+        }
+
+        if ($etiquettes) {
+            $qb->leftJoin('s.tags', 'tags');
+            $qb->andWhere('tags IN (:tags)')
+                ->setParameter('tags', $etiquettes);
+        }
+
+        if ($communes) {
+            $qb->andWhere('s.villeOccupant IN (:communes)')
+                ->setParameter('communes', $communes);
+        }
+
+        return $qb;
     }
 }

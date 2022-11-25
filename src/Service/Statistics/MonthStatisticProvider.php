@@ -14,10 +14,22 @@ class MonthStatisticProvider
     {
     }
 
+    public function getFilteredData($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes)
+    {
+        $countPerMonths = $this->signalementRepository->countByMonthFiltered($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes, true);
+
+        return $this->createFullArray($countPerMonths);
+    }
+
     public function getData(Territory|null $territory, int|null $year)
     {
         $countPerMonths = $this->signalementRepository->countByMonth($territory, $year, true);
 
+        return $this->createFullArray($countPerMonths);
+    }
+
+    private function createFullArray($countPerMonths)
+    {
         $monthsWithResults = [];
         foreach ($countPerMonths as $countPerMonth) {
             $strKey = $countPerMonth['year'].'-'.str_pad($countPerMonth['month'], 2, 0, \STR_PAD_LEFT);

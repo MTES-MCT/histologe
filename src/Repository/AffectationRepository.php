@@ -105,4 +105,17 @@ class AffectationRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function countByPartenaireFiltered($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes)
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb->select('a.id, a.statut, partner.id, partner.nom');
+        $qb->leftJoin('a.signalement', 's')
+            ->leftJoin('a.partner', 'partner');
+
+        $qb = SignalementRepository::addFiltersToQuery($qb, $statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes);
+
+        return $qb->getQuery()
+            ->getResult();
+    }
 }
