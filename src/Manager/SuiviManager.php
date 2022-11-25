@@ -9,10 +9,11 @@ use Symfony\Component\Security\Core\Security;
 
 class SuiviManager extends Manager
 {
-    public function __construct(private SuiviFactory $suiviFactory,
-                                private Security $security,
-                                protected ManagerRegistry $managerRegistry,
-                                string $entityName = Suivi::class
+    public function __construct(
+        private SuiviFactory $suiviFactory,
+        private Security $security,
+        protected ManagerRegistry $managerRegistry,
+        string $entityName = Suivi::class
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->entityName = $entityName;

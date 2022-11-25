@@ -11,8 +11,8 @@ class AffectationManager extends Manager
     public function __construct(
         private Security $security,
         protected ManagerRegistry $managerRegistry,
-        string $entityName = '')
-    {
+        string $entityName = ''
+    ) {
         $this->managerRegistry = $managerRegistry;
         $this->entityName = $entityName;
     }
