@@ -57,7 +57,7 @@ class UserManagerTest extends KernelTestCase
 
         /** @var PartnerRepository $partnerRepository */
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
-        $partner = $partnerRepository->findOneBy(['nom' => 'Gex']);
+        $partner = $partnerRepository->findOneBy(['nom' => 'Partenaire 01-02']);
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => 'user-01-01@histologe.fr']);
@@ -67,7 +67,7 @@ class UserManagerTest extends KernelTestCase
         /** @var User $userNewPartner */
         $userNewPartner = $userRepository->findOneBy(['email' => 'user-01-01@histologe.fr']);
 
-        $this->assertEquals('Gex', $userNewPartner->getPartner()->getNom());
+        $this->assertEquals('Partenaire 01-02', $userNewPartner->getPartner()->getNom());
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
         $this->assertEmailHtmlBodyContains($email, ' Cliquez ci-dessous pour vous connecter à votre compte');
@@ -87,7 +87,7 @@ class UserManagerTest extends KernelTestCase
 
         /** @var PartnerRepository $partnerRepository */
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
-        $partner = $partnerRepository->findOneBy(['nom' => 'Istres']);
+        $partner = $partnerRepository->findOneBy(['nom' => 'Partenaire 13-03']);
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => 'user-13-03@histologe.fr']);
@@ -97,7 +97,7 @@ class UserManagerTest extends KernelTestCase
         /** @var User $userNewPartner */
         $userNewPartner = $userRepository->findOneBy(['email' => 'user-13-03@histologe.fr']);
 
-        $this->assertEquals('Istres', $userNewPartner->getPartner()->getNom());
+        $this->assertEquals('Partenaire 13-03', $userNewPartner->getPartner()->getNom());
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
         $this->assertEmailHtmlBodyContains($email, 'Cliquez ci-dessous pour vous activer votre compte et définir votre mot de passe');

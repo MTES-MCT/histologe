@@ -162,6 +162,7 @@ class ActivityListener implements EventSubscriberInterface
                 );
             } else {
                 $this->notifier->send($mailType, array_unique($this->tos->toArray()), $options, $signalement->getTerritory());
+                $this->tos->clear();
             }
         }
     }
