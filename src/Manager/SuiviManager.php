@@ -5,13 +5,11 @@ namespace App\Manager;
 use App\Entity\Suivi;
 use App\Factory\SuiviFactory;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Security\Core\Security;
 
 class SuiviManager extends Manager
 {
     public function __construct(
         private SuiviFactory $suiviFactory,
-        private Security $security,
         protected ManagerRegistry $managerRegistry,
         string $entityName = Suivi::class
     ) {
@@ -19,11 +17,8 @@ class SuiviManager extends Manager
         $this->entityName = $entityName;
     }
 
-    public function createSuivi(string $description)
+    public function createSuivi(array $params, bool $isPublic = false)
     {
-        $suivi = $this->suiviFactory->createInstance();
-        $suivi->setDescription($description);
-
-        return $suivi;
+        return $this->suiviFactory->createInstanceFrom($params, $isPublic);
     }
 }

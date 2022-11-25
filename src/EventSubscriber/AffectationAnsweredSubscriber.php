@@ -4,7 +4,6 @@ namespace App\EventSubscriber;
 
 use App\Event\AffectationAnsweredEvent;
 use App\Manager\SuiviManager;
-use App\Service\Sanitizer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class AffectationAnsweredSubscriber implements EventSubscriberInterface
@@ -20,29 +19,16 @@ class AffectationAnsweredSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onAffectationAnswered(AffectationAnsweredEvent $event)
+    public function onAffectationAnswered(AffectationAnsweredEvent $event): void
     {
         $affectation = $event->getAffectation();
-        $answer = $event->getAnswer();
+        $params = $event->getParams();
         $signalement = $affectation->getSignalement();
-        $suivi = $this->suiviManager->createSuivi($this->buildDescriptionFrom($answer));
+        $suivi = $this->suiviManager->createSuivi($params);
         $suivi
             ->setCreatedBy($affectation->getAnsweredBy())
             ->setSignalement($signalement);
 
         $this->suiviManager->save($suivi);
-    }
-
-    private function buildDescriptionFrom(array $answer): string
-    {
-        $description = '';
-        if (isset($answer['accept'])) {
-            $description = 'Le signalement a été accepté';
-        } else {
-            $motifRejected = Sanitizer::sanitize($answer['suivi']);
-            $description = 'Le signalement à été refusé avec le motif suivant:<br> '.$motifRejected;
-        }
-
-        return $description;
     }
 }

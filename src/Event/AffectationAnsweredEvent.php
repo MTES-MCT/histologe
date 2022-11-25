@@ -9,7 +9,7 @@ class AffectationAnsweredEvent extends Event
 {
     public const NAME = 'affectation.answered';
 
-    public function __construct(private Affectation $affectation, private array $answer)
+    public function __construct(private Affectation $affectation, private array $params)
     {
     }
 
@@ -18,8 +18,8 @@ class AffectationAnsweredEvent extends Event
         return $this->affectation;
     }
 
-    public function getAnswer(): array
+    public function getParams(): array
     {
-        return $this->answer;
+        return $this->params;
     }
 }

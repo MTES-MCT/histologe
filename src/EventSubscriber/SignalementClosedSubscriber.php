@@ -7,8 +7,8 @@ use App\Entity\Enum\MotifCloture;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Event\SignalementClosedEvent;
-use App\Factory\SuiviFactory;
 use App\Manager\SignalementManager;
+use App\Manager\SuiviManager;
 use App\Repository\UserRepository;
 use App\Service\NotificationService;
 use App\Service\Token\TokenGeneratorInterface;
@@ -25,7 +25,7 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
                                 private UrlGeneratorInterface $urlGenerator,
                                 private ParameterBagInterface $parameterBag,
                                 private TokenGeneratorInterface $tokenGenerator,
-                                private SuiviFactory $suiviFactory,
+                                private SuiviManager $suiviManager,
                                 private Security $security,
     ) {
     }
@@ -44,7 +44,7 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
         $params = $event->getParams();
 
         if ($signalement instanceof Signalement) {
-            $suivi = $this->suiviFactory->createInstance(
+            $suivi = $this->suiviManager->createSuivi(
                 params: $params,
                 isPublic: true
             );
@@ -58,7 +58,7 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
         }
 
         if ($affectation instanceof Affectation) {
-            $suivi = $this->suiviFactory->createInstance(params: $params);
+            $suivi = $this->suiviManager->createSuivi($params);
             $signalement = $affectation->getSignalement();
             $signalement->addSuivi($suivi);
             $this->sendMailToPartner(

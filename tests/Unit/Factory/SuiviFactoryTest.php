@@ -24,9 +24,10 @@ class SuiviFactoryTest extends KernelTestCase
     public function testCreateSuiviInstance(): void
     {
         $suiviFactory = new SuiviFactory($this->security);
-        $suivi = $suiviFactory->createInstance();
+        $suivi = $suiviFactory->createInstanceFrom();
 
         $this->assertInstanceOf(Suivi::class, $suivi);
+        $this->assertEquals('', $suivi->getDescription());
         $this->assertFalse($suivi->getIsPublic());
         $this->assertInstanceOf(UserInterface::class, $suivi->getCreatedBy());
     }
@@ -34,7 +35,7 @@ class SuiviFactoryTest extends KernelTestCase
     public function testCreateSuiviInstanceWithClosedSignalementParameters(): void
     {
         $suiviFactory = new SuiviFactory($this->security);
-        $suivi = $suiviFactory->createInstance([
+        $suivi = $suiviFactory->createInstanceFrom([
             'motif_suivi' => 'Lorem ipsum suivi sit amet, consectetur adipiscing elit.',
             'motif_cloture' => MotifCloture::LABEL['INSALUBRITE'],
             'subject' => 'tous les partenaires',
