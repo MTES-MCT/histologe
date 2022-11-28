@@ -4,7 +4,6 @@ namespace App\Controller\Back;
 
 use App\Entity\Territory;
 use App\Entity\User;
-use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\Statistics\FilteredBackAnalyticsProvider;
 use App\Service\Statistics\GlobalBackAnalyticsProvider;
@@ -44,7 +43,7 @@ class BackStatistiquesController extends AbstractController
      * Route called by Ajax requests (filters filtered by user type, statistics filtered by filters).
      */
     #[Route('/filter', name: 'back_statistiques_filter')]
-    public function filter(Request $request, SignalementRepository $signalementRepository, TerritoryRepository $territoryRepository): Response
+    public function filter(Request $request, TerritoryRepository $territoryRepository): Response
     {
         if ($this->getUser()) {
             $this->ajaxResult = [];
