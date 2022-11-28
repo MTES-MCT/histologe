@@ -45,6 +45,14 @@ class PartenaireStatisticProvider
             }
         }
 
+        foreach ($buffer as $partenaireStr => $partnerStats) {
+            $totalPerPartner = $partnerStats['total'];
+            $buffer[$partenaireStr]['accepted_percent'] = round($partnerStats['accepted'] / $totalPerPartner * 100);
+            $buffer[$partenaireStr]['refused_percent'] = round($partnerStats['refused'] / $totalPerPartner * 100);
+            $buffer[$partenaireStr]['closed_percent'] = round($partnerStats['closed'] / $totalPerPartner * 100);
+            $buffer[$partenaireStr]['wait_percent'] = round($partnerStats['wait'] / $totalPerPartner * 100);
+        }
+
         return $buffer;
     }
 }

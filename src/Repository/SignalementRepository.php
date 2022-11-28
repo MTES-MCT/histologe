@@ -615,6 +615,21 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    public function countByStatusFiltered(string $statut, bool $countRefused, ?DateTime $dateStart, ?DateTime $dateEnd, string $type, ?Territory $territory, ?array $etiquettes, ?array $communes)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id) as count')
+            ->addSelect('s.statut');
+
+        $qb = self::addFiltersToQuery($qb, $statut, $countRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes);
+
+        $qb->indexBy('s', 's.statut');
+        $qb->groupBy('s.statut');
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
     public static function addFiltersToQuery($qb, string $statut, bool $countRefused, ?DateTime $dateStart, ?DateTime $dateEnd, string $type, ?Territory $territory, ?array $etiquettes, ?array $communes)
     {
         // Is the status defined?

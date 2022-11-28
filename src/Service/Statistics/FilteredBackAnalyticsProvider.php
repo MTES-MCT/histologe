@@ -26,6 +26,7 @@ class FilteredBackAnalyticsProvider
         private PartenaireStatisticProvider $partenaireStatisticProvider,
         private SituationStatisticProvider $situationStatisticProvider,
         private CriticiteStatisticProvider $criticiteStatisticProvider,
+        private StatusStatisticProvider $statusStatisticProvider,
         ) {
     }
 
@@ -53,6 +54,7 @@ class FilteredBackAnalyticsProvider
         $buffer['count_signalement_per_partenaire'] = $this->getCountSignalementPerPartenaire();
         $buffer['count_signalement_per_situation'] = $this->getCountSignalementPerSituation();
         $buffer['count_signalement_per_criticite'] = $this->getCountSignalementPerCriticite();
+        $buffer['count_signalement_per_statut'] = $this->getCountSignalementPerStatut();
 
         return $buffer;
     }
@@ -90,5 +92,10 @@ class FilteredBackAnalyticsProvider
     private function getCountSignalementPerCriticite()
     {
         return $this->criticiteStatisticProvider->getFilteredData($this->statut, $this->hasCountRefused, $this->dateStart, $this->dateEnd, $this->type, $this->territory, $this->etiquettes, $this->communes);
+    }
+
+    private function getCountSignalementPerStatut()
+    {
+        return $this->statusStatisticProvider->getFilteredData($this->statut, $this->hasCountRefused, $this->dateStart, $this->dateEnd, $this->type, $this->territory, $this->etiquettes, $this->communes);
     }
 }

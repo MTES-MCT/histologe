@@ -12,10 +12,22 @@ class StatusStatisticProvider
     {
     }
 
+    public function getFilteredData($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes)
+    {
+        $countPerSituations = $this->signalementRepository->countByStatusFiltered($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes, true);
+
+        return $this->createFullArray($countPerSituations);
+    }
+
     public function getData(Territory|null $territory, int|null $year)
     {
         $countPerStatuses = $this->signalementRepository->countByStatus($territory, $year, true);
 
+        return $this->createFullArray($countPerStatuses);
+    }
+
+    private function createFullArray($countPerStatuses)
+    {
         $buffer = [];
         foreach ($countPerStatuses as $countPerStatus) {
             $item = self::initStatutByValue($countPerStatus);
