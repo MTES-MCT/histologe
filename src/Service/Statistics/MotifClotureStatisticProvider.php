@@ -11,10 +11,22 @@ class MotifClotureStatisticProvider
     {
     }
 
+    public function getFilteredData($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes)
+    {
+        $countPerMotifsCloture = $this->signalementRepository->countByMotifClotureFiltered($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes);
+
+        return $this->createFullArray($countPerMotifsCloture);
+    }
+
     public function getData(Territory|null $territory, int|null $year)
     {
         $countPerMotifsCloture = $this->signalementRepository->countByMotifCloture($territory, $year, true);
 
+        return $this->createFullArray($countPerMotifsCloture);
+    }
+
+    private function createFullArray($countPerMotifsCloture)
+    {
         $buffer = self::initMotifPerValue();
         foreach ($countPerMotifsCloture as $countPerMotifCloture) {
             if ($buffer[$countPerMotifCloture['motifCloture']]) {

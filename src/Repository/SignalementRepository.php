@@ -667,6 +667,23 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function countByMotifClotureFiltered(string $statut, bool $countRefused, ?DateTime $dateStart, ?DateTime $dateEnd, string $type, ?Territory $territory, ?array $etiquettes, ?array $communes)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id) AS count, s.motifCloture');
+
+        $qb->andWhere('s.motifCloture IS NOT NULL');
+        $qb->andWhere('s.motifCloture != \'0\'');
+        $qb->andWhere('s.closedAt IS NOT NULL');
+
+        $qb = self::addFiltersToQuery($qb, $statut, $countRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes);
+
+        $qb->groupBy('s.motifCloture');
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
     public static function addFiltersToQuery($qb, string $statut, bool $countRefused, ?DateTime $dateStart, ?DateTime $dateEnd, string $type, ?Territory $territory, ?array $etiquettes, ?array $communes)
     {
         // Is the status defined?
