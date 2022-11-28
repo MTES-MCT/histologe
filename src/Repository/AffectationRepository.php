@@ -7,6 +7,7 @@ use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\SearchFilterService;
+use App\Service\Statistics\FilteredBackAnalyticsProvider;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -106,14 +107,14 @@ class AffectationRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function countByPartenaireFiltered($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes)
+    public function countByPartenaireFiltered(FilteredBackAnalyticsProvider $filters)
     {
         $qb = $this->createQueryBuilder('a');
         $qb->select('a.id, a.statut, partner.id, partner.nom');
         $qb->leftJoin('a.signalement', 's')
             ->leftJoin('a.partner', 'partner');
 
-        $qb = SignalementRepository::addFiltersToQuery($qb, $statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes);
+        $qb = SignalementRepository::addFiltersToQuery($qb, $filters);
 
         return $qb->getQuery()
             ->getResult();

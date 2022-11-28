@@ -11,9 +11,9 @@ class PartenaireStatisticProvider
     {
     }
 
-    public function getFilteredData($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes)
+    public function getFilteredData(FilteredBackAnalyticsProvider $filters)
     {
-        $countPerPartenaires = $this->affectationRepository->countByPartenaireFiltered($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes, true);
+        $countPerPartenaires = $this->affectationRepository->countByPartenaireFiltered($filters);
 
         $buffer = [];
         foreach ($countPerPartenaires as $countPerPartenaire) {

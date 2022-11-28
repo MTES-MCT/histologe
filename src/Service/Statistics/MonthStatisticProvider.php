@@ -14,9 +14,9 @@ class MonthStatisticProvider
     {
     }
 
-    public function getFilteredData($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes)
+    public function getFilteredData(FilteredBackAnalyticsProvider $filters)
     {
-        $countPerMonths = $this->signalementRepository->countByMonthFiltered($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes, true);
+        $countPerMonths = $this->signalementRepository->countByMonthFiltered($filters);
 
         return $this->createFullArray($countPerMonths);
     }

@@ -57,6 +57,8 @@ class BackStatistiquesController extends AbstractController
             $this->ajaxResult['average_criticite'] = $globalStatistics['average_criticite'];
             $this->ajaxResult['average_days_validation'] = $globalStatistics['average_days_validation'];
             $this->ajaxResult['average_days_closure'] = $globalStatistics['average_days_closure'];
+            $this->ajaxResult['count_signalement_refuses'] = $globalStatistics['count_signalement_refuses'];
+            $this->ajaxResult['count_signalement_archives'] = $globalStatistics['count_signalement_archives'];
 
             $this->filteredBackAnalyticsProvider->initFilters($request, $territory);
             $filteredStatistics = $this->filteredBackAnalyticsProvider->getData();
@@ -104,6 +106,7 @@ class BackStatistiquesController extends AbstractController
     {
         // Tells Vue component if a user can filter through Territoire
         $this->ajaxResult['can_filter_territoires'] = $this->isGranted('ROLE_ADMIN') ? '1' : '0';
+        $this->ajaxResult['can_filter_archived'] = $this->isGranted('ROLE_ADMIN') ? '1' : '0';
         $this->ajaxResult['can_see_per_partenaire'] = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY') ? '1' : '0';
 
         if ($this->isGranted('ROLE_ADMIN')) {

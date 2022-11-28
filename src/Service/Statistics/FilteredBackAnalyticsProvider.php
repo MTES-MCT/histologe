@@ -10,14 +10,15 @@ use Symfony\Component\HttpFoundation\Request;
 
 class FilteredBackAnalyticsProvider
 {
-    private $communes;
-    private $statut;
-    private $etiquettes;
-    private $type;
-    private $dateStart;
-    private $dateEnd;
-    private $hasCountRefused;
-    private $territory;
+    public $communes;
+    public $statut;
+    public $etiquettes;
+    public $type;
+    public $dateStart;
+    public $dateEnd;
+    public $hasCountRefused;
+    public $hasCountArchived;
+    public $territory;
 
     public function __construct(
         private SignalementRepository $signalementRepository,
@@ -45,6 +46,7 @@ class FilteredBackAnalyticsProvider
         $dateEnd = $request->get('dateEnd');
         $this->dateEnd = new DateTime($dateEnd);
         $this->hasCountRefused = '1' == $request->get('countRefused');
+        $this->hasCountArchived = '1' == $request->get('countArchived');
         $this->territory = $territory;
     }
 
@@ -67,12 +69,12 @@ class FilteredBackAnalyticsProvider
 
     private function getCountSignalementData()
     {
-        return $this->signalementRepository->countFiltered($this->statut, $this->hasCountRefused, $this->dateStart, $this->dateEnd, $this->type, $this->territory, $this->etiquettes, $this->communes);
+        return $this->signalementRepository->countFiltered($this);
     }
 
     private function getAverageCriticiteData()
     {
-        $buffer = $this->signalementRepository->getAverageCriticiteFiltered($this->statut, $this->hasCountRefused, $this->dateStart, $this->dateEnd, $this->type, $this->territory, $this->etiquettes, $this->communes);
+        $buffer = $this->signalementRepository->getAverageCriticiteFiltered($this);
         if (empty($buffer)) {
             $buffer = 0;
         }
@@ -82,41 +84,41 @@ class FilteredBackAnalyticsProvider
 
     private function getCountSignalementPerMonth()
     {
-        return $this->monthStatisticProvider->getFilteredData($this->statut, $this->hasCountRefused, $this->dateStart, $this->dateEnd, $this->type, $this->territory, $this->etiquettes, $this->communes);
+        return $this->monthStatisticProvider->getFilteredData($this);
     }
 
     private function getCountSignalementPerPartenaire()
     {
-        return $this->partenaireStatisticProvider->getFilteredData($this->statut, $this->hasCountRefused, $this->dateStart, $this->dateEnd, $this->type, $this->territory, $this->etiquettes, $this->communes);
+        return $this->partenaireStatisticProvider->getFilteredData($this);
     }
 
     private function getCountSignalementPerSituation()
     {
-        return $this->situationStatisticProvider->getFilteredData($this->statut, $this->hasCountRefused, $this->dateStart, $this->dateEnd, $this->type, $this->territory, $this->etiquettes, $this->communes);
+        return $this->situationStatisticProvider->getFilteredData($this);
     }
 
     private function getCountSignalementPerCriticite()
     {
-        return $this->criticiteStatisticProvider->getFilteredData($this->statut, $this->hasCountRefused, $this->dateStart, $this->dateEnd, $this->type, $this->territory, $this->etiquettes, $this->communes);
+        return $this->criticiteStatisticProvider->getFilteredData($this);
     }
 
     private function getCountSignalementPerStatut()
     {
-        return $this->statusStatisticProvider->getFilteredData($this->statut, $this->hasCountRefused, $this->dateStart, $this->dateEnd, $this->type, $this->territory, $this->etiquettes, $this->communes);
+        return $this->statusStatisticProvider->getFilteredData($this);
     }
 
     private function getCountSignalementPerCriticitePercent()
     {
-        return $this->criticitePercentStatisticProvider->getFilteredData($this->statut, $this->hasCountRefused, $this->dateStart, $this->dateEnd, $this->type, $this->territory, $this->etiquettes, $this->communes);
+        return $this->criticitePercentStatisticProvider->getFilteredData($this);
     }
 
     private function getCountSignalementPerVisite()
     {
-        return $this->visiteStatisticProvider->getFilteredData($this->statut, $this->hasCountRefused, $this->dateStart, $this->dateEnd, $this->type, $this->territory, $this->etiquettes, $this->communes);
+        return $this->visiteStatisticProvider->getFilteredData($this);
     }
 
     private function getCountSignalementPerMotifCloture()
     {
-        return $this->motifClotureStatisticProvider->getFilteredData($this->statut, $this->hasCountRefused, $this->dateStart, $this->dateEnd, $this->type, $this->territory, $this->etiquettes, $this->communes);
+        return $this->motifClotureStatisticProvider->getFilteredData($this);
     }
 }

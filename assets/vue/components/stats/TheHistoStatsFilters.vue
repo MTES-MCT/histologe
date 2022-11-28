@@ -64,6 +64,15 @@
             <template #label>Cocher la case pour comptabiliser les signalements refusés</template>
           </HistoCheckbox>
         </div>
+        <div class="fr-col-12 fr-col-lg-6 fr-col-xl-5" v-if="sharedState.filters.canFilterArchived">
+          <HistoCheckbox
+            id="count-archived"
+            v-model="sharedState.filters.countArchived"
+            @update:modelValue="onChange(false)"
+            >
+            <template #label>Cocher la case pour comptabiliser les signalements archivés</template>
+          </HistoCheckbox>
+        </div>
         <div class="fr-col-12 fr-col-lg-12 fr-col-xl-3 align-right">
           <a href="#" @click="onReinitLocalEvent"><span class="fr-fi-refresh-line"></span>Tout réinitialiser</a>
         </div>
@@ -106,7 +115,8 @@ export default defineComponent({
         etiquettes,
         type: store.state.filters.type,
         dateRange: store.state.filters.dateRange,
-        countRefused: store.state.filters.countRefused
+        countRefused: store.state.filters.countRefused,
+        countArchived: store.state.filters.countArchived
       },
       statusList: [
         { Id: 'all', Text: 'Tous' },
@@ -136,6 +146,7 @@ export default defineComponent({
       this.sharedState.filters.statut = this.initFilters.statut
       this.sharedState.filters.type = this.initFilters.type
       this.sharedState.filters.countRefused = this.initFilters.countRefused
+      this.sharedState.filters.countArchived = this.initFilters.countArchived
 
       if (this.onChange !== undefined) {
         this.onChange()

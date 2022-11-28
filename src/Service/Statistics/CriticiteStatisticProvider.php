@@ -10,9 +10,9 @@ class CriticiteStatisticProvider
     {
     }
 
-    public function getFilteredData($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes)
+    public function getFilteredData(FilteredBackAnalyticsProvider $filters)
     {
-        $countPerCriticites = $this->signalementRepository->countByCriticiteFiltered($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes, true);
+        $countPerCriticites = $this->signalementRepository->countByCriticiteFiltered($filters);
 
         $buffer = [];
         foreach ($countPerCriticites as $countPerCriticite) {

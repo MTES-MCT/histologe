@@ -10,9 +10,9 @@ class VisiteStatisticProvider
     {
     }
 
-    public function getFilteredData($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes)
+    public function getFilteredData(FilteredBackAnalyticsProvider $filters)
     {
-        $countPerVisites = $this->signalementRepository->countByVisiteFiltered($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes, true);
+        $countPerVisites = $this->signalementRepository->countByVisiteFiltered($filters);
 
         $buffer = self::initPerVisite();
         foreach ($countPerVisites as $countPerVisite) {

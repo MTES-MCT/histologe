@@ -40,7 +40,7 @@ class GlobalAnalyticsProvider
 
     public function getCountSignalementData()
     {
-        return $this->signalementRepository->countAll(null, true);
+        return $this->signalementRepository->countAll(null, true, true);
     }
 
     public function getCountTerritoryData()
@@ -50,7 +50,7 @@ class GlobalAnalyticsProvider
 
     private function getValidatedData()
     {
-        $total = $this->signalementRepository->countAll(null, true);
+        $total = $this->signalementRepository->countAll(null, true, true);
         if ($total > 0) {
             return round($this->signalementRepository->countValidated(true) / $total * 1000) / 10;
         }
@@ -60,7 +60,7 @@ class GlobalAnalyticsProvider
 
     private function getClotureData()
     {
-        $total = $this->signalementRepository->countAll(null, true);
+        $total = $this->signalementRepository->countAll(null, true, true);
         if ($total > 0) {
             return round($this->signalementRepository->countClosed(true) / $total * 1000) / 10;
         }

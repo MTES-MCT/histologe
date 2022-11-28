@@ -12,9 +12,9 @@ class StatusStatisticProvider
     {
     }
 
-    public function getFilteredData($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes)
+    public function getFilteredData(FilteredBackAnalyticsProvider $filters)
     {
-        $countPerSituations = $this->signalementRepository->countByStatusFiltered($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes, true);
+        $countPerSituations = $this->signalementRepository->countByStatusFiltered($filters);
 
         return $this->createFullArray($countPerSituations);
     }
@@ -42,6 +42,14 @@ class StatusStatisticProvider
     private static function initStatutByValue($statusResult)
     {
         switch ($statusResult['statut']) {
+            case Signalement::STATUS_REFUSED:
+                return [
+                    'label' => 'Refusé',
+                    'color' => '#CE0500',
+                    'count' => $statusResult['count'],
+                ];
+                break;
+
             case Signalement::STATUS_CLOSED:
                 return [
                     'label' => 'Fermé',

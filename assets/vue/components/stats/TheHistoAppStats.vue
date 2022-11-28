@@ -133,6 +133,8 @@ export default defineComponent({
       }
 
       this.sharedState.filters.canFilterTerritoires = requestResponse.can_filter_territoires === '1'
+      this.sharedState.filters.canFilterArchived = requestResponse.can_filter_archived === '1'
+
       if (this.sharedState.filters.canFilterTerritoires) {
         this.sharedState.filters.territoiresList = []
         const optionAllItem = new HistoInterfaceSelectOption()
@@ -155,6 +157,8 @@ export default defineComponent({
       this.sharedState.stats.averageCriticite = requestResponse.average_criticite
       this.sharedState.stats.averageDaysValidation = requestResponse.average_days_validation
       this.sharedState.stats.averageDaysClosure = requestResponse.average_days_closure
+      this.sharedState.stats.countSignalementsRefuses = requestResponse.count_signalement_refuses
+      this.sharedState.stats.countSignalementsArchives = requestResponse.count_signalement_archives
 
       this.sharedState.stats.countSignalementFiltered = requestResponse.count_signalement_filtered
       this.sharedState.stats.averageCriticiteFiltered = requestResponse.average_criticite_filtered

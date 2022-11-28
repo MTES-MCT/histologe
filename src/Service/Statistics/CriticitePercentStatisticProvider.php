@@ -15,9 +15,9 @@ class CriticitePercentStatisticProvider
     {
     }
 
-    public function getFilteredData($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes)
+    public function getFilteredData(FilteredBackAnalyticsProvider $filters)
     {
-        $countPerCriticites = $this->signalementRepository->countByCriticitePercentFiltered($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes, true);
+        $countPerCriticites = $this->signalementRepository->countByCriticitePercentFiltered($filters);
 
         $buffer = self::initPerCriticitePercent();
 

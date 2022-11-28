@@ -11,9 +11,9 @@ class MotifClotureStatisticProvider
     {
     }
 
-    public function getFilteredData($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes)
+    public function getFilteredData(FilteredBackAnalyticsProvider $filters)
     {
-        $countPerMotifsCloture = $this->signalementRepository->countByMotifClotureFiltered($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes);
+        $countPerMotifsCloture = $this->signalementRepository->countByMotifClotureFiltered($filters);
 
         return $this->createFullArray($countPerMotifsCloture);
     }

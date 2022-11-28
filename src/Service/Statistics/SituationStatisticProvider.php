@@ -11,9 +11,9 @@ class SituationStatisticProvider
     {
     }
 
-    public function getFilteredData($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes)
+    public function getFilteredData(FilteredBackAnalyticsProvider $filters)
     {
-        $countPerSituations = $this->signalementRepository->countBySituationFiltered($statut, $hasCountRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes, true);
+        $countPerSituations = $this->signalementRepository->countBySituationFiltered($filters);
 
         return $this->createFullArray($countPerSituations);
     }
