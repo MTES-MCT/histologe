@@ -45,7 +45,7 @@ class SuiviFactory
         $motifSuivi = Sanitizer::sanitize($params['motif_suivi']);
 
         return sprintf(
-            'Le signalement à été cloturé pour %s avec le motif suivant <br><strong>%s</strong><br><strong>Desc.:</strong>%s',
+            'Le signalement à été cloturé pour %s avec le motif suivant <br><strong>%s</strong><br><strong>Desc. : </strong>%s',
             $params['subject'],
             $params['motif_cloture'],
             $motifSuivi
