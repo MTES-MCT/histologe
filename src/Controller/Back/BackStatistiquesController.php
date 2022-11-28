@@ -81,6 +81,8 @@ class BackStatistiquesController extends AbstractController
             $this->ajaxResult['countSignalementPerSituation'] = $filteredStatistics['count_signalement_per_situation'];
             $this->ajaxResult['countSignalementPerCriticite'] = $filteredStatistics['count_signalement_per_criticite'];
             $this->ajaxResult['countSignalementPerStatut'] = $filteredStatistics['count_signalement_per_statut'];
+            $this->ajaxResult['countSignalementPerCriticitePercent'] = $filteredStatistics['count_signalement_per_criticite_percent'];
+            $this->ajaxResult['countSignalementPerVisite'] = $filteredStatistics['count_signalement_per_visite'];
 
             $resultFiltered = $this->buildQuery($request, $signalementRepository, $territory);
             $this->makeFilteredStats($resultFiltered);
@@ -301,8 +303,6 @@ class BackStatistiquesController extends AbstractController
         arsort($countSignalementPerCriticite);
         $countSignalementPerCriticite = \array_slice($countSignalementPerCriticite, 0, 5);
 
-        $this->ajaxResult['countSignalementPerCriticitePercent'] = $countSignalementPerCriticitePercent;
-        $this->ajaxResult['countSignalementPerVisite'] = $countSignalementPerVisite;
         $this->ajaxResult['countSignalementPerMotifCloture'] = $countSignalementPerMotifCloture;
     }
 

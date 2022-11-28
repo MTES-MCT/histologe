@@ -7,6 +7,7 @@ use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\SearchFilterService;
+use App\Service\Statistics\CriticitePercentStatisticProvider;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -625,6 +626,42 @@ class SignalementRepository extends ServiceEntityRepository
 
         $qb->indexBy('s', 's.statut');
         $qb->groupBy('s.statut');
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
+    public function countByCriticitePercentFiltered(string $statut, bool $countRefused, ?DateTime $dateStart, ?DateTime $dateEnd, string $type, ?Territory $territory, ?array $etiquettes, ?array $communes)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id) as count')
+            ->addSelect('case
+                when s.scoreCreation >= 0 and s.scoreCreation < 25 then \''.CriticitePercentStatisticProvider::CRITICITE_VERY_WEAK.'\'
+                when s.scoreCreation >= 25 and s.scoreCreation < 51 then \''.CriticitePercentStatisticProvider::CRITICITE_WEAK.'\'
+                when s.scoreCreation >= 51 and s.scoreCreation <= 75 then \''.CriticitePercentStatisticProvider::CRITICITE_STRONG.'\'
+                else \''.CriticitePercentStatisticProvider::CRITICITE_VERY_STRONG.'\'
+                end as range');
+
+        $qb = self::addFiltersToQuery($qb, $statut, $countRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes);
+
+        $qb->groupBy('range');
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
+    public function countByVisiteFiltered(string $statut, bool $countRefused, ?DateTime $dateStart, ?DateTime $dateEnd, string $type, ?Territory $territory, ?array $etiquettes, ?array $communes)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id) as count')
+            ->addSelect('case
+            when s.dateVisite IS NULL then \'Non\'
+            else \'Oui\'
+            end as visite');
+
+        $qb = self::addFiltersToQuery($qb, $statut, $countRefused, $dateStart, $dateEnd, $type, $territory, $etiquettes, $communes);
+
+        $qb->groupBy('visite');
 
         return $qb->getQuery()
             ->getResult();

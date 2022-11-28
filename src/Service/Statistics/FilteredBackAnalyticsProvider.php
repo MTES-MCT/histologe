@@ -27,6 +27,8 @@ class FilteredBackAnalyticsProvider
         private SituationStatisticProvider $situationStatisticProvider,
         private CriticiteStatisticProvider $criticiteStatisticProvider,
         private StatusStatisticProvider $statusStatisticProvider,
+        private CriticitePercentStatisticProvider $criticitePercentStatisticProvider,
+        private VisiteStatisticProvider $visiteStatisticProvider,
         ) {
     }
 
@@ -55,6 +57,8 @@ class FilteredBackAnalyticsProvider
         $buffer['count_signalement_per_situation'] = $this->getCountSignalementPerSituation();
         $buffer['count_signalement_per_criticite'] = $this->getCountSignalementPerCriticite();
         $buffer['count_signalement_per_statut'] = $this->getCountSignalementPerStatut();
+        $buffer['count_signalement_per_criticite_percent'] = $this->getCountSignalementPerCriticitePercent();
+        $buffer['count_signalement_per_visite'] = $this->getCountSignalementPerVisite();
 
         return $buffer;
     }
@@ -97,5 +101,15 @@ class FilteredBackAnalyticsProvider
     private function getCountSignalementPerStatut()
     {
         return $this->statusStatisticProvider->getFilteredData($this->statut, $this->hasCountRefused, $this->dateStart, $this->dateEnd, $this->type, $this->territory, $this->etiquettes, $this->communes);
+    }
+
+    private function getCountSignalementPerCriticitePercent()
+    {
+        return $this->criticitePercentStatisticProvider->getFilteredData($this->statut, $this->hasCountRefused, $this->dateStart, $this->dateEnd, $this->type, $this->territory, $this->etiquettes, $this->communes);
+    }
+
+    private function getCountSignalementPerVisite()
+    {
+        return $this->visiteStatisticProvider->getFilteredData($this->statut, $this->hasCountRefused, $this->dateStart, $this->dateEnd, $this->type, $this->territory, $this->etiquettes, $this->communes);
     }
 }
