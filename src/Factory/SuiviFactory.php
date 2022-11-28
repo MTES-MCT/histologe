@@ -22,7 +22,7 @@ class SuiviFactory
         return $suivi;
     }
 
-    private function buildDescription($params): ?string
+    private function buildDescription($params): string
     {
         $description = '';
         if (empty($params)) {
