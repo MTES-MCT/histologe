@@ -11,8 +11,8 @@ use App\Service\Statistics\CriticitePercentStatisticProvider;
 use App\Service\Statistics\FilteredBackAnalyticsProvider;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -36,7 +36,7 @@ class SignalementRepository extends ServiceEntityRepository
         $this->searchFilterService = new SearchFilterService();
     }
 
-    public function findAllWithGeoData($user, $options, int $offset, Territory|null $territory)
+    public function findAllWithGeoData($user, $options, int $offset, Territory|null $territory): array
     {
         $firstResult = $offset;
         $qb = $this->createQueryBuilder('s');
@@ -66,7 +66,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getQuery()->getArrayResult();
     }
 
-    public function findAllWithAffectations($year)
+    public function findAllWithAffectations($year): array
     {
         return $this->createQueryBuilder('s')
             ->where('s.statut != 7')
@@ -77,7 +77,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countAll(Territory|null $territory, bool $removeImported = false, bool $removeArchived = false)
+    public function countAll(Territory|null $territory, bool $removeImported = false, bool $removeArchived = false): int
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id)');
@@ -98,7 +98,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function countImported()
+    public function countImported(): int
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id)');
@@ -110,7 +110,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function countByStatus(Territory|null $territory, int|null $year = null, bool $removeImported = false)
+    public function countByStatus(Territory|null $territory, int|null $year = null, bool $removeImported = false): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
@@ -136,7 +136,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countValidated(bool $removeImported = false)
+    public function countValidated(bool $removeImported = false): int
     {
         $notStatus = [Signalement::STATUS_NEED_VALIDATION, Signalement::STATUS_REFUSED, Signalement::STATUS_ARCHIVED];
         $qb = $this->createQueryBuilder('s');
@@ -152,7 +152,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function countClosed(bool $removeImported = false)
+    public function countClosed(bool $removeImported = false): int
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id)');
@@ -167,7 +167,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function countByTerritory(bool $removeImported = false)
+    public function countByTerritory(bool $removeImported = false): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, t.zip, t.name, t.id');
@@ -185,7 +185,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countByMonth(Territory|null $territory, int|null $year, bool $removeImported = false)
+    public function countByMonth(Territory|null $territory, int|null $year, bool $removeImported = false): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, MONTH(s.createdAt) AS month, YEAR(s.createdAt) AS year');
@@ -214,7 +214,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countBySituation(Territory|null $territory, int|null $year, bool $removeImported = false)
+    public function countBySituation(Territory|null $territory, int|null $year, bool $removeImported = false): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, sit.id, sit.menuLabel');
@@ -241,7 +241,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countByMotifCloture(Territory|null $territory, int|null $year, bool $removeImported = false)
+    public function countByMotifCloture(Territory|null $territory, int|null $year, bool $removeImported = false): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, s.motifCloture');
@@ -270,27 +270,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * @throws NonUniqueResultException
-     */
-    public function findByUuid($uuid)
-    {
-        $qb = $this->createQueryBuilder('s')
-            ->where('s.uuid = :uuid')
-            ->setParameter('uuid', $uuid);
-        $qb
-            ->leftJoin('s.situations', 'situations')
-            ->leftJoin('s.tags', 'tags')
-            ->leftJoin('s.affectations', 'affectations')
-            ->leftJoin('situations.criteres', 'criteres')
-            ->leftJoin('criteres.criticites', 'criticites')
-            ->leftJoin('affectations.partner', 'partner')
-            ->addSelect('situations', 'affectations', 'criteres', 'criticites', 'partner');
-
-        return $qb->getQuery()->getOneOrNullResult();
-    }
-
-    public function findByStatusAndOrCityForUser(User|UserInterface $user = null, array $options, int|null $export)
+    public function findByStatusAndOrCityForUser(User|UserInterface $user = null, array $options, int|null $export): array|Paginator
     {
         $pageSize = $export ?? self::ARRAY_LIST_PAGE_SIZE;
         $firstResult = (($options['page'] ?? 1) - 1) * $pageSize;
@@ -372,24 +352,7 @@ class SignalementRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getOneOrNullResult();
     }
 
-    public function findDuplicatedReferences(Territory $territory)
-    {
-        $year = (new \DateTime())->format('Y');
-        $queryBuilder = $this->createQueryBuilder('s')
-            ->select('s.reference')
-            ->addSelect("SUBSTRING_INDEX(s.reference, '-', 1) AS year")
-            ->addSelect("CAST(SUBSTRING_INDEX(s.reference, '-', -1) AS SIGNED) AS reference_index")
-            ->addSelect('COUNT(s.id) AS nb_signalement')
-            ->where('s.territory = :territory')
-            ->setParameter('territory', $territory)
-            ->groupBy('s.reference')
-            ->having('nb_signalement > 1')
-            ->orderBy('reference_index', 'ASC');
-
-        return $queryBuilder->getQuery()->getArrayResult();
-    }
-
-    public function findUsersPartnerEmailAffectedToSignalement(int $signalementId, ?Partner $partnerToExclude = null)
+    public function findUsersPartnerEmailAffectedToSignalement(int $signalementId, ?Partner $partnerToExclude = null): array
     {
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder
@@ -415,7 +378,7 @@ class SignalementRepository extends ServiceEntityRepository
         return $usersEmail;
     }
 
-    public function findPartnersEmailAffectedToSignalement(int $signalementId)
+    public function findPartnersEmailAffectedToSignalement(int $signalementId): array
     {
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder
@@ -432,7 +395,7 @@ class SignalementRepository extends ServiceEntityRepository
         return $partnersEmail;
     }
 
-    public function getAverageCriticite(Territory|null $territory, bool $removeImported = false)
+    public function getAverageCriticite(Territory|null $territory, bool $removeImported = false): float
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('AVG(s.scoreCreation)');
@@ -448,17 +411,17 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function getAverageDaysValidation(Territory|null $territory, bool $removeImported = false)
+    public function getAverageDaysValidation(Territory|null $territory, bool $removeImported = false): float
     {
         return $this->getAverageDayResult('validatedAt', $territory, $removeImported);
     }
 
-    public function getAverageDaysClosure(Territory|null $territory, bool $removeImported = false)
+    public function getAverageDaysClosure(Territory|null $territory, bool $removeImported = false): float
     {
         return $this->getAverageDayResult('closedAt', $territory, $removeImported);
     }
 
-    private function getAverageDayResult(string $field, Territory|null $territory, bool $removeImported = false)
+    private function getAverageDayResult(string $field, Territory|null $territory, bool $removeImported = false): float
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('AVG(datediff(s.'.$field.', s.createdAt))');
@@ -476,7 +439,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function countFiltered(FilteredBackAnalyticsProvider $filters)
+    public function countFiltered(FilteredBackAnalyticsProvider $filters): int
     {
         $qb = $this->createQueryBuilder('s');
 
@@ -487,7 +450,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function countByMonthFiltered(FilteredBackAnalyticsProvider $filters)
+    public function countByMonthFiltered(FilteredBackAnalyticsProvider $filters): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, MONTH(s.createdAt) AS month, YEAR(s.createdAt) AS year');
@@ -504,7 +467,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function getAverageCriticiteFiltered(FilteredBackAnalyticsProvider $filters)
+    public function getAverageCriticiteFiltered(FilteredBackAnalyticsProvider $filters): float
     {
         $qb = $this->createQueryBuilder('s');
 
@@ -517,7 +480,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function countBySituationFiltered(FilteredBackAnalyticsProvider $filters)
+    public function countBySituationFiltered(FilteredBackAnalyticsProvider $filters): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, sit.id, sit.menuLabel');
@@ -532,7 +495,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countByCriticiteFiltered(FilteredBackAnalyticsProvider $filters)
+    public function countByCriticiteFiltered(FilteredBackAnalyticsProvider $filters): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, crit.id, crit.label');
@@ -547,7 +510,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countByStatusFiltered(FilteredBackAnalyticsProvider $filters)
+    public function countByStatusFiltered(FilteredBackAnalyticsProvider $filters): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
@@ -562,7 +525,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countByCriticitePercentFiltered(FilteredBackAnalyticsProvider $filters)
+    public function countByCriticitePercentFiltered(FilteredBackAnalyticsProvider $filters): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
@@ -581,7 +544,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countByVisiteFiltered(FilteredBackAnalyticsProvider $filters)
+    public function countByVisiteFiltered(FilteredBackAnalyticsProvider $filters): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
@@ -598,7 +561,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countByMotifClotureFiltered(FilteredBackAnalyticsProvider $filters)
+    public function countByMotifClotureFiltered(FilteredBackAnalyticsProvider $filters): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, s.motifCloture');
@@ -615,7 +578,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public static function addFiltersToQuery($qb, FilteredBackAnalyticsProvider $filters)
+    public static function addFiltersToQuery($qb, FilteredBackAnalyticsProvider $filters): QueryBuilder
     {
         // Is the status defined?
         if ('' != $filters->statut && 'all' != $filters->statut) {

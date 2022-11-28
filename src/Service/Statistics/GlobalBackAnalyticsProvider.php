@@ -15,7 +15,7 @@ class GlobalBackAnalyticsProvider
         ) {
     }
 
-    public function getData(?Territory $territory)
+    public function getData(?Territory $territory): array
     {
         $buffer = [];
         $buffer['count_signalement'] = $this->getCountSignalementData($territory);
@@ -42,33 +42,23 @@ class GlobalBackAnalyticsProvider
         return $buffer;
     }
 
-    private function getCountSignalementData(?Territory $territory)
+    private function getCountSignalementData(?Territory $territory): int
     {
         return $this->signalementRepository->countAll($territory, true);
     }
 
-    private function getAverageCriticiteData(?Territory $territory)
+    private function getAverageCriticiteData(?Territory $territory): float
     {
         return round($this->signalementRepository->getAverageCriticite($territory, true) * 10) / 10;
     }
 
-    private function getAverageDaysValidationData(?Territory $territory)
+    private function getAverageDaysValidationData(?Territory $territory): float
     {
         return round($this->signalementRepository->getAverageDaysValidation($territory, true) * 10) / 10;
     }
 
-    private function getAverageDaysClosureData(?Territory $territory)
+    private function getAverageDaysClosureData(?Territory $territory): float
     {
         return round($this->signalementRepository->getAverageDaysClosure($territory, true) * 10) / 10;
-    }
-
-    private function getCountSignalementsRefusesData(?Territory $territory)
-    {
-        return $this->signalementRepository->countAll($territory, true);
-    }
-
-    private function getCountSignalementArchivesData(?Territory $territory)
-    {
-        return $this->signalementRepository->countAll($territory, true);
     }
 }

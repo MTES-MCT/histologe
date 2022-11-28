@@ -11,21 +11,21 @@ class SituationStatisticProvider
     {
     }
 
-    public function getFilteredData(FilteredBackAnalyticsProvider $filters)
+    public function getFilteredData(FilteredBackAnalyticsProvider $filters): array
     {
         $countPerSituations = $this->signalementRepository->countBySituationFiltered($filters);
 
         return $this->createFullArray($countPerSituations);
     }
 
-    public function getData(Territory|null $territory, int|null $year)
+    public function getData(Territory|null $territory, int|null $year): array
     {
         $countPerSituations = $this->signalementRepository->countBySituation($territory, $year, true);
 
         return $this->createFullArray($countPerSituations);
     }
 
-    private function createFullArray($countPerSituations)
+    private function createFullArray($countPerSituations): array
     {
         $buffer = [];
         foreach ($countPerSituations as $countPerSituation) {

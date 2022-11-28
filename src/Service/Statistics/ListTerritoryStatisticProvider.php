@@ -10,7 +10,7 @@ class ListTerritoryStatisticProvider
     {
     }
 
-    public function getData()
+    public function getData(): array
     {
         $buffer = [];
         $territories = $this->territoryRepository->findAllList();

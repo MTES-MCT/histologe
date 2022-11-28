@@ -14,21 +14,21 @@ class MonthStatisticProvider
     {
     }
 
-    public function getFilteredData(FilteredBackAnalyticsProvider $filters)
+    public function getFilteredData(FilteredBackAnalyticsProvider $filters): array
     {
         $countPerMonths = $this->signalementRepository->countByMonthFiltered($filters);
 
         return $this->createFullArray($countPerMonths);
     }
 
-    public function getData(Territory|null $territory, int|null $year)
+    public function getData(Territory|null $territory, int|null $year): array
     {
         $countPerMonths = $this->signalementRepository->countByMonth($territory, $year, true);
 
         return $this->createFullArray($countPerMonths);
     }
 
-    private function createFullArray($countPerMonths)
+    private function createFullArray($countPerMonths): array
     {
         $monthsWithResults = [];
         foreach ($countPerMonths as $countPerMonth) {

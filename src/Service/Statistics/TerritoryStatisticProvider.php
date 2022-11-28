@@ -10,7 +10,7 @@ class TerritoryStatisticProvider
     {
     }
 
-    public function getData()
+    public function getData(): array
     {
         $buffer = [];
 

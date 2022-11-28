@@ -12,21 +12,21 @@ class StatusStatisticProvider
     {
     }
 
-    public function getFilteredData(FilteredBackAnalyticsProvider $filters)
+    public function getFilteredData(FilteredBackAnalyticsProvider $filters): array
     {
         $countPerSituations = $this->signalementRepository->countByStatusFiltered($filters);
 
         return $this->createFullArray($countPerSituations);
     }
 
-    public function getData(Territory|null $territory, int|null $year)
+    public function getData(Territory|null $territory, int|null $year): array
     {
         $countPerStatuses = $this->signalementRepository->countByStatus($territory, $year, true);
 
         return $this->createFullArray($countPerStatuses);
     }
 
-    private function createFullArray($countPerStatuses)
+    private function createFullArray($countPerStatuses): array
     {
         $buffer = [];
         foreach ($countPerStatuses as $countPerStatus) {
@@ -39,7 +39,7 @@ class StatusStatisticProvider
         return $buffer;
     }
 
-    private static function initStatutByValue($statusResult)
+    private static function initStatutByValue($statusResult): bool|array
     {
         switch ($statusResult['statut']) {
             case Signalement::STATUS_REFUSED:

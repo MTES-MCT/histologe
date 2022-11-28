@@ -50,7 +50,7 @@ class FilteredBackAnalyticsProvider
         $this->territory = $territory;
     }
 
-    public function getData()
+    public function getData(): array
     {
         $buffer = [];
         $buffer['count_signalement_filtered'] = $this->getCountSignalementData();
@@ -67,12 +67,12 @@ class FilteredBackAnalyticsProvider
         return $buffer;
     }
 
-    private function getCountSignalementData()
+    private function getCountSignalementData(): int
     {
         return $this->signalementRepository->countFiltered($this);
     }
 
-    private function getAverageCriticiteData()
+    private function getAverageCriticiteData(): float
     {
         $buffer = $this->signalementRepository->getAverageCriticiteFiltered($this);
         if (empty($buffer)) {
@@ -82,42 +82,42 @@ class FilteredBackAnalyticsProvider
         return $buffer;
     }
 
-    private function getCountSignalementPerMonth()
+    private function getCountSignalementPerMonth(): array
     {
         return $this->monthStatisticProvider->getFilteredData($this);
     }
 
-    private function getCountSignalementPerPartenaire()
+    private function getCountSignalementPerPartenaire(): array
     {
         return $this->partenaireStatisticProvider->getFilteredData($this);
     }
 
-    private function getCountSignalementPerSituation()
+    private function getCountSignalementPerSituation(): array
     {
         return $this->situationStatisticProvider->getFilteredData($this);
     }
 
-    private function getCountSignalementPerCriticite()
+    private function getCountSignalementPerCriticite(): array
     {
         return $this->criticiteStatisticProvider->getFilteredData($this);
     }
 
-    private function getCountSignalementPerStatut()
+    private function getCountSignalementPerStatut(): array
     {
         return $this->statusStatisticProvider->getFilteredData($this);
     }
 
-    private function getCountSignalementPerCriticitePercent()
+    private function getCountSignalementPerCriticitePercent(): array
     {
         return $this->criticitePercentStatisticProvider->getFilteredData($this);
     }
 
-    private function getCountSignalementPerVisite()
+    private function getCountSignalementPerVisite(): array
     {
         return $this->visiteStatisticProvider->getFilteredData($this);
     }
 
-    private function getCountSignalementPerMotifCloture()
+    private function getCountSignalementPerMotifCloture(): array
     {
         return $this->motifClotureStatisticProvider->getFilteredData($this);
     }

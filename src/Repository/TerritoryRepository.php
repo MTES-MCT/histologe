@@ -62,7 +62,7 @@ class TerritoryRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countAll()
+    public function countAll(): int
     {
         $qb = $this->createQueryBuilder('t');
         $qb->select('COUNT(t.id)')

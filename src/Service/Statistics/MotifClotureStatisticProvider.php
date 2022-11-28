@@ -11,21 +11,21 @@ class MotifClotureStatisticProvider
     {
     }
 
-    public function getFilteredData(FilteredBackAnalyticsProvider $filters)
+    public function getFilteredData(FilteredBackAnalyticsProvider $filters): array
     {
         $countPerMotifsCloture = $this->signalementRepository->countByMotifClotureFiltered($filters);
 
         return $this->createFullArray($countPerMotifsCloture);
     }
 
-    public function getData(Territory|null $territory, int|null $year)
+    public function getData(Territory|null $territory, int|null $year): array
     {
         $countPerMotifsCloture = $this->signalementRepository->countByMotifCloture($territory, $year, true);
 
         return $this->createFullArray($countPerMotifsCloture);
     }
 
-    private function createFullArray($countPerMotifsCloture)
+    private function createFullArray($countPerMotifsCloture): array
     {
         $buffer = self::initMotifPerValue();
         foreach ($countPerMotifsCloture as $countPerMotifCloture) {
@@ -37,7 +37,7 @@ class MotifClotureStatisticProvider
         return $buffer;
     }
 
-    private static function initMotifPerValue()
+    private static function initMotifPerValue(): array
     {
         return [
             'RESOLU' => [
