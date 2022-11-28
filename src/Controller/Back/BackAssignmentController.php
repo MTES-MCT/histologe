@@ -7,10 +7,9 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\AffectationAnsweredEvent;
 use App\Manager\AffectationManager;
+use App\Manager\SignalementManager;
 use App\Repository\PartnerRepository;
 use App\Service\EsaboraService;
-use App\Service\NotificationService;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,45 +22,36 @@ use Symfony\Component\Routing\Annotation\Route;
 class BackAssignmentController extends AbstractController
 {
     #[Route('/{uuid}/affectation/toggle', name: 'back_signalement_toggle_affectation')]
-    public function toggleAffectationSignalement(Signalement $signalement, EsaboraService $esaboraService, ManagerRegistry $doctrine, Request $request, PartnerRepository $partnerRepository, NotificationService $notificationService): RedirectResponse|JsonResponse
-    {
+    public function toggleAffectationSignalement(
+        Signalement $signalement,
+        SignalementManager $signalementManager,
+        AffectationManager $affectationManager,
+        EsaboraService $esaboraService,
+        Request $request,
+        PartnerRepository $partnerRepository,
+    ): RedirectResponse|JsonResponse {
         $this->denyAccessUnlessGranted('ASSIGN_TOGGLE', $signalement);
         if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), $request->get('_token'))) {
             $data = $request->get('signalement-affectation');
             if (isset($data['partners'])) {
                 $postedPartner = $data['partners'];
-                $alreadyAffectedPartner = $signalement->getAffectations()->map(function (Affectation $affectation) {
-                    return $affectation->getPartner()->getId();
-                })->toArray();
-                $partnersToAdd = array_diff($postedPartner, $alreadyAffectedPartner);
-                $partnersToRemove = array_diff($alreadyAffectedPartner, $postedPartner);
-                foreach ($partnersToAdd as $partnerIdToAdd) {
+                $alreadyAffectedPartner = $signalementManager->findPartners($signalement);
+                $partnersIdToAdd = array_diff($postedPartner, $alreadyAffectedPartner);
+                $partnersIdToRemove = array_diff($alreadyAffectedPartner, $postedPartner);
+
+                foreach ($partnersIdToAdd as $partnerIdToAdd) {
                     $partner = $partnerRepository->find($partnerIdToAdd);
-                    $affectation = new Affectation();
-                    $affectation->setSignalement($signalement);
-                    $affectation->setPartner($partner);
-                    $affectation->setAffectedBy($this->getUser());
-                    $affectation->setTerritory($partner->getTerritory());
-                    $doctrine->getManager()->persist($affectation);
+                    $affectation = $affectationManager->createAffectationFrom($signalement, $partner);
+                    $affectationManager->persist($affectation);
                     if ($partner->getEsaboraToken() && $partner->getEsaboraUrl()) {
                         $esaboraService->post($affectation);
                     }
                 }
-                foreach ($partnersToRemove as $partnerIdToRemove) {
-                    $partner = $partnerRepository->find($partnerIdToRemove);
-                    $signalement->getAffectations()->filter(function (Affectation $affectation) use ($doctrine, $partner) {
-                        if ($affectation->getPartner()->getId() === $partner->getId()) {
-                            $doctrine->getManager()->remove($affectation);
-                        }
-                    });
-                }
+                $affectationManager->removeAffectationsBy($signalement, $partnersIdToRemove);
             } else {
-                $signalement->getAffectations()->filter(function (Affectation $affectation) use ($doctrine) {
-                    $doctrine->getManager()->remove($affectation);
-                });
+                $affectationManager->removeAffectationsBy($signalement);
             }
-
-            $doctrine->getManager()->flush();
+            $affectationManager->flush();
             $this->addFlash('success', 'Les affectations ont bien été effectuées.');
 
             return $this->json(['status' => 'success']);

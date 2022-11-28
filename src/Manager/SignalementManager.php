@@ -32,6 +32,16 @@ class SignalementManager extends AbstractManager
         return $partners;
     }
 
+    public function findPartners(Signalement $signalement): array
+    {
+        $affectation = $signalement->getAffectations()->map(
+            function (Affectation $affectation) {
+                return $affectation->getPartner()->getId();
+            });
+
+        return $affectation->toArray();
+    }
+
     public function closeSignalementForAllPartners(Signalement $signalement, string $motif): Signalement
     {
         $signalement
