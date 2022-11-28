@@ -47,9 +47,9 @@ class BackAssignmentController extends AbstractController
                         $esaboraService->post($affectation);
                     }
                 }
-                $affectationManager->removeAffectationsBy($signalement, $partnersIdToRemove);
+                $affectationManager->removeAffectationsFrom($signalement, $partnersIdToRemove);
             } else {
-                $affectationManager->removeAffectationsBy($signalement);
+                $affectationManager->removeAffectationsFrom($signalement);
             }
             $affectationManager->flush();
             $this->addFlash('success', 'Les affectations ont bien été effectuées.');

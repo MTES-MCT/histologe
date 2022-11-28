@@ -29,7 +29,7 @@ class AffectationManagerTest extends KernelTestCase
         $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(['reference' => '2022-8']);
 
         $countAffectationBeforeRemove = $signalement->getAffectations()->count();
-        $affectationManager->removeAffectationsBy($signalement);
+        $affectationManager->removeAffectationsFrom($signalement);
         $countAffectationAfterRemove = $signalement->getAffectations()->count();
 
         $this->assertNotEquals($countAffectationBeforeRemove, $countAffectationAfterRemove);
@@ -46,7 +46,7 @@ class AffectationManagerTest extends KernelTestCase
         $partnersIdToRemove[] = $signalement->getAffectations()->get(0)->getPartner()->getId();
         $partnersIdToRemove[] = $signalement->getAffectations()->get(1)->getPartner()->getId();
         $countAffectationBeforeRemove = $signalement->getAffectations()->count();
-        $affectationManager->removeAffectationsBy(signalement: $signalement, partnersIdToRemove: $partnersIdToRemove);
+        $affectationManager->removeAffectationsFrom(signalement: $signalement, partnersIdToRemove: $partnersIdToRemove);
         $countAffectationAfterRemove = $signalement->getAffectations()->count();
         $this->assertNotEquals($countAffectationBeforeRemove, $countAffectationAfterRemove);
         $this->assertEquals(1, $countAffectationAfterRemove);
