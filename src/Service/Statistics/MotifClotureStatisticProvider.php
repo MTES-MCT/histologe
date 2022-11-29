@@ -2,6 +2,7 @@
 
 namespace App\Service\Statistics;
 
+use App\Dto\BackStatisticsFilters;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
 
@@ -11,9 +12,9 @@ class MotifClotureStatisticProvider
     {
     }
 
-    public function getFilteredData(FilteredBackAnalyticsProvider $filters): array
+    public function getFilteredData(BackStatisticsFilters $backStatisticsFilters): array
     {
-        $countPerMotifsCloture = $this->signalementRepository->countByMotifClotureFiltered($filters);
+        $countPerMotifsCloture = $this->signalementRepository->countByMotifClotureFiltered($backStatisticsFilters);
 
         return $this->createFullArray($countPerMotifsCloture);
     }
@@ -27,14 +28,14 @@ class MotifClotureStatisticProvider
 
     private function createFullArray($countPerMotifsCloture): array
     {
-        $buffer = self::initMotifPerValue();
+        $data = self::initMotifPerValue();
         foreach ($countPerMotifsCloture as $countPerMotifCloture) {
-            if ($buffer[$countPerMotifCloture['motifCloture']]) {
-                $buffer[$countPerMotifCloture['motifCloture']]['count'] = $countPerMotifCloture['count'];
+            if ($data[$countPerMotifCloture['motifCloture']]) {
+                $data[$countPerMotifCloture['motifCloture']]['count'] = $countPerMotifCloture['count'];
             }
         }
 
-        return $buffer;
+        return $data;
     }
 
     private static function initMotifPerValue(): array

@@ -2,6 +2,7 @@
 
 namespace App\Service\Statistics;
 
+use App\Dto\BackStatisticsFilters;
 use App\Repository\SignalementRepository;
 
 class CriticitePercentStatisticProvider
@@ -15,19 +16,19 @@ class CriticitePercentStatisticProvider
     {
     }
 
-    public function getFilteredData(FilteredBackAnalyticsProvider $filters)
+    public function getFilteredData(BackStatisticsFilters $backStatisticsFilters)
     {
-        $countPerCriticites = $this->signalementRepository->countByCriticitePercentFiltered($filters);
+        $countPerCriticites = $this->signalementRepository->countByCriticitePercentFiltered($backStatisticsFilters);
 
-        $buffer = self::initPerCriticitePercent();
+        $data = self::initPerCriticitePercent();
 
         foreach ($countPerCriticites as $countPerCriticite) {
             if ($countPerCriticite['range']) {
-                $buffer[$countPerCriticite['range']]['count'] = $countPerCriticite['count'];
+                $data[$countPerCriticite['range']]['count'] = $countPerCriticite['count'];
             }
         }
 
-        return $buffer;
+        return $data;
     }
 
     private static function initPerCriticitePercent(): array

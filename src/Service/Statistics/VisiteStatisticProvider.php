@@ -2,6 +2,7 @@
 
 namespace App\Service\Statistics;
 
+use App\Dto\BackStatisticsFilters;
 use App\Repository\SignalementRepository;
 
 class VisiteStatisticProvider
@@ -10,18 +11,18 @@ class VisiteStatisticProvider
     {
     }
 
-    public function getFilteredData(FilteredBackAnalyticsProvider $filters)
+    public function getFilteredData(BackStatisticsFilters $backStatisticsFilters)
     {
-        $countPerVisites = $this->signalementRepository->countByVisiteFiltered($filters);
+        $countPerVisites = $this->signalementRepository->countByVisiteFiltered($backStatisticsFilters);
 
-        $buffer = self::initPerVisite();
+        $data = self::initPerVisite();
         foreach ($countPerVisites as $countPerVisite) {
             if ($countPerVisite['visite']) {
-                $buffer[$countPerVisite['visite']]['count'] = $countPerVisite['count'];
+                $data[$countPerVisite['visite']]['count'] = $countPerVisite['count'];
             }
         }
 
-        return $buffer;
+        return $data;
     }
 
     private static function initPerVisite(): array

@@ -2,6 +2,7 @@
 
 namespace App\Service\Statistics;
 
+use App\Dto\BackStatisticsFilters;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
@@ -12,9 +13,9 @@ class StatusStatisticProvider
     {
     }
 
-    public function getFilteredData(FilteredBackAnalyticsProvider $filters): array
+    public function getFilteredData(BackStatisticsFilters $backStatisticsFilters): array
     {
-        $countPerSituations = $this->signalementRepository->countByStatusFiltered($filters);
+        $countPerSituations = $this->signalementRepository->countByStatusFiltered($backStatisticsFilters);
 
         return $this->createFullArray($countPerSituations);
     }
@@ -28,15 +29,15 @@ class StatusStatisticProvider
 
     private function createFullArray($countPerStatuses): array
     {
-        $buffer = [];
+        $data = [];
         foreach ($countPerStatuses as $countPerStatus) {
             $item = self::initStatutByValue($countPerStatus);
             if ($item) {
-                $buffer[$countPerStatus['statut']] = $item;
+                $data[$countPerStatus['statut']] = $item;
             }
         }
 
-        return $buffer;
+        return $data;
     }
 
     private static function initStatutByValue($statusResult): bool|array

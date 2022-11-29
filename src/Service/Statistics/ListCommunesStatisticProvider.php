@@ -17,7 +17,7 @@ class ListCommunesStatisticProvider
 
     public function getData(?Territory $territory)
     {
-        $buffer = [];
+        $data = [];
         if (null !== $territory) {
             $communes = $territory->getCommunes();
             /** @var Commune $commune */
@@ -33,12 +33,12 @@ class ListCommunesStatisticProvider
                 if (preg_match('/('.self::COMMUNE_PARIS.')(.)*(Arrondissement)/', $nomCommune)) {
                     $nomCommune = self::COMMUNE_PARIS;
                 }
-                $buffer[$nomCommune] = $nomCommune;
+                $data[$nomCommune] = $nomCommune;
             }
         }
         $collator = new Collator('fr_FR');
-        $collator->asort($buffer);
+        $collator->asort($data);
 
-        return $buffer;
+        return $data;
     }
 }

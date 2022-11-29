@@ -13,15 +13,15 @@ class ListTagsStatisticProvider
 
     public function getData(?Territory $territory)
     {
-        $buffer = [];
+        $data = [];
         if (null !== $territory) {
             $tagList = $this->tagsRepository->findAllActive($territory);
             /** @var Tag $tagItem */
             foreach ($tagList as $tagItem) {
-                $buffer[$tagItem->getId()] = $tagItem->getLabel();
+                $data[$tagItem->getId()] = $tagItem->getLabel();
             }
         }
 
-        return $buffer;
+        return $data;
     }
 }

@@ -15,20 +15,24 @@ class GlobalAnalyticsProvider
 
     public function getData(): array
     {
-        $buffer = [];
-        $buffer['count_signalement_resolus'] = $this->getCountSignalementResoluData();
-        $buffer['count_signalement'] = $this->getCountSignalementData();
-        $buffer['count_territory'] = $this->getCountTerritoryData();
-        $buffer['percent_validation'] = $this->getValidatedData();
-        $buffer['percent_cloture'] = $this->getClotureData();
-        $buffer['count_imported'] = $this->getImportedData();
+        $data = [];
+        $data['count_signalement_resolus'] = $this->getCountSignalementResoluData();
+        $data['count_signalement'] = $this->getCountSignalementData();
+        $data['count_territory'] = $this->getCountTerritoryData();
+        $data['percent_validation'] = $this->getValidatedData();
+        $data['percent_cloture'] = $this->getClotureData();
+        $data['count_imported'] = $this->getImportedData();
 
-        return $buffer;
+        return $data;
     }
 
     public function getCountSignalementResoluData(): int
     {
-        $countPerMotifsCloture = $this->signalementRepository->countByMotifCloture(null, null, true);
+        $countPerMotifsCloture = $this->signalementRepository->countByMotifCloture(
+            territory: null,
+            year: null,
+            removeImported: true
+        );
         foreach ($countPerMotifsCloture as $countPerMotifCloture) {
             if ('RESOLU' == $countPerMotifCloture['motifCloture'] && !empty($countPerMotifCloture['count'])) {
                 return $countPerMotifCloture['count'];
@@ -40,7 +44,11 @@ class GlobalAnalyticsProvider
 
     public function getCountSignalementData(): int
     {
-        return $this->signalementRepository->countAll(null, true, true);
+        return $this->signalementRepository->countAll(
+            territory: null,
+            removeImported: true,
+            removeArchived: true
+        );
     }
 
     public function getCountTerritoryData(): int
@@ -50,7 +58,7 @@ class GlobalAnalyticsProvider
 
     private function getValidatedData(): string|float
     {
-        $total = $this->signalementRepository->countAll(null, true, true);
+        $total = $this->getCountSignalementData();
         if ($total > 0) {
             return round($this->signalementRepository->countValidated(true) / $total * 1000) / 10;
         }
@@ -60,7 +68,7 @@ class GlobalAnalyticsProvider
 
     private function getClotureData(): string|float
     {
-        $total = $this->signalementRepository->countAll(null, true, true);
+        $total = $this->getCountSignalementData();
         if ($total > 0) {
             return round($this->signalementRepository->countClosed(true) / $total * 1000) / 10;
         }

@@ -2,6 +2,7 @@
 
 namespace App\Service\Statistics;
 
+use App\Dto\BackStatisticsFilters;
 use App\Entity\Affectation;
 use App\Repository\AffectationRepository;
 
@@ -11,15 +12,15 @@ class PartenaireStatisticProvider
     {
     }
 
-    public function getFilteredData(FilteredBackAnalyticsProvider $filters)
+    public function getFilteredData(BackStatisticsFilters $backStatisticsFilters)
     {
-        $countPerPartenaires = $this->affectationRepository->countByPartenaireFiltered($filters);
+        $countPerPartenaires = $this->affectationRepository->countByPartenaireFiltered($backStatisticsFilters);
 
-        $buffer = [];
+        $data = [];
         foreach ($countPerPartenaires as $countPerPartenaire) {
             $partnerName = $countPerPartenaire['nom'];
-            if (empty($buffer[$partnerName])) {
-                $buffer[$partnerName] = [
+            if (empty($data[$partnerName])) {
+                $data[$partnerName] = [
                     'total' => 0,
                     'wait' => 0,
                     'accepted' => 0,
@@ -27,32 +28,32 @@ class PartenaireStatisticProvider
                     'closed' => 0,
                 ];
             }
-            ++$buffer[$partnerName]['total'];
+            ++$data[$partnerName]['total'];
             switch ($countPerPartenaire['statut']) {
                 case Affectation::STATUS_ACCEPTED:
-                    ++$buffer[$partnerName]['accepted'];
+                    ++$data[$partnerName]['accepted'];
                     break;
                 case Affectation::STATUS_REFUSED:
-                    ++$buffer[$partnerName]['refused'];
+                    ++$data[$partnerName]['refused'];
                     break;
                 case Affectation::STATUS_CLOSED:
-                    ++$buffer[$partnerName]['closed'];
+                    ++$data[$partnerName]['closed'];
                     break;
                 case Affectation::STATUS_WAIT:
                 default:
-                    ++$buffer[$partnerName]['wait'];
+                    ++$data[$partnerName]['wait'];
                     break;
             }
         }
 
-        foreach ($buffer as $partenaireStr => $partnerStats) {
+        foreach ($data as $partenaireStr => $partnerStats) {
             $totalPerPartner = $partnerStats['total'];
-            $buffer[$partenaireStr]['accepted_percent'] = round($partnerStats['accepted'] / $totalPerPartner * 100);
-            $buffer[$partenaireStr]['refused_percent'] = round($partnerStats['refused'] / $totalPerPartner * 100);
-            $buffer[$partenaireStr]['closed_percent'] = round($partnerStats['closed'] / $totalPerPartner * 100);
-            $buffer[$partenaireStr]['wait_percent'] = round($partnerStats['wait'] / $totalPerPartner * 100);
+            $data[$partenaireStr]['accepted_percent'] = round($partnerStats['accepted'] / $totalPerPartner * 100);
+            $data[$partenaireStr]['refused_percent'] = round($partnerStats['refused'] / $totalPerPartner * 100);
+            $data[$partenaireStr]['closed_percent'] = round($partnerStats['closed'] / $totalPerPartner * 100);
+            $data[$partenaireStr]['wait_percent'] = round($partnerStats['wait'] / $totalPerPartner * 100);
         }
 
-        return $buffer;
+        return $data;
     }
 }

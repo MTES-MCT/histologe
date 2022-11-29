@@ -2,24 +2,12 @@
 
 namespace App\Service\Statistics;
 
-use App\Entity\Territory;
+use App\Dto\BackStatisticsFilters;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
-use DateTime;
-use Symfony\Component\HttpFoundation\Request;
 
 class FilteredBackAnalyticsProvider
 {
-    public $communes;
-    public $statut;
-    public $etiquettes;
-    public $type;
-    public $dateStart;
-    public $dateEnd;
-    public $hasCountRefused;
-    public $hasCountArchived;
-    public $territory;
-
     public function __construct(
         private SignalementRepository $signalementRepository,
         private TerritoryRepository $territoryRepository,
@@ -34,91 +22,75 @@ class FilteredBackAnalyticsProvider
         ) {
     }
 
-    public function initFilters(Request $request, ?Territory $territory)
+    public function getData(BackStatisticsFilters $backStatisticsFilters): array
     {
-        $this->communes = json_decode($request->get('communes'));
-        $this->statut = $request->get('statut');
-        $strEtiquettes = $request->get('etiquettes');
-        $this->etiquettes = array_map(fn ($value): int => $value * 1, json_decode($strEtiquettes));
-        $this->type = $request->get('type');
-        $dateStart = $request->get('dateStart');
-        $this->dateStart = new DateTime($dateStart);
-        $dateEnd = $request->get('dateEnd');
-        $this->dateEnd = new DateTime($dateEnd);
-        $this->hasCountRefused = '1' == $request->get('countRefused');
-        $this->hasCountArchived = '1' == $request->get('countArchived');
-        $this->territory = $territory;
+        $data = [];
+        $data['count_signalement_filtered'] = $this->getCountSignalementData($backStatisticsFilters);
+        $data['average_criticite_filtered'] = round($this->getAverageCriticiteData($backStatisticsFilters) * 10) / 10;
+        $data['count_signalement_per_month'] = $this->getCountSignalementPerMonth($backStatisticsFilters);
+        $data['count_signalement_per_partenaire'] = $this->getCountSignalementPerPartenaire($backStatisticsFilters);
+        $data['count_signalement_per_situation'] = $this->getCountSignalementPerSituation($backStatisticsFilters);
+        $data['count_signalement_per_criticite'] = $this->getCountSignalementPerCriticite($backStatisticsFilters);
+        $data['count_signalement_per_statut'] = $this->getCountSignalementPerStatut($backStatisticsFilters);
+        $data['count_signalement_per_criticite_percent'] = $this->getCountSignalementPerCriticitePercent($backStatisticsFilters);
+        $data['count_signalement_per_visite'] = $this->getCountSignalementPerVisite($backStatisticsFilters);
+        $data['count_signalement_per_motif_cloture'] = $this->getCountSignalementPerMotifCloture($backStatisticsFilters);
+
+        return $data;
     }
 
-    public function getData(): array
+    private function getCountSignalementData(BackStatisticsFilters $backStatisticsFilters): int
     {
-        $buffer = [];
-        $buffer['count_signalement_filtered'] = $this->getCountSignalementData();
-        $buffer['average_criticite_filtered'] = round($this->getAverageCriticiteData() * 10) / 10;
-        $buffer['count_signalement_per_month'] = $this->getCountSignalementPerMonth();
-        $buffer['count_signalement_per_partenaire'] = $this->getCountSignalementPerPartenaire();
-        $buffer['count_signalement_per_situation'] = $this->getCountSignalementPerSituation();
-        $buffer['count_signalement_per_criticite'] = $this->getCountSignalementPerCriticite();
-        $buffer['count_signalement_per_statut'] = $this->getCountSignalementPerStatut();
-        $buffer['count_signalement_per_criticite_percent'] = $this->getCountSignalementPerCriticitePercent();
-        $buffer['count_signalement_per_visite'] = $this->getCountSignalementPerVisite();
-        $buffer['count_signalement_per_motif_cloture'] = $this->getCountSignalementPerMotifCloture();
-
-        return $buffer;
+        return $this->signalementRepository->countFiltered($backStatisticsFilters);
     }
 
-    private function getCountSignalementData(): int
+    private function getAverageCriticiteData(BackStatisticsFilters $backStatisticsFilters): float
     {
-        return $this->signalementRepository->countFiltered($this);
-    }
-
-    private function getAverageCriticiteData(): float
-    {
-        $buffer = $this->signalementRepository->getAverageCriticiteFiltered($this);
-        if (empty($buffer)) {
-            $buffer = 0;
+        $data = $this->signalementRepository->getAverageCriticiteFiltered($backStatisticsFilters);
+        if (empty($data)) {
+            $data = 0;
         }
 
-        return $buffer;
+        return $data;
     }
 
-    private function getCountSignalementPerMonth(): array
+    private function getCountSignalementPerMonth(BackStatisticsFilters $backStatisticsFilters): array
     {
-        return $this->monthStatisticProvider->getFilteredData($this);
+        return $this->monthStatisticProvider->getFilteredData($backStatisticsFilters);
     }
 
-    private function getCountSignalementPerPartenaire(): array
+    private function getCountSignalementPerPartenaire(BackStatisticsFilters $backStatisticsFilters): array
     {
-        return $this->partenaireStatisticProvider->getFilteredData($this);
+        return $this->partenaireStatisticProvider->getFilteredData($backStatisticsFilters);
     }
 
-    private function getCountSignalementPerSituation(): array
+    private function getCountSignalementPerSituation(BackStatisticsFilters $backStatisticsFilters): array
     {
-        return $this->situationStatisticProvider->getFilteredData($this);
+        return $this->situationStatisticProvider->getFilteredData($backStatisticsFilters);
     }
 
-    private function getCountSignalementPerCriticite(): array
+    private function getCountSignalementPerCriticite(BackStatisticsFilters $backStatisticsFilters): array
     {
-        return $this->criticiteStatisticProvider->getFilteredData($this);
+        return $this->criticiteStatisticProvider->getFilteredData($backStatisticsFilters);
     }
 
-    private function getCountSignalementPerStatut(): array
+    private function getCountSignalementPerStatut(BackStatisticsFilters $backStatisticsFilters): array
     {
-        return $this->statusStatisticProvider->getFilteredData($this);
+        return $this->statusStatisticProvider->getFilteredData($backStatisticsFilters);
     }
 
-    private function getCountSignalementPerCriticitePercent(): array
+    private function getCountSignalementPerCriticitePercent(BackStatisticsFilters $backStatisticsFilters): array
     {
-        return $this->criticitePercentStatisticProvider->getFilteredData($this);
+        return $this->criticitePercentStatisticProvider->getFilteredData($backStatisticsFilters);
     }
 
-    private function getCountSignalementPerVisite(): array
+    private function getCountSignalementPerVisite(BackStatisticsFilters $backStatisticsFilters): array
     {
-        return $this->visiteStatisticProvider->getFilteredData($this);
+        return $this->visiteStatisticProvider->getFilteredData($backStatisticsFilters);
     }
 
-    private function getCountSignalementPerMotifCloture(): array
+    private function getCountSignalementPerMotifCloture(BackStatisticsFilters $backStatisticsFilters): array
     {
-        return $this->motifClotureStatisticProvider->getFilteredData($this);
+        return $this->motifClotureStatisticProvider->getFilteredData($backStatisticsFilters);
     }
 }

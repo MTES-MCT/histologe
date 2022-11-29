@@ -63,9 +63,8 @@
             >
             <template #label>Cocher la case pour comptabiliser les signalements refusés</template>
           </HistoCheckbox>
-        </div>
-        <div class="fr-col-12 fr-col-lg-6 fr-col-xl-5" v-if="sharedState.filters.canFilterArchived">
           <HistoCheckbox
+            v-if="sharedState.filters.canFilterArchived"
             id="count-archived"
             v-model="sharedState.filters.countArchived"
             @update:modelValue="onChange(false)"

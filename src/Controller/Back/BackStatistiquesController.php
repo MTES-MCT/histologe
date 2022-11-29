@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Dto\BackStatisticsFilters;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\TerritoryRepository;
@@ -10,6 +11,7 @@ use App\Service\Statistics\GlobalBackAnalyticsProvider;
 use App\Service\Statistics\ListCommunesStatisticProvider;
 use App\Service\Statistics\ListTagsStatisticProvider;
 use App\Service\Statistics\ListTerritoryStatisticProvider;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,8 +62,8 @@ class BackStatistiquesController extends AbstractController
             $this->ajaxResult['count_signalement_refuses'] = $globalStatistics['count_signalement_refuses'];
             $this->ajaxResult['count_signalement_archives'] = $globalStatistics['count_signalement_archives'];
 
-            $this->filteredBackAnalyticsProvider->initFilters($request, $territory);
-            $filteredStatistics = $this->filteredBackAnalyticsProvider->getData();
+            $backStatisticsFilters = $this->createFilters($request, $territory);
+            $filteredStatistics = $this->filteredBackAnalyticsProvider->getData($backStatisticsFilters);
             $this->ajaxResult['count_signalement_filtered'] = $filteredStatistics['count_signalement_filtered'];
             $this->ajaxResult['average_criticite_filtered'] = $filteredStatistics['average_criticite_filtered'];
             $this->ajaxResult['countSignalementPerMonth'] = $filteredStatistics['count_signalement_per_month'];
@@ -79,6 +81,33 @@ class BackStatistiquesController extends AbstractController
         }
 
         return $this->json(['response' => 'error'], 400);
+    }
+
+    private function createFilters(Request $request, ?Territory $territory): BackStatisticsFilters
+    {
+        $communes = json_decode($request->get('communes'));
+        $statut = $request->get('statut');
+        $strEtiquettes = $request->get('etiquettes');
+        $etiquettes = array_map(fn ($value): int => $value * 1, json_decode($strEtiquettes));
+        $type = $request->get('type');
+        $dateStartInput = $request->get('dateStart');
+        $dateStart = new DateTime($dateStartInput);
+        $dateEndInput = $request->get('dateEnd');
+        $dateEnd = new DateTime($dateEndInput);
+        $hasCountRefused = '1' == $request->get('countRefused');
+        $hasCountArchived = '1' == $request->get('countArchived');
+
+        return new BackStatisticsFilters(
+            $communes,
+            $statut,
+            $etiquettes,
+            $type,
+            $dateStart,
+            $dateEnd,
+            $hasCountRefused,
+            $hasCountArchived,
+            $territory
+        );
     }
 
     private function getSelectedTerritory(Request $request, TerritoryRepository $territoryRepository): ?Territory

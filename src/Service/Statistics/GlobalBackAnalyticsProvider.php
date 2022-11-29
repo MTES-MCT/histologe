@@ -17,29 +17,29 @@ class GlobalBackAnalyticsProvider
 
     public function getData(?Territory $territory): array
     {
-        $buffer = [];
-        $buffer['count_signalement'] = $this->getCountSignalementData($territory);
-        $buffer['average_criticite'] = $this->getAverageCriticiteData($territory);
-        $buffer['average_days_validation'] = $this->getAverageDaysValidationData($territory);
-        $buffer['average_days_closure'] = $this->getAverageDaysClosureData($territory);
+        $data = [];
+        $data['count_signalement'] = $this->getCountSignalementData($territory);
+        $data['average_criticite'] = $this->getAverageCriticiteData($territory);
+        $data['average_days_validation'] = $this->getAverageDaysValidationData($territory);
+        $data['average_days_closure'] = $this->getAverageDaysClosureData($territory);
 
-        $buffer['count_signalement_archives'] = 0;
-        $buffer['count_signalement_refuses'] = 0;
+        $data['count_signalement_archives'] = 0;
+        $data['count_signalement_refuses'] = 0;
         $countByStatus = $this->signalementRepository->countByStatus($territory, null, true);
         foreach ($countByStatus as $countByStatusItem) {
             switch ($countByStatusItem['statut']) {
                 case Signalement::STATUS_ARCHIVED:
-                    $buffer['count_signalement_archives'] = $countByStatusItem['count'];
+                    $data['count_signalement_archives'] = $countByStatusItem['count'];
                     break;
                 case Signalement::STATUS_REFUSED:
-                    $buffer['count_signalement_refuses'] = $countByStatusItem['count'];
+                    $data['count_signalement_refuses'] = $countByStatusItem['count'];
                     break;
                 default:
                     break;
             }
         }
 
-        return $buffer;
+        return $data;
     }
 
     private function getCountSignalementData(?Territory $territory): int

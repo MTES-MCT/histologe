@@ -2,6 +2,7 @@
 
 namespace App\Service\Statistics;
 
+use App\Dto\BackStatisticsFilters;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
 use DateTime;
@@ -14,9 +15,9 @@ class MonthStatisticProvider
     {
     }
 
-    public function getFilteredData(FilteredBackAnalyticsProvider $filters): array
+    public function getFilteredData(BackStatisticsFilters $backStatisticsFilters): array
     {
-        $countPerMonths = $this->signalementRepository->countByMonthFiltered($filters);
+        $countPerMonths = $this->signalementRepository->countByMonthFiltered($backStatisticsFilters);
 
         return $this->createFullArray($countPerMonths);
     }
@@ -36,20 +37,20 @@ class MonthStatisticProvider
             $monthsWithResults[$strKey] = $countPerMonth['count'];
         }
 
-        $buffer = [];
+        $data = [];
         $previousMonth = null; // This is used to avoid blank months
         foreach ($monthsWithResults as $month => $count) {
             $dateMonth = new DateTime($month);
-            $this->fillBlankMonths($buffer, $previousMonth, $dateMonth);
+            $this->fillBlankMonths($data, $previousMonth, $dateMonth);
             $strMonth = self::MONTH_NAMES[$dateMonth->format('m') - 1].' '.$dateMonth->format('Y');
-            $buffer[$strMonth] = $count;
+            $data[$strMonth] = $count;
             $previousMonth = $dateMonth;
         }
 
-        return $buffer;
+        return $data;
     }
 
-    private function fillBlankMonths(&$buffer, $previousMonth, $currentMonth)
+    private function fillBlankMonths(&$data, $previousMonth, $currentMonth)
     {
         if (null !== $previousMonth) {
             $shouldBeMonth = $previousMonth->format('m') + 1;
@@ -64,7 +65,7 @@ class MonthStatisticProvider
                     $endMonth = ($loopYear < $currentMonth->format('Y')) ? 12 : $shouldBeMonth;
                     for ($loopMonth = $startMonth; $loopMonth <= $endMonth; ++$loopMonth) {
                         $strMonth = self::MONTH_NAMES[$loopMonth - 1].' '.$loopYear;
-                        $buffer[$strMonth] = 0;
+                        $data[$strMonth] = 0;
                     }
                 }
             }
