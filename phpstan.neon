@@ -3,5 +3,6 @@ parameters:
 	paths:
 		- src
 		- tests
+		- wiremock
 	excludePaths:
 		- .php-cs-fixer.dist.php

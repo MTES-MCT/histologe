@@ -100,6 +100,9 @@ cs-check: ## Check source code with PHP-CS-Fixer
 cs-fix: ## Fix source code with PHP-CS-Fixer
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer cs-fix
 
+mock: ## Start Mock server
+	@${DOCKER_COMP} exec -it histologe_phpfpm sh -c "cd wiremock/src/Mock && php AppMock.php"
+
 .env:
 	@bash -l -c 'cp .env.sample .env'
 

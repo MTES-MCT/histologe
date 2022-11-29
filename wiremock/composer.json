@@ -1,0 +1,10 @@
+{
+    "require-dev": {
+        "wiremock-php/wiremock-php": "2.35.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mock\\": "src/Mock/"
+        }
+    }
+}

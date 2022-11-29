@@ -33,10 +33,14 @@ services:
   histologe_phpfpm:
     build: .docker/php-fpm
     container_name: histologe_phpfpm
+    depends_on:
+      - histologe_wiremock
     working_dir: /app
     environment:
       DATABASE_URL: ${DATABASE_URL}
       MAILER_DSN: ${MAILER_DSN}
+      WIREMOCK_HOSTNAME: ${WIREMOCK_HOSTNAME}
+      WIREMOCK_PORT: ${WIREMOCK_PORT}
     volumes:
       - .:/app/
 
@@ -53,9 +57,18 @@ services:
 
   histologe_mailer:
     image: schickling/mailcatcher
+    container_name: histologe_mailer
     ports:
       - 1025:1025
       - 1080:1080
+
+  histologe_wiremock:
+    image: wiremock/wiremock:2.35.0
+    container_name: histologe_wiremock
+    ports:
+      - 8082:8080
+    volumes:
+      - .:/home/wiremock
 
   cypress:
     image: cypress/base:latest

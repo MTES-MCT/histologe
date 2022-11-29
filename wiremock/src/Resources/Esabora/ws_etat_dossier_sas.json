@@ -1,0 +1,33 @@
+{
+  "searchId": "23547",
+  "nbResults": 1,
+  "columnList": [
+    "SAS_Référence",
+    "SAS_Etat",
+    "Doss_ID",
+    "Doss_Statut_Abrégé",
+    "Doss_Statut",
+    "Doss_Etat",
+    "DOss_Cloture"
+  ],
+  "keyList": [
+    "i1.iaff_id"
+  ],
+  "rowList": [
+    {
+      "columnDataList": [
+        "HISTO0001",
+        "Importé",
+        "6292",
+        "2022-1",
+        null,
+        null,
+        "en cours",
+        null
+      ],
+      "keyDataList": [
+        "20"
+      ]
+    }
+  ]
+}
