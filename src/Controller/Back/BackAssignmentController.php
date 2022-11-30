@@ -47,7 +47,7 @@ class BackAssignmentController extends AbstractController
                         $esaboraService->post($affectation);
                     }
                 }
-                $affectationManager->removeAffectationsFrom($signalement, $partnersIdToRemove);
+                $affectationManager->removeAffectationsFrom($signalement, $postedPartner, $partnersIdToRemove);
             } else {
                 $affectationManager->removeAffectationsFrom($signalement);
             }

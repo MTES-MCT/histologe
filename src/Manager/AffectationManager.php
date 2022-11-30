@@ -39,9 +39,12 @@ class AffectationManager extends Manager
             ->setTerritory($partner->getTerritory());
     }
 
-    public function removeAffectationsFrom(Signalement $signalement, array $partnersIdToRemove = []): void
+    public function removeAffectationsFrom(
+        Signalement $signalement,
+        array $postedPartner = [],
+        array $partnersIdToRemove = []): void
     {
-        if (empty($partnersIdToRemove)) {
+        if (empty($postedPartner) && empty($partnersIdToRemove)) {
             $signalement->getAffectations()->filter(function (Affectation $affectation) {
                 $this->remove($affectation);
             });
