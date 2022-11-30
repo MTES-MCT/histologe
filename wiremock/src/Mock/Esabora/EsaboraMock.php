@@ -17,7 +17,7 @@ class EsaboraMock
     {
         /* WS Import Histologe */
         $wiremock->stubFor(
-            WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/modbdd\\?task=doTreatment'))
+            WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/modbdd/\\?task=doTreatment'))
                 ->withHeader('Authorization', WireMock::containing(self::REQUEST_AUTHORIZATION))
                 ->withHeader('Content-Type', WireMock::containing(self::REQUEST_CONTENT_TYPE))
                 ->withRequestBody(WireMock::matchingJsonPath('$.treatmentName', WireMock::equalTo('Import Histologe')))
@@ -31,7 +31,7 @@ class EsaboraMock
 
         /* WS Etat SAS */
         $wiremock->stubFor(
-            WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/mult\\?task=doSearch'))
+            WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/mult/\\?task=doSearch'))
                 ->withHeader('Authorization', WireMock::containing(self::REQUEST_AUTHORIZATION))
                 ->withHeader('Content-Type', WireMock::containing(self::REQUEST_CONTENT_TYPE))
                 ->withRequestBody(WireMock::matchingJsonPath('$.searchName', WireMock::equalTo('WS_ETAT_SAS')))
@@ -45,7 +45,7 @@ class EsaboraMock
 
         /* WS Etat Dossier SAS */
         $wiremock->stubFor(
-            WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/mult\\?task=doSearch'))
+            WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/mult/\\?task=doSearch'))
                 ->withHeader('Authorization', WireMock::containing(self::REQUEST_AUTHORIZATION))
                 ->withHeader('Content-Type', WireMock::containing(self::REQUEST_CONTENT_TYPE))
                 ->withRequestBody(WireMock::matchingJsonPath('$.searchName', WireMock::equalTo('WS_ETAT_DOSSIER_SAS')))
