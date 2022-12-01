@@ -80,27 +80,6 @@ Un [Makefile](Makefile) est disponible, qui sert de point d’entrée aux diffé
 
 ```
 $ make help
-
-build                          Install local environement
-run                            Start containers
-down                           Shutdown containers
-sh                             Log to phpfpm container
-mysql                          Log to mysql container
-logs                           Show container logs
-composer                       Install composer dependencies
-clear-cache                    Clear cache prod: make-clear-cache env=[dev|prod|test]
-create-db                      Create database
-drop-db                        Drop database
-load-data                      Load database from dump
-load-migrations                Play migrations
-load-fixtures                  Load database from fixtures
-create-db-test                 Create test database
-test                           Run all tests
-test-coverage                  Generate phpunit coverage report in html
-e2e                            Run E2E tests
-stan                           Run PHPStan
-cs-check                       Check source code with PHP-CS-Fixer
-cs-fix                         Fix source code with PHP-CS-Fixer
 ```
 
 ### Lancement
@@ -112,8 +91,6 @@ La commande permet d'installer l'environnement de developpement avec un jeu de d
 ```
 make build
 ```
-
-### Accès
 
 2. Configurer les variables d'environnements du service object storage S3 d'OVH Cloud
 
@@ -164,7 +141,7 @@ php bin/console app:add-user ROLE_ADMIN_TERRITORY joe.doe.2@histologe.fr John Do
 php bin/console app:add-user ROLE_USER_PARTNER joe.doe.3@histologe.fr John Doe Marseille 13
 ```
 
-[Une activation de compte sera nécéssaire](http://localhost:8080/activation)
+Une activation de compte sera nécéssaire
 
 ### Compilation des fichiers Vue.js en cours de développement
 ```

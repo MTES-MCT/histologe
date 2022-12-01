@@ -7,8 +7,8 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\SignalementClosedEvent;
 use App\EventSubscriber\SignalementClosedSubscriber;
-use App\Factory\SuiviFactory;
 use App\Manager\SignalementManager;
+use App\Manager\SuiviManager;
 use App\Repository\UserRepository;
 use App\Service\NotificationService;
 use App\Service\Token\TokenGeneratorInterface;
@@ -85,7 +85,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
         $securityMock->expects($this->once())->method('getUser')->willReturn($user);
 
         $signalementManager = static::getContainer()->get(SignalementManager::class);
-        $suiviFactory = static::getContainer()->get(SuiviFactory::class);
+        $suiviManager = static::getContainer()->get(SuiviManager::class);
 
         $signalementClosedSubscriber = new SignalementClosedSubscriber(
             $notitificationServiceMock,
@@ -94,7 +94,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
             $urlGeneratorMock,
             $parameterBagMock,
             $tokenGeneratorMock,
-            $suiviFactory,
+            $suiviManager,
             $securityMock
         );
 
