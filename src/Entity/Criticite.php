@@ -12,6 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
 class Criticite
 {
     public const SCORE_MAX = 3;
+    public const ETAT_MOYEN = 'moyen';
+    public const ETAT_GRAVE = 'grave';
+    public const ETAT_TRES_GRAVE = 'très grave';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -163,5 +166,14 @@ class Criticite
         $this->isDefault = $isDefault;
 
         return $this;
+    }
+
+    public function getScoreLabel(): string
+    {
+        return match ($this->score) {
+            1 => self::ETAT_MOYEN,
+            2 => self::ETAT_GRAVE,
+            3 => self::ETAT_TRES_GRAVE,
+        };
     }
 }

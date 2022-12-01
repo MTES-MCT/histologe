@@ -202,4 +202,14 @@ class Affectation
 
         return $this;
     }
+
+    public function getAffectationLabel(): string
+    {
+        return match ($this->getStatut()) {
+            self::STATUS_WAIT => 'En attente...',
+            self::STATUS_ACCEPTED => 'Accepté',
+            self::STATUS_REFUSED => 'Refusé',
+            self::STATUS_CLOSED => 'Cloturé',
+        };
+    }
 }

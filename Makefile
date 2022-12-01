@@ -102,7 +102,7 @@ cs-fix: ## Fix source code with PHP-CS-Fixer
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer cs-fix
 
 mock: ## Start Mock server
-	@${DOCKER_COMP} exec -it histologe_phpfpm sh -c "cd wiremock/src/Mock && php AppMock.php"
+	@${DOCKER_COMP} exec -it histologe_phpfpm sh -c "cd tools/wiremock/src/Mock && php AppMock.php"
 
 npm-install: ## Install the dependencies in the local node_modules folder
 	@$(DOCKER_COMP) exec -it histologe_phpfpm $(NPM) install

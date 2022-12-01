@@ -27,6 +27,7 @@
         "symfony/apache-pack": "^1.0",
         "symfony/asset": "6.0.*",
         "symfony/console": "6.0.*",
+        "symfony/doctrine-messenger": "6.0.*",
         "symfony/dotenv": "6.0.*",
         "symfony/expression-language": "6.0.*",
         "symfony/flex": "^2",
@@ -35,6 +36,7 @@
         "symfony/http-client": "6.0.*",
         "symfony/intl": "6.0.*",
         "symfony/mailer": "6.0.*",
+        "symfony/messenger": "6.0.*",
         "symfony/mime": "6.0.*",
         "symfony/monolog-bundle": "^3.1",
         "symfony/notifier": "6.0.*",
@@ -119,7 +121,7 @@
         ],
         "cs-check": "tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run -v",
         "cs-fix": "tools/php-cs-fixer/vendor/bin/php-cs-fixer fix",
-        "stan": "vendor/bin/phpstan analyse --memory-limit 1G",
+        "stan": "vendor/bin/phpstan analyse --memory-limit 1G --xdebug",
         "check-quality": [
             "@composer cs-check",
             "@composer stan"

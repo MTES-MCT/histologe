@@ -20,7 +20,7 @@ class EsaboraMock
             WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/modbdd/\\?task=doTreatment'))
                 ->withHeader('Authorization', WireMock::containing(self::REQUEST_AUTHORIZATION))
                 ->withHeader('Content-Type', WireMock::containing(self::REQUEST_CONTENT_TYPE))
-                ->withRequestBody(WireMock::matchingJsonPath('$.treatmentName', WireMock::equalTo('Import Histologe')))
+                ->withRequestBody(WireMock::matchingJsonPath('$.treatmentName', WireMock::equalTo('Import HISTOLOGE')))
                 ->willReturn(
                     WireMock::aResponse()
                         ->withStatus(200)

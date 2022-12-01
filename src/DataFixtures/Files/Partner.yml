@@ -13,7 +13,7 @@ partners:
     is_commune: 0
     insee: "[\"\"]"
     territory: "Bouches-du-Rhône"
-    esabora_url: "http://localhost:8082/ws/rest/"
+    esabora_url: "http://histologe_wiremock:8080/ws/rest"
   -
     nom: "Partenaire 13-02"
     email: "partenaire-13-02@histologe.fr"
@@ -21,6 +21,7 @@ partners:
     is_commune: 1
     insee: "[\"13215\", \"13205\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\"]"
     territory: "Bouches-du-Rhône"
+    esabora_url: "http://histologe_wiremock:8080/ws/rest"
   -
     nom: "Partenaire 13-03"
     email: "partenaire-13-03@histologe.fr"
@@ -28,6 +29,7 @@ partners:
     is_commune: 1
     insee: "[\"13047\"]"
     territory: "Bouches-du-Rhône"
+    esabora_url: "http://histologe_wiremock:8080/ws/rest"
   -
     nom: "Partenaire 13-04"
     email: "partenaire-13-04@histologe.fr"
@@ -35,6 +37,7 @@ partners:
     is_commune: 0
     insee: "[\"\"]"
     territory: "Bouches-du-Rhône"
+    esabora_url: "http://histologe_wiremock:8080/ws/rest"
   -
     nom: "Partenaire 01-01"
     email: "partenaire-01-01@histologe.fr"
@@ -42,7 +45,7 @@ partners:
     is_commune: 0
     insee: "[\"\"]"
     territory: "Ain"
-    esabora_url: "http://localhost:8082/ws/rest/"
+    esabora_url: "http://histologe_wiremock:8080/ws/rest"
   -
     nom: "Partenaire 01-02"
     email: "partenaire-01-02@histologe.fr"
@@ -71,28 +74,28 @@ partners:
     is_commune: 1
     insee: "[\"2A247\"]"
     territory: "Corse-du-Sud"
-    esabora_url: "http://localhost:8082/ws/rest/"
+    esabora_url: "http://histologe_wiremock:8080/ws/rest"
   -
     nom: "Partenaire 63-01"
     is_archive: 0
     is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
-    esabora_url: "http://localhost:8082/ws/rest/"
+    esabora_url: "http://histologe_wiremock:8080/ws/rest"
   -
     nom: "Partenaire 06-01"
     is_archive: 0
     is_commune: 0
     insee: "[\"\"]"
     territory: "Alpes-Maritimes"
-    esabora_url: "http://localhost:8082/ws/rest/"
+    esabora_url: "http://histologe_wiremock:8080/ws/rest"
   -
     nom: "Partenaire 59-01"
     is_archive: 0
     is_commune: 0
     insee: "[\"\"]"
     territory: "Nord"
-    esabora_url: "http://localhost:8082/ws/rest/"
+    esabora_url: "http://histologe_wiremock:8080/ws/rest"
   -
     nom: "Partenaire 974-01"
     email: "partenaire-01-974@histologe.fr"
@@ -100,4 +103,4 @@ partners:
     is_commune: 0
     insee: "[\"\"]"
     territory: "La Réunion"
-    esabora_url: "http://localhost:8082/ws/rest/"
+    esabora_url: "http://histologe_wiremock:8080/ws/rest"

@@ -4,15 +4,16 @@ namespace App\DataFixtures\Loader;
 
 use App\Entity\Partner;
 use App\Repository\TerritoryRepository;
+use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Faker\Factory;
 use Symfony\Component\Yaml\Yaml;
 
 class LoadPartnerData extends Fixture implements OrderedFixtureInterface
 {
-    public function __construct(private TerritoryRepository $territoryRepository)
+    public function __construct(private TerritoryRepository $territoryRepository,
+                                private TokenGeneratorInterface $tokenGenerator)
     {
     }
 
@@ -27,7 +28,6 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
 
     public function loadPartner(ObjectManager $manager, array $row): void
     {
-        $faker = Factory::create();
         $partner = (new Partner())
             ->setNom($row['nom'])
             ->setEmail($row['email'] ?? null)
@@ -37,7 +37,7 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
             ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]));
 
         if (isset($row['esabora_url'])) {
-            $partner->setEsaboraUrl($row['esabora_url'])->setEsaboraToken($faker->uuid());
+            $partner->setEsaboraUrl($row['esabora_url'])->setEsaboraToken($this->tokenGenerator->generateToken());
         }
 
         $manager->persist($partner);
