@@ -75,8 +75,9 @@ describe('Simple test for the Signalement interface', () => {
     cy.get('#signalement-step-last-panel').should('be.visible')
     cy.window().scrollTo('top')
 
+    cy.get('label[for=signalement-accept-visite]').click()
     cy.get('label[for=signalement-accept-cgu]').click()
-    
+
     cy.get('#signalement-step-last-panel #form_finish_submit').should('be.visible')
   })
 

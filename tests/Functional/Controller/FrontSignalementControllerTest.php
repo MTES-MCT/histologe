@@ -17,11 +17,17 @@ class FrontSignalementControllerTest extends WebTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
-        $urlPostSignalement = $router->generate('envoi_signalement');
+        $routeSignalementSend = $router->generate('front_signalement');
+        $crawler = $client->request('GET', $routeSignalementSend);
+        $token = $crawler->filter('input[name=_token]')->attr('value');
 
         $payload = $this->getCommonPayload();
-        $payloadSignalement = ['signalement' => array_merge($payload, $adressSignalement)];
+        $payloadSignalement = [
+            'signalement' => array_merge($payload, $adressSignalement),
+            '_token' => $token,
+        ];
 
+        $urlPostSignalement = $router->generate('envoi_signalement');
         $client->request('POST', $urlPostSignalement, $payloadSignalement);
 
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
@@ -38,11 +44,17 @@ class FrontSignalementControllerTest extends WebTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
+        $routeSignalementSend = $router->generate('front_signalement');
+        $crawler = $client->request('GET', $routeSignalementSend);
+        $token = $crawler->filter('input[name=_token]')->attr('value');
+
         $urlPostSignalement = $router->generate('envoi_signalement');
 
         $payload = $this->getCommonPayload();
-        $payloadSignalement = ['signalement' => array_merge($payload, $adressSignalement)];
-
+        $payloadSignalement = [
+            'signalement' => array_merge($payload, $adressSignalement),
+            '_token' => $token,
+        ];
         $client->request('POST', $urlPostSignalement, $payloadSignalement);
 
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $client->getResponse()->getStatusCode());

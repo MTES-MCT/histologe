@@ -6,16 +6,20 @@ use App\Entity\Signalement;
 use App\Service\NotificationService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 
 class ExceptionListener
 {
-    public function __construct(private NotificationService $notificationService, private ParameterBagInterface $params)
-    {
+    public function __construct(
+        private NotificationService $notificationService,
+        private ParameterBagInterface $params,
+    ) {
     }
 
     public function onKernelException(ExceptionEvent $event)
     {
-        if (null !== $event->getRequest()->get('signalement')) {
+        if (!$event->getThrowable() instanceof MethodNotAllowedException &&
+            null !== $event->getRequest()->get('signalement')) {
             $attachment = ['documents' => 0, 'photos' => 0];
             if ($files = $event->getRequest()->files->get('signalement')) {
                 foreach ($files as $k => $file) {
