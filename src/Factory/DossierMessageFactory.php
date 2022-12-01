@@ -17,7 +17,8 @@ class DossierMessageFactory
     {
         $signalement = $affectation->getSignalement();
         $partner = $affectation->getPartner();
-        $dossier = (new DossierMessage())
+
+        return (new DossierMessage())
             ->setUrl($partner->getEsaboraUrl())
             ->setToken($partner->getEsaboraToken())
             ->setPartnerId($partner->getId())
@@ -39,16 +40,13 @@ class DossierMessageFactory
             ->setDossierCommentaire($this->buildCommentaire($signalement))
             ->setPiecesJointesObservation($this->buildPiecesJointesObservation($signalement))
             ->setPiecesJointes($this->buildPiecesJointes($signalement));
-
-        return $dossier;
     }
 
-    private function getNumeroAdresse(string $adresse)
+    private function getNumeroAdresse(string $adresse): string
     {
         preg_match('!\d+!', $adresse, $matches);
-        $numeroAddresseSignalement = $matches[0] ?? '';
 
-        return $numeroAddresseSignalement;
+        return $matches[0] ?? '';
     }
 
     private function buildCommentaire(Signalement $signalement): string

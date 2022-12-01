@@ -12,9 +12,10 @@ use Symfony\Component\Yaml\Yaml;
 
 class LoadPartnerData extends Fixture implements OrderedFixtureInterface
 {
-    public function __construct(private TerritoryRepository $territoryRepository,
-                                private TokenGeneratorInterface $tokenGenerator)
-    {
+    public function __construct(
+        private TerritoryRepository $territoryRepository,
+        private TokenGeneratorInterface $tokenGenerator
+    ) {
     }
 
     public function load(ObjectManager $manager): void

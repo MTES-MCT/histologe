@@ -7,7 +7,6 @@ use App\Entity\Suivi;
 use App\Factory\DossierMessageFactory;
 use App\Messenger\Message\DossierMessage;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
@@ -18,9 +17,6 @@ class EsaboraService
     public const ESABORA_REFUSED = 'Non importé';
     public const ESABORA_CLOSED = 'terminé';
 
-    private ParameterBagInterface $parameterBag;
-    private string $commentaire = '';
-
     public function __construct(
         private HttpClientInterface $client,
         private EntityManagerInterface $em,
@@ -28,13 +24,13 @@ class EsaboraService
     ) {
     }
 
-    public function pushDossier(DossierMessage $dossier): ResponseInterface
+    public function pushDossier(DossierMessage $dossierMessage): ResponseInterface
     {
-        $url = $dossier->getUrl();
-        $token = $dossier->getToken();
+        $url = $dossierMessage->getUrl();
+        $token = $dossierMessage->getToken();
         $payload = [
             'treatmentName' => 'Import HISTOLOGE',
-            'fieldList' => $this->generateFieldListPayloadImportDossier($dossier),
+            'fieldList' => $dossierMessage->preparePayload(),
         ];
         $response = $this->client->request('POST', $url.'/modbdd/?task=doTreatment', [
                 'headers' => [
@@ -126,102 +122,5 @@ class EsaboraService
             $this->em->persist($suivi);
         }
         $this->em->flush();
-    }
-
-    private function generateFieldListPayloadImportDossier(DossierMessage $dossier)
-    {
-        $payload = [
-            [
-                'fieldName' => 'Référence_Histologe',
-                'fieldValue' => $dossier->getReference(),
-            ],
-            [
-                'fieldName' => 'Usager_Nom',
-                'fieldValue' => $dossier->getNomUsager(),
-            ],
-            [
-                'fieldName' => 'Usager_Prénom',
-                'fieldValue' => $dossier->getPrenomUsager(),
-            ],
-            [
-                'fieldName' => 'Usager_Mail',
-                'fieldValue' => $dossier->getMailUsager(),
-            ],
-            [
-                'fieldName' => 'Usager_Téléphone',
-                'fieldValue' => $dossier->getTelephoneUsager(),
-            ],
-            [
-                'fieldName' => 'Usager_Numéro',
-                'fieldValue' => '',
-            ],
-            [
-                'fieldName' => 'Usager_Nom_Rue',
-                'fieldValue' => $dossier->getAdresseSignalement(),
-            ],
-            [
-                'fieldName' => 'Usager_Adresse2',
-                'fieldValue' => '',
-            ],
-            [
-                'fieldName' => 'Usager_CodePostal',
-                'fieldValue' => $dossier->getCodepostaleSignalement(),
-            ],
-            [
-                'fieldName' => 'Usager_Ville',
-                'fieldValue' => $dossier->getVilleSignalement(),
-            ],
-            [
-                'fieldName' => 'Adresse_Numéro',
-                'fieldValue' => $dossier->getNumeroAdresseSignalement(),
-            ],
-            [
-                'fieldName' => 'Adresse_Nom_Rue',
-                'fieldValue' => $dossier->getAdresseSignalement(),
-            ],
-            [
-                'fieldName' => 'Adresse_CodePostal',
-                'fieldValue' => $dossier->getCodepostaleSignalement(),
-            ],
-            [
-                'fieldName' => 'Adresse_Ville',
-                'fieldValue' => $dossier->getVilleSignalement(),
-            ],
-            [
-                'fieldName' => 'Adresse_Etage',
-                'fieldValue' => $dossier->getEtageSignalement(),
-            ],
-            [
-                'fieldName' => 'Adresse_Porte',
-                'fieldValue' => $dossier->getNumeroAppartementSignalement(),
-            ],
-            [
-                'fieldName' => 'Adresse_Latitude',
-                'fieldValue' => $dossier->getLatitudeSignalement(),
-            ],
-            [
-                'fieldName' => 'Adresse_Longitude',
-                'fieldValue' => $dossier->getLongitudeSignalement(),
-            ],
-            [
-                'fieldName' => 'Dossier_Ouverture',
-                'fieldValue' => $dossier->getDateOuverture(),
-            ],
-            [
-                'fieldName' => 'Dossier_Commentaire',
-                'fieldValue' => $dossier->getDossierCommentaire(),
-            ],
-            [
-                'fieldName' => 'PJ_Observations',
-                'fieldValue' => $dossier->getPiecesJointesObservation(),
-            ],
-            [
-                'fieldName' => 'PJ_Documents',
-                'fieldDocumentUpdate' => 1,
-                'fieldValue' => $dossier->getPiecesJointes(),
-            ],
-        ];
-
-        return $payload;
     }
 }

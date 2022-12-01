@@ -297,4 +297,99 @@ final class DossierMessage
 
         return $this;
     }
+
+    public function preparePayload(): array
+    {
+        return [
+            [
+                'fieldName' => 'Référence_Histologe',
+                'fieldValue' => $this->getReference(),
+            ],
+            [
+                'fieldName' => 'Usager_Nom',
+                'fieldValue' => $this->getNomUsager(),
+            ],
+            [
+                'fieldName' => 'Usager_Prénom',
+                'fieldValue' => $this->getPrenomUsager(),
+            ],
+            [
+                'fieldName' => 'Usager_Mail',
+                'fieldValue' => $this->getMailUsager(),
+            ],
+            [
+                'fieldName' => 'Usager_Téléphone',
+                'fieldValue' => $this->getTelephoneUsager(),
+            ],
+            [
+                'fieldName' => 'Usager_Numéro',
+                'fieldValue' => '',
+            ],
+            [
+                'fieldName' => 'Usager_Nom_Rue',
+                'fieldValue' => $this->getAdresseSignalement(),
+            ],
+            [
+                'fieldName' => 'Usager_Adresse2',
+                'fieldValue' => '',
+            ],
+            [
+                'fieldName' => 'Usager_CodePostal',
+                'fieldValue' => $this->getCodepostaleSignalement(),
+            ],
+            [
+                'fieldName' => 'Usager_Ville',
+                'fieldValue' => $this->getVilleSignalement(),
+            ],
+            [
+                'fieldName' => 'Adresse_Numéro',
+                'fieldValue' => $this->getNumeroAdresseSignalement(),
+            ],
+            [
+                'fieldName' => 'Adresse_Nom_Rue',
+                'fieldValue' => $this->getAdresseSignalement(),
+            ],
+            [
+                'fieldName' => 'Adresse_CodePostal',
+                'fieldValue' => $this->getCodepostaleSignalement(),
+            ],
+            [
+                'fieldName' => 'Adresse_Ville',
+                'fieldValue' => $this->getVilleSignalement(),
+            ],
+            [
+                'fieldName' => 'Adresse_Etage',
+                'fieldValue' => $this->getEtageSignalement(),
+            ],
+            [
+                'fieldName' => 'Adresse_Porte',
+                'fieldValue' => $this->getNumeroAppartementSignalement(),
+            ],
+            [
+                'fieldName' => 'Adresse_Latitude',
+                'fieldValue' => $this->getLatitudeSignalement(),
+            ],
+            [
+                'fieldName' => 'Adresse_Longitude',
+                'fieldValue' => $this->getLongitudeSignalement(),
+            ],
+            [
+                'fieldName' => 'Dossier_Ouverture',
+                'fieldValue' => $this->getDateOuverture(),
+            ],
+            [
+                'fieldName' => 'Dossier_Commentaire',
+                'fieldValue' => $this->getDossierCommentaire(),
+            ],
+            [
+                'fieldName' => 'PJ_Observations',
+                'fieldValue' => $this->getPiecesJointesObservation(),
+            ],
+            [
+                'fieldName' => 'PJ_Documents',
+                'fieldDocumentUpdate' => 1,
+                'fieldValue' => $this->getPiecesJointes(),
+            ],
+        ];
+    }
 }

@@ -13,7 +13,7 @@ class EsaboraServiceTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        $kernel = self::bootKernel();
+        self::bootKernel();
         $this->entityManager = self::getContainer()->get('doctrine')->getManager();
         $this->client = self::getContainer()->get(HttpClientInterface::class);
     }

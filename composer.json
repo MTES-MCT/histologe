@@ -121,7 +121,7 @@
         ],
         "cs-check": "tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run -v",
         "cs-fix": "tools/php-cs-fixer/vendor/bin/php-cs-fixer fix",
-        "stan": "vendor/bin/phpstan analyse --memory-limit 1G --xdebug",
+        "stan": "vendor/bin/phpstan analyse --memory-limit 1G",
         "check-quality": [
             "@composer cs-check",
             "@composer stan"

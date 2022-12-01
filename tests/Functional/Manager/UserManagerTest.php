@@ -6,6 +6,7 @@ use App\Entity\Partner;
 use App\Entity\User;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
+use App\Repository\UserRepository;
 use App\Service\NotificationService;
 use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\ORM\EntityManagerInterface;
