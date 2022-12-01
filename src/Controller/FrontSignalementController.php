@@ -163,9 +163,11 @@ class FrontSignalementController extends AbstractController
                 $signalement->setTelDeclarant(null);
             }
 
-            $signalement->setTerritory($territoryRepository->findOneBy([
-                'zip' => $postalCodeHomeChecker->mapZip($signalement->getCpOccupant()), 'isActive' => 1, ])
-            );
+            if (!empty($signalement->getCpOccupant())) {
+                $signalement->setTerritory($territoryRepository->findOneBy([
+                    'zip' => $postalCodeHomeChecker->mapZip($signalement->getCpOccupant()), 'isActive' => 1, ])
+                );
+            }
 
             if (null === $signalement->getTerritory() || !$postalCodeHomeChecker->isAuthorizedInseeCode($signalement->getTerritory(), $signalement->getInseeOccupant())) {
                 return $this->json(['response' => 'Territory is inactive'], Response::HTTP_BAD_REQUEST);
