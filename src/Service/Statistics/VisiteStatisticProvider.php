@@ -2,7 +2,7 @@
 
 namespace App\Service\Statistics;
 
-use App\Dto\BackStatisticsFilters;
+use App\Dto\StatisticsFilters;
 use App\Repository\SignalementRepository;
 
 class VisiteStatisticProvider
@@ -11,9 +11,9 @@ class VisiteStatisticProvider
     {
     }
 
-    public function getFilteredData(BackStatisticsFilters $backStatisticsFilters)
+    public function getFilteredData(StatisticsFilters $statisticsFilters)
     {
-        $countPerVisites = $this->signalementRepository->countByVisiteFiltered($backStatisticsFilters);
+        $countPerVisites = $this->signalementRepository->countByVisiteFiltered($statisticsFilters);
 
         $data = self::initPerVisite();
         foreach ($countPerVisites as $countPerVisite) {

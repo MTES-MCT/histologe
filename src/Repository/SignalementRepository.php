@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Dto\BackStatisticsFilters;
+use App\Dto\StatisticsFilters;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
@@ -442,23 +442,23 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function countFiltered(BackStatisticsFilters $backStatisticsFilters): ?int
+    public function countFiltered(StatisticsFilters $statisticsFilters): ?int
     {
         $qb = $this->createQueryBuilder('s');
 
         $qb->select('COUNT(s.id)');
-        $qb = self::addFiltersToQuery($qb, $backStatisticsFilters);
+        $qb = self::addFiltersToQuery($qb, $statisticsFilters);
 
         return $qb->getQuery()
             ->getSingleScalarResult();
     }
 
-    public function countByMonthFiltered(BackStatisticsFilters $backStatisticsFilters): array
+    public function countByMonthFiltered(StatisticsFilters $statisticsFilters): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, MONTH(s.createdAt) AS month, YEAR(s.createdAt) AS year');
 
-        $qb = self::addFiltersToQuery($qb, $backStatisticsFilters);
+        $qb = self::addFiltersToQuery($qb, $statisticsFilters);
 
         $qb->groupBy('month')
             ->addGroupBy('year');
@@ -470,26 +470,26 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function getAverageCriticiteFiltered(BackStatisticsFilters $backStatisticsFilters): ?float
+    public function getAverageCriticiteFiltered(StatisticsFilters $statisticsFilters): ?float
     {
         $qb = $this->createQueryBuilder('s');
 
         $qb->select('AVG(s.scoreCreation)');
         $qb->andWhere('s.scoreCreation IS NOT NULL');
 
-        $qb = self::addFiltersToQuery($qb, $backStatisticsFilters);
+        $qb = self::addFiltersToQuery($qb, $statisticsFilters);
 
         return $qb->getQuery()
             ->getSingleScalarResult();
     }
 
-    public function countBySituationFiltered(BackStatisticsFilters $backStatisticsFilters): array
+    public function countBySituationFiltered(StatisticsFilters $statisticsFilters): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, sit.id, sit.menuLabel');
         $qb->leftJoin('s.situations', 'sit');
 
-        $qb = self::addFiltersToQuery($qb, $backStatisticsFilters);
+        $qb = self::addFiltersToQuery($qb, $statisticsFilters);
 
         $qb->andWhere('sit.isActive = :isActive')->setParameter('isActive', true);
         $qb->groupBy('sit.id');
@@ -498,13 +498,13 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countByCriticiteFiltered(BackStatisticsFilters $backStatisticsFilters): array
+    public function countByCriticiteFiltered(StatisticsFilters $statisticsFilters): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, crit.id, crit.label');
         $qb->leftJoin('s.criticites', 'crit');
 
-        $qb = self::addFiltersToQuery($qb, $backStatisticsFilters);
+        $qb = self::addFiltersToQuery($qb, $statisticsFilters);
 
         $qb->andWhere('crit.isArchive = :isArchive')->setParameter('isArchive', false);
         $qb->groupBy('crit.id');
@@ -513,13 +513,13 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countByStatusFiltered(BackStatisticsFilters $backStatisticsFilters): array
+    public function countByStatusFiltered(StatisticsFilters $statisticsFilters): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
             ->addSelect('s.statut');
 
-        $qb = self::addFiltersToQuery($qb, $backStatisticsFilters);
+        $qb = self::addFiltersToQuery($qb, $statisticsFilters);
 
         $qb->indexBy('s', 's.statut');
         $qb->groupBy('s.statut');
@@ -528,7 +528,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countByCriticitePercentFiltered(BackStatisticsFilters $backStatisticsFilters): array
+    public function countByCriticitePercentFiltered(StatisticsFilters $statisticsFilters): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
@@ -539,7 +539,7 @@ class SignalementRepository extends ServiceEntityRepository
                 else \''.CriticitePercentStatisticProvider::CRITICITE_VERY_STRONG.'\'
                 end as range');
 
-        $qb = self::addFiltersToQuery($qb, $backStatisticsFilters);
+        $qb = self::addFiltersToQuery($qb, $statisticsFilters);
 
         $qb->groupBy('range');
 
@@ -547,7 +547,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countByVisiteFiltered(BackStatisticsFilters $backStatisticsFilters): array
+    public function countByVisiteFiltered(StatisticsFilters $statisticsFilters): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
@@ -556,7 +556,7 @@ class SignalementRepository extends ServiceEntityRepository
             else \'Oui\'
             end as visite');
 
-        $qb = self::addFiltersToQuery($qb, $backStatisticsFilters);
+        $qb = self::addFiltersToQuery($qb, $statisticsFilters);
 
         $qb->groupBy('visite');
 
@@ -564,7 +564,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countByMotifClotureFiltered(BackStatisticsFilters $backStatisticsFilters): array
+    public function countByMotifClotureFiltered(StatisticsFilters $statisticsFilters): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, s.motifCloture')
@@ -573,7 +573,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->andWhere('s.motifCloture != \'0\'')
             ->andWhere('s.closedAt IS NOT NULL');
 
-        $qb = self::addFiltersToQuery($qb, $backStatisticsFilters);
+        $qb = self::addFiltersToQuery($qb, $statisticsFilters);
 
         $qb->groupBy('s.motifCloture');
 
@@ -581,7 +581,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public static function addFiltersToQuery(QueryBuilder $qb, BackStatisticsFilters $filters): QueryBuilder
+    public static function addFiltersToQuery(QueryBuilder $qb, StatisticsFilters $filters): QueryBuilder
     {
         // Is the status defined?
         if ('' != $filters->getStatut() && 'all' != $filters->getStatut()) {

@@ -5,17 +5,17 @@ namespace App\Dto;
 use App\Entity\Territory;
 use DateTime;
 
-class BackStatisticsFilters
+class StatisticsFilters
 {
-    private $communes;
-    private $statut;
-    private $etiquettes;
-    private $type;
-    private $dateStart;
-    private $dateEnd;
-    private $countRefused;
-    private $countArchived;
-    private $territory;
+    private array $communes;
+    private string $statut;
+    private array $etiquettes;
+    private string $type;
+    private DateTime $dateStart;
+    private DateTime $dateEnd;
+    private bool $countRefused;
+    private bool $countArchived;
+    private ?Territory $territory;
 
     public function __construct(
         array $communes,

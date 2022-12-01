@@ -2,7 +2,7 @@
 
 namespace App\Service\Statistics;
 
-use App\Dto\BackStatisticsFilters;
+use App\Dto\StatisticsFilters;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
@@ -13,9 +13,9 @@ class StatusStatisticProvider
     {
     }
 
-    public function getFilteredData(BackStatisticsFilters $backStatisticsFilters): array
+    public function getFilteredData(StatisticsFilters $statisticsFilters): array
     {
-        $countPerSituations = $this->signalementRepository->countByStatusFiltered($backStatisticsFilters);
+        $countPerSituations = $this->signalementRepository->countByStatusFiltered($statisticsFilters);
 
         return $this->createFullArray($countPerSituations);
     }

@@ -2,7 +2,7 @@
 
 namespace App\Controller\Back;
 
-use App\Dto\BackStatisticsFilters;
+use App\Dto\StatisticsFilters;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\TerritoryRepository;
@@ -62,8 +62,8 @@ class BackStatistiquesController extends AbstractController
             $this->ajaxResult['count_signalement_refuses'] = $globalStatistics['count_signalement_refuses'];
             $this->ajaxResult['count_signalement_archives'] = $globalStatistics['count_signalement_archives'];
 
-            $backStatisticsFilters = $this->createFilters($request, $territory);
-            $filteredStatistics = $this->filteredBackAnalyticsProvider->getData($backStatisticsFilters);
+            $statisticsFilters = $this->createFilters($request, $territory);
+            $filteredStatistics = $this->filteredBackAnalyticsProvider->getData($statisticsFilters);
             $this->ajaxResult['count_signalement_filtered'] = $filteredStatistics['count_signalement_filtered'];
             $this->ajaxResult['average_criticite_filtered'] = $filteredStatistics['average_criticite_filtered'];
             $this->ajaxResult['countSignalementPerMonth'] = $filteredStatistics['count_signalement_per_month'];
@@ -83,7 +83,7 @@ class BackStatistiquesController extends AbstractController
         return $this->json(['response' => 'error'], 400);
     }
 
-    private function createFilters(Request $request, ?Territory $territory): BackStatisticsFilters
+    private function createFilters(Request $request, ?Territory $territory): StatisticsFilters
     {
         $communes = json_decode($request->get('communes'));
         $statut = $request->get('statut');
@@ -97,7 +97,7 @@ class BackStatistiquesController extends AbstractController
         $hasCountRefused = '1' == $request->get('countRefused');
         $hasCountArchived = '1' == $request->get('countArchived');
 
-        return new BackStatisticsFilters(
+        return new StatisticsFilters(
             $communes,
             $statut,
             $etiquettes,

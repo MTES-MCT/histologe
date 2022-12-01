@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Dto\BackStatisticsFilters;
+use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
 use App\Entity\Signalement;
 use App\Entity\Territory;
@@ -107,14 +107,14 @@ class AffectationRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function countByPartenaireFiltered(BackStatisticsFilters $backStatisticsFilters): array
+    public function countByPartenaireFiltered(StatisticsFilters $statisticsFilters): array
     {
         $qb = $this->createQueryBuilder('a');
         $qb->select('a.id, a.statut, partner.id, partner.nom')
             ->leftJoin('a.signalement', 's')
             ->leftJoin('a.partner', 'partner');
 
-        $qb = SignalementRepository::addFiltersToQuery($qb, $backStatisticsFilters);
+        $qb = SignalementRepository::addFiltersToQuery($qb, $statisticsFilters);
 
         return $qb->getQuery()
             ->getResult();

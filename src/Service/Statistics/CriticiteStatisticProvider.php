@@ -2,7 +2,7 @@
 
 namespace App\Service\Statistics;
 
-use App\Dto\BackStatisticsFilters;
+use App\Dto\StatisticsFilters;
 use App\Repository\SignalementRepository;
 
 class CriticiteStatisticProvider
@@ -11,9 +11,9 @@ class CriticiteStatisticProvider
     {
     }
 
-    public function getFilteredData(BackStatisticsFilters $backStatisticsFilters)
+    public function getFilteredData(StatisticsFilters $statisticsFilters)
     {
-        $countPerCriticites = $this->signalementRepository->countByCriticiteFiltered($backStatisticsFilters);
+        $countPerCriticites = $this->signalementRepository->countByCriticiteFiltered($statisticsFilters);
 
         $data = [];
         foreach ($countPerCriticites as $countPerCriticite) {

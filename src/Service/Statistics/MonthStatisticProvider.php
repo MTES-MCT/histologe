@@ -2,7 +2,7 @@
 
 namespace App\Service\Statistics;
 
-use App\Dto\BackStatisticsFilters;
+use App\Dto\StatisticsFilters;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
 use DateTime;
@@ -15,9 +15,9 @@ class MonthStatisticProvider
     {
     }
 
-    public function getFilteredData(BackStatisticsFilters $backStatisticsFilters): array
+    public function getFilteredData(StatisticsFilters $statisticsFilters): array
     {
-        $countPerMonths = $this->signalementRepository->countByMonthFiltered($backStatisticsFilters);
+        $countPerMonths = $this->signalementRepository->countByMonthFiltered($statisticsFilters);
 
         return $this->createFullArray($countPerMonths);
     }

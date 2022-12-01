@@ -2,7 +2,7 @@
 
 namespace App\Service\Statistics;
 
-use App\Dto\BackStatisticsFilters;
+use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
 use App\Repository\AffectationRepository;
 
@@ -12,9 +12,9 @@ class PartenaireStatisticProvider
     {
     }
 
-    public function getFilteredData(BackStatisticsFilters $backStatisticsFilters)
+    public function getFilteredData(StatisticsFilters $statisticsFilters)
     {
-        $countPerPartenaires = $this->affectationRepository->countByPartenaireFiltered($backStatisticsFilters);
+        $countPerPartenaires = $this->affectationRepository->countByPartenaireFiltered($statisticsFilters);
 
         $data = [];
         foreach ($countPerPartenaires as $countPerPartenaire) {
