@@ -2,6 +2,7 @@
 
 namespace App\Service\Statistics;
 
+use App\Dto\StatisticsFilters;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
 use DateTime;
@@ -14,30 +15,42 @@ class MonthStatisticProvider
     {
     }
 
-    public function getData(Territory|null $territory, int|null $year)
+    public function getFilteredData(StatisticsFilters $statisticsFilters): array
+    {
+        $countPerMonths = $this->signalementRepository->countByMonthFiltered($statisticsFilters);
+
+        return $this->createFullArray($countPerMonths);
+    }
+
+    public function getData(Territory|null $territory, int|null $year): array
     {
         $countPerMonths = $this->signalementRepository->countByMonth($territory, $year, true);
 
+        return $this->createFullArray($countPerMonths);
+    }
+
+    private function createFullArray($countPerMonths): array
+    {
         $monthsWithResults = [];
         foreach ($countPerMonths as $countPerMonth) {
             $strKey = $countPerMonth['year'].'-'.str_pad($countPerMonth['month'], 2, 0, \STR_PAD_LEFT);
             $monthsWithResults[$strKey] = $countPerMonth['count'];
         }
 
-        $buffer = [];
+        $data = [];
         $previousMonth = null; // This is used to avoid blank months
         foreach ($monthsWithResults as $month => $count) {
             $dateMonth = new DateTime($month);
-            $this->fillBlankMonths($buffer, $previousMonth, $dateMonth);
+            $this->fillBlankMonths($data, $previousMonth, $dateMonth);
             $strMonth = self::MONTH_NAMES[$dateMonth->format('m') - 1].' '.$dateMonth->format('Y');
-            $buffer[$strMonth] = $count;
+            $data[$strMonth] = $count;
             $previousMonth = $dateMonth;
         }
 
-        return $buffer;
+        return $data;
     }
 
-    private function fillBlankMonths(&$buffer, $previousMonth, $currentMonth)
+    private function fillBlankMonths(&$data, $previousMonth, $currentMonth)
     {
         if (null !== $previousMonth) {
             $shouldBeMonth = $previousMonth->format('m') + 1;
@@ -52,7 +65,7 @@ class MonthStatisticProvider
                     $endMonth = ($loopYear < $currentMonth->format('Y')) ? 12 : $shouldBeMonth;
                     for ($loopMonth = $startMonth; $loopMonth <= $endMonth; ++$loopMonth) {
                         $strMonth = self::MONTH_NAMES[$loopMonth - 1].' '.$loopYear;
-                        $buffer[$strMonth] = 0;
+                        $data[$strMonth] = 0;
                     }
                 }
             }

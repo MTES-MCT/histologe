@@ -2,6 +2,7 @@
 
 namespace App\Service\Statistics;
 
+use App\Dto\StatisticsFilters;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
@@ -12,24 +13,44 @@ class StatusStatisticProvider
     {
     }
 
-    public function getData(Territory|null $territory, int|null $year)
+    public function getFilteredData(StatisticsFilters $statisticsFilters): array
+    {
+        $countPerSituations = $this->signalementRepository->countByStatusFiltered($statisticsFilters);
+
+        return $this->createFullArray($countPerSituations);
+    }
+
+    public function getData(Territory|null $territory, int|null $year): array
     {
         $countPerStatuses = $this->signalementRepository->countByStatus($territory, $year, true);
 
-        $buffer = [];
+        return $this->createFullArray($countPerStatuses);
+    }
+
+    private function createFullArray($countPerStatuses): array
+    {
+        $data = [];
         foreach ($countPerStatuses as $countPerStatus) {
             $item = self::initStatutByValue($countPerStatus);
             if ($item) {
-                $buffer[$countPerStatus['statut']] = $item;
+                $data[$countPerStatus['statut']] = $item;
             }
         }
 
-        return $buffer;
+        return $data;
     }
 
-    private static function initStatutByValue($statusResult)
+    private static function initStatutByValue($statusResult): bool|array
     {
         switch ($statusResult['statut']) {
+            case Signalement::STATUS_REFUSED:
+                return [
+                    'label' => 'Refusé',
+                    'color' => '#CE0500',
+                    'count' => $statusResult['count'],
+                ];
+                break;
+
             case Signalement::STATUS_CLOSED:
                 return [
                     'label' => 'Fermé',

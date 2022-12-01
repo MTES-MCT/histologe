@@ -2,6 +2,7 @@
 
 namespace App\Service\Statistics;
 
+use App\Dto\StatisticsFilters;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
 
@@ -11,21 +12,33 @@ class MotifClotureStatisticProvider
     {
     }
 
-    public function getData(Territory|null $territory, int|null $year)
+    public function getFilteredData(StatisticsFilters $statisticsFilters): array
+    {
+        $countPerMotifsCloture = $this->signalementRepository->countByMotifClotureFiltered($statisticsFilters);
+
+        return $this->createFullArray($countPerMotifsCloture);
+    }
+
+    public function getData(Territory|null $territory, int|null $year): array
     {
         $countPerMotifsCloture = $this->signalementRepository->countByMotifCloture($territory, $year, true);
 
-        $buffer = self::initMotifPerValue();
+        return $this->createFullArray($countPerMotifsCloture);
+    }
+
+    private function createFullArray($countPerMotifsCloture): array
+    {
+        $data = self::initMotifPerValue();
         foreach ($countPerMotifsCloture as $countPerMotifCloture) {
-            if ($buffer[$countPerMotifCloture['motifCloture']]) {
-                $buffer[$countPerMotifCloture['motifCloture']]['count'] = $countPerMotifCloture['count'];
+            if ($data[$countPerMotifCloture['motifCloture']]) {
+                $data[$countPerMotifCloture['motifCloture']]['count'] = $countPerMotifCloture['count'];
             }
         }
 
-        return $buffer;
+        return $data;
     }
 
-    private static function initMotifPerValue()
+    private static function initMotifPerValue(): array
     {
         return [
             'RESOLU' => [

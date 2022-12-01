@@ -10,15 +10,15 @@ class ListTerritoryStatisticProvider
     {
     }
 
-    public function getData()
+    public function getData(): array
     {
-        $buffer = [];
+        $data = [];
         $territories = $this->territoryRepository->findAllList();
         /** @var Territory $territory */
         foreach ($territories as $territory) {
-            $buffer[$territory->getId()] = $territory->getName();
+            $data[$territory->getId()] = $territory->getName();
         }
 
-        return $buffer;
+        return $data;
     }
 }

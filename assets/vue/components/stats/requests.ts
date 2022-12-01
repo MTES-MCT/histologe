@@ -23,6 +23,7 @@ export const requests = {
       }
     }
     data.append('countRefused', store.state.filters.countRefused ? '1' : '0')
+    data.append('countArchived', store.state.filters.countArchived ? '1' : '0')
 
     axios
       .post(store.props.ajaxurl, data, { timeout: 15000 })

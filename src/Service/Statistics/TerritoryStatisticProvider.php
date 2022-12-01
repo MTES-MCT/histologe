@@ -10,19 +10,19 @@ class TerritoryStatisticProvider
     {
     }
 
-    public function getData()
+    public function getData(): array
     {
-        $buffer = [];
+        $data = [];
 
         $countSignalementsByTerritories = $this->signalementRepository->countByTerritory(true);
         foreach ($countSignalementsByTerritories as $countSignalementsByTerritory) {
-            $buffer[$countSignalementsByTerritory['id']] = [
+            $data[$countSignalementsByTerritory['id']] = [
                 'name' => $countSignalementsByTerritory['name'],
                 'zip' => $countSignalementsByTerritory['zip'],
                 'count' => $countSignalementsByTerritory['count'],
             ];
         }
 
-        return $buffer;
+        return $data;
     }
 }

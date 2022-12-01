@@ -39,6 +39,14 @@
         <TheHistoStatsDetailsItem :data=strAverageDaysClosure color="purple">
           <template #title>Délai clôture moy.</template>
         </TheHistoStatsDetailsItem>
+
+        <TheHistoStatsDetailsItem :data=strCountSignalementsRefuses color="purple">
+          <template #title>Nb. signalements refusés</template>
+        </TheHistoStatsDetailsItem>
+
+        <TheHistoStatsDetailsItem :data=strCountSignalementsArchives color="purple">
+          <template #title>Nb. signalements archivés</template>
+        </TheHistoStatsDetailsItem>
       </div>
     </div>
   </section>
@@ -80,6 +88,14 @@ export default defineComponent({
     strAverageDaysClosure () {
       const averageDaysClosure:string = this.sharedState.stats.averageDaysClosure !== undefined ? this.sharedState.stats.averageDaysClosure.toString() : '-'
       return averageDaysClosure + ' jours'
+    },
+    strCountSignalementsRefuses () {
+      const countSignalement:string = this.sharedState.stats.countSignalementsRefuses !== undefined ? this.sharedState.stats.countSignalementsRefuses.toString() : '0'
+      return countSignalement
+    },
+    strCountSignalementsArchives () {
+      const countSignalement:string = this.sharedState.stats.countSignalementsArchives !== undefined ? this.sharedState.stats.countSignalementsArchives.toString() : '0'
+      return countSignalement
     }
   }
 })
