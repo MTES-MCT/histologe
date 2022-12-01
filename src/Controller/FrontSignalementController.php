@@ -99,7 +99,8 @@ class FrontSignalementController extends AbstractController
         ReferenceGenerator $referenceGenerator,
         PostalCodeHomeChecker $postalCodeHomeChecker): Response
     {
-        if ($data = $request->get('signalement')) {
+        if ($this->isCsrfTokenValid('new_signalement', $request->request->get('_token'))
+            && $data = $request->get('signalement')) {
             $em = $doctrine->getManager();
             $signalement = new Signalement();
             $files_array = [];
