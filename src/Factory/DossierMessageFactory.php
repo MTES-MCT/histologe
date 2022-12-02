@@ -13,7 +13,7 @@ class DossierMessageFactory
     {
     }
 
-    public function createInstance(Affectation $affectation)
+    public function createInstance(Affectation $affectation): DossierMessage
     {
         $signalement = $affectation->getSignalement();
         $partner = $affectation->getPartner();
@@ -34,8 +34,8 @@ class DossierMessageFactory
             ->setEtageSignalement($signalement->getEtageOccupant())
             ->setNumeroAppartementSignalement($signalement->getNumAppartOccupant())
             ->setNumeroAdresseSignalement($this->getNumeroAdresse($signalement->getAdresseOccupant()))
-            ->setLatitudeSignalement($signalement->getGeoloc()['lat'] ?? '')
-            ->setLongitudeSignalement($signalement->getGeoloc()['lng'] ?? '')
+            ->setLatitudeSignalement($signalement->getGeoloc()['lat'] ?? 0)
+            ->setLongitudeSignalement($signalement->getGeoloc()['lng'] ?? 0)
             ->setDateOuverture($signalement->getCreatedAt()->format('d/m/Y'))
             ->setDossierCommentaire($this->buildCommentaire($signalement))
             ->setPiecesJointesObservation($this->buildPiecesJointesObservation($signalement))

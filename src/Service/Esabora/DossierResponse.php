@@ -37,23 +37,9 @@ class DossierResponse
         return $this->sasReference;
     }
 
-    public function setSasReference(?string $sasReference): self
-    {
-        $this->sasReference = $sasReference;
-
-        return $this;
-    }
-
     public function getSasEtat(): ?string
     {
         return $this->sasEtat;
-    }
-
-    public function setSasEtat(?string $sasEtat): self
-    {
-        $this->sasEtat = $sasEtat;
-
-        return $this;
     }
 
     public function getId(): ?string
@@ -61,23 +47,9 @@ class DossierResponse
         return $this->id;
     }
 
-    public function setId(?string $id): self
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
     public function getNumero(): ?string
     {
         return $this->numero;
-    }
-
-    public function setNumero(?string $numero): self
-    {
-        $this->numero = $numero;
-
-        return $this;
     }
 
     public function getStatutAbrege(): ?string
@@ -85,23 +57,9 @@ class DossierResponse
         return $this->statutAbrege;
     }
 
-    public function setStatutAbrege(?string $statutAbrege): self
-    {
-        $this->statutAbrege = $statutAbrege;
-
-        return $this;
-    }
-
     public function getStatut(): ?string
     {
         return $this->statut;
-    }
-
-    public function setStatut(?string $statut): self
-    {
-        $this->statut = $statut;
-
-        return $this;
     }
 
     public function getEtat(): ?string
@@ -109,34 +67,13 @@ class DossierResponse
         return $this->etat;
     }
 
-    public function setEtat(?string $etat): self
-    {
-        $this->etat = $etat;
-
-        return $this;
-    }
-
     public function getDateCloture(): ?string
     {
         return $this->dateCloture;
     }
 
-    public function setDateCloture(?string $dateCloture): self
-    {
-        $this->dateCloture = $dateCloture;
-
-        return $this;
-    }
-
     public function getStatusCode(): ?int
     {
         return $this->statusCode;
-    }
-
-    public function setStatusCode(?int $statusCode): self
-    {
-        $this->statusCode = $statusCode;
-
-        return $this;
     }
 }

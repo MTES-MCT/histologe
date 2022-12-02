@@ -16,10 +16,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[AsCommand(
-    name: 'app:esabora-sync',
+    name: 'app:sync-esabora',
     description: 'Commande qui permet de mettre à jour l\'état d\'une affectation depuis Esabora',
 )]
-class EsaboraSynchronizeCommand extends Command
+class SynchronizeEsaboraCommand extends Command
 {
     public function __construct(
         private EsaboraService $esaboraService,

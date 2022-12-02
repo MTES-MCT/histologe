@@ -86,8 +86,8 @@ class UploadHandlerService
 
     public function getTmpFilepath(string $filename): string
     {
-        $tmpFilepath = $this->parameterBag->getParameter('uploads_tmp_dir').$filename;
-        $bucketFilepath = $this->parameterBag->getParameter('url_bucket').'/'.$filename;
+        $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
+        $bucketFilepath = $this->parameterBag->get('url_bucket').'/'.$filename;
         file_put_contents($tmpFilepath, file_get_contents($bucketFilepath));
 
         return $tmpFilepath;

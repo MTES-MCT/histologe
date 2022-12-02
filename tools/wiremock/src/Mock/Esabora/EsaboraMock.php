@@ -112,7 +112,7 @@ class EsaboraMock
                 ->withRequestBody(
                     WireMock::matchingJsonPath(
                         '$.criterionList[0].criterionValueList[0]',
-                        WireMock::equalTo('00000000-0000-0000-2022-000000000003')
+                        WireMock::equalTo('00000000-0000-0000-2022-000000000010')
                     )
                 )
                 ->willReturn(
@@ -132,7 +132,7 @@ class EsaboraMock
                 ->withRequestBody(
                     WireMock::matchingJsonPath(
                         '$.criterionList[0].criterionValueList[0]',
-                        WireMock::notMatching('00000000-0000-0000-2022-000000000001|00000000-0000-0000-2022-000000000002|00000000-0000-0000-2022-000000000003|00000000-0000-0000-2022-000000000008')
+                        WireMock::notMatching('00000000-0000-0000-2022-000000000001|00000000-0000-0000-2022-000000000002|00000000-0000-0000-2022-000000000010|00000000-0000-0000-2022-000000000008')
                     )
                 )
                 ->willReturn(
