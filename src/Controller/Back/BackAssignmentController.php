@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Entity\Affectation;
+use App\Entity\JobEvent;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\AffectationAnsweredEvent;
@@ -120,7 +121,7 @@ class BackAssignmentController extends AbstractController
                     title: 'push_dossier',
                     message: json_encode($dossierMessage->preparePayload(), \JSON_THROW_ON_ERROR),
                     response: $exception->getMessage(),
-                    status: 500,
+                    status: JobEvent::STATUS_FAILED,
                     signalementId: $affectation->getSignalement()->getId(),
                     partnerId: $affectation->getPartner()->getId()
                 );
