@@ -1,5 +1,5 @@
 {
-  "searchId": "23547",
+  "searchId": "00000000-0000-0000-2022-000000000003",
   "nbResults": 1,
   "columnList": [
     "SAS_Référence",
@@ -16,17 +16,17 @@
   "rowList": [
     {
       "columnDataList": [
-        "HISTO0001",
-        "Importé",
-        "6292",
-        "2022-1",
+        "00000000-0000-0000-2022-000000000003",
+        "terminé",
+        "20223",
+        "2022-3",
         null,
         null,
-        "en cours",
-        null
+        "terminé",
+        "30/11/2022"
       ],
       "keyDataList": [
-        "20"
+        "23"
       ]
     }
   ]

@@ -4,28 +4,30 @@ namespace App\Service\Esabora;
 
 class DossierResponse
 {
-    private ?string $sasReference;
-    private ?string $sasEtat;
-    private ?string $id;
-    private ?string $numero;
-    private ?string $statutAbrege;
-    private ?string $statut;
-    private ?string $etat;
-    private ?string $dateCloture;
-    private ?int $statusCode;
+    private ?string $sasReference = null;
+    private ?string $sasEtat = null;
+    private ?string $id = null;
+    private ?string $numero = null;
+    private ?string $statutAbrege = null;
+    private ?string $statut = null;
+    private ?string $etat = null;
+    private ?string $dateCloture = null;
+    private ?int $statusCode = null;
 
     public function __construct(array $response, ?int $statusCode)
     {
-        $data = $response['rowList'][0]['columnDataList'] ?? null;
-        if (null !== $data) {
-            $this->sasReference = $data[0];
-            $this->sasEtat = $data[1];
-            $this->id = $data[2];
-            $this->numero = $data[3];
-            $this->statutAbrege = $data[4];
-            $this->statut = $data[5];
-            $this->etat = $data[6];
-            $this->dateCloture = $data[7];
+        if (!empty($response)) {
+            $data = $response['rowList'][0]['columnDataList'] ?? null;
+            if (null !== $data) {
+                $this->sasReference = $data[0];
+                $this->sasEtat = $data[1];
+                $this->id = $data[2];
+                $this->numero = $data[3];
+                $this->statutAbrege = $data[4];
+                $this->statut = $data[5];
+                $this->etat = $data[6];
+                $this->dateCloture = $data[7];
+            }
         }
         $this->statusCode = $statusCode;
     }

@@ -66,45 +66,11 @@ class AffectationManager extends Manager
 
     public function synchronizeAffectationFrom(DossierResponse $dossierResponse, Affectation $affectation): void
     {
-        $description = '';
-        $isUpdated = false;
-        $currentStatus = $affectation->getStatut();
         $user = $affectation->getPartner()->getUsers()->first();
         $signalement = $affectation->getSignalement();
-        switch ($dossierResponse->getSasEtat()) {
-            case EsaboraService::ESABORA_WAIT:
-                if (Affectation::STATUS_ACCEPTED !== $currentStatus) {
-                    $this->updateAffectation($affectation, $user, Affectation::STATUS_WAIT);
-                    $description = 'remis en attente via Esabora';
-                    $isUpdated = true;
-                }
-                break;
-            case EsaboraService::ESABORA_ACCEPTED:
-                if (Affectation::STATUS_ACCEPTED !== $currentStatus) {
-                    $this->updateAffectation($affectation, $user, Affectation::STATUS_ACCEPTED);
-                    $description = 'accepté via Esabora';
-                    $isUpdated = true;
-                }
-                break;
-            case EsaboraService::ESABORA_REFUSED:
-                if (Affectation::STATUS_REFUSED !== $currentStatus) {
-                    $this->updateAffectation($affectation, $user, Affectation::STATUS_REFUSED);
-                    $description = 'refusé via Esabora';
-                    $isUpdated = true;
-                }
-                break;
-        }
 
-        if (EsaboraService::ESABORA_CLOSED === $dossierResponse->getEtat()) {
-            if (Affectation::STATUS_CLOSED !== $affectation->getStatut()) {
-                $this->updateAffectation($affectation, $user, Affectation::STATUS_CLOSED);
-                $isUpdated = true;
-            } else {
-                $description = 'cloturé via Esabora';
-            }
-        }
-
-        if ($isUpdated) {
+        $description = $this->updateStatusFor($affectation, $user, $dossierResponse->getSasEtat());
+        if (!empty($description)) {
             $suivi = $this->suiviManager->createSuivi(
                 $user,
                 $signalement, [
@@ -116,5 +82,40 @@ class AffectationManager extends Manager
             );
             $this->suiviManager->save($suivi);
         }
+    }
+
+    public function updateStatusFor(Affectation $affectation, User $user, string $esaboraStatus): string
+    {
+        $description = '';
+        $currentStatus = $affectation->getStatut();
+        switch ($esaboraStatus) {
+            case EsaboraService::ESABORA_WAIT:
+                if (Affectation::STATUS_WAIT !== $currentStatus) {
+                    $this->updateAffectation($affectation, $user, Affectation::STATUS_WAIT);
+                    $description = 'remis en attente via Esabora';
+                }
+                break;
+            case EsaboraService::ESABORA_ACCEPTED:
+                if (Affectation::STATUS_ACCEPTED !== $currentStatus) {
+                    $this->updateAffectation($affectation, $user, Affectation::STATUS_ACCEPTED);
+                    $description = 'accepté via Esabora';
+                }
+                break;
+            case EsaboraService::ESABORA_REFUSED:
+                if (Affectation::STATUS_REFUSED !== $currentStatus) {
+                    $this->updateAffectation($affectation, $user, Affectation::STATUS_REFUSED);
+                    $description = 'refusé via Esabora';
+                }
+                break;
+        }
+
+        if (EsaboraService::ESABORA_CLOSED === $esaboraStatus) {
+            if (Affectation::STATUS_CLOSED !== $affectation->getStatut()) {
+                $this->updateAffectation($affectation, $user, Affectation::STATUS_CLOSED);
+                $description = 'cloturé via Esabora';
+            }
+        }
+
+        return $description;
     }
 }

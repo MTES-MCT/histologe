@@ -1,0 +1,33 @@
+{
+  "searchId": "00000000-0000-0000-2022-000000000008",
+  "nbResults": 1,
+  "columnList": [
+    "SAS_Référence",
+    "SAS_Etat",
+    "Doss_ID",
+    "Doss_Statut_Abrégé",
+    "Doss_Statut",
+    "Doss_Etat",
+    "DOss_Cloture"
+  ],
+  "keyList": [
+    "i1.iaff_id"
+  ],
+  "rowList": [
+    {
+      "columnDataList": [
+        "00000000-0000-0000-2022-000000000008",
+        "A traiter",
+        "20228",
+        "2022-8",
+        null,
+        null,
+        "en cours",
+        null
+      ],
+      "keyDataList": [
+        "20"
+      ]
+    }
+  ]
+}

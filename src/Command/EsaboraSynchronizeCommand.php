@@ -10,16 +10,14 @@ use App\Service\Esabora\DossierResponse;
 use App\Service\Esabora\EsaboraService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[AsCommand(
-    name: 'app:esabora-synchronize',
-    description: 'Add a short description for your command',
+    name: 'app:esabora-sync',
+    description: 'Commande qui permet de mettre à jour l\'état d\'une affectation depuis Esabora',
 )]
 class EsaboraSynchronizeCommand extends Command
 {
@@ -31,14 +29,6 @@ class EsaboraSynchronizeCommand extends Command
         string $name = null
     ) {
         parent::__construct($name);
-    }
-
-    protected function configure(): void
-    {
-        $this
-            ->addArgument('arg1', InputArgument::OPTIONAL, 'Argument description')
-            ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description')
-        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -59,7 +49,9 @@ class EsaboraSynchronizeCommand extends Command
 
             /** @var DossierResponse $dossierResponse */
             $dossierResponse = $this->esaboraService->getStateDossier($affectation);
-            $this->affectationManager->synchronizeAffectationFrom($dossierResponse, $affectation);
+            if (200 === $dossierResponse->getStatusCode()) {
+                $this->affectationManager->synchronizeAffectationFrom($dossierResponse, $affectation);
+            }
             $jobEvent = $this->jobEventManager->createJobEvent(
                 type: 'esabora',
                 title: 'sync_dossier',
@@ -71,7 +63,7 @@ class EsaboraSynchronizeCommand extends Command
             );
 
             $io->success(
-                sprintf('SAS Référence: %s, SAS Etat: %s, ID: %s, numéro %s, statut: %s, état: %s, cloture: %s',
+                sprintf('SAS Référence: %s, SAS Etat: %s, ID: %s, Numéro: %s, Statut: %s, Etat: %s, Date Cloture: %s',
                     $dossierResponse->getSasReference(),
                     $dossierResponse->getSasEtat(),
                     $dossierResponse->getId(),

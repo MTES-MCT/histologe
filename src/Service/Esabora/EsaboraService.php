@@ -43,7 +43,6 @@ class EsaboraService
     public function getStateDossier(Affectation $affectation): DossierResponse
     {
         list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
-
         $payload = [
             'searchName' => 'WS_ETAT_DOSSIER_SAS',
             'criterionList' => [
@@ -65,6 +64,8 @@ class EsaboraService
             ]
         );
 
-        return new DossierResponse($response->toArray(), $response->getStatusCode());
+        return new DossierResponse(
+            200 === $response->getStatusCode() ? $response->toArray() : [],
+            $response->getStatusCode());
     }
 }

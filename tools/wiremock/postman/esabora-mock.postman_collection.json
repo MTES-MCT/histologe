@@ -1,0 +1,292 @@
+{
+	"info": {
+		"_postman_id": "54f30937-5261-4643-956e-7d959341508d",
+		"name": "esabora-mock",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1569180"
+	},
+	"item": [
+		{
+			"name": "import",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "test",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"treatmentName\": \"Import HISTOLOGE\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/ws/rest/modbdd/?task=doTreatment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"ws",
+						"rest",
+						"modbdd",
+						""
+					],
+					"query": [
+						{
+							"key": "task",
+							"value": "doTreatment"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "etat_sas",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "test",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"searchName\": \"WS_ETAT_SAS\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/ws/rest/mult/?task=doSearch",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"ws",
+						"rest",
+						"mult",
+						""
+					],
+					"query": [
+						{
+							"key": "task",
+							"value": "doSearch"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "etat_dossier_sas_a_traiter",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "test",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"searchName\": \"WS_ETAT_DOSSIER_SAS\",\n    \"criterionList\": [\n        {\n            \"criterionName\": \"SAS_Référence\",\n            \"criterionValueList\": [\n                \"00000000-0000-0000-2022-000000000008\"\n            ]\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/ws/rest/mult/?task=doSearch",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"ws",
+						"rest",
+						"mult",
+						""
+					],
+					"query": [
+						{
+							"key": "task",
+							"value": "doSearch"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "etat_dossier_sas_terminé",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "test",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"searchName\": \"WS_ETAT_DOSSIER_SAS\",\n    \"criterionList\": [\n        {\n            \"criterionName\": \"SAS_Référence\",\n            \"criterionValueList\": [\n                \"00000000-0000-0000-2022-000000000003\"\n            ]\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/ws/rest/mult/?task=doSearch",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"ws",
+						"rest",
+						"mult",
+						""
+					],
+					"query": [
+						{
+							"key": "task",
+							"value": "doSearch"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "etat_dossier_sas_importe",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "test",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"searchName\": \"WS_ETAT_DOSSIER_SAS\",\n    \"criterionList\": [\n        {\n            \"criterionName\": \"SAS_Référence\",\n            \"criterionValueList\": [\n                \"00000000-0000-0000-2022-000000000001\"\n            ]\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/ws/rest/mult/?task=doSearch",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"ws",
+						"rest",
+						"mult",
+						""
+					],
+					"query": [
+						{
+							"key": "task",
+							"value": "doSearch"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "etat_dossier_sas_non_importe",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "test",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"searchName\": \"WS_ETAT_DOSSIER_SAS\",\n    \"criterionList\": [\n        {\n            \"criterionName\": \"SAS_Référence\",\n            \"criterionValueList\": [\n                \"00000000-0000-0000-2022-000000000002\"\n            ]\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/ws/rest/mult/?task=doSearch",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"ws",
+						"rest",
+						"mult",
+						""
+					],
+					"query": [
+						{
+							"key": "task",
+							"value": "doSearch"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
