@@ -122,5 +122,25 @@ class EsaboraMock
                         ->withBody(AppMock::getMockContent(self::RESOURCES_DIR.'ws_etat_dossier_sas/etat_termine.json'))
                 )
         );
+
+        /* WS Etat Dossier SAS  Cas: Dossier non trouvé */
+        $wiremock->stubFor(
+            WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/mult/\\?task=doSearch'))
+                ->withHeader('Authorization', WireMock::containing(self::REQUEST_AUTHORIZATION))
+                ->withHeader('Content-Type', WireMock::containing(self::REQUEST_CONTENT_TYPE))
+                ->withRequestBody(WireMock::matchingJsonPath('$.searchName', WireMock::equalTo('WS_ETAT_DOSSIER_SAS')))
+                ->withRequestBody(
+                    WireMock::matchingJsonPath(
+                        '$.criterionList[0].criterionValueList[0]',
+                        WireMock::notMatching('00000000-0000-0000-2022-000000000001|00000000-0000-0000-2022-000000000002|00000000-0000-0000-2022-000000000003|00000000-0000-0000-2022-000000000008')
+                    )
+                )
+                ->willReturn(
+                    WireMock::aResponse()
+                        ->withStatus(200)
+                        ->withHeader('Content-Type', self::RESPONSE_CONTENT_TYPE)
+                        ->withBody(AppMock::getMockContent(self::RESOURCES_DIR.'ws_etat_dossier_sas/etat_non_trouve.json'))
+                )
+        );
     }
 }

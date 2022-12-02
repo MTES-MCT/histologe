@@ -49,7 +49,7 @@ class EsaboraSynchronizeCommand extends Command
 
             /** @var DossierResponse $dossierResponse */
             $dossierResponse = $this->esaboraService->getStateDossier($affectation);
-            if (200 === $dossierResponse->getStatusCode()) {
+            if (200 === $dossierResponse->getStatusCode() && null !== $dossierResponse->getSasEtat()) {
                 $this->affectationManager->synchronizeAffectationFrom($dossierResponse, $affectation);
             }
             $jobEvent = $this->jobEventManager->createJobEvent(
