@@ -103,12 +103,28 @@ class BackAssignmentController extends AbstractController
         }
     }
 
+    /** @todo: Enable Scalingo Worker for Messenger
+     * Task handled as sync way, check how scalingo manage messenger to manage handler as async task
+     * https://doc.scalingo.com/languages/php/symfony#symfony-messenger
+     */
     private function dispatchDossierEsabora(Affectation $affectation): void
     {
         $partner = $affectation->getPartner();
         if ($partner->getEsaboraToken() && $partner->getEsaboraUrl()) {
             $dossierMessage = $this->dossierMessageFactory->createInstance($affectation);
-            $this->messageBus->dispatch($dossierMessage);
+            try {
+                $this->messageBus->dispatch($dossierMessage);
+            } catch (\Throwable $exception) {
+                $jobEvent = $this->jobEventManager->createJobEvent(
+                    type: 'esabora',
+                    title: 'push_dossier',
+                    message: json_encode($dossierMessage->preparePayload(), \JSON_THROW_ON_ERROR),
+                    response: $exception->getMessage(),
+                    status: 500,
+                    signalementId: $affectation->getSignalement()->getId(),
+                    partnerId: $affectation->getPartner()->getId()
+                );
+            }
         }
     }
 }

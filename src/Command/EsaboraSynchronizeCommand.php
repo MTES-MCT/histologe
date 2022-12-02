@@ -51,6 +51,17 @@ class EsaboraSynchronizeCommand extends Command
             $dossierResponse = $this->esaboraService->getStateDossier($affectation);
             if (200 === $dossierResponse->getStatusCode() && null !== $dossierResponse->getSasEtat()) {
                 $this->affectationManager->synchronizeAffectationFrom($dossierResponse, $affectation);
+                $io->success(
+                    sprintf('SAS Référence: %s, SAS Etat: %s, ID: %s, Numéro: %s, Statut: %s, Etat: %s, Date Cloture: %s',
+                        $dossierResponse->getSasReference(),
+                        $dossierResponse->getSasEtat(),
+                        $dossierResponse->getId(),
+                        $dossierResponse->getNumero(),
+                        $dossierResponse->getStatut(),
+                        $dossierResponse->getEtat(),
+                        $dossierResponse->getDateCloture()
+                    )
+                );
             }
             $jobEvent = $this->jobEventManager->createJobEvent(
                 type: 'esabora',
@@ -60,18 +71,6 @@ class EsaboraSynchronizeCommand extends Command
                 status: 200 === $dossierResponse->getStatusCode() ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,
                 signalementId: $affectation->getSignalement()->getId(),
                 partnerId: $affectation->getPartner()->getId()
-            );
-
-            $io->success(
-                sprintf('SAS Référence: %s, SAS Etat: %s, ID: %s, Numéro: %s, Statut: %s, Etat: %s, Date Cloture: %s',
-                    $dossierResponse->getSasReference(),
-                    $dossierResponse->getSasEtat(),
-                    $dossierResponse->getId(),
-                    $dossierResponse->getNumero(),
-                    $dossierResponse->getStatut(),
-                    $dossierResponse->getEtat(),
-                    $dossierResponse->getDateCloture()
-                )
             );
         }
 
