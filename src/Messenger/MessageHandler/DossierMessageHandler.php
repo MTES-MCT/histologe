@@ -5,7 +5,7 @@ namespace App\Messenger\MessageHandler;
 use App\Entity\JobEvent;
 use App\Manager\JobEventManager;
 use App\Messenger\Message\DossierMessage;
-use App\Service\EsaboraService;
+use App\Service\Esabora\EsaboraService;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 

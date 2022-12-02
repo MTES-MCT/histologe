@@ -252,7 +252,7 @@ class Partner
         return $this;
     }
 
-    public function getEsaboraAccess(): array
+    public function getEsaboraCredential(): array
     {
         return [
             $this->esaboraUrl,

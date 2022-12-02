@@ -52,7 +52,7 @@ class BackAssignmentController extends AbstractController
 
                 foreach ($partnersIdToAdd as $partnerIdToAdd) {
                     $partner = $this->partnerRepository->find($partnerIdToAdd);
-                    $affectation = $this->affectationManager->createAffectationFrom($signalement, $partner);
+                    $affectation = $this->affectationManager->createAffectationFrom($signalement, $partner, $this->getUser());
                     $this->affectationManager->persist($affectation);
                     $this->dispatchDossierEsabora($affectation);
                 }
@@ -81,7 +81,7 @@ class BackAssignmentController extends AbstractController
             && $response = $request->get('signalement-affectation-response')
         ) {
             $status = isset($response['accept']) ? Affectation::STATUS_ACCEPTED : Affectation::STATUS_REFUSED;
-            $affectation = $this->affectationManager->updateAffection($affectation, $status);
+            $affectation = $this->affectationManager->updateAffectation($affectation, $user, $status);
             $this->addFlash('success', 'Affectation mise à jour avec succès !');
             $this->dispatchAffectationAnsweredEvent($affectation, $response);
         } else {
@@ -97,7 +97,7 @@ class BackAssignmentController extends AbstractController
     ): void {
         if (isset($response['suivi'])) {
             $this->eventDispatcher->dispatch(
-                new AffectationAnsweredEvent($affectation, $response),
+                new AffectationAnsweredEvent($affectation, $this->getUser(), $response),
                 AffectationAnsweredEvent::NAME
             );
         }

@@ -2,20 +2,18 @@
 
 namespace App\Factory;
 
+use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Entity\User;
 use App\Service\Sanitizer;
-use Symfony\Component\Security\Core\Security;
 
 class SuiviFactory
 {
-    public function __construct(private Security $security)
-    {
-    }
-
-    public function createInstanceFrom(array $params = [], bool $isPublic = false): Suivi
+    public function createInstanceFrom(User $user, Signalement $signalement, array $params = [], bool $isPublic = false): Suivi
     {
         $suivi = (new Suivi())
-            ->setCreatedBy($this->security->getUser())
+            ->setCreatedBy($user)
+            ->setSignalement($signalement)
             ->setDescription($this->buildDescription($params))
             ->setIsPublic($isPublic);
 
@@ -35,6 +33,10 @@ class SuiviFactory
 
         if (isset($params['accept']) || isset($params['suivi'])) {
             return $this->buildDescriptionAnswerAffectation($params);
+        }
+
+        if (isset($params['domain']) && 'esabora' === $params['domain']) {
+            return 'Signalement <b>'.$params['description'].'</b> par '.$params['name_partner'];
         }
 
         return $description;
