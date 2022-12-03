@@ -11,10 +11,12 @@ use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
 use App\Service\Esabora\DossierResponse;
 use App\Service\Esabora\EsaboraService;
+use App\Service\NotificationService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class SynchronizeEsaboraCommandTest extends KernelTestCase
@@ -57,12 +59,16 @@ class SynchronizeEsaboraCommandTest extends KernelTestCase
             ->method('createJobEvent');
 
         $serializerMock = $this->createMock(SerializerInterface::class);
+        $notificationService = self::getContainer()->get(NotificationService::class);
+        $parameterBag = self::getContainer()->get(ParameterBagInterface::class);
 
         $command = $application->add(new SynchronizeEsaboraCommand(
             $esaboraServiceMock,
             $affectationManagerMock,
             $jobEventManagerMock,
             $serializerMock,
+            $notificationService,
+            $parameterBag,
         ));
 
         $commandTester = new CommandTester($command);

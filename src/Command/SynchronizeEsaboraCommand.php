@@ -8,11 +8,13 @@ use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
 use App\Service\Esabora\DossierResponse;
 use App\Service\Esabora\EsaboraService;
+use App\Service\NotificationService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[AsCommand(
@@ -26,6 +28,8 @@ class SynchronizeEsaboraCommand extends Command
         private AffectationManager $affectationManager,
         private JobEventManager $jobEventManager,
         private SerializerInterface $serializer,
+        private NotificationService $notificationService,
+        private ParameterBagInterface $parameterBag,
         string $name = null
     ) {
         parent::__construct($name);
@@ -38,7 +42,7 @@ class SynchronizeEsaboraCommand extends Command
         /** @var AffectationRepository $affectationRepository */
         $affectationRepository = $this->affectationManager->getRepository();
         $affectations = $affectationRepository->findAffectationSubscribedToEsabora();
-
+        $countSync = 0;
         foreach ($affectations as $affectation) {
             $message = [
                 'criterionName' => 'SAS_Référence',
@@ -62,6 +66,7 @@ class SynchronizeEsaboraCommand extends Command
                         $dossierResponse->getDateCloture()
                     )
                 );
+                ++$countSync;
             }
             $jobEvent = $this->jobEventManager->createJobEvent(
                 type: 'esabora',
@@ -73,6 +78,18 @@ class SynchronizeEsaboraCommand extends Command
                 partnerId: $affectation->getPartner()->getId()
             );
         }
+
+        $this->notificationService->send(
+            NotificationService::TYPE_CRON,
+            $this->parameterBag->get('admin_email'),
+            [
+                'url' => $this->parameterBag->get('host_url'),
+                'cron_label' => 'Synchronisation des signalements depuis Esabora',
+                'count' => $countSync,
+                'message' => $countSync > 1 ? 'signalements ont été synchronisés' : 'signalement ont été synchronisé',
+            ],
+            null
+        );
 
         return Command::SUCCESS;
     }
