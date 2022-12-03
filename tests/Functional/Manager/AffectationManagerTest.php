@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class AffectationManagerTest extends KernelTestCase
 {
+    private const REF_SIGNALEMENT = '2022-8';
     private ManagerRegistry $managerRegistry;
     private SuiviManager $suiviManager;
 
@@ -29,7 +30,9 @@ class AffectationManagerTest extends KernelTestCase
         $affectationManager = new AffectationManager($this->managerRegistry, $this->suiviManager, Affectation::class);
 
         /** @var Signalement $signalement */
-        $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(['reference' => '2022-8']);
+        $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(
+            ['reference' => self::REF_SIGNALEMENT]
+        );
 
         $countAffectationBeforeRemove = $signalement->getAffectations()->count();
         $affectationManager->removeAffectationsFrom($signalement);
@@ -44,7 +47,9 @@ class AffectationManagerTest extends KernelTestCase
         $affectationManager = new AffectationManager($this->managerRegistry, $this->suiviManager, Affectation::class);
 
         /** @var Signalement $signalement */
-        $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(['reference' => '2022-8']);
+        $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(
+            ['reference' => self::REF_SIGNALEMENT]
+        );
 
         $partnersIdToRemove[] = $signalement->getAffectations()->get(0)->getPartner()->getId();
         $partnersIdToRemove[] = $signalement->getAffectations()->get(1)->getPartner()->getId();

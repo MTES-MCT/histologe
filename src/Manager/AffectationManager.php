@@ -107,13 +107,13 @@ class AffectationManager extends Manager
                     $description = 'refusé via Esabora';
                 }
                 break;
-        }
-
-        if (EsaboraService::ESABORA_CLOSED === $esaboraStatus) {
-            if (Affectation::STATUS_CLOSED !== $affectation->getStatut()) {
-                $this->updateAffectation($affectation, $user, Affectation::STATUS_CLOSED);
-                $description = 'cloturé via Esabora';
-            }
+            default:
+                if (EsaboraService::ESABORA_CLOSED === $esaboraStatus &&
+                    Affectation::STATUS_CLOSED !== $affectation->getStatut()) {
+                    $this->updateAffectation($affectation, $user, Affectation::STATUS_CLOSED);
+                    $description = 'cloturé via Esabora';
+                }
+                break;
         }
 
         return $description;

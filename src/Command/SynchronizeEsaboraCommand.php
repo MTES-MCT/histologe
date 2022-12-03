@@ -56,7 +56,8 @@ class SynchronizeEsaboraCommand extends Command
             if (200 === $dossierResponse->getStatusCode() && null !== $dossierResponse->getSasEtat()) {
                 $this->affectationManager->synchronizeAffectationFrom($dossierResponse, $affectation);
                 $io->success(
-                    sprintf('SAS Référence: %s, SAS Etat: %s, ID: %s, Numéro: %s, Statut: %s, Etat: %s, Date Cloture: %s',
+                    sprintf(
+                        'SAS Référence: %s, SAS Etat: %s, ID: %s, Numéro: %s, Statut: %s, Etat: %s, Date Cloture: %s',
                         $dossierResponse->getSasReference(),
                         $dossierResponse->getSasEtat(),
                         $dossierResponse->getId(),
@@ -68,7 +69,7 @@ class SynchronizeEsaboraCommand extends Command
                 );
                 ++$countSync;
             }
-            $jobEvent = $this->jobEventManager->createJobEvent(
+            $this->jobEventManager->createJobEvent(
                 type: 'esabora',
                 title: 'sync_dossier',
                 message: json_encode($message, \JSON_THROW_ON_ERROR),

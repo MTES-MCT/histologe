@@ -72,10 +72,8 @@ class SynchronizeEsaboraCommandTest extends KernelTestCase
         ));
 
         $commandTester = new CommandTester($command);
-
         $commandTester->execute([]);
-
-        $output = $commandTester->getDisplay();
+        $commandTester->getDisplay();
 
         $commandTester->assertCommandIsSuccessful();
     }

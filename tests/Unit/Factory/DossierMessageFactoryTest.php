@@ -15,6 +15,8 @@ use PHPUnit\Framework\TestCase;
 
 class DossierMessageFactoryTest extends TestCase
 {
+    private const FILE = __DIR__.'/../../../src/DataFixtures/sample.png';
+
     public function testDossierMessageFactoryIsFullyCreated(): void
     {
         $faker = Factory::create('fr_FR');
@@ -22,7 +24,7 @@ class DossierMessageFactoryTest extends TestCase
         $uploadHandlerServiceMock
             ->expects($this->exactly(2))
             ->method('getTmpFilepath')
-            ->willReturn(__DIR__.'/../../../src/DataFixtures/sample.png');
+            ->willReturn(self::FILE);
 
         $criticite = (new Criticite())
             ->setCritere(
@@ -53,13 +55,13 @@ class DossierMessageFactoryTest extends TestCase
             ->setPrenomOccupant($faker->firstName())
             ->setDocuments([
                 [
-                    'file' => __DIR__.'/../../../src/DataFixtures/sample.png',
+                    'file' => self::FILE,
                     'titre' => 'Doc',
                     'date' => '02.12.2022', ],
             ])
             ->setPhotos([
                 [
-                    'file' => __DIR__.'/../../../src/DataFixtures/sample.png',
+                    'file' => self::FILE,
                     'titre' => 'Photo',
                     'date' => '02.12.2022',
                 ],

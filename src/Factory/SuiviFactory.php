@@ -9,8 +9,12 @@ use App\Service\Sanitizer;
 
 class SuiviFactory
 {
-    public function createInstanceFrom(User $user, Signalement $signalement, array $params = [], bool $isPublic = false): Suivi
-    {
+    public function createInstanceFrom(
+        User $user,
+        Signalement $signalement,
+        array $params = [],
+        bool $isPublic = false
+    ): Suivi {
         $suivi = (new Suivi())
             ->setCreatedBy($user)
             ->setSignalement($signalement)

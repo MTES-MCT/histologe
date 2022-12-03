@@ -18,13 +18,13 @@ class JobEventTest extends TestCase
             ->setResponse('{"sasReference":"00000000-0000-0000-2022-000000000008"}')
             ->setStatus(JobEvent::STATUS_SUCCESS);
 
-        $this->assertEquals($jobEvent->getId(), null);
-        $this->assertEquals($jobEvent->getPartnerId(), 1);
-        $this->assertEquals($jobEvent->getSignalementId(), 1);
-        $this->assertEquals($jobEvent->getStatus(), JobEvent::STATUS_SUCCESS);
-        $this->assertEquals($jobEvent->getType(), 'esabora');
-        $this->assertEquals($jobEvent->getTitle(), 'sync_dossier');
-        $this->assertEquals($jobEvent->getMessage(), '{"criterionName":"SAS_Référence"}');
-        $this->assertEquals($jobEvent->getResponse(), '{"sasReference":"00000000-0000-0000-2022-000000000008"}');
+        $this->assertNull($jobEvent->getId());
+        $this->assertEquals(1, $jobEvent->getPartnerId());
+        $this->assertEquals(1, $jobEvent->getSignalementId());
+        $this->assertEquals(JobEvent::STATUS_SUCCESS, $jobEvent->getStatus());
+        $this->assertEquals('esabora', $jobEvent->getType());
+        $this->assertEquals('sync_dossier', $jobEvent->getTitle());
+        $this->assertEquals('{"criterionName":"SAS_Référence"}', $jobEvent->getMessage());
+        $this->assertEquals('{"sasReference":"00000000-0000-0000-2022-000000000008"}', $jobEvent->getResponse());
     }
 }

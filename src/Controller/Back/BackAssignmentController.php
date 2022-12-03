@@ -53,7 +53,11 @@ class BackAssignmentController extends AbstractController
 
                 foreach ($partnersIdToAdd as $partnerIdToAdd) {
                     $partner = $this->partnerRepository->find($partnerIdToAdd);
-                    $affectation = $this->affectationManager->createAffectationFrom($signalement, $partner, $this->getUser());
+                    $affectation = $this->affectationManager->createAffectationFrom(
+                        $signalement,
+                        $partner,
+                        $this->getUser()
+                    );
                     $this->affectationManager->persist($affectation);
                     $this->dispatchDossierEsabora($affectation);
                 }
@@ -116,7 +120,7 @@ class BackAssignmentController extends AbstractController
             try {
                 $this->messageBus->dispatch($dossierMessage);
             } catch (\Throwable $exception) {
-                $jobEvent = $this->jobEventManager->createJobEvent(
+                $this->jobEventManager->createJobEvent(
                     type: 'esabora',
                     title: 'push_dossier',
                     message: json_encode($dossierMessage->preparePayload(), \JSON_THROW_ON_ERROR),
