@@ -87,7 +87,7 @@ class SynchronizeEsaboraCommand extends Command
                 'url' => $this->parameterBag->get('host_url'),
                 'cron_label' => 'Synchronisation des signalements depuis Esabora',
                 'count' => $countSync,
-                'message' => $countSync > 1 ? 'signalements ont été synchronisés' : 'signalement ont été synchronisé',
+                'message' => $countSync > 1 ? 'signalements ont été synchronisés' : 'signalement a été synchronisé',
             ],
             null
         );
