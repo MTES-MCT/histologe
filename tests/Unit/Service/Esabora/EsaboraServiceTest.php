@@ -9,7 +9,6 @@ use App\Manager\AffectationManager;
 use App\Messenger\Message\DossierMessage;
 use App\Service\Esabora\DossierResponse;
 use App\Service\Esabora\EsaboraService;
-use Doctrine\ORM\EntityManagerInterface;
 use Faker\Factory;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -18,10 +17,8 @@ use Symfony\Component\HttpClient\Response\MockResponse;
 
 class EsaboraServiceTest extends KernelTestCase
 {
-    private EntityManagerInterface $entityManager;
     private AffectationManager $affectationManager;
     private LoggerInterface $logger;
-    private Factory $faker;
 
     protected function setUp(): void
     {
@@ -50,7 +47,6 @@ class EsaboraServiceTest extends KernelTestCase
 
         $mockHttpClient = new MockHttpClient($mockResponse);
         $esaboraService = new EsaboraService($mockHttpClient, $this->affectationManager, $this->logger);
-        $dossierMessage = $this->getDossierMessage();
         $dossierResponse = $esaboraService->getStateDossier($this->getAffectation());
 
         $this->assertInstanceOf(DossierResponse::class, $dossierResponse);
