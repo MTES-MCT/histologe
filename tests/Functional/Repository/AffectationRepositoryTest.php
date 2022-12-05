@@ -25,10 +25,6 @@ class AffectationRepositoryTest extends KernelTestCase
         $this->assertEquals(9, \count($affectationsSubscribedToEsabora));
         /** @var Affectation $affectationSubscribedToEsabora */
         foreach ($affectationsSubscribedToEsabora as $affectationSubscribedToEsabora) {
-            $this->assertContains(
-                'http://histologe_wiremock:8080/ws/rest',
-                $affectationSubscribedToEsabora->getPartner()->getEsaboraCredential()
-            );
             $this->assertCount(2, $affectationSubscribedToEsabora->getPartner()->getEsaboraCredential());
         }
     }
