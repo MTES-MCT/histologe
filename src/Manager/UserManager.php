@@ -35,7 +35,6 @@ class UserManager extends AbstractManager
             ->setPrenom($data['prenom'])
             ->setRoles([$data['roles']])
             ->setEmail($data['email'])
-            ->setIsGenerique($data['isGenerique'])
             ->setIsMailingActive($data['isMailingActive']);
 
         return $user;

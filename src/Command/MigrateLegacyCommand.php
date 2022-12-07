@@ -228,7 +228,6 @@ class MigrateLegacyCommand extends Command
                 ->setPrenom($legacyUser['prenom'])
                 ->setStatut((int) $legacyUser['statut'])
                 ->setLastLoginAt(new \DateTimeImmutable($legacyUser['last_login_at']))
-                ->setIsGenerique((bool) $legacyUser['is_generique'])
                 ->setIsMailingActive((bool) $legacyUser['is_mailing_active']);
 
             $this->entityManager->persist($user);

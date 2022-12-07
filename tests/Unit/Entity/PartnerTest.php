@@ -26,7 +26,6 @@ class PartnerTest extends KernelTestCase
             ->setPrenom($faker->firstName())
             ->setRoles([User::ROLES['Utilisateur']])
             ->setIsMailingActive(true)
-            ->setIsGenerique(false)
             ->setPassword($faker->password());
 
         $partner = (new Partner())
@@ -45,7 +44,6 @@ class PartnerTest extends KernelTestCase
                 ->setPrenom($faker->firstName())
                 ->setRoles([User::ROLES['Utilisateur']])
                 ->setIsMailingActive(true)
-                ->setIsGenerique(false)
                 ->setPassword($faker->password(8));
             $partner->addUser($user);
         }
