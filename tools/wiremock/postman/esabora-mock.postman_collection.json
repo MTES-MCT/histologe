@@ -1,0 +1,339 @@
+{
+	"info": {
+		"_postman_id": "54f30937-5261-4643-956e-7d959341508d",
+		"name": "esabora-mock",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1569180"
+	},
+	"item": [
+		{
+			"name": "import",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "test",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"treatmentName\": \"Import HISTOLOGE\",\n    \"fieldList\": [\n        {\n            \"fieldName\": \"Référence_Histologe\",\n            \"fieldValue\": \"00000001\"\n        },\n        {\n            \"fieldName\": \"Usager_Nom\",\n            \"fieldValue\": \"Doe\"\n        },\n        {\n            \"fieldName\": \"Usager_Prénom\",\n            \"fieldValue\": \"John\"\n        },\n        {\n            \"fieldName\": \"Usager_Mail\",\n            \"fieldValue\": \"john.doe@yopmail.com\"\n        },\n        {\n            \"fieldName\": \"Usager_Téléphone\",\n            \"fieldValue\": \"0112154578\"\n        },\n        {\n            \"fieldName\": \"Addresse_Numéro\",\n            \"fieldValue\": \"15\"\n        },\n        {\n            \"fieldName\": \"Addresse_Nom_Rue\",\n            \"fieldValue\": \"rue de la république\"\n        },\n        {\n            \"fieldName\": \"Addresse_CodePostal\",\n            \"fieldValue\": \"13002\"\n        },\n        {\n            \"fieldName\": \"Addresse_Ville\",\n            \"fieldValue\": \"Marseille\"\n        },\n        {\n            \"fieldName\": \"Addesse_Etage\",\n            \"fieldValue\": \"2\"\n        },\n        {\n            \"fieldName\": \"Addresse_Latitude\",\n            \"fieldValue\": \"43.2975711\"\n        },\n        {\n            \"fieldName\": \"Addresse_Longitude\",\n            \"fieldValue\": \"5.372884\"\n        },\n        {\n            \"fieldName\": \"Dossier_Ouverture\",\n            \"fieldValue\": \"29/01/2022\"\n        },\n        {\n            \"fieldName\": \"Dossier_Commentaire\",\n            \"fieldValue\": \"Point signalés...\"\n        },\n        {\n            \"fieldName\": \"PJ_Observations\",\n            \"fieldValue\": \"Sample image\"\n        },\n        {\n            \"fieldName\": \"PJ_Documents\",\n            \"fieldDocumentUpdate\": 1,\n            \"fieldValue\": [\n                {\n                    \"documentName\": \"sample-image.png\",\n                    \"documentSize\": \"52\",\n                    \"documentContent\": \"R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==\"\n                }\n            ]\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/ws/rest/modbdd/?task=doTreatment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"ws",
+						"rest",
+						"modbdd",
+						""
+					],
+					"query": [
+						{
+							"key": "task",
+							"value": "doTreatment"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "etat_sas",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "test",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"searchName\": \"WS_ETAT_SAS\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/ws/rest/mult/?task=doSearch",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"ws",
+						"rest",
+						"mult",
+						""
+					],
+					"query": [
+						{
+							"key": "task",
+							"value": "doSearch"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "etat_dossier_sas_a_traiter",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "test",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"searchName\": \"WS_ETAT_DOSSIER_SAS\",\n    \"criterionList\": [\n        {\n            \"criterionName\": \"SAS_Référence\",\n            \"criterionValueList\": [\n                \"00000000-0000-0000-2022-000000000008\"\n            ]\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/ws/rest/mult/?task=doSearch",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"ws",
+						"rest",
+						"mult",
+						""
+					],
+					"query": [
+						{
+							"key": "task",
+							"value": "doSearch"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "etat_dossier_sas_terminé",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "test",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"searchName\": \"WS_ETAT_DOSSIER_SAS\",\n    \"criterionList\": [\n        {\n            \"criterionName\": \"SAS_Référence\",\n            \"criterionValueList\": [\n                \"00000000-0000-0000-2022-000000000010\"\n            ]\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/ws/rest/mult/?task=doSearch",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"ws",
+						"rest",
+						"mult",
+						""
+					],
+					"query": [
+						{
+							"key": "task",
+							"value": "doSearch"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "etat_dossier_sas_importe",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "test",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"searchName\": \"WS_ETAT_DOSSIER_SAS\",\n    \"criterionList\": [\n        {\n            \"criterionName\": \"SAS_Référence\",\n            \"criterionValueList\": [\n                \"00000000-0000-0000-2022-000000000001\"\n            ]\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/ws/rest/mult/?task=doSearch",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"ws",
+						"rest",
+						"mult",
+						""
+					],
+					"query": [
+						{
+							"key": "task",
+							"value": "doSearch"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "etat_dossier_sas_non_importe",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "test",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"searchName\": \"WS_ETAT_DOSSIER_SAS\",\n    \"criterionList\": [\n        {\n            \"criterionName\": \"SAS_Référence\",\n            \"criterionValueList\": [\n                \"00000000-0000-0000-2022-000000000002\"\n            ]\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/ws/rest/mult/?task=doSearch",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"ws",
+						"rest",
+						"mult",
+						""
+					],
+					"query": [
+						{
+							"key": "task",
+							"value": "doSearch"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "etat_dossier_sas_non_trouve",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "test",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"searchName\": \"WS_ETAT_DOSSIER_SAS\",\n    \"criterionList\": [\n        {\n            \"criterionName\": \"SAS_Référence\",\n            \"criterionValueList\": [\n                \"00000000-0000-0000-2022-000000000003\"\n            ]\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/ws/rest/mult/?task=doSearch",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"ws",
+						"rest",
+						"mult",
+						""
+					],
+					"query": [
+						{
+							"key": "task",
+							"value": "doSearch"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

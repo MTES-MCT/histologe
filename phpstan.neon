@@ -5,3 +5,4 @@ parameters:
 		- tests
 	excludePaths:
 		- .php-cs-fixer.dist.php
+		- tools

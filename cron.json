@@ -5,6 +5,9 @@
     },
     {
       "command": "0 0 * * 0 php bin/console app:clear-notification"
+    },
+    {
+      "command": "0 8,18 * * * php bin/console app:sync-esabora"
     }
   ]
 }

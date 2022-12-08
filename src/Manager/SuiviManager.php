@@ -2,7 +2,9 @@
 
 namespace App\Manager;
 
+use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Entity\User;
 use App\Factory\SuiviFactory;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,8 +19,8 @@ class SuiviManager extends Manager
         $this->entityName = $entityName;
     }
 
-    public function createSuivi(array $params, bool $isPublic = false)
+    public function createSuivi(User $user, Signalement $signalement, array $params, bool $isPublic = false): Suivi
     {
-        return $this->suiviFactory->createInstanceFrom($params, $isPublic);
+        return $this->suiviFactory->createInstanceFrom($user, $signalement, $params, $isPublic);
     }
 }

@@ -5,43 +5,49 @@ namespace App\Manager;
 use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Entity\User;
+use App\Service\Esabora\DossierResponse;
+use App\Service\Esabora\EsaboraService;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Security\Core\Security;
 
 class AffectationManager extends Manager
 {
     public function __construct(
-        private Security $security,
         protected ManagerRegistry $managerRegistry,
-        string $entityName = ''
+        protected SuiviManager $suiviManager,
+        string $entityName = Affectation::class
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->entityName = $entityName;
     }
 
-    public function updateAffection(Affectation $affectation, string $status): Affectation
+    public function updateAffectation(Affectation $affectation, User $user, string $status): Affectation
     {
-        $affectation->setStatut($status);
-        $affectation->setAnsweredAt(new \DateTimeImmutable());
-        $affectation->setAnsweredBy($this->security->getUser());
+        $affectation
+            ->setStatut($status)
+            ->setAnsweredBy($user)
+            ->setAnsweredAt(new \DateTimeImmutable());
 
         $this->save($affectation);
 
         return $affectation;
     }
 
-    public function createAffectationFrom(Signalement $signalement, Partner $partner): Affectation
+    public function createAffectationFrom(Signalement $signalement, Partner $partner, User $user): Affectation
     {
         return (new Affectation())
             ->setSignalement($signalement)
             ->setPartner($partner)
-            ->setAffectedBy($this->security->getUser())
+            ->setAffectedBy($user)
             ->setTerritory($partner->getTerritory());
     }
 
-    public function removeAffectationsFrom(Signalement $signalement, array $partnersIdToRemove = []): void
-    {
-        if (empty($partnersIdToRemove)) {
+    public function removeAffectationsFrom(
+        Signalement $signalement,
+        array $postedPartner = [],
+        array $partnersIdToRemove = []
+    ): void {
+        if (empty($postedPartner) && empty($partnersIdToRemove)) {
             $signalement->getAffectations()->filter(function (Affectation $affectation) {
                 $this->remove($affectation);
             });
@@ -56,5 +62,60 @@ class AffectationManager extends Manager
                     });
             }
         }
+    }
+
+    public function synchronizeAffectationFrom(DossierResponse $dossierResponse, Affectation $affectation): void
+    {
+        $user = $affectation->getPartner()->getUsers()->first();
+        $signalement = $affectation->getSignalement();
+
+        $description = $this->updateStatusFor($affectation, $user, $dossierResponse->getSasEtat());
+        if (!empty($description)) {
+            $suivi = $this->suiviManager->createSuivi(
+                $user,
+                $signalement, [
+                    'domain' => 'esabora',
+                    'action' => 'synchronize',
+                    'description' => $description,
+                    'name_partner' => $affectation->getPartner()->getNom(),
+                ],
+            );
+            $this->suiviManager->save($suivi);
+        }
+    }
+
+    public function updateStatusFor(Affectation $affectation, User $user, string $esaboraStatus): string
+    {
+        $description = '';
+        $currentStatus = $affectation->getStatut();
+        switch ($esaboraStatus) {
+            case EsaboraService::ESABORA_WAIT:
+                if (Affectation::STATUS_WAIT !== $currentStatus) {
+                    $this->updateAffectation($affectation, $user, Affectation::STATUS_WAIT);
+                    $description = 'remis en attente via Esabora';
+                }
+                break;
+            case EsaboraService::ESABORA_ACCEPTED:
+                if (Affectation::STATUS_ACCEPTED !== $currentStatus) {
+                    $this->updateAffectation($affectation, $user, Affectation::STATUS_ACCEPTED);
+                    $description = 'accepté via Esabora';
+                }
+                break;
+            case EsaboraService::ESABORA_REFUSED:
+                if (Affectation::STATUS_REFUSED !== $currentStatus) {
+                    $this->updateAffectation($affectation, $user, Affectation::STATUS_REFUSED);
+                    $description = 'refusé via Esabora';
+                }
+                break;
+            default:
+                if (EsaboraService::ESABORA_CLOSED === $esaboraStatus &&
+                    Affectation::STATUS_CLOSED !== $affectation->getStatut()) {
+                    $this->updateAffectation($affectation, $user, Affectation::STATUS_CLOSED);
+                    $description = 'cloturé via Esabora';
+                }
+                break;
+        }
+
+        return $description;
     }
 }

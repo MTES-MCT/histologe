@@ -1,5 +1,6 @@
 signalements:
   -
+    uuid: "00000000-0000-0000-2022-000000000001"
     details: "Absence d’isolation toiture<br><br>Courrier adressé non pas à la mairie mais au bailleur social"
     is_proprio_averti: 1
     nb_adultes: "2"
@@ -39,6 +40,7 @@ signalements:
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
       - "le sol ou la base des murs est très humide."
   -
+    uuid: "00000000-0000-0000-2022-000000000002"
     details: "Première personne à s’identifier (pour rappel l’A.S. nous a donner le signalement de ce lotissement ou plusieurs désordres mais locataires non volontaires pour procédure)<br><br>Demande à la mairie, par mail, de visiter les logements de ce lotissement (tous concernés)<br><br>Le 11/09/20 Mme FUCHS est dans l’attente d’un nouveau logement (DALO) la commission doit se tenir dans le mois. Aucun travaux n’a été réalisé dans son logement"
     is_proprio_averti: 1
     nb_adultes: "3"
@@ -81,6 +83,7 @@ signalements:
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
       - "le sol ou la base des murs est très humide."
   -
+    uuid: "00000000-0000-0000-2022-000000000003"
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     nb_adultes: "2"
@@ -121,6 +124,7 @@ signalements:
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
       - "le sol ou la base des murs est très humide."
   -
+    uuid: "00000000-0000-0000-2022-000000000004"
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     nb_adultes: "2"
@@ -161,6 +165,7 @@ signalements:
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
       - "le sol ou la base des murs est très humide."
   -
+    uuid: "00000000-0000-0000-2022-000000000005"
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     nb_adultes: "2"
@@ -201,6 +206,7 @@ signalements:
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
       - "le sol ou la base des murs est très humide."
   -
+    uuid: "00000000-0000-0000-2022-000000000006"
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     nb_adultes: "2"
@@ -241,6 +247,7 @@ signalements:
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
       - "le sol ou la base des murs est très humide."
   -
+    uuid: "00000000-0000-0000-2022-000000000007"
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     nb_adultes: "2"
@@ -281,6 +288,7 @@ signalements:
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
       - "le sol ou la base des murs est très humide."
   -
+    uuid: "00000000-0000-0000-2022-000000000008"
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     nb_adultes: "2"
@@ -321,6 +329,7 @@ signalements:
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
       - "le sol ou la base des murs est très humide."
   -
+    uuid: "00000000-0000-0000-2022-000000000009"
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     nb_adultes: "2"
@@ -361,6 +370,7 @@ signalements:
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
       - "le sol ou la base des murs est très humide."
   -
+    uuid: "00000000-0000-0000-2022-000000000010"
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     nb_adultes: "2"
@@ -401,6 +411,7 @@ signalements:
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
       - "le sol ou la base des murs est très humide."
   -
+    uuid: "00000000-0000-0000-2022-000000000011"
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     nb_adultes: "2"
@@ -441,6 +452,7 @@ signalements:
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
       - "le sol ou la base des murs est très humide."
   -
+    uuid: "00000000-0000-0000-2022-000000000012"
     details: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
     is_proprio_averti: 1
     nb_adultes: "3"
@@ -483,6 +495,7 @@ signalements:
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
       - "le sol ou la base des murs est très humide."
   -
+    uuid: "00000000-0000-0000-2022-000000000013"
     details: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
     is_proprio_averti: 1
     nb_adultes: "3"
@@ -525,6 +538,7 @@ signalements:
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
       - "le sol ou la base des murs est très humide."
   -
+    uuid: "00000000-0000-0000-2022-000000000014"
     details: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
     is_proprio_averti: 1
     nb_adultes: "3"

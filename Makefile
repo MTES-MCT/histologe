@@ -8,12 +8,13 @@ PATH_DUMP_SQL = data/dump.sql
 PHPUNIT       = ./vendor/bin/phpunit
 SYMFONY       = php bin/console
 NPX           = npx
+NPM           = npm
 
 help:
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
 
 build: ## Install local environement
-	@bash -l -c 'make .check .env .destroy .setup run .sleep composer create-db'
+	@bash -l -c 'make .check .env .destroy .setup run .sleep composer create-db npm-install npm-build mock'
 
 run: ## Start containers
 	@echo -e '\e[1;32mStart containers\032'
@@ -44,6 +45,7 @@ composer: ## Install composer dependencies
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer install --dev --no-interaction --optimize-autoloader
 	@echo "\033[33mInstall tools dependencies ...\033[0m"
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer install --working-dir=tools/php-cs-fixer --dev --no-interaction --optimize-autoloader
+	@$(DOCKER_COMP) exec -it histologe_phpfpm composer install --working-dir=tools/wiremock --dev --no-interaction --optimize-autoloader
 
 clear-cache: ## Clear cache prod: make-clear-cache env=[dev|prod|test]
 	@$(DOCKER_COMP) exec -it histologe_phpfpm $(SYMFONY) c:c --env=$(env)
@@ -99,6 +101,16 @@ cs-check: ## Check source code with PHP-CS-Fixer
 
 cs-fix: ## Fix source code with PHP-CS-Fixer
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer cs-fix
+
+mock: ## Start Mock server
+	@${DOCKER_COMP} start histologe_wiremock && sleep 5
+	@${DOCKER_COMP} exec -it histologe_phpfpm sh -c "cd tools/wiremock/src/Mock && php AppMock.php"
+
+npm-install: ## Install the dependencies in the local node_modules folder
+	@$(DOCKER_COMP) exec -it histologe_phpfpm $(NPM) install
+
+npm-build: ## Build the dependencies in the local node_modules folder
+	@$(DOCKER_COMP) exec -it histologe_phpfpm $(NPM) run build
 
 .env:
 	@bash -l -c 'cp .env.sample .env'

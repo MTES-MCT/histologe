@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Factory;
 
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Factory\SuiviFactory;
@@ -16,15 +17,17 @@ class SuiviFactoryTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        $kernel = self::bootKernel();
+        self::bootKernel();
         $this->security = $this->createMock(Security::class);
         $this->security->expects($this->once())->method('getUser')->willReturn(new User());
     }
 
     public function testCreateSuiviInstance(): void
     {
-        $suiviFactory = new SuiviFactory($this->security);
-        $suivi = $suiviFactory->createInstanceFrom();
+        $suiviFactory = new SuiviFactory();
+        $signalement = $this->createMock(Signalement::class);
+
+        $suivi = $suiviFactory->createInstanceFrom($this->security->getUser(), $signalement, []);
 
         $this->assertInstanceOf(Suivi::class, $suivi);
         $this->assertEquals('', $suivi->getDescription());
@@ -34,13 +37,18 @@ class SuiviFactoryTest extends KernelTestCase
 
     public function testCreateSuiviInstanceWithClosedSignalementParameters(): void
     {
-        $suiviFactory = new SuiviFactory($this->security);
-        $suivi = $suiviFactory->createInstanceFrom([
-            'motif_suivi' => 'Lorem ipsum suivi sit amet, consectetur adipiscing elit.',
-            'motif_cloture' => MotifCloture::LABEL['INSALUBRITE'],
-            'subject' => 'tous les partenaires',
-            'closed_for' => 'all',
-        ], true);
+        $suiviFactory = new SuiviFactory();
+        $signalement = $this->createMock(Signalement::class);
+        $suivi = $suiviFactory->createInstanceFrom(
+            $this->security->getUser(),
+            $signalement, [
+                'motif_suivi' => 'Lorem ipsum suivi sit amet, consectetur adipiscing elit.',
+                'motif_cloture' => MotifCloture::LABEL['INSALUBRITE'],
+                'subject' => 'tous les partenaires',
+                'closed_for' => 'all',
+            ],
+            true
+        );
 
         $this->assertInstanceOf(Suivi::class, $suivi);
         $this->assertTrue($suivi->getIsPublic());

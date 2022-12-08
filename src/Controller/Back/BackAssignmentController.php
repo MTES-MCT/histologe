@@ -3,55 +3,69 @@
 namespace App\Controller\Back;
 
 use App\Entity\Affectation;
+use App\Entity\JobEvent;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\AffectationAnsweredEvent;
+use App\Factory\DossierMessageFactory;
 use App\Manager\AffectationManager;
+use App\Manager\JobEventManager;
 use App\Manager\SignalementManager;
 use App\Repository\PartnerRepository;
-use App\Service\EsaboraService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/bo/s')]
 class BackAssignmentController extends AbstractController
 {
+    public function __construct(
+        private SignalementManager $signalementManager,
+        private AffectationManager $affectationManager,
+        private PartnerRepository $partnerRepository,
+        private DossierMessageFactory $dossierMessageFactory,
+        private MessageBusInterface $messageBus,
+        private EventDispatcherInterface $eventDispatcher,
+        private JobEventManager $jobEventManager,
+        private SerializerInterface $serializer
+    ) {
+    }
+
     #[Route('/{uuid}/affectation/toggle', name: 'back_signalement_toggle_affectation')]
     public function toggleAffectationSignalement(
-        Signalement $signalement,
-        SignalementManager $signalementManager,
-        AffectationManager $affectationManager,
-        EsaboraService $esaboraService,
         Request $request,
-        PartnerRepository $partnerRepository,
+        Signalement $signalement,
     ): RedirectResponse|JsonResponse {
         $this->denyAccessUnlessGranted('ASSIGN_TOGGLE', $signalement);
         if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), $request->get('_token'))) {
             $data = $request->get('signalement-affectation');
             if (isset($data['partners'])) {
                 $postedPartner = $data['partners'];
-                $alreadyAffectedPartner = $signalementManager->findPartners($signalement);
+                $alreadyAffectedPartner = $this->signalementManager->findPartners($signalement);
                 $partnersIdToAdd = array_diff($postedPartner, $alreadyAffectedPartner);
                 $partnersIdToRemove = array_diff($alreadyAffectedPartner, $postedPartner);
 
                 foreach ($partnersIdToAdd as $partnerIdToAdd) {
-                    $partner = $partnerRepository->find($partnerIdToAdd);
-                    $affectation = $affectationManager->createAffectationFrom($signalement, $partner);
-                    $affectationManager->persist($affectation);
-                    if ($partner->getEsaboraToken() && $partner->getEsaboraUrl()) {
-                        $esaboraService->post($affectation);
-                    }
+                    $partner = $this->partnerRepository->find($partnerIdToAdd);
+                    $affectation = $this->affectationManager->createAffectationFrom(
+                        $signalement,
+                        $partner,
+                        $this->getUser()
+                    );
+                    $this->affectationManager->persist($affectation);
+                    $this->dispatchDossierEsabora($affectation);
                 }
-                $affectationManager->removeAffectationsFrom($signalement, $partnersIdToRemove);
+                $this->affectationManager->removeAffectationsFrom($signalement, $postedPartner, $partnersIdToRemove);
             } else {
-                $affectationManager->removeAffectationsFrom($signalement);
+                $this->affectationManager->removeAffectationsFrom($signalement);
             }
-            $affectationManager->flush();
+            $this->affectationManager->flush();
             $this->addFlash('success', 'Les affectations ont bien été effectuées.');
 
             return $this->json(['status' => 'success']);
@@ -66,17 +80,15 @@ class BackAssignmentController extends AbstractController
         Affectation $affectation,
         User $user,
         Request $request,
-        AffectationManager $affectationManager,
-        EventDispatcherInterface $eventDispatcher,
     ): Response {
         $this->denyAccessUnlessGranted('ASSIGN_ANSWER', $affectation);
         if ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), $request->get('_token'))
             && $response = $request->get('signalement-affectation-response')
         ) {
             $status = isset($response['accept']) ? Affectation::STATUS_ACCEPTED : Affectation::STATUS_REFUSED;
-            $affectation = $affectationManager->updateAffection($affectation, $status);
+            $affectation = $this->affectationManager->updateAffectation($affectation, $user, $status);
             $this->addFlash('success', 'Affectation mise à jour avec succès !');
-            $this->dispatchAffectationAnsweredEvent($eventDispatcher, $affectation, $response);
+            $this->dispatchAffectationAnsweredEvent($affectation, $response);
         } else {
             $this->addFlash('error', "Une erreur est survenu lors de l'affectation");
         }
@@ -85,15 +97,39 @@ class BackAssignmentController extends AbstractController
     }
 
     private function dispatchAffectationAnsweredEvent(
-        EventDispatcherInterface $eventDispatcher,
         Affectation $affectation,
         array $response
     ): void {
         if (isset($response['suivi'])) {
-            $eventDispatcher->dispatch(
-                new AffectationAnsweredEvent($affectation, $response),
+            $this->eventDispatcher->dispatch(
+                new AffectationAnsweredEvent($affectation, $this->getUser(), $response),
                 AffectationAnsweredEvent::NAME
             );
+        }
+    }
+
+    /** @todo: Enable Scalingo Worker for Messenger
+     * Task handled as sync way, check how scalingo manage messenger to manage handler as async task
+     * https://doc.scalingo.com/languages/php/symfony#symfony-messenger
+     */
+    private function dispatchDossierEsabora(Affectation $affectation): void
+    {
+        $partner = $affectation->getPartner();
+        if ($partner->getEsaboraToken() && $partner->getEsaboraUrl()) {
+            $dossierMessage = $this->dossierMessageFactory->createInstance($affectation);
+            try {
+                $this->messageBus->dispatch($dossierMessage);
+            } catch (\Throwable $exception) {
+                $this->jobEventManager->createJobEvent(
+                    type: 'esabora',
+                    title: 'push_dossier',
+                    message: json_encode($dossierMessage->preparePayload(), \JSON_THROW_ON_ERROR),
+                    response: $exception->getMessage(),
+                    status: JobEvent::STATUS_FAILED,
+                    signalementId: $affectation->getSignalement()->getId(),
+                    partnerId: $affectation->getPartner()->getId()
+                );
+            }
         }
     }
 }

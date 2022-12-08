@@ -1,0 +1,20 @@
+{
+  "searchId": "164338",
+  "nbResults": 0,
+  "columnList": [
+    "SAS_Référence",
+    "SAS_Etat",
+    "Doss_ID",
+    "Doss_Numéro",
+    "Doss_Statut_Abrégé",
+    "Doss_Statut",
+    "Doss_Etat",
+    "Doss_Cloture",
+    "Doss_Type",
+    "Doss_Problématique"
+  ],
+  "keyList": [
+    "i1.iaff_id"
+  ],
+  "rowList": []
+}

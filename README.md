@@ -59,18 +59,20 @@ Description| Lien
 Plateforme histologe| [localhost:8080](http://localhost:8080)
 phpMyAdmin | [localhost:8081](http://localhost:8081)
 MailCatcher  | [localhost:1080](http://localhost:1080)
+Wiremock  | [localhost:1082](http://localhost:1082)
 
 ### Hôtes des environnements et ports
 
 Merci de vérifier que ces ports ne soient pas utilisés sur votre poste local
 
-Service|Hostname|Port number
--------|--------|-----------
-Nginx|  histologe_nginx| **8080**
-PHP-FPM| histologe_phpfpm|**9000**
-MySQL| histologe_mysql|**3307**
-PhpMyAdmin |   histologe_phpmyadmin | **8081**
-Mailcatcher|   histologe_mailer| **1025** et **1080**
+Service| Hostname             |Port number
+-------|----------------------|-----------
+Nginx| histologe_nginx      | **8080**
+PHP-FPM| histologe_phpfpm     |**9000**
+MySQL| histologe_mysql      |**3307**
+PhpMyAdmin | histologe_phpmyadmin | **8081**
+Mailcatcher| histologe_mailer     | **1025** et **1080**
+Wiremock| histologe_wiremock   | **8082**
 
 ## Installation
 

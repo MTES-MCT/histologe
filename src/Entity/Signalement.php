@@ -1576,6 +1576,9 @@ class Signalement
         return $this;
     }
 
+    /**
+     * @return Collection|Affectation[]
+     */
     public function getAffectations(): Collection
     {
         return $this->affectations;

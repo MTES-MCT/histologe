@@ -119,4 +119,16 @@ class AffectationRepository extends ServiceEntityRepository
         return $qb->getQuery()
             ->getResult();
     }
+
+    /**
+     * @return Affectation[]
+     */
+    public function findAffectationSubscribedToEsabora(): array
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb = $qb->innerJoin('a.partner', 'p')
+            ->where('p.esaboraUrl IS NOT NULL AND p.esaboraToken IS NOT NULL');
+
+        return $qb->getQuery()->getResult();
+    }
 }

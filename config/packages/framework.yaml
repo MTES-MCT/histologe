@@ -11,6 +11,9 @@ framework:
         cookie_secure: auto
         cookie_samesite: lax
         storage_factory_id: session.storage.factory.native
+    http_client:
+        default_options:
+            max_redirects: 10
 
     #esi: true
     #fragments: true
