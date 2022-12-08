@@ -91,9 +91,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $newsActivitiesSinceLastLogin;
 
     #[ORM\Column(type: 'boolean')]
-    private $isGenerique;
-
-    #[ORM\Column(type: 'boolean')]
     private $isMailingActive;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Notification::class)]
@@ -297,18 +294,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastLoginAt(?DateTimeImmutable $lastLoginAt): self
     {
         $this->lastLoginAt = $lastLoginAt;
-
-        return $this;
-    }
-
-    public function getIsGenerique(): ?bool
-    {
-        return $this->isGenerique;
-    }
-
-    public function setIsGenerique(bool $isGenerique): self
-    {
-        $this->isGenerique = $isGenerique;
 
         return $this;
     }

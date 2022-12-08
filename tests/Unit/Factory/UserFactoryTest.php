@@ -52,7 +52,6 @@ class UserFactoryTest extends KernelTestCase
         $this->assertInstanceOf(User::class, $user);
 
         $this->assertEquals($user->getIsMailingActive(), true);
-        $this->assertEquals($user->getIsGenerique(), false);
         $this->assertEquals($user->getStatut(), User::STATUS_INACTIVE);
     }
 
@@ -76,7 +75,6 @@ class UserFactoryTest extends KernelTestCase
         $this->assertInstanceOf(User::class, $user);
 
         $this->assertEquals($user->getIsMailingActive(), true);
-        $this->assertEquals($user->getIsGenerique(), false);
         $this->assertEquals($user->getStatut(), User::STATUS_INACTIVE);
         $this->assertEquals($user->getTerritory(), null);
         $this->assertEquals($user->getPartner(), null);
@@ -102,7 +100,6 @@ class UserFactoryTest extends KernelTestCase
         $this->assertInstanceOf(User::class, $user);
 
         $this->assertEquals($user->getIsMailingActive(), true);
-        $this->assertEquals($user->getIsGenerique(), false);
         $this->assertEquals($user->getStatut(), User::STATUS_INACTIVE);
         $this->assertEquals($user->getTerritory(), $partner->getTerritory());
         $this->assertEquals($user->getPartner(), $partner);

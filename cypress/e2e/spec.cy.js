@@ -140,3 +140,24 @@ describe('Test front statistics page', () => {
     cy.get('#filter-territoires').select('1')
   })
 })
+
+describe('Test submit partner with user', () => {
+  it('Displays partner page', () => {
+    cy.visit('http://localhost:8080/bo/partner/new')
+    disableSmoothScroll()
+    cy.get('#partner_nom').type('Partner')
+    cy.get('#partner_isCommune').select('0')
+    cy.get('#partner_email').type('partner@yopmail.com')
+    cy.get('#partner_add_user').click()
+    cy.get('#partner_users_nom_new0').type('Doe')
+    cy.get('#partner_users_prenom_new0').type('John')
+    cy.get('#partner_users_email_new0').type('john.doe@yopmail.com')
+    cy.get('#partner_users_roles_new0').select('ROLE_USER_PARTNER')
+    cy.get('#partner_users_is_mailing_active_new0').select('1')
+    cy.get('#partner_territory').select('1')
+    cy.get('#submit_btn_partner').click()
+    cy.get('.fr-alert.fr-alert--success.fr-alert--sm').should('be.visible')
+  })
+})
+
+

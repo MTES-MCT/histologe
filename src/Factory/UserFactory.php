@@ -32,7 +32,6 @@ class UserFactory
             ->setPrenom($firstname)
             ->setNom($lastname)
             ->setEmail($email)
-            ->setIsGenerique(false)
             ->setStatut(User::STATUS_INACTIVE)
             ->setIsMailingActive($isMailActive)
             ->setPassword($this->tokenGenerator->generateToken())
