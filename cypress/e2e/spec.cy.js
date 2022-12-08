@@ -142,7 +142,7 @@ describe('Test front statistics page', () => {
 })
 
 describe('Test submit partner with user', () => {
-  it('Displays the page of statistiques', () => {
+  it('Displays partner page', () => {
     cy.visit('http://localhost:8080/bo/partner/new')
     disableSmoothScroll()
     cy.get('#partner_nom').type('Partner')
