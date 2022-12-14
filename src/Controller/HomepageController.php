@@ -70,7 +70,7 @@ class HomepageController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $notificationService->send(
                 NotificationService::TYPE_CONTACT_FORM,
-                $this->getParameter('notifications_email'),
+                $this->getParameter('contact_email'),
                 [
                     'nom' => $form->get('nom')->getData(),
                     'mail' => $form->get('email')->getData(),

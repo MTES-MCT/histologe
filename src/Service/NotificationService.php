@@ -7,6 +7,7 @@ use App\Entity\Suivi;
 use App\Entity\Territory;
 use Exception;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
@@ -33,9 +34,7 @@ class NotificationService
     public const TYPE_MIGRATION_PASSWORD = 13;
     public const TYPE_CRON = 100;
 
-    private MailerInterface $mailer;
-
-    public function __construct(MailerInterface $mailer)
+    public function __construct(private MailerInterface $mailer, private ParameterBagInterface $parameterBag)
     {
         $this->mailer = $mailer;
     }
@@ -49,7 +48,12 @@ class NotificationService
         foreach ($emails as $email) {
             $email && $message->addTo($email);
         }
-        $message->from(new Address('histologe-'.str_replace(' ', '-', mb_strtolower($territoryName)).'@histologe.fr', 'HISTOLOGE - '.mb_strtoupper($territoryName)));
+        $message->from(
+            new Address(
+                $this->parameterBag->get('notifications_email'),
+                'HISTOLOGE - '.mb_strtoupper($territoryName)
+            )
+        );
         if (!empty($params['attach'])) {
             $message->attachFromPath($params['attach']);
         }

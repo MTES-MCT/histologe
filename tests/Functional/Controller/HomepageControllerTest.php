@@ -36,7 +36,10 @@ class HomepageControllerTest extends WebTestCase
             ]
         );
 
-        $client->enableProfiler();
         $this->assertEmailCount(1);
+
+        $email = $this->getMailerMessage();
+        $this->assertEmailHeaderSame($email, 'From', 'HISTOLOGE - ALERTE <notifications@histologe.beta.gouv.fr>');
+        $this->assertEmailHeaderSame($email, 'To', 'contact@histologe.beta.gouv.fr');
     }
 }
