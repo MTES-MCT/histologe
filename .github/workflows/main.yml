@@ -105,7 +105,8 @@ jobs:
           ./vendor/bin/phpunit --stop-on-failure --testdox -d memory_limit=-1
         env:
           DATABASE_URL: mysql://root:histologe@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/histologe_db
-          ADMIN_EMAIL: notifications@histologe.fr
-          NOTIFICATIONS_EMAIL: notifications@histologe.fr
+          ADMIN_EMAIL: support@histologe.beta.gouv.fr
+          NOTIFICATIONS_EMAIL: notifications@histologe.beta.gouv.fr
+          CONTACT_EMAIL: contact@histologe.beta.gouv.fr
           HISTOLOGE_URL: http://localhost:8080
           SERVER_NAME: localhost:8080
