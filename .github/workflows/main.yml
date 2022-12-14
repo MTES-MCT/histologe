@@ -110,3 +110,4 @@ jobs:
           CONTACT_EMAIL: contact@histologe.beta.gouv.fr
           HISTOLOGE_URL: http://localhost:8080
           SERVER_NAME: localhost:8080
+          MAILER_DSN: ${{ secrets.MAILER_DSN_CI }}
