@@ -36,6 +36,7 @@ class HomepageControllerTest extends WebTestCase
             ]
         );
 
+        $client->enableProfiler();
         $this->assertEmailCount(1);
 
         $email = $this->getMailerMessage();
