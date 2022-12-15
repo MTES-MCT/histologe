@@ -12,6 +12,7 @@ parameters:
     mail_attachment_dir: '%kernel.project_dir%/templates/emails/attachment/'
     admin_email: '%env(resolve:ADMIN_EMAIL)%'
     notifications_email: '%env(resolve:NOTIFICATIONS_EMAIL)%'
+    contact_email: '%env(resolve:CONTACT_EMAIL)%'
     host_url: '%env(resolve:HISTOLOGE_URL)%'
     token_lifetime: '1 day'
 services:
