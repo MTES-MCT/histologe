@@ -5,6 +5,8 @@ namespace App\Manager;
 use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Entity\Territory;
+use App\Factory\SignalementFactory;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Security;
 
@@ -12,9 +14,25 @@ class SignalementManager extends AbstractManager
 {
     public function __construct(protected ManagerRegistry $managerRegistry,
                                 private Security $security,
+                                private SignalementFactory $signalementFactory,
                                 string $entityName = Signalement::class
     ) {
         parent::__construct($managerRegistry, $entityName);
+    }
+
+    public function createOrGet(Territory $territory, array $data): ?Signalement
+    {
+        /** @var Signalement|null $signalement */
+        $signalement = $this->getRepository()->findOneBy([
+            'territory' => $territory,
+            'reference' => $data['reference'],
+        ]);
+
+        if ($signalement instanceof Signalement) {
+            return $signalement;
+        }
+
+        return $this->signalementFactory->createInstanceFrom($territory, $data);
     }
 
     public function findAllPartners(Signalement $signalement): array
