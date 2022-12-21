@@ -89,36 +89,8 @@ class ImportSignalementCommand extends Command
                 $signalement = $this->signalementManager->createOrGet($this->territory, $dataMapped);
                 $signalement->setIsImported(true);
 
-                if (isset($dataMapped['tags']) && !empty($dataMapped['tags'])) {
-                    $tag = $this->tagManager->createOrGet($this->territory, $dataMapped['tags']);
-                    $signalement->addTag($tag);
-                }
-
-                if (isset($dataMapped['partners']) && !empty($dataMapped['partners'])) {
-                    $partnersName = explode(',', $dataMapped['partners']);
-                    foreach ($partnersName as $partnerName) {
-                        $partner = $this->partnerRepository->findOneBy([
-                            'nom' => $partnerName,
-                            'territory' => $this->territory,
-                        ]);
-
-                        if (null !== $partner) {
-                            $affectation = $this->affectationManager->createAffectationFrom(
-                                $signalement,
-                                $partner,
-                                $partner?->getUsers()?->first()
-                            );
-
-                            $affectation
-                                ->setStatut(Affectation::STATUS_CLOSED)
-                                ->setAnsweredAt(new \DateTimeImmutable())
-                                ->setMotifCloture($dataMapped['motifCloture']);
-
-                            $this->affectationManager->persist($affectation);
-                        }
-                    }
-                }
-
+                $signalement = $this->loadTags($signalement, $dataMapped);
+                $this->loadAffectation($signalement, $dataMapped);
                 foreach (self::SITUATIONS as $situation) {
                     $signalement = $this->loadSignalementSituation($signalement, $dataMapped, $situation);
                 }
@@ -134,13 +106,51 @@ class ImportSignalementCommand extends Command
         return Command::SUCCESS;
     }
 
+    private function loadTags(Signalement $signalement, array $dataMapped): Signalement
+    {
+        if (isset($dataMapped['tags']) && !empty($dataMapped['tags'])) {
+            $tag = $this->tagManager->createOrGet($this->territory, $dataMapped['tags']);
+            $signalement->addTag($tag);
+        }
+
+        return $signalement;
+    }
+
+    private function loadAffectation(Signalement $signalement, array $dataMapped): void
+    {
+        if (isset($dataMapped['partners']) && !empty($dataMapped['partners'])) {
+            $partnersName = explode(',', $dataMapped['partners']);
+            foreach ($partnersName as $partnerName) {
+                $partner = $this->partnerRepository->findOneBy([
+                    'nom' => $partnerName,
+                    'territory' => $this->territory,
+                ]);
+
+                if (null !== $partner) {
+                    $affectation = $this->affectationManager->createAffectationFrom(
+                        $signalement,
+                        $partner,
+                        $partner?->getUsers()?->first()
+                    );
+
+                    $affectation
+                        ->setStatut(Affectation::STATUS_CLOSED)
+                        ->setAnsweredAt(new \DateTimeImmutable())
+                        ->setMotifCloture($dataMapped['motifCloture']);
+
+                    $this->affectationManager->persist($affectation);
+                }
+            }
+        }
+    }
+
     private function loadSignalementSituation(
         Signalement $signalement,
         array $dataMapped,
         string $situation
     ): Signalement {
         if (isset($dataMapped[$situation]) && !empty($dataMapped[$situation])) {
-            foreach ($dataMapped[$situation]  as $critereLabel => $etat) {
+            foreach ($dataMapped[$situation] as $critereLabel => $etat) {
                 /** @var Critere $critere */
                 $critere = $this->critereRepository->findByLabel(trim($critereLabel));
                 /** @var Criticite $criticite */
