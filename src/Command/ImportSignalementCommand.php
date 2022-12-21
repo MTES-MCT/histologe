@@ -7,17 +7,16 @@ use App\Entity\Critere;
 use App\Entity\Criticite;
 use App\Entity\Signalement;
 use App\Entity\Territory;
-use App\Factory\PartnerFactory;
+use App\EventListener\ActivityListener;
 use App\Manager\AffectationManager;
-use App\Manager\PartnerManager;
 use App\Manager\SignalementManager;
 use App\Manager\TagManager;
 use App\Repository\CritereRepository;
 use App\Repository\PartnerRepository;
-use App\Repository\SituationRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\Parser\CsvParser;
 use App\Service\Signalement\Import\SignalementImportMapper;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -25,6 +24,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 #[AsCommand(
     name: 'app:import-signalement',
@@ -44,18 +44,18 @@ class ImportSignalementCommand extends Command
     private ?Territory $territory = null;
 
     public function __construct(
+        private ActivityListener $activityListener,
         private CsvParser $csvParser,
         private SignalementImportMapper $signalementImportMapper,
         private SignalementManager $signalementManager,
         private AffectationManager $affectationManager,
         private TagManager $tagManager,
-        private PartnerManager $partnerManager,
-        private PartnerFactory $partnerFactory,
-        private ParameterBagInterface $parameterBag,
         private TerritoryRepository $territoryRepository,
         private PartnerRepository $partnerRepository,
-        private SituationRepository $situationRepository,
         private CritereRepository $critereRepository,
+        private ParameterBagInterface $parameterBag,
+        private EventDispatcherInterface $eventDispatcher,
+        private EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }
@@ -67,6 +67,7 @@ class ImportSignalementCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->entityManager->getEventManager()->removeEventSubscriber($this->activityListener);
         $io = new SymfonyStyle($input, $output);
         $territoryZip = $input->getArgument('territory_zip');
         $toFile = $this->parameterBag->get('uploads_tmp_dir').'signalement_'.$territoryZip.'.csv';
@@ -128,6 +129,7 @@ class ImportSignalementCommand extends Command
         }
         $this->signalementManager->flush();
         $io->success(sprintf('%s have been imported', $countSignalement));
+        $this->entityManager->getEventManager()->addEventSubscriber($this->activityListener);
 
         return Command::SUCCESS;
     }

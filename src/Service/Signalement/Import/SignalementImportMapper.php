@@ -6,6 +6,13 @@ use App\Entity\Enum\MotifCloture;
 
 class SignalementImportMapper
 {
+    private const SITUATION_SECURITE_OCCUPANT = 'Sécurité des occupants';
+    private const SITUATION_ETAT_PROPRETE_LOGEMENT = 'Etat et propreté du logement';
+    private const SITUATION_CONFORT_LOGEMENT = 'confort du logement';
+    private const SITUATION_ETAT_BATIMENT = 'Etat du bâtiment';
+    private const SITUATION_ESPACE_VIE = 'Les espaces de vie';
+    private const SITUATION_VIE_COMMUNE_VOISINAGE = 'Vie commune et voisinage';
+
     public function getMapping(): array
     {
         return [
@@ -95,24 +102,24 @@ class SignalementImportMapper
             'nb niveaux logement' => 'nbNiveauxLogement',
             'qualification' => 'tags',
             'Partenaires à affecter' => 'partners',
-            'Signalement - Securite occupants 1' => 'Sécurité des occupants',
-            'Signalement - Securite occupants 2' => 'Sécurité des occupants',
-            'Signalement - Securite occupants 3' => 'Sécurité des occupants',
-            'Signalement - Etat & Proprete logement 1' => 'Etat et propreté du logement',
-            'Signalement - Etat & Proprete logement 2' => 'Etat et propreté du logement',
-            'Signalement - Etat & Proprete logement 3' => 'Etat et propreté du logement',
-            'Signalement - Confort logement 1' => 'confort du logement',
-            'Signalement - Confort logement 2' => 'confort du logement',
-            'Signalement - Confort logement 3' => 'confort du logement',
-            'Signalement - Etat batiment 1' => 'Etat du bâtiment',
-            'Signalement - Etat batiment 2' => 'Etat du bâtiment',
-            'Signalement - Etat batiment 3' => 'Etat du bâtiment',
-            'Signalement - Espaces de vie 1' => 'Les espaces de vie',
-            'Signalement - Espaces de vie 2' => 'Les espaces de vie',
-            'Signalement - Espaces de vie 3' => 'Les espaces de vie',
-            'Signalement - Vie commune & voisinage 1' => 'Vie commune et voisinage',
-            'Signalement - Vie commune & voisinage 2' => 'Vie commune et voisinage',
-            'Signalement - Vie commune & voisinage 3' => 'Vie commune et voisinage',
+            'Signalement - Securite occupants 1' => self::SITUATION_SECURITE_OCCUPANT,
+            'Signalement - Securite occupants 2' => self::SITUATION_SECURITE_OCCUPANT,
+            'Signalement - Securite occupants 3' => self::SITUATION_SECURITE_OCCUPANT,
+            'Signalement - Etat & Proprete logement 1' => self::SITUATION_ETAT_PROPRETE_LOGEMENT,
+            'Signalement - Etat & Proprete logement 2' => self::SITUATION_ETAT_PROPRETE_LOGEMENT,
+            'Signalement - Etat & Proprete logement 3' => self::SITUATION_ETAT_PROPRETE_LOGEMENT,
+            'Signalement - Confort logement 1' => self::SITUATION_CONFORT_LOGEMENT,
+            'Signalement - Confort logement 2' => self::SITUATION_CONFORT_LOGEMENT,
+            'Signalement - Confort logement 3' => self::SITUATION_CONFORT_LOGEMENT,
+            'Signalement - Etat batiment 1' => self::SITUATION_ETAT_BATIMENT,
+            'Signalement - Etat batiment 2' => self::SITUATION_ETAT_BATIMENT,
+            'Signalement - Etat batiment 3' => self::SITUATION_ETAT_BATIMENT,
+            'Signalement - Espaces de vie 1' => self::SITUATION_ESPACE_VIE,
+            'Signalement - Espaces de vie 2' => self::SITUATION_ESPACE_VIE,
+            'Signalement - Espaces de vie 3' => self::SITUATION_ESPACE_VIE,
+            'Signalement - Vie commune & voisinage 1' => self::SITUATION_VIE_COMMUNE_VOISINAGE,
+            'Signalement - Vie commune & voisinage 2' => self::SITUATION_VIE_COMMUNE_VOISINAGE,
+            'Signalement - Vie commune & voisinage 3' => self::SITUATION_VIE_COMMUNE_VOISINAGE,
         ];
     }
 
@@ -160,12 +167,12 @@ class SignalementImportMapper
                     case 'motifCloture':
                         $fieldValue = \array_key_exists($fieldValue, MotifCloture::LABEL) ? $fieldValue : 'AUTRE';
                         break;
-                    case 'Sécurité des occupants':
-                    case 'Etat et propreté du logement':
-                    case 'confort du logement':
-                    case 'Etat du bâtiment':
-                    case 'Les espaces de vie':
-                    case 'Vie commune et voisinage':
+                    case self::SITUATION_SECURITE_OCCUPANT:
+                    case self::SITUATION_ETAT_PROPRETE_LOGEMENT:
+                    case self::SITUATION_CONFORT_LOGEMENT:
+                    case self::SITUATION_ETAT_BATIMENT:
+                    case self::SITUATION_ESPACE_VIE:
+                    case self::SITUATION_VIE_COMMUNE_VOISINAGE:
                         $situations[$fieldColumn] = $fieldValue;
                         break;
                     default:
