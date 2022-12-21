@@ -6,6 +6,7 @@ use App\Entity\Territory;
 use App\Manager\TerritoryManager;
 use App\Service\GridAffectation\GridAffectationLoader;
 use App\Service\Parser\CsvParser;
+use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -26,7 +27,8 @@ class ImportGridAffectationCommand extends Command
         private ParameterBagInterface $parameterBag,
         private CsvParser $csvParser,
         private TerritoryManager $territoryManager,
-        private GridAffectationLoader $gridAffectationLoader
+        private GridAffectationLoader $gridAffectationLoader,
+        private UploadHandlerService $uploadHandlerService,
     ) {
         parent::__construct();
     }
@@ -63,7 +65,7 @@ class ImportGridAffectationCommand extends Command
             return Command::FAILURE;
         }
 
-        $this->createTmpFileFromBucket($fromFile, $toFile);
+        $this->uploadHandlerService->createTmpFileFromBucket($fromFile, $toFile);
         $this->gridAffectationLoader->load($this->csvParser->parse($toFile), $territory);
 
         $metadata = $this->gridAffectationLoader->getMetadata();
@@ -74,13 +76,5 @@ class ImportGridAffectationCommand extends Command
         $io->success($territory->getName().' has been activated');
 
         return Command::SUCCESS;
-    }
-
-    private function createTmpFileFromBucket($from, $to): void
-    {
-        $resourceBucket = $this->fileStorage->read($from);
-        $resourceFileSytem = fopen($to, 'w');
-        fwrite($resourceFileSytem, $resourceBucket);
-        fclose($resourceFileSytem);
     }
 }
