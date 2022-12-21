@@ -7,9 +7,10 @@ use App\Entity\Territory;
 
 class SignalementFactory
 {
-    public function createInstanceFrom(Territory $territory, array $data): Signalement
+    public function createInstanceFrom(Territory $territory, array $data, bool $isImported = false): Signalement
     {
         return (new Signalement())
+            ->setIsImported($isImported)
             ->setTerritory($territory)
             ->setDetails($data['details'])
             ->setIsProprioAverti((bool) $data['isProprioAverti'])

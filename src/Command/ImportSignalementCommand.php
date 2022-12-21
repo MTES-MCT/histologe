@@ -86,11 +86,10 @@ class ImportSignalementCommand extends Command
             $dataMapped = $this->signalementImportMapper->map($headers, $item);
             if (!empty($dataMapped)) {
                 ++$countSignalement;
-                $signalement = $this->signalementManager->createOrGet($this->territory, $dataMapped);
-                $signalement->setIsImported(true);
-
+                $signalement = $this->signalementManager->createOrGet($this->territory, $dataMapped, true);
                 $signalement = $this->loadTags($signalement, $dataMapped);
                 $this->loadAffectation($signalement, $dataMapped);
+
                 foreach (self::SITUATIONS as $situation) {
                     $signalement = $this->loadSignalementSituation($signalement, $dataMapped, $situation);
                 }

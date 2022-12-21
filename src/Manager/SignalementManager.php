@@ -20,7 +20,7 @@ class SignalementManager extends AbstractManager
         parent::__construct($managerRegistry, $entityName);
     }
 
-    public function createOrGet(Territory $territory, array $data): ?Signalement
+    public function createOrGet(Territory $territory, array $data, bool $isImported = false): ?Signalement
     {
         /** @var Signalement|null $signalement */
         $signalement = $this->getRepository()->findOneBy([
@@ -32,7 +32,7 @@ class SignalementManager extends AbstractManager
             return $signalement;
         }
 
-        return $this->signalementFactory->createInstanceFrom($territory, $data);
+        return $this->signalementFactory->createInstanceFrom($territory, $data, $isImported);
     }
 
     public function findAllPartners(Signalement $signalement): array
