@@ -7,10 +7,6 @@ use App\Entity\Territory;
 
 class SignalementFactory
 {
-    public function __construct()
-    {
-    }
-
     public function createInstanceFrom(Territory $territory, array $data): Signalement
     {
         return (new Signalement())
@@ -27,7 +23,7 @@ class SignalementFactory
             ->setSuperficie($data['superficie'])
             ->setLoyer($data['loyer'])
             ->setIsBailEnCours((bool) $data['isBailEnCours'])
-            ->setDateEntree(new \DateTimeImmutable($data['dateEntree']))
+            ->setDateEntree($data['dateEntree'])
             ->setNomProprio($data['nomProprio'])
             ->setAdresseProprio($data['adresseProprio'])
             ->setTelProprio($data['telProprio'])

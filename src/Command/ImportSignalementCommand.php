@@ -132,21 +132,25 @@ class ImportSignalementCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function loadSignalementSituation(Signalement $signalement, array $dataMapped, string $situation): Signalement
-    {
+    private function loadSignalementSituation(
+        Signalement $signalement,
+        array $dataMapped,
+        string $situation
+    ): Signalement {
         if (isset($dataMapped[$situation]) && !empty($dataMapped[$situation])) {
-            list($critereLabel, $etat) = explode('-', $dataMapped[$situation]);
-            /** @var Critere $critere */
-            $critere = $this->critereRepository->findByLabel(trim($critereLabel));
-            /** @var Criticite $criticite */
-            $criticite = $critere->getCriticites()->filter(function (Criticite $criticite) use ($etat) {
-                return $criticite->getScore() === Criticite::ETAT_LABEL[trim($etat)];
-            })->first();
+            foreach ($dataMapped[$situation]  as $critereLabel => $etat) {
+                /** @var Critere $critere */
+                $critere = $this->critereRepository->findByLabel(trim($critereLabel));
+                /** @var Criticite $criticite */
+                $criticite = $critere->getCriticites()->filter(function (Criticite $criticite) use ($etat) {
+                    return $criticite->getScore() === Criticite::ETAT_LABEL[trim($etat)];
+                })->first();
 
-            $signalement
-                ->addCriticite($criticite)
-                ->addSituation($critere->getSituation())
-                ->addCritere($critere);
+                $signalement
+                    ->addCriticite($criticite)
+                    ->addSituation($critere->getSituation())
+                    ->addCritere($critere);
+            }
         }
 
         return $signalement;

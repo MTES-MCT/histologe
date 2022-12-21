@@ -95,12 +95,24 @@ class SignalementImportMapper
             'nb niveaux logement' => 'nbNiveauxLogement',
             'qualification' => 'tags',
             'Partenaires à affecter' => 'partners',
-            'Signalement - Securite occupants' => 'Sécurité des occupants',
-            'Signalement - Etat & Proprete logement' => 'Etat et propreté du logement',
-            'Signalement - Confort logement' => 'confort du logement',
-            'Signalement - Etat batiment' => 'Etat du bâtiment',
-            'Signalement - Espaces de vie' => 'Les espaces de vie',
-            'Signalement - Vie commune & voisinage' => 'Vie commune et voisinage',
+            'Signalement - Securite occupants 1' => 'Sécurité des occupants',
+            'Signalement - Securite occupants 2' => 'Sécurité des occupants',
+            'Signalement - Securite occupants 3' => 'Sécurité des occupants',
+            'Signalement - Etat & Proprete logement 1' => 'Etat et propreté du logement',
+            'Signalement - Etat & Proprete logement 2' => 'Etat et propreté du logement',
+            'Signalement - Etat & Proprete logement 3' => 'Etat et propreté du logement',
+            'Signalement - Confort logement 1' => 'confort du logement',
+            'Signalement - Confort logement 2' => 'confort du logement',
+            'Signalement - Confort logement 3' => 'confort du logement',
+            'Signalement - Etat batiment 1' => 'Etat du bâtiment',
+            'Signalement - Etat batiment 2' => 'Etat du bâtiment',
+            'Signalement - Etat batiment 3' => 'Etat du bâtiment',
+            'Signalement - Espaces de vie 1' => 'Les espaces de vie',
+            'Signalement - Espaces de vie 2' => 'Les espaces de vie',
+            'Signalement - Espaces de vie 3' => 'Les espaces de vie',
+            'Signalement - Vie commune & voisinage 1' => 'Vie commune et voisinage',
+            'Signalement - Vie commune & voisinage 2' => 'Vie commune et voisinage',
+            'Signalement - Vie commune & voisinage 3' => 'Vie commune et voisinage',
         ];
     }
 
@@ -110,6 +122,7 @@ class SignalementImportMapper
         if (1 === \count($data)) {
             return $dataMapped;
         }
+        $situations = [];
         foreach ($this->getMapping() as $fileColumn => $fieldColumn) {
             $foundIndex = array_search($fileColumn, $columns);
             if (false !== $foundIndex) {
@@ -126,13 +139,11 @@ class SignalementImportMapper
                     case 'createdAt':
                     case 'modifiedAt':
                     case 'closedAt':
+                    case 'dateEntree':
                     case 'prorioAvertiAt':
                     case 'dateVisite':
-                        if (!empty($fieldValue)) {
-                            $fieldValue = \DateTimeImmutable::createFromFormat('d/m/y', $fieldValue);
-                        } else {
-                            $fieldValue = null;
-                        }
+                        $fieldValue = \DateTimeImmutable::createFromFormat('d/m/y', $fieldValue);
+                        $fieldValue = false !== $fieldValue ? $fieldValue : null;
                         break;
                     case 'superficie':
                         $fieldValue = (float) $fieldValue;
@@ -147,12 +158,27 @@ class SignalementImportMapper
                         $fieldValue = (int) $fieldValue;
                         break;
                     case 'motifCloture':
-                        if (!empty($fieldValue)) {
-                            $fieldValue = \array_key_exists($fieldValue, MotifCloture::LABEL) ? $fieldValue : 'AUTRE';
-                        }
+                        $fieldValue = \array_key_exists($fieldValue, MotifCloture::LABEL) ? $fieldValue : 'AUTRE';
                         break;
+                    case 'Sécurité des occupants':
+                    case 'Etat et propreté du logement':
+                    case 'confort du logement':
+                    case 'Etat du bâtiment':
+                    case 'Les espaces de vie':
+                    case 'Vie commune et voisinage':
+                        $situations[$fieldColumn] = $fieldValue;
+                        break;
+                    default:
                 }
-                $dataMapped[$fieldColumn] = $fieldValue;
+
+                if (str_contains($fileColumn, 'Signalement - ')) {
+                    if (!empty($situations[$fieldColumn])) {
+                        list($critereLabel, $etat) = explode('-', $situations[$fieldColumn]);
+                        $dataMapped[$fieldColumn][trim($critereLabel)] = trim($etat);
+                    }
+                } else {
+                    $dataMapped[$fieldColumn] = $fieldValue;
+                }
             } else {
                 $dataMapped[$fieldColumn] = null;
             }
