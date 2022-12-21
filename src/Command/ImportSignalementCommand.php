@@ -24,7 +24,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 #[AsCommand(
     name: 'app:import-signalement',
@@ -54,7 +53,6 @@ class ImportSignalementCommand extends Command
         private PartnerRepository $partnerRepository,
         private CritereRepository $critereRepository,
         private ParameterBagInterface $parameterBag,
-        private EventDispatcherInterface $eventDispatcher,
         private EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
