@@ -2,7 +2,19 @@
 
 namespace App\Command;
 
+use App\Entity\Affectation;
+use App\Entity\Critere;
+use App\Entity\Criticite;
+use App\Entity\Signalement;
+use App\Entity\Territory;
+use App\Factory\PartnerFactory;
+use App\Manager\AffectationManager;
+use App\Manager\PartnerManager;
 use App\Manager\SignalementManager;
+use App\Manager\TagManager;
+use App\Repository\CritereRepository;
+use App\Repository\PartnerRepository;
+use App\Repository\SituationRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\Parser\CsvParser;
 use App\Service\Signalement\Import\SignalementImportMapper;
@@ -20,12 +32,30 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 )]
 class ImportSignalementCommand extends Command
 {
+    private const SITUATIONS = [
+        'Sécurité des occupants',
+        'Etat et propreté du logement',
+        'confort du logement',
+        'Etat du bâtiment',
+        'Les espaces de vie',
+        'Vie commune et voisinage',
+    ];
+
+    private ?Territory $territory = null;
+
     public function __construct(
         private CsvParser $csvParser,
         private SignalementImportMapper $signalementImportMapper,
         private SignalementManager $signalementManager,
+        private AffectationManager $affectationManager,
+        private TagManager $tagManager,
+        private PartnerManager $partnerManager,
+        private PartnerFactory $partnerFactory,
         private ParameterBagInterface $parameterBag,
         private TerritoryRepository $territoryRepository,
+        private PartnerRepository $partnerRepository,
+        private SituationRepository $situationRepository,
+        private CritereRepository $critereRepository,
     ) {
         parent::__construct();
     }
@@ -40,9 +70,9 @@ class ImportSignalementCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $territoryZip = $input->getArgument('territory_zip');
         $toFile = $this->parameterBag->get('uploads_tmp_dir').'signalement_'.$territoryZip.'.csv';
-        $territory = $this->territoryRepository->findOneBy(['zip' => $territoryZip]);
+        $this->territory = $this->territoryRepository->findOneBy(['zip' => $territoryZip]);
 
-        if (null === $territory) {
+        if (null === $this->territory) {
             $io->error('Territory does not exists');
 
             return Command::FAILURE;
@@ -55,8 +85,43 @@ class ImportSignalementCommand extends Command
             $dataMapped = $this->signalementImportMapper->map($headers, $item);
             if (!empty($dataMapped)) {
                 ++$countSignalement;
-                $signalement = $this->signalementManager->createOrGet($territory, $dataMapped);
+                $signalement = $this->signalementManager->createOrGet($this->territory, $dataMapped);
                 $signalement->setIsImported(true);
+
+                if (isset($dataMapped['tags']) && !empty($dataMapped['tags'])) {
+                    $tag = $this->tagManager->createOrGet($this->territory, $dataMapped['tags']);
+                    $signalement->addTag($tag);
+                }
+
+                if (isset($dataMapped['partners']) && !empty($dataMapped['partners'])) {
+                    $partnersName = explode(',', $dataMapped['partners']);
+                    foreach ($partnersName as $partnerName) {
+                        $partner = $this->partnerRepository->findOneBy([
+                            'nom' => $partnerName,
+                            'territory' => $this->territory,
+                        ]);
+
+                        if (null !== $partner) {
+                            $affectation = $this->affectationManager->createAffectationFrom(
+                                $signalement,
+                                $partner,
+                                $partner?->getUsers()?->first()
+                            );
+
+                            $affectation
+                                ->setStatut(Affectation::STATUS_CLOSED)
+                                ->setAnsweredAt(new \DateTimeImmutable())
+                                ->setMotifCloture($dataMapped['motifCloture']);
+
+                            $this->affectationManager->persist($affectation);
+                        }
+                    }
+                }
+
+                foreach (self::SITUATIONS as $situation) {
+                    $signalement = $this->loadSignalementSituation($signalement, $dataMapped, $situation);
+                }
+
                 $this->signalementManager->persist($signalement);
                 $io->writeln(sprintf('%s added', $signalement->getReference()));
             }
@@ -65,5 +130,25 @@ class ImportSignalementCommand extends Command
         $io->success(sprintf('%s have been imported', $countSignalement));
 
         return Command::SUCCESS;
+    }
+
+    private function loadSignalementSituation(Signalement $signalement, array $dataMapped, string $situation): Signalement
+    {
+        if (isset($dataMapped[$situation]) && !empty($dataMapped[$situation])) {
+            list($critereLabel, $etat) = explode('-', $dataMapped[$situation]);
+            /** @var Critere $critere */
+            $critere = $this->critereRepository->findByLabel(trim($critereLabel));
+            /** @var Criticite $criticite */
+            $criticite = $critere->getCriticites()->filter(function (Criticite $criticite) use ($etat) {
+                return $criticite->getScore() === Criticite::ETAT_LABEL[trim($etat)];
+            })->first();
+
+            $signalement
+                ->addCriticite($criticite)
+                ->addSituation($critere->getSituation())
+                ->addCritere($critere);
+        }
+
+        return $signalement;
     }
 }

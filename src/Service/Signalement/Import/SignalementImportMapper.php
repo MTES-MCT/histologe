@@ -2,6 +2,8 @@
 
 namespace App\Service\Signalement\Import;
 
+use App\Entity\Enum\MotifCloture;
+
 class SignalementImportMapper
 {
     public function getMapping(): array
@@ -91,6 +93,14 @@ class SignalementImportMapper
             'nb de pieces du logement' => 'nbPiecesLogement',
             'nb chambres logement' => 'nbChambresLogement',
             'nb niveaux logement' => 'nbNiveauxLogement',
+            'qualification' => 'tags',
+            'Partenaires à affecter' => 'partners',
+            'Signalement - Securite occupants' => 'Sécurité des occupants',
+            'Signalement - Etat & Proprete logement' => 'Etat et propreté du logement',
+            'Signalement - Confort logement' => 'confort du logement',
+            'Signalement - Etat batiment' => 'Etat du bâtiment',
+            'Signalement - Espaces de vie' => 'Les espaces de vie',
+            'Signalement - Vie commune & voisinage' => 'Vie commune et voisinage',
         ];
     }
 
@@ -135,6 +145,11 @@ class SignalementImportMapper
                     case 'nbChambresLogement':
                     case 'nbNiveauxLogement':
                         $fieldValue = (int) $fieldValue;
+                        break;
+                    case 'motifCloture':
+                        if (!empty($fieldValue)) {
+                            $fieldValue = \array_key_exists($fieldValue, MotifCloture::LABEL) ? $fieldValue : 'AUTRE';
+                        }
                         break;
                 }
                 $dataMapped[$fieldColumn] = $fieldValue;

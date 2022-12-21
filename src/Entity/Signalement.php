@@ -325,7 +325,7 @@ class Signalement
     #[ORM\Column(type: 'string', length: 15, nullable: true)]
     private $telOccupantBis;
 
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'signalement')]
+    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'signalement', cascade: ['persist'])]
     private $tags;
 
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'signalements')]

@@ -21,22 +21,6 @@ class CritereRepository extends ServiceEntityRepository
         parent::__construct($registry, Critere::class);
     }
 
-    // /**
-    //  * @return Critere[] Returns an array of Critere objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
     /**
      * @throws NonUniqueResultException
      * @throws NoResultException
@@ -60,15 +44,17 @@ class CritereRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /*
-    public function findOneBySomeField($value): ?Critere
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function findByLabel(string $label): ?Critere
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
+            ->where('c.label LIKE :label')
+            ->setParameter('label', "%{$label}%")
+            ->andWhere('c.isArchive = 0')
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getSingleResult();
     }
-    */
 }

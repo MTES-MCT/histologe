@@ -105,8 +105,7 @@ class SignalementManager extends AbstractManager
         $partnersEmail = $this->getRepository()->findPartnersEmailAffectedToSignalement(
             $signalement->getId()
         );
-        $sendTo = array_merge($sendTo, $partnersEmail);
 
-        return $sendTo;
+        return array_merge($sendTo, $partnersEmail);
     }
 }

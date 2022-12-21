@@ -16,6 +16,12 @@ class Criticite
     public const ETAT_GRAVE = 'grave';
     public const ETAT_TRES_GRAVE = 'très grave';
 
+    public const ETAT_LABEL = [
+        'etat moyen' => 1,
+        'mauvais état' => 2,
+        'très mauvais état' => 3,
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
