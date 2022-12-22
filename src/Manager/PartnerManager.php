@@ -7,8 +7,10 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class PartnerManager extends AbstractManager
 {
-    public function __construct(ManagerRegistry $managerRegistry, string $entityName = Partner::class)
-    {
+    public function __construct(
+        protected ManagerRegistry $managerRegistry,
+        protected string $entityName = Partner::class
+    ) {
         parent::__construct($managerRegistry, $entityName);
     }
 }

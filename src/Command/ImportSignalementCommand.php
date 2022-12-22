@@ -3,10 +3,11 @@
 namespace App\Command;
 
 use App\Entity\Territory;
-use App\Manager\TerritoryManager;
-use App\Service\GridAffectation\GridAffectationLoader;
+use App\EventListener\ActivityListener;
 use App\Service\Parser\CsvParser;
+use App\Service\Signalement\Import\SignalementImportLoader;
 use App\Service\UploadHandlerService;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -17,18 +18,19 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
-    name: 'app:import-grid-affectation',
-    description: 'Import grille affectation based on storage S3',
+    name: 'app:import-signalement',
+    description: 'Import signalement on storage S3',
 )]
-class ImportGridAffectationCommand extends Command
+class ImportSignalementCommand extends Command
 {
     public function __construct(
-        private FilesystemOperator $fileStorage,
-        private ParameterBagInterface $parameterBag,
+        private ActivityListener $activityListener,
         private CsvParser $csvParser,
-        private TerritoryManager $territoryManager,
-        private GridAffectationLoader $gridAffectationLoader,
+        private ParameterBagInterface $parameterBag,
+        private EntityManagerInterface $entityManager,
+        private FilesystemOperator $fileStorage,
         private UploadHandlerService $uploadHandlerService,
+        private SignalementImportLoader $signalementImportLoader,
     ) {
         parent::__construct();
     }
@@ -42,23 +44,17 @@ class ImportGridAffectationCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $territoryZip = $input->getArgument('territory_zip');
-        $fromFile = 'csv/grille_affectation_'.$territoryZip.'.csv';
-        $toFile = $this->parameterBag->get('uploads_tmp_dir').'grille.csv';
-
-        /** @var Territory $territory */
-        $territory = $this->territoryManager->findOneBy(['zip' => $territoryZip]);
+        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => $territoryZip]);
         if (null === $territory) {
             $io->error('Territory does not exists');
 
             return Command::FAILURE;
         }
 
-        if ($territory->isIsActive()) {
-            $io->warning('Partner(s) and user(s) from this repository has already been added');
+        $this->entityManager->getEventManager()->removeEventSubscriber($this->activityListener);
 
-            return Command::FAILURE;
-        }
-
+        $fromFile = 'csv/signalement_'.$territoryZip.'.csv';
+        $toFile = $this->parameterBag->get('uploads_tmp_dir').'signalement.csv';
         if (!$this->fileStorage->fileExists($fromFile)) {
             $io->error('CSV File does not exists');
 
@@ -66,14 +62,18 @@ class ImportGridAffectationCommand extends Command
         }
 
         $this->uploadHandlerService->createTmpFileFromBucket($fromFile, $toFile);
-        $this->gridAffectationLoader->load($this->csvParser->parse($toFile), $territory);
 
-        $metadata = $this->gridAffectationLoader->getMetadata();
-        $io->success($metadata['nb_partners'].' partner(s) created, '.$metadata['nb_users'].' user(s) created');
+        $this->signalementImportLoader->load(
+            $territory,
+            $this->csvParser->parseAsDict($toFile),
+            $this->csvParser->getHeaders($toFile)
+        );
 
-        $territory->setIsActive(true);
-        $this->territoryManager->save($territory);
-        $io->success($territory->getName().' has been activated');
+        $metadata = $this->signalementImportLoader->getMetadata();
+
+        $io->success(sprintf('%s signalement(s) have been imported', $metadata['count_signalement']));
+
+        $this->entityManager->getEventManager()->addEventSubscriber($this->activityListener);
 
         return Command::SUCCESS;
     }

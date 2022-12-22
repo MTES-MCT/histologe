@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Criticite;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,32 +20,16 @@ class CriticiteRepository extends ServiceEntityRepository
         parent::__construct($registry, Criticite::class);
     }
 
-    // /**
-    //  * @return Criticite[] Returns an array of Criticite objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findByLabel(string $label): ?Criticite
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
+            ->where('c.label LIKE :label')
+            ->setParameter('label', "%{$label}%")
+            ->andWhere('c.isArchive = 0')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getOneOrNullResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Criticite
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

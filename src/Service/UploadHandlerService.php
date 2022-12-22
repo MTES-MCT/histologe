@@ -93,6 +93,14 @@ class UploadHandlerService
         return $tmpFilepath;
     }
 
+    public function createTmpFileFromBucket($from, $to): void
+    {
+        $resourceBucket = $this->fileStorage->read($from);
+        $resourceFileSytem = fopen($to, 'w');
+        fwrite($resourceFileSytem, $resourceBucket);
+        fclose($resourceFileSytem);
+    }
+
     public function setKey(string $key): ?array
     {
         $this->file['key'] = $key;

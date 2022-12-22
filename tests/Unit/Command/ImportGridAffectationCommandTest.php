@@ -7,6 +7,7 @@ use App\Entity\Territory;
 use App\Manager\TerritoryManager;
 use App\Service\GridAffectation\GridAffectationLoader;
 use App\Service\Parser\CsvParser;
+use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -42,12 +43,18 @@ class ImportGridAffectationCommandTest extends KernelTestCase
             ->method('getMetaData')
             ->willReturn(['nb_partners' => 10, 'nb_users' => 55]);
 
+        $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
+        $uploadHandlerServiceMock
+            ->expects($this->once())
+            ->method('createTmpFileFromBucket');
+
         $command = $application->add(new ImportGridAffectationCommand(
             $fileStorage,
             $parameterBag,
             $csvParser,
             $territoryManager,
-            $gridAffectationLoader
+            $gridAffectationLoader,
+            $uploadHandlerServiceMock,
         ));
 
         $commandTester = new CommandTester($command);

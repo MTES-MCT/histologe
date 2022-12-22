@@ -3,6 +3,7 @@
 namespace App\Manager;
 
 use App\Entity\Tag;
+use App\Entity\Territory;
 use Doctrine\Persistence\ManagerRegistry;
 
 class TagManager extends AbstractManager
@@ -11,5 +12,21 @@ class TagManager extends AbstractManager
     {
         $this->managerRegistry = $managerRegistry;
         $this->entityName = $entityName;
+    }
+
+    public function createOrGet(Territory $territory, string $label): Tag
+    {
+        $tag = $this->findOneBy(['territory' => $territory, 'label' => $label]);
+        if (null === $tag) {
+            $tag = (new Tag())
+                ->setLabel($label)
+                ->setTerritory($territory);
+
+            $this->save($tag);
+
+            return $tag;
+        }
+
+        return $tag;
     }
 }

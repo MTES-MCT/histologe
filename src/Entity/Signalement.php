@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: SignalementRepository::class)]
 class Signalement
@@ -324,7 +325,7 @@ class Signalement
     #[ORM\Column(type: 'string', length: 15, nullable: true)]
     private $telOccupantBis;
 
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'signalement')]
+    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'signalement', cascade: ['persist'])]
     private $tags;
 
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'signalements')]
@@ -341,7 +342,7 @@ class Signalement
         $this->criticites = new ArrayCollection();
         $this->createdAt = new DateTimeImmutable();
         $this->statut = self::STATUS_NEED_VALIDATION;
-        $this->uuid = uniqid();
+        $this->uuid = Uuid::v4();
         $this->isOccupantPresentVisite = false;
         $this->suivis = new ArrayCollection();
         $this->scoreCreation = 0;
@@ -542,7 +543,7 @@ class Signalement
 
     public function setNatureLogement(?string $natureLogement): self
     {
-        $this->natureLogement = $natureLogement;
+        $this->natureLogement = mb_strtolower($natureLogement);
 
         return $this;
     }
@@ -554,7 +555,7 @@ class Signalement
 
     public function setTypeLogement(?string $typeLogement): self
     {
-        $this->typeLogement = $typeLogement;
+        $this->typeLogement = mb_strtoupper($typeLogement);
 
         return $this;
     }

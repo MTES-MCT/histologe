@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Factory\SignalementFactory;
 use App\Manager\SignalementManager;
 use App\Repository\TerritoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,12 +31,14 @@ class SignalementManagerTest extends KernelTestCase
         $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         /** @var Security $security */
         $security = static::getContainer()->get('security.helper');
+        /** @var SignalementFactory $signalementFactory */
+        $signalementFactory = static::getContainer()->get(SignalementFactory::class);
 
         /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         $territory = $territoryRepository->find(self::TERRITORY_13);
 
-        $signalementManager = new SignalementManager($managerRegistry, $security);
+        $signalementManager = new SignalementManager($managerRegistry, $security, $signalementFactory);
         $signalement = $signalementManager->findOneBy(['territory' => self::TERRITORY_13]);
 
         $partners = $signalementManager->findAllPartners($signalement);
@@ -55,7 +58,11 @@ class SignalementManagerTest extends KernelTestCase
 
         /** @var Security $security */
         $security = static::getContainer()->get('security.helper');
-        $signalementManager = new SignalementManager($managerRegistry, $security);
+
+        /** @var SignalementFactory $signalementFactory */
+        $signalementFactory = static::getContainer()->get(SignalementFactory::class);
+
+        $signalementManager = new SignalementManager($managerRegistry, $security, $signalementFactory);
         $signalementClosed = $signalementManager->closeSignalementForAllPartners(
             $signalementActive,
             MotifCloture::LABEL['RESOLU']
@@ -83,7 +90,10 @@ class SignalementManagerTest extends KernelTestCase
 
         /** @var Security $security */
         $security = static::getContainer()->get('security.helper');
-        $signalementManager = new SignalementManager($managerRegistry, $security);
+
+        /** @var SignalementFactory $signalementFactory */
+        $signalementFactory = static::getContainer()->get(SignalementFactory::class);
+        $signalementManager = new SignalementManager($managerRegistry, $security, $signalementFactory);
         $affectationClosed = $signalementManager->closeAffectation(
             $affectationAccepted,
             MotifCloture::LABEL['NON_DECENCE']
@@ -103,7 +113,10 @@ class SignalementManagerTest extends KernelTestCase
 
         /** @var Security $security */
         $security = static::getContainer()->get('security.helper');
-        $signalementManager = new SignalementManager($managerRegistry, $security);
+
+        /** @var SignalementFactory $signalementFactory */
+        $signalementFactory = static::getContainer()->get(SignalementFactory::class);
+        $signalementManager = new SignalementManager($managerRegistry, $security, $signalementFactory);
         $emails = $signalementManager->findEmailsAffectedToSignalement($signalement);
 
         $this->assertGreaterThan(1, \count($emails));

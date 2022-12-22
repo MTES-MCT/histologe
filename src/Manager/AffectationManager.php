@@ -33,13 +33,23 @@ class AffectationManager extends Manager
         return $affectation;
     }
 
-    public function createAffectationFrom(Signalement $signalement, Partner $partner, User $user): Affectation
+    public function createAffectationFrom(Signalement $signalement, Partner $partner, ?User $user): Affectation
     {
         return (new Affectation())
             ->setSignalement($signalement)
             ->setPartner($partner)
-            ->setAffectedBy($user)
+            ->setAffectedBy($user ?? null)
             ->setTerritory($partner->getTerritory());
+    }
+
+    public function closeAffectation(Affectation $affectation, User $user, string $motif): Affectation
+    {
+        $affectation
+            ->setStatut(Affectation::STATUS_CLOSED)
+            ->setMotifCloture($motif)
+            ->setAnsweredBy($user);
+
+        return $affectation;
     }
 
     public function removeAffectationsFrom(
