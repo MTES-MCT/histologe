@@ -46,7 +46,6 @@ class CritereRepository extends ServiceEntityRepository
 
     /**
      * @throws NonUniqueResultException
-     * @throws NoResultException
      */
     public function findByLabel(string $label): ?Critere
     {
@@ -55,6 +54,6 @@ class CritereRepository extends ServiceEntityRepository
             ->setParameter('label', "%{$label}%")
             ->andWhere('c.isArchive = 0')
             ->getQuery()
-            ->getSingleResult();
+            ->getOneOrNullResult();
     }
 }

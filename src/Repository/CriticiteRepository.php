@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Criticite;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -17,5 +18,18 @@ class CriticiteRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Criticite::class);
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findByLabel(string $label): ?Criticite
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.label LIKE :label')
+            ->setParameter('label', "%{$label}%")
+            ->andWhere('c.isArchive = 0')
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

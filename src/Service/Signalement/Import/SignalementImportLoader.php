@@ -12,7 +12,10 @@ use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\TagManager;
 use App\Repository\CritereRepository;
+use App\Repository\CriticiteRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
+use Psr\Log\LoggerInterface;
 
 class SignalementImportLoader
 {
@@ -26,6 +29,7 @@ class SignalementImportLoader
         private TagManager $tagManager,
         private AffectationManager $affectationManager,
         private EntityManagerInterface $entityManager,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -41,6 +45,7 @@ class SignalementImportLoader
     public function load(Territory $territory, array $data, array $headers): void
     {
         $countSignalement = 0;
+
         foreach ($data as $item) {
             $dataMapped = $this->signalementImportMapper->map($headers, $item);
             if (!empty($dataMapped)) {
@@ -92,10 +97,14 @@ class SignalementImportLoader
                         $partner?->getUsers()?->first()
                     );
 
-                    $affectation
-                        ->setStatut(Affectation::STATUS_CLOSED)
-                        ->setAnsweredAt(new \DateTimeImmutable())
-                        ->setMotifCloture($dataMapped['motifCloture']);
+                    if (!empty($dataMapped['motifCloture'])) {
+                        $affectation
+                            ->setStatut(Affectation::STATUS_CLOSED)
+                            ->setAnsweredAt(new \DateTimeImmutable())
+                            ->setMotifCloture($dataMapped['motifCloture']);
+                    } else {
+                        $affectation->setStatut(Affectation::STATUS_ACCEPTED);
+                    }
 
                     $this->affectationManager->persist($affectation);
                 }
@@ -103,6 +112,9 @@ class SignalementImportLoader
         }
     }
 
+    /**
+     * @throws NonUniqueResultException
+     */
     private function loadSignalementSituation(
         Signalement $signalement,
         array $dataMapped,
@@ -112,17 +124,31 @@ class SignalementImportLoader
             foreach ($dataMapped[$situation] as $critereLabel => $etat) {
                 /** @var CritereRepository $critereRepository */
                 $critereRepository = $this->entityManager->getRepository(Critere::class);
+
                 /** @var Critere $critere */
                 $critere = $critereRepository->findByLabel(trim($critereLabel));
-                /** @var Criticite $criticite */
-                $criticite = $critere->getCriticites()->filter(function (Criticite $criticite) use ($etat) {
-                    return $criticite->getScore() === Criticite::ETAT_LABEL[trim($etat)];
-                })->first();
+                try {
+                    if (null !== $critere) {
+                        /** @var Criticite $criticite */
+                        $criticite = $critere->getCriticites()->filter(function (Criticite $criticite) use ($etat) {
+                            return $criticite->getScore() === Criticite::ETAT_LABEL[trim($etat)];
+                        })->first();
+                    } else {
+                        /** @var CriticiteRepository $criticiteRepository */
+                        $criticiteRepository = $this->entityManager->getRepository(Criticite::class);
+                        $criticite = $criticiteRepository->findByLabel(trim($critereLabel));
+                        $critere = $criticite?->getCritere();
+                    }
 
-                $signalement
-                    ->addCriticite($criticite)
-                    ->addSituation($critere->getSituation())
-                    ->addCritere($critere);
+                    if (null !== $criticite) {
+                        $signalement
+                            ->addCriticite($criticite)
+                            ->addSituation($critere->getSituation())
+                            ->addCritere($critere);
+                    }
+                } catch (\Throwable $exception) {
+                    $this->logger->error($exception->getMessage());
+                }
             }
         }
 

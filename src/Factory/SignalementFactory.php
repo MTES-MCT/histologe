@@ -61,7 +61,7 @@ class SignalementFactory
             ->setEscalierOccupant($data['escalierOccupant'])
             ->setNumAppartOccupant($data['numAppartOccupant'])
             ->setAdresseAutreOccupant($data['adresseAutreOccupant'])
-            ->setModeContactProprio(json_decode($data['modeContactProprio'], true))
+            ->setModeContactProprio($data['modeContactProprio'])
             ->setInseeOccupant($data['inseeOccupant'])
             ->setLienDeclarantOccupant($data['lienDeclarantOccupant'])
             ->setIsConsentementTiers((bool) $data['isConsentementTiers'])

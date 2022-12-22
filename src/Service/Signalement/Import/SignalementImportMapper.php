@@ -126,7 +126,7 @@ class SignalementImportMapper
     public function map(array $columns, array $data): array
     {
         $dataMapped = [];
-        if (1 === \count($data)) {
+        if (1 === \count($data) || empty($data['Ref signalement'])) {
             return $dataMapped;
         }
         $situations = [];
@@ -134,14 +134,33 @@ class SignalementImportMapper
             $foundIndex = array_search($fileColumn, $columns);
             if (false !== $foundIndex) {
                 $fieldValue = 'NSP' !== $data[$fileColumn] ? $data[$fileColumn] : null;
+                $fieldValue = trim($fieldValue, '"');
                 switch ($fieldColumn) {
                     case 'reference':
-                        list($index, $year) = explode('-', $fieldValue);
+                        list($index, $year) = preg_split('(-|/)', $fieldValue);
                         $fieldValue = '20'.$year.'-'.$index;
+                        break;
+                    case 'modeContactProprio':
+                        $modes = array_filter(preg_split('(-|/)', $fieldValue));
+                        $fieldValue = empty($modes) ? null : $modes;
                         break;
                     case 'isProprioAverti':
                     case 'isAllocataire':
-                        $fieldValue = 'O' === $fieldValue;
+                    case 'isRisqueSurOccupation':
+                    case 'isConstructionAvant1949':
+                    case 'isLogementCollectif':
+                    case 'isConsentementTiers':
+                    case 'isOccupantPresentVisite':
+                    case 'isSituationHandicap':
+                    case 'isLogementSocial':
+                    case 'isPreavisDepart':
+                    case 'isRelogement':
+                    case 'isNotOccupant':
+                    case 'isFondSolidariteLogement':
+                    case 'isBailEnCours':
+                    case 'isRefusIntervention':
+                    case 'isCguAccepted':
+                        $fieldValue = 'NSP' !== $data[$fileColumn] ? 'O' === $fieldValue : null;
                         break;
                     case 'createdAt':
                     case 'modifiedAt':
@@ -149,8 +168,11 @@ class SignalementImportMapper
                     case 'dateEntree':
                     case 'prorioAvertiAt':
                     case 'dateVisite':
-                        $fieldValue = \DateTimeImmutable::createFromFormat('d/m/y', $fieldValue);
-                        $fieldValue = false !== $fieldValue ? $fieldValue : null;
+                        $date = \DateTimeImmutable::createFromFormat('d/m/y', $fieldValue);
+                        if (false === $date) {
+                            $date = \DateTimeImmutable::createFromFormat('Y/m/d', $fieldValue);
+                        }
+                        $fieldValue = false !== $date ? $date : null;
                         break;
                     case 'superficie':
                         $fieldValue = (float) $fieldValue;
@@ -180,8 +202,13 @@ class SignalementImportMapper
 
                 if (str_contains($fileColumn, 'Signalement - ')) {
                     if (!empty($situations[$fieldColumn])) {
-                        list($critereLabel, $etat) = explode('-', $situations[$fieldColumn]);
-                        $dataMapped[$fieldColumn][trim($critereLabel)] = trim($etat);
+                        $critere = explode('-', $situations[$fieldColumn]);
+                        if (\count($critere) > 1) {
+                            list($critereLabel, $etat) = $critere;
+                            $dataMapped[$fieldColumn][trim($critereLabel)] = trim($etat) ?? 'mauvais état';
+                        } else {
+                            $dataMapped[$fieldColumn][trim($critere[0])] = 'mauvais état';
+                        }
                     }
                 } else {
                     $dataMapped[$fieldColumn] = $fieldValue;
