@@ -202,7 +202,7 @@ class SignalementImportMapper
 
                 if (str_contains($fileColumn, 'Signalement - ')) {
                     if (!empty($situations[$fieldColumn])) {
-                        $critere = explode('-', $situations[$fieldColumn]);
+                        $critere = explode(' - ', $situations[$fieldColumn]);
                         if (\count($critere) > 1) {
                             list($critereLabel, $etat) = $critere;
                             $dataMapped[$fieldColumn][trim($critereLabel)] = trim($etat) ?? 'mauvais état';

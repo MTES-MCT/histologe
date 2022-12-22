@@ -71,7 +71,7 @@ class ImportSignalementCommand extends Command
 
         $metadata = $this->signalementImportLoader->getMetadata();
 
-        $io->success(sprintf('%s have been imported', $metadata['count_signalement']));
+        $io->success(sprintf('%s signalement(s) have been imported', $metadata['count_signalement']));
 
         $this->entityManager->getEventManager()->addEventSubscriber($this->activityListener);
 
