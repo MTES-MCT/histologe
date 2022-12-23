@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Entity\Territory;
 use App\Manager\TerritoryManager;
 use App\Service\GridAffectation\GridAffectationLoader;
+use App\Service\NotificationService;
 use App\Service\Parser\CsvParser;
 use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemOperator;
@@ -29,6 +30,7 @@ class ImportGridAffectationCommand extends Command
         private TerritoryManager $territoryManager,
         private GridAffectationLoader $gridAffectationLoader,
         private UploadHandlerService $uploadHandlerService,
+        private NotificationService $notificationService,
     ) {
         parent::__construct();
     }
@@ -74,6 +76,21 @@ class ImportGridAffectationCommand extends Command
         $territory->setIsActive(true);
         $this->territoryManager->save($territory);
         $io->success($territory->getName().' has been activated');
+
+        $this->notificationService->send(
+            NotificationService::TYPE_CRON,
+            $this->parameterBag->get('admin_email'),
+            [
+                'url' => $this->parameterBag->get('host_url'),
+                'cron_label' => 'Ouverture de territoire',
+                'message' => sprintf('Félicitation, le térritoire %s est ouvert: %s partenaires et %s utilsateurs ont été crées',
+                    $territory->getName(),
+                    $metadata['nb_partners'],
+                    $metadata['nb_users']
+                ),
+            ],
+            null
+        );
 
         return Command::SUCCESS;
     }

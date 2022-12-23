@@ -34,9 +34,10 @@ class NotificationService
     public const TYPE_MIGRATION_PASSWORD = 13;
     public const TYPE_CRON = 100;
 
-    public function __construct(private MailerInterface $mailer, private ParameterBagInterface $parameterBag)
-    {
-        $this->mailer = $mailer;
+    public function __construct(
+        private MailerInterface $mailer,
+        private ParameterBagInterface $parameterBag
+    ) {
     }
 
     public function send(int $type, string|array $to, array $params, Territory|null $territory): TransportExceptionInterface|Exception|bool
