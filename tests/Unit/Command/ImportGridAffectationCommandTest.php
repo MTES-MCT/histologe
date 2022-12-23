@@ -6,6 +6,7 @@ use App\Command\ImportGridAffectationCommand;
 use App\Entity\Territory;
 use App\Manager\TerritoryManager;
 use App\Service\GridAffectation\GridAffectationLoader;
+use App\Service\NotificationService;
 use App\Service\Parser\CsvParser;
 use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemOperator;
@@ -48,6 +49,12 @@ class ImportGridAffectationCommandTest extends KernelTestCase
             ->expects($this->once())
             ->method('createTmpFileFromBucket');
 
+        $notificationServiceMock = $this->createMock(NotificationService::class);
+        $notificationServiceMock
+            ->expects($this->once())
+            ->method('send')
+            ->willReturn(true);
+
         $command = $application->add(new ImportGridAffectationCommand(
             $fileStorage,
             $parameterBag,
@@ -55,6 +62,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
             $territoryManager,
             $gridAffectationLoader,
             $uploadHandlerServiceMock,
+            $notificationServiceMock,
         ));
 
         $commandTester = new CommandTester($command);
