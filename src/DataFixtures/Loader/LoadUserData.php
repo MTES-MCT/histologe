@@ -4,6 +4,7 @@ namespace App\DataFixtures\Loader;
 
 use App\Entity\User;
 use App\EventSubscriber\UserAddedSubscriber;
+use App\Factory\UserFactory;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -17,6 +18,8 @@ use Symfony\Component\Yaml\Yaml;
 
 class LoadUserData extends Fixture implements OrderedFixtureInterface
 {
+    private const PLAIN_PASSWORD = 'histologe';
+
     public function __construct(
         private TerritoryRepository $territoryRepository,
         private PartnerRepository $partnerRepository,
@@ -24,6 +27,7 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
         private EntityManagerInterface $entityManager,
         private UserAddedSubscriber $userAddedSubscriber,
         private ParameterBagInterface $parameterBag,
+        private UserFactory $userFactory,
     ) {
     }
 
@@ -33,7 +37,7 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
         foreach ($userRows['users'] as $row) {
             $this->loadUsers($manager, $row);
         }
-        $this->loadSystemUser();
+        $this->loadSystemUser($manager);
         $manager->flush();
 
         $connection = $this->entityManager->getConnection();
@@ -65,14 +69,29 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
                 );
         }
 
-        $password = $this->hasher->hashPassword($user, 'histologe');
+        $password = $this->hasher->hashPassword($user, self::PLAIN_PASSWORD);
         $user->setPassword($password);
 
         $manager->persist($user);
     }
 
-    private function loadSystemUser()
+    private function loadSystemUser(ObjectManager $manager)
     {
+        $partner = $this->partnerRepository->findOneBy(['nom' => 'Administrateurs Histologe ALL']);
+        $user = $this->userFactory->createInstanceFrom(
+            roleLabel: 'Super Admin',
+            partner: $partner,
+            territory: null,
+            firstname: 'Histologe',
+            lastname: 'Admin',
+            email: $this->parameterBag->get('user_system_email'),
+            isMailActive: false,
+        );
+
+        $password = $this->hasher->hashPassword($user, self::PLAIN_PASSWORD);
+        $user->setStatut(User::STATUS_ACTIVE)->setPassword($password);
+
+        $manager->persist($user);
     }
 
     public function getOrder(): int

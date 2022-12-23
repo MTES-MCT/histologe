@@ -167,8 +167,8 @@ class AddUserCommand extends Command
 
         $user = $this->userFactory->createInstanceFrom(
             roleLabel: $input->getArgument('role'),
-            territory: $territory,
             partner: $partner,
+            territory: $territory,
             firstname: $input->getArgument('firstname'),
             lastname: $input->getArgument('lastname'),
             email: $input->getArgument('email')
