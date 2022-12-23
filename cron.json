@@ -10,16 +10,7 @@
       "command": "0 8,18 * * * php bin/console app:sync-esabora"
     },
     {
-      "command": "0 7 2 1 * php bin/console app:import-grid-affectation 34"
-    },
-    {
-      "command": "5 7 2 1 * php bin/console app:import-grid-affectation 89"
-    },
-    {
-      "command": "10 7 2 1 * php bin/console app:import-grid-affectation 17"
-    },
-    {
-      "command": "15 7 2 1 * php bin/console app:import-grid-affectation 62"
+      "command": "0 7 2 1 * bash scripts/open-territory.sh"
     }
   ]
 }
