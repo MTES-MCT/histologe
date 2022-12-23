@@ -18,7 +18,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class LoadUserData extends Fixture implements OrderedFixtureInterface
 {
-    private const PLAIN_PASSWORD = 'histologe';
+    private const PLAIN_HISTOLOGE = 'histologe';
 
     public function __construct(
         private TerritoryRepository $territoryRepository,
@@ -69,7 +69,7 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
                 );
         }
 
-        $password = $this->hasher->hashPassword($user, self::PLAIN_PASSWORD);
+        $password = $this->hasher->hashPassword($user, self::PLAIN_HISTOLOGE);
         $user->setPassword($password);
 
         $manager->persist($user);
@@ -88,7 +88,7 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
             isMailActive: false,
         );
 
-        $password = $this->hasher->hashPassword($user, self::PLAIN_PASSWORD);
+        $password = $this->hasher->hashPassword($user, self::PLAIN_HISTOLOGE);
         $user->setStatut(User::STATUS_ACTIVE)->setPassword($password);
 
         $manager->persist($user);
