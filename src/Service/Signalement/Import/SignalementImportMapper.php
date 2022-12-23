@@ -131,8 +131,7 @@ class SignalementImportMapper
         }
         $situations = [];
         foreach ($this->getMapping() as $fileColumn => $fieldColumn) {
-            $foundIndex = array_search($fileColumn, $columns);
-            if (false !== $foundIndex) {
+            if (\in_array($fileColumn, $columns)) {
                 $fieldValue = 'NSP' !== $data[$fileColumn] ? $data[$fileColumn] : null;
                 $fieldValue = trim($fieldValue, '"');
                 switch ($fieldColumn) {
@@ -168,13 +167,18 @@ class SignalementImportMapper
                     case 'dateEntree':
                     case 'prorioAvertiAt':
                     case 'dateVisite':
+                    case 'naissanceOccupantAt':
                         $date = \DateTimeImmutable::createFromFormat('d/m/y', $fieldValue);
                         if (false === $date) {
                             $date = \DateTimeImmutable::createFromFormat('Y/m/d', $fieldValue);
                         }
+                        if (false === $date) {
+                            $date = \DateTimeImmutable::createFromFormat('d/m/Y', $fieldValue);
+                        }
                         $fieldValue = false !== $date ? $date : null;
                         break;
                     case 'superficie':
+                    case 'loyer':
                         $fieldValue = (float) $fieldValue;
                         break;
                     case 'nbAdultes':

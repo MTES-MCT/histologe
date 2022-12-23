@@ -147,7 +147,7 @@ class SignalementImportLoader
                             ->addCritere($critere);
                     }
                 } catch (\Throwable $exception) {
-                    $this->logger->error($exception->getMessage());
+                    $this->logger->error($critereLabel.' - '.$exception->getMessage());
                 }
             }
         }
