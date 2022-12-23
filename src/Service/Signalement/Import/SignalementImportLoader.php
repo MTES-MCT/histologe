@@ -8,30 +8,22 @@ use App\Entity\Criticite;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Entity\User;
+use App\Factory\SuiviFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
+use App\Manager\SuiviManager;
 use App\Manager\TagManager;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class SignalementImportLoader
 {
-    private array $metadata = [
-        'count_signalement' => 0,
-    ];
-
-    public function __construct(
-        private SignalementImportMapper $signalementImportMapper,
-        private SignalementManager $signalementManager,
-        private TagManager $tagManager,
-        private AffectationManager $affectationManager,
-        private EntityManagerInterface $entityManager,
-        private LoggerInterface $logger,
-    ) {
-    }
+    private const REGEX_DATE_FORMAT_CSV = '/\d{4}\/\d{2}\/\d{2}/';
 
     private const SITUATIONS = [
         'Sécurité des occupants',
@@ -42,6 +34,27 @@ class SignalementImportLoader
         'Vie commune et voisinage',
     ];
 
+    private array $metadata = [
+        'count_signalement' => 0,
+    ];
+
+    public function __construct(
+        private SignalementImportMapper $signalementImportMapper,
+        private SignalementManager $signalementManager,
+        private TagManager $tagManager,
+        private AffectationManager $affectationManager,
+        private SuiviManager $suiviManager,
+        private SuiviFactory $suiviFactory,
+        private EntityManagerInterface $entityManager,
+        private ParameterBagInterface $parameterBag,
+        private LoggerInterface $logger,
+    ) {
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws \Exception
+     */
     public function load(Territory $territory, array $data, array $headers): void
     {
         $countSignalement = 0;
@@ -52,12 +65,11 @@ class SignalementImportLoader
                 ++$countSignalement;
                 $signalement = $this->signalementManager->createOrGet($territory, $dataMapped, true);
                 $signalement = $this->loadTags($signalement, $territory, $dataMapped);
-                $this->loadAffectation($signalement, $territory, $dataMapped);
-
                 foreach (self::SITUATIONS as $situation) {
                     $signalement = $this->loadSignalementSituation($signalement, $dataMapped, $situation);
                 }
-
+                $this->loadAffectation($signalement, $territory, $dataMapped);
+                $this->loadSuivi($signalement, $dataMapped);
                 $this->signalementManager->persist($signalement);
                 $this->metadata['count_signalement'] = $countSignalement;
             }
@@ -147,11 +159,35 @@ class SignalementImportLoader
                             ->addCritere($critere);
                     }
                 } catch (\Throwable $exception) {
-                    $this->logger->error($exception->getMessage());
+                    $this->logger->error($critereLabel.' - '.$exception->getMessage());
                 }
             }
         }
 
         return $signalement;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function loadSuivi(Signalement $signalement, array $dataMapped): void
+    {
+        if (isset($dataMapped['suivi']) && !empty($dataMapped['suivi'])) {
+            $user = $this->entityManager->getRepository(User::class)->findOneBy([
+                    'email' => $this->parameterBag->get('user_system_email'), ]
+            );
+
+            foreach ($dataMapped['suivi'] as $suivi) {
+                preg_match(self::REGEX_DATE_FORMAT_CSV, $suivi, $matches);
+                $createdAt = array_shift($matches);
+                $description = trim(preg_replace(self::REGEX_DATE_FORMAT_CSV, '', $suivi));
+                $suivi = $this->suiviFactory->createInstanceFrom($user, $signalement, [], false);
+                $suivi
+                    ->setDescription($description)
+                    ->setCreatedAt(new \DateTimeImmutable($createdAt));
+
+                $this->suiviManager->persist($suivi);
+            }
+        }
     }
 }
