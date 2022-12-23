@@ -33,7 +33,7 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
         foreach ($userRows['users'] as $row) {
             $this->loadUsers($manager, $row);
         }
-
+        $this->loadSystemUser();
         $manager->flush();
 
         $connection = $this->entityManager->getConnection();
@@ -69,6 +69,10 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
         $user->setPassword($password);
 
         $manager->persist($user);
+    }
+
+    private function loadSystemUser()
+    {
     }
 
     public function getOrder(): int

@@ -3,6 +3,7 @@
 namespace App\Service\Signalement\Import;
 
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Signalement;
 
 class SignalementImportMapper
 {
@@ -12,6 +13,10 @@ class SignalementImportMapper
     private const SITUATION_ETAT_BATIMENT = 'Etat du bâtiment';
     private const SITUATION_ESPACE_VIE = 'Les espaces de vie';
     private const SITUATION_VIE_COMMUNE_VOISINAGE = 'Vie commune et voisinage';
+
+    private const STATUT_CSV_EN_COURS = 'en cours';
+    private const STATUT_CSV_OUVERTURE = 'ouverture';
+    private const STATUT_CSV_FERMETURE = 'fermeture';
 
     public function getMapping(): array
     {
@@ -120,6 +125,7 @@ class SignalementImportMapper
             'Signalement - Vie commune & voisinage 1' => self::SITUATION_VIE_COMMUNE_VOISINAGE,
             'Signalement - Vie commune & voisinage 2' => self::SITUATION_VIE_COMMUNE_VOISINAGE,
             'Signalement - Vie commune & voisinage 3' => self::SITUATION_VIE_COMMUNE_VOISINAGE,
+            'suivi' => 'suivi',
         ];
     }
 
@@ -168,14 +174,7 @@ class SignalementImportMapper
                     case 'prorioAvertiAt':
                     case 'dateVisite':
                     case 'naissanceOccupantAt':
-                        $date = \DateTimeImmutable::createFromFormat('d/m/y', $fieldValue);
-                        if (false === $date) {
-                            $date = \DateTimeImmutable::createFromFormat('Y/m/d', $fieldValue);
-                        }
-                        if (false === $date) {
-                            $date = \DateTimeImmutable::createFromFormat('d/m/Y', $fieldValue);
-                        }
-                        $fieldValue = false !== $date ? $date : null;
+                        $fieldValue = $this->transformToDatetime($fieldValue);
                         break;
                     case 'superficie':
                     case 'loyer':
@@ -190,6 +189,9 @@ class SignalementImportMapper
                     case 'nbNiveauxLogement':
                         $fieldValue = (int) $fieldValue;
                         break;
+                    case 'statut':
+                        $fieldValue = $this->transformToSignalementStatus($fieldValue);
+                        break;
                     case 'motifCloture':
                         $fieldValue = \array_key_exists($fieldValue, MotifCloture::LABEL) ? $fieldValue : 'AUTRE';
                         break;
@@ -201,6 +203,9 @@ class SignalementImportMapper
                     case self::SITUATION_VIE_COMMUNE_VOISINAGE:
                         $situations[$fieldColumn] = $fieldValue;
                         break;
+                    case 'suivi':
+                        $fieldValue = array_filter(array_map('trim', explode('-', $fieldValue)));
+                        // no break
                     default:
                 }
 
@@ -223,5 +228,30 @@ class SignalementImportMapper
         }
 
         return $dataMapped;
+    }
+
+    private function transformToDatetime(string $value): ?\DateTimeImmutable
+    {
+        $date = \DateTimeImmutable::createFromFormat('d/m/y', $value);
+        if (false === $date) {
+            $date = \DateTimeImmutable::createFromFormat('Y/m/d', $value);
+        }
+        if (false === $date) {
+            $date = \DateTimeImmutable::createFromFormat('d/m/Y', $value);
+        }
+
+        return false !== $date ? $date : null;
+    }
+
+    private function transformToSignalementStatus(?string $value): int
+    {
+        if (self::STATUT_CSV_EN_COURS === $value || self::STATUT_CSV_OUVERTURE === $value) {
+            return Signalement::STATUS_ACTIVE;
+        }
+        if (self::STATUT_CSV_FERMETURE === $value) {
+            return Signalement::STATUS_CLOSED;
+        }
+
+        return Signalement::STATUS_NEED_VALIDATION;
     }
 }
