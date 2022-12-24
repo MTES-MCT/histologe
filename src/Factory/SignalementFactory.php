@@ -71,7 +71,7 @@ class SignalementFactory
             ->setOrigineSignalement($data['origineSignalement'])
             ->setSituationOccupant($data['situationOccupant'])
             ->setSituationProOccupant($data['situationProOccupant'])
-            ->setNaissanceOccupantAt($data['naissanceOccupantAt'])
+            ->setNaissanceOccupants($data['naissanceOccupants'])
             ->setIsLogementCollectif((bool) $data['isLogementCollectif'])
             ->setIsConstructionAvant1949((bool) $data['isConstructionAvant1949'])
             ->setIsRisqueSurOccupation((bool) $data['isRisqueSurOccupation'])

@@ -16,6 +16,7 @@ use App\Manager\SuiviManager;
 use App\Manager\TagManager;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Psr\Log\LoggerInterface;
@@ -23,6 +24,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class SignalementImportLoader
 {
+    private const FLUSH_COUNT = 1000;
     private const REGEX_DATE_FORMAT_CSV = '/\d{4}\/\d{2}\/\d{2}/';
 
     private const SITUATIONS = [
@@ -68,10 +70,24 @@ class SignalementImportLoader
                 foreach (self::SITUATIONS as $situation) {
                     $signalement = $this->loadSignalementSituation($signalement, $dataMapped, $situation);
                 }
-                $this->loadAffectation($signalement, $territory, $dataMapped);
-                $this->loadSuivi($signalement, $dataMapped);
-                $this->signalementManager->persist($signalement);
+
+                $affectationCollection = $this->loadAffectation($signalement, $territory, $dataMapped);
+                foreach ($affectationCollection as $affectation) {
+                    $signalement->addAffectation($affectation);
+                }
+
+                $suiviCollection = $this->loadSuivi($signalement, $dataMapped);
+                foreach ($suiviCollection as $suivi) {
+                    $signalement->addSuivi($suivi);
+                }
+
                 $this->metadata['count_signalement'] = $countSignalement;
+                if (0 === $countSignalement % self::FLUSH_COUNT) {
+                    $this->logger->info(sprintf('in progress - %s signalements saved', $countSignalement));
+                    $this->signalementManager->flush();
+                } else {
+                    $this->signalementManager->persist($signalement);
+                }
             }
         }
         $this->signalementManager->flush();
@@ -92,8 +108,9 @@ class SignalementImportLoader
         return $signalement;
     }
 
-    private function loadAffectation(Signalement $signalement, Territory $territory, array $dataMapped): void
+    private function loadAffectation(Signalement $signalement, Territory $territory, array $dataMapped): ArrayCollection
     {
+        $affectationCollection = new ArrayCollection();
         if (isset($dataMapped['partners']) && !empty($dataMapped['partners'])) {
             $partnersName = explode(',', $dataMapped['partners']);
             foreach ($partnersName as $partnerName) {
@@ -118,10 +135,13 @@ class SignalementImportLoader
                         $affectation->setStatut(Affectation::STATUS_ACCEPTED);
                     }
 
-                    $this->affectationManager->persist($affectation);
+                    // $this->affectationManager->persist($affectation);
+                    $affectationCollection->add($affectation);
                 }
             }
         }
+
+        return $affectationCollection;
     }
 
     /**
@@ -170,8 +190,9 @@ class SignalementImportLoader
     /**
      * @throws \Exception
      */
-    private function loadSuivi(Signalement $signalement, array $dataMapped): void
+    private function loadSuivi(Signalement $signalement, array $dataMapped): ArrayCollection
     {
+        $suiviCollection = new ArrayCollection();
         if (isset($dataMapped['suivi']) && !empty($dataMapped['suivi'])) {
             $user = $this->entityManager->getRepository(User::class)->findOneBy([
                     'email' => $this->parameterBag->get('user_system_email'), ]
@@ -186,8 +207,11 @@ class SignalementImportLoader
                     ->setDescription($description)
                     ->setCreatedAt(new \DateTimeImmutable($createdAt));
 
-                $this->suiviManager->persist($suivi);
+                // $this->suiviManager->persist($suivi);
+                $suiviCollection->add($suivi);
             }
         }
+
+        return $suiviCollection;
     }
 }
