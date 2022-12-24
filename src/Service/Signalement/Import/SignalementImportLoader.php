@@ -135,7 +135,6 @@ class SignalementImportLoader
                         $affectation->setStatut(Affectation::STATUS_ACCEPTED);
                     }
 
-                    // $this->affectationManager->persist($affectation);
                     $affectationCollection->add($affectation);
                 }
             }
@@ -207,7 +206,6 @@ class SignalementImportLoader
                     ->setDescription($description)
                     ->setCreatedAt(new \DateTimeImmutable($createdAt));
 
-                // $this->suiviManager->persist($suivi);
                 $suiviCollection->add($suivi);
             }
         }
