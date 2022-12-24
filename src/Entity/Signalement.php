@@ -1265,12 +1265,12 @@ class Signalement
         return $this;
     }
 
-    public function getAnneeConstruction(): ?int
+    public function getAnneeConstruction(): ?string
     {
         return $this->anneeConstruction;
     }
 
-    public function setAnneeConstruction(?int $anneeConstruction): self
+    public function setAnneeConstruction(?string $anneeConstruction): self
     {
         $this->anneeConstruction = $anneeConstruction;
 

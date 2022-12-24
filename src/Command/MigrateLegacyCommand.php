@@ -331,7 +331,7 @@ class MigrateLegacyCommand extends Command
                     : null)
                 ->setIsRsa((bool) $legacySignalement['is_rsa'])
                 ->setProprioAvertiAt(new \DateTimeImmutable($legacySignalement['prorio_averti_at']))
-                ->setAnneeConstruction((int) $legacySignalement['annee_construction'])
+                ->setAnneeConstruction($legacySignalement['annee_construction'])
                 ->setTypeEnergieLogement($legacySignalement['type_energie_logement'])
                 ->setOrigineSignalement($legacySignalement['origine_signalement'])
                 ->setSituationOccupant($legacySignalement['situation_occupant'])
