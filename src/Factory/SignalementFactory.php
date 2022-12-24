@@ -66,7 +66,7 @@ class SignalementFactory
             ->setLienDeclarantOccupant($data['lienDeclarantOccupant'])
             ->setIsConsentementTiers((bool) $data['isConsentementTiers'])
             ->setIsRsa((bool) $data['isRsa'])
-            ->setAnneeConstruction((int) $data['anneeConstruction'])
+            ->setAnneeConstruction($data['anneeConstruction'])
             ->setTypeEnergieLogement($data['typeEnergieLogement'])
             ->setOrigineSignalement($data['origineSignalement'])
             ->setSituationOccupant($data['situationOccupant'])
