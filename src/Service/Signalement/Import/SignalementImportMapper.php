@@ -142,7 +142,7 @@ class SignalementImportMapper
                 $fieldValue = trim($fieldValue, '"');
                 switch ($fieldColumn) {
                     case 'reference':
-                        $result = preg_split('(-|/)', $fieldValue);
+                        $result = preg_split('/[-|\/]/', $fieldValue);
                         if (\count($result) > 1) {
                             list($index, $year) = $result;
                             $fieldValue = '20'.$year.'-'.$index;
