@@ -336,7 +336,6 @@ class MigrateLegacyCommand extends Command
                 ->setOrigineSignalement($legacySignalement['origine_signalement'])
                 ->setSituationOccupant($legacySignalement['situation_occupant'])
                 ->setSituationProOccupant($legacySignalement['situation_pro_occupant'])
-                ->setNaissanceOccupantAt(new \DateTimeImmutable($legacySignalement['naissance_occupant_at']))
                 ->setIsLogementCollectif((bool) $legacySignalement['is_logement_collectif'])
                 ->setIsConstructionAvant1949((bool) $legacySignalement['is_construction_avant1949'])
                 ->setIsDiagSocioTechnique((bool) $legacySignalement['is_diag_socio_technique'])

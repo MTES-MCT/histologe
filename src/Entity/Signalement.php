@@ -121,7 +121,7 @@ class Signalement
     #[ORM\Column(type: 'string', length: 15, nullable: true)]
     private $telDeclarant;
 
-    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $mailDeclarant;
 
     #[ORM\Column(type: 'string', length: 200, nullable: true)]
@@ -136,7 +136,7 @@ class Signalement
     #[ORM\Column(type: 'string', length: 15, nullable: true)]
     private $telOccupant;
 
-    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $mailOccupant;
 
     #[ORM\Column(type: 'string', length: 100)]
@@ -232,10 +232,10 @@ class Signalement
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private $prorioAvertiAt;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private $anneeConstruction;
 
-    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $typeEnergieLogement;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -247,8 +247,8 @@ class Signalement
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $situationProOccupant;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private $naissanceOccupantAt;
+    #[ORM\Column(type: 'string', nullable: true)]
+    private $naissanceOccupants;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
     private $isLogementCollectif;
@@ -310,7 +310,7 @@ class Signalement
     #[ORM\Column(type: 'integer', nullable: true)]
     private $nbOccupantsLogement;
 
-    #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Affectation::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Affectation::class, cascade: ['persist'], orphanRemoval: true)]
     private $affectations;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -1325,14 +1325,14 @@ class Signalement
         return $this;
     }
 
-    public function getNaissanceOccupantAt(): ?DateTimeImmutable
+    public function getNaissanceOccupants(): ?string
     {
-        return $this->naissanceOccupantAt;
+        return $this->naissanceOccupants;
     }
 
-    public function setNaissanceOccupantAt(?DateTimeImmutable $naissanceOccupantAt): self
+    public function setNaissanceOccupants(?string $naissanceOccupants): self
     {
-        $this->naissanceOccupantAt = $naissanceOccupantAt;
+        $this->naissanceOccupants = $naissanceOccupants;
 
         return $this;
     }

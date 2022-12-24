@@ -91,7 +91,7 @@ class SignalementImportMapper
             'origine signalement' => 'origineSignalement',
             'situation occupant' => 'situationOccupant',
             'situation pro occupant' => 'situationProOccupant',
-            'naissance occupant' => 'naissanceOccupantAt',
+            'naissance occupant' => 'naissanceOccupants',
             'logement collectif' => 'isLogementCollectif',
             'nom du referent social' => 'nomReferentSocial',
             'structure referent social' => 'StructureReferentSocial',
@@ -142,8 +142,13 @@ class SignalementImportMapper
                 $fieldValue = trim($fieldValue, '"');
                 switch ($fieldColumn) {
                     case 'reference':
-                        list($index, $year) = preg_split('(-|/)', $fieldValue);
-                        $fieldValue = '20'.$year.'-'.$index;
+                        $result = preg_split('/[-|\/]/', $fieldValue);
+                        if (\count($result) > 1) {
+                            list($index, $year) = $result;
+                            $fieldValue = '20'.$year.'-'.$index;
+                        } else {
+                            $fieldValue = array_shift($result);
+                        }
                         break;
                     case 'modeContactProprio':
                         $modes = array_filter(preg_split('(-|/)', $fieldValue));
@@ -187,7 +192,8 @@ class SignalementImportMapper
                     case 'nbPiecesLogement':
                     case 'nbChambresLogement':
                     case 'nbNiveauxLogement':
-                        $fieldValue = (int) $fieldValue;
+                        preg_match('!\d+!', $fieldValue, $matches);
+                        $fieldValue = array_shift($matches);
                         break;
                     case 'statut':
                         $fieldValue = $this->transformToSignalementStatus($fieldValue);
@@ -205,7 +211,12 @@ class SignalementImportMapper
                         break;
                     case 'suivi':
                         $fieldValue = array_filter(array_map('trim', explode('-', $fieldValue)));
-                        // no break
+                        break;
+                    case 'telDeclarant':
+                        if (9 === \strlen($fieldValue)) {
+                            $fieldValue = str_pad($fieldValue, 10, '0', \STR_PAD_LEFT);
+                        }
+                        break;
                     default:
                 }
 
@@ -224,6 +235,16 @@ class SignalementImportMapper
                 }
             } else {
                 $dataMapped[$fieldColumn] = null;
+            }
+        }
+
+        if (!str_contains($dataMapped['reference'], '-')) {
+            $createdAt = $dataMapped['createdAt'];
+            if ($createdAt instanceof \DateTimeImmutable) {
+                $dataMapped['reference'] = $createdAt->format('Y').'-'.$dataMapped['reference'];
+            } else {
+                $currentDate = new \DateTimeImmutable();
+                $dataMapped['reference'] = $currentDate->format('Y').'-'.$dataMapped['reference'];
             }
         }
 
