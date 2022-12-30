@@ -88,7 +88,9 @@ class BackAssignmentController extends AbstractController
             $status = isset($response['accept']) ? Affectation::STATUS_ACCEPTED : Affectation::STATUS_REFUSED;
             $affectation = $this->affectationManager->updateAffectation($affectation, $user, $status);
             $this->addFlash('success', 'Affectation mise à jour avec succès !');
-            $this->dispatchAffectationAnsweredEvent($affectation, $response);
+            if (Affectation::STATUS_REFUSED == $status) {
+                $this->dispatchAffectationAnsweredEvent($affectation, $response);
+            }
         } else {
             $this->addFlash('error', "Une erreur est survenu lors de l'affectation");
         }
