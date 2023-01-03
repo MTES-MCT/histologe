@@ -717,10 +717,9 @@
                 <div class="fr-col-2 {% if suivi.createdBy %}part-infos-hover{% endif %}"
                      {% if suivi.createdBy %}data-user="{{ suivi.createdBy.nomComplet }}"
                      data-mail="{{ suivi.createdBy.email }}"{% endif %}>
-                    <strong> {{ suivi.createdBy ? (suivi.createdBy.nom|upper~'. '~ suivi.createdBy.prenom|capitalize) : signalement.nomDeclarant ?? signalement.nomOccupant|upper~' '~signalement.prenomOccupant|capitalize }}</strong>
+                    <strong>{{ suivi.createdBy ? (suivi.createdBy.nom|upper~' '~ suivi.createdBy.prenom|capitalize) : (signalement.nomDeclarant ? signalement.nomDeclarant|upper~' '~signalement.prenomDeclarant|capitalize : signalement.nomOccupant|upper~' '~signalement.prenomOccupant|capitalize) }}</strong>
                     <br>
-                    <small>[{{ suivi.createdBy ? (suivi.createdBy.partner ? suivi.createdBy.partner.nom : 'Aucun') : 'DECLARANT' }}
-                        ]</small> <br>
+                    <small>[{{ suivi.createdBy ? (suivi.createdBy.partner ? suivi.createdBy.partner.nom : 'Aucun') : 'DECLARANT' }}]</small> <br>
                     <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
                 </div>
                 <div class="fr-col-9 bloc-suivi-content-row fr-pl-3v">
