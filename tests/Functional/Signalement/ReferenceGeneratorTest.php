@@ -22,11 +22,15 @@ class ReferenceGeneratorTest extends KernelTestCase
 
     public function testGenerateReferenceFromExistingSignalement()
     {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         $territory = $territoryRepository->findOneBy(['zip' => 13]);
+
+        $signalementRepository = $this->createMock(SignalementRepository::class);
+        $signalementRepository
+            ->expects($this->once())
+            ->method('findLastReferenceByTerritory')
+            ->with($territory)
+            ->willReturn(['reference' => '2022-11']);
 
         $referenceGenerator = new ReferenceGenerator($signalementRepository);
 
