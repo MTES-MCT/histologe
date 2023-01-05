@@ -17,7 +17,6 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-
 class ImportSignalementCommandTest extends KernelTestCase
 {
     public function testDisplaySuccessfullyMessage()
@@ -66,20 +65,20 @@ class ImportSignalementCommandTest extends KernelTestCase
         $signalementImportLoader->expects($this->once())
             ->method('getMetaData')
             ->willReturn([
-                'count_signalement' => 1
+                'count_signalement' => 1,
             ]);
 
         $csvParser = $this->createMock(CsvParser::class);
         $csvParser->expects($this->once())
             ->method('parseAsDict')
             ->willReturn([
-                'Ref signalement' => '12'
+                'Ref signalement' => '12',
             ]);
 
         $csvParser->expects($this->once())
             ->method('getHeaders')
             ->willReturn([
-                'Ref signalement'
+                'Ref signalement',
             ]);
 
         $fileStorage = $this->createMock(FilesystemOperator::class);
@@ -105,7 +104,7 @@ class ImportSignalementCommandTest extends KernelTestCase
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([
-            'territory_zip' => '01'
+            'territory_zip' => '01',
         ]);
 
         $output = $commandTester->getDisplay();

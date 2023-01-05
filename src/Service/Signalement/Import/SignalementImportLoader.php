@@ -40,6 +40,8 @@ class SignalementImportLoader
         'count_signalement' => 0,
     ];
 
+    private User|null $userSystem = null;
+
     public function __construct(
         private SignalementImportMapper $signalementImportMapper,
         private SignalementManager $signalementManager,
@@ -61,11 +63,15 @@ class SignalementImportLoader
     {
         $countSignalement = 0;
 
+        $this->userSystem = $this->entityManager->getRepository(User::class)->findOneBy([
+                'email' => $this->parameterBag->get('user_system_email'), ]
+        );
+
         foreach ($data as $item) {
             $dataMapped = $this->signalementImportMapper->map($headers, $item);
             if (!empty($dataMapped)) {
                 ++$countSignalement;
-                $signalement = $this->signalementManager->createOrGet($territory, $dataMapped, true);
+                $signalement = $this->signalementManager->createOrUpdate($territory, $dataMapped, true);
                 $signalement = $this->loadTags($signalement, $territory, $dataMapped);
                 foreach (self::SITUATIONS as $situation) {
                     $signalement = $this->loadSignalementSituation($signalement, $dataMapped, $situation);
@@ -115,7 +121,7 @@ class SignalementImportLoader
             $partnersName = explode(',', $dataMapped['partners']);
             foreach ($partnersName as $partnerName) {
                 $partner = $this->entityManager->getRepository(Partner::class)->findOneBy([
-                    'nom' => $partnerName,
+                    'nom' => trim($partnerName),
                     'territory' => $territory,
                 ]);
 
@@ -126,16 +132,21 @@ class SignalementImportLoader
                         $partner?->getUsers()?->first()
                     );
 
-                    if (!empty($dataMapped['motifCloture'])) {
+                    if ($affectation instanceof Affectation) {
                         $affectation
-                            ->setStatut(Affectation::STATUS_CLOSED)
-                            ->setAnsweredAt(new \DateTimeImmutable())
-                            ->setMotifCloture($dataMapped['motifCloture']);
-                    } else {
-                        $affectation->setStatut(Affectation::STATUS_ACCEPTED);
+                            ->setCreatedAt($dataMapped['createdAt'])
+                            ->setAnsweredAt($dataMapped['createdAt']);
+                        if (!empty($dataMapped['motifCloture'])) {
+                            $affectation = $this->affectationManager->closeAffectation(
+                                $affectation,
+                                $this->userSystem,
+                                $dataMapped['motifCloture']
+                            );
+                        } else {
+                            $affectation->setStatut(Affectation::STATUS_ACCEPTED);
+                        }
+                        $affectationCollection->add($affectation);
                     }
-
-                    $affectationCollection->add($affectation);
                 }
             }
         }
@@ -193,20 +204,25 @@ class SignalementImportLoader
     {
         $suiviCollection = new ArrayCollection();
         if (isset($dataMapped['suivi']) && !empty($dataMapped['suivi'])) {
-            $user = $this->entityManager->getRepository(User::class)->findOneBy([
-                    'email' => $this->parameterBag->get('user_system_email'), ]
-            );
-
             foreach ($dataMapped['suivi'] as $suivi) {
                 preg_match(self::REGEX_DATE_FORMAT_CSV, $suivi, $matches);
                 $createdAt = array_shift($matches);
                 $description = trim(preg_replace(self::REGEX_DATE_FORMAT_CSV, '', $suivi));
-                $suivi = $this->suiviFactory->createInstanceFrom($user, $signalement, [], false);
-                $suivi
-                    ->setDescription($description)
-                    ->setCreatedAt(new \DateTimeImmutable($createdAt));
 
-                $suiviCollection->add($suivi);
+                $suivi = $this->suiviManager->findOneBy([
+                    'description' => $description,
+                    'createdBy' => $this->userSystem,
+                    'signalement' => $signalement,
+                ]);
+
+                if (null === $suivi) {
+                    $suivi = $this->suiviFactory->createInstanceFrom($this->userSystem, $signalement, [], false);
+                    $suivi
+                        ->setDescription($description)
+                        ->setCreatedAt(new \DateTimeImmutable($createdAt));
+
+                    $suiviCollection->add($suivi);
+                }
             }
         }
 

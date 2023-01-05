@@ -9,6 +9,10 @@ class SignalementFactory
 {
     public function createInstanceFrom(Territory $territory, array $data, bool $isImported = false): Signalement
     {
+        if (empty($data['statut']) && ($data['motifCloture'] || $data['closedAt'])) {
+            $data['statut'] = Signalement::STATUS_CLOSED;
+        }
+
         return (new Signalement())
             ->setIsImported($isImported)
             ->setTerritory($territory)

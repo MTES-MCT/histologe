@@ -10,6 +10,7 @@ use App\Manager\SuiviManager;
 use App\Service\Esabora\DossierResponse;
 use App\Service\Esabora\EsaboraService;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class AffectationManagerTest extends KernelTestCase
@@ -17,17 +18,24 @@ class AffectationManagerTest extends KernelTestCase
     private const REF_SIGNALEMENT = '2022-8';
     private ManagerRegistry $managerRegistry;
     private SuiviManager $suiviManager;
+    private LoggerInterface $logger;
 
     protected function setUp(): void
     {
         self::bootKernel();
         $this->managerRegistry = self::getContainer()->get(ManagerRegistry::class);
         $this->suiviManager = self::getContainer()->get(SuiviManager::class);
+        $this->logger = self::getContainer()->get(LoggerInterface::class);
     }
 
     public function testRemoveAllPartnersFromAffectation(): void
     {
-        $affectationManager = new AffectationManager($this->managerRegistry, $this->suiviManager, Affectation::class);
+        $affectationManager = new AffectationManager(
+            $this->managerRegistry,
+            $this->suiviManager,
+            $this->logger,
+            Affectation::class,
+        );
 
         /** @var Signalement $signalement */
         $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(
@@ -44,7 +52,12 @@ class AffectationManagerTest extends KernelTestCase
 
     public function testRemoveSomePartnersFromAffectation(): void
     {
-        $affectationManager = new AffectationManager($this->managerRegistry, $this->suiviManager, Affectation::class);
+        $affectationManager = new AffectationManager(
+            $this->managerRegistry,
+            $this->suiviManager,
+            $this->logger,
+            Affectation::class,
+        );
 
         /** @var Signalement $signalement */
         $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(
@@ -86,7 +99,12 @@ class AffectationManagerTest extends KernelTestCase
         $responseEsabora = file_get_contents($basePath.$filename);
 
         $dossierResponse = new DossierResponse(json_decode($responseEsabora, true), 200);
-        $affectationManager = new AffectationManager($this->managerRegistry, $this->suiviManager, Affectation::class);
+        $affectationManager = new AffectationManager(
+            $this->managerRegistry,
+            $this->suiviManager,
+            $this->logger,
+            Affectation::class,
+        );
         $affectationManager->synchronizeAffectationFrom($dossierResponse, $affectation);
 
         /** @var Signalement $signalement */

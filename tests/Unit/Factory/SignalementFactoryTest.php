@@ -142,6 +142,5 @@ class SignalementFactoryTest extends KernelTestCase
 
         $this->assertEquals($data['nomSci'], $signalement->getNomSci());
         $this->assertEquals($data['nomSci'], $signalement->getNomSci());
-
     }
 }

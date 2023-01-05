@@ -58,8 +58,10 @@ class BackAssignmentController extends AbstractController
                         $partner,
                         $this->getUser()
                     );
-                    $this->affectationManager->persist($affectation);
-                    $this->dispatchDossierEsabora($affectation);
+                    if ($affectation instanceof Affectation) {
+                        $this->affectationManager->persist($affectation);
+                        $this->dispatchDossierEsabora($affectation);
+                    }
                 }
                 $this->affectationManager->removeAffectationsFrom($signalement, $postedPartner, $partnersIdToRemove);
             } else {
