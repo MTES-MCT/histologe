@@ -55,6 +55,9 @@ class SignalementFactory
             ->setCreatedAt($data['createdAt'])
             ->setModifiedAt($data['modifiedAt'])
             ->setStatut((int) $data['statut'])
+            ->setValidatedAt(
+                Signalement::STATUS_ACTIVE === $data['statut'] ? $data['createdAt'] : new \DateTimeImmutable()
+            )
             ->setReference($data['reference'])
             ->setDateVisite($data['dateVisite'])
             ->setIsOccupantPresentVisite((bool) $data['isOccupantPresentVisite'])

@@ -580,3 +580,37 @@ signalements:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
       - "le sol ou la base des murs est très humide."
+  -
+    uuid: "00000000-0000-0000-2023-00000000001"
+    details: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+    is_proprio_averti: 1
+    nb_adultes: "3"
+    is_allocataire: "CAF"
+    nature_logement: "Appartement"
+    type_logement: "T5"
+    superficie: 100
+    loyer: 1000
+    phone_number: 0621127285
+    cp_occupant: "01700"
+    ville_occupant: "Gex"
+    etage_occupant: "5"
+    statut: 6
+    motif_cloture: 'NON_DECENCE'
+    reference: "2023-1"
+    geoloc: "[]"
+    score_creation: 5.420054200542
+    insee_occupant: "01173"
+    type_energie_logement: "Electrique"
+    origine_signalement: "Guichet Unique"
+    situation_occupant: "1"
+    nb_pieces_logement: 0
+    nb_chambres_logement: 0
+    nb_niveaux_logement: 0
+    nb_occupants_logement: 2
+    territory: "Ain"
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    is_imported: true
+    tags: []
+    situations: []
+    criteres: []
+    criticites: []

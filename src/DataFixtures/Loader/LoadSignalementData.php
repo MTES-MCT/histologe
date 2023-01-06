@@ -88,6 +88,12 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setOrigineSignalement($row['origine_signalement'])
             ->setCreatedAt((new \DateTimeImmutable())->modify('-15 days'));
 
+        if (isset($row['is_imported'])) {
+            $signalement
+                ->setIsImported($row['is_imported'])
+                ->setModifiedAt(null);
+        }
+
         if (Signalement::STATUS_CLOSED === $row['statut']) {
             $signalement
                 ->setMotifCloture($row['motif_cloture'])

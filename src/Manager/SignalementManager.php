@@ -79,8 +79,11 @@ class SignalementManager extends AbstractManager
             ->setVilleOccupant($data['villeOccupant'])
             ->setIsCguAccepted((bool) $data['isCguAccepted'])
             ->setCreatedAt($data['createdAt'])
-            ->setModifiedAt($data['modifiedAt'])
+            ->setModifiedAt(new \DateTimeImmutable())
             ->setStatut((int) $data['statut'])
+            ->setValidatedAt(
+                Signalement::STATUS_ACTIVE === $data['statut'] ? $data['createdAt'] : new \DateTimeImmutable()
+            )
             ->setReference($data['reference'])
             ->setDateVisite($data['dateVisite'])
             ->setIsOccupantPresentVisite((bool) $data['isOccupantPresentVisite'])

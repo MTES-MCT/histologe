@@ -51,7 +51,7 @@ class CsvParser
             $dataList[] = $dataItem;
         }
 
-        array_shift($dataList);
+        array_pop($dataList);
 
         return $dataList;
     }

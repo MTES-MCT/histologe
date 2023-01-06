@@ -9,7 +9,6 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
-use App\Factory\SuiviFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
@@ -48,7 +47,6 @@ class SignalementImportLoader
         private TagManager $tagManager,
         private AffectationManager $affectationManager,
         private SuiviManager $suiviManager,
-        private SuiviFactory $suiviFactory,
         private EntityManagerInterface $entityManager,
         private ParameterBagInterface $parameterBag,
         private LoggerInterface $logger,
@@ -216,7 +214,7 @@ class SignalementImportLoader
                 ]);
 
                 if (null === $suivi) {
-                    $suivi = $this->suiviFactory->createInstanceFrom($this->userSystem, $signalement, [], false);
+                    $suivi = $this->suiviManager->createSuivi($this->userSystem, $signalement, [], false);
                     $suivi
                         ->setDescription($description)
                         ->setCreatedAt(new \DateTimeImmutable($createdAt));
