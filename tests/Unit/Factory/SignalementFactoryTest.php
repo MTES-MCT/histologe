@@ -27,8 +27,8 @@ class SignalementFactoryTest extends KernelTestCase
             'nbEnfantsM6' => $faker->randomDigit(),
             'nbEnfantsP6' => $faker->randomDigit(),
             'nbOccupantsLogement' => $faker->randomDigit(),
-            'isAllocataire' => false,
-            'numAllocataire' => null,
+            'isAllocataire' => true,
+            'numAllocataire' => $faker->randomNumber(7),
             'typeLogement' => 'maison',
             'superficie' => $faker->numberBetween(30, 100),
             'nomProprio' => $faker->lastName(),
@@ -74,7 +74,7 @@ class SignalementFactoryTest extends KernelTestCase
             'isCguAccepted' => true,
             'modifiedAt' => null,
             'statut' => Signalement::STATUS_ACTIVE,
-            'geoloc' => null,
+            'geoloc' => ['lat' => 5.386161, 'lng' => 43.312827],
             'montantAllocation' => null,
             'codeProcedure' => null,
             'adresseAutreOccupant' => null,
@@ -112,8 +112,8 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEquals($data['prenomDeclarant'], $signalement->getPrenomDeclarant());
         $this->assertEquals($data['telDeclarant'], $signalement->getTelDeclarant());
         $this->assertEquals($data['mailDeclarant'], $signalement->getMailDeclarant());
-        $this->assertEquals($data['lienDeclarantOccupant'], $signalement->getLienDeclarantOccupant());
         $this->assertEquals($data['structureDeclarant'], $signalement->getStructureDeclarant());
+        $this->assertEquals($data['lienDeclarantOccupant'], $signalement->getLienDeclarantOccupant());
         $this->assertEquals($data['prenomOccupant'], $signalement->getPrenomOccupant());
         $this->assertEquals($data['nomOccupant'], $signalement->getNomOccupant());
         $this->assertEquals($data['telOccupant'], $signalement->getTelOccupant());
@@ -121,26 +121,102 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEquals($data['adresseOccupant'], $signalement->getAdresseOccupant());
         $this->assertEquals($data['cpOccupant'], $signalement->getCpOccupant());
         $this->assertEquals($data['villeOccupant'], $signalement->getVilleOccupant());
+        $this->assertEquals($data['inseeOccupant'], $signalement->getInseeOccupant());
         $this->assertEquals($data['etageOccupant'], $signalement->getEtageOccupant());
+        $this->assertEquals($data['escalierOccupant'], $signalement->getEscalierOccupant());
         $this->assertEquals($data['numAppartOccupant'], $signalement->getNumAppartOccupant());
-        $this->assertEquals($data['nomProprio'], $signalement->getNomProprio());
         $this->assertEquals($data['adresseOccupant'], $signalement->getAdresseOccupant());
+        $this->assertEquals($data['naissanceOccupants'], $signalement->getNaissanceOccupants());
+        $this->assertEquals($data['situationProOccupant'], $signalement->getSituationProOccupant());
+        $this->assertEquals($data['situationOccupant'], $signalement->getSituationOccupant());
+        $this->assertEquals($data['adresseAutreOccupant'], $signalement->getAdresseAutreOccupant());
+
+        $this->assertEquals($data['nomProprio'], $signalement->getNomProprio());
         $this->assertEquals($data['telProprio'], $signalement->getTelProprio());
         $this->assertEquals($data['mailProprio'], $signalement->getMailProprio());
+        $this->assertEquals($data['adresseProprio'], $signalement->getAdresseProprio());
+        $this->assertEquals($data['modeContactProprio'], $signalement->getModeContactProprio());
         $this->assertEquals($data['details'], $signalement->getDetails());
+        $this->assertEquals($data['statut'], $signalement->getStatut());
+        $this->assertEquals($data['modifiedAt'], $signalement->getModifiedAt());
 
         $this->assertEquals($data['isProprioAverti'], $signalement->getIsProprioAverti());
+        $this->assertEquals($data['prorioAvertiAt'], $signalement->getProprioAvertiAt());
+
         $this->assertEquals($data['nbAdultes'], $signalement->getNbAdultes());
         $this->assertEquals($data['nbEnfantsM6'], $signalement->getNbEnfantsM6());
         $this->assertEquals($data['nbEnfantsP6'], $signalement->getNbEnfantsP6());
-        $this->assertEquals($data['natureLogement'], $signalement->getNatureLogement());
+        $this->assertEquals($data['nbOccupantsLogement'], $signalement->getNbOccupantsLogement());
+
+        $this->assertEquals($data['nbPiecesLogement'], $signalement->getNbPiecesLogement());
+        $this->assertEquals($data['nbChambresLogement'], $signalement->getNbChambresLogement());
+        $this->assertEquals($data['nbNiveauxLogement'], $signalement->getNbNiveauxLogement());
+
+        $this->assertEquals($data['loyer'], $signalement->getLoyer());
+        $this->assertEquals(mb_strtoupper($data['typeLogement']), $signalement->getTypeLogement());
+        $this->assertEquals(mb_strtolower($data['natureLogement']), $signalement->getNatureLogement());
         $this->assertEquals($data['superficie'], $signalement->getSuperficie());
+
         $this->assertEquals($data['isAllocataire'], $signalement->getIsAllocataire());
+        $this->assertEquals($data['numAllocataire'], $signalement->getNumAllocataire());
+        $this->assertEquals($data['montantAllocation'], $signalement->getMontantAllocation());
+
         $this->assertEquals($data['isSituationHandicap'], $signalement->getIsSituationHandicap());
         $this->assertEquals($data['isLogementSocial'], $signalement->getIsLogementSocial());
         $this->assertEquals($data['isRelogement'], $signalement->getIsRelogement());
 
+        $this->assertEquals($data['isLogementCollectif'], $signalement->getIsLogementCollectif());
+        $this->assertEquals($data['isPreavisDepart'], $signalement->getIsPreavisDepart());
+        $this->assertEquals($data['isNotOccupant'], $signalement->getIsNotOccupant());
+        $this->assertEquals($data['isOccupantPresentVisite'], $signalement->getIsOccupantPresentVisite());
+        $this->assertEquals($data['isRsa'], $signalement->getIsRsa());
+        $this->assertEquals($data['isConstructionAvant1949'], $signalement->getIsConstructionAvant1949());
+        $this->assertEquals($data['isFondSolidariteLogement'], $signalement->getIsFondSolidariteLogement());
+        $this->assertEquals($data['isRisqueSurOccupation'], $signalement->getIsRisqueSurOccupation());
+        $this->assertEquals($data['isBailEnCours'], $signalement->getIsBailEnCours());
+        $this->assertEquals($data['isRefusIntervention'], $signalement->getIsRefusIntervention());
+        $this->assertEquals($data['isCguAccepted'], $signalement->getIsCguAccepted());
+        $this->assertEquals($data['isConsentementTiers'], $signalement->getIsConsentementTiers());
+
         $this->assertEquals($data['nomSci'], $signalement->getNomSci());
-        $this->assertEquals($data['nomSci'], $signalement->getNomSci());
+        $this->assertEquals($data['nomRepresentantSci'], $signalement->getNomRepresentantSci());
+        $this->assertEquals($data['telSci'], $signalement->getTelSci());
+        $this->assertEquals($data['mailSci'], $signalement->getMailSci());
+
+        $this->assertEquals($data['nomSyndic'], $signalement->getNomSyndic());
+        $this->assertEquals($data['mailSyndic'], $signalement->getMailSyndic());
+        $this->assertEquals($data['telSyndic'], $signalement->getTelSyndic());
+
+        $this->assertEquals($data['createdAt'], $signalement->getCreatedAt());
+        $this->assertEquals(
+            $signalement->getValidatedAt()->getTimestamp(),
+            $signalement->getCreatedAt()->getTimestamp())
+        ;
+        $this->assertEquals($data['motifCloture'], $signalement->getMotifCloture());
+        $this->assertEquals($data['closedAt'], $signalement->getClosedAt());
+        $this->assertEquals($data['numeroInvariant'], $signalement->getNumeroInvariant());
+        $this->assertEquals($data['dateEntree'], $signalement->getDateEntree());
+        $this->assertEquals($data['dateVisite'], $signalement->getDateVisite());
+        $this->assertEquals($data['origineSignalement'], $signalement->getOrigineSignalement());
+        $this->assertEquals($data['typeEnergieLogement'], $signalement->getTypeEnergieLogement());
+        $this->assertEquals($data['anneeConstruction'], $signalement->getAnneeConstruction());
+        $this->assertEquals($data['codeProcedure'], $signalement->getCodeProcedure());
+        $this->assertEquals($data['raisonRefusIntervention'], $signalement->getRaisonRefusIntervention());
+
+        $this->assertEquals($data['nomReferentSocial'], $signalement->getNomReferentSocial());
+        $this->assertEquals($data['StructureReferentSocial'], $signalement->getStructureReferentSocial());
+        $this->assertEquals([$data['mailOccupant'], $data['mailDeclarant']], $signalement->getMailUsagers());
+        $this->assertTrue($signalement->getIsImported());
+
+        $this->assertEmpty($signalement->getPhotos());
+        $this->assertEmpty($signalement->getDocuments());
+        $this->assertEmpty($signalement->getTelOccupantBis());
+        $this->assertEmpty($signalement->getIsDiagSocioTechnique());
+        $this->assertEmpty($signalement->getScoreCloture());
+        $this->assertEmpty($signalement->getJsonContent());
+        $this->assertEmpty($signalement->getModifiedBy());
+        $this->assertEmpty($signalement->getAffectationStatusByPartner());
+
+        $this->assertCount(84, $data, 'Array $data should have 84 keys');
     }
 }

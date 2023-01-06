@@ -33,6 +33,38 @@ class CsvParserTest extends KernelTestCase
         $this->assertContains('Email', $data[0], 'The first line  does not contain Email as column value');
     }
 
+    public function testParseAsDict(): void
+    {
+        $options = ['first_line' => 0, 'delimiter' => ',', 'enclosure' => '"', 'escape' => '\\'];
+        $csvParser = new CsvParser($options);
+        $dataList = $csvParser->parseAsDict($this->projectDir.'/tmp/data.csv');
+
+        foreach ($dataList as $dataItem) {
+            $this->assertArrayHasKey('Lastname', $dataItem);
+            $this->assertArrayHasKey('Firstname', $dataItem);
+            $this->assertArrayHasKey('Email', $dataItem);
+        }
+    }
+
+    public function testGetHeaders(): void
+    {
+        $options = ['first_line' => 0, 'delimiter' => ',', 'enclosure' => '"', 'escape' => '\\'];
+        $csvParser = new CsvParser($options);
+        $headers = $csvParser->getHeaders($this->projectDir.'/tmp/data.csv');
+
+        $this->assertEquals(['Lastname', 'Firstname', 'Email'], $headers);
+    }
+
+    public function testGetContent(): void
+    {
+        $options = ['first_line' => 0, 'delimiter' => ',', 'enclosure' => '"', 'escape' => '\\'];
+        $csvParser = new CsvParser($options);
+        $content = $csvParser->getContent($this->projectDir.'/tmp/data.csv');
+
+        $this->assertArrayHasKey('headers', $content);
+        $this->assertArrayHasKey('rows', $content);
+    }
+
     protected function tearDown(): void
     {
         unlink($this->projectDir.'/tmp/data.csv');

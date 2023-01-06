@@ -11,6 +11,7 @@ use App\Manager\SignalementManager;
 use App\Repository\TerritoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Security\Core\Security;
 
@@ -120,5 +121,165 @@ class SignalementManagerTest extends KernelTestCase
         $emails = $signalementManager->findEmailsAffectedToSignalement($signalement);
 
         $this->assertGreaterThan(1, \count($emails));
+    }
+
+    public function testCreateSignalement(): void
+    {
+        $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
+        $territoryRepository = $this->entityManager->getRepository(Territory::class);
+        /** @var Territory $territory */
+        $territory = $territoryRepository->findOneBy(['zip' => '01']);
+        /** @var Security $security */
+        $security = static::getContainer()->get('security.helper');
+
+        /** @var SignalementFactory $signalementFactory */
+        $signalementFactory = static::getContainer()->get(SignalementFactory::class);
+        $signalementManager = new SignalementManager($managerRegistry, $security, $signalementFactory);
+        $signalement = $signalementManager->createOrUpdate(
+            $territory,
+            $this->getSignalementData('2023-2'),
+            true
+        );
+
+        $this->assertInstanceOf(Signalement::class, $signalement);
+    }
+
+    public function testUpdateSignalement(): void
+    {
+        $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
+        $territoryRepository = $this->entityManager->getRepository(Territory::class);
+        /** @var Territory $territory */
+        $territory = $territoryRepository->findOneBy(['zip' => '01']);
+        /** @var Security $security */
+        $security = static::getContainer()->get('security.helper');
+
+        /** @var SignalementFactory $signalementFactory */
+        $signalementFactory = static::getContainer()->get(SignalementFactory::class);
+        $signalementManager = new SignalementManager($managerRegistry, $security, $signalementFactory);
+        $signalement = $signalementManager->createOrUpdate(
+            $territory,
+            $this->getSignalementData('2023-1'),
+            true
+        );
+
+        $this->assertInstanceOf(Signalement::class, $signalement);
+        $this->assertEquals('2023-1', $signalement->getReference());
+    }
+
+    public function testUpdateSignalementImported(): void
+    {
+        $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        /** @var Signalement $signalementImported */
+        $signalementImported = $signalementRepository->findOneBy(['isImported' => true]);
+        /** @var Security $security */
+        $security = static::getContainer()->get('security.helper');
+        /** @var SignalementFactory $signalementFactory */
+        $signalementFactory = static::getContainer()->get(SignalementFactory::class);
+        $signalementManager = new SignalementManager($managerRegistry, $security, $signalementFactory);
+
+        $signalementImportedClone = clone $signalementImported;
+        $signalement = $signalementManager->update(
+            $signalementImportedClone,
+            $this->getSignalementData(),
+        );
+
+        $this->assertTrue($signalement->getIsImported());
+        $this->assertNotEquals(
+            $signalementImported?->getModifiedAt()?->getTimestamp(),
+            $signalement?->getModifiedAt()?->getTimestamp()
+        );
+    }
+
+    private function getSignalementData(string $reference = null): array
+    {
+        $faker = Factory::create();
+
+        return [
+            'reference' => $reference ?? (new \DateTimeImmutable())->format('Y').'-1',
+            'createdAt' => new \DateTimeImmutable(),
+            'closedAt' => new \DateTimeImmutable(),
+            'motifCloture' => null,
+            'photos' => null,
+            'documents' => null,
+            'details' => $faker->realText(),
+            'isProprioAverti' => false,
+            'prorioAvertiAt' => new \DateTimeImmutable(),
+            'nbAdultes' => $faker->randomDigit(),
+            'nbEnfantsM6' => $faker->randomDigit(),
+            'nbEnfantsP6' => $faker->randomDigit(),
+            'nbOccupantsLogement' => $faker->randomDigit(),
+            'isAllocataire' => true,
+            'numAllocataire' => $faker->randomNumber(7),
+            'typeLogement' => 'maison',
+            'superficie' => $faker->numberBetween(30, 100),
+            'nomProprio' => $faker->lastName(),
+            'adresseProprio' => $faker->streetAddress(),
+            'telProprio' => $faker->phoneNumber(),
+            'mailProprio' => $faker->email(),
+            'isLogementSocial' => true,
+            'isPreavisDepart' => false,
+            'isRelogement' => false,
+            'isNotOccupant' => false,
+            'nomDeclarant' => $faker->lastName(),
+            'prenomDeclarant' => $faker->firstName(),
+            'telDeclarant' => $faker->phoneNumber(),
+            'mailDeclarant' => $faker->email(),
+            'lienDeclarantOccupant' => 'PROCHE',
+            'structureDeclarant' => null,
+            'nomOccupant' => $faker->firstName(),
+            'prenomOccupant' => $faker->firstName(),
+            'telOccupant' => $faker->phoneNumber(),
+            'mailOccupant' => $faker->email(),
+            'adresseOccupant' => $faker->address(),
+            'cpOccupant' => $faker->postcode(),
+            'villeOccupant' => $faker->city(),
+            'inseeOccupant' => $faker->postcode(),
+            'dateVisite' => new \DateTimeImmutable(),
+            'isOccupantPresentVisite' => true,
+            'isSituationHandicap' => false,
+            'etageOccupant' => $faker->randomDigit(),
+            'escalierOccupant' => $faker->randomDigit(),
+            'numAppartOccupant' => $faker->randomDigit(),
+            'modeContactProprio' => ['sms'],
+            'isRsa' => false,
+            'isConstructionAvant1949' => false,
+            'isFondSolidariteLogement' => false,
+            'isRisqueSurOccupation' => false,
+            'numeroInvariant' => null,
+            'natureLogement' => 'maison',
+            'loyer' => $faker->numberBetween(300, 1000),
+            'isBailEnCours' => true,
+            'dateEntree' => new \DateTimeImmutable(),
+            'isRefusIntervention' => false,
+            'raisonRefusIntervention' => null,
+            'isCguAccepted' => true,
+            'modifiedAt' => null,
+            'statut' => null,
+            'geoloc' => ['lat' => 5.386161, 'lng' => 43.312827],
+            'montantAllocation' => null,
+            'codeProcedure' => null,
+            'adresseAutreOccupant' => null,
+            'isConsentementTiers' => true,
+            'anneeConstruction' => '1995',
+            'typeEnergieLogement' => null,
+            'origineSignalement' => null,
+            'situationOccupant' => null,
+            'situationProOccupant' => null,
+            'naissanceOccupants' => null,
+            'isLogementCollectif' => false,
+            'nomReferentSocial' => null,
+            'StructureReferentSocial' => null,
+            'mailSyndic' => $faker->companyEmail(),
+            'telSyndic' => $faker->phoneNumber(),
+            'nomSyndic' => $faker->company(),
+            'nomSci' => $faker->company(),
+            'nomRepresentantSci' => $faker->lastName().' '.$faker->firstName,
+            'telSci' => $faker->phoneNumber(),
+            'mailSci' => $faker->companyEmail(),
+            'nbPiecesLogement' => $faker->randomDigit(),
+            'nbChambresLogement' => $faker->randomDigit(),
+            'nbNiveauxLogement' => $faker->randomDigit(),
+        ];
     }
 }
