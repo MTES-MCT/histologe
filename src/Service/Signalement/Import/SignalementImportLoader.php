@@ -23,7 +23,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class SignalementImportLoader
 {
-    private const FLUSH_COUNT = 1000;
+    private const FLUSH_COUNT = 250;
     private const REGEX_DATE_FORMAT_CSV = '/\d{4}\/\d{2}\/\d{2}/';
 
     private const SITUATIONS = [
@@ -91,6 +91,7 @@ class SignalementImportLoader
                     $this->signalementManager->flush();
                 } else {
                     $this->signalementManager->persist($signalement);
+                    unset($signalement);
                 }
             }
         }
