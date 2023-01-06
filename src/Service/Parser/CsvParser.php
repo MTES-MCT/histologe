@@ -51,7 +51,9 @@ class CsvParser
             $dataList[] = $dataItem;
         }
 
-        array_pop($dataList);
+        if (1 === \count(end($dataList))) {
+            array_pop($dataList);
+        }
 
         return $dataList;
     }
