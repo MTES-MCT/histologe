@@ -37,8 +37,11 @@ class SignalementManager extends AbstractManager
 
     public function update(Signalement $signalement, array $data): Signalement
     {
-        if (empty($data['statut']) && ($data['motifCloture'] || $data['closedAt'])) {
-            $data['statut'] = Signalement::STATUS_CLOSED;
+        if (empty($data['statut'])) {
+            $data['statut'] = Signalement::STATUS_ACTIVE;
+            if ($data['motifCloture'] || $data['closedAt']) {
+                $data['statut'] = Signalement::STATUS_CLOSED;
+            }
         }
 
         return $signalement
