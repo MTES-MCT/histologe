@@ -4,8 +4,8 @@ namespace App\Command;
 
 use App\Entity\Territory;
 use App\EventListener\ActivityListener;
+use App\Service\Import\Signalement\SignalementImportLoader;
 use App\Service\Parser\CsvParser;
-use App\Service\Signalement\Import\SignalementImportLoader;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;

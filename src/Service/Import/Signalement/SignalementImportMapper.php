@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Signalement\Import;
+namespace App\Service\Import\Signalement;
 
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Signalement;

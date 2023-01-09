@@ -4,7 +4,7 @@ namespace App\Command;
 
 use App\Entity\Territory;
 use App\Manager\TerritoryManager;
-use App\Service\GridAffectation\GridAffectationLoader;
+use App\Service\Import\GridAffectation\GridAffectationLoader;
 use App\Service\NotificationService;
 use App\Service\Parser\CsvParser;
 use App\Service\UploadHandlerService;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\GridAffectation;
+namespace App\Service\Import\GridAffectation;
 
 class GridAffectationHeader
 {

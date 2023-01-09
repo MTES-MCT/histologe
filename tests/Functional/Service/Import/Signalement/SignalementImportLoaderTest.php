@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional\Service\Signalement\Import;
+namespace App\Tests\Functional\Service\Import\Signalement;
 
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Territory;
@@ -8,8 +8,8 @@ use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\TagManager;
-use App\Service\Signalement\Import\SignalementImportLoader;
-use App\Service\Signalement\Import\SignalementImportMapper;
+use App\Service\Import\Signalement\SignalementImportLoader;
+use App\Service\Import\Signalement\SignalementImportMapper;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Faker\Factory;
