@@ -51,7 +51,9 @@ class CsvParser
             $dataList[] = $dataItem;
         }
 
-        array_shift($dataList);
+        if (1 === \count(end($dataList))) {
+            array_pop($dataList);
+        }
 
         return $dataList;
     }
@@ -72,11 +74,17 @@ class CsvParser
 
     public function getContent(string $filepath): array
     {
-        $headers = $this->getHeaders($filepath);
         $rows = explode("\n", file_get_contents($filepath));
 
+        $headers = str_getcsv(
+            array_shift($rows),
+            $this->options['delimiter'],
+            $this->options['enclosure'],
+            $this->options['escape']
+        );
+
         return [
-            'headers' => $headers,
+            'headers' => array_map('trim', $headers),
             'rows' => $rows,
         ];
     }

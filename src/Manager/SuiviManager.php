@@ -15,8 +15,7 @@ class SuiviManager extends Manager
         protected ManagerRegistry $managerRegistry,
         string $entityName = Suivi::class
     ) {
-        $this->managerRegistry = $managerRegistry;
-        $this->entityName = $entityName;
+        parent::__construct($managerRegistry, $entityName);
     }
 
     public function createSuivi(User $user, Signalement $signalement, array $params, bool $isPublic = false): Suivi

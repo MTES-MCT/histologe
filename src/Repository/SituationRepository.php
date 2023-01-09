@@ -19,10 +19,6 @@ class SituationRepository extends ServiceEntityRepository
         parent::__construct($registry, Situation::class);
     }
 
-    // /**
-    //  * @return Situation[] Returns an array of Situation objects
-    //  */
-
     public function findAllActive()
     {
         return $this->createQueryBuilder('s')
@@ -35,30 +31,4 @@ class SituationRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-
-    public function findAllWithCritereAndCriticite()
-    {
-        return $this->createQueryBuilder('s')
-            ->where('s.isArchive != 1')
-            ->andWhere('s.isActive = 1')
-            ->leftJoin('s.criteres', 'criteres', 'WITH', 'criteres.isArchive != 1')
-            ->leftJoin('App\Entity\Criticite', 'criticites', 'WITH', 'criticites.isArchive != 1')
-            ->addSelect('criteres')
-            ->addSelect('criticites')
-            ->orderBy('s.isActive', 'DESC')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /*
-    public function findOneBySomeField($value): ?Situation
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

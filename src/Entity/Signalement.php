@@ -229,9 +229,6 @@ class Signalement
     #[ORM\Column(type: 'boolean', nullable: true)]
     private $isRsa;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private $prorioAvertiAt;
-
     #[ORM\Column(type: 'string', nullable: true)]
     private $anneeConstruction;
 
@@ -1081,7 +1078,7 @@ class Signalement
         return $this;
     }
 
-    public function getAffectationStatusByPartner()
+    public function getAffectationStatusByPartner(): array
     {
         $result = [];
         foreach ($this->affectations as $affectation) {
@@ -1249,18 +1246,6 @@ class Signalement
     public function setIsRsa(bool $isRsa): self
     {
         $this->isRsa = $isRsa;
-
-        return $this;
-    }
-
-    public function getProrioAvertiAt(): ?DateTimeImmutable
-    {
-        return $this->prorioAvertiAt;
-    }
-
-    public function setProrioAvertiAt(?DateTimeImmutable $prorioAvertiAt): self
-    {
-        $this->prorioAvertiAt = $prorioAvertiAt;
 
         return $this;
     }

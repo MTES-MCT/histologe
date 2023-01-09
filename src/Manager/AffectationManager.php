@@ -9,12 +9,14 @@ use App\Entity\User;
 use App\Service\Esabora\DossierResponse;
 use App\Service\Esabora\EsaboraService;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 
 class AffectationManager extends Manager
 {
     public function __construct(
         protected ManagerRegistry $managerRegistry,
         protected SuiviManager $suiviManager,
+        protected LoggerInterface $logger,
         string $entityName = Affectation::class
     ) {
         $this->managerRegistry = $managerRegistry;
@@ -33,8 +35,29 @@ class AffectationManager extends Manager
         return $affectation;
     }
 
-    public function createAffectationFrom(Signalement $signalement, Partner $partner, ?User $user): Affectation
+    public function createAffectationFrom(Signalement $signalement, Partner $partner, ?User $user): Affectation|bool
     {
+        $hasAffectation = $signalement
+            ->getAffectations()
+            ->exists(
+                function (int $key, Affectation $affectation) use ($signalement, $partner) {
+                    $this->logger->info(
+                        sprintf(
+                            'Signalement %s - Partner already affected %s - %s',
+                            $signalement->getReference(),
+                            $key,
+                            $affectation->getPartner()->getNom()
+                        )
+                    );
+
+                    return $affectation->getPartner() === $partner;
+                }
+            );
+
+        if ($hasAffectation) {
+            return false;
+        }
+
         return (new Affectation())
             ->setSignalement($signalement)
             ->setPartner($partner)
