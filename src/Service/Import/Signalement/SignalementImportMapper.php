@@ -199,7 +199,7 @@ class SignalementImportMapper
                         $fieldValue = $this->transformToSignalementStatus($fieldValue);
                         break;
                     case 'motifCloture':
-                        $fieldValue = \array_key_exists($fieldValue, MotifCloture::LABEL) ? $fieldValue : 'AUTRE';
+                        $fieldValue = \array_key_exists(mb_strtoupper($fieldValue), MotifCloture::LABEL) ? $fieldValue : null;
                         break;
                     case self::SITUATION_SECURITE_OCCUPANT:
                     case self::SITUATION_ETAT_PROPRETE_LOGEMENT:
