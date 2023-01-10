@@ -128,11 +128,11 @@ class Signalement
     #[ORM\Column(type: 'string', length: 200, nullable: true)]
     private $structureDeclarant;
 
-    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    #[ORM\Column(type: 'string', length: 50)]
     #[Assert\NotBlank]
     private $nomOccupant;
 
-    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    #[ORM\Column(type: 'string', length: 50)]
     #[Assert\NotBlank]
     private $prenomOccupant;
 
