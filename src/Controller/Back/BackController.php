@@ -226,8 +226,13 @@ class BackController extends AbstractController
     private function generateCsrfToken(): array
     {
         $csrfTokens = [];
-        /** @var Signalement $signalement */
-        foreach ($this->req as $signalement) {
+        foreach ($this->req as $item) {
+            /** @var Signalement $signalement */
+            $signalement = $item;
+            if ($item instanceof Affectation) {
+                $signalement = $item->getSignalement();
+            }
+
             if ($signalement instanceof Signalement) {
                 $csrfTokens[$signalement->getUuid()] = $this->csrfTokenManager->getToken(
                     'signalement_delete_'.$signalement->getId()
