@@ -14,13 +14,13 @@
           </ul>
         </div>
 
-        <div ref="francemap" class="map fr-col-12 fr-col-md-9">
-          <div v-if="displayTerritoryCaption" class="territory-caption" :style="{ left: territoryCaptionX+'px', top: territoryCaptionY+'px'}">
-            {{ captionTerritoryName }} ({{ captionTerritoryZip }})<br>
-            {{ captionTerritoryCount }} signalement{{ captionTerritoryCountPlural }}
-          </div>
+        <div v-if="displayTerritoryCaption" class="territory-caption" :style="{ left: territoryCaptionX+'px', top: territoryCaptionY+'px'}">
+          {{ captionTerritoryName }} ({{ captionTerritoryZip }})<br>
+          {{ captionTerritoryCount }} signalement{{ captionTerritoryCountPlural }}
+        </div>
 
-          <svg width="588" height="550" @mouseover="handleStateHover" @mouseout="handleStateOut">
+        <div ref="francemap" class="map fr-col-12 fr-col-md-9">
+          <svg viewBox="0 0 588 550" preserveAspectRatio="xMinYMin meet" @mouseover="handleStateHover" @mouseout="handleStateOut">
             <path id="dpt2B" inkscape:label="Haute-Corse" class="st0" d="M562.1,441.7l-2.8,1.9l0.4,1.9l1.5,1.9l-1.7,1.3l0.8,1.5l-1.1,1.3v1.7l1.9,1.7
               v2.6l-1.1,2.5l-1.3,0.6l-1.5-2.1l-2.7,0.2l-0.6-0.4h-2.3l-2.1,1.9l-0.8,3.2l-4.9,0.9l-3.8,3.2l-0.8,2.1l-1.9-0.2l-1-1.1l-0.5,3.2
               l-1.3,0.5l-0.4,3l0.6,1.3l-2.1,1.5l-0.6,1.5l2.1,0.4l0.4,1h3.8l1,0.7l2.8-0.5l1.2,0.7l-0.5,0.8l1.9,2.6h3.6l0.9,2.6h2.5l-0.2,1.5
@@ -742,6 +742,20 @@ export default defineComponent({
     font-size: 18px;
     letter-spacing: 0px;
   }
+  .histo-france-map .map {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%;
+    vertical-align: middle;
+    overflow: hidden;
+  }
+  .histo-france-map .map svg {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
 
   .histo-france-map .captions {
     text-align: left;
@@ -794,6 +808,7 @@ export default defineComponent({
   .territory-caption {
     display: block;
     position: absolute;
+    z-index: 10;
     background: #000;
     color: #FFF;
     padding: 8px;
