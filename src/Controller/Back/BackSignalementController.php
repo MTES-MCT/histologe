@@ -138,56 +138,49 @@ class BackSignalementController extends AbstractController
         $etats_classes = ['moyen', 'grave', 'tres-grave'];
         $form = $this->createForm(SignalementType::class, $signalement);
         $form->handleRequest($request);
-        if ($form->isSubmitted() /* && $form->isValid() */) {
-            // TODO INSEE AP
-            $signalement->setModifiedBy($this->getUser());
-            $signalement->setModifiedAt(new DateTimeImmutable());
-            $score = new CriticiteCalculatorService($signalement, $doctrine);
-            $signalement->setScoreCreation($score->calculate());
-            $data = [];
-            $data['situation'] = $form->getExtraData()['situation'];
-            foreach ($data['situation'] as $idSituation => $criteres) {
-                $situation = $doctrine->getManager()->getRepository(Situation::class)->find($idSituation);
-                $signalement->addSituation($situation);
-                $data['situation'][$idSituation]['label'] = $situation->getLabel();
-                foreach ($criteres as $critere) {
-                    foreach ($critere as $idCritere => $criticites) {
-                        $critere = $doctrine->getManager()->getRepository(Critere::class)->find($idCritere);
-                        $signalement->addCritere($critere);
-                        $data['situation'][$idSituation]['critere'][$idCritere]['label'] = $critere->getLabel();
-                        $criticite = $doctrine->getManager()->getRepository(Criticite::class)->find($data['situation'][$idSituation]['critere'][$idCritere]['criticite']);
-                        $signalement->addCriticite($criticite);
-                        $data['situation'][$idSituation]['critere'][$idCritere]['criticite'] = [$criticite->getId() => ['label' => $criticite->getLabel(), 'score' => $criticite->getScore()]];
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $signalement->setModifiedBy($this->getUser());
+                $signalement->setModifiedAt(new DateTimeImmutable());
+                $score = new CriticiteCalculatorService($signalement, $doctrine);
+                $signalement->setScoreCreation($score->calculate());
+                $data = [];
+                if (\array_key_exists('situation', $form->getExtraData())) {
+                    $data['situation'] = $form->getExtraData()['situation'];
+                }
+                if ($data['situation']) {
+                    foreach ($data['situation'] as $idSituation => $criteres) {
+                        $situation = $doctrine->getManager()->getRepository(Situation::class)->find($idSituation);
+                        $signalement->addSituation($situation);
+                        $data['situation'][$idSituation]['label'] = $situation->getLabel();
+                        foreach ($criteres as $critere) {
+                            foreach ($critere as $idCritere => $criticites) {
+                                $critere = $doctrine->getManager()->getRepository(Critere::class)->find($idCritere);
+                                $signalement->addCritere($critere);
+                                $data['situation'][$idSituation]['critere'][$idCritere]['label'] = $critere->getLabel();
+                                $criticite = $doctrine->getManager()->getRepository(Criticite::class)->find($data['situation'][$idSituation]['critere'][$idCritere]['criticite']);
+                                $signalement->addCriticite($criticite);
+                                $data['situation'][$idSituation]['critere'][$idCritere]['criticite'] = [$criticite->getId() => ['label' => $criticite->getLabel(), 'score' => $criticite->getScore()]];
+                            }
+                        }
                     }
                 }
-            }
-            !empty($data['situation']) && $signalement->setJsonContent($data['situation']);
-            $suivi = new Suivi();
-            $suivi->setCreatedBy($this->getUser());
-            $suivi->setSignalement($signalement);
-            $suivi->setIsPublic(false);
-            $suivi->setDescription('Modification du signalement par un partenaire');
-            $doctrine->getManager()->persist($suivi);
-            /*if (!$signalement->getInseeOccupant() || !isset($signalement->getGeoloc()['lat']) || !isset($signalement->getGeoloc()['lat'])) {
-                $adresse = $signalement->getAdresseOccupant() . ' ' . $signalement->getCpOccupant() . ' ' . $signalement->getVilleOccupant();
-                $response = json_decode($httpClient->request('GET', 'https://api-adresse.data.gouv.fr/search/?q=' . $adresse)->getContent(), true);
-                if (!empty($response['features'][0])) {
-                    $coordinates = $response['features'][0]['geometry']['coordinates'];
-                    $insee = $response['features'][0]['properties']['citycode'];
-                    if ($coordinates)
-                        $signalement->setGeoloc(['lat' => $coordinates[0], 'lng' => $coordinates[1]]);
-                    if ($insee)
-                        $signalement->setInseeOccupant($insee);
-                }
-            }*/
-            $signalement->setGeoloc($form->getExtraData()['geoloc']);
-            $signalement->setInseeOccupant($form->getExtraData()['inseeOccupant']);
-            $doctrine->getManager()->persist($signalement);
-            $doctrine->getManager()->flush();
-            $this->addFlash('success', 'Signalement modifié avec succés !');
+                !empty($data['situation']) && $signalement->setJsonContent($data['situation']);
+                $suivi = new Suivi();
+                $suivi->setCreatedBy($this->getUser());
+                $suivi->setSignalement($signalement);
+                $suivi->setIsPublic(false);
+                $suivi->setDescription('Modification du signalement par un partenaire');
+                $doctrine->getManager()->persist($suivi);
+                $signalement->setGeoloc($form->getExtraData()['geoloc']);
+                $signalement->setInseeOccupant($form->getExtraData()['inseeOccupant']);
+                $doctrine->getManager()->persist($signalement);
+                $doctrine->getManager()->flush();
+                $this->addFlash('success', 'Signalement modifié avec succés !');
 
-            return $this->json(['response' => 'success_edited']);
-        } elseif ($form->isSubmitted()) {
+                return $this->json(['response' => 'success_edited']);
+            }
+
             return $this->json(['response' => $form->getErrors()]);
         }
 

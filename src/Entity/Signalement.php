@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SignalementRepository::class)]
 class Signalement
@@ -38,6 +39,7 @@ class Signalement
     private $criticites;
 
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank]
     private $details;
 
     #[ORM\Column(type: 'json', nullable: true)]
@@ -128,9 +130,11 @@ class Signalement
     private $structureDeclarant;
 
     #[ORM\Column(type: 'string', length: 50)]
+    #[Assert\NotBlank]
     private $nomOccupant;
 
     #[ORM\Column(type: 'string', length: 50)]
+    #[Assert\NotBlank]
     private $prenomOccupant;
 
     #[ORM\Column(type: 'string', length: 15, nullable: true)]
@@ -430,7 +434,7 @@ class Signalement
         return $this->details;
     }
 
-    public function setDetails(string $details): self
+    public function setDetails(?string $details): self
     {
         $this->details = $details;
 
@@ -804,7 +808,7 @@ class Signalement
         return $this->nomOccupant;
     }
 
-    public function setNomOccupant(string $nomOccupant): self
+    public function setNomOccupant(?string $nomOccupant): self
     {
         $this->nomOccupant = $nomOccupant;
 
@@ -816,7 +820,7 @@ class Signalement
         return $this->prenomOccupant;
     }
 
-    public function setPrenomOccupant(string $prenomOccupant): self
+    public function setPrenomOccupant(?string $prenomOccupant): self
     {
         $this->prenomOccupant = $prenomOccupant;
 
