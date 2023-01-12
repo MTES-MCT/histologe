@@ -98,11 +98,9 @@ class ActivityListener implements EventSubscriberInterface
             ->setParameter('territory', $territory);
 
         foreach ($admins->getQuery()->getResult() as $admin) {
-            if ($admin->isSuperAdmin() || $admin->isTerritoryAdmin()) {
-                $this->createInAppNotification($admin, $entity, $inAppType);
-                if ($admin->getIsMailingActive()) {
-                    $this->tos[] = $admin->getEmail();
-                }
+            $this->createInAppNotification($admin, $entity, $inAppType);
+            if ($admin->getIsMailingActive()) {
+                $this->tos[] = $admin->getEmail();
             }
         }
     }
