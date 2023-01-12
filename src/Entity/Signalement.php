@@ -39,6 +39,7 @@ class Signalement
     private $criticites;
 
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank]
     private $details;
 
     #[ORM\Column(type: 'json', nullable: true)]
@@ -433,7 +434,7 @@ class Signalement
         return $this->details;
     }
 
-    public function setDetails(string $details): self
+    public function setDetails(?string $details): self
     {
         $this->details = $details;
 
