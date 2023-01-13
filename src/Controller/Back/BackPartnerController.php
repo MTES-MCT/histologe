@@ -24,10 +24,11 @@ class BackPartnerController extends AbstractController
     public const DEFAULT_TERRITORY_AIN = 1;
 
     #[Route('/', name: 'back_partner_index', methods: ['GET', 'POST'])]
-    public function index(Request $request,
-                          PartnerRepository $partnerRepository,
-                          TerritoryRepository $territoryRepository): Response
-    {
+    public function index(
+        Request $request,
+        PartnerRepository $partnerRepository,
+        TerritoryRepository $territoryRepository
+    ): Response {
         $this->denyAccessUnlessGranted('PARTNER_LIST', null);
         $page = $request->get('page') ?? 1;
 
@@ -98,8 +99,8 @@ class BackPartnerController extends AbstractController
     public function edit(
         Request $request,
         Partner $partner,
-        EntityManagerInterface $entityManager): Response
-    {
+        EntityManagerInterface $entityManager
+    ): Response {
         $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
         $form = $this->createForm(PartnerType::class, $partner, [
             'can_edit_territory' => $this->getUser()->isSuperAdmin(),
@@ -128,8 +129,10 @@ class BackPartnerController extends AbstractController
     public function transferUser(Request $request, UserManager $userManager, PartnerManager $partnerManager): Response
     {
         $this->denyAccessUnlessGranted('USER_TRANSFER', $this->getUser());
-        if ($this->isCsrfTokenValid('partner_user_transfer', $request->request->get('_token'))
-            && $data = $request->get('user_transfer')) {
+        if (
+            $this->isCsrfTokenValid('partner_user_transfer', $request->get('_token'))
+            && $data = $request->get('user_transfer')
+        ) {
             $partner = $partnerManager->find($data['partner']);
             $user = $userManager->find($data['user']);
             $userManager->transferUserToPartner($user, $partner);
@@ -142,15 +145,20 @@ class BackPartnerController extends AbstractController
         return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/{user}/delete', name: 'back_partner_user_delete', methods: ['POST'])]
+    #[Route('/deleteuser', name: 'back_partner_user_delete', methods: ['POST'])]
     public function deleteUser(
         Request $request,
-        User $user,
         UserManager $userManager,
-        NotificationService $notificationService): Response
-    {
+        PartnerManager $partnerManager,
+        NotificationService $notificationService
+    ): Response {
         $this->denyAccessUnlessGranted('USER_DELETE', $this->getUser());
-        if ($this->isCsrfTokenValid('partner_user_delete_'.$user->getId(), $request->request->get('_token'))) {
+        if (
+            $this->isCsrfTokenValid('partner_user_delete', $request->get('_token'))
+            && $data = $request->get('user_delete')
+        ) {
+            $user = $userManager->find($data['user']);
+            $partner = $partnerManager->find($data['partner']);
             $user->setStatut(User::STATUS_ARCHIVE);
             $userManager->save($user);
             $notificationService->send(
@@ -159,7 +167,11 @@ class BackPartnerController extends AbstractController
                 [],
                 $user->getTerritory()
             );
+            $this->addFlash('success', $user->getNomComplet().' supprimé avec succès !');
+
+            return $this->redirectToRoute('back_partner_edit', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         }
+        $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
 
         return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
     }

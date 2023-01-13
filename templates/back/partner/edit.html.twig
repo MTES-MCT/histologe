@@ -6,6 +6,7 @@
     {% if is_granted('ROLE_ADMIN_TERRITORY') and app.request.get('_route') is not same as('back_partner_new') %}
         {% include '_partials/_modal_user_transfer.html.twig' %}
     {% endif %}
+    {% include '_partials/_modal_user_delete.html.twig' %}
     <section class="fr-col-12 fr-p-5v">
         <h2 class="fr-h2 fr-mb-0">Partenaire {{ partner.nom ? '"'~partner.nom~'"' : '' }}</h2>
         <span class="fr-hint-text">Ci dessous les informations du partenaire, vous pouvez les éditer si nécessaire.</span>
@@ -18,13 +19,26 @@
     <script>
         document.querySelectorAll('.partner_users_transfer_btn').forEach(swbtn => {
             swbtn.addEventListener('click', (evt => {
-                console.log(evt)
                 let target = evt.target;
                 document.querySelector('#fr-modal-user-transfer_username').innerHTML = target.getAttribute('data-username');
                 document.querySelector('#fr-modal-user-transfer_userid').value = target.getAttribute('data-userid');
                 document.querySelector('#user_c_form').addEventListener('submit', (e) => {
                     document.querySelector('#user_transfer_form_submit').innerHTML = "Transfert en cours...";
                     document.querySelector('#user_transfer_form_submit').disabled = true;
+                })
+            }))
+        })
+        document.querySelectorAll('.partner-user-delete').forEach(swbtn => {
+            swbtn.addEventListener('click', (evt => {
+                let target = evt.target;
+                document.querySelectorAll('.fr-modal-user-delete_username').forEach(userItem => {
+                    userItem.innerHTML = target.getAttribute('data-username');
+                });
+                document.querySelector('#fr-modal-user-delete_userid').value = target.getAttribute('data-userid');
+                document.querySelector('#fr-modal-user-delete_partnerid').value = target.getAttribute('data-partnerid');
+                document.querySelector('#user_c_form').addEventListener('submit', (e) => {
+                    document.querySelector('#user_delete_form_submit').innerHTML = "Suppression en cours...";
+                    document.querySelector('#user_delete_form_submit').disabled = true;
                 })
             }))
         })
