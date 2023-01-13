@@ -5,7 +5,6 @@ namespace App\Tests\Unit\Service\Esabora;
 use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
-use App\Manager\AffectationManager;
 use App\Messenger\Message\DossierMessage;
 use App\Service\Esabora\DossierResponse;
 use App\Service\Esabora\EsaboraService;
@@ -18,7 +17,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EsaboraServiceTest extends KernelTestCase
 {
-    private AffectationManager $affectationManager;
     private LoggerInterface $logger;
 
     protected function setUp(): void

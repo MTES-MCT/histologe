@@ -45,7 +45,7 @@ services:
     volumes:
       - .:/app/
 
-  php-worker:
+  histologe_phpworker:
     build: .docker/php-worker
     container_name: histologe_worker
     working_dir: /app

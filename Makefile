@@ -30,9 +30,25 @@ sh: ## Log to phpfpm container
 	@echo -e '\e[1;32mLog to phpfpm container\032'
 	@bash -l -c '$(DOCKER_COMP) exec -it histologe_phpfpm sh'
 
+worker: ## Log to php-worker container
+	@echo -e '\e[1;32mLog to phpworker container\032'
+	@bash -l -c '$(DOCKER_COMP) exec -it histologe_phpworker sh'
+
 mysql: ## Log to mysql container
 	@echo -e '\e[1;32mLog to mysql container\032[0m'
 	@bash -l -c '$(DOCKER_COMP) exec -it histologe_mysql mysql -u histologe -phistologe histologe_db'
+
+worker-status:
+	@echo -e '\e[1;32mLog to phpworker container\032'
+	@bash -l -c '$(DOCKER_COMP) exec -it histologe_phpworker supervisorctl status all'
+
+worker-start:
+	@echo -e '\e[1;32mLog to phpworker container\032'
+	@bash -l -c '$(DOCKER_COMP) exec -it histologe_phpworker supervisorctl start all'
+
+worker-stop:
+	@echo -e '\e[1;32mLog to phpworker container\032'
+	@bash -l -c '$(DOCKER_COMP) exec -it histologe_phpworker supervisorctl stop all'
 
 logs: ## Show container logs
 	@$(DOCKER_COMP) logs --follow

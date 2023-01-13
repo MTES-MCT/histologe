@@ -42,7 +42,7 @@ git clone git@github.com:MTES-MCT/histologe.git
 
 [Génération d'une nouvelle clé SSH](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
 
-## Environnement
+## Environnement technique
 
 ### Versions des dépendances
 
@@ -68,7 +68,8 @@ Merci de vérifier que ces ports ne soient pas utilisés sur votre poste local
 Service| Hostname             |Port number
 -------|----------------------|-----------
 Nginx| histologe_nginx      | **8080**
-PHP-FPM| histologe_phpfpm     |**9000**
+php-fpm| histologe_phpfpm     |**9000**
+php-worker| histologe_phpworker  |**8089**
 MySQL| histologe_mysql      |**3307**
 PhpMyAdmin | histologe_phpmyadmin | **8081**
 Mailcatcher| histologe_mailer     | **1025** et **1080**
@@ -145,12 +146,6 @@ php bin/console app:add-user ROLE_USER_PARTNER joe.doe.3@histologe.fr John Doe M
 
 Une activation de compte sera nécéssaire
 
-### Compilation des fichiers Vue.js en cours de développement
-```
-npm install
-npm run watch
-```
-
 ## Bases de données scalingo
 
 ### Pré-requis
@@ -185,4 +180,4 @@ make load-data
 
 ## Documentaton projet
 
-[Wiki](https://github.com/MTES-MCT/histologe/wiki)
+[Consulter la documentation](https://github.com/MTES-MCT/histologe/wiki)
