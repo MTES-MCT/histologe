@@ -41,6 +41,20 @@ services:
       MAILER_DSN: ${MAILER_DSN}
       WIREMOCK_HOSTNAME: ${WIREMOCK_HOSTNAME}
       WIREMOCK_PORT: ${WIREMOCK_PORT}
+      MESSENGER_TRANSPORT_DSN: ${MESSENGER_TRANSPORT_DSN}
+    volumes:
+      - .:/app/
+
+  php-worker:
+    build: .docker/php-worker
+    container_name: histologe_worker
+    working_dir: /app
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      MAILER_DSN: ${MAILER_DSN}
+      WIREMOCK_HOSTNAME: ${WIREMOCK_HOSTNAME}
+      WIREMOCK_PORT: ${WIREMOCK_PORT}
+      MESSENGER_TRANSPORT_DSN: ${MESSENGER_TRANSPORT_DSN}
     volumes:
       - .:/app/
 

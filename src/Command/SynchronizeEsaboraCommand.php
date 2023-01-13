@@ -15,6 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[AsCommand(
@@ -74,7 +75,9 @@ class SynchronizeEsaboraCommand extends Command
                 title: 'sync_dossier',
                 message: json_encode($message, \JSON_THROW_ON_ERROR),
                 response: $this->serializer->serialize($dossierResponse, 'json'),
-                status: 200 === $dossierResponse->getStatusCode() ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,
+                status: Response::HTTP_OK === $dossierResponse->getStatusCode()
+                    ? JobEvent::STATUS_SUCCESS
+                    : JobEvent::STATUS_FAILED,
                 signalementId: $affectation->getSignalement()->getId(),
                 partnerId: $affectation->getPartner()->getId()
             );

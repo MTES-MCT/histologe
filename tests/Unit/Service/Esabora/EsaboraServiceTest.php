@@ -14,6 +14,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class EsaboraServiceTest extends KernelTestCase
 {
@@ -22,22 +23,30 @@ class EsaboraServiceTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        $this->affectationManager = $this->createMock(AffectationManager::class);
         $this->logger = $this->createMock(LoggerInterface::class);
     }
 
-    public function testPushDossierToEsaboraSas(): void
+    public function testPushDossierToEsaboraSasSuccess(): void
     {
         $filepath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/ws_import.json';
         $mockResponse = new MockResponse(file_get_contents($filepath));
 
         $mockHttpClient = new MockHttpClient($mockResponse);
-        $esaboraService = new EsaboraService($mockHttpClient, $this->affectationManager, $this->logger);
-        $dossierMessage = $this->getDossierMessage();
-        $response = $esaboraService->pushDossier($dossierMessage);
+        $esaboraService = new EsaboraService($mockHttpClient, $this->logger);
+        $response = $esaboraService->pushDossier($this->getDossierMessage());
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $this->assertStringContainsString('insert', $response->getContent());
+    }
+
+    public function testPushDossierToEsaboraSasFailed(): void
+    {
+        $mockResponse = new MockResponse([], ['http_code' => Response::HTTP_INTERNAL_SERVER_ERROR]);
+        $mockHttpClient = new MockHttpClient($mockResponse);
+        $esaboraService = new EsaboraService($mockHttpClient, $this->logger);
+        $response = $esaboraService->pushDossier($this->getDossierMessage());
+
+        $this->assertEquals(Response::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
     }
 
     public function testgetStateDossierFromEsaboraSas(): void
@@ -46,7 +55,7 @@ class EsaboraServiceTest extends KernelTestCase
         $mockResponse = new MockResponse(file_get_contents($filepath));
 
         $mockHttpClient = new MockHttpClient($mockResponse);
-        $esaboraService = new EsaboraService($mockHttpClient, $this->affectationManager, $this->logger);
+        $esaboraService = new EsaboraService($mockHttpClient, $this->logger);
         $dossierResponse = $esaboraService->getStateDossier($this->getAffectation());
 
         $this->assertInstanceOf(DossierResponse::class, $dossierResponse);

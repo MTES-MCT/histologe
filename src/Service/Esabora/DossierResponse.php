@@ -13,6 +13,7 @@ class DossierResponse
     private ?string $etat = null;
     private ?string $dateCloture = null;
     private ?int $statusCode = null;
+    private ?string $errorReason = null;
 
     public function __construct(array $response, ?int $statusCode)
     {
@@ -29,6 +30,7 @@ class DossierResponse
                 $this->dateCloture = $data[7];
             }
         }
+        $this->errorReason = json_encode($response);
         $this->statusCode = $statusCode;
     }
 

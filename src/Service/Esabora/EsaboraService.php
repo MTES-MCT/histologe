@@ -3,10 +3,10 @@
 namespace App\Service\Esabora;
 
 use App\Entity\Affectation;
-use App\Manager\AffectationManager;
 use App\Messenger\Message\DossierMessage;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
@@ -19,7 +19,6 @@ class EsaboraService
 
     public function __construct(
         private HttpClientInterface $client,
-        private AffectationManager $affectationManager,
         private LoggerInterface $logger,
     ) {
     }
@@ -46,7 +45,9 @@ class EsaboraService
             $this->logger->error($exception->getMessage());
         }
 
-        return (new JsonResponse(['message' => $exception->getMessage()]))->setStatusCode(500);
+        return (new JsonResponse([
+            'message' => $exception->getMessage(),
+        ]))->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     public function getStateDossier(Affectation $affectation): DossierResponse|JsonResponse
@@ -75,13 +76,15 @@ class EsaboraService
             );
 
             return new DossierResponse(
-                200 === $response->getStatusCode() ? $response->toArray() : [],
+                Response::HTTP_INTERNAL_SERVER_ERROR !== $response->getStatusCode() ? $response->toArray() : [],
                 $response->getStatusCode()
             );
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
         }
 
-        return (new JsonResponse(['message' => $exception->getMessage()]))->setStatusCode(500);
+        return (new JsonResponse([
+            'message' => $exception->getMessage(),
+        ]))->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
