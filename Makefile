@@ -38,7 +38,7 @@ mysql: ## Log to mysql container
 	@echo -e '\e[1;32mLog to mysql container\032[0m'
 	@bash -l -c '$(DOCKER_COMP) exec -it histologe_mysql mysql -u histologe -phistologe histologe_db'
 
-worker-status:## Gest status worker
+worker-status:## Get status worker
 	@echo -e '\e[1;32mGet status worker\032'
 	@bash -l -c '$(DOCKER_COMP) exec -it histologe_phpworker supervisorctl status all'
 
@@ -152,15 +152,3 @@ npm-build: ## Build the dependencies in the local node_modules folder
 
 .sleep:
 	@sleep 30
-
-.PHONY : cypress
-cypress:
-	docker run -it --rm -d -e DISPLAY \
-		-v $(shell pwd):/e2e \
-	 	-v /tmp/.X11-unix:/tmp/.X11-unix --net=host -w /e2e \
-		--entrypoint cypress cypress/included:6.6.0 open --project .
-
-cypress-run:
-	docker run -it --rm -w /e2e \
-		-v $(shell pwd):/e2e \
-		cypress/included:6.6.0
