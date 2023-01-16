@@ -78,18 +78,15 @@ class EsaboraService
             $statusCode = $response->getStatusCode();
 
             return new DossierResponse(
-                Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode ? $response->toArray() : [],
+                Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
+                    ? $response->toArray()
+                    : [],
                 $statusCode
             );
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
         }
 
-        return new DossierResponse([
-            'message' => $exception->getMessage(),
-            'status_code' => $statusCode,
-        ],
-            $statusCode
-        );
+        return new DossierResponse(['message' => $exception->getMessage(), 'status_code' => $statusCode], $statusCode);
     }
 }
