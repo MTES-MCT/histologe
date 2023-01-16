@@ -63,7 +63,7 @@ class BackPartnerControllerTest extends WebTestCase
         $partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $newPartnerId = $partnerRepository->findOneBy(['nom' => 'Partenaire 13-01'])->getId();
 
-        $crawler = $client->request('POST', $router->generate('back_partner_user_transfer', [
+        $client->request('POST', $router->generate('back_partner_user_transfer', [
             'user_transfer[user]' => $userId,
             'user_transfer[partner]' => $newPartnerId,
             '_token' => $this->generateCsrfToken($client, 'partner_user_transfer'),
@@ -93,7 +93,7 @@ class BackPartnerControllerTest extends WebTestCase
         $partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $newPartnerId = $partnerRepository->findOneBy(['nom' => 'Partenaire 13-02'])->getId();
 
-        $crawler = $client->request('POST', $router->generate('back_partner_user_transfer', [
+        $client->request('POST', $router->generate('back_partner_user_transfer', [
             'user_transfer[user]' => $userId,
             'user_transfer[partner]' => $newPartnerId,
             '_token' => $this->generateCsrfToken($client, 'partner_user_transfer'),
@@ -122,7 +122,7 @@ class BackPartnerControllerTest extends WebTestCase
         $partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $newPartnerId = $partnerRepository->findOneBy(['nom' => 'Partenaire 13-02'])->getId();
 
-        $crawler = $client->request('POST', $router->generate('back_partner_user_transfer', [
+        $client->request('POST', $router->generate('back_partner_user_transfer', [
             'user_transfer[user]' => $userId,
             'user_transfer[partner]' => $newPartnerId,
             '_token' => $this->generateCsrfToken($client, 'bad_csrf'),
@@ -146,11 +146,9 @@ class BackPartnerControllerTest extends WebTestCase
 
         $user = $userRepository->findOneBy(['email' => 'user-974-01@histologe.fr']);
         $userId = $user->getId();
-        $partnerId = $user->getPartner()->getId();
 
-        $crawler = $client->request('POST', $router->generate('back_partner_user_delete', [
+        $client->request('POST', $router->generate('back_partner_user_delete', [
             'user_delete[user]' => $userId,
-            'user_delete[partner]' => $partnerId,
             '_token' => $this->generateCsrfToken($client, 'partner_user_delete'),
         ]));
 
@@ -172,9 +170,8 @@ class BackPartnerControllerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => 'user-01-03@histologe.fr']);
         $userId = $user->getId();
 
-        $crawler = $client->request('POST', $router->generate('back_partner_user_delete', [
+        $client->request('POST', $router->generate('back_partner_user_delete', [
             'user_delete[user]' => $userId,
-            'user_delete[partner]' => $user->getPartner()->getId(),
             '_token' => $this->generateCsrfToken($client, 'bad_csrf'),
         ]));
 

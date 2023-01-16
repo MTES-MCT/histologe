@@ -31,12 +31,14 @@ class BackPartnerController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('PARTNER_LIST', null);
         $page = $request->get('page') ?? 1;
+        /** @var User $user */
+        $user = $this->getUser();
 
         if ($this->isGranted('ROLE_ADMIN')) {
             $territory = empty($request->get('territory')) ? self::DEFAULT_TERRITORY_AIN : (int) $request->get('territory');
             $currentTerritory = $territoryRepository->find($territory);
         } else {
-            $currentTerritory = $this->getUser()->getTerritory();
+            $currentTerritory = $user->getTerritory();
         }
 
         $paginatedPartners = $partnerRepository->getPartners($currentTerritory, (int) $page);
@@ -67,17 +69,19 @@ class BackPartnerController extends AbstractController
     {
         $this->denyAccessUnlessGranted('PARTNER_CREATE', null);
         $partner = new Partner();
+        /** @var User $user */
+        $user = $this->getUser();
         $form = $this->createForm(PartnerType::class, $partner, [
-            'can_edit_territory' => $this->getUser()->isSuperAdmin(),
-            'territory' => $this->getUser()->getTerritory(),
+            'can_edit_territory' => $user->isSuperAdmin(),
+            'territory' => $user->getTerritory(),
             'route' => 'back_partner_new',
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             // Si la personne identifiée n'est pas super admin (donc qu'elle ne peut pas éditer),
             // on redéfinit le territoire avec celui de l'utilisateur en cours
-            if (!$this->getUser()->isSuperAdmin()) {
-                $partner->setTerritory($this->getUser()->getTerritory());
+            if (!$user->isSuperAdmin()) {
+                $partner->setTerritory($user->getTerritory());
             }
 
             $entityManager->persist($partner);
@@ -102,8 +106,10 @@ class BackPartnerController extends AbstractController
         EntityManagerInterface $entityManager
     ): Response {
         $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
+        /** @var User $user */
+        $user = $this->getUser();
         $form = $this->createForm(PartnerType::class, $partner, [
-            'can_edit_territory' => $this->getUser()->isSuperAdmin(),
+            'can_edit_territory' => $user->isSuperAdmin(),
         ]);
         $form->handleRequest($request);
 
@@ -157,8 +163,8 @@ class BackPartnerController extends AbstractController
             $this->isCsrfTokenValid('partner_user_delete', $request->get('_token'))
             && $data = $request->get('user_delete')
         ) {
+            /** @var User $user */
             $user = $userManager->find($data['user']);
-            $partner = $partnerManager->find($data['partner']);
             $user->setStatut(User::STATUS_ARCHIVE);
             $userManager->save($user);
             $notificationService->send(
@@ -169,7 +175,7 @@ class BackPartnerController extends AbstractController
             );
             $this->addFlash('success', $user->getNomComplet().' supprimé avec succès !');
 
-            return $this->redirectToRoute('back_partner_edit', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_edit', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
         }
         $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
 
