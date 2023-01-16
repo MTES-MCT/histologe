@@ -71,6 +71,7 @@ class SynchronizeEsaboraCommand extends Command
                 );
                 ++$countSyncSuccess;
             } else {
+                $io->error(sprintf('%s', $this->serializer->serialize($dossierResponse, 'json')));
                 ++$countSyncFailed;
             }
             $this->jobEventManager->createJobEvent(
@@ -98,7 +99,7 @@ class SynchronizeEsaboraCommand extends Command
                     ? 'signalements ont été synchronisés'
                     : 'signalement a été synchronisé',
                 'message_failed' => $countSyncFailed > 1
-                    ? 'signalements n\'ont été synchronisés'
+                    ? 'signalements n\'ont pas été synchronisés'
                     : 'signalement n\'a pas été synchronisé',
             ],
             null

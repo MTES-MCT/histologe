@@ -50,7 +50,7 @@ class EsaboraService
         ]))->setStatusCode(Response::HTTP_SERVICE_UNAVAILABLE);
     }
 
-    public function getStateDossier(Affectation $affectation): DossierResponse|JsonResponse
+    public function getStateDossier(Affectation $affectation): DossierResponse
     {
         list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
         $payload = [
@@ -65,6 +65,7 @@ class EsaboraService
             ],
         ];
 
+        $statusCode = Response::HTTP_SERVICE_UNAVAILABLE;
         try {
             $response = $this->client->request('POST', $url.'/mult/?task=doSearch', [
                     'headers' => [
@@ -74,17 +75,21 @@ class EsaboraService
                     'body' => json_encode($payload, \JSON_THROW_ON_ERROR),
                 ]
             );
+            $statusCode = $response->getStatusCode();
 
             return new DossierResponse(
-                Response::HTTP_INTERNAL_SERVER_ERROR !== $response->getStatusCode() ? $response->toArray() : [],
-                $response->getStatusCode()
+                Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode ? $response->toArray() : [],
+                $statusCode
             );
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
         }
 
-        return (new JsonResponse([
+        return new DossierResponse([
             'message' => $exception->getMessage(),
-        ]))->setStatusCode(Response::HTTP_SERVICE_UNAVAILABLE);
+            'status_code' => $statusCode,
+        ],
+            $statusCode
+        );
     }
 }
