@@ -38,17 +38,21 @@ mysql: ## Log to mysql container
 	@echo -e '\e[1;32mLog to mysql container\032[0m'
 	@bash -l -c '$(DOCKER_COMP) exec -it histologe_mysql mysql -u histologe -phistologe histologe_db'
 
-worker-status:
-	@echo -e '\e[1;32mLog to phpworker container\032'
+worker-status:## Gest status worker
+	@echo -e '\e[1;32mGet status worker\032'
 	@bash -l -c '$(DOCKER_COMP) exec -it histologe_phpworker supervisorctl status all'
 
-worker-start:
-	@echo -e '\e[1;32mLog to phpworker container\032'
+worker-start: ## Start worker
+	@echo -e '\e[1;32mStart worker\032'
 	@bash -l -c '$(DOCKER_COMP) exec -it histologe_phpworker supervisorctl start all'
 
-worker-stop:
-	@echo -e '\e[1;32mLog to phpworker container\032'
+worker-stop: ## Stop worker
+	@echo -e '\e[1;32mStop worker\032'
 	@bash -l -c '$(DOCKER_COMP) exec -it histologe_phpworker supervisorctl stop all'
+
+worker-exec-failed: ## Consume failed queue
+	@echo -e '\e[1;32mConsume failed queue\032'
+	@bash -l -c '$(DOCKER_COMP) exec -it histologe_phpworker php bin/console messenger:consume failed -vvv'
 
 logs: ## Show container logs
 	@$(DOCKER_COMP) logs --follow
@@ -148,3 +152,15 @@ npm-build: ## Build the dependencies in the local node_modules folder
 
 .sleep:
 	@sleep 30
+
+.PHONY : cypress
+cypress:
+	docker run -it --rm -d -e DISPLAY \
+		-v $(shell pwd):/e2e \
+	 	-v /tmp/.X11-unix:/tmp/.X11-unix --net=host -w /e2e \
+		--entrypoint cypress cypress/included:6.6.0 open --project .
+
+cypress-run:
+	docker run -it --rm -w /e2e \
+		-v $(shell pwd):/e2e \
+		cypress/included:6.6.0

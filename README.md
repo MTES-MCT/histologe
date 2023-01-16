@@ -10,10 +10,6 @@ Cette application est déployé chez Scalingo, hébergé par Outscale.
 
 - Staging: [histologe-staging.incubateur.net](https://histologe-staging.incubateur.net)
 
-Les ressources statiques telles que les images et documents sont hébergés par OVH Cloud à travers le service Object Storage.  
-
-- https://horizon.cloud.ovh.net
-
 ## Pré-requis
 
 Requirements|Release
@@ -24,23 +20,6 @@ AWS CLI OVH Object storage (optionnel) | [1.25](https://docs.ovh.com/fr/storage/
 PHP (optionnel)| [8.0.*](https://www.php.net/)
 Composer (optionnel) | [2.4.*](https://getcomposer.org/download/)
 Node (optionnel)| [16.*](https://nodejs.org/en/)
-
-
-## Clone du projet
-
-### HTTP
-```bash
-git clone https://github.com/MTES-MCT/histologe
-```
-
-### SSH
-```
-git clone git@github.com:MTES-MCT/histologe.git
-```
-
-[Vérification des clés SSH existantes](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/checking-for-existing-ssh-keys)
-
-[Génération d'une nouvelle clé SSH](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
 
 ## Environnement technique
 

@@ -47,7 +47,7 @@ class EsaboraService
 
         return (new JsonResponse([
             'message' => $exception->getMessage(),
-        ]))->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+        ]))->setStatusCode(Response::HTTP_SERVICE_UNAVAILABLE);
     }
 
     public function getStateDossier(Affectation $affectation): DossierResponse|JsonResponse
@@ -85,6 +85,6 @@ class EsaboraService
 
         return (new JsonResponse([
             'message' => $exception->getMessage(),
-        ]))->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+        ]))->setStatusCode(Response::HTTP_SERVICE_UNAVAILABLE);
     }
 }

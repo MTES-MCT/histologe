@@ -28,9 +28,10 @@ class DossierResponse
                 $this->statut = $data[5];
                 $this->etat = $data[6];
                 $this->dateCloture = $data[7];
+            } else {
+                $this->errorReason = json_encode($response);
             }
         }
-        $this->errorReason = json_encode($response);
         $this->statusCode = $statusCode;
     }
 
@@ -77,5 +78,10 @@ class DossierResponse
     public function getStatusCode(): ?int
     {
         return $this->statusCode;
+    }
+
+    public function getErrorReason(): ?string
+    {
+        return $this->errorReason;
     }
 }
