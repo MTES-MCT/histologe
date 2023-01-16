@@ -65,14 +65,8 @@ class BackPartnerControllerTest extends WebTestCase
 
         $client->request(
             'POST',
-            $router->generate(
-                'back_partner_user_transfer',
-                [
-                    'user_transfer[user]' => $userId,
-                    'user_transfer[partner]' => $newPartnerId,
-                ]
-            ),
-            ['_token' => $this->generateCsrfToken($client, 'partner_user_transfer')]
+            $router->generate('back_partner_user_transfer'),
+            ['user_transfer' => ['user' => $userId, 'partner' => $newPartnerId], '_token' => $this->generateCsrfToken($client, 'partner_user_transfer')]
         );
 
         $this->assertEquals($newPartnerId, $user->getPartner()->getId());
@@ -101,14 +95,8 @@ class BackPartnerControllerTest extends WebTestCase
 
         $client->request(
             'POST',
-            $router->generate(
-                'back_partner_user_transfer',
-                [
-                    'user_transfer[user]' => $userId,
-                    'user_transfer[partner]' => $newPartnerId,
-                ]
-            ),
-            ['_token' => $this->generateCsrfToken($client, 'partner_user_transfer')]
+            $router->generate('back_partner_user_transfer'),
+            ['user_transfer' => ['user' => $userId, 'partner' => $newPartnerId], '_token' => $this->generateCsrfToken($client, 'partner_user_transfer')]
         );
 
         $this->assertEquals($userOldPartner, $user->getPartner()->getId());
@@ -136,14 +124,8 @@ class BackPartnerControllerTest extends WebTestCase
 
         $client->request(
             'POST',
-            $router->generate(
-                'back_partner_user_transfer',
-                [
-                    'user_transfer[user]' => $userId,
-                    'user_transfer[partner]' => $newPartnerId,
-                ]
-            ),
-            ['_token' => $this->generateCsrfToken($client, 'bad_csrf')]
+            $router->generate('back_partner_user_transfer'),
+            ['user_transfer' => ['user' => $userId, 'partner' => $newPartnerId], '_token' => $this->generateCsrfToken($client, 'bad_csrf')]
         );
 
         $this->assertEquals($userOldPartner, $user->getPartner()->getId());
