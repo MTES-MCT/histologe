@@ -6,7 +6,7 @@ use App\Form\ContactType;
 use App\Form\PostalCodeSearchType;
 use App\Repository\AffectationRepository;
 use App\Repository\SignalementRepository;
-use App\Service\NotificationService;
+use App\Service\ContactFormService;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -62,22 +62,16 @@ class HomepageController extends AbstractController
     #[Route('/contact', name: 'front_contact')]
     public function contact(
         Request $request,
-        NotificationService $notificationService
+        ContactFormService $contactFormService,
     ): Response {
         $title = "Conditions Générales d'Utilisation";
         $form = $this->createForm(ContactType::class, []);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $notificationService->send(
-                NotificationService::TYPE_CONTACT_FORM,
-                $this->getParameter('contact_email'),
-                [
-                    'nom' => $form->get('nom')->getData(),
-                    'mail' => $form->get('email')->getData(),
-                    'reply' => $form->get('email')->getData(),
-                    'message' => nl2br($form->get('message')->getData()),
-                ],
-                null
+            $contactFormService->dispatch(
+                $form->get('nom')->getData(),
+                $form->get('email')->getData(),
+                $form->get('message')->getData()
             );
             $this->addFlash('success', 'Votre message à bien été envoyé !');
 
