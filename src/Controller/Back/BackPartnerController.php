@@ -136,7 +136,7 @@ class BackPartnerController extends AbstractController
     {
         $this->denyAccessUnlessGranted('USER_TRANSFER', $this->getUser());
         if (
-            $this->isCsrfTokenValid('partner_user_transfer', $request->get('_token'))
+            $this->isCsrfTokenValid('partner_user_transfer', $request->request->get('_token'))
             && $data = $request->get('user_transfer')
         ) {
             $partner = $partnerManager->find($data['partner']);
@@ -160,11 +160,11 @@ class BackPartnerController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('USER_DELETE', $this->getUser());
         if (
-            $this->isCsrfTokenValid('partner_user_delete', $request->get('_token'))
-            && $data = $request->get('user_delete')
+            $this->isCsrfTokenValid('partner_user_delete', $request->request->get('_token'))
+            && $user_id = $request->request->get('user_id')
         ) {
             /** @var User $user */
-            $user = $userManager->find($data['user']);
+            $user = $userManager->find($user_id);
             $user->setStatut(User::STATUS_ARCHIVE);
             $userManager->save($user);
             $notificationService->send(

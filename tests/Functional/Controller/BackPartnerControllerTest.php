@@ -63,11 +63,17 @@ class BackPartnerControllerTest extends WebTestCase
         $partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $newPartnerId = $partnerRepository->findOneBy(['nom' => 'Partenaire 13-01'])->getId();
 
-        $client->request('POST', $router->generate('back_partner_user_transfer', [
-            'user_transfer[user]' => $userId,
-            'user_transfer[partner]' => $newPartnerId,
-            '_token' => $this->generateCsrfToken($client, 'partner_user_transfer'),
-        ]));
+        $client->request(
+            'POST',
+            $router->generate(
+                'back_partner_user_transfer',
+                [
+                    'user_transfer[user]' => $userId,
+                    'user_transfer[partner]' => $newPartnerId,
+                ]
+            ),
+            ['_token' => $this->generateCsrfToken($client, 'partner_user_transfer')]
+        );
 
         $this->assertEquals($newPartnerId, $user->getPartner()->getId());
         $this->assertResponseRedirects('/bo/partner/'.$newPartnerId.'/edit');
@@ -93,11 +99,17 @@ class BackPartnerControllerTest extends WebTestCase
         $partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $newPartnerId = $partnerRepository->findOneBy(['nom' => 'Partenaire 13-02'])->getId();
 
-        $client->request('POST', $router->generate('back_partner_user_transfer', [
-            'user_transfer[user]' => $userId,
-            'user_transfer[partner]' => $newPartnerId,
-            '_token' => $this->generateCsrfToken($client, 'partner_user_transfer'),
-        ]));
+        $client->request(
+            'POST',
+            $router->generate(
+                'back_partner_user_transfer',
+                [
+                    'user_transfer[user]' => $userId,
+                    'user_transfer[partner]' => $newPartnerId,
+                ]
+            ),
+            ['_token' => $this->generateCsrfToken($client, 'partner_user_transfer')]
+        );
 
         $this->assertEquals($userOldPartner, $user->getPartner()->getId());
     }
@@ -122,11 +134,17 @@ class BackPartnerControllerTest extends WebTestCase
         $partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $newPartnerId = $partnerRepository->findOneBy(['nom' => 'Partenaire 13-02'])->getId();
 
-        $client->request('POST', $router->generate('back_partner_user_transfer', [
-            'user_transfer[user]' => $userId,
-            'user_transfer[partner]' => $newPartnerId,
-            '_token' => $this->generateCsrfToken($client, 'bad_csrf'),
-        ]));
+        $client->request(
+            'POST',
+            $router->generate(
+                'back_partner_user_transfer',
+                [
+                    'user_transfer[user]' => $userId,
+                    'user_transfer[partner]' => $newPartnerId,
+                ]
+            ),
+            ['_token' => $this->generateCsrfToken($client, 'bad_csrf')]
+        );
 
         $this->assertEquals($userOldPartner, $user->getPartner()->getId());
         $this->assertResponseRedirects('/bo/partner/');
@@ -147,10 +165,10 @@ class BackPartnerControllerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => 'user-974-01@histologe.fr']);
         $userId = $user->getId();
 
-        $client->request('POST', $router->generate('back_partner_user_delete', [
-            'user_delete[user]' => $userId,
+        $client->request('POST', $router->generate('back_partner_user_delete'), [
+            'user_id' => $userId,
             '_token' => $this->generateCsrfToken($client, 'partner_user_delete'),
-        ]));
+        ]);
 
         $this->assertEquals(2, $user->getStatut());
     }
@@ -170,10 +188,10 @@ class BackPartnerControllerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => 'user-01-03@histologe.fr']);
         $userId = $user->getId();
 
-        $client->request('POST', $router->generate('back_partner_user_delete', [
-            'user_delete[user]' => $userId,
+        $client->request('POST', $router->generate('back_partner_user_delete'), [
+            'user_id' => $userId,
             '_token' => $this->generateCsrfToken($client, 'bad_csrf'),
-        ]));
+        ]);
 
         $this->assertNotEquals(2, $user->getStatut());
         $this->assertResponseRedirects('/bo/partner/');
