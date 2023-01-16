@@ -127,6 +127,9 @@ mock: ## Start Mock server
 	@${DOCKER_COMP} start histologe_wiremock && sleep 5
 	@${DOCKER_COMP} exec -it histologe_phpfpm sh -c "cd tools/wiremock/src/Mock && php AppMock.php"
 
+stop-mock: ## Stop Mock server
+	@${DOCKER_COMP} stop histologe_wiremock
+
 npm-install: ## Install the dependencies in the local node_modules folder
 	@$(DOCKER_COMP) exec -it histologe_phpfpm $(NPM) install
 
