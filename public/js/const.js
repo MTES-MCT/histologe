@@ -1,3 +1,6 @@
+// Warning ! For the moment we do not know how to compile this file in const.min.js, we keep it for the debug
+
+
 Node.prototype.addEventListeners = function (eventNames, eventFunction) {
     for (let eventName of eventNames.split(' '))
         this.addEventListener(eventName, eventFunction);

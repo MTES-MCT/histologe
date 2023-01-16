@@ -14,3 +14,5 @@ import './styles/tooltip.scss';
 
 import './vue/index';
 import './vue/front-stats';
+
+import './controllers/form_partner';
