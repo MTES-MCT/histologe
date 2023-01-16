@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Entity\Signalement;
 use App\Factory\SuiviFactory;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
@@ -10,6 +9,8 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ContactFormService
 {
+    public const MENTION_SENT_BY_EMAIL = '<br>Envoyé par email';
+
     public function __construct(
         private NotificationService $notificationService,
         private ParameterBagInterface $parameterBag,
@@ -34,7 +35,7 @@ class ContactFormService
         if (1 === \count($signalementsByOccupants)) {
             $signalement = $signalementsByOccupants[0];
             $params = [
-                'description_contact_form' => nl2br($message).'<br>'.'Envoyé par email',
+                'description_contact_form' => nl2br($message).self::MENTION_SENT_BY_EMAIL,
             ];
             $suivi = $this->suiviFactory->createInstanceFrom(
                 user: null, // TODO : mettre le bon id occupant
@@ -53,7 +54,7 @@ class ContactFormService
         if (1 === \count($signalementsByDeclarants)) {
             $signalement = $signalementsByDeclarants[0];
             $params = [
-                'description_contact_form' => nl2br($message).'<br>'.'Envoyé par email',
+                'description_contact_form' => nl2br($message).self::MENTION_SENT_BY_EMAIL,
             ];
             $suivi = $this->suiviFactory->createInstanceFrom(
                 user: null, // TODO : mettre le bon id déclarant
