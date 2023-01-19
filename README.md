@@ -2,7 +2,7 @@
 
 Une solution pour détecter et accélérer la prise en charge du “mal logement”.
 
-Histologe est une application web écrite en PHP et utilisant le framework Symfony, avec une base de données MySQL.
+## Environnement
 
 Cette application est déployé chez Scalingo, hébergé par Outscale.
 
@@ -71,7 +71,7 @@ $ make help
 La commande permet d'installer l'environnement de developpement avec un jeu de données
 
 ```
-make build
+$ make build
 ```
 
 2. Configurer les variables d'environnements du service object storage S3 d'OVH Cloud
@@ -108,19 +108,19 @@ Ain                    | Utilisateur Partenaire 01 | user-01-01@histologe.fr    
 > En tant qu'administrateur
 
 ```
-php bin/console app:add-user ROLE_ADMIN john.doe.1@histologe.fr John Doe
+$ php bin/console app:add-user ROLE_ADMIN john.doe.1@histologe.fr John Doe
 ```
 
 > En tant qu'administrateur territoire
 
 ```
-php bin/console app:add-user ROLE_ADMIN_TERRITORY joe.doe.2@histologe.fr John Doe Marseille 13
+$ php bin/console app:add-user ROLE_ADMIN_TERRITORY joe.doe.2@histologe.fr John Doe Marseille 13
 ```
 
 > En tant que partenaire
 > 
 ```
-php bin/console app:add-user ROLE_USER_PARTNER joe.doe.3@histologe.fr John Doe Marseille 13
+$ php bin/console app:add-user ROLE_USER_PARTNER joe.doe.3@histologe.fr John Doe Marseille 13
 ```
 
 Une activation de compte sera nécéssaire
@@ -149,12 +149,12 @@ Une fois le tunnel construit, à partir d'un autre terminal que celui du tunnel 
 `127.0.0.1:10000` et faire votre export de données.
 
 ```
-mysqldump --column-statistics=0 --no-tablespaces -u <database_user>  -h 127.0.0.1 -p <database_name> -P 10000 > data/dump.sql
+$ mysqldump --column-statistics=0 --no-tablespaces -u <database_user>  -h 127.0.0.1 -p <database_name> -P 10000 > data/dump.sql
 ```
 Vous pouvez ensuite executer la commande.
 
 ```
-make load-data  
+$ make load-data  
 ```
 
 ## Documentaton projet
