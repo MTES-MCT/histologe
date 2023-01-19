@@ -6,7 +6,6 @@ use App\Entity\JobEvent;
 use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
-use App\Service\Esabora\DossierResponse;
 use App\Service\Esabora\EsaboraService;
 use App\Service\NotificationService;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -53,7 +52,6 @@ class SynchronizeEsaboraCommand extends Command
                 ],
             ];
 
-            /** @var DossierResponse $dossierResponse */
             $dossierResponse = $this->esaboraService->getStateDossier($affectation);
             if (Response::HTTP_OK === $dossierResponse->getStatusCode() && null !== $dossierResponse->getSasEtat()) {
                 $this->affectationManager->synchronizeAffectationFrom($dossierResponse, $affectation);
@@ -75,8 +73,8 @@ class SynchronizeEsaboraCommand extends Command
                 ++$countSyncFailed;
             }
             $this->jobEventManager->createJobEvent(
-                type: 'esabora',
-                title: 'sync_dossier',
+                type: EsaboraService::TYPE_SERVICE,
+                title: EsaboraService::ACTION_SYNC_DOSSIER,
                 message: json_encode($message),
                 response: $this->serializer->serialize($dossierResponse, 'json'),
                 status: Response::HTTP_OK === $dossierResponse->getStatusCode()

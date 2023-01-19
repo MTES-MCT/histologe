@@ -14,11 +14,11 @@ framework:
             # Symfony\Component\Mailer\Messenger\SendEmailMessage: sync
             App\Messenger\Message\DossierMessage: async
 
-#
-#when@test:
-#    framework:
-#        messenger:
-#            transports:
-#                # replace with your transport name here (e.g., my_transport: 'in-memory://')
-#                # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
-#                sync: 'in-memory://'
+
+when@test:
+    framework:
+        messenger:
+            transports:
+                # replace with your transport name here (e.g., my_transport: 'in-memory://')
+                # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
+                async: 'in-memory://'

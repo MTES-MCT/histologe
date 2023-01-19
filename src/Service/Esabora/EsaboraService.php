@@ -17,6 +17,10 @@ class EsaboraService
     public const ESABORA_REFUSED = 'Non importé';
     public const ESABORA_CLOSED = 'terminé';
 
+    public const TYPE_SERVICE = 'esabora';
+    public const ACTION_PUSH_DOSSIER = 'push_dossier';
+    public const ACTION_SYNC_DOSSIER = 'sync_dossier';
+
     public function __construct(
         private HttpClientInterface $client,
         private LoggerInterface $logger,

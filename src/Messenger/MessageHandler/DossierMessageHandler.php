@@ -22,8 +22,8 @@ final class DossierMessageHandler implements MessageHandlerInterface
     {
         $response = $this->esaboraService->pushDossier($dossierMessage);
         $this->jobEventManager->createJobEvent(
-            type: 'esabora',
-            title: 'push_dossier',
+            type: EsaboraService::TYPE_SERVICE,
+            title: EsaboraService::ACTION_PUSH_DOSSIER,
             message: $this->serializer->serialize($dossierMessage, 'json'),
             response: $response->getContent(),
             status: 200 === $response->getStatusCode() ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,

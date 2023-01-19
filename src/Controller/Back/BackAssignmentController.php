@@ -3,7 +3,6 @@
 namespace App\Controller\Back;
 
 use App\Entity\Affectation;
-use App\Entity\JobEvent;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\AffectationAnsweredEvent;
@@ -117,19 +116,7 @@ class BackAssignmentController extends AbstractController
         $partner = $affectation->getPartner();
         if ($partner->getEsaboraToken() && $partner->getEsaboraUrl()) {
             $dossierMessage = $this->dossierMessageFactory->createInstance($affectation);
-            try {
-                $this->messageBus->dispatch($dossierMessage);
-            } catch (\Throwable $exception) {
-                $this->jobEventManager->createJobEvent(
-                    type: 'esabora',
-                    title: 'push_dossier',
-                    message: json_encode($dossierMessage->preparePayload(), \JSON_THROW_ON_ERROR),
-                    response: $exception->getMessage(),
-                    status: JobEvent::STATUS_FAILED,
-                    signalementId: $affectation->getSignalement()->getId(),
-                    partnerId: $affectation->getPartner()->getId()
-                );
-            }
+            $this->messageBus->dispatch($dossierMessage);
         }
     }
 }
