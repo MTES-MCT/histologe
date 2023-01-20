@@ -719,7 +719,7 @@
                      data-mail="{{ suivi.createdBy.email }}"{% endif %}>
                     <strong>{{ suivi.createdBy.nom|upper~' '~ suivi.createdBy.prenom|capitalize }}</strong>
                     <br>
-                    <small>[{{ 'ROLE_USAGER' in suivi.createdBy.roles ? 'DECLARANT/OCCUPANT' : (suivi.createdBy.partner ? suivi.createdBy.partner.nom : 'Aucun')  }}]</small> <br>
+                    <small>[{{ 'ROLE_USAGER' in suivi.createdBy.roles ? (suivi.createdBy.email is same as signalement.mailDeclarant ? 'DECLARANT' : 'OCCUPANT') : (suivi.createdBy.partner ? suivi.createdBy.partner.nom : 'Aucun')  }}]</small> <br>
                     <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
                 </div>
                 <div class="fr-col-9 bloc-suivi-content-row fr-pl-3v">

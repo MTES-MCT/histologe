@@ -30,44 +30,33 @@ class ContactFormService
         ) {
         $addNotification = true;
 
-        // add Suivi if signalement with this email for occupant
+        // add Suivi if signalement with this email for occupant or declarant
         $signalementsByOccupants = $this->signalementRepository->findBy([
             'mailOccupant' => $email,
             'closedAt' => null,
         ]);
-        if (1 === \count($signalementsByOccupants)) {
-            /** @var Signalement $signalement */
-            $signalement = $signalementsByOccupants[0];
-            $params = [
-                'description_contact_form' => nl2br($message).self::MENTION_SENT_BY_EMAIL,
-            ];
-            $userOccupant = $this->userManager->createOccupantAccountFromSignalement($signalement);
-            $userDeclarant = $this->userManager->createDeclarantAccountFromSignalement($signalement);
-            $suivi = $this->suiviFactory->createInstanceFrom(
-                user: $userOccupant,
-                signalement: $signalement,
-                params: $params,
-            );
-            $this->suiviManager->save($suivi);
-            $addNotification = false;
-        }
 
-        // add Suivi if signalement with this email for declarant
         $signalementsByDeclarants = $this->signalementRepository->findBy([
             'mailDeclarant' => $email,
             'closedAt' => null,
         ]);
 
-        if (1 === \count($signalementsByDeclarants)) {
+        if (1 === \count($signalementsByOccupants) || 1 === \count($signalementsByDeclarants)) {
             /** @var Signalement $signalement */
-            $signalement = $signalementsByDeclarants[0];
+            $signalement = (1 === \count($signalementsByOccupants)) ? $signalementsByOccupants[0] : $signalementsByDeclarants[0];
             $params = [
                 'description_contact_form' => nl2br($message).self::MENTION_SENT_BY_EMAIL,
             ];
             $userOccupant = $this->userManager->createOccupantAccountFromSignalement($signalement);
             $userDeclarant = $this->userManager->createDeclarantAccountFromSignalement($signalement);
+
+            if (1 === \count($signalementsByOccupants)) {
+                $user = $userOccupant;
+            } else {
+                $user = $userDeclarant;
+            }
             $suivi = $this->suiviFactory->createInstanceFrom(
-                user: $userDeclarant,
+                user: $user,
                 signalement: $signalement,
                 params: $params,
             );
