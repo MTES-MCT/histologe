@@ -38,12 +38,15 @@ class UserAddedSubscriber implements EventSubscriberInterface
 
     private function sendNotification(User $user): void
     {
-        $this->notificationService->send(
-            NotificationService::TYPE_ACCOUNT_ACTIVATION,
-            $user->getEmail(),
-            ['link' => $this->generateLink($user)],
-            $user->getTerritory()
-        );
+        // est-ce qu'on limite sur le getToken ou sur le role pour ne pas envoyer de notification aux occupants / déclarants ?
+        if (null !== $user->getToken()) {
+            $this->notificationService->send(
+                NotificationService::TYPE_ACCOUNT_ACTIVATION,
+                $user->getEmail(),
+                ['link' => $this->generateLink($user)],
+                $user->getTerritory()
+            );
+        }
     }
 
     private function generateLink(User $user): string

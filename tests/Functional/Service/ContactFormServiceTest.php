@@ -6,6 +6,7 @@ use App\Entity\Signalement;
 use App\Factory\SuiviFactory;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
+use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Service\ContactFormService;
 use App\Service\NotificationService;
@@ -33,12 +34,14 @@ class ContactFormServiceTest extends KernelTestCase
         $suiviFactory = new SuiviFactory();
         $suiviManager = self::getContainer()->get(SuiviManager::class);
         $this->signalementManager = self::getContainer()->get(SignalementManager::class);
+        $userManager = self::getContainer()->get(UserManager::class);
         $this->contactFormService = new ContactFormService(
             $notificationService,
             $parameterBag,
             $this->signalementRepository,
             $suiviFactory,
             $suiviManager,
+            $userManager
         );
     }
 

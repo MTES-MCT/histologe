@@ -41,7 +41,8 @@
             {% set suivi = (signalement.lastSuivi) %}
             {% if suivi %}
                 <strong>{{ suivi.createdAt|date('d.m.Y') }}</strong> <br>
-                <small>{{ suivi.createdBy ? suivi.createdBy.partner.nom|upper : '<small class="fr-badge fr-badge--warning">DECLARANT</small>'|raw }}</small>
+                {# TODO différencier facilement déclarant et occupant #}
+                <small>{{ suivi.createdBy.partner ? suivi.createdBy.partner.nom|upper : '<small class="fr-badge fr-badge--warning">DECLARANT/OCCUPANT</small>'|raw }}</small>
             {% else %}
                 Aucun
             {% endif %}

@@ -2,8 +2,10 @@
 
 namespace App\Service;
 
+use App\Entity\Signalement;
 use App\Factory\SuiviFactory;
 use App\Manager\SuiviManager;
+use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
@@ -17,6 +19,7 @@ class ContactFormService
         private SignalementRepository $signalementRepository,
         private SuiviFactory $suiviFactory,
         private SuiviManager $suiviManager,
+        private UserManager $userManager,
         ) {
     }
 
@@ -33,12 +36,15 @@ class ContactFormService
             'closedAt' => null,
         ]);
         if (1 === \count($signalementsByOccupants)) {
+            /** @var Signalement $signalement */
             $signalement = $signalementsByOccupants[0];
             $params = [
                 'description_contact_form' => nl2br($message).self::MENTION_SENT_BY_EMAIL,
             ];
+            $userOccupant = $this->userManager->createOccupantAccountFromSignalement($signalement);
+            $userDeclarant = $this->userManager->createDeclarantAccountFromSignalement($signalement);
             $suivi = $this->suiviFactory->createInstanceFrom(
-                user: null, // TODO : mettre le bon id occupant
+                user: $userOccupant,
                 signalement: $signalement,
                 params: $params,
             );
@@ -51,13 +57,17 @@ class ContactFormService
             'mailDeclarant' => $email,
             'closedAt' => null,
         ]);
+
         if (1 === \count($signalementsByDeclarants)) {
+            /** @var Signalement $signalement */
             $signalement = $signalementsByDeclarants[0];
             $params = [
                 'description_contact_form' => nl2br($message).self::MENTION_SENT_BY_EMAIL,
             ];
+            $userOccupant = $this->userManager->createOccupantAccountFromSignalement($signalement);
+            $userDeclarant = $this->userManager->createDeclarantAccountFromSignalement($signalement);
             $suivi = $this->suiviFactory->createInstanceFrom(
-                user: null, // TODO : mettre le bon id déclarant
+                user: $userDeclarant,
                 signalement: $signalement,
                 params: $params,
             );
