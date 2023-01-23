@@ -11,6 +11,7 @@ use App\Service\SearchFilterService;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -670,5 +671,19 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         return $qb;
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findByReferenceChunk(Territory $territory, string $chunkReference): ?Signalement
+    {
+        return $this->createQueryBuilder('s')
+            ->where('s.territory = :territory')
+            ->andWhere('s.reference LIKE :reference')
+            ->setParameter('territory', $territory)
+            ->setParameter('reference', '%'.$chunkReference.'%')
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

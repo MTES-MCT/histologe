@@ -3,8 +3,8 @@
 namespace App\Controller\Security;
 
 use App\Entity\Signalement;
-use League\Flysystem\FilesystemOperator;
 use LogicException;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File;
@@ -44,8 +44,8 @@ class SecurityController extends AbstractController
     #[Route('/_up/{filename}', name: 'show_uploaded_file')]
     public function showUploadedFile(
         string $filename,
-        Signalement|null $signalement = null,
-        FilesystemOperator $fileStorage): BinaryFileResponse|RedirectResponse
+        LoggerInterface $logger,
+        Signalement|null $signalement = null): BinaryFileResponse|RedirectResponse
     {
         $request = Request::createFromGlobals();
         $this->denyAccessUnlessGranted(
@@ -55,10 +55,18 @@ class SecurityController extends AbstractController
 
         $tmpFilepath = $this->getParameter('uploads_tmp_dir').$filename;
         $bucketFilepath = $this->getParameter('url_bucket').'/'.$filename;
-        file_put_contents($tmpFilepath, file_get_contents($bucketFilepath));
-        $file = new File($tmpFilepath);
+        try {
+            file_put_contents($tmpFilepath, file_get_contents($bucketFilepath));
+            $file = new File($tmpFilepath);
 
-        return new BinaryFileResponse($file);
+            return new BinaryFileResponse($file);
+        } catch (\Throwable $exception) {
+            $logger->error($exception->getMessage());
+        }
+
+        return new BinaryFileResponse(
+            new File($this->getParameter('images_dir').'image-404.png'),
+        );
     }
 
     /**

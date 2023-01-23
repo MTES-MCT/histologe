@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Tests\Functional\Service;
+namespace App\Tests\Functional\Service\Import;
 
-use App\Service\Parser\CsvParser;
+use App\Service\Import\CsvParser;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 

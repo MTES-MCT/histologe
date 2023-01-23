@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Parser;
+namespace App\Service\Import;
 
 class CsvParser
 {
