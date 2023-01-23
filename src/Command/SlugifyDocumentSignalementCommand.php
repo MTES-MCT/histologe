@@ -33,7 +33,7 @@ class SlugifyDocumentSignalementCommand extends Command
     private ?string $sourceFile = null;
     private ?string $destinationFile = null;
 
-    private ?string $error = null;
+    private ?array $errors = [];
 
     public function __construct(
         private ParameterBagInterface $parameterBag,
@@ -66,10 +66,8 @@ class SlugifyDocumentSignalementCommand extends Command
             return Command::FAILURE;
         }
 
-        if (!$this->validate($io, $input, $output)) {
-            if ($this->error) {
-                $io->error($this->error);
-            }
+        if (!$this->validate($input, $output)) {
+            $io->error($this->errors);
             $io->writeln('Bye!');
 
             return Command::FAILURE;
@@ -128,7 +126,7 @@ class SlugifyDocumentSignalementCommand extends Command
     /**
      * @throws FilesystemException
      */
-    private function validate(SymfonyStyle $io, InputInterface $input, OutputInterface $output): bool
+    private function validate(InputInterface $input, OutputInterface $output): bool
     {
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion(
@@ -147,16 +145,12 @@ class SlugifyDocumentSignalementCommand extends Command
         /** @var Territory $territory */
         $territory = $this->territoryManager->findOneBy(['zip' => $zip]);
         if (null === $territory) {
-            $this->error = 'Territory does not exists';
-
-            return false;
+            $this->errors[] = 'Territory does not exists';
         }
 
         $directoryPath = $this->projectDir.'/data/images/import_'.$zip.'/';
         if (!$this->filesystem->exists($directoryPath)) {
-            $this->error = sprintf('%s path directory does not exists', $directoryPath);
-
-            return false;
+            $this->errors[] = sprintf('%s path directory does not exists', $directoryPath);
         }
 
         $countFile = \count(scandir($directoryPath)) - 2; // ignore single dot (.) and double dots (..)
@@ -169,9 +163,7 @@ class SlugifyDocumentSignalementCommand extends Command
         }
 
         if (!$this->fileStorage->fileExists($fromFile)) {
-            $this->error = 'CSV File does not exists';
-
-            return false;
+            $this->errors[] = 'CSV File does not exists';
         }
 
         $this->sourceFile = $fromFile;
@@ -179,6 +171,6 @@ class SlugifyDocumentSignalementCommand extends Command
         $this->directoryPath = $directoryPath;
         $this->territory = $territory;
 
-        return true;
+        return empty($this->errors);
     }
 }

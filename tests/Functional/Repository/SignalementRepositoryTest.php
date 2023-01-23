@@ -33,7 +33,7 @@ class SignalementRepositoryTest extends KernelTestCase
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         $territory = $territoryRepository->findOneBy(['zip' => '01']);
 
-        $signalement = $signalementRepository->findByReferenceChunk(
+        $signalementRepository->findByReferenceChunk(
             $territory,
             '2022-1'
         );
