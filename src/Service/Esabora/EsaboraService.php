@@ -3,10 +3,10 @@
 namespace App\Service\Esabora;
 
 use App\Entity\Affectation;
-use App\Manager\AffectationManager;
 use App\Messenger\Message\DossierMessage;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
@@ -17,9 +17,12 @@ class EsaboraService
     public const ESABORA_REFUSED = 'Non importé';
     public const ESABORA_CLOSED = 'terminé';
 
+    public const TYPE_SERVICE = 'esabora';
+    public const ACTION_PUSH_DOSSIER = 'push_dossier';
+    public const ACTION_SYNC_DOSSIER = 'sync_dossier';
+
     public function __construct(
         private HttpClientInterface $client,
-        private AffectationManager $affectationManager,
         private LoggerInterface $logger,
     ) {
     }
@@ -46,10 +49,12 @@ class EsaboraService
             $this->logger->error($exception->getMessage());
         }
 
-        return (new JsonResponse(['message' => $exception->getMessage()]))->setStatusCode(500);
+        return (new JsonResponse([
+            'message' => $exception->getMessage(),
+        ]))->setStatusCode(Response::HTTP_SERVICE_UNAVAILABLE);
     }
 
-    public function getStateDossier(Affectation $affectation): DossierResponse|JsonResponse
+    public function getStateDossier(Affectation $affectation): DossierResponse
     {
         list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
         $payload = [
@@ -64,6 +69,7 @@ class EsaboraService
             ],
         ];
 
+        $statusCode = Response::HTTP_SERVICE_UNAVAILABLE;
         try {
             $response = $this->client->request('POST', $url.'/mult/?task=doSearch', [
                     'headers' => [
@@ -73,15 +79,18 @@ class EsaboraService
                     'body' => json_encode($payload, \JSON_THROW_ON_ERROR),
                 ]
             );
+            $statusCode = $response->getStatusCode();
 
             return new DossierResponse(
-                200 === $response->getStatusCode() ? $response->toArray() : [],
-                $response->getStatusCode()
+                Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
+                    ? $response->toArray()
+                    : [],
+                $statusCode
             );
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
         }
 
-        return (new JsonResponse(['message' => $exception->getMessage()]))->setStatusCode(500);
+        return new DossierResponse(['message' => $exception->getMessage(), 'status_code' => $statusCode], $statusCode);
     }
 }

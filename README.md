@@ -2,17 +2,13 @@
 
 Une solution pour détecter et accélérer la prise en charge du “mal logement”.
 
-Histologe est une application web écrite en PHP et utilisant le framework Symfony, avec une base de données MySQL.
+## Environnement
 
 Cette application est déployé chez Scalingo, hébergé par Outscale.
 
 - Production: [histologe.beta.gouv.fr](https://histologe.beta.gouv.fr)
 
 - Staging: [histologe-staging.incubateur.net](https://histologe-staging.incubateur.net)
-
-Les ressources statiques telles que les images et documents sont hébergés par OVH Cloud à travers le service Object Storage.  
-
-- https://horizon.cloud.ovh.net
 
 ## Pré-requis
 
@@ -25,24 +21,7 @@ PHP (optionnel)| [8.0.*](https://www.php.net/)
 Composer (optionnel) | [2.4.*](https://getcomposer.org/download/)
 Node (optionnel)| [16.*](https://nodejs.org/en/)
 
-
-## Clone du projet
-
-### HTTP
-```bash
-git clone https://github.com/MTES-MCT/histologe
-```
-
-### SSH
-```
-git clone git@github.com:MTES-MCT/histologe.git
-```
-
-[Vérification des clés SSH existantes](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/checking-for-existing-ssh-keys)
-
-[Génération d'une nouvelle clé SSH](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
-
-## Environnement
+## Environnement technique
 
 ### Versions des dépendances
 
@@ -68,7 +47,8 @@ Merci de vérifier que ces ports ne soient pas utilisés sur votre poste local
 Service| Hostname             |Port number
 -------|----------------------|-----------
 Nginx| histologe_nginx      | **8080**
-PHP-FPM| histologe_phpfpm     |**9000**
+php-fpm| histologe_phpfpm     |**9000**
+php-worker| histologe_phpworker  |**8089**
 MySQL| histologe_mysql      |**3307**
 PhpMyAdmin | histologe_phpmyadmin | **8081**
 Mailcatcher| histologe_mailer     | **1025** et **1080**
@@ -91,7 +71,7 @@ $ make help
 La commande permet d'installer l'environnement de developpement avec un jeu de données
 
 ```
-make build
+$ make build
 ```
 
 2. Configurer les variables d'environnements du service object storage S3 d'OVH Cloud
@@ -128,28 +108,22 @@ Ain                    | Utilisateur Partenaire 01 | user-01-01@histologe.fr    
 > En tant qu'administrateur
 
 ```
-php bin/console app:add-user ROLE_ADMIN john.doe.1@histologe.fr John Doe
+$ php bin/console app:add-user ROLE_ADMIN john.doe.1@histologe.fr John Doe
 ```
 
 > En tant qu'administrateur territoire
 
 ```
-php bin/console app:add-user ROLE_ADMIN_TERRITORY joe.doe.2@histologe.fr John Doe Marseille 13
+$ php bin/console app:add-user ROLE_ADMIN_TERRITORY joe.doe.2@histologe.fr John Doe Marseille 13
 ```
 
 > En tant que partenaire
 > 
 ```
-php bin/console app:add-user ROLE_USER_PARTNER joe.doe.3@histologe.fr John Doe Marseille 13
+$ php bin/console app:add-user ROLE_USER_PARTNER joe.doe.3@histologe.fr John Doe Marseille 13
 ```
 
 Une activation de compte sera nécéssaire
-
-### Compilation des fichiers Vue.js en cours de développement
-```
-npm install
-npm run watch
-```
 
 ## Bases de données scalingo
 
@@ -175,14 +149,14 @@ Une fois le tunnel construit, à partir d'un autre terminal que celui du tunnel 
 `127.0.0.1:10000` et faire votre export de données.
 
 ```
-mysqldump --column-statistics=0 --no-tablespaces -u <database_user>  -h 127.0.0.1 -p <database_name> -P 10000 > data/dump.sql
+$ mysqldump --column-statistics=0 --no-tablespaces -u <database_user>  -h 127.0.0.1 -p <database_name> -P 10000 > data/dump.sql
 ```
 Vous pouvez ensuite executer la commande.
 
 ```
-make load-data  
+$ make load-data  
 ```
 
 ## Documentaton projet
 
-[Wiki](https://github.com/MTES-MCT/histologe/wiki)
+[Consulter la documentation](https://github.com/MTES-MCT/histologe/wiki)

@@ -4,45 +4,45 @@ namespace App\Messenger\Message;
 
 final class DossierMessage
 {
-    private ?string $url;
+    private ?string $url = null;
 
-    private ?string $token;
+    private ?string $token = null;
 
-    private ?int $signalementId;
+    private ?int $signalementId = null;
 
-    private ?int $partnerId;
+    private ?int $partnerId = null;
 
-    private ?string $reference;
+    private ?string $reference = null;
 
-    private ?string $prenomUsager;
+    private ?string $prenomUsager = null;
 
-    private ?string $nomUsager;
+    private ?string $nomUsager = null;
 
-    private ?string $mailUsager;
+    private ?string $mailUsager = null;
 
-    private ?string $telephoneUsager;
+    private ?string $telephoneUsager = null;
 
-    private ?string $numeroAdresseSignalement;
+    private ?string $numeroAdresseSignalement = null;
 
-    private ?string $adresseSignalement;
+    private ?string $adresseSignalement = null;
 
-    private ?string $etageSignalement;
+    private ?string $etageSignalement = null;
 
-    private ?string $numeroAppartementSignalement;
+    private ?string $numeroAppartementSignalement = null;
 
-    private ?string $codepostaleSignalement;
+    private ?string $codepostaleSignalement = null;
 
-    private ?string $villeSignalement;
+    private ?string $villeSignalement = null;
 
-    private ?float $latitudeSignalement;
+    private ?float $latitudeSignalement = null;
 
-    private ?float $longitudeSignalement;
+    private ?float $longitudeSignalement = null;
 
-    private ?string $dateOuverture;
+    private ?string $dateOuverture = null;
 
-    private ?string $dossierCommentaire;
+    private ?string $dossierCommentaire = null;
 
-    private ?string $piecesJointesObservation;
+    private ?string $piecesJointesObservation = null;
 
     private array $piecesJointes = [];
 

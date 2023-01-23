@@ -6,7 +6,6 @@ use App\Entity\JobEvent;
 use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
-use App\Service\Esabora\DossierResponse;
 use App\Service\Esabora\EsaboraService;
 use App\Service\NotificationService;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -15,6 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[AsCommand(
@@ -42,7 +42,8 @@ class SynchronizeEsaboraCommand extends Command
         /** @var AffectationRepository $affectationRepository */
         $affectationRepository = $this->affectationManager->getRepository();
         $affectations = $affectationRepository->findAffectationSubscribedToEsabora();
-        $countSync = 0;
+        $countSyncSuccess = 0;
+        $countSyncFailed = 0;
         foreach ($affectations as $affectation) {
             $message = [
                 'criterionName' => 'SAS_Référence',
@@ -51,9 +52,8 @@ class SynchronizeEsaboraCommand extends Command
                 ],
             ];
 
-            /** @var DossierResponse $dossierResponse */
             $dossierResponse = $this->esaboraService->getStateDossier($affectation);
-            if (200 === $dossierResponse->getStatusCode() && null !== $dossierResponse->getSasEtat()) {
+            if (Response::HTTP_OK === $dossierResponse->getStatusCode() && null !== $dossierResponse->getSasEtat()) {
                 $this->affectationManager->synchronizeAffectationFrom($dossierResponse, $affectation);
                 $io->success(
                     sprintf(
@@ -67,14 +67,19 @@ class SynchronizeEsaboraCommand extends Command
                         $dossierResponse->getDateCloture()
                     )
                 );
-                ++$countSync;
+                ++$countSyncSuccess;
+            } else {
+                $io->error(sprintf('%s', $this->serializer->serialize($dossierResponse, 'json')));
+                ++$countSyncFailed;
             }
             $this->jobEventManager->createJobEvent(
-                type: 'esabora',
-                title: 'sync_dossier',
-                message: json_encode($message, \JSON_THROW_ON_ERROR),
+                type: EsaboraService::TYPE_SERVICE,
+                title: EsaboraService::ACTION_SYNC_DOSSIER,
+                message: json_encode($message),
                 response: $this->serializer->serialize($dossierResponse, 'json'),
-                status: 200 === $dossierResponse->getStatusCode() ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,
+                status: Response::HTTP_OK === $dossierResponse->getStatusCode()
+                    ? JobEvent::STATUS_SUCCESS
+                    : JobEvent::STATUS_FAILED,
                 signalementId: $affectation->getSignalement()->getId(),
                 partnerId: $affectation->getPartner()->getId()
             );
@@ -86,8 +91,14 @@ class SynchronizeEsaboraCommand extends Command
             [
                 'url' => $this->parameterBag->get('host_url'),
                 'cron_label' => 'Synchronisation des signalements depuis Esabora',
-                'count' => $countSync,
-                'message' => $countSync > 1 ? 'signalements ont été synchronisés' : 'signalement a été synchronisé',
+                'count_success' => $countSyncSuccess,
+                'count_failed' => $countSyncFailed,
+                'message_success' => $countSyncSuccess > 1
+                    ? 'signalements ont été synchronisés'
+                    : 'signalement a été synchronisé',
+                'message_failed' => $countSyncFailed > 1
+                    ? 'signalements n\'ont pas été synchronisés'
+                    : 'signalement n\'a pas été synchronisé',
             ],
             null
         );

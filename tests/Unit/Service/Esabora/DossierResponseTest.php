@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Service\Esabora;
 
 use App\Service\Esabora\DossierResponse;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class DossierResponseTest extends TestCase
 {
@@ -22,5 +23,23 @@ class DossierResponseTest extends TestCase
         $this->assertEquals('en cours', $dossierResponse->getEtat());
         $this->assertNull($dossierResponse->getDateCloture());
         $this->assertEquals(200, $dossierResponse->getStatusCode());
+        $this->assertNull($dossierResponse->getErrorReason());
+    }
+
+    public function testDossierResponseFailed(): void
+    {
+        $responseEsabora = ['message' => 'Lorem ipsum', 'statusCode' => Response::HTTP_BAD_REQUEST];
+
+        $dossierResponse = new DossierResponse($responseEsabora, Response::HTTP_BAD_REQUEST);
+        $this->assertNull($dossierResponse->getSasReference());
+        $this->assertNull($dossierResponse->getSasEtat());
+        $this->assertNull($dossierResponse->getId());
+        $this->assertNull($dossierResponse->getNumero());
+        $this->assertNull($dossierResponse->getStatutAbrege());
+        $this->assertNull($dossierResponse->getStatut());
+        $this->assertNull($dossierResponse->getEtat());
+        $this->assertNull($dossierResponse->getDateCloture());
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $dossierResponse->getStatusCode());
+        $this->assertNotNull($dossierResponse->getErrorReason());
     }
 }

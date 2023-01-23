@@ -79,7 +79,7 @@ class DossierMessageFactoryTest extends TestCase
         $dossierMessageFactory = new DossierMessageFactory($uploadHandlerServiceMock);
         $dossierMessage = $dossierMessageFactory->createInstance($affectation);
 
-        $this->assertEquals(2, \count($dossierMessage->getPiecesJointes()));
+        $this->assertCount(2, $dossierMessage->getPiecesJointes());
         $this->assertStringContainsString('Doc', $dossierMessage->getPiecesJointesObservation());
         $this->assertStringContainsString('Points signalés', $dossierMessage->getDossierCommentaire());
         $this->assertStringContainsString('Etat grave', $dossierMessage->getDossierCommentaire());

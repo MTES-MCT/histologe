@@ -3,5 +3,11 @@
 {% block body %}
     <p>Plateforme: {{ url }}</p>
     <p>La tache planifiée <strong>{{ cron_label }}</strong> s'est éxécutée avec succès.</p>
-    <p> {{ count is defined ? count : ' '}} {{ message }}.</p>
+    <p> {{ count is defined ? count : ' '}} {{ message is defined ? message : ' ' }}</p>
+    {% if count_success is defined and message_success is defined %}
+        <p><span>&#9989;</span> {{ count_success }} {{ message_success }}</p>
+    {% endif %}
+    {% if count_failed is defined and message_failed is defined %}
+        <p><span>&#10060;</span> {{ count_failed }}  {{ message_failed }}</p>
+    {% endif %}
 {% endblock %}
