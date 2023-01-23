@@ -27,7 +27,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 )]
 class SlugifyDocumentSignalementCommand extends Command
 {
-    private const PREFIX_FILENAME_STORAGE = 'mapping_doc_signalement_slugged_';
+    public const PREFIX_FILENAME_STORAGE = 'mapping_doc_signalement_slugged_';
     private ?Territory $territory = null;
     private ?string $directoryPath = null;
     private ?string $sourceFile = null;

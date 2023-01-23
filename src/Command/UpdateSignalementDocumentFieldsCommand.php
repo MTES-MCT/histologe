@@ -27,9 +27,9 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 )]
 class UpdateSignalementDocumentFieldsCommand extends Command
 {
-    public const BATCH_SIZE = 200;
-    public const TYPE_IMAGE = 'image';
-    public const REGEX_IMAGE = '/(jpe?g|png)/mi';
+    private const BATCH_SIZE = 200;
+    private const TYPE_IMAGE = 'image';
+    private const REGEX_IMAGE = '/(jpe?g|png)/mi';
 
     public function __construct(
         private TerritoryManager $territoryManager,
@@ -63,10 +63,10 @@ class UpdateSignalementDocumentFieldsCommand extends Command
             return Command::FAILURE;
         }
 
-        $fromFile = 'csv/new_mapping_doc_signalement_'.$zip.'.csv';
-        $toFile = $this->parameterBag->get('uploads_tmp_dir').'test_mapping_doc_signalement.csv';
+        $fromFile = 'csv/'.SlugifyDocumentSignalementCommand::PREFIX_FILENAME_STORAGE.'_'.$zip.'.csv';
+        $toFile = $this->parameterBag->get('uploads_tmp_dir').'mapping_doc_signalement_'.$zip.'.csv';
         if (!$this->fileStorage->fileExists($fromFile)) {
-            $io->error('CSV File does not exists');
+            $io->error('CSV Mapping file does not exists, please execute app:slugify-doc-signalement');
 
             return Command::FAILURE;
         }
