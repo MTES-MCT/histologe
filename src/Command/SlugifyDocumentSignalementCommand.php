@@ -149,17 +149,17 @@ class SlugifyDocumentSignalementCommand extends Command
         }
 
         $directoryPath = $this->projectDir.'/data/images/import_'.$zip.'/';
-        if (!$this->filesystem->exists($directoryPath)) {
+        if ($this->filesystem->exists($directoryPath)) {
+            $countFile = \count(scandir($directoryPath)) - 2; // ignore single dot (.) and double dots (..)
+            $question = new ConfirmationQuestion(
+                sprintf('Do you want to slugify %s files from your directory %s ? ', $countFile, $directoryPath),
+                false
+            );
+            if (!$helper->ask($input, $output, $question)) {
+                return false;
+            }
+        } else {
             $this->errors[] = sprintf('%s path directory does not exists', $directoryPath);
-        }
-
-        $countFile = \count(scandir($directoryPath)) - 2; // ignore single dot (.) and double dots (..)
-        $question = new ConfirmationQuestion(
-            sprintf('Do you want to slugify %s files from your directory %s ? ', $countFile, $directoryPath),
-            false
-        );
-        if (!$helper->ask($input, $output, $question)) {
-            return false;
         }
 
         if (!$this->fileStorage->fileExists($fromFile)) {
