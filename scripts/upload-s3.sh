@@ -12,7 +12,9 @@
 #   option - The type of file to upload (grid, signalement, or image)
 #   zip - The code of the department
 #
-# Example: ./scripts/upload-s3.sh grid 33
+# Example 1: ./scripts/upload-s3.sh grid 33
+# Example 2: ./scripts/upload-s3.sh signalement 33
+# Example 3: ./scripts/upload-s3.sh image 33
 #
 
 if [ -z "$BUCKET_URL" ]; then
