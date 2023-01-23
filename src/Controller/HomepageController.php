@@ -4,9 +4,9 @@ namespace App\Controller;
 
 use App\Form\ContactType;
 use App\Form\PostalCodeSearchType;
+use App\FormHandler\ContactFormHandler;
 use App\Repository\AffectationRepository;
 use App\Repository\SignalementRepository;
-use App\Service\ContactFormService;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,8 +20,8 @@ class HomepageController extends AbstractController
         Request $request,
         SignalementRepository $signalementRepository,
         AffectationRepository $affectationRepository,
-        PostalCodeHomeChecker $postalCodeHomeChecker): Response
-    {
+        PostalCodeHomeChecker $postalCodeHomeChecker
+    ): Response {
         $title = 'Un service public pour les locataires et propriétaires';
 
         $stats = [];
@@ -62,13 +62,13 @@ class HomepageController extends AbstractController
     #[Route('/contact', name: 'front_contact')]
     public function contact(
         Request $request,
-        ContactFormService $contactFormService,
+        ContactFormHandler $contactFormHandler,
     ): Response {
         $title = "Conditions Générales d'Utilisation";
         $form = $this->createForm(ContactType::class, []);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $contactFormService->dispatch(
+            $contactFormHandler->handle(
                 $form->get('nom')->getData(),
                 $form->get('email')->getData(),
                 $form->get('message')->getData()

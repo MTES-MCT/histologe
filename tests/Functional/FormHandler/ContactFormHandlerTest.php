@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Tests\Functional\Service;
+namespace App\Tests\Functional\FormHandler;
 
 use App\Entity\Signalement;
 use App\Factory\SuiviFactory;
+use App\FormHandler\ContactFormHandler;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
-use App\Service\ContactFormService;
 use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Faker\Factory;
@@ -16,10 +16,10 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 
-class ContactFormServiceTest extends KernelTestCase
+class ContactFormHandlerTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
-    private ContactFormService $contactFormService;
+    private ContactFormHandler $contactFormHandler;
     private SignalementRepository $signalementRepository;
     private SignalementManager $signalementManager;
 
@@ -35,7 +35,7 @@ class ContactFormServiceTest extends KernelTestCase
         $suiviManager = self::getContainer()->get(SuiviManager::class);
         $this->signalementManager = self::getContainer()->get(SignalementManager::class);
         $userManager = self::getContainer()->get(UserManager::class);
-        $this->contactFormService = new ContactFormService(
+        $this->contactFormHandler = new ContactFormHandler(
             $notificationService,
             $parameterBag,
             $this->signalementRepository,
@@ -45,13 +45,13 @@ class ContactFormServiceTest extends KernelTestCase
         );
     }
 
-    public function testDispatchContactFormForOccupant()
+    public function testHandleContactFormForOccupant()
     {
         $faker = Factory::create();
         $signalement = $this->signalementRepository->find(1);
 
         $fakeMessage = $faker->text();
-        $this->contactFormService->dispatch(
+        $this->contactFormHandler->handle(
             $faker->firstName(),
             $signalement->getMailOccupant(),
             $fakeMessage,
@@ -59,10 +59,10 @@ class ContactFormServiceTest extends KernelTestCase
 
         $suivis = $signalement->getSuivis();
         $suivi = $suivis[\count($suivis) - 1];
-        $this->assertEquals($fakeMessage.ContactFormService::MENTION_SENT_BY_EMAIL, $suivi->getDescription());
+        $this->assertEquals($fakeMessage.ContactFormHandler::MENTION_SENT_BY_EMAIL, $suivi->getDescription());
     }
 
-    public function testDispatchContactFormForDeclarant()
+    public function testHandleContactFormForDeclarant()
     {
         $faker = Factory::create();
         $signalement = $this->signalementRepository->find(1);
@@ -70,7 +70,7 @@ class ContactFormServiceTest extends KernelTestCase
         $this->signalementManager->save($signalement);
 
         $fakeMessage = $faker->text();
-        $this->contactFormService->dispatch(
+        $this->contactFormHandler->handle(
             $faker->firstName(),
             $signalement->getMailDeclarant(),
             $fakeMessage,
@@ -78,6 +78,6 @@ class ContactFormServiceTest extends KernelTestCase
 
         $suivis = $signalement->getSuivis();
         $suivi = $suivis[\count($suivis) - 1];
-        $this->assertEquals($fakeMessage.ContactFormService::MENTION_SENT_BY_EMAIL, $suivi->getDescription());
+        $this->assertEquals($fakeMessage.ContactFormHandler::MENTION_SENT_BY_EMAIL, $suivi->getDescription());
     }
 }

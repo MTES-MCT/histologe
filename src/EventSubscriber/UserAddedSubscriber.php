@@ -12,10 +12,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class UserAddedSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private ParameterBagInterface $parameterBag,
-                                private UrlGeneratorInterface $urlGenerator,
-                                private NotificationService $notificationService)
-    {
+    public function __construct(
+        private ParameterBagInterface $parameterBag,
+        private UrlGeneratorInterface $urlGenerator,
+        private NotificationService $notificationService
+    ) {
     }
 
     public function getSubscribedEvents(): array
@@ -38,7 +39,7 @@ class UserAddedSubscriber implements EventSubscriberInterface
 
     private function sendNotification(User $user): void
     {
-        if (null !== $user->getToken()) {
+        if (\in_array('ROLE_USER_PARTNER', $user->getRoles()) || \in_array('ROLE_ADMIN_PARTNER', $user->getRoles()) || \in_array('ROLE_ADMIN_TERRITORY', $user->getRoles()) || \in_array('ROLE_ADMIN', $user->getRoles())) {
             $this->notificationService->send(
                 NotificationService::TYPE_ACCOUNT_ACTIVATION,
                 $user->getEmail(),

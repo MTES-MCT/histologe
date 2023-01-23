@@ -1,15 +1,17 @@
 <?php
 
-namespace App\Service;
+namespace App\FormHandler;
 
 use App\Entity\Signalement;
+use App\Entity\User;
 use App\Factory\SuiviFactory;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
+use App\Service\NotificationService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class ContactFormService
+class ContactFormHandler
 {
     public const MENTION_SENT_BY_EMAIL = '<br>Envoyé par email';
 
@@ -20,52 +22,55 @@ class ContactFormService
         private SuiviFactory $suiviFactory,
         private SuiviManager $suiviManager,
         private UserManager $userManager,
-        ) {
+    ) {
     }
 
-    public function dispatch(
+    public function handle(
         string $nom,
         string $email,
         string $message,
-        ) {
-        $addNotification = true;
+    ) {
+        $hasNotificationToSend = true;
 
         // add Suivi if signalement with this email for occupant or declarant
-        $signalementsByOccupants = $this->signalementRepository->findBy([
+        $signalementsByOccupants = $this->signalementRepository->findOneBy([
             'mailOccupant' => $email,
             'closedAt' => null,
         ]);
 
-        $signalementsByDeclarants = $this->signalementRepository->findBy([
+        $signalementsByDeclarants = $this->signalementRepository->findOneBy([
             'mailDeclarant' => $email,
             'closedAt' => null,
         ]);
 
-        if (1 === \count($signalementsByOccupants) || 1 === \count($signalementsByDeclarants)) {
+        if (null !== $signalementsByOccupants || null !== $signalementsByDeclarants) {
             /** @var Signalement $signalement */
-            $signalement = (1 === \count($signalementsByOccupants)) ? $signalementsByOccupants[0] : $signalementsByDeclarants[0];
+            $signalement = (null !== $signalementsByOccupants)
+                ? $signalementsByOccupants
+                : $signalementsByDeclarants;
             $params = [
                 'description_contact_form' => nl2br($message).self::MENTION_SENT_BY_EMAIL,
             ];
-            $userOccupant = $this->userManager->createOccupantAccountFromSignalement($signalement);
-            $userDeclarant = $this->userManager->createDeclarantAccountFromSignalement($signalement);
+            $userOccupant = $this->userManager->createUsagerFromSignalement($signalement, 'occupant');
+            $userDeclarant = $this->userManager->createUsagerFromSignalement($signalement, 'declarant');
 
-            if (1 === \count($signalementsByOccupants)) {
-                $user = $userOccupant;
-            } else {
-                $user = $userDeclarant;
+            /** @var User $user */
+            $user = (null !== $signalementsByOccupants)
+                ? $userOccupant
+                : $userDeclarant;
+
+            if (null !== $user) {
+                $suivi = $this->suiviFactory->createInstanceFrom(
+                    user: $user,
+                    signalement: $signalement,
+                    params: $params,
+                );
+                $this->suiviManager->save($suivi);
             }
-            $suivi = $this->suiviFactory->createInstanceFrom(
-                user: $user,
-                signalement: $signalement,
-                params: $params,
-            );
-            $this->suiviManager->save($suivi);
-            $addNotification = false;
+            $hasNotificationToSend = false;
         }
 
-        // no Suivi added : send classic email
-        if ($addNotification) {
+        if ($hasNotificationToSend) {
             $this->notificationService->send(
                 NotificationService::TYPE_CONTACT_FORM,
                 $this->parameterBag->get('contact_email'),

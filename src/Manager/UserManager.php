@@ -6,6 +6,7 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Exception\User\UserEmailNotFoundException;
+use App\Factory\UserFactory;
 use App\Service\NotificationService;
 use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -25,8 +26,9 @@ class UserManager extends AbstractManager
         private ParameterBagInterface $parameterBag,
         protected ManagerRegistry $managerRegistry,
         private SignalementUsagerManager $signalementUsagerManager,
-        string $entityName = User::class)
-    {
+        private UserFactory $userFactory,
+        string $entityName = User::class,
+    ) {
         parent::__construct($managerRegistry, $entityName);
     }
 
@@ -61,7 +63,8 @@ class UserManager extends AbstractManager
 
         $this->notificationService->send(
             NotificationService::TYPE_ACCOUNT_TRANSFER,
-            $user->getEmail(), [
+            $user->getEmail(),
+            [
             'btntext' => User::STATUS_ACTIVE === $user->getStatut() ? 'Accéder à mon compte' : 'Activer mon compte',
             'link' => $link,
             'user_status' => $user->getStatut(),
@@ -101,51 +104,41 @@ class UserManager extends AbstractManager
         return $user;
     }
 
-    public function createOccupantAccountFromSignalement(Signalement $signalement): ?User
+    public function createUsagerFromSignalement(Signalement $signalement, string $type = 'occupant'): ?User
     {
-        $mailOccupant = $signalement->getMailOccupant();
-        if (null !== $mailOccupant) {
-            /** @var User $userOccupant */
-            $userOccupant = $this->findOneBy(['email' => $mailOccupant]);
-            if (null === $userOccupant) {
-                $userOccupant = (new User())
-                ->setRoles([User::ROLES['Usager']])
-                ->setStatut(User::STATUS_ACTIVE)
-                ->setIsMailingActive(true)
-                ->setEmail($mailOccupant)
-                ->setPrenom($signalement->getPrenomOccupant())
-                ->setNom($signalement->getNomOccupant());
-                $this->save($userOccupant);
+        $mail = ('occupant' === $type)
+        ? $signalement->getMailOccupant()
+        : $signalement->getMailDeclarant();
+
+        $prenom = ('occupant' === $type)
+        ? $signalement->getPrenomOccupant()
+        : $signalement->getPrenomDeclarant();
+
+        $nom = ('occupant' === $type)
+        ? $signalement->getNomOccupant()
+        : $signalement->getNomDeclarant();
+
+        if (null !== $mail) {
+            /** @var User $user */
+            $user = $this->findOneBy(['email' => $mail]);
+            if (null === $user) {
+                $user = $this->userFactory->createInstanceFrom(
+                    roleLabel: User::ROLES['Usager'],
+                    territory: null,
+                    partner: null,
+                    firstname: $prenom,
+                    lastname: $nom,
+                    email: $mail
+                );
+
+                $user->setIsMailingActive(true);
+                $user->setStatut(User::STATUS_ACTIVE);
+                $this->save($user);
             }
 
-            $this->signalementUsagerManager->createOrUpdate($signalement, $userOccupant, null);
+            $this->signalementUsagerManager->createOrUpdate($signalement, null, $user);
 
-            return $userOccupant;
-        }
-
-        return null;
-    }
-
-    public function createDeclarantAccountFromSignalement(Signalement $signalement): ?User
-    {
-        $mailDeclarant = $signalement->getMailDeclarant();
-        if (null !== $mailDeclarant) {
-            /** @var User $userDeclarant */
-            $userDeclarant = $this->findOneBy(['email' => $mailDeclarant]);
-            if (null === $userDeclarant) {
-                $userDeclarant = (new User())
-                ->setRoles([User::ROLES['Usager']])
-                ->setStatut(User::STATUS_ACTIVE)
-                ->setIsMailingActive(true)
-                ->setEmail($mailDeclarant)
-                ->setPrenom($signalement->getPrenomDeclarant())
-                ->setNom($signalement->getNomDeclarant());
-                $this->save($userDeclarant);
-            }
-
-            $this->signalementUsagerManager->createOrUpdate($signalement, null, $userDeclarant);
-
-            return $userDeclarant;
+            return $user;
         }
 
         return null;

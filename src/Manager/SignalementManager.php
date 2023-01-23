@@ -12,10 +12,11 @@ use Symfony\Component\Security\Core\Security;
 
 class SignalementManager extends AbstractManager
 {
-    public function __construct(protected ManagerRegistry $managerRegistry,
-                                private Security $security,
-                                private SignalementFactory $signalementFactory,
-                                string $entityName = Signalement::class
+    public function __construct(
+        protected ManagerRegistry $managerRegistry,
+        private Security $security,
+        private SignalementFactory $signalementFactory,
+        string $entityName = Signalement::class
     ) {
         parent::__construct($managerRegistry, $entityName);
     }
@@ -151,7 +152,8 @@ class SignalementManager extends AbstractManager
         $affectation = $signalement->getAffectations()->map(
             function (Affectation $affectation) {
                 return $affectation->getPartner()->getId();
-            });
+            }
+        );
 
         return $affectation->toArray();
     }
