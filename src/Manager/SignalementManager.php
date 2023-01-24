@@ -37,7 +37,7 @@ class SignalementManager extends AbstractManager
         }
 
         $signalement = $this->signalementFactory->createInstanceFrom($territory, $data, $isImported);
-        if (false === $isImported) {
+        if (!$isImported) {
             $this->eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME);
         }
 

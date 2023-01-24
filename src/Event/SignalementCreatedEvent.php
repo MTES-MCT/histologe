@@ -9,12 +9,12 @@ class SignalementCreatedEvent extends Event
 {
     public const NAME = 'signalement.created';
 
-    public function __construct(private Signalement $entity)
+    public function __construct(private Signalement $signalement)
     {
     }
 
     public function getSignalement(): ?Signalement
     {
-        return $this->entity;
+        return $this->signalement;
     }
 }
