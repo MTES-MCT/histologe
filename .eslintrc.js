@@ -13,7 +13,7 @@ module.exports = {
       "files": ["./assets/tsconfig.json", "assets/vue/*.ts", "assets/vue/**/*.ts", "assets/vue/**/*.vue"]
     },
   ],
-  excludedFiles: "./assets/controllers/*.js",
+  // excludedFiles: "./assets/controllers/*.js",
   parser: "vue-eslint-parser",
   parserOptions: {
     ecmaVersion: 2020,
