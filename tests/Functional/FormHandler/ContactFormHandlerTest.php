@@ -58,7 +58,7 @@ class ContactFormHandlerTest extends KernelTestCase
         );
 
         $suivis = $signalement->getSuivis();
-        $suivi = $suivis[\count($suivis) - 1];
+        $suivi = $suivis->last();
         $this->assertEquals($fakeMessage.ContactFormHandler::MENTION_SENT_BY_EMAIL, $suivi->getDescription());
     }
 
@@ -77,7 +77,7 @@ class ContactFormHandlerTest extends KernelTestCase
         );
 
         $suivis = $signalement->getSuivis();
-        $suivi = $suivis[\count($suivis) - 1];
+        $suivi = $suivis->last();
         $this->assertEquals($fakeMessage.ContactFormHandler::MENTION_SENT_BY_EMAIL, $suivi->getDescription());
     }
 }

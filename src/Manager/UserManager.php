@@ -17,6 +17,9 @@ use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
 class UserManager extends AbstractManager
 {
+    public const OCCUPANT = 'occupant';
+    public const DECLARANT = 'declarant';
+
     public function __construct(
         private LoginLinkHandlerInterface $loginLinkHandler,
         private NotificationService $notificationService,
@@ -104,17 +107,17 @@ class UserManager extends AbstractManager
         return $user;
     }
 
-    public function createUsagerFromSignalement(Signalement $signalement, string $type = 'occupant'): ?User
+    public function createUsagerFromSignalement(Signalement $signalement, string $type = self::OCCUPANT): ?User
     {
-        $mail = ('occupant' === $type)
+        $mail = (self::OCCUPANT === $type)
         ? $signalement->getMailOccupant()
         : $signalement->getMailDeclarant();
 
-        $prenom = ('occupant' === $type)
+        $prenom = (self::OCCUPANT === $type)
         ? $signalement->getPrenomOccupant()
         : $signalement->getPrenomDeclarant();
 
-        $nom = ('occupant' === $type)
+        $nom = (self::OCCUPANT === $type)
         ? $signalement->getNomOccupant()
         : $signalement->getNomDeclarant();
 

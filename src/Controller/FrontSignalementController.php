@@ -7,6 +7,7 @@ use App\Entity\Criticite;
 use App\Entity\Signalement;
 use App\Entity\Situation;
 use App\Entity\Suivi;
+use App\Event\SignalementCreatedEvent;
 use App\Exception\MaxUploadSizeExceededException;
 use App\Form\SignalementType;
 use App\Repository\SignalementRepository;
@@ -23,6 +24,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -97,8 +99,9 @@ class FrontSignalementController extends AbstractController
         NotificationService $notificationService,
         UploadHandlerService $uploadHandlerService,
         ReferenceGenerator $referenceGenerator,
-        PostalCodeHomeChecker $postalCodeHomeChecker): Response
-    {
+        PostalCodeHomeChecker $postalCodeHomeChecker,
+        EventDispatcherInterface $eventDispatcher
+    ): Response {
         if ($this->isCsrfTokenValid('new_signalement', $request->request->get('_token'))
             && $data = $request->get('signalement')) {
             $em = $doctrine->getManager();
@@ -165,7 +168,8 @@ class FrontSignalementController extends AbstractController
             }
 
             if (!empty($signalement->getCpOccupant())) {
-                $signalement->setTerritory($territoryRepository->findOneBy([
+                $signalement->setTerritory(
+                    $territoryRepository->findOneBy([
                     'zip' => $postalCodeHomeChecker->mapZip($signalement->getCpOccupant()), 'isActive' => 1, ])
                 );
             }
@@ -182,6 +186,8 @@ class FrontSignalementController extends AbstractController
             $em->flush();
             !$signalement->getIsProprioAverti() && $attachment = file_exists($this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf') ? $this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf' : null;
             $notificationService->send(NotificationService::TYPE_CONFIRM_RECEPTION, [$signalement->getMailDeclarant(), $signalement->getMailOccupant()], ['signalement' => $signalement, 'attach' => $attachment ?? null], $signalement->getTerritory());
+
+            $eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME);
 
             return $this->json(['response' => 'success']);
         }
@@ -210,8 +216,8 @@ class FrontSignalementController extends AbstractController
         NotificationService $notificationService,
         UploadHandlerService $uploadHandlerService,
         Request $request,
-        EntityManagerInterface $entityManager)
-    {
+        EntityManagerInterface $entityManager
+    ) {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
             if ($this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {
                 $suivi = new Suivi();

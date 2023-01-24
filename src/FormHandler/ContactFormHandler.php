@@ -51,8 +51,8 @@ class ContactFormHandler
             $params = [
                 'description_contact_form' => nl2br($message).self::MENTION_SENT_BY_EMAIL,
             ];
-            $userOccupant = $this->userManager->createUsagerFromSignalement($signalement, 'occupant');
-            $userDeclarant = $this->userManager->createUsagerFromSignalement($signalement, 'declarant');
+            $userOccupant = $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::OCCUPANT);
+            $userDeclarant = $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::DECLARANT);
 
             /** @var User $user */
             $user = (null !== $signalementsByOccupants)

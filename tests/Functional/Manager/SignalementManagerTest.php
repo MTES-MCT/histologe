@@ -8,11 +8,11 @@ use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Factory\SignalementFactory;
 use App\Manager\SignalementManager;
-use App\Repository\TerritoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Security;
 
 class SignalementManagerTest extends KernelTestCase
@@ -20,26 +20,27 @@ class SignalementManagerTest extends KernelTestCase
     public const TERRITORY_13 = 13;
 
     private EntityManagerInterface $entityManager;
+    private Security $security;
+    private ManagerRegistry $managerRegistry;
+    private SignalementFactory $signalementFactory;
+    private EventDispatcherInterface $eventDispatcher;
 
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
+        /* @var Security $security */
+        $this->security = static::getContainer()->get('security.helper');
+        /* @var SignalementFactory $signalementFactory */
+        $this->signalementFactory = static::getContainer()->get(SignalementFactory::class);
+        /* @var EventDispatcherInterface $eventDispatcher */
+        $this->eventDispatcher = static::getContainer()->get(EventDispatcherInterface::class);
     }
 
     public function testFindAllPartnersAffectedAndNotAffectedBySignalementLocalization()
     {
-        $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
-        /** @var Security $security */
-        $security = static::getContainer()->get('security.helper');
-        /** @var SignalementFactory $signalementFactory */
-        $signalementFactory = static::getContainer()->get(SignalementFactory::class);
-
-        /** @var TerritoryRepository $territoryRepository */
-        $territoryRepository = $this->entityManager->getRepository(Territory::class);
-        $territory = $territoryRepository->find(self::TERRITORY_13);
-
-        $signalementManager = new SignalementManager($managerRegistry, $security, $signalementFactory);
+        $signalementManager = new SignalementManager($this->managerRegistry, $this->security, $this->signalementFactory, $this->eventDispatcher);
         $signalement = $signalementManager->findOneBy(['territory' => self::TERRITORY_13]);
 
         $partners = $signalementManager->findAllPartners($signalement);
@@ -53,17 +54,10 @@ class SignalementManagerTest extends KernelTestCase
 
     public function testCloseSignalementForAllPartners()
     {
-        $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $signalementActive = $signalementRepository->findOneBy(['statut' => Signalement::STATUS_ACTIVE]);
 
-        /** @var Security $security */
-        $security = static::getContainer()->get('security.helper');
-
-        /** @var SignalementFactory $signalementFactory */
-        $signalementFactory = static::getContainer()->get(SignalementFactory::class);
-
-        $signalementManager = new SignalementManager($managerRegistry, $security, $signalementFactory);
+        $signalementManager = new SignalementManager($this->managerRegistry, $this->security, $this->signalementFactory, $this->eventDispatcher);
         $signalementClosed = $signalementManager->closeSignalementForAllPartners(
             $signalementActive,
             MotifCloture::LABEL['RESOLU']
@@ -85,16 +79,9 @@ class SignalementManagerTest extends KernelTestCase
 
     public function testCloseAffectation()
     {
-        $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $affectationRepository = $this->entityManager->getRepository(Affectation::class);
         $affectationAccepted = $affectationRepository->findOneBy(['statut' => Affectation::STATUS_ACCEPTED]);
-
-        /** @var Security $security */
-        $security = static::getContainer()->get('security.helper');
-
-        /** @var SignalementFactory $signalementFactory */
-        $signalementFactory = static::getContainer()->get(SignalementFactory::class);
-        $signalementManager = new SignalementManager($managerRegistry, $security, $signalementFactory);
+        $signalementManager = new SignalementManager($this->managerRegistry, $this->security, $this->signalementFactory, $this->eventDispatcher);
         $affectationClosed = $signalementManager->closeAffectation(
             $affectationAccepted,
             MotifCloture::LABEL['NON_DECENCE']
@@ -107,17 +94,10 @@ class SignalementManagerTest extends KernelTestCase
 
     public function testFindEmailsAffectedToSignalement()
     {
-        $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
 
         $signalement = $signalementRepository->findOneBy(['statut' => Signalement::STATUS_ACTIVE]);
-
-        /** @var Security $security */
-        $security = static::getContainer()->get('security.helper');
-
-        /** @var SignalementFactory $signalementFactory */
-        $signalementFactory = static::getContainer()->get(SignalementFactory::class);
-        $signalementManager = new SignalementManager($managerRegistry, $security, $signalementFactory);
+        $signalementManager = new SignalementManager($this->managerRegistry, $this->security, $this->signalementFactory, $this->eventDispatcher);
         $emails = $signalementManager->findEmailsAffectedToSignalement($signalement);
 
         $this->assertGreaterThan(1, \count($emails));
@@ -125,16 +105,10 @@ class SignalementManagerTest extends KernelTestCase
 
     public function testCreateSignalement(): void
     {
-        $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         /** @var Territory $territory */
         $territory = $territoryRepository->findOneBy(['zip' => '01']);
-        /** @var Security $security */
-        $security = static::getContainer()->get('security.helper');
-
-        /** @var SignalementFactory $signalementFactory */
-        $signalementFactory = static::getContainer()->get(SignalementFactory::class);
-        $signalementManager = new SignalementManager($managerRegistry, $security, $signalementFactory);
+        $signalementManager = new SignalementManager($this->managerRegistry, $this->security, $this->signalementFactory, $this->eventDispatcher);
         $signalement = $signalementManager->createOrUpdate(
             $territory,
             $this->getSignalementData('2023-2'),
@@ -146,16 +120,10 @@ class SignalementManagerTest extends KernelTestCase
 
     public function testUpdateSignalement(): void
     {
-        $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         /** @var Territory $territory */
         $territory = $territoryRepository->findOneBy(['zip' => '01']);
-        /** @var Security $security */
-        $security = static::getContainer()->get('security.helper');
-
-        /** @var SignalementFactory $signalementFactory */
-        $signalementFactory = static::getContainer()->get(SignalementFactory::class);
-        $signalementManager = new SignalementManager($managerRegistry, $security, $signalementFactory);
+        $signalementManager = new SignalementManager($this->managerRegistry, $this->security, $this->signalementFactory, $this->eventDispatcher);
         $signalement = $signalementManager->createOrUpdate(
             $territory,
             $this->getSignalementData('2023-1'),
@@ -168,15 +136,10 @@ class SignalementManagerTest extends KernelTestCase
 
     public function testUpdateSignalementImported(): void
     {
-        $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         /** @var Signalement $signalementImported */
         $signalementImported = $signalementRepository->findOneBy(['isImported' => true]);
-        /** @var Security $security */
-        $security = static::getContainer()->get('security.helper');
-        /** @var SignalementFactory $signalementFactory */
-        $signalementFactory = static::getContainer()->get(SignalementFactory::class);
-        $signalementManager = new SignalementManager($managerRegistry, $security, $signalementFactory);
+        $signalementManager = new SignalementManager($this->managerRegistry, $this->security, $this->signalementFactory, $this->eventDispatcher);
 
         $signalementImportedClone = clone $signalementImported;
         $signalement = $signalementManager->update(
@@ -193,7 +156,7 @@ class SignalementManagerTest extends KernelTestCase
 
     private function getSignalementData(string $reference = null): array
     {
-        $faker = Factory::create();
+        $faker = Factory::create('fr_FR');
 
         return [
             'reference' => $reference ?? (new \DateTimeImmutable())->format('Y').'-1',
