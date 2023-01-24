@@ -15,6 +15,7 @@
 # Example 1: ./scripts/upload-s3.sh grid 33
 # Example 2: ./scripts/upload-s3.sh signalement 33
 # Example 3: ./scripts/upload-s3.sh image 33
+# Example 4: ./scripts/upload-s3.sh mapping-doc 33
 #
 
 if [ -z "$BUCKET_URL" ]; then
@@ -37,8 +38,12 @@ else
       echo "Upload image_$zip to cloud"
       aws s3 cp --recursive data/images/import_${zip} s3://${BUCKET_URL}/
       ;;
+    "mapping-doc")
+      echo "Upload mapping_doc_signalement_$zip to cloud"
+      aws s3 cp data/images/mapping_doc_signalement_${zip}.csv s3://${BUCKET_URL}/
+      ;;
     *)
-      echo "Invalid argument. Please use 'grid' or 'signalement' or 'image'"
+      echo "Invalid argument. Please use 'grid' or 'signalement' or 'image' or 'mapping-doc'"
       ;;
   esac
 fi
