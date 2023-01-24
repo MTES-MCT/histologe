@@ -31,7 +31,7 @@ class UserAccountControllerTest extends WebTestCase
             'password-repeat' => $password,
         ]);
 
-        $this->assertResponseRedirects('/bo/');
+        $this->assertResponseRedirects('/bo/signalements/');
     }
 
     public function testActivationUserFormSubmitWithMismatchedPassword(): void

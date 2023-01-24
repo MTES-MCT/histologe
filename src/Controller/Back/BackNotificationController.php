@@ -25,7 +25,7 @@ class BackNotificationController extends AbstractController
         $this->signalements = new ArrayCollection();
     }
 
-    #[Route('/news', name: 'back_news_activities')]
+    #[Route('/notifications', name: 'back_news_activities')]
     public function newsActivitiesSinceLastLogin(Request $request, NotificationRepository $notificationRepository, EntityManagerInterface $entityManager): Response
     {
         $title = 'Administration - Nouveauté(s)';
@@ -80,7 +80,7 @@ class BackNotificationController extends AbstractController
         $em->flush();
     }
 
-    #[Route('/news/{id}/delete', name: 'back_news_activities_delete_notification')]
+    #[Route('/notifications/{id}/supprimer', name: 'back_news_activities_delete_notification')]
     public function deleteNotification(Notification $notification, EntityManagerInterface $em, Request $request): Response
     {
         $this->denyAccessUnlessGranted('NOTIF_DELETE', $notification);

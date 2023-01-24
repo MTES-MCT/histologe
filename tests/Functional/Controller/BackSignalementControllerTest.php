@@ -31,7 +31,7 @@ class BackSignalementControllerTest extends WebTestCase
                 $signalement->getReference()
             );
         } else {
-            $this->assertResponseRedirects('/bo/');
+            $this->assertResponseRedirects('/bo/signalements/');
         }
     }
 
@@ -78,7 +78,7 @@ class BackSignalementControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertResponseRedirects('/bo/');
+        $this->assertResponseRedirects('/bo/signalements/');
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2022-8']);
         $this->assertEquals(Signalement::STATUS_CLOSED, $signalement->getStatut());
