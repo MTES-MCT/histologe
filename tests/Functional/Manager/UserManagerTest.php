@@ -3,7 +3,10 @@
 namespace App\Tests\Functional\Manager;
 
 use App\Entity\Partner;
+use App\Entity\SignalementUsager;
 use App\Entity\User;
+use App\Factory\UserFactory;
+use App\Manager\SignalementUsagerManager;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
@@ -26,6 +29,8 @@ class UserManagerTest extends KernelTestCase
     private PasswordHasherFactoryInterface $passwordHasherFactory;
     private TokenGeneratorInterface $tokenGenerator;
     private ParameterBagInterface $parameterBag;
+    private SignalementUsagerManager $signalementUsagerManager;
+    private UserFactory $userFactory;
 
     protected ManagerRegistry $managerRegistry;
 
@@ -40,8 +45,9 @@ class UserManagerTest extends KernelTestCase
         $this->passwordHasherFactory = static::getContainer()->get(PasswordHasherFactoryInterface::class);
         $this->tokenGenerator = static::getContainer()->get(TokenGeneratorInterface::class);
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        $this->signalementUsagerManager = new SignalementUsagerManager($this->managerRegistry, SignalementUsager::class);
+        $this->userFactory = static::getContainer()->get(UserFactory::class);
     }
 
     public function testTransferActiveUserToAnotherPartner()
@@ -54,7 +60,10 @@ class UserManagerTest extends KernelTestCase
             $this->tokenGenerator,
             $this->parameterBag,
             $this->managerRegistry,
-            User::class);
+            $this->signalementUsagerManager,
+            $this->userFactory,
+            User::class,
+        );
 
         /** @var PartnerRepository $partnerRepository */
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
@@ -84,7 +93,10 @@ class UserManagerTest extends KernelTestCase
             $this->tokenGenerator,
             $this->parameterBag,
             $this->managerRegistry,
-            User::class);
+            $this->signalementUsagerManager,
+            $this->userFactory,
+            User::class,
+        );
 
         /** @var PartnerRepository $partnerRepository */
         $partnerRepository = $this->entityManager->getRepository(Partner::class);

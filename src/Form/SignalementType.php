@@ -493,7 +493,7 @@ class SignalementType extends AbstractType
                     'class' => 'fr-label',
                 ],
                 'label' => "Êtes-vous l'occupant du logement ?",
-                'help' => "Si vous déposez ce signalement pour le compte de quelqu'un d'autres, merci de nous le faire savoir.",
+                'help' => "Si vous déposez ce signalement pour le compte de quelqu'un d'autre, merci de nous le faire savoir.",
                 'help_attr' => [
                     'class' => 'fr-hint-text',
                 ],
