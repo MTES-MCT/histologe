@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/bo/partner')]
+#[Route('/bo/partenaires')]
 class BackPartnerController extends AbstractController
 {
     public const DEFAULT_TERRITORY_AIN = 1;
@@ -64,7 +64,7 @@ class BackPartnerController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'back_partner_new', methods: ['GET', 'POST'])]
+    #[Route('/ajout', name: 'back_partner_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('PARTNER_CREATE', null);
@@ -99,7 +99,7 @@ class BackPartnerController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'back_partner_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/editer', name: 'back_partner_edit', methods: ['GET', 'POST'])]
     public function edit(
         Request $request,
         Partner $partner,

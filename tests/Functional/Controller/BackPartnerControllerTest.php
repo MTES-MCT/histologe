@@ -41,7 +41,7 @@ class BackPartnerControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertResponseRedirects('/bo/partner/');
+        $this->assertResponseRedirects('/bo/partenaires/');
     }
 
     public function testTransferUserAccount(): void
@@ -70,7 +70,7 @@ class BackPartnerControllerTest extends WebTestCase
         );
 
         $this->assertEquals($newPartnerId, $user->getPartner()->getId());
-        $this->assertResponseRedirects('/bo/partner/'.$newPartnerId.'/edit');
+        $this->assertResponseRedirects('/bo/partenaires/'.$newPartnerId.'/editer');
     }
 
     public function testTransferUserAccountWithUserNotAllowed(): void
@@ -129,7 +129,7 @@ class BackPartnerControllerTest extends WebTestCase
         );
 
         $this->assertEquals($userOldPartner, $user->getPartner()->getId());
-        $this->assertResponseRedirects('/bo/partner/');
+        $this->assertResponseRedirects('/bo/partenaires/');
     }
 
     public function testDeleteUserAccount(): void
@@ -176,6 +176,6 @@ class BackPartnerControllerTest extends WebTestCase
         ]);
 
         $this->assertNotEquals(2, $user->getStatut());
-        $this->assertResponseRedirects('/bo/partner/');
+        $this->assertResponseRedirects('/bo/partenaires/');
     }
 }

@@ -21,7 +21,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/bo/s')]
+#[Route('/bo/signalements')]
 class BackAssignmentController extends AbstractController
 {
     public function __construct(
