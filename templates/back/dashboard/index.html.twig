@@ -1,0 +1,19 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block customscripts %}
+    {{ encore_entry_script_tags('app') }}
+    {{ encore_entry_link_tags('app') }}
+{% endblock %}
+
+{% block content %}
+    <div
+        id="app-dashboard"
+        data-ajaxurl-filter="{{ path('back_dashboard_filter') }}"
+        data-ajaxurl-partners="{{ path('back_dashboard_partners') }}"
+        data-ajaxurl-signalements-nosuivi="{{ path('back_dashboard_signalements_nosuivi') }}"
+        data-ajaxurl-signalements-per-territoire="{{ path('back_dashboard_signalements_per_territoire') }}"
+        data-ajaxurl-connections-esabora="{{ path('back_dashboard_connections_esabora') }}"
+        ></div>
+{% endblock %}
