@@ -29,6 +29,7 @@ class UpdateSignalementDocumentFieldsCommand extends Command
 {
     private const BATCH_SIZE = 200;
     private const TYPE_IMAGE = 'image';
+    private const TYPE_DOCUMENT = 'document';
     private const REGEX_IMAGE = '/(jpe?g|png)/mi';
 
     public function __construct(
@@ -50,6 +51,7 @@ class UpdateSignalementDocumentFieldsCommand extends Command
 
     /**
      * @throws FilesystemException
+     * @throws NonUniqueResultException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -58,7 +60,7 @@ class UpdateSignalementDocumentFieldsCommand extends Command
         /** @var Territory $territory */
         $territory = $this->territoryManager->findOneBy(['zip' => $zip]);
         if (null === $territory) {
-            $io->error('Territory does not exists');
+            $io->error('Territory does not exist');
 
             return Command::FAILURE;
         }
@@ -66,7 +68,7 @@ class UpdateSignalementDocumentFieldsCommand extends Command
         $fromFile = 'csv/'.SlugifyDocumentSignalementCommand::PREFIX_FILENAME_STORAGE.'_'.$zip.'.csv';
         $toFile = $this->parameterBag->get('uploads_tmp_dir').'mapping_doc_signalement_'.$zip.'.csv';
         if (!$this->fileStorage->fileExists($fromFile)) {
-            $io->error('CSV Mapping file does not exists, please execute app:slugify-doc-signalement');
+            $io->error('CSV Mapping file does not exist, please execute app:slugify-doc-signalement');
 
             return Command::FAILURE;
         }
@@ -80,6 +82,7 @@ class UpdateSignalementDocumentFieldsCommand extends Command
         $photos = [];
         $documents = [];
         $currentReference = $rows[0]['id_Enregistrement'];
+        $countSignalement = 0;
         foreach ($rows as $key => $row) {
             try {
                 if ($row['id_Enregistrement'] === $currentReference) {
@@ -105,12 +108,9 @@ class UpdateSignalementDocumentFieldsCommand extends Command
                         $documents[] = $document;
                     }
                 } else {
-                    $signalement = $signalementRepository->findByReferenceChunk($territory, $row['id_Enregistrement']);
+                    $signalement = $signalementRepository->findByReferenceChunk($territory, $currentReference);
                     if ($signalement instanceof Signalement) {
-                        $signalement
-                            ->setPhotos($photos)
-                            ->setDocuments($documents);
-
+                        $signalement = $this->updateSignalement($signalement, $photos, $documents);
                         if (0 === $key % self::BATCH_SIZE) {
                             $this->signalementManager->flush();
                             $io->success(sprintf('%s flushed', self::BATCH_SIZE));
@@ -118,6 +118,7 @@ class UpdateSignalementDocumentFieldsCommand extends Command
                             $this->signalementManager->persist($signalement);
                             $io->success($signalement->getReference().' updated');
                             unset($signalement);
+                            ++$countSignalement;
                         }
                     }
                     $photos = [];
@@ -129,7 +130,18 @@ class UpdateSignalementDocumentFieldsCommand extends Command
             }
         }
 
+        if (!empty($photos) || !empty($documents)) { // persist the last one
+            $signalement = $signalementRepository->findByReferenceChunk($territory, $currentReference);
+            if ($signalement instanceof Signalement) {
+                $signalement = $this->updateSignalement($signalement, $photos, $documents);
+                $io->success($signalement->getReference().' updated');
+                ++$countSignalement;
+                $this->signalementManager->persist($signalement);
+            }
+        }
+
         $this->signalementManager->flush();
+        $io->success(sprintf('%s Signalement(s) updated', $countSignalement));
 
         return Command::SUCCESS;
     }
@@ -138,9 +150,14 @@ class UpdateSignalementDocumentFieldsCommand extends Command
     {
         $fileInfo = pathinfo($filePath);
         if (preg_match(self::REGEX_IMAGE, $fileInfo['extension'])) {
-            return 'image';
+            return self::TYPE_IMAGE;
         }
 
-        return 'document';
+        return self::TYPE_DOCUMENT;
+    }
+
+    private function updateSignalement(Signalement $signalement, array $photos, array $documents): Signalement
+    {
+        return $signalement->setPhotos($photos)->setDocuments($documents);
     }
 }
