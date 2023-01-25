@@ -40,7 +40,7 @@ else
       ;;
     "mapping-doc")
       echo "Upload mapping_doc_signalement_$zip to cloud"
-      aws s3 cp data/images/mapping_doc_signalement_${zip}.csv s3://${BUCKET_URL}/
+      aws s3 cp data/images/mapping_doc_signalement_${zip}.csv s3://${BUCKET_URL}/csv
       ;;
     *)
       echo "Invalid argument. Please use 'grid' or 'signalement' or 'image' or 'mapping-doc'"
