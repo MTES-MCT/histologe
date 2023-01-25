@@ -16,6 +16,10 @@
 # Example 2: ./scripts/upload-s3.sh signalement 33
 # Example 3: ./scripts/upload-s3.sh image 33
 # Example 4: ./scripts/upload-s3.sh mapping-doc 33
+# Example 5: ./scripts/upload-s3.sh process-all 33
+#
+# Notice:
+# - File must be executed in local, ignored during the deployment
 #
 
 if [ -z "$BUCKET_URL" ]; then
@@ -45,6 +49,20 @@ else
       echo "Upload mapping_doc_signalement_$zip to cloud"
       aws s3 cp data/images/mapping_doc_signalement_${zip}.csv s3://${BUCKET_URL}/csv/ ${debug}
       aws s3 ls s3://${BUCKET_URL}/csv/mapping_doc_signalement_${zip}.csv
+      ;;
+    "process-all")
+      echo "Upload mapping_doc_signalement_$zip to cloud"
+      aws s3 cp data/images/mapping_doc_signalement_${zip}.csv s3://${BUCKET_URL}/csv/ ${debug}
+      aws s3 ls s3://${BUCKET_URL}/csv/mapping_doc_signalement_${zip}.csv
+      make console app="slugify-doc-signalement ${zip}"
+      result=$?
+      if [ $result -eq 0 ]; then
+        echo "Upload image_$zip to cloud"
+        aws s3 cp --recursive data/images/import_${zip} s3://${BUCKET_URL}/ ${debug}
+        make console app="update-doc-signalement ${zip}"
+      else
+          echo "Please check the message"
+      fi
       ;;
     *)
       echo "Invalid argument. Please use 'grid' or 'signalement' or 'image' or 'mapping-doc'"

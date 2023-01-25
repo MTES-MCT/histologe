@@ -137,6 +137,8 @@ class SlugifyDocumentSignalementCommand extends Command
             $io->warning(sprintf('%s files has been slugify', $countFileSlugged));
             $io->warning(sprintf('%s is empty, please check if your images has been already slugged', $filename));
             $io->warning(sprintf('You should send your images to S3 Bucket with`%s`', $command));
+
+            return Command::FAILURE;
         }
 
         return Command::SUCCESS;
