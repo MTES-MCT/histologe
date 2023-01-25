@@ -68,20 +68,26 @@ class ActivityListener implements EventSubscriberInterface
                 }
 
                 if ($entity->getIsPublic() && Signalement::STATUS_REFUSED !== $entity->getSignalement()->getStatut()) {
-                    $to = [];
-                    $mailDeclarant = $entity->getSignalement()->getMailDeclarant();
-                    if (!empty($mailDeclarant)) {
-                        $to[] = $mailDeclarant;
-                    }
-                    $mailOccupant = $entity->getSignalement()->getMailOccupant();
-                    if (!empty($mailOccupant)) {
-                        $to[] = $mailOccupant;
-                    }
+                    $to = $entity->getSignalement()->getMailUsagers();
                     if (!empty($to) && Signalement::STATUS_CLOSED !== $entity->getSignalement()->getStatut()) {
-                        $this->notifier->send(NotificationService::TYPE_NEW_COMMENT_FRONT, $to, [
-                            'signalement' => $entity->getSignalement(),
-                            'lien_suivi' => $this->urlGenerator->generate('front_suivi_signalement', ['code' => $entity->getSignalement()->getCodeSuivi()], UrlGenerator::ABSOLUTE_URL),
-                        ], $entity->getSignalement()->getTerritory());
+                        foreach ($to as $recipient) {
+                            $this->notifier->send(
+                                NotificationService::TYPE_NEW_COMMENT_FRONT,
+                                [$recipient],
+                                [
+                                    'signalement' => $entity->getSignalement(),
+                                    'lien_suivi' => $this->urlGenerator->generate(
+                                        'front_suivi_signalement',
+                                        [
+                                            'code' => $entity->getSignalement()->getCodeSuivi(),
+                                            'from' => $recipient,
+                                        ],
+                                        UrlGenerator::ABSOLUTE_URL
+                                    ),
+                                ],
+                                $entity->getSignalement()->getTerritory()
+                            );
+                        }
                     }
                 }
             }
@@ -154,7 +160,8 @@ class ActivityListener implements EventSubscriberInterface
                     $this->parameterBag->get('admin_email'),
                     [
                         'url' => $this->parameterBag->get('host_url'),
-                        'error' => sprintf('Aucun utilisateur est notifiable pour le signalement #%s.',
+                        'error' => sprintf(
+                            'Aucun utilisateur est notifiable pour le signalement #%s.',
                             $signalement->getReference()
                         ),
                     ],

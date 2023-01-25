@@ -56,7 +56,8 @@ class SignalementClosedSubscriberTest extends KernelTestCase
         $notitificationServiceMock
             ->expects($this->exactly(2))
             ->method('send')
-            ->withConsecutive([
+            ->withConsecutive(
+                [
                     NotificationService::TYPE_SIGNALEMENT_CLOSED_TO_USAGER,
                     $signalementClosed->getMailUsagers(),
                     [
@@ -64,7 +65,8 @@ class SignalementClosedSubscriberTest extends KernelTestCase
                         'link' => '',
                     ],
                     $signalementClosed->getTerritory(),
-                ], [
+                ],
+                [
                     NotificationService::TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS,
                     $sendToPartners,
                     [
@@ -98,7 +100,9 @@ class SignalementClosedSubscriberTest extends KernelTestCase
             $securityMock
         );
 
-        $signalementClosedEvent = new SignalementClosedEvent($signalementClosed, [
+        $signalementClosedEvent = new SignalementClosedEvent(
+            $signalementClosed,
+            [
                 'motif_suivi' => 'Lorem ipsum suivi sit amet, consectetur adipiscing elit.',
                 'motif_cloture' => 'Non décence',
                 'subject' => 'tous les partenaires',

@@ -32,17 +32,39 @@ class BackSignalementActionController extends AbstractController
                 $description = 'validé';
                 $signalement->setValidatedAt(new DateTimeImmutable());
                 $signalement->setCodeSuivi(md5(uniqid()));
-                $notificationService->send(NotificationService::TYPE_SIGNALEMENT_VALIDATION, [$signalement->getMailDeclarant(), $signalement->getMailOccupant()], [
-                    'signalement' => $signalement,
-                    'lien_suivi' => $urlGenerator->generate('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()], 0),
-                ], $signalement->getTerritory());
+                $to = $signalement->getMailUsagers();
+                foreach ($to as $recipient) {
+                    $notificationService->send(
+                        NotificationService::TYPE_SIGNALEMENT_VALIDATION,
+                        [$recipient],
+                        [
+                            'signalement' => $signalement,
+                            'lien_suivi' => $urlGenerator->generate(
+                                'front_suivi_signalement',
+                                [
+                                    'code' => $signalement->getCodeSuivi(),
+                                    'from' => $recipient,
+                                ],
+                                0
+                            ),
+                        ],
+                        $signalement->getTerritory()
+                    );
+                }
             } else {
                 $statut = Signalement::STATUS_REFUSED;
                 $description = 'cloturé car non-valide avec le motif suivant :<br>'.$response['suivi'];
-                $notificationService->send(NotificationService::TYPE_SIGNALEMENT_REFUSAL, [$signalement->getMailDeclarant(), $signalement->getMailOccupant()], [
-                    'signalement' => $signalement,
-                    'motif' => $response['suivi'],
-                ], $signalement->getTerritory());
+
+                $to = $signalement->getMailUsagers();
+                $notificationService->send(
+                    NotificationService::TYPE_SIGNALEMENT_REFUSAL,
+                    $to,
+                    [
+                        'signalement' => $signalement,
+                        'motif' => $response['suivi'],
+                    ],
+                    $signalement->getTerritory()
+                );
             }
             $suivi = new Suivi();
             $suivi->setSignalement($signalement);

@@ -713,13 +713,13 @@
             <hr class=" fr-mt-5v">
         {% endif %}
         {% for suivi in signalement.suivis|reverse %}
-            <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-5v {% if 'ROLE_USAGER' in suivi.createdBy.roles %}fr-background-alt--orange-terre-battue{% endif %}">
+            <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-5v {% if suivi.createdBy is not null and 'ROLE_USAGER' in suivi.createdBy.roles %}fr-background-alt--orange-terre-battue{% endif %}">
                 <div class="fr-col-2 {% if suivi.createdBy %}part-infos-hover{% endif %}"
                      {% if suivi.createdBy %}data-user="{{ suivi.createdBy.nomComplet }}"
                      data-mail="{{ suivi.createdBy.email }}"{% endif %}>
                     <strong>{{ suivi.createdBy.nom|upper~' '~ suivi.createdBy.prenom|capitalize }}</strong>
                     <br>
-                    <small>[{{ 'ROLE_USAGER' in suivi.createdBy.roles ? (suivi.createdBy.email is same as signalement.mailDeclarant ? 'DECLARANT' : 'OCCUPANT') : (suivi.createdBy.partner ? suivi.createdBy.partner.nom : 'Aucun')  }}]</small> <br>
+                    <small>[{{ suivi.createdBy is not null and 'ROLE_USAGER' in suivi.createdBy.roles ? (suivi.createdBy.email is same as signalement.mailDeclarant ? 'DECLARANT' : 'OCCUPANT') : (suivi.createdBy.partner ? suivi.createdBy.partner.nom : 'Aucun')  }}]</small> <br>
                     <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
                 </div>
                 <div class="fr-col-9 bloc-suivi-content-row fr-pl-3v">
