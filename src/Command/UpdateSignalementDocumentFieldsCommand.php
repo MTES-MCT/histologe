@@ -8,6 +8,7 @@ use App\Manager\SignalementManager;
 use App\Manager\TerritoryManager;
 use App\Repository\SignalementRepository;
 use App\Service\Import\CsvParser;
+use App\Service\Import\Signalement\SignalementImportImageHeader;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\NonUniqueResultException;
 use League\Flysystem\FilesystemException;
@@ -51,7 +52,6 @@ class UpdateSignalementDocumentFieldsCommand extends Command
 
     /**
      * @throws FilesystemException
-     * @throws NonUniqueResultException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -65,10 +65,10 @@ class UpdateSignalementDocumentFieldsCommand extends Command
             return Command::FAILURE;
         }
 
-        $fromFile = 'csv/'.SlugifyDocumentSignalementCommand::PREFIX_FILENAME_STORAGE.'_'.$zip.'.csv';
+        $fromFile = 'csv/'.SlugifyDocumentSignalementCommand::PREFIX_FILENAME_STORAGE.$zip.'.csv';
         $toFile = $this->parameterBag->get('uploads_tmp_dir').'mapping_doc_signalement_'.$zip.'.csv';
         if (!$this->fileStorage->fileExists($fromFile)) {
-            $io->error('CSV Mapping file does not exist, please execute app:slugify-doc-signalement');
+            $io->error('CSV Mapping file '.$fromFile.' does not exist, please execute app:slugify-doc-signalement');
 
             return Command::FAILURE;
         }
@@ -81,40 +81,29 @@ class UpdateSignalementDocumentFieldsCommand extends Command
         $signalementRepository = $this->signalementManager->getRepository();
         $photos = [];
         $documents = [];
-        $currentReference = $rows[0]['id_Enregistrement'];
+        $currentReference = $rows[0][SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT];
         $countSignalement = 0;
         foreach ($rows as $key => $row) {
             try {
-                if ($row['id_Enregistrement'] === $currentReference) {
-                    $filename = $row['sAttachFileName'];
-                    $fileInfo = pathinfo($filename);
-                    if (4 !== \count($fileInfo)) {
-                        continue;
-                    }
-                    $this->logger->info(sprintf('%s slugged', $filename));
+                $filename = $row[SignalementImportImageHeader::COLUMN_FILENAME];
+                $fileInfo = pathinfo($filename);
+                if (4 !== \count($fileInfo)) {
+                    continue;
+                }
+                if ($row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT] === $currentReference) {
                     if (self::TYPE_IMAGE === $this->checkFileType($filename)) {
-                        $photo = [
-                            'file' => $filename,
-                            'titre' => $filename,
-                            'date' => date('d-m-Y'),
-                        ];
-                        $photos[] = $photo;
+                        $photos[] = $this->getFileModel($filename);
                     } else {
-                        $document = [
-                            'file' => $filename,
-                            'titre' => $filename,
-                            'date' => date('d-m-Y'),
-                        ];
-                        $documents[] = $document;
+                        $documents[] = $this->getFileModel($filename);
                     }
                 } else {
                     $signalement = $signalementRepository->findByReferenceChunk($territory, $currentReference);
                     if ($signalement instanceof Signalement) {
-                        $signalement = $this->updateSignalement($signalement, $photos, $documents);
                         if (0 === $key % self::BATCH_SIZE) {
                             $this->signalementManager->flush();
                             $io->success(sprintf('%s flushed', self::BATCH_SIZE));
                         } else {
+                            $signalement = $this->updateSignalement($signalement, $photos, $documents);
                             $this->signalementManager->persist($signalement);
                             $io->success($signalement->getReference().' updated');
                             unset($signalement);
@@ -123,20 +112,30 @@ class UpdateSignalementDocumentFieldsCommand extends Command
                     }
                     $photos = [];
                     $documents = [];
-                    $currentReference = $row['id_Enregistrement'];
+                    if (self::TYPE_IMAGE === $this->checkFileType($filename)) {
+                        $photos[] = $this->getFileModel($filename);
+                    } else {
+                        $documents[] = $this->getFileModel($filename);
+                    }
+                    $currentReference = $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT];
                 }
             } catch (NonUniqueResultException $exception) {
-                $this->logger->warning($row['id_Enregistrement'].':'.$exception->getMessage());
+                $this->logger->warning(
+                    $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT].':'.$exception->getMessage());
             }
         }
-
         if (!empty($photos) || !empty($documents)) { // persist the last one
-            $signalement = $signalementRepository->findByReferenceChunk($territory, $currentReference);
-            if ($signalement instanceof Signalement) {
-                $signalement = $this->updateSignalement($signalement, $photos, $documents);
-                $io->success($signalement->getReference().' updated');
-                ++$countSignalement;
-                $this->signalementManager->persist($signalement);
+            try {
+                $signalement = $signalementRepository->findByReferenceChunk($territory, $currentReference);
+                if ($signalement instanceof Signalement) {
+                    $signalement = $this->updateSignalement($signalement, $photos, $documents);
+                    $io->success($signalement->getReference().' updated');
+                    ++$countSignalement;
+                    $this->signalementManager->persist($signalement);
+                }
+            } catch (NonUniqueResultException $exception) {
+                $this->logger->warning(
+                    $currentReference.':'.$exception->getMessage());
             }
         }
 
@@ -159,5 +158,14 @@ class UpdateSignalementDocumentFieldsCommand extends Command
     private function updateSignalement(Signalement $signalement, array $photos, array $documents): Signalement
     {
         return $signalement->setPhotos($photos)->setDocuments($documents);
+    }
+
+    private function getFileModel(string $filename): array
+    {
+        return [
+            'file' => $filename,
+            'titre' => $filename,
+            'date' => date('d-m-Y'),
+        ];
     }
 }

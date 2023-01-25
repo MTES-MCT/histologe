@@ -16,6 +16,10 @@ class CsvWriter
             'escape' => '\\',
         ]
     ) {
+        if (file_exists($this->filepath)) {
+            unlink($this->filepath);
+        }
+
         if (!empty($this->header)) {
             $this->writeRow($this->header);
         }

@@ -67,7 +67,7 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
             ->method('getRepository')
             ->willReturn($signalementRepositoryMock);
 
-        $fromFile = 'csv/'.SlugifyDocumentSignalementCommand::PREFIX_FILENAME_STORAGE.'_01.csv';
+        $fromFile = 'csv/'.SlugifyDocumentSignalementCommand::PREFIX_FILENAME_STORAGE.'01.csv';
         $toFile = $this->parameterBag->get('uploads_tmp_dir').'mapping_doc_signalement_01.csv';
 
         $this->fileStorage->expects($this->once())
@@ -155,7 +155,7 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
         $this->assertStringContainsString('Territory does not exist', $commandTester->getDisplay());
     }
 
-    public function testDisplayFailedMessageMappingFileDoesNotExist(): void
+    public function testDisplayFailedMessageWithMappingFileDoesNotExist(): void
     {
         $this->territoryManager
             ->expects($this->once())
@@ -163,7 +163,7 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
             ->with(['zip' => '99'])
             ->willReturn($this->territory);
 
-        $fromFile = 'csv/'.SlugifyDocumentSignalementCommand::PREFIX_FILENAME_STORAGE.'_99.csv';
+        $fromFile = 'csv/'.SlugifyDocumentSignalementCommand::PREFIX_FILENAME_STORAGE.'99.csv';
 
         $this->fileStorage->expects($this->once())
             ->method('fileExists')
@@ -186,7 +186,7 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
         ]);
 
         $this->assertStringContainsString(
-            'CSV Mapping file does not exist',
+            'CSV Mapping file csv/mapping_doc_signalement_slugged_99.csv does not',
             $commandTester->getDisplay()
         );
     }

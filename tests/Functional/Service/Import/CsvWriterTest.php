@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class CsvWriterTest extends KernelTestCase
 {
+    private const FILEPATH = '/tmp/csv_write.csv';
     private string $projectDir = '';
 
     protected function setUp(): void
@@ -41,6 +42,6 @@ class CsvWriterTest extends KernelTestCase
 
     protected function tearDown(): void
     {
-        unlink($this->projectDir.'/tmp/csv_write.csv');
+        unlink($this->projectDir.self::FILEPATH);
     }
 }

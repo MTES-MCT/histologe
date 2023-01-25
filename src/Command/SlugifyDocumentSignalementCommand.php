@@ -6,6 +6,7 @@ use App\Entity\Territory;
 use App\Manager\TerritoryManager;
 use App\Service\Import\CsvParser;
 use App\Service\Import\CsvWriter;
+use App\Service\Import\Signalement\SignalementImportImageHeader;
 use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -28,11 +29,11 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class SlugifyDocumentSignalementCommand extends Command
 {
     public const PREFIX_FILENAME_STORAGE = 'mapping_doc_signalement_slugged_';
+    public const BASE_DIRECTORY_CSV = 'csv/';
     private ?Territory $territory = null;
     private ?string $directoryPath = null;
     private ?string $sourceFile = null;
     private ?string $destinationFile = null;
-
     private ?array $errors = [];
 
     public function __construct(
@@ -73,17 +74,23 @@ class SlugifyDocumentSignalementCommand extends Command
             return Command::FAILURE;
         }
 
+        $tmpDirectory = $this->parameterBag->get('uploads_tmp_dir');
         $this->uploadHandlerService->createTmpFileFromBucket($this->sourceFile, $this->destinationFile);
+
+        if ($this->hasMissingColumnLabel($io)) {
+            return Command::FAILURE;
+        }
+
         $rows = $this->csvParser->parseAsDict($this->destinationFile);
         $filename = self::PREFIX_FILENAME_STORAGE.$this->territory->getZip().'.csv';
 
         $csvWriter = new CsvWriter(
-            'tmp/'.$filename,
+            $tmpDirectory.$filename,
             $this->csvParser->getHeaders($this->destinationFile)
         );
         $countFileSlugged = 0;
         foreach ($rows as $index => $row) {
-            $fileInfo = pathinfo($row['sAttachFileName']);
+            $fileInfo = pathinfo($row[SignalementImportImageHeader::COLUMN_FILENAME]);
             $extension = $fileInfo['extension'] ?? null;
             if (null === $extension) {
                 continue;
@@ -96,13 +103,13 @@ class SlugifyDocumentSignalementCommand extends Command
 
             try {
                 $this->filesystem->rename(
-                    $this->directoryPath.$row['sAttachFileName'],
+                    $this->directoryPath.$row[SignalementImportImageHeader::COLUMN_FILENAME],
                     $this->directoryPath.$filenameSlugged,
                     true
                 );
                 $csvWriter->writeRow([
-                        $row['id_EnregistrementAttachment'],
-                        $row['id_Enregistrement'],
+                        $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT_ATTACHMENT],
+                        $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT],
                         $filenameSlugged,
                     ]
                 );
@@ -114,11 +121,23 @@ class SlugifyDocumentSignalementCommand extends Command
 
         $csvWriter->close();
 
-        $this->uploadHandlerService->uploadFromFilename($filename);
-        $io->success(sprintf('%s files has been slugify', $countFileSlugged));
-        $io->success(
-            sprintf('%s has been pushed to S3 bucket storage, please send your images to S3 Bucket', $filename)
-        );
+        $file = file($tmpDirectory.$filename, \FILE_SKIP_EMPTY_LINES);
+
+        $command = 'make upload action=image zip='.$this->territory->getZip();
+        if (\count($file) > 1) {
+            $this->uploadHandlerService->uploadFromFilename($filename, self::BASE_DIRECTORY_CSV);
+            $io->success(sprintf('%s files has been slugify', $countFileSlugged));
+            $io->success(
+                sprintf('%s has been pushed to S3 bucket storage, please send your images to S3 Bucket `%s`',
+                    $filename,
+                    $command
+                )
+            );
+        } else {
+            $io->warning(sprintf('%s files has been slugify', $countFileSlugged));
+            $io->warning(sprintf('%s is empty, please check if your images has been already slugged', $filename));
+            $io->warning(sprintf('You should send your images to S3 Bucket with`%s`', $command));
+        }
 
         return Command::SUCCESS;
     }
@@ -128,17 +147,19 @@ class SlugifyDocumentSignalementCommand extends Command
      */
     private function validate(InputInterface $input, OutputInterface $output): bool
     {
+        $zip = $input->getArgument('zip');
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion(
-            'Did you send CSV mapping original file to S3 Bucket ? ',
+            'Did you send CSV mapping file to S3 Bucket ?',
             false
         );
 
         if (!$helper->ask($input, $output, $question)) {
+            $this->errors[] = 'Please execute `make upload action=mapping-doc zip='.$zip.'`';
+
             return false;
         }
 
-        $zip = $input->getArgument('zip');
         $fromFile = 'csv/mapping_doc_signalement_'.$zip.'.csv';
         $toFile = $this->parameterBag->get('uploads_tmp_dir').'mapping_doc_signalement_'.$zip.'.csv';
 
@@ -172,5 +193,22 @@ class SlugifyDocumentSignalementCommand extends Command
         $this->territory = $territory;
 
         return empty($this->errors);
+    }
+
+    private function hasMissingColumnLabel(SymfonyStyle $io): bool
+    {
+        $errors = [];
+        $header = $this->csvParser->getHeaders($this->destinationFile);
+        foreach (SignalementImportImageHeader::COLUMNS_LIST as $column) {
+            if (!\in_array($column, $header)) {
+                $errors[] = $column.' is missing.';
+            }
+        }
+
+        if (!empty($errors)) {
+            $io->error($errors);
+        }
+
+        return !empty($errors);
     }
 }

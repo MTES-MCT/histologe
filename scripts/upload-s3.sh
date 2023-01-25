@@ -24,23 +24,24 @@ else
   echo "The value of BUCKET_URL is: $BUCKET_URL"
   option=$1
   zip=$2
+  debug=${3:null}
 
   case "$option" in
     "grid")
       echo "Upload grille_affectation_$2.csv to cloud..."
-      aws s3 cp data/grid-affectation/grille_affectation_${zip}.csv s3://${BUCKET_URL}/csv/
+      aws s3 cp data/grid-affectation/grille_affectation_${zip}.csv s3://${BUCKET_URL}/csv/ ${debug}
       ;;
     "signalement")
       echo "Upload signalement_$2.csv to cloud..."
-      aws s3 cp data/signalement/signalement_${zip}.csv s3://${BUCKET_URL}/csv/
+      aws s3 cp data/signalement/signalement_${zip}.csv s3://${BUCKET_URL}/csv/ ${debug}
       ;;
     "image")
       echo "Upload image_$zip to cloud"
-      aws s3 cp --recursive data/images/import_${zip} s3://${BUCKET_URL}/
+      aws s3 cp --recursive data/images/import_${zip} s3://${BUCKET_URL}/ ${debug}
       ;;
     "mapping-doc")
       echo "Upload mapping_doc_signalement_$zip to cloud"
-      aws s3 cp data/images/mapping_doc_signalement_${zip}.csv s3://${BUCKET_URL}/csv/
+      aws s3 cp data/images/mapping_doc_signalement_${zip}.csv s3://${BUCKET_URL}/csv/ ${debug}
       ;;
     *)
       echo "Invalid argument. Please use 'grid' or 'signalement' or 'image' or 'mapping-doc'"

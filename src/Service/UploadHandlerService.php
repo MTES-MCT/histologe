@@ -55,12 +55,14 @@ class UploadHandlerService
         return $this;
     }
 
-    public function uploadFromFilename(string $filename): string
+    public function uploadFromFilename(string $filename, ?string $directory = null): string
     {
         $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
 
         try {
             $resourceFile = fopen($tmpFilepath, 'r');
+            $filename = null === $directory ? $filename : $directory.$filename;
+            $this->logger->info($filename);
             $this->fileStorage->writeStream($filename, $resourceFile);
             fclose($resourceFile);
         } catch (FilesystemException $exception) {
