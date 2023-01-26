@@ -121,7 +121,9 @@ class UpdateSignalementDocumentFieldsCommand extends Command
                 }
             } catch (NonUniqueResultException $exception) {
                 $this->logger->warning(
-                    $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT].':'.$exception->getMessage());
+                    $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT].':(Reference:'.$currentReference.') '.$exception->getMessage());
+
+                $currentReference = $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT];
             }
         }
         if (!empty($photos) || !empty($documents)) { // persist the last one
