@@ -713,26 +713,49 @@
             <hr class=" fr-mt-5v">
         {% endif %}
         {% for suivi in signalement.suivis|reverse %}
-            <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-5v {% if 'ROLE_USAGER' in suivi.createdBy.roles %}fr-background-alt--orange-terre-battue{% endif %}">
-                <div class="fr-col-2 {% if suivi.createdBy %}part-infos-hover{% endif %}"
-                     {% if suivi.createdBy %}data-user="{{ suivi.createdBy.nomComplet }}"
-                     data-mail="{{ suivi.createdBy.email }}"{% endif %}>
-                    <strong>{{ suivi.createdBy.nom|upper~' '~ suivi.createdBy.prenom|capitalize }}</strong>
-                    <br>
-                    <small>[{{ 'ROLE_USAGER' in suivi.createdBy.roles ? (suivi.createdBy.email is same as signalement.mailDeclarant ? 'DECLARANT' : 'OCCUPANT') : (suivi.createdBy.partner ? suivi.createdBy.partner.nom : 'Aucun')  }}]</small> <br>
-                    <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
+            {% if suivi.createdBy is not null %}
+                <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-5v {% if 'ROLE_USAGER' in suivi.createdBy.roles %}fr-background-alt--orange-terre-battue{% endif %}">
+                    <div class="fr-col-2 {% if suivi.createdBy %}part-infos-hover{% endif %}"
+                         {% if suivi.createdBy %}data-user="{{ suivi.createdBy.nomComplet }}"
+                         data-mail="{{ suivi.createdBy.email }}"{% endif %}>
+                        <strong>{{ suivi.createdBy.nom|upper~' '~ suivi.createdBy.prenom|capitalize }}</strong>
+                        <br>
+                        <small>[{{ 'ROLE_USAGER' in suivi.createdBy.roles ? (suivi.createdBy.email is same as signalement.mailDeclarant ? 'DECLARANT' : 'OCCUPANT') : (suivi.createdBy.partner ? suivi.createdBy.partner.nom : 'Aucun')  }}]</small> <br>
+                        <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
+                    </div>
+                    <div class="fr-col-9 bloc-suivi-content-row fr-pl-3v">
+                        {{ suivi.description|replace({'&t=___TOKEN___':''})|replace({'?t=___TOKEN___':''})|raw }}
+                    </div>
+                    <div class="fr-col-1 fr-text--right">
+                        {% if suivi.isPublic %}
+                            <span class="fr-fi-eye-fill" title="Visible par l'usager"></span>
+                        {% else %}
+                            <span class="fr-fi-eye-off-fill" title="Non visible par l'usager"></span>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="fr-col-9 bloc-suivi-content-row fr-pl-3v">
-                    {{ suivi.description|replace({'&t=___TOKEN___':''})|replace({'?t=___TOKEN___':''})|raw }}
-                </div>
-                <div class="fr-col-1 fr-text--right">
-                    {% if suivi.isPublic %}
-                        <span class="fr-fi-eye-fill" title="Visible par l'usager"></span>
-                    {% else %}
-                        <span class="fr-fi-eye-off-fill" title="Non visible par l'usager"></span>
-                    {% endif %}
-                </div>
-            </div>
+                {% else %}
+                    <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-5v {% if not suivi.createdBy %}fr-background-alt--orange-terre-battue{% endif %}">
+                        <div class="fr-col-2 {% if suivi.createdBy %}part-infos-hover{% endif %}"
+                             {% if suivi.createdBy %}data-user="{{ suivi.createdBy.nomComplet }}"
+                             data-mail="{{ suivi.createdBy.email }}"{% endif %}>
+                            <strong>{{ suivi.createdBy ? (suivi.createdBy.nom|upper~' '~ suivi.createdBy.prenom|capitalize) : (signalement.nomDeclarant ? signalement.nomDeclarant|upper~' '~signalement.prenomDeclarant|capitalize : signalement.nomOccupant|upper~' '~signalement.prenomOccupant|capitalize) }}</strong>
+                            <br>
+                            <small>[{{ suivi.createdBy ? (suivi.createdBy.partner ? suivi.createdBy.partner.nom : 'Aucun') : 'DECLARANT' }}]</small> <br>
+                            <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
+                        </div>
+                        <div class="fr-col-9 bloc-suivi-content-row fr-pl-3v">
+                            {{ suivi.description|replace({'&t=___TOKEN___':''})|replace({'?t=___TOKEN___':''})|raw }}
+                        </div>
+                        <div class="fr-col-1 fr-text--right">
+                            {% if suivi.isPublic %}
+                                <span class="fr-fi-eye-fill" title="Visible par l'usager"></span>
+                            {% else %}
+                                <span class="fr-fi-eye-off-fill" title="Non visible par l'usager"></span>
+                            {% endif %}
+                        </div>
+                    </div>
+            {% endif %}
         {% endfor %}
     </section>
 {% endblock %}
