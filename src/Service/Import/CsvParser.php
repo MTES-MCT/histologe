@@ -88,4 +88,9 @@ class CsvParser
             'rows' => $rows,
         ];
     }
+
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
 }

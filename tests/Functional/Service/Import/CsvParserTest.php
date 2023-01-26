@@ -19,6 +19,15 @@ class CsvParserTest extends KernelTestCase
         $this->createRandomCSV($this->projectDir.'/tmp/data.csv');
     }
 
+    public function testDefaultOptionsCsvParser(): void
+    {
+        $csvParser = new CsvParser();
+        $this->assertEquals(1, $csvParser->getOptions()['first_line']);
+        $this->assertEquals(',', $csvParser->getOptions()['delimiter']);
+        $this->assertEquals('"', $csvParser->getOptions()['enclosure']);
+        $this->assertEquals('\\', $csvParser->getOptions()['escape']);
+    }
+
     public function testParseRandomCsv(): void
     {
         $options = ['first_line' => 0, 'delimiter' => ',', 'enclosure' => '"', 'escape' => '\\'];

@@ -27,6 +27,11 @@ class CsvWriterTest extends KernelTestCase
             ['firstname', 'lastname', 'city']
         );
 
+        $this->assertEquals(1, $csvWriter->getOptions()['first_line']);
+        $this->assertEquals(',', $csvWriter->getOptions()['delimiter']);
+        $this->assertEquals('"', $csvWriter->getOptions()['enclosure']);
+        $this->assertEquals('\\', $csvWriter->getOptions()['escape']);
+
         for ($i = 0; $i < 10; ++$i) {
             $csvWriter->writeRow([$faker->firstName, $faker->lastName, $faker->city]);
         }

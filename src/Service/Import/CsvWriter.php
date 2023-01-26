@@ -42,6 +42,11 @@ class CsvWriter
         return array_filter($this->header);
     }
 
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
     public function close(): void
     {
         fclose($this->fileResource);
