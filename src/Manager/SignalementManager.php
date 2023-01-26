@@ -6,16 +6,20 @@ use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Event\SignalementCreatedEvent;
 use App\Factory\SignalementFactory;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Security;
 
 class SignalementManager extends AbstractManager
 {
-    public function __construct(protected ManagerRegistry $managerRegistry,
-                                private Security $security,
-                                private SignalementFactory $signalementFactory,
-                                string $entityName = Signalement::class
+    public function __construct(
+        protected ManagerRegistry $managerRegistry,
+        private Security $security,
+        private SignalementFactory $signalementFactory,
+        private EventDispatcherInterface $eventDispatcher,
+        string $entityName = Signalement::class
     ) {
         parent::__construct($managerRegistry, $entityName);
     }
@@ -32,7 +36,12 @@ class SignalementManager extends AbstractManager
             return $this->update($signalement, $data);
         }
 
-        return $this->signalementFactory->createInstanceFrom($territory, $data, $isImported);
+        $signalement = $this->signalementFactory->createInstanceFrom($territory, $data, $isImported);
+        if (!$isImported) {
+            $this->eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME);
+        }
+
+        return $signalement;
     }
 
     public function update(Signalement $signalement, array $data): Signalement
@@ -151,7 +160,8 @@ class SignalementManager extends AbstractManager
         $affectation = $signalement->getAffectations()->map(
             function (Affectation $affectation) {
                 return $affectation->getPartner()->getId();
-            });
+            }
+        );
 
         return $affectation->toArray();
     }

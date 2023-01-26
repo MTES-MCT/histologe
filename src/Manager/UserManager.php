@@ -3,8 +3,10 @@
 namespace App\Manager;
 
 use App\Entity\Partner;
+use App\Entity\Signalement;
 use App\Entity\User;
 use App\Exception\User\UserEmailNotFoundException;
+use App\Factory\UserFactory;
 use App\Service\NotificationService;
 use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -15,6 +17,9 @@ use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
 class UserManager extends AbstractManager
 {
+    public const OCCUPANT = 'occupant';
+    public const DECLARANT = 'declarant';
+
     public function __construct(
         private LoginLinkHandlerInterface $loginLinkHandler,
         private NotificationService $notificationService,
@@ -23,8 +28,10 @@ class UserManager extends AbstractManager
         private TokenGeneratorInterface $tokenGenerator,
         private ParameterBagInterface $parameterBag,
         protected ManagerRegistry $managerRegistry,
-        string $entityName = User::class)
-    {
+        private SignalementUsagerManager $signalementUsagerManager,
+        private UserFactory $userFactory,
+        string $entityName = User::class,
+    ) {
         parent::__construct($managerRegistry, $entityName);
     }
 
@@ -59,7 +66,8 @@ class UserManager extends AbstractManager
 
         $this->notificationService->send(
             NotificationService::TYPE_ACCOUNT_TRANSFER,
-            $user->getEmail(), [
+            $user->getEmail(),
+            [
             'btntext' => User::STATUS_ACTIVE === $user->getStatut() ? 'Accéder à mon compte' : 'Activer mon compte',
             'link' => $link,
             'user_status' => $user->getStatut(),
@@ -97,5 +105,45 @@ class UserManager extends AbstractManager
             );
 
         return $user;
+    }
+
+    public function createUsagerFromSignalement(Signalement $signalement, string $type = self::OCCUPANT): ?User
+    {
+        $mail = (self::OCCUPANT === $type)
+        ? $signalement->getMailOccupant()
+        : $signalement->getMailDeclarant();
+
+        $prenom = (self::OCCUPANT === $type)
+        ? $signalement->getPrenomOccupant()
+        : $signalement->getPrenomDeclarant();
+
+        $nom = (self::OCCUPANT === $type)
+        ? $signalement->getNomOccupant()
+        : $signalement->getNomDeclarant();
+
+        if (null !== $mail) {
+            /** @var User $user */
+            $user = $this->findOneBy(['email' => $mail]);
+            if (null === $user) {
+                $user = $this->userFactory->createInstanceFrom(
+                    roleLabel: User::ROLES['Usager'],
+                    territory: null,
+                    partner: null,
+                    firstname: $prenom,
+                    lastname: $nom,
+                    email: $mail
+                );
+
+                $user->setIsMailingActive(true);
+                $user->setStatut(User::STATUS_ACTIVE);
+                $this->save($user);
+            }
+
+            $this->signalementUsagerManager->createOrUpdate($signalement, null, $user);
+
+            return $user;
+        }
+
+        return null;
     }
 }

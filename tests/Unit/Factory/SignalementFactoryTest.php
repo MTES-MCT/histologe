@@ -12,7 +12,7 @@ class SignalementFactoryTest extends KernelTestCase
 {
     public function testCreateSignalementIsValid()
     {
-        $faker = Factory::create();
+        $faker = Factory::create('fr_FR');
         $data = [
             'reference' => (new \DateTimeImmutable())->format('Y').'-1',
             'createdAt' => new \DateTimeImmutable(),
@@ -190,7 +190,8 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEquals($data['createdAt'], $signalement->getCreatedAt());
         $this->assertEquals(
             $signalement->getValidatedAt()->getTimestamp(),
-            $signalement->getCreatedAt()->getTimestamp())
+            $signalement->getCreatedAt()->getTimestamp()
+        )
         ;
         $this->assertEquals($data['motifCloture'], $signalement->getMotifCloture());
         $this->assertEquals($data['closedAt'], $signalement->getClosedAt());

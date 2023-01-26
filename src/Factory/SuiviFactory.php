@@ -10,7 +10,7 @@ use App\Service\Sanitizer;
 class SuiviFactory
 {
     public function createInstanceFrom(
-        User $user,
+        ?User $user,
         Signalement $signalement,
         array $params = [],
         bool $isPublic = false
@@ -41,6 +41,10 @@ class SuiviFactory
 
         if (isset($params['domain']) && 'esabora' === $params['domain']) {
             return 'Signalement <b>'.$params['description'].'</b> par '.$params['name_partner'];
+        }
+
+        if (isset($params['description_contact_form'])) {
+            return $params['description_contact_form'];
         }
 
         return $description;

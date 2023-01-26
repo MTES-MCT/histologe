@@ -27,6 +27,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public const STATUS_ARCHIVE = 2;
 
     public const ROLES = [
+        'Usager' => 'ROLE_USAGER',
         'Utilisateur' => 'ROLE_USER_PARTNER',
         'Administrateur' => 'ROLE_ADMIN_PARTNER',
         'Responsable Territoire' => 'ROLE_ADMIN_TERRITORY',
