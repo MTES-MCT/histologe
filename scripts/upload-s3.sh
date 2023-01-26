@@ -29,7 +29,10 @@ else
   option=$1
   zip=$2
   debug=${3:null}
-
+  if [ -z "$zip" ]; then
+    echo "zip argument is missing: ./scripts/upload-s3.sh [option] [zip]"
+    exit 1
+  fi
   case "$option" in
     "grid")
       echo "Upload grille_affectation_$2.csv to cloud..."
@@ -65,7 +68,7 @@ else
       fi
       ;;
     *)
-      echo "Invalid argument. Please use 'grid' or 'signalement' or 'image' or 'mapping-doc'"
+      echo "Invalid argument. Please use 'grid' or 'signalement' or 'image' or 'mapping-doc' or 'process-all'"
       ;;
   esac
 fi
