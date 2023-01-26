@@ -14,6 +14,7 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\Messenger\Stamp\ReceivedStamp;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class WorkerMessageEventSubscriberTest extends TestCase
 {
@@ -30,7 +31,8 @@ class WorkerMessageEventSubscriberTest extends TestCase
     public function testOnWorkerMessageFailedEvent(): void
     {
         $jobEventManagerMock = $this->createMock(JobEventManager::class);
-        $subscriber = new WorkerMessageEventSubscriber($jobEventManagerMock);
+        $serializerMock = $this->createMock(SerializerInterface::class);
+        $subscriber = new WorkerMessageEventSubscriber($jobEventManagerMock, $serializerMock);
 
         $dossierMessage = new DossierMessage();
         $envelope = new Envelope($dossierMessage, [
@@ -48,7 +50,7 @@ class WorkerMessageEventSubscriberTest extends TestCase
             ->with(
                 EsaboraService::TYPE_SERVICE,
                 EsaboraService::ACTION_PUSH_DOSSIER,
-                json_encode($dossierMessageFromEnvelope->preparePayload()),
+                '',
                 json_encode(['message' => 'custom error', 'stack_trace' => $event->getThrowable()->getTraceAsString()]),
                 JobEvent::STATUS_FAILED,
                 null,

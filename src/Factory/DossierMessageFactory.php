@@ -86,7 +86,7 @@ class DossierMessageFactory
             $piecesJointes[] = [
                 'documentName' => $document['titre'],
                 'documentSize' => filesize($filepath),
-                'documentContent' => base64_encode(file_get_contents($filepath)),
+                'documentContent' => $document['file'],
             ];
         }
         foreach ($signalement->getPhotos() as $photo) {
@@ -94,7 +94,7 @@ class DossierMessageFactory
             $piecesJointes[] = [
                 'documentName' => 'Image téléversée',
                 'documentSize' => filesize($filepath),
-                'documentContent' => base64_encode(file_get_contents($filepath)),
+                'documentContent' => $photo['file'],
             ];
         }
 
