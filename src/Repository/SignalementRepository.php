@@ -281,7 +281,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->where('s.statut != :status')
             ->setParameter('status', Signalement::STATUS_ARCHIVED);
         if (!$export) {
-            $qb->select('PARTIAL s.{id,uuid,reference,nomOccupant,prenomOccupant,adresseOccupant,cpOccupant,villeOccupant,mailOccupant, scoreCreation,statut,createdAt,geoloc}');
+            $qb->select('PARTIAL s.{id,uuid,reference,isNotOccupant, nomOccupant,prenomOccupant,adresseOccupant,cpOccupant,villeOccupant,mailOccupant, scoreCreation,statut,createdAt,geoloc}');
             $qb->leftJoin('s.affectations', 'affectations');
             $qb->leftJoin('s.tags', 'tags');
             $qb->leftJoin('affectations.partner', 'partner');

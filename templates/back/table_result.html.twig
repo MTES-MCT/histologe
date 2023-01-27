@@ -39,13 +39,15 @@
         </td>
         <td>
             {% set suivi = (signalement.lastSuivi) %}
-            {% if suivi %}
+            {% if suivi and suivi.createdBy is not null %}
                 <strong>{{ suivi.createdAt|date('d.m.Y') }}</strong> <br>{% set classe = '' %}
                 {% if suivi.createdBy is not null and 'ROLE_USAGER' in suivi.createdBy.roles %}
                     {% set classe = 'fr-badge fr-badge--warning' %}
                 {% endif %}
-                <small class="{{ classe }}">{{ suivi.createdBy is not null and 'ROLE_USAGER' in suivi.createdBy.roles ? (suivi.createdBy.email is same as signalement.mailOccupant ? 'OCCUPANT' : 'DECLARANT')  : (suivi.createdBy.partner ? suivi.createdBy.partner.nom : 'Aucun')|upper   }}</small> <br>
-                    
+                <small class="{{ classe }}">{{ 'ROLE_USAGER' in suivi.createdBy.roles ? (suivi.createdBy.email is same as signalement.mailOccupant ? 'OCCUPANT' : 'DECLARANT')  : (suivi.createdBy.partner ? suivi.createdBy.partner.nom : 'Aucun')|upper   }}</small> <br>
+            {% elseif suivi and suivi.createdBy is null %}
+                <strong>{{ suivi.createdAt|date('d.m.Y') }}</strong> <br>
+                <small class='fr-badge fr-badge--warning'>{{ signalement.isNotOccupant ? 'DECLARANT' : 'OCCUPANT'  }}</small> <br>
             {% else %}
                 Aucun
             {% endif %}
