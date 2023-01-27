@@ -3,7 +3,6 @@
 namespace App\Command;
 
 use App\Entity\Signalement;
-use App\Entity\Suivi;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -51,8 +50,8 @@ class CreateSignalementUsagerCommand extends Command
             return Command::FAILURE;
         }
 
-        $userOccupant = $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::OCCUPANT);
-        $userDeclarant = $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::DECLARANT);
+        $userOccupant = $this->userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
+        $userDeclarant = $this->userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
 
         if ($userOccupant) {
             $this->io->success($userOccupant->getEmail().' occupant created or already existing');
@@ -61,7 +60,7 @@ class CreateSignalementUsagerCommand extends Command
             $this->io->success($userDeclarant->getEmail().' declarant created or already existing');
         }
 
-        $unaffectedSuivis = $this->entityManager->getRepository(Suivi::class)->findBy([
+        $unaffectedSuivis = $this->suiviManager->getRepository()->findBy([
             'signalement' => $signalement,
             'createdBy' => null,
         ]);
@@ -83,11 +82,11 @@ class CreateSignalementUsagerCommand extends Command
 
                 if ($userOccupant) {
                     $question .= ' to occupant';
-                    $answers[] = 'occupant';
+                    $answers[] = UserManager::OCCUPANT;
                 }
                 if ($userDeclarant) {
                     $question .= ' or to declarant';
-                    $answers[] = 'declarant';
+                    $answers[] = UserManager::DECLARANT;
                 }
 
                 $question .= ' ?';

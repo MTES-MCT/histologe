@@ -32,18 +32,18 @@ class BackSignalementActionController extends AbstractController
                 $description = 'validé';
                 $signalement->setValidatedAt(new DateTimeImmutable());
                 $signalement->setCodeSuivi(md5(uniqid()));
-                $to = $signalement->getMailUsagers();
-                foreach ($to as $recipient) {
+                $toRecipients = $signalement->getMailUsagers();
+                foreach ($toRecipients as $toRecipient) {
                     $notificationService->send(
                         NotificationService::TYPE_SIGNALEMENT_VALIDATION,
-                        [$recipient],
+                        [$toRecipient],
                         [
                             'signalement' => $signalement,
                             'lien_suivi' => $urlGenerator->generate(
                                 'front_suivi_signalement',
                                 [
                                     'code' => $signalement->getCodeSuivi(),
-                                    'from' => $recipient,
+                                    'from' => $toRecipient,
                                 ],
                                 0
                             ),
@@ -55,10 +55,10 @@ class BackSignalementActionController extends AbstractController
                 $statut = Signalement::STATUS_REFUSED;
                 $description = 'cloturé car non-valide avec le motif suivant :<br>'.$response['suivi'];
 
-                $to = $signalement->getMailUsagers();
+                $toRecipients = $signalement->getMailUsagers();
                 $notificationService->send(
                     NotificationService::TYPE_SIGNALEMENT_REFUSAL,
-                    $to,
+                    $toRecipients,
                     [
                         'signalement' => $signalement,
                         'motif' => $response['suivi'],

@@ -68,19 +68,19 @@ class ActivityListener implements EventSubscriberInterface
                 }
 
                 if ($entity->getIsPublic() && Signalement::STATUS_REFUSED !== $entity->getSignalement()->getStatut()) {
-                    $to = $entity->getSignalement()->getMailUsagers();
-                    if (!empty($to) && Signalement::STATUS_CLOSED !== $entity->getSignalement()->getStatut()) {
-                        foreach ($to as $recipient) {
+                    $toRecipients = $entity->getSignalement()->getMailUsagers();
+                    if (!empty($toRecipients) && Signalement::STATUS_CLOSED !== $entity->getSignalement()->getStatut()) {
+                        foreach ($toRecipients as $toRecipient) {
                             $this->notifier->send(
                                 NotificationService::TYPE_NEW_COMMENT_FRONT,
-                                [$recipient],
+                                [$toRecipient],
                                 [
                                     'signalement' => $entity->getSignalement(),
                                     'lien_suivi' => $this->urlGenerator->generate(
                                         'front_suivi_signalement',
                                         [
                                             'code' => $entity->getSignalement()->getCodeSuivi(),
-                                            'from' => $recipient,
+                                            'from' => $toRecipient,
                                         ],
                                         UrlGenerator::ABSOLUTE_URL
                                     ),

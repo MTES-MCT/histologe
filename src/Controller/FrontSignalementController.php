@@ -189,10 +189,10 @@ class FrontSignalementController extends AbstractController
             $em->flush();
             !$signalement->getIsProprioAverti() && $attachment = file_exists($this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf') ? $this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf' : null;
 
-            $to = $signalement->getMailUsagers();
+            $toRecipients = $signalement->getMailUsagers();
             $notificationService->send(
                 NotificationService::TYPE_CONFIRM_RECEPTION,
-                $to,
+                $toRecipients,
                 [
                     'signalement' => $signalement,
                     'attach' => $attachment ?? null,
@@ -218,14 +218,14 @@ class FrontSignalementController extends AbstractController
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
             $fromEmail = $request->get('from');
             /** @var User $userOccupant */
-            $userOccupant = $userManager->createUsagerFromSignalement($signalement, 'occupant');
+            $userOccupant = $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
             /** @var User $userDeclarant */
-            $userDeclarant = $userManager->createUsagerFromSignalement($signalement, 'declarant');
+            $userDeclarant = $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
             $type = null;
             if ($userOccupant && $fromEmail === $userOccupant->getEmail()) {
-                $type = $userManager::OCCUPANT;
+                $type = UserManager::OCCUPANT;
             } elseif ($userDeclarant && $fromEmail === $userDeclarant->getEmail()) {
-                $type = $userManager::DECLARANT;
+                $type = UserManager::DECLARANT;
             }
 
             // TODO: Verif info perso pour plus de sécu

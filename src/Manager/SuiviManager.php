@@ -25,8 +25,7 @@ class SuiviManager extends Manager
 
     public function updateSuiviCreatedByUser(Suivi $suivi, User $user): Suivi
     {
-        $suivi
-            ->setCreatedBy($user);
+        $suivi->setCreatedBy($user);
 
         $this->save($suivi);
 
