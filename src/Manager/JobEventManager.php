@@ -9,8 +9,7 @@ class JobEventManager extends AbstractManager
 {
     public function __construct(ManagerRegistry $managerRegistry, string $entityName = JobEvent::class)
     {
-        $this->managerRegistry = $managerRegistry;
-        $this->entityName = $entityName;
+        parent::__construct($managerRegistry, $entityName);
     }
 
     public function createJobEvent(

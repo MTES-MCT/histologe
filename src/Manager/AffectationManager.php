@@ -19,8 +19,7 @@ class AffectationManager extends Manager
         protected LoggerInterface $logger,
         string $entityName = Affectation::class
     ) {
-        $this->managerRegistry = $managerRegistry;
-        $this->entityName = $entityName;
+        parent::__construct($this->managerRegistry, $entityName);
     }
 
     public function updateAffectation(Affectation $affectation, User $user, string $status): Affectation

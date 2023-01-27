@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional\Signalement;
+namespace App\Tests\Functional\Service\Signalement;
 
 use App\Entity\Signalement;
 use App\Entity\Territory;
