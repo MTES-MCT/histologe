@@ -22,4 +22,14 @@ class SuiviManager extends Manager
     {
         return $this->suiviFactory->createInstanceFrom($user, $signalement, $params, $isPublic);
     }
+
+    public function updateSuiviCreatedByUser(Suivi $suivi, User $user): Suivi
+    {
+        $suivi
+            ->setCreatedBy($user);
+
+        $this->save($suivi);
+
+        return $suivi;
+    }
 }
