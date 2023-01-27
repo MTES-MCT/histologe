@@ -5,7 +5,7 @@ namespace App\Command;
 use App\Factory\CommuneFactory;
 use App\Manager\CommuneManager;
 use App\Manager\TerritoryManager;
-use App\Service\Parser\CsvParser;
+use App\Service\Import\CsvParser;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

@@ -9,7 +9,7 @@ use App\Factory\UserFactory;
 use App\Manager\ManagerInterface;
 use App\Manager\PartnerManager;
 use App\Manager\UserManager;
-use App\Service\Parser\CsvParser;
+use App\Service\Import\CsvParser;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
