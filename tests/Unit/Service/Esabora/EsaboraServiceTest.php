@@ -127,6 +127,5 @@ class EsaboraServiceTest extends KernelTestCase
     {
         unlink($this->tempFilepath);
         $this->tempFilepath = null;
-        unset($this->tempFilepath);
     }
 }
