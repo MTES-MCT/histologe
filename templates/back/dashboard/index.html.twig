@@ -10,10 +10,10 @@
 {% block content %}
     <div
         id="app-dashboard"
-        data-ajaxurl-filter="{{ path('back_dashboard_filter') }}"
-        data-ajaxurl-partners="{{ path('back_dashboard_partners') }}"
-        data-ajaxurl-signalements-nosuivi="{{ path('back_dashboard_signalements_nosuivi') }}"
-        data-ajaxurl-signalements-per-territoire="{{ path('back_dashboard_signalements_per_territoire') }}"
-        data-ajaxurl-connections-esabora="{{ path('back_dashboard_connections_esabora') }}"
+        data-ajaxurl-filter="{{ path('back_dashboard_widget', {widgetType: 'data-kpi'}) }}"
+        data-ajaxurl-partners="{{ path('back_dashboard_widget', {widgetType: 'affectations-partenaires'}) }}"
+        data-ajaxurl-signalements-nosuivi="{{ path('back_dashboard_widget', {widgetType: 'signalements-accepte-sans-suivi'}) }}"
+        data-ajaxurl-signalements-per-territoire="{{ path('back_dashboard_widget', {widgetType: 'signalements-territoires'}) }}"
+        data-ajaxurl-connections-esabora="{{ path('back_dashboard_widget', {widgetType: 'esabora-evenements'}) }}"
         ></div>
 {% endblock %}
