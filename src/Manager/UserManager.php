@@ -139,7 +139,11 @@ class UserManager extends AbstractManager
                 $this->save($user);
             }
 
-            $this->signalementUsagerManager->createOrUpdate($signalement, null, $user);
+            if (self::OCCUPANT === $type) {
+                $this->signalementUsagerManager->createOrUpdate($signalement, $user, null);
+            } else {
+                $this->signalementUsagerManager->createOrUpdate($signalement, null, $user);
+            }
 
             return $user;
         }
