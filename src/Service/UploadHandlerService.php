@@ -7,7 +7,6 @@ use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -22,7 +21,6 @@ class UploadHandlerService
         private FilesystemOperator $fileStorage,
         private ParameterBagInterface $parameterBag,
         private SluggerInterface $slugger,
-        private Filesystem $filesystem,
         private LoggerInterface $logger
     ) {
         $this->file = null;

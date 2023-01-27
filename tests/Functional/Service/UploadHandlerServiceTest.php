@@ -47,7 +47,6 @@ class UploadHandlerServiceTest extends KernelTestCase
             $this->createMock(FilesystemOperator::class),
             $parameterBag,
             $sluggerMock,
-            $this->filesystem,
             $this->createMock(LoggerInterface::class)
         );
 
@@ -78,7 +77,6 @@ class UploadHandlerServiceTest extends KernelTestCase
             $this->createMock(FilesystemOperator::class),
             $parameterBag,
             $sluggerMock,
-            $this->filesystem,
             $this->createMock(LoggerInterface::class)
         );
 

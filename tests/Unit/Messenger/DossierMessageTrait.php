@@ -31,7 +31,21 @@ trait DossierMessageTrait
             ->setLongitudeSignalement(0)
             ->setDateOuverture('01/01/2022')
             ->setDossierCommentaire(null)
-            ->setPiecesJointesObservation(null);
+            ->setPiecesJointesObservation(null)
+            ->setPiecesJointes(
+                [
+                    [
+                        'documentName' => 'file',
+                        'documentSize' => 80,
+                        'documentContent' => 'file.pdf',
+                    ],
+                    [
+                        'documentName' => 'Image téléversée',
+                        'documentSize' => 80,
+                        'documentContent' => 'image.jpg',
+                    ],
+                ]
+            );
     }
 
     protected function preparePushPayload(): array
