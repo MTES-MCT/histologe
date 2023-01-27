@@ -26,4 +26,21 @@ class CreateSignalementUsagerCommandTest extends KernelTestCase
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('occupant created or already existing', $output);
     }
+
+    public function testErrorIfNoSignalement(): void
+    {
+        $kernel = self::bootKernel();
+        $application = new Application($kernel);
+
+        $command = $application->find('app:create-signalement-usager');
+
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute([
+            'signalement' => 'truc',
+        ]);
+
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('Signalement does not exists', $output);
+    }
 }
