@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -107,5 +109,37 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 'created_at' => $pendingUser['created_at'],
             ];
         }, $pendingUsers);
+    }
+
+    public function findAllArchived(Territory|null $territory, Partner|null $partner, $page)
+    {
+        $maxResult = User::MAX_LIST_PAGINATION;
+        $firstResult = ($page - 1) * $maxResult;
+
+        $queryBuilder = $this->createQueryBuilder('u');
+        $queryBuilder
+            ->where('u.statut = :archived')
+            ->setParameter('archived', User::STATUS_ARCHIVE);
+
+        if (!empty($territory)) {
+            $queryBuilder
+                ->andWhere('u.territory = :territory')
+                ->setParameter('territory', $territory);
+        }
+
+        if (!empty($partner)) {
+            $queryBuilder
+                ->andWhere('u.partner = :partner')
+                ->setParameter('partner', $partner);
+        }
+
+        // return $queryBuilder->getQuery()->getResult();
+
+        // $queryBuilder = $this->getPartnersQueryBuilder($territory);
+        $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
+
+        $paginator = new Paginator($queryBuilder->getQuery(), false);
+
+        return $paginator;
     }
 }

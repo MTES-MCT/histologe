@@ -1,0 +1,186 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Comptes archivés{% endblock %}
+
+{% block content %}
+    {% if is_granted('ROLE_ADMIN') %}
+    <section class="fr-container--fluid">
+        <form action="#" name="bo-filters-form" id="bo_filters_form" method="POST"
+              class="fr-accordion fr-background--white fr-p-2v fr-grid-row fr-grid-row--bottom">
+              
+            <div class="fr-col-4 fr-p-2v">
+                <div class="fr-search-bar fr-mt-2v" id="header-search">
+                    <input class="fr-input" placeholder="Utilisateur" type="search" id="header-search-input"
+                        name="bo-filters-searchterms" value="{{ filters.searchterms ?? '' }}">
+                    <button class="fr-btn" title="Rechercher">
+                        Utilisateur
+                    </button>&nbsp;
+                </div>
+            </div>
+            <div class="fr-col-3 fr-p-2v">
+                <select id="bo-filters-territories" class="fr-select" onchange="this.form.submit()" name="territory">
+                    {# {% for territory in territories %}
+                        <option value="{{ territory.id }}" {{ territory.id == currentTerritory.id ? 'selected' : '' }}>{{ territory.name|upper }}</option>
+                    {% endfor %} #}
+                </select>
+            </div>
+            <div class="fr-col-3 fr-p-2v">
+                <select id="bo-filters-partners" class="fr-select" onchange="this.form.submit()" name="partner">
+                    {# {% for partner in partners %}
+                        <option value="{{ partner.id }}" {{ partner.id == currentPartner.id ? 'selected' : '' }}>{{ partner.name|upper }}</option>
+                    {% endfor %} #}
+                </select>
+            </div>
+            <div class="fr-col-2 fr-p-2v">
+                <a href="{{ path('back_account_index') }}" class="fr-link fr-link--icon-left fr-fi-close-circle-line">Réinitialiser</a>
+            </div>
+        </form>
+    </section>
+    {% endif %}
+    <section class="fr-grid-row fr-grid-row--middle fr-p-5v ">
+        <div class="fr-col-6">
+            <h1 class="fr-h2 fr-mb-0">{{total}} comptes archivés trouvés</h1>
+        </div>
+    </section>
+    <section class="fr-col-12 fr-table fr-table--bordered fr-pt-0">
+        <table class="fr-display-inline-table">
+            <thead>
+            <tr>
+                {# <th>Archivage</th> #}
+                <th>Dpt.</th>
+                <th>Partenaire</th>
+                <th>Statut part.</th>
+                <th>Email</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th class="fr-text--right"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr class="user-row">
+                    {# <td>{{ user.updatedAt }}</td> #}
+                    <td>{{ user.territory }}</td>
+                    <td>{{ user.partner ? user.partner.nom : 'aucun' }}</td>
+                    <td>{{ user.partner ? (user.partner.isArchive ? 'archivé' : 'actif') : 'aucun' }}</td>
+                    <td>{{ user.email}}</ail td>
+                    <td>{{ user.nom}}</ail td>
+                    <td>{{ user.prenom}}</ail td>
+                    <td class="fr-text--right">
+                        <a href="{{ path('back_partner_edit', {'id': user.id}) }}"
+                           class="fr-btn fr-icon-recycle-line fr-btn--sm"></a>
+                        {# <button data-delete="{{ path('back_partner_delete', {'id': partner.id}) }}"
+                                data-token="{{ csrf_token('partner_delete_' ~ partner.id) }}"
+                                class="fr-btn fr-btn--danger fr-fi-delete-line fr-btn--sm partner-row-delete"></button> #}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+            <nav role="navigation" class="fr-pagination" aria-label="Pagination">
+                <ul class="fr-pagination__list">
+                    <li>
+                        <a class="fr-pagination__link fr-pagination__link--first"
+                                {% if pages > 1 %}
+                                    {# {% if is_granted('ROLE_ADMIN') %}
+                                        href="{{ path('back_account_index', {page : 1, territory: currentTerritory.id}) }}"
+                                    {% else %} #}
+                                        href="{{ path('back_account_index', {page : 1 }) }}"
+                                    {# {% endif %} #}
+                                {% else %}
+                                    aria-disabled="true"
+                                {% endif %}>
+                            Première page
+                        </a>
+                    </li>
+                    <li>
+                        <a class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+                                {% if pages > 1 and page != 1 %}
+                                    {# {% if is_granted('ROLE_ADMIN') %}
+                                        href="{{ path('back_account_index', {page : page - 1, territory: currentTerritory.id}) }}"
+                                    {% else %} #}
+                                        href="{{ path('back_account_index', {page : page - 1 }) }}"
+                                    {# {% endif %} #}
+                                {% else %}
+                                    aria-disabled="true"
+                                {% endif %} role="link">
+                            Page précédente
+                        </a>
+                    </li>
+                    <li>
+                        <a class="fr-pagination__link" {{ page == 1 ? 'aria-current="page"' : '' }}
+                           title="Page 1"
+                           data-page="1"
+                                {# {% if is_granted('ROLE_ADMIN') %}
+                                    href="{{ path('back_account_index', {page : 1 , territory: currentTerritory.id}) }}"
+                                {% else %} #}
+                                    href="{{ path('back_account_index', {page : 1 }) }}"
+                                {# {% endif %} #}
+                        >
+                            1
+                        </a>
+                    </li>
+                    {% if pages > 1 %}
+                        {% for i in 2..pages %}
+                            <li class="{% if loop.index > 2 and loop.index < pages-3 %}fr-hidden{% endif %}">
+                                <a class="fr-pagination__link" {{ page == i ? 'aria-current="page"' : '' }}
+                                        {# {% if is_granted('ROLE_ADMIN') %}
+                                            href="{{ path('back_account_index', {page : i, territory: currentTerritory.id}) }}"
+                                        {% else %} #}
+                                            href="{{ path('back_account_index', {page : i }) }}"
+                                        {# {% endif %} #}
+                                   title="Page {{ i }}"
+                                   data-page="{{ i }}">
+                                    {{ i }}
+                                </a>
+                            </li>
+                            {% if loop.index is same as(3) %}
+                                <li>
+                                    <a class="fr-pagination__link" title="placeholder">
+                                        ...
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    <li>
+                        <a class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+                                {% if pages > 1  and page < pages %}
+                                    {# {% if is_granted('ROLE_ADMIN') %}
+                                        href="{{ path('back_account_index', {page : page + 1, territory: currentTerritory.id }) }}"
+                                    {% else %} #}
+                                        href="{{ path('back_account_index', {page : page + 1 }) }}"
+                                    {# {% endif %} #}
+                                {% else %}
+                                    aria-disabled="true"
+                                {% endif %} role="link">
+                            Page suivante
+                        </a>
+                    </li>
+                    <li>
+                        <a class="fr-pagination__link fr-pagination__link--last"
+                                {% if pages > 1 %}
+                                    {# {% if is_granted('ROLE_ADMIN') %}
+                                        href="{{ path('back_account_index', {page : pages, territory: currentTerritory.id }) }}"
+                                    {% else %} #}
+                                        href="{{ path('back_account_index', {page : pages }) }}"
+                                    {# {% endif %} #}
+                                {% else %}
+                                    aria-disabled="true"
+                                {% endif %}
+                           data-page="{{ pages }}">
+                            Dernière page
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </section>
+
+
+{% endblock %}
