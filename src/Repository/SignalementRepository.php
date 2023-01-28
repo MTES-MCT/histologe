@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Dto\CountSignalement;
 use App\Dto\StatisticsFilters;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -14,7 +15,9 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -758,5 +761,34 @@ class SignalementRepository extends ServiceEntityRepository
             ->groupBy('p.nom');
 
         return $queryBuilder->getQuery()->getResult();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     * @throws QueryException
+     */
+    public function countSignalementByStatus(?Territory $territory = null): CountSignalement
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select(sprintf('NEW %s(
+                COUNT(s.id),
+                SUM(CASE WHEN s.statut = :new     THEN 1 ELSE 0 END),
+                SUM(CASE WHEN s.statut = :active  THEN 1 ELSE 0 END),
+                SUM(CASE WHEN s.statut = :closed  THEN 1 ELSE 0 END),
+                SUM(CASE WHEN s.statut = :refused THEN 1 ELSE 0 END))',
+            CountSignalement::class))
+            ->setParameter('new', Signalement::STATUS_NEED_VALIDATION)
+            ->setParameter('active', Signalement::STATUS_ACTIVE)
+            ->setParameter('closed', Signalement::STATUS_CLOSED)
+            ->setParameter('refused', Signalement::STATUS_REFUSED)
+            ->where('s.statut != :archived')
+            ->setParameter('archived', Signalement::STATUS_ARCHIVED);
+
+        if (null !== $territory) {
+            $qb->andWhere('s.territory =:territory')->setParameter('territory', $territory);
+        }
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }
