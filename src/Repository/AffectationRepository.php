@@ -131,4 +131,22 @@ class AffectationRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function countAffectationPartner(?Territory $territory = null): array
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb->select('SUM(CASE WHEN a.statut = 0 THEN 1 ELSE 0 END) AS waiting')
+            ->addSelect('SUM(CASE WHEN a.statut = 2 THEN 1 ELSE 0 END) AS refused')
+            ->addSelect('t.zip', 'p.nom')
+            ->innerJoin('a.territory', 't')
+            ->innerJoin('a.partner', 'p');
+
+        if ($territory instanceof Territory) {
+            $qb->andWhere('a.territory = :territory')->setParameter('territory', $territory);
+        }
+
+        $qb->groupBy('t.zip', 'p.nom');
+
+        return $qb->getQuery()->getResult();
+    }
 }

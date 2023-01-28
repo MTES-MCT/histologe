@@ -5,11 +5,13 @@ namespace App\Repository;
 use App\Dto\StatisticsFilters;
 use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\SearchFilterService;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
@@ -707,5 +709,54 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('reference', '%'.$chunkReference.'%')
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function countSignalementTerritory(): array
+    {
+        $connexion = $this->getEntityManager()->getConnection();
+        $subSql = 'SELECT COUNT(s2.id)
+                   FROM signalement s2
+                   INNER JOIN territory t2 ON t2.id = s2.territory_id
+                   WHERE s2.statut = :statut_2 AND s2.territory_id = t1.id
+                   AND s2.id NOT IN (SELECT a.signalement_id FROM affectation a)';
+
+        $sql = 'SELECT t1.id, t1.zip, t1.name as territory_name,
+                CONCAT(t1.zip, " - ", t1.name) as label,
+                COUNT(s1.id) AS new,
+                ('.$subSql.') AS no_affected
+                FROM signalement s1
+                INNER JOIN territory t1 ON t1.id = s1.territory_id
+                WHERE s1.statut = :statut_1
+                GROUP BY t1.id, t1.zip, t1.name
+                ORDER BY t1.name;';
+
+        $statement = $connexion->prepare($sql);
+
+        return $statement->executeQuery([
+            'statut_1' => Signalement::STATUS_NEED_VALIDATION,
+            'statut_2' => Signalement::STATUS_ACTIVE,
+        ])->fetchAllAssociative();
+    }
+
+    public function countSignalementAcceptedNoSuivi(Territory $territory)
+    {
+        $subquery = $this->createQueryBuilder('su')
+                ->select('su.signalement.id')
+                ->from(Suivi::class, 'su')
+                ->distinct();
+
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->select('COUNT(s.id) as count_no_suivi, p.nom')
+            ->innerJoin('s.affectations', 'a')
+            ->innerJoin('a.partner', 'p')
+            ->where('s.statut IN (:statut) AND s.id NOT IN (:subquery)')
+            ->setParameter('statut', [Signalement::STATUS_ACTIVE, Signalement::STATUS_NEED_PARTNER_RESPONSE])
+            ->setParameter('subquery', $subquery)
+            ->groupBy('p.nom');
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }

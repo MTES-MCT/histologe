@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\JobEvent;
+use App\Entity\Partner;
+use App\Entity\Signalement;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
@@ -17,8 +19,6 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class JobEventRepository extends ServiceEntityRepository
 {
-    public const TYPE_JOB_EVENT_ESABORA = 'esabora';
-
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, JobEvent::class);
@@ -27,19 +27,18 @@ class JobEventRepository extends ServiceEntityRepository
     /**
      * @throws Exception
      */
-    public function findLastJobEventByType(string $type = self::TYPE_JOB_EVENT_ESABORA): array
+    public function findLastJobEventByType(string $type = JobEvent::TYPE_JOB_EVENT_ESABORA): array
     {
-        $connexion = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT MAX(j.created_at) AS last_event, p.id, p.nom, s.reference, j.status, j.title
-                FROM job_event j
-                INNER JOIN signalement s ON s.id = j.signalement_id
-                INNER JOIN partner p ON p.id = j.partner_id
-                WHERE type LIKE :type
-                GROUP BY p.id, p.nom, s.reference,j.title, j.status
-                ORDER BY p.id ASC, last_event DESC;';
+        $qb = $this->createQueryBuilder('j')
+            ->select('MAX(j.createdAt) AS last_event, p.id, p.nom, s.reference, j.status, j.title')
+            ->innerJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId')
+            ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
+            ->where('j.type LIKE :type')
+            ->setParameter('type', '%'.$type.'%')
+            ->groupBy('p.id, p.nom, s.reference,j.title, j.status')
+            ->orderBy('p.id', 'ASC')
+            ->addOrderBy('last_event', 'DESC');
 
-        $statement = $connexion->prepare($sql);
-
-        return $statement->executeQuery(['type' => $type])->fetchAllAssociative();
+        return $qb->getQuery()->getArrayResult();
     }
 }
