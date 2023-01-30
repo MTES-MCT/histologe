@@ -7,12 +7,15 @@ use App\Entity\Criticite;
 use App\Entity\Signalement;
 use App\Entity\Situation;
 use App\Entity\Suivi;
+use App\Entity\User;
 use App\Event\SignalementCreatedEvent;
 use App\Exception\MaxUploadSizeExceededException;
 use App\Form\SignalementType;
+use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TerritoryRepository;
+use App\Repository\UserRepository;
 use App\Service\CriticiteCalculatorService;
 use App\Service\NotificationService;
 use App\Service\Signalement\PostalCodeHomeChecker;
@@ -185,7 +188,17 @@ class FrontSignalementController extends AbstractController
             $em->persist($signalement);
             $em->flush();
             !$signalement->getIsProprioAverti() && $attachment = file_exists($this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf') ? $this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf' : null;
-            $notificationService->send(NotificationService::TYPE_CONFIRM_RECEPTION, [$signalement->getMailDeclarant(), $signalement->getMailOccupant()], ['signalement' => $signalement, 'attach' => $attachment ?? null], $signalement->getTerritory());
+
+            $toRecipients = $signalement->getMailUsagers();
+            $notificationService->send(
+                NotificationService::TYPE_CONFIRM_RECEPTION,
+                $toRecipients,
+                [
+                    'signalement' => $signalement,
+                    'attach' => $attachment ?? null,
+                ],
+                $signalement->getTerritory()
+            );
 
             $eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME);
 
@@ -196,12 +209,30 @@ class FrontSignalementController extends AbstractController
     }
 
     #[Route('/suivre-mon-signalement/{code}', name: 'front_suivi_signalement', methods: 'GET')]
-    public function suiviSignalement(string $code, SignalementRepository $signalementRepository)
-    {
+    public function suiviSignalement(
+        string $code,
+        SignalementRepository $signalementRepository,
+        Request $request,
+        UserManager $userManager
+    ) {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
+            $fromEmail = $request->get('from');
+            /** @var User $userOccupant */
+            $userOccupant = $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
+            /** @var User $userDeclarant */
+            $userDeclarant = $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
+            $type = null;
+            if ($userOccupant && $fromEmail === $userOccupant->getEmail()) {
+                $type = UserManager::OCCUPANT;
+            } elseif ($userDeclarant && $fromEmail === $userDeclarant->getEmail()) {
+                $type = UserManager::DECLARANT;
+            }
+
             // TODO: Verif info perso pour plus de sécu
             return $this->render('front/suivi_signalement.html.twig', [
                 'signalement' => $signalement,
+                'email' => $fromEmail,
+                'type' => $type,
             ]);
         }
         $this->addFlash('error', 'Le lien utilisé est expiré ou invalide, verifier votre saisie.');
@@ -213,6 +244,7 @@ class FrontSignalementController extends AbstractController
     public function postUserResponse(
         string $code,
         SignalementRepository $signalementRepository,
+        UserRepository $userRepository,
         NotificationService $notificationService,
         UploadHandlerService $uploadHandlerService,
         Request $request,
@@ -222,6 +254,10 @@ class FrontSignalementController extends AbstractController
             if ($this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {
                 $suivi = new Suivi();
                 $suivi->setIsPublic(true);
+                $email = $request->get('signalement_front_response')['email'];
+                $user = $userRepository->findOneBy(['email' => $email]);
+                $suivi->setCreatedBy($user);
+
                 $description = nl2br(filter_var($request->get('signalement_front_response')['content'], \FILTER_SANITIZE_STRING));
                 $files_array = [
                     'documents' => $signalement->getDocuments(),

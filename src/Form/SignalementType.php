@@ -14,6 +14,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SignalementType extends AbstractType
 {
+    public const LINK_CHOICES = [
+        'Proche' => 'PROCHE',
+        'Professionnel' => 'PROFESSIONNEL',
+        'Tuteur / Tutrice' => 'TUTEUR',
+        'Voisin / Voisine' => 'VOISIN',
+        'Autre' => 'AUTRE',
+    ];
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -543,13 +551,7 @@ class SignalementType extends AbstractType
                 'required' => false,
             ])
             ->add('lienDeclarantOccupant', ChoiceType::class, [
-                'choices' => [
-                    'Proche' => 'PROCHE',
-                    'Professionnel' => 'PROFESSIONNEL',
-                    'Tuteur / Tutrice' => 'TUTEUR',
-                    'Voisin / Voisine' => 'VOISIN',
-                    'Autre' => 'AUTRE',
-                ],
+                'choices' => self::LINK_CHOICES,
                 'expanded' => true,
                 'label_attr' => [
                     'class' => 'fr-label',

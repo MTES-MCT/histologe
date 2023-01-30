@@ -3,6 +3,7 @@ signalements:
     uuid: "00000000-0000-0000-2022-000000000001"
     details: "Absence d’isolation toiture<br><br>Courrier adressé non pas à la mairie mais au bailleur social"
     is_proprio_averti: 1
+    is_not_occupant: true
     nb_adultes: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
@@ -127,6 +128,7 @@ signalements:
     uuid: "00000000-0000-0000-2022-000000000004"
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
+    is_not_occupant: true
     nb_adultes: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
@@ -541,6 +543,7 @@ signalements:
     uuid: "00000000-0000-0000-2022-000000000014"
     details: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
     is_proprio_averti: 1
+    is_not_occupant: true
     nb_adultes: "3"
     is_allocataire: "CAF"
     nature_logement: "Appartement"

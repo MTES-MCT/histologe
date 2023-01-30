@@ -9,8 +9,8 @@
             <header>
                 <div class="fr-grid-row fr-grid-row--middle">
                     <div class="fr-col-12 fr-col-md-6">
-                        <h1 class="fr-h2 fr-mb-2v">Signalement #{{ signalement.reference }} </h1>
-                        {% if signalement.isNotOccupant %}
+                        <h1 class="fr-h2 fr-mb-2v">Signalement #{{ signalement.reference }}  </h1>
+                        {% if type is same as 'declarant' or (type is null and signalement.isNotOccupant) %}
                             <small class="fr-background-contrast--red-marianne fr-text-default--error fr-rounded fr-p-1v fr-text--bold fr-fi-information-fill fr-link--icon-right fr-pr-3v">&nbsp;
                                 Signalement par un tiers</small>
                         {% else %}
@@ -34,6 +34,8 @@
                                     <label for="signalement_front_response_content" class="fr-label">Votre
                                         message:</label>
                                     <p class="fr-hint-text">Dix (10) caractères minimum</p>
+                                    <input type="hidden" name="signalement_front_response[email]" value="{{ email }}">
+                                    <input type="hidden" name="signalement_front_response[type]" value="{{ type }}">
                                     <textarea name="signalement_front_response[content]"
                                               id="signalement_front_response_content" rows="10" class="fr-input"
                                               required minlength="10"></textarea>
@@ -64,7 +66,7 @@
                 {% endif %}
                 <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-5v {% if not suivi.createdBy %}fr-background-alt--orange-terre-battue{% endif %}">
                     <div class="fr-col-12 fr-col-md-2">
-                        <small>[{{ suivi.createdBy ? (suivi.createdBy.partner ? suivi.createdBy.partner.nom : 'Aucun'): 'Vous' }}
+                        <small>[{{ suivi.createdBy ? (suivi.createdBy.partner ? suivi.createdBy.partner.nom : (suivi.createdBy.email ? (suivi.createdBy.email is same as signalement.mailOccupant ? 'OCCUPANT' : 'DECLARANT') : 'Aucun')): 'Vous' }}
                             ]</small> <br>
                         <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
                     </div>
