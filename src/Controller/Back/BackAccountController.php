@@ -2,7 +2,6 @@
 
 namespace App\Controller\Back;
 
-use App\Entity\Partner;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\PartnerRepository;
@@ -36,31 +35,40 @@ class BackAccountController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        // TODO : limiter aux super admins, créer un nouveau droit ?
-        if ($this->isGranted('ROLE_ADMIN')) {
-            // $territory = empty($request->get('territory')) ? self::DEFAULT_TERRITORY_AIN : (int) $request->get('territory');
-            // $currentTerritory = $territoryRepository->find($territory);
+        $territory = empty($request->get('territory')) ? null : (int) $request->get('territory');
+        if ($territory) {
+            $currentTerritory = $territoryRepository->find($territory);
+        } else {
+            $currentTerritory = null;
         }
-        // $currentTerritory = $user->getTerritory();
 
-        $paginatedArchivedUsers = $userRepository->findAllArchived(null, null, (int) $page);
+        $partner = empty($request->get('partner')) ? null : (int) $request->get('partner');
+        if ($partner) {
+            $currentPartner = $partnerRepository->find($partner);
+        } else {
+            $currentPartner = null;
+        }
 
-        // if (Request::METHOD_POST === $request->getMethod()) {
-        //     $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
+        $paginatedArchivedUsers = $userRepository->findAllArchived($currentTerritory, $currentPartner, (int) $page);
 
-        //     return $this->redirect($this->generateUrl('back_partner_index', [
-        //         'page' => 1,
-        //         'territory' => $currentTerritory->getId(),
-        //     ]));
-        // }
+        if (Request::METHOD_POST === $request->getMethod()) {
+            $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
+            $currentPartner = $partnerRepository->find((int) $request->request->get('partner'));
+
+            return $this->redirect($this->generateUrl('back_account_index', [
+                'page' => 1,
+                'territory' => ($currentTerritory ? $currentTerritory->getId() : null),
+                'partner' => ($currentPartner ? $currentPartner->getId() : null),
+            ]));
+        }
 
         $totalArchivedUsers = \count($paginatedArchivedUsers);
 
         return $this->render('back/account/index.html.twig', [
-            'currentTerritory' => null,
-            'currentPartner' => null,
+            'currentTerritory' => $currentTerritory,
+            'currentPartner' => $currentPartner,
             'territories' => $territoryRepository->findAllList(),
-            'partners' => $partnerRepository->findAllList(null),
+            'partners' => $partnerRepository->findAllList($currentTerritory),
             'users' => $paginatedArchivedUsers,
             'total' => $totalArchivedUsers,
             'page' => $page,
