@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Back;
 
+use App\Entity\User;
 use App\Manager\TerritoryManager;
 use App\Service\DashboardWidget\Widget;
 use App\Service\DashboardWidget\WidgetLoaderCollection;
@@ -11,7 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class DashboardWidgetController extends AbstractController
+#[Route('/bo')]
+class WidgetController extends AbstractController
 {
     #[Route('/widget/{widgetType}', name: 'back_dashboard_widget')]
     public function index(
@@ -21,7 +23,13 @@ class DashboardWidgetController extends AbstractController
         TerritoryManager $territoryManager,
         string $widgetType
     ): Response {
-        $territory = $territoryManager->find((int) $request->get('territory'));
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $territory = $territoryManager->find((int) $request->get('territory'));
+        } else {
+            /** @var User $user */
+            $user = $this->getUser();
+            $territory = $territoryManager->find($user->getTerritory()->getId());
+        }
         $widget = new Widget($widgetType, $territory);
         $widgetLoaderCollection->load($widget);
 

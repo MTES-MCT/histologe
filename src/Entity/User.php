@@ -360,6 +360,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
+    public function getRoleLabel(): string
+    {
+        $roleLabel = array_flip(self::ROLES);
+        $role = array_shift($this->roles);
+
+        return $roleLabel[$role];
+    }
+
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;

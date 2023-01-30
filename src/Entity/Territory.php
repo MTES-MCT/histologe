@@ -14,7 +14,6 @@ class Territory
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Ignore]
     private $id;
 
     #[ORM\Column(type: 'string', length: 3)]
