@@ -111,7 +111,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }, $pendingUsers);
     }
 
-    public function findAllArchived(Territory|null $territory, Partner|null $partner, $page)
+    public function findAllArchived(Territory|null $territory, Partner|null $partner, ?string $filterTerms, $page)
     {
         $maxResult = User::MAX_LIST_PAGINATION;
         $firstResult = ($page - 1) * $maxResult;
@@ -133,9 +133,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->setParameter('partner', $partner);
         }
 
-        // return $queryBuilder->getQuery()->getResult();
+        if (!empty($filterTerms)) {
+            $queryBuilder
+                ->andWhere('LOWER(u.nom) LIKE :usersterms
+                OR LOWER(u.prenom) LIKE :usersterms
+                OR LOWER(u.email) LIKE :usersterms');
+            $queryBuilder
+                ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
+        }
 
-        // $queryBuilder = $this->getPartnersQueryBuilder($territory);
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         $paginator = new Paginator($queryBuilder->getQuery(), false);

@@ -11,9 +11,9 @@
             <div class="fr-col-4 fr-p-2v">
                 <div class="fr-search-bar fr-mt-2v" id="header-search">
                     <input class="fr-input" placeholder="Utilisateur" type="search" id="header-search-input"
-                        name="bo-filters-searchterms" value="{{ filters.searchterms ?? '' }}">
+                        name="bo-filters-usersterms" value="{{ userTerms ?? '' }}">
                     <button class="fr-btn" title="Rechercher">
-                        Utilisateur
+                        {{userTerms is null ? 'Utilisateur' : userTerms}}
                     </button>&nbsp;
                 </div>
             </div>

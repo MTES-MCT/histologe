@@ -49,16 +49,20 @@ class BackAccountController extends AbstractController
             $currentPartner = null;
         }
 
-        $paginatedArchivedUsers = $userRepository->findAllArchived($currentTerritory, $currentPartner, (int) $page);
+        $filterTerms = empty($request->get('userTerms')) ? null : $request->get('userTerms');
+
+        $paginatedArchivedUsers = $userRepository->findAllArchived($currentTerritory, $currentPartner, $filterTerms, (int) $page);
 
         if (Request::METHOD_POST === $request->getMethod()) {
             $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
             $currentPartner = $partnerRepository->find((int) $request->request->get('partner'));
+            $userTerms = $request->request->get('bo-filters-usersterms');
 
             return $this->redirect($this->generateUrl('back_account_index', [
                 'page' => 1,
                 'territory' => ($currentTerritory ? $currentTerritory->getId() : null),
                 'partner' => ($currentPartner ? $currentPartner->getId() : null),
+                'userTerms' => $userTerms,
             ]));
         }
 
@@ -67,6 +71,7 @@ class BackAccountController extends AbstractController
         return $this->render('back/account/index.html.twig', [
             'currentTerritory' => $currentTerritory,
             'currentPartner' => $currentPartner,
+            'userTerms' => $filterTerms,
             'territories' => $territoryRepository->findAllList(),
             'partners' => $partnerRepository->findAllList($currentTerritory),
             'users' => $paginatedArchivedUsers,
