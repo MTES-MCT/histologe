@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Partner;
 use App\Entity\Territory;
+use App\Entity\User;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -17,19 +18,21 @@ class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $territory = false;
-        if ($options['territory']) {
-            $territory = $options['territory'];
-        } else {
-            $territory = $options['data']->getTerritory();
-        }
+        /** @var User $user */
+        $user = $options['data'];
+        // $territory = false;
+        // if ($options['territory']) {
+        //     $territory = $options['territory'];
+        // } else {
+        $territory = $user->getTerritory();
+        // }
 
-        $partner = false;
-        if ($options['partner']) {
-            $partner = $options['partner'];
-        } else {
-            $partner = $options['data']->getPartner();
-        }
+        // $partner = false;
+        // if ($options['partner']) {
+        //     $partner = $options['partner'];
+        // } else {
+        $partner = $user->getPartner();
+        // }
 
         $builder
             ->add('email', EmailType::class, [
@@ -56,7 +59,10 @@ class UserType extends AbstractType
                     'class' => 'fr-input',
                 ], 'label' => 'Prénom',
                 'required' => true,
-            ])
+            ]);
+
+        if (\in_array('ROLE_USER_PARTNER', $user->getRoles()) || \in_array('ROLE_ADMIN_PARTNER', $user->getRoles()) || \in_array('ROLE_ADMIN_TERRITORY', $user->getRoles()) || \in_array('ROLE_ADMIN', $user->getRoles())) {
+            $builder
             ->add('territory', EntityType::class, [
                 'class' => Territory::class,
                 'query_builder' => function (TerritoryRepository $tr) {
@@ -90,7 +96,8 @@ class UserType extends AbstractType
                 ],
                 'label' => 'Partenaire',
                 'required' => false,
-            ]);
+                ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -104,7 +111,6 @@ class UserType extends AbstractType
                 'class' => 'needs-validation',
                 'novalidate' => 'true',
             ],
-            // Configure your form options here
         ]);
     }
 }

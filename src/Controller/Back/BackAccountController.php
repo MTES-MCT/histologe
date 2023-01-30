@@ -8,6 +8,7 @@ use App\Form\UserType;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
@@ -15,6 +16,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
 #[Route('/bo/comptes-archives')]
 class BackAccountController extends AbstractController
@@ -73,7 +75,9 @@ class BackAccountController extends AbstractController
         UserRepository $userRepository,
         TerritoryRepository $territoryRepository,
         PartnerRepository $partnerRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        NotificationService $notificationService,
+        LoginLinkHandlerInterface $loginLinkHandler,
     ): Response {
         // TODO : limiter aux super admins, créer un nouveau droit ?
         $this->denyAccessUnlessGranted('USER_EDIT', $this->getUser());
@@ -89,7 +93,18 @@ class BackAccountController extends AbstractController
             $entityManager->flush();
             $this->addFlash('success', 'Réactivation du compte effectuée.');
 
-            return $this->redirectToRoute('back_account_reactiver', [
+            if (\in_array('ROLE_USER_PARTNER', $user->getRoles()) || \in_array('ROLE_ADMIN_PARTNER', $user->getRoles()) || \in_array('ROLE_ADMIN_TERRITORY', $user->getRoles()) || \in_array('ROLE_ADMIN', $user->getRoles())) {
+                $loginLinkDetails = $loginLinkHandler->createLoginLink($account);
+                $loginLink = $loginLinkDetails->getUrl();
+                $notificationService->send(
+                    NotificationService::TYPE_ACCOUNT_ACTIVATION,
+                    $account->getEmail(),
+                    ['link' => $loginLink],
+                    $account->getTerritory()
+                );
+            }
+
+            return $this->redirectToRoute('back_account_index', [
                 'id' => $account->getId(),
             ]);
         }
