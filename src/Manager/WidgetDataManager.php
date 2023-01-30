@@ -9,6 +9,7 @@ use App\Entity\Territory;
 use App\Repository\AffectationRepository;
 use App\Repository\JobEventRepository;
 use App\Repository\SignalementRepository;
+use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
@@ -22,6 +23,7 @@ class WidgetDataManager
         private JobEventRepository $jobEventRepository,
         private AffectationRepository $affectationRepository,
         private UserRepository $userRepository,
+        private SuiviRepository $suiviRepository,
     ) {
     }
 
@@ -74,7 +76,7 @@ class WidgetDataManager
     {
         return [
             'count_signalement' => $this->countSignalementData($territory),
-            'count_suivi' => $this->countSuiviData(),
+            'count_suivi' => $this->countSuiviData($territory),
             'count_user' => $this->countUserData($territory),
         ];
     }
@@ -91,7 +93,9 @@ class WidgetDataManager
 
     public function countSuiviData(?Territory $territory = null): CountSuivi
     {
-        return new CountSuivi();
+        $averageSuivi = $this->suiviRepository->getAverageSuivi($territory);
+
+        return new CountSuivi($averageSuivi);
     }
 
     public function countUserData(?Territory $territory = null): CountUser

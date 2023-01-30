@@ -5,9 +5,9 @@ namespace App\Dto;
 class CountSuivi
 {
     public function __construct(
-        private float $average = 0,
-        private int $partner = 0,
-        private int $usager = 0,
+        private ?float $average = null,
+        private ?int $partner = null,
+        private ?int $usager = null,
     ) {
     }
 

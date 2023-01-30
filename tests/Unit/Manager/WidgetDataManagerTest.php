@@ -8,6 +8,7 @@ use App\Manager\WidgetDataManager;
 use App\Repository\AffectationRepository;
 use App\Repository\JobEventRepository;
 use App\Repository\SignalementRepository;
+use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
 use PHPUnit\Framework\TestCase;
 
@@ -18,6 +19,7 @@ class WidgetDataManagerTest extends TestCase
     private $jobEventRepositoryMock;
     private $affectationRepositoryMock;
     private $userRepositoryMock;
+    private $suiviRepositoryMock;
 
     protected function setUp(): void
     {
@@ -25,11 +27,13 @@ class WidgetDataManagerTest extends TestCase
         $this->jobEventRepositoryMock = $this->createMock(JobEventRepository::class);
         $this->affectationRepositoryMock = $this->createMock(AffectationRepository::class);
         $this->userRepositoryMock = $this->createMock(UserRepository::class);
+        $this->suiviRepositoryMock = $this->createMock(SuiviRepository::class);
         $this->widgetDataManager = new WidgetDataManager(
             $this->signalementRepositoryMock,
             $this->jobEventRepositoryMock,
             $this->affectationRepositoryMock,
             $this->userRepositoryMock,
+            $this->suiviRepositoryMock,
         );
     }
 

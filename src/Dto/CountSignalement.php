@@ -5,11 +5,11 @@ namespace App\Dto;
 class CountSignalement
 {
     public function __construct(
-        private int $total = 0,
-        private int $new = 0,
-        private int $active = 0,
-        private int $closed = 0,
-        private int $refused = 0
+        private ?int $total = null,
+        private ?int $new = null,
+        private ?int $active = null,
+        private ?int $closed = null,
+        private ?int $refused = null
     ) {
     }
 
