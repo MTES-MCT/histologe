@@ -19,16 +19,16 @@
             </div>
             <div class="fr-col-3 fr-p-2v">
                 <select id="bo-filters-territories" class="fr-select" onchange="this.form.submit()" name="territory">
-                    {# {% for territory in territories %}
-                        <option value="{{ territory.id }}" {{ territory.id == currentTerritory.id ? 'selected' : '' }}>{{ territory.name|upper }}</option>
-                    {% endfor %} #}
+                    {% for territory in territories %}
+                        <option value="{{ territory.id }}" {{ currentTerritory ? (territory.id == currentTerritory.id ? 'selected' : '') : ''  }}>{{ territory.name|upper }}</option>
+                    {% endfor %}
                 </select>
             </div>
             <div class="fr-col-3 fr-p-2v">
                 <select id="bo-filters-partners" class="fr-select" onchange="this.form.submit()" name="partner">
-                    {# {% for partner in partners %}
-                        <option value="{{ partner.id }}" {{ partner.id == currentPartner.id ? 'selected' : '' }}>{{ partner.name|upper }}</option>
-                    {% endfor %} #}
+                    {% for partner in partners %}
+                        <option value="{{ partner.id }}" {{ currentPartner ? (partner.id == currentPartner.id ? 'selected' : '') : '' }}>{{ partner.nom|upper }}</option>
+                    {% endfor %}
                 </select>
             </div>
             <div class="fr-col-2 fr-p-2v">
@@ -58,17 +58,27 @@
             </thead>
             <tbody>
             {% for user in users %}
+                {% if user.partner is null %}
+                    {% set classe = 'fr-badge--info' %}
+                    {% set statut = 'aucun' %}
+                {% elseif user.partner and user.partner.isArchive  %}
+                    {% set classe = 'fr-badge--error' %}
+                    {% set statut = 'archivé' %}
+                {% else %}
+                    {% set classe = 'fr-badge--success' %}
+                    {% set statut = 'actif' %}
+                {% endif %}
                 <tr class="user-row">
                     {# <td>{{ user.updatedAt }}</td> #}
                     <td>{{ user.territory }}</td>
                     <td>{{ user.partner ? user.partner.nom : 'aucun' }}</td>
-                    <td>{{ user.partner ? (user.partner.isArchive ? 'archivé' : 'actif') : 'aucun' }}</td>
+                    <td><span class="fr-badge {{ classe }} fr-badge--no-icon fr-ws-nowrap ">{{ statut|upper }}</span></td>
                     <td>{{ user.email}}</ail td>
                     <td>{{ user.nom}}</ail td>
                     <td>{{ user.prenom}}</ail td>
                     <td class="fr-text--right">
-                        <a href="{{ path('back_partner_edit', {'id': user.id}) }}"
-                           class="fr-btn fr-icon-recycle-line fr-btn--sm"></a>
+                        <a href="{{ path('back_account_reactiver', {'id': user.id}) }}"
+                           class="fr-btn fr-icon-flashlight-fill fr-btn--sm" title="Réactiver le compte {{user.email}}"></a>
                         {# <button data-delete="{{ path('back_partner_delete', {'id': partner.id}) }}"
                                 data-token="{{ csrf_token('partner_delete_' ~ partner.id) }}"
                                 class="fr-btn fr-btn--danger fr-fi-delete-line fr-btn--sm partner-row-delete"></button> #}

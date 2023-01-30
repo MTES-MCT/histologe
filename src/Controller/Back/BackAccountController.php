@@ -4,8 +4,11 @@ namespace App\Controller\Back;
 
 use App\Entity\Partner;
 use App\Entity\User;
-use App\Form\PartnerType;
+use App\Form\UserType;
+use App\Repository\PartnerRepository;
+use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -22,6 +25,8 @@ class BackAccountController extends AbstractController
     public function index(
         Request $request,
         UserRepository $userRepository,
+        TerritoryRepository $territoryRepository,
+        PartnerRepository $partnerRepository
     ): Response {
         // TODO : limiter aux super admins, créer un nouveau droit ?
         $this->denyAccessUnlessGranted('USER_EDIT', $this->getUser());
@@ -50,8 +55,10 @@ class BackAccountController extends AbstractController
         $totalArchivedUsers = \count($paginatedArchivedUsers);
 
         return $this->render('back/account/index.html.twig', [
-            // 'currentTerritory' => $currentTerritory,
-            // 'territories' => $territoryRepository->findAllList(),
+            'currentTerritory' => null,
+            'currentPartner' => null,
+            'territories' => $territoryRepository->findAllList(),
+            'partners' => $partnerRepository->findAllList(null),
             'users' => $paginatedArchivedUsers,
             'total' => $totalArchivedUsers,
             'page' => $page,
@@ -59,36 +66,43 @@ class BackAccountController extends AbstractController
         ]);
     }
 
-    // #[Route('/{id}/reactiver', name: 'back_account_reactiver', methods: ['GET', 'POST'])]
-    // public function reactiver(
-    //     Request $request,
-    //     UserRepository $userRepository,
-    // ): Response {
-    //     $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
-    //     /** @var User $user */
-    //     $user = $this->getUser();
-    //     $form = $this->createForm(PartnerType::class, $partner, [
-    //         'can_edit_territory' => $user->isSuperAdmin(),
-    //     ]);
-    //     $form->handleRequest($request);
+    #[Route('/{id}/reactiver', name: 'back_account_reactiver', methods: ['GET', 'POST'])]
+    public function reactiver(
+        Request $request,
+        User $account,
+        UserRepository $userRepository,
+        TerritoryRepository $territoryRepository,
+        PartnerRepository $partnerRepository,
+        EntityManagerInterface $entityManager
+    ): Response {
+        // TODO : limiter aux super admins, créer un nouveau droit ?
+        $this->denyAccessUnlessGranted('USER_EDIT', $this->getUser());
+        /** @var User $user */
+        $user = $this->getUser();
+        $form = $this->createForm(UserType::class, $account, [
+            'can_edit_email' => false,
+        ]);
+        $form->handleRequest($request);
 
-    //     if ($form->isSubmitted() && $form->isValid()) {
-    //         $entityManager->flush();
-    //         $this->addFlash('success', 'Mise à jour partenaire effectuée.');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $account->setStatut(User::STATUS_ACTIVE);
+            $entityManager->flush();
+            $this->addFlash('success', 'Réactivation du compte effectuée.');
 
-    //         return $this->redirectToRoute('back_partner_edit', [
-    //             'id' => $partner->getId(),
-    //         ]);
-    //     }
+            return $this->redirectToRoute('back_account_reactiver', [
+                'id' => $account->getId(),
+            ]);
+        }
 
-    //     $this->displayErrors($form);
+        $this->displayErrors($form);
 
-    //     return $this->renderForm('back/partner/edit.html.twig', [
-    //         'partner' => $partner,
-    //         'partners' => $entityManager->getRepository(Partner::class)->findAllList($partner->getTerritory()),
-    //         'form' => $form,
-    //     ]);
-    // }
+        return $this->renderForm('back/account/edit.html.twig', [
+            'user' => $account,
+            'territories' => $territoryRepository->findAllList(),
+            'partners' => $partnerRepository->findAllList(null),
+            'form' => $form,
+        ]);
+    }
 
     private function displayErrors(FormInterface $form): void
     {
