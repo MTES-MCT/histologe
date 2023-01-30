@@ -2,10 +2,14 @@
 
 namespace App\Manager;
 
+use App\Dto\CountSignalement;
+use App\Dto\CountSuivi;
+use App\Dto\CountUser;
 use App\Entity\Territory;
 use App\Repository\AffectationRepository;
 use App\Repository\JobEventRepository;
 use App\Repository\SignalementRepository;
+use App\Repository\UserRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -17,6 +21,7 @@ class WidgetDataManager
         private SignalementRepository $signalementRepository,
         private JobEventRepository $jobEventRepository,
         private AffectationRepository $affectationRepository,
+        private UserRepository $userRepository,
     ) {
     }
 
@@ -67,11 +72,11 @@ class WidgetDataManager
      */
     public function countDataKpi(?Territory $territory = null): array
     {
-        return array_merge(
-            $this->countSignalementData($territory),
-            $this->countSuiviData(),
-            $this->countUserData()
-        );
+        return [
+            'count_signalement' => $this->countSignalementData($territory),
+            'count_suivi' => $this->countSuiviData(),
+            'count_user' => $this->countUserData($territory),
+        ];
     }
 
     /**
@@ -79,24 +84,18 @@ class WidgetDataManager
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function countSignalementData(?Territory $territory = null): array
+    public function countSignalementData(?Territory $territory = null): CountSignalement
     {
-        return [
-            'signalement' => $this->signalementRepository->countSignalementByStatus($territory),
-        ];
+        return $this->signalementRepository->countSignalementByStatus($territory);
     }
 
-    public function countSuiviData(): array
+    public function countSuiviData(?Territory $territory = null): CountSuivi
     {
-        return [
-            'suivi' => [],
-        ];
+        return new CountSuivi();
     }
 
-    public function countUserData(): array
+    public function countUserData(?Territory $territory = null): CountUser
     {
-        return [
-            'user' => [],
-        ];
+        return $this->userRepository->countUserByStatus($territory);
     }
 }

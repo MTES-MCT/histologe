@@ -5,8 +5,10 @@ namespace App\Repository;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Dto\CountUser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -161,5 +163,27 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         return new Paginator($queryBuilder->getQuery(), false);
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function countUserByStatus(?Territory $territory = null): CountUser
+    {
+        $qb = $this->createQueryBuilder('u');
+        $qb->select(sprintf('NEW %s(
+            SUM(CASE WHEN u.statut = :active THEN 1 ELSE 0 END),
+            SUM(CASE WHEN u.statut = :inactive THEN 1 ELSE 0 END))',
+            CountUser::class))
+            ->setParameter('active', User::STATUS_ACTIVE)
+            ->setParameter('inactive', User::STATUS_INACTIVE)
+            ->where('u.statut != :statut')
+            ->setParameter('statut', User::STATUS_ARCHIVE);
+
+        if (null !== $territory) {
+            $qb->andWhere('u.territory = :territory')->setParameter('territory', $territory);
+        }
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }
