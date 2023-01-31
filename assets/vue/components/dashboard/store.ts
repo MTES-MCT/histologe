@@ -3,8 +3,8 @@ export const store = {
   state: {
     user: {
       prenom: '',
-      isAdmin: false,
-      isResponsableTerritoire: true,
+      isAdmin: true,
+      isResponsableTerritoire: false,
       isAdministrateurPartenaire: false
     },
     territories: [],
