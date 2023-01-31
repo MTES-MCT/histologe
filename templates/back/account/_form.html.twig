@@ -12,9 +12,6 @@
             <div class="fr-col-lg-6 ">
                 <label for="{{ form.territory.vars.id }}" class="fr-label">Territoire</label>
                 {{ form_widget(form.territory) }}
-                {# <p class="fr-error-text fr-hidden">
-                    Vous devez renseigner le territoire du compte.
-                </p> #}
                 </br>
                 <span class="fr-hint-text">Sélectionnez un territoire pour afficher les partenaires.</span>
             </div>
@@ -30,9 +27,6 @@
             <div class="fr-col-lg-6">
                 <label for="{{ form.partner.vars.id }}" class="fr-label">Partenaire</label>
                 {{ form_widget(form.partner) }}
-                {# <p class="fr-error-text fr-hidden">
-                    Vous devez renseigner le partenaire du compte.
-                </p> #}
                 </br>
                 <span class="fr-hint-text fr-background-contrast--error">Si le partenaire n'apparaît pas dans la liste des partenaires, c'est qu'il n'existe pas. Veillez à bien créer le partenaire avant de vouloir y ajouter un compte.</span>
             </div>

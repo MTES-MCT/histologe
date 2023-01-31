@@ -87,6 +87,18 @@ class PartnerRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findAllWithoutTerritory()
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('PARTIAL p.{id,nom,isCommune}')
+            ->where('p.isArchive != 1')
+            ->andWhere('p.territory IS NULL');
+
+        return $qb->indexBy('p', 'p.id')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findWithCodeInseeNotNull()
     {
         return $this

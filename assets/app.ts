@@ -16,3 +16,4 @@ import './vue/index';
 import './vue/front-stats';
 
 import './controllers/form_partner';
+import './controllers/form_account';
