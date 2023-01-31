@@ -1,0 +1,31 @@
+parameters:
+  data-kpi:
+    widget_cards:
+      card_nouveaux_signalements:
+        label: "Nouveaux signalements"
+        roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY]
+      card_nouveaux_suivis:
+        label: "Nouveaux suivi"
+        roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_USER_PARTNER]
+      card_sans_suivi:
+        label: "Sans suivi"
+        roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_USER_PARTNER]
+      card_clotures_globales:
+        label: "Clôtures globales"
+        roles: [ROLE_ADMIN]
+      card_clotures_partenaires:
+        label: "Clotures partenaires"
+        roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY]
+      card_mes_affectations:
+        label: "Mes affectations"
+        roles: [ROLE_ADMIN_TERRITORY]
+      card_nouvelles_affectations:
+        label: "Nouvelles affectations"
+        roles: [ROLE_USER_PARTNER, ROLE_ADMIN_PARTNER]
+      card_tous_les_signalements:
+        label: "Tous les signalements"
+        roles: [ROLE_USER_PARTNER, ROLE_ADMIN_PARTNER]
+
+
+
+

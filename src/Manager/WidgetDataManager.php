@@ -5,6 +5,7 @@ namespace App\Manager;
 use App\Dto\CountSignalement;
 use App\Dto\CountSuivi;
 use App\Dto\CountUser;
+use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Repository\AffectationRepository;
 use App\Repository\JobEventRepository;
@@ -82,27 +83,43 @@ class WidgetDataManager
             'count_signalement' => $countSignalement,
             'count_suivi' => $this->countSuiviData($territory),
             'count_user' => $this->countUserData($territory),
-            'card_widget' => [
-                'new_signalement' => [
+            'widget_cards' => [
+                'card_nouveaux_signalements' => [
                     'count' => $countSignalement->getNew(),
                     'link' => $this->urlGenerator->generate('back_index', [
-                        'status_signalement' => 'new',
+                        'status_signalement' => Signalement::STATUS_NEED_VALIDATION,
                     ], UrlGeneratorInterface::ABSOLUTE_URL),
                 ],
-                'new_suivi' => [
-                    'count' => 0,
+                'card_nouveaux_suivis' => [
+                    'count' => 0, /* @todo: https://github.com/MTES-MCT/histologe/issues/867 */
+                    'link' => null,
+                ],
+                'card_sans_suivi' => [
+                    'count' => 0, /* @todo: https://github.com/MTES-MCT/histologe/issues/867 */
+                    'link' => null,
+                ],
+                'card_clotures_partenaires' => [
+                    'count' => $this->signalementRepository->countSignalementClosedByAtLeast(1, $territory),
+                    'link' => null, /* @todo: https://github.com/MTES-MCT/histologe/issues/869 */
+                ],
+                'card_mes_affectations' => [
                     'link' => '',
                 ],
-                'no_suivi' => [
-                    'count' => 0,
-                    'link' => '',
+                'card_tous_les_signalements' => [
+                    'count' => $countSignalement->getTotal(),
+                    'link' => $this->urlGenerator->generate(
+                        'back_index',
+                        [],
+                        UrlGeneratorInterface::ABSOLUTE_URL
+                    ),
                 ],
-                'closed_signalement_partners' => [
-                    'count' => 0,
-                    'link' => '',
+                'clotures_globales' => [
+                    'count' => $countSignalement->getClosed(),
+                    'link' => $this->urlGenerator->generate('back_index', [
+                        'status_signalement' => Signalement::STATUS_CLOSED,
+                    ], UrlGeneratorInterface::ABSOLUTE_URL),
                 ],
-                'affectation' => [
-                    'link' => '',
+                'card_nouvelles_affectations' => [
                 ],
             ],
         ];
