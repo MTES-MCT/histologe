@@ -10,7 +10,8 @@
 {% block content %}
     <div
         id="app-dashboard"
-        data-ajaxurl-filter="{{ path('back_dashboard_widget', {widgetType: 'data-kpi'}) }}"
+        data-ajaxurl-settings="{{ path('back_widget_settings') }}"
+        data-ajaxurl-KPI="{{ path('back_dashboard_widget', {widgetType: 'data-kpi'}) }}"
         data-ajaxurl-partners="{{ path('back_dashboard_widget', {widgetType: 'affectations-partenaires'}) }}"
         data-ajaxurl-signalements-nosuivi="{{ path('back_dashboard_widget', {widgetType: 'signalements-accepte-sans-suivi'}) }}"
         data-ajaxurl-signalements-per-territoire="{{ path('back_dashboard_widget', {widgetType: 'signalements-territoires'}) }}"

@@ -64,7 +64,7 @@ class BackOfficeAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('back_index'));
+        return new RedirectResponse($this->urlGenerator->generate('back_dashboard'));
     }
 
     protected function getLoginUrl(Request $request): string

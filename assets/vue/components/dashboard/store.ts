@@ -3,7 +3,7 @@ export const store = {
   state: {
     user: {
       prenom: '',
-      isAdmin: true,
+      isAdmin: false,
       isResponsableTerritoire: false,
       isAdministrateurPartenaire: false
     },
@@ -67,7 +67,8 @@ export const store = {
     }
   },
   props: {
-    ajaxurlFilter: '',
+    ajaxurlSettings: '',
+    ajaxurlKpi: '',
     ajaxurlPartners: '',
     ajaxurlSignalementsNosuivi: '',
     ajaxurlSignamentsPerTerritoire: '',
