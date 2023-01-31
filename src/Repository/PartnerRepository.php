@@ -22,7 +22,7 @@ class PartnerRepository extends ServiceEntityRepository
         parent::__construct($registry, Partner::class);
     }
 
-    private function getPartnersQueryBuilder(Territory|null $territory)
+    public function getPartnersQueryBuilder(Territory|null $territory)
     {
         $queryBuilder = $this->createQueryBuilder('p')->where('p.isArchive != 1');
 

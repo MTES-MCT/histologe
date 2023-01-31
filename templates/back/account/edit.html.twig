@@ -3,10 +3,6 @@
 {% block title %}Réactivation du compte{% endblock %}
 
 {% block content %}
-    {# {% if is_granted('ROLE_ADMIN_TERRITORY') and app.request.get('_route') is not same as('back_partner_new') %}
-        {% include '_partials/_modal_user_transfer.html.twig' %}
-    {% endif %}
-    {% include '_partials/_modal_user_delete.html.twig' %} #}
     <section class="fr-col-12 fr-p-5v">
         <h2 class="fr-h2 fr-mb-0">Réactivation du compte {{ user.email }}</h2>
         <span>Pour réactiver le compte {{ user.email }}, veuillez vérifier les champs ci-dessous et les modifier si besoin.</span></br>

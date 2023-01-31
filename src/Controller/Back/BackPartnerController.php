@@ -106,6 +106,12 @@ class BackPartnerController extends AbstractController
         EntityManagerInterface $entityManager
     ): Response {
         $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
+        if ($partner->getIsArchive()) {
+            return $this->redirect($this->generateUrl('back_partner_index', [
+                'page' => 1,
+                'territory' => $partner->getTerritory()->getId(),
+            ]));
+        }
         /** @var User $user */
         $user = $this->getUser();
         $form = $this->createForm(PartnerType::class, $partner, [

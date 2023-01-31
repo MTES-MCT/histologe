@@ -11,13 +11,14 @@ class UserVoter extends Voter
 {
     public const CREATE = 'USER_CREATE';
     public const EDIT = 'USER_EDIT';
+    public const REACTIVE = 'USER_REACTIVE';
     public const TRANSFER = 'USER_TRANSFER';
     public const DELETE = 'USER_DELETE';
     public const CHECKMAIL = 'USER_CHECKMAIL';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::CHECKMAIL, self::CREATE, self::EDIT, self::TRANSFER, self::DELETE])
+        return \in_array($attribute, [self::CHECKMAIL, self::CREATE, self::REACTIVE, self::EDIT, self::TRANSFER, self::DELETE])
             && $subject instanceof User;
     }
 
@@ -37,6 +38,7 @@ class UserVoter extends Voter
             self::EDIT => $this->canEdit($subject, $user),
             self::TRANSFER => $this->canTransfer($subject, $user),
             self::DELETE => $this->canDelete($subject, $user),
+            self::REACTIVE => $this->canReactive($subject, $user),
             default => false,
         };
     }
@@ -72,5 +74,10 @@ class UserVoter extends Voter
     private function canCheckMail(mixed $subject, UserInterface $user)
     {
         return $user->isTerritoryAdmin() || $user->isPartnerAdmin();
+    }
+
+    private function canReactive(mixed $subject, UserInterface $user)
+    {
+        return $user->isSuperAdmin();
     }
 }

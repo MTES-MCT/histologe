@@ -29,8 +29,7 @@ class BackAccountController extends AbstractController
         TerritoryRepository $territoryRepository,
         PartnerRepository $partnerRepository
     ): Response {
-        // TODO : limiter aux super admins, créer un nouveau droit ?
-        $this->denyAccessUnlessGranted('USER_EDIT', $this->getUser());
+        $this->denyAccessUnlessGranted('USER_REACTIVE', $this->getUser());
         $page = $request->get('page') ?? 1;
         /** @var User $user */
         $user = $this->getUser();
@@ -51,7 +50,7 @@ class BackAccountController extends AbstractController
 
         $filterTerms = empty($request->get('userTerms')) ? null : $request->get('userTerms');
 
-        $paginatedArchivedUsers = $userRepository->findAllArchived($currentTerritory, $currentPartner, $filterTerms, (int) $page);
+        $paginatedArchivedUsers = $userRepository->findAllArchived($currentTerritory, $currentPartner, $filterTerms, false, (int) $page);
 
         if (Request::METHOD_POST === $request->getMethod()) {
             $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
@@ -92,8 +91,7 @@ class BackAccountController extends AbstractController
         NotificationService $notificationService,
         LoginLinkHandlerInterface $loginLinkHandler,
     ): Response {
-        // TODO : limiter aux super admins, créer un nouveau droit ?
-        $this->denyAccessUnlessGranted('USER_EDIT', $this->getUser());
+        $this->denyAccessUnlessGranted('USER_REACTIVE', $this->getUser());
         /** @var User $user */
         $user = $this->getUser();
         $form = $this->createForm(UserType::class, $account, [
