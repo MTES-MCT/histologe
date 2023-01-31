@@ -25,7 +25,3 @@ parameters:
       card_tous_les_signalements:
         label: "Tous les signalements"
         roles: [ROLE_USER_PARTNER, ROLE_ADMIN_PARTNER]
-
-
-
-
