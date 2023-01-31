@@ -1,15 +1,16 @@
+import HistoInterfaceSelectOption from '../common/HistoInterfaceSelectOption'
 
 export const store = {
   state: {
     user: {
       prenom: '',
-      isAdmin: false,
-      isResponsableTerritoire: true,
+      isAdmin: true,
+      isResponsableTerritoire: false,
       isAdministrateurPartenaire: false
     },
-    territories: [],
+    territories: new Array<HistoInterfaceSelectOption>(),
     filters: {
-      territory: ''
+      territory: 'all'
     },
     newSignalements: {
       count: 0,
@@ -32,45 +33,48 @@ export const store = {
       link: '#all-signalements'
     },
     newAffectations: {
-      count: 1,
+      count: 0,
       link: '#new-affectations'
     },
     userAffectations: {
       link: '#user-affectations'
     },
     newSuivis: {
-      count: 2,
+      count: 0,
       link: '#new-suivis'
     },
     noSuivis: {
-      count: 3,
+      count: 0,
       link: '#no-suivis'
     },
     suivis: {
-      countMoyen: 1,
-      countByPartner: 2,
-      countByUsager: 3
+      countMoyen: 0,
+      countByPartner: 0,
+      countByUsager: 0
     },
     cloturesGlobales: {
-      count: 5,
+      count: 0,
       link: '#clotures-globales'
     },
     cloturesPartenaires: {
-      count: 6,
+      count: 0,
       link: '#clotures-partenaires'
     },
     users: {
-      countActive: 1,
-      percentActive: 33,
-      countNotActive: 2,
-      percentNotActive: 66
-    }
+      countActive: 0,
+      percentActive: 0,
+      countNotActive: 0,
+      percentNotActive: 0
+    },
+    esaboraEvents: new Array<any>(),
+    signalementsPerTerritoire: new Array<any>(),
+    affectationsPartenaires: new Array<any>()
   },
   props: {
     ajaxurlFilter: '',
     ajaxurlPartners: '',
     ajaxurlSignalementsNosuivi: '',
-    ajaxurlSignamentsPerTerritoire: '',
+    ajaxurlSignalementsPerTerritoire: '',
     ajaxurlConnectionsEsabora: ''
   }
 }
