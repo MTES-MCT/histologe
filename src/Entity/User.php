@@ -27,6 +27,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public const STATUS_ARCHIVE = 2;
     public const MAX_LIST_PAGINATION = 20;
 
+    public const ROLE_USAGER = self::ROLES['Usager'];
+    public const ROLE_USER_PARTNER = self::ROLES['Utilisateur'];
+    public const ROLE_ADMIN_PARTNER = self::ROLES['Administrateur'];
+    public const ROLE_ADMIN_TERRITORY = self::ROLES['Responsable Territoire'];
+
     public const ROLES = [
         'Usager' => 'ROLE_USAGER',
         'Utilisateur' => 'ROLE_USER_PARTNER',

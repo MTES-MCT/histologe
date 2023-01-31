@@ -5,8 +5,11 @@ namespace App\Repository;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -48,5 +51,62 @@ class SuiviRepository extends ServiceEntityRepository
         $statement = $connection->prepare($sql);
 
         return (float) $statement->executeQuery($parameters)->fetchOne();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function countSuiviPartner(?Territory $territory = null): int
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s) as nb_suivi')
+            ->innerJoin('s.signalement', 'sig')
+            ->innerJoin('s.createdBy', 'u')
+            ->where('sig.statut != :statut')
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->like('u.roles', ':role1'),
+                    $qb->expr()->like('u.roles', ':role2'),
+                    $qb->expr()->like('u.roles', ':role3')
+                )
+            )
+            ->setParameter('role1', '%'.User::ROLE_ADMIN_TERRITORY.'%')
+            ->setParameter('role2', '%'.User::ROLE_ADMIN_PARTNER.'%')
+            ->setParameter('role3', '%'.User::ROLE_USER_PARTNER.'%')
+            ->setParameter('statut', Signalement::STATUS_ARCHIVED);
+
+        if ($territory instanceof Territory) {
+            $qb->andWhere('sig.territory = :territory')->setParameter('territory', $territory);
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function countSuiviUsager(?Territory $territory = null): int
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s) as nb_suivi')
+            ->innerJoin('s.signalement', 'sig')
+            ->leftJoin('s.createdBy', 'u')
+            ->where('sig.statut != :statut')
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->like('u.roles', ':role'),
+                    $qb->expr()->isNull('s.createdBy')
+                )
+            )
+            ->setParameter('role', '%'.User::ROLE_USAGER.'%')
+            ->setParameter('statut', Signalement::STATUS_ARCHIVED);
+
+        if ($territory instanceof Territory) {
+            $qb->andWhere('sig.territory = :territory')->setParameter('territory', $territory);
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 }

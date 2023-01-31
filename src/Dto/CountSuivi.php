@@ -13,7 +13,7 @@ class CountSuivi
 
     public function getAverage(): float
     {
-        return $this->average;
+        return round($this->average, 1);
     }
 
     public function getPartner(): int

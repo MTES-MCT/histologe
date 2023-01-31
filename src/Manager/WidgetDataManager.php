@@ -78,6 +78,27 @@ class WidgetDataManager
             'count_signalement' => $this->countSignalementData($territory),
             'count_suivi' => $this->countSuiviData($territory),
             'count_user' => $this->countUserData($territory),
+            'card_widget' => [
+                'new_signalement' => [
+                    'count' => 0,
+                    'link' => '',
+                ],
+                'new_suivi' => [
+                    'count' => 0,
+                    'link' => '',
+                ],
+                'no_suivi' => [
+                    'count' => 0,
+                    'link' => '',
+                ],
+                'closed_signalement_partners' => [
+                    'count' => 0,
+                    'link' => '',
+                ],
+                'affectation' => [
+                    'link' => '',
+                ],
+            ],
         ];
     }
 
@@ -94,8 +115,10 @@ class WidgetDataManager
     public function countSuiviData(?Territory $territory = null): CountSuivi
     {
         $averageSuivi = $this->suiviRepository->getAverageSuivi($territory);
+        $countSuiviPartner = $this->suiviRepository->countSuiviPartner($territory);
+        $countSuiviUsager = $this->suiviRepository->countSuiviUsager($territory);
 
-        return new CountSuivi($averageSuivi);
+        return new CountSuivi($averageSuivi, $countSuiviPartner, $countSuiviUsager);
     }
 
     public function countUserData(?Territory $territory = null): CountUser

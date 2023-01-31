@@ -774,12 +774,13 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->select(sprintf('NEW %s(
                 COUNT(s.id),
                 SUM(CASE WHEN s.statut = :new     THEN 1 ELSE 0 END),
-                SUM(CASE WHEN s.statut = :active  THEN 1 ELSE 0 END),
+                SUM(CASE WHEN s.statut = :active OR s.statut =:waiting THEN 1 ELSE 0 END),
                 SUM(CASE WHEN s.statut = :closed  THEN 1 ELSE 0 END),
                 SUM(CASE WHEN s.statut = :refused THEN 1 ELSE 0 END))',
             CountSignalement::class))
             ->setParameter('new', Signalement::STATUS_NEED_VALIDATION)
             ->setParameter('active', Signalement::STATUS_ACTIVE)
+            ->setParameter('waiting', Signalement::STATUS_NEED_PARTNER_RESPONSE)
             ->setParameter('closed', Signalement::STATUS_CLOSED)
             ->setParameter('refused', Signalement::STATUS_REFUSED)
             ->where('s.statut != :archived')

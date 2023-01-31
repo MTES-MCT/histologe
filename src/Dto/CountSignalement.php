@@ -4,13 +4,21 @@ namespace App\Dto;
 
 class CountSignalement
 {
+    private ?array $percentage = null;
+
     public function __construct(
         private ?int $total = null,
         private ?int $new = null,
         private ?int $active = null,
         private ?int $closed = null,
-        private ?int $refused = null
+        private ?int $refused = null,
     ) {
+        $this->percentage = [
+            'new' => round($new / $total * 100, 1),
+            'active' => round($active / $total * 100, 1),
+            'closed' => round($closed / $total * 100, 1),
+            'refused' => round($refused / $total * 100, 1),
+        ];
     }
 
     public function getTotal(): int
@@ -36,5 +44,10 @@ class CountSignalement
     public function getRefused(): int
     {
         return $this->refused;
+    }
+
+    public function getPercentage(): ?array
+    {
+        return $this->percentage;
     }
 }
