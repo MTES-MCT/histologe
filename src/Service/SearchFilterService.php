@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Signalement;
 use DateInterval;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
@@ -27,6 +28,7 @@ class SearchFilterService
     public function setFilters(): self
     {
         $request = $this->getRequest();
+
         $this->filters = [
             'searchterms' => $request->get('bo-filters-searchterms') ?? null,
             'territories' => $request->get('bo-filters-territories') ?? null,
@@ -50,6 +52,10 @@ class SearchFilterService
             'tags' => $request->get('bo-filters-tags') ?? null,
             'page' => $request->get('page') ?? 1,
         ];
+
+        if ('new' === $request->query->get('status_signalement')) {
+            $this->filters['statuses'] = [Signalement::STATUS_NEED_VALIDATION];
+        }
 
         return $this;
     }

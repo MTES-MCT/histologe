@@ -11,6 +11,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class WidgetDataManagerTest extends TestCase
 {
@@ -20,6 +21,7 @@ class WidgetDataManagerTest extends TestCase
     private $affectationRepositoryMock;
     private $userRepositoryMock;
     private $suiviRepositoryMock;
+    private $urlGeneratorMock;
 
     protected function setUp(): void
     {
@@ -28,12 +30,14 @@ class WidgetDataManagerTest extends TestCase
         $this->affectationRepositoryMock = $this->createMock(AffectationRepository::class);
         $this->userRepositoryMock = $this->createMock(UserRepository::class);
         $this->suiviRepositoryMock = $this->createMock(SuiviRepository::class);
+        $this->urlGeneratorMock = $this->createMock(UrlGeneratorInterface::class);
         $this->widgetDataManager = new WidgetDataManager(
             $this->signalementRepositoryMock,
             $this->jobEventRepositoryMock,
             $this->affectationRepositoryMock,
             $this->userRepositoryMock,
             $this->suiviRepositoryMock,
+            $this->urlGeneratorMock,
         );
     }
 

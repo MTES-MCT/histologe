@@ -15,6 +15,7 @@ use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\QueryException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class WidgetDataManager
 {
@@ -24,6 +25,7 @@ class WidgetDataManager
         private AffectationRepository $affectationRepository,
         private UserRepository $userRepository,
         private SuiviRepository $suiviRepository,
+        private UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -74,14 +76,18 @@ class WidgetDataManager
      */
     public function countDataKpi(?Territory $territory = null): array
     {
+        $countSignalement = $this->countSignalementData($territory);
+
         return [
-            'count_signalement' => $this->countSignalementData($territory),
+            'count_signalement' => $countSignalement,
             'count_suivi' => $this->countSuiviData($territory),
             'count_user' => $this->countUserData($territory),
             'card_widget' => [
                 'new_signalement' => [
-                    'count' => 0,
-                    'link' => '',
+                    'count' => $countSignalement->getNew(),
+                    'link' => $this->urlGenerator->generate('back_index', [
+                        'status_signalement' => 'new',
+                    ], UrlGeneratorInterface::ABSOLUTE_URL),
                 ],
                 'new_suivi' => [
                     'count' => 0,

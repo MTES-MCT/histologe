@@ -178,7 +178,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('active', User::STATUS_ACTIVE)
             ->setParameter('inactive', User::STATUS_INACTIVE)
             ->where('u.statut != :statut')
-            ->setParameter('statut', User::STATUS_ARCHIVE);
+            ->andWhere('u.roles not like :role')
+            ->setParameter('statut', User::STATUS_ARCHIVE)
+            ->setParameter('role', '%'.User::ROLE_USAGER.'%');
 
         if (null !== $territory) {
             $qb->andWhere('u.territory = :territory')->setParameter('territory', $territory);
