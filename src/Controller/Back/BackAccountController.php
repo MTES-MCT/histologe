@@ -92,6 +92,11 @@ class BackAccountController extends AbstractController
         LoginLinkHandlerInterface $loginLinkHandler,
     ): Response {
         $this->denyAccessUnlessGranted('USER_REACTIVE', $this->getUser());
+
+        if (User::STATUS_ARCHIVE !== $account->getStatut()) {
+            return $this->redirect($this->generateUrl('back_account_index'));
+        }
+
         /** @var User $user */
         $user = $this->getUser();
         $form = $this->createForm(UserType::class, $account, [
@@ -99,12 +104,23 @@ class BackAccountController extends AbstractController
         ]);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $account->setStatut(User::STATUS_ACTIVE);
-            $entityManager->flush();
-            $this->addFlash('success', 'Réactivation du compte effectuée.');
+        if ($form->isSubmitted()) {
+            if (\in_array('ROLE_USER_PARTNER', $account->getRoles()) || \in_array('ROLE_ADMIN_PARTNER', $account->getRoles()) || \in_array('ROLE_ADMIN_TERRITORY', $account->getRoles())) {
+                if (null === $account->getTerritory()) {
+                    $errorTerritory = new FormError('Le territoire doit être renseigné');
+                    $form->addError($errorTerritory);
+                }
+            }
+            if (null === $account->getPartner()) {
+                $errorPartner = new FormError('Le partenaire doit être renseigné');
+                $form->addError($errorPartner);
+            }
 
-            if (\in_array('ROLE_USER_PARTNER', $user->getRoles()) || \in_array('ROLE_ADMIN_PARTNER', $user->getRoles()) || \in_array('ROLE_ADMIN_TERRITORY', $user->getRoles()) || \in_array('ROLE_ADMIN', $user->getRoles())) {
+            if ($form->isValid()) {
+                $account->setStatut(User::STATUS_ACTIVE);
+                $entityManager->flush();
+                $this->addFlash('success', 'Réactivation du compte effectuée.');
+
                 $loginLinkDetails = $loginLinkHandler->createLoginLink($account);
                 $loginLink = $loginLinkDetails->getUrl();
                 $notificationService->send(
@@ -113,11 +129,9 @@ class BackAccountController extends AbstractController
                     ['link' => $loginLink],
                     $account->getTerritory()
                 );
-            }
 
-            return $this->redirectToRoute('back_account_index', [
-                'id' => $account->getId(),
-            ]);
+                return $this->redirectToRoute('back_account_index');
+            }
         }
 
         $this->displayErrors($form);
