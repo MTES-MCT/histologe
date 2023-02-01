@@ -3,8 +3,8 @@ const $partner = document.querySelector('#user_partner');
 
 $territory?.addEventListeners('change', (event) => {
     const $form = document.querySelector('form#account_user');
-    const url = $form.action
-    const type = $form.getAttribute('method')
+    const url = $form.action;
+    const type = $form.method;
 
     const options = {
         method: type,      
@@ -14,34 +14,20 @@ $territory?.addEventListeners('change', (event) => {
 
     fetch(url, options)
         .then(function (response) {
-            // The API call was successful!
             return response.text();
         })
         .then(function (html) {
-            // This is the HTML from our response as a text string
-            // console.log(html);
-            // Convert the HTML string into a document object
-            var parser = new DOMParser();
-            var doc = parser.parseFromString(html, 'text/html');
-            const newPartner = doc.querySelector('#user_partner')
-            if (null !== newPartner ){
-                newPartner.addEventListener('change', function(e) {
+            const parser = new DOMParser();
+            const receivedDoc = parser.parseFromString(html, 'text/html');
+            const $newPartner = receivedDoc.querySelector('#user_partner');
+            if (null !== $newPartner ){
+                $newPartner.addEventListener('change', function(e) {
                     e.target.classList.remove('is-invalid');
                 });
-
-                console.log(newPartner)
-                // Replace current position field ...
-                $partner.replaceWith(newPartner);
-
-            }else {
-                // vider la    liste ?
+                $partner.replaceWith($newPartner);
             }
         })
         .catch(function (err) {
-            // There was an error
             console.warn('Something went wrong.', err);
         });
-
-
 })
-
