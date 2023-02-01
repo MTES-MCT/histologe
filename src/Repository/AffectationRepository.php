@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -135,11 +136,13 @@ class AffectationRepository extends ServiceEntityRepository
     public function countAffectationPartner(?Territory $territory = null): array
     {
         $qb = $this->createQueryBuilder('a');
-        $qb->select('SUM(CASE WHEN a.statut = 0 THEN 1 ELSE 0 END) AS waiting')
-            ->addSelect('SUM(CASE WHEN a.statut = 2 THEN 1 ELSE 0 END) AS refused')
+        $qb->select('SUM(CASE WHEN a.statut = :statut_wait THEN 1 ELSE 0 END) AS waiting')
+            ->addSelect('SUM(CASE WHEN a.statut = :statut_refused THEN 1 ELSE 0 END) AS refused')
             ->addSelect('t.zip', 'p.nom')
             ->innerJoin('a.territory', 't')
-            ->innerJoin('a.partner', 'p');
+            ->innerJoin('a.partner', 'p')
+            ->setParameter('statut_wait', Affectation::STATUS_WAIT)
+            ->setParameter('statut_refused', Affectation::STATUS_REFUSED);
 
         if ($territory instanceof Territory) {
             $qb->andWhere('a.territory = :territory')->setParameter('territory', $territory);
@@ -148,5 +151,17 @@ class AffectationRepository extends ServiceEntityRepository
         $qb->groupBy('t.zip', 'p.nom');
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function countAffectationByPartner(Partner $partner): int
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb->select('COUNT(a.id) as nb_affectation')
+            ->where('a.partner = :partner')
+            ->setParameter('partner', $partner)
+            ->andWhere('a.statut = :statut_wait')
+            ->setParameter('statut_wait', Affectation::STATUS_WAIT);
+
+        return $qb->getQuery()->getSingleScalarResult();
     }
 }

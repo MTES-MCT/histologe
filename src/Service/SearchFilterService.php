@@ -56,6 +56,10 @@ class SearchFilterService
             $this->filters['statuses'] = [$statusSignalement];
         }
 
+        if (null !== $partners = $request->query->get('partners')) {
+            $this->filters['partners'] = [$partners];
+        }
+
         return $this;
     }
 

@@ -2,15 +2,15 @@
 
 namespace App\Service\DashboardWidget\WidgetLoader;
 
-use App\Manager\WidgetDataManager;
 use App\Service\DashboardWidget\Widget;
+use App\Service\DashboardWidget\WidgetDataManagerInterface;
 use App\Service\DashboardWidget\WidgetLoaderInterface;
 use App\Service\DashboardWidget\WidgetType;
 use Doctrine\DBAL\Exception;
 
 class SignalementTerritoryWidgetLoader implements WidgetLoaderInterface
 {
-    public function __construct(private WidgetDataManager $widgetDataManager)
+    public function __construct(private WidgetDataManagerInterface $widgetDataManager)
     {
     }
 
@@ -19,7 +19,7 @@ class SignalementTerritoryWidgetLoader implements WidgetLoaderInterface
      */
     public function load(Widget $widget)
     {
-        $widget->setData($this->widgetDataManager->getCountSignalementsByTerritory());
+        $widget->setData($this->widgetDataManager->countSignalementsByTerritory());
     }
 
     public function supports(string $type): bool

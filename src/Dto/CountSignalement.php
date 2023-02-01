@@ -5,6 +5,9 @@ namespace App\Dto;
 class CountSignalement
 {
     private ?array $percentage = null;
+    private ?int $closedByAtLeastOnePartner = null;
+
+    private ?int $affected = null;
 
     public function __construct(
         private ?int $total = null,
@@ -49,5 +52,29 @@ class CountSignalement
     public function getPercentage(): ?array
     {
         return $this->percentage;
+    }
+
+    public function getClosedByAtLeastOnePartner(): ?int
+    {
+        return $this->closedByAtLeastOnePartner;
+    }
+
+    public function setClosedByAtLeastOnePartner(?int $closedByAtLeastOnePartner): self
+    {
+        $this->closedByAtLeastOnePartner = $closedByAtLeastOnePartner;
+
+        return $this;
+    }
+
+    public function getAffected(): ?int
+    {
+        return $this->affected;
+    }
+
+    public function setAffected(?int $affected): self
+    {
+        $this->affected = $affected;
+
+        return $this;
     }
 }

@@ -4,12 +4,17 @@ parameters:
       card_nouveaux_signalements:
         label: "Nouveaux signalements"
         roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY]
+        link: 'back_index'
+        params:
+          status_signalement: 1
       card_nouveaux_suivis:
         label: "Nouveaux suivi"
         roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_USER_PARTNER]
+        active: false
       card_sans_suivi:
         label: "Sans suivi"
         roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_USER_PARTNER]
+        active: false
       card_clotures_globales:
         label: "Clôtures globales"
         roles: [ROLE_ADMIN]
@@ -19,9 +24,12 @@ parameters:
       card_mes_affectations:
         label: "Mes affectations"
         roles: [ROLE_ADMIN_TERRITORY]
+        link: 'back_index'
       card_nouvelles_affectations:
         label: "Nouvelles affectations"
         roles: [ROLE_USER_PARTNER, ROLE_ADMIN_PARTNER]
+        link: 'back_index'
       card_tous_les_signalements:
         label: "Tous les signalements"
         roles: [ROLE_USER_PARTNER, ROLE_ADMIN_PARTNER]
+        link: 'back_index'
