@@ -31,6 +31,7 @@ class WidgetController extends AbstractController
             $territory = $territoryManager->find($user->getTerritory()->getId());
         }
         $widget = new Widget($widgetType, $territory);
+        $this->denyAccessUnlessGranted('VIEW_WIDGET', $widget);
         $widgetLoaderCollection->load($widget);
 
         return new Response(

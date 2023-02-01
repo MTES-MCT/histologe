@@ -10,8 +10,12 @@ class WidgetCardFactory
     {
     }
 
-    public function createInstance(string $label, ?int $count = null, ?string $route = null, ?array $parameters = null): WidgetCard
-    {
+    public function createInstance(
+        string $label,
+        ?int $count = null,
+        ?string $route = null,
+        ?array $parameters = null
+    ): WidgetCard {
         $link = null;
         if (!empty($route)) {
             $link = $this->urlGenerator->generate($route, $parameters, UrlGeneratorInterface::ABSOLUTE_URL);

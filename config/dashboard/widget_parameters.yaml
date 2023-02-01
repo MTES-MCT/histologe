@@ -1,5 +1,6 @@
 parameters:
   data-kpi:
+    roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_ADMIN_PARTNER, ROLE_USER_PARTNER]
     widget_cards:
       card_nouveaux_signalements:
         label: "Nouveaux signalements"
@@ -33,3 +34,14 @@ parameters:
         label: "Tous les signalements"
         roles: [ROLE_USER_PARTNER, ROLE_ADMIN_PARTNER]
         link: 'back_index'
+  affectations-partenaires:
+    roles: [ ROLE_ADMIN, ROLE_ADMIN_TERRITORY ]
+
+  signalements-accepte-sans-suivi:
+    roles: [ ROLE_ADMIN_TERRITORY ]
+
+  signalements-territoires:
+    roles: [ ROLE_ADMIN ]
+
+  esabora-evenements:
+    roles: [ ROLE_ADMIN ]
