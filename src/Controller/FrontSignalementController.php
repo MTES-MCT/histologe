@@ -292,6 +292,10 @@ class FrontSignalementController extends AbstractController
             $this->addFlash('error', 'Une erreur est survenue...');
         }
 
+        if (!empty($email)) {
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi(), 'from' => $email]);
+        }
+
         return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
     }
 }
