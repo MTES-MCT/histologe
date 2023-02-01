@@ -772,13 +772,16 @@ class SignalementRepository extends ServiceEntityRepository
     public function countSignalementByStatus(?Territory $territory = null): CountSignalement
     {
         $qb = $this->createQueryBuilder('s');
-        $qb->select(sprintf('NEW %s(
+        $qb->select(
+            sprintf('NEW %s(
                 COUNT(s.id),
                 SUM(CASE WHEN s.statut = :new     THEN 1 ELSE 0 END),
                 SUM(CASE WHEN s.statut = :active OR s.statut =:waiting THEN 1 ELSE 0 END),
                 SUM(CASE WHEN s.statut = :closed  THEN 1 ELSE 0 END),
                 SUM(CASE WHEN s.statut = :refused THEN 1 ELSE 0 END))',
-            CountSignalement::class))
+                CountSignalement::class
+            )
+        )
             ->setParameter('new', Signalement::STATUS_NEED_VALIDATION)
             ->setParameter('active', Signalement::STATUS_ACTIVE)
             ->setParameter('waiting', Signalement::STATUS_NEED_PARTNER_RESPONSE)
