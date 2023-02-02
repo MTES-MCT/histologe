@@ -66,6 +66,96 @@ class WidgetControllerTest extends WebTestCase
         }
     }
 
+    public function testWidgetRouteAffectationPartenaires(): void
+    {
+        $client = static::createClient();
+        /** @var UserRepository $userRepository */
+        $userRepository = self::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $client->loginUser($user);
+
+        /** @var Router $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $client->request(
+            'GET',
+            $router->generate(
+                'back_dashboard_widget',
+                ['widgetType' => WidgetType::WIDGET_TYPE_AFFECTATION_PARTNER]
+            )
+        );
+
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertEquals('affectations-partenaires', $response['type']);
+        $this->assertEquals('13', $response['territory']['zip']);
+        $this->assertEquals('Bouches-du-Rhône', $response['territory']['name']);
+
+        foreach ($response['data'] as $data) {
+            $this->assertArrayHasKey('waiting', $data);
+            $this->assertArrayHasKey('refused', $data);
+            $this->assertArrayHasKey('zip', $data);
+            $this->assertArrayHasKey('nom', $data);
+        }
+    }
+
+    public function testWidgetRouteSignalementTerritoires(): void
+    {
+        $client = static::createClient();
+        /** @var UserRepository $userRepository */
+        $userRepository = self::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $client->loginUser($user);
+
+        /** @var Router $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $client->request(
+            'GET',
+            $router->generate(
+                'back_dashboard_widget',
+                ['widgetType' => WidgetType::WIDGET_TYPE_SIGNALEMENT_TERRITOIRE]
+            )
+        );
+
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertEquals('signalements-territoires', $response['type']);
+
+        foreach ($response['data'] as $data) {
+            $this->assertArrayHasKey('zip', $data);
+            $this->assertArrayHasKey('territory_name', $data);
+            $this->assertArrayHasKey('label', $data);
+            $this->assertArrayHasKey('new', $data);
+            $this->assertArrayHasKey('no_affected', $data);
+        }
+    }
+
+    public function testWidgetRouteSignalementAccepteSansSuivi(): void
+    {
+        $client = static::createClient();
+        /** @var UserRepository $userRepository */
+        $userRepository = self::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $client->loginUser($user);
+
+        /** @var Router $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $client->request(
+            'GET',
+            $router->generate(
+                'back_dashboard_widget',
+                ['widgetType' => WidgetType::WIDGET_TYPE_SIGNALEMENT_ACCEPTED_NO_SUIVI]
+            )
+        );
+
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertEquals('signalements-accepte-sans-suivi', $response['type']);
+        $this->assertEquals('13', $response['territory']['zip']);
+        $this->assertEquals('Bouches-du-Rhône', $response['territory']['name']);
+
+        foreach ($response['data'] as $data) {
+            $this->assertArrayHasKey('count_no_suivi', $data);
+            $this->assertArrayHasKey('nom', $data);
+        }
+    }
+
     /**
      * @dataProvider provideWidgetRoutesSuperAdmin
      */

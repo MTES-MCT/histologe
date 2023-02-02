@@ -123,13 +123,6 @@ class WidgetDataKpiBuilder
         return $this;
     }
 
-    public function setUser(User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
     /**
      * @todo: cardNouveauxSuivis, cardSansSuivi, cardCloturesPartenaires(ayant été fermé par au moins 1 partenaire)
      * [BO - Suivi] Qualification suivi: https://github.com/MTES-MCT/histologe/issues/867
