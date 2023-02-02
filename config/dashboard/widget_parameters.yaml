@@ -46,3 +46,4 @@ parameters:
 
   esabora-evenements:
     roles: [ ROLE_ADMIN ]
+    day_period: 21

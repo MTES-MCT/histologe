@@ -27,14 +27,18 @@ class JobEventRepository extends ServiceEntityRepository
     /**
      * @throws Exception
      */
-    public function findLastJobEventByType(string $type = JobEvent::TYPE_JOB_EVENT_ESABORA): array
-    {
+    public function findLastJobEventByType(
+        string $type,
+        int $dayPeriod
+    ): array {
         $qb = $this->createQueryBuilder('j')
             ->select('MAX(j.createdAt) AS last_event, p.id, p.nom, s.reference, j.status, j.title')
             ->innerJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId')
             ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
             ->where('j.type LIKE :type')
+            ->andWhere('DATEDIFF(NOW(),j.createdAt) <= :day_period')
             ->setParameter('type', '%'.$type.'%')
+            ->setParameter('day_period', $dayPeriod)
             ->groupBy('p.id, p.nom, s.reference,j.title, j.status')
             ->orderBy('p.id', 'ASC')
             ->addOrderBy('last_event', 'DESC');

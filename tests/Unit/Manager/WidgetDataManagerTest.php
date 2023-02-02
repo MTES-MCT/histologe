@@ -88,7 +88,10 @@ class WidgetDataManagerTest extends TestCase
             ->with(JobEvent::TYPE_JOB_EVENT_ESABORA)
             ->willReturn([]);
 
-        $this->assertEquals([], $this->widgetDataManager->findLastJobEventByType(JobEvent::TYPE_JOB_EVENT_ESABORA));
+        $this->assertEquals([], $this->widgetDataManager->findLastJobEventByType(
+            JobEvent::TYPE_JOB_EVENT_ESABORA,
+            5)
+        );
     }
 
     public function testCountDataKpi()

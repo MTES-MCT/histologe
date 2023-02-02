@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SignalementRepository::class)]
 #[ORM\Index(columns: ['statut'], name: 'idx_signalement_statut')]
+#[ORM\Index(columns: ['created_at'], name: 'idx_signalement_created_at')]
 class Signalement
 {
     public const STATUS_NEED_VALIDATION = 1;

@@ -12,7 +12,7 @@ interface WidgetDataManagerInterface
 
     public function countAffectationPartner(?Territory $territory = null): array;
 
-    public function findLastJobEventByType(string $type): array;
+    public function findLastJobEventByType(string $type, int $dayPeriod): array;
 
     public function countDataKpi(?Territory $territory = null): WidgetDataKpi;
 }

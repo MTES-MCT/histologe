@@ -8,11 +8,14 @@ use App\Service\DashboardWidget\WidgetDataManagerInterface;
 use App\Service\DashboardWidget\WidgetLoaderInterface;
 use App\Service\DashboardWidget\WidgetType;
 use Doctrine\DBAL\Exception;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class EsaboraEventWidgetLoader implements WidgetLoaderInterface
 {
-    public function __construct(private WidgetDataManagerInterface $widgetDataManager)
-    {
+    public function __construct(
+        private WidgetDataManagerInterface $widgetDataManager,
+        private ParameterBagInterface $parameterBag,
+    ) {
     }
 
     /**
@@ -20,7 +23,13 @@ class EsaboraEventWidgetLoader implements WidgetLoaderInterface
      */
     public function load(Widget $widget)
     {
-        $widget->setData($this->widgetDataManager->findLastJobEventByType(JobEvent::TYPE_JOB_EVENT_ESABORA));
+        $params = $this->parameterBag->get($widget->getType());
+        $widget->setData(
+            $this->widgetDataManager->findLastJobEventByType(
+                JobEvent::TYPE_JOB_EVENT_ESABORA,
+                $params['day_period']
+            )
+        );
     }
 
     public function supports(string $type): bool
