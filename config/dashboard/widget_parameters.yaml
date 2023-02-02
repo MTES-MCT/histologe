@@ -1,36 +1,37 @@
 parameters:
   data-kpi:
     roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_ADMIN_PARTNER, ROLE_USER_PARTNER]
-    widget_cards:
-      card_nouveaux_signalements:
+    widgetCards:
+      cardNouveauxSignalements:
         label: "Nouveaux signalements"
         roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY]
         link: 'back_index'
         params:
           status_signalement: 1
-      card_nouveaux_suivis:
+      cardNouveauxSuivis:
         label: "Nouveaux suivi"
         roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_USER_PARTNER]
-        active: false
-      card_sans_suivi:
+      cardSansSuivi:
         label: "Sans suivi"
         roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_USER_PARTNER]
-        active: false
-      card_clotures_globales:
+      cardCloturesGlobales:
         label: "Clôtures globales"
         roles: [ROLE_ADMIN]
-      card_clotures_partenaires:
+        link: 'back_index'
+        params:
+          status_signalement: 6
+      cardCloturesPartenaires:
         label: "Clotures partenaires"
         roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY]
-      card_mes_affectations:
+      cardMesAffectations:
         label: "Mes affectations"
         roles: [ROLE_ADMIN_TERRITORY]
         link: 'back_index'
-      card_nouvelles_affectations:
+      cardNouvellesAffectations:
         label: "Nouvelles affectations"
         roles: [ROLE_USER_PARTNER, ROLE_ADMIN_PARTNER]
         link: 'back_index'
-      card_tous_les_signalements:
+      cardTousLesSignalements:
         label: "Tous les signalements"
         roles: [ROLE_USER_PARTNER, ROLE_ADMIN_PARTNER]
         link: 'back_index'

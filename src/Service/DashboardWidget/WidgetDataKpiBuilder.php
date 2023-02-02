@@ -46,7 +46,7 @@ class WidgetDataKpiBuilder
 
     public function createWidgetDataKpiBuilder(): self
     {
-        $this->parameters = $this->parameterBag->get('data-kpi')['widget_cards'];
+        $this->parameters = $this->parameterBag->get('data-kpi')['widgetCards'];
         $this->user = $this->security->getUser();
 
         return $this;
@@ -67,7 +67,9 @@ class WidgetDataKpiBuilder
      */
     public function withCountSignalement(): self
     {
-        $this->countSignalement = $this->signalementRepository->countSignalementByStatus($this->territory);
+        $this->countSignalement = $this->user->isPartnerAdmin() || $this->user->isUserPartner()
+            ? $this->affectationRepository->countSignalementByPartner($this->user->getPartner())
+            : $this->signalementRepository->countSignalementByStatus($this->territory);
 
         $this->countSignalement->setClosedByAtLeastOnePartner(
             $this->signalementRepository->countSignalementClosedByAtLeast(1, $this->territory)
@@ -100,7 +102,7 @@ class WidgetDataKpiBuilder
      */
     public function withCountUser(): self
     {
-        $this->countUser = $this->userRepository->countUserByStatus($this->territory);
+        $this->countUser = $this->userRepository->countUserByStatus($this->territory, $this->user);
 
         return $this;
     }
@@ -129,19 +131,19 @@ class WidgetDataKpiBuilder
     }
 
     /**
-     * @todo: card_nouveaux_suivis and card_sans_suivi
-     * https://github.com/MTES-MCT/histologe/issues/867
-     * https://github.com/MTES-MCT/histologe/issues/869
+     * @todo: cardNouveauxSuivis, cardSansSuivi, cardCloturesPartenaires(ayant été fermé par au moins 1 partenaire)
+     * [BO - Suivi] Qualification suivi: https://github.com/MTES-MCT/histologe/issues/867
+     * [BO - Filtre signalement] Cloture partiel: https://github.com/MTES-MCT/histologe/issues/869
      */
     public function build(): WidgetDataKpi
     {
         $this
-            ->addWidgetCard('card_nouveaux_signalements', $this->countSignalement->getNew())
-            ->addWidgetCard('card_clotures_partenaires', $this->countSignalement->getClosedByAtLeastOnePartner())
-            ->addWidgetCard('card_mes_affectations')
-            ->addWidgetCard('card_tous_les_signalements', $this->countSignalement->getTotal())
-            ->addWidgetCard('card_clotures_globales', $this->countSignalement->getClosed())
-            ->addWidgetCard('card_nouvelles_affectations');
+            ->addWidgetCard('cardNouveauxSignalements', $this->countSignalement->getNew())
+            ->addWidgetCard('cardCloturesPartenaires', $this->countSignalement->getClosedByAtLeastOnePartner())
+            ->addWidgetCard('cardMesAffectations')
+            ->addWidgetCard('cardTousLesSignalements', $this->countSignalement->getTotal())
+            ->addWidgetCard('cardCloturesGlobales', $this->countSignalement->getClosed())
+            ->addWidgetCard('cardNouvellesAffectations', $this->countSignalement->getNew());
 
         return new WidgetDataKpi(
             $this->widgetCards,

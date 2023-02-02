@@ -351,7 +351,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function isPartnerAdmin(): bool
     {
         return \in_array('ROLE_ADMIN_PARTNER', $this->getRoles());
-//        return count(array_intersect(['ROLE_ADMIN_TERRITOIRE','ROLE_ADMIN_PARTNER'], $this->roles)) > 0;
+    }
+
+    public function isUserPartner(): bool
+    {
+        return \in_array(self::ROLE_USER_PARTNER, $this->getRoles());
     }
 
     /**

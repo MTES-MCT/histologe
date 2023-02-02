@@ -168,7 +168,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     /**
      * @throws NonUniqueResultException
      */
-    public function countUserByStatus(?Territory $territory = null): CountUser
+    public function countUserByStatus(?Territory $territory = null, ?User $user = null): CountUser
     {
         $qb = $this->createQueryBuilder('u');
         $qb->select(sprintf('NEW %s(
@@ -184,6 +184,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         if (null !== $territory) {
             $qb->andWhere('u.territory = :territory')->setParameter('territory', $territory);
+        }
+
+        if ($user?->isUserPartner() || $user?->isPartnerAdmin()) {
+            $qb->andWhere('u.partner = :partner')->setParameter('partner', $user->getPartner());
         }
 
         return $qb->getQuery()->getOneOrNullResult();

@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Dto\CountSignalement;
 use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
 use App\Entity\Partner;
@@ -10,6 +11,7 @@ use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\SearchFilterService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -163,5 +165,32 @@ class AffectationRepository extends ServiceEntityRepository
             ->setParameter('statut_wait', Affectation::STATUS_WAIT);
 
         return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function countSignalementByPartner(Partner $partner): CountSignalement
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb->select(sprintf('NEW %s(COUNT(a.id),
+                    SUM(CASE WHEN a.statut = :statut_wait THEN 1 ELSE 0 END),
+                    SUM(CASE WHEN a.statut = :statut_accepted THEN 1 ELSE 0 END),
+                    SUM(CASE WHEN a.statut = :statut_closed THEN 1 ELSE 0 END),
+                    SUM(CASE WHEN a.statut = :statut_refused THEN 1 ELSE 0 END))',
+            CountSignalement::class)
+        )
+            ->setParameter('statut_wait', Affectation::STATUS_WAIT)
+            ->setParameter('statut_accepted', Affectation::STATUS_ACCEPTED)
+            ->setParameter('statut_closed', Affectation::STATUS_CLOSED)
+            ->setParameter('statut_refused', Affectation::STATUS_REFUSED)
+            ->innerJoin('a.partner', 'p')
+            ->innerJoin('a.signalement', 's')
+            ->where('s.statut != :statut_archived')
+            ->andWhere('a.partner = :partner')
+            ->setParameter('statut_archived', Signalement::STATUS_ARCHIVED)
+            ->setParameter('partner', $partner);
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }
