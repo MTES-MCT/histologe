@@ -10,12 +10,16 @@ use Symfony\Component\Routing\RouterInterface;
 
 class WidgetControllerTest extends WebTestCase
 {
+    private const USER_SUPER_ADMIN = 'admin-01@histologe.fr';
+    private const USER_ADMIN_TERRITOIRE = 'admin-territoire-13-01@histologe.fr';
+    private const USER_PARTNER = 'user-13-01@histologe.fr';
+
     public function testWidgetRouteDataKpi(): void
     {
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => self::USER_SUPER_ADMIN]);
         $client->loginUser($user);
 
         /** @var Router $router */
@@ -42,7 +46,7 @@ class WidgetControllerTest extends WebTestCase
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => self::USER_SUPER_ADMIN]);
         $client->loginUser($user);
 
         /** @var Router $router */
@@ -71,7 +75,7 @@ class WidgetControllerTest extends WebTestCase
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITOIRE]);
         $client->loginUser($user);
 
         /** @var Router $router */
@@ -102,7 +106,7 @@ class WidgetControllerTest extends WebTestCase
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => self::USER_SUPER_ADMIN]);
         $client->loginUser($user);
 
         /** @var Router $router */
@@ -132,7 +136,7 @@ class WidgetControllerTest extends WebTestCase
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITOIRE]);
         $client->loginUser($user);
 
         /** @var Router $router */
@@ -164,7 +168,7 @@ class WidgetControllerTest extends WebTestCase
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => self::USER_SUPER_ADMIN]);
         $client->loginUser($user);
 
         /** @var Router $router */
@@ -186,7 +190,7 @@ class WidgetControllerTest extends WebTestCase
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITOIRE]);
         $client->loginUser($user);
 
         /** @var Router $router */
@@ -208,7 +212,7 @@ class WidgetControllerTest extends WebTestCase
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => self::USER_PARTNER]);
         $client->loginUser($user);
 
         /** @var Router $router */
