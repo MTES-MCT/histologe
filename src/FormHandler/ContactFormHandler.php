@@ -33,15 +33,9 @@ class ContactFormHandler
         $hasNotificationToSend = true;
 
         // add Suivi if signalement with this email for occupant or declarant
-        $signalementsByOccupants = $this->signalementRepository->findOneBy([
-            'mailOccupant' => $email,
-            'closedAt' => null,
-        ]);
 
-        $signalementsByDeclarants = $this->signalementRepository->findOneBy([
-            'mailDeclarant' => $email,
-            'closedAt' => null,
-        ]);
+        $signalementsByOccupants = $this->signalementRepository->findOneOpenedByMailOccupant($email);
+        $signalementsByDeclarants = $this->signalementRepository->findOneOpenedByMailDeclarant($email);
 
         if (null !== $signalementsByOccupants || null !== $signalementsByDeclarants) {
             /** @var Signalement $signalement */
