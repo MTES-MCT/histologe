@@ -12,8 +12,8 @@ class CountUser
     ) {
         $total = $this->active + $this->inactive;
         $this->percentage = [
-            'active' => round($active / $total * 100, 1),
-            'inactive' => round($inactive / $total * 100, 1),
+            'active' => 0 !== $total ? round($active / $total * 100, 1) : 0,
+            'inactive' => 0 !== $total ? round($inactive / $total * 100, 1) : 0,
         ];
     }
 

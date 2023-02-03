@@ -17,10 +17,10 @@ class CountSignalement
         private ?int $refused = null,
     ) {
         $this->percentage = [
-            'new' => round($new / $total * 100, 1),
-            'active' => round($active / $total * 100, 1),
-            'closed' => round($closed / $total * 100, 1),
-            'refused' => round($refused / $total * 100, 1),
+            'new' => 0 !== $total ? round($new / $total * 100, 1) : 0,
+            'active' => 0 !== $total ? round($active / $total * 100, 1) : 0,
+            'closed' => 0 !== $total ? round($closed / $total * 100, 1) : 0,
+            'refused' => 0 !== $total ? round($refused / $total * 100, 1) : 0,
         ];
     }
 
