@@ -10,7 +10,7 @@ class CountSignalement
     private ?int $affected = null;
 
     public function __construct(
-        private ?int $total = null,
+        private ?int $total = 0,
         private ?int $new = null,
         private ?int $active = null,
         private ?int $closed = null,
