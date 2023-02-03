@@ -19,14 +19,15 @@ use Symfony\Component\Security\Core\Security;
 
 class SignalementClosedSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private NotificationService $notificationService,
-                                private SignalementManager $signalementManager,
-                                private UserRepository $userRepository,
-                                private UrlGeneratorInterface $urlGenerator,
-                                private ParameterBagInterface $parameterBag,
-                                private TokenGeneratorInterface $tokenGenerator,
-                                private SuiviManager $suiviManager,
-                                private Security $security,
+    public function __construct(
+        private NotificationService $notificationService,
+        private SignalementManager $signalementManager,
+        private UserRepository $userRepository,
+        private UrlGeneratorInterface $urlGenerator,
+        private ParameterBagInterface $parameterBag,
+        private TokenGeneratorInterface $tokenGenerator,
+        private SuiviManager $suiviManager,
+        private Security $security,
     ) {
     }
 
@@ -73,11 +74,14 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
         $this->signalementManager->save($signalement);
     }
 
-    private function generateLinkCodeSuivi(string $codeSuivi): string
+    private function generateLinkCodeSuivi(string $codeSuivi, string $email): string
     {
         return $this->parameterBag->get('host_url').$this->urlGenerator->generate(
             'front_suivi_signalement',
-            ['code' => $codeSuivi]
+            [
+                'code' => $codeSuivi,
+                'from' => $email,
+            ]
         );
     }
 
@@ -91,17 +95,19 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
 
     private function sendMailToUsager(Signalement $signalement): void
     {
-        $sendTo = $signalement->getMailUsagers();
-        if (!empty($sendTo)) {
-            $this->notificationService->send(
-                NotificationService::TYPE_SIGNALEMENT_CLOSED_TO_USAGER,
-                $sendTo,
-                [
-                    'motif_cloture' => MotifCloture::LABEL[$signalement->getMotifCloture()],
-                    'link' => $this->generateLinkCodeSuivi($signalement->getCodeSuivi()),
-                ],
-                $signalement->getTerritory()
-            );
+        $toRecipients = $signalement->getMailUsagers();
+        if (!empty($toRecipients)) {
+            foreach ($toRecipients as $toRecipient) {
+                $this->notificationService->send(
+                    NotificationService::TYPE_SIGNALEMENT_CLOSED_TO_USAGER,
+                    [$toRecipient],
+                    [
+                        'motif_cloture' => MotifCloture::LABEL[$signalement->getMotifCloture()],
+                        'link' => $this->generateLinkCodeSuivi($signalement->getCodeSuivi(), $toRecipient),
+                    ],
+                    $signalement->getTerritory()
+                );
+            }
         }
     }
 
@@ -114,13 +120,14 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
 
         $this->notificationService->send(
             NotificationService::TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS,
-            $sendTo, [
-            'ref_signalement' => $signalement->getReference(),
-            'motif_cloture' => MotifCloture::LABEL[$signalement->getMotifCloture()],
-            'closed_by' => $signalement->getClosedBy()->getNomComplet(),
-            'partner_name' => $signalement->getClosedBy()->getPartner()->getNom(),
-            'link' => $this->generateLinkSignalementView($signalement->getUuid()),
-        ],
+            $sendTo,
+            [
+                'ref_signalement' => $signalement->getReference(),
+                'motif_cloture' => MotifCloture::LABEL[$signalement->getMotifCloture()],
+                'closed_by' => $signalement->getClosedBy()->getNomComplet(),
+                'partner_name' => $signalement->getClosedBy()->getPartner()->getNom(),
+                'link' => $this->generateLinkSignalementView($signalement->getUuid()),
+            ],
             $signalement->getTerritory()
         );
     }
@@ -138,11 +145,12 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
 
         $this->notificationService->send(
             NotificationService::TYPE_SIGNALEMENT_CLOSED_TO_PARTNER,
-            $sendTo, [
-            'ref_signalement' => $signalement->getReference(),
-            'partner_name' => $this->security->getUser()->getPartner()->getNom(),
-            'link' => $this->generateLinkSignalementView($signalement->getUuid()),
-        ],
+            $sendTo,
+            [
+                'ref_signalement' => $signalement->getReference(),
+                'partner_name' => $this->security->getUser()->getPartner()->getNom(),
+                'link' => $this->generateLinkSignalementView($signalement->getUuid()),
+            ],
             $signalement->getTerritory()
         );
     }

@@ -4,6 +4,7 @@ namespace App\DataFixtures\Loader;
 
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Form\SignalementType;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
 use App\Repository\SituationRepository;
@@ -87,6 +88,17 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setValidatedAt(Signalement::STATUS_ACTIVE === $row['statut'] ? new \DateTimeImmutable() : null)
             ->setOrigineSignalement($row['origine_signalement'])
             ->setCreatedAt((new \DateTimeImmutable())->modify('-15 days'));
+
+        if (isset($row['is_not_occupant'])) {
+            $signalement
+                ->setIsNotOccupant($row['is_not_occupant'])
+                ->setNomDeclarant($faker->lastName())
+                ->setPrenomDeclarant($faker->firstName())
+                ->setTelDeclarant($phoneNumber)
+                ->setMailDeclarant($faker->email())
+                ->setStructureDeclarant($faker->company())
+                ->setLienDeclarantOccupant(SignalementType::LINK_CHOICES[array_rand(SignalementType::LINK_CHOICES)]);
+        }
 
         if (isset($row['is_imported'])) {
             $signalement
