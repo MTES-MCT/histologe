@@ -47,10 +47,6 @@ class BackArchivedAccountController extends AbstractController
         $paginatedArchivedUsers = $userRepository->findAllArchived($currentTerritory, $currentPartner, $userTerms, false, (int) $page);
 
         if (Request::METHOD_POST === $request->getMethod()) {
-            // $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
-            // $currentPartner = $partnerRepository->find((int) $request->request->get('partner'));
-            // $userTerms = $request->request->get('bo-filters-usersterms');
-
             return $this->redirect($this->generateUrl('back_account_index', [
                 'page' => 1,
                 'territory' => $currentTerritory?->getId(),
@@ -78,12 +74,10 @@ class BackArchivedAccountController extends AbstractController
     public function reactiver(
         Request $request,
         User $user,
-        // UserRepository $userRepository,
         TerritoryRepository $territoryRepository,
         PartnerRepository $partnerRepository,
         EntityManagerInterface $entityManager,
         NotificationService $notificationService,
-        // LoginLinkHandlerInterface $loginLinkHandler,
     ): Response {
         $this->denyAccessUnlessGranted('USER_REACTIVE', $this->getUser());
 
@@ -114,15 +108,16 @@ class BackArchivedAccountController extends AbstractController
                 $entityManager->flush();
                 $this->addFlash('success', 'Réactivation du compte effectuée.');
 
-                // $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
-                // $loginLink = $loginLinkDetails->getUrl();
-
                 $link = $this->generateLink($user);
 
                 $notificationService->send(
-                    NotificationService::TYPE_ACCOUNT_ACTIVATION,
+                    NotificationService::TYPE_ACCOUNT_REACTIVATION,
                     $user->getEmail(),
-                    ['link' => $link],
+                    [
+                        'link' => $link,
+                        'territoire_name' => $user->getTerritory()->getName(),
+                        'partner_name' => $user->getPartner()->getNom(),
+                    ],
                     $user->getTerritory()
                 );
 

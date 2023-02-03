@@ -18,8 +18,6 @@ class BackArchivedAccountControllerTest extends WebTestCase
 
     public function testAccountList(): void
     {
-        $faker = Factory::create();
-
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */
@@ -41,8 +39,6 @@ class BackArchivedAccountControllerTest extends WebTestCase
 
     public function testAccountListWithTerritory(): void
     {
-        $faker = Factory::create();
-
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */
@@ -70,8 +66,6 @@ class BackArchivedAccountControllerTest extends WebTestCase
 
     public function testAccountReactivateActiveUser(): void
     {
-        $faker = Factory::create();
-
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */
@@ -120,9 +114,9 @@ class BackArchivedAccountControllerTest extends WebTestCase
             'isArchive' => '0',
         ]);
 
-        $account_email = 'user-01-09@histologe.fr';
+        $accountEmail = 'user-01-09@histologe.fr';
         /** @var User $account */
-        $account = $userRepository->findOneBy(['email' => $account_email]);
+        $account = $userRepository->findOneBy(['email' => $accountEmail]);
         $route = $router->generate('back_account_reactiver', [
             'id' => $account->getId(),
         ]);
@@ -140,7 +134,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $client->submit($form);
 
         /** @var User $account */
-        $account = $userRepository->findOneBy(['email' => $account_email]);
+        $account = $userRepository->findOneBy(['email' => $accountEmail]);
         $this->assertEquals(USER::STATUS_ACTIVE, $account->getStatut());
         $this->assertResponseRedirects('/bo/comptes-archives/');
     }
@@ -159,9 +153,9 @@ class BackArchivedAccountControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
 
-        $account_email = 'admin-02@histologe.fr';
+        $accountEmail = 'admin-02@histologe.fr';
         /** @var User $account */
-        $account = $userRepository->findOneBy(['email' => $account_email]);
+        $account = $userRepository->findOneBy(['email' => $accountEmail]);
         $route = $router->generate('back_account_reactiver', [
             'id' => $account->getId(),
         ]);
@@ -179,7 +173,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $client->submit($form);
 
         /** @var User $account */
-        $account = $userRepository->findOneBy(['email' => $account_email]);
+        $account = $userRepository->findOneBy(['email' => $accountEmail]);
         $this->assertEquals(USER::STATUS_ARCHIVE, $account->getStatut());
     }
 }
