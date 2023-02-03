@@ -279,12 +279,8 @@ class SignalementRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
             ->andWhere('s.mailOccupant = :email')
             ->setParameter('email', $email)
-            ->andWhere('s.statut != :status')
-            ->setParameter('status', Signalement::STATUS_ARCHIVED)
-            ->andWhere('s.statut != :status2')
-            ->setParameter('status2', Signalement::STATUS_CLOSED)
-            ->andWhere('s.statut != :status3')
-            ->setParameter('status3', Signalement::STATUS_REFUSED)
+            ->andWhere('s.statut NOT IN (:statusList)')
+            ->setParameter('statusList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_CLOSED, Signalement::STATUS_REFUSED])
             ->getQuery()
             ->getOneOrNullResult();
     }
@@ -294,12 +290,8 @@ class SignalementRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
             ->andWhere('s.mailDeclarant = :email')
             ->setParameter('email', $email)
-            ->andWhere('s.statut != :status')
-            ->setParameter('status', Signalement::STATUS_ARCHIVED)
-            ->andWhere('s.statut != :status2')
-            ->setParameter('status2', Signalement::STATUS_CLOSED)
-            ->andWhere('s.statut != :status3')
-            ->setParameter('status3', Signalement::STATUS_REFUSED)
+            ->andWhere('s.statut NOT IN (:statusList)')
+            ->setParameter('statusList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_CLOSED, Signalement::STATUS_REFUSED])
             ->getQuery()
             ->getOneOrNullResult();
     }
