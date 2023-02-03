@@ -16,6 +16,8 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class UserType extends AbstractType
 {
@@ -124,6 +126,35 @@ class UserType extends AbstractType
                 'class' => 'needs-validation',
                 'novalidate' => 'true',
             ],
+            'constraints' => [
+                new Assert\Callback([$this, 'validateTerritory']),
+                new Assert\Callback([$this, 'validatePartner']),
+            ],
         ]);
+    }
+
+    public function validateTerritory(mixed $value, ExecutionContextInterface $context)
+    {
+        if ($value instanceof User) {
+            $user = $value;
+
+            if ((null === $user->getTerritory()) &&
+            (\in_array('ROLE_USER_PARTNER', $user->getRoles())
+            || \in_array('ROLE_ADMIN_PARTNER', $user->getRoles())
+            || \in_array('ROLE_ADMIN_TERRITORY', $user->getRoles()))) {
+                $context->addViolation('Le territoire doit être renseigné');
+            }
+        }
+    }
+
+    public function validatePartner(mixed $value, ExecutionContextInterface $context)
+    {
+        if ($value instanceof User) {
+            $user = $value;
+
+            if (null === $user->getPartner()) {
+                $context->addViolation('Le partenaire doit être renseigné');
+            }
+        }
     }
 }

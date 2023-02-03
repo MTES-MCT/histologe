@@ -90,39 +90,25 @@ class BackArchivedAccountController extends AbstractController
         ]);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
-            if ((null === $user->getTerritory()) &&
-            (\in_array('ROLE_USER_PARTNER', $user->getRoles())
-            || \in_array('ROLE_ADMIN_PARTNER', $user->getRoles())
-            || \in_array('ROLE_ADMIN_TERRITORY', $user->getRoles()))) {
-                $errorTerritory = new FormError('Le territoire doit être renseigné');
-                $form->addError($errorTerritory);
-            }
-            if (null === $user->getPartner()) {
-                $errorPartner = new FormError('Le partenaire doit être renseigné');
-                $form->addError($errorPartner);
-            }
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user->setStatut(User::STATUS_ACTIVE);
+            $entityManager->flush();
+            $this->addFlash('success', 'Réactivation du compte effectuée.');
 
-            if ($form->isValid()) {
-                $user->setStatut(User::STATUS_ACTIVE);
-                $entityManager->flush();
-                $this->addFlash('success', 'Réactivation du compte effectuée.');
+            $link = $this->generateLink($user);
 
-                $link = $this->generateLink($user);
+            $notificationService->send(
+                NotificationService::TYPE_ACCOUNT_REACTIVATION,
+                $user->getEmail(),
+                [
+                    'link' => $link,
+                    'territoire_name' => $user->getTerritory()->getName(),
+                    'partner_name' => $user->getPartner()->getNom(),
+                ],
+                $user->getTerritory()
+            );
 
-                $notificationService->send(
-                    NotificationService::TYPE_ACCOUNT_REACTIVATION,
-                    $user->getEmail(),
-                    [
-                        'link' => $link,
-                        'territoire_name' => $user->getTerritory()->getName(),
-                        'partner_name' => $user->getPartner()->getNom(),
-                    ],
-                    $user->getTerritory()
-                );
-
-                return $this->redirectToRoute('back_account_index');
-            }
+            return $this->redirectToRoute('back_account_index');
         }
 
         $this->displayErrors($form);
