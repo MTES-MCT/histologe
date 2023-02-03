@@ -1,8 +1,8 @@
 const territory = document.querySelector('#user_territory');
-const partner = document.querySelector('#user_partner');
 
 territory?.addEventListeners('change', (event) => {
     const form = document.querySelector('form#account_user');
+    const partner = document.querySelector('#user_partner');
     const url = form.action;
     const type = form.method;
 
