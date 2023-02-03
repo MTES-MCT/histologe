@@ -274,6 +274,28 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findOneOpenedByMailOccupant(string $email): ?Signalement
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.mailOccupant = :email')
+            ->setParameter('email', $email)
+            ->andWhere('s.statut NOT IN (:statusList)')
+            ->setParameter('statusList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_CLOSED, Signalement::STATUS_REFUSED])
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function findOneOpenedByMailDeclarant(string $email): ?Signalement
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.mailDeclarant = :email')
+            ->setParameter('email', $email)
+            ->andWhere('s.statut NOT IN (:statusList)')
+            ->setParameter('statusList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_CLOSED, Signalement::STATUS_REFUSED])
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function findByStatusAndOrCityForUser(User|UserInterface $user = null, array $options, int|null $export): array|Paginator
     {
         $pageSize = $export ?? self::ARRAY_LIST_PAGE_SIZE;

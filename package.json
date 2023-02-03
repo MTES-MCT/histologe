@@ -33,5 +33,8 @@
     "dev": "encore dev",
     "watch": "encore dev --watch",
     "build": "encore production --progress"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }
