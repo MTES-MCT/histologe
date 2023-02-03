@@ -58,11 +58,16 @@ class UploadHandlerService
         $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
 
         try {
-            $resourceFile = fopen($tmpFilepath, 'r');
+            $fileResource = fopen($tmpFilepath, 'r');
             $filename = null === $directory ? $filename : $directory.$filename;
             $this->logger->info($filename);
-            $this->fileStorage->writeStream($filename, $resourceFile);
-            fclose($resourceFile);
+
+            $convertResult = $this->convertToJpeg($fileResource, $filename);
+            $fileResource = $convertResult['fileResource'];
+            $filename = $convertResult['newFilename'];
+
+            $this->fileStorage->writeStream($filename, $fileResource);
+            fclose($fileResource);
         } catch (FilesystemException $exception) {
             $this->logger->error($exception->getMessage());
         }
@@ -70,18 +75,51 @@ class UploadHandlerService
         return $filename;
     }
 
-    public function uploadFromFile(UploadedFile $file, $newFilename): void
+    public function uploadFromFile(UploadedFile $file, $newFilename): ?string
     {
         if ($file->getSize() > self::MAX_FILESIZE) {
             throw new MaxUploadSizeExceededException(self::MAX_FILESIZE);
         }
         try {
             $fileResource = fopen($file->getPathname(), 'r');
+
+            $convertResult = $this->convertToJpeg($fileResource, $newFilename);
+            $fileResource = $convertResult['fileResource'];
+            $newFilename = $convertResult['newFilename'];
+
             $this->fileStorage->writeStream($newFilename, $fileResource);
             fclose($fileResource);
+
+            return $newFilename;
         } catch (FilesystemException $exception) {
             $this->logger->error($exception->getMessage());
         }
+
+        return null;
+    }
+
+    private function convertToJpeg($fileResource, string $newFilename): array
+    {
+        $pathInfo = pathinfo($newFilename);
+        if ('heic' === $pathInfo['extension']) {
+            $newFilename = str_replace('.heic', '.jpg', $newFilename);
+            $imageConvert = new \Imagick();
+            $imageConvert->readImageFile($fileResource);
+            $imageConvert->setImageFormat('jpeg');
+            fclose($fileResource);
+
+            $tempName = $this->parameterBag->get('uploads_tmp_dir').uniqid().'.jpg';
+            $fileResourceWrite = fopen($tempName, 'w+');
+            $imageConvert->writeImageFile($fileResourceWrite);
+            fclose($fileResourceWrite);
+
+            $fileResource = fopen($tempName, 'r');
+        }
+
+        return [
+            'fileResource' => $fileResource,
+            'newFilename' => $newFilename,
+        ];
     }
 
     public function getTmpFilepath(string $filename): string
