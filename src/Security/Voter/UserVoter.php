@@ -38,7 +38,7 @@ class UserVoter extends Voter
             self::EDIT => $this->canEdit($subject, $user),
             self::TRANSFER => $this->canTransfer($subject, $user),
             self::DELETE => $this->canDelete($subject, $user),
-            self::REACTIVE => $this->canReactive($subject, $user),
+            self::REACTIVE => $this->canReactive($user),
             default => false,
         };
     }
@@ -76,7 +76,7 @@ class UserVoter extends Voter
         return $user->isTerritoryAdmin() || $user->isPartnerAdmin();
     }
 
-    private function canReactive(mixed $subject, UserInterface $user)
+    private function canReactive(UserInterface $user)
     {
         return $user->isSuperAdmin();
     }

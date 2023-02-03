@@ -7,20 +7,28 @@ use App\Form\UserType;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Security\BackOfficeAuthenticator;
 use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('/bo/comptes-archives')]
-class BackAccountController extends AbstractController
+class BackArchivedAccountController extends AbstractController
 {
     public const DEFAULT_TERRITORY_AIN = 1;
+
+    public function __construct(
+        private UrlGeneratorInterface $urlGenerator,
+        private ParameterBagInterface $parameterBag,
+    ) {
+    }
 
     #[Route('/', name: 'back_account_index', methods: ['GET', 'POST'])]
     public function index(
@@ -31,36 +39,22 @@ class BackAccountController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('USER_REACTIVE', $this->getUser());
         $page = $request->get('page') ?? 1;
-        /** @var User $user */
-        $user = $this->getUser();
 
-        $territory = empty($request->get('territory')) ? null : (int) $request->get('territory');
-        if ($territory) {
-            $currentTerritory = $territoryRepository->find($territory);
-        } else {
-            $currentTerritory = null;
-        }
+        $currentTerritory = $territoryRepository->find((int) $request->get('territory'));
+        $currentPartner = $partnerRepository->find((int) $request->get('partner'));
+        $userTerms = $request->get('userTerms');
 
-        $partner = empty($request->get('partner')) ? null : (int) $request->get('partner');
-        if ($partner) {
-            $currentPartner = $partnerRepository->find($partner);
-        } else {
-            $currentPartner = null;
-        }
-
-        $filterTerms = empty($request->get('userTerms')) ? null : $request->get('userTerms');
-
-        $paginatedArchivedUsers = $userRepository->findAllArchived($currentTerritory, $currentPartner, $filterTerms, false, (int) $page);
+        $paginatedArchivedUsers = $userRepository->findAllArchived($currentTerritory, $currentPartner, $userTerms, false, (int) $page);
 
         if (Request::METHOD_POST === $request->getMethod()) {
-            $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
-            $currentPartner = $partnerRepository->find((int) $request->request->get('partner'));
-            $userTerms = $request->request->get('bo-filters-usersterms');
+            // $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
+            // $currentPartner = $partnerRepository->find((int) $request->request->get('partner'));
+            // $userTerms = $request->request->get('bo-filters-usersterms');
 
             return $this->redirect($this->generateUrl('back_account_index', [
                 'page' => 1,
-                'territory' => ($currentTerritory ? $currentTerritory->getId() : null),
-                'partner' => ($currentPartner ? $currentPartner->getId() : null),
+                'territory' => $currentTerritory?->getId(),
+                'partner' => $currentPartner?->getId(),
                 'userTerms' => $userTerms,
             ]));
         }
@@ -70,7 +64,7 @@ class BackAccountController extends AbstractController
         return $this->render('back/account/index.html.twig', [
             'currentTerritory' => $currentTerritory,
             'currentPartner' => $currentPartner,
-            'userTerms' => $filterTerms,
+            'userTerms' => $userTerms,
             'territories' => $territoryRepository->findAllList(),
             'partners' => $partnerRepository->findAllList($currentTerritory),
             'users' => $paginatedArchivedUsers,
@@ -83,51 +77,53 @@ class BackAccountController extends AbstractController
     #[Route('/{id}/reactiver', name: 'back_account_reactiver', methods: ['GET', 'POST'])]
     public function reactiver(
         Request $request,
-        User $account,
-        UserRepository $userRepository,
+        User $user,
+        // UserRepository $userRepository,
         TerritoryRepository $territoryRepository,
         PartnerRepository $partnerRepository,
         EntityManagerInterface $entityManager,
         NotificationService $notificationService,
-        LoginLinkHandlerInterface $loginLinkHandler,
+        // LoginLinkHandlerInterface $loginLinkHandler,
     ): Response {
         $this->denyAccessUnlessGranted('USER_REACTIVE', $this->getUser());
 
-        if (User::STATUS_ARCHIVE !== $account->getStatut()) {
+        if (User::STATUS_ARCHIVE !== $user->getStatut()) {
             return $this->redirect($this->generateUrl('back_account_index'));
         }
 
-        /** @var User $user */
-        $user = $this->getUser();
-        $form = $this->createForm(UserType::class, $account, [
+        $form = $this->createForm(UserType::class, $user, [
             'can_edit_email' => false,
         ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if (\in_array('ROLE_USER_PARTNER', $account->getRoles()) || \in_array('ROLE_ADMIN_PARTNER', $account->getRoles()) || \in_array('ROLE_ADMIN_TERRITORY', $account->getRoles())) {
-                if (null === $account->getTerritory()) {
-                    $errorTerritory = new FormError('Le territoire doit être renseigné');
-                    $form->addError($errorTerritory);
-                }
+            if ((null === $user->getTerritory()) &&
+            (\in_array('ROLE_USER_PARTNER', $user->getRoles())
+            || \in_array('ROLE_ADMIN_PARTNER', $user->getRoles())
+            || \in_array('ROLE_ADMIN_TERRITORY', $user->getRoles()))) {
+                $errorTerritory = new FormError('Le territoire doit être renseigné');
+                $form->addError($errorTerritory);
             }
-            if (null === $account->getPartner()) {
+            if (null === $user->getPartner()) {
                 $errorPartner = new FormError('Le partenaire doit être renseigné');
                 $form->addError($errorPartner);
             }
 
             if ($form->isValid()) {
-                $account->setStatut(User::STATUS_ACTIVE);
+                $user->setStatut(User::STATUS_ACTIVE);
                 $entityManager->flush();
                 $this->addFlash('success', 'Réactivation du compte effectuée.');
 
-                $loginLinkDetails = $loginLinkHandler->createLoginLink($account);
-                $loginLink = $loginLinkDetails->getUrl();
+                // $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
+                // $loginLink = $loginLinkDetails->getUrl();
+
+                $link = $this->generateLink($user);
+
                 $notificationService->send(
                     NotificationService::TYPE_ACCOUNT_ACTIVATION,
-                    $account->getEmail(),
-                    ['link' => $loginLink],
-                    $account->getTerritory()
+                    $user->getEmail(),
+                    ['link' => $link],
+                    $user->getTerritory()
                 );
 
                 return $this->redirectToRoute('back_account_index');
@@ -137,7 +133,7 @@ class BackAccountController extends AbstractController
         $this->displayErrors($form);
 
         return $this->renderForm('back/account/edit.html.twig', [
-            'user' => $account,
+            'user' => $user,
             'territories' => $territoryRepository->findAllList(),
             'partners' => $partnerRepository->findAllList(null),
             'form' => $form,
@@ -150,5 +146,12 @@ class BackAccountController extends AbstractController
         foreach ($form->getErrors(true) as $error) {
             $this->addFlash('error', $error->getMessage());
         }
+    }
+
+    private function generateLink(User $user): string
+    {
+        return
+            $this->parameterBag->get('host_url').
+            $this->urlGenerator->generate(BackOfficeAuthenticator::LOGIN_ROUTE, ['token' => $user->getToken()]);
     }
 }

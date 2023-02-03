@@ -41,11 +41,11 @@
     {% endif %}
     <section class="fr-grid-row fr-grid-row--middle fr-p-5v ">
         <div class="fr-col-6">
-            <h1 class="fr-h2 fr-mb-0">{{total}} comptes archivés trouvés</h1>
+            <h1 class="fr-h2 fr-mb-0" id="desc-table">{{total}} comptes archivés trouvés</h1>
         </div>
     </section>
     <section class="fr-col-12 fr-table fr-table--bordered fr-pt-0">
-        <table class="fr-display-inline-table sortable">
+        <table class="fr-display-inline-table sortable" aria-label="Liste des comptes archivés" aria-describedby="desc-table">
             <thead>
             <tr>
                 <th>Dpt.</th>

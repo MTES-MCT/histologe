@@ -90,7 +90,6 @@ class PartnerRepository extends ServiceEntityRepository
     public function findAllWithoutTerritory()
     {
         $qb = $this->createQueryBuilder('p')
-            ->select('PARTIAL p.{id,nom,isCommune}')
             ->where('p.isArchive != 1')
             ->andWhere('p.territory IS NULL');
 

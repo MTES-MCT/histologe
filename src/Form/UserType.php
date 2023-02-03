@@ -19,11 +19,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserType extends AbstractType
 {
-    private $partnerRepository;
-
-    public function __construct(PartnerRepository $partnerRepository)
+    public function __construct(private PartnerRepository $partnerRepository)
     {
-        $this->partnerRepository = $partnerRepository;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -63,7 +60,7 @@ class UserType extends AbstractType
         ->add('territory', EntityType::class, [
             'class' => Territory::class,
             'query_builder' => function (TerritoryRepository $tr) {
-                return $tr->createQueryBuilder('t')->select('PARTIAL t.{id,name,zip}')->where('t.isActive = 1')->orderBy('t.id', 'ASC');
+                return $tr->createQueryBuilder('t')->where('t.isActive = 1')->orderBy('t.id', 'ASC');
             },
             'data' => !empty($territory) ? $territory : null,
             'choice_label' => 'name',
@@ -79,7 +76,9 @@ class UserType extends AbstractType
         ]);
 
         $formModifier = function (FormInterface $form, Territory $territory = null) {
-            $partners = null === $territory ? $this->partnerRepository->findAllWithoutTerritory() : $this->partnerRepository->findAllList($territory);
+            $partners = null === $territory ?
+            $this->partnerRepository->findAllWithoutTerritory()
+            : $this->partnerRepository->findAllList($territory);
 
             $form->add('partner', EntityType::class, [
                 'class' => Partner::class,

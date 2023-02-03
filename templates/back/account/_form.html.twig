@@ -1,5 +1,9 @@
 {{ form_start(form,{attr:{'class':'needs-validation','novalidate':true}}) }}
 <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-md-0">
+    <legend class="fr-fieldset__legend fr-text--regular">
+        <span>Pour réactiver le compte {{ user.email }}, veuillez vérifier les champs ci-dessous et les modifier si besoin.</span></br>
+        <span>Tous les champs sont obligatoires.</span>
+    </legend>
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-lg-6">
             <label for="{{ form.email.vars.id }}" class="fr-label">Adresse email</label>
