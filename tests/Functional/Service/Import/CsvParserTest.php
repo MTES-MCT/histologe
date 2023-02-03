@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Tests\Functional\Service;
+namespace App\Tests\Functional\Service\Import;
 
-use App\Service\Parser\CsvParser;
+use App\Service\Import\CsvParser;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class CsvParserTest extends KernelTestCase
 {
-    private string $projectDir = '';
+    private const FILEPATH = '/tmp/data.csv';
 
-    private string $filepath;
+    private string $projectDir = '';
 
     protected function setUp(): void
     {
@@ -19,12 +19,21 @@ class CsvParserTest extends KernelTestCase
         $this->createRandomCSV($this->projectDir.'/tmp/data.csv');
     }
 
+    public function testDefaultOptionsCsvParser(): void
+    {
+        $csvParser = new CsvParser();
+        $this->assertEquals(1, $csvParser->getOptions()['first_line']);
+        $this->assertEquals(',', $csvParser->getOptions()['delimiter']);
+        $this->assertEquals('"', $csvParser->getOptions()['enclosure']);
+        $this->assertEquals('\\', $csvParser->getOptions()['escape']);
+    }
+
     public function testParseRandomCsv(): void
     {
         $options = ['first_line' => 0, 'delimiter' => ',', 'enclosure' => '"', 'escape' => '\\'];
 
         $csvParser = new CsvParser($options);
-        $data = $csvParser->parse($this->projectDir.'/tmp/data.csv');
+        $data = $csvParser->parse($this->projectDir.self::FILEPATH);
 
         $this->assertIsArray($data);
         $this->assertCount(11, $data);
@@ -37,7 +46,7 @@ class CsvParserTest extends KernelTestCase
     {
         $options = ['first_line' => 0, 'delimiter' => ',', 'enclosure' => '"', 'escape' => '\\'];
         $csvParser = new CsvParser($options);
-        $dataList = $csvParser->parseAsDict($this->projectDir.'/tmp/data.csv');
+        $dataList = $csvParser->parseAsDict($this->projectDir.self::FILEPATH);
 
         foreach ($dataList as $dataItem) {
             $this->assertArrayHasKey('Lastname', $dataItem);
@@ -50,7 +59,7 @@ class CsvParserTest extends KernelTestCase
     {
         $options = ['first_line' => 0, 'delimiter' => ',', 'enclosure' => '"', 'escape' => '\\'];
         $csvParser = new CsvParser($options);
-        $headers = $csvParser->getHeaders($this->projectDir.'/tmp/data.csv');
+        $headers = $csvParser->getHeaders($this->projectDir.self::FILEPATH);
 
         $this->assertEquals(['Lastname', 'Firstname', 'Email'], $headers);
     }
@@ -59,7 +68,7 @@ class CsvParserTest extends KernelTestCase
     {
         $options = ['first_line' => 0, 'delimiter' => ',', 'enclosure' => '"', 'escape' => '\\'];
         $csvParser = new CsvParser($options);
-        $content = $csvParser->getContent($this->projectDir.'/tmp/data.csv');
+        $content = $csvParser->getContent($this->projectDir.self::FILEPATH);
 
         $this->assertArrayHasKey('headers', $content);
         $this->assertArrayHasKey('rows', $content);
@@ -67,7 +76,7 @@ class CsvParserTest extends KernelTestCase
 
     protected function tearDown(): void
     {
-        unlink($this->projectDir.'/tmp/data.csv');
+        unlink($this->projectDir.self::FILEPATH);
     }
 
     public function createRandomCSV($filepath, $line = 10): void

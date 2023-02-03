@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Parser;
+namespace App\Service\Import;
 
 class CsvParser
 {
@@ -87,5 +87,10 @@ class CsvParser
             'headers' => array_map('trim', $headers),
             'rows' => $rows,
         ];
+    }
+
+    public function getOptions(): array
+    {
+        return $this->options;
     }
 }

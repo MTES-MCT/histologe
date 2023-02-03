@@ -136,6 +136,9 @@ npm-install: ## Install the dependencies in the local node_modules folder
 npm-build: ## Build the dependencies in the local node_modules folder
 	@$(DOCKER_COMP) exec -it histologe_phpfpm $(NPM) run build
 
+upload: ## Push objects to S3 Bucket
+	./scripts/upload-s3.sh $(action) $(zip) $(debug)
+
 .env:
 	@bash -l -c 'cp .env.sample .env'
 

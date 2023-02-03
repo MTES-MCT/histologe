@@ -4,6 +4,7 @@ namespace App\Service\Esabora;
 
 use App\Entity\Affectation;
 use App\Messenger\Message\DossierMessage;
+use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +24,7 @@ class EsaboraService
 
     public function __construct(
         private HttpClientInterface $client,
+        private UploadHandlerService $uploadHandlerService,
         private LoggerInterface $logger,
     ) {
     }
@@ -33,7 +35,7 @@ class EsaboraService
         $token = $dossierMessage->getToken();
         $payload = [
             'treatmentName' => 'Import HISTOLOGE',
-            'fieldList' => $dossierMessage->preparePayload(),
+            'fieldList' => $this->preparePayloadPushDossier($dossierMessage),
         ];
 
         try {
@@ -92,5 +94,110 @@ class EsaboraService
         }
 
         return new DossierResponse(['message' => $exception->getMessage(), 'status_code' => $statusCode], $statusCode);
+    }
+
+    public function preparePayloadPushDossier(DossierMessage $dossierMessage, bool $encodeDocuments = true): array
+    {
+        $piecesJointes = [];
+        if ($encodeDocuments) {
+            $piecesJointes = array_map(function ($pieceJointe) {
+                $filepath = $this->uploadHandlerService->getTmpFilepath($pieceJointe['documentContent']);
+                $pieceJointe['documentContent'] = base64_encode(file_get_contents($filepath));
+
+                return $pieceJointe;
+            }, $dossierMessage->getPiecesJointes());
+        }
+
+        return [
+            [
+                'fieldName' => 'Référence_Histologe',
+                'fieldValue' => $dossierMessage->getReference(),
+            ],
+            [
+                'fieldName' => 'Usager_Nom',
+                'fieldValue' => $dossierMessage->getNomUsager(),
+            ],
+            [
+                'fieldName' => 'Usager_Prénom',
+                'fieldValue' => $dossierMessage->getPrenomUsager(),
+            ],
+            [
+                'fieldName' => 'Usager_Mail',
+                'fieldValue' => $dossierMessage->getMailUsager(),
+            ],
+            [
+                'fieldName' => 'Usager_Téléphone',
+                'fieldValue' => $dossierMessage->getTelephoneUsager(),
+            ],
+            [
+                'fieldName' => 'Usager_Numéro',
+                'fieldValue' => '',
+            ],
+            [
+                'fieldName' => 'Usager_Nom_Rue',
+                'fieldValue' => $dossierMessage->getAdresseSignalement(),
+            ],
+            [
+                'fieldName' => 'Usager_Adresse2',
+                'fieldValue' => '',
+            ],
+            [
+                'fieldName' => 'Usager_CodePostal',
+                'fieldValue' => $dossierMessage->getCodepostaleSignalement(),
+            ],
+            [
+                'fieldName' => 'Usager_Ville',
+                'fieldValue' => $dossierMessage->getVilleSignalement(),
+            ],
+            [
+                'fieldName' => 'Adresse_Numéro',
+                'fieldValue' => $dossierMessage->getNumeroAdresseSignalement(),
+            ],
+            [
+                'fieldName' => 'Adresse_Nom_Rue',
+                'fieldValue' => $dossierMessage->getAdresseSignalement(),
+            ],
+            [
+                'fieldName' => 'Adresse_CodePostal',
+                'fieldValue' => $dossierMessage->getCodepostaleSignalement(),
+            ],
+            [
+                'fieldName' => 'Adresse_Ville',
+                'fieldValue' => $dossierMessage->getVilleSignalement(),
+            ],
+            [
+                'fieldName' => 'Adresse_Etage',
+                'fieldValue' => $dossierMessage->getEtageSignalement(),
+            ],
+            [
+                'fieldName' => 'Adresse_Porte',
+                'fieldValue' => $dossierMessage->getNumeroAppartementSignalement(),
+            ],
+            [
+                'fieldName' => 'Adresse_Latitude',
+                'fieldValue' => $dossierMessage->getLatitudeSignalement(),
+            ],
+            [
+                'fieldName' => 'Adresse_Longitude',
+                'fieldValue' => $dossierMessage->getLongitudeSignalement(),
+            ],
+            [
+                'fieldName' => 'Dossier_Ouverture',
+                'fieldValue' => $dossierMessage->getDateOuverture(),
+            ],
+            [
+                'fieldName' => 'Dossier_Commentaire',
+                'fieldValue' => $dossierMessage->getDossierCommentaire(),
+            ],
+            [
+                'fieldName' => 'PJ_Observations',
+                'fieldValue' => $dossierMessage->getPiecesJointesObservation(),
+            ],
+            [
+                'fieldName' => 'PJ_Documents',
+                'fieldDocumentUpdate' => 1,
+                'fieldValue' => $piecesJointes,
+            ],
+        ];
     }
 }

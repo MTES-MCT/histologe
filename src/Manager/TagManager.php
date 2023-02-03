@@ -10,8 +10,7 @@ class TagManager extends AbstractManager
 {
     public function __construct(ManagerRegistry $managerRegistry, string $entityName = Tag::class)
     {
-        $this->managerRegistry = $managerRegistry;
-        $this->entityName = $entityName;
+        parent::__construct($managerRegistry, $entityName);
     }
 
     public function createOrGet(Territory $territory, string $label): Tag

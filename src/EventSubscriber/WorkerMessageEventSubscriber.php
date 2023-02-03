@@ -8,11 +8,14 @@ use App\Messenger\Message\DossierMessage;
 use App\Service\Esabora\EsaboraService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class WorkerMessageEventSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private JobEventManager $jobEventManager)
-    {
+    public function __construct(
+        private JobEventManager $jobEventManager,
+        private SerializerInterface $serializer,
+    ) {
     }
 
     public static function getSubscribedEvents(): array
@@ -34,7 +37,7 @@ class WorkerMessageEventSubscriber implements EventSubscriberInterface
                 $this->jobEventManager->createJobEvent(
                     type: EsaboraService::TYPE_SERVICE,
                     title: EsaboraService::ACTION_PUSH_DOSSIER,
-                    message: json_encode($dossierMessage->preparePayload()),
+                    message: $this->serializer->serialize($dossierMessage, 'json'),
                     response: json_encode($error),
                     status: JobEvent::STATUS_FAILED,
                     signalementId: $dossierMessage->getSignalementId(),

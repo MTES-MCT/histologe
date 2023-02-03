@@ -11,6 +11,7 @@ use App\Service\SearchFilterService;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -271,6 +272,28 @@ class SignalementRepository extends ServiceEntityRepository
 
         return $qb->getQuery()
             ->getResult();
+    }
+
+    public function findOneOpenedByMailOccupant(string $email): ?Signalement
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.mailOccupant = :email')
+            ->setParameter('email', $email)
+            ->andWhere('s.statut NOT IN (:statusList)')
+            ->setParameter('statusList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_CLOSED, Signalement::STATUS_REFUSED])
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function findOneOpenedByMailDeclarant(string $email): ?Signalement
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.mailDeclarant = :email')
+            ->setParameter('email', $email)
+            ->andWhere('s.statut NOT IN (:statusList)')
+            ->setParameter('statusList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_CLOSED, Signalement::STATUS_REFUSED])
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function findByStatusAndOrCityForUser(User|UserInterface $user = null, array $options, int|null $export): array|Paginator
@@ -670,5 +693,19 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         return $qb;
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findByReferenceChunk(Territory $territory, string $chunkReference): ?Signalement
+    {
+        return $this->createQueryBuilder('s')
+            ->where('s.territory = :territory')
+            ->andWhere('s.reference LIKE :reference')
+            ->setParameter('territory', $territory)
+            ->setParameter('reference', '%'.$chunkReference.'%')
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }
