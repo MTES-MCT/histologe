@@ -38,7 +38,7 @@ parameters:
   affectations-partenaires:
     roles: [ ROLE_ADMIN, ROLE_ADMIN_TERRITORY ]
 
-  signalements-accepte-sans-suivi:
+  signalements-acceptes-sans-suivi:
     roles: [ ROLE_ADMIN_TERRITORY ]
 
   signalements-territoires:

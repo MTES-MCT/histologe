@@ -18,7 +18,7 @@ class WidgetTest extends TestCase
             ->setType(WidgetType::WIDGET_TYPE_SIGNALEMENT_ACCEPTED_NO_SUIVI);
 
         $this->assertEquals('01', $widget->getTerritory()->getZip());
-        $this->assertEquals('signalements-accepte-sans-suivi', $widget->getType());
+        $this->assertEquals('signalements-acceptes-sans-suivi', $widget->getType());
         $this->assertArrayHasKey('page', $widget->getParameters());
         $this->assertArrayHasKey('content', $widget->getData());
     }

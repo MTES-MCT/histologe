@@ -150,7 +150,7 @@ class WidgetControllerTest extends WebTestCase
         );
 
         $response = json_decode($client->getResponse()->getContent(), true);
-        $this->assertEquals('signalements-accepte-sans-suivi', $response['type']);
+        $this->assertEquals('signalements-acceptes-sans-suivi', $response['type']);
         $this->assertEquals('13', $response['territory']['zip']);
         $this->assertEquals('Bouches-du-Rhône', $response['territory']['name']);
 
@@ -230,7 +230,7 @@ class WidgetControllerTest extends WebTestCase
     {
         yield 'data-kpi' => [WidgetType::WIDGET_TYPE_DATA_KPI, 200];
         yield 'affectations-partenaires' => [WidgetType::WIDGET_TYPE_AFFECTATION_PARTNER, 200];
-        yield 'signalements-accepte-sans-suivi' => [WidgetType::WIDGET_TYPE_SIGNALEMENT_ACCEPTED_NO_SUIVI, 403];
+        yield 'signalements-acceptes-sans-suivi' => [WidgetType::WIDGET_TYPE_SIGNALEMENT_ACCEPTED_NO_SUIVI, 403];
         yield 'signalements-territoires' => [WidgetType::WIDGET_TYPE_SIGNALEMENT_TERRITOIRE, 200];
         yield 'esabora-evenements' => [WidgetType::WIDGET_TYPE_ESABORA_EVENTS, 200];
     }
@@ -239,7 +239,7 @@ class WidgetControllerTest extends WebTestCase
     {
         yield 'data-kpi' => [WidgetType::WIDGET_TYPE_DATA_KPI, 200];
         yield 'affectations-partenaires' => [WidgetType::WIDGET_TYPE_AFFECTATION_PARTNER, 200];
-        yield 'signalements-accepte-sans-suivi' => [WidgetType::WIDGET_TYPE_SIGNALEMENT_ACCEPTED_NO_SUIVI, 200];
+        yield 'signalements-acceptes-sans-suivi' => [WidgetType::WIDGET_TYPE_SIGNALEMENT_ACCEPTED_NO_SUIVI, 200];
         yield 'signalements-territoires' => [WidgetType::WIDGET_TYPE_SIGNALEMENT_TERRITOIRE, 403];
         yield 'esabora-evenements' => [WidgetType::WIDGET_TYPE_ESABORA_EVENTS, 403];
     }
@@ -248,7 +248,7 @@ class WidgetControllerTest extends WebTestCase
     {
         yield 'data-kpi' => [WidgetType::WIDGET_TYPE_DATA_KPI, 200];
         yield 'affectations-partenaires' => [WidgetType::WIDGET_TYPE_AFFECTATION_PARTNER, 403];
-        yield 'signalements-accepte-sans-suivi' => [WidgetType::WIDGET_TYPE_SIGNALEMENT_ACCEPTED_NO_SUIVI, 403];
+        yield 'signalements-acceptes-sans-suivi' => [WidgetType::WIDGET_TYPE_SIGNALEMENT_ACCEPTED_NO_SUIVI, 403];
         yield 'signalements-territoires' => [WidgetType::WIDGET_TYPE_SIGNALEMENT_TERRITOIRE, 403];
         yield 'esabora-evenements' => [WidgetType::WIDGET_TYPE_ESABORA_EVENTS, 403];
     }
