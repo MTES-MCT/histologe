@@ -17,7 +17,7 @@ class UploadHandlerServiceTest extends KernelTestCase
 {
     public string $projectDir = '';
     public Filesystem $filesystem;
-    public string $fixturesPath = '/src/DataFixtures/';
+    public string $fixturesPath = '/src/DataFixtures/Images/';
     public string $originalFilename = 'sample';
     public string $targetFilename = 'sample-target';
     public string $extension = '.png';
