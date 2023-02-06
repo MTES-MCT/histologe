@@ -25,7 +25,10 @@ class HomepageController extends AbstractController
         $title = 'Un service public pour les locataires et propriétaires';
 
         $stats = [];
-        $stats['total'] = $signalementRepository->countAll(null, true);
+        $stats['total'] = $signalementRepository->countAll(
+            territory: null,
+            removeImported: true
+        );
         $stats['pris_en_compte'] = round($signalementRepository->countValidated(true) / $stats['total'] * 100, 1);
         $stats['clotures'] = round($signalementRepository->countClosed(true) / $stats['total'] * 100, 1);
 
