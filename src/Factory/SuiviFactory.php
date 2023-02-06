@@ -19,9 +19,23 @@ class SuiviFactory
             ->setCreatedBy($user)
             ->setSignalement($signalement)
             ->setDescription($this->buildDescription($params))
+            ->setType($this->buildType($user, $params))
             ->setIsPublic($isPublic);
 
         return $suivi;
+    }
+
+    private function buildType(?User $user, array $params): string
+    {
+        if ($user && \in_array('ROLE_USAGER', $user->getRoles())) {
+            return SUIVI::TYPE_USAGER;
+        }
+
+        if (isset($params['motif_cloture']) || isset($params['accept']) || isset($params['suivi']) || (isset($params['domain']) && 'esabora' === $params['domain'])) {
+            return SUIVI::TYPE_AUTO;
+        }
+
+        return SUIVI::TYPE_PARTNER;
     }
 
     private function buildDescription($params): string

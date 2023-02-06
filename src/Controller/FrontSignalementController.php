@@ -257,6 +257,7 @@ class FrontSignalementController extends AbstractController
                 $email = $request->get('signalement_front_response')['email'];
                 $user = $userRepository->findOneBy(['email' => $email]);
                 $suivi->setCreatedBy($user);
+                $suivi->setType(Suivi::TYPE_USAGER);
 
                 $description = nl2br(filter_var($request->get('signalement_front_response')['content'], \FILTER_SANITIZE_STRING));
                 $files_array = [

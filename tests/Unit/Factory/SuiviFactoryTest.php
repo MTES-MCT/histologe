@@ -41,7 +41,8 @@ class SuiviFactoryTest extends KernelTestCase
         $signalement = $this->createMock(Signalement::class);
         $suivi = $suiviFactory->createInstanceFrom(
             $this->security->getUser(),
-            $signalement, [
+            $signalement,
+            [
                 'motif_suivi' => 'Lorem ipsum suivi sit amet, consectetur adipiscing elit.',
                 'motif_cloture' => MotifCloture::LABEL['INSALUBRITE'],
                 'subject' => 'tous les partenaires',
@@ -52,6 +53,7 @@ class SuiviFactoryTest extends KernelTestCase
 
         $this->assertInstanceOf(Suivi::class, $suivi);
         $this->assertTrue($suivi->getIsPublic());
+        $this->assertEquals(Suivi::TYPE_AUTO, $suivi->getType());
         $this->assertInstanceOf(UserInterface::class, $suivi->getCreatedBy());
         $this->assertTrue(str_contains($suivi->getDescription(), MotifCloture::LABEL['INSALUBRITE']));
         $this->assertTrue(str_contains($suivi->getDescription(), 'Le signalement à été cloturé pour'));

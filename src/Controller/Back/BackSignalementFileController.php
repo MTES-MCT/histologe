@@ -60,8 +60,8 @@ class BackSignalementFileController extends AbstractController
         ManagerRegistry $doctrine,
         SluggerInterface $slugger,
         LoggerInterface $logger,
-        UploadHandlerService $uploadHandler): RedirectResponse
-    {
+        UploadHandlerService $uploadHandler
+    ): RedirectResponse {
         $this->denyAccessUnlessGranted('FILE_CREATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token'))
             && $files = $request->files->get('signalement-add-file')) {
@@ -94,8 +94,10 @@ class BackSignalementFileController extends AbstractController
                     $this->addFlash('error', $exception->getMessage());
                 }
                 if (!empty($newFilename)) {
-                    $list[] = '<li><a class="fr-link" target="_blank" href="'.$this->generateUrl('show_uploaded_file',
-                        ['folder' => '_up', 'filename' => $newFilename]).'">'.$titre.'</a></li>';
+                    $list[] = '<li><a class="fr-link" target="_blank" href="'.$this->generateUrl(
+                        'show_uploaded_file',
+                        ['folder' => '_up', 'filename' => $newFilename]
+                    ).'">'.$titre.'</a></li>';
                     if (null === $type_list) {
                         $type_list = [];
                     }
@@ -114,6 +116,7 @@ class BackSignalementFileController extends AbstractController
                 $suivi->setCreatedBy($this->getUser());
                 $suivi->setDescription('Ajout de '.$type.' au signalement<ul>'.implode('', $list).'</ul>');
                 $suivi->setSignalement($signalement);
+                $suivi->setType(SUIVI::TYPE_AUTO);
                 $signalement->$setMethod($type_list);
                 $doctrine->getManager()->persist($suivi);
                 $doctrine->getManager()->persist($signalement);
@@ -134,8 +137,8 @@ class BackSignalementFileController extends AbstractController
         string $filename,
         Request $request,
         ManagerRegistry $doctrine,
-        FilesystemOperator $fileStorage): JsonResponse
-    {
+        FilesystemOperator $fileStorage
+    ): JsonResponse {
         $this->denyAccessUnlessGranted('FILE_DELETE', $signalement);
         if ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))) {
             $setMethod = 'set'.ucfirst($type);

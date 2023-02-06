@@ -116,6 +116,7 @@ class AffectationManagerTest extends KernelTestCase
         $suivi = $signalement->getSuivis()->last();
         $this->assertStringContainsString($suiviDescription, $suivi->getDescription());
         $this->assertFalse($suivi->getIsPublic());
+        $this->assertEquals(Suivi::TYPE_AUTO, $suivi->getType());
 
         /** @var Affectation $affectationUpdated */
         $affectationUpdated = $signalement->getAffectations()->get(0);
