@@ -113,6 +113,6 @@ class UserManagerTest extends KernelTestCase
         $this->assertEquals('Partenaire 13-03', $userNewPartner->getPartner()->getNom());
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
-        $this->assertEmailHtmlBodyContains($email, 'Cliquez ci-dessous pour vous activer votre compte et définir votre mot de passe');
+        $this->assertEmailHtmlBodyContains($email, 'Cliquez ci-dessous pour activer votre compte et définir votre mot de passe');
     }
 }

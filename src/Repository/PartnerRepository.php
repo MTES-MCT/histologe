@@ -22,7 +22,7 @@ class PartnerRepository extends ServiceEntityRepository
         parent::__construct($registry, Partner::class);
     }
 
-    private function getPartnersQueryBuilder(Territory|null $territory)
+    public function getPartnersQueryBuilder(Territory|null $territory)
     {
         $queryBuilder = $this->createQueryBuilder('p')->where('p.isArchive != 1');
 
@@ -81,6 +81,17 @@ class PartnerRepository extends ServiceEntityRepository
         if ($territory) {
             $qb->andWhere('p.territory = :territory')->setParameter('territory', $territory);
         }
+
+        return $qb->indexBy('p', 'p.id')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findAllWithoutTerritory()
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->where('p.isArchive != 1')
+            ->andWhere('p.territory IS NULL');
 
         return $qb->indexBy('p', 'p.id')
             ->getQuery()
