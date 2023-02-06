@@ -11,7 +11,7 @@
           </ul>
           <div class="fr-card__content">
             <h3 class="fr-card__title">
-              <a :href="sharedState.allSignalements.link">Nouveaux signalements</a>
+              <a :href=getSanitizedUrl(sharedState.newSignalements.link)>Nouveaux signalements</a>
             </h3>
             <p class="fr-card__desc">
               Retrouvez les nouveaux signalements à accepter et à affecter.
@@ -31,7 +31,7 @@
           </ul>
           <div class="fr-card__content">
             <h3 class="fr-card__title">
-              <a :href="sharedState.newAffectations.link">Nouvelles affectations</a>
+              <a :href=getSanitizedUrl(sharedState.newAffectations.link)>Nouvelles affectations</a>
             </h3>
             <p class="fr-card__desc">
               Retrouvez les nouveaux signalements affectés à votre partenaire.
@@ -51,7 +51,7 @@
           </ul>
           <div class="fr-card__content">
             <h3 class="fr-card__title">
-              <a :href="sharedState.newSuivis.link">Nouveaux suivis</a>
+              <a :href=getSanitizedUrl(sharedState.newSuivis.link)>Nouveaux suivis</a>
             </h3>
             <p class="fr-card__desc">
               Retrouvez les signalements avec de nouveaux suivis partenaires et usagers.
@@ -71,7 +71,7 @@
           </ul>
           <div class="fr-card__content">
             <h3 class="fr-card__title">
-              <a :href="sharedState.noSuivis.link">Sans suivi</a>
+              <a :href=getSanitizedUrl(sharedState.noSuivis.link)>Sans suivi</a>
             </h3>
             <p class="fr-card__desc">
               Accédez aux signalements sans nouveau suivi depuis au moins 30 jours.
@@ -86,7 +86,7 @@
         <div class="fr-card__body">
           <div class="fr-card__content fr-mt-5w">
             <h3 class="fr-card__title">
-              <a :href="sharedState.allSignalements.link">Tous les signalements</a>
+              <a :href=getSanitizedUrl(sharedState.allSignalements.link)>Tous les signalements</a>
             </h3>
             <p class="fr-card__desc">
               Retrouvez tous les signalements gérés par votre partenaire.
@@ -106,7 +106,7 @@
           </ul>
           <div class="fr-card__content">
             <h3 class="fr-card__title">
-              <a :href="sharedState.cloturesGlobales.link">Clôtures globales</a>
+              <a :href=getSanitizedUrl(sharedState.cloturesGlobales.link)>Clôtures globales</a>
             </h3>
             <p class="fr-card__desc">
               Retrouvez les signalements récemment clôturés par les responsables territoire.
@@ -126,7 +126,7 @@
           </ul>
           <div class="fr-card__content">
             <h3 class="fr-card__title">
-              <a :href="sharedState.cloturesPartenaires.link">Clôtures partenaires</a>
+              <a :href=getSanitizedUrl(sharedState.cloturesPartenaires.link)>Clôtures partenaires</a>
             </h3>
             <p class="fr-card__desc">
               Retrouvez les signalements récemment clôturés par les partenaires.
@@ -141,7 +141,7 @@
         <div class="fr-card__body">
           <div class="fr-card__content fr-mt-5w">
             <h3 class="fr-card__title">
-              <a :href="sharedState.userAffectations.link">Mes affectations</a>
+              <a :href=getSanitizedUrl(sharedState.userAffectations.link)>Mes affectations</a>
             </h3>
             <p class="fr-card__desc">
               Retrouvez tous les signalements qui vous ont été affectés.
@@ -217,6 +217,13 @@ export default defineComponent({
         return 'fr-badge--info'
       }
       return 'fr-badge--warning'
+    },
+    getSanitizedUrl (url:any) {
+      if (url === undefined || url === null) {
+        return url
+      }
+      const sanitizeUrl = require('@braintree/sanitize-url').sanitizeUrl
+      return sanitizeUrl(url)
     }
   }
 })
