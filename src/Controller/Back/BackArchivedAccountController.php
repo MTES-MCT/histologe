@@ -46,7 +46,11 @@ class BackArchivedAccountController extends AbstractController
 
         $paginatedArchivedUsers = $userRepository->findAllArchived($currentTerritory, $currentPartner, $userTerms, false, (int) $page);
 
-        if (Request::METHOD_POST === $request->getMethod()) {
+        if ($request->isMethod(Request::METHOD_POST)) {
+            $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
+            $currentPartner = $partnerRepository->find((int) $request->request->get('partner'));
+            $userTerms = $request->request->get('bo-filters-usersterms');
+
             return $this->redirect($this->generateUrl('back_account_index', [
                 'page' => 1,
                 'territory' => $currentTerritory?->getId(),
@@ -102,7 +106,7 @@ class BackArchivedAccountController extends AbstractController
                 $user->getEmail(),
                 [
                     'link' => $link,
-                    'territoire_name' => $user->getTerritory()->getName(),
+                    'territoire_name' => $user->getTerritory()?->getName(),
                     'partner_name' => $user->getPartner()->getNom(),
                 ],
                 $user->getTerritory()
