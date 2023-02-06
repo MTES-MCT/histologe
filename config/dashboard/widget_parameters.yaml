@@ -9,7 +9,7 @@ parameters:
         params:
           status_signalement: 1
       cardNouveauxSuivis:
-        label: "Nouveaux suivi"
+        label: "Nouveaux suivis"
         roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_USER_PARTNER]
       cardSansSuivi:
         label: "Sans suivi"
