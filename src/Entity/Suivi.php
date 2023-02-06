@@ -114,7 +114,7 @@ class Suivi
         return $this->type;
     }
 
-    public function setType($type)
+    public function setType(int $type): self
     {
         $this->type = $type;
 
