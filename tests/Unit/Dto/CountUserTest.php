@@ -13,4 +13,11 @@ class CountUserTest extends TestCase
         $this->assertEquals(100, $countUser->getActive());
         $this->assertEquals(23, $countUser->getInactive());
     }
+
+    public function testEmptyCountUser(): void
+    {
+        $countUser = new CountUser(0, 0);
+        $this->assertEquals(0, $countUser->getActive());
+        $this->assertEquals(0, $countUser->getInactive());
+    }
 }

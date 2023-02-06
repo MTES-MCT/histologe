@@ -14,4 +14,12 @@ class CountSuiviTest extends TestCase
         $this->assertEquals(123, $countSuivi->getPartner());
         $this->assertEquals(70, $countSuivi->getUsager());
     }
+
+    public function testEmptyCountSuivi(): void
+    {
+        $countSuivi = new CountSuivi(0, 0, 0);
+        $this->assertEquals(0, $countSuivi->getAverage());
+        $this->assertEquals(0, $countSuivi->getPartner());
+        $this->assertEquals(0, $countSuivi->getUsager());
+    }
 }
