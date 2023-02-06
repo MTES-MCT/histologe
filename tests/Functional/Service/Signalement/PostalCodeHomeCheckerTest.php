@@ -63,19 +63,19 @@ class PostalCodeHomeCheckerTest extends KernelTestCase
     public function testGetZipCodeTerritory(): void
     {
         $this->assertEquals(
-            PostalCodeHomeChecker::CDRSE_DU_SUD_CODE_DEPARTMENT_2A,
+            PostalCodeHomeChecker::CORSE_DU_SUD_CODE_DEPARTMENT_2A,
             $this->postalCodeHomeChecker->getZipCode('20167'),
         );
         $this->assertEquals(
-            PostalCodeHomeChecker::CDRSE_DU_SUD_CODE_DEPARTMENT_2A,
+            PostalCodeHomeChecker::CORSE_DU_SUD_CODE_DEPARTMENT_2A,
             $this->postalCodeHomeChecker->getZipCode('20000'),
         );
         $this->assertEquals(
-            PostalCodeHomeChecker::HAUTE_CDRSE_CODE_DEPARTMENT_2B,
+            PostalCodeHomeChecker::HAUTE_CORSE_CODE_DEPARTMENT_2B,
             $this->postalCodeHomeChecker->getZipCode('20200')
         );
         $this->assertEquals(
-            PostalCodeHomeChecker::HAUTE_CDRSE_CODE_DEPARTMENT_2B,
+            PostalCodeHomeChecker::HAUTE_CORSE_CODE_DEPARTMENT_2B,
             $this->postalCodeHomeChecker->getZipCode('20600')
         );
         $this->assertEquals(
