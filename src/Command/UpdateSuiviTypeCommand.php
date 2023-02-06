@@ -56,39 +56,16 @@ class UpdateSuiviTypeCommand extends Command
     {
         $description = $suivi->getDescription();
 
-        if ('Signalement validé' === $description) {
-            return true;
-        }
-
-        if ('Le signalement a été accepté' === $description) {
-            return true;
-        }
-
-        if ('Modification du signalement par un partenaire' === $description) {
-            return true;
-        }
-
-        if (0 === strpos($description, 'Le signalement à été refusé avec le motif suivant:')) {
-            return true;
-        }
-
-        if (0 === strpos($description, 'Signalement rouvert pour ')) {
-            return true;
-        }
-
-        if (0 === strpos($description, 'Signalement cloturé car non-valide avec le motif suivant :')) {
-            return true;
-        }
-
-        if (preg_match('/Ajout de(.*)au signalement(.*)/', $description)) {
-            return true;
-        }
-
-        if (preg_match('/Le signalement à été cloturé pour (.*)avec le motif suivant (.*)/', $description)) {
-            return true;
-        }
-
-        if (preg_match('/Signalement (.*)via Esabora(.*)par(.*)/', $description)) {
+        if ('Signalement validé' === $description
+        || 'Le signalement a été accepté' === $description
+        || 'Modification du signalement par un partenaire' === $description
+        || 0 === strpos($description, 'Le signalement à été refusé avec le motif suivant:')
+        || 0 === strpos($description, 'Signalement rouvert pour ')
+        || 0 === strpos($description, 'Signalement cloturé car non-valide avec le motif suivant :')
+        || preg_match('/Ajout de(.*)au signalement(.*)/', $description)
+        || preg_match('/Le signalement à été cloturé pour (.*)avec le motif suivant (.*)/', $description)
+        || preg_match('/Signalement (.*)via Esabora(.*)par(.*)/', $description)
+        ) {
             return true;
         }
 

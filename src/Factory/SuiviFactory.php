@@ -31,7 +31,10 @@ class SuiviFactory
             return SUIVI::TYPE_USAGER;
         }
 
-        if (isset($params['motif_cloture']) || isset($params['accept']) || isset($params['suivi']) || (isset($params['domain']) && 'esabora' === $params['domain'])) {
+        if (isset($params['motif_cloture'])
+        || isset($params['accept'])
+        || isset($params['suivi'])
+        || (isset($params['domain']) && 'esabora' === $params['domain'])) {
             return SUIVI::TYPE_AUTO;
         }
 
