@@ -93,6 +93,13 @@ class FrontSignalementControllerTest extends WebTestCase
                 'geoloc' => ['lat' => 47.324467, 'lng' => 5.039006],
                 'inseeOccupant' => '21231',
             ]],
+            'Bastia' => [[
+                'adresseOccupant' => '2 rue de la marine',
+                'villeOccupant' => 'Bastia',
+                'cpOccupant' => '20200',
+                'geoloc' => ['lat' => 42.70278, 'lng' => 9.45],
+                'inseeOccupant' => '2B033',
+            ]],
         ];
     }
 
