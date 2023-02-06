@@ -2,18 +2,10 @@
 
 {% block body %}
     <p>Bonjour,</p>
-        <p>Votre compte Histologe vous attend !</p>
-    {% if reminder is defined %}
-        {% if nb_signalements != 0 %}
+    <p>Votre compte a bien été activé sur la plateforme Histologe - {{territoire_name}}.</p>
+    <p>Vous pouvez désormais traiter et assurer le suivi des signalements du partenaire {{partner_name}}.
+Cliquez ci-dessous pour vous connecter à votre compte.</p>
 
-            <p><strong>{{ (nb_signalements > 1) ?  nb_signalements ~ ' signalements sont ' : nb_signalements  ~' signalement est ' }} en attente sur votre compte.</strong></p>
-        {% endif %}
-        <p>Cliquez sur le bouton ci-dessous pour activer votre compte et paramétrer votre mot de passe.</p>
-    {% else %}
-        <p>Vous n'avez toujours pas activé votre compte depuis sa création, si vous le souhaitez, cliquez sur le bouton
-            ci-dessous pour vous connecter et activer
-            votre compte</p>
-    {% endif %}
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary"
            style="text-align: center">
         <tbody>

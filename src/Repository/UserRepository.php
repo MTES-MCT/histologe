@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -107,5 +109,57 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 'created_at' => $pendingUser['created_at'],
             ];
         }, $pendingUsers);
+    }
+
+    public function findAllArchived(
+        Territory|null $territory,
+        Partner|null $partner,
+        ?string $filterTerms,
+        bool $includeUsagers,
+        $page
+    ) {
+        $maxResult = User::MAX_LIST_PAGINATION;
+        $firstResult = ($page - 1) * $maxResult;
+
+        $queryBuilder = $this->createQueryBuilder('u');
+        $queryBuilder
+            ->where('u.statut = :archived')
+            ->setParameter('archived', User::STATUS_ARCHIVE);
+
+        if (!empty($territory)) {
+            $queryBuilder
+                ->andWhere('u.territory = :territory')
+                ->setParameter('territory', $territory);
+        }
+
+        if (!empty($partner)) {
+            $queryBuilder
+                ->andWhere('u.partner = :partner')
+                ->setParameter('partner', $partner);
+        }
+
+        if (!empty($filterTerms)) {
+            $queryBuilder
+                ->andWhere('LOWER(u.nom) LIKE :usersterms
+                OR LOWER(u.prenom) LIKE :usersterms
+                OR LOWER(u.email) LIKE :usersterms');
+            $queryBuilder
+                ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
+        }
+
+        if (!$includeUsagers) {
+            $queryBuilder
+                ->andWhere('u.roles LIKE :role
+                OR u.roles LIKE :role2
+                OR u.roles LIKE :role3');
+            $queryBuilder
+                ->setParameter('role', '%ROLE_ADMIN%')
+                ->setParameter('role2', '%ROLE_ADMIN_TERRITORY%')
+                ->setParameter('role3', '%ROLE_USER_PARTNER%');
+        }
+
+        $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
+
+        return new Paginator($queryBuilder->getQuery(), false);
     }
 }

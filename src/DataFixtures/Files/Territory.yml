@@ -102,7 +102,7 @@ territories:
   -
     zip: "2B"
     name: "Haute-Corse"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"43.027678\",\"e\":\"9.560096\",\"s\":\"41.832168\",\"w\":\"8.573307\"}"
   -
     zip: "21"

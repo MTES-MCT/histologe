@@ -25,6 +25,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public const STATUS_INACTIVE = 0;
     public const STATUS_ACTIVE = 1;
     public const STATUS_ARCHIVE = 2;
+    public const MAX_LIST_PAGINATION = 20;
 
     public const ROLES = [
         'Usager' => 'ROLE_USAGER',

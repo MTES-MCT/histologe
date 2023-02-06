@@ -85,6 +85,13 @@
                                        target="_self"
                                        {% if 'back_partner' in app.request.get('_route') %}aria-current="page"{% endif %}>Partenaires</a>
                                 </li>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <li class="fr-sidemenu__item {% if 'back_account' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
+                                        <a class="fr-sidemenu__link" href="{{ path('back_account_index') }}"
+                                        target="_self"
+                                        {% if 'back_account' in app.request.get('_route') %}aria-current="page"{% endif %}>Comptes archivés</a>
+                                    </li>
+                                {% endif %}
                             {% endif %}
                         </ul>
                     </div>

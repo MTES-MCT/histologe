@@ -173,7 +173,7 @@ class FrontSignalementController extends AbstractController
             if (!empty($signalement->getCpOccupant())) {
                 $signalement->setTerritory(
                     $territoryRepository->findOneBy([
-                    'zip' => $postalCodeHomeChecker->mapZip($signalement->getCpOccupant()), 'isActive' => 1, ])
+                    'zip' => $postalCodeHomeChecker->getZipCode($signalement->getCpOccupant()), 'isActive' => 1, ])
                 );
             }
 

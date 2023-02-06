@@ -18,6 +18,8 @@ class NotificationService
     public const TYPE_ACCOUNT_ACTIVATION_REMINDER = 11;
     public const TYPE_ACCOUNT_DELETE = 14;
     public const TYPE_ACCOUNT_TRANSFER = 15;
+    public const TYPE_ACCOUNT_REACTIVATION = 16;
+    public const TYPE_MIGRATION_PASSWORD = 13;
     public const TYPE_LOST_PASSWORD = 2;
     public const TYPE_SIGNALEMENT_NEW = 3;
     public const TYPE_ASSIGNMENT_NEW = 4;
@@ -31,7 +33,6 @@ class NotificationService
     public const TYPE_NEW_COMMENT_BACK = 10;
     public const TYPE_CONTACT_FORM = 8;
     public const TYPE_ERROR_SIGNALEMENT = 9;
-    public const TYPE_MIGRATION_PASSWORD = 13;
     public const TYPE_CRON = 100;
 
     public function __construct(
@@ -101,6 +102,11 @@ class NotificationService
             self::TYPE_ACCOUNT_TRANSFER => [
                 'template' => 'transfer_account_email',
                 'subject' => 'Transfert de votre compte Histologe',
+            ],
+            self::TYPE_ACCOUNT_REACTIVATION => [
+                'template' => 'reactive_account_email',
+                'subject' => 'Votre compte Histologe est activé !',
+                'btntext' => 'Accéder à mon compte',
             ],
             self::TYPE_LOST_PASSWORD => [
                 'template' => 'lost_pass_email',
