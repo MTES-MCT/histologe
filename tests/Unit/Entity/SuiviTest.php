@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Entity;
 
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Entity\User;
 use App\Manager\UserManager;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -17,13 +18,13 @@ class SuiviTest extends KernelTestCase
         $entityManager = self::getContainer()->get('doctrine')->getManager();
         $validator = self::getContainer()->get('validator');
 
-        // $territory = $entityManager->getRepository(Territory::class)->find(1);
         $faker = Factory::create();
 
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->find(1);
         $userManager = self::getContainer()->get(UserManager::class);
 
+        /** @var User $userOccupant */
         $userOccupant = $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
 
         $suivi = (new Suivi())

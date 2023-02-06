@@ -7,6 +7,7 @@ use App\Manager\SuiviManager;
 use App\Repository\SuiviRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -17,6 +18,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class UpdateSuiviTypeCommand extends Command
 {
+    private const FLUSH_COUNT = 1000;
+
     public function __construct(private SuiviManager $suiviManager)
     {
         parent::__construct();
@@ -24,6 +27,9 @@ class UpdateSuiviTypeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        // ini_set("memory_limit", "-1"); // Hack for local env: uncomment this line if you have memory limit error
+
+        $totalRead = 0;
         $io = new SymfonyStyle($input, $output);
 
         /** @var SuiviRepository $suiviRepository */
@@ -32,9 +38,14 @@ class UpdateSuiviTypeCommand extends Command
             'type' => 0,
         ]);
 
-        $count = 0;
+        $progressBar = new ProgressBar($output, \count($suivis));
+        $progressBar->start();
+
         /** @var Suivi $suivi */
         foreach ($suivis as $suivi) {
+            ++$totalRead;
+            $progressBar->advance();
+
             if (null === $suivi->getCreatedBy() || \in_array('ROLE_USAGER', $suivi->getCreatedBy()->getRoles())) {
                 $suivi->setType(Suivi::TYPE_USAGER);
             } elseif ($this->isSuiviAuto($suivi)) {
@@ -42,12 +53,18 @@ class UpdateSuiviTypeCommand extends Command
             } else {
                 $suivi->setType(Suivi::TYPE_PARTNER);
             }
-            $this->suiviManager->save($suivi, false);
-            ++$count;
+
+            if (0 === $totalRead % self::FLUSH_COUNT) {
+                $this->suiviManager->save($suivi);
+            } else {
+                $this->suiviManager->save($suivi, false);
+            }
         }
+
         $this->suiviManager->flush();
 
-        $io->success(sprintf('%s suivis updated', $count));
+        $progressBar->finish();
+        $io->success(sprintf('%s suivis updated', $totalRead));
 
         return Command::SUCCESS;
     }
@@ -63,7 +80,6 @@ class UpdateSuiviTypeCommand extends Command
         || 0 === strpos($description, 'Signalement rouvert pour ')
         || 0 === strpos($description, 'Signalement cloturé car non-valide avec le motif suivant :')
         || preg_match('/Ajout de(.*)au signalement(.*)/', $description)
-        || preg_match('/Le signalement à été cloturé pour (.*)avec le motif suivant (.*)/', $description)
         || preg_match('/Signalement (.*)via Esabora(.*)par(.*)/', $description)
         ) {
             return true;
