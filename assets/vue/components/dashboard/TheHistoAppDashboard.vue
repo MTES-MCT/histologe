@@ -86,7 +86,7 @@ export default defineComponent({
       requests.initSettings(this.handleInitSettings)
       requests.initKPI(this.handleInitKPI)
     } else {
-      alert('Error while loading dashboard')
+      this.isErrorInit = true
     }
   },
   methods: {
@@ -151,22 +151,18 @@ export default defineComponent({
       this.sharedState.users.countNotActive = requestResponse.data.count_user.inactive
       this.sharedState.users.percentNotActive = requestResponse.data.count_user.percentage.inactive
 
-      const dataWidget = requestResponse.data.card_widget
-      if (dataWidget.new_signalement !== undefined) {
-        this.sharedState.newSignalements.count = dataWidget.new_signalement.count
-        this.sharedState.newSignalements.link = dataWidget.new_signalement.link
-      }
-      if (dataWidget.affectation !== undefined) {
-        this.sharedState.newAffectations.link = dataWidget.affectation.link
-      }
-      if (dataWidget.new_suivi !== undefined) {
-        this.sharedState.newSuivis.count = dataWidget.new_suivi.count
-        this.sharedState.newSuivis.link = dataWidget.new_suivi.link
-      }
-      if (dataWidget.no_suivi !== undefined) {
-        this.sharedState.noSuivis.count = dataWidget.no_suivi.count
-        this.sharedState.noSuivis.link = dataWidget.no_suivi.link
-      }
+      const dataWidget = requestResponse.data.widgetCards
+      this.sharedState.newSignalements.count = dataWidget.cardNouveauxSignalements?.count
+      this.sharedState.newSignalements.link = dataWidget.cardNouveauxSignalements?.link
+      this.sharedState.newAffectations.link = dataWidget.cardAffectation?.link
+      this.sharedState.newSuivis.count = dataWidget.cardNouveauxSuivis?.count
+      this.sharedState.newSuivis.link = dataWidget.cardNouveauxSuivis?.link
+      this.sharedState.noSuivis.count = dataWidget.cardSansSuivi?.count
+      this.sharedState.noSuivis.link = dataWidget.cardSansSuivi?.link
+      this.sharedState.cloturesGlobales.count = dataWidget.cardCloturesGlobales?.count
+      this.sharedState.cloturesGlobales.link = dataWidget.cardCloturesGlobales?.link
+      this.sharedState.cloturesPartenaires.count = dataWidget.cardCloturesPartenaires?.count
+      this.sharedState.cloturesPartenaires.link = dataWidget.cardCloturesPartenaires?.link
     },
     handleAffectationPartner (requestResponse: any) {
       this.countTablesLoaded++

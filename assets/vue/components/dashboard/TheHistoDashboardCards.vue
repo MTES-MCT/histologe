@@ -213,10 +213,7 @@ export default defineComponent({
   },
   methods: {
     getTagClass (count:number) {
-      if (count === 0) {
-        return 'fr-badge--info'
-      }
-      return 'fr-badge--warning'
+      return (count === 0) ? 'fr-badge--info' : 'fr-badge--warning'
     },
     getSanitizedUrl (url:any) {
       if (url === undefined || url === null) {
