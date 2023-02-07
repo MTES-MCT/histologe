@@ -93,9 +93,11 @@ class UserAccountController extends AbstractController
                 ]);
             }
 
-            return $this->render('security/login_link_not_sent.html.twig', [
-                'title' => 'Aucun utilisateur ne correspond à cette adresse e-mail.',
-                'email' => $email,
+            return $this->render('security/reset_password.html.twig', [
+                'title' => $title,
+                'actionTitle' => 'Récupération de mot de passe',
+                'actionText' => "afin de récupèrer l'accès à",
+                'emailError' => $email,
             ]);
         }
 
