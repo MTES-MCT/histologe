@@ -33,6 +33,7 @@ class NotificationService
     public const TYPE_NEW_COMMENT_BACK = 10;
     public const TYPE_CONTACT_FORM = 8;
     public const TYPE_ERROR_SIGNALEMENT = 9;
+    public const TYPE_ERROR_SIGNALEMENT_NO_USER = 12;
     public const TYPE_CRON = 100;
 
     public function __construct(
@@ -173,6 +174,10 @@ class NotificationService
             self::TYPE_ERROR_SIGNALEMENT => [
                 'template' => 'erreur_signalement_email',
                 'subject' => 'Une erreur est survenue lors de la création d\'un signalement !',
+            ],
+            self::TYPE_ERROR_SIGNALEMENT_NO_USER => [
+                'template' => 'erreur_signalement_email',
+                'subject' => 'Aucun utilisateur notifiable pour un signalement !',
             ],
             self::TYPE_CRON => [
                 'template' => 'cron_email',

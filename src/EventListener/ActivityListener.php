@@ -142,8 +142,10 @@ class ActivityListener implements EventSubscriberInterface
         $options['entity'] = $entity;
         if (!$this->tos->isEmpty()) {
             if ($entity instanceof Signalement) {
+                /** @var Signalement $signalement */
                 $signalement = $entity;
             } else {
+                /** @var Signalement $signalement */
                 $signalement = $entity->getSignalement();
             }
             $uuid = $signalement->getUuid();
@@ -154,15 +156,15 @@ class ActivityListener implements EventSubscriberInterface
             ]);
 
             $this->removeCurrentUserEmailForNotification();
-            if ($this->tos->isEmpty()) {
+            if ($this->tos->isEmpty() || (1 === \count($this->tos) && empty($this->tos[0]))) {
                 $this->notifier->send(
-                    NotificationService::TYPE_ERROR_SIGNALEMENT,
-                    $this->parameterBag->get('admin_email'),
+                    NotificationService::TYPE_ERROR_SIGNALEMENT_NO_USER,
+                    $this->parameterBag->get('notifications_email'),
                     [
                         'url' => $this->parameterBag->get('host_url'),
                         'error' => sprintf(
-                            'Aucun utilisateur est notifiable pour le signalement #%s.',
-                            $signalement->getReference()
+                            'Aucun utilisateur est notifiable pour le signalement #%s',
+                            $signalement->getReference(),
                         ),
                     ],
                     $signalement->getTerritory()
