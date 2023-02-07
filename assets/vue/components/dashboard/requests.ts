@@ -7,11 +7,9 @@ export const requests = {
       .get(ajaxUrl, { timeout: 15000 })
       .then(response => {
         const responseData = response.data
-        console.log(responseData)
         functionReturn(responseData)
       })
       .catch(error => {
-        console.log('error.toJSON')
         console.log(error)
         functionReturn('error')
       })

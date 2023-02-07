@@ -93,14 +93,14 @@ export default defineComponent({
       requests.initSettings(this.handleInitSettings)
       requests.initKPI(this.handleInitKPI)
     } else {
-      alert('Error while loading dashboard')
+      this.isErrorInit = true
     }
   },
   methods: {
     handleInitSettings (requestResponse: any) {
-      this.sharedState.user.isAdmin = requestResponse.role_label === 'Super Admin'
-      this.sharedState.user.isResponsableTerritoire = requestResponse.role_label === 'Responsable Territoire'
-      this.sharedState.user.isAdministrateurPartenaire = requestResponse.role_label === 'Administrateur'
+      this.sharedState.user.isAdmin = requestResponse.roleLabel === 'Super Admin'
+      this.sharedState.user.isResponsableTerritoire = requestResponse.roleLabel === 'Responsable Territoire'
+      this.sharedState.user.isAdministrateurPartenaire = requestResponse.roleLabel === 'Administrateur'
       this.sharedState.user.prenom = requestResponse.firstname
 
       this.sharedState.territories = []
@@ -140,40 +140,36 @@ export default defineComponent({
       }
     },
     processResponseInit (requestResponse: any) {
-      this.sharedState.signalements.count = requestResponse.data.count_signalement.active
-      this.sharedState.signalements.percent = requestResponse.data.count_signalement.percentage.active
-      this.sharedState.closedSignalements.count = requestResponse.data.count_signalement.closed
-      this.sharedState.closedSignalements.percent = requestResponse.data.count_signalement.percentage.closed
-      this.sharedState.newSignalements.count = requestResponse.data.count_signalement.new
-      this.sharedState.newSignalements.percent = requestResponse.data.count_signalement.percentage.new
-      this.sharedState.refusedSignalements.count = requestResponse.data.count_signalement.refused
-      this.sharedState.refusedSignalements.percent = requestResponse.data.count_signalement.percentage.refused
+      this.sharedState.signalements.count = requestResponse.data.countSignalement.active
+      this.sharedState.signalements.percent = requestResponse.data.countSignalement.percentage.active
+      this.sharedState.closedSignalements.count = requestResponse.data.countSignalement.closed
+      this.sharedState.closedSignalements.percent = requestResponse.data.countSignalement.percentage.closed
+      this.sharedState.newSignalements.count = requestResponse.data.countSignalement.new
+      this.sharedState.newSignalements.percent = requestResponse.data.countSignalement.percentage.new
+      this.sharedState.refusedSignalements.count = requestResponse.data.countSignalement.refused
+      this.sharedState.refusedSignalements.percent = requestResponse.data.countSignalement.percentage.refused
 
-      this.sharedState.suivis.countMoyen = requestResponse.data.count_suivi.average
-      this.sharedState.suivis.countByPartner = requestResponse.data.count_suivi.partner
-      this.sharedState.suivis.countByUsager = requestResponse.data.count_suivi.usager
+      this.sharedState.suivis.countMoyen = requestResponse.data.countSuivi.average
+      this.sharedState.suivis.countByPartner = requestResponse.data.countSuivi.partner
+      this.sharedState.suivis.countByUsager = requestResponse.data.countSuivi.usager
 
-      this.sharedState.users.countActive = requestResponse.data.count_user.active
-      this.sharedState.users.percentActive = requestResponse.data.count_user.percentage.active
-      this.sharedState.users.countNotActive = requestResponse.data.count_user.inactive
-      this.sharedState.users.percentNotActive = requestResponse.data.count_user.percentage.inactive
+      this.sharedState.users.countActive = requestResponse.data.countUser.active
+      this.sharedState.users.percentActive = requestResponse.data.countUser.percentage.active
+      this.sharedState.users.countNotActive = requestResponse.data.countUser.inactive
+      this.sharedState.users.percentNotActive = requestResponse.data.countUser.percentage.inactive
 
-      const dataWidget = requestResponse.data.card_widget
-      if (dataWidget.new_signalement !== undefined) {
-        this.sharedState.newSignalements.count = dataWidget.new_signalement.count
-        this.sharedState.newSignalements.link = dataWidget.new_signalement.link
-      }
-      if (dataWidget.affectation !== undefined) {
-        this.sharedState.newAffectations.link = dataWidget.affectation.link
-      }
-      if (dataWidget.new_suivi !== undefined) {
-        this.sharedState.newSuivis.count = dataWidget.new_suivi.count
-        this.sharedState.newSuivis.link = dataWidget.new_suivi.link
-      }
-      if (dataWidget.no_suivi !== undefined) {
-        this.sharedState.noSuivis.count = dataWidget.no_suivi.count
-        this.sharedState.noSuivis.link = dataWidget.no_suivi.link
-      }
+      const dataWidget = requestResponse.data.widgetCards
+      this.sharedState.newSignalements.count = dataWidget.cardNouveauxSignalements?.count
+      this.sharedState.newSignalements.link = dataWidget.cardNouveauxSignalements?.link
+      this.sharedState.newAffectations.link = dataWidget.cardAffectation?.link
+      this.sharedState.newSuivis.count = dataWidget.cardNouveauxSuivis?.count
+      this.sharedState.newSuivis.link = dataWidget.cardNouveauxSuivis?.link
+      this.sharedState.noSuivis.count = dataWidget.cardSansSuivi?.count
+      this.sharedState.noSuivis.link = dataWidget.cardSansSuivi?.link
+      this.sharedState.cloturesGlobales.count = dataWidget.cardCloturesGlobales?.count
+      this.sharedState.cloturesGlobales.link = dataWidget.cardCloturesGlobales?.link
+      this.sharedState.cloturesPartenaires.count = dataWidget.cardCloturesPartenaires?.count
+      this.sharedState.cloturesPartenaires.link = dataWidget.cardCloturesPartenaires?.link
     },
     handleAffectationPartner (requestResponse: any) {
       this.countTablesLoaded++
