@@ -45,7 +45,7 @@ class PostalCodeHomeChecker
         };
     }
 
-    public function isAuthorizedInseeCode(Territory $territory, string $inseeCode)
+    public function isAuthorizedInseeCode(Territory $territory, string $inseeCode): bool
     {
         $authorizedCodesInsee = $territory->getAuthorizedCodesInsee();
         if (empty($authorizedCodesInsee) || 0 == \count($authorizedCodesInsee)) {
