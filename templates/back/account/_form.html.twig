@@ -1,0 +1,56 @@
+{{ form_start(form,{attr:{'class':'needs-validation','novalidate':true}}) }}
+<fieldset class="fr-fieldset fr-fieldset--inline fr-mb-md-0">
+    <legend class="fr-fieldset__legend fr-text--regular">
+        <span>Pour réactiver le compte {{ user.email }}, veuillez vérifier les champs ci-dessous et les modifier si besoin.</span></br>
+        <span>Tous les champs sont obligatoires.</span>
+    </legend>
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-lg-6">
+            <label for="{{ form.email.vars.id }}" class="fr-label">Adresse email</label>
+            {{ form_widget(form.email) }}
+            </br>
+            <span class="fr-hint-text">L'adresse email ne peut pas être modifiée</span>
+        </div>
+        
+        {% if 'ROLE_USAGER' not in user.roles %}
+            <div class="fr-col-lg-6 ">
+                <label for="{{ form.territory.vars.id }}" class="fr-label">Territoire</label>
+                {{ form_widget(form.territory) }}
+                </br>
+                <span class="fr-hint-text">Sélectionnez un territoire pour afficher les partenaires.</span>
+            </div>
+        {% endif %}
+        <div class="fr-col-lg-6">
+            <label for="{{ form.nom.vars.id }}" class="fr-label">Nom</label>
+            {{ form_widget(form.nom) }}
+            <p class="fr-error-text fr-hidden">
+                Vous devez renseigner le nom du compte.
+            </p>
+        </div>
+        {% if 'ROLE_USAGER' not in user.roles %}
+            <div class="fr-col-lg-6">
+                <label for="{{ form.partner.vars.id }}" class="fr-label">Partenaire</label>
+                {{ form_widget(form.partner) }}
+                </br>
+                <span class="fr-hint-text fr-background-contrast--error">Si le partenaire n'apparaît pas dans la liste des partenaires, c'est qu'il n'existe pas. Veillez à bien créer le partenaire avant de vouloir y ajouter un compte.</span>
+            </div>
+        {% endif %}
+        <div class="fr-col-lg-6">
+            <label for="{{ form.prenom.vars.id }}" class="fr-label">Prénom</label>
+            {{ form_widget(form.prenom) }}
+            <p class="fr-error-text fr-hidden">
+                Vous devez renseigner le prénom du compte.
+            </p>
+        </div>
+    </div>
+</fieldset><br><br>
+<div class="fr-grid-row">
+    <div class="fr-col-6">
+        <a class="fr-btn fr-btn--secondary fr-fi-arrow-left-line fr-btn--icon-left"
+        href="{{ path('back_account_index') }}">Annuler</a>
+    </div>
+    <div class="fr-col-6 fr-text--right">
+        <button class="fr-btn fr-fi-check-line fr-btn--icon-left" id="submit_btn_account"> Réactiver le compte</button>
+    </div>
+</div>
+{{ form_end(form) }}

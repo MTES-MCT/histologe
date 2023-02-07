@@ -1,0 +1,15 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Réactivation du compte{% endblock %}
+
+{% block content %}
+    <section class="fr-col-12 fr-p-5v">
+        <h2 class="fr-h2 fr-mb-0">Réactivation du compte {{ user.email }}</h2>
+        <div class="fr-pt-5v">
+            {{ include('back/account/_form.html.twig') }}
+        </div>
+    </section>
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}

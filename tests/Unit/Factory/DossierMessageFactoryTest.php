@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class DossierMessageFactoryTest extends TestCase
 {
-    private const FILE = __DIR__.'/../../../src/DataFixtures/sample.png';
+    private const FILE = __DIR__.'/../../../src/DataFixtures/Images/sample.png';
 
     public function testDossierMessageFactoryIsFullyCreated(): void
     {

@@ -4,33 +4,40 @@ suivis:
   description: "Signalement validé"
   is_public: 1
   signalement: "2022-1"
+  type: 1
 -
   created_by: admin-01@histologe.fr
   description: "Signalement validé"
   is_public: 1
   signalement: "2022-2"
+  type: 1
 -
   created_by: admin-territoire-13-01@histologe.fr
   description: "Signalement validé"
   is_public: 1
   signalement: "2022-3"
+  type: 1
 -
   created_by: admin-01@histologe.fr
   description: "Signalement validé"
   is_public: 1
   signalement: "2022-4"
+  type: 1
 -
   created_by: admin-01@histologe.fr
   description: "Signalement validé"
   is_public: 0
   signalement: "2022-5"
+  type: 1
 -
   created_by: admin-territoire-13-01@histologe.fr
   description: "Le signalement à été refusé avec le motif suivant: <br>Ne me concerne pas, voir avec la DDT."
   is_public: 0
   signalement: "2022-3"
+  type: 1
 -
   created_by: null
   description: "Bonjour, j'ai toujours le problème, quand vais-je avoir une visite ?"
   is_public: 1
   signalement: "2022-4"
+  type: 2

@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Exception\MaxUploadSizeExceededException;
+use App\Service\Files\HeicToJpegConverter;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
@@ -21,7 +22,8 @@ class UploadHandlerService
         private FilesystemOperator $fileStorage,
         private ParameterBagInterface $parameterBag,
         private SluggerInterface $slugger,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
+        private HeicToJpegConverter $heicToJpegConverter
     ) {
         $this->file = null;
     }
@@ -55,33 +57,51 @@ class UploadHandlerService
 
     public function uploadFromFilename(string $filename, ?string $directory = null): string
     {
+        $filename = null === $directory ? $filename : $directory.$filename;
+        $this->logger->info($filename);
         $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
 
         try {
-            $resourceFile = fopen($tmpFilepath, 'r');
-            $filename = null === $directory ? $filename : $directory.$filename;
-            $this->logger->info($filename);
-            $this->fileStorage->writeStream($filename, $resourceFile);
-            fclose($resourceFile);
-        } catch (FilesystemException $exception) {
-            $this->logger->error($exception->getMessage());
-        }
+            $tmpFilepath = $this->heicToJpegConverter->convert($tmpFilepath);
 
-        return $filename;
-    }
+            $pathInfo = pathinfo($tmpFilepath);
+            $newFilename = $pathInfo['filename'].'.'.$pathInfo['extension'];
 
-    public function uploadFromFile(UploadedFile $file, $newFilename): void
-    {
-        if ($file->getSize() > self::MAX_FILESIZE) {
-            throw new MaxUploadSizeExceededException(self::MAX_FILESIZE);
-        }
-        try {
-            $fileResource = fopen($file->getPathname(), 'r');
+            $fileResource = fopen($tmpFilepath, 'r');
             $this->fileStorage->writeStream($newFilename, $fileResource);
             fclose($fileResource);
         } catch (FilesystemException $exception) {
             $this->logger->error($exception->getMessage());
         }
+
+        return $newFilename;
+    }
+
+    public function uploadFromFile(UploadedFile $file, $newFilename): ?string
+    {
+        if ($file->getSize() > self::MAX_FILESIZE) {
+            throw new MaxUploadSizeExceededException(self::MAX_FILESIZE);
+        }
+        try {
+            $tmpFilepath = $file->getPathname();
+
+            $newTmpFilepath = $this->heicToJpegConverter->convert($tmpFilepath, $newFilename);
+            if ($newTmpFilepath !== $tmpFilepath) {
+                $tmpFilepath = $newTmpFilepath;
+                $pathInfo = pathinfo($tmpFilepath);
+                $newFilename = $pathInfo['filename'].'.'.$pathInfo['extension'];
+            }
+
+            $fileResource = fopen($tmpFilepath, 'r');
+            $this->fileStorage->writeStream($newFilename, $fileResource);
+            fclose($fileResource);
+
+            return $newFilename;
+        } catch (FilesystemException $exception) {
+            $this->logger->error($exception->getMessage());
+        }
+
+        return null;
     }
 
     public function getTmpFilepath(string $filename): string

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Service;
 
+use App\Service\Files\HeicToJpegConverter;
 use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
@@ -16,7 +17,7 @@ class UploadHandlerServiceTest extends KernelTestCase
 {
     public string $projectDir = '';
     public Filesystem $filesystem;
-    public string $fixturesPath = '/src/DataFixtures/';
+    public string $fixturesPath = '/src/DataFixtures/Images/';
     public string $originalFilename = 'sample';
     public string $targetFilename = 'sample-target';
     public string $extension = '.png';
@@ -47,7 +48,8 @@ class UploadHandlerServiceTest extends KernelTestCase
             $this->createMock(FilesystemOperator::class),
             $parameterBag,
             $sluggerMock,
-            $this->createMock(LoggerInterface::class)
+            $this->createMock(LoggerInterface::class),
+            $this->createMock(HeicToJpegConverter::class)
         );
 
         $uploadFile = new UploadedFile(
@@ -77,7 +79,8 @@ class UploadHandlerServiceTest extends KernelTestCase
             $this->createMock(FilesystemOperator::class),
             $parameterBag,
             $sluggerMock,
-            $this->createMock(LoggerInterface::class)
+            $this->createMock(LoggerInterface::class),
+            $this->createMock(HeicToJpegConverter::class)
         );
 
         $uploadedFileMock = $this->createMock(UploadedFile::class);

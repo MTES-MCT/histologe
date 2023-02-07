@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\FormHandler;
 
 use App\Entity\Signalement;
+use App\Entity\Suivi;
 use App\Factory\SuiviFactory;
 use App\FormHandler\ContactFormHandler;
 use App\Manager\SignalementManager;
@@ -60,6 +61,7 @@ class ContactFormHandlerTest extends KernelTestCase
         $suivis = $signalement->getSuivis();
         $suivi = $suivis->last();
         $this->assertEquals($fakeMessage.ContactFormHandler::MENTION_SENT_BY_EMAIL, $suivi->getDescription());
+        $this->assertEquals(Suivi::TYPE_USAGER, $suivi->getType());
     }
 
     public function testHandleContactFormForDeclarant()
@@ -79,5 +81,6 @@ class ContactFormHandlerTest extends KernelTestCase
         $suivis = $signalement->getSuivis();
         $suivi = $suivis->last();
         $this->assertEquals($fakeMessage.ContactFormHandler::MENTION_SENT_BY_EMAIL, $suivi->getDescription());
+        $this->assertEquals(Suivi::TYPE_USAGER, $suivi->getType());
     }
 }

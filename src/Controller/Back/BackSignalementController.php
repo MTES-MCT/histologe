@@ -31,13 +31,14 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class BackSignalementController extends AbstractController
 {
     #[Route('/{uuid}', name: 'back_signalement_view')]
-    public function viewSignalement(Signalement $signalement,
-                                    Request $request,
-                                    EntityManagerInterface $entityManager,
-                                    TagRepository $tagsRepository,
-                                    PartnerRepository $partnerRepository,
-                                    SignalementManager $signalementManager,
-                                    EventDispatcherInterface $eventDispatcher
+    public function viewSignalement(
+        Signalement $signalement,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TagRepository $tagsRepository,
+        PartnerRepository $partnerRepository,
+        SignalementManager $signalementManager,
+        EventDispatcherInterface $eventDispatcher
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
         if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
@@ -171,6 +172,7 @@ class BackSignalementController extends AbstractController
                 $suivi->setSignalement($signalement);
                 $suivi->setIsPublic(false);
                 $suivi->setDescription('Modification du signalement par un partenaire');
+                $suivi->setType(SUIVI::TYPE_AUTO);
                 $doctrine->getManager()->persist($suivi);
                 $signalement->setGeoloc($form->getExtraData()['geoloc']);
                 $signalement->setInseeOccupant($form->getExtraData()['inseeOccupant']);
