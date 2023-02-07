@@ -84,7 +84,7 @@ class BackSignalementFileController extends AbstractController
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
                 try {
-                    $uploadHandler->uploadFromFile($file, $newFilename);
+                    $newFilename = $uploadHandler->uploadFromFile($file, $newFilename);
                 } catch (FilesystemException $exception) {
                     $newFilename = '';
                     $logger->error($exception->getMessage());
