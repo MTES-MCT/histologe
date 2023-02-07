@@ -26,6 +26,9 @@ class BackCartographieController extends AbstractController
             $user = $this->getUser();
         }
         if ($request->get('load_markers')) {
+            $filters['insee_eligible'] = $this->getParameter('insee_eligible');
+            $filters['partner_name'] = $this->getUser()->getPartner()->getNom();
+
             return $this->json(['signalements' => $signalementRepository->findAllWithGeoData($user ?? null, $filters, (int) $request->get('offset'), $this->getUser()->getTerritory() ?? null)]);
         }
 

@@ -6,6 +6,7 @@
 
 imports:
     - { resource: 'dashboard/widget_parameters.yaml'}
+    - { resource: 'signalement/insee_agglomeration.yaml'}
 parameters:
     uploads_dir: '%kernel.project_dir%/uploaded_files/signalement/'
     uploads_tmp_dir: '%kernel.project_dir%/tmp/'
@@ -19,6 +20,10 @@ parameters:
     user_system_email: '%env(resolve:USER_SYSTEM_EMAIL)%'
     host_url: '%env(resolve:HISTOLOGE_URL)%'
     token_lifetime: '1 day'
+    special_territory:
+        zip: '69'
+        partner_name_cor: 'COR'
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -90,6 +95,13 @@ services:
     App\Service\Token\TokenGeneratorInterface:
         alias: App\Service\Token\TokenGenerator
 
+
+    App\Repository\SignalementRepository:
+        arguments:
+            $paramsRhone: '%special_territory%'
+    App\Repository\NotificationRepository:
+        arguments:
+            $paramsRhone: '%special_territory%'
 
 when@test:
     parameters:
