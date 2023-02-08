@@ -95,7 +95,6 @@ services:
     App\Service\Token\TokenGeneratorInterface:
         alias: App\Service\Token\TokenGenerator
 
-
     App\Repository\SignalementRepository:
         arguments:
             $paramsRhone: '%special_territory%'
