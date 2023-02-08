@@ -140,14 +140,15 @@ class ActivityListener implements EventSubscriberInterface
     {
         $options = [];
         $options['entity'] = $entity;
+        $sendErrorMail = false;
+        if ($entity instanceof Signalement) {
+            /** @var Signalement $signalement */
+            $signalement = $entity;
+        } else {
+            /** @var Signalement $signalement */
+            $signalement = $entity->getSignalement();
+        }
         if (!$this->tos->isEmpty()) {
-            if ($entity instanceof Signalement) {
-                /** @var Signalement $signalement */
-                $signalement = $entity;
-            } else {
-                /** @var Signalement $signalement */
-                $signalement = $entity->getSignalement();
-            }
             $uuid = $signalement->getUuid();
             $options = array_merge($options, [
                 'link' => $this->urlGenerator->generate('back_signalement_view', [
@@ -157,22 +158,27 @@ class ActivityListener implements EventSubscriberInterface
 
             $this->removeCurrentUserEmailForNotification();
             if ($this->tos->isEmpty() || (1 === \count($this->tos) && empty($this->tos[0]))) {
-                $this->notifier->send(
-                    NotificationService::TYPE_ERROR_SIGNALEMENT_NO_USER,
-                    $this->parameterBag->get('notifications_email'),
-                    [
-                        'url' => $this->parameterBag->get('host_url'),
-                        'error' => sprintf(
-                            'Aucun utilisateur est notifiable pour le signalement #%s',
-                            $signalement->getReference(),
-                        ),
-                    ],
-                    $signalement->getTerritory()
-                );
+                $sendErrorMail = true;
             } else {
                 $this->notifier->send($mailType, array_unique($this->tos->toArray()), $options, $signalement->getTerritory());
                 $this->tos->clear();
             }
+        } else {
+            $sendErrorMail = true;
+        }
+        if ($sendErrorMail) {
+            $this->notifier->send(
+                NotificationService::TYPE_ERROR_SIGNALEMENT_NO_USER,
+                $this->parameterBag->get('notifications_email'),
+                [
+                    'url' => $this->parameterBag->get('host_url'),
+                    'error' => sprintf(
+                        'Aucun utilisateur est notifiable pour le signalement #%s',
+                        $signalement->getReference(),
+                    ),
+                ],
+                $signalement->getTerritory()
+            );
         }
     }
 
