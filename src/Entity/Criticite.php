@@ -46,6 +46,9 @@ class Criticite
     #[ORM\Column(type: 'integer')]
     private $score;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $newScore;
+
     #[ORM\Column(type: 'boolean')]
     private $isArchive;
 
@@ -146,6 +149,18 @@ class Criticite
     public function setScore(int $score): self
     {
         $this->score = $score;
+
+        return $this;
+    }
+
+    public function getNewScore(): ?int
+    {
+        return $this->newScore;
+    }
+
+    public function setNewScore(int $newScore): self
+    {
+        $this->newScore = $newScore;
 
         return $this;
     }
