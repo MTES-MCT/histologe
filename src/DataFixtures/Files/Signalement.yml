@@ -617,3 +617,69 @@ signalements:
     situations: []
     criteres: []
     criticites: []
+  -
+    uuid: "00000000-0000-0000-2023-0000000002"
+    details: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+    is_proprio_averti: 0
+    nb_adultes: "3"
+    is_allocataire: "CAF"
+    nature_logement: "Appartement"
+    type_logement: "T5"
+    superficie: 100
+    loyer: 1000
+    phone_number: 0621127285
+    adresse_occupant: "Le Bourg, 47 route du Montmeterme"
+    cp_occupant: "69170"
+    ville_occupant: "Affoux"
+    etage_occupant: "5"
+    statut: 2
+    reference: "2023-2"
+    geoloc: "[\"48.862725\", \"2.287592\"]"
+    score_creation: 5.420054200542
+    insee_occupant: "69001"
+    type_energie_logement: "Electrique"
+    origine_signalement: "Guichet Unique"
+    situation_occupant: "1"
+    nb_pieces_logement: 3
+    nb_chambres_logement: 2
+    nb_niveaux_logement: 0
+    nb_occupants_logement: 2
+    territory: "Rhône"
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    tags: []
+    situations: []
+    criteres: []
+    criticites: []
+  -
+    uuid: "00000000-0000-0000-2023-0000000003"
+    details: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+    is_proprio_averti: 1
+    nb_adultes: "3"
+    is_allocataire: "CAF"
+    nature_logement: "Appartement"
+    type_logement: "T5"
+    superficie: 100
+    loyer: 1000
+    phone_number: 0621127285
+    adresse_occupant: "10 Rue Adamoli"
+    cp_occupant: "69001"
+    ville_occupant: "Lyon"
+    etage_occupant: "5"
+    statut: 2
+    reference: "2023-3"
+    geoloc: "[]"
+    score_creation: 5.420054200542
+    insee_occupant: "69381"
+    type_energie_logement: "Electrique"
+    origine_signalement: "Guichet Unique"
+    situation_occupant: "1"
+    nb_pieces_logement: 3
+    nb_chambres_logement: 2
+    nb_niveaux_logement: 0
+    nb_occupants_logement: 2
+    territory: "Rhône"
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    tags: []
+    situations: []
+    criteres: []
+    criticites: []

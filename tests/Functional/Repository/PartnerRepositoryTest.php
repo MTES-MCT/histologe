@@ -3,8 +3,9 @@
 namespace App\Tests\Functional\Repository;
 
 use App\Entity\Partner;
-use App\Entity\Territory;
+use App\Entity\Signalement;
 use App\Repository\PartnerRepository;
+use App\Repository\SignalementRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -12,70 +13,38 @@ class PartnerRepositoryTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
 
+    private PartnerRepository $partnerRepository;
+
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
 
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        $this->partnerRepository = $this->entityManager->getRepository(Partner::class);
     }
 
-    public function testFindPartners(): void
+    public function testFindPartnersAffected(): void
     {
-        /** @var PartnerRepository $partnerRepository */
-        $partnerRepository = $this->entityManager->getRepository(Partner::class);
-        $partners = $partnerRepository->findAllOrByInseeIfCommune(null, null);
-        $this->assertTrue(\count($partners) > 0);
-        $this->assertContainsOnlyInstancesOf(Partner::class, $partners);
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['reference' => '2022-1']);
+
+        $partners = $this->partnerRepository->findByLocalization($signalement, true);
+        $this->assertCount(1, $partners);
     }
 
-    public function testFindPartnersWithTerritory(): void
+    public function testFindPartnersNotAffected(): void
     {
-        $territoryRepository = $this->entityManager->getRepository(Territory::class);
-        $territory = $territoryRepository->findOneBy(['zip' => '01']);
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
 
-        /** @var PartnerRepository $partnerRepository */
-        $partnerRepository = $this->entityManager->getRepository(Partner::class);
-        $partners = $partnerRepository->findAllOrByInseeIfCommune(null, $territory);
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['reference' => '2022-1']);
 
-        $this->assertTrue(\count($partners) > 0);
-        $this->assertContainsOnlyInstancesOf(Partner::class, $partners);
-        /** @var Partner $partner */
-        foreach ($partners as $partner) {
-            $this->assertInstanceOf(Territory::class, $partner->getTerritory());
-        }
-    }
-
-    public function testFindPartnersByIntInseeWithTerritory(): void
-    {
-        $territoryRepository = $this->entityManager->getRepository(Territory::class);
-        $territory = $territoryRepository->findOneBy(['zip' => '13']);
-
-        /** @var PartnerRepository $partnerRepository */
-        $partnerRepository = $this->entityManager->getRepository(Partner::class);
-        $partners = $partnerRepository->findAllOrByInseeIfCommune(13215, $territory);
-        /** @var Partner $partner */
-        $inseeList = [];
-        foreach ($partners as $partner) {
-            foreach ($partner->getInsee() as $insee) {
-                $inseeList[] = $insee;
-            }
-        }
-        $this->assertContains('13215', $inseeList);
-    }
-
-    public function testFindPartnersByStringInseeWithTerritory(): void
-    {
-        $territoryRepository = $this->entityManager->getRepository(Territory::class);
-        $territory = $territoryRepository->findOneBy(['zip' => '2A']);
-
-        /** @var PartnerRepository $partnerRepository */
-        $partnerRepository = $this->entityManager->getRepository(Partner::class);
-        $partners = $partnerRepository->findAllOrByInseeIfCommune('2A247', $territory);
-
-        /** @var Partner $partner */
-        foreach ($partners as $partner) {
-            $this->assertContains('2A247', $partner->getInsee());
-        }
+        $partners = $this->partnerRepository->findByLocalization($signalement, false);
+        $this->assertCount(3, $partners);
     }
 
     protected function tearDown(): void
