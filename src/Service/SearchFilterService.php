@@ -27,6 +27,7 @@ class SearchFilterService
     public function setFilters(): self
     {
         $request = $this->getRequest();
+
         $this->filters = [
             'searchterms' => $request->get('bo-filters-searchterms') ?? null,
             'territories' => $request->get('bo-filters-territories') ?? null,
@@ -50,6 +51,14 @@ class SearchFilterService
             'tags' => $request->get('bo-filters-tags') ?? null,
             'page' => $request->get('page') ?? 1,
         ];
+
+        if (null !== $statusSignalement = $request->query->get('status_signalement')) {
+            $this->filters['statuses'] = [$statusSignalement];
+        }
+
+        if (null !== $partners = $request->query->get('partners')) {
+            $this->filters['partners'] = [$partners];
+        }
 
         return $this;
     }

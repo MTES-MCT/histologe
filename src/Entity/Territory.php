@@ -6,6 +6,7 @@ use App\Repository\TerritoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: TerritoryRepository::class)]
 class Territory
@@ -22,30 +23,39 @@ class Territory
     private $name;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: User::class)]
+    #[Ignore]
     private $users;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Partner::class)]
+    #[Ignore]
     private $partners;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Commune::class)]
+    #[Ignore]
     private $communes;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Signalement::class)]
+    #[Ignore]
     private $signalements;
 
     #[ORM\Column(type: 'boolean')]
+    #[Ignore]
     private $isActive;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Affectation::class)]
+    #[Ignore]
     private $affectations;
 
     #[ORM\Column(type: 'json')]
+    #[Ignore]
     private $bbox = [];
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Tag::class, orphanRemoval: true)]
+    #[Ignore]
     private $tags;
 
     #[ORM\Column(type: 'json', nullable: true)]
+    #[Ignore]
     private $authorizedCodesInsee = [];
 
     public function __construct()

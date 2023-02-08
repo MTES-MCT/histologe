@@ -27,6 +27,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public const STATUS_ARCHIVE = 2;
     public const MAX_LIST_PAGINATION = 20;
 
+    public const ROLE_USAGER = self::ROLES['Usager'];
+    public const ROLE_USER_PARTNER = self::ROLES['Utilisateur'];
+    public const ROLE_ADMIN_PARTNER = self::ROLES['Administrateur'];
+    public const ROLE_ADMIN_TERRITORY = self::ROLES['Responsable Territoire'];
+    public const ROLE_ADMIN = self::ROLES['Super Admin'];
+
     public const ROLES = [
         'Usager' => 'ROLE_USAGER',
         'Utilisateur' => 'ROLE_USER_PARTNER',
@@ -345,7 +351,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function isPartnerAdmin(): bool
     {
         return \in_array('ROLE_ADMIN_PARTNER', $this->getRoles());
-//        return count(array_intersect(['ROLE_ADMIN_TERRITOIRE','ROLE_ADMIN_PARTNER'], $this->roles)) > 0;
+    }
+
+    public function isUserPartner(): bool
+    {
+        return \in_array(self::ROLE_USER_PARTNER, $this->getRoles());
     }
 
     /**
@@ -358,6 +368,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
+    }
+
+    public function getRoleLabel(): string
+    {
+        $roleLabel = array_flip(self::ROLES);
+        $role = array_shift($this->roles);
+
+        return $roleLabel[$role];
     }
 
     public function setRoles(array $roles): self
