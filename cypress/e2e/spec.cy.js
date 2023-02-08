@@ -113,6 +113,7 @@ describe('Test a real user login', () => {
 
 describe('Simple test for back-office statistics', () => {
   it('Displays the page of the statistics', () => {
+    cy.get('#fr-sidemenu-wrapper').contains('Signalements').click() //Open by default so click to close
     cy.get('#fr-sidemenu-wrapper').contains('Données chiffrées').click()
     cy.get('#fr-sidemenu-pilotage').contains('Statistiques').click()
     disableSmoothScroll()
