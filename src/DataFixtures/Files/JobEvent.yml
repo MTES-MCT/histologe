@@ -1,0 +1,37 @@
+job_event:
+  -
+    partner: "partenaire-13-01@histologe.fr"
+    signalement: "2022-7"
+    type: "esabora"
+    title: "sync_dossier"
+    status: success
+  -
+    partner: "partenaire-13-02@histologe.fr"
+    signalement: "2022-8"
+    type: "esabora"
+    title: "push_dossier"
+    status: failed
+  -
+    partner: "partenaire-13-01@histologe.fr"
+    signalement: "2022-10"
+    type: "esabora"
+    title: "sync_dossier"
+    status: success
+  -
+    partner: "partenaire-13-02@histologe.fr"
+    signalement: "2022-11"
+    type: "esabora"
+    title: "push_dossier"
+    status: failed
+  -
+    partner: "partenaire-13-01@histologe.fr"
+    signalement: "2022-12"
+    type: "esabora"
+    title: "sync_dossier"
+    status: success
+  -
+    partner: "partenaire-13-02@histologe.fr"
+    signalement: "2022-13"
+    type: "esabora"
+    title: "push_dossier"
+    status: failed

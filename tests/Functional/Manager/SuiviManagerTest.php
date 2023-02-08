@@ -51,6 +51,7 @@ class SuiviManagerTest extends KernelTestCase
         $signalement->addSuivi($suivi);
         $countSuivisAfterCreate = $signalement->getSuivis()->count();
 
+        $this->assertEquals(Suivi::TYPE_PARTNER, $suivi->getType());
         $this->assertNotEquals($countSuivisBeforeCreate, $countSuivisAfterCreate);
     }
 

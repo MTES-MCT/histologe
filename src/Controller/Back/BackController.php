@@ -70,8 +70,10 @@ class BackController extends AbstractController
                     Affectation::STATUS_CLOSED => Signalement::STATUS_CLOSED,
                     Affectation::STATUS_REFUSED => Signalement::STATUS_CLOSED,
                 ];
-                foreach ($this->iterator as $item) {
-                    $item->getSignalement()->setStatut((int) $status[$item->getStatut()]);
+                if ($this->iterator) {
+                    foreach ($this->iterator as $item) {
+                        $item->getSignalement()->setStatut((int) $status[$item->getStatut()]);
+                    }
                 }
             }
         } else {

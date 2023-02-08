@@ -71,6 +71,7 @@ class BackSignalementActionController extends AbstractController
             $suivi->setDescription('Signalement '.$description);
             $suivi->setCreatedBy($this->getUser());
             $suivi->setIsPublic(true);
+            $suivi->setType(SUIVI::TYPE_AUTO);
             $signalement->setStatut($statut);
             $doctrine->getManager()->persist($signalement);
             $doctrine->getManager()->persist($suivi);
@@ -98,6 +99,7 @@ class BackSignalementActionController extends AbstractController
             $suivi->setIsPublic($form['isPublic']);
             $suivi->setSignalement($signalement);
             $suivi->setCreatedBy($this->getUser());
+            $suivi->setType(SUIVI::TYPE_PARTNER);
             $doctrine->getManager()->persist($suivi);
             $doctrine->getManager()->flush();
             $this->addFlash('success', 'Suivi publié avec succès !');
@@ -137,6 +139,7 @@ class BackSignalementActionController extends AbstractController
             $suivi->setDescription('Signalement rouvert pour '.$reopenFor);
             $suivi->setCreatedBy($this->getUser());
             $suivi->setIsPublic(true);
+            $suivi->setType(SUIVI::TYPE_AUTO);
             $doctrine->getManager()->persist($suivi);
             $doctrine->getManager()->flush();
             $this->addFlash('success', 'Signalement rouvert avec succés !');

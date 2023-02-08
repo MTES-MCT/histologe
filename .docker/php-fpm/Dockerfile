@@ -4,6 +4,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         curl \
         wget \
         zlib1g-dev \
+        libmagickwand-dev \
         libxml2-dev \
         libzip-dev \
         zip \
@@ -22,6 +23,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         # Install Xdebug
         && pecl bundle -d /usr/src/php/ext xdebug-3.0.4 \
         && docker-php-ext-install xdebug \
+        # Install Imagick
+        && pecl install imagick \
+        && docker-php-ext-enable imagick \
         # Install others
         && docker-php-ext-install -j2 bcmath ctype iconv pdo pdo_mysql pdo_sqlite zip xsl\
         && docker-php-ext-enable opcache \

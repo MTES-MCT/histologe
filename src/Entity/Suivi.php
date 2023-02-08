@@ -9,6 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: SuiviRepository::class)]
 class Suivi
 {
+    public const TYPE_AUTO = 1;
+    public const TYPE_USAGER = 2;
+    public const TYPE_PARTNER = 3;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -26,6 +30,9 @@ class Suivi
 
     #[ORM\Column(type: 'boolean')]
     private $isPublic;
+
+    #[ORM\Column(type: 'integer')]
+    private $type;
 
     #[ORM\ManyToOne(targetEntity: Signalement::class, inversedBy: 'suivis')]
     #[ORM\JoinColumn(nullable: false)]
@@ -98,6 +105,18 @@ class Suivi
     public function setSignalement(?Signalement $signalement): self
     {
         $this->signalement = $signalement;
+
+        return $this;
+    }
+
+    public function getType(): ?int
+    {
+        return $this->type;
+    }
+
+    public function setType(int $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }
