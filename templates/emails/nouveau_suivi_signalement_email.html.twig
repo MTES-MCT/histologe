@@ -4,7 +4,7 @@
     <p>Bonjour,</p>
     <p>Une nouvelle mise à jour est disponible pour votre signalement concernant le logement situé <br>
         <strong>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</strong>
-        <br>Vous pouvez consulter la mise à jour en cliquant sur le bouton ci-dessous :</p>
+        <br>Vous pouvez consulter la mise à jour ou nous envoyer un message en cliquant sur le bouton ci-dessous :</p>
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary"
            style="text-align: center">
         <tbody>
@@ -14,7 +14,7 @@
                     <tbody>
                     <tr style="text-align: center;width: 100%">
                         <td>
-                            <a href="{{ lien_suivi|raw }}" target="_blank">{{ btntext|capitalize }}</a></td>
+                            <a href="{{ lien_suivi|raw }}" target="_blank">{{ btnText|capitalize }}</a></td>
                     </tr>
                     </tbody>
                 </table>

@@ -13,4 +13,23 @@
         <p><strong>Si vous êtes propriétaire occupant, merci de ne pas tenir compte de la demande d'information et
                 du fichier ci-joint</strong></p>
     {% endif %}
+        <br>Pour suivre votre signalement ou nous envoyer un message, cliquez sur le bouton ci-dessous :</p>
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary"
+           style="text-align: center">
+        <tbody>
+        <tr>
+            <td align="left">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                    <tbody>
+                    <tr style="text-align: center;width: 100%">
+                        <td>
+                            <a href="{{ lien_suivi|raw }}" target="_blank">{{ btnText|capitalize }}</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p>Si le bouton ne fonctionne pas <a href="{{ lien_suivi|raw }}">cliquez ici</a></p>
 {% endblock %}
