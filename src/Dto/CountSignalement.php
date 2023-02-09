@@ -24,27 +24,27 @@ class CountSignalement
         ];
     }
 
-    public function getTotal(): int
+    public function getTotal(): ?int
     {
         return $this->total;
     }
 
-    public function getNew(): int
+    public function getNew(): ?int
     {
         return $this->new;
     }
 
-    public function getActive(): int
+    public function getActive(): ?int
     {
         return $this->active;
     }
 
-    public function getClosed(): int
+    public function getClosed(): ?int
     {
         return $this->closed;
     }
 
-    public function getRefused(): int
+    public function getRefused(): ?int
     {
         return $this->refused;
     }
