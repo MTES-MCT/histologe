@@ -6,7 +6,7 @@ const disableSmoothScroll = () => {
   });
 };
 
-describe('Simple test for the Signalement interface', () => {
+describe('Simple test for the Signalement interface', { testIsolation: false }, () => {
   it('Displays the form for Signalement', () => {
     cy.visit('http://localhost:8080/signalement')
     disableSmoothScroll()
@@ -20,7 +20,8 @@ describe('Simple test for the Signalement interface', () => {
     cy.get('#signalement_prenomOccupant').type('Philippe')
     cy.get('#signalement_telOccupant').type('0612345678')
     cy.get('#signalement_mailOccupant').type('akh@gmail.com')
-    cy.get('#signalement_adresseOccupant').type("13006 Marseille 5 rue d' Italie")
+    cy.get('#signalement_adresseOccupant').type("13006 Marseille 5 rue Italie")
+    cy.wait(1500)
     // --
     // Normalement rempli automatiquement en cliquant, mais le click est aléatoire à cause de la recherche et du DOM
     cy.get('#signalement_cpOccupant').type("13006")
@@ -91,12 +92,9 @@ describe('Simple test for the Signalement interface', () => {
 
 before(() => {
   cy.clearCookie('PHPSESSID')
-  Cypress.Cookies.defaults({
-    preserve: "PHPSESSID"
-  })
 });
 
-describe('Test a real user login', () => {
+describe('Test a real user login', { testIsolation: false }, () => {
   it('Displays the form for login', () => {
     cy.visit('http://localhost:8080/connexion')
     disableSmoothScroll()
@@ -111,7 +109,7 @@ describe('Test a real user login', () => {
   })
 })
 
-describe('Simple test for back-office statistics', () => {
+describe('Simple test for back-office statistics', { testIsolation: false }, () => {
   it('Displays the page of the statistics', () => {
     cy.get('#fr-sidemenu-wrapper').contains('Signalements').click() //Open by default so click to close
     cy.get('#fr-sidemenu-wrapper').contains('Données chiffrées').click()
@@ -130,7 +128,7 @@ describe('Simple test for back-office statistics', () => {
   })
 })
 
-describe('Test front statistics page', () => {
+describe('Test front statistics page', { testIsolation: false }, () => {
   it('Displays the page of statistiques', () => {
     cy.visit('http://localhost:8080/statistiques')
     disableSmoothScroll()
@@ -142,17 +140,17 @@ describe('Test front statistics page', () => {
   })
 })
 
-describe('Test submit partner with user', () => {
+describe('Test submit partner with user', { testIsolation: false }, () => {
   it('Displays partner page', () => {
     cy.visit('http://localhost:8080/bo/partner/new')
     disableSmoothScroll()
     cy.get('#partner_nom').type('Partner')
     cy.get('#partner_isCommune').select('0')
-    cy.get('#partner_email').type('partner@yopmail.com')
+    cy.get('#partner_email').type('partner'+Date.now()+'@yopmail.com')
     cy.get('#partner_add_user').click()
     cy.get('#partner_users_nom_new0').type('Doe')
     cy.get('#partner_users_prenom_new0').type('John')
-    cy.get('#partner_users_email_new0').type('john.doe@yopmail.com')
+    cy.get('#partner_users_email_new0').type('john.doe'+Date.now()+'@yopmail.com')
     cy.get('#partner_users_roles_new0').select('ROLE_USER_PARTNER')
     cy.get('#partner_users_is_mailing_active_new0').select('1')
     cy.get('#partner_territory').select('1')
