@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional\Service;
+namespace App\Tests\Functional\Service\Files;
 
 use App\Service\Files\HeicToJpegConverter;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
