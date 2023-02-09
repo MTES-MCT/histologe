@@ -64,9 +64,9 @@ users:
     is_mailing_active: 1
     territory: "Nord"
   -
-    email: admin-territoire-69-01@histologe.fr
+    email: admin-territoire-69-mdl@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
-    partner: "Partenaire 69-01"
+    partner: "EMHA - Métropole de Lyon"
     statut: 1
     is_generique: 0
     is_mailing_active: 1
@@ -75,6 +75,38 @@ users:
     email: admin-territoire-69-cor@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "COR"
+    statut: 1
+    is_generique: 0
+    is_mailing_active: 1
+    territory: "Rhône"
+  -
+    email: user-69205-mdl@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Commune 69-03 MDL"
+    statut: 1
+    is_generique: 0
+    is_mailing_active: 1
+    territory: "Rhône"
+  -
+    email: user-69054-cor@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Commune 69-04 COR"
+    statut: 1
+    is_generique: 0
+    is_mailing_active: 1
+    territory: "Rhône"
+  -
+    email: user-69-05@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Partenaire 69-05"
+    statut: 1
+    is_generique: 0
+    is_mailing_active: 1
+    territory: "Rhône"
+  -
+    email: user-69-06@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Partenaire 69-06"
     statut: 1
     is_generique: 0
     is_mailing_active: 1

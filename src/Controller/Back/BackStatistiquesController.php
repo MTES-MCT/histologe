@@ -87,8 +87,8 @@ class BackStatistiquesController extends AbstractController
     {
         $communes = json_decode($request->get('communes'));
         $statut = $request->get('statut');
-        $strEtiquettes = $request->get('etiquettes');
-        $etiquettes = array_map(fn ($value): int => $value * 1, json_decode($strEtiquettes));
+        $strEtiquettes = json_decode($request->get('etiquettes') ?? '[]');
+        $etiquettes = array_map(fn ($value): int => $value * 1, $strEtiquettes);
         $type = $request->get('type');
         $dateStartInput = $request->get('dateStart');
         $dateStart = new DateTime($dateStartInput);

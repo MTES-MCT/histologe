@@ -9,6 +9,7 @@ use App\Factory\UserFactory;
 use App\Manager\UserManager;
 use App\Repository\TerritoryRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -24,13 +25,19 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class PartnerType extends AbstractType
 {
-    public function __construct(private UserManager $userManager, private UserFactory $userFactory)
-    {
+    public function __construct(
+        private UserManager $userManager,
+        private UserFactory $userFactory,
+        private ParameterBagInterface $parameterBag,
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $territory = false;
+        $insee = $this->parameterBag->get('authorized_codes_insee');
+        /** @var Partner $partner */
+        $partner = $builder->getData();
         if ($options['territory']) {
             $territory = $options['territory'];
         } else {
@@ -41,6 +48,7 @@ class PartnerType extends AbstractType
             ->add('nom', TextType::class, [
                 'attr' => [
                     'class' => 'fr-input',
+                    'readonly' => isset($insee[$partner?->getTerritory()?->getZip()][$partner->getNom()]),
                 ],
             ])
             ->add('isCommune', ChoiceType::class, [
@@ -61,6 +69,7 @@ class PartnerType extends AbstractType
             ->add('insee', TextType::class, [
                 'attr' => [
                     'class' => 'fr-input',
+                    'readonly' => isset($insee[$partner?->getTerritory()?->getZip()][$partner->getNom()]),
                 ],
                 'required' => false,
             ])

@@ -33,15 +33,15 @@ class NotificationRepository extends ServiceEntityRepository
             ->leftJoin('n.affectation', 'affectation')
             ->addSelect('suivi', 'signalement', 'affectation', 'user', 'createdBy');
 
-        $zip = $user->getTerritory()->getZip();
+        $zip = $user->getTerritory()?->getZip();
         if ($user->isTerritoryAdmin() && $this->paramsRhone['zip'] === $zip) {
             $partnerName = $this->paramsRhone['partner_name_cor'];
             if ($partnerName === $user->getPartner()->getNom()) {
-                $qb->andWhere('signalement.inseeOccupant IN (:insee_eligible)')
-                    ->setParameter('insee_eligible', $options[$zip][$partnerName]);
+                $qb->andWhere('signalement.inseeOccupant IN (:authorized_codes_insee)')
+                    ->setParameter('authorized_codes_insee', $options[$zip][$partnerName]);
             } else {
-                $qb->andWhere('signalement.inseeOccupant NOT IN (:insee_eligible)')
-                    ->setParameter('insee_eligible', $options[$zip][$partnerName]);
+                $qb->andWhere('signalement.inseeOccupant NOT IN (:authorized_codes_insee)')
+                    ->setParameter('authorized_codes_insee', $options[$zip][$partnerName]);
             }
         }
 

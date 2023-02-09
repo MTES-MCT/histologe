@@ -61,13 +61,13 @@ class SignalementRepository extends ServiceEntityRepository
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
 
-            if (\array_key_exists($territory->getZip(), $options['insee_eligible'])
+            if (\array_key_exists($territory->getZip(), $options['authorized_codes_insee'])
             ) {
                 $qb = $this->filterForSpecificAgglomeration(
                     $qb,
                     $territory->getZip(),
                     $options['partner_name'],
-                    $options['insee_eligible']
+                    $options['authorized_codes_insee']
                 );
             }
         }
@@ -332,13 +332,13 @@ class SignalementRepository extends ServiceEntityRepository
         if (!$user->isSuperAdmin()) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $user->getTerritory());
             if ($user->isTerritoryAdmin()
-                && \array_key_exists($user->getTerritory()->getZip(), $options['insee_eligible'])
+                && \array_key_exists($user->getTerritory()->getZip(), $options['authorized_codes_insee'])
             ) {
                 $qb = $this->filterForSpecificAgglomeration(
                     $qb,
                     $user->getTerritory()->getZip(),
                     $user->getPartner()->getNom(),
-                    $options['insee_eligible']
+                    $options['authorized_codes_insee']
                 );
             }
         }
@@ -744,11 +744,11 @@ class SignalementRepository extends ServiceEntityRepository
     ): QueryBuilder {
         if ($this->paramsRhone['zip'] === $territoryZip
             && $this->paramsRhone['partner_name_cor'] === $partnerName) {
-            $qb->andWhere('s.inseeOccupant IN (:insee_eligible)')
-                ->setParameter('insee_eligible', $options[$territoryZip][$partnerName]);
+            $qb->andWhere('s.inseeOccupant IN (:authorized_codes_insee)')
+                ->setParameter('authorized_codes_insee', $options[$territoryZip][$partnerName]);
         } else {
-            $qb->andWhere('s.inseeOccupant NOT IN (:insee_eligible)')
-                ->setParameter('insee_eligible', $options[$territoryZip][$this->paramsRhone['partner_name_cor']]);
+            $qb->andWhere('s.inseeOccupant NOT IN (:authorized_codes_insee)')
+                ->setParameter('authorized_codes_insee', $options[$territoryZip][$this->paramsRhone['partner_name_cor']]);
         }
 
         return $qb;

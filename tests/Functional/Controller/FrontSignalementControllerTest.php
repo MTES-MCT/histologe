@@ -100,6 +100,13 @@ class FrontSignalementControllerTest extends WebTestCase
                 'geoloc' => ['lat' => 42.70278, 'lng' => 9.45],
                 'inseeOccupant' => '2B033',
             ]],
+            'Chenelette' => [[
+                'adresseOccupant' => '7 place Ganelon',
+                'villeOccupant' => 'Chenelette',
+                'cpOccupant' => '69430',
+                'geoloc' => ['lat' => 46.166672, 'lng' => 4.48333],
+                'inseeOccupant' => '69054',
+            ]],
         ];
     }
 

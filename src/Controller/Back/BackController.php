@@ -80,7 +80,7 @@ class BackController extends AbstractController
                 }
             }
         } else {
-            $filters['insee_eligible'] = $this->getParameter('insee_eligible');
+            $filters['authorized_codes_insee'] = $this->getParameter('authorized_codes_insee');
             $this->req = $signalementRepository->findByStatusAndOrCityForUser($user, $filters, $request->get('export'));
             $signalementsCount = $signalementRepository->countByStatus($territory);
         }
