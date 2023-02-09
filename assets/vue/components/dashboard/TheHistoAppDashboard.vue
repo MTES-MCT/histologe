@@ -152,16 +152,16 @@ export default defineComponent({
       this.sharedState.users.percentNotActive = requestResponse.data.count_user.percentage.inactive
 
       const dataWidget = requestResponse.data.widgetCards
-      this.sharedState.newSignalements.count = dataWidget.cardNouveauxSignalements?.count
+      this.sharedState.newSignalements.count = dataWidget.cardNouveauxSignalements ? dataWidget.cardNouveauxSignalements?.count : 0
       this.sharedState.newSignalements.link = dataWidget.cardNouveauxSignalements?.link
       this.sharedState.newAffectations.link = dataWidget.cardAffectation?.link
-      this.sharedState.newSuivis.count = dataWidget.cardNouveauxSuivis?.count
+      this.sharedState.newSuivis.count = dataWidget.cardNouveauxSuivis ? dataWidget.cardNouveauxSuivis?.count : 0
       this.sharedState.newSuivis.link = dataWidget.cardNouveauxSuivis?.link
-      this.sharedState.noSuivis.count = dataWidget.cardSansSuivi?.count
+      this.sharedState.noSuivis.count = dataWidget.cardSansSuivi ? dataWidget.cardSansSuivi?.count : 0
       this.sharedState.noSuivis.link = dataWidget.cardSansSuivi?.link
-      this.sharedState.cloturesGlobales.count = dataWidget.cardCloturesGlobales?.count
+      this.sharedState.cloturesGlobales.count = dataWidget.cardCloturesGlobales ? dataWidget.cardCloturesGlobales?.count : 0
       this.sharedState.cloturesGlobales.link = dataWidget.cardCloturesGlobales?.link
-      this.sharedState.cloturesPartenaires.count = dataWidget.cardCloturesPartenaires?.count
+      this.sharedState.cloturesPartenaires.count = dataWidget.cardCloturesPartenaires ? dataWidget.cardCloturesPartenaires?.count : 0
       this.sharedState.cloturesPartenaires.link = dataWidget.cardCloturesPartenaires?.link
     },
     handleAffectationPartner (requestResponse: any) {
