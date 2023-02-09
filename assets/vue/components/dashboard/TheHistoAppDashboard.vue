@@ -5,7 +5,7 @@
     :data-ajaxurl-kpi="sharedProps.ajaxurlKpi"
     :data-ajaxurl-partners="sharedProps.ajaxurlPartners"
     :data-ajaxurl-signalements-nosuivi="sharedProps.ajaxurlSignalementsNosuivi"
-    :data-ajaxurl-signalements-per-territoire="sharedProps.ajaxurlSignamentsPerTerritoire"
+    :data-ajaxurl-signalements-per-territoire="sharedProps.ajaxurlSignalementsPerTerritoire"
     :data-ajaxurl-connections-esabora="sharedProps.ajaxurlConnectionsEsabora"
     >
 
@@ -56,10 +56,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { store } from './store'
+import { requests } from './requests'
 import HistoSelect from '../common/HistoSelect.vue'
 import TheHistoDashboardHeader from './TheHistoDashboardHeader.vue'
 import TheHistoDashboardCards from './TheHistoDashboardCards.vue'
 import TheHistoDashboardTables from './TheHistoDashboardTables.vue'
+import HistoInterfaceSelectOption from '../common/HistoInterfaceSelectOption'
 const initElements:any = document.querySelector('#app-dashboard')
 export default defineComponent({
   name: 'TheHistoAppDashboard',
@@ -72,7 +74,12 @@ export default defineComponent({
   data () {
     return {
       sharedState: store.state,
-      sharedProps: store.props
+      sharedProps: store.props,
+      isErrorInit: false,
+      isLoadingInit: true,
+      countTablesToLoad: 0,
+      countTablesLoaded: 0,
+      isLoadingRefresh: false
     }
   },
   created () {
@@ -81,7 +88,7 @@ export default defineComponent({
       this.sharedProps.ajaxurlKpi = initElements.dataset.ajaxurlKpi
       this.sharedProps.ajaxurlPartners = initElements.dataset.ajaxurlPartners
       this.sharedProps.ajaxurlSignalementsNosuivi = initElements.dataset.ajaxurlSignalementsNosuivi
-      this.sharedProps.ajaxurlSignamentsPerTerritoire = initElements.dataset.ajaxurlSignamentsPerTerritoire
+      this.sharedProps.ajaxurlSignalementsPerTerritoire = initElements.dataset.ajaxurlSignalementsPerTerritoire
       this.sharedProps.ajaxurlConnectionsEsabora = initElements.dataset.ajaxurlConnectionsEsabora
       requests.initSettings(this.handleInitSettings)
       requests.initKPI(this.handleInitKPI)
@@ -91,11 +98,10 @@ export default defineComponent({
   },
   methods: {
     handleInitSettings (requestResponse: any) {
-      this.sharedState.user.isAdmin = requestResponse.role_label === 'Super Admin'
-      this.sharedState.user.isResponsableTerritoire = requestResponse.role_label === 'Responsable Territoire'
-      this.sharedState.user.isAdministrateurPartenaire = requestResponse.role_label === 'Administrateur'
+      this.sharedState.user.isAdmin = requestResponse.roleLabel === 'Super Admin'
+      this.sharedState.user.isResponsableTerritoire = requestResponse.roleLabel === 'Responsable Territoire'
+      this.sharedState.user.isAdministrateurPartenaire = requestResponse.roleLabel === 'Administrateur'
       this.sharedState.user.prenom = requestResponse.firstname
-
       this.sharedState.territories = []
       const optionAllItem = new HistoInterfaceSelectOption()
       optionAllItem.Id = 'all'
@@ -108,7 +114,6 @@ export default defineComponent({
         this.sharedState.territories.push(optionItem)
       }
     },
-
     handleInitKPI (requestResponse: any) {
       if (requestResponse === 'error') {
         this.isErrorInit = true
@@ -133,24 +138,21 @@ export default defineComponent({
       }
     },
     processResponseInit (requestResponse: any) {
-      this.sharedState.signalements.count = requestResponse.data.count_signalement.active
-      this.sharedState.signalements.percent = requestResponse.data.count_signalement.percentage.active
-      this.sharedState.closedSignalements.count = requestResponse.data.count_signalement.closed
-      this.sharedState.closedSignalements.percent = requestResponse.data.count_signalement.percentage.closed
-      this.sharedState.newSignalements.count = requestResponse.data.count_signalement.new
-      this.sharedState.newSignalements.percent = requestResponse.data.count_signalement.percentage.new
-      this.sharedState.refusedSignalements.count = requestResponse.data.count_signalement.refused
-      this.sharedState.refusedSignalements.percent = requestResponse.data.count_signalement.percentage.refused
-
-      this.sharedState.suivis.countMoyen = requestResponse.data.count_suivi.average
-      this.sharedState.suivis.countByPartner = requestResponse.data.count_suivi.partner
-      this.sharedState.suivis.countByUsager = requestResponse.data.count_suivi.usager
-
-      this.sharedState.users.countActive = requestResponse.data.count_user.active
-      this.sharedState.users.percentActive = requestResponse.data.count_user.percentage.active
-      this.sharedState.users.countNotActive = requestResponse.data.count_user.inactive
-      this.sharedState.users.percentNotActive = requestResponse.data.count_user.percentage.inactive
-
+      this.sharedState.signalements.count = requestResponse.data.countSignalement.active
+      this.sharedState.signalements.percent = requestResponse.data.countSignalement.percentage.active
+      this.sharedState.closedSignalements.count = requestResponse.data.countSignalement.closed
+      this.sharedState.closedSignalements.percent = requestResponse.data.countSignalement.percentage.closed
+      this.sharedState.newSignalements.count = requestResponse.data.countSignalement.new
+      this.sharedState.newSignalements.percent = requestResponse.data.countSignalement.percentage.new
+      this.sharedState.refusedSignalements.count = requestResponse.data.countSignalement.refused
+      this.sharedState.refusedSignalements.percent = requestResponse.data.countSignalement.percentage.refused
+      this.sharedState.suivis.countMoyen = requestResponse.data.countSuivi.average
+      this.sharedState.suivis.countByPartner = requestResponse.data.countSuivi.partner
+      this.sharedState.suivis.countByUsager = requestResponse.data.countSuivi.usager
+      this.sharedState.users.countActive = requestResponse.data.countUser.active
+      this.sharedState.users.percentActive = requestResponse.data.countUser.percentage.active
+      this.sharedState.users.countNotActive = requestResponse.data.countUser.inactive
+      this.sharedState.users.percentNotActive = requestResponse.data.countUser.percentage.inactive
       const dataWidget = requestResponse.data.widgetCards
       this.sharedState.newSignalements.count = dataWidget.cardNouveauxSignalements ? dataWidget.cardNouveauxSignalements?.count : 0
       this.sharedState.newSignalements.link = dataWidget.cardNouveauxSignalements?.link
@@ -166,7 +168,6 @@ export default defineComponent({
     },
     handleAffectationPartner (requestResponse: any) {
       this.countTablesLoaded++
-
       this.sharedState.affectationsPartenaires = []
       for (const i in requestResponse.data) {
         const responseItem = requestResponse.data[i]
@@ -184,7 +185,6 @@ export default defineComponent({
     },
     handleSignalementsPerTerritoire (requestResponse: any) {
       this.countTablesLoaded++
-
       this.sharedState.signalementsPerTerritoire = []
       for (const i in requestResponse.data) {
         const responseItem = requestResponse.data[i]
@@ -198,7 +198,6 @@ export default defineComponent({
     },
     handleEsaboraEvents (requestResponse: any) {
       this.countTablesLoaded++
-
       this.sharedState.esaboraEvents = []
       for (const i in requestResponse.data) {
         const responseItem = requestResponse.data[i]

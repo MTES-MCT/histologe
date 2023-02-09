@@ -1,3 +1,4 @@
+import HistoInterfaceSelectOption from '../common/HistoInterfaceSelectOption'
 
 export const store = {
   state: {
@@ -7,14 +8,14 @@ export const store = {
       isResponsableTerritoire: false,
       isAdministrateurPartenaire: false
     },
-    territories: [],
+    territories: new Array<HistoInterfaceSelectOption>(),
     filters: {
-      territory: ''
+      territory: 'all'
     },
     newSignalements: {
       count: 0,
       percent: 0,
-      link: '#new-signalements'
+      link: undefined
     },
     signalements: {
       count: 0,
@@ -29,49 +30,52 @@ export const store = {
       percent: 0
     },
     allSignalements: {
-      link: '#all-signalements'
+      link: undefined
     },
     newAffectations: {
-      count: 1,
-      link: '#new-affectations'
+      count: 0,
+      link: undefined
     },
     userAffectations: {
-      link: '#user-affectations'
+      link: undefined
     },
     newSuivis: {
-      count: 2,
-      link: '#new-suivis'
+      count: 0,
+      link: undefined
     },
     noSuivis: {
-      count: 3,
-      link: '#no-suivis'
+      count: 0,
+      link: undefined
     },
     suivis: {
-      countMoyen: 1,
-      countByPartner: 2,
-      countByUsager: 3
+      countMoyen: 0,
+      countByPartner: 0,
+      countByUsager: 0
     },
     cloturesGlobales: {
-      count: 5,
-      link: '#clotures-globales'
+      count: 0,
+      link: undefined
     },
     cloturesPartenaires: {
-      count: 6,
-      link: '#clotures-partenaires'
+      count: 0,
+      link: undefined
     },
     users: {
-      countActive: 1,
-      percentActive: 33,
-      countNotActive: 2,
-      percentNotActive: 66
-    }
+      countActive: 0,
+      percentActive: 0,
+      countNotActive: 0,
+      percentNotActive: 0
+    },
+    esaboraEvents: new Array<any>(),
+    signalementsPerTerritoire: new Array<any>(),
+    affectationsPartenaires: new Array<any>()
   },
   props: {
     ajaxurlSettings: '',
     ajaxurlKpi: '',
     ajaxurlPartners: '',
     ajaxurlSignalementsNosuivi: '',
-    ajaxurlSignamentsPerTerritoire: '',
+    ajaxurlSignalementsPerTerritoire: '',
     ajaxurlConnectionsEsabora: ''
   }
 }
