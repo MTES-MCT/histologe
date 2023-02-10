@@ -31,9 +31,7 @@ class BackSignalementActionController extends AbstractController
                 $statut = Signalement::STATUS_ACTIVE;
                 $description = 'validé';
                 $signalement->setValidatedAt(new DateTimeImmutable());
-                if (empty($signalement->getCodeSuivi())) {
-                    $signalement->setCodeSuivi(md5(uniqid()));
-                }
+                $signalement->setCodeSuivi(md5(uniqid()));
                 $toRecipients = $signalement->getMailUsagers();
                 foreach ($toRecipients as $toRecipient) {
                     $notificationService->send(

@@ -206,7 +206,7 @@ class FrontSignalementController extends AbstractController
                                 'code' => $signalement->getCodeSuivi(),
                                 'from' => $toRecipient,
                             ],
-                            0
+                            UrlGeneratorInterface::ABSOLUTE_URL
                         ),
                     ],
                     $signalement->getTerritory()
