@@ -27,6 +27,8 @@ services:
     environment:
       PMA_HOST: histologe_mysql
       PMA_PORT: 3307
+      PMA_USER: histologe
+      PMA_PASSWORD: histologe
     ports:
       - 8081:80
 
