@@ -32,6 +32,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('/')]
 class FrontSignalementController extends AbstractController
@@ -103,7 +104,8 @@ class FrontSignalementController extends AbstractController
         UploadHandlerService $uploadHandlerService,
         ReferenceGenerator $referenceGenerator,
         PostalCodeHomeChecker $postalCodeHomeChecker,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        UrlGeneratorInterface $urlGenerator,
     ): Response {
         if ($this->isCsrfTokenValid('new_signalement', $request->request->get('_token'))
             && $data = $request->get('signalement')) {
@@ -177,28 +179,44 @@ class FrontSignalementController extends AbstractController
                 );
             }
 
-            if (null === $signalement->getTerritory() || !$postalCodeHomeChecker->isAuthorizedInseeCode($signalement->getTerritory(), $signalement->getInseeOccupant())) {
+            if (null === $signalement->getTerritory()
+                || !$postalCodeHomeChecker->isAuthorizedInseeCode(
+                    $signalement->getTerritory(),
+                    $signalement->getInseeOccupant()
+                )
+            ) {
                 return $this->json(['response' => 'Territory is inactive'], Response::HTTP_BAD_REQUEST);
             }
             $signalement->setReference($referenceGenerator->generate($signalement->getTerritory()));
 
             $score = new CriticiteCalculatorService($signalement, $doctrine);
             $signalement->setScoreCreation($score->calculate());
+            $signalement->setCodeSuivi(md5(uniqid()));
 
             $em->persist($signalement);
             $em->flush();
             !$signalement->getIsProprioAverti() && $attachment = file_exists($this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf') ? $this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf' : null;
 
             $toRecipients = $signalement->getMailUsagers();
-            $notificationService->send(
-                NotificationService::TYPE_CONFIRM_RECEPTION,
-                $toRecipients,
-                [
-                    'signalement' => $signalement,
-                    'attach' => $attachment ?? null,
-                ],
-                $signalement->getTerritory()
-            );
+            foreach ($toRecipients as $toRecipient) {
+                $notificationService->send(
+                    NotificationService::TYPE_CONFIRM_RECEPTION,
+                    [$toRecipient],
+                    [
+                        'signalement' => $signalement,
+                        'attach' => $attachment ?? null,
+                        'lien_suivi' => $urlGenerator->generate(
+                            'front_suivi_signalement',
+                            [
+                                'code' => $signalement->getCodeSuivi(),
+                                'from' => $toRecipient,
+                            ],
+                            UrlGeneratorInterface::ABSOLUTE_URL
+                        ),
+                    ],
+                    $signalement->getTerritory()
+                );
+            }
 
             $eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME);
 
