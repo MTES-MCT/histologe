@@ -80,6 +80,7 @@ class BackControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains('#signalements-result', '2023-3');
         $this->assertSelectorTextContains('#signalements-result', '2023-4');
+        $this->assertSelectorTextContains('table', '2 signalement(s)');
     }
 
     public function testDisplaySignalementCORRoleAdminTerritory()
@@ -97,5 +98,6 @@ class BackControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains('#signalements-result', '2023-2');
         $this->assertSelectorTextContains('#signalements-result', '2023-5');
+        $this->assertSelectorTextContains('table', '2 signalement(s)');
     }
 }
