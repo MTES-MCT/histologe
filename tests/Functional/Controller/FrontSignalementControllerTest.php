@@ -107,6 +107,13 @@ class FrontSignalementControllerTest extends WebTestCase
                 'geoloc' => ['lat' => 46.166672, 'lng' => 4.48333],
                 'inseeOccupant' => '69054',
             ]],
+            'Lyon 1er arrondissement' => [[
+                'adresseOccupant' => 'Ruelle des Fantasques',
+                'villeOccupant' => 'Lyon',
+                'cpOccupant' => '69001',
+                'geoloc' => ['lat' => 45.7640, 'lng' => 4.8357],
+                'inseeOccupant' => '69381',
+            ]],
         ];
     }
 

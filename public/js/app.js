@@ -67,11 +67,17 @@ forms.forEach((form) => {
                 let cpOccupant = form.querySelector('#signalement_cpOccupant').value;
                 // Only a few code postal available in territory 69
                 if (cpOccupant.substr(0, 2) == '69') {
-                    const RHONES_AUTHORIZED_CODES_POSTAL = [
+                    const METROPOLE_RHONES_AUTHORIZED_CODES_POSTAL = [
                         69000, 69001, 69002, 69003, 69004, 69005, 69006, 69007, 69008, 69009,
                         69100, 69125, 69190, 69200, 69290, 69381,
                         69520, 69600, 69700, 69800
+                    ]
+                    const COR_RHONES_AUTHORIZED_CODES_POSTAL = [
+                        69170, 69240, 69430, 69470, 69490, 69550, 69870
                     ];
+                    const RHONES_AUTHORIZED_CODES_POSTAL = METROPOLE_RHONES_AUTHORIZED_CODES_POSTAL.concat(
+                        COR_RHONES_AUTHORIZED_CODES_POSTAL
+                    );
                     if (RHONES_AUTHORIZED_CODES_POSTAL.indexOf(Number(cpOccupant)) == -1) {
                         form.querySelector('#fr-error-text-code-postal')?.classList?.remove('fr-hidden');
                     } else {
@@ -778,10 +784,19 @@ const refetchAddress = (form) => {
             let feature = r.features[0];
             form.querySelector('#signalement-insee-occupant').value = feature.properties.citycode;
             if (feature.properties.citycode.substr(0, 2) == '69') {
-                const RHONES_AUTHORIZED_INSEE_CODES = [
+                const METROPOLE_RHONES_AUTHORIZED_INSEE_CODES = [
                     69091, 69096, 69123, 69149, 69199, 69205, 69290, 69259, 69266,
                     69381, 69382, 69383, 69384, 69385, 69386, 69387, 69388, 69389,
                     69901 ];
+                const COR_RHONES_AUTHORIZED_INSEE_CODES = [
+                    69001, 69006, 69008, 69037, 69054, 69060, 69066, 69070, 69075,
+                    69093, 69102, 69107, 69174, 69130, 69160, 69164, 69169, 69181,
+                    69183, 69188, 69200, 69214, 69217, 69225, 69229, 69234, 69240,
+                    69243, 69248, 69254, 69157
+                ];
+                const RHONES_AUTHORIZED_INSEE_CODES = METROPOLE_RHONES_AUTHORIZED_INSEE_CODES.concat(
+                    COR_RHONES_AUTHORIZED_INSEE_CODES
+                );
                 if (RHONES_AUTHORIZED_INSEE_CODES.indexOf(Number(feature.properties.citycode)) == -1) {
                     form.querySelector('#fr-error-text-insee')?.classList?.remove('fr-hidden');
                 } else {
