@@ -10,6 +10,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class BackControllerTest extends WebTestCase
 {
+    protected function setUp(): void
+    {
+        self::ensureKernelShutdown();
+    }
+
     /**
      * @dataProvider provideUserEmail
      */
@@ -58,5 +63,41 @@ class BackControllerTest extends WebTestCase
         $this->assertSelectorTextContains('.fr-sidemenu ul:nth-of-type(2)', 'Documentation');
         $link = $crawler->selectLink('Documentation')->link();
         $this->assertEquals('https://documentation.histologe.beta.gouv.fr', $link->getUri());
+    }
+
+    public function testDisplaySignalementMDLRoleAdminTerritory()
+    {
+        $client = static::createClient();
+        /** @var UrlGeneratorInterface $generatorUrl */
+        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-69-mdl@histologe.fr']);
+        $client->loginUser($user);
+        $route = $generatorUrl->generate('back_index');
+        $client->request('GET', $route);
+
+        $this->assertSelectorTextContains('#signalements-result', '2023-3');
+        $this->assertSelectorTextContains('#signalements-result', '2023-4');
+        $this->assertSelectorTextContains('table', '2 signalement(s)');
+    }
+
+    public function testDisplaySignalementCORRoleAdminTerritory()
+    {
+        $client = static::createClient();
+        /** @var UrlGeneratorInterface $generatorUrl */
+        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-69-cor@histologe.fr']);
+        $client->loginUser($user);
+        $route = $generatorUrl->generate('back_index');
+        $client->request('GET', $route);
+
+        $this->assertSelectorTextContains('#signalements-result', '2023-2');
+        $this->assertSelectorTextContains('#signalements-result', '2023-5');
+        $this->assertSelectorTextContains('table', '2 signalement(s)');
     }
 }

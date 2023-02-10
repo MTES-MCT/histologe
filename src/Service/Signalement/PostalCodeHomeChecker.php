@@ -15,7 +15,7 @@ class PostalCodeHomeChecker
     {
     }
 
-    public function isActive(string $postalCode, string $inseeCode = ''): bool
+    public function isActive(string $postalCode, ?string $inseeCode = null): bool
     {
         $territoryItem = $this->territoryRepository->findOneBy([
             'zip' => $this->getZipCode($postalCode),
@@ -45,7 +45,7 @@ class PostalCodeHomeChecker
         };
     }
 
-    public function isAuthorizedInseeCode(Territory $territory, string $inseeCode)
+    public function isAuthorizedInseeCode(Territory $territory, string $inseeCode): bool
     {
         $authorizedCodesInsee = $territory->getAuthorizedCodesInsee();
         if (empty($authorizedCodesInsee) || 0 == \count($authorizedCodesInsee)) {
