@@ -157,6 +157,11 @@ Vous pouvez ensuite executer la commande.
 $ make load-data  
 ```
 
+### Accès à Metabase
+
+Login : admin@histologe.fr
+Mot de passe : histologe2023
+
 ## Documentaton projet
 
 [Consulter la documentation](https://github.com/MTES-MCT/histologe/wiki)
