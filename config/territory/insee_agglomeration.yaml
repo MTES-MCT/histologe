@@ -1,4 +1,7 @@
-parameters:
+# `special_territory` To define the partners for the special territory
+# `authorized_codes_insee` To define the authorized INSEE codes for the special territory
+
+ parameters:
     special_territory:
      69: # Rhône
       COR: 'COR'
