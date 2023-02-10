@@ -4,8 +4,9 @@
 #   - Apply filters on signalement, cartographie and notification for user with role ROLE_ADMIN_TERRITORY
 #   - Partner name and insee code partner will be readonly on partner form to make no difference between
 #     possible affectation filter and signalement filter
+#
 
- parameters:
+parameters:
     special_territory:
      69: # Rhône
       COR: 'COR'
