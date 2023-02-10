@@ -55,22 +55,41 @@ class UpdateAlgoCriticiteCommand extends Command
         $this->changeCritereCoefAndType('Il y a des traces importantes de moisissures.', coef: 4, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 1], criticiteScores: [0.5, 0.5, 1.5]); // TODO coef différent
         $this->changeCritereCoefAndType('La peinture est écaillée par endroits.', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 1], criticiteScores: [0.5, 1, 2]); // TODO coef différent
         $this->changeCritereCoefAndType('Les toilettes du logement sont abîmées ou inexistantes.', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 2]);
-
         $this->changeCritereCoefAndType('La salle de bain est abîmée ou inexistante.', coef: 2, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 2]); // TODO coef
-
         $this->changeCritereCoefAndType("J'ai un problème avec l’eau potable.", coef: 4, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 1]); // TODO deux types possibles, coef cahnge suivant type et criticité
+        $this->changeCritereCoefAndType('Il y a des nuisibles dans mon logement (blattes, punaises de lit, rongeurs...).', coef: 0, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0, 0, 0]);
+        $this->changeCritereCoefAndType("J’ai un problème d'évacuation des eaux usées.", coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 3]); // TODO deux types possible
+        $this->changeCritereCoefAndType('Les installations électriques ne sont pas en bon état.', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 1, 1], criticiteScores: [0, 1, 2]);
+        $this->changeCritereCoefAndType('Le chauffage ne fonctionne pas bien.', coef: 2, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [1, 2, 1]); // TODO deux types ou pas ?
+        $this->changeCritereCoefAndType("J'ai un problème de ventilation dans mon logement.", coef: 2, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [1, 2, 3]); // TODO deux types ou pas ?
+        $this->changeCritereCoefAndType('De l’air s’infiltre dans mon logement.', coef: 3, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 1]); // TODO : coef et type
+        $this->changeCritereCoefAndType('Mes factures de chauffage sont anormalement élevées.', coef: 2, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [1, 1, 1]);
+        $this->changeCritereCoefAndType('Mon logement est mal isolé.', coef: 2, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [1, 1, 1]);
+        $this->changeCritereCoefAndType("J’utilise un appareil d'appoint pour le chauffage.", coef: 2, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 1]);
+        $this->changeCritereCoefAndType("L'installation de gaz n’est pas en bon état", coef: 2, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 1, 1], criticiteScores: [0, 1, 3]);
+        $this->changeCritereCoefAndType('Le sol est abîmé.', coef: 2, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 1], criticiteScores: [0.5, 0.5, 2]); // TODO deux types possible
+        $this->changeCritereCoefAndType('Les escaliers sont abîmés.', coef: 2, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 1], criticiteScores: [1, 2, 3]);
+        $this->changeCritereCoefAndType('Les murs et plafonds intérieurs sont mal entretenus', coef: 1, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 2]);
+        $this->changeCritereCoefAndType('Les façades ne sont pas en bon état.', coef: 2, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 1], criticiteScores: [0.5, 1, 2]); // TODO plusieurs coefs
+        $this->changeCritereCoefAndType('La toiture n’est pas en bon état.', coef: 1, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [1, 2, 3]);
+        $this->changeCritereCoefAndType('Mon logement est en sous-sol.', coef: 8, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0], criticiteScores: [2]);
+        $this->changeCritereCoefAndType('Mon logement est sous les combles.', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 2]);
+        $this->changeCritereCoefAndType("Il n'y a pas de fenêtre dans mon salon ou ma salle à manger.", coef: 8, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0], criticiteScores: [0.5]);
+        $this->changeCritereCoefAndType('Mon logement est une pièce unique, de moins de 9m².', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0], criticiteScores: [3]);
+        $this->changeCritereCoefAndType('Mon salon ou ma salle à manger mesure moins de 7m².', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0], criticiteScores: [1]);
+        $this->changeCritereCoefAndType('Les plafonds sont trop bas (moins de 2.20 m).', coef: 2, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [1], criticiteScores: [2]);
+        $this->changeCritereCoefAndType('La lumière naturelle en pleine journée est insuffisante.', coef: 8, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0, 0.25, 0.5]);
+        $this->changeCritereCoefAndType('Les déchets sont mal stockés.', coef: 1, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0, 1, 3]);
+        $this->changeCritereCoefAndType('L’usage des lieux n’est pas respecté.', coef: 0, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0, 0, 1]); // TODO plusieurs coefs
+        $this->changeCritereCoefAndType('Le bruit à l’intérieur du logement ou du bâtiment est gênant.', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 2]);
+        $this->changeCritereCoefAndType('Le bruit extérieur est gênant.', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 0.5, 1]);
 
+        // $this->changeCritereCoefAndType("J'ai un problème avec l’eau potable.");
         // $this->changeCritereCoefAndType("Nuisances de l'environnement");
         // $this->changeCritereCoefAndType("Murs extérieurs");
         // $this->changeCritereCoefAndType("Charpentes");
         // $this->changeCritereCoefAndType("Toitures");
         // $this->changeCritereCoefAndType("Prévention des chutes");
-        // $this->changeCritereCoefAndType("Le sol est abîmé.");
-        // $this->changeCritereCoefAndType("Les escaliers sont abîmés.");
-        // $this->changeCritereCoefAndType("Les murs et plafonds intérieurs sont mal entretenus");
-
-        // $this->changeCritereCoefAndType("Les déchets sont mal stockés.");
-        // $this->changeCritereCoefAndType("L’usage des lieux n’est pas respecté.");
         // $this->changeCritereCoefAndType("Réseau eau potable");
         // $this->changeCritereCoefAndType("Évacuation des eaux usées et raccordement");
         // $this->changeCritereCoefAndType("Propreté");
@@ -95,29 +114,6 @@ class UpdateAlgoCriticiteCommand extends Command
         // $this->changeCritereCoefAndType("Salle de bain ou salle d'eau");
         // $this->changeCritereCoefAndType("Entretien des lieux, propreté courante");
         // $this->changeCritereCoefAndType("Sur-occupation");
-        // $this->changeCritereCoefAndType("Mon logement est en sous-sol.");
-        // $this->changeCritereCoefAndType("Mon logement est sous les combles.");
-        // $this->changeCritereCoefAndType("Il n'y a pas de fenêtre dans mon salon ou ma salle à manger.");
-        // $this->changeCritereCoefAndType("Mon logement est une pièce unique, de moins de 9m².");
-        // $this->changeCritereCoefAndType("Mon salon ou ma salle à manger mesure moins de 7m².");
-        // $this->changeCritereCoefAndType("Les plafonds sont trop bas (moins de 2.20 m).");
-        // $this->changeCritereCoefAndType("La lumière naturelle en pleine journée est insuffisante.");
-
-        // $this->changeCritereCoefAndType("Les installations électriques ne sont pas en bon état.");
-        // $this->changeCritereCoefAndType("Le chauffage ne fonctionne pas bien.");
-        // $this->changeCritereCoefAndType("J'ai un problème avec l’eau potable.");
-        // $this->changeCritereCoefAndType("J'ai un problème de ventilation dans mon logement.");
-        // $this->changeCritereCoefAndType("De l’air s’infiltre dans mon logement.");
-        // $this->changeCritereCoefAndType("Mes factures de chauffage sont anormalement élevées.");
-        // $this->changeCritereCoefAndType("Il y a des nuisibles dans mon logement (blattes, punaises de lit, rongeurs...).");
-        // $this->changeCritereCoefAndType("Le bruit à l’intérieur du logement ou du bâtiment est gênant.");
-        // $this->changeCritereCoefAndType("Le bruit extérieur est gênant.");
-        // $this->changeCritereCoefAndType("J’ai un problème d'évacuation des eaux usées.");
-        // $this->changeCritereCoefAndType("Mon logement est mal isolé.");
-        // $this->changeCritereCoefAndType("J’utilise un appareil d'appoint pour le chauffage.");
-        // $this->changeCritereCoefAndType("L'installation de gaz n’est pas en bon état");
-        // $this->changeCritereCoefAndType("Les façades ne sont pas en bon état.");
-        // $this->changeCritereCoefAndType("La toiture n’est pas en bon état.");
 
         $this->changeCritereLabel('L’installation du réseau électrique a un problème.', 'L’installation du réseau électrique du bâtiment a un problème');
         $this->changeCritereLabel('Fils électriques dénudés', 'Fils électriques dénudés -Bâtiment/Parties communes');
