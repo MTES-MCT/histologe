@@ -1,5 +1,9 @@
 # `special_territory` To define the partners for the special territory
 # `authorized_codes_insee` To define the authorized INSEE codes for the special territory
+#  Result:
+#   - Apply filters on signalement, cartographie and notification for user with role ROLE_ADMIN_TERRITORY
+#   - Partner name and insee code partner will be readonly on partner form to make no difference between
+#     possible affectation filter and signalement filter
 
  parameters:
     special_territory:
