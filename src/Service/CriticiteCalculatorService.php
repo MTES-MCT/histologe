@@ -45,4 +45,5 @@ class CriticiteCalculatorService
 
         return $score;
     }
+    // TODO calculate_new
 }
