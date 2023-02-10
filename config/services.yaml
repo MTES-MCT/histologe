@@ -21,8 +21,9 @@ parameters:
     host_url: '%env(resolve:HISTOLOGE_URL)%'
     token_lifetime: '1 day'
     special_territory:
-        zip: '69'
-        partner_name_cor: 'COR'
+        69: # Rhône
+         COR: 'COR'
+         "EMHA - Métropole de Lyon": "EMHA - Métropole de Lyon"
 
 services:
     # default configuration for services in *this* file
@@ -97,10 +98,10 @@ services:
 
     App\Repository\SignalementRepository:
         arguments:
-            $paramsRhone: '%special_territory%'
+            $params: '%special_territory%'
     App\Repository\NotificationRepository:
         arguments:
-            $paramsRhone: '%special_territory%'
+            $params: '%special_territory%'
 
 when@test:
     parameters:

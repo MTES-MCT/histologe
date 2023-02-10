@@ -36,7 +36,7 @@ class SignalementRepository extends ServiceEntityRepository
 
     private SearchFilterService $searchFilterService;
 
-    public function __construct(ManagerRegistry $registry, private array $paramsRhone)
+    public function __construct(ManagerRegistry $registry, private array $params)
     {
         parent::__construct($registry, Signalement::class);
         $this->searchFilterService = new SearchFilterService();
@@ -742,13 +742,14 @@ class SignalementRepository extends ServiceEntityRepository
         string $partnerName,
         array $options
     ): QueryBuilder {
-        if ($this->paramsRhone['zip'] === $territoryZip
-            && $this->paramsRhone['partner_name_cor'] === $partnerName) {
+        if (isset($this->params[$territoryZip])
+            && isset($this->params[$territoryZip][$partnerName])
+        ) {
             $qb->andWhere('s.inseeOccupant IN (:authorized_codes_insee)')
-                ->setParameter('authorized_codes_insee', $options[$territoryZip][$partnerName]);
-        } else {
-            $qb->andWhere('s.inseeOccupant NOT IN (:authorized_codes_insee)')
-                ->setParameter('authorized_codes_insee', $options[$territoryZip][$this->paramsRhone['partner_name_cor']]);
+                ->setParameter(
+                    'authorized_codes_insee',
+                    $options[$territoryZip][$partnerName]
+                );
         }
 
         return $qb;

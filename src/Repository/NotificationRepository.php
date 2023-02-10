@@ -16,7 +16,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class NotificationRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, private array $paramsRhone)
+    public function __construct(ManagerRegistry $registry, private array $params)
     {
         parent::__construct($registry, Notification::class);
     }
@@ -34,13 +34,10 @@ class NotificationRepository extends ServiceEntityRepository
             ->addSelect('suivi', 'signalement', 'affectation', 'user', 'createdBy');
 
         $zip = $user->getTerritory()?->getZip();
-        if ($user->isTerritoryAdmin() && $this->paramsRhone['zip'] === $zip) {
-            $partnerName = $this->paramsRhone['partner_name_cor'];
-            if ($partnerName === $user->getPartner()->getNom()) {
+        if ($user->isTerritoryAdmin() && isset($this->params[$zip])) {
+            $partnerName = $this->params[$zip][$user->getPartner()?->getNom()] ?? null;
+            if (null !== $partnerName) {
                 $qb->andWhere('signalement.inseeOccupant IN (:authorized_codes_insee)')
-                    ->setParameter('authorized_codes_insee', $options[$zip][$partnerName]);
-            } else {
-                $qb->andWhere('signalement.inseeOccupant NOT IN (:authorized_codes_insee)')
                     ->setParameter('authorized_codes_insee', $options[$zip][$partnerName]);
             }
         }
