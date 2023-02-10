@@ -109,7 +109,7 @@ export default defineComponent({
       this.sharedState.territories.push(optionAllItem)
       for (const id in requestResponse.territories) {
         const optionItem = new HistoInterfaceSelectOption()
-        optionItem.Id = requestResponse.territories[id].zip
+        optionItem.Id = requestResponse.territories[id].id
         optionItem.Text = requestResponse.territories[id].name
         this.sharedState.territories.push(optionItem)
       }
@@ -154,17 +154,21 @@ export default defineComponent({
       this.sharedState.users.countNotActive = requestResponse.data.countUser.inactive
       this.sharedState.users.percentNotActive = requestResponse.data.countUser.percentage.inactive
       const dataWidget = requestResponse.data.widgetCards
-      this.sharedState.newSignalements.count = dataWidget.cardNouveauxSignalements ? dataWidget.cardNouveauxSignalements?.count : 0
+      this.sharedState.newSignalements.count = dataWidget.cardNouveauxSignalements && dataWidget.cardNouveauxSignalements.count != null ? dataWidget.cardNouveauxSignalements?.count : 0
       this.sharedState.newSignalements.link = dataWidget.cardNouveauxSignalements?.link
       this.sharedState.newAffectations.link = dataWidget.cardAffectation?.link
-      this.sharedState.newSuivis.count = dataWidget.cardNouveauxSuivis ? dataWidget.cardNouveauxSuivis?.count : 0
+      this.sharedState.newSuivis.count = dataWidget.cardNouveauxSuivis && dataWidget.cardNouveauxSuivis.count != null ? dataWidget.cardNouveauxSuivis?.count : 0
       this.sharedState.newSuivis.link = dataWidget.cardNouveauxSuivis?.link
-      this.sharedState.noSuivis.count = dataWidget.cardSansSuivi ? dataWidget.cardSansSuivi?.count : 0
+      this.sharedState.noSuivis.count = dataWidget.cardSansSuivi && dataWidget.cardSansSuivi.count != null ? dataWidget.cardSansSuivi?.count : 0
       this.sharedState.noSuivis.link = dataWidget.cardSansSuivi?.link
-      this.sharedState.cloturesGlobales.count = dataWidget.cardCloturesGlobales ? dataWidget.cardCloturesGlobales?.count : 0
+      this.sharedState.cloturesGlobales.count = dataWidget.cardCloturesGlobales && dataWidget.cardCloturesGlobales.count != null ? dataWidget.cardCloturesGlobales?.count : 0
       this.sharedState.cloturesGlobales.link = dataWidget.cardCloturesGlobales?.link
-      this.sharedState.cloturesPartenaires.count = dataWidget.cardCloturesPartenaires ? dataWidget.cardCloturesPartenaires?.count : 0
+      this.sharedState.cloturesPartenaires.count = dataWidget.cardCloturesPartenaires && dataWidget.cardCloturesPartenaires.count != null ? dataWidget.cardCloturesPartenaires?.count : 0
       this.sharedState.cloturesPartenaires.link = dataWidget.cardCloturesPartenaires?.link
+      this.sharedState.allSignalements.link = dataWidget.cardTousLesSignalements?.link
+      this.sharedState.newAffectations.count = dataWidget.cardNouvellesAffectations && dataWidget.cardNouvellesAffectations.count != null ? dataWidget.cardNouvellesAffectations?.count : 0
+      this.sharedState.newAffectations.link = dataWidget.cardNouvellesAffectations?.link
+      this.sharedState.userAffectations.link = dataWidget.cardMesAffectations?.link
     },
     handleAffectationPartner (requestResponse: any) {
       this.countTablesLoaded++

@@ -6,7 +6,7 @@
         <div class="fr-card__body">
           <ul class="fr-badges-group">
             <li>
-                <p class="fr-badge fr-badge--no-icon" :class=getTagClass(sharedState.newSignalements.count)>{{ countNouveauxSignalements }}</p>
+                <p class="fr-badge fr-badge--no-icon" :class=getTagClass(sharedState.newSignalements.count)>{{ getBadgeText(sharedState.newSignalements.count, 'aucun', 'nouveau', 'nouveaux') }}</p>
             </li>
           </ul>
           <div class="fr-card__content">
@@ -26,7 +26,7 @@
         <div class="fr-card__body">
           <ul class="fr-badges-group">
             <li>
-              <p class="fr-badge fr-badge--no-icon" :class=getTagClass(sharedState.newAffectations.count)>{{ countNouvellesAffectations }}</p>
+              <p class="fr-badge fr-badge--no-icon" :class=getTagClass(sharedState.newAffectations.count)>{{ getBadgeText(sharedState.newAffectations.count, 'aucun', 'nouveau', 'nouveaux') }}</p>
             </li>
           </ul>
           <div class="fr-card__content">
@@ -46,7 +46,7 @@
         <div class="fr-card__body">
           <ul class="fr-badges-group">
             <li>
-              <p class="fr-badge fr-badge--no-icon" :class=getTagClass(sharedState.newSuivis.count)>{{ countNouveauxSuivis }}</p>
+              <p class="fr-badge fr-badge--no-icon" :class=getTagClass(sharedState.newSuivis.count)>{{ getBadgeText(sharedState.newSuivis.count, 'aucun', 'nouveau', 'nouveaux') }}</p>
             </li>
           </ul>
           <div class="fr-card__content">
@@ -66,7 +66,7 @@
         <div class="fr-card__body">
           <ul class="fr-badges-group">
             <li>
-                <p class="fr-badge fr-badge--no-icon fr-badge--info">{{ countSansSuivi }}</p>
+                <p class="fr-badge fr-badge--no-icon fr-badge--info">{{ getBadgeText(sharedState.newSuivis.count, 'aucun', 'signalement', 'signalements') }}</p>
             </li>
           </ul>
           <div class="fr-card__content">
@@ -101,7 +101,7 @@
         <div class="fr-card__body">
           <ul class="fr-badges-group">
             <li>
-              <p class="fr-badge fr-badge--no-icon" :class=getTagClass(sharedState.cloturesGlobales.count)>{{ countCloturesGlobales }}</p>
+              <p class="fr-badge fr-badge--no-icon" :class=getTagClass(sharedState.cloturesGlobales.count)>{{ getBadgeText(sharedState.cloturesGlobales.count, 'aucun', 'nouveau', 'nouveaux') }}</p>
             </li>
           </ul>
           <div class="fr-card__content">
@@ -121,7 +121,7 @@
         <div class="fr-card__body">
           <ul class="fr-badges-group">
             <li>
-              <p class="fr-badge fr-badge--no-icon" :class=getTagClass(sharedState.cloturesPartenaires.count)>{{ countCloturesPartenaires }}</p>
+              <p class="fr-badge fr-badge--no-icon" :class=getTagClass(sharedState.cloturesPartenaires.count)>{{ getBadgeText(sharedState.cloturesPartenaires.count, 'aucun', 'nouveau', 'nouveaux') }}</p>
             </li>
           </ul>
           <div class="fr-card__content">
@@ -167,53 +167,16 @@ export default defineComponent({
       sharedState: store.state
     }
   },
-  computed: {
-    countNouveauxSignalements () {
-      if (store.state.newSignalements.count === 0) {
-        return 'Aucun'
-      } else {
-        return store.state.newSignalements.count + ' nouveaux'
-      }
-    },
-    countNouvellesAffectations () {
-      if (store.state.newAffectations.count === 0) {
-        return 'Aucun'
-      } else {
-        return store.state.newAffectations.count + ' nouveaux'
-      }
-    },
-    countNouveauxSuivis () {
-      if (store.state.newSuivis.count === 0) {
-        return 'Aucun'
-      } else {
-        return store.state.newSuivis.count + ' nouveaux'
-      }
-    },
-    countSansSuivi () {
-      if (store.state.noSuivis.count === 0) {
-        return 'Aucun'
-      } else {
-        return store.state.noSuivis.count + ' signalements'
-      }
-    },
-    countCloturesGlobales () {
-      if (store.state.cloturesGlobales.count === 0) {
-        return 'Aucun'
-      } else {
-        return store.state.cloturesGlobales.count + ' nouveaux'
-      }
-    },
-    countCloturesPartenaires () {
-      if (store.state.cloturesPartenaires.count === 0) {
-        return 'Aucun'
-      } else {
-        return store.state.cloturesPartenaires.count + ' nouveaux'
-      }
-    }
-  },
   methods: {
     getTagClass (count:number) {
       return (count === 0) ? 'fr-badge--info' : 'fr-badge--warning'
+    },
+    getBadgeText (count:number, noneTxt:string, singularTxt:string, pluralTxt:string) {
+      if (count === 0) {
+        return noneTxt
+      } else {
+        return count + ' ' + (count > 1 ? pluralTxt : singularTxt)
+      }
     },
     getSanitizedUrl (url:any) {
       if (url === undefined || url === null) {
