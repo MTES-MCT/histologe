@@ -62,25 +62,22 @@ forms.forEach((form) => {
     })
     form?.querySelectorAll('#signalement_cpOccupant')?.forEach((element) => {
         element.addEventListener('change', (event) => {
-            clearTimeout(idFetchTimeout);
-            idFetchTimeout = setTimeout( () => {
-                let cpOccupant = form.querySelector('#signalement_cpOccupant').value;
-                // Only a few code postal available in territory 69
-                if (cpOccupant.substr(0, 2) == '69') {
-                    const RHONES_AUTHORIZED_CODES_POSTAL = [
-                        69000, 69001, 69002, 69003, 69004, 69005, 69006, 69007, 69008, 69009,
-                        69100, 69125, 69190, 69200, 69290, 69381,
-                        69520, 69600, 69700, 69800
-                    ];
-                    if (RHONES_AUTHORIZED_CODES_POSTAL.indexOf(Number(cpOccupant)) == -1) {
-                        form.querySelector('#fr-error-text-code-postal')?.classList?.remove('fr-hidden');
-                    } else {
-                        form.querySelector('#fr-error-text-code-postal')?.classList?.add('fr-hidden');
-                    }
+            let cpOccupant = form.querySelector('#signalement_cpOccupant').value;
+            // Only a few code postal available in territory 69
+            if (cpOccupant.substr(0, 2) == '69') {
+                const RHONES_AUTHORIZED_CODES_POSTAL = [
+                    69000, 69001, 69002, 69003, 69004, 69005, 69006, 69007, 69008, 69009,
+                    69100, 69125, 69190, 69200, 69290, 69381,
+                    69520, 69600, 69700, 69800
+                ];
+                if (RHONES_AUTHORIZED_CODES_POSTAL.indexOf(Number(cpOccupant)) == -1) {
+                    form.querySelector('#fr-error-text-code-postal')?.classList?.remove('fr-hidden');
+                } else {
+                    form.querySelector('#fr-error-text-code-postal')?.classList?.add('fr-hidden');
                 }
-    
-                refetchAddress(form)
-            }, 300 );
+            }
+
+            refetchAddress(form)
         })
     })
     form?.querySelectorAll('#signalement_villeOccupant')?.forEach((element) => {
