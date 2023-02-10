@@ -10,7 +10,7 @@ parameters:
     special_territory:
      69: # Rhône
       COR: 'COR'
-     "EMHA - Métropole de Lyon": "EMHA - Métropole de Lyon"
+      EMHA - Métropole de Lyon: "EMHA - Métropole de Lyon"
     authorized_codes_insee:
      69:
       COR:
@@ -45,7 +45,7 @@ parameters:
        - "69248"
        - "69254"
        - "69157"
-      "EMHA - Métropole de Lyon":
+      EMHA - Métropole de Lyon:
        - "69091"
        - "69091"
        - "69096"
