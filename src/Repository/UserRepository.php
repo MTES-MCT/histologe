@@ -2,10 +2,12 @@
 
 namespace App\Repository;
 
+use App\Dto\CountUser;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -161,5 +163,33 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         return new Paginator($queryBuilder->getQuery(), false);
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function countUserByStatus(?Territory $territory = null, ?User $user = null): CountUser
+    {
+        $qb = $this->createQueryBuilder('u');
+        $qb->select(sprintf('NEW %s(
+            SUM(CASE WHEN u.statut = :active THEN 1 ELSE 0 END),
+            SUM(CASE WHEN u.statut = :inactive THEN 1 ELSE 0 END))',
+            CountUser::class))
+            ->setParameter('active', User::STATUS_ACTIVE)
+            ->setParameter('inactive', User::STATUS_INACTIVE)
+            ->where('u.statut != :statut')
+            ->andWhere('u.roles not like :role')
+            ->setParameter('statut', User::STATUS_ARCHIVE)
+            ->setParameter('role', '%'.User::ROLE_USAGER.'%');
+
+        if (null !== $territory) {
+            $qb->andWhere('u.territory = :territory')->setParameter('territory', $territory);
+        }
+
+        if ($user?->isUserPartner() || $user?->isPartnerAdmin()) {
+            $qb->andWhere('u.partner = :partner')->setParameter('partner', $user->getPartner());
+        }
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }

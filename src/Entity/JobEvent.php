@@ -15,6 +15,7 @@ class JobEvent
 
     public const STATUS_SUCCESS = 'success';
     public const STATUS_FAILED = 'failed';
+    public const TYPE_JOB_EVENT_ESABORA = 'esabora';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

@@ -77,18 +77,27 @@ class UserAccountController extends AbstractController
         $title = 'Récupération de votre mot de passe';
         if ($request->isMethod('POST') && $email = $request->request->get('email')) {
             $user = $userRepository->findOneBy(['email' => $email]);
-            $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
-            $loginLink = $loginLinkDetails->getUrl();
-            $notificationService->send(
-                NotificationService::TYPE_LOST_PASSWORD,
-                $email,
-                ['link' => $loginLink],
-                $user->getTerritory()
-            );
+            if ($user) {
+                $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
+                $loginLink = $loginLinkDetails->getUrl();
+                $notificationService->send(
+                    NotificationService::TYPE_LOST_PASSWORD,
+                    $email,
+                    ['link' => $loginLink],
+                    $user->getTerritory()
+                );
 
-            return $this->render('security/login_link_sent.html.twig', [
-                'title' => 'Lien de récupération envoyé !',
-                'email' => $email,
+                return $this->render('security/login_link_sent.html.twig', [
+                    'title' => 'Lien de récupération envoyé !',
+                    'email' => $email,
+                ]);
+            }
+
+            return $this->render('security/reset_password.html.twig', [
+                'title' => $title,
+                'actionTitle' => 'Récupération de mot de passe',
+                'actionText' => "afin de récupèrer l'accès à",
+                'emailError' => $email,
             ]);
         }
 

@@ -2,17 +2,23 @@
 
 namespace App\Repository;
 
+use App\Dto\CountSignalement;
 use App\Dto\StatisticsFilters;
+use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\SearchFilterService;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -707,5 +713,118 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('reference', '%'.$chunkReference.'%')
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function countSignalementTerritory(): array
+    {
+        $connexion = $this->getEntityManager()->getConnection();
+        $subSql = 'SELECT COUNT(s2.id)
+                   FROM signalement s2
+                   INNER JOIN territory t2 ON t2.id = s2.territory_id
+                   WHERE s2.statut = :statut_2 AND s2.territory_id = t1.id
+                   AND s2.id NOT IN (SELECT a.signalement_id FROM affectation a)';
+
+        $sql = 'SELECT t1.id, t1.zip, t1.name as territory_name,
+                CONCAT(t1.zip, " - ", t1.name) as label,
+                COUNT(s1.id) AS new,
+                ('.$subSql.') AS no_affected
+                FROM signalement s1
+                INNER JOIN territory t1 ON t1.id = s1.territory_id
+                WHERE s1.statut = :statut_1
+                GROUP BY t1.id, t1.zip, t1.name
+                ORDER BY t1.name;';
+
+        $statement = $connexion->prepare($sql);
+
+        return $statement->executeQuery([
+            'statut_1' => Signalement::STATUS_NEED_VALIDATION,
+            'statut_2' => Signalement::STATUS_ACTIVE,
+        ])->fetchAllAssociative();
+    }
+
+    public function countSignalementAcceptedNoSuivi(Territory $territory)
+    {
+        $subquery = $this->createQueryBuilder('su')
+                ->select('su.signalement.id')
+                ->from(Suivi::class, 'su')
+                ->distinct();
+
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->select('COUNT(s.id) as count_no_suivi, p.nom')
+            ->innerJoin('s.affectations', 'a')
+            ->innerJoin('a.partner', 'p')
+            ->where('s.statut IN (:statut) AND s.id NOT IN (:subquery)')
+            ->setParameter('statut', [Signalement::STATUS_ACTIVE, Signalement::STATUS_NEED_PARTNER_RESPONSE])
+            ->setParameter('subquery', $subquery)
+            ->groupBy('p.nom');
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     * @throws QueryException
+     */
+    public function countSignalementByStatus(?Territory $territory = null): CountSignalement
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select(
+            sprintf('NEW %s(
+                COUNT(s.id),
+                SUM(CASE WHEN s.statut = :new     THEN 1 ELSE 0 END),
+                SUM(CASE WHEN s.statut = :active OR s.statut =:waiting THEN 1 ELSE 0 END),
+                SUM(CASE WHEN s.statut = :closed  THEN 1 ELSE 0 END),
+                SUM(CASE WHEN s.statut = :refused THEN 1 ELSE 0 END))',
+                CountSignalement::class
+            )
+        )
+            ->setParameter('new', Signalement::STATUS_NEED_VALIDATION)
+            ->setParameter('active', Signalement::STATUS_ACTIVE)
+            ->setParameter('waiting', Signalement::STATUS_NEED_PARTNER_RESPONSE)
+            ->setParameter('closed', Signalement::STATUS_CLOSED)
+            ->setParameter('refused', Signalement::STATUS_REFUSED)
+            ->where('s.statut != :archived')
+            ->setParameter('archived', Signalement::STATUS_ARCHIVED);
+
+        if (null !== $territory) {
+            $qb->andWhere('s.territory =:territory')->setParameter('territory', $territory);
+        }
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function countSignalementClosedByAtLeast(int $numberPartner = 1, ?Territory $territory = null): int
+    {
+        $connection = $this->getEntityManager()->getConnection();
+        $whereTerritory = $territory instanceof Territory ? ' AND s.territory_id = :territory_id ' : null;
+        $parameters = [
+            'signalement_closed' => Signalement::STATUS_CLOSED,
+            'affectation_closed' => Affectation::STATUS_CLOSED,
+            'nb_partner_closed' => $numberPartner,
+        ];
+        if (null !== $whereTerritory) {
+            $parameters['territory_id'] = $territory->getId();
+        }
+
+        $sql = 'SELECT COUNT(uuid) AS count_partner FROM (
+            SELECT s.uuid, count(s.uuid) as nb_partner_closed
+            FROM signalement s
+            INNER JOIN affectation a on a.signalement_id = s.id
+            WHERE s.statut != :signalement_closed
+            AND a.statut = :affectation_closed'
+            .$whereTerritory.
+            ' GROUP BY s.uuid
+            HAVING nb_partner_closed > :nb_partner_closed) as count_partner_request';
+
+        $statement = $connection->prepare($sql);
+
+        return (int) $statement->executeQuery($parameters)->fetchOne();
     }
 }
