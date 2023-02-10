@@ -174,9 +174,9 @@ class AddUserCommand extends Command
             email: $input->getArgument('email')
         );
 
-        $password = $this->hasher->hashPassword($user, uniqid());
+        $password = $this->hasher->hashPassword($user, 'histologe');
 
-        $user->setPassword($password);
+        $user->setPassword($password)->setStatut(User::STATUS_ACTIVE);
 
         $errors = $this->validator->validate($user);
 

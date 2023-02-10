@@ -617,3 +617,135 @@ signalements:
     situations: []
     criteres: []
     criticites: []
+  -
+    uuid: "00000000-0000-0000-2023-0000000002"
+    details: "[COR] Signalement dans la commune Affoux (code insee: 69001, code postal: 69170)"
+    is_proprio_averti: 0
+    nb_adultes: "3"
+    is_allocataire: "CAF"
+    nature_logement: "Appartement"
+    type_logement: "T5"
+    superficie: 100
+    loyer: 1000
+    phone_number: 0621127285
+    adresse_occupant: "Le Bourg, 47 route du Montmeterme"
+    cp_occupant: "69170"
+    ville_occupant: "Affoux"
+    etage_occupant: "5"
+    statut: 2
+    reference: "2023-2"
+    geoloc: "{\"lat\":\"48.862725\", \"lng\":\"2.287592\"}"
+    score_creation: 5.420054200542
+    insee_occupant: "69001"
+    type_energie_logement: "Electrique"
+    origine_signalement: "Guichet Unique"
+    situation_occupant: "1"
+    nb_pieces_logement: 3
+    nb_chambres_logement: 2
+    nb_niveaux_logement: 0
+    nb_occupants_logement: 2
+    territory: "Rhône"
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    tags: []
+    situations: []
+    criteres: []
+    criticites: []
+  -
+    uuid: "00000000-0000-0000-2023-0000000003"
+    details: "[MDL] Signalement dans la commune Lyon (code insee: 69381, code postal: 69001)"
+    is_proprio_averti: 1
+    nb_adultes: "3"
+    is_allocataire: "CAF"
+    nature_logement: "Appartement"
+    type_logement: "T5"
+    superficie: 100
+    loyer: 1000
+    phone_number: 0621127285
+    adresse_occupant: "10 Rue Adamoli"
+    cp_occupant: "69001"
+    ville_occupant: "Lyon"
+    etage_occupant: "5"
+    statut: 2
+    reference: "2023-3"
+    geoloc: "[]"
+    score_creation: 5.420054200542
+    insee_occupant: "69381"
+    type_energie_logement: "Electrique"
+    origine_signalement: "Guichet Unique"
+    situation_occupant: "1"
+    nb_pieces_logement: 3
+    nb_chambres_logement: 2
+    nb_niveaux_logement: 0
+    nb_occupants_logement: 2
+    territory: "Rhône"
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    tags: []
+    situations: []
+    criteres: []
+    criticites: []
+  -
+    uuid: "00000000-0000-0000-2023-0000000004"
+    details: "[MDL] Signalement pour la commune St Genis les Ollieres	(code insee: 69205, code postal: 69290)"
+    is_proprio_averti: 1
+    nb_adultes: "3"
+    is_allocataire: "CAF"
+    nature_logement: "Appartement"
+    type_logement: "T5"
+    superficie: 100
+    loyer: 1000
+    phone_number: 0621127285
+    adresse_occupant: "Rue de la Cascade"
+    cp_occupant: "69290"
+    ville_occupant: "Saint-Genis-les-Ollières"
+    etage_occupant: "5"
+    statut: 2
+    reference: "2023-4"
+    geoloc: "[]"
+    score_creation: 5.420054200542
+    insee_occupant: "69205"
+    type_energie_logement: "Electrique"
+    origine_signalement: "Guichet Unique"
+    situation_occupant: "1"
+    nb_pieces_logement: 3
+    nb_chambres_logement: 2
+    nb_niveaux_logement: 0
+    nb_occupants_logement: 2
+    territory: "Rhône"
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    tags: []
+    situations: []
+    criteres: []
+    criticites: []
+  -
+    uuid: "00000000-0000-0000-2023-0000000005"
+    details: "[COR] Signalement pour la commune Chenelette (code insee: 69054, code postal: 69430)"
+    is_proprio_averti: 1
+    nb_adultes: "3"
+    is_allocataire: "CAF"
+    nature_logement: "Appartement"
+    type_logement: "T5"
+    superficie: 100
+    loyer: 1000
+    phone_number: 0621127285
+    adresse_occupant: "7 place Ganelon"
+    cp_occupant: "69430"
+    ville_occupant: "Chenelette"
+    etage_occupant: "5"
+    statut: 2
+    reference: "2023-5"
+    geoloc: "[]"
+    score_creation: 5.420054200542
+    insee_occupant: "69054"
+    type_energie_logement: "Electrique"
+    origine_signalement: "Guichet Unique"
+    situation_occupant: "1"
+    nb_pieces_logement: 3
+    nb_chambres_logement: 2
+    nb_niveaux_logement: 0
+    nb_occupants_logement: 2
+    territory: "Rhône"
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    tags: []
+    situations: []
+    criteres: []
+    criticites: []

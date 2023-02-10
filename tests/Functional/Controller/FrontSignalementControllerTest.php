@@ -100,6 +100,20 @@ class FrontSignalementControllerTest extends WebTestCase
                 'geoloc' => ['lat' => 42.70278, 'lng' => 9.45],
                 'inseeOccupant' => '2B033',
             ]],
+            'Chenelette' => [[
+                'adresseOccupant' => '7 place Ganelon',
+                'villeOccupant' => 'Chenelette',
+                'cpOccupant' => '69430',
+                'geoloc' => ['lat' => 46.166672, 'lng' => 4.48333],
+                'inseeOccupant' => '69054',
+            ]],
+            'Lyon 1er arrondissement' => [[
+                'adresseOccupant' => 'Ruelle des Fantasques',
+                'villeOccupant' => 'Lyon',
+                'cpOccupant' => '69001',
+                'geoloc' => ['lat' => 45.7640, 'lng' => 4.8357],
+                'inseeOccupant' => '69381',
+            ]],
         ];
     }
 

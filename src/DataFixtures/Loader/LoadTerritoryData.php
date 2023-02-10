@@ -6,18 +6,10 @@ use App\Entity\Territory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Faker\Factory;
 use Symfony\Component\Yaml\Yaml;
 
 class LoadTerritoryData extends Fixture implements OrderedFixtureInterface
 {
-    public const DEPARTEMENTS = [
-        '13' => 'BOUCHES-DU-RHONE',
-        '01' => 'AIN',
-        '06' => 'ALPES-MARITIMES',
-        '64' => 'PYRENEES-ATLANTIQUE',
-    ];
-
     public function __construct()
     {
     }
@@ -33,12 +25,15 @@ class LoadTerritoryData extends Fixture implements OrderedFixtureInterface
 
     public function loadTerritories(ObjectManager $manager, array $row): void
     {
-        $faker = Factory::create('fr_FR');
         $territory = (new Territory())
             ->setZip($row['zip'])
             ->setName($row['name'])
             ->setIsActive($row['is_active'])
             ->setBbox(json_decode($row['bbox'], true));
+
+        if (isset($row['authorized_codes_insee'])) {
+            $territory->setAuthorizedCodesInsee($row['authorized_codes_insee']);
+        }
 
         $manager->persist($territory);
     }

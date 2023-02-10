@@ -4,30 +4,26 @@ partners:
     email: "admin@histologe.fr"
     is_archive: 0
     is_commune: 0
-    insee: "[\"\"]"
     territory: null
   -
     nom: "Partenaire 13-01"
     email: "partenaire-13-01@histologe.fr"
     is_archive: 0
     is_commune: 0
-    insee: "[\"\"]"
     territory: "Bouches-du-Rhône"
     esabora_url: "http://histologe_wiremock:8080/ws/rest"
   -
     nom: "Partenaire 13-02"
     email: "partenaire-13-02@histologe.fr"
     is_archive: 0
-    is_commune: 1
-    insee: "[\"13215\", \"13205\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\", \"13001\"]"
+    is_commune: 0
     territory: "Bouches-du-Rhône"
     esabora_url: "http://histologe_wiremock:8080/ws/rest"
   -
     nom: "Partenaire 13-03"
     email: "partenaire-13-03@histologe.fr"
     is_archive: 0
-    is_commune: 1
-    insee: "[\"13047\"]"
+    is_commune: 0
     territory: "Bouches-du-Rhône"
     esabora_url: "http://histologe_wiremock:8080/ws/rest"
   -
@@ -35,7 +31,6 @@ partners:
     email: "partenaire-13-04@histologe.fr"
     is_archive: 0
     is_commune: 0
-    insee: "[\"\"]"
     territory: "Bouches-du-Rhône"
     esabora_url: "http://histologe_wiremock:8080/ws/rest"
   -
@@ -104,3 +99,45 @@ partners:
     insee: "[\"\"]"
     territory: "La Réunion"
     esabora_url: "http://histologe_wiremock:8080/ws/rest"
+  -
+    nom: "EMHA - Métropole de Lyon"
+    email: "partenaire-01-69@histologe.fr"
+    is_archive: 0
+    is_commune: 1
+    insee: "[\"69091\", \"69091\", \"69096\", \"69123\", \"69149\", \"69199\",\"69205\", \"69290\", \"69259\", \"69266\", \"69381\", \"69382\", \"69383\", \"69384\", \"69385\", \"69386\", \"69387\", \"69388\", \"69389\", \"69901\"]"
+    territory: "Rhône"
+  -
+    nom: "COR"
+    email: "partenaire-02-69@histologe.fr"
+    is_archive: 0
+    is_commune: 1
+    insee: "[\"69001\", \"69006\", \"69008\", \"69037\", \"69054\", \"69060\", \"69066\", \"69070\", \"69075\", \"69093\", \"69102\", \"69107\", \"69174\", \"69130\", \"69160\", \"69164\", \"69169\", \"69181\", \"69183\", \"69188\", \"69200\", \"69214\", \"69217\", \"69225\", \"69229\", \"69234\", \"69240\", \"69243\", \"69248\", \"69254\", \"69157\"]"
+    territory: "Rhône"
+  -
+    nom: "Commune 69-03 MDL"
+    email: "partenaire-03-69@histologe.fr"
+    is_archive: 0
+    is_commune: 1
+    insee: "[\"69205\"]"
+    territory: "Rhône"
+  -
+    nom: "Commune 69-04 COR"
+    email: "partenaire-04-69@histologe.fr"
+    is_archive: 0
+    is_commune: 1
+    insee: "[\"69054\"]"
+    territory: "Rhône"
+  -
+    nom: "Partenaire 69-05"
+    email: "partenaire-05-69@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Rhône"
+  -
+    nom: "Partenaire 69-06"
+    email: "partenaire-06-69@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Rhône"

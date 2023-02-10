@@ -46,33 +46,6 @@ class PartnerRepository extends ServiceEntityRepository
         return $paginator;
     }
 
-    /**
-     * @deprecated
-     */
-    public function findAllOrByInseeIfCommune(string|null $insee, Territory|null $territory)
-    {
-        $qb = $this->createQueryBuilder('p')
-            ->where('p.isArchive != 1');
-        /*
-         * @todo: necessary to clean data and add some constraint in partner creation to know
-         * if partner should have `is_commune` 0 or 1 depends if code insee exists
-         */
-        if ($insee) {
-            $qb->andWhere('p.isCommune = 0 OR p.isCommune = 1 AND p.insee LIKE :insee')
-                ->setParameter('insee', '%'.$insee.'%');
-        }
-        if ($territory) {
-            $qb->andWhere('p.territory = :territory')->setParameter('territory', $territory);
-        }
-        $qb
-            ->leftJoin('p.affectations', 'affectations')
-            ->addSelect('affectations');
-
-        return $qb
-            ->getQuery()
-            ->getResult();
-    }
-
     public function findAllList(Territory|null $territory)
     {
         $qb = $this->createQueryBuilder('p')
