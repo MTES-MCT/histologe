@@ -140,7 +140,7 @@ class NotificationService
             self::TYPE_SIGNALEMENT_CLOSED_TO_USAGER => [
                 'template' => 'closed_to_usager_signalement_email',
                 'subject' => 'Votre signalement sur Histologe est terminé.',
-                'btnText' => 'Accéder à ma page de suivi',
+                'btnText' => 'Accéder à mon signalement',
             ],
             self::TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS => [
                 'template' => 'closed_to_partners_signalement_email',
@@ -159,11 +159,12 @@ class NotificationService
             self::TYPE_CONFIRM_RECEPTION => [
                 'template' => 'accuse_reception_email',
                 'subject' => 'Votre signalement a bien été reçu !',
+                'btnText' => 'Accéder à mon signalement',
             ],
             self::TYPE_NEW_COMMENT_FRONT => [
                 'template' => 'nouveau_suivi_signalement_email',
                 'subject' => 'Nouvelle mise à jour de votre signalement !',
-                'btntext' => 'Suivre mon signalement',
+                'btnText' => 'Accéder à mon signalement',
             ],
             self::TYPE_NEW_COMMENT_BACK => [
                 'template' => 'nouveau_suivi_signalement_back_email',

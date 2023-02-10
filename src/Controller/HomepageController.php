@@ -27,7 +27,8 @@ class HomepageController extends AbstractController
         $stats = [];
         $stats['total'] = $signalementRepository->countAll(
             territory: null,
-            removeImported: true
+            removeImported: true,
+            removeArchived: true
         );
         $stats['pris_en_compte'] = round($signalementRepository->countValidated(true) / $stats['total'] * 100, 1);
         $stats['clotures'] = round($signalementRepository->countClosed(true) / $stats['total'] * 100, 1);
