@@ -17,7 +17,6 @@ for (i = 0; i < tables.length; i++) {
         thead.addEventListener("click", sortTableFunction(table));
     }
 }
-var idFetchTimeout;
 localStorage.clear();
 forms.forEach((form) => {
     form?.querySelectorAll('.toggle-criticite input[type="radio"]')?.forEach((criticite) => {

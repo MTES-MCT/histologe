@@ -259,7 +259,7 @@ const removeBadge = (badge) => {
     }
     badge.remove();
 }
-var idFetchTimeout;
+let idFetchTimeout;
 const searchAddress = (form, autocomplete) => {
     clearTimeout(idFetchTimeout);
     idFetchTimeout = setTimeout( () => {
