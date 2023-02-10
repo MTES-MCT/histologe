@@ -6,7 +6,7 @@
 
 imports:
     - { resource: 'dashboard/widget_parameters.yaml'}
-    - { resource: 'signalement/insee_agglomeration.yaml'}
+    - { resource: 'territory/insee_agglomeration.yaml'}
 parameters:
     uploads_dir: '%kernel.project_dir%/uploaded_files/signalement/'
     uploads_tmp_dir: '%kernel.project_dir%/tmp/'
@@ -20,10 +20,6 @@ parameters:
     user_system_email: '%env(resolve:USER_SYSTEM_EMAIL)%'
     host_url: '%env(resolve:HISTOLOGE_URL)%'
     token_lifetime: '1 day'
-    special_territory:
-        69: # Rhône
-         COR: 'COR'
-         "EMHA - Métropole de Lyon": "EMHA - Métropole de Lyon"
 
 services:
     # default configuration for services in *this* file

@@ -1,4 +1,8 @@
 parameters:
+    special_territory:
+     69: # Rhône
+      COR: 'COR'
+     "EMHA - Métropole de Lyon": "EMHA - Métropole de Lyon"
     authorized_codes_insee:
      69:
       COR:
