@@ -34,12 +34,12 @@ class SignalementRepository extends ServiceEntityRepository
     public const ARRAY_LIST_PAGE_SIZE = 30;
     public const MARKERS_PAGE_SIZE = 9000; // @todo: is high cause duplicate result, the query findAllWithGeoData should be reviewed
 
-    private SearchFilterService $searchFilterService;
-
-    public function __construct(ManagerRegistry $registry, private array $params)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private SearchFilterService $searchFilterService,
+        private array $params
+    ) {
         parent::__construct($registry, Signalement::class);
-        $this->searchFilterService = new SearchFilterService();
     }
 
     public function findAllWithGeoData($user, $options, int $offset, Territory|null $territory): array
