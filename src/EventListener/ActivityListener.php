@@ -157,7 +157,12 @@ class ActivityListener implements EventSubscriberInterface
             ]);
 
             $this->removeCurrentUserEmailForNotification();
-            if ($this->tos->isEmpty() || (1 === \count($this->tos) && empty($this->tos[0]))) {
+
+            $this->tos = $this->tos->filter(function ($element) {
+                return '' !== trim($element) && null !== $element;
+            });
+
+            if ($this->tos->isEmpty()) {
                 $sendErrorMail = true;
             } else {
                 $this->notifier->send($mailType, array_unique($this->tos->toArray()), $options, $signalement->getTerritory());
