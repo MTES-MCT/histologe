@@ -81,10 +81,6 @@ services:
         alias: App\Manager\Manager
         public: true
 
-    App\Command\MigrateLegacyCommand:
-        arguments:
-            $hostUrl: '%env(resolve:HISTOLOGE_URL)%'
-
     App\EventSubscriber\UserAddedSubscriber:
         tags:
             - name: 'doctrine.event_subscriber'

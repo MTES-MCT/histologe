@@ -9,8 +9,8 @@ use App\Entity\Territory;
 use App\Event\SignalementCreatedEvent;
 use App\Factory\SignalementFactory;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Security\Core\Security;
 
 class SignalementManager extends AbstractManager
 {
