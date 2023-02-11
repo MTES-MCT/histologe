@@ -5,35 +5,28 @@ namespace App\Service\DashboardWidget\WidgetLoader;
 use App\Entity\JobEvent;
 use App\Service\DashboardWidget\Widget;
 use App\Service\DashboardWidget\WidgetDataManagerInterface;
-use App\Service\DashboardWidget\WidgetLoaderInterface;
 use App\Service\DashboardWidget\WidgetType;
-use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class EsaboraEventWidgetLoader implements WidgetLoaderInterface
+class EsaboraEventWidgetLoader extends AbstractWidgetLoader
 {
+    protected ?string $widgetType = WidgetType::WIDGET_TYPE_ESABORA_EVENTS;
+
     public function __construct(
-        private WidgetDataManagerInterface $widgetDataManager,
-        private ParameterBagInterface $parameterBag,
+        protected ParameterBagInterface $parameterBag,
+        protected WidgetDataManagerInterface $widgetDataManager
     ) {
+        parent::__construct($this->parameterBag);
     }
 
-    /**
-     * @throws Exception
-     */
-    public function load(Widget $widget)
+    public function load(Widget $widget): void
     {
-        $params = $this->parameterBag->get($widget->getType());
+        parent::load($widget);
         $widget->setData(
             $this->widgetDataManager->findLastJobEventByType(
                 JobEvent::TYPE_JOB_EVENT_ESABORA,
-                $params['day_period']
+                $this->widgetParameter['data']
             )
         );
-    }
-
-    public function supports(string $type): bool
-    {
-        return WidgetType::WIDGET_TYPE_ESABORA_EVENTS === $type;
     }
 }

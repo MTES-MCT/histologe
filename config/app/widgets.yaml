@@ -1,6 +1,8 @@
 parameters:
   data-kpi:
     roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_ADMIN_PARTNER, ROLE_USER_PARTNER]
+    data:
+      expired_at: '%env(int:WIDGET_DATA_KPI_CACHE_EXPIRED_AT)%' #second
     widgetCards:
       cardNouveauxSignalements:
         label: "Nouveaux signalements"
@@ -35,15 +37,24 @@ parameters:
         label: "Tous les signalements"
         roles: [ROLE_USER_PARTNER, ROLE_ADMIN_PARTNER]
         link: 'back_index'
+
   affectations-partenaires:
     roles: [ ROLE_ADMIN, ROLE_ADMIN_TERRITORY ]
+    data:
+      expired_at: '%env(int:WIDGET_AFFECTATION_PARTNER_CACHE_EXPIRED_AT)%' #second
 
   signalements-acceptes-sans-suivi:
     roles: [ ROLE_ADMIN_TERRITORY ]
+    data:
+      expired_at: '%env(int:WIDGET_SIGNALEMENT_ACCEPTED_NO_SUIVI_CACHE_EXPIRED_AT)%' #second
 
   signalements-territoires:
     roles: [ ROLE_ADMIN ]
+    data:
+      expired_at: '%env(int:WIDGET_SIGNALEMENT_TERRITOIRE_CACHE_EXPIRED_AT)%' #second
 
   esabora-evenements:
     roles: [ ROLE_ADMIN ]
-    day_period: 21
+    data:
+      expired_at: '%env(int:WIDGET_ESABORA_EVENTS_CACHE_EXPIRED_AT)%' #second
+      period: 21 #day
