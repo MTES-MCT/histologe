@@ -37,7 +37,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
         return $this->dashboardCache->get(
             __FUNCTION__.$this->key.'-zip-'.$territory?->getZip(),
             function (ItemInterface $item) use ($territory, $params) {
-                $item->expiresAfter($params['expired_at'] ?? null);
+                $item->expiresAfter($params['expired_after'] ?? null);
 
                 return $this->widgetDataManager->countSignalementAcceptedNoSuivi($territory);
             }
@@ -52,7 +52,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
         return $this->dashboardCache->get(
             __FUNCTION__.'-'.$this->key,
             function (ItemInterface $item) use ($params) {
-                $item->expiresAfter($params['expired_at'] ?? null);
+                $item->expiresAfter($params['expired_after'] ?? null);
 
                 return $this->widgetDataManager->countSignalementsByTerritory();
             }
@@ -67,7 +67,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
         return $this->dashboardCache->get(
             __FUNCTION__.'-'.$this->key.'-zip-'.$territory?->getZip(),
             function (ItemInterface $item) use ($territory, $params) {
-                $item->expiresAfter($params['expired_at'] ?? null);
+                $item->expiresAfter($params['expired_after'] ?? null);
 
                 return $this->widgetDataManager->countAffectationPartner($territory);
             }
@@ -82,7 +82,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
         return $this->dashboardCache->get(
             __FUNCTION__.'-'.$this->key,
             function (ItemInterface $item) use ($type, $params) {
-                $item->expiresAfter($params['expired_at'] ?? null);
+                $item->expiresAfter($params['expired_after'] ?? null);
 
                 return $this->widgetDataManager->findLastJobEventByType($type, $params);
             }
@@ -97,7 +97,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
         return $this->dashboardCache->get(
             __FUNCTION__.'-'.$this->key.'-zip-'.$territory?->getZip(),
             function (ItemInterface $item) use ($territory, $params) {
-                $item->expiresAfter($params['expired_at'] ?? null);
+                $item->expiresAfter($params['expired_after'] ?? null);
 
                 return $this->widgetDataManager->countDataKpi($territory);
             }
