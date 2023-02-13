@@ -30,9 +30,6 @@ class UpdateAlgoCriticiteCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        // ini_set("memory_limit", "-1"); // Hack for local env: uncomment this line if you have memory limit error
-
-        $totalRead = 0;
         $this->io = new SymfonyStyle($input, $output);
 
         $this->io->title('Update Critere and Criticite');
@@ -83,36 +80,6 @@ class UpdateAlgoCriticiteCommand extends Command
         $this->changeCritereCoefAndType('L’usage des lieux n’est pas respecté.', coef: 0, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0, 0, 1]); // TODO plusieurs coefs
         $this->changeCritereCoefAndType('Le bruit à l’intérieur du logement ou du bâtiment est gênant.', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 2]);
         $this->changeCritereCoefAndType('Le bruit extérieur est gênant.', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 0.5, 1]);
-
-        // $this->changeCritereCoefAndType("Nuisances de l'environnement");
-        // $this->changeCritereCoefAndType("Murs extérieurs");
-        // $this->changeCritereCoefAndType("Charpentes");
-        // $this->changeCritereCoefAndType("Toitures");
-        // $this->changeCritereCoefAndType("Prévention des chutes");
-        // $this->changeCritereCoefAndType("Réseau eau potable");
-        // $this->changeCritereCoefAndType("Évacuation des eaux usées et raccordement");
-        // $this->changeCritereCoefAndType("Propreté");
-        // $this->changeCritereCoefAndType("Présence d'animaux nuisibles ");
-        // $this->changeCritereCoefAndType("Éclairement naturel des pièces principales");
-        // $this->changeCritereCoefAndType("Organisation intérieure du logement");
-        // $this->changeCritereCoefAndType("Dimension des pièces / surface habitable");
-        // $this->changeCritereCoefAndType("Protection phonique / bruits extérieurs");
-        // $this->changeCritereCoefAndType("Protection phonique / bruits intérieurs");
-        // $this->changeCritereCoefAndType("Isolation thermique");
-        // $this->changeCritereCoefAndType("Chaudière gaz:\r\nInstallation, sécurité ");
-        // $this->changeCritereCoefAndType("Évacuation des produits de combustion");
-        // $this->changeCritereCoefAndType("Toxiques, peintures au plomb");
-        // $this->changeCritereCoefAndType("Risque amiante");
-        // $this->changeCritereCoefAndType("Prévention des chutes de personnes");
-        // $this->changeCritereCoefAndType("Appréciation globale des manifestations d'humidité");
-        // $this->changeCritereCoefAndType("Réseau d'alimentation en eau potable");
-        // $this->changeCritereCoefAndType("Réseau d'évacuation des eaux usées");
-        // $this->changeCritereCoefAndType("Réseau d'électricité");
-        // $this->changeCritereCoefAndType("Fils électriques dénudés");
-        // $this->changeCritereCoefAndType("Toilettes");
-        // $this->changeCritereCoefAndType("Salle de bain ou salle d'eau");
-        // $this->changeCritereCoefAndType("Entretien des lieux, propreté courante");
-        // $this->changeCritereCoefAndType("Sur-occupation");
 
         $this->changeCritereLabel('L’installation du réseau électrique a un problème.', 'L’installation du réseau électrique du bâtiment a un problème');
         $this->changeCritereLabel('Fils électriques dénudés', 'Fils électriques dénudés -Bâtiment/Parties communes');
