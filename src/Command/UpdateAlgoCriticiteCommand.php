@@ -81,8 +81,11 @@ class UpdateAlgoCriticiteCommand extends Command
         $this->changeCritereCoefAndType('Le bruit à l’intérieur du logement ou du bâtiment est gênant.', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 2]);
         $this->changeCritereCoefAndType('Le bruit extérieur est gênant.', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 0.5, 1]);
 
+        $this->io->success('End of change Critere and Criticites coef, score, isDanger and types');
+
         $this->changeCritereLabel('L’installation du réseau électrique a un problème.', 'L’installation du réseau électrique du bâtiment a un problème');
         $this->changeCritereLabel('Fils électriques dénudés', 'Fils électriques dénudés -Bâtiment/Parties communes');
+        $this->io->success('End of change Critere labels');
 
         return Command::SUCCESS;
     }
@@ -91,10 +94,11 @@ class UpdateAlgoCriticiteCommand extends Command
     {
         $critere = $this->critereRepository->findByLabel($label);
         if ($critere) {
-            $this->io->text('Update critere with label : '.$critere->getLabel());
+            $this->io->section('<info>Update critere with label</info> : '.$critere->getLabel());
             $critere->setNewCoef($coef);
             $critere->setType($type);
-            $this->io->text('New Coef : '.$critere->getNewCoef().'  and type '.$critere->getType().'  and is_danger '.$critere->getIsDanger());
+            $this->io->text(sprintf('New critere coef : %s and critere type : %s', $critere->getNewCoef(), $critere->getTypeString()));
+            $this->io->newLine();
 
             if ($criticiteIsDanger || $criticiteScores) {
                 $this->changeCriticiteScore($critere, $criticiteIsDanger, $criticiteScores);
@@ -103,7 +107,7 @@ class UpdateAlgoCriticiteCommand extends Command
             $this->entityManager->persist($critere);
             $this->entityManager->flush();
         } else {
-            $this->io->text('No critere with label : '.$label);
+            $this->io->warning('No critere with label : '.$label);
         }
     }
 
@@ -117,17 +121,18 @@ class UpdateAlgoCriticiteCommand extends Command
         if ($criticites) {
             $count = 0;
             foreach ($criticites as $criticite) {
-                $this->io->text('Update criticite with label : '.$criticite->getLabel());
+                $this->io->text('<info>Update criticite with label</info> : '.$criticite->getLabel());
                 $criticite->setIsDanger($criticiteIsDanger[$count]);
                 $criticite->setNewScore($criticiteScores[$count]);
-                $this->io->text('IsDanger  : '.$criticite->getIsDanger().'New score : '.$criticite->getNewScore());
+                $this->io->text(sprintf('IsDanger : %s and new criticite score : %s', var_export($criticite->getIsDanger(), true), $criticite->getNewScore()));
+
                 $this->entityManager->persist($criticite);
                 ++$count;
             }
 
             $this->entityManager->flush();
         } else {
-            $this->io->text('No criticites associated with critere with label : '.$critere->getLabel());
+            $this->io->warning('No criticites associated with critere with label : '.$critere->getLabel());
         }
     }
 
@@ -142,7 +147,7 @@ class UpdateAlgoCriticiteCommand extends Command
             $this->entityManager->persist($critere);
             $this->entityManager->flush();
         } else {
-            $this->io->text('No critere with label : '.$oldLabel);
+            $this->io->warning('No critere with label : '.$oldLabel);
         }
     }
 }

@@ -238,6 +238,17 @@ class Critere
         return $this->type;
     }
 
+    public function getTypeString(): ?string
+    {
+        if (self::TYPE_BATIMENT == $this->type) {
+            return 'batiment';
+        } elseif (self::TYPE_LOGEMENT == $this->type) {
+            return 'logement';
+        }
+
+        return null;
+    }
+
     public function setType(int $type): self
     {
         $this->type = $type;
