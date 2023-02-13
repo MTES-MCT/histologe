@@ -21,41 +21,11 @@ class TerritoryRepository extends ServiceEntityRepository
         parent::__construct($registry, Territory::class);
     }
 
-    public function add(Territory $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(Territory $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
     public function findAllList()
     {
         $qb = $this->createQueryBuilder('t')
             ->select('PARTIAL t.{id,name,zip}')
             ->where('t.isActive = 1');
-
-        return $qb->indexBy('t', 't.id')
-            ->getQuery()
-            ->getResult();
-    }
-
-    public function findByZip($zip)
-    {
-        $qb = $this->createQueryBuilder('t')
-            ->select('PARTIAL t.{id,name}')
-            ->where('t.isActive = 1')
-            ->andWhere('t.zip = \''.$zip.'\'');
 
         return $qb->indexBy('t', 't.id')
             ->getQuery()

@@ -21,7 +21,7 @@ class PartnerFactory
         $partner = (new Partner())
             ->setTerritory($territory)
             ->setNom($name)
-            ->setEmail(mb_strtolower($email))
+            ->setEmail($email)
             ->setIsCommune($isCommune)
             ->setIsArchive(false);
 

@@ -10,7 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PartnerRepository::class)]
-#[UniqueEntity('email')]
+#[UniqueEntity('email', ignoreNull: true)]
 class Partner
 {
     public const DEFAULT_PARTNER = 'Administrateurs Histologe ALL';
@@ -43,7 +43,7 @@ class Partner
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     #[Assert\Email]
-    private $email;
+    private ?string $email = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Url]
@@ -211,7 +211,7 @@ class Partner
 
     public function setEmail(?string $email): self
     {
-        $this->email = $email;
+        $this->email = !empty($email) ? mb_strtolower($email) : null;
 
         return $this;
     }

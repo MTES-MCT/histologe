@@ -14,7 +14,6 @@ use App\Service\SearchFilterService;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\Expr\Join;
@@ -37,7 +36,7 @@ class SignalementRepository extends ServiceEntityRepository
 
     private SearchFilterService $searchFilterService;
 
-    public function __construct(ManagerRegistry $registry, private EntityManagerInterface $entityManager)
+    public function __construct(ManagerRegistry $registry, private array $params)
     {
         parent::__construct($registry, Signalement::class);
         $this->searchFilterService = new SearchFilterService();
@@ -47,7 +46,8 @@ class SignalementRepository extends ServiceEntityRepository
     {
         $firstResult = $offset;
         $qb = $this->createQueryBuilder('s');
-        $qb->select('PARTIAL s.{id,details,uuid,reference,nomOccupant,prenomOccupant,adresseOccupant,cpOccupant,villeOccupant,scoreCreation,statut,createdAt,geoloc,territory},
+        $qb->select('PARTIAL s.{id,details,uuid,reference,nomOccupant,prenomOccupant,adresseOccupant,cpOccupant,
+        inseeOccupant, villeOccupant,scoreCreation,statut,createdAt,geoloc,territory},
             PARTIAL a.{id,partner,createdAt},
             PARTIAL criteres.{id,label},
             PARTIAL partner.{id,nom}');
@@ -60,6 +60,16 @@ class SignalementRepository extends ServiceEntityRepository
         }
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+
+            if (\array_key_exists($territory->getZip(), $options['authorized_codes_insee'])
+            ) {
+                $qb = $this->filterForSpecificAgglomeration(
+                    $qb,
+                    $territory->getZip(),
+                    $options['partner_name'],
+                    $options['authorized_codes_insee']
+                );
+            }
         }
 
         $qb = $this->searchFilterService->applyFilters($qb, $options);
@@ -310,7 +320,8 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->where('s.statut != :status')
             ->setParameter('status', Signalement::STATUS_ARCHIVED);
         if (!$export) {
-            $qb->select('PARTIAL s.{id,uuid,reference,isNotOccupant, nomOccupant,prenomOccupant,adresseOccupant,cpOccupant,villeOccupant,mailOccupant, scoreCreation,statut,createdAt,geoloc}');
+            $qb->select('PARTIAL s.{id,uuid,reference,isNotOccupant, nomOccupant,prenomOccupant,adresseOccupant,
+            cpOccupant,inseeOccupant, villeOccupant,mailOccupant, scoreCreation,statut,createdAt,geoloc}');
             $qb->leftJoin('s.affectations', 'affectations');
             $qb->leftJoin('s.tags', 'tags');
             $qb->leftJoin('affectations.partner', 'partner');
@@ -320,6 +331,16 @@ class SignalementRepository extends ServiceEntityRepository
         }
         if (!$user->isSuperAdmin()) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $user->getTerritory());
+            if ($user->isTerritoryAdmin()
+                && \array_key_exists($user->getTerritory()->getZip(), $options['authorized_codes_insee'])
+            ) {
+                $qb = $this->filterForSpecificAgglomeration(
+                    $qb,
+                    $user->getTerritory()->getZip(),
+                    $user->getPartner()->getNom(),
+                    $options['authorized_codes_insee']
+                );
+            }
         }
         $qb = $this->searchFilterService->applyFilters($qb, $options);
         $qb->orderBy('s.createdAt', 'DESC');
@@ -713,6 +734,25 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('reference', '%'.$chunkReference.'%')
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    private function filterForSpecificAgglomeration(
+        QueryBuilder $qb,
+        string $territoryZip,
+        string $partnerName,
+        array $options
+    ): QueryBuilder {
+        if (isset($this->params[$territoryZip])
+            && isset($this->params[$territoryZip][$partnerName])
+        ) {
+            $qb->andWhere('s.inseeOccupant IN (:authorized_codes_insee)')
+                ->setParameter(
+                    'authorized_codes_insee',
+                    $options[$territoryZip][$partnerName]
+                );
+        }
+
+        return $qb;
     }
 
     /**

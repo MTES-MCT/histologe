@@ -33,9 +33,13 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
             ->setNom($row['nom'])
             ->setEmail($row['email'] ?? null)
             ->setIsArchive($row['is_archive'])
-            ->setIsCommune($row['is_commune'])
-            ->setInsee(json_decode($row['insee'], true))
-            ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]));
+            ->setIsCommune($row['is_commune']);
+
+        if (isset($row['insee'])) {
+            $partner->setInsee(json_decode($row['insee'], true));
+        }
+
+        $partner->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]));
 
         if (isset($row['esabora_url'])) {
             $partner->setEsaboraUrl($row['esabora_url'])->setEsaboraToken($this->tokenGenerator->generateToken());
