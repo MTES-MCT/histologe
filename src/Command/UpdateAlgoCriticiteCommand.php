@@ -36,7 +36,7 @@ class UpdateAlgoCriticiteCommand extends Command
 
         $this->changeCritereCoefAndType("L'entrée du bâtiment est abîmée ou mal sécurisée", coef: 1, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0, 1, 2]);
         $this->changeCritereCoefAndType('Le bâtiment n’est pas sécurisé contre les chutes.', coef: 2, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 1, 1], criticiteScores: [0.5, 1, 2]);
-        $this->changeCritereCoefAndType('L’installation du réseau électrique a un problème.', coef: 1, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 1], criticiteScores: [0, 0.5, 1.5]);
+        $this->changeCritereCoefAndType('L’installation du réseau électrique a un problème.', coef: 1, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 1], criticiteScores: [0.5, 0, 1.5]);
         $this->changeCritereCoefAndType('L’installation du réseau gaz a un problème.', coef: 1, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 1], criticiteScores: [0, 0.5, 1.5]);
         $this->changeCritereCoefAndType('La protection incendie n’est pas adaptée.', coef: 1, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 1, 1], criticiteScores: [0, 0.5, 1.5]);
         $this->changeCritereCoefAndType('Le chauffage collectif est obsolète.', coef: 1, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 2]);
@@ -45,29 +45,29 @@ class UpdateAlgoCriticiteCommand extends Command
         $this->changeCritereCoefAndType('Les garde-corps ou rambardes sont dangereuses.', coef: 2, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 2]);
         $this->changeCritereCoefAndType("L'accès au logement est mal éclairé.", coef: 0, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0, 0, 0]);
         $this->changeCritereCoefAndType('La protection incendie du logement n’est pas adaptée.', coef: 2, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 0.5]);
-        $this->changeCritereCoefAndType('Les escaliers intérieurs sont dangereux.', coef: 4, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 1, 1], criticiteScores: [0.5, 1, 3]); // TODO, coef différent ?
+        $this->changeCritereCoefAndType('Les escaliers intérieurs sont dangereux.', coef: 4, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 1, 1], criticiteScores: [0.5, 1, 1.5]);
         $this->changeCritereCoefAndType('Les sols sont humides.', coef: 4, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 1], criticiteScores: [0.5, 1, 1]);
-        $this->changeCritereCoefAndType('Les murs ont des fissures.', coef: 1, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 1], criticiteScores: [1, 1, 2]); // TODO : coef et type
+        $this->changeCritereCoefAndType('Les murs ont des fissures.', coef: 1, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 1], criticiteScores: [1, 1, 4]);
         $this->changeCritereCoefAndType("De l'eau s’infiltre dans mon logement.", coef: 4, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [1, 0, 1], criticiteScores: [0.5, 0.5, 1.5]);
-        $this->changeCritereCoefAndType('Il y a des traces importantes de moisissures.', coef: 4, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 1], criticiteScores: [0.5, 0.5, 1.5]); // TODO coef différent
-        $this->changeCritereCoefAndType('La peinture est écaillée par endroits.', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 1], criticiteScores: [0.5, 1, 2]); // TODO coef différent
+        $this->changeCritereCoefAndType('Il y a des traces importantes de moisissures.', coef: 2, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 1], criticiteScores: [1, 1, 4.5]);
+        $this->changeCritereCoefAndType('La peinture est écaillée par endroits.', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 1], criticiteScores: [0.5, 1, 6]);
         $this->changeCritereCoefAndType('Les toilettes du logement sont abîmées ou inexistantes.', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 2]);
-        $this->changeCritereCoefAndType('La salle de bain est abîmée ou inexistante.', coef: 2, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 2]); // TODO coef
-        $this->changeCritereCoefAndType("J'ai un problème avec l’eau potable.", coef: 4, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 1]); // TODO deux types possibles, coef cahnge suivant type et criticité
+        $this->changeCritereCoefAndType('La salle de bain est abîmée ou inexistante.', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 2, 4]);
+        $this->changeCritereCoefAndType("J'ai un problème avec l’eau potable.", coef: 3, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1.67, 1.67]);
         $this->changeCritereCoefAndType('Il y a des nuisibles dans mon logement (blattes, punaises de lit, rongeurs...).', coef: 0, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0, 0, 0]);
-        $this->changeCritereCoefAndType("J’ai un problème d'évacuation des eaux usées.", coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 3]); // TODO deux types possible
+        $this->changeCritereCoefAndType("J’ai un problème d'évacuation des eaux usées.", coef: 2, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 3]);
         $this->changeCritereCoefAndType('Les installations électriques ne sont pas en bon état.', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 1, 1], criticiteScores: [0, 1, 2]);
-        $this->changeCritereCoefAndType('Le chauffage ne fonctionne pas bien.', coef: 2, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [1, 2, 1]); // TODO deux types ou pas ?
-        $this->changeCritereCoefAndType("J'ai un problème de ventilation dans mon logement.", coef: 2, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [1, 2, 3]); // TODO deux types ou pas ?
-        $this->changeCritereCoefAndType('De l’air s’infiltre dans mon logement.', coef: 3, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 1]); // TODO : coef et type
+        $this->changeCritereCoefAndType('Le chauffage ne fonctionne pas bien.', coef: 4, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [1, 2, 1]);
+        $this->changeCritereCoefAndType("J'ai un problème de ventilation dans mon logement.", coef: 2, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [1, 2, 3]);
+        $this->changeCritereCoefAndType('De l’air s’infiltre dans mon logement.', coef: 4, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 1]);
         $this->changeCritereCoefAndType('Mes factures de chauffage sont anormalement élevées.', coef: 2, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [1, 1, 1]);
         $this->changeCritereCoefAndType('Mon logement est mal isolé.', coef: 2, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [1, 1, 1]);
         $this->changeCritereCoefAndType("J’utilise un appareil d'appoint pour le chauffage.", coef: 2, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 1]);
         $this->changeCritereCoefAndType("L'installation de gaz n’est pas en bon état", coef: 2, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 1, 1], criticiteScores: [0, 1, 3]);
-        $this->changeCritereCoefAndType('Le sol est abîmé.', coef: 2, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 1], criticiteScores: [0.5, 0.5, 2]); // TODO deux types possible
+        $this->changeCritereCoefAndType('Le sol est abîmé.', coef: 4, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 1], criticiteScores: [0.5, 0.5, 2]);
         $this->changeCritereCoefAndType('Les escaliers sont abîmés.', coef: 2, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 1], criticiteScores: [1, 2, 3]);
         $this->changeCritereCoefAndType('Les murs et plafonds intérieurs sont mal entretenus', coef: 1, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 2]);
-        $this->changeCritereCoefAndType('Les façades ne sont pas en bon état.', coef: 2, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 1], criticiteScores: [0.5, 1, 2]); // TODO plusieurs coefs
+        $this->changeCritereCoefAndType('Les façades ne sont pas en bon état.', coef: 1, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 1], criticiteScores: [0.5, 2, 6]);
         $this->changeCritereCoefAndType('La toiture n’est pas en bon état.', coef: 1, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [1, 2, 3]);
         $this->changeCritereCoefAndType('Mon logement est en sous-sol.', coef: 8, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0], criticiteScores: [2]);
         $this->changeCritereCoefAndType('Mon logement est sous les combles.', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 2]);
@@ -77,7 +77,7 @@ class UpdateAlgoCriticiteCommand extends Command
         $this->changeCritereCoefAndType('Les plafonds sont trop bas (moins de 2.20 m).', coef: 2, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [1], criticiteScores: [2]);
         $this->changeCritereCoefAndType('La lumière naturelle en pleine journée est insuffisante.', coef: 8, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0, 0.25, 0.5]);
         $this->changeCritereCoefAndType('Les déchets sont mal stockés.', coef: 1, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0, 1, 3]);
-        $this->changeCritereCoefAndType('L’usage des lieux n’est pas respecté.', coef: 0, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0, 0, 1]); // TODO plusieurs coefs
+        $this->changeCritereCoefAndType('L’usage des lieux n’est pas respecté.', coef: 2, type: Critere::TYPE_BATIMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0, 0, 1]);
         $this->changeCritereCoefAndType('Le bruit à l’intérieur du logement ou du bâtiment est gênant.', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 2]);
         $this->changeCritereCoefAndType('Le bruit extérieur est gênant.', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 0.5, 1]);
 
@@ -114,8 +114,10 @@ class UpdateAlgoCriticiteCommand extends Command
     private function changeCriticiteScore(Critere $critere, ?array $criticiteIsDanger, ?array $criticiteScores)
     {
         $criticites = $this->criticiteRepository->findBy(
-            ['critere' => $critere],
-            ['score' => 'ASC'] // TODO id plutôt ?
+            ['critere' => $critere,
+            'isArchive' => 0,
+            ],
+            ['id' => 'ASC']
         );
 
         if ($criticites) {
