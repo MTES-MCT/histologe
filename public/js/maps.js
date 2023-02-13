@@ -84,8 +84,9 @@ async function getMarkers(offset) {
                     city: signalement.villeOccupant,
                     reference: signalement.reference,
                     score: signalement.scoreCreation,
+                    newScore: signalement.newScoreCreation,
                     name: signalement.nomOccupant.toUpperCase() +' '+ signalement.prenomOccupant,
-                    danger: signalement.scoreCreation > 66 ? 1 : 0,
+                    danger: signalement.scoreCreation > 66 ? 1 : 0,// ?? 
                     url: `/bo/s/${signalement.uuid}`,
                     criteres: crit,
                     details: `${signalement.details}`

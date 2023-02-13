@@ -145,6 +145,7 @@ class BackSignalementController extends AbstractController
                 $signalement->setModifiedAt(new DateTimeImmutable());
                 $score = new CriticiteCalculatorService($signalement, $doctrine);
                 $signalement->setScoreCreation($score->calculate());
+                $signalement->setNewScoreCreation($score->calculateNewCriticite());
                 $data = [];
                 if (\array_key_exists('situation', $form->getExtraData())) {
                     $data['situation'] = $form->getExtraData()['situation'];

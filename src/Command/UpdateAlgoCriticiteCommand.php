@@ -84,7 +84,6 @@ class UpdateAlgoCriticiteCommand extends Command
         $this->changeCritereCoefAndType('Le bruit à l’intérieur du logement ou du bâtiment est gênant.', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 1, 2]);
         $this->changeCritereCoefAndType('Le bruit extérieur est gênant.', coef: 1, type: Critere::TYPE_LOGEMENT, criticiteIsDanger: [0, 0, 0], criticiteScores: [0.5, 0.5, 1]);
 
-        // $this->changeCritereCoefAndType("J'ai un problème avec l’eau potable.");
         // $this->changeCritereCoefAndType("Nuisances de l'environnement");
         // $this->changeCritereCoefAndType("Murs extérieurs");
         // $this->changeCritereCoefAndType("Charpentes");
