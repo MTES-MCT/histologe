@@ -23,11 +23,8 @@ class WidgetDataKpiBuilder
     private ?CountSignalement $countSignalement = null;
     private ?CountSuivi $countSuivi = null;
     private ?CountUser $countUser = null;
-
     private ?Territory $territory = null;
-
     private ?User $user = null;
-
     private array $parameters;
 
     /** @var WidgetCard[] */
@@ -115,6 +112,7 @@ class WidgetDataKpiBuilder
             $widgetParams = $this->parameters[$key];
             $link = $widgetParams['link'] ?? null;
             $label = $widgetParams['label'] ?? null;
+            $widgetParams['params']['territory_id'] = $this->territory?->getId();
             $parameters = array_merge($linkParameters, $widgetParams['params'] ?? []);
             $widgetCard = $this->widgetCardFactory->createInstance($label, $count, $link, $parameters);
             $this->widgetCards[$key] = $widgetCard;

@@ -46,11 +46,11 @@ class BackController extends AbstractController
         Request $request,
         AffectationRepository $affectationRepository,
         PartnerRepository $partnerRepository,
+        SearchFilterService $searchFilterService,
         TagRepository $tagsRepository): Response
     {
         $title = 'Administration - Tableau de bord';
-        $searchService = new SearchFilterService();
-        $filters = $searchService->setRequest($request)->setFilters()->getFilters();
+        $filters = $searchFilterService->setRequest($request)->setFilters()->getFilters();
         /** @var User $user */
         $user = $this->getUser();
         $territory = $user->getTerritory(); // If user is not admin, he can only see his territory

@@ -21,7 +21,7 @@ class WidgetDataManager implements WidgetDataManagerInterface
     ) {
     }
 
-    public function countSignalementAcceptedNoSuivi(Territory $territory): array
+    public function countSignalementAcceptedNoSuivi(Territory $territory, ?array $params = null): array
     {
         return $this->signalementRepository->countSignalementAcceptedNoSuivi($territory);
     }
@@ -29,7 +29,7 @@ class WidgetDataManager implements WidgetDataManagerInterface
     /**
      * @throws Exception
      */
-    public function countSignalementsByTerritory(): array
+    public function countSignalementsByTerritory(?array $params = null): array
     {
         $countSignalementTerritoryList = $this->signalementRepository->countSignalementTerritory();
 
@@ -41,7 +41,7 @@ class WidgetDataManager implements WidgetDataManagerInterface
         }, $countSignalementTerritoryList);
     }
 
-    public function countAffectationPartner(?Territory $territory = null): array
+    public function countAffectationPartner(?Territory $territory = null, ?array $params = null): array
     {
         $countAffectationPartnerList = $this->affectationRepository->countAffectationPartner($territory);
 
@@ -56,9 +56,9 @@ class WidgetDataManager implements WidgetDataManagerInterface
     /**
      * @throws Exception
      */
-    public function findLastJobEventByType(string $type, int $dayPeriod): array
+    public function findLastJobEventByType(string $type, array $params): array
     {
-        return $this->jobEventRepository->findLastJobEventByType($type, $dayPeriod);
+        return $this->jobEventRepository->findLastJobEventByType($type, $params['period']);
     }
 
     /**
@@ -67,7 +67,7 @@ class WidgetDataManager implements WidgetDataManagerInterface
      * @throws NoResultException
      * @throws Exception
      */
-    public function countDataKpi(?Territory $territory = null): WidgetDataKpi
+    public function countDataKpi(?Territory $territory = null, ?array $params = null): WidgetDataKpi
     {
         return $this->widgetDataKpiBuilder
             ->createWidgetDataKpiBuilder()
