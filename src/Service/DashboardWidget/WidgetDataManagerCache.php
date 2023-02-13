@@ -15,7 +15,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
 
     public function __construct(
         private WidgetDataManager $widgetDataManager,
-        private CacheInterface $cache,
+        private CacheInterface $dashboardCache,
         private Security $security,
     ) {
         $this->initKeyCache();
@@ -34,7 +34,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
      */
     public function countSignalementAcceptedNoSuivi(Territory $territory, ?array $params = null): array
     {
-        return $this->cache->get(
+        return $this->dashboardCache->get(
             __FUNCTION__.$this->key.'-zip-'.$territory?->getZip(),
             function (ItemInterface $item) use ($territory, $params) {
                 $item->expiresAfter($params['expired_at'] ?? null);
@@ -49,7 +49,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
      */
     public function countSignalementsByTerritory(?array $params = null): array
     {
-        return $this->cache->get(
+        return $this->dashboardCache->get(
             __FUNCTION__.'-'.$this->key,
             function (ItemInterface $item) use ($params) {
                 $item->expiresAfter($params['expired_at'] ?? null);
@@ -64,7 +64,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
      */
     public function countAffectationPartner(?Territory $territory = null, ?array $params = null): array
     {
-        return $this->cache->get(
+        return $this->dashboardCache->get(
             __FUNCTION__.'-'.$this->key.'-zip-'.$territory?->getZip(),
             function (ItemInterface $item) use ($territory, $params) {
                 $item->expiresAfter($params['expired_at'] ?? null);
@@ -79,7 +79,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
      */
     public function findLastJobEventByType(string $type, array $params): array
     {
-        return $this->cache->get(
+        return $this->dashboardCache->get(
             __FUNCTION__.'-'.$this->key,
             function (ItemInterface $item) use ($type, $params) {
                 $item->expiresAfter($params['expired_at'] ?? null);
@@ -94,7 +94,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
      */
     public function countDataKpi(?Territory $territory = null, ?array $params = null): WidgetDataKpi
     {
-        return $this->cache->get(
+        return $this->dashboardCache->get(
             __FUNCTION__.'-'.$this->key.'-zip-'.$territory?->getZip(),
             function (ItemInterface $item) use ($territory, $params) {
                 $item->expiresAfter($params['expired_at'] ?? null);
