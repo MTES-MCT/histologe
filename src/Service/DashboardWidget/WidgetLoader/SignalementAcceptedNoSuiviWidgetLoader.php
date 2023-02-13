@@ -21,6 +21,11 @@ class SignalementAcceptedNoSuiviWidgetLoader extends AbstractWidgetLoader
     public function load(Widget $widget): void
     {
         parent::load($widget);
-        $widget->setData($this->widgetDataManager->countSignalementAcceptedNoSuivi($widget->getTerritory()));
+        $widget->setData(
+            $this->widgetDataManager->countSignalementAcceptedNoSuivi(
+                $widget->getTerritory(),
+                $this->widgetParameter['data']
+            )
+        );
     }
 }
