@@ -6,7 +6,6 @@ security:
         ROLE_ADMIN_TERRITORY: ROLE_ADMIN_PARTNER
         ROLE_ADMIN: ROLE_ADMIN_TERRITORY
 
-    enable_authenticator_manager: true
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'

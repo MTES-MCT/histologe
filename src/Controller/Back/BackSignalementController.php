@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-#[Route('/bo/s')]
+#[Route('/bo/signalements')]
 class BackSignalementController extends AbstractController
 {
     #[Route('/{uuid}', name: 'back_signalement_view')]
@@ -131,7 +131,7 @@ class BackSignalementController extends AbstractController
         ]);
     }
 
-    #[Route('/{uuid}/edit', name: 'back_signalement_edit', methods: ['GET', 'POST'])]
+    #[Route('/{uuid}/editer', name: 'back_signalement_edit', methods: ['GET', 'POST'])]
     public function editSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine, SituationRepository $situationRepository, HttpClientInterface $httpClient): Response
     {
         $title = 'Administration - Edition signalement #'.$signalement->getReference();
@@ -196,7 +196,7 @@ class BackSignalementController extends AbstractController
         ]);
     }
 
-    #[Route('/{uuid}/delete', name: 'back_signalement_delete', methods: 'POST')]
+    #[Route('/{uuid}/supprimer', name: 'back_signalement_delete', methods: 'POST')]
     public function deleteSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine): Response
     {
         $this->denyAccessUnlessGranted('SIGN_DELETE', $signalement);

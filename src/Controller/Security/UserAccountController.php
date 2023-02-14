@@ -121,7 +121,7 @@ class UserAccountController extends AbstractController
             $entityManager->flush();
             $this->addFlash('success', 'Votre compte est maintenant activé !');
 
-            return $this->redirectToRoute('back_index');
+            return $this->redirectToRoute('back_dashboard');
         }
 
         return $this->render('security/login_creation_mdp.html.twig', [

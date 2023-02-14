@@ -90,7 +90,7 @@ class WidgetDataManagerTest extends TestCase
 
         $this->assertEquals([], $this->widgetDataManager->findLastJobEventByType(
             JobEvent::TYPE_JOB_EVENT_ESABORA,
-            5)
+            ['period' => 5])
         );
     }
 

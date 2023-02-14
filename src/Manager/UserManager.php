@@ -61,7 +61,7 @@ class UserManager extends AbstractManager
         $loginLink = $loginLinkDetails->getUrl();
 
         $link = User::STATUS_ACTIVE === $user->getStatut() ?
-            $this->urlGenerator->generate('back_index') :
+            $this->urlGenerator->generate('back_dashboard') :
             $loginLink;
 
         $this->notificationService->send(

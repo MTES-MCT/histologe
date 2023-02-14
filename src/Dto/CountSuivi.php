@@ -11,17 +11,17 @@ class CountSuivi
     ) {
     }
 
-    public function getAverage(): float
+    public function getAverage(): ?float
     {
         return round($this->average, 1);
     }
 
-    public function getPartner(): int
+    public function getPartner(): ?int
     {
         return $this->partner;
     }
 
-    public function getUsager(): int
+    public function getUsager(): ?int
     {
         return $this->usager;
     }

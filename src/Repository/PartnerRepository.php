@@ -6,6 +6,9 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
+use Doctrine\ORM\Query\QueryException;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -22,7 +25,7 @@ class PartnerRepository extends ServiceEntityRepository
         parent::__construct($registry, Partner::class);
     }
 
-    public function getPartnersQueryBuilder(Territory|null $territory)
+    public function getPartnersQueryBuilder(Territory|null $territory): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('p')->where('p.isArchive != 1');
 
@@ -33,7 +36,7 @@ class PartnerRepository extends ServiceEntityRepository
         return $queryBuilder;
     }
 
-    public function getPartners(Territory|null $territory, $page)
+    public function getPartners(Territory|null $territory, $page): Paginator
     {
         $maxResult = Partner::MAX_LIST_PAGINATION;
         $firstResult = ($page - 1) * $maxResult;
@@ -46,10 +49,12 @@ class PartnerRepository extends ServiceEntityRepository
         return $paginator;
     }
 
+    /**
+     * @throws QueryException
+     */
     public function findAllList(Territory|null $territory)
     {
         $qb = $this->createQueryBuilder('p')
-            ->select('PARTIAL p.{id,nom,isCommune}')
             ->where('p.isArchive != 1');
         if ($territory) {
             $qb->andWhere('p.territory = :territory')->setParameter('territory', $territory);
@@ -80,6 +85,9 @@ class PartnerRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @throws Exception
+     */
     public function findByLocalization(Signalement $signalement, bool $affected = true): array
     {
         $connection = $this->getEntityManager()->getConnection();

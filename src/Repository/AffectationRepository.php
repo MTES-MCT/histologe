@@ -25,12 +25,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class AffectationRepository extends ServiceEntityRepository
 {
     public const ARRAY_LIST_PAGE_SIZE = 30;
-    private SearchFilterService $searchFilterService;
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private SearchFilterService $searchFilterService)
     {
         parent::__construct($registry, Affectation::class);
-        $this->searchFilterService = new SearchFilterService();
     }
 
     public function countByStatusForUser($user, Territory|null $territory)
