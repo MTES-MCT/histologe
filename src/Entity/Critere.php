@@ -50,10 +50,10 @@ class Critere
     #[ORM\Column(type: 'integer')]
     private $coef;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer')]
     private $newCoef;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer')]
     private $type;
 
     public function __construct()

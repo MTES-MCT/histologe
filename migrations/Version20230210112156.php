@@ -16,7 +16,8 @@ final class Version20230210112156 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE criticite ADD is_danger TINYINT(1) DEFAULT NULL, CHANGE new_score new_score DOUBLE PRECISION DEFAULT NULL');
+        $this->addSql('ALTER TABLE criticite ADD is_danger TINYINT(1) DEFAULT NULL,
+        CHANGE new_score new_score DOUBLE PRECISION DEFAULT NULL');
     }
 
     public function down(Schema $schema): void

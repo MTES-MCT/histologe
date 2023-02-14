@@ -46,10 +46,10 @@ class Criticite
     #[ORM\Column(type: 'integer')]
     private $score;
 
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: 'float')]
     private $newScore;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
+    #[ORM\Column(type: 'boolean')]
     private $isDanger;
 
     #[ORM\Column(type: 'boolean')]

@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Critere;
-use App\Entity\Criticite;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -52,21 +51,6 @@ class CritereRepository extends ServiceEntityRepository
         $statement = $connexion->prepare($sql);
 
         return $statement->executeQuery()->fetchOne();
-
-        // $subquery = $this->createQueryBuilder('criticite')
-        // ->select('criticite.critereId, MAX(criticite.newScore) AS newMaxScore')
-        // ->groupBy('criticite.critereId')
-        // ->getDQL();
-
-        // return $this->createQueryBuilder('c')
-        //     ->select('SUM(c.newCoef * maxCriticite.newMaxScore) AS totalScore')
-        //     ->innerJoin('('.$subquery.') AS maxCriticite', 'WITH', 'maxCriticite.critereId = c.id')
-        //     ->where('c.isArchive = 0')
-        //     ->andWhere('c.type = :type')
-        //     ->setParameter('type', $type)
-        //     ->orderBy('c.id', 'ASC')
-        //     ->getQuery()
-        //     ->getSingleScalarResult();
     }
 
     public function findAllList()
