@@ -54,7 +54,7 @@ class BackAssignmentControllerTest extends WebTestCase
         $this->assertEmailCount(1);
         $this->assertTrue(str_contains($suivi->getDescription(), 'Cela ne me concerne pas, voir avec un autre organisme'));
         $this->assertEquals(Suivi::TYPE_AUTO, $suivi->getType());
-        $this->assertResponseRedirects('/bo/s/'.$signalement->getUuid());
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
     }
 
     public function testCheckingNoDuplicatedMailSentWhenPartnerAffectationIsMultiple(): void

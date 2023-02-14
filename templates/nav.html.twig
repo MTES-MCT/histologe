@@ -20,7 +20,7 @@
             </li>
             <li>
                 {% if app.user %}
-                    <a class="fr-link fr-fi-user-line" href="{{ path('back_index') }}">Tableau de bord</a>
+                    <a class="fr-link fr-fi-user-line" href="{{ path('back_dashboard') }}">Tableau de bord</a>
                 {% else %}
                     <a class="fr-link fr-fi-lock-line" href="{{ path('app_login') }}">Espace pro</a>
                 {% endif %}
