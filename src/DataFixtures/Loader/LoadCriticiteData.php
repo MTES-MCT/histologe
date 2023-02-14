@@ -32,7 +32,9 @@ class LoadCriticiteData extends Fixture implements OrderedFixtureInterface
             ->setIsArchive($row['is_archive'])
             ->setIsDefault($row['is_default'])
             ->setCreatedAt(new \DateTimeImmutable())
-            ->setScore($row['score']);
+            ->setScore($row['score'])
+            ->setNewScore($row['new_score'])
+            ->setIsDanger($row['is_danger']);
 
         $manager->persist($criticite);
     }
