@@ -41,54 +41,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
-    public function findAdmins()
-    {
-        return $this->createQueryBuilder('u')
-            ->select('PARTIAL u.{id,email,isMailingActive}')
-            ->where('u.roles LIKE :role')
-            ->setParameter('role', '["ROLE_ADMIN"]')
-            ->orWhere('u.roles LIKE :role2')
-            ->setParameter('role2', '["ROLE_ADMIN_TERRITOIRE"]')
-            ->getQuery()
-            ->getResult();
-    }
-
-    public function findAdminsEmailByTerritory(Territory $territory): array
-    {
-        $queryBuilder = $this->createQueryBuilder('u');
-        $queryBuilder
-            ->select('u.email')
-            ->where('u.roles LIKE :role OR u.roles LIKE :role2')
-            ->setParameter('role', '["ROLE_ADMIN"]')
-            ->setParameter('role2', '["ROLE_ADMIN_TERRITORY"]')
-            ->andWhere('u.territory = :territory')
-            ->setParameter('territory', $territory)
-            ->andWhere('u.statut = '.User::STATUS_ACTIVE)
-            ->andWhere('u.isMailingActive = true');
-
-        $adminsEmail = array_map(function ($value) {
-            return $value['email'];
-        }, $queryBuilder->getQuery()->getArrayResult());
-
-        return $adminsEmail;
-    }
-
-    public function findAllInactive(Territory|null $territory)
-    {
-        $queryBuilder = $this->createQueryBuilder('u');
-        $queryBuilder
-            ->where('u.statut = :inactive')
-            ->setParameter('inactive', User::STATUS_INACTIVE);
-
-        if (!empty($territory)) {
-            $queryBuilder
-                ->andWhere('u.territory = :territory')
-                ->setParameter('territory', $territory);
-        }
-
-        return $queryBuilder->getQuery()->getResult();
-    }
-
     public function findInactiveWithNbAffectationPending(): array
     {
         $connection = $this->getEntityManager()->getConnection();
@@ -100,9 +52,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 GROUP BY u.email, u.created_at
                 ORDER BY nb_signalements desc';
 
-        $statetment = $connection->prepare($sql);
+        $statement = $connection->prepare($sql);
 
-        $pendingUsers = $statetment->executeQuery()->fetchAllAssociative();
+        $pendingUsers = $statement->executeQuery()->fetchAllAssociative();
 
         return array_map(function ($pendingUser) {
             return [
@@ -119,7 +71,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ?string $filterTerms,
         bool $includeUsagers,
         $page
-    ) {
+    ): Paginator {
         $maxResult = User::MAX_LIST_PAGINATION;
         $firstResult = ($page - 1) * $maxResult;
 

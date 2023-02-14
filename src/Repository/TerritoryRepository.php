@@ -4,6 +4,9 @@ namespace App\Repository;
 
 use App\Entity\Territory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Query\QueryException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -21,10 +24,12 @@ class TerritoryRepository extends ServiceEntityRepository
         parent::__construct($registry, Territory::class);
     }
 
+    /**
+     * @throws QueryException
+     */
     public function findAllList()
     {
         $qb = $this->createQueryBuilder('t')
-            ->select('PARTIAL t.{id,name,zip}')
             ->where('t.isActive = 1');
 
         return $qb->indexBy('t', 't.id')
@@ -32,13 +37,16 @@ class TerritoryRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
     public function countAll(): int
     {
         $qb = $this->createQueryBuilder('t');
         $qb->select('COUNT(t.id)')
             ->where('t.isActive = 1');
 
-        return $qb->getQuery()
-            ->getSingleScalarResult();
+        return $qb->getQuery()->getSingleScalarResult();
     }
 }

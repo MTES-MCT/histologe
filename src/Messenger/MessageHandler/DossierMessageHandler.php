@@ -6,10 +6,15 @@ use App\Entity\JobEvent;
 use App\Manager\JobEventManager;
 use App\Messenger\Message\DossierMessage;
 use App\Service\Esabora\EsaboraService;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-final class DossierMessageHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+final class DossierMessageHandler
 {
     public function __construct(
         private EsaboraService $esaboraService,
@@ -18,7 +23,13 @@ final class DossierMessageHandler implements MessageHandlerInterface
     ) {
     }
 
-    public function __invoke(DossierMessage $dossierMessage)
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ClientExceptionInterface
+     */
+    public function __invoke(DossierMessage $dossierMessage): void
     {
         $response = $this->esaboraService->pushDossier($dossierMessage);
         $this->jobEventManager->createJobEvent(

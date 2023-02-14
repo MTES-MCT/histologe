@@ -37,7 +37,6 @@ class CritereRepository extends ServiceEntityRepository
     public function findAllList()
     {
         return $this->createQueryBuilder('c')
-            ->select('PARTIAL c.{id,label}')
             ->where('c.isArchive != 1')
             ->indexBy('c', 'c.id')
             ->getQuery()
