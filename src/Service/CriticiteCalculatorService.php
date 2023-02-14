@@ -70,9 +70,10 @@ class CriticiteCalculatorService
             }
         });
 
-        $score = ((($this->scoreBatiment / $scoreMaxBatiment) * 1000)
-        + (($this->scoreLogement / $scoreMaxLogement) * 1000))
-        / 2;
+        $scoreBatiment = ($this->scoreBatiment / $scoreMaxBatiment) * 100;
+        $scoreLogement = ($this->scoreLogement / $scoreMaxLogement) * 100;
+
+        $score = ($scoreBatiment + $scoreLogement) / 2;
 
         if ($signalement->getNbEnfantsM6() || $signalement->getNbEnfantsP6()) {// enfant de plus de 6 ans aussi ?
             $score = $score * 1.1;
@@ -81,6 +82,6 @@ class CriticiteCalculatorService
             $score = 100;
         }
 
-        return $score;
+        return round($score, 2);
     }
 }
