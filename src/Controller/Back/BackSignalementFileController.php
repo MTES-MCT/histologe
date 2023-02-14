@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-#[Route('/bo/s')]
+#[Route('/bo/signalements')]
 class BackSignalementFileController extends AbstractController
 {
     #[Route('/{uuid}/pdf', name: 'back_signalement_gen_pdf')]

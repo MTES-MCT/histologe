@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/bo/s')]
+#[Route('/bo/signalements')]
 class BackTagController extends AbstractController
 {
     #[Route('/{uuid}/newtag', name: 'back_tag_create', methods: 'POST')]

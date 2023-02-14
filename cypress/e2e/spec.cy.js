@@ -142,7 +142,7 @@ describe('Test front statistics page', { testIsolation: false }, () => {
 
 describe('Test submit partner with user', { testIsolation: false }, () => {
   it('Displays partner page', () => {
-    cy.visit('http://localhost:8080/bo/partner/new')
+    cy.visit('http://localhost:8080/bo/partenaires/ajout')
     disableSmoothScroll()
     cy.get('#partner_nom').type('Partner')
     cy.get('#partner_isCommune').select('0')

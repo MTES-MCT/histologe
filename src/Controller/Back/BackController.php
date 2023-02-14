@@ -36,7 +36,7 @@ class BackController extends AbstractController
     {
     }
 
-    #[Route('/', name: 'back_index')]
+    #[Route('/signalements/', name: 'back_index')]
     public function index(
         EntityManagerInterface $em,
         CritereRepository $critereRepository,

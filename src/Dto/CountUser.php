@@ -17,12 +17,12 @@ class CountUser
         ];
     }
 
-    public function getActive(): int
+    public function getActive(): ?int
     {
         return $this->active;
     }
 
-    public function getInactive(): int
+    public function getInactive(): ?int
     {
         return $this->inactive;
     }
