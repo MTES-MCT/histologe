@@ -39,6 +39,7 @@ Plateforme histologe| [localhost:8080](http://localhost:8080)
 phpMyAdmin | [localhost:8081](http://localhost:8081)
 MailCatcher  | [localhost:1080](http://localhost:1080)
 Wiremock  | [localhost:1082](http://localhost:1082)
+Metabase  | [localhost:3007](http://localhost:3007)
 
 ### Hôtes des environnements et ports
 
@@ -53,6 +54,7 @@ MySQL| histologe_mysql      |**3307**
 PhpMyAdmin | histologe_phpmyadmin | **8081**
 Mailcatcher| histologe_mailer     | **1025** et **1080**
 Wiremock| histologe_wiremock   | **8082**
+Metabase| histologe_metabase   | **3007**
 
 ## Installation
 
@@ -159,8 +161,9 @@ $ make load-data
 
 ### Accès à Metabase
 
-Login : admin@histologe.fr
-Mot de passe : histologe2023
+- Copier le fichier de base de données dans le dossier ```metabase-data/metabase.db/```
+- Login : ```admin@histologe.fr```
+- Mot de passe : ```histologe2023```
 
 ## Documentaton projet
 
