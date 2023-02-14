@@ -82,6 +82,6 @@ class CriticiteCalculatorService
             $score = 100;
         }
 
-        return round($score, 2);
+        return $score;
     }
 }

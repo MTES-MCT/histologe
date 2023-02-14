@@ -67,6 +67,9 @@
                 <th>#Ref.</th>
                 <th>Date</th>
                 <th>Criticité</th>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <th>Criticité nouveau score</th>
+                {% endif %}
                 <th>Occupant</th>
                 <th>Adresse</th>
                 <th>Affectation</th>

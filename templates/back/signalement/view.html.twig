@@ -350,6 +350,9 @@
                             <canvas id="slider-criticite" class="fr-col-4"></canvas>
                             <div class="fr-col-8 fr-col--middle">
                                 <text class="fr-display-sm"><span id="score-criticite"></span>%</text>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <text class="fr-display-xs"><span id="new-score-criticite">{{ signalement.newScoreCreation|round(2) }}</span>%</text>
+                            {% endif %}
                             </div>
                         </div>
                     </li>
