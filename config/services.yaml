@@ -5,7 +5,8 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 
 imports:
-    - { resource: 'dashboard/widget_parameters.yaml'}
+    - { resource: 'app/widgets.yaml'}
+    - { resource: 'app/insee.yaml'}
 parameters:
     uploads_dir: '%kernel.project_dir%/uploaded_files/signalement/'
     uploads_tmp_dir: '%kernel.project_dir%/tmp/'
@@ -19,6 +20,7 @@ parameters:
     user_system_email: '%env(resolve:USER_SYSTEM_EMAIL)%'
     host_url: '%env(resolve:HISTOLOGE_URL)%'
     token_lifetime: '1 day'
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -90,6 +92,19 @@ services:
     App\Service\Token\TokenGeneratorInterface:
         alias: App\Service\Token\TokenGenerator
 
+    App\Repository\SignalementRepository:
+        arguments:
+            $params: '%special_territory%'
+
+    App\Repository\NotificationRepository:
+        arguments:
+            $params: '%special_territory%'
+
+    App\Service\DashboardWidget\WidgetDataManagerInterface:
+        alias: App\Service\DashboardWidget\WidgetDataManager
+
+    App\Service\DashboardWidget\WidgetDataManagerCache:
+        decorates: App\Service\DashboardWidget\WidgetDataManager
 
 when@test:
     parameters:

@@ -5,6 +5,7 @@ namespace App\Controller\Back;
 use App\Entity\Affectation;
 use App\Entity\Criticite;
 use App\Entity\Signalement;
+use App\Entity\User;
 use App\Repository\AffectationRepository;
 use App\Repository\CritereRepository;
 use App\Repository\PartnerRepository;
@@ -45,19 +46,21 @@ class BackController extends AbstractController
         Request $request,
         AffectationRepository $affectationRepository,
         PartnerRepository $partnerRepository,
+        SearchFilterService $searchFilterService,
         TagRepository $tagsRepository): Response
     {
         $title = 'Administration - Tableau de bord';
-        $searchService = new SearchFilterService();
-        $filters = $searchService->setRequest($request)->setFilters()->getFilters();
-        $territory = $this->getUser()->getTerritory(); // If user is not admin, he can only see his territory
+        $filters = $searchFilterService->setRequest($request)->setFilters()->getFilters();
+        /** @var User $user */
+        $user = $this->getUser();
+        $territory = $user->getTerritory(); // If user is not admin, he can only see his territory
         if (!$this->isGranted('ROLE_ADMIN_TERRITORY') || $filters['partners'] || $filters['affectations']) {
-            $this->req = $affectationRepository->findByStatusAndOrCityForUser($this->getUser(), $filters, $request->get('export'));
+            $this->req = $affectationRepository->findByStatusAndOrCityForUser($user, $filters, $request->get('export'));
             if (!$request->get('export')) {
                 $this->iterator = $this->req->getIterator()->getArrayCopy();
             }
-            if (!$this->isGranted('ROLE_ADMIN_TERRITORY') && $this->getUser()->getPartner()) {
-                $counts = $affectationRepository->countByStatusForUser($this->getUser(), $territory);
+            if (!$this->isGranted('ROLE_ADMIN_TERRITORY') && $user->getPartner()) {
+                $counts = $affectationRepository->countByStatusForUser($user, $territory);
                 $signalementsCount = [
                     Signalement::STATUS_NEED_VALIDATION => $counts[0] ?? ['count' => 0],
                     Signalement::STATUS_ACTIVE => $counts[1] ?? ['count' => 0],
@@ -77,7 +80,8 @@ class BackController extends AbstractController
                 }
             }
         } else {
-            $this->req = $signalementRepository->findByStatusAndOrCityForUser($this->getUser(), $filters, $request->get('export'));
+            $filters['authorized_codes_insee'] = $this->getParameter('authorized_codes_insee');
+            $this->req = $signalementRepository->findByStatusAndOrCityForUser($user, $filters, $request->get('export'));
             $signalementsCount = $signalementRepository->countByStatus($territory);
         }
         $criteria = new Criteria();
@@ -88,7 +92,7 @@ class BackController extends AbstractController
             }
             $signalementsCount['total'] = $signalementRepository->matching($criteria)->count();
         }
-        if ($this->getUser()->isSuperAdmin()) {
+        if ($user->isSuperAdmin()) {
             $users = [
                 'active' => $userRepository->matching($criteria->where(Criteria::expr()->eq('statut', 1)))->count(),
                 'inactive' => $userRepository->matching($criteria->where(Criteria::expr()->eq('statut', 0)))->count(),
@@ -113,7 +117,7 @@ class BackController extends AbstractController
             return $this->stream('back/table_result.html.twig', ['filters' => $filters, 'signalements' => $signalements]);
         }
         $criteres = $critereRepository->findAllList();
-        if ($request->get('export') && $this->isCsrfTokenValid('export_token_'.$this->getUser()->getId(), $request->get('_token'))) {
+        if ($request->get('export') && $this->isCsrfTokenValid('export_token_'.$user->getId(), $request->get('_token'))) {
             return $this->export($this->req, $em);
         }
 
@@ -121,7 +125,7 @@ class BackController extends AbstractController
             $criteria->andWhere(Criteria::expr()->eq('territory', $territory));
         }
 
-        $userToFilterCities = $this->getUser();
+        $userToFilterCities = $user;
         if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY')) {
             $userToFilterCities = null;
         }
@@ -209,16 +213,6 @@ class BackController extends AbstractController
         $response->headers->set('Content-type', 'application/csv');
 
         return $response;
-    }
-
-    #[Route('/_json', name: 'back_json_convert')]
-    public function jsonToEntity(Request $request)
-    {
-        if ($request->isMethod('POST')) {
-            return $this->forward('App\Controller\FrontSignalementController::envoi', ['signalement' => json_decode($request->get('json'), true)]);
-        }
-
-        return new Response('<form method="POST" style="width: 100%;height: calc(100vh - 50px)"><textarea name="json" id="" style="width: 100%;height: calc(100% - 50px)"></textarea><hr><button style="width: 100%;height: 50px;">OK</button></form>');
     }
 
     /**

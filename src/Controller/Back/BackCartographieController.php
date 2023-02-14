@@ -16,16 +16,22 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/bo/cartographie')]
 class BackCartographieController extends AbstractController
 {
+    public function __construct(private SearchFilterService $searchFilterService)
+    {
+    }
+
     #[Route('/', name: 'back_cartographie')]
     public function index(SignalementRepository $signalementRepository, TagRepository $tagsRepository, Request $request, CritereRepository $critereRepository, TerritoryRepository $territoryRepository, PartnerRepository $partnerRepository): Response
     {
         $title = 'Cartographie';
-        $searchService = new SearchFilterService();
-        $filters = $searchService->setRequest($request)->setFilters()->getFilters();
+        $filters = $this->searchFilterService->setRequest($request)->setFilters()->getFilters();
         if (!$this->isGranted('ROLE_ADMIN_TERRITORY')) {
             $user = $this->getUser();
         }
         if ($request->get('load_markers')) {
+            $filters['authorized_codes_insee'] = $this->getParameter('authorized_codes_insee');
+            $filters['partner_name'] = $this->getUser()->getPartner()->getNom();
+
             return $this->json(['signalements' => $signalementRepository->findAllWithGeoData($user ?? null, $filters, (int) $request->get('offset'), $this->getUser()->getTerritory() ?? null)]);
         }
 

@@ -179,7 +179,12 @@ class FrontSignalementController extends AbstractController
                 );
             }
 
-            if (null === $signalement->getTerritory() || !$postalCodeHomeChecker->isAuthorizedInseeCode($signalement->getTerritory(), $signalement->getInseeOccupant())) {
+            if (null === $signalement->getTerritory()
+                || !$postalCodeHomeChecker->isAuthorizedInseeCode(
+                    $signalement->getTerritory(),
+                    $signalement->getInseeOccupant()
+                )
+            ) {
                 return $this->json(['response' => 'Territory is inactive'], Response::HTTP_BAD_REQUEST);
             }
             $signalement->setReference($referenceGenerator->generate($signalement->getTerritory()));

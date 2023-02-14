@@ -14,7 +14,6 @@ use App\Service\SearchFilterService;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\Expr\Join;
@@ -35,19 +34,20 @@ class SignalementRepository extends ServiceEntityRepository
     public const ARRAY_LIST_PAGE_SIZE = 30;
     public const MARKERS_PAGE_SIZE = 9000; // @todo: is high cause duplicate result, the query findAllWithGeoData should be reviewed
 
-    private SearchFilterService $searchFilterService;
-
-    public function __construct(ManagerRegistry $registry, private EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private SearchFilterService $searchFilterService,
+        private array $params
+    ) {
         parent::__construct($registry, Signalement::class);
-        $this->searchFilterService = new SearchFilterService();
     }
 
     public function findAllWithGeoData($user, $options, int $offset, Territory|null $territory): array
     {
         $firstResult = $offset;
         $qb = $this->createQueryBuilder('s');
-        $qb->select('PARTIAL s.{id,details,uuid,reference,nomOccupant,prenomOccupant,adresseOccupant,cpOccupant,villeOccupant,scoreCreation,statut,createdAt,geoloc,territory},
+        $qb->select('PARTIAL s.{id,details,uuid,reference,nomOccupant,prenomOccupant,adresseOccupant,cpOccupant,
+        inseeOccupant, villeOccupant,scoreCreation,statut,createdAt,geoloc,territory},
             PARTIAL a.{id,partner,createdAt},
             PARTIAL criteres.{id,label},
             PARTIAL partner.{id,nom}');
@@ -60,6 +60,16 @@ class SignalementRepository extends ServiceEntityRepository
         }
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+
+            if (\array_key_exists($territory->getZip(), $options['authorized_codes_insee'])
+            ) {
+                $qb = $this->filterForSpecificAgglomeration(
+                    $qb,
+                    $territory->getZip(),
+                    $options['partner_name'],
+                    $options['authorized_codes_insee']
+                );
+            }
         }
 
         $qb = $this->searchFilterService->applyFilters($qb, $options);
@@ -310,7 +320,8 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->where('s.statut != :status')
             ->setParameter('status', Signalement::STATUS_ARCHIVED);
         if (!$export) {
-            $qb->select('PARTIAL s.{id,uuid,reference,isNotOccupant, nomOccupant,prenomOccupant,adresseOccupant,cpOccupant,villeOccupant,mailOccupant, scoreCreation,statut,createdAt,geoloc}');
+            $qb->select('PARTIAL s.{id,uuid,reference,isNotOccupant, nomOccupant,prenomOccupant,adresseOccupant,
+            cpOccupant,inseeOccupant, villeOccupant,mailOccupant, scoreCreation,statut,createdAt,geoloc}');
             $qb->leftJoin('s.affectations', 'affectations');
             $qb->leftJoin('s.tags', 'tags');
             $qb->leftJoin('affectations.partner', 'partner');
@@ -320,6 +331,16 @@ class SignalementRepository extends ServiceEntityRepository
         }
         if (!$user->isSuperAdmin()) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $user->getTerritory());
+            if ($user->isTerritoryAdmin()
+                && \array_key_exists($user->getTerritory()->getZip(), $options['authorized_codes_insee'])
+            ) {
+                $qb = $this->filterForSpecificAgglomeration(
+                    $qb,
+                    $user->getTerritory()->getZip(),
+                    $user->getPartner()->getNom(),
+                    $options['authorized_codes_insee']
+                );
+            }
         }
         $qb = $this->searchFilterService->applyFilters($qb, $options);
         $qb->orderBy('s.createdAt', 'DESC');
@@ -715,25 +736,48 @@ class SignalementRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    private function filterForSpecificAgglomeration(
+        QueryBuilder $qb,
+        string $territoryZip,
+        string $partnerName,
+        array $options
+    ): QueryBuilder {
+        if (isset($this->params[$territoryZip])
+            && isset($this->params[$territoryZip][$partnerName])
+        ) {
+            $qb->andWhere('s.inseeOccupant IN (:authorized_codes_insee)')
+                ->setParameter(
+                    'authorized_codes_insee',
+                    $options[$territoryZip][$partnerName]
+                );
+        }
+
+        return $qb;
+    }
+
     /**
      * @throws Exception
      */
     public function countSignalementTerritory(): array
     {
         $connexion = $this->getEntityManager()->getConnection();
-        $subSql = 'SELECT COUNT(s2.id)
+        $noAffectedSql = 'SELECT COUNT(s2.id)
                    FROM signalement s2
                    INNER JOIN territory t2 ON t2.id = s2.territory_id
-                   WHERE s2.statut = :statut_2 AND s2.territory_id = t1.id
+                   WHERE (s2.statut = :statut_2 OR s2.statut = :statut_1) AND s2.territory_id = t1.id
                    AND s2.id NOT IN (SELECT a.signalement_id FROM affectation a)';
+
+        $newSql = 'SELECT COUNT(s1.id)
+                   FROM signalement s1
+                   INNER JOIN territory t2 ON t2.id = s1.territory_id
+                   WHERE s1.statut = :statut_1 AND s1.territory_id = t1.id';
 
         $sql = 'SELECT t1.id, t1.zip, t1.name as territory_name,
                 CONCAT(t1.zip, " - ", t1.name) as label,
-                COUNT(s1.id) AS new,
-                ('.$subSql.') AS no_affected
+                ('.$newSql.') AS new,
+                ('.$noAffectedSql.') AS no_affected
                 FROM signalement s1
                 INNER JOIN territory t1 ON t1.id = s1.territory_id
-                WHERE s1.statut = :statut_1
                 GROUP BY t1.id, t1.zip, t1.name
                 ORDER BY t1.name;';
 

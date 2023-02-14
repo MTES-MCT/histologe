@@ -40,7 +40,9 @@ class BackNotificationController extends AbstractController
 
             return $this->redirectToRoute('back_news_activities');
         }
-        $notifications = new ArrayCollection($notificationRepository->findAllForUser($this->getUser()));
+
+        $options = $this->getParameter('authorized_codes_insee');
+        $notifications = new ArrayCollection($notificationRepository->findAllForUser($this->getUser(), $options));
         $notifications->filter(function (Notification $notification) {
             if (Notification::TYPE_AFFECTATION === $notification->getType() && $notification->getAffectation()) {
                 $this->affectations->add($notification);

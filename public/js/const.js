@@ -259,42 +259,56 @@ const removeBadge = (badge) => {
     }
     badge.remove();
 }
+let idFetchTimeout;
 const searchAddress = (form, autocomplete) => {
-    if (autocomplete.value.length > 10) {
-        autocomplete.removeEventListener('keyup', searchAddress)
-        fetch('https://api-adresse.data.gouv.fr/search/?q=' + autocomplete.value).then((res) => {
-            res.json().then((r) => {
-                let container = form.querySelector('#signalement-adresse-suggestion')
-                container.innerHTML = '';
-                for (let feature of r.features) {
-                    let suggestion = document.createElement('div');
-                    suggestion.classList.add('fr-col-12', 'fr-p-3v', 'fr-text-label--blue-france', 'fr-adresse-suggestion');
-                    suggestion.innerHTML = feature.properties.label;
-                    suggestion.addEventListener('click', () => {
-                        form.querySelector('#signalement_adresseOccupant').value = feature.properties.name;
-                        form.querySelector('#signalement_cpOccupant').value = feature.properties.postcode;
-                        form.querySelector('#signalement_villeOccupant').value = feature.properties.city;
-                        form.querySelector('#signalement-insee-occupant').value = feature.properties.citycode;
-                        if (feature.properties.citycode.substr(0, 2) == '69') {
-                            const RHONES_AUTHORIZED_INSEE_CODES = [
-                                69091, 69096, 69123, 69149, 69199, 69205, 69290, 69259, 69266,
-                                69381, 69382, 69383, 69384, 69385, 69386, 69387, 69388, 69389,
-                                69901 ];
-                            if (RHONES_AUTHORIZED_INSEE_CODES.indexOf(Number(feature.properties.citycode)) == -1) {
-                                form.querySelector('#fr-error-text-insee')?.classList?.remove('fr-hidden');
-                            } else {
-                                form.querySelector('#fr-error-text-insee')?.classList?.add('fr-hidden');
-                            }
-                        }
-                        form.querySelector('#signalement-geoloc-lat-occupant').value = feature.geometry.coordinates[0];
-                        form.querySelector('#signalement-geoloc-lng-occupant').value = feature.geometry.coordinates[1];
-                        container.innerHTML = '';
-                    })
-                    container.appendChild(suggestion)
+    clearTimeout(idFetchTimeout);
+    idFetchTimeout = setTimeout( () => {
+        if (autocomplete.value.length > 10) {
+            autocomplete.removeEventListener('keyup', searchAddress)
+            fetch('https://api-adresse.data.gouv.fr/search/?q=' + autocomplete.value).then((res) => {
+                res.json().then((r) => {
+                    let container = form.querySelector('#signalement-adresse-suggestion')
+                    container.innerHTML = '';
+                    for (let feature of r.features) {
+                        let suggestion = document.createElement('div');
+                        suggestion.classList.add('fr-col-12', 'fr-p-3v', 'fr-text-label--blue-france', 'fr-adresse-suggestion');
+                        suggestion.innerHTML = feature.properties.label;
+                        suggestion.addEventListener('click', () => {
+                            form.querySelector('#signalement_adresseOccupant').value = feature.properties.name;
+                            form.querySelector('#signalement_cpOccupant').value = feature.properties.postcode;
+                            form.querySelector('#signalement_villeOccupant').value = feature.properties.city;
+                            form.querySelector('#signalement-insee-occupant').value = feature.properties.citycode;
+                            if (feature.properties.citycode.substr(0, 2) == '69') {
+                                const METROPOLE_RHONES_AUTHORIZED_INSEE_CODES = [
+                                    69091, 69096, 69123, 69149, 69199, 69205, 69290, 69259, 69266,
+                                    69381, 69382, 69383, 69384, 69385, 69386, 69387, 69388, 69389,
+                                    69901 ];
+                                const COR_RHONES_AUTHORIZED_INSEE_CODES = [
+                                    69001, 69006, 69008, 69037, 69054, 69060, 69066, 69070, 69075,
+                                    69093, 69102, 69107, 69174, 69130, 69160, 69164, 69169, 69181,
+                                    69183, 69188, 69200, 69214, 69217, 69225, 69229, 69234, 69240,
+                                    69243, 69248, 69254, 69157
+                                ];
+                                const RHONES_AUTHORIZED_INSEE_CODES = METROPOLE_RHONES_AUTHORIZED_INSEE_CODES.concat(
+                                    COR_RHONES_AUTHORIZED_INSEE_CODES
+                                );
 
-                }
+                                if (RHONES_AUTHORIZED_INSEE_CODES.indexOf(Number(feature.properties.citycode)) == -1) {
+                                    form.querySelector('#fr-error-text-insee')?.classList?.remove('fr-hidden');
+                                } else {
+                                    form.querySelector('#fr-error-text-insee')?.classList?.add('fr-hidden');
+                                }
+                                form.querySelector('#signalement-geoloc-lat-occupant').value = feature.geometry.coordinates[0];
+                                form.querySelector('#signalement-geoloc-lng-occupant').value = feature.geometry.coordinates[1];
+                                container.innerHTML = '';
+                            }
+                        })
+                        container.appendChild(suggestion)
+
+                    }
+                })
             })
-        })
-        return false;
-    }
+            return false;
+        }
+    }, 300 );
 };

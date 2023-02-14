@@ -8,6 +8,7 @@ grumphp:
           - ';dd('
           - 'die('
           - 'exit('
+      yamllint:
       phpstan: ~
       eslint:
         bin: node_modules/.bin/eslint

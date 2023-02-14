@@ -7,10 +7,10 @@ use DateTime;
 
 class StatisticsFilters
 {
-    private array $communes;
-    private string $statut;
+    private ?array $communes;
+    private ?string $statut;
     private array $etiquettes;
-    private string $type;
+    private ?string $type;
     private DateTime $dateStart;
     private DateTime $dateEnd;
     private bool $countRefused;
@@ -18,10 +18,10 @@ class StatisticsFilters
     private ?Territory $territory;
 
     public function __construct(
-        array $communes,
-        string $statut,
+        ?array $communes,
+        ?string $statut,
         array $etiquettes,
-        string $type,
+        ?string $type,
         DateTime $dateStart,
         DateTime $dateEnd,
         bool $countRefused,

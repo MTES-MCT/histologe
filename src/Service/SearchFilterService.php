@@ -6,11 +6,16 @@ use DateInterval;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Security;
 
 class SearchFilterService
 {
     private array $filters;
     private Request $request;
+
+    public function __construct(private Security $security)
+    {
+    }
 
     public function setRequest(Request $request): static
     {
@@ -58,6 +63,11 @@ class SearchFilterService
 
         if (null !== $partners = $request->query->get('partners')) {
             $this->filters['partners'] = [$partners];
+        }
+
+        if ($this->security->isGranted('ROLE_ADMIN')
+            && null !== $territory = $request->query->get('territory_id')) {
+            $this->filters['territories'] = [$territory];
         }
 
         return $this;
