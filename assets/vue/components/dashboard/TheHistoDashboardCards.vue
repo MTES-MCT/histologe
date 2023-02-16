@@ -66,7 +66,7 @@
         <div class="fr-card__body">
           <ul class="fr-badges-group">
             <li>
-                <p class="fr-badge fr-badge--no-icon fr-badge--info">{{ getBadgeText(sharedState.newSuivis.count, 'aucun', 'signalement', 'signalements') }}</p>
+                <p class="fr-badge fr-badge--no-icon fr-badge--info">{{ getBadgeText(sharedState.noSuivis.count, 'aucun', 'signalement', 'signalements') }}</p>
             </li>
           </ul>
           <div class="fr-card__content">

@@ -5,11 +5,11 @@ namespace App\Controller\Back;
 use App\Entity\Affectation;
 use App\Entity\Critere;
 use App\Entity\Criticite;
-use App\Entity\Notification;
 use App\Entity\Signalement;
 use App\Entity\Situation;
 use App\Entity\Suivi;
 use App\Event\SignalementClosedEvent;
+use App\Event\SignalementViewedEvent;
 use App\Form\ClotureType;
 use App\Form\SignalementType;
 use App\Manager\SignalementManager;
@@ -48,14 +48,8 @@ class BackSignalementController extends AbstractController
             return $this->redirectToRoute('back_index');
         }
 
-        // TODO REPLACE THIS
-        $this->getUser()->getNotifications()->filter(function (Notification $notification) use ($signalement, $entityManager) {
-            if ($notification->getSignalement()->getId() === $signalement->getId()) {
-                $notification->setIsSeen(true);
-                $entityManager->persist($notification);
-            }
-        });
-        $entityManager->flush();
+        $eventDispatcher->dispatch(new SignalementViewedEvent($signalement, $this->getUser()), SignalementViewedEvent::NAME);
+
         $isRefused = $isAccepted = $isClosedForMe = null;
         if ($isAffected = $signalement->getAffectations()->filter(function (Affectation $affectation) {
             return $affectation->getPartner() === $this->getUser()->getPartner();
