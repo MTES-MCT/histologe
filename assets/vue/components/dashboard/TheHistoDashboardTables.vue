@@ -3,7 +3,7 @@
     <div v-if="sharedState.user.isAdmin" class="fr-col-12 fr-col-lg-6 fr-mb-3w">
       <HistoDataTable
         :headers=signalementPerTerritoryHeaders
-        :items=[]
+        :items=sharedState.signalementsPerTerritoire
         >
         <template #title>Signalements sur les territoires</template>
       </HistoDataTable>
@@ -12,7 +12,7 @@
     <div v-if="sharedState.user.isAdmin || sharedState.user.isResponsableTerritoire" class="fr-col-12 fr-col-lg-6 fr-mb-3w">
       <HistoDataTable
         :headers=affectationsOfPartnersHeaders
-        :items=[]
+        :items=sharedState.affectationsPartenaires
         >
         <template #title>Affectations des partenaires</template>
       </HistoDataTable>
@@ -30,7 +30,7 @@
     <div v-if="sharedState.user.isAdmin" class="fr-col-12 fr-col-lg-6">
       <HistoDataTable
         :headers=connectionsEsaboraHeaders
-        :items=[]
+        :items=sharedState.esaboraEvents
         >
         <template #title>Connexions ESABORA</template>
       </HistoDataTable>
