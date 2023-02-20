@@ -2,8 +2,10 @@
 
 namespace App\Service;
 
+use App\Entity\Affectation;
 use DateInterval;
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,7 +15,7 @@ class SearchFilterService
     private array $filters;
     private Request $request;
 
-    public function __construct(private Security $security)
+    public function __construct(private Security $security, private EntityManagerInterface $entityManager)
     {
     }
 
@@ -39,6 +41,7 @@ class SearchFilterService
             'statuses' => $request->get('bo-filters-statuses') ?? null,
             'cities' => $request->get('bo-filters-cities') ?? null,
             'partners' => $request->get('bo-filters-partners') ?? null,
+            'closed_affectation' => $request->get('bo-filters-closed_affectation') ?? null,
             'criteres' => $request->get('bo-filters-criteres') ?? null,
             'allocs' => $request->get('bo-filters-allocs') ?? null,
             'housetypes' => $request->get('bo-filters-housetypes') ?? null,
@@ -137,9 +140,49 @@ class SearchFilterService
             } else {
                 $qb->andWhere('partner IN (:partners)');
                 if (!empty($filters['affectations'])) {
-                    $qb->andWhere('a.statut IN (:affectations)')->setParameter('affectations', $filters['affectations']);
+                    $qb->andWhere('a.statut IN (:affectations)')
+                    ->setParameter('affectations', $filters['affectations']);
                 }
                 $qb->setParameter('partners', $filters['partners']);
+            }
+        }
+        if (!empty($filters['closed_affectation'])) {
+            $qb->andWhere('affectations IS NOT NULL');
+            if (\in_array('ALL_OPEN', $filters['closed_affectation'])) {
+                // les id de tous les signalements ayant au moins une affectation fermée :
+                $subquery = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
+                    ->select('s.id')
+                    ->leftJoin('a.signalement', 's')
+                    ->where('a.statut = '.Affectation::STATUS_CLOSED)
+                    ->groupBy('s.id');
+
+                // les signalements n'ayant aucune affectation fermée :
+                $qb->andWhere('s.id NOT IN (:subquery)')
+                    ->setParameter('subquery', $subquery->getDQL());
+            }
+            if (\in_array('ONE_CLOSED', $filters['closed_affectation'])) {
+                // les id de tous les signalements ayant au moins une affectation fermée :
+                $subquery = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
+                    ->select('s.id')
+                    ->leftJoin('a.signalement', 's')
+                    ->where('a.statut = '.Affectation::STATUS_CLOSED)
+                    ->groupBy('s.id');
+
+                // les signalements ayant au moins une affectation fermée :
+                $qb->andWhere('s.id IN (:subquery)')
+                   ->setParameter('subquery', $subquery->getDQL());
+            }
+            if (\in_array('ALL_CLOSED', $filters['closed_affectation'])) {
+                // les id de tous les signalements ayant au moins une affectation non fermée :
+                $subquery = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
+                    ->select('s.id')
+                    ->leftJoin('a.signalement', 's')
+                    ->where('a.statut != '.Affectation::STATUS_CLOSED)
+                    ->groupBy('s.id');
+
+                // les signalements n'ayant aucune affectation non fermée
+                $qb->andWhere('s.id NOT IN (:subquery)')
+                    ->setParameter('subquery', $subquery->getDQL());
             }
         }
         if (!empty($filters['tags'])) {
