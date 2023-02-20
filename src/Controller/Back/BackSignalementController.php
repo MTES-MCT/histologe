@@ -13,10 +13,11 @@ use App\Event\SignalementClosedEvent;
 use App\Form\ClotureType;
 use App\Form\SignalementType;
 use App\Manager\SignalementManager;
+use App\Repository\CritereRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
-use App\Service\CriticiteCalculatorService;
+use App\Service\Signalement\CriticiteCalculatorService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -132,8 +133,14 @@ class BackSignalementController extends AbstractController
     }
 
     #[Route('/{uuid}/editer', name: 'back_signalement_edit', methods: ['GET', 'POST'])]
-    public function editSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine, SituationRepository $situationRepository, HttpClientInterface $httpClient): Response
-    {
+    public function editSignalement(
+        Signalement $signalement,
+        Request $request,
+        ManagerRegistry $doctrine,
+        SituationRepository $situationRepository,
+        CritereRepository $critereRepository,
+        HttpClientInterface $httpClient
+    ): Response {
         $title = 'Administration - Edition signalement #'.$signalement->getReference();
         $etats = ['Etat moyen', 'Mauvais état', 'Très mauvais état'];
         $etats_classes = ['moyen', 'grave', 'tres-grave'];
@@ -143,7 +150,7 @@ class BackSignalementController extends AbstractController
             if ($form->isValid()) {
                 $signalement->setModifiedBy($this->getUser());
                 $signalement->setModifiedAt(new DateTimeImmutable());
-                $score = new CriticiteCalculatorService($signalement, $doctrine);
+                $score = new CriticiteCalculatorService($signalement, $critereRepository);
                 $signalement->setScoreCreation($score->calculate());
                 $signalement->setNewScoreCreation($score->calculateNewCriticite());
                 $data = [];

@@ -11,18 +11,20 @@ final class Version20230214155156 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Make new_coef, type, new_score and is_danger not nullable';
+        return 'Add columns for new criticite algo.';
     }
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE critere CHANGE new_coef new_coef INT NOT NULL, CHANGE type type INT NOT NULL');
-        $this->addSql('ALTER TABLE criticite CHANGE new_score new_score DOUBLE PRECISION NOT NULL, CHANGE is_danger is_danger TINYINT(1) NOT NULL');
+        $this->addSql('ALTER TABLE critere ADD new_coef INT NOT NULL, ADD type INT NOT NULL');
+        $this->addSql('ALTER TABLE criticite ADD new_score DOUBLE PRECISION NOT NULL, ADD is_danger TINYINT(1) NOT NULL');
+        $this->addSql('ALTER TABLE signalement ADD new_score_creation DOUBLE PRECISION NOT NULL');
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE critere CHANGE new_coef new_coef INT DEFAULT NULL, CHANGE type type INT DEFAULT NULL');
-        $this->addSql('ALTER TABLE criticite CHANGE new_score new_score DOUBLE PRECISION DEFAULT NULL, CHANGE is_danger is_danger TINYINT(1) DEFAULT NULL');
+        $this->addSql('ALTER TABLE critere DROP new_coef, DROP type');
+        $this->addSql('ALTER TABLE criticite DROP new_score, DROP is_danger');
+        $this->addSql('ALTER TABLE signalement DROP new_score_creation');
     }
 }

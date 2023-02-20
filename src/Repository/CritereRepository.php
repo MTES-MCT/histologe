@@ -34,25 +34,6 @@ class CritereRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
-     */
-    public function getMaxNewScore(int $type): ?float
-    {
-        $connexion = $this->getEntityManager()->getConnection();
-
-        $sql = 'SELECT SUM(new_coef * new_max_score) '.
-        'FROM `critere` c '.
-        'INNER JOIN (SELECT critere_id, MAX(new_score) AS new_max_score FROM criticite GROUP BY critere_id ) AS max_criticite '.
-        'ON max_criticite.critere_id = c.id '.
-        'WHERE c.is_archive = 0 AND c.type = '.$type;
-
-        $statement = $connexion->prepare($sql);
-
-        return $statement->executeQuery()->fetchOne();
-    }
-
     public function findAllList()
     {
         return $this->createQueryBuilder('c')
