@@ -64,8 +64,8 @@ console: ## Execute application command
 composer: ## Install composer dependencies
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer install --no-interaction --optimize-autoloader
 	@echo "\033[33mInstall tools dependencies ...\033[0m"
-	@$(DOCKER_COMP) exec -it histologe_phpfpm composer install --working-dir=tools/php-cs-fixer --dev --no-interaction --optimize-autoloader
-	@$(DOCKER_COMP) exec -it histologe_phpfpm composer install --working-dir=tools/wiremock --dev --no-interaction --optimize-autoloader
+	@$(DOCKER_COMP) exec -it histologe_phpfpm composer install --working-dir=tools/php-cs-fixer  --no-interaction --optimize-autoloader
+	@$(DOCKER_COMP) exec -it histologe_phpfpm composer install --working-dir=tools/wiremock  --no-interaction --optimize-autoloader
 
 clear-cache: ## Clear cache prod: make-clear-cache env=[dev|prod|test]
 	@$(DOCKER_COMP) exec -it histologe_phpfpm $(SYMFONY) c:c --env=$(env)

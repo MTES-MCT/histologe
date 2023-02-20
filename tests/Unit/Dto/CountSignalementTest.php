@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Dto;
+namespace App\Tests\Unit\Dto;
 
 use App\Dto\CountSignalement;
 use PHPUnit\Framework\TestCase;

@@ -768,14 +768,9 @@ class SignalementRepository extends ServiceEntityRepository
                    WHERE (s2.statut = :statut_2 OR s2.statut = :statut_1) AND s2.territory_id = t1.id
                    AND s2.id NOT IN (SELECT a.signalement_id FROM affectation a)';
 
-        $newSql = 'SELECT COUNT(s1.id)
-                   FROM signalement s1
-                   INNER JOIN territory t2 ON t2.id = s1.territory_id
-                   WHERE s1.statut = :statut_1 AND s1.territory_id = t1.id';
-
         $sql = 'SELECT t1.id, t1.zip, t1.name as territory_name,
                 CONCAT(t1.zip, " - ", t1.name) as label,
-                ('.$newSql.') AS new,
+                SUM(CASE WHEN s1.statut = 1 THEN 1 ELSE 0 END) AS new,
                 ('.$noAffectedSql.') AS no_affected
                 FROM signalement s1
                 INNER JOIN territory t1 ON t1.id = s1.territory_id

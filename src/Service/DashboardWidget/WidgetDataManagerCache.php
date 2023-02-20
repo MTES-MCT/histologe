@@ -5,7 +5,7 @@ namespace App\Service\DashboardWidget;
 use App\Entity\Territory;
 use App\Entity\User;
 use Psr\Cache\InvalidArgumentException;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 

@@ -5,8 +5,8 @@ namespace App\Service;
 use DateInterval;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Security;
 
 class SearchFilterService
 {

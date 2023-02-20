@@ -12,10 +12,10 @@ use App\Manager\SuiviManager;
 use App\Repository\UserRepository;
 use App\Service\NotificationService;
 use App\Service\Token\TokenGeneratorInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Security;
 
 class SignalementClosedSubscriber implements EventSubscriberInterface
 {
