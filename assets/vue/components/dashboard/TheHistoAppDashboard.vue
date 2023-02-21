@@ -101,6 +101,7 @@ export default defineComponent({
       this.sharedState.user.isAdmin = requestResponse.roleLabel === 'Super Admin'
       this.sharedState.user.isResponsableTerritoire = requestResponse.roleLabel === 'Responsable Territoire'
       this.sharedState.user.isAdministrateurPartenaire = requestResponse.roleLabel === 'Administrateur'
+      this.sharedState.user.canSeeNonDecenceEnergetique = true // TODO
       this.sharedState.user.prenom = requestResponse.firstname
       this.sharedState.territories = []
       const optionAllItem = new HistoInterfaceSelectOption()
@@ -169,6 +170,10 @@ export default defineComponent({
       this.sharedState.newAffectations.count = dataWidget.cardNouvellesAffectations && dataWidget.cardNouvellesAffectations.count != null ? dataWidget.cardNouvellesAffectations?.count : 0
       this.sharedState.newAffectations.link = dataWidget.cardNouvellesAffectations?.link
       this.sharedState.userAffectations.link = dataWidget.cardMesAffectations?.link
+      this.sharedState.nonDecenceSignalements.countNew = dataWidget.cardSignalementsNouveauxNonDecence && dataWidget.cardSignalementsNouveauxNonDecence.count != null ? dataWidget.cardSignalementsNouveauxNonDecence?.count : 0
+      this.sharedState.nonDecenceSignalements.linkNew = dataWidget.cardSignalementsNouveauxNonDecence?.link
+      this.sharedState.nonDecenceSignalements.countActive = dataWidget.cardSignalementsEnCoursNonDecence && dataWidget.cardSignalementsEnCoursNonDecence.count != null ? dataWidget.cardSignalementsEnCoursNonDecence?.count : 0
+      this.sharedState.nonDecenceSignalements.linkActive = dataWidget.cardSignalementsEnCoursNonDecence?.link
     },
     handleAffectationPartner (requestResponse: any) {
       this.countTablesLoaded++

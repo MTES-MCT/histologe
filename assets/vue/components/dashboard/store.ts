@@ -6,7 +6,8 @@ export const store = {
       prenom: '',
       isAdmin: false,
       isResponsableTerritoire: false,
-      isAdministrateurPartenaire: false
+      isAdministrateurPartenaire: false,
+      canSeeNonDecenceEnergetique: false
     },
     territories: new Array<HistoInterfaceSelectOption>(),
     filters: {
@@ -29,6 +30,12 @@ export const store = {
       count: 0,
       percent: 0
     },
+    nonDecenceSignalements: {
+      countNew: 0,
+      linkNew: undefined,
+      countActive: 0,
+      linkActive: undefined
+    },
     allSignalements: {
       link: undefined
     },
@@ -37,7 +44,11 @@ export const store = {
       link: undefined
     },
     userAffectations: {
-      link: undefined
+      link: undefined,
+      countPendingNonDecence: 0,
+      linkPendingNonDecence: undefined,
+      countAcceptedNonDecence: 0,
+      linkAcceptedNonDecence: undefined
     },
     newSuivis: {
       count: 0,
