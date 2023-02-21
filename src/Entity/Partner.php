@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\PartnerType;
 use App\Repository\PartnerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -55,6 +56,12 @@ class Partner
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'partners')]
     #[ORM\JoinColumn(nullable: true)]
     private $territory;
+
+    #[ORM\Column(type: 'string', enumType: PartnerType::class, nullable: true)]
+    private PartnerType $type;
+
+    #[ORM\Column(type: 'json', nullable: true)]
+    private $competence = [];
 
     public function __construct()
     {
@@ -258,5 +265,29 @@ class Partner
             $this->esaboraUrl,
             $this->esaboraToken,
         ];
+    }
+
+    public function getType(): PartnerType
+    {
+        return $this->type;
+    }
+
+    public function setType(PartnerType $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getCompetence(): ?array
+    {
+        return $this->competence;
+    }
+
+    public function setCompetence(?array $competence): self
+    {
+        $this->competence = $competence;
+
+        return $this;
     }
 }
