@@ -4,13 +4,16 @@ namespace App\EventListener;
 
 use App\Entity\Affectation;
 use App\Entity\Notification;
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Repository\PartnerRepository;
 use App\Service\NotificationService;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
@@ -30,6 +33,7 @@ class ActivityListener implements EventSubscriberInterface
         private UrlGeneratorInterface $urlGenerator,
         private Security $security,
         private ParameterBagInterface $parameterBag,
+        private PartnerRepository $partnerRepository,
     ) {
         $this->tos = new ArrayCollection();
         $this->uow = null;
@@ -94,16 +98,43 @@ class ActivityListener implements EventSubscriberInterface
         }
     }
 
+    private function getPartnerFromSignalement(mixed $entity, Territory|null $territory): ?Partner
+    {
+        if ($entity instanceof Signalement) {
+            $signalement = $entity;
+        } else {
+            /** @var Signalement $signalement */
+            $signalement = $entity->getSignalement();
+        }
+
+        $authorizedInsee = $this->parameterBag->get('authorized_codes_insee');
+
+        if (isset($authorizedInsee[$territory->getZip()])) {
+            foreach ($authorizedInsee[$territory->getZip()] as $key => $authorizedInseePartner) {
+                if (\in_array($signalement->getInseeOccupant(), $authorizedInseePartner)) {
+                    return $this->partnerRepository->findOneBy(['nom' => $key]);
+                }
+            }
+        }
+
+        return null;
+    }
+
     private function notifyAdmins($entity, $inAppType, Territory|null $territory)
     {
-        $admins = $this->em->getRepository(User::class)->createQueryBuilder('u')
+        /** @var QueryBuilder $qb */
+        $qb = $this->em->getRepository(User::class)->createQueryBuilder('u')
             ->andWhere('u.statut = 1')
             ->andWhere('JSON_CONTAINS(u.roles, :role) = 1 OR (JSON_CONTAINS(u.roles, :role2) = 1 AND u.territory = :territory)')
             ->setParameter('role', '"ROLE_ADMIN"')
             ->setParameter('role2', '"ROLE_ADMIN_TERRITORY"')
             ->setParameter('territory', $territory);
 
-        foreach ($admins->getQuery()->getResult() as $admin) {
+        if (null !== $partner = $this->getPartnerFromSignalement($entity, $territory)) {
+            $qb->andWhere('u.partner = :partner')->setParameter('partner', $partner);
+        }
+
+        foreach ($qb->getQuery()->getResult() as $admin) {
             $this->createInAppNotification($admin, $entity, $inAppType);
             if ($admin->getIsMailingActive()) {
                 $this->tos[] = $admin->getEmail();
@@ -153,7 +184,7 @@ class ActivityListener implements EventSubscriberInterface
             $options = array_merge($options, [
                 'link' => $this->urlGenerator->generate('back_signalement_view', [
                     'uuid' => $uuid,
-                ], UrlGenerator::ABSOLUTE_URL),
+                ], UrlGeneratorInterface::ABSOLUTE_URL),
             ]);
 
             $this->removeCurrentUserEmailForNotification();
@@ -166,6 +197,7 @@ class ActivityListener implements EventSubscriberInterface
                 $sendErrorMail = true;
             } else {
                 $this->notifier->send($mailType, array_unique($this->tos->toArray()), $options, $signalement->getTerritory());
+
                 $this->tos->clear();
             }
         } else {
