@@ -312,15 +312,6 @@
                         </li>
                     {% endif %}
                     <li>
-                        <strong>Situation de handicap: </strong>
-                        {% if signalement.isSituationHandicap %}
-                            {{ picto_yes|format('IsSituationHandicap')|raw }}
-                        {% else %}
-                            {{ picto_no|format('IsSituationHandicap')|raw }}
-                        {% endif %}
-
-                    </li>
-                    <li>
                         <div class="fr-responsive-img fr-grid-row fr-grid-row--gutters fr-p-4v">
                             <div id="map-signalement-view" class="fr-rounded fr-mt-5v fr-col-12"
                                  style="height: 300px;"></div>

@@ -552,25 +552,6 @@
             </div>
             <div class="fr-form-group">
                 <fieldset class="fr-fieldset fr-fieldset--inline">
-                    <legend class="fr-fieldset__legend fr-text--regular" id='signalement-situation-handicap'>
-                        {{ form_label(form.isSituationHandicap) }}
-                        {{ form_help(form.isSituationHandicap) }}
-                    </legend>
-                    <div class="fr-fieldset__content">
-                        {% for key, choice in form.isSituationHandicap.children %}
-                            <div class="fr-radio-group">
-                                {{ form_widget(choice) }}
-                                {{ form_label(choice) }}
-                            </div>
-                        {% endfor %}
-                    </div>
-                    <p class="fr-error-text fr-hidden">
-                        Veuillez préciser une ou plusieur personnes présentent une situation de handicap
-                    </p>
-                </fieldset>
-            </div>
-            <div class="fr-form-group">
-                <fieldset class="fr-fieldset fr-fieldset--inline">
                     <legend class="fr-fieldset__legend fr-text--regular" id='signalement-logement-social'>
                         {{ form_label(form.isLogementSocial) }}
                         {{ form_help(form.isLogementSocial) }}

@@ -55,7 +55,6 @@ class SignalementFactoryTest extends KernelTestCase
             'inseeOccupant' => $faker->postcode(),
             'dateVisite' => new \DateTimeImmutable(),
             'isOccupantPresentVisite' => true,
-            'isSituationHandicap' => false,
             'etageOccupant' => $faker->randomDigit(),
             'escalierOccupant' => $faker->randomDigit(),
             'numAppartOccupant' => $faker->randomDigit(),
@@ -161,7 +160,6 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEquals($data['numAllocataire'], $signalement->getNumAllocataire());
         $this->assertEquals($data['montantAllocation'], $signalement->getMontantAllocation());
 
-        $this->assertEquals($data['isSituationHandicap'], $signalement->getIsSituationHandicap());
         $this->assertEquals($data['isLogementSocial'], $signalement->getIsLogementSocial());
         $this->assertEquals($data['isRelogement'], $signalement->getIsRelogement());
 
@@ -218,6 +216,6 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEmpty($signalement->getModifiedBy());
         $this->assertEmpty($signalement->getAffectationStatusByPartner());
 
-        $this->assertCount(84, $data, 'Array $data should have 84 keys');
+        $this->assertCount(83, $data, 'Array $data should have 83 keys');
     }
 }
