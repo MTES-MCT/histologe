@@ -98,7 +98,7 @@ class ActivityListener implements EventSubscriberInterface
         }
     }
 
-    private function getPartnerFromSignalement(mixed $entity, Territory|null $territory): ?Partner
+    private function getPartnerFromSignalementInsee(mixed $entity, Territory|null $territory): ?Partner
     {
         if ($entity instanceof Signalement) {
             $signalement = $entity;
@@ -130,7 +130,7 @@ class ActivityListener implements EventSubscriberInterface
             ->setParameter('role2', '"ROLE_ADMIN_TERRITORY"')
             ->setParameter('territory', $territory);
 
-        if (null !== $partner = $this->getPartnerFromSignalement($entity, $territory)) {
+        if (null !== $partner = $this->getPartnerFromSignalementInsee($entity, $territory)) {
             $qb->andWhere('u.partner = :partner')->setParameter('partner', $partner);
         }
 
