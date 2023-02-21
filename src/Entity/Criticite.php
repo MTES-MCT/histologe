@@ -52,6 +52,9 @@ class Criticite
     #[ORM\Column(type: 'boolean')]
     private $isDefault;
 
+    #[ORM\Column(type: 'json', nullable: true)]
+    private $qualification = [];
+
     public function __construct()
     {
         $this->createdAt = new DateTimeImmutable();
@@ -181,5 +184,17 @@ class Criticite
             2 => self::ETAT_GRAVE,
             3 => self::ETAT_TRES_GRAVE,
         };
+    }
+
+    public function getQualification(): ?array
+    {
+        return $this->qualification;
+    }
+
+    public function setQualification(?array $qualification): self
+    {
+        $this->qualification = $qualification;
+
+        return $this;
     }
 }
