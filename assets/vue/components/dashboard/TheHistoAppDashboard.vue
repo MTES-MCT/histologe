@@ -185,7 +185,17 @@ export default defineComponent({
       }
     },
     handleSignalementsNoSuivi (requestResponse: any) {
+      console.log(requestResponse)
       this.countTablesLoaded++
+      this.sharedState.signalementsAcceptedNoSuivi = []
+      for (const i in requestResponse.data) {
+        const responseItem = requestResponse.data[i]
+        const item = [
+          responseItem.nom,
+          responseItem.count_no_suivi
+        ]
+        this.sharedState.signalementsAcceptedNoSuivi.push(item)
+      }
     },
     handleSignalementsPerTerritoire (requestResponse: any) {
       this.countTablesLoaded++

@@ -77,14 +77,14 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     /**
      * @throws InvalidArgumentException
      */
-    public function findLastJobEventByType(string $type, array $params): array
+    public function findLastJobEventByType(string $type, array $params, ?Territory $territory = null): array
     {
         return $this->dashboardCache->get(
             __FUNCTION__.'-'.$this->key,
-            function (ItemInterface $item) use ($type, $params) {
+            function (ItemInterface $item) use ($type, $params, $territory) {
                 $item->expiresAfter($params['expired_after'] ?? null);
 
-                return $this->widgetDataManager->findLastJobEventByType($type, $params);
+                return $this->widgetDataManager->findLastJobEventByType($type, $params, $territory);
             }
         );
     }

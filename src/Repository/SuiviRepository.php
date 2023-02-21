@@ -6,7 +6,6 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
-use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
@@ -109,19 +108,10 @@ class SuiviRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s) as nb_suivi')
             ->innerJoin('s.signalement', 'sig')
-            ->innerJoin('s.createdBy', 'u')
             ->where('sig.statut != :statut')
-            ->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->like('u.roles', ':role1'),
-                    $qb->expr()->like('u.roles', ':role2'),
-                    $qb->expr()->like('u.roles', ':role3')
-                )
-            )
-            ->setParameter('role1', '%'.User::ROLE_ADMIN_TERRITORY.'%')
-            ->setParameter('role2', '%'.User::ROLE_ADMIN_PARTNER.'%')
-            ->setParameter('role3', '%'.User::ROLE_USER_PARTNER.'%')
-            ->setParameter('statut', Signalement::STATUS_ARCHIVED);
+            ->andWhere('s.type = :type_suivi')
+            ->setParameter('statut', Signalement::STATUS_ARCHIVED)
+            ->setParameter('type_suivi', Suivi::TYPE_PARTNER);
 
         if ($territory instanceof Territory) {
             $qb->andWhere('sig.territory = :territory')->setParameter('territory', $territory);
@@ -141,13 +131,8 @@ class SuiviRepository extends ServiceEntityRepository
             ->innerJoin('s.signalement', 'sig')
             ->leftJoin('s.createdBy', 'u')
             ->where('sig.statut != :statut')
-            ->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->like('u.roles', ':role'),
-                    $qb->expr()->isNull('s.createdBy')
-                )
-            )
-            ->setParameter('role', '%'.User::ROLE_USAGER.'%')
+            ->andWhere('s.type = :type_suivi')
+            ->setParameter('type_suivi', Suivi::TYPE_USAGER)
             ->setParameter('statut', Signalement::STATUS_ARCHIVED);
 
         if ($territory instanceof Territory) {

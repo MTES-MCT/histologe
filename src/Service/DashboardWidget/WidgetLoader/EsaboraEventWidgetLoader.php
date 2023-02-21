@@ -25,7 +25,8 @@ class EsaboraEventWidgetLoader extends AbstractWidgetLoader
         $widget->setData(
             $this->widgetDataManager->findLastJobEventByType(
                 JobEvent::TYPE_JOB_EVENT_ESABORA,
-                $this->widgetParameter['data']
+                $this->widgetParameter['data'],
+                $widget->getTerritory()
             )
         );
     }

@@ -5,8 +5,8 @@ namespace App\Repository;
 use App\Entity\JobEvent;
 use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Entity\Territory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -24,20 +24,23 @@ class JobEventRepository extends ServiceEntityRepository
         parent::__construct($registry, JobEvent::class);
     }
 
-    /**
-     * @throws Exception
-     */
     public function findLastJobEventByType(
         string $type,
-        int $dayPeriod
+        int $dayPeriod,
+        ?Territory $territory
     ): array {
         $qb = $this->createQueryBuilder('j')
             ->select('MAX(j.createdAt) AS last_event, p.id, p.nom, s.reference, j.status, j.title')
             ->innerJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId')
             ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
             ->where('j.type LIKE :type')
-            ->andWhere('DATEDIFF(NOW(),j.createdAt) <= :day_period')
-            ->setParameter('type', '%'.$type.'%')
+            ->andWhere('DATEDIFF(NOW(),j.createdAt) <= :day_period');
+
+        if (null !== $territory) {
+            $qb->andWhere('p.territory = :territory')->setParameter('territory', $territory);
+        }
+
+        $qb->setParameter('type', '%'.$type.'%')
             ->setParameter('day_period', $dayPeriod)
             ->groupBy('p.id, p.nom, s.reference,j.title, j.status')
             ->orderBy('p.id', 'ASC')

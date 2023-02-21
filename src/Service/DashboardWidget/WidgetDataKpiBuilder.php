@@ -135,10 +135,17 @@ class WidgetDataKpiBuilder
             $widgetParams['params']['territory_id'] = $this->territory?->getId();
             $parameters = array_merge($linkParameters, $widgetParams['params'] ?? []);
             $widgetCard = $this->widgetCardFactory->createInstance($label, $count, $link, $parameters);
-            $this->widgetCards[$key] = $widgetCard;
+            if (!$this->hasWidgetCard($key)) {
+                $this->widgetCards[$key] = $widgetCard;
+            }
         }
 
         return $this;
+    }
+
+    public function hasWidgetCard(string $key): bool
+    {
+        return \in_array($key, $this->widgetCards);
     }
 
     /**
