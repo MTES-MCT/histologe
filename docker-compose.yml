@@ -32,6 +32,17 @@ services:
     ports:
       - 8081:80
 
+  histologe_metabase:
+    container_name: histologe_metabase
+    image: metabase/metabase
+    restart: always
+    environment:
+      - MB_DB_FILE=/metabase-data/metabase.db
+    volumes:
+      - ./metabase-data:/metabase-data
+    ports:
+      - 3007:3000
+
   histologe_phpfpm:
     build: .docker/php-fpm
     container_name: histologe_phpfpm
