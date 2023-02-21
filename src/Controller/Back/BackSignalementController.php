@@ -14,12 +14,10 @@ use App\Form\ClotureType;
 use App\Form\SignalementType;
 use App\Manager\SignalementManager;
 use App\Repository\CritereRepository;
-use App\Repository\PartnerRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
 use App\Service\Signalement\CriticiteCalculatorService;
 use DateTimeImmutable;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -35,9 +33,7 @@ class BackSignalementController extends AbstractController
     public function viewSignalement(
         Signalement $signalement,
         Request $request,
-        EntityManagerInterface $entityManager,
         TagRepository $tagsRepository,
-        PartnerRepository $partnerRepository,
         SignalementManager $signalementManager,
         EventDispatcherInterface $eventDispatcher
     ): Response {

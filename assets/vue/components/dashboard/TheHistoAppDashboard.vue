@@ -185,7 +185,6 @@ export default defineComponent({
       }
     },
     handleSignalementsNoSuivi (requestResponse: any) {
-      console.log(requestResponse)
       this.countTablesLoaded++
       this.sharedState.signalementsAcceptedNoSuivi = []
       for (const i in requestResponse.data) {
