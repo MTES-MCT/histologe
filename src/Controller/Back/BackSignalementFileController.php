@@ -10,7 +10,6 @@ use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Snappy\Pdf;
-use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,6 +24,8 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 #[Route('/bo/s')]
 class BackSignalementFileController extends AbstractController
 {
+    public const HEIC_FORMAT = ['image/heic', 'image/heif'];
+
     #[Route('/{uuid}/pdf', name: 'back_signalement_gen_pdf')]
     public function generatePdfSignalement(Signalement $signalement, Pdf $knpSnappyPdf, EntityManagerInterface $entityManager)
     {
@@ -79,35 +80,41 @@ class BackSignalementFileController extends AbstractController
 
             /** @var UploadedFile $file */
             foreach ($files[$type] as $file) {
-                $originalFilename = pathinfo($file->getClientOriginalName(), \PATHINFO_FILENAME);
-                $titre = $originalFilename.'.'.$file->guessExtension();
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
-                try {
-                    $newFilename = $uploadHandler->uploadFromFile($file, $newFilename);
-                } catch (FilesystemException $exception) {
-                    $newFilename = '';
-                    $logger->error($exception->getMessage());
-                } catch (MaxUploadSizeExceededException $exception) {
-                    $newFilename = '';
-                    $logger->error($exception->getMessage());
-                    $this->addFlash('error', $exception->getMessage());
-                }
-                if (!empty($newFilename)) {
-                    $list[] = '<li><a class="fr-link" target="_blank" href="'.$this->generateUrl(
-                        'show_uploaded_file',
-                        ['folder' => '_up', 'filename' => $newFilename]
-                    ).'">'.$titre.'</a></li>';
-                    if (null === $type_list) {
-                        $type_list = [];
+                if (\in_array($file->getMimeType(), self::HEIC_FORMAT)) {
+                    $message = <<<ERROR
+                    Les fichiers de format HEIC ne sont pas pris en charge,
+                    merci de convertir votre image en JPEG ou en PNG avant de l'envoyer.
+                    ERROR;
+                    $logger->error($message);
+                    $this->addFlash('error', $message);
+                } else {
+                    $originalFilename = pathinfo($file->getClientOriginalName(), \PATHINFO_FILENAME);
+                    $titre = $originalFilename.'.'.$file->guessExtension();
+                    $safeFilename = $slugger->slug($originalFilename);
+                    $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+                    try {
+                        $newFilename = $uploadHandler->uploadFromFile($file, $newFilename);
+                    } catch (MaxUploadSizeExceededException $exception) {
+                        $newFilename = '';
+                        $logger->error($exception->getMessage());
+                        $this->addFlash('error', $exception->getMessage());
                     }
-                    array_push($type_list, [
-                        'file' => $newFilename,
-                        'titre' => $titre,
-                        'user' => $this->getUser()->getId(),
-                        'username' => $this->getUser()->getNomComplet(),
-                        'date' => (new DateTimeImmutable())->format('d.m.Y'),
-                    ]);
+                    if (!empty($newFilename)) {
+                        $list[] = '<li><a class="fr-link" target="_blank" href="'.$this->generateUrl(
+                            'show_uploaded_file',
+                            ['folder' => '_up', 'filename' => $newFilename]
+                        ).'">'.$titre.'</a></li>';
+                        if (null === $type_list) {
+                            $type_list = [];
+                        }
+                        $type_list[] = [
+                            'file' => $newFilename,
+                            'titre' => $titre,
+                            'user' => $this->getUser()->getId(),
+                            'username' => $this->getUser()->getNomComplet(),
+                            'date' => (new DateTimeImmutable())->format('d.m.Y'),
+                        ];
+                    }
                 }
             }
 
