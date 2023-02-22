@@ -80,7 +80,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     public function findLastJobEventByType(string $type, array $params, ?Territory $territory = null): array
     {
         return $this->dashboardCache->get(
-            __FUNCTION__.'-'.$this->key,
+            __FUNCTION__.'-'.$this->key.'-zip-'.$territory?->getZip(),
             function (ItemInterface $item) use ($type, $params, $territory) {
                 $item->expiresAfter($params['expired_after'] ?? null);
 
