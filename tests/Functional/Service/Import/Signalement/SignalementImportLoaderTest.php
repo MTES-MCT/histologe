@@ -113,7 +113,6 @@ class SignalementImportLoaderTest extends KernelTestCase
                 'code insee occupant' => '13001',
                 'date visite' => null,
                 'Occupant présent lors de la visite ?' => null,
-                'Occupant en situation handicap' => false,
                 'etage occupant' => '2',
                 'escalier occupant' => null,
                 'numéro appartement  occupant' => null,

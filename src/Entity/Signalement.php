@@ -184,9 +184,6 @@ class Signalement
     #[ORM\Column(type: 'float', nullable: true)]
     private $montantAllocation;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private $isSituationHandicap;
-
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'signalementsModified')]
     private $modifiedBy;
 
@@ -1029,18 +1026,6 @@ class Signalement
     public function setMontantAllocation(?float $montantAllocation): self
     {
         $this->montantAllocation = $montantAllocation;
-
-        return $this;
-    }
-
-    public function getIsSituationHandicap()
-    {
-        return $this->isSituationHandicap;
-    }
-
-    public function setIsSituationHandicap($isSituationHandicap)
-    {
-        $this->isSituationHandicap = $isSituationHandicap;
 
         return $this;
     }

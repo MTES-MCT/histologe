@@ -158,21 +158,6 @@ class SignalementType extends AbstractType
                 'label' => 'Quelle est la superficie du logement (en m²) ?',
                 'required' => false,
             ])
-            ->add('isSituationHandicap', ChoiceType::class, [
-                'choice_attr' => [
-                    'class' => 'fr-radio',
-                ],
-                'choices' => [
-                    'Oui' => 1,
-                    'Non' => 0,
-                    'Ne sais pas' => '',
-                ],
-                'expanded' => true,
-                'label_attr' => [
-                    'class' => 'fr-label',
-                ],
-                'label' => 'Il y a-t-il des personnes en situation de handicap dans le logement ?',
-            ])
             ->add('isAllocataire', ChoiceType::class, [
                 'choices' => [
                     'CAF' => 'CAF',
