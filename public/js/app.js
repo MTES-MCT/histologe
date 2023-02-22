@@ -161,7 +161,6 @@ forms.forEach((form) => {
     form?.querySelectorAll('input[type="file"]')?.forEach((file) => {
         file.addEventListener('change', (event) => {
             if (event.target.files.length > 0) {
-                console.log(event.target.files);
                 let resTextEl = event.target.parentElement.nextElementSibling;
                 let fileData = new FormData();
                 let deleter = event.target.parentElement.parentElement.querySelector('.signalement-uploadedfile-delete'),
