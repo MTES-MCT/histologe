@@ -60,7 +60,7 @@ class BackSignalementFileControllerTest extends WebTestCase
         $this->assertEquals(302, $client->getResponse()->getStatusCode());
 
         $redirectUrl = $client->getResponse()->headers->get('Location');
-        $crawler = $client->request('GET', $redirectUrl);
+        $client->request('GET', $redirectUrl);
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
 
@@ -90,7 +90,7 @@ class BackSignalementFileControllerTest extends WebTestCase
         $router = self::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_signalement_add_file', ['uuid' => $signalement->getUuid()]);
-        $crawler = $client->request('POST', $route, [
+        $client->request('POST', $route, [
             '_token' => $this->generateCsrfToken($client, 'signalement_add_file_'.$signalement->getId()),
         ], [
             'signalement-add-file' => [
