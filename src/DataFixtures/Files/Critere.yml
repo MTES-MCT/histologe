@@ -3,45 +3,56 @@ criteres:
     situation: "Extérieur"
     label: "Aspect des espaces extérieurs"
     description: "Espaces verts et surfaces extérieures proches agréables."
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "Extérieur"
     label: "Nuisances de l'environnement"
     description: "Voisinage calme et non pollué."
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 2
+    new_coef: 1
+    type: 1
   -
-
     situation: "Extérieur"
     label: "Murs extérieurs"
     description: "Murs porteurs stables, non dégradés, sans fissure, sans dégradation des joints ni des enduits."
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 2
+    new_coef: 1
+    type: 1
   -
     situation: "Extérieur"
     label: "Charpentes"
     description: "Stables, n'entraînant aucune altération. absence de parasites destructeurs."
-    is_archive: 0
+    is_archive: 1
     is_danger: 1
     coef: 2
+    new_coef: 1
+    type: 1
   -
     situation: "Extérieur"
     label: "Toitures"
     description: "Toiture étanches à  l'eau. bonne isolation thermique entre l'extérieur et le plancher haut des logements du dernier étage habité."
-    is_archive: 0
+    is_archive: 1
     is_danger: 1
     coef: 2
+    new_coef: 1
+    type: 1
   -
     situation: "Extérieur"
     label: "Prévention des chutes"
     description: "Ouvrages en bon état. balcons et saillies apparemment solides. canalisations extérieures fixées. toiture sans éléments déplacés. souches stables. volets repeints"
-    is_archive: 0
+    is_archive: 1
     is_danger: 1
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "la sécurité des occupants"
     label: "L'entrée du bâtiment est abîmée ou mal sécurisée"
@@ -49,6 +60,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "l'état du bâtiment"
     label: "Le sol est abîmé."
@@ -56,6 +69,8 @@ criteres:
     is_archive: 0
     is_danger: 1
     coef: 2
+    new_coef: 4
+    type: 1
   -
     situation: "l'état du bâtiment"
     label: "Les escaliers sont abîmés."
@@ -63,6 +78,8 @@ criteres:
     is_archive: 0
     is_danger: 1
     coef: 2
+    new_coef: 2
+    type: 1
   -
     situation: "la sécurité des occupants"
     label: "Le bâtiment n’est pas sécurisé contre les chutes."
@@ -70,6 +87,8 @@ criteres:
     is_archive: 0
     is_danger: 1
     coef: 2
+    new_coef: 2
+    type: 1
   -
     situation: "l'état du bâtiment"
     label: "Les murs et plafonds intérieurs sont mal entretenus"
@@ -77,6 +96,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "l'état et propreté du logement"
     label: "Les sols sont humides."
@@ -84,6 +105,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 4
+    type: 2
   -
     situation: "la sécurité des occupants"
     label: "L’installation du réseau électrique a un problème."
@@ -91,6 +114,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 2
+    new_coef: 1
+    type: 1
   -
     situation: "la sécurité des occupants"
     label: "L’installation du réseau gaz a un problème."
@@ -98,6 +123,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 2
+    new_coef: 1
+    type: 1
   -
     situation: "la sécurité des occupants"
     label: "La protection incendie n’est pas adaptée."
@@ -105,6 +132,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "la sécurité des occupants"
     label: "Le chauffage collectif est obsolète."
@@ -112,6 +141,8 @@ criteres:
     is_archive: 0
     is_danger: 1
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "la vie commune et le voisinage"
     label: "Les déchets sont mal stockés."
@@ -119,6 +150,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "la vie commune et le voisinage"
     label: "L’usage des lieux n’est pas respecté."
@@ -126,196 +159,251 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 2
+    type: 1
   -
     situation: "Logement"
     label: "Réseau eau potable"
     description: "Raccordement au réseau public d'eau potable, débit et pression suffisants, protection contre les retours d'eau, absence de canalisation en plomb, protection contre le gel. protection contre les pollutions."
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 2
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Évacuation des eaux usées et raccordement"
     description: "Réseaux séparés, ventilés.\r\ncanalisations de taille suffisante, conditions d'écoulement satisfaisantes,  protection contre le gel, facilité d'entretien.\r\nraccordement au réseau de collecte ou dispositif autonome conforme et fonctionnel. absence de nuisances."
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 2
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Propreté"
     description: "Les lieux et les surfaces intérieures et extérieures sont régulièrement nettoyés et maintenus en bon état de propreté."
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Présence d'animaux nuisibles "
     description: "Absence de rongeurs, d'insectes parasites.\r\npas d'accumulation de pigeons."
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 2
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Éclairement naturel des pièces principales"
     description: "Éclairement suffisant pour permettre une activité normale sans avoir recours à l'éclairage artificiel.\r\nle rapport de la surface laissant passer la lumière sur la surface de la pièce est supérieur à 1/6."
-    is_archive: 0
-    is_danger: 0
+    is_archive: 1
+    is_danger: 0    
     coef: 3
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Organisation intérieure du logement"
     description: "Séparation des pièces de jour et de nuit. entrée et dégagement de distribution."
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Dimension des pièces / surface habitable"
     description: "Pièce principale d'au moins 12 m2, et au moins 9 m2 pour les autres pièces."
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Protection phonique / bruits extérieurs"
     description: "Isolation phonique adaptée au niveau de bruit extérieur.\r\nen environnement bruyant, double vitrage. liaisons dormant/ouvrant traitées."
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Protection phonique / bruits intérieurs"
     description: "Cloisons, portes palières, et planchers suffisamment isolants pour empêcher d'entendre parler ou marcher depuis les locaux voisins. pas de nuisance acoustique due au bruit des équipements collectifs."
-
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Isolation thermique"
     description: "Présence de dispositifs de construction (doublage des parois, double vitrage, étanchéité des huisseries…) assurant une isolation correcte."
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Chaudière gaz:\r\nInstallation, sécurité "
     description: "Appareils à circuits de combustion non étanche raccordés à une évacuation des produits de combustion vers l'extérieur, munis de sécurité au refoulement.\r\nappareils à circuit de combustion  étanche."
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 2
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Évacuation des produits de combustion"
     description: "Systèmes d'évacuation stables, étanches, protégés des effets de perturbations d'origine extérieure pouvant affecter le tirage ( vents plongeants, ouvrages proches,...)"
-    is_archive: 0
+    is_archive: 1
     is_danger: 1
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Toxiques, peintures au plomb"
     description: "Absence de peintures au plomb ou peintures anciennes protégées durablement et solidement"
-    is_archive: 0
+    is_archive: 1
     is_danger: 1
     coef: 2
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Risque amiante"
     description: "Absence de flocages, calorifugeages ou faux-plafond visibles, ou diagnostic amiante négatif."
-    is_archive: 0
+    is_archive: 1
     is_danger: 1
     coef: 2
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Prévention des chutes de personnes"
     description: "Tous les dispositifs de protection contre les chutes sont correctement installés et fonctionnels : garde-corps, mains-courantes…  absence de défauts pouvant provoquer des chutes.\r\ngarde-corps en bon état et hauteur adaptée. sols non glissants. absence de dénivelées susceptibles d'occasionner des chutes."
-    is_archive: 0
+    is_archive: 1
     is_danger: 1
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Appréciation globale des manifestations d'humidité"
     description: "Le logement ne présente aucune trace d'humidité."
-    is_archive: 0
+    is_archive: 1
     is_danger: 1
     coef: 4
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Réseau d'alimentation en eau potable"
     description: "Desserte de l'ensemble des équipements de l'appartement avec un débit et une pression suffisants."
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 2
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Réseau d'évacuation des eaux usées"
     description: "Desserte de tous les appareils. canalisations étanches, de débit adapté. orifices et appareils munis de siphons efficaces. absence de dysfonctionnements."
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Réseau d'électricité"
     description: "Réseau avec un nombre suffisant de points desservis et ne présentant pas d'anomalie particulière. pas de risques par contact direct ou indirect, notamment dans les locaux humides ( salles d'eau) ni de risque d'incendie."
-    is_archive: 0
+    is_archive: 1
     is_danger: 1
     coef: 2
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Réseau de gaz"
     description: "Canalisations correctement fixées, protégées des chocs. raccordement des appareils par canalisations rigides ou canalisations souples en bon état avec dispositif de sécurité."
-    is_archive: 0
+    is_archive: 1
     is_danger: 1
     coef: 2
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Moyens de chauffage"
     description: "Dispositif de chauffage suffisant dans chaque pièce."
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Cuisine ou coin cuisine"
     description: "Local indépendant ou coin cuisine aménagé avec équipements spécifiques adaptés."
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Toilettes"
     description: "Privatif à l'intérieur du logement, facile à entretenir."
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Salle de bain ou salle d'eau"
     description: "Privative avec douche ou baignoire, eau chaude et froide."
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Entretien des lieux, propreté courante"
     description: "Bon état de propreté et de rangement des locaux."
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "Logement"
     label: "Sur-occupation"
     description: "Pas de sur-occupation , usage n'entraînant pas de dégradation des locaux. au moins 14m2 de surface habitable par occupant pour les quatre premiers et 10 m2 par occupant supplémentaire."
-    is_archive: 0
+    is_archive: 1
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "les espaces de vie"
     label: "Mon logement est en sous-sol."
     description: "Le logement n'est pas situé au niveau -1 du bâtiment ou en inter-sol sans lumière extérieure directe."
     is_archive: 0
-    is_danger: 0
+    is_danger: 0    
     coef: 3
+    new_coef: 8
+    type: 2
   -
     situation: "les espaces de vie"
     label: "Mon logement est sous les combles."
@@ -323,6 +411,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 2
   -
     situation: "les espaces de vie"
     label: "Il n'y a pas de fenêtre dans mon salon ou ma salle à manger."
@@ -330,13 +420,17 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 8
+    type: 2
   -
     situation: "les espaces de vie"
     label: "Mon logement est une pièce unique, de moins de 9m²."
     description: "Le logement n'est pas constitué d'une seule pièce de moins de 9m2."
     is_archive: 0
-    is_danger: 1
+    is_danger: 1    
     coef: 3
+    new_coef: 1
+    type: 2
   -
     situation: "les espaces de vie"
     label: "Mon salon ou ma salle à manger mesure moins de 7m²."
@@ -344,6 +438,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 2
   -
     situation: "les espaces de vie"
     label: "Les plafonds sont trop bas (moins de 2.20 m)."
@@ -351,13 +447,17 @@ criteres:
     is_archive: 0
     is_danger: 1
     coef: 2
+    new_coef: 2
+    type: 2
   -
     situation: "les espaces de vie"
     label: "La lumière naturelle en pleine journée est insuffisante."
     description: "L'éclairage naturel du logement est suffisant pour vivre sans éclairage électrique en pleine journée. "
     is_archive: 0
-    is_danger: 0
+    is_danger: 0    
     coef: 3
+    new_coef: 8
+    type: 2
   -
     situation: "la sécurité des occupants"
     label: "Fils électriques dénudés"
@@ -365,6 +465,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 2
+    new_coef: 1
+    type: 1
   -
     situation: "le confort du logement"
     label: "Les installations électriques ne sont pas en bon état."
@@ -372,6 +474,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 2
+    new_coef: 1
+    type: 2
   -
     situation: "l'état et propreté du logement"
     label: "Les murs ont des fissures."
@@ -379,6 +483,8 @@ criteres:
     is_archive: 0
     is_danger: 1
     coef: 2
+    new_coef: 1
+    type: 1
   -
     situation: "la sécurité des occupants"
     label: "Les planchers sont dangereux."
@@ -386,6 +492,8 @@ criteres:
     is_archive: 0
     is_danger: 1
     coef: 2
+    new_coef: 2
+    type: 2
   -
     situation: "la sécurité des occupants"
     label: "Les garde-corps ou rambardes sont dangereuses."
@@ -393,6 +501,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 2
+    new_coef: 2
+    type: 1
   -
     situation: "l'état et propreté du logement"
     label: "De l'eau s’infiltre dans mon logement."
@@ -400,6 +510,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 4
+    type: 2
   -
     situation: "l'état et propreté du logement"
     label: "Il y a des traces importantes de moisissures."
@@ -407,6 +519,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 2
+    new_coef: 2
+    type: 2
   -
     situation: "l'état et propreté du logement"
     label: "La peinture est écaillée par endroits."
@@ -414,6 +528,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 2
   -
     situation: "l'état et propreté du logement"
     label: "Les toilettes du logement sont abîmées ou inexistantes."
@@ -421,6 +537,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 2
   -
     situation: "l'état et propreté du logement"
     label: "La salle de bain est abîmée ou inexistante."
@@ -428,6 +546,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 2
   -
     situation: "le confort du logement"
     label: "Le chauffage ne fonctionne pas bien."
@@ -435,13 +555,17 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 4
+    type: 2
   -
     situation: "l'état et propreté du logement"
     label: "J'ai un problème avec l’eau potable."
     description: "J’ai accès à l’eau potable et le débit de l’eau est bon."
     is_archive: 0
-    is_danger: 0
+    is_danger: 0    
     coef: 3
+    new_coef: 3
+    type: 1
   -
     situation: "le confort du logement"
     label: "J'ai un problème de ventilation dans mon logement."
@@ -449,6 +573,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 2
+    new_coef: 2
+    type: 2
   -
     situation: "le confort du logement"
     label: "De l’air s’infiltre dans mon logement."
@@ -456,6 +582,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 4
+    type: 1
   -
     situation: "le confort du logement"
     label: "Mes factures de chauffage sont anormalement élevées."
@@ -463,13 +591,17 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 2
+    type: 2
   -
     situation: "l'état et propreté du logement"
     label: "Il y a des nuisibles dans mon logement (blattes, punaises de lit, rongeurs...)."
     description: "Aucun nuisible et aucune trace de nuisibles dans le logement (cafards, punaises de lit, rongeurs, pigeons, termites, moustiques, insectes…)."
     is_archive: 0
-    is_danger: 0
+    is_danger: 0    
     coef: 3
+    new_coef: 0
+    type: 2
   -
     situation: "la vie commune et le voisinage"
     label: "Le bruit à l’intérieur du logement ou du bâtiment est gênant."
@@ -477,6 +609,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 2
+    new_coef: 1
+    type: 2
   -
     situation: "la vie commune et le voisinage"
     label: "Le bruit extérieur est gênant."
@@ -484,6 +618,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 2
+    new_coef: 1
+    type: 2
   -
     situation: "la sécurité des occupants"
     label: "L'accès au logement est mal éclairé."
@@ -491,6 +627,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 0
+    type: 1
   -
     situation: "l'état et propreté du logement"
     label: "J’ai un problème d'évacuation des eaux usées."
@@ -498,6 +636,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 2
+    new_coef: 2
+    type: 1
   -
     situation: "le confort du logement"
     label: "Mon logement est mal isolé."
@@ -505,6 +645,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 2
+    type: 2
   -
     situation: "la sécurité des occupants"
     label: "La protection incendie du logement n’est pas adaptée."
@@ -512,6 +654,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 2
+    type: 1
   -
     situation: "la sécurité des occupants"
     label: "Les escaliers intérieurs sont dangereux."
@@ -519,6 +663,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 2
+    new_coef: 4
+    type: 1
   -
     situation: "le confort du logement"
     label: "J’utilise un appareil d'appoint pour le chauffage."
@@ -526,6 +672,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 2
+    type: 2
   -
     situation: "le confort du logement"
     label: "L'installation de gaz n’est pas en bon état"
@@ -533,6 +681,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 2
+    type: 2
   -
     situation: "l'état du bâtiment"
     label: "Les façades ne sont pas en bon état."
@@ -540,6 +690,8 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 1
   -
     situation: "l'état du bâtiment"
     label: "La toiture n’est pas en bon état."
@@ -547,3 +699,5 @@ criteres:
     is_archive: 0
     is_danger: 0
     coef: 1
+    new_coef: 1
+    type: 1

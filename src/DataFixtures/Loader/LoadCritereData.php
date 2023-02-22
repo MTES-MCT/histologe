@@ -32,7 +32,9 @@ class LoadCritereData extends Fixture implements OrderedFixtureInterface
             ->setDescription($row['description'])
             ->setIsArchive($row['is_archive'])
             ->setIsDanger($row['is_danger'])
-            ->setCoef($row['coef']);
+            ->setCoef($row['coef'])
+            ->setNewCoef($row['new_coef'])
+            ->setType($row['type']);
 
         $manager->persist($critere);
     }

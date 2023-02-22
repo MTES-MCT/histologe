@@ -11,6 +11,9 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: CritereRepository::class)]
 class Critere
 {
+    public const TYPE_BATIMENT = 1;
+    public const TYPE_LOGEMENT = 2;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -46,6 +49,12 @@ class Critere
 
     #[ORM\Column(type: 'integer')]
     private $coef;
+
+    #[ORM\Column(type: 'integer')]
+    private $newCoef;
+
+    #[ORM\Column(type: 'integer')]
+    private $type;
 
     public function __construct()
     {
@@ -208,6 +217,41 @@ class Critere
     public function setCoef(int $coef): self
     {
         $this->coef = $coef;
+
+        return $this;
+    }
+
+    public function getNewCoef(): ?int
+    {
+        return $this->newCoef;
+    }
+
+    public function setNewCoef(int $newCoef): self
+    {
+        $this->newCoef = $newCoef;
+
+        return $this;
+    }
+
+    public function getType(): ?int
+    {
+        return $this->type;
+    }
+
+    public function getTypeString(): ?string
+    {
+        if (self::TYPE_BATIMENT == $this->type) {
+            return 'batiment';
+        } elseif (self::TYPE_LOGEMENT == $this->type) {
+            return 'logement';
+        }
+
+        return null;
+    }
+
+    public function setType(int $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

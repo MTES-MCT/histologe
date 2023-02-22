@@ -12,12 +12,13 @@ use App\Event\SignalementCreatedEvent;
 use App\Exception\MaxUploadSizeExceededException;
 use App\Form\SignalementType;
 use App\Manager\UserManager;
+use App\Repository\CritereRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
-use App\Service\CriticiteCalculatorService;
 use App\Service\NotificationService;
+use App\Service\Signalement\CriticiteCalculatorService;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\UploadHandlerService;
@@ -106,6 +107,7 @@ class FrontSignalementController extends AbstractController
         PostalCodeHomeChecker $postalCodeHomeChecker,
         EventDispatcherInterface $eventDispatcher,
         UrlGeneratorInterface $urlGenerator,
+        CritereRepository $critereRepository
     ): Response {
         if ($this->isCsrfTokenValid('new_signalement', $request->request->get('_token'))
             && $data = $request->get('signalement')) {
@@ -189,8 +191,9 @@ class FrontSignalementController extends AbstractController
             }
             $signalement->setReference($referenceGenerator->generate($signalement->getTerritory()));
 
-            $score = new CriticiteCalculatorService($signalement, $doctrine);
+            $score = new CriticiteCalculatorService($signalement, $critereRepository);
             $signalement->setScoreCreation($score->calculate());
+            $signalement->setNewScoreCreation($score->calculateNewCriticite());
             $signalement->setCodeSuivi(md5(uniqid()));
 
             $em->persist($signalement);
