@@ -50,7 +50,7 @@ users:
   -
     email: admin-territoire-89-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
-    partner: "Partenaire 89-01"
+    partner: "DDT"
     statut: 1
     is_generique: 0
     is_mailing_active: 1

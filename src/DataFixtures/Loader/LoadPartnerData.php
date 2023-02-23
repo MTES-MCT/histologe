@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures\Loader;
 
+use App\Entity\Enum\PartnerType;
 use App\Entity\Partner;
 use App\Repository\TerritoryRepository;
 use App\Service\Token\TokenGeneratorInterface;
@@ -45,6 +46,9 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
             $partner->setEsaboraUrl($row['esabora_url'])->setEsaboraToken($this->tokenGenerator->generateToken());
         }
 
+        if (isset($row['type'])) {
+            $partner->setType(PartnerType::from($row['type']));
+        }
         $manager->persist($partner);
     }
 
