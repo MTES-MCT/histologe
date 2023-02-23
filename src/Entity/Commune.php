@@ -86,17 +86,11 @@ class Commune
         return $this->nom;
     }
 
-    /**
-     * Get the value of isZonePermisLouer.
-     */
     public function getIsZonePermisLouer(): ?bool
     {
         return $this->isZonePermisLouer;
     }
 
-    /**
-     * Set the value of isZonePermisLouer.
-     */
     public function setIsZonePermisLouer(?bool $isZonePermisLouer): self
     {
         $this->isZonePermisLouer = $isZonePermisLouer;
