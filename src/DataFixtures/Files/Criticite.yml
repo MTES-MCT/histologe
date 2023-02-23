@@ -333,7 +333,7 @@ criticites:
     is_archive: 0
     is_default: 0
     score: 3
-    new_score: 4
+    new_score: 6
     is_danger: 1
   -
     critere: "Les planchers sont dangereux."
@@ -637,7 +637,7 @@ criticites:
     is_archive: 0
     is_default: 0
     score: 3
-    new_score: 2
+    new_score: 3
     is_danger: 0
   -
     critere: "Mon logement est sous les combles."
@@ -853,7 +853,7 @@ criticites:
     is_archive: 0
     is_default: 0
     score: 3
-    new_score: 1.5
+    new_score: 3
     is_danger: 1
   -
     critere: "Les escaliers sont abîmés."
