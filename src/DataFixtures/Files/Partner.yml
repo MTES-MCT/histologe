@@ -141,3 +141,276 @@ partners:
     is_commune: 0
     insee: "[\"\"]"
     territory: "Rhône"
+  -
+    nom: "ADIL"
+    email: "partenaire-63-01@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Puy-de-Dôme"
+  -
+    nom: "ALF (OPAH)"
+    email: "partenaire-63-02@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Puy-de-Dôme"
+  -
+    nom: "MSA"
+    email: "partenaire-63-03@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Puy-de-Dôme"
+  -
+    nom: "API"
+    email: "partenaire-63-04@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Puy-de-Dôme"
+  -
+    nom: "ARS"
+    email: "partenaire-63-05@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Puy-de-Dôme"
+  -
+    nom: "Soliha"
+    email: "partenaire-63-06@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Puy-de-Dôme"
+  -
+    nom: "BILLOM-CO"
+    email: "partenaire-63-07@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Puy-de-Dôme"
+  -
+    nom: "CAF"
+    email: "partenaire-63-08@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Puy-de-Dôme"
+  -
+    nom: "DDTM"
+    email: "partenaire-63-09@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Puy-de-Dôme"
+  -
+    nom: "Métropole de Clermont"
+    email: "partenaire-63-10@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Puy-de-Dôme"
+  -
+    nom: "PAYS DE SAINT-ELOY"
+    email: "partenaire-63-11@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Puy-de-Dôme"
+  -
+    nom: "PIG CD"
+    email: "partenaire-63-12@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Puy-de-Dôme"
+  -
+    nom: "RLV"
+    email: "partenaire-63-13@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Puy-de-Dôme"
+  -
+    nom: "SCHS CF"
+    email: "partenaire-63-14@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Puy-de-Dôme"
+  -
+    nom: "SCHS Royat"
+    email: "partenaire-63-15@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Puy-de-Dôme"
+  -
+    nom: "TDM"
+    email: "partenaire-63-16@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Puy-de-Dôme"
+  -
+    nom: "Urbanis"
+    email: "partenaire-63-17@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Puy-de-Dôme"
+  -
+    nom: "DDETS"
+    email: "partenaire-63-18@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Puy-de-Dôme"
+  -
+    nom: "ADIL"
+    email: "partenaire-89-01@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
+  -
+    nom: "DDT"
+    email: "partenaire-89-02@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
+  -
+    nom: "CAF"
+    email: "partenaire-89-03@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
+  -
+    nom: "ARS"
+    email: "partenaire-89-04@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
+  -
+    nom: "CD"
+    email: "partenaire-89-05@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
+  -
+    nom: "URBANIS"
+    email: "partenaire-89-06@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
+  -
+    nom: "SOLIHA89"
+    email: "partenaire-89-07@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
+  -
+    nom: "Mairie de Tonnerre"
+    email: "partenaire-89-08@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
+  -
+    nom: "Mairie de Avallon"
+    email: "partenaire-89-09@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
+  -
+    nom: "CAGS"
+    email: "partenaire-89-10@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
+  -
+    nom: "DDTESPP"
+    email: "partenaire-89-11@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
+  -
+    nom: "SCHS Auxerre"
+    email: "partenaire-89-12@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
+  -
+    nom: "Maison de l'Habitat du Jovinien"
+    email: "partenaire-89-13@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
+  -
+    nom: "Mairie de Saint Florentin"
+    email: "partenaire-89-14@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
+  -
+    nom: "ADIL MISSION CAF"
+    email: "partenaire-89-15@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
+  -
+    nom: "Mairie d'Egriselles le Bocage"
+    email: "partenaire-89-16@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
+  -
+    nom: "Mairie d'Epineau les voves"
+    email: "partenaire-89-17@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
+  -
+    nom: "Mairie de Saint Fargeau"
+    email: "partenaire-89-18@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
+  -
+    nom: "Mairie de Saint Sauveur en Puisaye"
+    email: "partenaire-89-19@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
+  -
+    nom: "Mairie de Charbuy"
+    email: "partenaire-89-20@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
+  -
+    nom: "Mairie de Tronchoy"
+    email: "partenaire-89-21@histologe.fr"
+    is_archive: 0
+    is_commune: 0
+    insee: "[\"\"]"
+    territory: "Yonne"
