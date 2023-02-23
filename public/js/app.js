@@ -171,7 +171,11 @@ forms.forEach((form) => {
                 let progress = document.querySelector("#progress_" + id);
                 let totalProgress = document.querySelector('#form_global_file_progress');
                 if (preview) {
-                    if (event.target.files[0].size > 10 * 1024 * 1024) {
+                    if (event.target.files[0].type === 'image/heic' || event.target.files[0].type === 'image/heif') {
+                        event.target.value = "";
+                        resTextEl.innerHTML = "Les fichiers de format HEIC/HEIF ne sont pas pris en charge, merci de convertir votre image en JPEG ou en PNG avant de l'envoyer.";
+                        resTextEl.classList.remove('fr-hidden')
+                    }  else if (event.target.files[0].size > 10 * 1024 * 1024) {
                         event.target.value = "";
                         resTextEl.innerHTML = "L'image dépasse 10MB";
                         resTextEl.classList.remove('fr-hidden')
@@ -181,7 +185,11 @@ forms.forEach((form) => {
                         fileIsOk = true;
                     }
                 } else if (event.target.parentElement.classList.contains('fr-fi-attachment-fill')) {
-                    if (event.target.files[0].size > 10 * 1024 * 1024) {
+                    if (event.target.files[0].type === 'image/heic' || event.target.files[0].type === 'image/heif') {
+                        event.target.value = "";
+                        resTextEl.innerHTML = "Les fichiers de format HEIC/HEIF ne sont pas pris en charge, merci de convertir votre image en JPEG ou en PNG avant de l'envoyer.";
+                        resTextEl.classList.remove('fr-hidden')
+                    } else if (event.target.files[0].size > 10 * 1024 * 1024) {
                         event.target.value = "";
                         resTextEl.innerHTML = "Le document dépasse 10MB";
                         resTextEl.classList.remove('fr-hidden')

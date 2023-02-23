@@ -55,7 +55,7 @@ class UploadHandlerService
         return $this;
     }
 
-    public function uploadFromFilename(string $filename, ?string $directory = null): string
+    public function uploadFromFilename(string $filename, ?string $directory = null): ?string
     {
         $filename = null === $directory ? $filename : $directory.$filename;
         $this->logger->info($filename);
@@ -70,13 +70,20 @@ class UploadHandlerService
             $fileResource = fopen($tmpFilepath, 'r');
             $this->fileStorage->writeStream($newFilename, $fileResource);
             fclose($fileResource);
+
+            return $newFilename;
         } catch (FilesystemException $exception) {
+            $this->logger->error($exception->getMessage());
+        } catch (\ImagickException $exception) {
             $this->logger->error($exception->getMessage());
         }
 
-        return $newFilename;
+        return null;
     }
 
+    /**
+     * @throws MaxUploadSizeExceededException
+     */
     public function uploadFromFile(UploadedFile $file, $newFilename): ?string
     {
         if ($file->getSize() > self::MAX_FILESIZE) {
@@ -98,6 +105,8 @@ class UploadHandlerService
 
             return $newFilename;
         } catch (FilesystemException $exception) {
+            $this->logger->error($exception->getMessage());
+        } catch (\ImagickException $exception) {
             $this->logger->error($exception->getMessage());
         }
 

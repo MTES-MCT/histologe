@@ -6,11 +6,17 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class HeicToJpegConverter
 {
+    public const FORMAT = ['.heic', '.heif'];
+    public const HEIC_FORMAT = ['image/heic', 'image/heif'];
+
     public function __construct(
         private ParameterBagInterface $parameterBag
     ) {
     }
 
+    /**
+     * @throws \ImagickException
+     */
     public function convert(string $filePath, ?string $newFilename = null): string
     {
         $pathInfo = pathinfo($filePath);
@@ -29,7 +35,9 @@ class HeicToJpegConverter
             fclose($fileResourceRead);
 
             // Save to new jpg file
-            $fileName = $newFilename ? str_replace('.heic', '.jpg', $newFilename) : $pathInfo['filename'].'-'.uniqid().'.jpg';
+            $fileName = $newFilename
+                ? str_replace(self::FORMAT, '.jpg', $newFilename)
+                : $pathInfo['filename'].'-'.uniqid().'.jpg';
 
             $filePath = $this->parameterBag->get('uploads_tmp_dir').$fileName;
             $fileResourceWrite = fopen($filePath, 'w+');
