@@ -36,7 +36,7 @@ class HeicToJpegConverter
 
             // Save to new jpg file
             $fileName = $newFilename
-                ? str_replace('.heic', '.jpg', $newFilename)
+                ? str_replace(self::FORMAT, '.jpg', $newFilename)
                 : $pathInfo['filename'].'-'.uniqid().'.jpg';
 
             $filePath = $this->parameterBag->get('uploads_tmp_dir').$fileName;
