@@ -59,15 +59,6 @@
                                     €/mois
                                 </li>
                             {% endif %}
-                            <li>
-                                <b>Situation de handicap: </b>
-                                {% if signalement.isSituationHandicap %}
-                                    {{ picto_yes|raw }}
-                                {% else %}
-                                    {{ picto_no|raw }}
-                                {% endif %}
-
-                            </li>
                         </ul>
                     </td>
                     {% if signalement.isNotOccupant %}

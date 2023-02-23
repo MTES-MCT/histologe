@@ -12,9 +12,19 @@
         </td>
         <td>{{ signalement.createdAt|date('d/m/Y') }}</td>
         <td>
-            <canvas id="gauge-signalement-{{ signalement.id }}"
-                    class="fr-col-12 fr-col-md-10 fr-col-lg-6 gauge-signalement"></canvas>
+            {% if is_granted('ROLE_ADMIN') %}
+                {{ signalement.scoreCreation|round(2) }}
+            {% else %}
+                <canvas id="gauge-signalement-{{ signalement.id }}"
+                        class="fr-col-12 fr-col-md-10 fr-col-lg-6 gauge-signalement"></canvas>
+                        
+            {% endif %}
         </td>
+        {% if is_granted('ROLE_ADMIN') %}
+            <td>
+                {{ signalement.newScoreCreation|round(2) }}
+            </td>
+        {% endif %}
         <td>
             {{ signalement.nomOccupant|upper }}<br>{{ signalement.prenomOccupant|capitalize }}
         </td>

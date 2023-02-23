@@ -62,7 +62,6 @@ class SignalementImportMapper
             'code insee occupant' => 'inseeOccupant',
             'date visite' => 'dateVisite',
             'Occupant présent lors de la visite ?' => 'isOccupantPresentVisite',
-            'Occupant en situation handicap' => 'isSituationHandicap',
             'etage occupant' => 'etageOccupant',
             'escalier occupant' => 'escalierOccupant',
             'numéro appartement  occupant' => 'numAppartOccupant',
@@ -161,7 +160,6 @@ class SignalementImportMapper
                     case 'isLogementCollectif':
                     case 'isConsentementTiers':
                     case 'isOccupantPresentVisite':
-                    case 'isSituationHandicap':
                     case 'isLogementSocial':
                     case 'isPreavisDepart':
                     case 'isRelogement':

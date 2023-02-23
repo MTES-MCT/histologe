@@ -38,3 +38,5 @@ tmp/*
 /scripts/legacy.sh
 /scripts/local/
 src/DataFixtures/Images/sample-target.png
+/metabase-data/
+metabase-data/*

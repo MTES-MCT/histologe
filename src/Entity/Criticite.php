@@ -46,6 +46,12 @@ class Criticite
     #[ORM\Column(type: 'integer')]
     private $score;
 
+    #[ORM\Column(type: 'float')]
+    private $newScore;
+
+    #[ORM\Column(type: 'boolean')]
+    private $isDanger;
+
     #[ORM\Column(type: 'boolean')]
     private $isArchive;
 
@@ -149,6 +155,30 @@ class Criticite
     public function setScore(int $score): self
     {
         $this->score = $score;
+
+        return $this;
+    }
+
+    public function getNewScore(): ?float
+    {
+        return $this->newScore;
+    }
+
+    public function setNewScore(float $newScore): self
+    {
+        $this->newScore = $newScore;
+
+        return $this;
+    }
+
+    public function getIsDanger(): ?bool
+    {
+        return $this->isDanger;
+    }
+
+    public function setIsDanger(bool $isDanger): self
+    {
+        $this->isDanger = $isDanger;
 
         return $this;
     }
