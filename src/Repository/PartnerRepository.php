@@ -94,7 +94,7 @@ class PartnerRepository extends ServiceEntityRepository
         $operator = $affected ? 'IN' : 'NOT IN';
 
         $sql = '
-        SELECT id, nom as name
+        SELECT id, nom as name, competence
         FROM partner
         WHERE territory_id = :territory_id AND is_archive = 0 AND (is_commune = 0 OR insee LIKE :insee)
         AND id '.$operator.' (
