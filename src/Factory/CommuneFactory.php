@@ -15,12 +15,14 @@ class CommuneFactory
         Territory $territory,
         string $nom = null,
         string $codePostal = null,
-        string $codeInsee = null)
-    {
+        string $codeInsee = null,
+        bool $isZonePermisLouer = false
+    ) {
         return (new Commune())
             ->setTerritory($territory)
             ->setNom($nom)
             ->setCodePostal($codePostal)
-            ->setCodeInsee($codeInsee);
+            ->setCodeInsee($codeInsee)
+            ->setIsZonePermisLouer($isZonePermisLouer);
     }
 }
