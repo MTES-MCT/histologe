@@ -30,7 +30,14 @@
                                         id="signalement-affectation-select-disponible"
                                         size="10" multiple>
                                     {% for partner in partners['not_affected'] %}
-                                            <option value="{{ partner['id'] }}">{{ partner['name']|upper }}</option>
+                                            <option value="{{ partner['id'] }}">{{ partner['name']|upper }} 
+                                            {# TODO : seulement si le signalement correspond
+                                            TODO faire joli #}
+                                            {{ partner.competence|json_encode()|length }}
+                                            {% if isExperimentationTerritory and partner['competence']|length > 1 %}
+                                                    {{ partner['competence']|join(', ')  }}
+                                            {% endif %}
+                                            </option>
                                     {% endfor %}
                                 </select>
                             </div>
