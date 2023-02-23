@@ -6,20 +6,20 @@ enum PartnerType: string
 {
     case ADIL = 'ADIL';
     case ARS = 'ARS';
-    case Association = 'Association';
-    case Bailleur_social = 'Bailleur social';
+    case ASSOCIATION = 'Association';
+    case BAILLEUR_SOCIAL = 'Bailleur social';
     case CAF_MSA = 'CAF / MSA';
     case CCAS = 'CCAS';
-    case Commune_SCHS = 'Commune / SCHS';
-    case Conciliateurs = 'Conciliateurs';
-    case Conseil_departemental = 'Conseil départemental';
+    case COMMUNE_SCHS = 'Commune / SCHS';
+    case CONCILIATEURS = 'Conciliateurs';
+    case CONSEIL_DEPARTEMENTAL = 'Conseil départemental';
     case DDETS = 'DDETS';
     case DDT_M = 'DDT/M';
-    case Dispositif_renovation_habitat = 'Dispositif rénovation habitat';
+    case DISPOSITIF_RENOVATION_HABITAT = 'Dispositif rénovation habitat';
     case EPCI = 'EPCI';
-    case Operateur_visites_et_travaux = 'Opérateur visites et travaux';
-    case Police_Gendarmerie = 'Police / Gendarmerie';
-    case Prefecture = 'Préfecture';
-    case Tribunal = 'Tribunal';
-    case Autre = 'Autre';
+    case OPERATEUR_VISITES_ET_TRAVAUX = 'Opérateur visites et travaux';
+    case POLICE_GENDARMERIE = 'Police / Gendarmerie';
+    case PREFECTURE = 'Préfecture';
+    case TRIBUNAL = 'Tribunal';
+    case AUTRE = 'Autre';
 }
