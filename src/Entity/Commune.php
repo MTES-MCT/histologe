@@ -25,6 +25,9 @@ class Commune
     #[ORM\Column(type: 'string', length: 10)]
     private $codeInsee;
 
+    #[ORM\Column(type: 'boolean')]
+    private $isZonePermisLouer;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -81,5 +84,17 @@ class Commune
     public function __toString(): string
     {
         return $this->nom;
+    }
+
+    public function getIsZonePermisLouer(): ?bool
+    {
+        return $this->isZonePermisLouer;
+    }
+
+    public function setIsZonePermisLouer(?bool $isZonePermisLouer): self
+    {
+        $this->isZonePermisLouer = $isZonePermisLouer;
+
+        return $this;
     }
 }
