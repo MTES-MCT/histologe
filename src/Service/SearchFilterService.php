@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Affectation;
+use App\Entity\Signalement;
 use DateInterval;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -150,38 +151,51 @@ class SearchFilterService
             if (\in_array('ALL_OPEN', $filters['closed_affectation'])) {
                 // les id de tous les signalements ayant au moins une affectation fermée :
                 $subquery = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
-                    ->select('s.id')
-                    ->leftJoin('a.signalement', 's')
-                    ->where('a.statut = '.Affectation::STATUS_CLOSED)
-                    ->groupBy('s.id');
+                    ->select('DISTINCT s.id')
+                    ->innerJoin('a.signalement', 's')
+                    ->where('a.statut = '.Affectation::STATUS_CLOSED);
 
                 // les signalements n'ayant aucune affectation fermée :
                 $qb->andWhere('s.id NOT IN (:subquery)')
-                    ->setParameter('subquery', $subquery->getDQL());
+                    ->setParameter('subquery', $subquery->getQuery()->getSingleColumnResult());
             }
             if (\in_array('ONE_CLOSED', $filters['closed_affectation'])) {
                 // les id de tous les signalements ayant au moins une affectation fermée :
-                $subquery = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
-                    ->select('s.id')
+                $subqueryClosedAffectation = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
+                    ->select('DISTINCT s.id')
                     ->leftJoin('a.signalement', 's')
-                    ->where('a.statut = '.Affectation::STATUS_CLOSED)
-                    ->groupBy('s.id');
+                    ->where('a.statut = '.Affectation::STATUS_CLOSED);
+                // les id de tous les signalements ayant au moins une affectation non fermée :
+                $subqueryUnclosedAffectation = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
+                    ->select('DISTINCT s.id')
+                    ->leftJoin('a.signalement', 's')
+                    ->where('a.statut != '.Affectation::STATUS_CLOSED);
 
                 // les signalements ayant au moins une affectation fermée :
-                $qb->andWhere('s.id IN (:subquery)')
-                   ->setParameter('subquery', $subquery->getDQL());
+                $qb->andWhere('s.id IN (:subqueryClosedAffectation)')
+                    ->andWhere('s.id IN (:subqueryUnclosedAffectation)')
+                    ->setParameter('subqueryClosedAffectation', $subqueryClosedAffectation->getQuery()->getSingleColumnResult())
+                    ->setParameter('subqueryUnclosedAffectation', $subqueryUnclosedAffectation->getQuery()->getSingleColumnResult());
             }
             if (\in_array('ALL_CLOSED', $filters['closed_affectation'])) {
                 // les id de tous les signalements ayant au moins une affectation non fermée :
                 $subquery = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
-                    ->select('s.id')
+                    ->select('DISTINCT s.id')
                     ->leftJoin('a.signalement', 's')
-                    ->where('a.statut != '.Affectation::STATUS_CLOSED)
-                    ->groupBy('s.id');
+                    ->where('a.statut != '.Affectation::STATUS_CLOSED);
 
-                // les signalements n'ayant aucune affectation non fermée
-                $qb->andWhere('s.id NOT IN (:subquery)')
-                    ->setParameter('subquery', $subquery->getDQL());
+                // les signalements n'ayant aucune affectation non fermée ou qui sont fermés
+                // $qb->andWhere('s.id NOT IN (:subquery)')
+                //     ->setParameter('subquery', $subquery->getQuery()->getSingleColumnResult());
+
+                $qb->andWhere(
+                    $qb->expr()->orX(
+                        $qb->expr()->notIn('s.id', ':idUnclosedAffectation'),
+                        $qb->expr()->eq('s.statut', ':statut')
+                    )
+                )
+                ->setParameter('idUnclosedAffectation', $subquery->getQuery()->getSingleColumnResult())
+                ->setParameter('statut', Signalement::STATUS_ARCHIVED);
             }
         }
         if (!empty($filters['tags'])) {
