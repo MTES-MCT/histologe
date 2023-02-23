@@ -34,7 +34,7 @@ final class Version20230221151642 extends AbstractMigration
         $this->addSql('ALTER TABLE partner ADD type VARCHAR(255) DEFAULT NULL, ADD competence JSON DEFAULT NULL');
 
         foreach (self::CRITICITE_NDE as $criticite) {
-            $qualification = [Qualification::Non_decence_energetique];
+            $qualification = [Qualification::NON_DECENCE_ENERGETIQUE];
             $this->addSql('UPDATE criticite SET qualification = \''.json_encode($qualification).'\', modified_at=NOW() WHERE label like "'.$criticite.'"');
         }
     }
