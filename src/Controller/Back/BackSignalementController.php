@@ -44,7 +44,10 @@ class BackSignalementController extends AbstractController
             return $this->redirectToRoute('back_index');
         }
 
-        $eventDispatcher->dispatch(new SignalementViewedEvent($signalement, $this->getUser()), SignalementViewedEvent::NAME);
+        $eventDispatcher->dispatch(
+            new SignalementViewedEvent($signalement, $this->getUser()),
+            SignalementViewedEvent::NAME
+        );
 
         $isRefused = $isAccepted = $isClosedForMe = null;
         if ($isAffected = $signalement->getAffectations()->filter(function (Affectation $affectation) {

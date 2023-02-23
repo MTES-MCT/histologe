@@ -8,6 +8,7 @@ use App\Entity\Territory;
 use App\Entity\User;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -84,5 +85,29 @@ class NotificationRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function findSignalementNewSuivi(User $user, ?Territory $territory): array
+    {
+        $qb = $this->createQueryBuilder('n')
+            ->select('DISTINCT IDENTITY(n.signalement) as id')
+            ->innerJoin('n.suivi', 'su')
+            ->where('n.isSeen = :is_seen')
+            ->andWhere('n.type = :type')
+            ->andWhere('n.user = :user')
+            ->andWhere('su.type IN (:type_suivi_usager, :type_suivi_partner)')
+            ->setParameter('is_seen', 0)
+            ->setParameter('type', 1)
+            ->setParameter('user', $user)
+            ->setParameter('type_suivi_usager', Suivi::TYPE_USAGER)
+            ->setParameter('type_suivi_partner', Suivi::TYPE_PARTNER);
+
+        if (null !== $territory) {
+            $qb->innerJoin('n.signalement', 's')
+                ->andWhere('s.territory = :territory')
+                ->setParameter('territory', $territory);
+        }
+
+        return $qb->getQuery()->getResult(AbstractQuery::HYDRATE_SCALAR_COLUMN);
     }
 }
