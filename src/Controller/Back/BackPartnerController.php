@@ -12,6 +12,7 @@ use App\Repository\TerritoryRepository;
 use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,7 +28,8 @@ class BackPartnerController extends AbstractController
     public function index(
         Request $request,
         PartnerRepository $partnerRepository,
-        TerritoryRepository $territoryRepository
+        TerritoryRepository $territoryRepository,
+        ParameterBagInterface $parameterBag
     ): Response {
         $this->denyAccessUnlessGranted('PARTNER_LIST', null);
         $page = $request->get('page') ?? 1;
@@ -54,6 +56,8 @@ class BackPartnerController extends AbstractController
 
         $totalPartners = \count($paginatedPartners);
 
+        $experimentationTerritories = $parameterBag->get('experimentation_territory');
+
         return $this->render('back/partner/index.html.twig', [
             'currentTerritory' => $currentTerritory,
             'territories' => $territoryRepository->findAllList(),
@@ -61,6 +65,7 @@ class BackPartnerController extends AbstractController
             'total' => $totalPartners,
             'page' => $page,
             'pages' => (int) ceil($totalPartners / Partner::MAX_LIST_PAGINATION),
+            'isExperimentationTerritory' => \array_key_exists($currentTerritory->getZip(), $experimentationTerritories),
         ]);
     }
 

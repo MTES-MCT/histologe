@@ -22,6 +22,7 @@ use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,7 +40,8 @@ class BackSignalementController extends AbstractController
         TagRepository $tagsRepository,
         PartnerRepository $partnerRepository,
         SignalementManager $signalementManager,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        ParameterBagInterface $parameterBag
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
         if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
@@ -114,6 +116,8 @@ class BackSignalementController extends AbstractController
             $canExportSignalement = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY') || $isAccepted;
         }
 
+        $experimentationTerritories = $parameterBag->get('experimentation_territory');
+
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
             'situations' => $criticitesArranged,
@@ -129,6 +133,7 @@ class BackSignalementController extends AbstractController
             'partners' => $signalementManager->findAllPartners($signalement),
             'clotureForm' => $clotureForm->createView(),
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
+            'isExperimentationTerritory' => \array_key_exists($signalement->getTerritory()->getZip(), $experimentationTerritories),
         ]);
     }
 
