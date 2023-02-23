@@ -66,7 +66,12 @@
             <tr>
                 <th>#Ref.</th>
                 <th>Date</th>
-                <th>Criticité</th>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <th>Criticité 1</th>
+                    <th>Criticité 2</th>
+                {% else %}
+                    <th>Criticité</th>
+                {% endif %}
                 <th>Occupant</th>
                 <th>Adresse</th>
                 <th>Affectation</th>

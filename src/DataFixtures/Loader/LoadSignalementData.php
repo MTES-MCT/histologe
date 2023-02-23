@@ -62,7 +62,6 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setSuperficie($row['superficie'])
             ->setLoyer($row['loyer'])
             ->setDetails($row['details'])
-            ->setIsSituationHandicap(false)
             ->setIsProprioAverti($row['is_proprio_averti'])
             ->setModeContactProprio(json_decode($row['mode_contact_proprio'], true))
             ->setNomProprio($faker->company())

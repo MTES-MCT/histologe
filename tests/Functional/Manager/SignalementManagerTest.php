@@ -200,7 +200,6 @@ class SignalementManagerTest extends KernelTestCase
             'inseeOccupant' => $faker->postcode(),
             'dateVisite' => new \DateTimeImmutable(),
             'isOccupantPresentVisite' => true,
-            'isSituationHandicap' => false,
             'etageOccupant' => $faker->randomDigit(),
             'escalierOccupant' => $faker->randomDigit(),
             'numAppartOccupant' => $faker->randomDigit(),

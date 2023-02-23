@@ -23,3 +23,4 @@ grumphp:
         scripts:
           - ["-c", "make cs-check"]
           - ["-c", "make test"]
+    process_timeout: 120

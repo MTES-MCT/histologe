@@ -100,7 +100,6 @@ class SignalementManager extends AbstractManager
             ->setDateVisite($data['dateVisite'])
             ->setIsOccupantPresentVisite((bool) $data['isOccupantPresentVisite'])
             ->setMontantAllocation((float) $data['montantAllocation'])
-            ->setIsSituationHandicap($data['isSituationHandicap'])
             ->setCodeProcedure($data['codeProcedure'])
             ->setEtageOccupant($data['etageOccupant'])
             ->setEscalierOccupant($data['escalierOccupant'])

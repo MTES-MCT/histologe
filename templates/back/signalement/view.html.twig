@@ -312,15 +312,6 @@
                         </li>
                     {% endif %}
                     <li>
-                        <strong>Situation de handicap: </strong>
-                        {% if signalement.isSituationHandicap %}
-                            {{ picto_yes|format('IsSituationHandicap')|raw }}
-                        {% else %}
-                            {{ picto_no|format('IsSituationHandicap')|raw }}
-                        {% endif %}
-
-                    </li>
-                    <li>
                         <div class="fr-responsive-img fr-grid-row fr-grid-row--gutters fr-p-4v">
                             <div id="map-signalement-view" class="fr-rounded fr-mt-5v fr-col-12"
                                  style="height: 300px;"></div>
@@ -350,6 +341,9 @@
                             <canvas id="slider-criticite" class="fr-col-4"></canvas>
                             <div class="fr-col-8 fr-col--middle">
                                 <text class="fr-display-sm"><span id="score-criticite"></span>%</text>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <text class="fr-display-xs"><span id="new-score-criticite">{{ signalement.newScoreCreation|round(2) }}</span>%</text>
+                            {% endif %}
                             </div>
                         </div>
                     </li>

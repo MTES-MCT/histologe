@@ -50,7 +50,6 @@ class SearchFilterService
             'interventions' => $request->get('bo-filters-interventions') ?? null,
             'avant1949' => $request->get('bo-filters-avant1949') ?? null,
             'enfantsM6' => $request->get('bo-filters-enfantsM6') ?? null,
-            'handicaps' => $request->get('bo-filters-handicaps') ?? null,
             'affectations' => $request->get('bo-filters-affectations') ?? null,
             'visites' => $request->get('bo-filters-visites') ?? null,
             'delays' => $request->get('bo-filters-delays') ?? null,
@@ -209,10 +208,6 @@ class SearchFilterService
         if (!empty($filters['avant1949'])) {
             $qb->andWhere('s.isConstructionAvant1949 IN (:avant1949)')
                 ->setParameter('avant1949', $filters['avant1949']);
-        }
-        if (!empty($filters['handicaps'])) {
-            $qb->andWhere('s.isSituationHandicap IN (:handicaps)')
-                ->setParameter('handicaps', $filters['handicaps']);
         }
         if (!empty($filters['dates'])) {
             $field = 's.createdAt';

@@ -168,7 +168,6 @@ class FrontSignalementControllerTest extends WebTestCase
             'superficie' => '1000',
             'isAllocataire' => '0',
             'numAllocataire' => '0',
-            'isSituationHandicap' => '0',
             'isLogementSocial' => '0',
             'isPreavisDepart' => '0',
             'isRelogement' => '0',
