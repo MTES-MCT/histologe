@@ -6,6 +6,9 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class HeicToJpegConverter
 {
+    public const FORMAT = ['.heic', '.heif'];
+    public const HEIC_FORMAT = ['image/heic', 'image/heif'];
+
     public function __construct(
         private ParameterBagInterface $parameterBag
     ) {

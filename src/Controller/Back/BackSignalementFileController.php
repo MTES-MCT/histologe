@@ -5,6 +5,7 @@ namespace App\Controller\Back;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Exception\MaxUploadSizeExceededException;
+use App\Service\Files\HeicToJpegConverter;
 use App\Service\UploadHandlerService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,8 +25,6 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 #[Route('/bo/s')]
 class BackSignalementFileController extends AbstractController
 {
-    public const HEIC_FORMAT = ['image/heic', 'image/heif'];
-
     #[Route('/{uuid}/pdf', name: 'back_signalement_gen_pdf')]
     public function generatePdfSignalement(Signalement $signalement, Pdf $knpSnappyPdf, EntityManagerInterface $entityManager)
     {
@@ -80,9 +79,9 @@ class BackSignalementFileController extends AbstractController
 
             /** @var UploadedFile $file */
             foreach ($files[$type] as $file) {
-                if (\in_array($file->getMimeType(), self::HEIC_FORMAT)) {
+                if (\in_array($file->getMimeType(), HeicToJpegConverter::HEIC_FORMAT)) {
                     $message = <<<ERROR
-                    Les fichiers de format HEIC ne sont pas pris en charge,
+                    Les fichiers de format HEIC/HEIF ne sont pas pris en charge,
                     merci de convertir votre image en JPEG ou en PNG avant de l'envoyer.
                     ERROR;
                     $logger->error($message);

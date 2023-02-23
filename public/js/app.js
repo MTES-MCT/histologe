@@ -173,7 +173,7 @@ forms.forEach((form) => {
                 if (preview) {
                     if (event.target.files[0].type === 'image/heic' || event.target.files[0].type === 'image/heif') {
                         event.target.value = "";
-                        resTextEl.innerHTML = "Les fichiers de format HEIC ne sont pas pris en charge, merci de convertir votre image en JPEG ou en PNG avant de l'envoyer.";
+                        resTextEl.innerHTML = "Les fichiers de format HEIC/HEIF ne sont pas pris en charge, merci de convertir votre image en JPEG ou en PNG avant de l'envoyer.";
                         resTextEl.classList.remove('fr-hidden')
                     }  else if (event.target.files[0].size > 10 * 1024 * 1024) {
                         event.target.value = "";
@@ -187,7 +187,7 @@ forms.forEach((form) => {
                 } else if (event.target.parentElement.classList.contains('fr-fi-attachment-fill')) {
                     if (event.target.files[0].type === 'image/heic' || event.target.files[0].type === 'image/heif') {
                         event.target.value = "";
-                        resTextEl.innerHTML = "Les fichiers de format HEIC ne sont pas pris en charge, merci de convertir votre image en JPEG ou en PNG avant de l'envoyer.";
+                        resTextEl.innerHTML = "Les fichiers de format HEIC/HEIF ne sont pas pris en charge, merci de convertir votre image en JPEG ou en PNG avant de l'envoyer.";
                         resTextEl.classList.remove('fr-hidden')
                     } else if (event.target.files[0].size > 10 * 1024 * 1024) {
                         event.target.value = "";

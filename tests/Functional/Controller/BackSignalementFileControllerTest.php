@@ -104,7 +104,7 @@ class BackSignalementFileControllerTest extends WebTestCase
         $crawler = $client->request('GET', $redirectUrl);
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertStringContainsString(
-            'Les fichiers de format HEIC ne sont pas pris en charge',
+            'Les fichiers de format HEIC/HEIF ne sont pas pris en charge',
             $crawler->filter('.fr-alert.fr-alert--error.fr-alert--sm')->text()
         );
     }
