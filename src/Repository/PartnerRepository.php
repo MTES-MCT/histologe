@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
@@ -88,25 +89,42 @@ class PartnerRepository extends ServiceEntityRepository
     /**
      * @throws Exception
      */
-    public function findByLocalization(Signalement $signalement, bool $affected = true): array
+    public function findByLocalization(Signalement $signalement, bool $affected = true, bool $isExperimentationTerritory = false): array
     {
-        $connection = $this->getEntityManager()->getConnection();
         $operator = $affected ? 'IN' : 'NOT IN';
 
-        $sql = '
-        SELECT id, nom as name, competence
-        FROM partner
-        WHERE territory_id = :territory_id AND is_archive = 0 AND (is_commune = 0 OR insee LIKE :insee)
-        AND id '.$operator.' (
-            SELECT partner_id FROM affectation WHERE signalement_id = :signalement_id)
-        ';
+        $selectCompetence = $isExperimentationTerritory ? ', p.competence' : '';
 
-        $statement = $connection->prepare($sql);
+        $subquery = $this->getEntityManager()->getRepository(Affectation::class)->createQueryBuilder('a')
+            ->select('DISTINCT p.id')
+            ->innerJoin('a.partner', 'p')
+            ->innerJoin('a.signalement', 's')
+            ->where('s.id = :signalement_id')
+            ->setParameter('signalement_id', $signalement->getId());
 
-        return $statement->executeQuery([
-            'signalement_id' => $signalement->getId(),
-            'territory_id' => $signalement->getTerritory()->getId(),
-            'insee' => '%'.$signalement->getInseeOccupant().'%',
-        ])->fetchAllAssociative();
+        $affectedPartners = $subquery->getQuery()->getSingleColumnResult();
+
+        $queryBuilder = $this->createQueryBuilder('p');
+        $queryBuilder->select('p.id, p.nom as name'.$selectCompetence)
+            ->where('p.isArchive = 0')
+            ->andWhere('p.territory = :territory')
+            ->setParameter('territory', $signalement->getTerritory())
+            ->andWhere(
+                $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->eq('p.isCommune', 0),
+                    $queryBuilder->expr()->like('p.insee', ':insee')
+                )
+            )
+            ->setParameter('insee', '%'.$signalement->getInseeOccupant().'%')
+        ;
+        if (\count($affectedPartners) > 0 || 'IN' == $operator) {
+            $queryBuilder->andWhere('p.id '.$operator.' (:subquery)')
+            ->setParameter('subquery', $affectedPartners);
+        }
+        if ($isExperimentationTerritory) {
+            $queryBuilder->orderBy('p.competence', 'DESC');
+        }
+
+        return $queryBuilder->getQuery()->getArrayResult();
     }
 }

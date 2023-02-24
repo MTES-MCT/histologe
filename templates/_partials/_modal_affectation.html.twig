@@ -31,11 +31,12 @@
                                         size="10" multiple>
                                     {% for partner in partners['not_affected'] %}
                                             <option value="{{ partner['id'] }}">{{ partner['name']|upper }} 
-                                            {# TODO : seulement si le signalement correspond
-                                            TODO faire joli #}
-                                            {{ partner.competence|json_encode()|length }}
-                                            {% if isExperimentationTerritory and partner['competence']|length > 1 %}
-                                                    {{ partner['competence']|join(', ')  }}
+                                            {# TODO : seulement si le signalement correspond#}
+                                            {% if partner.competence|default %}
+                                                {% for competence in partner.competence %}
+                                                    {# <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ competence }}</span> #}
+                                                    {{ competence }}
+                                                {% endfor %}
                                             {% endif %}
                                             </option>
                                     {% endfor %}
@@ -58,7 +59,15 @@
                                             size="10" data-fr-select-count="fr-modal-affectation-count"
                                             name="signalement-affectation[partners][]">
                                         {% for partner in partners['affected'] %}
-                                            <option value="{{ partner['id'] }}">{{ partner['name']|upper }}</option>
+                                            <option value="{{ partner['id'] }}">{{ partner['name']|upper }}
+                                            {# TODO : seulement si le signalement correspond#}
+                                            {% if partner.competence|default %}
+                                                {% for competence in partner.competence %}
+                                                    {# <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ competence }}</span> #}
+                                                    {{ competence }}
+                                                {% endfor %}
+                                            {% endif %}
+                                            </option>
                                         {% endfor %}
                                     </select>
                                     <input type="hidden" name="_token"

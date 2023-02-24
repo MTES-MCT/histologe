@@ -140,18 +140,20 @@ class SignalementManager extends AbstractManager
             ->setIsFondSolidariteLogement((bool) $data['isFondSolidariteLogement']);
     }
 
-    public function findAllPartners(Signalement $signalement): array
+    public function findAllPartners(Signalement $signalement, bool $isExperimentationTerritory = false): array
     {
         /** @var PartnerRepository $partnerRepository */
         $partnerRepository = $this->managerRegistry->getRepository(Partner::class);
         $partners['affected'] = $partnerRepository->findByLocalization(
             signalement: $signalement,
-            affected: true
+            affected: true,
+            isExperimentationTerritory: $isExperimentationTerritory
         );
 
         $partners['not_affected'] = $partnerRepository->findByLocalization(
             signalement: $signalement,
-            affected: false
+            affected: false,
+            isExperimentationTerritory: $isExperimentationTerritory
         );
 
         return $partners;
