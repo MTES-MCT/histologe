@@ -110,6 +110,10 @@ class BackSignalementController extends AbstractController
         }
 
         $experimentationTerritories = $parameterBag->get('experimentation_territory');
+        $isExperimentationTerritory = \array_key_exists($signalement->getTerritory()->getZip(), $experimentationTerritories);
+        // TODO : rajouter la condition "signalement tagué "non décence énergétique" avérée ou à vérifier"
+
+        $partners = $signalementManager->findAllPartners($signalement, $isExperimentationTerritory);
 
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
@@ -123,10 +127,10 @@ class BackSignalementController extends AbstractController
             'isClosedForMe' => $isClosedForMe,
             'isRefused' => $isRefused,
             'signalement' => $signalement,
-            'partners' => $signalementManager->findAllPartners($signalement),
+            'partners' => $partners,
             'clotureForm' => $clotureForm->createView(),
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
-            'isExperimentationTerritory' => \array_key_exists($signalement->getTerritory()->getZip(), $experimentationTerritories),
+            'isExperimentationTerritory' => $isExperimentationTerritory,
         ]);
     }
 
