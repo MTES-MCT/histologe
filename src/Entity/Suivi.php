@@ -12,7 +12,6 @@ class Suivi
     public const TYPE_AUTO = 1;
     public const TYPE_USAGER = 2;
     public const TYPE_PARTNER = 3;
-    public const DEFAULT_PERIOD_INACTIVITY = 30;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

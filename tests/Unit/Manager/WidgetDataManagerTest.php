@@ -12,28 +12,28 @@ use App\Repository\JobEventRepository;
 use App\Repository\SignalementRepository;
 use App\Service\DashboardWidget\WidgetDataKpiBuilder;
 use App\Service\DashboardWidget\WidgetDataManager;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class WidgetDataManagerTest extends TestCase
 {
     private WidgetDataManager $widgetDataManager;
-    private SignalementRepository|MockObject $signalementRepositoryMock;
-    private JobEventRepository|MockObject $jobEventRepositoryMock;
-    private MockObject|AffectationRepository $affectationRepositoryMock;
+    private $signalementRepositoryMock;
+    private $jobEventRepositoryMock;
+    private $affectationRepositoryMock;
+    private $widgetDataKpiBuilderMock;
 
     protected function setUp(): void
     {
         $this->signalementRepositoryMock = $this->createMock(SignalementRepository::class);
         $this->jobEventRepositoryMock = $this->createMock(JobEventRepository::class);
         $this->affectationRepositoryMock = $this->createMock(AffectationRepository::class);
-        $widgetDataKpiBuilderMock = $this->createMock(WidgetDataKpiBuilder::class);
+        $this->widgetDataKpiBuilderMock = $this->createMock(WidgetDataKpiBuilder::class);
 
         $this->widgetDataManager = new WidgetDataManager(
             $this->signalementRepositoryMock,
             $this->jobEventRepositoryMock,
             $this->affectationRepositoryMock,
-            $widgetDataKpiBuilderMock,
+            $this->widgetDataKpiBuilderMock,
         );
     }
 

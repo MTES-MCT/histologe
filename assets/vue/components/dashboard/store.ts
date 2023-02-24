@@ -68,8 +68,7 @@ export const store = {
     },
     esaboraEvents: new Array<any>(),
     signalementsPerTerritoire: new Array<any>(),
-    affectationsPartenaires: new Array<any>(),
-    signalementsAcceptedNoSuivi: new Array<any>()
+    affectationsPartenaires: new Array<any>()
   },
   props: {
     ajaxurlSettings: '',

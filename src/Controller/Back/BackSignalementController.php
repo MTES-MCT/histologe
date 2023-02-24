@@ -5,19 +5,21 @@ namespace App\Controller\Back;
 use App\Entity\Affectation;
 use App\Entity\Critere;
 use App\Entity\Criticite;
+use App\Entity\Notification;
 use App\Entity\Signalement;
 use App\Entity\Situation;
 use App\Entity\Suivi;
 use App\Event\SignalementClosedEvent;
-use App\Event\SignalementViewedEvent;
 use App\Form\ClotureType;
 use App\Form\SignalementType;
 use App\Manager\SignalementManager;
 use App\Repository\CritereRepository;
+use App\Repository\PartnerRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
 use App\Service\Signalement\CriticiteCalculatorService;
 use DateTimeImmutable;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -33,7 +35,9 @@ class BackSignalementController extends AbstractController
     public function viewSignalement(
         Signalement $signalement,
         Request $request,
+        EntityManagerInterface $entityManager,
         TagRepository $tagsRepository,
+        PartnerRepository $partnerRepository,
         SignalementManager $signalementManager,
         EventDispatcherInterface $eventDispatcher
     ): Response {
@@ -44,11 +48,14 @@ class BackSignalementController extends AbstractController
             return $this->redirectToRoute('back_index');
         }
 
-        $eventDispatcher->dispatch(
-            new SignalementViewedEvent($signalement, $this->getUser()),
-            SignalementViewedEvent::NAME
-        );
-
+        // TODO REPLACE THIS
+        $this->getUser()->getNotifications()->filter(function (Notification $notification) use ($signalement, $entityManager) {
+            if ($notification->getSignalement()->getId() === $signalement->getId()) {
+                $notification->setIsSeen(true);
+                $entityManager->persist($notification);
+            }
+        });
+        $entityManager->flush();
         $isRefused = $isAccepted = $isClosedForMe = null;
         if ($isAffected = $signalement->getAffectations()->filter(function (Affectation $affectation) {
             return $affectation->getPartner() === $this->getUser()->getPartner();

@@ -21,7 +21,7 @@
     <div v-if="sharedState.user.isResponsableTerritoire" class="fr-col-12 fr-col-lg-6 fr-mb-3w">
       <HistoDataTable
         :headers=signalementsAcceptedNoSuiviHeaders
-        :items=sharedState.signalementsAcceptedNoSuivi
+        :items=[]
         >
         <template #title>Signalements acceptés mais sans suivi</template>
       </HistoDataTable>
