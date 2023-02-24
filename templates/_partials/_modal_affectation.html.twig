@@ -31,12 +31,10 @@
                                         size="10" multiple>
                                     {% for partner in partners['not_affected'] %}
                                             <option value="{{ partner['id'] }}">{{ partner['name']|upper }} 
-                                            {# TODO : seulement si le signalement correspond#}
                                             {% if partner.competence|default %}
-                                                {% for competence in partner.competence %}
-                                                    {# <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ competence }}</span> #}
+                                               ({% for competence in partner.competence %}
                                                     {{ competence }}
-                                                {% endfor %}
+                                                {% endfor %})
                                             {% endif %}
                                             </option>
                                     {% endfor %}
@@ -60,12 +58,10 @@
                                             name="signalement-affectation[partners][]">
                                         {% for partner in partners['affected'] %}
                                             <option value="{{ partner['id'] }}">{{ partner['name']|upper }}
-                                            {# TODO : seulement si le signalement correspond#}
                                             {% if partner.competence|default %}
-                                                {% for competence in partner.competence %}
-                                                    {# <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ competence }}</span> #}
+                                                ({% for competence in partner.competence %}
                                                     {{ competence }}
-                                                {% endfor %}
+                                                {% endfor %})
                                             {% endif %}
                                             </option>
                                         {% endfor %}
