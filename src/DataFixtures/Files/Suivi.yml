@@ -48,6 +48,13 @@ suivis:
   signalement: "2022-8"
   type: 1
 -
+  created_by: admin-territoire-13-01@histologe.fr
+  description: "Ceci est vieux suivi de partenaire 13-01"
+  created_at: "2022-06-08 17:06:33"
+  is_public: 0
+  signalement: "2022-8"
+  type: 3
+-
   created_by: admin-01@histologe.fr
   description: "Signalement validé"
   is_public: 0

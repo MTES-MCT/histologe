@@ -97,13 +97,13 @@ class SearchFilterService
             }
         }
 
-        if (null !== $this->filters['delays']
+        if (!empty($this->filters['delays'])
             || $request->isMethod('GET') && null !== $request->query->get('sans_suivi_periode')
         ) {
             $period = $this->filters['delays'] ?? $request->query->get('sans_suivi_periode');
             $territory = $user->getTerritory();
             $partner = \in_array(User::ROLE_USER_PARTNER, $user->getRoles()) ? $user->getPartner() : null;
-            $signalementIds = $this->suiviRepository->findSignalementNoSuiviSince($period, $territory, $partner);
+            $signalementIds = $this->suiviRepository->findSignalementNoSuiviSince((int) $period, $territory, $partner);
             $this->filters['delays'] = (int) $period;
             $this->filters['delays_signalement_id'] = $signalementIds;
         }
