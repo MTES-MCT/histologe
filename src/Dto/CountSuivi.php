@@ -8,8 +8,6 @@ class CountSuivi
         private ?float $average = null,
         private ?int $partner = null,
         private ?int $usager = null,
-        private ?int $signalementNewSuivi = null,
-        private ?int $signalementNoSuivi = null,
     ) {
     }
 
@@ -26,15 +24,5 @@ class CountSuivi
     public function getUsager(): ?int
     {
         return $this->usager;
-    }
-
-    public function getSignalementNewSuivi(): ?int
-    {
-        return $this->signalementNewSuivi;
-    }
-
-    public function getSignalementNoSuivi(): ?int
-    {
-        return $this->signalementNoSuivi;
     }
 }

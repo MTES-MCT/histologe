@@ -2,10 +2,10 @@
 
 namespace App\Repository;
 
-use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
@@ -54,70 +54,6 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     /**
-     * @throws Exception
-     */
-    public function countSignalementNoSuiviSince(
-        int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
-        ?Territory $territory = null,
-        ?Partner $partner = null,
-    ): int {
-        $connection = $this->getEntityManager()->getConnection();
-        $parameters = [
-            'day_period' => $period,
-            'type_suivi_usager' => Suivi::TYPE_USAGER,
-            'type_suivi_partner' => Suivi::TYPE_PARTNER,
-            'status_archived' => Signalement::STATUS_ARCHIVED,
-            'status_closed' => Signalement::STATUS_CLOSED,
-        ];
-
-        if (null !== $territory) {
-            $parameters['territory_id'] = $territory->getId();
-        }
-        if (null !== $partner) {
-            $parameters['partner_id'] = $partner->getId();
-        }
-
-        $sql = 'SELECT COUNT(*) as count_signalement
-                FROM ('.
-                        $this->getSignalementsQuery($territory, $partner)
-                .') as countSignalementSuivi';
-        $statement = $connection->prepare($sql);
-
-        return (int) $statement->executeQuery($parameters)->fetchOne();
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function findSignalementNoSuiviSince(
-        int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
-        ?Territory $territory = null,
-        ?Partner $partner = null,
-    ): array {
-        $connection = $this->getEntityManager()->getConnection();
-        $parameters = [
-            'day_period' => $period,
-            'type_suivi_usager' => Suivi::TYPE_USAGER,
-            'type_suivi_partner' => Suivi::TYPE_PARTNER,
-            'status_archived' => Signalement::STATUS_ARCHIVED,
-            'status_closed' => Signalement::STATUS_CLOSED,
-        ];
-
-        if (null !== $territory) {
-            $parameters['territory_id'] = $territory->getId();
-        }
-
-        if (null != $partner) {
-            $parameters['partner_id'] = $partner->getId();
-        }
-
-        $sql = $this->getSignalementsQuery($territory, $partner);
-        $statement = $connection->prepare($sql);
-
-        return $statement->executeQuery($parameters)->fetchFirstColumn();
-    }
-
-    /**
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
@@ -126,10 +62,19 @@ class SuiviRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s) as nb_suivi')
             ->innerJoin('s.signalement', 'sig')
+            ->innerJoin('s.createdBy', 'u')
             ->where('sig.statut != :statut')
-            ->andWhere('s.type = :type_suivi')
-            ->setParameter('statut', Signalement::STATUS_ARCHIVED)
-            ->setParameter('type_suivi', Suivi::TYPE_PARTNER);
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->like('u.roles', ':role1'),
+                    $qb->expr()->like('u.roles', ':role2'),
+                    $qb->expr()->like('u.roles', ':role3')
+                )
+            )
+            ->setParameter('role1', '%'.User::ROLE_ADMIN_TERRITORY.'%')
+            ->setParameter('role2', '%'.User::ROLE_ADMIN_PARTNER.'%')
+            ->setParameter('role3', '%'.User::ROLE_USER_PARTNER.'%')
+            ->setParameter('statut', Signalement::STATUS_ARCHIVED);
 
         if ($territory instanceof Territory) {
             $qb->andWhere('sig.territory = :territory')->setParameter('territory', $territory);
@@ -149,8 +94,13 @@ class SuiviRepository extends ServiceEntityRepository
             ->innerJoin('s.signalement', 'sig')
             ->leftJoin('s.createdBy', 'u')
             ->where('sig.statut != :statut')
-            ->andWhere('s.type = :type_suivi')
-            ->setParameter('type_suivi', Suivi::TYPE_USAGER)
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->like('u.roles', ':role'),
+                    $qb->expr()->isNull('s.createdBy')
+                )
+            )
+            ->setParameter('role', '%'.User::ROLE_USAGER.'%')
             ->setParameter('statut', Signalement::STATUS_ARCHIVED);
 
         if ($territory instanceof Territory) {
@@ -158,33 +108,5 @@ class SuiviRepository extends ServiceEntityRepository
         }
 
         return (int) $qb->getQuery()->getSingleScalarResult();
-    }
-
-    private function getSignalementsQuery(
-        ?Territory $territory = null,
-        ?Partner $partner = null
-    ): string {
-        $whereTerritory = $wherePartner = $innerPartnerJoin = '';
-
-        if (null !== $territory) {
-            $whereTerritory = 'AND s.territory_id = :territory_id';
-        }
-
-        if (null != $partner) {
-            $wherePartner = 'AND a.partner_id = :partner_id';
-            $innerPartnerJoin = 'INNER JOIN affectation a ON a.signalement_id = su.signalement_id';
-        }
-
-        return 'SELECT su.signalement_id, MAX(su.created_at) as last_posted_at
-                FROM suivi su
-                INNER JOIN signalement s on s.id = su.signalement_id
-                '.$innerPartnerJoin.'
-                WHERE type in (:type_suivi_usager,:type_suivi_partner)
-                AND s.statut NOT IN (:status_closed, :status_archived)
-                '.$whereTerritory.'
-                '.$wherePartner.'
-                GROUP BY su.signalement_id
-                HAVING DATEDIFF(NOW(),last_posted_at) > :day_period
-                ORDER BY last_posted_at';
     }
 }
