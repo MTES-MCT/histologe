@@ -5,6 +5,7 @@ namespace App\Controller\Back;
 use App\Entity\Affectation;
 use App\Entity\Critere;
 use App\Entity\Criticite;
+use App\Entity\Enum\Qualification;
 use App\Entity\Signalement;
 use App\Entity\Situation;
 use App\Entity\Suivi;
@@ -14,6 +15,7 @@ use App\Form\ClotureType;
 use App\Form\SignalementType;
 use App\Manager\SignalementManager;
 use App\Repository\CritereRepository;
+use App\Repository\SignalementQualificationRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
 use App\Service\Signalement\CriticiteCalculatorService;
@@ -37,7 +39,8 @@ class BackSignalementController extends AbstractController
         TagRepository $tagsRepository,
         SignalementManager $signalementManager,
         EventDispatcherInterface $eventDispatcher,
-        ParameterBagInterface $parameterBag
+        ParameterBagInterface $parameterBag,
+        SignalementQualificationRepository $signalementQualificationRepository
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
         if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
@@ -111,9 +114,10 @@ class BackSignalementController extends AbstractController
 
         $experimentationTerritories = $parameterBag->get('experimentation_territory');
         $isExperimentationTerritory = \array_key_exists($signalement->getTerritory()->getZip(), $experimentationTerritories);
-        // TODO : rajouter la condition "signalement tagué "non décence énergétique" avérée ou à vérifier"
+        $signalementQualification = $signalementQualificationRepository->findOneBy(['signalement' => $signalement]);
+        $isSignalementNonDecence = Qualification::NON_DECENCE_ENERGETIQUE == $signalementQualification?->getQualification();
 
-        $partners = $signalementManager->findAllPartners($signalement, $isExperimentationTerritory);
+        $partners = $signalementManager->findAllPartners($signalement, $isExperimentationTerritory && $isSignalementNonDecence);
 
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
