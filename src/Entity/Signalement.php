@@ -321,6 +321,9 @@ class Signalement
     #[ORM\Column(type: 'boolean', nullable: true)]
     private $isImported;
 
+    #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: SignalementQualification::class, orphanRemoval: true)]
+    private Collection $signalementQualifications;
+
     public function __construct()
     {
         $this->situations = new ArrayCollection();
@@ -336,6 +339,7 @@ class Signalement
         $this->affectations = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->isImported = false;
+        $this->signalementQualifications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -1611,6 +1615,36 @@ class Signalement
     public function setLastSuiviAt(?DateTimeImmutable $lastSuiviAt): self
     {
         $this->lastSuiviAt = $lastSuiviAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SignalementQualification>
+     */
+    public function getSignalementQualifications(): Collection
+    {
+        return $this->signalementQualifications;
+    }
+
+    public function addSignalementQualification(SignalementQualification $signalementQualification): self
+    {
+        if (!$this->signalementQualifications->contains($signalementQualification)) {
+            $this->signalementQualifications->add($signalementQualification);
+            $signalementQualification->setSignalement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSignalementQualification(SignalementQualification $signalementQualification): self
+    {
+        if ($this->signalementQualifications->removeElement($signalementQualification)) {
+            // set the owning side to null (unless already changed)
+            if ($signalementQualification->getSignalement() === $this) {
+                $signalementQualification->setSignalement(null);
+            }
+        }
 
         return $this;
     }
