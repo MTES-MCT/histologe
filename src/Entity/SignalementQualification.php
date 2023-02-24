@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\Qualification;
 use App\Repository\SignalementQualificationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -18,8 +19,8 @@ class SignalementQualification
     #[ORM\JoinColumn(nullable: false)]
     private ?Signalement $signalement = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $qualification = null;
+    #[ORM\Column(type: 'string', enumType: Qualification::class)]
+    private ?Qualification $qualification = null;
 
     #[ORM\Column(nullable: true)]
     private array $desordres = [];
@@ -47,12 +48,12 @@ class SignalementQualification
         return $this;
     }
 
-    public function getQualification(): ?string
+    public function getQualification(): ?Qualification
     {
         return $this->qualification;
     }
 
-    public function setQualification(string $qualification): self
+    public function setQualification(Qualification $qualification): self
     {
         $this->qualification = $qualification;
 
