@@ -185,9 +185,6 @@ class SearchFilterService
                     ->where('a.statut != '.Affectation::STATUS_CLOSED);
 
                 // les signalements n'ayant aucune affectation non fermée ou qui sont fermés
-                // $qb->andWhere('s.id NOT IN (:subquery)')
-                //     ->setParameter('subquery', $subquery->getQuery()->getSingleColumnResult());
-
                 $qb->andWhere(
                     $qb->expr()->orX(
                         $qb->expr()->notIn('s.id', ':idUnclosedAffectation'),

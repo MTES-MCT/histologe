@@ -134,9 +134,10 @@
                                                 affectation</strong></label>
                                         <select id="bo-filters-closed_affectation" class="fr-select" onchange="setBadge(this)">
                                             <option value="">TOUS</option>
-                                            <option value="ALL_OPEN">Ouvert chez tous les partenaires</option>
+                                            {# TODO remettre les options quand on mettra en place une UI pour ne pas pouvoir cumuler ces filtres excluants #}
+                                            {# <option value="ALL_OPEN">Ouvert chez tous les partenaires</option> #}
                                             <option value="ONE_CLOSED">Fermé chez au moins un partenaire</option>
-                                            <option value="ALL_CLOSED">Fermé chez tous les partenaires</option>
+                                            {# <option value="ALL_CLOSED">Fermé chez tous les partenaires</option> #}
                                         </select>
                                         <div class="selected__value">
                                             <div class="fr-pb-1v fr-border--bottom--orange"></div>
