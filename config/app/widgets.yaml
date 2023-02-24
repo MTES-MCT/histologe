@@ -31,6 +31,9 @@ parameters:
       cardCloturesPartenaires:
         label: "Clotures partenaires"
         roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY]
+        link: 'back_index'
+        params:
+          closed_affectation: 'ONE_CLOSED'
       cardMesAffectations:
         label: "Mes affectations"
         roles: [ROLE_ADMIN_TERRITORY]

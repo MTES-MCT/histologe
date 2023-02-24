@@ -2,6 +2,8 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\Entity\Signalement;
+use App\Entity\Suivi;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -99,5 +101,44 @@ class BackControllerTest extends WebTestCase
         $this->assertSelectorTextContains('#signalements-result', '2023-2');
         $this->assertSelectorTextContains('#signalements-result', '2023-5');
         $this->assertSelectorTextContains('table', '2 signalement(s)');
+    }
+
+    /**
+     * @dataProvider provideLinkFilterDashboard
+     */
+    public function testWidgetLinkFilterDashboard(string $emailUser, string $filter): void
+    {
+        $client = static::createClient();
+        /** @var UrlGeneratorInterface $generatorUrl */
+        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+
+        $user = $userRepository->findOneBy(['email' => $emailUser]);
+        $client->loginUser($user);
+        $route = $generatorUrl->generate('back_index').$filter;
+        $client->request('GET', $route);
+
+        $this->assertResponseIsSuccessful();
+    }
+
+    private function provideLinkFilterDashboard(): \Generator
+    {
+        $adminUser = 'admin-01@histologe.fr';
+        yield 'SUPER_ADMIN - Nouveaux signalements' => [$adminUser, '?statut='.Signalement::STATUS_NEED_VALIDATION];
+        yield 'SUPER_ADMIN - Nouveaux suivis' => [$adminUser, '?nouveau_suivi=1'];
+        yield 'SUPER_ADMIN - Sans suivis' => [$adminUser, '?sans_suivi_periode='.Suivi::DEFAULT_PERIOD_INACTIVITY];
+        yield 'SUPER_ADMIN - Clotures globales' => [$adminUser, '?statut='.Signalement::STATUS_CLOSED];
+        yield 'SUPER_ADMIN - Clotures partenaires' => [$adminUser, '?closed_affectation=ONE_CLOSED'];
+
+        $adminTerritoryUser = 'admin-territoire-13-01@histologe.fr';
+        yield 'ADMIN_T - Nouveaux signalements' => [$adminTerritoryUser, '?statut='.Signalement::STATUS_NEED_VALIDATION];
+        yield 'ADMIN_T - Nouveaux suivis' => [$adminTerritoryUser, '?nouveau_suivi=1'];
+        yield 'ADMIN_T - Sans suivis' => [$adminTerritoryUser, '?sans_suivi_periode='.Suivi::DEFAULT_PERIOD_INACTIVITY];
+        yield 'ADMIN_T - Clotures partenaires' => [$adminTerritoryUser, '?closed_affectation=ONE_CLOSED'];
+
+        $partnerUser = 'user-13-01@histologe.fr';
+        yield 'PARTNER - Nouveaux suivis' => [$partnerUser, '?nouveau_suivi=1'];
+        yield 'PARTNER - Sans suivis' => [$partnerUser, '?sans_suivi_periode='.Suivi::DEFAULT_PERIOD_INACTIVITY];
     }
 }

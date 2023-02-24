@@ -2,17 +2,15 @@
 
 namespace App\Service;
 
+use App\Entity\Affectation;
+use App\Entity\Signalement;
 use App\Entity\User;
 use App\Repository\NotificationRepository;
 use App\Repository\SuiviRepository;
-use App\Entity\Affectation;
-use App\Entity\Signalement;
 use DateInterval;
 use DateTime;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\DBAL\Exception;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,17 +40,11 @@ class SearchFilterService
         return $this->filters ?? null;
     }
 
-    /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
-     * @throws Exception
-     */
     public function setFilters(): self
     {
         $request = $this->getRequest();
         /** @var User $user */
         $user = $this->security->getUser();
-
         $this->filters = [
             'searchterms' => $request->get('bo-filters-searchterms') ?? null,
             'territories' => $request->get('bo-filters-territories') ?? null,
@@ -76,14 +68,13 @@ class SearchFilterService
             'tags' => $request->get('bo-filters-tags') ?? null,
             'page' => $request->get('page') ?? 1,
         ];
-
         if ($request->isMethod('GET')) {
-            if (null !== $statusSignalement = $request->query->get('statut')) {
-                $this->filters['statuses'] = [$statusSignalement];
+            if ($request->query->get('statut')) {
+                $this->filters['statuses'] = [$request->query->get('statut')];
             }
 
-            if (null !== $partners = $request->query->get('partenaires')) {
-                $this->filters['partners'] = [$partners];
+            if ($request->query->get('partenaires')) {
+                $this->filters['partners'] = [$request->query->get('partenaires')];
             }
 
             if ($request->query->get('nouveau_suivi')) {
@@ -91,21 +82,24 @@ class SearchFilterService
                 $this->filters['signalement_ids'] = $signalementIds;
             }
 
-            if ($this->security->isGranted('ROLE_ADMIN')
-                && null !== $territory = $request->query->get('territoire_id')) {
-                $this->filters['territories'] = [$territory];
+            if ($this->security->isGranted('ROLE_ADMIN') && $request->query->get('territoire_id')) {
+                $this->filters['territories'] = [$request->query->get('territoire_id')];
+            }
+
+            if ($request->query->get('closed_affectation')) {
+                $this->filters['closed_affectation'] = [$request->query->get('closed_affectation')];
             }
         }
 
         if (!empty($this->filters['delays'])
-            || $request->isMethod('GET') && null !== $request->query->get('sans_suivi_periode')
+            || $request->isMethod('GET') && $request->query->get('sans_suivi_periode')
         ) {
             $period = $this->filters['delays'] ?? $request->query->get('sans_suivi_periode');
             $territory = $user->getTerritory();
             $partner = \in_array(User::ROLE_USER_PARTNER, $user->getRoles()) ? $user->getPartner() : null;
-            $signalementIds = $this->suiviRepository->findSignalementNoSuiviSince((int) $period, $territory, $partner);
             $this->filters['delays'] = (int) $period;
-            $this->filters['delays_signalement_id'] = $signalementIds;
+            $this->filters['delays_territory'] = $territory;
+            $this->filters['delays_partner'] = $partner;
         }
 
         return $this;
@@ -146,6 +140,9 @@ class SearchFilterService
         return $this->filters;
     }
 
+    /**
+     * @throws Exception
+     */
     public function applyFilters(QueryBuilder $qb, array $filters): QueryBuilder
     {
         if (!empty($filters['searchterms'])) {
@@ -297,8 +294,13 @@ class SearchFilterService
                 ->setParameter('interventions', $filters['interventions']);
         }
         if (!empty($filters['delays'])) {
-            $qb->andWhere('s.id IN (:id)')
-                ->setParameter('id', $filters['delays_signalement_id']);
+            $signalementIds = $this->suiviRepository->findSignalementNoSuiviSince(
+                $filters['delays'],
+                $filters['delays_territory'],
+                $filters['delays_partner']
+            );
+            $qb->andWhere('s.id IN (:signalement_ids)')
+                ->setParameter('signalement_ids', $signalementIds);
         }
         if (!empty($filters['scores'])) {
             if (!empty($filters['scores']['on'])) {
@@ -312,11 +314,6 @@ class SearchFilterService
         if (!empty($filters['territories'])) {
             $qb->andWhere('s.territory IN (:territories)')
                 ->setParameter('territories', $filters['territories']);
-        }
-
-        if (!empty($filters['signalement_ids'])) {
-            $qb->andWhere('s.id IN (:reference)')
-                ->setParameter('reference', $filters['signalement_ids']);
         }
 
         return $qb;

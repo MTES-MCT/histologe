@@ -148,11 +148,6 @@ class WidgetDataKpiBuilder
         return \in_array($key, $this->widgetCards);
     }
 
-    /**
-     * @todo: cardNouveauxSuivis(fiiltre), cardSansSuivi(filtre), cardCloturesPartenaires(ayant été fermé par au moins 1 partenaire)
-     * [BO - Suivi] Qualification suivi: https://github.com/MTES-MCT/histologe/issues/867
-     * [BO - Filtre signalement] Cloture partiel: https://github.com/MTES-MCT/histologe/issues/869
-     */
     public function build(): WidgetDataKpi
     {
         $this

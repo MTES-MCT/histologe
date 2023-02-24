@@ -378,19 +378,6 @@
                                                 <small>(jours)</small></label>
                                             <input type="number" min="0" max="9999" step="1" id="bo-filters-delays" name="bo-filters-delays"
                                                    class="fr-input" value="{{ filters.delays ?? '' }}">
-                                            <div class="selected__value">
-                                                <div class="fr-pb-1v fr-border--bottom--orange"></div>
-                                                {% set visible = 'fr-hidden' %}
-                                                {% if filters.delays %}
-                                                    <input type="hidden" name="bo-filters-delays" value="{{ filters.delays }}">
-                                                    <span class="fr-badge fr-badge--success fr-m-1v" data-value="{{ filters.delays }}"
-                                                          data-removable="true">PLUS {{ filters.delays }} JOUR(S)</span>
-                                                {% else %}
-                                                    {% set visible = 0 %}
-                                                {% endif %}
-                                                <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
-                                            </div>
-
                                         </div>
                                     </div>
                                 </div>
