@@ -42,6 +42,8 @@ parameters:
         label: "Nouvelles affectations"
         roles: [ROLE_USER_PARTNER, ROLE_ADMIN_PARTNER]
         link: 'back_index'
+        params:
+          statut: 1
       cardTousLesSignalements:
         label: "Tous les signalements"
         roles: [ROLE_USER_PARTNER, ROLE_ADMIN_PARTNER]
