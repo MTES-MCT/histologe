@@ -822,17 +822,16 @@ signalements:
     mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags: []
     situations:
-      - "la vie commune et le voisinage"
       - "le confort du logement"
       - "le confort du logement"
     criteres:
-      - "Les déchets sont mal stockés."
       - "Mon logement est mal isolé."
       - "J’utilise un appareil d'appoint pour le chauffage."
     criticites:
-      - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "Le DPE indique une étiquette énergie F ou G ou n’a pas été fait. J’ai tout le temps la sensation d'avoir froid en hiver et/ou très chaud en été."
       - "J’utilise plusieurs chauffages d'appoint et/ou des pièces principales ne possèdent pas de moyen de chauffage."
+    qualification: 
+      - "Non décence énergétique"
   -
     uuid: "00000000-0000-0000-2023-0000000008"
     details: "Signalement Non-Décence dans le Puy de dôme"
@@ -864,14 +863,13 @@ signalements:
     mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags: []
     situations:
-      - "la vie commune et le voisinage"
       - "le confort du logement"
       - "le confort du logement"
     criteres:
-      - "Les déchets sont mal stockés."
       - "Mon logement est mal isolé."
       - "J’utilise un appareil d'appoint pour le chauffage."
     criticites:
-      - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "Le DPE indique une étiquette énergie F ou G ou n’a pas été fait. J’ai tout le temps la sensation d'avoir froid en hiver et/ou très chaud en été."
       - "J’utilise plusieurs chauffages d'appoint et/ou des pièces principales ne possèdent pas de moyen de chauffage."
+    qualification: 
+      - "Non décence énergétique"

@@ -3,7 +3,10 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Criticite;
+use App\Entity\Enum\Qualification;
 use App\Entity\Signalement;
+use App\Entity\SignalementQualification;
 use App\Entity\User;
 use App\Form\SignalementType;
 use App\Repository\CritereRepository;
@@ -131,6 +134,21 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         }
 
         $manager->persist($signalement);
+
+        if (isset($row['qualification'])) {
+            foreach ($row['qualification'] as $qualificationLabel) {
+                $signalementQualification = (new SignalementQualification())
+                ->setSignalement($signalement)
+                ->setQualification(Qualification::from($qualificationLabel))
+                ->setDesordres($signalement->getCriticites()->map(function (Criticite $criticite) {
+                    return $criticite->getId();
+                })->toArray());
+                $manager->persist($signalementQualification);
+
+                $signalement->addSignalementQualification($signalementQualification);
+                $manager->persist($signalement);
+            }
+        }
     }
 
     public function getOrder(): int
