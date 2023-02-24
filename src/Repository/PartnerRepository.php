@@ -89,11 +89,11 @@ class PartnerRepository extends ServiceEntityRepository
     /**
      * @throws Exception
      */
-    public function findByLocalization(Signalement $signalement, bool $affected = true, bool $isExperimentationTerritory = false): array
+    public function findByLocalization(Signalement $signalement, bool $affected = true, bool $addCompetences = false): array
     {
         $operator = $affected ? 'IN' : 'NOT IN';
 
-        $selectCompetence = $isExperimentationTerritory ? ', p.competence' : '';
+        $selectCompetence = $addCompetences ? ', p.competence' : '';
 
         $subquery = $this->getEntityManager()->getRepository(Affectation::class)->createQueryBuilder('a')
             ->select('DISTINCT p.id')
@@ -121,7 +121,7 @@ class PartnerRepository extends ServiceEntityRepository
             $queryBuilder->andWhere('p.id '.$operator.' (:subquery)')
             ->setParameter('subquery', $affectedPartners);
         }
-        if ($isExperimentationTerritory) {
+        if ($addCompetences) {
             $queryBuilder->orderBy('p.competence', 'DESC');
         }
 
