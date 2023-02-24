@@ -34,7 +34,11 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
             ->setDescription($row['description'])
             ->setCreatedBy($this->userRepository->findOneBy(['email' => $row['created_by']]))
             ->setIsPublic($row['is_public'])
-            ->setCreatedAt(new \DateTimeImmutable())
+            ->setCreatedAt(
+                isset($row['created_at'])
+                    ? new \DateTimeImmutable($row['created_at'])
+                    : new \DateTimeImmutable()
+            )
             ->setType($row['type']);
 
         $manager->persist($suivi);

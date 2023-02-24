@@ -5,9 +5,11 @@ namespace App\Service\DashboardWidget;
 use App\Dto\CountSignalement;
 use App\Dto\CountSuivi;
 use App\Dto\CountUser;
+use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\AffectationRepository;
+use App\Repository\NotificationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
@@ -36,6 +38,7 @@ class WidgetDataKpiBuilder
         private AffectationRepository $affectationRepository,
         private SignalementRepository $signalementRepository,
         private UserRepository $userRepository,
+        private NotificationRepository $notificationRepository,
         private ParameterBagInterface $parameterBag,
         private Security $security,
     ) {
@@ -85,11 +88,28 @@ class WidgetDataKpiBuilder
      */
     public function withCountSuivi(): self
     {
+        /** @var User $user */
+        $user = $this->security->getUser();
         $averageSuivi = $this->suiviRepository->getAverageSuivi($this->territory);
         $countSuiviPartner = $this->suiviRepository->countSuiviPartner($this->territory);
         $countSuiviUsager = $this->suiviRepository->countSuiviUsager($this->territory);
+        $countSignalementNewSuivi = $this->notificationRepository->countSignalementNewSuivi(
+            $user,
+            $this->territory
+        );
+        $countSignalementNoSuivi = $this->suiviRepository->countSignalementNoSuiviSince(
+            Suivi::DEFAULT_PERIOD_INACTIVITY,
+            $this->territory,
+            \in_array(User::ROLE_USER_PARTNER, $user->getRoles()) ? $user->getPartner() : null
+        );
 
-        $this->countSuivi = new CountSuivi($averageSuivi, $countSuiviPartner, $countSuiviUsager);
+        $this->countSuivi = new CountSuivi(
+            $averageSuivi,
+            $countSuiviPartner,
+            $countSuiviUsager,
+            $countSignalementNewSuivi,
+            $countSignalementNoSuivi
+        );
 
         return $this;
     }
@@ -112,20 +132,22 @@ class WidgetDataKpiBuilder
             $widgetParams = $this->parameters[$key];
             $link = $widgetParams['link'] ?? null;
             $label = $widgetParams['label'] ?? null;
-            $widgetParams['params']['territory_id'] = $this->territory?->getId();
+            $widgetParams['params']['territoire_id'] = $this->territory?->getId();
             $parameters = array_merge($linkParameters, $widgetParams['params'] ?? []);
             $widgetCard = $this->widgetCardFactory->createInstance($label, $count, $link, $parameters);
-            $this->widgetCards[$key] = $widgetCard;
+            if (!$this->hasWidgetCard($key)) {
+                $this->widgetCards[$key] = $widgetCard;
+            }
         }
 
         return $this;
     }
 
-    /**
-     * @todo: cardNouveauxSuivis, cardSansSuivi, cardCloturesPartenaires(ayant été fermé par au moins 1 partenaire)
-     * [BO - Suivi] Qualification suivi: https://github.com/MTES-MCT/histologe/issues/867
-     * [BO - Filtre signalement] Cloture partiel: https://github.com/MTES-MCT/histologe/issues/869
-     */
+    public function hasWidgetCard(string $key): bool
+    {
+        return \in_array($key, $this->widgetCards);
+    }
+
     public function build(): WidgetDataKpi
     {
         $this
@@ -134,7 +156,9 @@ class WidgetDataKpiBuilder
             ->addWidgetCard('cardMesAffectations')
             ->addWidgetCard('cardTousLesSignalements', $this->countSignalement->getTotal())
             ->addWidgetCard('cardCloturesGlobales', $this->countSignalement->getClosed())
-            ->addWidgetCard('cardNouvellesAffectations', $this->countSignalement->getNew());
+            ->addWidgetCard('cardNouvellesAffectations', $this->countSignalement->getNew())
+            ->addWidgetCard('cardNouveauxSuivis', $this->countSuivi->getSignalementNewSuivi())
+            ->addWidgetCard('cardSansSuivi', $this->countSuivi->getSignalementNoSuivi());
 
         return new WidgetDataKpi(
             $this->widgetCards,

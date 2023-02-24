@@ -128,6 +128,31 @@
                                         </div>
                                     </div>
                                 {% endif %}
+                                {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+                                    <div class="fr-col-12 fr-col-md-6">
+                                        <label class="fr-label" for="bo-filters-closed_affectation"><strong>Filtrer par
+                                                affectation</strong></label>
+                                        <select id="bo-filters-closed_affectation" class="fr-select" onchange="setBadge(this)">
+                                            <option value="">TOUS</option>
+                                            {# TODO remettre les options quand on mettra en place une UI pour ne pas pouvoir cumuler ces filtres excluants #}
+                                            {# <option value="ALL_OPEN">Ouvert chez tous les partenaires</option> #}
+                                            <option value="ONE_CLOSED">Fermé chez au moins un partenaire</option>
+                                            {# <option value="ALL_CLOSED">Fermé chez tous les partenaires</option> #}
+                                        </select>
+                                        <div class="selected__value">
+                                            <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                            {% set visible = 'fr-hidden' %}
+                                            {% for affectation in filters.closed_affectation %}
+                                                <input type="hidden" name="bo-filters-closed_affectation[]" value="{{ affectation }}">
+                                                <span class="fr-badge fr-badge--success fr-m-1v" data-value="{{ affectation }}"
+                                                      data-removable="true">{{ affectation == 'ALL_OPEN' ? 'Ouvert chez tous les partenaires' : ( affectation == 'ONE_CLOSED' ? 'Fermé chez au moins un partenaire':'Fermé chez tous les partenaires') }}</span>
+                                            {% else %}
+                                                {% set visible = 0 %}
+                                            {% endfor %}
+                                            <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
+                                        </div>
+                                    </div>
+                                {% endif %}
                                 <div class="fr-col-12 fr-col-md-6">
                                     <label class="fr-label" for="bo-filters-criteres"><strong>Critères</strong></label>
                                     <select id="bo-filters-criteres" class="fr-select" onchange="setBadge(this)">
@@ -353,19 +378,6 @@
                                                 <small>(jours)</small></label>
                                             <input type="number" min="0" max="9999" step="1" id="bo-filters-delays" name="bo-filters-delays"
                                                    class="fr-input" value="{{ filters.delays ?? '' }}">
-                                            <div class="selected__value">
-                                                <div class="fr-pb-1v fr-border--bottom--orange"></div>
-                                                {% set visible = 'fr-hidden' %}
-                                                {% if filters.delays %}
-                                                    <input type="hidden" name="bo-filters-delays" value="{{ filters.delays }}">
-                                                    <span class="fr-badge fr-badge--success fr-m-1v" data-value="{{ filters.delays }}"
-                                                          data-removable="true">PLUS {{ filters.delays }} JOUR(S)</span>
-                                                {% else %}
-                                                    {% set visible = 0 %}
-                                                {% endif %}
-                                                <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
-                                            </div>
-
                                         </div>
                                     </div>
                                 </div>
