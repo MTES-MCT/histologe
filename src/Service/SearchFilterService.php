@@ -316,6 +316,11 @@ class SearchFilterService
                 ->setParameter('territories', $filters['territories']);
         }
 
+        if (!empty($filters['signalement_ids'])) {
+            $qb->andWhere('s.id IN (:signalement_ids)')
+                ->setParameter('signalement_ids', $filters['signalement_ids']);
+        }
+
         return $qb;
     }
 }
