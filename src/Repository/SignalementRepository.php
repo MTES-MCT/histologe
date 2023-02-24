@@ -861,7 +861,7 @@ class SignalementRepository extends ServiceEntityRepository
             AND a.statut = :affectation_closed'
             .$whereTerritory.
             ' GROUP BY s.uuid
-            HAVING nb_partner_closed > :nb_partner_closed) as count_partner_request';
+            HAVING nb_partner_closed >= :nb_partner_closed) as count_partner_request';
 
         $statement = $connection->prepare($sql);
 

@@ -56,9 +56,9 @@ class WidgetDataManager implements WidgetDataManagerInterface
     /**
      * @throws Exception
      */
-    public function findLastJobEventByType(string $type, array $params): array
+    public function findLastJobEventByType(string $type, array $params, ?Territory $territory = null): array
     {
-        return $this->jobEventRepository->findLastJobEventByType($type, $params['period']);
+        return $this->jobEventRepository->findLastJobEventByType($type, $params['period'], $territory);
     }
 
     /**
