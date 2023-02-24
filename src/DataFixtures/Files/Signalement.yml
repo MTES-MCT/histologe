@@ -750,7 +750,7 @@ signalements:
     criteres: []
     criticites: []
   -
-    uuid: "00000000-0000-0000-2023-0000000006"
+    uuid: "00000000-0000-0000-2023-0000000007"
     details: "Signalement Non-Décence dans l'Yonne"
     is_proprio_averti: 1
     nb_adultes: "2"
@@ -765,7 +765,7 @@ signalements:
     ville_occupant: "Auxerre"
     etage_occupant: "5"
     statut: 2
-    reference: "2023-6"
+    reference: "2023-7"
     geoloc: "[]"
     score_creation: 43
     insee_occupant: "89024"
@@ -791,7 +791,7 @@ signalements:
     qualification: 
       - "Non décence énergétique"
   -
-    uuid: "00000000-0000-0000-2023-0000000007"
+    uuid: "00000000-0000-0000-2023-0000000008"
     details: "Signalement Non-Décence dans le Puy de dôme"
     is_proprio_averti: 1
     nb_adultes: "2"
@@ -806,7 +806,7 @@ signalements:
     ville_occupant: "Clermont-Ferrand"
     etage_occupant: "5"
     statut: 2
-    reference: "2023-6"
+    reference: "2023-8"
     geoloc: "[]"
     score_creation: 43
     insee_occupant: "63113"
