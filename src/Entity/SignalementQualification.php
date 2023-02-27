@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Enum\Qualification;
 use App\Repository\SignalementQualificationRepository;
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,8 +26,8 @@ class SignalementQualification
     #[ORM\Column(nullable: true)]
     private array $desordres = [];
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $dernierBailAt = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $dernierBailAt = null;
 
     #[ORM\Column(nullable: true)]
     private array $details = [];
@@ -72,12 +73,12 @@ class SignalementQualification
         return $this;
     }
 
-    public function getDernierBailAt(): ?\DateTimeInterface
+    public function getDernierBailAt(): ?DateTimeImmutable
     {
         return $this->dernierBailAt;
     }
 
-    public function setDernierBailAt(?\DateTimeInterface $dernierBailAt): self
+    public function setDernierBailAt(?DateTimeImmutable $dernierBailAt): self
     {
         $this->dernierBailAt = $dernierBailAt;
 
