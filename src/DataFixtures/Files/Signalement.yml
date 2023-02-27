@@ -788,7 +788,7 @@ signalements:
     criticites:
       - "Le DPE indique une étiquette énergie F ou G ou n’a pas été fait. J’ai tout le temps la sensation d'avoir froid en hiver et/ou très chaud en été."
       - "J’utilise plusieurs chauffages d'appoint et/ou des pièces principales ne possèdent pas de moyen de chauffage."
-    qualification: 
+    qualifications: 
       - "Non décence énergétique"
   -
     uuid: "00000000-0000-0000-2023-0000000008"
@@ -829,5 +829,5 @@ signalements:
     criticites:
       - "Le DPE indique une étiquette énergie F ou G ou n’a pas été fait. J’ai tout le temps la sensation d'avoir froid en hiver et/ou très chaud en été."
       - "J’utilise plusieurs chauffages d'appoint et/ou des pièces principales ne possèdent pas de moyen de chauffage."
-    qualification: 
+    qualifications: 
       - "Non décence énergétique"
