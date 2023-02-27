@@ -26,7 +26,7 @@ class SignalementQualification
     private array $desordres = [];
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $dateDernierBail = null;
+    private ?\DateTimeInterface $dernierBailAt = null;
 
     #[ORM\Column(nullable: true)]
     private array $details = [];
@@ -72,14 +72,14 @@ class SignalementQualification
         return $this;
     }
 
-    public function getDateDernierBail(): ?\DateTimeInterface
+    public function getDernierBailAt(): ?\DateTimeInterface
     {
-        return $this->dateDernierBail;
+        return $this->dernierBailAt;
     }
 
-    public function setDateDernierBail(?\DateTimeInterface $dateDernierBail): self
+    public function setDernierBailAt(?\DateTimeInterface $dernierBailAt): self
     {
-        $this->dateDernierBail = $dateDernierBail;
+        $this->dernierBailAt = $dernierBailAt;
 
         return $this;
     }
