@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
@@ -88,25 +89,39 @@ class PartnerRepository extends ServiceEntityRepository
     /**
      * @throws Exception
      */
-    public function findByLocalization(Signalement $signalement, bool $affected = true): array
+    public function findByLocalization(Signalement $signalement, bool $affected = true, bool $addCompetences = false): array
     {
-        $connection = $this->getEntityManager()->getConnection();
         $operator = $affected ? 'IN' : 'NOT IN';
 
-        $sql = '
-        SELECT id, nom as name
-        FROM partner
-        WHERE territory_id = :territory_id AND is_archive = 0 AND (is_commune = 0 OR insee LIKE :insee)
-        AND id '.$operator.' (
-            SELECT partner_id FROM affectation WHERE signalement_id = :signalement_id)
-        ';
+        $subquery = $this->getEntityManager()->getRepository(Affectation::class)->createQueryBuilder('a')
+        ->select('IDENTITY(a.partner)')
+        ->where('a.signalement = :signalement')
+        ->setParameter('signalement', $signalement);
 
-        $statement = $connection->prepare($sql);
+        $affectedPartners = $subquery->getQuery()->getSingleColumnResult();
 
-        return $statement->executeQuery([
-            'signalement_id' => $signalement->getId(),
-            'territory_id' => $signalement->getTerritory()->getId(),
-            'insee' => '%'.$signalement->getInseeOccupant().'%',
-        ])->fetchAllAssociative();
+        $queryBuilder = $this->createQueryBuilder('p');
+        $queryBuilder->select('p.id, p.nom as name')
+            ->where('p.isArchive = 0')
+            ->andWhere('p.territory = :territory')
+            ->setParameter('territory', $signalement->getTerritory())
+            ->andWhere(
+                $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->eq('p.isCommune', 0),
+                    $queryBuilder->expr()->like('p.insee', ':insee')
+                )
+            )
+            ->setParameter('insee', '%'.$signalement->getInseeOccupant().'%')
+        ;
+        if (\count($affectedPartners) > 0 || 'IN' == $operator) {
+            $queryBuilder->andWhere('p.id '.$operator.' (:subquery)')
+            ->setParameter('subquery', $affectedPartners);
+        }
+        if ($addCompetences) {
+            $queryBuilder->addSelect('p.competence');
+            $queryBuilder->orderBy('p.competence', 'DESC');
+        }
+
+        return $queryBuilder->getQuery()->getArrayResult();
     }
 }
