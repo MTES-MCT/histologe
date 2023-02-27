@@ -22,7 +22,7 @@ class AffectationRepositoryTest extends KernelTestCase
         /** @var AffectationRepository $affectationRepository */
         $affectationRepository = $this->entityManager->getRepository(Affectation::class);
         $affectationsSubscribedToEsabora = $affectationRepository->findAffectationSubscribedToEsabora();
-        $this->assertCount(11, $affectationsSubscribedToEsabora);
+        $this->assertCount(9, $affectationsSubscribedToEsabora);
         foreach ($affectationsSubscribedToEsabora as $affectationSubscribedToEsabora) {
             $this->assertCount(2, $affectationSubscribedToEsabora->getPartner()->getEsaboraCredential());
         }
