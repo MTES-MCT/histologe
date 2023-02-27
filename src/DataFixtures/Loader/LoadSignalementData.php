@@ -134,8 +134,8 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
         $manager->persist($signalement);
 
-        if (isset($row['qualification'])) {
-            foreach ($row['qualification'] as $qualificationLabel) {
+        if (isset($row['qualifications'])) {
+            foreach ($row['qualifications'] as $qualificationLabel) {
                 $signalementQualification = (new SignalementQualification())
                 ->setSignalement($signalement)
                 ->setQualification(Qualification::from($qualificationLabel))
