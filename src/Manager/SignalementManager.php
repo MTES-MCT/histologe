@@ -8,6 +8,7 @@ use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Event\SignalementCreatedEvent;
 use App\Factory\SignalementFactory;
+use App\Repository\PartnerRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -139,16 +140,20 @@ class SignalementManager extends AbstractManager
             ->setIsFondSolidariteLogement((bool) $data['isFondSolidariteLogement']);
     }
 
-    public function findAllPartners(Signalement $signalement): array
+    public function findAllPartners(Signalement $signalement, bool $addCompetences = false): array
     {
-        $partners['affected'] = $this->managerRegistry->getRepository(Partner::class)->findByLocalization(
+        /** @var PartnerRepository $partnerRepository */
+        $partnerRepository = $this->managerRegistry->getRepository(Partner::class);
+        $partners['affected'] = $partnerRepository->findByLocalization(
             signalement: $signalement,
-            affected: true
+            affected: true,
+            addCompetences: $addCompetences
         );
 
-        $partners['not_affected'] = $this->managerRegistry->getRepository(Partner::class)->findByLocalization(
+        $partners['not_affected'] = $partnerRepository->findByLocalization(
             signalement: $signalement,
-            affected: false
+            affected: false,
+            addCompetences: $addCompetences
         );
 
         return $partners;

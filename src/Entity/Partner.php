@@ -58,7 +58,7 @@ class Partner
     private $territory;
 
     #[ORM\Column(type: 'string', enumType: PartnerType::class, nullable: true)]
-    private PartnerType $type;
+    private ?PartnerType $type = null;
 
     #[ORM\Column(type: 'json', nullable: true)]
     private $competence = [];
@@ -267,7 +267,7 @@ class Partner
         ];
     }
 
-    public function getType(): PartnerType
+    public function getType(): ?PartnerType
     {
         return $this->type;
     }

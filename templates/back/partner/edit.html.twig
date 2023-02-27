@@ -9,6 +9,9 @@
     {% include '_partials/_modal_user_delete.html.twig' %}
     <section class="fr-col-12 fr-p-5v">
         <h2 class="fr-h2 fr-mb-0">Partenaire {{ partner.nom ? '"'~partner.nom~'"' : '' }}</h2>
+        {% if partner.competence %}
+            <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ partner.competence|join(', ')  }}</span>
+        {% endif %}
         <span class="fr-hint-text">Ci dessous les informations du partenaire, vous pouvez les éditer si nécessaire.</span>
         <div class="fr-pt-5v">
             {{ include('back/partner/_form.html.twig') }}
