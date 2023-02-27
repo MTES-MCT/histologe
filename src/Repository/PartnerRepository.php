@@ -93,19 +93,15 @@ class PartnerRepository extends ServiceEntityRepository
     {
         $operator = $affected ? 'IN' : 'NOT IN';
 
-        $selectCompetence = $addCompetences ? ', p.competence' : '';
-
         $subquery = $this->getEntityManager()->getRepository(Affectation::class)->createQueryBuilder('a')
-            ->select('DISTINCT p.id')
-            ->innerJoin('a.partner', 'p')
-            ->innerJoin('a.signalement', 's')
-            ->where('s.id = :signalement_id')
-            ->setParameter('signalement_id', $signalement->getId());
+        ->select('IDENTITY(a.partner)')
+        ->where('a.signalement = :signalement')
+        ->setParameter('signalement', $signalement);
 
         $affectedPartners = $subquery->getQuery()->getSingleColumnResult();
 
         $queryBuilder = $this->createQueryBuilder('p');
-        $queryBuilder->select('p.id, p.nom as name'.$selectCompetence)
+        $queryBuilder->select('p.id, p.nom as name')
             ->where('p.isArchive = 0')
             ->andWhere('p.territory = :territory')
             ->setParameter('territory', $signalement->getTerritory())
@@ -122,6 +118,7 @@ class PartnerRepository extends ServiceEntityRepository
             ->setParameter('subquery', $affectedPartners);
         }
         if ($addCompetences) {
+            $queryBuilder->addSelect('p.competence');
             $queryBuilder->orderBy('p.competence', 'DESC');
         }
 
