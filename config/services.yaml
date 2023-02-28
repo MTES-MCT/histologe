@@ -100,8 +100,8 @@ services:
     App\Service\DashboardWidget\WidgetDataManagerInterface:
         alias: App\Service\DashboardWidget\WidgetDataManager
 
-    App\Service\DashboardWidget\WidgetDataManagerCache:
-        decorates: App\Service\DashboardWidget\WidgetDataManager
+#    App\Service\DashboardWidget\WidgetDataManagerCache:
+#        decorates: App\Service\DashboardWidget\WidgetDataManager
 
 when@test:
     parameters:
