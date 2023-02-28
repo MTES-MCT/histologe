@@ -7,8 +7,6 @@ use App\Entity\Criticite;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\MotifCloture;
-use App\Entity\Criticite;
-use App\Entity\Enum\Qualification;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Entity\User;
