@@ -1,0 +1,140 @@
+<header class="fr-callout bg-light fr-mb-5v">
+    <p class="fr-callout__title">Consommation d'énergie</p>
+    <p class="fr-callout__text fr-mb-5v">
+        Vous avez sélectionné des désordres concernant le chauffage et / ou la consommation 
+        d'énergie de votre logement. Depuis le 1er janvier 2023, la législation concernant 
+        la consommation d'énergie a évolué ! En effet, les logements consommant le plus 
+        d'énergie peuvent être qualifiés de "non décents". Répondez aux questions suivantes 
+        pour savoir si votre logement est concerné et nous permettre de vous accompagner au mieux !
+    </p>
+    <em class="fr-fi-information-line fr-text--light fr-text-label--blue-france">
+        Les champs marqués d'un astérisque (*) sont obligatoires.
+    </em>
+</header>
+
+<form action="#" name="signalement" class="needs-validation" novalidate>
+    <div id="form-nte" class="fr-form-group">
+        <fieldset class="fr-fieldset fr-fieldset--inline">
+            <legend class="fr-fieldset__legend fr-text--regular">
+                <label class="fr-label required">Quelle est la date d'entrée dans le logement ?</label>
+            </legend>
+            <div class="fr-fieldset__content">
+                <div class="fr-radio-group">
+                    <input type="radio" id="signalement_dateEntree_0" name="signalement[dateEntree]" value="2023-01-02">
+                    <label for="signalement_dateEntree_0">En 2023</label>
+                </div>
+                <div class="fr-radio-group">
+                    <input type="radio" id="signalement_dateEntree_1" name="signalement[dateEntree]" value="1970-01-01">
+                    <label for="signalement_dateEntree_1">Avant 2023</label>
+                </div>
+            </div>
+            <p class="fr-error-text fr-hidden">
+                Veuillez préciser la date d'entrée.
+            </p>
+        </fieldset>
+
+        <fieldset class="fr-fieldset fr-fieldset--inline fr-mt-3w fr-hidden display-if-entree-before-2023">
+            <legend class="fr-fieldset__legend fr-text--regular">
+                <label class="fr-label required">Savez-vous à quelle date votre bail a été renouvelé pour la dernière fois ?</label>
+            </legend>
+            <div class="fr-fieldset__content">
+                <div class="fr-radio-group">
+                    <input type="radio" id="signalement_dateBail_0" name="signalement[dateBail]" value="2023-01-02">
+                    <label for="signalement_dateBail_0">En 2023</label>
+                </div>
+                <div class="fr-radio-group">
+                    <input type="radio" id="signalement_dateBail_1" name="signalement[dateBail]" value="1970-01-01">
+                    <label for="signalement_dateBail_1">Avant 2023</label>
+                </div>
+                <div class="fr-radio-group">
+                    <input type="radio" id="signalement_dateBail_2" name="signalement[dateBail]" value="">
+                    <label for="signalement_dateBail_2">Je ne sais pas</label>
+                </div>
+            </div>
+            <p class="fr-error-text fr-hidden">
+                Veuillez préciser la date de renouvellement de bail.
+            </p>
+        </fieldset>
+
+        <fieldset class="fr-fieldset fr-fieldset--inline fr-mt-3w fr-hidden display-if-entree-2023">
+            <legend class="fr-fieldset__legend fr-text--regular">
+                <label class="fr-label required">Avez-vous un DPE (diagnostic de performance énergétique) pour votre logement ?</label>
+            </legend>
+            <div class="fr-fieldset__content">
+                <div class="fr-radio-group">
+                    <input type="radio" id="signalement_hasDPE_0" name="signalement[hasDPE]" value="1">
+                    <label for="signalement_hasDPE_0">Oui</label>
+                </div>
+                <div class="fr-radio-group">
+                    <input type="radio" id="signalement_hasDPE_1" name="signalement[hasDPE]" value="0">
+                    <label for="signalement_hasDPE_1">Non</label>
+                </div>
+                <div class="fr-radio-group">
+                    <input type="radio" id="signalement_hasDPE_2" name="signalement[hasDPE]" value="">
+                    <label for="signalement_hasDPE_2">Je ne sais pas</label>
+                </div>
+            </div>
+            <p class="fr-error-text fr-hidden">
+                Veuillez préciser si vous disposez d'un DPE.
+            </p>
+        </fieldset>
+
+        <fieldset class="fr-fieldset fr-fieldset--inline fr-mt-3w fr-hidden display-if-has-dpe">
+            <legend class="fr-fieldset__legend fr-text--regular">
+                <label class="fr-label required">Quand le DPE de votre logement a-t-il été réalisé ?</label>
+            </legend>
+            <div class="fr-fieldset__content">
+                <div class="fr-radio-group">
+                    <input type="radio" id="signalement_dateDPE_0" name="signalement[dateDPE]" value="2023-01-02">
+                    <label for="signalement_dateDPE_0">En 2023</label>
+                </div>
+                <div class="fr-radio-group">
+                    <input type="radio" id="signalement_dateEntree_1" name="signalement[dateDPE]" value="1970-01-01">
+                    <label for="signalement_dateDPE_1">Avant 2023</label>
+                </div>
+            </div>
+            <p class="fr-error-text fr-hidden">
+                Veuillez préciser la date de votre DPE.
+            </p>
+        </fieldset>
+
+        <fieldset class="fr-fieldset fr-fieldset--inline fr-mt-3w fr-hidden display-if-dpe-2023">
+            <legend class="fr-fieldset__legend fr-text--regular">
+                <label class="fr-label required">Quelle est la consommation en énergie finale indiquée sur votre DPE ?</label>
+            </legend>
+            <p>Comment trouver l'information sur mon DPE ?</p>
+            <div class="fr-fieldset__content">
+                <input type="text" name="conso-size-year"> kWh/m²/an
+                <button type="button">OK</button>
+            </div>
+            <p class="fr-error-text fr-hidden">
+                Veuillez préciser votre consommation énergétique
+            </p>
+        </fieldset>
+
+        <fieldset class="fr-fieldset fr-fieldset--inline fr-mt-3w fr-hidden display-if-dpe-before-2023">
+            <legend class="fr-fieldset__legend fr-text--regular">
+                <label class="fr-label required">Quelle est la consommation en énergie finale indiquée sur votre DPE ?</label>
+            </legend>
+            <p>Comment trouver l'information sur mon DPE ?</p>
+            <div class="fr-fieldset__content">
+                <input type="text" name="conso-size"> m²
+                <input type="text" name="conso-year"> kWh/an
+                <button type="button">OK</button>
+            </div>
+            <p class="fr-error-text fr-hidden">
+                Veuillez préciser votre consommation énergétique
+            </p>
+        </fieldset>
+
+        <p class="fr-hidden display-if-conso-complete">
+            La consommation d'énergie finale de votre logement est de <span></span> kWh/m²/an.
+        </p>
+
+        <div class="fr-grid-row fr-hidden display-if-finished">
+            <div class="fr-col-12 fr-text--center">
+                <button class="fr-btn fr-fi-arrow-right-line fr-btn--icon-right">Continuer</button>
+            </div>
+        </div>
+    </div>
+</form>

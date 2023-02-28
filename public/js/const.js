@@ -278,7 +278,8 @@ const searchAddress = (form, autocomplete) => {
                             form.querySelector('#signalement_cpOccupant').value = feature.properties.postcode;
                             form.querySelector('#signalement_villeOccupant').value = feature.properties.city;
                             form.querySelector('#signalement-insee-occupant').value = feature.properties.citycode;
-                            if (feature.properties.citycode.substr(0, 2) == '69') {
+                            let zipOccupant = feature.properties.citycode.substr(0, 2)
+                            if (zipOccupant == '69') {
                                 const METROPOLE_RHONES_AUTHORIZED_INSEE_CODES = [
                                     69091, 69096, 69123, 69149, 69199, 69205, 69290, 69259, 69266,
                                     69381, 69382, 69383, 69384, 69385, 69386, 69387, 69388, 69389,
@@ -302,6 +303,9 @@ const searchAddress = (form, autocomplete) => {
                                 form.querySelector('#signalement-geoloc-lng-occupant').value = feature.geometry.coordinates[1];
                                 container.innerHTML = '';
                             }
+
+                            // Zip codes available for Non Conformité Energétique
+                            isZipForNonConformiteEnergetique = (zipOccupant == '63' || zipOccupant == '89');
                         })
                         container.appendChild(suggestion)
 
