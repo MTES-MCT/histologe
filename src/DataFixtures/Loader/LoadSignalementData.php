@@ -109,6 +109,10 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 ->setModifiedAt(null);
         }
 
+        if (isset($row['date_entree'])) {
+            $signalement->setDateEntree(new \DateTimeImmutable($row['date_entree']));
+        }
+
         if (Signalement::STATUS_CLOSED === $row['statut']) {
             $signalement
                 ->setMotifCloture($row['motif_cloture'])
@@ -139,6 +143,11 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 $signalementQualification = (new SignalementQualification())
                 ->setSignalement($signalement)
                 ->setQualification(Qualification::from($qualificationLabel))
+                ->setDernierBailAt(
+                    isset($row['date_entree'])
+                        ? new \DateTimeImmutable($row['date_entree'])
+                        : new \DateTimeImmutable()
+                )
                 ->setDesordres($signalement->getCriticites()->map(function (Criticite $criticite) {
                     return $criticite->getId();
                 })->toArray());
