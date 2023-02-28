@@ -97,6 +97,10 @@ services:
     volumes:
       - .:/home/wiremock
 
+  histologe_redis:
+    image: redis:7.0-alpine
+    container_name: histologe_redis
+
   cypress:
     image: cypress/base:latest
 

@@ -17,7 +17,7 @@ Requirements|Release
 Docker engine (minimum)| [20.10.17](https://www.docker.com/)
 Scalingo CLI (minimum) | [1.24](https://doc.scalingo.com/platform/cli/start)
 AWS CLI OVH Object storage (optionnel) | [1.25](https://docs.ovh.com/fr/storage/s3/debuter-avec-s3/#utilisation-de-aws-cli)
-PHP (optionnel)| [8.0.*](https://www.php.net/)
+PHP (optionnel)| [8.1.*](https://www.php.net/)
 Composer (optionnel) | [2.4.*](https://getcomposer.org/download/)
 Node (optionnel)| [16.*](https://nodejs.org/en/)
 
@@ -28,8 +28,9 @@ Node (optionnel)| [16.*](https://nodejs.org/en/)
 Service|Version
 -------|-------
 Nginx | 1.20.2
-PHP | 8.0.x (latest)
+PHP | 8.1.x (latest)
 MySQL | 5.7.38
+Redis | 7.0.x (latest)
 
 ### URL(s)
 
@@ -55,6 +56,7 @@ PhpMyAdmin | histologe_phpmyadmin | **8081**
 Mailcatcher| histologe_mailer     | **1025** et **1080**
 Wiremock| histologe_wiremock   | **8082**
 Metabase| histologe_metabase   | **3007**
+Redis| histologe_redis      | /
 
 ## Installation
 
