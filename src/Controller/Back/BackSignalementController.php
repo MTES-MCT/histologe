@@ -114,6 +114,7 @@ class BackSignalementController extends AbstractController
 
         $experimentationTerritories = $parameterBag->get('experimentation_territory');
         $isExperimentationTerritory = \array_key_exists($signalement->getTerritory()->getZip(), $experimentationTerritories);
+        // TODO : à terme plusieurs qualifications possibles par signalement
         $signalementQualification = $signalementQualificationRepository->findOneBy(['signalement' => $signalement]);
         $isSignalementNonDecence = Qualification::NON_DECENCE_ENERGETIQUE == $signalementQualification?->getQualification();
 
@@ -135,6 +136,8 @@ class BackSignalementController extends AbstractController
             'clotureForm' => $clotureForm->createView(),
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
             'isExperimentationTerritory' => $isExperimentationTerritory,
+            'isSignalementNonDecence' => $isSignalementNonDecence,
+            'signalementQualification' => $signalementQualification,
         ]);
     }
 
