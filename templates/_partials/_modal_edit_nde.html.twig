@@ -10,8 +10,8 @@
                             <button class="fr-link--close fr-link" aria-controls="fr-modal-edit-nde">Fermer</button>
                      </div>
                     <div class="fr-modal__content">
-                       <div class="fr-grid-row fr-grid-row--gutters fr-alert fr-alert--info fr-alert--sm">Valider les informations pour savoir si le logement dépasse le seuil de non décence énergétique ou non.</div>
-                    
+                       <p class="fr-grid-row fr-grid-row--gutters fr-alert fr-alert--info fr-alert--sm">Valider les informations pour savoir si le logement dépasse le seuil de non décence énergétique ou non.</p>
+                    {# <p class="fr-badge fr-badge--info fr-badge--sm">Valider les informations pour savoir si le logement dépasse le seuil de non décence énergétique ou non.</p> #}
                         <div class="fr-grid-row fr-grid-row--center fr-grid-row--middle fr-h-100 fr-hidden fr-mt-5w"
                              id="signalement-edit-nde-loader-row">
                             <div class="fr-col-12 fr-text--center">
@@ -33,31 +33,31 @@
                                         </legend>
                                         <div class="fr-fieldset__content">
                                             <div class="fr-radio-group">
-                                                <input type="radio" id="radio-inline-1" name="radio-inline">
+                                                <input type="radio" id="radio-inline-1" name="radio-inline" {% if signalement.dateEntree|date('Y')<2023 %}checked{% endif %}>
                                                 <label class="fr-label" for="radio-inline-1">Avant 2023
                                                 </label>
                                             </div>
                                             <div class="fr-radio-group">
-                                                <input type="radio" id="radio-inline-2" name="radio-inline">
+                                                <input type="radio" id="radio-inline-2" name="radio-inline" {% if signalement.dateEntree|date('Y')>=2023 %}checked{% endif %}>
                                                 <label class="fr-label" for="radio-inline-2">A partir de 2023
                                                 </label>
                                             </div>
                                         </div>
                                     </fieldset>
-
                                     <div class="fr-input-group">
                                         <label class="fr-label" for="text-input-calendar">
                                             Date du dernier bail
                                         </label>
-                                        <div class="fr-input-wrap fr-fi-calendar-line">
-                                            <input class="fr-input" type="date" id="text-input-calendar" name="text-input-calendar">
+                                        <div class="fr-input-wrap">
+                                            <input class="fr-input" type="date" id="text-input-calendar" name="text-input-calendar" value="{{ signalementQualification.dernierBailAt|date('Y-m-d') }}">
                                         </div>
+
                                     </div>
                                     <div class="fr-input-group">
                                         <label class="fr-label" for="text-input-number">
                                             Consommation énergétique
                                         </label>
-                                        <input class="fr-input" pattern="[0-9]*" inputmode="numeric" type="number" id="text-input-number" name="text-input-number"> kWh/an
+                                        <input class="fr-input" pattern="[0-9]*" inputmode="numeric" type="number" id="text-input-number" name="text-input-number" value="{{ signalementQualification.details.consommation_energie }}"> kWh/an
                                     </div>
                                 </div>
                                 <div class="fr-col-6">
@@ -69,17 +69,17 @@
                                         </legend>
                                         <div class="fr-fieldset__content">
                                             <div class="fr-radio-group">
-                                                <input type="radio" id="radio-inline-1" name="radio-dpe">
+                                                <input type="radio" id="radio-inline-1" name="radio-dpe" {% if signalementQualification.details.DPE == 1 %}checked{% endif %}>
                                                 <label class="fr-label" for="radio-inline-1">Oui
                                                 </label>
                                             </div>
                                             <div class="fr-radio-group">
-                                                <input type="radio" id="radio-inline-2" name="radio-dpe">
+                                                <input type="radio" id="radio-inline-2" name="radio-dpe" {% if signalementQualification.details.DPE == 0 %}checked{% endif %}>
                                                 <label class="fr-label" for="radio-inline-2">Non
                                                 </label>
                                             </div>
                                             <div class="fr-radio-group">
-                                                <input type="radio" id="radio-inline-2" name="radio-dpe">
+                                                <input type="radio" id="radio-inline-2" name="radio-dpe" {% if signalementQualification.details.DPE is null %}checked{% endif %}>
                                                 <label class="fr-label" for="radio-inline-2">Ne sais pas
                                                 </label>
                                             </div>
@@ -90,7 +90,7 @@
                                             Date du dernier DPE
                                         </label>
                                         <div class="fr-input-wrap fr-fi-calendar-line">
-                                            <input class="fr-input" type="date" id="text-input-calendar" name="text-input-calendar">
+                                            <input class="fr-input" type="date" id="text-input-calendar" name="text-input-calendar" value="{{ signalementQualification.details.date_dernier_dpe|date('Y-m-d') }}">
                                         </div>
                                     </div>
                                     {# TODO Si date de DPE à partir du 01/01/2023 -> On affiche un champ unique kWh/m²/an sur toute la largeur #}
@@ -98,7 +98,7 @@
                                         <label class="fr-label" for="text-input-number">
                                             Superficie du logement
                                         </label>
-                                        <input class="fr-input" pattern="[0-9]*" type="number" id="text-input-number" name="text-input-number"> m2
+                                        <input class="fr-input" pattern="[0-9]*" type="number" id="text-input-number" name="text-input-number" value="{{signalement.superficie}}"> m²
                                     </div>
 
                                     <input type="hidden" name="_token"
