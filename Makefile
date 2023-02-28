@@ -43,8 +43,12 @@ redis: ## Log to redis container
 	@bash -l -c '$(DOCKER_COMP) exec -it histologe_redis sh'
 
 redis-cli: ## Log to redis-cli
-	@echo -e '\e[1;32mLog to redis container\032[0m'
+	@echo -e '\e[1;32mLog to redis-cli\032[0m'
 	@bash -l -c '$(DOCKER_COMP) exec -it histologe_redis redis-cli'
+
+redis-stat: ## Collect stat redis
+	@echo -e '\e[1;32mCollect stat-redis\032[0m'
+	@bash -l -c '$(DOCKER_COMP) exec -it histologe_redis redis-cli --stat'
 
 worker-status:## Get status worker
 	@echo -e '\e[1;32mGet status worker\032'
