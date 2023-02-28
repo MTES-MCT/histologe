@@ -71,12 +71,10 @@ class WidgetDataKpiBuilder
             ? $this->affectationRepository->countSignalementByPartner($this->user->getPartner())
             : $this->signalementRepository->countSignalementByStatus($this->territory);
 
-        $this->countSignalement->setClosedByAtLeastOnePartner(
-            $this->signalementRepository->countSignalementClosedByAtLeast(1, $this->territory)
-        )
-            ->setAffected(
-                $this->affectationRepository->countAffectationByPartner($this->user->getPartner())
-            );
+        $this->countSignalement
+            ->setClosedByAtLeastOnePartner($this->signalementRepository->countSignalementClosedByAtLeast(1, $this->territory))
+            ->setAffected($this->affectationRepository->countAffectationByPartner($this->user->getPartner()))
+            ->setClosedAllPartnersRecently($this->notificationRepository->countSignalementClosedNotSeen($this->user, $this->territory));
 
         return $this;
     }
@@ -155,7 +153,7 @@ class WidgetDataKpiBuilder
             ->addWidgetCard('cardCloturesPartenaires', $this->countSignalement->getClosedByAtLeastOnePartner())
             ->addWidgetCard('cardMesAffectations')
             ->addWidgetCard('cardTousLesSignalements', $this->countSignalement->getTotal())
-            ->addWidgetCard('cardCloturesGlobales', $this->countSignalement->getClosed())
+            ->addWidgetCard('cardCloturesGlobales', $this->countSignalement->getClosedAllPartnersRecently())
             ->addWidgetCard('cardNouvellesAffectations', $this->countSignalement->getNew())
             ->addWidgetCard('cardNouveauxSuivis', $this->countSuivi->getSignalementNewSuivi())
             ->addWidgetCard('cardSansSuivi', $this->countSuivi->getSignalementNoSuivi());

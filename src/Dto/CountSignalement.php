@@ -6,6 +6,7 @@ class CountSignalement
 {
     private ?array $percentage = null;
     private ?int $closedByAtLeastOnePartner = null;
+    private ?int $closedAllPartnersRecently = null;
 
     private ?int $affected = null;
 
@@ -74,6 +75,18 @@ class CountSignalement
     public function setAffected(?int $affected): self
     {
         $this->affected = $affected;
+
+        return $this;
+    }
+
+    public function getClosedAllPartnersRecently(): ?int
+    {
+        return $this->closedAllPartnersRecently;
+    }
+
+    public function setClosedAllPartnersRecently(?int $closedAllPartnersRecently): self
+    {
+        $this->closedAllPartnersRecently = $closedAllPartnersRecently;
 
         return $this;
     }
