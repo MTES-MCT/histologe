@@ -209,6 +209,7 @@ class Criticite
 
     public function getScoreLabel(): string
     {
+        // TODO à revoir avec le nouvel algo de criticité (les scores ne sont plus forcément 1, 2, 3)
         return match ($this->score) {
             1 => self::ETAT_MOYEN,
             2 => self::ETAT_GRAVE,
