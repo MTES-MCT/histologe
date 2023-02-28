@@ -15,6 +15,7 @@ use App\Form\ClotureType;
 use App\Form\SignalementType;
 use App\Manager\SignalementManager;
 use App\Repository\CritereRepository;
+use App\Repository\CriticiteRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
@@ -40,7 +41,8 @@ class BackSignalementController extends AbstractController
         SignalementManager $signalementManager,
         EventDispatcherInterface $eventDispatcher,
         ParameterBagInterface $parameterBag,
-        SignalementQualificationRepository $signalementQualificationRepository
+        SignalementQualificationRepository $signalementQualificationRepository,
+        CriticiteRepository $criticiteRepository
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
         if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
@@ -118,6 +120,8 @@ class BackSignalementController extends AbstractController
         $signalementQualification = $signalementQualificationRepository->findOneBy(['signalement' => $signalement]);
         $isSignalementNonDecence = Qualification::NON_DECENCE_ENERGETIQUE == $signalementQualification?->getQualification();
 
+        $signalementQualificationCriticites = $signalementQualification ? $criticiteRepository->findBy(['id' => $signalementQualification->getCriticites()]) : null;
+
         $partners = $signalementManager->findAllPartners($signalement, $isExperimentationTerritory && $isSignalementNonDecence);
 
         return $this->render('back/signalement/view.html.twig', [
@@ -138,6 +142,7 @@ class BackSignalementController extends AbstractController
             'isExperimentationTerritory' => $isExperimentationTerritory,
             'isSignalementNonDecence' => $isSignalementNonDecence,
             'signalementQualification' => $signalementQualification,
+            'signalementQualificationCriticite' => $signalementQualificationCriticites,
         ]);
     }
 

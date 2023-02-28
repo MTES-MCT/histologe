@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\QualificationStatus;
 use App\Repository\SignalementQualificationRepository;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
@@ -24,13 +25,16 @@ class SignalementQualification
     private ?Qualification $qualification = null;
 
     #[ORM\Column(nullable: true)]
-    private array $desordres = [];
+    private array $criticites = [];
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?DateTimeImmutable $dernierBailAt = null;
 
     #[ORM\Column(nullable: true)]
     private array $details = [];
+
+    #[ORM\Column(type: 'string', enumType: QualificationStatus::class, nullable: true)]
+    private ?QualificationStatus $status = null;
 
     public function getId(): ?int
     {
@@ -61,14 +65,14 @@ class SignalementQualification
         return $this;
     }
 
-    public function getDesordres(): array
+    public function getCriticites(): array
     {
-        return $this->desordres;
+        return $this->criticites;
     }
 
-    public function setDesordres(?array $desordres): self
+    public function setCriticites(?array $criticites): self
     {
-        $this->desordres = $desordres;
+        $this->criticites = $criticites;
 
         return $this;
     }
@@ -93,6 +97,18 @@ class SignalementQualification
     public function setDetails(?array $details): self
     {
         $this->details = $details;
+
+        return $this;
+    }
+
+    public function getStatus(): ?QualificationStatus
+    {
+        return $this->status;
+    }
+
+    public function setStatus(QualificationStatus $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }
