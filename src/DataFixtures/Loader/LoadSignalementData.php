@@ -2,15 +2,10 @@
 
 namespace App\DataFixtures\Loader;
 
-<<<<<<< HEAD
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Criticite;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
-=======
-use App\Entity\Criticite;
-use App\Entity\Enum\Qualification;
->>>>>>> 98d1344 (934 : add signalementqualification in fixtures)
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Entity\User;
