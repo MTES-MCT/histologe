@@ -86,6 +86,7 @@
             "phpro/grumphp-shim": true
         },
         "optimize-autoloader": true,
+        "classmap-authoritative": true,
         "preferred-install": {
             "*": "dist"
         },
@@ -141,7 +142,13 @@
                 "npm run build"
             ],
             "php-config": [
-                "memory_limit=-1"
+                "memory_limit=-1",
+                "opcache.memory_consumption=256",
+                "opcache.max_accelerated_files=20000",
+                "opcache.validate_timestamps=0",
+                "opcache.preload=/app/config/preload.php",
+                "opcache.preload_user=appsdeck",
+                "realpath_cache_ttl=600"
             ]
         }
     }

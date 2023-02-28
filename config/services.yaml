@@ -8,6 +8,7 @@ imports:
     - { resource: 'app/widgets.yaml'}
     - { resource: 'app/insee.yaml'}
 parameters:
+    container.dumper.inline_factories: true
     uploads_dir: '%kernel.project_dir%/uploaded_files/signalement/'
     uploads_tmp_dir: '%kernel.project_dir%/tmp/'
     url_bucket: '%env(resolve:S3_URL_BUCKET)%'
