@@ -405,6 +405,7 @@
                             <strong>{{ situation|capitalize }}</strong>
                             <ul class="fr-list--icon-img fr-collapse" id="situation-collapse-{{ loop.index }}">
                                 {% for critere,criticite in criteres %}
+                                    {# TODO à revoir avec le nouvel algo de criticité (les scores ne sont plus forcément 1, 2, 3, et le isDanger est au niveau de la criticité) #}
                                     {% if criticite.score is same as(1) %}
                                         {% set icon = 'moyen' %}
                                     {% elseif criticite.score is same as(2) %}
@@ -437,6 +438,8 @@
         </div>
         
         {% if isSignalementNonDecence %}
+        
+                {# {% if is_granted('ROLE_ADMIN_TERRITORY') and signalement.statut is not same as(6) and not needValidation %} #}
         {# TODO : Les infos sur la non décence énergétique sont affichés sur les signalements concernés, pour 
 Les super admin
 Les responsables territoire sur les territoires d'expérimentation
@@ -452,42 +455,51 @@ Les partenaires affectés au signalement ET ayant la compétence "Non décence �
                 <button class="fr-accordion__btn fr-btn--icon-left fr-fi-chat-quote-fill fr-icon--sm fr-text-label--blue-france" aria-expanded="true" aria-controls="accordion-nde">Non décence énergétique</button>
             </h3>
             <div class="fr-collapse" id="accordion-nde">
-                <!-- données de test -->
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-5">
-                    Consommation d'énergie :
+                    <strong>Consommation d'énergie :</strong> <span class="fr-badge fr-badge--info fr-badge--sm">{{ signalementQualification.details.consommation_energie }} kWh/m²/an</span>
                     </div>
-                    <div class="fr-col-12 fr-col-md-5">
-                    Analyse :
+                    <div class="fr-col-12 fr-col-md-5">                    
+                        {% set classe = '' %}
+                        {% if signalementQualification.status.name == 'NDE_CHECK' %}
+                            {% set classe = 'fr-badge fr-badge--info fr-badge--sm' %}
+                        {% elseif signalementQualification.status.name == 'NDE_OK' %}
+                            {% set classe = 'fr-badge fr-badge--success fr-badge--sm' %}
+                        {% elseif signalementQualification.status.name == 'NDE_AVEREE' %}
+                            {% set classe = 'fr-badge fr-badge--error fr-badge--sm' %}
+                        {% endif %}
+                    <strong>Analyse :</strong> <span class="{{ classe }}">{{ signalementQualification.status.value }}</span>
                     </div>
                     
-                {# {% if is_granted('ROLE_ADMIN_TERRITORY') and signalement.statut is not same as(6) and not needValidation %} #}
                     <div class="fr-col-12 fr-col-md-2 fr-text--right">
                         <button class="fr-btn fr-btn--secondary fr-fi-edit-line fr-btn--icon-left" data-fr-opened="false"
                                 aria-controls="fr-modal-edit-nde">
                             Modifier
                         </button>
                     </div>
-                {# {% endif %} #}
-
                 </div>
                 <div class="fr-grid-row">
-                    Désordre(s) concerné(s) : {{ signalementQualification.desordres|join(', ')}}
-                </div>
-                <div class="fr-grid-row">
-                    <div class="fr-col-12 fr-col-md-6">
-                    Entrée dans le logement : {{ signalement.dateEntree}}
-                    </div>
-                    <div class="fr-col-12 fr-col-md-6">
-                    DPE :
-                    </div>
+                    <strong>Désordre(s) concerné(s) :</strong> 
+                    <ul class="fr-list">
+                        {% for criticite in signalementQualificationCriticite %}
+                            <li> {{ criticite.critere.label}} - Etat {{criticite.scoreLabel}} : {{criticite.label}}</li>
+                        {% endfor %}
+                    </ul>
                 </div>
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-6">
-                    Dernier bail : {{ signalementQualification.dernierBailAt}}
+                    <strong>Entrée dans le logement :</strong> {{ signalement.dateEntree|date('d/m/Y') }}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
-                    Date dernier DPE :
+                    <strong>DPE :</strong> {{ signalementQualification.details.DPE ? 'Oui' : 'Non' }} 
+                    </div>
+                </div>
+                <div class="fr-grid-row">
+                    <div class="fr-col-12 fr-col-md-6">
+                    <strong>Dernier bail :</strong> {{ signalementQualification.dernierBailAt|date('d/m/Y') }}
+                    </div>
+                    <div class="fr-col-12 fr-col-md-6">
+                    <strong>Date dernier DPE :</strong> {{ signalementQualification.details.date_dernier_dpe|date('d/m/Y') }} 
                     </div>
                 </div>
             </div>
