@@ -22,12 +22,19 @@
                 Détails
             </button>
         </li>
-
+        <li role="presentation">
+            <button id="signalement-step-3b-btn"
+                    class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left fr-hidden" tabindex="-1"
+                    role="tab" aria-selected="false" aria-controls="signalement-step-3b-panel"
+                    {% if 'back_' not in app.request.get('_route') %}disabled{% endif %}>4.
+                Consommation énergétique
+            </button>
+        </li>
         <li role="presentation">
             <button id="signalement-step-4-btn"
                     class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left" tabindex="-1"
                     role="tab" aria-selected="false" aria-controls="signalement-step-4-panel"
-                    {% if 'back_' not in app.request.get('_route') %}disabled{% endif %}>4.
+                    {% if 'back_' not in app.request.get('_route') %}disabled{% endif %}><span>4</span>.
                 Logement
             </button>
         </li>
@@ -378,6 +385,7 @@
                                                                name="signalement[situation][{{ situation.id }}][critere][{{ critere.id }}][criticite]"
                                                                value="{{ criticite.id }}"
                                                                class="toggle-criticite-smiley"
+                                                               {% if "Non décence énergétique" in criticite.qualification %}data-nte="1"{% endif %}
                                                                {% if criticite in signalement.criticites %}checked{% endif %}>
                                                         <label class="fr-label"
                                                                for="signalement-critere-{{ critere.id }}-criticite-{{ criticite.id }}"><strong>{{ etats[criticite.score-1] }}</strong>
@@ -425,7 +433,7 @@
                 astérisque
                 (*) sont obligatoires.</em>
         </header>
-        <form action="#" name="signalement" class="needs-validation" novalidate>
+        <form action="#" name="signalement" class="needs-validation" novalidate id="signalement-step-3">
             <div class="fr-input-group">
                 {{ form_label(form.details) }}
                 {{ form_help(form.details) }}
@@ -444,6 +452,12 @@
             </div>
         </form>
     </section>
+
+    <section id="signalement-step-3b-panel" class="fr-tabs__panel" role="tabpanel"
+             aria-labelledby="signalement-step-3b-btn" tabindex="0">
+        {% include '_partials/_signalement_step_nte.html.twig' %}
+    </section>
+
     <section id="signalement-step-4-panel" class="fr-tabs__panel" role="tabpanel"
              aria-labelledby="signalement-step-4-btn" tabindex="0">
         {% if 'back_' not in app.request.get('_route') %}
