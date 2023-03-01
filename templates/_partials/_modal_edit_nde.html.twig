@@ -11,7 +11,6 @@
                      </div>
                     <div class="fr-modal__content">
                        <p class="fr-grid-row fr-grid-row--gutters fr-alert fr-alert--info fr-alert--sm">Valider les informations pour savoir si le logement dépasse le seuil de non décence énergétique ou non.</p>
-                    {# <p class="fr-badge fr-badge--info fr-badge--sm">Valider les informations pour savoir si le logement dépasse le seuil de non décence énergétique ou non.</p> #}
                         <div class="fr-grid-row fr-grid-row--center fr-grid-row--middle fr-h-100 fr-hidden fr-mt-5w"
                              id="signalement-edit-nde-loader-row">
                             <div class="fr-col-12 fr-text--center">
@@ -22,6 +21,8 @@
                                 </div>
                             </div>
                         </div>
+                        </br>
+                        </br>
                         <form method="POST" name="signalement-edit-nde" id="signalement-edit-nde-form">
                             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle"
                                 id="signalement-edit-nde-form-row">
@@ -43,21 +44,6 @@
                                             </div>
                                         </div>
                                     </fieldset>
-                                    <div class="fr-input-group">
-                                        <label class="fr-label" for="signalement-edit-nde-dernier-bail">
-                                            Date du dernier bail
-                                        </label>
-                                        <div class="fr-input-wrap">
-                                            <input class="fr-input" type="date" id="signalement-edit-nde-dernier-bail" name="signalement-edit-nde-dernier-bail" value="{{ signalementQualificationNDE.dernierBailAt|date('Y-m-d') }}">
-                                        </div>
-
-                                    </div>
-                                    <div class="fr-input-group">
-                                        <label class="fr-label" for="signalement-edit-nde-conso-energie">
-                                            Consommation énergétique
-                                        </label>
-                                        <input class="fr-input" pattern="[0-9]*" inputmode="numeric" type="number" id="signalement-edit-nde-conso-energie" name="signalement-edit-nde-conso-energie" value="{{ signalementQualificationNDE.details.consommation_energie }}"> kWh/an
-                                    </div>
                                 </div>
                                 <div class="fr-col-6">
                                     <fieldset class="fr-fieldset fr-fieldset--inline">
@@ -82,26 +68,65 @@
                                             </div>
                                         </div>
                                     </fieldset>
+                                </div>
+                            </div>
+                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle"
+                                id="signalement-edit-nde-form-row">
+                                <div class="fr-col-6">
+                                    <div class="fr-input-group">
+                                        <label class="fr-label" for="signalement-edit-nde-dernier-bail">
+                                            Date du dernier bail
+                                        </label>
+                                        <div class="fr-input-group">
+                                            <input class="fr-input fr-col-10" type="date" id="signalement-edit-nde-dernier-bail" name="signalement-edit-nde-dernier-bail" value="{{ signalementQualificationNDE.dernierBailAt|date('Y-m-d') }}">
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="fr-col-6">
                                     <div class="fr-input-group">
                                         <label class="fr-label" for="signalement-edit-nde-dpe-date">
                                             Date du dernier DPE
                                         </label>
-                                        <div class="fr-input-wrap fr-fi-calendar-line">
-                                            <input class="fr-input" type="date" id="signalement-edit-nde-dpe-date" name="signalement-edit-nde-dpe-date" value="{{ signalementQualificationNDE.details.date_dernier_dpe|date('Y-m-d') }}">
+                                        <div class="fr-input-group">
+                                            <input class="fr-input fr-col-10" type="date" id="signalement-edit-nde-dpe-date" name="signalement-edit-nde-dpe-date" value="{{ signalementQualificationNDE.details.date_dernier_dpe|date('Y-m-d') }}">
                                         </div>
                                     </div>
-                                    {# TODO Si date de DPE à partir du 01/01/2023 -> On affiche un champ unique kWh/m²/an sur toute la largeur #}
-                                    <div class="fr-input-group">
-                                        <label class="fr-label" for="signalement-edit-nde-superficie">
-                                            Superficie du logement
-                                        </label>
-                                        <input class="fr-input" pattern="[0-9]*" type="number" id="signalement-edit-nde-superficie" name="signalement-edit-nde-superficie" value="{{signalement.superficie}}"> m²
-                                    </div>
-
-                                    <input type="hidden" name="_token"
-                                            value="{{ csrf_token('signalement_edit_nde_'~signalement.id) }}">
                                 </div>
                             </div>
+                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle"
+                                id="signalement-edit-nde-form-row">
+                                {# Si date de DPE à partir du 01/01/2023 -> On affiche un champ unique kWh/m²/an sur toute la largeur #}
+                                {% if signalementQualificationNDE.details.date_dernier_dpe|date('Y') >= '2023' %}
+                                    <div class="fr-col-12">
+                                        <div class="fr-input-group">
+                                            <label class="fr-label" for="signalement-edit-nde-conso-energie">
+                                                Consommation énergétique
+                                            </label>
+                                            <input class="fr-input fr-col-10" style="display: inline;" pattern="[0-9]*" inputmode="numeric" type="number" id="signalement-edit-nde-conso-energie" name="signalement-edit-nde-conso-energie" value="{{ signalementQualificationNDE.details.consommation_energie }}"> kWh/m²/an
+                                        </div>
+                                    </div>
+
+                                {% else %}
+                                    <div class="fr-col-6">
+                                        <div class="fr-input-group">
+                                            <label class="fr-label" for="signalement-edit-nde-conso-energie">
+                                                Consommation énergétique
+                                            </label>
+                                            <input class="fr-input fr-col-10" style="display: inline;" pattern="[0-9]*" inputmode="numeric" type="number" id="signalement-edit-nde-conso-energie" name="signalement-edit-nde-conso-energie" value="{{ signalementQualificationNDE.details.consommation_energie }}"> kWh/an
+                                        </div>
+                                    </div>
+                                    <div class="fr-col-6">
+                                        <div class="fr-input-group">
+                                            <label class="fr-label" for="signalement-edit-nde-superficie">
+                                                Superficie du logement
+                                            </label>
+                                            <input class="fr-input fr-col-10" style="display: inline;" pattern="[0-9]*" type="number" id="signalement-edit-nde-superficie" name="signalement-edit-nde-superficie" value="{{signalement.superficie}}"> m²
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>                            
+                            <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_nde_'~signalement.id) }}">
                         </form>
                     </div>
                     <div class="fr-modal__footer">
