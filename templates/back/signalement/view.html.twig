@@ -12,7 +12,7 @@
     {% if signalement.statut is not same as(1) and not isClosed and not isClosedForMe and ((isAffected and isAccepted)) or is_granted('ROLE_ADMIN_TERRITORY') %}
         {% include '_partials/_modal_cloture.html.twig' %}
     {% endif %}
-    {% if isSignalementNonDecence %}
+    {% if isSignalementNDE %}
         {% include '_partials/_modal_edit_nde.html.twig' %}        
     {% endif %}
     <section
@@ -39,7 +39,7 @@
                         <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold{# fr-fi-information-fill fr-icon--sm #} fr-pr-3v">&nbsp;
                             Signalement par l'occupant</small>
                     {% endif %}                    
-                    {% if isSignalementNonDecence %}
+                    {% if isSignalementNDE %}
                          <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold fr-pr-3v">&nbsp;
                             Non décence énergétique</small>
                     {% endif %}                               
@@ -436,20 +436,7 @@
                 </ul>
             </div>
         </div>
-        
-        {% if isSignalementNonDecence %}
-        
-                {# {% if is_granted('ROLE_ADMIN_TERRITORY') and signalement.statut is not same as(6) and not needValidation %} #}
-        {# TODO : Les infos sur la non décence énergétique sont affichés sur les signalements concernés, pour 
-Les super admin
-Les responsables territoire sur les territoires d'expérimentation
-Les partenaires affectés au signalement ET ayant la compétence "Non décence énergétique" #}
-
-        {# <div class="fr-grid-row fr-grid-row--middle fr-mb-3v"> #}
-    {# <div class="fr-grid-row">
-                <strong class="fr-fi-chat-quote-fill fr-icon--sm fr-text-label--blue-france"> Non décence énergétique</strong>#}
-                {# <span class="fr-hint-text">Ci-dessous le détail du signalement tel que rapporté par l'usager</span> #}
-            {# </div>  #}
+        {% if isSignalementNDE and (is_granted('ROLE_ADMIN_TERRITORY') or 'Non décence énergétique' in app.user.partner.competence)  %}
         <section class="fr-accordion">
             <h3 class="fr-accordion__title ">
                 <button class="fr-accordion__btn fr-btn--icon-left fr-fi-chat-quote-fill fr-icon--sm fr-text-label--blue-france" aria-expanded="true" aria-controls="accordion-nde">Non décence énergétique</button>
@@ -457,18 +444,18 @@ Les partenaires affectés au signalement ET ayant la compétence "Non décence �
             <div class="fr-collapse" id="accordion-nde">
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-5">
-                    <strong>Consommation d'énergie :</strong> <span class="fr-badge fr-badge--info fr-badge--sm">{{ signalementQualification.details.consommation_energie }} kWh/m²/an</span>
+                    <strong>Consommation d'énergie :</strong> <span class="fr-badge fr-badge--info fr-badge--sm">{{ signalementQualificationNDE.details.consommation_energie }} kWh/m²/an</span>
                     </div>
                     <div class="fr-col-12 fr-col-md-5">                    
                         {% set classe = '' %}
-                        {% if signalementQualification.status.name == 'NDE_CHECK' %}
+                        {% if signalementQualificationNDE.status.name == 'NDE_CHECK' %}
                             {% set classe = 'fr-badge fr-badge--info fr-badge--sm' %}
-                        {% elseif signalementQualification.status.name == 'NDE_OK' %}
+                        {% elseif signalementQualificationNDE.status.name == 'NDE_OK' %}
                             {% set classe = 'fr-badge fr-badge--success fr-badge--sm' %}
-                        {% elseif signalementQualification.status.name == 'NDE_AVEREE' %}
+                        {% elseif signalementQualificationNDE.status.name == 'NDE_AVEREE' %}
                             {% set classe = 'fr-badge fr-badge--error fr-badge--sm' %}
                         {% endif %}
-                    <strong>Analyse :</strong> <span class="{{ classe }}">{{ signalementQualification.status.value }}</span>
+                    <strong>Analyse :</strong> <span class="{{ classe }}">{{ signalementQualificationNDE.status.value }}</span>
                     </div>
                     
                     <div class="fr-col-12 fr-col-md-2 fr-text--right">
@@ -481,7 +468,7 @@ Les partenaires affectés au signalement ET ayant la compétence "Non décence �
                 <div class="fr-grid-row">
                     <strong>Désordre(s) concerné(s) :</strong> 
                     <ul class="fr-list">
-                        {% for criticite in signalementQualificationCriticite %}
+                        {% for criticite in signalementQualificationNDECriticite %}
                             <li> {{ criticite.critere.label}} - Etat {{criticite.scoreLabel}} : {{criticite.label}}</li>
                         {% endfor %}
                     </ul>
@@ -491,15 +478,15 @@ Les partenaires affectés au signalement ET ayant la compétence "Non décence �
                     <strong>Entrée dans le logement :</strong> {{ signalement.dateEntree|date('d/m/Y') }}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
-                    <strong>DPE :</strong> {{ signalementQualification.details.DPE ? 'Oui' : 'Non' }} 
+                    <strong>DPE :</strong> {{ signalementQualificationNDE.details.DPE ? 'Oui' : 'Non' }} 
                     </div>
                 </div>
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-6">
-                    <strong>Dernier bail :</strong> {{ signalementQualification.dernierBailAt|date('d/m/Y') }}
+                    <strong>Dernier bail :</strong> {{ signalementQualificationNDE.dernierBailAt|date('d/m/Y') }}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
-                    <strong>Date dernier DPE :</strong> {{ signalementQualification.details.date_dernier_dpe|date('d/m/Y') }} 
+                    <strong>Date dernier DPE :</strong> {{ signalementQualificationNDE.details.date_dernier_dpe|date('d/m/Y') }} 
                     </div>
                 </div>
             </div>
