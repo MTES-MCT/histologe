@@ -43,18 +43,18 @@ class BackSignalementQualificationController extends AbstractController
                 // $signalement->setDateEntree(new DateTimeImmutable($dataDateEntree));
             }
 
-            if ($signalement->getSuperficie() !== $dataSuperficie) {
+            if (null !== $dataSuperficie && $signalement->getSuperficie() !== $dataSuperficie) {
                 $signalement->setSuperficie($dataSuperficie);
             }
 
-            if ($signalementQualification->getDernierBailAt()->format('Y-m-d') !== $dataDernierBail) {
+            if (null !== $dataDernierBail && $signalementQualification->getDernierBailAt()->format('Y-m-d') !== $dataDernierBail) {
                 $signalementQualification->setDernierBailAt(new DateTimeImmutable($dataDernierBail));
             }
 
             $qualificationDetails = $signalementQualification->getDetails();
-            if ($qualificationDetails['consommation_energie'] !== $dataConsoEnergie
-            || $qualificationDetails['DPE'] !== $dataDpe
-            || $qualificationDetails['date_dernier_dpe'] !== $dataDpeDate) {
+            if ((null !== $dataConsoEnergie && $qualificationDetails['consommation_energie'] !== $dataConsoEnergie)
+            || (null !== $dataDpe && $qualificationDetails['DPE'] !== $dataDpe)
+            || (null !== $dataDpeDate && $qualificationDetails['date_dernier_dpe'] !== $dataDpeDate)) {
                 $qualificationDetails['consommation_energie'] = $dataConsoEnergie;
                 $qualificationDetails['DPE'] = $dataDpe;
                 $qualificationDetails['date_dernier_dpe'] = $dataDpeDate;
