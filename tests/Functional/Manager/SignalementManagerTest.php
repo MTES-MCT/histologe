@@ -52,6 +52,22 @@ class SignalementManagerTest extends KernelTestCase
         $this->assertCount(3, $partners['not_affected'], 'Three partners should not be affected');
     }
 
+    public function testFindAllPartnersWithCompetences()
+    {
+        $signalementManager = new SignalementManager($this->managerRegistry, $this->security, $this->signalementFactory, $this->eventDispatcher);
+        $signalement = $signalementManager->findOneBy(['reference' => '2023-8']);
+
+        $partners = $signalementManager->findAllPartners($signalement, true);
+
+        $this->assertArrayHasKey('affected', $partners);
+        $this->assertArrayHasKey('not_affected', $partners);
+
+        $this->assertCount(0, $partners['affected'], '0 partner should be affected');
+        $this->assertCount(19, $partners['not_affected'], '19 partners should not be affected');
+        $firstPartner = $partners['not_affected'][0];
+        $this->assertArrayHasKey('competence', $firstPartner);
+    }
+
     public function testCloseSignalementForAllPartners()
     {
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
