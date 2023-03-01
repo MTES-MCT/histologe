@@ -1,8 +1,8 @@
 <template>
   <div class="histo-dashboard-header fr-p-3w fr-mb-3w">
-    <div class="header-list">
-      <div class="label-rollover">
-        Passez votre curseur sur cette zone pour visualiser des statistiques complémentaires.
+    <div :class="['header-list', classExpanded]" @click=handleClick>
+      <div class="label-clickzone">
+        Cliquez sur cette zone pour afficher quelques statistiques.
       </div>
       <div class="header-group-item">
         <div class="header-item">
@@ -68,7 +68,8 @@ export default defineComponent({
   },
   data () {
     return {
-      sharedState: store.state
+      sharedState: store.state,
+      classExpanded: ''
     }
   },
   computed: {
@@ -77,6 +78,9 @@ export default defineComponent({
     }
   },
   methods: {
+    handleClick () {
+      this.classExpanded = this.classExpanded === '' ? 'expanded' : ''
+    }
   }
 })
 </script>
@@ -90,7 +94,7 @@ export default defineComponent({
     margin-left: -10px;
     border-spacing: 10px 0px;
   }
-  .histo-dashboard-header div.header-list div.label-rollover {
+  .histo-dashboard-header div.header-list div.label-clickzone {
     display: none;
   }
   .histo-dashboard-header div.header-list div.header-item {
@@ -107,22 +111,23 @@ export default defineComponent({
   @media (max-width: 1200px) {
     .histo-dashboard-header div.header-list {
       display: block;
+      cursor: pointer;
     }
-    .histo-dashboard-header div.header-list:hover {
+    .histo-dashboard-header div.header-list.expanded {
       display: block;
       height: auto;
     }
     .histo-dashboard-header div.header-list div.header-group-item {
       display: none;
     }
-    .histo-dashboard-header div.header-list div.label-rollover {
+    .histo-dashboard-header div.header-list div.label-clickzone {
       display: block;
       font-style: italic;
     }
-    .histo-dashboard-header div.header-list:hover div.label-rollover {
+    .histo-dashboard-header div.header-list.expanded div.label-clickzone {
       display: none;
     }
-    .histo-dashboard-header div.header-list:hover div.header-group-item {
+    .histo-dashboard-header div.header-list.expanded div.header-group-item {
       display: block;
     }
     .histo-dashboard-header div.header-list div.header-item {
