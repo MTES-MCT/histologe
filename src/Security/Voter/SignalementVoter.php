@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\Qualification;
 use App\Entity\Signalement;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -18,10 +19,11 @@ class SignalementVoter extends Voter
     public const VIEW = 'SIGN_VIEW';
     public const REOPEN = 'SIGN_REOPEN';
     public const EXPORT = 'SIGN_EXPORT';
+    public const EDIT_NDE = 'SIGN_EDIT_NDE';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::VALIDATE, self::REOPEN, self::CLOSE, self::EXPORT])
+        return \in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::VALIDATE, self::REOPEN, self::CLOSE, self::EXPORT, self::EDIT_NDE])
             && ($subject instanceof Signalement || $subject instanceof ArrayCollection);
     }
 
@@ -43,6 +45,7 @@ class SignalementVoter extends Voter
             self::EDIT => $this->canEdit($subject, $user),
             self::VIEW => $this->canView($subject, $user),
             self::EXPORT => $this->canExport($subject, $user),
+            self::EDIT_NDE => $this->canEditNde($subject, $user),
             default => false,
         };
     }
@@ -88,5 +91,16 @@ class SignalementVoter extends Voter
         return $user->isTerritoryAdmin() && 0 == $signalements->filter(function (Signalement $signalement) use ($user) {
             return $signalement->getTerritory() !== $user->getTerritory();
         })->count();
+    }
+
+    public function canEditNde(Signalement $signalement, UserInterface $user): bool
+    {
+        if ($this->canEdit($signalement, $user)
+        && ($user->isTerritoryAdmin()
+            || \in_array(Qualification::NON_DECENCE_ENERGETIQUE, $user->getPartner()->getCompetence()))) {
+            return true;
+        }
+
+        return false;
     }
 }
