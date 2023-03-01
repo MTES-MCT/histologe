@@ -8,6 +8,7 @@ ini_contents="opcache.preload=/app/config/preload.php\nopcache.preload_user=apps
 
 echo "Écriture du contenu dans le fichier .user.ini"
 echo -e $ini_contents > .user.ini
+composer install --prefer-dist --no-scripts --no-dev -q -a
 
 if [[ -z "${COMPOSER_DEV}" ]];
 then
