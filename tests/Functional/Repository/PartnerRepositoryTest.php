@@ -49,6 +49,20 @@ class PartnerRepositoryTest extends KernelTestCase
         $this->assertCount(3, $partners);
     }
 
+    public function testFindPartnersWithCompetences(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['reference' => '2023-8']);
+
+        $partners = $this->partnerRepository->findByLocalization($signalement, false, true);
+        $this->assertCount(19, $partners);
+        $firstPartner = $partners[0];
+        $this->assertArrayHasKey('competence', $firstPartner);
+    }
+
     public function testFindPossiblePartnersForCOR69(): void
     {
         /** @var SignalementRepository $signalementRepository */
