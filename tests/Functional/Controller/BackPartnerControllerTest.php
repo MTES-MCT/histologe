@@ -13,6 +13,43 @@ class BackPartnerControllerTest extends WebTestCase
 {
     use SessionHelper;
 
+    public function testPartnersSuccessfullyDisplay()
+    {
+        $client = static::createClient();
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $client->loginUser($user);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+
+        $route = $router->generate('back_partner_index');
+        $client->request('GET', $route);
+
+        $this->assertResponseIsSuccessful();
+    }
+
+    public function testPartnersExperimentalTerritorySuccessfullyDisplay()
+    {
+        $client = static::createClient();
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-63-01@histologe.fr']);
+        $client->loginUser($user);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+
+        $route = $router->generate('back_partner_index');
+        $client->request('GET', $route);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('.fr-display-inline-table',
+            'Compétences',
+        );
+    }
+
     public function testPartnerFormSubmit(): void
     {
         $faker = Factory::create();
