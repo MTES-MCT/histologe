@@ -26,6 +26,7 @@ class SignalementQualificationService
             return QualificationStatus::NDE_CHECK;
         }
 
-        return null;
+        // si avant 2023, on archive la qualification
+        return QualificationStatus::ARCHIVED;
     }
 }

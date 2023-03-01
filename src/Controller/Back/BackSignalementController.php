@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Critere;
 use App\Entity\Criticite;
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
 use App\Entity\Situation;
 use App\Entity\Suivi;
@@ -116,13 +117,14 @@ class BackSignalementController extends AbstractController
 
         $experimentationTerritories = $parameterBag->get('experimentation_territory');
         $isExperimentationTerritory = \array_key_exists($signalement->getTerritory()->getZip(), $experimentationTerritories);
-        // TODO : à terme plusieurs qualifications possibles par signalement
-        $signalementQualification = $signalementQualificationRepository->findOneBy(['signalement' => $signalement]);
-        $isSignalementNonDecence = Qualification::NON_DECENCE_ENERGETIQUE == $signalementQualification?->getQualification();
 
-        $signalementQualificationCriticites = $signalementQualification ? $criticiteRepository->findBy(['id' => $signalementQualification->getCriticites()]) : null;
+        $signalementQualificationNDE = $signalementQualificationRepository->findOneBy([
+            'signalement' => $signalement,
+            'qualification' => Qualification::NON_DECENCE_ENERGETIQUE, ]);
+        $isSignalementNDEActif = $signalementQualificationNDE && QualificationStatus::ARCHIVED != $signalementQualificationNDE?->getStatus();
+        $signalementQualificationNDECriticites = $signalementQualificationNDE ? $criticiteRepository->findBy(['id' => $signalementQualificationNDE->getCriticites()]) : null;
 
-        $partners = $signalementManager->findAllPartners($signalement, $isExperimentationTerritory && $isSignalementNonDecence);
+        $partners = $signalementManager->findAllPartners($signalement, $isExperimentationTerritory && $isSignalementNDEActif);
 
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
@@ -140,9 +142,9 @@ class BackSignalementController extends AbstractController
             'clotureForm' => $clotureForm->createView(),
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
             'isExperimentationTerritory' => $isExperimentationTerritory,
-            'isSignalementNonDecence' => $isSignalementNonDecence,
-            'signalementQualification' => $signalementQualification,
-            'signalementQualificationCriticite' => $signalementQualificationCriticites,
+            'isSignalementNDE' => $isSignalementNDEActif,
+            'signalementQualificationNDE' => $signalementQualificationNDE,
+            'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
         ]);
     }
 
