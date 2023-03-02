@@ -51,6 +51,31 @@ class BackSignalementControllerTest extends WebTestCase
         }
     }
 
+    public function testSignalementNDESuccessfullyDisplay()
+    {
+        $client = static::createClient();
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $client->loginUser($user);
+
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['reference' => '2023-8']);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+
+        $client->loginUser($user);
+        $client->request('GET', $route);
+        $this->assertResponseIsSuccessful($signalement->getId());
+        $this->assertSelectorTextContains('#accordion-nde',
+            'Consommation'
+        );
+    }
+
     public function testSubmitClotureSignalementWihEmailSentToPartnersAndUsager()
     {
         $client = static::createClient();
