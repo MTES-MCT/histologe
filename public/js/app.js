@@ -19,6 +19,10 @@ for (i = 0; i < tables.length; i++) {
 }
 let isZipForNonConformiteEnergetique = false
 let hasCritereForNonConformiteEnergetique = false
+let isNDEBail2023 = false;
+let isNDEMissingInfo = false;
+let isNDEDPEBefore2023 = false;
+let totalNDEConso = -1;
 localStorage.clear();
 forms.forEach((form) => {
     form?.querySelectorAll('.toggle-criticite input[type="radio"]')?.forEach((criticite) => {
@@ -96,18 +100,18 @@ forms.forEach((form) => {
             refetchAddress(form)
         })
     })
-    form?.querySelectorAll('#form-nte input')?.forEach((element) => {
+    form?.querySelectorAll('#form-nde input')?.forEach((element) => {
         element.addEventListener('change', (event) => {
             let isEntreeSelected = false;
             let isEntree2023 = false;
             let isEntreeBefore2023 = false;
-            let isBail2023 = false;
             let isDPESelected = false;
             let isDateDPE2023 = false;
             let isDateDPEBefore2023 = false;
             let isMissingInfo = false;
+            isNDEMissingInfo = false;
 
-            form.querySelectorAll('#form-nte input[name="signalement[dateEntree]"]')?.forEach((element) => {
+            form.querySelectorAll('#form-nde input[name="signalement[dateEntree]"]')?.forEach((element) => {
                 if (element.checked) {
                     isEntreeSelected = true;
                     isEntree2023 = (element.value === '2023-01-02')
@@ -116,35 +120,34 @@ forms.forEach((form) => {
             })
 
             if (isEntree2023) {
-                form.querySelector('#form-nte .display-if-entree-2023')?.classList.remove('fr-hidden');
-                form.querySelector('#form-nte .display-if-entree-before-2023')?.classList.add('fr-hidden');
-                form.querySelectorAll('#form-nte input[name="signalement[hasDPE]"]')?.forEach((element) => {
+                form.querySelector('#form-nde .display-if-entree-2023')?.classList.remove('fr-hidden');
+                form.querySelector('#form-nde .display-if-entree-before-2023')?.classList.add('fr-hidden');
+                form.querySelectorAll('#form-nde input[name="signalement[hasDPE]"]')?.forEach((element) => {
                     if (element.checked) {
                         isDPESelected = true;
-                        isBail2023 = (element.value === '1');
+                        isNDEBail2023 = (element.value === '1');
                         isMissingInfo = (element.value === '');
                     }
                 })
 
             } else if (isEntreeBefore2023) {
-                form.querySelector('#form-nte .display-if-entree-2023')?.classList.add('fr-hidden');
-                form.querySelector('#form-nte .display-if-entree-before-2023')?.classList.remove('fr-hidden');
-                form.querySelectorAll('#form-nte input[name="signalement[dateBail]"]')?.forEach((element) => {
+                form.querySelector('#form-nde .display-if-entree-2023')?.classList.add('fr-hidden');
+                form.querySelector('#form-nde .display-if-entree-before-2023')?.classList.remove('fr-hidden');
+                form.querySelectorAll('#form-nde input[name="signalement[dateBail]"]')?.forEach((element) => {
                     if (element.checked) {
                         isDPESelected = true;
-                        isBail2023 = (element.value === '2023-01-02')
+                        isNDEBail2023 = (element.value === '2023-01-02')
                         isMissingInfo = (element.value === '');
                     }
                 })
             }
 
             if (isEntreeSelected) {
-                if (isBail2023) {
-                    form.querySelector('#form-nte .display-if-conso-complete')?.classList.add('fr-hidden');
-                    form.querySelector('#form-nte .display-if-finished')?.classList.add('fr-hidden');
-                    form.querySelector('#form-nte .display-if-has-dpe')?.classList.remove('fr-hidden');
+                if (isNDEBail2023) {
+                    form.querySelector('#form-nde .display-if-finished')?.classList.add('fr-hidden');
+                    form.querySelector('#form-nde .display-if-has-dpe')?.classList.remove('fr-hidden');
     
-                    form.querySelectorAll('#form-nte input[name="signalement[dateDPE]"]')?.forEach((element) => {
+                    form.querySelectorAll('#form-nde input[name="signalement[dateDPE]"]')?.forEach((element) => {
                         if (element.checked) {
                             isDateDPE2023 = (element.value === '2023-01-02')
                             isDateDPEBefore2023 = (element.value === '1970-01-01')
@@ -152,47 +155,52 @@ forms.forEach((form) => {
                     })
     
                 } else {
-                    form.querySelector('#form-nte .display-if-has-dpe')?.classList.add('fr-hidden');
-                    form.querySelector('#form-nte .display-if-finished')?.classList.remove('fr-hidden');
+                    form.querySelector('#form-nde .display-if-has-dpe')?.classList.add('fr-hidden');
+                    form.querySelector('#form-nde .display-if-finished')?.classList.remove('fr-hidden');
                 }
             } else {
-                form.querySelector('#form-nte .display-if-conso-complete')?.classList.add('fr-hidden');
-                form.querySelector('#form-nte .display-if-finished')?.classList.add('fr-hidden');
+                form.querySelector('#form-nde .display-if-finished')?.classList.add('fr-hidden');
             }
     
-            form.querySelector('#form-nte .display-if-dpe-2023')?.classList.add('fr-hidden');
-            form.querySelector('#form-nte .display-if-dpe-before-2023')?.classList.add('fr-hidden');
-            form.querySelector('#form-nte .display-if-missing-info')?.classList.add('fr-hidden');
-            form.querySelector('#form-nte .display-if-bail-before-2023')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .display-if-dpe-2023')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .display-if-dpe-before-2023')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .display-if-missing-info')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .display-if-bail-before-2023')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .display-if-not-nde')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .display-if-nde')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .display-if-conso-complete')?.classList.add('fr-hidden');
             if (isDPESelected) {
                 if (isMissingInfo) {
-                    form.querySelector('#form-nte .display-if-missing-info')?.classList.remove('fr-hidden');
-                } else if (!isBail2023) {
-                    form.querySelector('#form-nte .display-if-bail-before-2023')?.classList.remove('fr-hidden');
+                    form.querySelector('#form-nde .display-if-missing-info')?.classList.remove('fr-hidden');
+                    isNDEMissingInfo = true;
+                    
+                } else if (!isNDEBail2023) {
+                    form.querySelector('#form-nde .display-if-bail-before-2023')?.classList.remove('fr-hidden');
                 }
 
                 if (isDateDPE2023) {
-                    form.querySelector('#form-nte .display-if-dpe-2023')?.classList.remove('fr-hidden');
+                    form.querySelector('#form-nde .display-if-dpe-2023')?.classList.remove('fr-hidden');
+                    form.querySelector('#form-nde button.calculate-conso')?.click();
     
                 } else if (isDateDPEBefore2023) {
-                    form.querySelector('#form-nte .display-if-dpe-before-2023')?.classList.remove('fr-hidden');
+                    form.querySelector('#form-nde .display-if-dpe-before-2023')?.classList.remove('fr-hidden');
+                    form.querySelector('#form-nde button.calculate-conso')?.click();
                 }
             } else {
-                form.querySelector('#form-nte .display-if-conso-complete')?.classList.add('fr-hidden');
-                form.querySelector('#form-nte .display-if-finished')?.classList.add('fr-hidden');
+                form.querySelector('#form-nde .display-if-finished')?.classList.add('fr-hidden');
             }
         })
     })
-    form?.querySelectorAll('#form-nte button.calculate-conso')?.forEach((element) => {
+    form?.querySelectorAll('#form-nde button.calculate-conso')?.forEach((element) => {
         element.addEventListener('click', (event) => {
-            form.querySelector('#form-nte .display-if-conso-complete')?.classList.add('fr-hidden');
-            form.querySelector('#form-nte .display-if-finished')?.classList.add('fr-hidden');
-            form.querySelector('#form-nte .fr-error-conso-size-year')?.classList.add('fr-hidden');
-            form.querySelector('#form-nte .fr-error-conso-size-plus-year')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .display-if-conso-complete')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .display-if-finished')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .fr-error-conso-size-year')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .fr-error-conso-size-plus-year')?.classList.add('fr-hidden');
 
             let isDateDPE2023 = false;
             let isDateDPEBefore2023 = false;
-            form.querySelectorAll('#form-nte input[name="signalement[dateDPE]"]')?.forEach((element) => {
+            form.querySelectorAll('#form-nde input[name="signalement[dateDPE]"]')?.forEach((element) => {
                 if (element.checked) {
                     isDateDPE2023 = (element.value === '2023-01-02')
                     isDateDPEBefore2023 = (element.value === '1970-01-01')
@@ -200,44 +208,52 @@ forms.forEach((form) => {
             })
 
             let consoSizeYear = -1;
-            if (isDateDPE2023) {
-                consoSizeYear = form.querySelector('#form-nte input[name="conso-size-year"]')?.value;
-                if (consoSizeYear.length > 0) {
-                    if (isNaN(consoSizeYear)) {
-                        form.querySelector('#form-nte .fr-error-conso-size-year')?.classList.remove('fr-hidden');
+            isNDEDPEBefore2023 = false;
+            totalNDEConso = -1;
+            if (isNDEBail2023) {
+                if (isDateDPE2023) {
+                    let consoSizeYearTxt = form.querySelector('#form-nde input[name="conso-size-year"]')?.value;
+                    if (consoSizeYearTxt.length > 0) {
+                        if (isNaN(consoSizeYear)) {
+                            form.querySelector('#form-nde .fr-error-conso-size-year')?.classList.remove('fr-hidden');
+                        } else {
+                            consoSizeYear = consoSizeYearTxt;
+                            form.querySelector('#form-nde .display-if-conso-complete span').textContent = consoSizeYear;
+                            form.querySelector('#form-nde .display-if-conso-complete')?.classList.remove('fr-hidden');
+                            form.querySelector('#form-nde .display-if-finished')?.classList.remove('fr-hidden');
+                        }
                     } else {
-                        form.querySelector('#form-nte .display-if-conso-complete span').textContent = consoSizeYear;
-                        form.querySelector('#form-nte .display-if-conso-complete')?.classList.remove('fr-hidden');
-                        form.querySelector('#form-nte .display-if-finished')?.classList.remove('fr-hidden');
+                        form.querySelector('#form-nde .display-if-conso-complete')?.classList.add('fr-hidden');
+                        form.querySelector('#form-nde .display-if-finished')?.classList.add('fr-hidden');
                     }
-                } else {
-                    form.querySelector('#form-nte .display-if-conso-complete')?.classList.add('fr-hidden');
-                    form.querySelector('#form-nte .display-if-finished')?.classList.add('fr-hidden');
-                }
-            } else if (isDateDPEBefore2023) {
-                let consoSize = form.querySelector('#form-nte input[name="conso-size"]')?.value;
-                let consoYear = form.querySelector('#form-nte input[name="conso-year"]')?.value;
-                if (consoSize.length > 0 && consoYear.length > 0) {
-                    if (isNaN(consoSize) || isNaN(consoYear)) {
-                        form.querySelector('#form-nte .fr-error-conso-size-plus-year')?.classList.remove('fr-hidden');
+                } else if (isDateDPEBefore2023) {
+                    isNDEDPEBefore2023 = true;
+                    let consoSize = form.querySelector('#form-nde input[name="conso-size"]')?.value;
+                    let consoYear = form.querySelector('#form-nde input[name="conso-year"]')?.value;
+                    if (consoSize.length > 0 && consoYear.length > 0) {
+                        if (isNaN(consoSize) || isNaN(consoYear)) {
+                            form.querySelector('#form-nde .fr-error-conso-size-plus-year')?.classList.remove('fr-hidden');
+                        } else {
+                            consoSizeYear = Math.round(consoYear / consoSize, 2);
+                            form.querySelector('#form-nde .display-if-conso-complete span').textContent = consoSizeYear;
+                            form.querySelector('#form-nde .display-if-conso-complete')?.classList.remove('fr-hidden');
+                            form.querySelector('#form-nde .display-if-finished')?.classList.remove('fr-hidden');
+                        }
                     } else {
-                        consoSizeYear = Math.round(consoYear / consoSize, 2);
-                        form.querySelector('#form-nte .display-if-conso-complete span').textContent = consoSizeYear;
-                        form.querySelector('#form-nte .display-if-conso-complete')?.classList.remove('fr-hidden');
-                        form.querySelector('#form-nte .display-if-finished')?.classList.remove('fr-hidden');
+                        form.querySelector('#form-nde .display-if-conso-complete')?.classList.add('fr-hidden');
+                        form.querySelector('#form-nde .display-if-finished')?.classList.add('fr-hidden');
                     }
-                } else {
-                    form.querySelector('#form-nte .display-if-conso-complete')?.classList.add('fr-hidden');
-                    form.querySelector('#form-nte .display-if-finished')?.classList.add('fr-hidden');
                 }
-            }
-            if (consoSizeYear > -1) {
-                if (consoSizeYear > 450) {
-                    form.querySelector('#form-nte .display-if-nde')?.classList.remove('fr-hidden');
-                    form.querySelector('#form-nte .display-if-not-nde')?.classList.add('fr-hidden');
-                } else {
-                    form.querySelector('#form-nte .display-if-nde')?.classList.add('fr-hidden');
-                    form.querySelector('#form-nte .display-if-not-nde')?.classList.remove('fr-hidden');
+    
+                if (consoSizeYear > -1) {
+                    totalNDEConso = consoSizeYear;
+                    if (consoSizeYear > 450) {
+                        form.querySelector('#form-nde .display-if-nde')?.classList.remove('fr-hidden');
+                        form.querySelector('#form-nde .display-if-not-nde')?.classList.add('fr-hidden');
+                    } else {
+                        form.querySelector('#form-nde .display-if-nde')?.classList.add('fr-hidden');
+                        form.querySelector('#form-nde .display-if-not-nde')?.classList.remove('fr-hidden');
+                    }
                 }
             }
         })
@@ -574,6 +590,54 @@ forms.forEach((form) => {
 
                             document.querySelector('#recap-signalement_documents').innerHTML = nbDocs + ' document(s) transmis';
                             document.querySelector('#recap-signalement_photos').innerHTML = nbPhotos + ' photo(s) transmise(s)';
+
+                            // Reinit display
+                            document.querySelector('#result-nde').classList.add('fr-hidden');
+                            document.querySelectorAll('#result-nde .display-if-missing-info').forEach(el => {
+                                el.classList.add('fr-hidden')
+                            })
+                            document.querySelectorAll('#result-nde .display-if-dpe-before-2023').forEach(el => {
+                                el.classList.add('fr-hidden')
+                            })
+                            document.querySelectorAll('#result-nde .display-if-conso').forEach(el => {
+                                el.classList.add('fr-hidden')
+                            })
+                            document.querySelectorAll('#result-nde .display-if-not-nde').forEach(el => {
+                                el.classList.add('fr-hidden')
+                            })
+                            document.querySelectorAll('#result-nde .display-if-nde').forEach(el => {
+                                el.classList.add('fr-hidden')
+                            })
+                            // Results for non-décence
+                            if (isZipForNonConformiteEnergetique && hasCritereForNonConformiteEnergetique) {
+                                if (isNDEMissingInfo) {
+                                    document.querySelector('#result-nde').classList.remove('fr-hidden');
+                                    document.querySelectorAll('#result-nde .display-if-missing-info').forEach(el => {
+                                        el.classList.remove('fr-hidden')
+                                    })
+                                } else if (isNDEBail2023 && totalNDEConso > -1) {
+                                    document.querySelector('#result-nde').classList.remove('fr-hidden');
+                                    if (isNDEDPEBefore2023) {
+                                        document.querySelectorAll('#result-nde .display-if-dpe-before-2023').forEach(el => {
+                                            el.classList.remove('fr-hidden')
+                                        })
+                                    }
+                                    document.querySelectorAll('#result-nde .display-if-conso').forEach(el => {
+                                        el.classList.remove('fr-hidden')
+                                    })
+                                    document.querySelector('#result-nde .conso-amount').textContent = totalNDEConso;
+                                    if (totalNDEConso > 450) {
+                                        document.querySelectorAll('#result-nde .display-if-nde').forEach(el => {
+                                            el.classList.remove('fr-hidden')
+                                        })
+                                    } else {
+                                        document.querySelectorAll('#result-nde .display-if-not-nde').forEach(el => {
+                                            el.classList.remove('fr-hidden')
+                                        })
+                                    }
+                                }
+                                
+                            }
                         }
                         nextTabBtn.disabled = false;
                         nextTabBtn.click();

@@ -455,7 +455,7 @@
 
     <section id="signalement-step-3b-panel" class="fr-tabs__panel" role="tabpanel"
              aria-labelledby="signalement-step-3b-btn" tabindex="0">
-        {% include '_partials/_signalement_step_nte.html.twig' %}
+        {% include '_partials/_signalement_step_nde.html.twig' %}
     </section>
 
     <section id="signalement-step-4-panel" class="fr-tabs__panel" role="tabpanel"
@@ -734,6 +734,34 @@
                             <span id="recap-signalement_photos"></span>
                             <span id="recap-signalement_documents" class="fr-display-block"></span>
                         </p>
+                    </li>
+                </ul>
+            </div>
+            <div id="result-nde" class="fr-col-6 fr-hidden">
+                <ul>
+                    <li>
+                        <strong>Consommation énergétique
+                            <button class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-edit-fill"
+                                    title="Editer les informations" data-goto-step="3b"></button>
+                        </strong>
+                        <li class="fr-hidden display-if-missing-info">Situation : à vérifier</li>
+                        <li class="fr-hidden display-if-missing-info">DPE : à renseigner</li>
+                        <li class="fr-hidden display-if-missing-info">Bail : à renseigner</li>
+                        <li class="fr-hidden display-if-missing-info">Consommation : non calculée</li>
+
+                        <li class="fr-hidden display-if-not-nde">Situation : décence énergétique OK</li>
+                        <li class="fr-hidden display-if-nde">Situation : non décence énergétique</li>
+                        <li class="fr-hidden display-if-conso">
+                            DPE :
+                            <span class="fr-hidden display-if-dpe-before-2023">Avant</span>
+                            2023
+                        </li>
+                        <li class="fr-hidden display-if-conso">Bail : 2023</li>
+                        <li class="fr-hidden display-if-conso">
+                            Consommation :
+                            <span class="conso-amount"></span>
+                            kWh/m²/an
+                        </li>
                     </li>
                 </ul>
             </div>
