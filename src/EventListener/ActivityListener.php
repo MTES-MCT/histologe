@@ -209,7 +209,7 @@ class ActivityListener implements EventSubscriberInterface
                 [
                     'url' => $this->parameterBag->get('host_url'),
                     'error' => sprintf(
-                        'Aucun utilisateur est notifiable pour le signalement #%s, notification prévue %s (2 = nouveau signalement, 1 = suivi, 0 = affectation)',
+                        'Aucun utilisateur est notifiable pour le signalement #%s, notification prévue %s (TYPE_SIGNALEMENT_NEW = 3, TYPE_ASSIGNMENT_NEW = 4, TYPE_NEW_COMMENT_BACK = 10)',
                         $signalement->getReference(),
                         $mailType,
                     ),
