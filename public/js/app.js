@@ -98,22 +98,28 @@ forms.forEach((form) => {
     })
     form?.querySelectorAll('#form-nte input')?.forEach((element) => {
         element.addEventListener('change', (event) => {
-            form.querySelector('#form-nte .display-if-finished')?.classList.add('fr-hidden');
+            let isEntreeSelected = false;
             let isEntree2023 = false;
             let isEntreeBefore2023 = false;
+            let isBail2023 = false;
+            let isDPESelected = false;
+            let isDateDPE2023 = false;
+            let isDateDPEBefore2023 = false;
+
             form.querySelectorAll('#form-nte input[name="signalement[dateEntree]"]')?.forEach((element) => {
                 if (element.checked) {
+                    isEntreeSelected = true;
                     isEntree2023 = (element.value === '2023-01-02')
                     isEntreeBefore2023 = (element.value === '1970-01-01')
                 }
             })
 
-            let isBail2023 = false;
             if (isEntree2023) {
                 form.querySelector('#form-nte .display-if-entree-2023')?.classList.remove('fr-hidden');
                 form.querySelector('#form-nte .display-if-entree-before-2023')?.classList.add('fr-hidden');
                 form.querySelectorAll('#form-nte input[name="signalement[hasDPE]"]')?.forEach((element) => {
                     if (element.checked) {
+                        isDPESelected = true;
                         isBail2023 = (element.value === '1')
                     }
                 })
@@ -123,36 +129,95 @@ forms.forEach((form) => {
                 form.querySelector('#form-nte .display-if-entree-before-2023')?.classList.remove('fr-hidden');
                 form.querySelectorAll('#form-nte input[name="signalement[dateBail]"]')?.forEach((element) => {
                     if (element.checked) {
+                        isDPESelected = true;
                         isBail2023 = (element.value === '2023-01-02')
                     }
                 })
             }
 
-            let isDateDPE2023 = false;
-            let isDateDPEBefore2023 = false;
-            if (isBail2023) {
-                form.querySelector('#form-nte .display-if-finished')?.classList.add('fr-hidden');
-                form.querySelector('#form-nte .display-if-has-dpe')?.classList.remove('fr-hidden');
-
-                form.querySelectorAll('#form-nte input[name="signalement[dateDPE]"]')?.forEach((element) => {
-                    if (element.checked) {
-                        isDateDPE2023 = (element.value === '2023-01-02')
-                        isDateDPEBefore2023 = (element.value === '1970-01-01')
-                    }
-                })
-
+            if (isEntreeSelected) {
+                if (isBail2023) {
+                    form.querySelector('#form-nte .display-if-conso-complete')?.classList.add('fr-hidden');
+                    form.querySelector('#form-nte .display-if-finished')?.classList.add('fr-hidden');
+                    form.querySelector('#form-nte .display-if-has-dpe')?.classList.remove('fr-hidden');
+    
+                    form.querySelectorAll('#form-nte input[name="signalement[dateDPE]"]')?.forEach((element) => {
+                        if (element.checked) {
+                            isDateDPE2023 = (element.value === '2023-01-02')
+                            isDateDPEBefore2023 = (element.value === '1970-01-01')
+                        }
+                    })
+    
+                } else {
+                    form.querySelector('#form-nte .display-if-has-dpe')?.classList.add('fr-hidden');
+                    form.querySelector('#form-nte .display-if-finished')?.classList.remove('fr-hidden');
+                }
             } else {
-                form.querySelector('#form-nte .display-if-has-dpe')?.classList.add('fr-hidden');
-                form.querySelector('#form-nte .display-if-finished')?.classList.remove('fr-hidden');
+                form.querySelector('#form-nte .display-if-conso-complete')?.classList.add('fr-hidden');
+                form.querySelector('#form-nte .display-if-finished')?.classList.add('fr-hidden');
             }
-
+    
             form.querySelector('#form-nte .display-if-dpe-2023')?.classList.add('fr-hidden');
             form.querySelector('#form-nte .display-if-dpe-before-2023')?.classList.add('fr-hidden');
-            if (isDateDPE2023) {
-                form.querySelector('#form-nte .display-if-dpe-2023')?.classList.remove('fr-hidden');
+            if (isDPESelected) {
+                if (isDateDPE2023) {
+                    form.querySelector('#form-nte .display-if-dpe-2023')?.classList.remove('fr-hidden');
+    
+                } else if (isDateDPEBefore2023) {
+                    form.querySelector('#form-nte .display-if-dpe-before-2023')?.classList.remove('fr-hidden');
+                }
+            } else {
+                form.querySelector('#form-nte .display-if-conso-complete')?.classList.add('fr-hidden');
+                form.querySelector('#form-nte .display-if-finished')?.classList.add('fr-hidden');
+            }
+        })
+    })
+    form?.querySelectorAll('#form-nte button.calculate-conso')?.forEach((element) => {
+        element.addEventListener('click', (event) => {
+            form.querySelector('#form-nte .display-if-conso-complete')?.classList.add('fr-hidden');
+            form.querySelector('#form-nte .display-if-finished')?.classList.add('fr-hidden');
+            form.querySelector('#form-nte .fr-error-conso-size-year')?.classList.add('fr-hidden');
+            form.querySelector('#form-nte .fr-error-conso-size-plus-year')?.classList.add('fr-hidden');
 
+            let isDateDPE2023 = false;
+            let isDateDPEBefore2023 = false;
+            form.querySelectorAll('#form-nte input[name="signalement[dateDPE]"]')?.forEach((element) => {
+                if (element.checked) {
+                    isDateDPE2023 = (element.value === '2023-01-02')
+                    isDateDPEBefore2023 = (element.value === '1970-01-01')
+                }
+            })
+
+            if (isDateDPE2023) {
+                let consoSizeYear = form.querySelector('#form-nte input[name="conso-size-year"]')?.value;
+                if (consoSizeYear.length > 0) {
+                    if (isNaN(consoSizeYear)) {
+                        form.querySelector('#form-nte .fr-error-conso-size-year')?.classList.remove('fr-hidden');
+                    } else {
+                        form.querySelector('#form-nte .display-if-conso-complete span').textContent = consoSizeYear;
+                        form.querySelector('#form-nte .display-if-conso-complete')?.classList.remove('fr-hidden');
+                        form.querySelector('#form-nte .display-if-finished')?.classList.remove('fr-hidden');
+                    }
+                } else {
+                    form.querySelector('#form-nte .display-if-conso-complete')?.classList.add('fr-hidden');
+                    form.querySelector('#form-nte .display-if-finished')?.classList.add('fr-hidden');
+                }
             } else if (isDateDPEBefore2023) {
-                form.querySelector('#form-nte .display-if-dpe-before-2023')?.classList.remove('fr-hidden');
+                let consoSize = form.querySelector('#form-nte input[name="conso-size"]')?.value;
+                let consoYear = form.querySelector('#form-nte input[name="conso-year"]')?.value;
+                if (consoSize.length > 0 && consoYear.length > 0) {
+                    if (isNaN(consoSize) || isNaN(consoYear)) {
+                        form.querySelector('#form-nte .fr-error-conso-size-plus-year')?.classList.remove('fr-hidden');
+                    } else {
+                        let consoSizeYear = Math.round(consoYear / consoSize, 2);
+                        form.querySelector('#form-nte .display-if-conso-complete span').textContent = consoSizeYear;
+                        form.querySelector('#form-nte .display-if-conso-complete')?.classList.remove('fr-hidden');
+                        form.querySelector('#form-nte .display-if-finished')?.classList.remove('fr-hidden');
+                    }
+                } else {
+                    form.querySelector('#form-nte .display-if-conso-complete')?.classList.add('fr-hidden');
+                    form.querySelector('#form-nte .display-if-finished')?.classList.add('fr-hidden');
+                }
             }
         })
     })

@@ -89,7 +89,7 @@
                     <label for="signalement_dateDPE_0">En 2023</label>
                 </div>
                 <div class="fr-radio-group">
-                    <input type="radio" id="signalement_dateEntree_1" name="signalement[dateDPE]" value="1970-01-01">
+                    <input type="radio" id="signalement_dateDPE_1" name="signalement[dateDPE]" value="1970-01-01">
                     <label for="signalement_dateDPE_1">Avant 2023</label>
                 </div>
             </div>
@@ -98,32 +98,97 @@
             </p>
         </fieldset>
 
-        <fieldset class="fr-fieldset fr-fieldset--inline fr-mt-3w fr-hidden display-if-dpe-2023">
+        <dialog aria-labelledby="fr-modal-title-modal-dpe-2023" role="dialog" id="fr-modal-dpe-2023" class="fr-modal">
+            <div class="fr-container fr-container--fluid fr-container-md">
+                <div class="fr-grid-row fr-grid-row--center">
+                    <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                        <div class="fr-modal__body">
+                            <div class="fr-modal__header">
+                                <button type="button" class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="fr-modal-dpe-2023">Fermer</button>
+                            </div>
+                            <div class="fr-modal__content">
+                                <h1 id="fr-modal-title-modal-dpe-before-2023" class="fr-modal__title">
+                                    <span class="fr-fi-arrow-right-line fr-fi--lg"></span>Trouver les informations sur votre DPE
+                                </h1>
+                                <p>
+                                    Sur la première page de votre DPE, chercher la <strong>consommation d'énergie primaire</strong>,
+                                    indiquée en kWh/m²/an. Le nombre est situé sur la première page, à côté de l'indice performance
+                                    du logement (une lettre de A à G).    
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </dialog>
+
+        <fieldset class="fr-fieldset fr-fieldset--inline fr-my-3w fr-hidden display-if-dpe-2023">
             <legend class="fr-fieldset__legend fr-text--regular">
                 <label class="fr-label required">Quelle est la consommation en énergie finale indiquée sur votre DPE ?</label>
             </legend>
-            <p>Comment trouver l'information sur mon DPE ?</p>
-            <div class="fr-fieldset__content">
-                <input type="text" name="conso-size-year"> kWh/m²/an
-                <button type="button">OK</button>
+            <div class="fr-alert fr-alert--info fr-mb-3w">
+                <p><a href="#" data-fr-opened="false" aria-controls="fr-modal-dpe-2023">Comment trouver l'information sur mon DPE ?</a></p>
             </div>
-            <p class="fr-error-text fr-hidden">
-                Veuillez préciser votre consommation énergétique
+            <div class="fr-fieldset__content">
+                <label class="fr-label" for="conso-size-year">Nombre de kWh/m²/an</label>
+                <input class="fr-input" type="text" name="conso-size-year">
+                <button class="fr-btn fr-btn--secondary calculate-conso fr-mt-3w" type="button">OK</button>
+            </div>
+            <p class="fr-error-conso-size-year fr-hidden fr-mt-3w">
+                Veuillez préciser votre consommation énergétique avec un nombre entier
             </p>
         </fieldset>
 
-        <fieldset class="fr-fieldset fr-fieldset--inline fr-mt-3w fr-hidden display-if-dpe-before-2023">
+        <dialog aria-labelledby="fr-modal-title-modal-dpe-before-2023" role="dialog" id="fr-modal-dpe-before-2023" class="fr-modal">
+            <div class="fr-container fr-container--fluid fr-container-md">
+                <div class="fr-grid-row fr-grid-row--center">
+                    <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                        <div class="fr-modal__body">
+                            <div class="fr-modal__header">
+                                <button type="button" class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="fr-modal-dpe-before-2023">Fermer</button>
+                            </div>
+                            <div class="fr-modal__content">
+                                <h1 id="fr-modal-title-modal-dpe-before-2023" class="fr-modal__title">
+                                    <span class="fr-fi-arrow-right-line fr-fi--lg"></span>Trouver les informations sur votre DPE
+                                </h1>
+                                <p>
+                                    Vous devez récupérer deux informations sur votre DPE :
+                                    <br>
+                                    <ul>
+                                        <li>
+                                            La <strong>surface habitable</strong> de votre logement, indiquée en m²
+                                        </li>
+                                        <li>
+                                            La <strong>consommation en énergie finale</strong> de votre logement,
+                                            indiquée en kWh avec la mention "é.f" (kWhef ou kWhef/an ou kWh é.f.)
+                                        </li>
+                                    </ul>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </dialog>
+
+        <fieldset class="fr-fieldset fr-fieldset--inline fr-my-3w fr-hidden display-if-dpe-before-2023">
             <legend class="fr-fieldset__legend fr-text--regular">
                 <label class="fr-label required">Quelle est la consommation en énergie finale indiquée sur votre DPE ?</label>
             </legend>
-            <p>Comment trouver l'information sur mon DPE ?</p>
-            <div class="fr-fieldset__content">
-                <input type="text" name="conso-size"> m²
-                <input type="text" name="conso-year"> kWh/an
-                <button type="button">OK</button>
+            <div class="fr-alert fr-alert--info fr-mb-3w">
+                <p><a href="#" data-fr-opened="false" aria-controls="fr-modal-dpe-before-2023">Comment trouver l'information sur mon DPE ?</a></p>
             </div>
-            <p class="fr-error-text fr-hidden">
-                Veuillez préciser votre consommation énergétique
+            <div class="fr-fieldset__content">
+                <label class="fr-label" for="conso-size">Nombre de m²</label>
+                <input class="fr-input" type="text" name="conso-size">
+
+                <label class="fr-label fr-mt-3w" for="conso-year">Nombre de kWh/an</label>
+                <input class="fr-input" type="text" name="conso-year">
+
+                <button class="fr-btn fr-btn--secondary calculate-conso fr-mt-3w" type="button">OK</button>
+            </div>
+            <p class="fr-error-conso-size-plus-year fr-hidden fr-mt-3w">
+                Veuillez préciser votre consommation énergétique avec un nombre entier
             </p>
         </fieldset>
 
