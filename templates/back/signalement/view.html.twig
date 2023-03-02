@@ -12,6 +12,9 @@
     {% if signalement.statut is not same as(1) and not isClosed and not isClosedForMe and ((isAffected and isAccepted)) or is_granted('ROLE_ADMIN_TERRITORY') %}
         {% include '_partials/_modal_cloture.html.twig' %}
     {% endif %}
+    {% if isSignalementNDE %}
+        {% include '_partials/_modal_edit_nde.html.twig' %}        
+    {% endif %}
     <section
             class="fr-p-5v {{ isClosedForMe or signalement.statut is same as(6) or signalement.statut is same as(8) ? 'signalement-invalid':'' }}"
             id="signalement-{{ signalement.id }}-content">
@@ -35,7 +38,11 @@
                     {% else %}
                         <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold{# fr-fi-information-fill fr-icon--sm #} fr-pr-3v">&nbsp;
                             Signalement par l'occupant</small>
-                    {% endif %}
+                    {% endif %}                    
+                    {% if isSignalementNDE %}
+                         <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold fr-pr-3v">&nbsp;
+                            Non décence énergétique</small>
+                    {% endif %}                               
                     <text><strong>Déposé le:</strong> {{ signalement.createdAt|format_datetime(locale='fr') }}</text>
                 </div>
                 <div class="fr-col-12 fr-col-md-6 fr-text--right">
@@ -398,6 +405,7 @@
                             <strong>{{ situation|capitalize }}</strong>
                             <ul class="fr-list--icon-img fr-collapse" id="situation-collapse-{{ loop.index }}">
                                 {% for critere,criticite in criteres %}
+                                    {# TODO à revoir avec le nouvel algo de criticité (les scores ne sont plus forcément 1, 2, 3, et le isDanger est au niveau de la criticité) #}
                                     {% if criticite.score is same as(1) %}
                                         {% set icon = 'moyen' %}
                                     {% elseif criticite.score is same as(2) %}
@@ -428,6 +436,67 @@
                 </ul>
             </div>
         </div>
+        {% if isSignalementNDE and (is_granted('ROLE_ADMIN_TERRITORY') or 'Non décence énergétique' in app.user.partner.competence)  %}
+        <section class="fr-accordion">
+            <h3 class="fr-accordion__title ">
+                <button class="fr-accordion__btn fr-btn--icon-left fr-fi-chat-quote-fill fr-icon--sm fr-text-label--blue-france" aria-expanded="true" aria-controls="accordion-nde">Non décence énergétique</button>
+            </h3>
+            <div class="fr-collapse" id="accordion-nde">
+                <div class="fr-grid-row">
+                    <div class="fr-col-12 fr-col-md-5">
+                    <strong>Consommation d'énergie :</strong> <span class="fr-badge fr-badge--info fr-badge--sm">{{ signalementQualificationNDE.details.consommation_energie }} kWh/m²/an</span>
+                    </div>
+                    <div class="fr-col-12 fr-col-md-5">                    
+                        {% set classe = '' %}
+                        {% if signalementQualificationNDE.status.name == 'NDE_CHECK' %}
+                            {% set classe = 'fr-badge fr-badge--info fr-badge--sm' %}
+                        {% elseif signalementQualificationNDE.status.name == 'NDE_OK' %}
+                            {% set classe = 'fr-badge fr-badge--success fr-badge--sm' %}
+                        {% elseif signalementQualificationNDE.status.name == 'NDE_AVEREE' %}
+                            {% set classe = 'fr-badge fr-badge--error fr-badge--sm' %}
+                        {% endif %}
+                    <strong>Analyse :</strong> <span class="{{ classe }}">{{ signalementQualificationNDE.status.value }}</span>
+                    </div>
+                    
+                    <div class="fr-col-12 fr-col-md-2 fr-text--right">
+                        <button class="fr-btn fr-btn--secondary fr-fi-edit-line fr-btn--icon-left" data-fr-opened="false"
+                                aria-controls="fr-modal-edit-nde">
+                            Modifier
+                        </button>
+                    </div>
+                </div>
+                <div class="fr-grid-row">
+                    <strong>Désordre(s) concerné(s) :</strong> 
+                    <ul class="fr-list">
+                        {% for criticite in signalementQualificationNDECriticite %}
+                            <li> {{ criticite.critere.label}} - Etat {{criticite.scoreLabel}} : {{criticite.label}}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="fr-grid-row">
+                    <div class="fr-col-12 fr-col-md-6">
+                    <strong>Entrée dans le logement :</strong> {{ signalement.dateEntree|date('d/m/Y') }}
+                    </div>
+                    <div class="fr-col-12 fr-col-md-6">
+                    <strong>DPE :</strong> {{ signalementQualificationNDE.details.DPE ? 'Oui' : 'Non' }} 
+                    </div>
+                </div>
+                <div class="fr-grid-row">
+                    <div class="fr-col-12 fr-col-md-6">
+                    <strong>Dernier bail :</strong> {{ signalementQualificationNDE.dernierBailAt|date('d/m/Y') }}
+                    </div>
+                    <div class="fr-col-12 fr-col-md-6">
+                    <strong>Date dernier DPE :</strong> {{ signalementQualificationNDE.details.date_dernier_dpe|date('d/m/Y') }} 
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        {# </div> #}
+
+        {% endif %}
+
         <hr>
         <div class="fr-grid-row">
             <div class="fr-col-12 fr-col-md-6">

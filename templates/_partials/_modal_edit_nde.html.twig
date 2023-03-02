@@ -1,0 +1,153 @@
+<dialog aria-labelledby="fr-modal-edit-nde-title" id="fr-modal-edit-nde" class="fr-modal" role="dialog">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-10 fr-col-lg-10">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                            <h1 id="fr-modal-edit-nde-title" class="fr-modal__title">
+                                Non décence énergétique
+                            </h1>
+                            <button class="fr-link--close fr-link" aria-controls="fr-modal-edit-nde">Fermer</button>
+                     </div>
+                    <div class="fr-modal__content">
+                       <p class="fr-grid-row fr-grid-row--gutters fr-alert fr-alert--info fr-alert--sm">Valider les informations pour savoir si le logement dépasse le seuil de non décence énergétique ou non.</p>
+                        <div class="fr-grid-row fr-grid-row--center fr-grid-row--middle fr-h-100 fr-hidden fr-mt-5w"
+                             id="signalement-edit-nde-loader-row">
+                            <div class="fr-col-12 fr-text--center">
+                                <div class="lds-histologe">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
+                        </div>
+                        </br>
+                        </br>
+                        <form method="POST" name="signalement-edit-nde" id="signalement-edit-nde-form">
+                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle"
+                                id="signalement-edit-nde-form-row">
+                                <div class="fr-col-6">
+                                    <fieldset class="fr-fieldset fr-fieldset--inline">
+                                        <legend class="fr-fieldset__legend fr-text--regular" id='signalement-edit-nde-date-entree-legend'>
+                                            Entrée dans le logement
+                                        </legend>
+                                        <div class="fr-fieldset__content">
+                                            <div class="fr-radio-group">
+                                                <input type="radio" id="signalement-edit-nde-date-entree-before" name="signalement-edit-nde-date-entree" value="before" {% if signalement.dateEntree|date('Y')<2023 %}checked{% endif %}>
+                                                <label class="fr-label" for="signalement-edit-nde-date-entree-before">Avant 2023
+                                                </label>
+                                            </div>
+                                            <div class="fr-radio-group">
+                                                <input type="radio" id="signalement-edit-nde-date-entree-after" name="signalement-edit-nde-date-entree" value="after" {% if signalement.dateEntree|date('Y')>=2023 %}checked{% endif %}>
+                                                <label class="fr-label" for="signalement-edit-nde-date-entree-after">A partir de 2023
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                                <div class="fr-col-6">
+                                    <fieldset class="fr-fieldset fr-fieldset--inline">
+                                        <legend class="fr-fieldset__legend fr-text--regular" id='signalement-edit-nde-dpe-legend'>
+                                            DPE Disponible ?
+                                        </legend>
+                                        <div class="fr-fieldset__content">
+                                            <div class="fr-radio-group">
+                                                <input type="radio" id="signalement-edit-nde-dpe-1" name="signalement-edit-nde-dpe" value='1' {% if signalementQualificationNDE.details.DPE == 1 %}checked{% endif %}>
+                                                <label class="fr-label" for="signalement-edit-nde-dpe-1">Oui
+                                                </label>
+                                            </div>
+                                            <div class="fr-radio-group">
+                                                <input type="radio" id="signalement-edit-nde-dpe-0" name="signalement-edit-nde-dpe" value='0' {% if signalementQualificationNDE.details.DPE == 0 %}checked{% endif %}>
+                                                <label class="fr-label" for="signalement-edit-nde-dpe-0">Non
+                                                </label>
+                                            </div>
+                                            <div class="fr-radio-group">
+                                                <input type="radio" id="signalement-edit-nde-dpe-2" name="signalement-edit-nde-dpe" value='null' {% if signalementQualificationNDE.details.DPE is null %}checked{% endif %}>
+                                                <label class="fr-label" for="signalement-edit-nde-dpe-2">Ne sais pas
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle"
+                                id="signalement-edit-nde-form-row">
+                                <div class="fr-col-6">
+                                    <div class="fr-input-group">
+                                        <label class="fr-label" for="signalement-edit-nde-dernier-bail">
+                                            Date du dernier bail
+                                        </label>
+                                        <div class="fr-input-group">
+                                            <input class="fr-input fr-col-10" type="date" id="signalement-edit-nde-dernier-bail" name="signalement-edit-nde-dernier-bail" value="{{ signalementQualificationNDE.dernierBailAt|date('Y-m-d') }}">
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="fr-col-6">
+                                    <div class="fr-input-group">
+                                        <label class="fr-label" for="signalement-edit-nde-dpe-date">
+                                            Date du dernier DPE
+                                        </label>
+                                        <div class="fr-input-group">
+                                            <input class="fr-input fr-col-10" type="date" id="signalement-edit-nde-dpe-date" name="signalement-edit-nde-dpe-date" value="{{ signalementQualificationNDE.details.date_dernier_dpe|date('Y-m-d') }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle"
+                                id="signalement-edit-nde-form-row">
+                                {# Si date de DPE à partir du 01/01/2023 -> On affiche un champ unique kWh/m²/an sur toute la largeur #}
+                                {% if signalementQualificationNDE.details.date_dernier_dpe|date('Y') >= '2023' %}
+                                    <div class="fr-col-12">
+                                        <div class="fr-input-group">
+                                            <label class="fr-label" for="signalement-edit-nde-conso-energie">
+                                                Consommation énergétique
+                                            </label>
+                                            <input class="fr-input fr-col-10" style="display: inline;" pattern="[0-9]*" inputmode="numeric" type="number" id="signalement-edit-nde-conso-energie" name="signalement-edit-nde-conso-energie" value="{{ signalementQualificationNDE.details.consommation_energie }}"> kWh/m²/an
+                                        </div>
+                                    </div>
+
+                                {% else %}
+                                    <div class="fr-col-6">
+                                        <div class="fr-input-group">
+                                            <label class="fr-label" for="signalement-edit-nde-conso-energie">
+                                                Consommation énergétique
+                                            </label>
+                                            <input class="fr-input fr-col-10" style="display: inline;" pattern="[0-9]*" inputmode="numeric" type="number" id="signalement-edit-nde-conso-energie" name="signalement-edit-nde-conso-energie" value="{{ signalementQualificationNDE.details.consommation_energie }}"> kWh/an
+                                        </div>
+                                    </div>
+                                    <div class="fr-col-6">
+                                        <div class="fr-input-group">
+                                            <label class="fr-label" for="signalement-edit-nde-superficie">
+                                                Superficie du logement
+                                            </label>
+                                            <input class="fr-input fr-col-10" style="display: inline;" pattern="[0-9]*" type="number" id="signalement-edit-nde-superficie" name="signalement-edit-nde-superficie" value="{{signalement.superficie}}"> m²
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>                            
+                            <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_nde_'~signalement.id) }}">
+                        </form>
+                    </div>
+                    <div class="fr-modal__footer">
+                        <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                            <li>
+                                <button class="fr-btn fr-fi-checkbox-line" type="submit"
+                                        form="signalement-edit-nde-form" id="signalement-edit-nde-form-submit"
+                                        formaction="{{ path('back_signalement_qualification_editer',{uuid:signalement.uuid, signalement_qualification:signalementQualificationNDE.id}) }}">
+                                    Valider
+                                </button>
+                            </li>
+                            <li>
+                                <button class="fr-btn fr-fi-checkbox-line fr-btn--secondary"
+                                        aria-controls="fr-modal-edit-nde">
+                                    Annuler
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>

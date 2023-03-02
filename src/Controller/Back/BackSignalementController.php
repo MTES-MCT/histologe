@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Critere;
 use App\Entity\Criticite;
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
 use App\Entity\Situation;
 use App\Entity\Suivi;
@@ -15,6 +16,7 @@ use App\Form\ClotureType;
 use App\Form\SignalementType;
 use App\Manager\SignalementManager;
 use App\Repository\CritereRepository;
+use App\Repository\CriticiteRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
@@ -40,7 +42,8 @@ class BackSignalementController extends AbstractController
         SignalementManager $signalementManager,
         EventDispatcherInterface $eventDispatcher,
         ParameterBagInterface $parameterBag,
-        SignalementQualificationRepository $signalementQualificationRepository
+        SignalementQualificationRepository $signalementQualificationRepository,
+        CriticiteRepository $criticiteRepository
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
         if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
@@ -114,10 +117,14 @@ class BackSignalementController extends AbstractController
 
         $experimentationTerritories = $parameterBag->get('experimentation_territory');
         $isExperimentationTerritory = \array_key_exists($signalement->getTerritory()->getZip(), $experimentationTerritories);
-        $signalementQualification = $signalementQualificationRepository->findOneBy(['signalement' => $signalement]);
-        $isSignalementNonDecence = Qualification::NON_DECENCE_ENERGETIQUE == $signalementQualification?->getQualification();
 
-        $partners = $signalementManager->findAllPartners($signalement, $isExperimentationTerritory && $isSignalementNonDecence);
+        $signalementQualificationNDE = $signalementQualificationRepository->findOneBy([
+            'signalement' => $signalement,
+            'qualification' => Qualification::NON_DECENCE_ENERGETIQUE, ]);
+        $isSignalementNDEActif = $signalementQualificationNDE && QualificationStatus::ARCHIVED != $signalementQualificationNDE?->getStatus();
+        $signalementQualificationNDECriticites = $signalementQualificationNDE ? $criticiteRepository->findBy(['id' => $signalementQualificationNDE->getCriticites()]) : null;
+
+        $partners = $signalementManager->findAllPartners($signalement, $isExperimentationTerritory && $isSignalementNDEActif);
 
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
@@ -135,6 +142,9 @@ class BackSignalementController extends AbstractController
             'clotureForm' => $clotureForm->createView(),
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
             'isExperimentationTerritory' => $isExperimentationTerritory,
+            'isSignalementNDE' => $isSignalementNDEActif,
+            'signalementQualificationNDE' => $signalementQualificationNDE,
+            'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
         ]);
     }
 

@@ -4,6 +4,7 @@ namespace App\DataFixtures\Loader;
 
 use App\Entity\Criticite;
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Entity\User;
@@ -148,9 +149,19 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                         ? new \DateTimeImmutable($row['date_entree'])
                         : new \DateTimeImmutable()
                 )
-                ->setDesordres($signalement->getCriticites()->map(function (Criticite $criticite) {
+                ->setCriticites($signalement->getCriticites()->map(function (Criticite $criticite) {
                     return $criticite->getId();
                 })->toArray());
+                if ('Non décence énergétique' == $qualificationLabel) {
+                    $qualificationDetails = [];
+                    $qualificationDetails['consommation_energie'] = $faker->numberBetween(450, 700);
+                    $qualificationDetails['DPE'] = 1;
+                    $qualificationDetails['date_dernier_dpe'] = $faker->dateTimeThisYear()->format('Y-m-d');
+                    $signalementQualification
+                    ->setStatus(QualificationStatus::NDE_AVEREE)
+                    ->setDetails($qualificationDetails);
+                }
+
                 $manager->persist($signalementQualification);
 
                 $signalement->addSignalementQualification($signalementQualification);
