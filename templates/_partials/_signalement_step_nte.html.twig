@@ -171,7 +171,7 @@
             </div>
         </dialog>
 
-        <fieldset class="fr-fieldset fr-fieldset--inline fr-my-3w fr-hidden display-if-dpe-before-2023">
+        <fieldset class="fr-fieldset fr-fieldset--inline fr-mt-3w fr-hidden display-if-dpe-before-2023">
             <legend class="fr-fieldset__legend fr-text--regular">
                 <label class="fr-label required">Quelle est la consommation en énergie finale indiquée sur votre DPE ?</label>
             </legend>
@@ -192,11 +192,34 @@
             </p>
         </fieldset>
 
-        <p class="fr-hidden display-if-conso-complete">
+        <p class="fr-hidden display-if-conso-complete fr-mt-3w">
             La consommation d'énergie finale de votre logement est de <span></span> kWh/m²/an.
         </p>
 
-        <div class="fr-grid-row fr-hidden display-if-finished">
+        <p class="fr-hidden display-if-bail-before-2023 fr-mt-3w">
+            Votre logement n'est pas concerné par les changements de législation concernant la consommation énergétique.
+            Cliquez sur le bouton "Continuer" pour compléter votre signalement sur Histologe !
+        </p>
+
+        <p class="fr-hidden display-if-missing-info fr-mt-3w">
+            Il nous manque des informations pour déterminer la consommation énergétique de votre logement !
+            Ces informations pourront vous être demandées plus tard.
+            <br>
+            Cliquez sur le bouton "Continuer" pour compléter votre signalement et le déposer sur Histologe.
+        </p>
+
+        <p class="fr-hidden display-if-not-nde fr-mt-3w">
+            D'après les informations renseignées, votre logement n'est pas concerné par la non décence énergétique.
+            Cliquez sur le bouton "Continuer" pour compléter votre signalement et le déposer sur Histologe.
+        </p>
+
+        <p class="fr-hidden display-if-nde fr-mt-3w">
+            D'après les informations renseignées, votre logement est en situation de non décence énergétique.
+            Vous allez bénéficier d'un accompagnement spécifique sur les problèmes de consommation énergétique dans votre logement.
+            Cliquez sur le bouton "Continuer" pour compléter votre signalement et le déposer sur Histologe !
+        </p>
+
+        <div class="fr-grid-row fr-hidden display-if-finished fr-mt-3w">
             <div class="fr-col-12 fr-text--center">
                 <button class="fr-btn fr-fi-arrow-right-line fr-btn--icon-right">Continuer</button>
             </div>
