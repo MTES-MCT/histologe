@@ -118,7 +118,6 @@ class FrontSignalementController extends AbstractController
             $signalement = new Signalement();
             $files_array = [];
 
-            // TODO : remplacer par DTO
             $dataDateBail = null;
             $dataHasDPE = null;
             $dataDateDPE = null;
