@@ -47,7 +47,7 @@
                     <label for="signalement_dateBail_1">Avant 2023</label>
                 </div>
                 <div class="fr-radio-group">
-                    <input type="radio" id="signalement_dateBail_2" name="signalement[dateBail]" value="">
+                    <input type="radio" id="signalement_dateBail_2" name="signalement[dateBail]" value="Je ne sais pas">
                     <label for="signalement_dateBail_2">Je ne sais pas</label>
                 </div>
             </div>
@@ -130,11 +130,11 @@
                 <p><a href="#" data-fr-opened="false" aria-controls="fr-modal-dpe-2023">Comment trouver l'information sur mon DPE ?</a></p>
             </div>
             <div class="fr-fieldset__content">
-                <label class="fr-label" for="conso-size-year">Nombre de kWh/m²/an</label>
-                <input class="fr-input" type="text" name="conso-size-year">
+                <label class="fr-label" for="signalement[consoSizeYear]">Nombre de kWh/m²/an</label>
+                <input class="fr-input" type="text" name="signalement[consoSizeYear]">
                 <button class="fr-btn fr-btn--secondary calculate-conso fr-mt-3w" type="button">OK</button>
             </div>
-            <p class="fr-error-conso-size-year fr-hidden fr-mt-3w">
+            <p class="fr-error-consoSizeYear fr-hidden fr-mt-3w">
                 Veuillez préciser votre consommation énergétique avec un nombre entier
             </p>
         </fieldset>
@@ -179,15 +179,15 @@
                 <p><a href="#" data-fr-opened="false" aria-controls="fr-modal-dpe-before-2023">Comment trouver l'information sur mon DPE ?</a></p>
             </div>
             <div class="fr-fieldset__content">
-                <label class="fr-label" for="conso-size">Nombre de m²</label>
-                <input class="fr-input" type="text" name="conso-size">
+                <label class="fr-label" for="signalement[consoSize]">Nombre de m²</label>
+                <input class="fr-input" type="text" name="signalement[consoSize]">
 
-                <label class="fr-label fr-mt-3w" for="conso-year">Nombre de kWh/an</label>
-                <input class="fr-input" type="text" name="conso-year">
+                <label class="fr-label fr-mt-3w" for="signalement[consoYear]">Nombre de kWh/an</label>
+                <input class="fr-input" type="text" name="signalement[consoYear]">
 
                 <button class="fr-btn fr-btn--secondary calculate-conso fr-mt-3w" type="button">OK</button>
             </div>
-            <p class="fr-error-conso-size-plus-year fr-hidden fr-mt-3w">
+            <p class="fr-error-consoSizePlusYear fr-hidden fr-mt-3w">
                 Veuillez préciser votre consommation énergétique avec un nombre entier
             </p>
         </fieldset>
