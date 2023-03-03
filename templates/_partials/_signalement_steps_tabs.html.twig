@@ -385,7 +385,7 @@
                                                                name="signalement[situation][{{ situation.id }}][critere][{{ critere.id }}][criticite]"
                                                                value="{{ criticite.id }}"
                                                                class="toggle-criticite-smiley"
-                                                               {% if "Non décence énergétique" in criticite.qualification %}data-nte="1"{% endif %}
+                                                               {% if "Non décence énergétique" in criticite.qualification %}data-nde="1"{% endif %}
                                                                {% if criticite in signalement.criticites %}checked{% endif %}>
                                                         <label class="fr-label"
                                                                for="signalement-critere-{{ critere.id }}-criticite-{{ criticite.id }}"><strong>{{ etats[criticite.score-1] }}</strong>
@@ -749,6 +749,9 @@
                         <li class="fr-hidden display-if-missing-info">Bail : à renseigner</li>
                         <li class="fr-hidden display-if-missing-info">Consommation : non calculée</li>
 
+                        <li class="fr-hidden display-if-nde-no-dpe">Situation : non décence énergétique</li>
+                        <li class="fr-hidden display-if-nde-no-dpe">DPE : Non</li>
+                        
                         <li class="fr-hidden display-if-not-nde">Situation : décence énergétique OK</li>
                         <li class="fr-hidden display-if-nde">Situation : non décence énergétique</li>
                         <li class="fr-hidden display-if-conso">

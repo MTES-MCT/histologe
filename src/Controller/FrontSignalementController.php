@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Critere;
 use App\Entity\Criticite;
+use App\Entity\Enum\Qualification;
 use App\Entity\Signalement;
+use App\Entity\SignalementQualification;
 use App\Entity\Situation;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -21,6 +23,7 @@ use App\Service\NotificationService;
 use App\Service\Signalement\CriticiteCalculatorService;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\ReferenceGenerator;
+use App\Service\Signalement\SignalementQualificationService;
 use App\Service\UploadHandlerService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -115,6 +118,15 @@ class FrontSignalementController extends AbstractController
             $signalement = new Signalement();
             $files_array = [];
 
+            // TODO : remplacer par DTO
+            $dataDateBail = null;
+            $dataHasDPE = null;
+            $dataDateDPE = null;
+            $dataConsoSizeYear = null;
+            $dataConsoSize = null;
+            $dataConsoYear = null;
+            $listNDECriticites = [];
+
             if (isset($data['files'])) {
                 $dataFiles = $data['files'];
                 foreach ($dataFiles as $key => $files) {
@@ -143,6 +155,9 @@ class FrontSignalementController extends AbstractController
                                     $signalement->addCritere($critere);
                                     $criticite = $em->getRepository(Criticite::class)->find($data[$key][$idSituation]['critere'][$idCritere]['criticite']);
                                     $signalement->addCriticite($criticite);
+                                    if (\in_array('Non décence énergétique', $criticite->getQualification())) {
+                                        $listNDECriticites[] = $criticite->getId();
+                                    }
                                 }
                             }
                         }
@@ -155,6 +170,25 @@ class FrontSignalementController extends AbstractController
 
                     case 'geoloc':
                         $signalement->setGeoloc(['lat' => $data[$key]['lat'], 'lng' => $data[$key]['lng']]);
+                        break;
+
+                    case 'dateBail':
+                        $dataDateBail = $value;
+                        break;
+                    case 'hasDPE':
+                        $dataHasDPE = $value;
+                        break;
+                    case 'dateDPE':
+                        $dataDateDPE = $value;
+                        break;
+                    case 'consoSizeYear':
+                        $dataConsoSizeYear = $value;
+                        break;
+                    case 'consoSize':
+                        $dataConsoSize = $value;
+                        break;
+                    case 'consoYear':
+                        $dataConsoYear = $value;
                         break;
 
                     default:
@@ -195,6 +229,53 @@ class FrontSignalementController extends AbstractController
             $signalement->setScoreCreation($score->calculate());
             $signalement->setNewScoreCreation($score->calculateNewCriticite());
             $signalement->setCodeSuivi(md5(uniqid()));
+
+            // Non-décence énergétique
+            // Create a SignalementQualification if:
+            // - Territory in experimentation : $isExperimentationTerritory
+            // - Criticité is NDE : $hasNDECriticite
+            // - dateEntree >= 2023 or dataDateBail >= 2023 or dataDateBail "Je ne sais pas"
+            $experimentationTerritories = $this->getParameter('experimentation_territory');
+            $isExperimentationTerritory = \array_key_exists($signalement->getTerritory()->getZip(), $experimentationTerritories);
+            if ($isExperimentationTerritory && \count($listNDECriticites) > 0) {
+                $isDateBail2023 = $signalement->getDateEntree()->format('Y') >= 2023 || '2023-01-02' === $dataDateBail || 'Je ne sais pas' === $dataDateBail;
+                if ($isDateBail2023) {
+                    $signalementQualification = new SignalementQualification();
+                    $signalementQualification->setQualification(Qualification::NON_DECENCE_ENERGETIQUE);
+
+                    $qualificationDetails = [
+                        'consommation_energie' => null,
+                        'DPE' => null,
+                        'date_dernier_dpe' => null,
+                    ];
+
+                    if ('Je ne sais pas' !== $dataDateBail) {
+                        if ($signalement->getDateEntree()->format('Y') >= 2023) {
+                            $signalementQualification->setDernierBailAt($signalement->getDateEntree());
+                        } elseif (!empty($dataDateBail)) {
+                            $signalementQualification->setDernierBailAt(new DateTimeImmutable($dataDateBail));
+                        }
+                        if (empty($dataConsoSizeYear) && !empty($dataConsoYear) && !empty($dataConsoSize)) {
+                            $dataConsoSizeYear = round($dataConsoYear / $dataConsoSize, 2);
+                        }
+
+                        $dataHasDPE = ('' === $dataHasDPE) ? null : $dataHasDPE;
+                        // TODO : remplacer par DTO Hélène
+                        $qualificationDetails = [
+                            'consommation_energie' => $dataConsoSizeYear,
+                            'DPE' => $dataHasDPE,
+                            'date_dernier_dpe' => $dataDateDPE,
+                        ];
+                    }
+                    $signalementQualification->setDetails($qualificationDetails);
+
+                    $qualificationService = new SignalementQualificationService($signalement, $signalementQualification);
+                    $signalementQualification->setStatus($qualificationService->updateNDEStatus());
+                    $signalementQualification->setCriticites($listNDECriticites);
+                    $signalement->addSignalementQualification($signalementQualification);
+                    $em->persist($signalementQualification);
+                }
+            }
 
             $em->persist($signalement);
             $em->flush();
