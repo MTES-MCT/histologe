@@ -562,9 +562,11 @@ forms.forEach((form) => {
                             nextTabBtn = document.querySelector('#signalement-step-3b-btn');
                             nextTabBtn.classList.remove('fr-hidden');
                             document.querySelector('#signalement-step-4-btn > span').textContent = '5';
+                            document.querySelector('#signalement-step-last-btn > span').textContent = '6';
                         } else {
                             nextTabBtn = document.querySelector('#signalement-step-4-btn');
                             document.querySelector('#signalement-step-4-btn > span').textContent = '4';
+                            document.querySelector('#signalement-step-last-btn > span').textContent = '5';
                         }
                     }
 
@@ -607,61 +609,7 @@ forms.forEach((form) => {
                             document.querySelector('#recap-signalement_photos').innerHTML = nbPhotos + ' photo(s) transmise(s)';
 
                             // Reinit display for non-décence
-                            document.querySelector('#result-nde').classList.add('fr-hidden');
-                            document.querySelectorAll('#result-nde .display-if-missing-info').forEach(el => {
-                                el.classList.add('fr-hidden')
-                            })
-                            document.querySelectorAll('#result-nde .display-if-dpe-before-2023').forEach(el => {
-                                el.classList.add('fr-hidden')
-                            })
-                            document.querySelectorAll('#result-nde .display-if-conso').forEach(el => {
-                                el.classList.add('fr-hidden')
-                            })
-                            document.querySelectorAll('#result-nde .display-if-not-nde').forEach(el => {
-                                el.classList.add('fr-hidden')
-                            })
-                            document.querySelectorAll('#result-nde .display-if-nde').forEach(el => {
-                                el.classList.add('fr-hidden')
-                            })
-                            document.querySelectorAll('#result-nde .display-if-nde-no-dpe').forEach(el => {
-                                el.classList.add('fr-hidden')
-                            })
-                            // Results for non-décence
-                            if (isZipForNonConformiteEnergetique && hasCritereForNonConformiteEnergetique) {
-                                document.querySelector('#result-nde').classList.remove('fr-hidden');
-                                if (isNDEMissingInfo) {
-                                    document.querySelectorAll('#result-nde .display-if-missing-info').forEach(el => {
-                                        el.classList.remove('fr-hidden')
-                                    })
-                                } else if (!hasDPE) {
-                                    document.querySelectorAll('#result-nde .display-if-nde-no-dpe').forEach(el => {
-                                        el.classList.remove('fr-hidden')
-                                    })
-                                   
-                                } else if (isNDEBail2023 && totalNDEConso > -1) {
-                                    if (isNDEDPEBefore2023) {
-                                        document.querySelectorAll('#result-nde .display-if-dpe-before-2023').forEach(el => {
-                                            el.classList.remove('fr-hidden')
-                                        })
-                                    }
-                                    document.querySelectorAll('#result-nde .display-if-conso').forEach(el => {
-                                        el.classList.remove('fr-hidden')
-                                    })
-                                    document.querySelector('#result-nde .conso-amount').textContent = totalNDEConso;
-                                    if (totalNDEConso > 450) {
-                                        document.querySelectorAll('#result-nde .display-if-nde').forEach(el => {
-                                            el.classList.remove('fr-hidden')
-                                        })
-                                    } else {
-                                        document.querySelectorAll('#result-nde .display-if-not-nde').forEach(el => {
-                                            el.classList.remove('fr-hidden')
-                                        })
-                                    }
-                                } else {
-                                    document.querySelector('#result-nde').classList.add('fr-hidden');
-                                }
-                                
-                            }
+                            updateResultNDE();
                         }
                         nextTabBtn.disabled = false;
                         nextTabBtn.click();
@@ -766,6 +714,9 @@ document?.querySelector('#signalement-step-2-panel')?.addEventListener('dsfr.dis
             document.querySelector('#' + exp.id).setAttribute('aria-expanded', "true"), localStorage.removeItem(exp.id)
         }
     })
+}))
+document?.querySelector('#signalement-step-last-panel')?.addEventListener('dsfr.disclose', (ev => {
+    updateResultNDE();
 }))
 document?.querySelectorAll(".fr-pagination__link").forEach((e => {
     let t, r, a, n = document.querySelector(".fr-pagination__link--prev"),
@@ -1075,4 +1026,62 @@ const refetchAddress = (form) => {
             form.querySelector('#signalement-geoloc-lng-occupant').value = feature.geometry.coordinates[1];
         })
     })
+}
+
+const updateResultNDE = () => {
+    document.querySelector('#result-nde').classList.add('fr-hidden');
+    document.querySelectorAll('#result-nde .display-if-missing-info').forEach(el => {
+        el.classList.add('fr-hidden')
+    })
+    document.querySelectorAll('#result-nde .display-if-dpe-before-2023').forEach(el => {
+        el.classList.add('fr-hidden')
+    })
+    document.querySelectorAll('#result-nde .display-if-conso').forEach(el => {
+        el.classList.add('fr-hidden')
+    })
+    document.querySelectorAll('#result-nde .display-if-not-nde').forEach(el => {
+        el.classList.add('fr-hidden')
+    })
+    document.querySelectorAll('#result-nde .display-if-nde').forEach(el => {
+        el.classList.add('fr-hidden')
+    })
+    document.querySelectorAll('#result-nde .display-if-nde-no-dpe').forEach(el => {
+        el.classList.add('fr-hidden')
+    })
+    // Results for non-décence
+    if (isZipForNonConformiteEnergetique && hasCritereForNonConformiteEnergetique) {
+        document.querySelector('#result-nde').classList.remove('fr-hidden');
+        if (isNDEMissingInfo) {
+            document.querySelectorAll('#result-nde .display-if-missing-info').forEach(el => {
+                el.classList.remove('fr-hidden')
+            })
+        } else if (!hasDPE) {
+            document.querySelectorAll('#result-nde .display-if-nde-no-dpe').forEach(el => {
+                el.classList.remove('fr-hidden')
+            })
+           
+        } else if (isNDEBail2023 && totalNDEConso > -1) {
+            if (isNDEDPEBefore2023) {
+                document.querySelectorAll('#result-nde .display-if-dpe-before-2023').forEach(el => {
+                    el.classList.remove('fr-hidden')
+                })
+            }
+            document.querySelectorAll('#result-nde .display-if-conso').forEach(el => {
+                el.classList.remove('fr-hidden')
+            })
+            document.querySelector('#result-nde .conso-amount').textContent = totalNDEConso;
+            if (totalNDEConso > 450) {
+                document.querySelectorAll('#result-nde .display-if-nde').forEach(el => {
+                    el.classList.remove('fr-hidden')
+                })
+            } else {
+                document.querySelectorAll('#result-nde .display-if-not-nde').forEach(el => {
+                    el.classList.remove('fr-hidden')
+                })
+            }
+        } else {
+            document.querySelector('#result-nde').classList.add('fr-hidden');
+        }
+        
+    }
 }
