@@ -176,7 +176,6 @@ export default defineComponent({
       for (const i in requestResponse.data) {
         const responseItem = requestResponse.data[i]
         const item = [
-          responseItem.zip,
           responseItem.nom,
           responseItem.waiting,
           responseItem.refused
