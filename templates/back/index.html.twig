@@ -54,8 +54,6 @@
                         {{ signalements.total }} signalement(s)
                     </div>
                     <div class="fr-col fr-text--right">
-                        <a href="{{ path('back_index') }}" class="fr-link fr-link--icon-left fr-fi-close-circle-line">Réinitialiser
-                            les résultats</a>
                         <a href="{{ path('back_index') }}?export={{ signalements.total }}&{{ app.request.content|replace({'%5B':'['})|replace({'%5D':']'}) }}&_token={{ csrf_token('export_token_'~app.user.id) }}"
                            class="fr-link fr-link--icon-left fr-fi-download-line">Exporter
                             les résultats</a>
