@@ -31,10 +31,10 @@ class SignalementQualificationServiceTest extends KernelTestCase
         /** @var SignalementQualification $signalementQualification */
         $signalementQualification = $signalement->getSignalementQualifications()[0];
 
-        $qualificationService = new SignalementQualificationService($signalement, $signalementQualification);
-        $signalementQualification->setStatus($qualificationService->updateNDEStatus());
+        $qualificationService = new SignalementQualificationService();
+        $signalementQualification->setStatus($qualificationService->getNDEStatus($signalementQualification));
 
-        $status = $qualificationService->updateNDEStatus();
+        $status = $qualificationService->getNDEStatus($signalementQualification);
 
         $this->assertEquals(QualificationStatus::NDE_AVEREE, $status);
     }
