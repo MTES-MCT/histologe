@@ -447,7 +447,7 @@
                     <strong>Consommation d'énergie :</strong> <span class="fr-badge fr-badge--info fr-badge--sm">{{ signalementQualificationNDE.details.consommation_energie }} kWh/m²/an</span>
                     </div>
                     <div class="fr-col-12 fr-col-md-5">                    
-                        {% set classe = '' %}
+                        {# {% set classe = '' %}
                         {% if signalementQualificationNDE.status.name == 'NDE_CHECK' %}
                             {% set classe = 'fr-badge fr-badge--info fr-badge--sm' %}
                         {% elseif signalementQualificationNDE.status.name == 'NDE_OK' %}
@@ -455,7 +455,8 @@
                         {% elseif signalementQualificationNDE.status.name == 'NDE_AVEREE' %}
                             {% set classe = 'fr-badge fr-badge--error fr-badge--sm' %}
                         {% endif %}
-                    <strong>Analyse :</strong> <span class="{{ classe }}">{{ signalementQualificationNDE.status.value }}</span>
+                    <strong>Analyse :</strong> <span class="{{ classe }}">{{ signalementQualificationNDE.status.value }}</span> #}
+                    <strong>Analyse :</strong> <span class="{{ signalementQualificationNDE.status|status_to_css }}">{{ signalementQualificationNDE.status.value }}</span>
                     </div>
                     
                     <div class="fr-col-12 fr-col-md-2 fr-text--right">
