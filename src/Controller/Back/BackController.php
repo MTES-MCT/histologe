@@ -51,6 +51,7 @@ class BackController extends AbstractController
     {
         $title = 'Administration - Tableau de bord';
         $filters = $searchFilterService->setRequest($request)->setFilters()->getFilters();
+        $countActiveFilters = $searchFilterService->getCountActiveFilters();
         /** @var User $user */
         $user = $this->getUser();
         $territory = $user->getTerritory(); // If user is not admin, he can only see his territory
@@ -133,6 +134,8 @@ class BackController extends AbstractController
         return $this->render('back/index.html.twig', [
             'title' => $title,
             'filters' => $filters,
+            'countActiveFilters' => $countActiveFilters,
+            'displayRefreshAll' => true,
             'territories' => $territoryRepository->findAllList(),
             'cities' => $signalementRepository->findCities($userToFilterCities, $territory),
             'partners' => $partnerRepository->findAllList($territory),

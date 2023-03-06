@@ -19,6 +19,28 @@ class SearchFilterService
 {
     private array $filters;
     private Request $request;
+    private const REQUESTS = [
+        'searchterms',
+        'territories',
+        'statuses',
+        'cities',
+        'partners',
+        'closed_affectation',
+        'criteres',
+        'allocs',
+        'housetypes',
+        'declarants',
+        'proprios',
+        'interventions',
+        'avant1949',
+        'enfantsM6',
+        'affectations',
+        'visites',
+        'delays',
+        'scores',
+        'dates',
+        'tags',
+    ];
 
     public function __construct(
         private Security $security,
@@ -45,29 +67,14 @@ class SearchFilterService
         $request = $this->getRequest();
         /** @var User $user */
         $user = $this->security->getUser();
-        $this->filters = [
-            'searchterms' => $request->get('bo-filters-searchterms') ?? null,
-            'territories' => $request->get('bo-filters-territories') ?? null,
-            'statuses' => $request->get('bo-filters-statuses') ?? null,
-            'cities' => $request->get('bo-filters-cities') ?? null,
-            'partners' => $request->get('bo-filters-partners') ?? null,
-            'closed_affectation' => $request->get('bo-filters-closed_affectation') ?? null,
-            'criteres' => $request->get('bo-filters-criteres') ?? null,
-            'allocs' => $request->get('bo-filters-allocs') ?? null,
-            'housetypes' => $request->get('bo-filters-housetypes') ?? null,
-            'declarants' => $request->get('bo-filters-declarants') ?? null,
-            'proprios' => $request->get('bo-filters-proprios') ?? null,
-            'interventions' => $request->get('bo-filters-interventions') ?? null,
-            'avant1949' => $request->get('bo-filters-avant1949') ?? null,
-            'enfantsM6' => $request->get('bo-filters-enfantsM6') ?? null,
-            'affectations' => $request->get('bo-filters-affectations') ?? null,
-            'visites' => $request->get('bo-filters-visites') ?? null,
-            'delays' => $request->get('bo-filters-delays') ?? null,
-            'scores' => $request->get('bo-filters-scores') ?? null,
-            'dates' => $request->get('bo-filters-dates') ?? null,
-            'tags' => $request->get('bo-filters-tags') ?? null,
-            'page' => $request->get('page') ?? 1,
-        ];
+        $filters = self::REQUESTS;
+        $this->filters = [];
+        foreach ($filters as $filter) {
+            $this->filters[$filter] = $request->get('bo-filters-'.$filter) ?? null;
+        }
+
+        $this->filters['page'] = $request->get('page') ?? 1;
+
         if ($request->isMethod('GET')) {
             if ($request->query->get('statut')) {
                 $this->filters['statuses'] = [$request->query->get('statut')];
@@ -138,6 +145,36 @@ class SearchFilterService
     public function getFiltersAsArray(): array
     {
         return $this->filters;
+    }
+
+    public function getCountActiveFilters(): int
+    {
+        $buffer = 0;
+        $request = $this->getRequest();
+        $filters = self::REQUESTS;
+        foreach ($filters as $filter) {
+            if ($request->get('bo-filters-'.$filter)) {
+                switch ($filter) {
+                    case 'dates':
+                        $filterDates = $request->get('bo-filters-'.$filter);
+                        if (!empty($filterDates['on']) || !empty($filterDates['off'])) {
+                            ++$buffer;
+                        }
+                        break;
+                    case 'scores':
+                        $filterScores = $request->get('bo-filters-'.$filter);
+                        if ('0' != $filterScores['on'] || '100' != $filterScores['off']) {
+                            ++$buffer;
+                        }
+                        break;
+                    default:
+                        ++$buffer;
+                        break;
+                }
+            }
+        }
+
+        return $buffer;
     }
 
     /**

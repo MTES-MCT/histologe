@@ -9,8 +9,23 @@
                 Rechercher
             </button>&nbsp;
         </div>
-        <span data-fr-opened="false" aria-controls="bo-modal-filters"
-              class="fr-badge fr-fi-equalizer-line fr-mt-1v">Filtres avancés</span>
+        <div class="fr-grid-row fr-grid-row--center fr-mt-1v">
+            <div class="fr-col-8">
+                <button type="button" data-fr-opened="false" aria-controls="bo-modal-filters" class="fr-btn fr-btn--icon-left fr-fi-filter-line">Filtres</button>
+                {% if countActiveFilters > 0 %}
+                <span class="fr-badge fr-badge--success fr-badge--no-icon">Filtres actifs ({{countActiveFilters}})</span>
+                {% else %}
+                <span class="fr-badge fr-badge--info fr-badge--no-icon">Aucun filtre actif</span>
+                {% endif %}
+            </div>
+            <div class="fr-col-4 fr-text--right">
+                {% if displayRefreshAll %}
+                <a href="{{ path('back_index') }}" class="fr-btn fr-btn--icon-left fr-btn--secondary fr-fi-refresh-line">
+                    Afficher tous les signalements
+                </a>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <dialog aria-labelledby="fr-modal-2-title" id="bo-modal-filters" class="fr-modal" role="dialog" >
         <div class="fr-container fr-container--fluid fr-container-md">
@@ -20,7 +35,7 @@
                         <div class="fr-modal__header">
                             <h1 id="fr-modal-2-title" class="fr-modal__title">
                                 <span class="fr-fi-search-line fr-fi--sm" aria-hidden="true"></span>
-                                Filtres avancés
+                                Filtres
                             </h1>
                         </div>
                         <div class="fr-modal__content">

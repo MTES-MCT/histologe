@@ -25,6 +25,7 @@ class BackCartographieController extends AbstractController
     {
         $title = 'Cartographie';
         $filters = $this->searchFilterService->setRequest($request)->setFilters()->getFilters();
+        $countActiveFilters = $this->searchFilterService->getCountActiveFilters();
         if (!$this->isGranted('ROLE_ADMIN_TERRITORY')) {
             $user = $this->getUser();
         }
@@ -43,6 +44,8 @@ class BackCartographieController extends AbstractController
         return $this->render('back/cartographie/index.html.twig', [
             'title' => $title,
             'filters' => $filters,
+            'countActiveFilters' => $countActiveFilters,
+            'displayRefreshAll' => false,
             'territories' => $territoryRepository->findAllList(),
             'cities' => $signalementRepository->findCities($userToFilterCities, $this->getUser()->getTerritory() ?? null),
             'partners' => $partnerRepository->findAllList($this->getUser()->getTerritory() ?? null),
