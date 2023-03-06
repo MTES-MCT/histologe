@@ -104,6 +104,10 @@ services:
     App\Service\DashboardWidget\WidgetDataManagerCache:
         decorates: App\Service\DashboardWidget\WidgetDataManager
 
+    App\ValueResolver\SignalementQualificationNDEValueResolver:
+        tags:
+            - { name: controller.argument_value_resolver, priority: 150 }
+
 when@test:
     parameters:
         uploads_tmp_dir: '%kernel.project_dir%/tmp/'
