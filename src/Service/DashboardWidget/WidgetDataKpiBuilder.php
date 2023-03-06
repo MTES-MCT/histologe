@@ -72,7 +72,7 @@ class WidgetDataKpiBuilder
             : $this->signalementRepository->countSignalementByStatus($this->territory);
 
         $this->countSignalement
-            ->setClosedByAtLeastOnePartner($this->signalementRepository->countSignalementClosedByAtLeast(1, $this->territory))
+            ->setClosedByAtLeastOnePartner($this->notificationRepository->countAffectationClosedNotSeen($this->user, $this->territory))
             ->setAffected($this->affectationRepository->countAffectationByPartner($this->user->getPartner()))
             ->setClosedAllPartnersRecently($this->notificationRepository->countSignalementClosedNotSeen($this->user, $this->territory));
 
