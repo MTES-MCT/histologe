@@ -2,8 +2,10 @@
 
 namespace App\Controller\Back;
 
+use App\Dto\SignalementQualificationNDE;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
+use App\Manager\SignalementManager;
 use App\Service\Signalement\SignalementQualificationService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,7 +23,9 @@ class BackSignalementQualificationController extends AbstractController
         Request $request,
         Signalement $signalement,
         SignalementQualification $signalementQualification,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        SignalementManager $signalementManager,
+        SignalementQualificationService $signalementQualificationService
     ): RedirectResponse|JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT_NDE', $signalement);
         if ($this->isCsrfTokenValid('signalement_edit_nde_'.$signalement->getId(), $request->get('_token'))) {
@@ -32,6 +36,17 @@ class BackSignalementQualificationController extends AbstractController
             $dataConsoEnergie = $request->get('signalement-edit-nde-conso-energie');
             $dataDpe = 'null' === $request->get('signalement-edit-nde-dpe') ? null : (int) $request->get('signalement-edit-nde-dpe');
             $dataDpeDate = $request->get('signalement-edit-nde-dpe-date');
+
+            $dto = new SignalementQualificationNDE(
+                $dataDateEntree,
+                new DateTimeImmutable($dataDernierBail),
+                new DateTimeImmutable($dataDpeDate),
+                $dataSuperficie,
+                $dataConsoEnergie,
+                $dataDpe
+            );
+
+            $signalementManager->updateSignalementQualification($dto);
 
             if ('after' === $dataDateEntree && $signalement->getDateEntree()->format('Y') < '2023 ') {
                 // TODO :  voir avec Emilien les dates qu'on met en fonction des différents cas : ici date du jour ?
@@ -61,8 +76,7 @@ class BackSignalementQualificationController extends AbstractController
                 $signalementQualification->setDetails($qualificationDetails);
             }
 
-            $qualificationService = new SignalementQualificationService($signalement, $signalementQualification);
-            $signalementQualification->setStatus($qualificationService->updateNDEStatus());
+            $signalementQualification->setStatus($signalementQualificationService->getNDEStatus($signalementQualification));
 
             $entityManager->persist($signalement);
             $entityManager->persist($signalementQualification);
