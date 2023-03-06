@@ -1,8 +1,8 @@
 {% extends 'back/base_bo.html.twig' %}
 
 {% block content %}
-
-    <section class="fr-background-alt--blue-france fr-p-2v">
+    {% if not feature.dashboard_enable %}
+        <section class="fr-background-alt--blue-france fr-p-2v">
         <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
             <span class="fr-text-default--info">{{ signalements.counts.total }}</span>
             <strong class="fr-hint-text">&nbsp;SIGNALEMENTS</strong>
@@ -45,6 +45,8 @@
             </div>
         {% endif %}
     </section>
+    {% endif %}
+
     {% include '_partials/_search_filter_form.html.twig' %}
     <section class="fr-col-12 fr-table fr-table--bordered fr-background-alt--blue-france">
         <table class="fr-display-inline-table fr-display-md-block sortable fr-mb-0">

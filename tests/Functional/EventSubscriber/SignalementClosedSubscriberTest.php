@@ -29,7 +29,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
     }
 
-    public function testEventSubcription(): void
+    public function testEventSubscription(): void
     {
         $this->assertArrayHasKey(SignalementClosedEvent::NAME, SignalementClosedSubscriber::getSubscribedEvents());
     }

@@ -14,6 +14,9 @@ class Suivi
     public const TYPE_PARTNER = 3;
     public const DEFAULT_PERIOD_INACTIVITY = 30;
 
+    public const DESCRIPTION_MOTIF_CLOTURE_ALL = 'Le signalement a été cloturé pour tous';
+    public const DESCRIPTION_MOTIF_CLOTURE_PARTNER = 'Le signalement a été cloturé pour';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]

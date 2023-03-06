@@ -19,7 +19,6 @@ use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ActivityListener implements EventSubscriberInterface
@@ -86,7 +85,7 @@ class ActivityListener implements EventSubscriberInterface
                                             'code' => $entity->getSignalement()->getCodeSuivi(),
                                             'from' => $toRecipient,
                                         ],
-                                        UrlGenerator::ABSOLUTE_URL
+                                        UrlGeneratorInterface::ABSOLUTE_URL
                                     ),
                                 ],
                                 $entity->getSignalement()->getTerritory()

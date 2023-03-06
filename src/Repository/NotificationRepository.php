@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Notification;
+use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -109,5 +110,62 @@ class NotificationRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getResult(AbstractQuery::HYDRATE_SCALAR_COLUMN);
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function countSignalementClosedNotSeen(?User $user, ?Territory $territory): int
+    {
+        $qb = $this->createQueryBuilder('n');
+        $qb
+            ->select('COUNT(DISTINCT n.signalement)')
+            ->innerJoin('n.signalement', 'si')
+            ->innerJoin('n.suivi', 'su')
+            ->where('n.isSeen = :is_seen')
+            ->andWhere('n.type = :type_notification')
+            ->andWhere('n.user = :user')
+            ->andWhere('si.statut = :statut')
+            ->andWhere('su.description LIKE :description')
+            ->setParameter('is_seen', 0)
+            ->setParameter('type_notification', Notification::TYPE_SUIVI)
+            ->setParameter('statut', Signalement::STATUS_CLOSED)
+            ->setParameter('description', '%'.Suivi::DESCRIPTION_MOTIF_CLOTURE_ALL.'%')
+            ->setParameter('user', $user);
+
+        if (null !== $territory) {
+            $qb->andWhere('si.territory = :territory')->setParameter('territory', $territory);
+        }
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function countAffectationClosedNotSeen(?User $user, ?Territory $territory): int
+    {
+        $qb = $this->createQueryBuilder('n');
+        $qb
+            ->select('COUNT(DISTINCT n.signalement)')
+            ->innerJoin('n.signalement', 'si')
+            ->innerJoin('n.suivi', 'su')
+            ->where('n.isSeen = :is_seen')
+            ->andWhere('n.type = :type_notification')
+            ->andWhere('n.user = :user')
+            ->andWhere('su.description NOT LIKE :description_all AND su.description LIKE :description_partner')
+            ->setParameter('is_seen', 0)
+            ->setParameter('type_notification', Notification::TYPE_SUIVI)
+            ->setParameter('description_all', '%'.Suivi::DESCRIPTION_MOTIF_CLOTURE_ALL.'%')
+            ->setParameter('description_partner', '%'.Suivi::DESCRIPTION_MOTIF_CLOTURE_PARTNER.'%')
+            ->setParameter('user', $user);
+
+        if (null !== $territory) {
+            $qb->andWhere('si.territory = :territory')->setParameter('territory', $territory);
+        }
+
+        return $qb->getQuery()->getSingleScalarResult();
     }
 }
