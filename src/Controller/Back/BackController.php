@@ -135,6 +135,7 @@ class BackController extends AbstractController
             'title' => $title,
             'filters' => $filters,
             'countActiveFilters' => $countActiveFilters,
+            'displayRefreshAll' => true,
             'territories' => $territoryRepository->findAllList(),
             'cities' => $signalementRepository->findCities($userToFilterCities, $territory),
             'partners' => $partnerRepository->findAllList($territory),

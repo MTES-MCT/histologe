@@ -45,6 +45,7 @@ class BackCartographieController extends AbstractController
             'title' => $title,
             'filters' => $filters,
             'countActiveFilters' => $countActiveFilters,
+            'displayRefreshAll' => false,
             'territories' => $territoryRepository->findAllList(),
             'cities' => $signalementRepository->findCities($userToFilterCities, $this->getUser()->getTerritory() ?? null),
             'partners' => $partnerRepository->findAllList($this->getUser()->getTerritory() ?? null),
