@@ -7,18 +7,24 @@ use DateTimeImmutable;
 class SignalementQualificationNDE
 {
     public function __construct(
-        private ?string $dateEntree,
-        private ?DateTimeImmutable $dateDernierBail,
-        private ?DateTimeImmutable $dateDernierDPE,
-        private ?int $superficie,
-        private ?int $consommationEnergie,
-        private ?bool $dpe,
+        private ?string $type = null,
+        private ?string $dateEntree = null,
+        private ?DateTimeImmutable $dateDernierBail = null,
+        private ?DateTimeImmutable $dateDernierDPE = null,
+        private ?int $superficie = null,
+        private ?int $consommationEnergie = null,
+        private ?bool $dpe = null,
     ) {
     }
 
     public function getDateEntree(): ?string
     {
         return $this->dateEntree;
+    }
+
+    public function getSuperficie(): ?int
+    {
+        return $this->superficie;
     }
 
     public function getDateDernierBail(): ?DateTimeImmutable
@@ -31,11 +37,6 @@ class SignalementQualificationNDE
         return $this->dateDernierDPE;
     }
 
-    public function getSuperficie(): ?int
-    {
-        return $this->superficie;
-    }
-
     public function getConsommationEnergie(): ?int
     {
         return $this->consommationEnergie;
@@ -44,5 +45,14 @@ class SignalementQualificationNDE
     public function getDPE(): ?bool
     {
         return $this->dpe;
+    }
+
+    public function getDetails(): ?array
+    {
+        return [
+            'consommation_energie' => $this->consommationEnergie,
+            'DPE' => $this->dpe,
+            'date_dernier_dpe' => $this->dateDernierDPE?->format('Y-m-d'),
+        ];
     }
 }
