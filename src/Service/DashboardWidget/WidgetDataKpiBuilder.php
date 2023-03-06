@@ -5,6 +5,7 @@ namespace App\Service\DashboardWidget;
 use App\Dto\CountSignalement;
 use App\Dto\CountSuivi;
 use App\Dto\CountUser;
+use App\Entity\Partner;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -100,7 +101,7 @@ class WidgetDataKpiBuilder
         $countSignalementNoSuivi = $this->suiviRepository->countSignalementNoSuiviSince(
             Suivi::DEFAULT_PERIOD_INACTIVITY,
             $this->territory,
-            \in_array(User::ROLE_USER_PARTNER, $user->getRoles()) ? $user->getPartner() : null
+            $this->getPartnerFromUser($user)
         );
 
         $this->countSuivi = new CountSuivi(
@@ -166,5 +167,12 @@ class WidgetDataKpiBuilder
             $this->countSuivi,
             $this->countUser,
         );
+    }
+
+    private function getPartnerFromUser(User $user): ?Partner
+    {
+        return 1 === \count(array_diff([User::ROLE_USER_PARTNER, User::ROLE_ADMIN_PARTNER], $user->getRoles()))
+            ? $user->getPartner()
+            : null;
     }
 }

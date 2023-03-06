@@ -12,13 +12,13 @@ parameters:
           statut: 1
       cardNouveauxSuivis:
         label: "Nouveaux suivis"
-        roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_USER_PARTNER]
+        roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_USER_PARTNER, ROLE_ADMIN_PARTNER]
         link: 'back_index'
         params:
           nouveau_suivi: true
       cardSansSuivi:
         label: "Sans suivi"
-        roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_USER_PARTNER]
+        roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_USER_PARTNER, ROLE_ADMIN_PARTNER]
         link: 'back_index'
         params:
           sans_suivi_periode: 30
