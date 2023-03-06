@@ -154,7 +154,23 @@ class SearchFilterService
         $filters = self::REQUESTS;
         foreach ($filters as $filter) {
             if ($request->get('bo-filters-'.$filter)) {
-                ++$buffer;
+                switch ($filter) {
+                    case 'dates':
+                        $filterDates = $request->get('bo-filters-'.$filter);
+                        if (!empty($filterDates['on']) || !empty($filterDates['off'])) {
+                            ++$buffer;
+                        }
+                        break;
+                    case 'scores':
+                        $filterScores = $request->get('bo-filters-'.$filter);
+                        if ('0' != $filterScores['on'] || '100' != $filterScores['off']) {
+                            ++$buffer;
+                        }
+                        break;
+                    default:
+                        ++$buffer;
+                        break;
+                }
             }
         }
 
