@@ -320,7 +320,7 @@ class Signalement
     #[ORM\Column(type: 'boolean', nullable: true)]
     private $isImported;
 
-    #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: SignalementQualification::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: SignalementQualification::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $signalementQualifications;
 
     public function __construct()
