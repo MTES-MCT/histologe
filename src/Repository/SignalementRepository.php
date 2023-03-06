@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Dto\CountSignalement;
 use App\Dto\StatisticsFilters;
-use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -835,36 +834,5 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getOneOrNullResult();
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function countSignalementClosedByAtLeast(int $numberPartner = 1, ?Territory $territory = null): int
-    {
-        $connection = $this->getEntityManager()->getConnection();
-        $whereTerritory = $territory instanceof Territory ? ' AND s.territory_id = :territory_id ' : null;
-        $parameters = [
-            'signalement_closed' => Signalement::STATUS_CLOSED,
-            'affectation_closed' => Affectation::STATUS_CLOSED,
-            'nb_partner_closed' => $numberPartner,
-        ];
-        if (null !== $whereTerritory) {
-            $parameters['territory_id'] = $territory->getId();
-        }
-
-        $sql = 'SELECT COUNT(uuid) AS count_partner FROM (
-            SELECT s.uuid, count(s.uuid) as nb_partner_closed
-            FROM signalement s
-            INNER JOIN affectation a on a.signalement_id = s.id
-            WHERE s.statut != :signalement_closed
-            AND a.statut = :affectation_closed'
-            .$whereTerritory.
-            ' GROUP BY s.uuid
-            HAVING nb_partner_closed >= :nb_partner_closed) as count_partner_request';
-
-        $statement = $connection->prepare($sql);
-
-        return (int) $statement->executeQuery($parameters)->fetchOne();
     }
 }
