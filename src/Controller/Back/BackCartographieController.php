@@ -25,7 +25,7 @@ class BackCartographieController extends AbstractController
     {
         $title = 'Cartographie';
         $filters = $this->searchFilterService->setRequest($request)->setFilters()->getFilters();
-        $countActiveFilters = $this->searchFilterService->getCountActiveFilters();
+        $countActiveFilters = $this->searchFilterService->getCountActive();
         if (!$this->isGranted('ROLE_ADMIN_TERRITORY')) {
             $user = $this->getUser();
         }

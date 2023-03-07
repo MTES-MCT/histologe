@@ -19,6 +19,7 @@ class SearchFilterService
 {
     private array $filters;
     private Request $request;
+    private int $countActive;
     private const REQUESTS = [
         'searchterms',
         'territories',
@@ -64,6 +65,7 @@ class SearchFilterService
 
     public function setFilters(): self
     {
+        $this->countActive = 0;
         $request = $this->getRequest();
         /** @var User $user */
         $user = $this->security->getUser();
@@ -71,29 +73,54 @@ class SearchFilterService
         $this->filters = [];
         foreach ($filters as $filter) {
             $this->filters[$filter] = $request->get('bo-filters-'.$filter) ?? null;
+
+            if ($request->get('bo-filters-'.$filter)) {
+                switch ($filter) {
+                    case 'dates':
+                        $filterDates = $request->get('bo-filters-'.$filter);
+                        if (!empty($filterDates['on']) || !empty($filterDates['off'])) {
+                            ++$this->countActive;
+                        }
+                        break;
+                    case 'scores':
+                        $filterScores = $request->get('bo-filters-'.$filter);
+                        if ('0' != $filterScores['on'] || '100' != $filterScores['off']) {
+                            ++$this->countActive;
+                        }
+                        break;
+                    default:
+                        ++$this->countActive;
+                        break;
+                }
+            }
         }
 
         $this->filters['page'] = $request->get('page') ?? 1;
 
         if ($request->isMethod('GET')) {
             if ($request->query->get('statut')) {
+                ++$this->countActive;
                 $this->filters['statuses'] = [$request->query->get('statut')];
             }
 
             if ($request->query->get('partenaires')) {
+                ++$this->countActive;
                 $this->filters['partners'] = [$request->query->get('partenaires')];
             }
 
             if ($request->query->get('nouveau_suivi')) {
+                ++$this->countActive;
                 $signalementIds = $this->notificationRepository->findSignalementNewSuivi($user, $user->getTerritory());
                 $this->filters['signalement_ids'] = $signalementIds;
             }
 
             if ($this->security->isGranted('ROLE_ADMIN') && $request->query->get('territoire_id')) {
+                ++$this->countActive;
                 $this->filters['territories'] = [$request->query->get('territoire_id')];
             }
 
             if ($request->query->get('closed_affectation')) {
+                ++$this->countActive;
                 $this->filters['closed_affectation'] = [$request->query->get('closed_affectation')];
             }
         }
@@ -101,6 +128,9 @@ class SearchFilterService
         if (!empty($this->filters['delays'])
             || $request->isMethod('GET') && $request->query->get('sans_suivi_periode')
         ) {
+            if ($request->isMethod('GET') && $request->query->get('sans_suivi_periode')) {
+                ++$this->countActive;
+            }
             $period = $this->filters['delays'] ?? $request->query->get('sans_suivi_periode');
             $territory = $user->getTerritory();
             $partner = \in_array(User::ROLE_USER_PARTNER, $user->getRoles()) ? $user->getPartner() : null;
@@ -147,34 +177,9 @@ class SearchFilterService
         return $this->filters;
     }
 
-    public function getCountActiveFilters(): int
+    public function getCountActive(): int
     {
-        $buffer = 0;
-        $request = $this->getRequest();
-        $filters = self::REQUESTS;
-        foreach ($filters as $filter) {
-            if ($request->get('bo-filters-'.$filter)) {
-                switch ($filter) {
-                    case 'dates':
-                        $filterDates = $request->get('bo-filters-'.$filter);
-                        if (!empty($filterDates['on']) || !empty($filterDates['off'])) {
-                            ++$buffer;
-                        }
-                        break;
-                    case 'scores':
-                        $filterScores = $request->get('bo-filters-'.$filter);
-                        if ('0' != $filterScores['on'] || '100' != $filterScores['off']) {
-                            ++$buffer;
-                        }
-                        break;
-                    default:
-                        ++$buffer;
-                        break;
-                }
-            }
-        }
-
-        return $buffer;
+        return $this->countActive;
     }
 
     /**
