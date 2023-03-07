@@ -23,7 +23,8 @@
                         </div>
                         </br>
                         </br>
-                        <form method="POST" name="signalement-edit-nde" id="signalement-edit-nde-form">
+                        <form method="POST" name="signalement-edit-nde" id="signalement-edit-nde-form" enctype="application/json"
+                        action="{{ path('back_signalement_qualification_editer',{uuid:signalement.uuid, signalement_qualification:signalementQualificationNDE.id}) }}">
                             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle"
                                 id="signalement-edit-nde-form-row">
                                 <div class="fr-col-6">
@@ -33,12 +34,12 @@
                                         </legend>
                                         <div class="fr-fieldset__content">
                                             <div class="fr-radio-group">
-                                                <input type="radio" id="signalement-edit-nde-date-entree-before" name="signalement-edit-nde-date-entree" value="before" {% if signalement.dateEntree|date('Y')<2023 %}checked{% endif %}>
+                                                <input type="radio" id="signalement-edit-nde-date-entree-before" name="dateEntree" value="before" {% if signalement.dateEntree and signalement.dateEntree|date('Y')<2023 %}checked{% endif %}>
                                                 <label class="fr-label" for="signalement-edit-nde-date-entree-before">Avant 2023
                                                 </label>
                                             </div>
                                             <div class="fr-radio-group">
-                                                <input type="radio" id="signalement-edit-nde-date-entree-after" name="signalement-edit-nde-date-entree" value="after" {% if signalement.dateEntree|date('Y')>=2023 %}checked{% endif %}>
+                                                <input type="radio" id="signalement-edit-nde-date-entree-after" name="dateEntree" value="after" {% if signalement.dateEntree and signalement.dateEntree|date('Y')>=2023 %}checked{% endif %}>
                                                 <label class="fr-label" for="signalement-edit-nde-date-entree-after">A partir de 2023
                                                 </label>
                                             </div>
@@ -52,17 +53,17 @@
                                         </legend>
                                         <div class="fr-fieldset__content">
                                             <div class="fr-radio-group">
-                                                <input type="radio" id="signalement-edit-nde-dpe-1" name="signalement-edit-nde-dpe" value='1' {% if signalementQualificationNDE.details.DPE == 1 %}checked{% endif %}>
+                                                <input type="radio" id="signalement-edit-nde-dpe-1" name="dpe" value='1' {% if signalementQualificationNDE.details.DPE == 1 %}checked{% endif %}>
                                                 <label class="fr-label" for="signalement-edit-nde-dpe-1">Oui
                                                 </label>
                                             </div>
                                             <div class="fr-radio-group">
-                                                <input type="radio" id="signalement-edit-nde-dpe-0" name="signalement-edit-nde-dpe" value='0' {% if signalementQualificationNDE.details.DPE == 0 %}checked{% endif %}>
+                                                <input type="radio" id="signalement-edit-nde-dpe-0" name="dpe" value='0' {% if signalementQualificationNDE.details.DPE == 0 %}checked{% endif %}>
                                                 <label class="fr-label" for="signalement-edit-nde-dpe-0">Non
                                                 </label>
                                             </div>
                                             <div class="fr-radio-group">
-                                                <input type="radio" id="signalement-edit-nde-dpe-2" name="signalement-edit-nde-dpe" value='null' {% if signalementQualificationNDE.details.DPE is null %}checked{% endif %}>
+                                                <input type="radio" id="signalement-edit-nde-dpe-2" name="dpe" value='null' {% if signalementQualificationNDE.details.DPE is null %}checked{% endif %}>
                                                 <label class="fr-label" for="signalement-edit-nde-dpe-2">Ne sais pas
                                                 </label>
                                             </div>
@@ -74,22 +75,22 @@
                                 id="signalement-edit-nde-form-row">
                                 <div class="fr-col-6">
                                     <div class="fr-input-group">
-                                        <label class="fr-label" for="signalement-edit-nde-dernier-bail">
+                                        <label class="fr-label" for="dateDernierBail">
                                             Date du dernier bail
                                         </label>
                                         <div class="fr-input-group">
-                                            <input class="fr-input fr-col-10" type="date" id="signalement-edit-nde-dernier-bail" name="signalement-edit-nde-dernier-bail" value="{{ signalementQualificationNDE.dernierBailAt|date('Y-m-d') }}">
+                                            <input class="fr-input fr-col-10" type="date" id="signalement-edit-nde-dernier-bail" name="dateDernierBail" value="{{ signalementQualificationNDE.dernierBailAt ? signalementQualificationNDE.dernierBailAt|date('Y-m-d') }}">
                                         </div>
 
                                     </div>
                                 </div>
                                 <div class="fr-col-6">
                                     <div class="fr-input-group">
-                                        <label class="fr-label" for="signalement-edit-nde-dpe-date">
+                                        <label class="fr-label" for="dateDernierDPE">
                                             Date du dernier DPE
                                         </label>
                                         <div class="fr-input-group">
-                                            <input class="fr-input fr-col-10" type="date" id="signalement-edit-nde-dpe-date" name="signalement-edit-nde-dpe-date" value="{{ signalementQualificationNDE.details.date_dernier_dpe|date('Y-m-d') }}">
+                                            <input class="fr-input fr-col-10" type="date" id="signalement-edit-nde-dpe-date" name="dateDernierDPE" value="{{ signalementQualificationNDE.details.date_dernier_dpe ? signalementQualificationNDE.details.date_dernier_dpe|date('Y-m-d') }}">
                                         </div>
                                     </div>
                                 </div>
@@ -97,13 +98,13 @@
                             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle"
                                 id="signalement-edit-nde-form-row">
                                 {# Si date de DPE à partir du 01/01/2023 -> On affiche un champ unique kWh/m²/an sur toute la largeur #}
-                                {% if signalementQualificationNDE.details.date_dernier_dpe|date('Y') >= '2023' %}
+                                {% if signalementQualificationNDE.details.date_dernier_dpe and signalementQualificationNDE.details.date_dernier_dpe|date('Y') >= '2023' %}
                                     <div class="fr-col-12">
                                         <div class="fr-input-group">
                                             <label class="fr-label" for="signalement-edit-nde-conso-energie">
                                                 Consommation énergétique
                                             </label>
-                                            <input class="fr-input fr-col-10" style="display: inline;" pattern="[0-9]*" inputmode="numeric" type="number" id="signalement-edit-nde-conso-energie" name="signalement-edit-nde-conso-energie" value="{{ signalementQualificationNDE.details.consommation_energie }}"> kWh/m²/an
+                                            <input class="fr-input fr-col-10" style="display: inline;" pattern="[0-9]*" inputmode="numeric" type="number" id="signalement-edit-nde-conso-energie" name="consommationEnergie" value="{{ signalementQualificationNDE.details.consommation_energie }}"> kWh/m²/an
                                         </div>
                                     </div>
 
@@ -113,7 +114,7 @@
                                             <label class="fr-label" for="signalement-edit-nde-conso-energie">
                                                 Consommation énergétique
                                             </label>
-                                            <input class="fr-input fr-col-10" style="display: inline;" pattern="[0-9]*" inputmode="numeric" type="number" id="signalement-edit-nde-conso-energie" name="signalement-edit-nde-conso-energie" value="{{ signalementQualificationNDE.details.consommation_energie }}"> kWh/an
+                                            <input class="fr-input fr-col-10" style="display: inline;" pattern="[0-9]*" inputmode="numeric" type="number" id="signalement-edit-nde-conso-energie" name="consommationEnergie" value="{{ signalementQualificationNDE.details.consommation_energie }}"> kWh/an
                                         </div>
                                     </div>
                                     <div class="fr-col-6">
@@ -121,20 +122,19 @@
                                             <label class="fr-label" for="signalement-edit-nde-superficie">
                                                 Superficie du logement
                                             </label>
-                                            <input class="fr-input fr-col-10" style="display: inline;" pattern="[0-9]*" type="number" id="signalement-edit-nde-superficie" name="signalement-edit-nde-superficie" value="{{signalement.superficie}}"> m²
+                                            <input class="fr-input fr-col-10" style="display: inline;" pattern="[0-9]*" type="number" id="signalement-edit-nde-superficie" name="superficie" value="{{signalement.superficie}}"> m²
                                         </div>
                                     </div>
                                 {% endif %}
                             </div>                            
-                            <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_nde_'~signalement.id) }}">
+                            <input type="hidden" name="_token" id="signalement-edit-nde-token" value="{{ csrf_token('signalement_edit_nde_'~signalement.id) }}">
                         </form>
                     </div>
                     <div class="fr-modal__footer">
                         <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
                             <li>
                                 <button class="fr-btn fr-fi-checkbox-line" type="submit"
-                                        form="signalement-edit-nde-form" id="signalement-edit-nde-form-submit"
-                                        formaction="{{ path('back_signalement_qualification_editer',{uuid:signalement.uuid, signalement_qualification:signalementQualificationNDE.id}) }}">
+                                        id="signalement-edit-nde-form-submit">
                                     Valider
                                 </button>
                             </li>
