@@ -305,7 +305,7 @@ const searchAddress = (form, autocomplete) => {
                             }
 
                             // Zip codes available for Non Conformité Energétique
-                            isZipForNonConformiteEnergetique = (zipOccupant == '63' || zipOccupant == '89');
+                            isZipForNDE = (zipOccupant == '63' || zipOccupant == '89');
                         })
                         container.appendChild(suggestion)
 

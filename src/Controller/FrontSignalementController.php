@@ -154,7 +154,7 @@ class FrontSignalementController extends AbstractController
                                     $signalement->addCritere($critere);
                                     $criticite = $em->getRepository(Criticite::class)->find($data[$key][$idSituation]['critere'][$idCritere]['criticite']);
                                     $signalement->addCriticite($criticite);
-                                    if (\in_array('Non décence énergétique', $criticite->getQualification())) {
+                                    if (\in_array(Qualification::NON_DECENCE_ENERGETIQUE, $criticite->getQualification())) {
                                         $listNDECriticites[] = $criticite->getId();
                                     }
                                 }
