@@ -1049,7 +1049,7 @@ const updateResultNDE = () => {
         el.classList.add('fr-hidden')
     })
     // Results for non-décence
-    if (isZipForNDE && hasCriticiteForNDE) {
+    if (isZipForNDE && hasCriticiteForNDE && isNDEBail2023) {
         document.querySelector('#result-nde').classList.remove('fr-hidden');
         if (isNDEMissingInfo) {
             document.querySelectorAll('#result-nde .display-if-missing-info').forEach(el => {
