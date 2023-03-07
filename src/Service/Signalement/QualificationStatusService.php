@@ -5,7 +5,7 @@ namespace App\Service\Signalement;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\SignalementQualification;
 
-class SignalementQualificationService
+class QualificationStatusService
 {
     public function __construct()
     {

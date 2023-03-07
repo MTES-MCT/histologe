@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Dto;
+namespace App\Dto\Request\Signalement;
 
 use DateTimeImmutable;
 
-class SignalementQualificationNDE
+class QualificationNDERequest
 {
     public function __construct(
-        private ?string $type = null,
         private ?string $dateEntree = null,
         private ?DateTimeImmutable $dateDernierBail = null,
         private ?DateTimeImmutable $dateDernierDPE = null,
