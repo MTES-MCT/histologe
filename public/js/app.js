@@ -24,6 +24,7 @@ let isNDEMissingInfo = false;
 let isNDEDPEBefore2023 = false;
 let hasDPE = false;
 let totalNDEConso = -1;
+let superficieNDE = -1;
 localStorage.clear();
 forms.forEach((form) => {
     form?.querySelectorAll('.toggle-criticite input[type="radio"]')?.forEach((criticite) => {
@@ -243,13 +244,13 @@ forms.forEach((form) => {
                     }
                 } else if (isDateDPEBefore2023) {
                     isNDEDPEBefore2023 = true;
-                    let consoSize = form.querySelector('#form-nde input[name="signalement[consoSize]"]')?.value;
+                    superficieNDE = form.querySelector('#form-nde input[name="signalement[consoSize]"]')?.value;
                     let consoYear = form.querySelector('#form-nde input[name="signalement[consoYear]"]')?.value;
-                    if (consoSize.length > 0 && consoYear.length > 0) {
-                        if (isNaN(consoSize) || isNaN(consoYear)) {
+                    if (superficieNDE.length > 0 && consoYear.length > 0) {
+                        if (isNaN(superficieNDE) || isNaN(consoYear)) {
                             form.querySelector('#form-nde .fr-error-consoSizePlusYear')?.classList.remove('fr-hidden');
                         } else {
-                            consoSizeYear = Math.round(consoYear / consoSize, 2);
+                            consoSizeYear = Math.round(consoYear / superficieNDE, 2);
                             form.querySelector('#form-nde .display-if-conso-complete span').textContent = consoSizeYear;
                             form.querySelector('#form-nde .display-if-conso-complete')?.classList.remove('fr-hidden');
                             form.querySelector('#form-nde .display-if-finished')?.classList.remove('fr-hidden');
@@ -567,6 +568,11 @@ forms.forEach((form) => {
                             nextTabBtn = document.querySelector('#signalement-step-4-btn');
                             document.querySelector('#signalement-step-4-btn > span').textContent = '4';
                             document.querySelector('#signalement-step-last-btn > span').textContent = '5';
+                        }
+                    }
+                    if (form.id === "signalement-step-3b") {
+                        if (superficieNDE > -1) {
+                            document.querySelector('#signalement_superficie').value = superficieNDE;
                         }
                     }
 

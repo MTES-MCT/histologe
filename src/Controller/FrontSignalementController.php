@@ -154,7 +154,7 @@ class FrontSignalementController extends AbstractController
                                     $signalement->addCritere($critere);
                                     $criticite = $em->getRepository(Criticite::class)->find($data[$key][$idSituation]['critere'][$idCritere]['criticite']);
                                     $signalement->addCriticite($criticite);
-                                    if (\in_array(Qualification::NON_DECENCE_ENERGETIQUE, $criticite->getQualification())) {
+                                    if (\in_array(Qualification::NON_DECENCE_ENERGETIQUE->value, $criticite->getQualification())) {
                                         $listNDECriticites[] = $criticite->getId();
                                     }
                                 }
@@ -254,14 +254,15 @@ class FrontSignalementController extends AbstractController
                         } elseif (!empty($dataDateBail)) {
                             $signalementQualification->setDernierBailAt(new DateTimeImmutable($dataDateBail));
                         }
+                        $dataConsoToSave = $dataConsoSizeYear;
                         if (empty($dataConsoSizeYear) && !empty($dataConsoYear) && !empty($dataConsoSize)) {
-                            $dataConsoSizeYear = round($dataConsoYear / $dataConsoSize, 2);
+                            $dataConsoToSave = $dataConsoYear;
                         }
 
                         $dataHasDPE = ('' === $dataHasDPE) ? null : $dataHasDPE;
                         // TODO : remplacer par DTO Hélène
                         $qualificationDetails = [
-                            'consommation_energie' => $dataConsoSizeYear,
+                            'consommation_energie' => $dataConsoToSave,
                             'DPE' => $dataHasDPE,
                             'date_dernier_dpe' => $dataDateDPE,
                         ];
