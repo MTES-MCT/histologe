@@ -17,8 +17,8 @@ for (i = 0; i < tables.length; i++) {
         thead.addEventListener("click", sortTableFunction(table));
     }
 }
-let isZipForNonConformiteEnergetique = false
-let hasCritereForNonConformiteEnergetique = false
+let isZipForNDE = false
+let hasCriticiteForNDE = false
 let isNDEBail2023 = false;
 let isNDEMissingInfo = false;
 let isNDEDPEBefore2023 = false;
@@ -91,7 +91,7 @@ forms.forEach((form) => {
             }
 
             // Zip codes available for Non Conformité Energétique
-            isZipForNonConformiteEnergetique = (zipOccupant == '63' || zipOccupant == '89');
+            isZipForNDE = (zipOccupant == '63' || zipOccupant == '89');
 
             refetchAddress(form)
         })
@@ -558,7 +558,7 @@ forms.forEach((form) => {
                     })
                 } else {
                     if (form.id === "signalement-step-3") {
-                        if (isZipForNonConformiteEnergetique && hasCritereForNonConformiteEnergetique) {
+                        if (isZipForNDE && hasCriticiteForNDE) {
                             nextTabBtn = document.querySelector('#signalement-step-3b-btn');
                             nextTabBtn.classList.remove('fr-hidden');
                             document.querySelector('#signalement-step-4-btn > span').textContent = '5';
@@ -700,10 +700,10 @@ document?.querySelectorAll('.toggle-criticite-smiley').forEach(iptSmiley => {
             icon.src = evt.target.parentElement.querySelector('.fr-radio-rich__img img').getAttribute('data-fr-checked-icon')
 
         // Browse all options to check if one nte is checked
-        hasCritereForNonConformiteEnergetique = false;
+        hasCriticiteForNDE = false;
         document?.querySelectorAll('.toggle-criticite-smiley').forEach(elmtSmiley => {
             if (elmtSmiley.checked && elmtSmiley.dataset.nde !== undefined) {
-                hasCritereForNonConformiteEnergetique = true;
+                hasCriticiteForNDE = true;
             }
         })
     })
@@ -1020,7 +1020,7 @@ const refetchAddress = (form) => {
             }
 
             // Zip codes available for Non Conformité Energétique
-            isZipForNonConformiteEnergetique = (zipOccupant == '63' || zipOccupant == '89');
+            isZipForNDE = (zipOccupant == '63' || zipOccupant == '89');
 
             form.querySelector('#signalement-geoloc-lat-occupant').value = feature.geometry.coordinates[0];
             form.querySelector('#signalement-geoloc-lng-occupant').value = feature.geometry.coordinates[1];
@@ -1049,7 +1049,7 @@ const updateResultNDE = () => {
         el.classList.add('fr-hidden')
     })
     // Results for non-décence
-    if (isZipForNonConformiteEnergetique && hasCritereForNonConformiteEnergetique) {
+    if (isZipForNDE && hasCriticiteForNDE) {
         document.querySelector('#result-nde').classList.remove('fr-hidden');
         if (isNDEMissingInfo) {
             document.querySelectorAll('#result-nde .display-if-missing-info').forEach(el => {
