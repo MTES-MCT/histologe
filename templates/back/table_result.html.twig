@@ -19,6 +19,17 @@
                         class="fr-col-12 fr-col-md-10 fr-col-lg-6 gauge-signalement"></canvas>
                         
             {% endif %}
+            {% if is_granted('ROLE_ADMIN_TERRITORY') or 'Non décence énergétique' in app.user.partner.competence %}
+                {% set isNDE = false %}
+                {% for qualification in signalement.signalementQualifications %}
+                    {% if (qualification.qualification.name is same as 'NON_DECENCE_ENERGETIQUE') and (qualification.status.name is same as 'NDE_AVEREE' or qualification.status.name is same as 'NDE_AVEREE') %}
+                        {% set isNDE = true %}
+                    {% endif %}
+                {% endfor %}
+                {% if isNDE %}
+                    <span class="fr-badge fr-badge--info fr-badge--no-icon" title="Non-décence énergétique">NDE</span>
+                {% endif %}
+            {% endif %}
         </td>
         {% if is_granted('ROLE_ADMIN') %}
             <td>

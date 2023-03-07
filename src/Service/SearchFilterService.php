@@ -3,9 +3,11 @@
 namespace App\Service;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\Qualification;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Repository\NotificationRepository;
+use App\Repository\SignalementQualificationRepository;
 use App\Repository\SuiviRepository;
 use DateInterval;
 use DateTime;
@@ -40,6 +42,7 @@ class SearchFilterService
         'delays',
         'scores',
         'dates',
+        'nde',
         'tags',
     ];
 
@@ -48,6 +51,7 @@ class SearchFilterService
         private NotificationRepository $notificationRepository,
         private SuiviRepository $suiviRepository,
         private EntityManagerInterface $entityManager,
+        private SignalementQualificationRepository $signalementQualificationRepository
     ) {
     }
 
@@ -360,6 +364,12 @@ class SearchFilterService
         if (!empty($filters['territories'])) {
             $qb->andWhere('s.territory IN (:territories)')
                 ->setParameter('territories', $filters['territories']);
+        }
+
+        if (!empty($filters['nde'])) {
+            $subqueryResults = $this->signalementQualificationRepository->findSignalementsByQualification(Qualification::NON_DECENCE_ENERGETIQUE, $filters['nde'][0]);
+            $qb->andWhere('s.id IN (:subqueryResults)')
+                ->setParameter('subqueryResults', $subqueryResults);
         }
 
         if (!empty($filters['signalement_ids'])) {

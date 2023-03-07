@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Enum\Qualification;
 use App\Entity\SignalementQualification;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -37,5 +38,19 @@ class SignalementQualificationRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findSignalementsByQualification(Qualification $qualification, string $status)
+    {
+        $queryBuilder = $this->createQueryBuilder('sq')
+            ->select('s.id')
+            ->innerJoin('sq.signalement', 's')
+            ->where('sq.qualification LIKE :qualification')
+            ->setParameter('qualification', $qualification)
+            ->andWhere('sq.status LIKE :status')
+            ->setParameter('status', $status)
+            ->distinct();
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }
