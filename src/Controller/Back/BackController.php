@@ -51,7 +51,7 @@ class BackController extends AbstractController
     {
         $title = 'Administration - Tableau de bord';
         $filters = $searchFilterService->setRequest($request)->setFilters()->getFilters();
-        $countActiveFilters = $searchFilterService->getCountActiveFilters();
+        $countActiveFilters = $searchFilterService->getCountActive();
         /** @var User $user */
         $user = $this->getUser();
         $territory = $user->getTerritory(); // If user is not admin, he can only see his territory
