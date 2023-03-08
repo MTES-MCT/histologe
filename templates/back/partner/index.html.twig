@@ -46,13 +46,14 @@
                     <td>{{ partner.id }}</td>
                     <td>{{ partner.nom }}</td>
                     {% if isExperimentationTerritory %}
-                        <td>{{ partner.type ? partner.type.value : (partner.isCommune ? 'Commune':'Partenaire') }}</td>
+                        <td>{{ partner.type ? partner.type.label : (partner.isCommune ? 'Commune':'Partenaire') }}</td>
                     {% else %}
                         <td>{{ partner.isCommune ? 'Commune':'Partenaire' }}</td>
                     {% endif %}
                     {% if isExperimentationTerritory %}
                         <td>
                             {% for competence in partner.competence %}
+                                {# <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ competence.label }}</div> #}
                                 <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ competence }}</div>
                             {% endfor %}
                         </td>
