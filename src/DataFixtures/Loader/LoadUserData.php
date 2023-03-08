@@ -3,7 +3,7 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\User;
-use App\EventSubscriber\UserAddedSubscriber;
+use App\EventSubscriber\UserCreatedSubscriber;
 use App\Factory\UserFactory;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
@@ -25,7 +25,7 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
         private PartnerRepository $partnerRepository,
         private UserPasswordHasherInterface $hasher,
         private EntityManagerInterface $entityManager,
-        private UserAddedSubscriber $userAddedSubscriber,
+        private UserCreatedSubscriber $userAddedSubscriber,
         private ParameterBagInterface $parameterBag,
         private UserFactory $userFactory,
     ) {

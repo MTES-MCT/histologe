@@ -5,7 +5,7 @@ namespace App\Command;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
-use App\EventSubscriber\UserAddedSubscriber;
+use App\EventSubscriber\UserCreatedSubscriber;
 use App\Factory\UserFactory;
 use App\Manager\PartnerManager;
 use App\Manager\TerritoryManager;
@@ -55,7 +55,7 @@ class AddUserCommand extends Command
         private UserManager $userManager,
         private PartnerManager $partnerManager,
         private TerritoryManager $territoryManager,
-        private UserAddedSubscriber $userAddedSubscriber,
+        private UserCreatedSubscriber $userAddedSubscriber,
     ) {
         parent::__construct();
     }

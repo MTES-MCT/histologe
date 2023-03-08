@@ -83,7 +83,11 @@ services:
         alias: App\Manager\Manager
         public: true
 
-    App\EventSubscriber\UserAddedSubscriber:
+    App\EventSubscriber\UserCreatedSubscriber:
+        tags:
+            - name: 'doctrine.event_subscriber'
+
+    App\EventSubscriber\SuiviCreatedSubscriber:
         tags:
             - name: 'doctrine.event_subscriber'
 

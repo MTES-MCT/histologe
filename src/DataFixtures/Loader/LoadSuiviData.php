@@ -3,10 +3,12 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\Suivi;
+use App\EventSubscriber\SuiviCreatedSubscriber;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Yaml\Yaml;
 
@@ -14,12 +16,15 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
 {
     public function __construct(
         private SignalementRepository $signalementRepository,
-        private UserRepository $userRepository
+        private UserRepository $userRepository,
+        private EntityManagerInterface $entityManager,
+        private SuiviCreatedSubscriber $suiviCreatedSubscriber,
     ) {
     }
 
     public function load(ObjectManager $manager): void
     {
+        $this->entityManager->getEventManager()->removeEventSubscriber($this->suiviCreatedSubscriber);
         $suiviRows = Yaml::parseFile(__DIR__.'/../Files/Suivi.yml');
         foreach ($suiviRows['suivis'] as $row) {
             $this->loadSuivi($manager, $row);
