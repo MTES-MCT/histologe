@@ -53,17 +53,17 @@
                                         </legend>
                                         <div class="fr-fieldset__content">
                                             <div class="fr-radio-group">
-                                                <input type="radio" id="signalement-edit-nde-dpe-1" name="dpe" value='1' {% if signalementQualificationNDE.details.DPE == 1 %}checked{% endif %}>
+                                                <input type="radio" id="signalement-edit-nde-dpe-1" name="dpe" value='1' {% if signalementQualificationNDE.details and signalementQualificationNDE.details.DPE == 1 %}checked{% endif %}>
                                                 <label class="fr-label" for="signalement-edit-nde-dpe-1">Oui
                                                 </label>
                                             </div>
                                             <div class="fr-radio-group">
-                                                <input type="radio" id="signalement-edit-nde-dpe-0" name="dpe" value='0' {% if signalementQualificationNDE.details.DPE == 0 %}checked{% endif %}>
+                                                <input type="radio" id="signalement-edit-nde-dpe-0" name="dpe" value='0' {% if signalementQualificationNDE.details and signalementQualificationNDE.details.DPE == 0 %}checked{% endif %}>
                                                 <label class="fr-label" for="signalement-edit-nde-dpe-0">Non
                                                 </label>
                                             </div>
                                             <div class="fr-radio-group">
-                                                <input type="radio" id="signalement-edit-nde-dpe-2" name="dpe" value='null' {% if signalementQualificationNDE.details.DPE is null %}checked{% endif %}>
+                                                <input type="radio" id="signalement-edit-nde-dpe-2" name="dpe" value='null' {% if signalementQualificationNDE.details and signalementQualificationNDE.details.DPE is null %}checked{% endif %}>
                                                 <label class="fr-label" for="signalement-edit-nde-dpe-2">Ne sais pas
                                                 </label>
                                             </div>

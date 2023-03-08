@@ -3,9 +3,11 @@
 namespace App\Entity;
 
 use App\Entity\Enum\PartnerType;
+use App\Entity\Enum\Qualification;
 use App\Repository\PartnerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -62,6 +64,9 @@ class Partner
 
     #[ORM\Column(type: 'json', nullable: true)]
     private $competence = [];
+
+    // #[ORM\Column(type: Types::SIMPLE_ARRAY, length: 255, nullable: true, enumType: Qualification::class)]
+    // private array $competence = [];
 
     public function __construct()
     {

@@ -102,11 +102,11 @@ class UpdatePartnerAndCommuneNDECommand extends Command
         $partner = $this->partnerRepository->findOneBy(['nom' => $nomPartner, 'territory' => $territory]);
         if ($partner) {
             $partner->setType($typePartner);
-            $info = '<info>Update partner '.$partner->getNom().' </info> type : '.$partner->getType()->name;
+            $info = '<info>Update partner '.$partner->getNom().' </info> type : '.$partner->getType()->label();
             if ($isNonDecence) {
                 $qualification = [Qualification::NON_DECENCE_ENERGETIQUE];
                 $partner->setCompetence($qualification);
-                $info .= ' and competence : '.Qualification::NON_DECENCE_ENERGETIQUE->name;
+                $info .= ' and competence : '.Qualification::NON_DECENCE_ENERGETIQUE->label();
             }
             if ($insee) {
                 $partner->setInsee($insee);

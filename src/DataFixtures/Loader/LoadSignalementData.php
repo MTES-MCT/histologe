@@ -153,7 +153,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 ->setCriticites($signalement->getCriticites()->map(function (Criticite $criticite) {
                     return $criticite->getId();
                 })->toArray());
-                if ('Non décence énergétique' == $qualificationLabel) {
+                if (Qualification::NON_DECENCE_ENERGETIQUE->name == $qualificationLabel) {
                     $qualificationDetails = [];
                     $qualificationDetails['consommation_energie'] = $faker->numberBetween(450, 700);
                     $qualificationDetails['DPE'] = 1;
