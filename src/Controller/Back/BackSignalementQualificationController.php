@@ -16,7 +16,9 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route('/bo/signalements')]
 class BackSignalementQualificationController extends AbstractController
 {
-    #[Route('/{uuid}/qualification/{signalement_qualification}/editer', name: 'back_signalement_qualification_editer', methods: 'POST')]
+    #[Route('/{uuid}/qualification/{signalement_qualification}/editer',
+        name: 'back_signalement_qualification_editer',
+        methods: 'POST')]
     public function editQualification(
         Request $request,
         Signalement $signalement,
@@ -27,8 +29,11 @@ class BackSignalementQualificationController extends AbstractController
         $this->denyAccessUnlessGranted('SIGN_EDIT_NDE', $signalement);
         $decodedRequest = json_decode($request->getContent());
         if ($this->isCsrfTokenValid('signalement_edit_nde_'.$signalement->getId(), $decodedRequest->_token)) {
-            $qualificationNDERequest = $serializer->deserialize($request->getContent(), QualificationNDERequest::class, 'json');
-            $signalementManager->updateFromSignalementQualification($signalementQualification, $qualificationNDERequest);
+            $qualificationNDERequest = $serializer->deserialize($request->getContent(),
+                QualificationNDERequest::class,
+                'json');
+            $signalementManager->updateFromSignalementQualification($signalementQualification,
+                $qualificationNDERequest);
         } else {
             $this->addFlash('error', "Une erreur est survenu lors de l'édition");
         }

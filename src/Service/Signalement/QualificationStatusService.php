@@ -7,17 +7,15 @@ use App\Entity\SignalementQualification;
 
 class QualificationStatusService
 {
-    public function __construct()
-    {
-    }
-
     public function getNDEStatus(SignalementQualification $signalementQualification): ?QualificationStatus
     {
-        if ($signalementQualification->getDernierBailAt()->format('Y') >= '2023' && $signalementQualification->getDetails()['consommation_energie'] > 450) {
+        if ($signalementQualification->getDernierBailAt()->format('Y') >= '2023'
+        && $signalementQualification->getDetails()['consommation_energie'] > 450) {
             return QualificationStatus::NDE_AVEREE;
         }
 
-        if ($signalementQualification->getDernierBailAt()->format('Y') >= '2023' && $signalementQualification->getDetails()['consommation_energie'] <= 450) {
+        if ($signalementQualification->getDernierBailAt()->format('Y') >= '2023'
+        && $signalementQualification->getDetails()['consommation_energie'] <= 450) {
             return QualificationStatus::NDE_OK;
         }
 

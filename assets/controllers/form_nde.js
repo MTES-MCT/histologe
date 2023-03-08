@@ -19,7 +19,6 @@ formBtn?.addEventListener('click', evt => {
               
             case null: 
             case undefined:
-            case NaN:
             default: 
               return null;
         }
