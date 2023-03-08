@@ -224,24 +224,30 @@ class SignalementManager extends AbstractManager
         return array_merge($sendTo, $partnersEmail);
     }
 
-    public function updateFromSignalementQualification(SignalementQualification $signalementQualification, QualificationNDERequest $qualificationNDERequest)
+    public function updateFromSignalementQualification(
+        SignalementQualification $signalementQualification,
+        QualificationNDERequest $qualificationNDERequest)
     {
         $signalement = $signalementQualification->getSignalement();
         // // mise à jour du signalement
-        if ('after' === $qualificationNDERequest->getDateEntree() && $signalement->getDateEntree()->format('Y') < '2023 ') {
+        if ('after' === $qualificationNDERequest->getDateEntree()
+        && $signalement->getDateEntree()->format('Y') < '2023 ') {
             $signalement->setDateEntree(new DateTimeImmutable('2023-01-02'));
         }
 
-        if ('before' === $qualificationNDERequest->getDateEntree() && $signalement->getDateEntree()->format('Y') >= '2023 ') {
+        if ('before' === $qualificationNDERequest->getDateEntree()
+        && $signalement->getDateEntree()->format('Y') >= '2023 ') {
             $signalement->setDateEntree(new DateTimeImmutable('1970-01-01'));
         }
 
-        if (null !== $qualificationNDERequest->getSuperficie() && $signalement->getSuperficie() !== $qualificationNDERequest->getSuperficie()) {
+        if (null !== $qualificationNDERequest->getSuperficie()
+        && $signalement->getSuperficie() !== $qualificationNDERequest->getSuperficie()) {
             $signalement->setSuperficie($qualificationNDERequest->getSuperficie());
         }
 
         // // mise à jour du signalementqualification
-        if (null !== $qualificationNDERequest->getDateDernierBail() && $signalementQualification->getDernierBailAt()->format('Y-m-d') !== $qualificationNDERequest->getDateDernierBail()) {
+        if (null !== $qualificationNDERequest->getDateDernierBail()
+        && $signalementQualification->getDernierBailAt()->format('Y-m-d') !== $qualificationNDERequest->getDateDernierBail()) {
             $signalementQualification->setDernierBailAt($qualificationNDERequest->getDateDernierBail());
         }
 
