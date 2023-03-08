@@ -436,7 +436,7 @@
                 </ul>
             </div>
         </div>
-        {% if isSignalementNDE and (is_granted('ROLE_ADMIN_TERRITORY') or 'Non décence énergétique' in app.user.partner.competence)  %}
+        {% if isSignalementNDE and (is_granted('ROLE_ADMIN_TERRITORY') or 'NON_DECENCE_ENERGETIQUE' in app.user.partner.competence)  %}
         <section class="fr-accordion">
             <h3 class="fr-accordion__title ">
                 <button class="fr-accordion__btn fr-btn--icon-left fr-fi-chat-quote-fill fr-icon--sm fr-text-label--blue-france" aria-expanded="true" aria-controls="accordion-nde">Non décence énergétique</button>
@@ -452,7 +452,7 @@
                        <strong>Consommation d'énergie :</strong> <span class="fr-badge fr-badge--info fr-badge--sm">{{ calcul }} kWh/m²/an</span>
                     </div>
                     <div class="fr-col-12 fr-col-md-5">                    
-                        <strong>Analyse :</strong> <span class="{{ signalementQualificationNDE.status|status_to_css }}">{{ signalementQualificationNDE.status.value }}</span>
+                        <strong>Analyse :</strong> <span class="{{ signalementQualificationNDE.status|status_to_css }}">{{ signalementQualificationNDE.status.label }}</span>
                     </div>
                     
                     <div class="fr-col-12 fr-col-md-2 fr-text--right">
