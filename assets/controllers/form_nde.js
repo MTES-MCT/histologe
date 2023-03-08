@@ -17,6 +17,7 @@ formBtn?.addEventListener('click', evt => {
             case "0": 
               return false;
               
+            case 'null': 
             case null: 
             case undefined:
             default: 

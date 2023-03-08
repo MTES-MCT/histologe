@@ -29,11 +29,15 @@ class BackSignalementQualificationController extends AbstractController
         $this->denyAccessUnlessGranted('SIGN_EDIT_NDE', $signalement);
         $decodedRequest = json_decode($request->getContent());
         if ($this->isCsrfTokenValid('signalement_edit_nde_'.$signalement->getId(), $decodedRequest->_token)) {
-            $qualificationNDERequest = $serializer->deserialize($request->getContent(),
+            $qualificationNDERequest = $serializer->deserialize(
+                $request->getContent(),
                 QualificationNDERequest::class,
-                'json');
-            $signalementManager->updateFromSignalementQualification($signalementQualification,
-                $qualificationNDERequest);
+                'json'
+            );
+            $signalementManager->updateFromSignalementQualification(
+                $signalementQualification,
+                $qualificationNDERequest
+            );
         } else {
             $this->addFlash('error', "Une erreur est survenu lors de l'édition");
         }

@@ -34,12 +34,15 @@ class BackSignalementQualificationControllerTest extends WebTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('back_signalement_qualification_editer',
-            ['uuid' => $signalement->getUuid(), 'signalement_qualification' => $signalementQualification->getId()]);
+        $route = $router->generate(
+            'back_signalement_qualification_editer',
+            ['uuid' => $signalement->getUuid(), 'signalement_qualification' => $signalementQualification->getId()]
+        );
 
-        $routeSignalementView = $router->generate('back_signalement_view', [
-            'uuid' => $signalement->getUuid(),
-        ]);
+        $routeSignalementView = $router->generate(
+            'back_signalement_view',
+            ['uuid' => $signalement->getUuid()]
+        );
 
         $crawler = $client->request('GET', $routeSignalementView);
         $token = $crawler->filter('#signalement-edit-nde-form input[name=_token]')->attr('value');
@@ -94,12 +97,15 @@ class BackSignalementQualificationControllerTest extends WebTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('back_signalement_qualification_editer',
-            ['uuid' => $signalement->getUuid(), 'signalement_qualification' => $signalementQualification->getId()]);
+        $route = $router->generate(
+            'back_signalement_qualification_editer',
+            ['uuid' => $signalement->getUuid(), 'signalement_qualification' => $signalementQualification->getId()]
+        );
 
-        $routeSignalementView = $router->generate('back_signalement_view', [
-            'uuid' => $signalement->getUuid(),
-        ]);
+        $routeSignalementView = $router->generate(
+            'back_signalement_view',
+            ['uuid' => $signalement->getUuid()]
+        );
 
         $crawler = $client->request('GET', $routeSignalementView);
         $token = $crawler->filter('#signalement-edit-nde-form input[name=_token]')->attr('value');
