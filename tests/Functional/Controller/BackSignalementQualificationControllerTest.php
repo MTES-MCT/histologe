@@ -34,7 +34,8 @@ class BackSignalementQualificationControllerTest extends WebTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('back_signalement_qualification_editer', ['uuid' => $signalement->getUuid(), 'signalement_qualification' => $signalementQualification->getId()]);
+        $route = $router->generate('back_signalement_qualification_editer',
+            ['uuid' => $signalement->getUuid(), 'signalement_qualification' => $signalementQualification->getId()]);
 
         $routeSignalementView = $router->generate('back_signalement_view', [
             'uuid' => $signalement->getUuid(),
@@ -93,7 +94,8 @@ class BackSignalementQualificationControllerTest extends WebTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('back_signalement_qualification_editer', ['uuid' => $signalement->getUuid(), 'signalement_qualification' => $signalementQualification->getId()]);
+        $route = $router->generate('back_signalement_qualification_editer',
+            ['uuid' => $signalement->getUuid(), 'signalement_qualification' => $signalementQualification->getId()]);
 
         $routeSignalementView = $router->generate('back_signalement_view', [
             'uuid' => $signalement->getUuid(),
