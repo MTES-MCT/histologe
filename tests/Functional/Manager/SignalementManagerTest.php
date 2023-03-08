@@ -49,7 +49,8 @@ class SignalementManagerTest extends KernelTestCase
             $this->security,
             $this->signalementFactory,
             $this->eventDispatcher,
-            $this->qualificationStatusService);
+            $this->qualificationStatusService
+        );
         $signalement = $signalementManager->findOneBy(['territory' => self::TERRITORY_13]);
 
         $partners = $signalementManager->findAllPartners($signalement);
@@ -68,8 +69,9 @@ class SignalementManagerTest extends KernelTestCase
             $this->security,
             $this->signalementFactory,
             $this->eventDispatcher,
-            $this->qualificationStatusService);
-            $signalement = $signalementManager->findOneBy(['reference' => '2023-8']);
+            $this->qualificationStatusService
+        );
+        $signalement = $signalementManager->findOneBy(['reference' => '2023-8']);
 
         $partners = $signalementManager->findAllPartners($signalement, true);
 
@@ -92,11 +94,12 @@ class SignalementManagerTest extends KernelTestCase
             $this->security,
             $this->signalementFactory,
             $this->eventDispatcher,
-            $this->qualificationStatusService);
-            $signalementClosed = $signalementManager->closeSignalementForAllPartners(
-                $signalementActive,
-                MotifCloture::LABEL['RESOLU']
-            );
+            $this->qualificationStatusService
+        );
+        $signalementClosed = $signalementManager->closeSignalementForAllPartners(
+            $signalementActive,
+            MotifCloture::LABEL['RESOLU']
+        );
 
         $this->assertInstanceOf(Signalement::class, $signalementClosed);
         $this->assertEquals(Signalement::STATUS_CLOSED, $signalementClosed->getStatut());
@@ -122,7 +125,8 @@ class SignalementManagerTest extends KernelTestCase
             $this->security,
             $this->signalementFactory,
             $this->eventDispatcher,
-            $this->qualificationStatusService);
+            $this->qualificationStatusService
+        );
         $affectationClosed = $signalementManager->closeAffectation(
             $affectationAccepted,
             MotifCloture::LABEL['NON_DECENCE']
@@ -144,7 +148,8 @@ class SignalementManagerTest extends KernelTestCase
             $this->security,
             $this->signalementFactory,
             $this->eventDispatcher,
-            $this->qualificationStatusService);
+            $this->qualificationStatusService
+        );
         $emails = $signalementManager->findEmailsAffectedToSignalement($signalement);
 
         $this->assertGreaterThan(1, \count($emails));
@@ -161,7 +166,8 @@ class SignalementManagerTest extends KernelTestCase
             $this->security,
             $this->signalementFactory,
             $this->eventDispatcher,
-            $this->qualificationStatusService);
+            $this->qualificationStatusService
+        );
         $signalement = $signalementManager->createOrUpdate(
             $territory,
             $this->getSignalementData('2023-2'),
@@ -182,7 +188,8 @@ class SignalementManagerTest extends KernelTestCase
             $this->security,
             $this->signalementFactory,
             $this->eventDispatcher,
-            $this->qualificationStatusService);
+            $this->qualificationStatusService
+        );
         $signalement = $signalementManager->createOrUpdate(
             $territory,
             $this->getSignalementData('2023-1'),
@@ -204,7 +211,8 @@ class SignalementManagerTest extends KernelTestCase
             $this->security,
             $this->signalementFactory,
             $this->eventDispatcher,
-            $this->qualificationStatusService);
+            $this->qualificationStatusService
+        );
 
         $signalementImportedClone = clone $signalementImported;
         $signalement = $signalementManager->update(
