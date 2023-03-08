@@ -1,0 +1,40 @@
+parameters:
+  files:
+    path: "assets/files/"
+    documents:
+      - 
+        title: "1 - Demande de transmission d'une copie d'un DPE"
+        file: '1_Demande_de_transmission_d_une_copie_d_un_DPE.docx'
+        params:
+          qualification: 
+            - !php/enum Qualification::NON_DECENCE_ENERGETIQUE
+      - 
+        title: "2 - Information au bailleur - Mise en conformité"
+        file: '2_Information_au_bailleur_Mise_en_conformite.docx'
+        params:
+          qualification: 
+            - !php/enum Qualification::NON_DECENCE_ENERGETIQUE
+      - 
+        title: "3 - Mise en demeure"
+        file: '3_Mise_en_demeure.docx'
+        params:
+          qualification: 
+            - !php/enum Qualification::NON_DECENCE_ENERGETIQUE
+      - 
+        title: "4 - Invitation à contacter l'ADIL"
+        file: '4_Invitation_a_contacter_l_ADIL.docx'
+        params:
+          qualification: 
+            - !php/enum Qualification::NON_DECENCE_ENERGETIQUE
+      - 
+        title: "5 - Engagement du bailleur à réaliser des travaux"
+        file: '5_Engagement_du_bailleur_a_realiser_des_travaux.docx'
+        params:
+          qualification: 
+            - !php/enum Qualification::NON_DECENCE_ENERGETIQUE
+      - 
+        title: "6 - Saisine de la Commission départementale de conciliation"
+        file: '6_Saisine_de_la_Commission_departementale_de_conciliation.docx'
+        params:
+          qualification: 
+            - !php/enum Qualification::NON_DECENCE_ENERGETIQUE
