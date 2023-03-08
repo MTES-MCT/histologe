@@ -9,6 +9,7 @@ grumphp:
           - 'die('
           - 'exit('
       yamllint:
+        parse_custom_tags: true
       phpstan: ~
       eslint:
         bin: node_modules/.bin/eslint
