@@ -76,8 +76,8 @@ class SignalementImportLoaderTest extends KernelTestCase
         $dataList = [];
         for ($i = 0; $i < 10; ++$i) {
             $dataItem = [
-                'Ref signalement' => (0 === $i % 2) ? $faker->randomNumber(4) : '2024-'.$faker->randomNumber(4),
-                'Date de creation signalement' => '22/12/2022',
+                'Ref signalement' => (0 === $i % 2) ? $faker->randomNumber(4) : date('Y').'-'.$faker->randomNumber(4),
+                'Date de creation signalement' => date('d/m/Y'),
                 'Date cloture' => null,
                 'motif_cloture' => (0 === $i % 2) ? MotifCloture::LABEL['AUTRE'] : null,
                 'ref des photos' => null,

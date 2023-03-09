@@ -213,8 +213,4 @@ class SignalementManager extends AbstractManager
 
         return array_merge($sendTo, $partnersEmail);
     }
-
-    public function updateSignalementAnalytics()
-    {
-    }
 }
