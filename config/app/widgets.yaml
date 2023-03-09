@@ -28,12 +28,14 @@ parameters:
         link: 'back_index'
         params:
           statut: 6
+          sort: 'lastSuiviAt'
       cardCloturesPartenaires:
         label: "Clotures partenaires"
         roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY]
         link: 'back_index'
         params:
           closed_affectation: 'ONE_CLOSED'
+          sort: 'lastSuiviAt'
       cardMesAffectations:
         label: "Mes affectations"
         roles: [ROLE_ADMIN_TERRITORY]

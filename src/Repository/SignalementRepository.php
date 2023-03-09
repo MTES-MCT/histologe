@@ -343,7 +343,11 @@ class SignalementRepository extends ServiceEntityRepository
             }
         }
         $qb = $this->searchFilterService->applyFilters($qb, $options);
-        $qb->orderBy('s.createdAt', 'DESC');
+        $qb->orderBy(
+            isset($options['sort']) && 'lastSuiviAt' === $options['sort']
+                ? 's.lastSuiviAt'
+                : 's.createdAt', 'DESC'
+        );
         if (!$export) {
             $qb->setFirstResult($firstResult)
                 ->setMaxResults($pageSize);
@@ -834,5 +838,28 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function createQueryBuilderActiveSignalement(
+        ?Territory $territory = null,
+        bool $removeImported = false,
+        bool $removeArchived = false
+    ): QueryBuilder {
+        $qb = $this->createQueryBuilder('s');
+
+        if ($removeArchived) {
+            $qb->andWhere('s.statut != :statutArchived')
+                ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
+        }
+
+        if ($removeImported) {
+            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+        }
+
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+
+        return $qb;
     }
 }

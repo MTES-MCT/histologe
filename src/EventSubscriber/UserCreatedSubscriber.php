@@ -10,7 +10,7 @@ use Doctrine\ORM\Events;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class UserAddedSubscriber implements EventSubscriberInterface
+class UserCreatedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private ParameterBagInterface $parameterBag,
@@ -28,7 +28,7 @@ class UserAddedSubscriber implements EventSubscriberInterface
 
     public function onFlush(OnFlushEventArgs $args): void
     {
-        $unitOfWork = $args->getEntityManager()->getUnitOfWork();
+        $unitOfWork = $args->getObjectManager()->getUnitOfWork();
 
         foreach ($unitOfWork->getScheduledEntityInsertions() as $entity) {
             if ($entity instanceof User) {

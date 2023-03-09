@@ -190,6 +190,9 @@ class Signalement
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Suivi::class, orphanRemoval: true, cascade: ['persist'])]
     private $suivis;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $lastSuiviAt = null;
+
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $codeProcedure;
 
@@ -1700,6 +1703,18 @@ class Signalement
     public function setClosedBy(?User $closedBy): self
     {
         $this->closedBy = $closedBy;
+
+        return $this;
+    }
+
+    public function getLastSuiviAt(): ?DateTimeImmutable
+    {
+        return $this->lastSuiviAt;
+    }
+
+    public function setLastSuiviAt(?DateTimeImmutable $lastSuiviAt): self
+    {
+        $this->lastSuiviAt = $lastSuiviAt;
 
         return $this;
     }

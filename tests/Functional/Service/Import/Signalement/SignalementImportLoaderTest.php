@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Service\Import\Signalement;
 
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Territory;
+use App\EventSubscriber\SuiviCreatedSubscriber;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
@@ -27,6 +28,7 @@ class SignalementImportLoaderTest extends KernelTestCase
     private EntityManagerInterface $entityManager;
     private ParameterBagInterface $parameterBag;
     private LoggerInterface $logger;
+    private SuiviCreatedSubscriber $suiviCreatedSubscriber;
 
     protected function setUp(): void
     {
@@ -38,6 +40,7 @@ class SignalementImportLoaderTest extends KernelTestCase
         $this->suiviManager = self::getContainer()->get(SuiviManager::class);
         $this->parameterBag = self::getContainer()->get(ParameterBagInterface::class);
         $this->logger = self::getContainer()->get(LoggerInterface::class);
+        $this->suiviCreatedSubscriber = self::getContainer()->get(SuiviCreatedSubscriber::class);
 
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
     }
@@ -47,6 +50,7 @@ class SignalementImportLoaderTest extends KernelTestCase
      */
     public function testLoadSignalementImport()
     {
+        $this->entityManager->getEventManager()->removeEventSubscriber($this->suiviCreatedSubscriber);
         $signalementImportLoader = new SignalementImportLoader(
             $this->signalementImportMapper,
             $this->signalementManager,
@@ -72,8 +76,8 @@ class SignalementImportLoaderTest extends KernelTestCase
         $dataList = [];
         for ($i = 0; $i < 10; ++$i) {
             $dataItem = [
-                'Ref signalement' => (0 === $i % 2) ? $faker->randomNumber(4) : '2022-'.$faker->randomNumber(4),
-                'Date de creation signalement' => '22/12/2022',
+                'Ref signalement' => (0 === $i % 2) ? $faker->randomNumber(4) : date('Y').'-'.$faker->randomNumber(4),
+                'Date de creation signalement' => date('d/m/Y'),
                 'Date cloture' => null,
                 'motif_cloture' => (0 === $i % 2) ? MotifCloture::LABEL['AUTRE'] : null,
                 'ref des photos' => null,
