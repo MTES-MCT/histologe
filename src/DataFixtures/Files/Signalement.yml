@@ -791,3 +791,85 @@ signalements:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
       - "le sol ou la base des murs est très humide."
+  -
+    uuid: "00000000-0000-0000-2023-0000000007"
+    details: "Signalement Non-Décence dans l'Yonne"
+    is_proprio_averti: 1
+    nb_adultes: "2"
+    is_allocataire: "CAF"
+    nature_logement: "Appartement"
+    type_logement: "T5"
+    superficie: 100
+    loyer: 1000
+    phone_number: 0621127285
+    adresse_occupant: "83 rue du Pont"
+    cp_occupant: "89000"
+    ville_occupant: "Auxerre"
+    etage_occupant: "5"
+    statut: 2
+    reference: "2023-7"
+    geoloc: "[]"
+    score_creation: 43
+    insee_occupant: "89024"
+    type_energie_logement: "Electrique"
+    origine_signalement: "Guichet Unique"
+    situation_occupant: "1"
+    nb_pieces_logement: 0
+    nb_chambres_logement: 0
+    nb_niveaux_logement: 0
+    nb_occupants_logement: 2
+    territory: "Yonne"
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    tags: []
+    situations:
+      - "le confort du logement"
+      - "le confort du logement"
+    criteres:
+      - "Mon logement est mal isolé."
+      - "J’utilise un appareil d'appoint pour le chauffage."
+    criticites:
+      - "Le DPE indique une étiquette énergie F ou G ou n’a pas été fait. J’ai tout le temps la sensation d'avoir froid en hiver et/ou très chaud en été."
+      - "J’utilise plusieurs chauffages d'appoint et/ou des pièces principales ne possèdent pas de moyen de chauffage."
+    qualifications: 
+      - "Non décence énergétique"
+  -
+    uuid: "00000000-0000-0000-2023-0000000008"
+    details: "Signalement Non-Décence dans le Puy de dôme"
+    is_proprio_averti: 1
+    nb_adultes: "2"
+    is_allocataire: "CAF"
+    nature_logement: "Appartement"
+    type_logement: "T5"
+    superficie: 100
+    loyer: 1000
+    phone_number: 0621127285
+    adresse_occupant: "18 Boulevard Desaix"
+    cp_occupant: "63033"
+    ville_occupant: "Clermont-Ferrand"
+    etage_occupant: "5"
+    statut: 2
+    reference: "2023-8"
+    geoloc: "[]"
+    score_creation: 43
+    insee_occupant: "63113"
+    type_energie_logement: "Electrique"
+    origine_signalement: "Guichet Unique"
+    situation_occupant: "1"
+    nb_pieces_logement: 0
+    nb_chambres_logement: 0
+    nb_niveaux_logement: 0
+    nb_occupants_logement: 2
+    territory: "Puy-de-Dôme"
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    tags: []
+    situations:
+      - "le confort du logement"
+      - "le confort du logement"
+    criteres:
+      - "Mon logement est mal isolé."
+      - "J’utilise un appareil d'appoint pour le chauffage."
+    criticites:
+      - "Le DPE indique une étiquette énergie F ou G ou n’a pas été fait. J’ai tout le temps la sensation d'avoir froid en hiver et/ou très chaud en été."
+      - "J’utilise plusieurs chauffages d'appoint et/ou des pièces principales ne possèdent pas de moyen de chauffage."
+    qualifications: 
+      - "Non décence énergétique"
