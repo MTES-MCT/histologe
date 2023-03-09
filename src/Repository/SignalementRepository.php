@@ -343,7 +343,11 @@ class SignalementRepository extends ServiceEntityRepository
             }
         }
         $qb = $this->searchFilterService->applyFilters($qb, $options);
-        $qb->orderBy('s.createdAt', 'DESC');
+        $qb->orderBy(
+            isset($options['sort']) && 'lastSuiviAt' === $options['sort']
+                ? 's.lastSuiviAt'
+                : 's.createdAt', 'DESC'
+        );
         if (!$export) {
             $qb->setFirstResult($firstResult)
                 ->setMaxResults($pageSize);
