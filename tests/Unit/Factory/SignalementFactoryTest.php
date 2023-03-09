@@ -87,13 +87,6 @@ class SignalementFactoryTest extends KernelTestCase
             'isLogementCollectif' => false,
             'nomReferentSocial' => null,
             'StructureReferentSocial' => null,
-            'mailSyndic' => $faker->companyEmail(),
-            'telSyndic' => $faker->phoneNumber(),
-            'nomSyndic' => $faker->company(),
-            'nomSci' => $faker->company(),
-            'nomRepresentantSci' => $faker->lastName().' '.$faker->firstName,
-            'telSci' => $faker->phoneNumber(),
-            'mailSci' => $faker->companyEmail(),
             'nbPiecesLogement' => $faker->randomDigit(),
             'nbChambresLogement' => $faker->randomDigit(),
             'nbNiveauxLogement' => $faker->randomDigit(),
@@ -176,15 +169,6 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEquals($data['isCguAccepted'], $signalement->getIsCguAccepted());
         $this->assertEquals($data['isConsentementTiers'], $signalement->getIsConsentementTiers());
 
-        $this->assertEquals($data['nomSci'], $signalement->getNomSci());
-        $this->assertEquals($data['nomRepresentantSci'], $signalement->getNomRepresentantSci());
-        $this->assertEquals($data['telSci'], $signalement->getTelSci());
-        $this->assertEquals($data['mailSci'], $signalement->getMailSci());
-
-        $this->assertEquals($data['nomSyndic'], $signalement->getNomSyndic());
-        $this->assertEquals($data['mailSyndic'], $signalement->getMailSyndic());
-        $this->assertEquals($data['telSyndic'], $signalement->getTelSyndic());
-
         $this->assertEquals($data['createdAt'], $signalement->getCreatedAt());
         $this->assertEquals(
             $signalement->getValidatedAt()->getTimestamp(),
@@ -216,6 +200,6 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEmpty($signalement->getModifiedBy());
         $this->assertEmpty($signalement->getAffectationStatusByPartner());
 
-        $this->assertCount(83, $data, 'Array $data should have 83 keys');
+        $this->assertCount(76, $data, 'Array $data should have 76 keys');
     }
 }
