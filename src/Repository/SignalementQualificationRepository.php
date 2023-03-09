@@ -40,15 +40,15 @@ class SignalementQualificationRepository extends ServiceEntityRepository
         }
     }
 
-    public function findSignalementsByQualification(Qualification $qualification, string $status)
+    public function findSignalementsByQualification(Qualification $qualification, array $statuses)
     {
         $queryBuilder = $this->createQueryBuilder('sq')
             ->select('s.id')
             ->innerJoin('sq.signalement', 's')
             ->where('sq.qualification LIKE :qualification')
             ->setParameter('qualification', $qualification)
-            ->andWhere('sq.status LIKE :status')
-            ->setParameter('status', $status)
+            ->andWhere('sq.status IN (:statuses)')
+            ->setParameter('statuses', $statuses)
             ->distinct();
 
         return $queryBuilder->getQuery()->getResult();

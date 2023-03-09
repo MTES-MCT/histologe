@@ -367,7 +367,7 @@ class SearchFilterService
         }
 
         if (!empty($filters['nde'])) {
-            $subqueryResults = $this->signalementQualificationRepository->findSignalementsByQualification(Qualification::NON_DECENCE_ENERGETIQUE, $filters['nde'][0]);
+            $subqueryResults = $this->signalementQualificationRepository->findSignalementsByQualification(Qualification::NON_DECENCE_ENERGETIQUE, $filters['nde']);
             $qb->andWhere('s.id IN (:subqueryResults)')
                 ->setParameter('subqueryResults', $subqueryResults);
         }
