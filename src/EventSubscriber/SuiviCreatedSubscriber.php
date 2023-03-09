@@ -10,10 +10,6 @@ use Doctrine\ORM\Events;
 
 class SuiviCreatedSubscriber implements EventSubscriberInterface
 {
-    public function __construct()
-    {
-    }
-
     public function getSubscribedEvents(): array
     {
         return [
