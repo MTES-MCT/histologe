@@ -71,19 +71,11 @@ export default defineComponent({
   },
   computed: {
     affectationsOfPartnersHeaders () {
-      if (store.state.user.isAdmin) {
-        return [
-          'Partenaire',
-          'En attente',
-          'Refusés'
-        ]
-      } else {
-        return [
-          'Partenaire',
-          'En attente',
-          'Refusés'
-        ]
-      }
+      return [
+        'Partenaire',
+        'En attente',
+        'Refusés'
+      ]
     }
   },
   methods: {
