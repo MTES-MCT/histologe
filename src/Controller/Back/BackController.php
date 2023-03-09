@@ -12,7 +12,6 @@ use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
-use App\Repository\UserRepository;
 use App\Service\SearchFilterService;
 use DateTime;
 use DateTimeImmutable;
@@ -41,7 +40,6 @@ class BackController extends AbstractController
         EntityManagerInterface $em,
         CritereRepository $critereRepository,
         TerritoryRepository $territoryRepository,
-        UserRepository $userRepository,
         SignalementRepository $signalementRepository,
         Request $request,
         AffectationRepository $affectationRepository,
@@ -61,13 +59,6 @@ class BackController extends AbstractController
                 $this->iterator = $this->req->getIterator()->getArrayCopy();
             }
             if (!$this->isGranted('ROLE_ADMIN_TERRITORY') && $user->getPartner()) {
-                $counts = $affectationRepository->countByStatusForUser($user, $territory);
-                $signalementsCount = [
-                    Signalement::STATUS_NEED_VALIDATION => $counts[0] ?? ['count' => 0],
-                    Signalement::STATUS_ACTIVE => $counts[1] ?? ['count' => 0],
-                    Signalement::STATUS_CLOSED => ['count' => ($counts[3]['count'] ?? 0) + ($counts[2]['count'] ?? 0)],
-                ];
-                $signalementsCount['total'] = \count($this->req);
                 $status = [
                     Affectation::STATUS_WAIT => Signalement::STATUS_NEED_VALIDATION,
                     Affectation::STATUS_ACCEPTED => Signalement::STATUS_ACTIVE,
@@ -83,7 +74,6 @@ class BackController extends AbstractController
         } else {
             $filters['authorized_codes_insee'] = $this->getParameter('authorized_codes_insee');
             $this->req = $signalementRepository->findByStatusAndOrCityForUser($user, $filters, $request->get('export'));
-            $signalementsCount = $signalementRepository->countByStatus($territory);
         }
         $criteria = new Criteria();
         if ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
@@ -91,18 +81,6 @@ class BackController extends AbstractController
             if ($territory) {
                 $criteria->andWhere(Criteria::expr()->eq('territory', $territory));
             }
-            $signalementsCount['total'] = $signalementRepository->matching($criteria)->count();
-        }
-        if ($user->isSuperAdmin()) {
-            $users = [
-                'active' => $userRepository->matching($criteria->where(Criteria::expr()->eq('statut', 1)))->count(),
-                'inactive' => $userRepository->matching($criteria->where(Criteria::expr()->eq('statut', 0)))->count(),
-            ];
-        } else {
-            $users = [
-                'active' => $userRepository->matching($criteria->where(Criteria::expr()->eq('statut', 1))->andWhere(Criteria::expr()->eq('territory', $territory)))->count(),
-                'inactive' => $userRepository->matching($criteria->where(Criteria::expr()->eq('statut', 0))->andWhere(Criteria::expr()->eq('territory', $territory)))->count(),
-            ];
         }
 
         $signalements = [
@@ -110,7 +88,6 @@ class BackController extends AbstractController
             'total' => \count($this->req),
             'page' => (int) $filters['page'],
             'pages' => (int) ceil(\count($this->req) / 30),
-            'counts' => $signalementsCount ?? [],
             'csrfTokens' => $this->generateCsrfToken(),
         ];
 
@@ -140,7 +117,6 @@ class BackController extends AbstractController
             'cities' => $signalementRepository->findCities($userToFilterCities, $territory),
             'partners' => $partnerRepository->findAllList($territory),
             'signalements' => $signalements,
-            'users' => $users,
             'criteres' => $criteres,
             'tags' => $tagsRepository->findAllActive($territory),
         ]);

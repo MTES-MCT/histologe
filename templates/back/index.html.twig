@@ -1,52 +1,6 @@
 {% extends 'back/base_bo.html.twig' %}
 
 {% block content %}
-    {% if not feature.dashboard_enable %}
-        <section class="fr-background-alt--blue-france fr-p-2v">
-        <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
-            <span class="fr-text-default--info">{{ signalements.counts.total }}</span>
-            <strong class="fr-hint-text">&nbsp;SIGNALEMENTS</strong>
-        </div>
-        |
-        <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
-            <span class="fr-text-default--info">{% if signalements.counts[1] is defined %}{{ signalements.counts[1].count }}{% else %}0{% endif %}</span>
-            <strong class="fr-hint-text">&nbsp;Nouveaux</strong>
-        </div>
-        <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
-            <span class="fr-text-default--info">{% if signalements.counts[2] is defined %}{{ signalements.counts[2].count }}{% else %}0{% endif %}</span>
-            <strong class="fr-hint-text">&nbsp;En cours</strong>
-        </div>
-        <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
-            <span class="fr-text-default--info">{% if signalements.counts[6] is defined %}{{ signalements.counts[6].count }}{% else %}0{% endif %}</span>
-            <strong class="fr-hint-text">&nbsp;Fermés</strong>
-        </div>
-        {% if is_granted('ROLE_ADMIN_TERRITORY') %}
-            |
-            <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
-                <span class="fr-text-default--info">{{ users.active+users.inactive }}</span>
-                <strong class="fr-hint-text">&nbsp;COMPTES</strong>
-            </div>
-            <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
-                <span class="fr-text-default--info">{{ users.active }}</span>
-                <strong class="fr-hint-text">&nbsp;ACTIFS</strong>
-            </div>
-            <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
-                <span class="fr-text-default--info">{{ users.inactive }}</span>
-                <strong class="fr-hint-text">&nbsp;INACTIFS</strong>
-            </div>
-            |
-            <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
-                <span class="fr-text-default--info">{{ partners|filter(v=> v.isCommune == 0)|length }}</span>
-                <strong class="fr-hint-text">&nbsp;PARTENAIRES</strong>
-            </div>
-            <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
-                <span class="fr-text-default--info">{{ partners|filter(v=> v.isCommune == 1  and not v.isArchive)|length }}</span>
-                <strong class="fr-hint-text">&nbsp;COMMUNES</strong>
-            </div>
-        {% endif %}
-    </section>
-    {% endif %}
-
     {% include '_partials/_search_filter_form.html.twig' %}
     <section class="fr-col-12 fr-table fr-table--bordered fr-background-alt--blue-france">
         <table class="fr-display-inline-table fr-display-md-block sortable fr-mb-0">
