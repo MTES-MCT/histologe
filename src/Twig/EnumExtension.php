@@ -7,6 +7,7 @@ namespace App\Twig;
 use BadMethodCallException;
 use InvalidArgumentException;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 // https://github.com/twigphp/Twig/issues/3681
@@ -43,6 +44,23 @@ class EnumExtension extends AbstractExtension
         return [
             new TwigFunction('enum', [$this, 'createProxy']),
         ];
+    }
+
+    public function getFilters(): array
+    {
+        return [
+            new TwigFilter('joinEnumKeys', [$this, 'joinEnumKeys']),
+        ];
+    }
+
+    public function joinEnumKeys(array $arrayOfEnum, string $delimiter = ','): string
+    {
+        $returnString = '';
+        foreach ($arrayOfEnum as $enum) {
+            $returnString .= $enum->name.$delimiter;
+        }
+
+        return $returnString;
     }
 
     public function createProxy(string $enumFQN): object

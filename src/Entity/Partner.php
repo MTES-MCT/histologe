@@ -62,11 +62,8 @@ class Partner
     #[ORM\Column(type: 'string', enumType: PartnerType::class, nullable: true)]
     private ?PartnerType $type = null;
 
-    #[ORM\Column(type: 'json', nullable: true)]
-    private $competence = [];
-
-    // #[ORM\Column(type: Types::SIMPLE_ARRAY, length: 255, nullable: true, enumType: Qualification::class)]
-    // private array $competence = [];
+    #[ORM\Column(type: Types::SIMPLE_ARRAY, length: 255, nullable: true, enumType: Qualification::class)]
+    private array $competence = [];
 
     public function __construct()
     {
