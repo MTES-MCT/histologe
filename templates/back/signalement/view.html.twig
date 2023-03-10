@@ -436,7 +436,7 @@
                 </ul>
             </div>
         </div>
-        {% if isSignalementNDE and (is_granted('ROLE_ADMIN_TERRITORY') or 'NON_DECENCE_ENERGETIQUE' in app.user.partner.competence)  %}
+        {% if isSignalementNDE and (is_granted('ROLE_ADMIN_TERRITORY') or 'NON_DECENCE_ENERGETIQUE' in app.user.partner.competence|joinEnumKeys(','))  %}        
         <section class="fr-accordion">
             <h3 class="fr-accordion__title ">
                 <button class="fr-accordion__btn fr-btn--icon-left fr-fi-chat-quote-fill fr-icon--sm fr-text-label--blue-france" aria-expanded="true" aria-controls="accordion-nde">Non décence énergétique</button>
