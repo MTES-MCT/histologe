@@ -29,12 +29,10 @@ class QualificationStatusService
 
     public function getList(): array
     {
-        $labelList = QualificationStatus::getLabelList();
-
         return [
-            QualificationStatus::NDE_AVEREE->name => $labelList[QualificationStatus::NDE_AVEREE->name],
-            QualificationStatus::NDE_CHECK->name => $labelList[QualificationStatus::NDE_CHECK->name],
-            QualificationStatus::NDE_OK->name => $labelList[QualificationStatus::NDE_OK->name],
+            QualificationStatus::NDE_AVEREE->name => QualificationStatus::NDE_AVEREE->label(),
+            QualificationStatus::NDE_CHECK->name => QualificationStatus::NDE_CHECK->label(),
+            QualificationStatus::NDE_OK->name => QualificationStatus::NDE_OK->label(),
         ];
     }
 }
