@@ -5,12 +5,12 @@ namespace App\Tests\Functional\Service\Signalement;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
-use App\Service\Signalement\SignalementQualificationService;
+use App\Service\Signalement\QualificationStatusService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class SignalementQualificationServiceTest extends KernelTestCase
+class QualificationStatusServiceTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
     protected ManagerRegistry $managerRegistry;
@@ -31,10 +31,10 @@ class SignalementQualificationServiceTest extends KernelTestCase
         /** @var SignalementQualification $signalementQualification */
         $signalementQualification = $signalement->getSignalementQualifications()[0];
 
-        $qualificationService = new SignalementQualificationService($signalement, $signalementQualification);
-        $signalementQualification->setStatus($qualificationService->updateNDEStatus());
+        $qualificationService = new QualificationStatusService();
+        $signalementQualification->setStatus($qualificationService->getNDEStatus($signalementQualification));
 
-        $status = $qualificationService->updateNDEStatus();
+        $status = $qualificationService->getNDEStatus($signalementQualification);
 
         $this->assertEquals(QualificationStatus::NDE_AVEREE, $status);
     }

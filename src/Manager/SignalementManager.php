@@ -2,13 +2,17 @@
 
 namespace App\Manager;
 
+use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Entity\SignalementQualification;
 use App\Entity\Territory;
 use App\Event\SignalementCreatedEvent;
 use App\Factory\SignalementFactory;
 use App\Repository\PartnerRepository;
+use App\Service\Signalement\QualificationStatusService;
+use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -20,6 +24,7 @@ class SignalementManager extends AbstractManager
         private Security $security,
         private SignalementFactory $signalementFactory,
         private EventDispatcherInterface $eventDispatcher,
+        private QualificationStatusService $qualificationStatusService,
         string $entityName = Signalement::class
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -217,5 +222,43 @@ class SignalementManager extends AbstractManager
         );
 
         return array_merge($sendTo, $partnersEmail);
+    }
+
+    public function updateFromSignalementQualification(
+        SignalementQualification $signalementQualification,
+        QualificationNDERequest $qualificationNDERequest
+    ) {
+        $signalement = $signalementQualification->getSignalement();
+        // // mise à jour du signalement
+        if ('after' === $qualificationNDERequest->getDateEntree()
+        && $signalement->getDateEntree()->format('Y') < '2023 '
+        ) {
+            $signalement->setDateEntree(new DateTimeImmutable('2023-01-02'));
+        }
+
+        if ('before' === $qualificationNDERequest->getDateEntree()
+        && $signalement->getDateEntree()->format('Y') >= '2023 '
+        ) {
+            $signalement->setDateEntree(new DateTimeImmutable('1970-01-01'));
+        }
+
+        if (null !== $qualificationNDERequest->getSuperficie()
+        && $signalement->getSuperficie() !== $qualificationNDERequest->getSuperficie()
+        ) {
+            $signalement->setSuperficie($qualificationNDERequest->getSuperficie());
+        }
+
+        // // mise à jour du signalementqualification
+        if (null !== $qualificationNDERequest->getDateDernierBail()
+        && $signalementQualification->getDernierBailAt()->format('Y-m-d') !== $qualificationNDERequest->getDateDernierBail()
+        ) {
+            $signalementQualification->setDernierBailAt($qualificationNDERequest->getDateDernierBail());
+        }
+
+        $signalementQualification->setDetails($qualificationNDERequest->getDetails());
+
+        $signalementQualification->setStatus($this->qualificationStatusService->getNDEStatus($signalementQualification));
+
+        $this->save($signalement);
     }
 }

@@ -444,18 +444,15 @@
             <div class="fr-collapse" id="accordion-nde">
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-5">
-                    <strong>Consommation d'énergie :</strong> <span class="fr-badge fr-badge--info fr-badge--sm">{{ signalementQualificationNDE.details.consommation_energie }} kWh/m²/an</span>
+                        {% if signalementQualificationNDE.details.date_dernier_dpe|date('Y') < '2023' and signalement.superficie is not null %}
+                            {% set calcul = signalementQualificationNDE.details.consommation_energie / signalement.superficie %}
+                        {% else %}
+                            {% set calcul = signalementQualificationNDE.details.consommation_energie %}
+                        {% endif %}
+                       <strong>Consommation d'énergie :</strong> <span class="fr-badge fr-badge--info fr-badge--sm">{{ calcul }} kWh/m²/an</span>
                     </div>
                     <div class="fr-col-12 fr-col-md-5">                    
-                        {% set classe = '' %}
-                        {% if signalementQualificationNDE.status.name == 'NDE_CHECK' %}
-                            {% set classe = 'fr-badge fr-badge--info fr-badge--sm' %}
-                        {% elseif signalementQualificationNDE.status.name == 'NDE_OK' %}
-                            {% set classe = 'fr-badge fr-badge--success fr-badge--sm' %}
-                        {% elseif signalementQualificationNDE.status.name == 'NDE_AVEREE' %}
-                            {% set classe = 'fr-badge fr-badge--error fr-badge--sm' %}
-                        {% endif %}
-                    <strong>Analyse :</strong> <span class="{{ classe }}">{{ signalementQualificationNDE.status.value }}</span>
+                        <strong>Analyse :</strong> <span class="{{ signalementQualificationNDE.status|status_to_css }}">{{ signalementQualificationNDE.status.value }}</span>
                     </div>
                     
                     <div class="fr-col-12 fr-col-md-2 fr-text--right">
@@ -475,7 +472,7 @@
                 </div>
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-6">
-                    <strong>Entrée dans le logement :</strong> {{ signalement.dateEntree|date('d/m/Y') }}
+                    <strong>Entrée dans le logement :</strong> {{ signalement.dateEntree ? signalement.dateEntree|date('d/m/Y') : ''}}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                     <strong>DPE :</strong> {{ signalementQualificationNDE.details.DPE ? 'Oui' : 'Non' }} 
@@ -483,10 +480,10 @@
                 </div>
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-6">
-                    <strong>Dernier bail :</strong> {{ signalementQualificationNDE.dernierBailAt|date('d/m/Y') }}
+                    <strong>Dernier bail :</strong> {{ signalementQualificationNDE.dernierBailAt ? signalementQualificationNDE.dernierBailAt|date('d/m/Y') : ''}}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
-                    <strong>Date dernier DPE :</strong> {{ signalementQualificationNDE.details.date_dernier_dpe|date('d/m/Y') }} 
+                    <strong>Date dernier DPE :</strong> {{ signalementQualificationNDE.details.date_dernier_dpe ? signalementQualificationNDE.details.date_dernier_dpe|date('d/m/Y') : '' }} 
                     </div>
                 </div>
             </div>
@@ -821,6 +818,7 @@
     </section>
 {% endblock %}
 {% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
     <script>
         tippy('.part-infos-hover', {
             content: (reference) => '<strong style="white-space: nowrap">' + reference.getAttribute('data-user') + '</strong>' + '<hr class="fr-pb-1v"><span style="white-space: nowrap">' + reference.getAttribute('data-mail') + '</span>',

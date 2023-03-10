@@ -8,6 +8,7 @@ use App\Entity\Criticite;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
+use App\Entity\SignalementQualification;
 use App\Entity\Situation;
 use App\Entity\Suivi;
 use App\Event\SignalementClosedEvent;
@@ -121,7 +122,7 @@ class BackSignalementController extends AbstractController
         $signalementQualificationNDE = $signalementQualificationRepository->findOneBy([
             'signalement' => $signalement,
             'qualification' => Qualification::NON_DECENCE_ENERGETIQUE, ]);
-        $isSignalementNDEActif = $signalementQualificationNDE && QualificationStatus::ARCHIVED != $signalementQualificationNDE?->getStatus();
+        $isSignalementNDEActif = $this->isSignalementNDEActif($signalementQualificationNDE);
         $signalementQualificationNDECriticites = $signalementQualificationNDE ? $criticiteRepository->findBy(['id' => $signalementQualificationNDE->getCriticites()]) : null;
 
         $partners = $signalementManager->findAllPartners($signalement, $isExperimentationTerritory && $isSignalementNDEActif);
@@ -146,6 +147,15 @@ class BackSignalementController extends AbstractController
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
         ]);
+    }
+
+    private function isSignalementNDEActif(?SignalementQualification $signalementQualification): bool
+    {
+        if (null !== $signalementQualification) {
+            return QualificationStatus::ARCHIVED != $signalementQualification->getStatus();
+        }
+
+        return false;
     }
 
     #[Route('/{uuid}/editer', name: 'back_signalement_edit', methods: ['GET', 'POST'])]

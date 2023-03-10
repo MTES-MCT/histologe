@@ -34,11 +34,15 @@ class BackSignalementQualificationControllerTest extends WebTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('back_signalement_qualification_editer', ['uuid' => $signalement->getUuid(), 'signalement_qualification' => $signalementQualification->getId()]);
+        $route = $router->generate(
+            'back_signalement_qualification_editer',
+            ['uuid' => $signalement->getUuid(), 'signalement_qualification' => $signalementQualification->getId()]
+        );
 
-        $routeSignalementView = $router->generate('back_signalement_view', [
-            'uuid' => $signalement->getUuid(),
-        ]);
+        $routeSignalementView = $router->generate(
+            'back_signalement_view',
+            ['uuid' => $signalement->getUuid()]
+        );
 
         $crawler = $client->request('GET', $routeSignalementView);
         $token = $crawler->filter('#signalement-edit-nde-form input[name=_token]')->attr('value');
@@ -49,11 +53,17 @@ class BackSignalementQualificationControllerTest extends WebTestCase
             sprintf('Result value: %d', $client->getResponse()->getStatusCode())
         );
 
-        $client->request('POST', $route, [
-            'signalement-edit-nde-superficie' => 234,
-            'signalement-edit-nde-conso-energie' => 545,
-            '_token' => $token,
-        ]);
+        $client->request(
+            'POST',
+            $route,
+            [],
+            [],
+            [],
+            json_encode([
+                'superficie' => 234,
+                'consommationEnergie' => 545,
+                '_token' => $token,
+            ]));
 
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-8']);
@@ -87,11 +97,15 @@ class BackSignalementQualificationControllerTest extends WebTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('back_signalement_qualification_editer', ['uuid' => $signalement->getUuid(), 'signalement_qualification' => $signalementQualification->getId()]);
+        $route = $router->generate(
+            'back_signalement_qualification_editer',
+            ['uuid' => $signalement->getUuid(), 'signalement_qualification' => $signalementQualification->getId()]
+        );
 
-        $routeSignalementView = $router->generate('back_signalement_view', [
-            'uuid' => $signalement->getUuid(),
-        ]);
+        $routeSignalementView = $router->generate(
+            'back_signalement_view',
+            ['uuid' => $signalement->getUuid()]
+        );
 
         $crawler = $client->request('GET', $routeSignalementView);
         $token = $crawler->filter('#signalement-edit-nde-form input[name=_token]')->attr('value');
@@ -102,10 +116,16 @@ class BackSignalementQualificationControllerTest extends WebTestCase
             sprintf('Result value: %d', $client->getResponse()->getStatusCode())
         );
 
-        $client->request('POST', $route, [
-            'signalement-edit-nde-dernier-bail' => '2019-02-04',
-            '_token' => $token,
-        ]);
+        $client->request(
+            'POST',
+            $route,
+            [],
+            [],
+            [],
+            json_encode([
+                'dateDernierBail' => '2019-02-04',
+                '_token' => $token,
+            ]));
 
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-8']);
