@@ -2,7 +2,7 @@
 
 namespace App\Dto;
 
-class SignalementAffectation
+class SignalementAffectationListView
 {
     private function __construct(
       private ?int $id = null,
