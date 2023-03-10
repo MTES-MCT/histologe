@@ -7,11 +7,14 @@ use App\Entity\Enum\MotifCloture;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Entity\User;
 use App\Event\SignalementCreatedEvent;
+use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementFactory;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class SignalementManager extends AbstractManager
 {
@@ -20,6 +23,7 @@ class SignalementManager extends AbstractManager
         private Security $security,
         private SignalementFactory $signalementFactory,
         private EventDispatcherInterface $eventDispatcher,
+        private SignalementAffectationListViewFactory $signalementAffectationListViewFactory,
         string $entityName = Signalement::class
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -206,5 +210,20 @@ class SignalementManager extends AbstractManager
         );
 
         return array_merge($sendTo, $partnersEmail);
+    }
+
+    public function findSignalementAffectationList(User|UserInterface|null $user, array $options): array
+    {
+        $signalementAffectationList = [];
+        $dataResult = $this->getRepository()
+            ->findSignalementAffectationListPaginator($user, $options)
+            ->getQuery()
+            ->getResult();
+
+        foreach ($dataResult as $dataItem) {
+            $signalementAffectationList[] = $this->signalementAffectationListViewFactory->createInstanceFrom($dataItem);
+        }
+
+        return $signalementAffectationList;
     }
 }

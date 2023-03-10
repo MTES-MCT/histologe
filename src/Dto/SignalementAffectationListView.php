@@ -4,22 +4,21 @@ namespace App\Dto;
 
 class SignalementAffectationListView
 {
-    private function __construct(
+    public function __construct(
       private ?int $id = null,
-      private ?int $uuid = null,
+      private ?string $uuid = null,
       private ?string $reference = null,
-      private ?string $createdAt = null,
+      private ?\DateTimeImmutable $createdAt = null,
       private ?int $statut = null,
-      private ?string $currentScore = null,
-      private ?string $upcomingScore = null,
+      private ?string $scoreCreation = null,
+      private ?string $newScoreCreation = null,
       private ?bool $isNotOccupant = null,
-      private ?string $fullnameOccupant = null,
+      private ?string $nomOccupant = null,
+      private ?string $prenomOccupant = null,
       private ?string $adresseOccupant = null,
-      private ?string $cpOccupant = null,
       private ?string $villeOccupant = null,
+      private ?\DateTimeImmutable $lastSuiviAt = null,
       private ?array $affectations = null,
-      private ?string $lastSuiviAt = null,
-      private ?string $lastSuiviBy = null,
     ) {
     }
 
@@ -35,12 +34,12 @@ class SignalementAffectationListView
         return $this;
     }
 
-    public function getUuid(): ?int
+    public function getUuid(): ?string
     {
         return $this->uuid;
     }
 
-    public function setUuid(?int $uuid): self
+    public function setUuid(?string $uuid): self
     {
         $this->uuid = $uuid;
 
@@ -59,12 +58,12 @@ class SignalementAffectationListView
         return $this;
     }
 
-    public function getCreatedAt(): ?string
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(?string $createdAt): self
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
 
@@ -83,26 +82,26 @@ class SignalementAffectationListView
         return $this;
     }
 
-    public function getCurrentScore(): ?string
+    public function getScoreCreation(): ?string
     {
-        return $this->currentScore;
+        return $this->scoreCreation;
     }
 
-    public function setCurrentScore(?string $currentScore): self
+    public function setScoreCreation(?string $scoreCreation): self
     {
-        $this->currentScore = $currentScore;
+        $this->scoreCreation = $scoreCreation;
 
         return $this;
     }
 
-    public function getUpcomingScore(): ?string
+    public function getNewScoreCreation(): ?string
     {
-        return $this->upcomingScore;
+        return $this->newScoreCreation;
     }
 
-    public function setUpcomingScore(?string $upcomingScore): self
+    public function setNewScoreCreation(?string $newScoreCreation): self
     {
-        $this->upcomingScore = $upcomingScore;
+        $this->newScoreCreation = $newScoreCreation;
 
         return $this;
     }
@@ -119,14 +118,26 @@ class SignalementAffectationListView
         return $this;
     }
 
-    public function getFullnameOccupant(): ?string
+    public function getNomOccupant(): ?string
     {
-        return $this->fullnameOccupant;
+        return $this->nomOccupant;
     }
 
-    public function setFullnameOccupant(?string $fullnameOccupant): self
+    public function setNomOccupant(?string $nomOccupant): self
     {
-        $this->fullnameOccupant = $fullnameOccupant;
+        $this->nomOccupant = $nomOccupant;
+
+        return $this;
+    }
+
+    public function getPrenomOccupant(): ?string
+    {
+        return $this->prenomOccupant;
+    }
+
+    public function setPrenomOccupant(?string $prenomOccupant): self
+    {
+        $this->prenomOccupant = $prenomOccupant;
 
         return $this;
     }
@@ -143,18 +154,6 @@ class SignalementAffectationListView
         return $this;
     }
 
-    public function getCpOccupant(): ?string
-    {
-        return $this->cpOccupant;
-    }
-
-    public function setCpOccupant(?string $cpOccupant): self
-    {
-        $this->cpOccupant = $cpOccupant;
-
-        return $this;
-    }
-
     public function getVilleOccupant(): ?string
     {
         return $this->villeOccupant;
@@ -167,38 +166,26 @@ class SignalementAffectationListView
         return $this;
     }
 
-    public function getAffectations(): ?array
-    {
-        return $this->affectations;
-    }
-
-    public function setAffectations(?array $affectations): self
-    {
-        $this->affectations = $affectations;
-
-        return $this;
-    }
-
-    public function getLastSuiviAt(): ?string
+    public function getLastSuiviAt(): ?\DateTimeImmutable
     {
         return $this->lastSuiviAt;
     }
 
-    public function setLastSuiviAt(?string $lastSuiviAt): self
+    public function setLastSuiviAt(?\DateTimeImmutable $lastSuiviAt): self
     {
         $this->lastSuiviAt = $lastSuiviAt;
 
         return $this;
     }
 
-    public function getLastSuiviBy(): ?string
+    public function getAffectations(): array
     {
-        return $this->lastSuiviBy;
+        return $this->affectations;
     }
 
-    public function setLastSuiviBy(?string $lastSuiviBy): self
+    public function setAffectations(array $affectations): self
     {
-        $this->lastSuiviBy = $lastSuiviBy;
+        $this->affectations = $affectations;
 
         return $this;
     }

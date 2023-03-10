@@ -24,6 +24,8 @@ class Signalement
     public const STATUS_ARCHIVED = 7;
     public const STATUS_REFUSED = 8;
 
+    public const MAX_LIST_PAGINATION = 30;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]

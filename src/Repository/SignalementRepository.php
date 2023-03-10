@@ -311,6 +311,58 @@ class SignalementRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    public function findSignalementAffectationListPaginator(
+        User|UserInterface|null $user,
+        array $options,
+    ): Paginator {
+        $maxResult = Signalement::MAX_LIST_PAGINATION;
+        $page = (int) $options['page'];
+        $firstResult = (($page ?: 1) - 1) * $maxResult;
+
+        $qb = $this->createQueryBuilder('s')
+            ->select('
+            DISTINCT s.id,
+            s.uuid,
+            s.reference,
+            s.createdAt,
+            s.statut,
+            s.scoreCreation,
+            s.newScoreCreation,
+            s.isNotOccupant,
+            s.nomOccupant,
+            s.prenomOccupant,
+            s.adresseOccupant,
+            s.villeOccupant,
+            s.lastSuiviAt,
+            GROUP_CONCAT(CONCAT(p.nom, \'||\', a.statut) SEPARATOR \'--\') as rawAffectations')
+            ->leftJoin('s.affectations', 'a')
+            ->leftJoin('a.partner', 'p')
+            ->where('s.statut != :status')
+            ->setParameter('status', Signalement::STATUS_ARCHIVED)
+            ->groupBy('s.id');
+
+        if ($user->isTerritoryAdmin()) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $user->getTerritory());
+            if (\array_key_exists($user->getTerritory()->getZip(), $options['authorized_codes_insee'])) {
+                $qb = $this->filterForSpecificAgglomeration(
+                    $qb,
+                    $user->getTerritory()->getZip(),
+                    $user->getPartner()->getNom(),
+                    $options['authorized_codes_insee']
+                );
+            }
+        } elseif ($user->isUserPartner() || $user->isPartnerAdmin()) {
+            $qb->andWhere('a.partner = :partner')->setParameter('partner', $user->getPartner());
+        }
+
+        $qb->orderBy('s.createdAt', 'DESC')
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResult)
+            ->getQuery();
+
+        return new Paginator($qb, true);
+    }
+
     public function findByStatusAndOrCityForUser(User|UserInterface $user = null, array $options, int|null $export): array|Paginator
     {
         $pageSize = $export ?? self::ARRAY_LIST_PAGE_SIZE;
