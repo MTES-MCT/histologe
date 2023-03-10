@@ -44,11 +44,7 @@ export const store = {
       link: undefined
     },
     userAffectations: {
-      link: undefined,
-      countPendingNonDecence: 0,
-      linkPendingNonDecence: undefined,
-      countAcceptedNonDecence: 0,
-      linkAcceptedNonDecence: undefined
+      link: undefined
     },
     newSuivis: {
       count: 0,

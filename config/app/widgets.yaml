@@ -50,6 +50,14 @@ parameters:
         label: "Tous les signalements"
         roles: [ROLE_USER_PARTNER, ROLE_ADMIN_PARTNER]
         link: 'back_index'
+      cardSignalementsNouveauxNonDecence:
+        label: "Affectations non décence énergétique"
+        roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_ADMIN_PARTNER, ROLE_USER_PARTNER]
+        link: 'back_index'
+      cardSignalementsEnCoursNonDecence:
+        label: "Non décence énergétique en cours"
+        roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_ADMIN_PARTNER, ROLE_USER_PARTNER]
+        link: 'back_index'
 
   affectations-partenaires:
     roles: [ ROLE_ADMIN, ROLE_ADMIN_TERRITORY ]

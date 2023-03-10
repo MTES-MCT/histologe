@@ -171,6 +171,26 @@
       </div>
     </div>
 
+    <div v-else-if="sharedState.user.canSeeNonDecenceEnergetique" class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+      <div class="fr-card fr-enlarge-link">
+        <div class="fr-card__body">
+          <ul class="fr-badges-group">
+            <li>
+              <p class="fr-badge fr-badge--no-icon" :class=getTagClass(sharedState.nonDecenceSignalements.countNew)>{{ getBadgeText(sharedState.nonDecenceSignalements.countNew, 'aucune', 'nouvelle', 'nouvelles') }}</p>
+            </li>
+          </ul>
+          <div class="fr-card__content">
+            <h3 class="fr-card__title">
+              <a :href=getSanitizedUrl(sharedState.nonDecenceSignalements.linkNew)>Affectations non décence énergétique</a>
+            </h3>
+            <p class="fr-card__desc">
+              Prenez en charge les signalements avec une situation de non décence énergétique.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div v-if="sharedState.user.isAdmin || sharedState.user.isResponsableTerritoire" class="fr-col-12 fr-col-md-6 fr-col-lg-4">
       <div class="fr-card fr-enlarge-link">
         <div class="fr-card__body">
@@ -191,37 +211,17 @@
       </div>
     </div>
 
-    <div v-if="sharedState.user.canSeeNonDecenceEnergetique" class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+    <div v-else-if="sharedState.user.canSeeNonDecenceEnergetique" class="fr-col-12 fr-col-md-6 fr-col-lg-4">
       <div class="fr-card fr-enlarge-link">
         <div class="fr-card__body">
           <ul class="fr-badges-group">
             <li>
-              <p class="fr-badge fr-badge--no-icon" :class=getTagClass(sharedState.userAffectations.countPendingNonDecence)>{{ getBadgeText(sharedState.userAffectations.countPendingNonDecence, 'aucune', 'nouvelle', 'nouvelles') }}</p>
+              <p class="fr-badge fr-badge--no-icon" :class=getTagClass(sharedState.nonDecenceSignalements.countActive)>{{ getBadgeText(sharedState.nonDecenceSignalements.countActive, 'aucune', 'nouvelle', 'nouvelles') }}</p>
             </li>
           </ul>
           <div class="fr-card__content">
             <h3 class="fr-card__title">
-              <a :href=getSanitizedUrl(sharedState.userAffectations.linkPendingNonDecence)>Affectations non décence énergétique</a>
-            </h3>
-            <p class="fr-card__desc">
-              Prenez en charge les signalements avec une situation de non décence énergétique.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="sharedState.user.canSeeNonDecenceEnergetique" class="fr-col-12 fr-col-md-6 fr-col-lg-4">
-      <div class="fr-card fr-enlarge-link">
-        <div class="fr-card__body">
-          <ul class="fr-badges-group">
-            <li>
-              <p class="fr-badge fr-badge--no-icon" :class=getTagClass(sharedState.userAffectations.countAcceptedNonDecence)>{{ getBadgeText(sharedState.userAffectations.countAcceptedNonDecence, 'aucune', 'nouvelle', 'nouvelles') }}</p>
-            </li>
-          </ul>
-          <div class="fr-card__content">
-            <h3 class="fr-card__title">
-              <a :href=getSanitizedUrl(sharedState.userAffectations.linkAcceptedNonDecence)>Non décence énergétique en cours</a>
+              <a :href=getSanitizedUrl(sharedState.nonDecenceSignalements.linkActive)>Non décence énergétique en cours</a>
             </h3>
             <p class="fr-card__desc">
               Traitez et suivez les signalements en cours.

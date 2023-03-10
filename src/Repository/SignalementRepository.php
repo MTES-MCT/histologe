@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Dto\CountSignalement;
 use App\Dto\StatisticsFilters;
+use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -126,7 +127,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function countByStatus(Territory|null $territory, int|null $year = null, bool $removeImported = false): array
+    public function countByStatus(Territory|null $territory, int|null $year = null, bool $removeImported = false, Qualification $qualification = null): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
@@ -143,6 +144,12 @@ class SignalementRepository extends ServiceEntityRepository
         }
         if ($year) {
             $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);
+        }
+
+        if ($qualification) {
+            $qb->innerJoin('s.signalementQualifications', 'sq')
+                ->andWhere('sq.qualification = :qualification')
+                ->setParameter('qualification', $qualification);
         }
 
         $qb->indexBy('s', 's.statut')

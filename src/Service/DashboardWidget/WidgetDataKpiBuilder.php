@@ -5,7 +5,10 @@ namespace App\Service\DashboardWidget;
 use App\Dto\CountSignalement;
 use App\Dto\CountSuivi;
 use App\Dto\CountUser;
+use App\Entity\Affectation;
+use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
+use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -76,6 +79,24 @@ class WidgetDataKpiBuilder
             ->setClosedByAtLeastOnePartner($this->notificationRepository->countAffectationClosedNotSeen($this->user, $this->territory))
             ->setAffected($this->affectationRepository->countAffectationByPartner($this->user->getPartner()))
             ->setClosedAllPartnersRecently($this->notificationRepository->countSignalementClosedNotSeen($this->user, $this->territory));
+
+        if ($this->user->isSuperAdmin() || $this->user->isTerritoryAdmin()) {
+            $countSignalementByStatus = $this->signalementRepository->countByStatus($this->territory, null, false, Qualification::NON_DECENCE_ENERGETIQUE);
+            $newNDE = isset($countSignalementByStatus[Signalement::STATUS_NEED_VALIDATION]) ? $countSignalementByStatus[Signalement::STATUS_NEED_VALIDATION]['count'] : 0;
+            $currentNDE = isset($countSignalementByStatus[Signalement::STATUS_ACTIVE]) ? $countSignalementByStatus[Signalement::STATUS_ACTIVE]['count'] : 0;
+            $currentNDE += (isset($countSignalementByStatus[Signalement::STATUS_NEED_PARTNER_RESPONSE]) ? $countSignalementByStatus[Signalement::STATUS_NEED_PARTNER_RESPONSE]['count'] : 0);
+            $this->countSignalement
+                ->setNewNDE($newNDE)
+                ->setCurrentNDE($currentNDE);
+        } else {
+            $countAffectationByStatus = $this->affectationRepository->countByStatusForUser($this->user, $this->territory, Qualification::NON_DECENCE_ENERGETIQUE);
+            $newNDE = isset($countAffectationByStatus[Affectation::STATUS_WAIT]) ? $countAffectationByStatus[Affectation::STATUS_WAIT]['count'] : 0;
+            $currentNDE = isset($countAffectationByStatus[Affectation::STATUS_ACCEPTED]) ? $countAffectationByStatus[Affectation::STATUS_ACCEPTED]['count'] : 0;
+
+            $this->countSignalement
+                ->setNewNDE($newNDE)
+                ->setCurrentNDE($currentNDE);
+        }
 
         return $this;
     }
@@ -156,6 +177,8 @@ class WidgetDataKpiBuilder
             ->addWidgetCard('cardTousLesSignalements', $this->countSignalement->getTotal())
             ->addWidgetCard('cardCloturesGlobales', $this->countSignalement->getClosedAllPartnersRecently())
             ->addWidgetCard('cardNouvellesAffectations', $this->countSignalement->getNew())
+            ->addWidgetCard('cardSignalementsNouveauxNonDecence', $this->countSignalement->getNewNDE())
+            ->addWidgetCard('cardSignalementsEnCoursNonDecence', $this->countSignalement->getCurrentNDE())
             ->addWidgetCard('cardNouveauxSuivis', $this->countSuivi->getSignalementNewSuivi())
             ->addWidgetCard('cardSansSuivi', $this->countSuivi->getSignalementNoSuivi());
 

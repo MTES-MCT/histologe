@@ -2,6 +2,7 @@
 
 namespace App\Service\DashboardWidget;
 
+use App\Entity\Enum\Qualification;
 use App\Entity\User;
 
 class WidgetSettings
@@ -9,6 +10,7 @@ class WidgetSettings
     private ?string $firstname = null;
     private ?string $lastname = null;
     private ?string $roleLabel = null;
+    private ?string $canSeeNDE = null;
     private ?string $partnerName = null;
     private ?string $territoryName = null;
 
@@ -19,6 +21,7 @@ class WidgetSettings
         $this->firstname = $user->getPrenom();
         $this->lastname = $user->getNom();
         $this->roleLabel = $user->getRoleLabel();
+        $this->canSeeNDE = \in_array(Qualification::NON_DECENCE_ENERGETIQUE, $user->getPartner()->getCompetence());
         $this->partnerName = $user->getPartner()->getNom();
         $this->territoryName = $user->getTerritory()?->getZip().'-'.$user->getTerritory()?->getName();
         $this->territories = $territories;
@@ -37,6 +40,11 @@ class WidgetSettings
     public function getRoleLabel(): ?string
     {
         return $this->roleLabel;
+    }
+
+    public function getCanSeeNDE(): ?string
+    {
+        return $this->canSeeNDE;
     }
 
     public function getPartnerName(): ?string

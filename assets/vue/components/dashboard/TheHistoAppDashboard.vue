@@ -101,7 +101,7 @@ export default defineComponent({
       this.sharedState.user.isAdmin = requestResponse.roleLabel === 'Super Admin'
       this.sharedState.user.isResponsableTerritoire = requestResponse.roleLabel === 'Responsable Territoire'
       this.sharedState.user.isAdministrateurPartenaire = requestResponse.roleLabel === 'Administrateur'
-      this.sharedState.user.canSeeNonDecenceEnergetique = true // TODO
+      this.sharedState.user.canSeeNonDecenceEnergetique = requestResponse.canSeeNDE === '1'
       this.sharedState.user.prenom = requestResponse.firstname
       this.sharedState.territories = []
       const optionAllItem = new HistoInterfaceSelectOption()
