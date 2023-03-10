@@ -29,7 +29,8 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
                 $signalement->setLastSuiviAt($entity->getCreatedAt());
                 $metaData = $entityManager->getClassMetadata(Signalement::class);
                 $entityManager->persist($signalement);
-                $unitOfWork->computeChangeSet($metaData, $signalement);
+                //  used to recompute the changes of a specific signalement entity
+                $unitOfWork->recomputeSingleEntityChangeSet($metaData, $signalement);
             }
         }
     }
