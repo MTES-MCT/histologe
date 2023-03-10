@@ -127,6 +127,8 @@ class BackSignalementController extends AbstractController
 
         $partners = $signalementManager->findAllPartners($signalement, $isExperimentationTerritory && $isSignalementNDEActif);
 
+        $files = $parameterBag->get('files');
+
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
             'situations' => $criticitesArranged,
@@ -146,6 +148,7 @@ class BackSignalementController extends AbstractController
             'isSignalementNDE' => $isSignalementNDEActif,
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
+            'files' => $files,
         ]);
     }
 

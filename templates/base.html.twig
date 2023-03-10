@@ -140,6 +140,20 @@
                         },
                         {% endfor %}
                     ];
+             
+                    {% if isSignalementNDE and (is_granted('ROLE_ADMIN_TERRITORY') or 'NON_DECENCE_ENERGETIQUE' in app.user.partner.competence|joinEnumKeys(','))  %}  
+                        {% for doc in files.documents %}
+                            {% if 'NON_DECENCE_ENERGETIQUE' in doc.params.qualification|joinEnumKeys(',') %}
+                                items.push({
+                                    type: 'menuitem',
+                                    text: '{{ doc.title }}',
+                                    onAction: function () {
+                                        editor.insertContent('&nbsp;<a href="{{ asset(files.path~doc.file) }}?t=___TOKEN___" class="fr-btn fr-fi-eye-fill fr-btn--icon-left" title="Afficher le document" target="_blank">Consulter "{{ doc.title }}"</a>');
+                                    }
+                                })     
+                            {% endif %}   
+                        {% endfor %}
+                    {% endif %}
                     callback(items);
                 }
             });
