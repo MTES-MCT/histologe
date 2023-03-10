@@ -84,7 +84,6 @@ class WidgetDataKpiBuilder
             $countSignalementByStatus = $this->signalementRepository->countByStatus($this->territory, null, false, Qualification::NON_DECENCE_ENERGETIQUE);
             $newNDE = isset($countSignalementByStatus[Signalement::STATUS_NEED_VALIDATION]) ? $countSignalementByStatus[Signalement::STATUS_NEED_VALIDATION]['count'] : 0;
             $currentNDE = isset($countSignalementByStatus[Signalement::STATUS_ACTIVE]) ? $countSignalementByStatus[Signalement::STATUS_ACTIVE]['count'] : 0;
-            $currentNDE += (isset($countSignalementByStatus[Signalement::STATUS_NEED_PARTNER_RESPONSE]) ? $countSignalementByStatus[Signalement::STATUS_NEED_PARTNER_RESPONSE]['count'] : 0);
             $this->countSignalement
                 ->setNewNDE($newNDE)
                 ->setCurrentNDE($currentNDE);

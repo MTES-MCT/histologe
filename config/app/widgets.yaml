@@ -54,10 +54,16 @@ parameters:
         label: "Affectations non décence énergétique"
         roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_ADMIN_PARTNER, ROLE_USER_PARTNER]
         link: 'back_index'
+        params:
+          nde: '1'
+          statut: 1
       cardSignalementsEnCoursNonDecence:
         label: "Non décence énergétique en cours"
         roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_ADMIN_PARTNER, ROLE_USER_PARTNER]
         link: 'back_index'
+        params:
+          nde: '1'
+          statut: 2
 
   affectations-partenaires:
     roles: [ ROLE_ADMIN, ROLE_ADMIN_TERRITORY ]
