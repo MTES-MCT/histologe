@@ -14,6 +14,7 @@ use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\SearchFilterService;
+use App\Service\Signalement\QualificationStatusService;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -47,6 +48,7 @@ class BackController extends AbstractController
         AffectationRepository $affectationRepository,
         PartnerRepository $partnerRepository,
         SearchFilterService $searchFilterService,
+        QualificationStatusService $qualificationStatusService,
         TagRepository $tagsRepository): Response
     {
         $title = 'Administration - Tableau de bord';
@@ -135,6 +137,7 @@ class BackController extends AbstractController
             'title' => $title,
             'filters' => $filters,
             'countActiveFilters' => $countActiveFilters,
+            'listQualificationStatus' => $qualificationStatusService->getList(),
             'displayRefreshAll' => true,
             'territories' => $territoryRepository->findAllList(),
             'cities' => $signalementRepository->findCities($userToFilterCities, $territory),

@@ -19,10 +19,10 @@
                         class="fr-col-12 fr-col-md-10 fr-col-lg-6 gauge-signalement"></canvas>
                         
             {% endif %}
-            {% if is_granted('ROLE_ADMIN_TERRITORY') or 'Non décence énergétique' in app.user.partner.competence %}
+            {% if is_granted('ROLE_ADMIN_TERRITORY') or enum('App\\Entity\\Enum\\Qualification').NON_DECENCE_ENERGETIQUE.name in app.user.partner.competence %}
                 {% set isNDE = false %}
                 {% for qualification in signalement.signalementQualifications %}
-                    {% if (qualification.qualification.name is same as 'NON_DECENCE_ENERGETIQUE') and (qualification.status.name is same as 'NDE_AVEREE' or qualification.status.name is same as 'NDE_AVEREE') %}
+                    {% if (qualification.qualification.name is same as enum('App\\Entity\\Enum\\Qualification').NON_DECENCE_ENERGETIQUE.name) and (qualification.status.name is same as enum('App\\Entity\\Enum\\QualificationStatus').NDE_AVEREE.name or qualification.status.name is same as enum('App\\Entity\\Enum\\QualificationStatus').NDE_CHECK.name) %}
                         {% set isNDE = true %}
                     {% endif %}
                 {% endfor %}

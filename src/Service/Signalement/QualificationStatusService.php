@@ -26,4 +26,15 @@ class QualificationStatusService
         // si avant 2023, on archive la qualification
         return QualificationStatus::ARCHIVED;
     }
+
+    public function getList(): array
+    {
+        $labelList = QualificationStatus::getLabelList();
+
+        return [
+            QualificationStatus::NDE_AVEREE->name => $labelList[QualificationStatus::NDE_AVEREE->name],
+            QualificationStatus::NDE_CHECK->name => $labelList[QualificationStatus::NDE_CHECK->name],
+            QualificationStatus::NDE_OK->name => $labelList[QualificationStatus::NDE_OK->name],
+        ];
+    }
 }

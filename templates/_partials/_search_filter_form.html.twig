@@ -514,9 +514,9 @@
                                             <label class="fr-label" for="bo-filters-nde"><strong>Non décence énergétique</strong></label>
                                             <select id="bo-filters-nde" class="fr-select" onchange="setBadge(this)">
                                                 <option value="">Tous</option>
-                                                <option value="Non décence énergétique avérée" class="{% if "Non décence énergétique avérée" in filters.nde %}fr-hidden{% endif %}">Non décence énergétique avérée</option>
-                                                <option value="Non décence énergétique à vérifier" class="{% if "Non décence énergétique à vérifier" in filters.nde %}fr-hidden{% endif %}">Non décence énergétique à vérifier</option>
-                                                <option value="Décence énergétique OK" class="{% if "Décence énergétique OK" in filters.nde %}fr-hidden{% endif %}">Décence énergétique OK</option>
+                                                {% for qualificationName, qualificationValue in listQualificationStatus %}
+                                                    <option value="{{ qualificationName }}" class="{% if qualificationName in filters.nde %}fr-hidden{% endif %}">{{ qualificationValue }}</option>
+                                                {% endfor %}
                                             </select>
                                             <div class="selected__value">
                                                 <div class="fr-pb-1v fr-border--bottom--orange"></div>
@@ -525,7 +525,7 @@
                                                     <input type="hidden" name="bo-filters-nde[]" value="{{ nde }}">
                                                     <span class="fr-badge fr-badge--success fr-m-1v"
                                                           data-removable="true"
-                                                          data-value="{{ nde }}">{{ nde }}</span>
+                                                          data-value="{{ nde }}">{{ listQualificationStatus[nde] }}</span>
                                                 {% else %}
                                                     {% set visible = 0 %}
                                                 {% endfor %}
