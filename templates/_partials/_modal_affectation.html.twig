@@ -33,8 +33,7 @@
                                             <option value="{{ partner['id'] }}">{{ partner['name']|upper }} 
                                             {% if partner.competence|default %}
                                                ({% for competence in partner.competence %}
-                                                    {{ competence }}
-                                                    {# {{ competence.label }} #}
+                                                    {{ competence.label }}
                                                 {% endfor %})
                                             {% endif %}
                                             </option>
@@ -61,8 +60,7 @@
                                             <option value="{{ partner['id'] }}">{{ partner['name']|upper }}
                                             {% if partner.competence|default %}
                                                 ({% for competence in partner.competence %}
-                                                    {{ competence }}
-                                                    {# {{ competence.label }} #}
+                                                    {{ competence.label }}
                                                 {% endfor %})
                                             {% endif %}
                                             </option>
