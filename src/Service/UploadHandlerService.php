@@ -39,10 +39,10 @@ class UploadHandlerService
             throw new MaxUploadSizeExceededException(self::MAX_FILESIZE);
         }
         try {
-            $file->move(
-                $this->parameterBag->get('uploads_tmp_dir'),
-                $newFilename
-            );
+            $distantFolder = $this->parameterBag->get('bucket_tmp_dir');
+            $fileResource = fopen($file->getPathname(), 'r');
+            $this->fileStorage->writeStream($distantFolder.$newFilename, $fileResource);
+            fclose($fileResource);
         } catch (FileException $e) {
             $this->logger->error($e->getMessage());
 
@@ -59,7 +59,8 @@ class UploadHandlerService
     {
         $filename = null === $directory ? $filename : $directory.$filename;
         $this->logger->info($filename);
-        $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
+        $distantFolder = $this->parameterBag->get('bucket_tmp_dir');
+        $tmpFilepath = $distantFolder.$filename;
 
         try {
             $tmpFilepath = $this->heicToJpegConverter->convert($tmpFilepath);
@@ -67,9 +68,7 @@ class UploadHandlerService
             $pathInfo = pathinfo($tmpFilepath);
             $newFilename = $pathInfo['filename'].'.'.$pathInfo['extension'];
 
-            $fileResource = fopen($tmpFilepath, 'r');
-            $this->fileStorage->writeStream($newFilename, $fileResource);
-            fclose($fileResource);
+            $this->fileStorage->move($tmpFilepath, $newFilename);
 
             return $newFilename;
         } catch (FilesystemException $exception) {

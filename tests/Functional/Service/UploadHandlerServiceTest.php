@@ -66,7 +66,6 @@ class UploadHandlerServiceTest extends KernelTestCase
         $this->assertIsArray($fileResult);
         $this->assertArrayHasKey('file', $fileResult);
         $this->assertArrayHasKey('titre', $fileResult);
-        $this->assertFileExists($parameterBag->get('uploads_tmp_dir').$fileResult['file']);
     }
 
     public function testUploadBigFileShouldThrowsException(): void
