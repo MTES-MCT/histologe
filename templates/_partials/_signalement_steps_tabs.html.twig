@@ -385,7 +385,7 @@
                                                                name="signalement[situation][{{ situation.id }}][critere][{{ critere.id }}][criticite]"
                                                                value="{{ criticite.id }}"
                                                                class="toggle-criticite-smiley"
-                                                               {% if "Non décence énergétique" in criticite.qualification %}data-nde="1"{% endif %}
+                                                               {% if enum('App\\Entity\\Enum\\Qualification').NON_DECENCE_ENERGETIQUE.name in criticite.qualification %}data-nde="1"{% endif %}
                                                                {% if criticite in signalement.criticites %}checked{% endif %}>
                                                         <label class="fr-label"
                                                                for="signalement-critere-{{ critere.id }}-criticite-{{ criticite.id }}"><strong>{{ etats[criticite.score-1] }}</strong>
