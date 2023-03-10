@@ -281,27 +281,6 @@ class Signalement
     private $StructureReferentSocial;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $mailSyndic;
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $nomSci;
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $nomRepresentantSci;
-
-    #[ORM\Column(type: 'string', length: 12, nullable: true)]
-    private $telSci;
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $mailSci;
-
-    #[ORM\Column(type: 'string', length: 12, nullable: true)]
-    private $telSyndic;
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $nomSyndic;
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $numeroInvariant;
 
     #[ORM\Column(type: 'integer', nullable: true)]
@@ -1424,90 +1403,6 @@ class Signalement
     public function setStructureReferentSocial(?string $StructureReferentSocial): self
     {
         $this->StructureReferentSocial = $StructureReferentSocial;
-
-        return $this;
-    }
-
-    public function getMailSyndic(): ?string
-    {
-        return $this->mailSyndic;
-    }
-
-    public function setMailSyndic(?string $mailSyndic): self
-    {
-        $this->mailSyndic = $mailSyndic;
-
-        return $this;
-    }
-
-    public function getNomSci(): ?string
-    {
-        return $this->nomSci;
-    }
-
-    public function setNomSci(?string $nomSci): self
-    {
-        $this->nomSci = $nomSci;
-
-        return $this;
-    }
-
-    public function getNomRepresentantSci(): ?string
-    {
-        return $this->nomRepresentantSci;
-    }
-
-    public function setNomRepresentantSci(?string $nomRepresentantSci): self
-    {
-        $this->nomRepresentantSci = $nomRepresentantSci;
-
-        return $this;
-    }
-
-    public function getTelSci(): ?string
-    {
-        return $this->telSci;
-    }
-
-    public function setTelSci(?string $telSci): self
-    {
-        $this->telSci = $telSci;
-
-        return $this;
-    }
-
-    public function getMailSci(): ?string
-    {
-        return $this->mailSci;
-    }
-
-    public function setMailSci(?string $mailSci): self
-    {
-        $this->mailSci = $mailSci;
-
-        return $this;
-    }
-
-    public function getTelSyndic(): ?string
-    {
-        return $this->telSyndic;
-    }
-
-    public function setTelSyndic(?string $telSyndic): self
-    {
-        $this->telSyndic = $telSyndic;
-
-        return $this;
-    }
-
-    public function getNomSyndic(): ?string
-    {
-        return $this->nomSyndic;
-    }
-
-    public function setNomSyndic(?string $nomSyndic): self
-    {
-        $this->nomSyndic = $nomSyndic;
 
         return $this;
     }
