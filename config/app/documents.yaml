@@ -1,6 +1,6 @@
 parameters:
   files:
-    path: "assets/files/"
+    path: "build/files/"
     documents:
       - 
         title: "1 - Demande de transmission d'une copie d'un DPE"
