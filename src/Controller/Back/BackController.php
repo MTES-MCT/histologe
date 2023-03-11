@@ -7,17 +7,15 @@ use App\Entity\Criticite;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Repository\AffectationRepository;
-use App\Repository\CritereRepository;
-use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
-use App\Repository\TagRepository;
-use App\Repository\TerritoryRepository;
 use App\Service\SearchFilterService;
+use App\Service\Signalement\SearchFilterOptionDataProvider;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\QueryException;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,24 +33,24 @@ class BackController extends AbstractController
     {
     }
 
+    /**
+     * @throws QueryException
+     * @throws InvalidArgumentException
+     */
     #[Route('/signalements/', name: 'back_index')]
     public function index(
         EntityManagerInterface $em,
-        CritereRepository $critereRepository,
-        TerritoryRepository $territoryRepository,
         SignalementRepository $signalementRepository,
         Request $request,
         AffectationRepository $affectationRepository,
-        PartnerRepository $partnerRepository,
         SearchFilterService $searchFilterService,
-        TagRepository $tagsRepository): Response
-    {
+        SearchFilterOptionDataProvider $searchFilterOptionDataProvider
+    ): Response {
         $title = 'Administration - Tableau de bord';
         $filters = $searchFilterService->setRequest($request)->setFilters()->getFilters();
         $countActiveFilters = $searchFilterService->getCountActive();
         /** @var User $user */
         $user = $this->getUser();
-        $territory = $user->getTerritory(); // If user is not admin, he can only see his territory
         if (!$this->isGranted('ROLE_ADMIN_TERRITORY') || $filters['partners'] || $filters['affectations']) {
             $this->req = $affectationRepository->findByStatusAndOrCityForUser($user, $filters, $request->get('export'));
             if (!$request->get('export')) {
@@ -75,13 +73,6 @@ class BackController extends AbstractController
             $filters['authorized_codes_insee'] = $this->getParameter('authorized_codes_insee');
             $this->req = $signalementRepository->findByStatusAndOrCityForUser($user, $filters, $request->get('export'));
         }
-        $criteria = new Criteria();
-        if ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
-            $criteria->where(Criteria::expr()->neq('statut', 7));
-            if ($territory) {
-                $criteria->andWhere(Criteria::expr()->eq('territory', $territory));
-            }
-        }
 
         $signalements = [
             'list' => $this->req,
@@ -94,31 +85,18 @@ class BackController extends AbstractController
         if ($request->get('pagination')) {
             return $this->stream('back/table_result.html.twig', ['filters' => $filters, 'signalements' => $signalements]);
         }
-        $criteres = $critereRepository->findAllList();
+
         if ($request->get('export') && $this->isCsrfTokenValid('export_token_'.$user->getId(), $request->get('_token'))) {
             return $this->export($this->req, $em);
-        }
-
-        if ($territory) {
-            $criteria->andWhere(Criteria::expr()->eq('territory', $territory));
-        }
-
-        $userToFilterCities = $user;
-        if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY')) {
-            $userToFilterCities = null;
         }
 
         return $this->render('back/index.html.twig', [
             'title' => $title,
             'filters' => $filters,
+            'filtersOptionData' => $searchFilterOptionDataProvider->getData($user),
             'countActiveFilters' => $countActiveFilters,
             'displayRefreshAll' => true,
-            'territories' => $territoryRepository->findAllList(),
-            'cities' => $signalementRepository->findCities($userToFilterCities, $territory),
-            'partners' => $partnerRepository->findAllList($territory),
             'signalements' => $signalements,
-            'criteres' => $criteres,
-            'tags' => $tagsRepository->findAllActive($territory),
         ]);
     }
 

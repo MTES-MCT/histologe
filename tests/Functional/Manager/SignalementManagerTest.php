@@ -26,7 +26,6 @@ class SignalementManagerTest extends KernelTestCase
     private SignalementFactory $signalementFactory;
     private EventDispatcherInterface $eventDispatcher;
     private SignalementAffectationListViewFactory $signalementAffectationListViewFactory;
-
     private SignalementManager $signalementManager;
 
     protected function setUp(): void
