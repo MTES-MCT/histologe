@@ -38,8 +38,10 @@
                     {% set classe = 'fr-badge fr-badge--info' %}
                 {% elseif affectation.statut is same as (1) %}
                     {% set classe = 'fr-badge fr-badge--success' %}
-                {% elseif affectation.statut is same as (2) or affectation.statut is same as (3) %}
-                    {% set classe = 'fr-badge fr-badge--error' %}
+                {% elseif affectation.statut is same as (2) %}
+                    {% set classe = 'fr-badge fr-text-label--red-marianne fr-background-contrast--red-marianne fr-fi-close-line' %}
+                {% elseif affectation.statut is same as (3) %}
+                    {% set classe = 'fr-badge fr-fi-close-circle-fill' %}
                 {% endif %}
                 <small class="{{ classe }} fr-ws-nowrap fr-badge--sm fr-my-1v fr-text--bold fr-display-block"><span
                     > {{ affectation.partner.nom }}</span></small>
