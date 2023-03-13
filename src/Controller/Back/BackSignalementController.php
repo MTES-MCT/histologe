@@ -124,6 +124,7 @@ class BackSignalementController extends AbstractController
             'qualification' => Qualification::NON_DECENCE_ENERGETIQUE, ]);
         $isSignalementNDEActif = $this->isSignalementNDEActif($signalementQualificationNDE);
         $signalementQualificationNDECriticites = $signalementQualificationNDE ? $criticiteRepository->findBy(['id' => $signalementQualificationNDE->getCriticites()]) : null;
+        $isUserNDE = $this->isGranted('SIGN_EDIT_NDE', $signalement);
 
         $partners = $signalementManager->findAllPartners($signalement, $isExperimentationTerritory && $isSignalementNDEActif);
 
@@ -148,6 +149,7 @@ class BackSignalementController extends AbstractController
             'isSignalementNDE' => $isSignalementNDEActif,
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
+            'isUserNDE' => $isUserNDE,
             'files' => $files,
         ]);
     }
