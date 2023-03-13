@@ -17,7 +17,8 @@ class SignalementAffectationListView
       private ?string $prenomOccupant = null,
       private ?string $adresseOccupant = null,
       private ?string $villeOccupant = null,
-      private ?\DateTimeImmutable $lastSuiviAt = null,
+      private \DateTimeImmutable|string|null $lastSuiviAt = null,
+      private ?string $lastSuiviBy = null,
       private ?array $affectations = null,
     ) {
     }
@@ -166,14 +167,26 @@ class SignalementAffectationListView
         return $this;
     }
 
-    public function getLastSuiviAt(): ?\DateTimeImmutable
+    public function getLastSuiviAt(): \DateTimeImmutable|string|null
     {
         return $this->lastSuiviAt;
     }
 
-    public function setLastSuiviAt(?\DateTimeImmutable $lastSuiviAt): self
+    public function setLastSuiviAt(\DateTimeImmutable|string|null $lastSuiviAt): self
     {
         $this->lastSuiviAt = $lastSuiviAt;
+
+        return $this;
+    }
+
+    public function getLastSuiviBy(): ?string
+    {
+        return $this->lastSuiviBy;
+    }
+
+    public function setLastSuiviBy(?string $lastSuiviBy): self
+    {
+        $this->lastSuiviBy = $lastSuiviBy;
 
         return $this;
     }

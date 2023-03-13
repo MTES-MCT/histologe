@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Dto\CountSignalement;
 use App\Dto\StatisticsFilters;
+use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -319,8 +320,8 @@ class SignalementRepository extends ServiceEntityRepository
         $page = (int) $options['page'];
         $firstResult = (($page ?: 1) - 1) * $maxResult;
 
-        $qb = $this->createQueryBuilder('s')
-            ->select('
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('
             DISTINCT s.id,
             s.uuid,
             s.reference,
@@ -334,11 +335,11 @@ class SignalementRepository extends ServiceEntityRepository
             s.adresseOccupant,
             s.villeOccupant,
             s.lastSuiviAt,
+            s.lastSuiviBy,
             GROUP_CONCAT(CONCAT(p.nom, \'||\', a.statut) SEPARATOR \'--\') as rawAffectations')
             ->leftJoin('s.affectations', 'a')
             ->leftJoin('a.partner', 'p')
             ->where('s.statut != :status')
-            ->setParameter('status', Signalement::STATUS_ARCHIVED)
             ->groupBy('s.id');
 
         if ($user->isTerritoryAdmin()) {
@@ -352,9 +353,23 @@ class SignalementRepository extends ServiceEntityRepository
                 );
             }
         } elseif ($user->isUserPartner() || $user->isPartnerAdmin()) {
-            $qb->andWhere('a.partner = :partner')->setParameter('partner', $user->getPartner());
+            $subQueryBuilder = $this->createQueryBuilder('s2')
+                ->select('IDENTITY(a2.signalement)')
+                ->from(Affectation::class, 'a2')
+                ->where('a2.partner = :partner_1');
+
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->eq('a.partner', ':partner_2'),
+                    $qb->expr()->in('s.id', $subQueryBuilder->getDQL())
+                ));
+
+            $qb->setParameter('partner_1', $user->getPartner());
+            $qb->setParameter('partner_2', $user->getPartner());
         }
 
+        $qb->setParameter('status', Signalement::STATUS_ARCHIVED);
+        $qb = $this->searchFilterService->applyFilters($qb, $options);
         $qb->orderBy('s.createdAt', 'DESC')
             ->setFirstResult($firstResult)
             ->setMaxResults($maxResult)

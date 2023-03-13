@@ -11,8 +11,10 @@ use App\Entity\User;
 use App\Event\SignalementCreatedEvent;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementFactory;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -24,6 +26,7 @@ class SignalementManager extends AbstractManager
         private SignalementFactory $signalementFactory,
         private EventDispatcherInterface $eventDispatcher,
         private SignalementAffectationListViewFactory $signalementAffectationListViewFactory,
+        private ParameterBagInterface $parameterBag,
         string $entityName = Signalement::class
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -214,16 +217,26 @@ class SignalementManager extends AbstractManager
 
     public function findSignalementAffectationList(User|UserInterface|null $user, array $options): array
     {
+        $options['authorized_codes_insee'] = $this->parameterBag->get('authorized_codes_insee');
         $signalementAffectationList = [];
-        $dataResult = $this->getRepository()
-            ->findSignalementAffectationListPaginator($user, $options)
-            ->getQuery()
-            ->getResult();
 
-        foreach ($dataResult as $dataItem) {
-            $signalementAffectationList[] = $this->signalementAffectationListViewFactory->createInstanceFrom($dataItem);
+        /** @var Paginator $paginator */
+        $paginator = $this->getRepository()->findSignalementAffectationListPaginator($user, $options);
+        $total = $paginator->count();
+        $dataResultList = $paginator->getQuery()->getResult();
+
+        foreach ($dataResultList as $dataResultItem) {
+            $signalementAffectationList[] = $this->signalementAffectationListViewFactory->createInstanceFrom(
+                $this->security->getUser(),
+                $dataResultItem
+            );
         }
 
-        return $signalementAffectationList;
+        return [
+            'list' => $signalementAffectationList,
+            'total' => $total,
+            'page' => (int) $options['page'],
+            'pages' => (int) ceil($total / 30),
+        ];
     }
 }

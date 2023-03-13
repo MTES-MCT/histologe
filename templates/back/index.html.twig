@@ -88,7 +88,7 @@
                 </ul>
             </nav>
         </div>
-    </section>
+
 {% endblock %}
 {% block javascripts %}
 
@@ -98,8 +98,19 @@
             strokeWidth: 0.1,
             color: '#000000'
         }
-        let ids = [{% if not is_granted('ROLE_ADMIN_TERRITORY')  or filters.partners or filters.affectations %}{{ signalements.list|map(p => "#{p.signalement.id}")|join(', ') }}{% else %}{{ signalements.list|map(p => "#{p.id}")|join(', ') }}{% endif %}],
-            scores = [{% if not is_granted('ROLE_ADMIN_TERRITORY')  or filters.partners or filters.affectations %}{{ signalements.list|map(p => "#{p.signalement.scoreCreation}")|join(', ') }}{% else %}{{ signalements.list|map(p => "#{p.scoreCreation}")|join(', ') }}{% endif %}];
+        let ids = [ {% if not is_granted('ROLE_ADMIN_TERRITORY')  or filters.partners or filters.affectations %}
+                        {{ signalements.list|map(signalement => "#{signalement.id}")|join(', ') }}
+                    {% else %}
+                        {{ signalements.list|map(signalement => "#{signalement.id}")|join(', ') }}
+                    {% endif %}],
+
+            scores = [
+                {% if not is_granted('ROLE_ADMIN_TERRITORY')  or filters.partners or filters.affectations %}
+                    {{ signalements.list|map(signalement => "#{signalement.scoreCreation}")|join(', ') }}
+                {% else %}
+                    {{ signalements.list|map(signalement => "#{signalement.scoreCreation}")|join(', ') }}
+                {% endif %}];
+
         ids.map((id, index) => {
             gauge = new Gauge(document.getElementById(`gauge-signalement-${id}`)).setOptions(opts);
             gauge.set(scores[index]);
