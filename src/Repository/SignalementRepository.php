@@ -336,7 +336,9 @@ class SignalementRepository extends ServiceEntityRepository
             s.villeOccupant,
             s.lastSuiviAt,
             s.lastSuiviBy,
-            GROUP_CONCAT(CONCAT(p.nom, \'||\', a.statut) SEPARATOR \'--\') as rawAffectations')
+            GROUP_CONCAT(CONCAT(p.nom, \'||\', a.statut) SEPARATOR \'--\') as rawAffectations,
+            GROUP_CONCAT(p.nom SEPARATOR \'||\') as affectationPartner,
+            GROUP_CONCAT(a.statut SEPARATOR \'||\') as affectationStatus')
             ->leftJoin('s.affectations', 'a')
             ->leftJoin('a.partner', 'p')
             ->where('s.statut != :status')

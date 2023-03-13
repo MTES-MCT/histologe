@@ -225,7 +225,7 @@ class SearchFilterService
             }
         }
         if (!empty($filters['closed_affectation'])) {
-            $qb->andWhere('affectations IS NOT NULL');
+            $qb->having('affectationPartner IS NOT NULL');
             if (\in_array('ALL_OPEN', $filters['closed_affectation'])) {
                 // les id de tous les signalements ayant au moins une affectation fermée :
                 $subquery = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')

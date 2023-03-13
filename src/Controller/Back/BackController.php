@@ -32,7 +32,7 @@ class BackController extends AbstractController
         if ($request->get('pagination')) {
             return $this->stream('back/table_result.html.twig', [
                 'filters' => $filters,
-                'signalements' => $signalements
+                'signalements' => $signalements,
             ]);
         }
 

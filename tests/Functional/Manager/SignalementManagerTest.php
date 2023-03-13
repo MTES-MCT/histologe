@@ -14,6 +14,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SignalementManagerTest extends KernelTestCase
@@ -26,6 +27,7 @@ class SignalementManagerTest extends KernelTestCase
     private SignalementFactory $signalementFactory;
     private EventDispatcherInterface $eventDispatcher;
     private SignalementAffectationListViewFactory $signalementAffectationListViewFactory;
+    private ParameterBagInterface $parameterBag;
     private SignalementManager $signalementManager;
 
     protected function setUp(): void
@@ -39,13 +41,15 @@ class SignalementManagerTest extends KernelTestCase
         $this->signalementAffectationListViewFactory = static::getContainer()->get(
             SignalementAffectationListViewFactory::class
         );
+        $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
 
         $this->signalementManager = new SignalementManager(
             $this->managerRegistry,
             $this->security,
             $this->signalementFactory,
             $this->eventDispatcher,
-            $this->signalementAffectationListViewFactory
+            $this->signalementAffectationListViewFactory,
+            $this->parameterBag,
         );
     }
 

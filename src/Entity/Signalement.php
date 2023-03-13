@@ -1539,8 +1539,10 @@ class Signalement
         return $this;
     }
 
-    // This function return the last suivis
-    public function getLastSuivi()
+    /**
+     * @return false|mixed|Suivi
+     */
+    public function getLastSuivi(): mixed
     {
         return $this->suivis->last();
     }

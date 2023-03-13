@@ -41,8 +41,9 @@ class UpdateSignalementLastSuiviAtCommand extends Command
             $suivi = $signalement->getLastSuivi();
             if ($suivi instanceof Suivi) {
                 ++$count;
-                $signalement->setLastSuiviAt($suivi->getCreatedAt());
-                $signalement->setLastSuiviBy(SuiviHelper::getSuiviLastByLabel($signalement));
+                $signalement
+                    ->setLastSuiviAt($suivi->getCreatedAt())
+                    ->setLastSuiviBy(SuiviHelper::getLastLabelFromSignalement($signalement));
                 $this->entityManager->persist($signalement);
 
                 if (0 === $count % self::FLUSH_COUNT) {

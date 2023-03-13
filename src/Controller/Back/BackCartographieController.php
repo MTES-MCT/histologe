@@ -5,7 +5,6 @@ namespace App\Controller\Back;
 use App\Repository\SignalementRepository;
 use App\Service\SearchFilterService;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
-use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,9 +19,6 @@ class BackCartographieController extends AbstractController
     ) {
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     #[Route('/', name: 'back_cartographie')]
     public function index(
         SignalementRepository $signalementRepository,
