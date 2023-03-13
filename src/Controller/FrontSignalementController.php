@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Entity\Critere;
 use App\Entity\Criticite;
 use App\Entity\Enum\Qualification;
@@ -37,6 +38,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/')]
 class FrontSignalementController extends AbstractController
@@ -110,7 +112,8 @@ class FrontSignalementController extends AbstractController
         PostalCodeHomeChecker $postalCodeHomeChecker,
         EventDispatcherInterface $eventDispatcher,
         UrlGeneratorInterface $urlGenerator,
-        CritereRepository $critereRepository
+        CritereRepository $critereRepository,
+        SerializerInterface $serializer
     ): Response {
         if ($this->isCsrfTokenValid('new_signalement', $request->request->get('_token'))
             && $data = $request->get('signalement')) {
@@ -242,32 +245,33 @@ class FrontSignalementController extends AbstractController
                     $signalementQualification = new SignalementQualification();
                     $signalementQualification->setQualification(Qualification::NON_DECENCE_ENERGETIQUE);
 
-                    $qualificationDetails = [
-                        'consommation_energie' => null,
-                        'DPE' => null,
-                        'date_dernier_dpe' => null,
-                    ];
-
+                    $dataHasDPEToSave = null;
+                    $dataConsoToSave = null;
+                    $dataDateBailToSave = null;
                     if ('Je ne sais pas' !== $dataDateBail) {
                         if ($signalement->getDateEntree()->format('Y') >= 2023) {
                             $signalementQualification->setDernierBailAt($signalement->getDateEntree());
                         } elseif (!empty($dataDateBail)) {
                             $signalementQualification->setDernierBailAt(new DateTimeImmutable($dataDateBail));
                         }
-                        $dataConsoToSave = $dataConsoSizeYear;
+                        $dataDateBailToSave = $signalementQualification->getDernierBailAt();
                         if (empty($dataConsoSizeYear) && !empty($dataConsoYear) && !empty($dataConsoSize)) {
                             $dataConsoToSave = $dataConsoYear;
+                        } elseif (!empty($dataConsoSizeYear)) {
+                            $dataConsoToSave = $dataConsoSizeYear;
                         }
 
-                        $dataHasDPE = ('' === $dataHasDPE) ? null : $dataHasDPE;
-                        // TODO : remplacer par DTO Hélène
-                        $qualificationDetails = [
-                            'consommation_energie' => $dataConsoToSave,
-                            'DPE' => $dataHasDPE,
-                            'date_dernier_dpe' => $dataDateDPE,
-                        ];
+                        $dataHasDPEToSave = ('' === $dataHasDPE) ? null : $dataHasDPE;
                     }
-                    $signalementQualification->setDetails($qualificationDetails);
+                    $qualificationNDERequest = new QualificationNDERequest(
+                        dateEntree: $signalement->getDateEntree()->format('Y-m-d'),
+                        dateDernierBail: $dataDateBailToSave,
+                        dateDernierDPE: isset($dataDateDPE) ? new DateTimeImmutable($dataDateDPE) : null,
+                        superficie: !empty($dataConsoSize) ? $dataConsoSize : null,
+                        consommationEnergie: $dataConsoToSave,
+                        dpe: $dataHasDPEToSave
+                    );
+                    $signalementQualification->setDetails($qualificationNDERequest->getDetails());
 
                     $qualificationService = new SignalementQualificationService($signalement, $signalementQualification);
                     $signalementQualification->setStatus($qualificationService->updateNDEStatus());
