@@ -1648,4 +1648,15 @@ class Signalement
 
         return $this;
     }
+
+    public function hasNDE(): bool
+    {
+        foreach ($this->signalementQualifications as $qualification) {
+            if ($qualification->isNDE()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

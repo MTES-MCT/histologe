@@ -65,6 +65,12 @@ class SignalementQualification
         return $this;
     }
 
+    public function isNDE(): bool
+    {
+        return Qualification::NON_DECENCE_ENERGETIQUE == $this->qualification
+            && (QualificationStatus::NDE_AVEREE == $this->status || QualificationStatus::NDE_CHECK == $this->status);
+    }
+
     public function getCriticites(): array
     {
         return $this->criticites;

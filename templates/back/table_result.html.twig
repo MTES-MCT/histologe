@@ -20,13 +20,7 @@
                         
             {% endif %}
             {% if is_granted('ROLE_ADMIN_TERRITORY') or enum('App\\Entity\\Enum\\Qualification').NON_DECENCE_ENERGETIQUE.name in app.user.partner.competence %}
-                {% set isNDE = false %}
-                {% for qualification in signalement.signalementQualifications %}
-                    {% if (qualification.qualification.name is same as enum('App\\Entity\\Enum\\Qualification').NON_DECENCE_ENERGETIQUE.name) and (qualification.status.name is same as enum('App\\Entity\\Enum\\QualificationStatus').NDE_AVEREE.name or qualification.status.name is same as enum('App\\Entity\\Enum\\QualificationStatus').NDE_CHECK.name) %}
-                        {% set isNDE = true %}
-                    {% endif %}
-                {% endfor %}
-                {% if isNDE %}
+                {% if signalement.hasNDE %}
                     <span class="fr-badge fr-badge--info fr-badge--no-icon" title="Non-décence énergétique">NDE</span>
                 {% endif %}
             {% endif %}
