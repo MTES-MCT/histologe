@@ -191,7 +191,8 @@ class SignalementImportMapper
                         break;
                     case 'motifCloture':
                         $fieldValue = mb_strtoupper($fieldValue);
-                        $fieldValue = \array_key_exists($fieldValue, MotifCloture::LABEL) ? $fieldValue : null;
+                        // TODO  : faire un mapping ?
+                        $fieldValue = \array_key_exists($fieldValue, MotifCloture::getLabelList()) ? $fieldValue : null;
                         break;
                     case self::SITUATION_SECURITE_OCCUPANT:
                     case self::SITUATION_ETAT_PROPRETE_LOGEMENT:

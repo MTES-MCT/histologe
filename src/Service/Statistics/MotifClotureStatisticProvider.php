@@ -30,8 +30,8 @@ class MotifClotureStatisticProvider
     {
         $data = self::initMotifPerValue();
         foreach ($countPerMotifsCloture as $countPerMotifCloture) {
-            if ($data[$countPerMotifCloture['motifCloture']]) {
-                $data[$countPerMotifCloture['motifCloture']]['count'] = $countPerMotifCloture['count'];
+            if ($data[$countPerMotifCloture['motifCloture']->name]) {
+                $data[$countPerMotifCloture['motifCloture']->name]['count'] = $countPerMotifCloture['count'];
             }
         }
 
@@ -41,8 +41,13 @@ class MotifClotureStatisticProvider
     private static function initMotifPerValue(): array
     {
         return [
-            'RESOLU' => [
-                'label' => 'Problème résolu',
+            'TRAVAUX_FAITS_OU_EN_COURS' => [
+                'label' => 'Travaux faits ou en cours',
+                'color' => '#21AB8E',
+                'count' => 0,
+            ],
+            'RELOGEMENT_OCCUPANT' => [
+                'label' => 'Relogement occupant',
                 'color' => '#21AB8E',
                 'count' => 0,
             ],
@@ -51,8 +56,8 @@ class MotifClotureStatisticProvider
                 'color' => '#E4794A',
                 'count' => 0,
             ],
-            'INFRACTION RSD' => [
-                'label' => 'Infraction RSD',
+            'RSD' => [
+                'label' => 'RSD',
                 'color' => '#A558A0',
                 'count' => 0,
             ],
@@ -61,19 +66,44 @@ class MotifClotureStatisticProvider
                 'color' => '#CE0500',
                 'count' => 0,
             ],
-            'LOGEMENT DECENT' => [
+            'LOGEMENT_DECENT' => [
                 'label' => 'Logement décent',
                 'color' => '#00A95F',
                 'count' => 0,
             ],
-            'LOCATAIRE PARTI' => [
+            'DEPART_OCCUPANT' => [
                 'label' => 'Départ occupant',
                 'color' => '#000091',
                 'count' => 0,
             ],
-            'LOGEMENT VENDU' => [
+            'LOGEMENT_VENDU' => [
                 'label' => 'Logement vendu',
                 'color' => '#417DC4',
+                'count' => 0,
+            ],
+            'ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE' => [
+                'label' => 'Abandon de procédure / absence de réponse',
+                'color' => '#CACAFB',
+                'count' => 0,
+            ],
+            'PERIL' => [
+                'label' => 'Péril',
+                'color' => '#CACAFB',
+                'count' => 0,
+            ],
+            'REFUS_DE_VISITE' => [
+                'label' => 'Refus de visite',
+                'color' => '#CACAFB',
+                'count' => 0,
+            ],
+            'REFUS_DE_TRAVAUX' => [
+                'label' => 'Refus de travaux',
+                'color' => '#CACAFB',
+                'count' => 0,
+            ],
+            'RESPONSABILITE_DE_L_OCCUPANT' => [
+                'label' => "Responsabilité de l'occupant",
+                'color' => '#CACAFB',
                 'count' => 0,
             ],
             'AUTRE' => [

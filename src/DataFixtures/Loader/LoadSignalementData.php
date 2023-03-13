@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures\Loader;
 
+use App\Entity\Enum\MotifCloture;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Form\SignalementType;
@@ -108,7 +109,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
         if (Signalement::STATUS_CLOSED === $row['statut']) {
             $signalement
-                ->setMotifCloture($row['motif_cloture'])
+                ->setMotifCloture(MotifCloture::tryFrom($row['motif_cloture']))
                 ->setClosedAt(new \DateTimeImmutable())
                 ->setClosedBy($this->userRepository->findOneBy(['statut' => User::STATUS_ACTIVE]));
         }

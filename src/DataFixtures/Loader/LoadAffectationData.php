@@ -3,6 +3,7 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\MotifCloture;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
@@ -43,6 +44,11 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
             ->setAnsweredBy($this->userRepository->findOneBy(['email' => $row['affected_by']]))
             ->setAnsweredAt(new \DateTimeImmutable())
         ;
+
+        if (Affectation::STATUS_CLOSED === $row['statut'] && '' !== $row['motif_cloture']) {
+            $affectation
+                ->setMotifCloture(MotifCloture::tryFrom($row['motif_cloture']));
+        }
 
         $manager->persist($affectation);
     }

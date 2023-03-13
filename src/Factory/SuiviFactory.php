@@ -73,7 +73,7 @@ class SuiviFactory
         return sprintf(
             'Le signalement à été cloturé pour %s avec le motif suivant <br><strong>%s</strong><br><strong>Desc. : </strong>%s',
             $params['subject'],
-            $params['motif_cloture'],
+            $params['motif_cloture']->label(),
             $motifSuivi
         );
     }

@@ -60,18 +60,18 @@ class SignalementManagerTest extends KernelTestCase
         $signalementManager = new SignalementManager($this->managerRegistry, $this->security, $this->signalementFactory, $this->eventDispatcher);
         $signalementClosed = $signalementManager->closeSignalementForAllPartners(
             $signalementActive,
-            MotifCloture::LABEL['RESOLU']
+            MotifCloture::tryFrom('TRAVAUX_FAITS_OU_EN_COURS')
         );
 
         $this->assertInstanceOf(Signalement::class, $signalementClosed);
         $this->assertEquals(Signalement::STATUS_CLOSED, $signalementClosed->getStatut());
-        $this->assertEquals('Problème résolu', $signalementClosed->getMotifCloture());
+        $this->assertEquals('Travaux faits ou en cours', $signalementClosed->getMotifCloture()->label());
         $this->assertInstanceOf(\DateTimeInterface::class, $signalementClosed->getClosedAt());
 
         $signalementHasAllAffectationsClosed = $signalementClosed->getAffectations()
             ->forAll(function (int $index, Affectation $affectation) {
                 return Affectation::STATUS_CLOSED === $affectation->getStatut()
-                && str_contains($affectation->getMotifCloture(), 'Problème résolu');
+                && str_contains($affectation->getMotifCloture()->label(), 'Travaux faits ou en cours'); // TODO ??
             });
 
         $this->assertTrue($signalementHasAllAffectationsClosed);
@@ -84,12 +84,12 @@ class SignalementManagerTest extends KernelTestCase
         $signalementManager = new SignalementManager($this->managerRegistry, $this->security, $this->signalementFactory, $this->eventDispatcher);
         $affectationClosed = $signalementManager->closeAffectation(
             $affectationAccepted,
-            MotifCloture::LABEL['NON_DECENCE']
+            MotifCloture::tryFrom('NON_DECENCE')
         );
 
         $this->assertEquals(Affectation::STATUS_CLOSED, $affectationClosed->getStatut());
         $this->assertInstanceOf(\DateTimeInterface::class, $affectationClosed->getAnsweredAt());
-        $this->assertTrue(str_contains($affectationClosed->getMotifCloture(), 'Non décence'));
+        $this->assertTrue(str_contains($affectationClosed->getMotifCloture()->label(), 'Non décence'));
     }
 
     public function testFindEmailsAffectedToSignalement()

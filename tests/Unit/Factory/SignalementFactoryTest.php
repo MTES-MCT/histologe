@@ -175,7 +175,7 @@ class SignalementFactoryTest extends KernelTestCase
             $signalement->getCreatedAt()->getTimestamp()
         )
         ;
-        $this->assertEquals($data['motifCloture'], $signalement->getMotifCloture());
+        $this->assertEquals($data['motifCloture'], $signalement->getMotifCloture()?->label());
         $this->assertEquals($data['closedAt'], $signalement->getClosedAt());
         $this->assertEquals($data['numeroInvariant'], $signalement->getNumeroInvariant());
         $this->assertEquals($data['dateEntree'], $signalement->getDateEntree());
