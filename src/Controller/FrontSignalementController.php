@@ -2,17 +2,16 @@
 
 namespace App\Controller;
 
-use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Entity\Critere;
 use App\Entity\Criticite;
 use App\Entity\Enum\Qualification;
 use App\Entity\Signalement;
-use App\Entity\SignalementQualification;
 use App\Entity\Situation;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementCreatedEvent;
 use App\Exception\MaxUploadSizeExceededException;
+use App\Factory\SignalementQualificationFactory;
 use App\Form\SignalementType;
 use App\Manager\UserManager;
 use App\Repository\CritereRepository;
@@ -24,7 +23,6 @@ use App\Service\NotificationService;
 use App\Service\Signalement\CriticiteCalculatorService;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\ReferenceGenerator;
-use App\Service\Signalement\SignalementQualificationService;
 use App\Service\UploadHandlerService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -38,7 +36,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/')]
 class FrontSignalementController extends AbstractController
@@ -113,7 +110,7 @@ class FrontSignalementController extends AbstractController
         EventDispatcherInterface $eventDispatcher,
         UrlGeneratorInterface $urlGenerator,
         CritereRepository $critereRepository,
-        SerializerInterface $serializer
+        SignalementQualificationFactory $signalementQualificationFactory
     ): Response {
         if ($this->isCsrfTokenValid('new_signalement', $request->request->get('_token'))
             && $data = $request->get('signalement')) {
@@ -157,6 +154,7 @@ class FrontSignalementController extends AbstractController
                                     $signalement->addCritere($critere);
                                     $criticite = $em->getRepository(Criticite::class)->find($data[$key][$idSituation]['critere'][$idCritere]['criticite']);
                                     $signalement->addCriticite($criticite);
+                                    // TODO : replace getQualification with an array of enum
                                     if (\in_array(Qualification::NON_DECENCE_ENERGETIQUE->value, $criticite->getQualification())) {
                                         $listNDECriticites[] = $criticite->getId();
                                     }
@@ -242,40 +240,17 @@ class FrontSignalementController extends AbstractController
             if ($isExperimentationTerritory && \count($listNDECriticites) > 0) {
                 $isDateBail2023 = $signalement->getDateEntree()->format('Y') >= 2023 || '2023-01-02' === $dataDateBail || 'Je ne sais pas' === $dataDateBail;
                 if ($isDateBail2023) {
-                    $signalementQualification = new SignalementQualification();
-                    $signalementQualification->setQualification(Qualification::NON_DECENCE_ENERGETIQUE);
-
-                    $dataHasDPEToSave = null;
-                    $dataConsoToSave = null;
-                    $dataDateBailToSave = null;
-                    if ('Je ne sais pas' !== $dataDateBail) {
-                        if ($signalement->getDateEntree()->format('Y') >= 2023) {
-                            $signalementQualification->setDernierBailAt($signalement->getDateEntree());
-                        } elseif (!empty($dataDateBail)) {
-                            $signalementQualification->setDernierBailAt(new DateTimeImmutable($dataDateBail));
-                        }
-                        $dataDateBailToSave = $signalementQualification->getDernierBailAt();
-                        if (empty($dataConsoSizeYear) && !empty($dataConsoYear) && !empty($dataConsoSize)) {
-                            $dataConsoToSave = $dataConsoYear;
-                        } elseif (!empty($dataConsoSizeYear)) {
-                            $dataConsoToSave = $dataConsoSizeYear;
-                        }
-
-                        $dataHasDPEToSave = ('' === $dataHasDPE) ? null : $dataHasDPE;
-                    }
-                    $qualificationNDERequest = new QualificationNDERequest(
-                        dateEntree: $signalement->getDateEntree()->format('Y-m-d'),
-                        dateDernierBail: $dataDateBailToSave,
-                        dateDernierDPE: isset($dataDateDPE) ? new DateTimeImmutable($dataDateDPE) : null,
-                        superficie: !empty($dataConsoSize) ? $dataConsoSize : null,
-                        consommationEnergie: $dataConsoToSave,
-                        dpe: $dataHasDPEToSave
+                    $signalementQualification = $signalementQualificationFactory->createInstanceFrom(
+                        signalement: $signalement,
+                        listNDECriticites: $listNDECriticites,
+                        dataDateBail: $dataDateBail,
+                        dataConsoSizeYear: $dataConsoSizeYear,
+                        dataConsoYear: $dataConsoYear,
+                        dataConsoSize: $dataConsoSize,
+                        dataHasDPE: $dataHasDPE,
+                        dataDateDPE: $dataDateDPE
                     );
-                    $signalementQualification->setDetails($qualificationNDERequest->getDetails());
 
-                    $qualificationService = new SignalementQualificationService($signalement, $signalementQualification);
-                    $signalementQualification->setStatus($qualificationService->updateNDEStatus());
-                    $signalementQualification->setCriticites($listNDECriticites);
                     $signalement->addSignalementQualification($signalementQualification);
                     $em->persist($signalementQualification);
                 }
