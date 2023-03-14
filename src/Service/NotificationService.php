@@ -28,6 +28,7 @@ class NotificationService
     public const TYPE_SIGNALEMENT_CLOSED_TO_USAGER = 98;
     public const TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS = 97;
     public const TYPE_SIGNALEMENT_CLOSED_TO_PARTNER = 96;
+    public const TYPE_SIGNALEMENT_FEEDBACK_USAGER = 95;
     public const TYPE_CONFIRM_RECEPTION = 6;
     public const TYPE_NEW_COMMENT_FRONT = 7;
     public const TYPE_NEW_COMMENT_BACK = 10;
@@ -166,6 +167,11 @@ class NotificationService
                 'template' => 'nouveau_suivi_signalement_email',
                 'subject' => 'Nouvelle mise à jour de votre signalement !',
                 'btnText' => 'Accéder à mon signalement',
+            ],
+            self::TYPE_SIGNALEMENT_FEEDBACK_USAGER => [
+                'template' => 'demande_feedback_usager_email',
+                'subject' => 'Histologe : faites le point sur votre problème de logement !',
+                'btntext' => 'Mettre à jour ma situation',
             ],
             self::TYPE_NEW_COMMENT_BACK => [
                 'template' => 'nouveau_suivi_signalement_back_email',
