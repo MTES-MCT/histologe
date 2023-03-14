@@ -4,6 +4,7 @@ namespace App\Controller\Back;
 
 use App\Entity\Affectation;
 use App\Entity\Criticite;
+use App\Entity\Enum\MotifCloture;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Repository\AffectationRepository;
@@ -186,7 +187,9 @@ class BackController extends AbstractController
                     $data[] = $signalement->$method()->format('d.m.Y');
                 } elseif (\is_bool($signalement->$method())) {
                     $data[] = $signalement->$method() ? 'OUI' : 'NON';
-                } elseif (!\is_array($signalement->$method()) && !($signalement->$method() instanceof ArrayCollection)) {
+                } elseif ($signalement->$method() instanceof MotifCloture && null !== $signalement->$method()) {
+                    $data[] = str_replace(';', '', $signalement->$method()->label());
+                } elseif (!\is_array($signalement->$method()) && !($signalement->$method() instanceof ArrayCollection) && \is_string($signalement->$method())) {
                     $data[] = str_replace(';', '', $signalement->$method());
                 } elseif ('' == $signalement->$method()) {
                     $data[] = 'N/R';
