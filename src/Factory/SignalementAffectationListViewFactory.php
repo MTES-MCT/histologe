@@ -11,7 +11,7 @@ class SignalementAffectationListViewFactory
 {
     public function createInstanceFrom(UserInterface|User $user, array $data): SignalementAffectationListView
     {
-        $affectations = $this->parseAffectations($user, $data['rawAffectations']);
+        $affectations = $this->parseAffectations($data['rawAffectations']);
         if ($user->isUserPartner() || $user->isPartnerAdmin()) {
             $statusAffectation = $affectations[$user->getPartner()->getNom()]['statut'];
             $status = AffectationStatus::tryFrom($statusAffectation)->mapSignalementStatus();
@@ -38,7 +38,7 @@ class SignalementAffectationListViewFactory
         );
     }
 
-    private function parseAffectations(User $user, ?string $rawAffectations): array
+    private function parseAffectations(?string $rawAffectations): array
     {
         if (null === $rawAffectations) {
             return [];
