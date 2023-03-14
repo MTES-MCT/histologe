@@ -508,6 +508,8 @@
                                         </div>
                                     </div>
                                 </div>
+                                
+                                {% if is_granted('ROLE_ADMIN_TERRITORY') or enum('App\\Entity\\Enum\\Qualification').NON_DECENCE_ENERGETIQUE.name in app.user.partner.competence|joinEnumKeys(',') %}
                                 <div class="fr-col-12 fr-col-md-6">
                                     <div class="fr-grid-row fr-grid-row--gutters">
                                         <div class="fr-col-6">
@@ -534,6 +536,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                {% endif %}
                             </div>
 
                         </div>
