@@ -37,7 +37,7 @@ class TagRepository extends ServiceEntityRepository
     }
     */
 
-    public function findAllActive(Territory|null $territory)
+    public function findAllActive(Territory|null $territory = null)
     {
         $qb = $this->createQueryBuilder('t')
             ->andWhere('t.isArchive != 1')

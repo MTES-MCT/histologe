@@ -16,6 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class SignalementManagerTest extends KernelTestCase
 {
@@ -29,6 +30,7 @@ class SignalementManagerTest extends KernelTestCase
     private SignalementAffectationListViewFactory $signalementAffectationListViewFactory;
     private ParameterBagInterface $parameterBag;
     private SignalementManager $signalementManager;
+    private CsrfTokenManagerInterface $csrfTokenManager;
 
     protected function setUp(): void
     {
@@ -42,6 +44,7 @@ class SignalementManagerTest extends KernelTestCase
             SignalementAffectationListViewFactory::class
         );
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
+        $this->csrfTokenManager = static::getContainer()->get(CsrfTokenManagerInterface::class);
 
         $this->signalementManager = new SignalementManager(
             $this->managerRegistry,
@@ -50,6 +53,7 @@ class SignalementManagerTest extends KernelTestCase
             $this->eventDispatcher,
             $this->signalementAffectationListViewFactory,
             $this->parameterBag,
+            $this->csrfTokenManager,
         );
     }
 

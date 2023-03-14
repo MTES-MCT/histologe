@@ -214,9 +214,9 @@ class SearchFilterService
         }
         if (!empty($filters['partners'])) {
             if (\in_array('AUCUN', $filters['partners'])) {
-                $qb->andWhere('affectations IS NULL');
+                $qb->andWhere('a.partner IS NULL');
             } else {
-                $qb->andWhere('partner IN (:partners)');
+                $qb->andWhere('a.partner IN (:partners)');
                 if (!empty($filters['affectations'])) {
                     $qb->andWhere('a.statut IN (:affectations)')
                     ->setParameter('affectations', $filters['affectations']);
@@ -225,7 +225,7 @@ class SearchFilterService
             }
         }
         if (!empty($filters['closed_affectation'])) {
-            $qb->having('affectationPartner IS NOT NULL');
+            $qb->having('affectationPartnerName IS NOT NULL');
             if (\in_array('ALL_OPEN', $filters['closed_affectation'])) {
                 // les id de tous les signalements ayant au moins une affectation fermée :
                 $subquery = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
@@ -274,9 +274,8 @@ class SearchFilterService
             }
         }
         if (!empty($filters['tags'])) {
-            foreach ($filters['tags'] as $tag) {
-                $qb->andWhere(':tag IN (tags)')->setParameter('tag', $tag);
-            }
+            $qb->leftJoin('s.tags', 't');
+            $qb->andWhere('t.id IN (:tag)')->setParameter('tag', $filters['tags']);
         }
         if (!empty($filters['statuses'])) {
             $qb->andWhere('s.statut IN (:statuses)')
@@ -316,7 +315,8 @@ class SearchFilterService
         }
 
         if (!empty($filters['criteres'])) {
-            $qb->andWhere('criteres IN (:criteres)')
+            $qb->leftJoin('s.criteres', 'c');
+            $qb->andWhere('c.id IN (:criteres)')
                 ->setParameter('criteres', $filters['criteres']);
         }
         if (!empty($filters['housetypes'])) {

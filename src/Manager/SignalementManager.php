@@ -2,6 +2,7 @@
 
 namespace App\Manager;
 
+use App\Dto\SignalementAffectationListView;
 use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Partner;
@@ -17,6 +18,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class SignalementManager extends AbstractManager
 {
@@ -27,6 +29,7 @@ class SignalementManager extends AbstractManager
         private EventDispatcherInterface $eventDispatcher,
         private SignalementAffectationListViewFactory $signalementAffectationListViewFactory,
         private ParameterBagInterface $parameterBag,
+        private CsrfTokenManagerInterface $csrfTokenManager,
         string $entityName = Signalement::class
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -236,7 +239,29 @@ class SignalementManager extends AbstractManager
             'list' => $signalementAffectationList,
             'total' => $total,
             'page' => (int) $options['page'],
-            'pages' => (int) ceil($total / 30),
+            'pages' => (int) ceil($total / Signalement::MAX_LIST_PAGINATION),
+            'csrfTokens' => $this->generateCsrfToken($signalementAffectationList),
         ];
+    }
+
+    /**
+     * @todo: Investigate Twig\Error\RuntimeError in ajax request
+     * Hack: generate csrf token in side server for ajav request
+     * Fix Twig\Error\RuntimeError in order to do not generate csrf token (session) after the headers have been sent.
+     */
+    private function generateCsrfToken(array $signalementList): array
+    {
+        $csrfTokens = [];
+        /* @var SignalementAffectationListView $signalement */
+        foreach ($signalementList as $signalementItem) {
+            if ($signalementItem instanceof SignalementAffectationListView) {
+                $csrfTokens[$signalementItem->getUuid()] =
+                    $this->csrfTokenManager->getToken(
+                        'signalement_delete_'.$signalementItem->getId()
+                    )->getValue();
+            }
+        }
+
+        return $csrfTokens;
     }
 }

@@ -337,8 +337,9 @@ class SignalementRepository extends ServiceEntityRepository
             s.lastSuiviAt,
             s.lastSuiviBy,
             GROUP_CONCAT(CONCAT(p.nom, \'||\', a.statut) SEPARATOR \'--\') as rawAffectations,
-            GROUP_CONCAT(p.nom SEPARATOR \'||\') as affectationPartner,
-            GROUP_CONCAT(a.statut SEPARATOR \'||\') as affectationStatus')
+            GROUP_CONCAT(p.nom SEPARATOR \'||\') as affectationPartnerName,
+            GROUP_CONCAT(a.statut SEPARATOR \'||\') as affectationStatus,
+            GROUP_CONCAT(p.id SEPARATOR \',\') as affectationPartnerId')
             ->leftJoin('s.affectations', 'a')
             ->leftJoin('a.partner', 'p')
             ->where('s.statut != :status')
@@ -428,7 +429,7 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findCities(User|UserInterface|null $user, Territory|null $territory): array|int|string
+    public function findCities(User|UserInterface|null $user = null, Territory|null $territory = null): array|int|string
     {
         $qb = $this->createQueryBuilder('s')
             ->select('s.villeOccupant city')
