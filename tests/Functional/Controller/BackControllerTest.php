@@ -141,4 +141,38 @@ class BackControllerTest extends WebTestCase
         yield 'PARTNER - Nouveaux suivis' => [$partnerUser, '?nouveau_suivi=1'];
         yield 'PARTNER - Sans suivis' => [$partnerUser, '?sans_suivi_periode='.Suivi::DEFAULT_PERIOD_INACTIVITY];
     }
+
+    /**
+     * @dataProvider provideFilterSearch
+     */
+    public function testSearchSignalementByTerms(string $filter, string|array $terms, string $results)
+    {
+        $client = static::createClient();
+        /** @var UrlGeneratorInterface $generatorUrl */
+        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $client->loginUser($user);
+        $route = $generatorUrl->generate('back_index');
+        $client->request('POST', $route, [
+            $filter => $terms,
+        ]);
+
+        $this->assertSelectorTextContains('table', $results);
+        $this->assertResponseIsSuccessful();
+    }
+
+    public function provideFilterSearch(): \Generator
+    {
+        yield 'Search Terms with Reference' => ['bo-filters-searchterms', '2022-1', '1 signalement(s)'];
+        yield 'Search Terms with cp Occupant' => ['bo-filters-searchterms', '13003', '10 signalement(s)'];
+        yield 'Search Terms with city Occupant' => ['bo-filters-searchterms', 'Gex', '5 signalement(s)'];
+        yield 'Search by Territory' => ['bo-filters-territories', ['1'], '5 signalement(s)'];
+        yield 'Search by Partner' => ['bo-filters-partners', ['5'], '2 signalement(s)'];
+        yield 'Search by Critere' => ['bo-filters-criteres', ['17'], '15 signalement(s)'];
+        yield 'Search by Tags' => ['bo-filters-tags', ['3'], '4 signalement(s)'];
+        yield 'Search by Parc public/prive' => ['bo-filters-housetypes', ['1'], '4 signalement(s)'];
+    }
 }

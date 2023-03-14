@@ -11,7 +11,7 @@ final class Version20230311184843 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Ajout last_suivi_by dans la table signalement';
+        return 'Ajout last_suivi_by in table signalement';
     }
 
     public function up(Schema $schema): void
