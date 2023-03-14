@@ -4,6 +4,7 @@ namespace App\Security\Voter;
 
 use App\Entity\Enum\Qualification;
 use App\Entity\User;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -17,6 +18,10 @@ class UserVoter extends Voter
     public const DELETE = 'USER_DELETE';
     public const CHECKMAIL = 'USER_CHECKMAIL';
     public const SEE_NDE = 'USER_SEE_NDE';
+
+    public function __construct(private ParameterBagInterface $parameterBag)
+    {
+    }
 
     protected function supports(string $attribute, $subject): bool
     {
@@ -86,6 +91,12 @@ class UserVoter extends Voter
 
     public function canSeeNde(UserInterface $user): bool
     {
-        return $user->isTerritoryAdmin() || \in_array(Qualification::NON_DECENCE_ENERGETIQUE, $user->getPartner()->getCompetence());
+        $experimentationTerritories = $this->parameterBag->get('experimentation_territory');
+        $isExperimentationTerritory = \array_key_exists($user->getPartner()->getTerritory()->getZip(), $experimentationTerritories);
+        if ($isExperimentationTerritory) {
+            return $user->isTerritoryAdmin() || \in_array(Qualification::NON_DECENCE_ENERGETIQUE, $user->getPartner()->getCompetence());
+        }
+
+        return false;
     }
 }
