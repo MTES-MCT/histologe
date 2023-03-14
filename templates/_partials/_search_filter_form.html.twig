@@ -508,14 +508,35 @@
                                         </div>
                                     </div>
                                 </div>
-                                {# <div class="fr-col-12 fr-col-md-6">
-                <div class="fr-p-3v">
-                    <div class=" fr-border--bottom--orange">
-                        <label class="fr-label">&nbsp;</label>
-                        <button class="fr-btn fr-btn--secondary fr-fi-search-line fr-btn--icon-left fr-col-12">Recherche avancée</button>
-                    </div>
-                </div>
-            </div> #}
+                                
+                                {% if userSeeNDE %}
+                                <div class="fr-col-12 fr-col-md-6">
+                                    <div class="fr-grid-row fr-grid-row--gutters">
+                                        <div class="fr-col-6">
+                                            <label class="fr-label" for="bo-filters-nde"><strong>Non décence énergétique</strong></label>
+                                            <select id="bo-filters-nde" class="fr-select" onchange="setBadge(this)">
+                                                <option value="">Tous</option>
+                                                {% for qualificationName, qualificationValue in listQualificationStatus %}
+                                                    <option value="{{ qualificationName }}" class="{% if qualificationName in filters.nde %}fr-hidden{% endif %}">{{ qualificationValue }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <div class="selected__value">
+                                                <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                                {% set visible = 'fr-hidden' %}
+                                                {% for nde in filters.nde %}
+                                                    <input type="hidden" name="bo-filters-nde[]" value="{{ nde }}">
+                                                    <span class="fr-badge fr-badge--success fr-m-1v"
+                                                          data-removable="true"
+                                                          data-value="{{ nde }}">{{ listQualificationStatus[nde] }}</span>
+                                                {% else %}
+                                                    {% set visible = 0 %}
+                                                {% endfor %}
+                                                <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
                             </div>
 
                         </div>
