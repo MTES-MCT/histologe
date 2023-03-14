@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\MotifCloture;
 use App\Repository\AffectationRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -43,8 +44,8 @@ class Affectation
     #[ORM\ManyToOne(targetEntity: User::class)]
     private ?User $affectedBy;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $motifCloture;
+    #[ORM\Column(type: 'string', enumType: MotifCloture::class, nullable: true)]
+    private ?MotifCloture $motifCloture;
 
     #[ORM\OneToMany(mappedBy: 'affectation', targetEntity: Notification::class)]
     private $notifications;
@@ -149,12 +150,12 @@ class Affectation
         return $this;
     }
 
-    public function getMotifCloture(): ?string
+    public function getMotifCloture(): ?MotifCloture
     {
         return $this->motifCloture;
     }
 
-    public function setMotifCloture(?string $motifCloture): self
+    public function setMotifCloture(?MotifCloture $motifCloture): self
     {
         $this->motifCloture = $motifCloture;
 

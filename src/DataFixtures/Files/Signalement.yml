@@ -469,7 +469,7 @@ signalements:
     ville_occupant: "Gex"
     etage_occupant: "5"
     statut: 6
-    motif_cloture: 'NON_DECENCE'
+    motif_cloture: 'TRAVAUX_FAITS_OU_EN_COURS'
     reference: "2022-12"
     geoloc: "[]"
     score_creation: 5.420054200542
@@ -512,7 +512,7 @@ signalements:
     ville_occupant: "Gex"
     etage_occupant: "5"
     statut: 6
-    motif_cloture: 'NON_DECENCE'
+    motif_cloture: 'ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE'
     reference: "2022-13"
     geoloc: "[]"
     score_creation: 5.420054200542
@@ -556,7 +556,7 @@ signalements:
     ville_occupant: "Gex"
     etage_occupant: "5"
     statut: 1
-    motif_cloture: 'NON_DECENCE'
+    motif_cloture: 'RESPONSABILITE_DE_L_OCCUPANT'
     reference: "2022-14"
     geoloc: "[]"
     score_creation: 5.420054200542

@@ -3,6 +3,7 @@
 namespace App\Manager;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\MotifCloture;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
@@ -127,7 +128,7 @@ class SignalementManager extends AbstractManager
             ->setNbChambresLogement((int) $data['nbChambresLogement'])
             ->setNbNiveauxLogement((int) $data['nbNiveauxLogement'])
             ->setNbOccupantsLogement((int) $data['nbOccupantsLogement'])
-            ->setMotifCloture($data['motifCloture'])
+            ->setMotifCloture(MotifCloture::tryFrom($data['motifCloture']))
             ->setClosedAt($data['closedAt'])
             ->setIsFondSolidariteLogement((bool) $data['isFondSolidariteLogement']);
     }
@@ -158,7 +159,7 @@ class SignalementManager extends AbstractManager
         return $affectation->toArray();
     }
 
-    public function closeSignalementForAllPartners(Signalement $signalement, string $motif): Signalement
+    public function closeSignalementForAllPartners(Signalement $signalement, MotifCloture $motif): Signalement
     {
         $signalement
             ->setStatut(Signalement::STATUS_CLOSED)
@@ -178,7 +179,7 @@ class SignalementManager extends AbstractManager
         return $signalement;
     }
 
-    public function closeAffectation(Affectation $affectation, string $motif): Affectation
+    public function closeAffectation(Affectation $affectation, MotifCloture $motif): Affectation
     {
         $affectation
             ->setStatut(Affectation::STATUS_CLOSED)

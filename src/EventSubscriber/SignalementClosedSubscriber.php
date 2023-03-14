@@ -3,7 +3,6 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Affectation;
-use App\Entity\Enum\MotifCloture;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Event\SignalementClosedEvent;
@@ -102,7 +101,7 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
                     NotificationService::TYPE_SIGNALEMENT_CLOSED_TO_USAGER,
                     [$toRecipient],
                     [
-                        'motif_cloture' => MotifCloture::LABEL[$signalement->getMotifCloture()],
+                        'motif_cloture' => $signalement->getMotifCloture()->label(),
                         'link' => $this->generateLinkCodeSuivi($signalement->getCodeSuivi(), $toRecipient),
                     ],
                     $signalement->getTerritory()
@@ -123,7 +122,7 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
             $sendTo,
             [
                 'ref_signalement' => $signalement->getReference(),
-                'motif_cloture' => MotifCloture::LABEL[$signalement->getMotifCloture()],
+                'motif_cloture' => $signalement->getMotifCloture()->label(),
                 'closed_by' => $signalement->getClosedBy()->getNomComplet(),
                 'partner_name' => $signalement->getClosedBy()->getPartner()->getNom(),
                 'link' => $this->generateLinkSignalementView($signalement->getUuid()),

@@ -12,7 +12,7 @@ affectations:
     statut: 3
     answered_by: "admin-territoire-01-01@histologe.fr"
     affected_by: "admin-territoire-01-01@histologe.fr"
-    motif_cloture: "LOCATAIRE PARTI"
+    motif_cloture: "DEPART_OCCUPANT"
     territory: "Ain"
   -
     signalement: 2022-3
@@ -20,7 +20,7 @@ affectations:
     statut: 3
     answered_by: "admin-territoire-13-01@histologe.fr"
     affected_by: "admin-territoire-13-01@histologe.fr"
-    motif_cloture: "LOCATAIRE PARTI"
+    motif_cloture: "DEPART_OCCUPANT"
     territory: "Bouches-du-Rhône"
   -
     signalement: 2022-12

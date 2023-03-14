@@ -2,6 +2,7 @@
 
 namespace App\Factory;
 
+use App\Entity\Enum\MotifCloture;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 
@@ -92,7 +93,7 @@ class SignalementFactory
             ->setNbChambresLogement((int) $data['nbChambresLogement'])
             ->setNbNiveauxLogement((int) $data['nbNiveauxLogement'])
             ->setNbOccupantsLogement((int) $data['nbOccupantsLogement'])
-            ->setMotifCloture($data['motifCloture'])
+            ->setMotifCloture(MotifCloture::tryFrom($data['motifCloture']))
             ->setClosedAt($data['closedAt'])
             ->setIsFondSolidariteLogement((bool) $data['isFondSolidariteLogement']);
     }

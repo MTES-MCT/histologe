@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\MotifCloture;
 use App\Repository\SignalementRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -298,8 +299,8 @@ class Signalement
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Affectation::class, cascade: ['persist'], orphanRemoval: true)]
     private $affectations;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $motifCloture;
+    #[ORM\Column(type: 'string', enumType: MotifCloture::class, nullable: true)]
+    private ?MotifCloture $motifCloture;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private $closedAt;
@@ -1497,12 +1498,12 @@ class Signalement
         return $this;
     }
 
-    public function getMotifCloture(): ?string
+    public function getMotifCloture(): ?MotifCloture
     {
         return $this->motifCloture;
     }
 
-    public function setMotifCloture(?string $motifCloture): self
+    public function setMotifCloture(?MotifCloture $motifCloture): self
     {
         $this->motifCloture = $motifCloture;
 

@@ -2,7 +2,6 @@
 
 namespace App\Tests\Functional\Service\Import\Signalement;
 
-use App\Entity\Enum\MotifCloture;
 use App\Entity\Territory;
 use App\EventSubscriber\SuiviCreatedSubscriber;
 use App\Manager\AffectationManager;
@@ -79,7 +78,7 @@ class SignalementImportLoaderTest extends KernelTestCase
                 'Ref signalement' => (0 === $i % 2) ? $faker->randomNumber(4) : date('Y').'-'.$faker->randomNumber(4),
                 'Date de creation signalement' => date('d/m/Y'),
                 'Date cloture' => null,
-                'motif_cloture' => (0 === $i % 2) ? MotifCloture::LABEL['AUTRE'] : null,
+                'motif_cloture' => (0 === $i % 2) ? 'AUTRE' : null,
                 'ref des photos' => null,
                 'ref des documents' => null,
                 'details' => $faker->realText(),

@@ -61,7 +61,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
                     NotificationService::TYPE_SIGNALEMENT_CLOSED_TO_USAGER,
                     $signalementClosed->getMailUsagers(),
                     [
-                        'motif_cloture' => MotifCloture::LABEL[$signalementClosed->getMotifCloture()],
+                        'motif_cloture' => $signalementClosed->getMotifCloture()->label(),
                         'link' => '',
                     ],
                     $signalementClosed->getTerritory(),
@@ -71,7 +71,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
                     $sendToPartners,
                     [
                         'ref_signalement' => $signalementClosed->getReference(),
-                        'motif_cloture' => MotifCloture::LABEL[$signalementClosed->getMotifCloture()],
+                        'motif_cloture' => $signalementClosed->getMotifCloture()->label(),
                         'closed_by' => $signalementClosed->getClosedBy()->getNomComplet(),
                         'partner_name' => $signalementClosed->getClosedBy()->getPartner()->getNom(),
                         'link' => '',
@@ -104,7 +104,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
             $signalementClosed,
             [
                 'motif_suivi' => 'Lorem ipsum suivi sit amet, consectetur adipiscing elit.',
-                'motif_cloture' => 'Non décence',
+                'motif_cloture' => MotifCloture::tryFrom('NON_DECENCE'),
                 'subject' => 'tous les partenaires',
                 'closed_for' => 'all',
             ]

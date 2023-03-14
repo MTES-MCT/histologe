@@ -44,7 +44,7 @@ class SuiviFactoryTest extends KernelTestCase
             $signalement,
             [
                 'motif_suivi' => 'Lorem ipsum suivi sit amet, consectetur adipiscing elit.',
-                'motif_cloture' => MotifCloture::LABEL['INSALUBRITE'],
+                'motif_cloture' => MotifCloture::tryFrom('INSALUBRITE'),
                 'subject' => 'tous les partenaires',
                 'closed_for' => 'all',
             ],
@@ -55,7 +55,7 @@ class SuiviFactoryTest extends KernelTestCase
         $this->assertTrue($suivi->getIsPublic());
         $this->assertEquals(Suivi::TYPE_PARTNER, $suivi->getType());
         $this->assertInstanceOf(UserInterface::class, $suivi->getCreatedBy());
-        $this->assertTrue(str_contains($suivi->getDescription(), MotifCloture::LABEL['INSALUBRITE']));
+        $this->assertTrue(str_contains($suivi->getDescription(), MotifCloture::tryFrom('INSALUBRITE')->label()));
         $this->assertTrue(str_contains($suivi->getDescription(), 'Le signalement à été cloturé pour'));
     }
 }

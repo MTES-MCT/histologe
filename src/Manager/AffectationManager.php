@@ -3,6 +3,7 @@
 namespace App\Manager;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\MotifCloture;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -64,7 +65,7 @@ class AffectationManager extends Manager
             ->setTerritory($partner->getTerritory());
     }
 
-    public function closeAffectation(Affectation $affectation, User $user, string $motif): Affectation
+    public function closeAffectation(Affectation $affectation, User $user, MotifCloture $motif): Affectation
     {
         $affectation
             ->setStatut(Affectation::STATUS_CLOSED)
@@ -91,7 +92,8 @@ class AffectationManager extends Manager
                         if ($affectation->getPartner()->getId() === $partner->getId()) {
                             $this->remove($affectation);
                         }
-                    });
+                    }
+                );
             }
         }
     }
@@ -105,7 +107,8 @@ class AffectationManager extends Manager
         if (!empty($description)) {
             $suivi = $this->suiviManager->createSuivi(
                 $user,
-                $signalement, [
+                $signalement,
+                [
                     'domain' => 'esabora',
                     'action' => 'synchronize',
                     'description' => $description,

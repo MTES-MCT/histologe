@@ -19,7 +19,7 @@ class FilteredBackAnalyticsProvider
         private CriticitePercentStatisticProvider $criticitePercentStatisticProvider,
         private VisiteStatisticProvider $visiteStatisticProvider,
         private MotifClotureStatisticProvider $motifClotureStatisticProvider,
-        ) {
+    ) {
     }
 
     public function getData(StatisticsFilters $statisticsFilters): array

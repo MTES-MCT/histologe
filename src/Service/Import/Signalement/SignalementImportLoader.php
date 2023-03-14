@@ -5,6 +5,7 @@ namespace App\Service\Import\Signalement;
 use App\Entity\Affectation;
 use App\Entity\Critere;
 use App\Entity\Criticite;
+use App\Entity\Enum\MotifCloture;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
@@ -61,7 +62,8 @@ class SignalementImportLoader
     {
         $countSignalement = 0;
 
-        $this->userSystem = $this->entityManager->getRepository(User::class)->findOneBy([
+        $this->userSystem = $this->entityManager->getRepository(User::class)->findOneBy(
+            [
                 'email' => $this->parameterBag->get('user_system_email'), ]
         );
 
@@ -139,7 +141,7 @@ class SignalementImportLoader
                             $affectation = $this->affectationManager->closeAffectation(
                                 $affectation,
                                 $this->userSystem,
-                                $dataMapped['motifCloture']
+                                MotifCloture::tryFrom($dataMapped['motifCloture'])
                             );
                         } else {
                             $affectation->setStatut(Affectation::STATUS_ACCEPTED);

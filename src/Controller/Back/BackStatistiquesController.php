@@ -28,7 +28,7 @@ class BackStatistiquesController extends AbstractController
         private ListTagsStatisticProvider $listTagStatisticProvider,
         private GlobalBackAnalyticsProvider $globalBackAnalyticsProvider,
         private FilteredBackAnalyticsProvider $filteredBackAnalyticsProvider,
-        ) {
+    ) {
     }
 
     #[Route('/', name: 'back_statistiques')]
