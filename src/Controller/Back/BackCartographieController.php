@@ -7,6 +7,7 @@ use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
+use App\Security\Voter\UserVoter;
 use App\Service\SearchFilterService;
 use App\Service\Signalement\QualificationStatusService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -50,6 +51,8 @@ class BackCartographieController extends AbstractController
             $userToFilterCities = null;
         }
 
+        $userSeeNDE = $this->isGranted(UserVoter::SEE_NDE, $this->getUser());
+
         return $this->render('back/cartographie/index.html.twig', [
             'title' => $title,
             'filters' => $filters,
@@ -62,6 +65,7 @@ class BackCartographieController extends AbstractController
             'signalements' => [/* $signalements */],
             'criteres' => $critereRepository->findAllList(),
             'tags' => $tagsRepository->findAllActive($this->getUser()->getTerritory() ?? null),
+            'userSeeNDE' => $userSeeNDE,
         ]);
     }
 }

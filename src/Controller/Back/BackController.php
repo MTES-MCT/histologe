@@ -13,6 +13,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Security\Voter\UserVoter;
 use App\Service\SearchFilterService;
 use App\Service\Signalement\QualificationStatusService;
 use DateTime;
@@ -133,6 +134,8 @@ class BackController extends AbstractController
             $userToFilterCities = null;
         }
 
+        $userSeeNDE = $this->isGranted(UserVoter::SEE_NDE, $user);
+
         return $this->render('back/index.html.twig', [
             'title' => $title,
             'filters' => $filters,
@@ -146,6 +149,7 @@ class BackController extends AbstractController
             'users' => $users,
             'criteres' => $criteres,
             'tags' => $tagsRepository->findAllActive($territory),
+            'userSeeNDE' => $userSeeNDE,
         ]);
     }
 

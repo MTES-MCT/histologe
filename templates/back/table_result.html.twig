@@ -19,7 +19,7 @@
                         class="fr-col-12 fr-col-md-10 fr-col-lg-6 gauge-signalement"></canvas>
                         
             {% endif %}
-            {% if is_granted('ROLE_ADMIN_TERRITORY') or enum('App\\Entity\\Enum\\Qualification').NON_DECENCE_ENERGETIQUE.name in app.user.partner.competence|joinEnumKeys(',') %}
+            {% if userSeeNDE %}
                 {% if signalement.hasNDE %}
                     <span class="fr-badge fr-badge--info fr-badge--no-icon" title="Non-décence énergétique">NDE</span>
                 {% endif %}
