@@ -45,7 +45,7 @@ class ContactFormHandlerTest extends KernelTestCase
             $suiviFactory,
             $suiviManager,
             $userManager,
-            $loggerInterface 
+            $loggerInterface
         );
     }
 
