@@ -3,15 +3,15 @@
 {% block content %}
     {% include '_partials/_search_filter_form.html.twig' %}
     <section class="fr-col-12 fr-table fr-table--bordered fr-background-alt--blue-france">
-        <table class="fr-display-inline-table fr-display-md-block sortable fr-mb-0">
+        <table class="fr-display-inline-table fr-display-md-block sortable fr-mb-0 disabled-link">
             <caption class="fr-w-100 fr-px-3v fr-pt-3v fr-pb-0">
                 <div class="fr-grid-row">
                     <div class="fr-col">
                         {{ signalements.total }} signalement(s)
                     </div>
                     <div class="fr-col fr-text--right">
-                        <a href="{{ path('back_index') }}?export={{ signalements.total }}&{{ app.request.content|replace({'%5B':'['})|replace({'%5D':']'}) }}&_token={{ csrf_token('export_token_'~app.user.id) }}"
-                           class="fr-link fr-link--icon-left fr-fi-download-line">Exporter
+                        <a href="#"
+                           class="fr-link fr-link--icon-left fr-fi-download-line disabled-link" title="La fonctionnalité est momentanément indisponible">Exporter
                             les résultats</a>
                     </div>
                 </div>

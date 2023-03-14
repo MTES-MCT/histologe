@@ -397,3 +397,12 @@ label.fr-toggle__label[for="signalement-accept-visite"] {
 span.partner_user_last_login_value {
     font-size: 0.9em;
 }
+
+a.disabled-link {
+    cursor: not-allowed;
+    color: var(--text-disabled-grey);
+
+    &:hover {
+        background: var(--background-disabled-grey);
+    }
+}
