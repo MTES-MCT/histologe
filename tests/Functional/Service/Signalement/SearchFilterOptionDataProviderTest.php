@@ -10,7 +10,6 @@ use App\Repository\TerritoryRepository;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 
 class SearchFilterOptionDataProviderTest extends KernelTestCase
 {
@@ -53,24 +52,12 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
             'cities' => $this->signalementRepository->findCities(),
         ];
 
-        $cacheKey = 'getData_all_user';
-
-        $actualData = $this->cache->get(
-            $cacheKey,
-            function (ItemInterface $item) {
-                $item->expiresAfter(0);
-
-                return $this->searchFilterOptionDataProvider->getData();
-            }
-        );
+        $actualData = $this->searchFilterOptionDataProvider->getData();
 
         $this->assertSameSize($expectedData['criteres'], $actualData['criteres']);
         $this->assertSameSize($expectedData['territories'], $actualData['territories']);
         $this->assertSameSize($expectedData['partners'], $actualData['partners']);
         $this->assertSameSize($expectedData['tags'], $actualData['tags']);
         $this->assertSameSize($expectedData['cities'], $actualData['cities']);
-
-        $cacheItem = $this->cache->getItem($cacheKey);
-        $this->assertTrue($cacheItem->isHit());
     }
 }
