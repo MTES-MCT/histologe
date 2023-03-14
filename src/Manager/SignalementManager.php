@@ -239,7 +239,7 @@ class SignalementManager extends AbstractManager
             'list' => $signalementAffectationList,
             'total' => $total,
             'page' => (int) $options['page'],
-            'pages' => (int) ceil($total / Signalement::MAX_LIST_PAGINATION),
+            'pages' => (int) ceil($total / SignalementAffectationListView::MAX_LIST_PAGINATION),
             'csrfTokens' => $this->generateCsrfToken($signalementAffectationList),
         ];
     }

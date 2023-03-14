@@ -4,6 +4,10 @@ namespace App\Dto;
 
 class SignalementAffectationListView
 {
+    public const SEPARATOR_CONCAT = '||';
+    public const SEPARATOR_GROUP_CONCAT = ';';
+    public const MAX_LIST_PAGINATION = 30;
+
     public function __construct(
       private ?int $id = null,
       private ?string $uuid = null,

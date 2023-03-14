@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Dto\CountSignalement;
+use App\Dto\SignalementAffectationListView;
 use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
 use App\Entity\Partner;
@@ -316,7 +317,7 @@ class SignalementRepository extends ServiceEntityRepository
         User|UserInterface|null $user,
         array $options,
     ): Paginator {
-        $maxResult = Signalement::MAX_LIST_PAGINATION;
+        $maxResult = SignalementAffectationListView::MAX_LIST_PAGINATION;
         $page = (int) $options['page'];
         $firstResult = (($page ?: 1) - 1) * $maxResult;
 
@@ -336,14 +337,16 @@ class SignalementRepository extends ServiceEntityRepository
             s.villeOccupant,
             s.lastSuiviAt,
             s.lastSuiviBy,
-            GROUP_CONCAT(CONCAT(p.nom, \'||\', a.statut) SEPARATOR \'--\') as rawAffectations,
-            GROUP_CONCAT(p.nom SEPARATOR \'||\') as affectationPartnerName,
-            GROUP_CONCAT(a.statut SEPARATOR \'||\') as affectationStatus,
-            GROUP_CONCAT(p.id SEPARATOR \',\') as affectationPartnerId')
+            GROUP_CONCAT(CONCAT(p.nom, :concat_separator, a.statut) SEPARATOR :group_concat_separator) as rawAffectations,
+            GROUP_CONCAT(p.nom SEPARATOR :group_concat_separator) as affectationPartnerName,
+            GROUP_CONCAT(a.statut SEPARATOR :group_concat_separator) as affectationStatus,
+            GROUP_CONCAT(p.id SEPARATOR :group_concat_separator) as affectationPartnerId')
             ->leftJoin('s.affectations', 'a')
             ->leftJoin('a.partner', 'p')
             ->where('s.statut != :status')
-            ->groupBy('s.id');
+            ->groupBy('s.id')
+            ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
+            ->setParameter('group_concat_separator', SignalementAffectationListView::SEPARATOR_GROUP_CONCAT);
 
         if ($user->isTerritoryAdmin()) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $user->getTerritory());

@@ -45,9 +45,9 @@ class SignalementAffectationListViewFactory
         }
 
         $affectations = [];
-        $affectationsList = explode('--', $rawAffectations);
+        $affectationsList = explode(SignalementAffectationListView::SEPARATOR_GROUP_CONCAT, $rawAffectations);
         foreach ($affectationsList as $affectationItem) {
-            list($partner, $status) = explode('||', $affectationItem);
+            list($partner, $status) = explode(SignalementAffectationListView::SEPARATOR_CONCAT, $affectationItem);
             $statusAffectation = AffectationStatus::from($status)->value;
             $affectations[$partner] = [
                 'partner' => $partner,
