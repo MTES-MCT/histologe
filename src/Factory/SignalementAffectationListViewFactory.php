@@ -14,7 +14,7 @@ class SignalementAffectationListViewFactory
         $affectations = $this->parseAffectations($data['rawAffectations']);
         if ($user->isUserPartner() || $user->isPartnerAdmin()) {
             $statusAffectation = $affectations[$user->getPartner()->getNom()]['statut'];
-            $status = AffectationStatus::tryFrom($statusAffectation)->mapSignalementStatus();
+            $status = AffectationStatus::tryFrom($statusAffectation)?->mapSignalementStatus();
         } else {
             $status = $data['statut'];
         }

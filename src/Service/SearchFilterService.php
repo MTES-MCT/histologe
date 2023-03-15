@@ -299,7 +299,7 @@ class SearchFilterService
             } else {
                 // @todo: filter more than one status for partner
                 $statuses = array_map(function ($status) {
-                    return SignalementStatus::tryFrom($status)->mapAffectationStatus();
+                    return SignalementStatus::tryFrom($status)?->mapAffectationStatus();
                 }, $filters['statuses']);
                 $statuses = array_shift($statuses);
                 $qb->having('affectationStatus LIKE :status_affectation')

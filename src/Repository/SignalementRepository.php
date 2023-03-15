@@ -363,7 +363,7 @@ class SignalementRepository extends ServiceEntityRepository
             $statuses = [];
             if (!empty($options['statuses'])) {
                 $statuses = array_map(function ($status) {
-                    return SignalementStatus::tryFrom($status)->mapAffectationStatus();
+                    return SignalementStatus::tryFrom($status)?->mapAffectationStatus();
                 }, $options['statuses']);
             }
 
