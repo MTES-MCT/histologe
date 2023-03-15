@@ -247,10 +247,10 @@ class SearchFilterService
                     ->select('DISTINCT IDENTITY(a.signalement)')
                     ->innerJoin('a.signalement', 's')
                     ->where('a.statut = '.Affectation::STATUS_CLOSED)
-                    ->andWhere('s.statut != :status_closed')
+                    ->andWhere('s.statut != :status_archived')
                     ->andWhere('a.territory IN (:territories)')
                     ->setParameter('territories', $filters['territories'])
-                    ->setParameter('status_closed', Signalement::STATUS_ARCHIVED);
+                    ->setParameter('status_archived', Signalement::STATUS_ARCHIVED);
 
                 // les id de tous les signalements ayant au moins une affectation non fermée :
                 $subqueryUnclosedAffectation = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
