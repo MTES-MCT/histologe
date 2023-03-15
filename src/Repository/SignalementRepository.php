@@ -974,21 +974,12 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb;
     }
 
-    public function findSignalementWithSuiviOlderThan30()
+    public function findAllByIds(array $ids): array
     {
-        $subquery = $this->createQueryBuilder('su')
-                ->select('su.signalement.id')
-                ->from(Suivi::class, 'su')
-                ->distinct();
-
-        $queryBuilder = $this->createQueryBuilder('s')
-            // ->select('s.')
-            // ->innerJoin('s.affectations', 'a')
-            // ->innerJoin('a.partner', 'p')
-            ->where('s.statut IN (:statut) AND s.id NOT IN (:subquery)')
-            ->setParameter('statut', [Signalement::STATUS_ACTIVE, Signalement::STATUS_NEED_PARTNER_RESPONSE])
-            ->setParameter('subquery', $subquery);
-
-        return $queryBuilder->getQuery()->getResult();
+        return $this->createQueryBuilder('s')
+            ->where('s.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
     }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Command;
 
-use App\Manager\SignalementManager;
+use App\Entity\Suivi;
+use App\Manager\SuiviManager;
+use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Service\NotificationService;
 use App\Service\Token\TokenGenerator;
@@ -21,13 +23,16 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 )]
 class AskFeedbackUsagerCommand extends Command
 {
+    private const FLUSH_COUNT = 1000;
+
     public function __construct(
-        private SignalementManager $signalementManager,
+        private SuiviManager $suiviManager,
         private NotificationService $notificationService,
         private UrlGeneratorInterface $urlGenerator,
         private TokenGenerator $tokenGenerator,
         private ParameterBagInterface $parameterBag,
         private SuiviRepository $suiviRepository,
+        private SignalementRepository $signalementRepository,
     ) {
         parent::__construct();
     }
@@ -41,13 +46,11 @@ class AskFeedbackUsagerCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $totalRead = 0;
         $io = new SymfonyStyle($input, $output);
 
-        // $signalementsList = $this->signalementManager->getRepository()->findSignalementWithSuiviOlderThan30();
-
-        // TODO : revoir la récupération de la liste
-        $signalements = $this->suiviRepository->findSignalementNoSuiviSince(30);
-
+        $signalementsIds = $this->suiviRepository->findSignalementsNoSuiviUsagerFrom(30);
+        $signalements = $this->signalementRepository->findAllByIds($signalementsIds);
         $nbSignalements = \count($signalements);
         if ($input->getOption('debug')) {
             $io->info(sprintf('%s signalement without suivi from more than 30 days', $nbSignalements));
@@ -56,6 +59,7 @@ class AskFeedbackUsagerCommand extends Command
         }
 
         foreach ($signalements as $signalement) {
+            ++$totalRead;
             $toRecipients = $signalement->getMailUsagers();
             if (!empty($toRecipients)) {
                 foreach ($toRecipients as $toRecipient) {
@@ -63,14 +67,28 @@ class AskFeedbackUsagerCommand extends Command
                         NotificationService::TYPE_SIGNALEMENT_FEEDBACK_USAGER,
                         [$toRecipient],
                         [
-                            'link' => $this->generateLinkCodeSuivi($signalement->getCodeSuivi(), $toRecipient),
+                            'signalement' => $signalement,
+                            'lien_suivi' => $this->generateLinkCodeSuivi($signalement->getCodeSuivi(), $toRecipient),
                         ],
                         $signalement->getTerritory()
                     );
                 }
             }
+
+            $suivi = new Suivi();
+            $suivi->setSignalement($signalement);
+            $suivi->setDescription("Un message automatique a été envoyé à l'usager pour lui demander de mettre à jour sa situation.");
+            $suivi->setIsPublic(false);
+            $suivi->setType(SUIVI::TYPE_TECHNICAL);
+
+            if (0 === $totalRead % self::FLUSH_COUNT) {
+                $this->suiviManager->save($suivi);
+            } else {
+                $this->suiviManager->save($suivi, false);
+            }
         }
-        // TODO : comment prendre en compte cet envoi pour qu'il n'y en ait pas un autre avant 30 jours ?
+
+        $this->suiviManager->flush();
 
         $io->success(sprintf('%s signalement without suivi from more than 30 days', $nbSignalements));
 

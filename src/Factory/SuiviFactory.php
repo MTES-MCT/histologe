@@ -37,6 +37,8 @@ class SuiviFactory
             return SUIVI::TYPE_AUTO;
         }
 
+        // TODO : type technical
+
         return SUIVI::TYPE_PARTNER;
     }
 

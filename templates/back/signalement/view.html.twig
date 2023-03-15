@@ -707,11 +707,30 @@
             <hr class=" fr-mt-5v">
         {% endif %}
         {% for suivi in signalement.suivis|reverse %}            
-            {% if suivi.createdBy is not null %}
+            {% if suivi.type is same as 4 %}
+                <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-5v">
+                    <div class="fr-col-2">
+                        <strong>Message automatique</strong>
+                        <br>
+                        <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
+                    </div>
+                    <div class="fr-col-9 bloc-suivi-content-row fr-pl-3v">
+                        {{ suivi.description|replace({'&t=___TOKEN___':''})|replace({'?t=___TOKEN___':''})|raw }}
+                    </div>
+                    <div class="fr-col-1 fr-text--right">
+                        {% if suivi.isPublic %}
+                            <span class="fr-fi-eye-fill" title="Visible par l'usager"></span>
+                        {% else %}
+                            <span class="fr-fi-eye-off-fill" title="Non visible par l'usager"></span>
+                        {% endif %}
+                    </div>
+                </div>
+
+            {% elseif suivi.createdBy is not null %}
                 <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-5v {% if 'ROLE_USAGER' in suivi.createdBy.roles %}fr-background-alt--orange-terre-battue{% endif %}">
-                    <div class="fr-col-2 {% if suivi.createdBy %}part-infos-hover{% endif %}"
-                        {% if suivi.createdBy %}data-user="{{ suivi.createdBy.nomComplet }}"
-                        data-mail="{{ suivi.createdBy.email }}"{% endif %}>
+                    <div class="fr-col-2 part-infos-hover"
+                        data-user="{{ suivi.createdBy.nomComplet }}"
+                        data-mail="{{ suivi.createdBy.email }}">
                         <strong>{{ suivi.createdBy.nom|upper~' '~ suivi.createdBy.prenom|capitalize }}</strong>
                         <br>
                         <small>[{{ 'ROLE_USAGER' in suivi.createdBy.roles ? (suivi.createdBy.email is same as signalement.mailDeclarant ? 'DECLARANT' : 'OCCUPANT') : (suivi.createdBy.partner ? suivi.createdBy.partner.nom : 'Aucun')  }}]</small> <br>

@@ -12,6 +12,7 @@ class Suivi
     public const TYPE_AUTO = 1;
     public const TYPE_USAGER = 2;
     public const TYPE_PARTNER = 3;
+    public const TYPE_TECHNICAL = 4;
     public const DEFAULT_PERIOD_INACTIVITY = 30;
 
     public const DESCRIPTION_MOTIF_CLOTURE_ALL = 'Le signalement a été cloturé pour tous';
