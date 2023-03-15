@@ -6,6 +6,7 @@ use App\Dto\CountSignalement;
 use App\Dto\SignalementAffectationListView;
 use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -359,24 +360,41 @@ class SignalementRepository extends ServiceEntityRepository
                 );
             }
         } elseif ($user->isUserPartner() || $user->isPartnerAdmin()) {
+            $statuses = [];
+            if (!empty($options['statuses'])) {
+                $statuses = array_map(function ($status) {
+                    return SignalementStatus::tryFrom($status)->mapAffectationStatus();
+                }, $options['statuses']);
+            }
+
             $subQueryBuilder = $this->createQueryBuilder('s2')
                 ->select('IDENTITY(a2.signalement)')
                 ->from(Affectation::class, 'a2')
                 ->where('a2.partner = :partner_1');
 
+            if (!empty($options['statuses'])) {
+                $subQueryBuilder->andWhere('a2.statut IN (:statut_affectation)');
+            }
+
             $qb->andWhere(
                 $qb->expr()->orX(
                     $qb->expr()->eq('a.partner', ':partner_2'),
                     $qb->expr()->in('s.id', $subQueryBuilder->getDQL())
-                ));
+                )
+            );
 
             $qb->setParameter('partner_1', $user->getPartner());
             $qb->setParameter('partner_2', $user->getPartner());
+            if (!empty($options['statuses'])) {
+                $qb->setParameter('statut_affectation', $statuses);
+            }
         }
 
         $qb->setParameter('status', Signalement::STATUS_ARCHIVED);
         $qb = $this->searchFilterService->applyFilters($qb, $options);
-        $qb->orderBy('s.createdAt', 'DESC')
+        $qb->orderBy(isset($options['sort']) && 'lastSuiviAt' === $options['sort']
+                ? 's.lastSuiviAt'
+                : 's.createdAt', 'DESC')
             ->setFirstResult($firstResult)
             ->setMaxResults($maxResult)
             ->getQuery();
