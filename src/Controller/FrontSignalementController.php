@@ -4,12 +4,14 @@ namespace App\Controller;
 
 use App\Entity\Critere;
 use App\Entity\Criticite;
+use App\Entity\Enum\Qualification;
 use App\Entity\Signalement;
 use App\Entity\Situation;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementCreatedEvent;
 use App\Exception\MaxUploadSizeExceededException;
+use App\Factory\SignalementQualificationFactory;
 use App\Form\SignalementType;
 use App\Manager\UserManager;
 use App\Repository\CritereRepository;
@@ -107,13 +109,22 @@ class FrontSignalementController extends AbstractController
         PostalCodeHomeChecker $postalCodeHomeChecker,
         EventDispatcherInterface $eventDispatcher,
         UrlGeneratorInterface $urlGenerator,
-        CritereRepository $critereRepository
+        CritereRepository $critereRepository,
+        SignalementQualificationFactory $signalementQualificationFactory
     ): Response {
         if ($this->isCsrfTokenValid('new_signalement', $request->request->get('_token'))
             && $data = $request->get('signalement')) {
             $em = $doctrine->getManager();
             $signalement = new Signalement();
             $files_array = [];
+
+            $dataDateBail = null;
+            $dataHasDPE = null;
+            $dataDateDPE = null;
+            $dataConsoSizeYear = null;
+            $dataConsoSize = null;
+            $dataConsoYear = null;
+            $listNDECriticites = [];
 
             if (isset($data['files'])) {
                 $dataFiles = $data['files'];
@@ -143,6 +154,10 @@ class FrontSignalementController extends AbstractController
                                     $signalement->addCritere($critere);
                                     $criticite = $em->getRepository(Criticite::class)->find($data[$key][$idSituation]['critere'][$idCritere]['criticite']);
                                     $signalement->addCriticite($criticite);
+                                    // TODO : replace getQualification with an array of enum
+                                    if (\in_array(Qualification::NON_DECENCE_ENERGETIQUE->value, $criticite->getQualification())) {
+                                        $listNDECriticites[] = $criticite->getId();
+                                    }
                                 }
                             }
                         }
@@ -155,6 +170,25 @@ class FrontSignalementController extends AbstractController
 
                     case 'geoloc':
                         $signalement->setGeoloc(['lat' => $data[$key]['lat'], 'lng' => $data[$key]['lng']]);
+                        break;
+
+                    case 'dateBail':
+                        $dataDateBail = $value;
+                        break;
+                    case 'hasDPE':
+                        $dataHasDPE = $value;
+                        break;
+                    case 'dateDPE':
+                        $dataDateDPE = $value;
+                        break;
+                    case 'consoSizeYear':
+                        $dataConsoSizeYear = $value;
+                        break;
+                    case 'consoSize':
+                        $dataConsoSize = $value;
+                        break;
+                    case 'consoYear':
+                        $dataConsoYear = $value;
                         break;
 
                     default:
@@ -195,6 +229,32 @@ class FrontSignalementController extends AbstractController
             $signalement->setScoreCreation($score->calculate());
             $signalement->setNewScoreCreation($score->calculateNewCriticite());
             $signalement->setCodeSuivi(md5(uniqid()));
+
+            // Non-décence énergétique
+            // Create a SignalementQualification if:
+            // - Territory in experimentation : $isExperimentationTerritory
+            // - Criticité is NDE : $hasNDECriticite
+            // - dateEntree >= 2023 or dataDateBail >= 2023 or dataDateBail "Je ne sais pas"
+            $experimentationTerritories = $this->getParameter('experimentation_territory');
+            $isExperimentationTerritory = \array_key_exists($signalement->getTerritory()->getZip(), $experimentationTerritories);
+            if ($isExperimentationTerritory && \count($listNDECriticites) > 0) {
+                $isDateBail2023 = $signalement->getDateEntree()->format('Y') >= 2023 || '2023-01-02' === $dataDateBail || 'Je ne sais pas' === $dataDateBail;
+                if ($isDateBail2023) {
+                    $signalementQualification = $signalementQualificationFactory->createInstanceFrom(
+                        signalement: $signalement,
+                        listNDECriticites: $listNDECriticites,
+                        dataDateBail: $dataDateBail,
+                        dataConsoSizeYear: $dataConsoSizeYear,
+                        dataConsoYear: $dataConsoYear,
+                        dataConsoSize: $dataConsoSize,
+                        dataHasDPE: $dataHasDPE,
+                        dataDateDPE: $dataDateDPE
+                    );
+
+                    $signalement->addSignalementQualification($signalementQualification);
+                    $em->persist($signalementQualification);
+                }
+            }
 
             $em->persist($signalement);
             $em->flush();
