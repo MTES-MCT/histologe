@@ -4,14 +4,21 @@
 
 {% block body %}
     <main class="fr-container--fluid">
-        <header class="fr-grid-row fr-background--blue-france fr-py-5w fr-py-md-10w">
-            <div class="fr-col-12 fr-text--center">
-                <h1 class="fr-h2 fr-mb-0 fr-text--white">Une question ? Une précision ? <br> N'hésitez pas à nous
-                    envoyer un message !</h1>
-            </div>
-        </header>
-        <section class="fr-container fr-grid-row fr-pb-5w">
-            <div class="fr-col-12 fr-py-5w">
+        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-py-5w fr-py-md-10w">
+            <h1 class="fr-col-11 fr-col-md-8 fr-text-title--blue-france fr-text--center">Contacter Histologe</h1>
+
+            <p class="fr-col-11 fr-col-md-8 fr-text--center fr-text--lg">
+                Une question ? Une précision ? N'hésitez pas à nous envoyer un message !
+            </p>
+
+            <p class="fr-col-11 fr-col-md-8 fr-text--center fr-text--lg">
+                <strong>Attention :</strong>
+                le formulaire de contact ne permet pas de déposer un signalement.
+                Si vous souhaitez signaler un problème de logement, remplissez
+                <a href="{{ path('front_signalement') }}">le formulaire de signalement</a>.
+            </p>
+
+            <div class="fr-col-11 fr-col-md-8 fr-py-5w">
                 {{ form_start(form) }}
                 <div class="fr-grid-row fr-grid-row--gutters">
 
@@ -21,11 +28,11 @@
                 </div>
                 {{ form_end(form) }}
             </div>
-            <div class="fr-col-12 fr-text--center">
+            <div class="fr-col-11 fr-col-md-8 fr-text--center">
                 <button class="fr-btn fr-rounded fr-fi-mail-fill fr-btn--icon-left" form="front_contact"> Envoyer le
                     message
                 </button>
             </div>
-        </section>
+        </div>
     </main>
 {% endblock %}
