@@ -150,10 +150,6 @@ small {
     }
 }
 
-.fr-blockquote {
-    border-left: .3rem solid var(--border-plain-blue-france);
-}
-
 .fr-list--hover li:hover {
     background-color: white;
 }
@@ -349,20 +345,8 @@ h2.home {
     line-height: 32px;
 }
 
-.home-form label {
-    font-weight: normal;
-    font-size: 20px;
-    line-height: 30px;
-    color: #FFFFFF;
-}
-
-@media (min-width: 768px) {
-    .home-form button {
-        position: relative;
-        display: block;
-        top: 100%;
-        margin-top: -40px;
-    }
+#postal_code_search_postalcode {
+    background-color: #FFFFFF;
 }
 
 label.fr-toggle__label[for="signalement-accept-cgu"] {

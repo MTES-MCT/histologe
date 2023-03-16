@@ -3,29 +3,41 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
-    <main class="fr-container--fluid">
+
+    {% if display_modal != '' %}
+        {% include '_partials/_modal_closed_territory.html.twig' with { 'autoopen': '1' } %}
+    {% endif %}
+    <main>
+        <section class="fr-background-contrast--blue-france fr-pt-3w">
+            <div class="fr-container fr-grid-row">
+                <div class="fr-col-12 fr-col-md-8">
+                    <p class="fr-mt-5w">
+                        <p class="fr-text--lead">Avec Histologe,</p>
+                        <h1>Sortez du mal-logement</h1>
+                        {{ form_start(form_postalcode) }}
+                        <div class="fr-grid-row fr-grid-row--gutters fr-mb-5v">
+                            {{ form_row(form_postalcode.postalcode) }}
+
+                            <div class="fr-col-12 fr-col-md-6 fr-mt-3w">
+                                <button 
+                                    class="fr-btn fr-btn--icon-left fr-rounded fr-fi-check-line"
+                                    form="front_postalcodesearch">Signaler mon problème</button>
+                            </div>
+                        </div>
+                        {{ form_end(form_postalcode) }}
+                    </p>
+                </div>
+                <div class="fr-col-12 fr-col-md-4">
+                    <img src="{{ asset('img/illustration-undraw-home.svg') }}" alt="Illustration cible">
+                </div>
+            </div>
+        </section>
+
         <section class="fr-container--fluid fr-artwork-decorative--blue-france fr-background--blue-france fr-py-5w fr-py-md-10w">
             <div class="fr-container">
                 <div class="fr-grid-row">
                     <div class="fr-col-md-12">
                         <h1 class="fr-h3 fr-text--white">Signalez votre problème de logement</h1>
-
-                        {% if display_modal != '' %}
-                            {% include '_partials/_modal_closed_territory.html.twig' with { 'autoopen': '1' } %}
-                        {% endif %}
-
-                        <!-- form code postal -->
-                        {{ form_start(form_postalcode) }}
-                        <div class="fr-grid-row fr-grid-row--gutters fr-text--white fr-mb-5v home-form">
-                            {{ form_row(form_postalcode.postalcode) }}
-
-                            <div class="fr-col-12 fr-col-md-6 fr-col-xl-4 fr-pr-md-2v">
-                                <button 
-                                    class="fr-col-12 fr-btn fr-btn--orange fr-text-label--blue-france fr-rounded"
-                                    form="front_postalcodesearch">Accéder au service</button>
-                            </div>
-                        </div>
-                        {{ form_end(form_postalcode) }}
                         
                         {# <a role="button" href="{{ path('front_signalement') }}"
                            class="fr-btn fr-btn--orange fr-text-label--blue-france fr-mb-5v fr-fi-arrow-right-line fr-btn--icon-right fr-rounded fr-py-5v">Je
@@ -266,145 +278,93 @@
                 </div>
             </div>
         </section>
-        <section class="fr-container fr-py-5w">
-            <div class="fr-grid-row fr-grid-row--center">
-                <header>
-                    <h4 class="fr-pb-5w fr-text--center fr-text-label--blue-france">Histologe améliore la prise en
-                        charge du mal-logement</h4>
-                </header>
-                <div class="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
-                    <div class="fr-col-md-6">
-                        <figure class="fr-grid-row">
-                            <div>
-                                <img src="{{ asset('img/icon-user-comment.PNG') }}" alt="commentaire">
-                            </div>
-                            <figcaption class="fr-col">
-                                <blockquote class="fr-pl-5v fr-blockquote fr-text--alt">
-                                    Logement plein de moisissures et mes vêtements ne sentent pas bon. J'ai honte
-                                    d'inviter des amis et du coup j'ai tendance à m'isoler car je n'ai pas envie d'aller
-                                    crier mon problème sur les toits. Avec Histologe j'ai pu de chez moi sortir de
-                                    l'ombre en quelques clics via mon téléphone portable. Je suis maintenant accompagné
-                                    pour m'aider à résoudre ces problèmes.
-                                    <strong class="fr-display-block fr-mt-3v">Mathieu F.</strong>
-                                </blockquote>
-                            </figcaption>
-                        </figure>
-                    </div>
-                    <div class="fr-col-md-6">
-                        <figure class="fr-grid-row">
-                            <div>
-                                <img src="{{ asset('img/icon-user-comment.PNG') }}" alt="commentaire">
-                            </div>
-                            <figcaption class="fr-col">
-                                <blockquote class="fr-pl-5v fr-blockquote fr-text--alt">
-                                    1 an et 11 mois que j'occupe un appartement sans chauffage malgré les promesses de
-                                    mon propriétaire de résoudre ce problème. En déposant un signalement sur la
-                                    plateforme Histologe et accompagnée par les bons acteurs, le propriétaire a
-                                    finalement missionné un artisan pour m'installer les équipements de chauffage. Avec
-                                    mon mari nous n'avons plus froid ! Merci
-                                    <strong class="fr-display-block fr-mt-3v">Suzanne R.</strong>
-                                </blockquote>
-                            </figcaption>
-                        </figure>
-                    </div>
+        <section class="fr-py-5w fr-background-contrast--blue-france">
+            <h2 class="fr-container fr-pb-5w">Objectif : sortir du mal-logement</h2>
+
+            <div class="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-md-8">
+                    <figure class="fr-quote">
+                        <blockquote>
+                            <p>
+                                Logement plein de moisissures et mes vêtements ne sentent pas bon. J'ai honte
+                                d'inviter des amis et du coup j'ai tendance à m'isoler car je n'ai pas envie d'aller
+                                crier mon problème sur les toits. Avec Histologe j'ai pu de chez moi sortir de
+                                l'ombre en quelques clics via mon téléphone portable. Je suis maintenant accompagné
+                                pour m'aider à résoudre ces problèmes.
+                            </p>
+                        </blockquote>
+                        <figcaption>
+                            <p class="fr-quote__author">Mathieu F.</p>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="fr-quote fr-mt-3w">
+                        <blockquote>
+                            <p>
+                                1 an et 11 mois que j'occupe un appartement sans chauffage malgré les promesses de
+                                mon propriétaire de résoudre ce problème. En déposant un signalement sur la
+                                plateforme Histologe et accompagnée par les bons acteurs, le propriétaire a
+                                finalement missionné un artisan pour m'installer les équipements de chauffage. Avec
+                                mon mari nous n'avons plus froid ! Merci
+                            </p>
+                        </blockquote>
+                        <figcaption>
+                            <p class="fr-quote__author">Suzanne R.</p>
+                        </figcaption>
+                    </figure>
+                </div>
+                <div class="fr-col-12 fr-col-md-4">
+                    <img src="{{ asset('img/illustration-undraw-target.svg') }}" alt="Illustration cible">
                 </div>
             </div>
         </section>
-        <section class="fr-container--fluid fr-background--blue-france fr-py-5w">
+        <section class="fr-container--fluid fr-py-5w">
             <div class="fr-container">
                 <header class="fr-pb-5w">
-                    <h5 class="fr-text--white fr-text--center">Histologe en quelques chiffres</h5>
+                    <h2 class="fr-text--center">Le service en quelques chiffres</h2>
                 </header>
-                <div class="fr-grid-row fr-grid-row--center fr-text--white">
-                    <div class="fr-col-12 fr-col-md-4 fr-py-2v fr-py-md-0">
-                        <figure class="fr-grid-row fr-grid-row--middle">
-                            <img src="{{ asset('img/icon-house-info.svg') }}" alt="Info" class="fr-col-2">
-                            <figcaption class="fr-col-10 text-white fr-pl-2v">
-                                <strong class="fr-display-block">{{ stats.total }}</strong>
-                                signalements enregistrés
-                            </figcaption>
-                        </figure>
-                    </div>
-                    <div class="fr-col-12 fr-col-md-4 fr-py-2v fr-py-md-0">
-                        <figure class="fr-grid-row fr-grid-row--middle">
-                            <img src="{{ asset('img/icon-chart-bubble.svg') }}" alt="Info" class="fr-col-2">
-                            <figcaption class="fr-col-10 text-white fr-pl-2v">
-                                <strong class="fr-display-block">{{ stats.pris_en_compte }} %</strong>
-                                des signalements pris en charge
-                            </figcaption>
-                        </figure>
-                    </div>
-                    <div class="fr-col-12 fr-col-md-4 fr-py-2v fr-py-md-0">
-                        <figure class="fr-grid-row fr-grid-row--middle">
-                            <img src="{{ asset('img/icon-pass.svg') }}" alt="Info" class="fr-col-2">
-                            <figcaption class="fr-col-10 text-white fr-pl-2v">
-                                <strong class="fr-display-block">{{ stats.clotures }} %</strong>
-                                de signalements clôturés
-                            </figcaption>
-                        </figure>
-                    </div>
-                </div>
-                <div class="fr-mt-5w fr-text--center fr-text--white">
-                    <a href="{{ path('front_statistiques') }}">Voir les statistiques</a>
-                </div>
-            </div>
-        </section>
-        <section class="fr-container--fluid fr-background-alt--blue-france fr-py-5w">
-            <div class="fr-container">
-                <header class="fr-pb-5w">
-                    <h4 class="fr-text-label--blue-france fr-text--center">Une solution reconnue !</h4>
-                </header>
-                <div class="fr-grid-row fr-grid-row--center fr-grid-row--gutters fr-text--center">
-                    <div class="fr-col-md-3">
-                        <figure class="fr-m-2v">
-                            <img src="{{ asset('img/Logo_label_2021.png') }}" alt="label_innovant">
-                            <figcaption class="fr-col fr-mt-5w">
-                                <div class="fr-text--bold">Lauréat du label Territoire Innovant (interconnectés 2021)
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12 fr-col-md-4">
+                        <div class="fr-card fr-card--no-arrow">
+                            <div class="fr-card__body fr-text--center">
+                                <div class="fr-card__content">
+                                    <h3 class="fr-card__title fr-h1 fr-text-title--blue-france">
+                                        {{ stats.total }}
+                                    </h3>
+                                    <p class="fr-card__desc fr-text--lg">signalements enregistrés</p>
                                 </div>
-                                <small>Le label « Territoire Innovant » est décerné aux collectivités qui ont mis en
-                                    œuvre des initiatives marquantes en termes d’usages ou de services, ce label se
-                                    différencie en reposant sur des valeurs comme critères d’attribution.</small>
-                            </figcaption>
-                        </figure>
+                            </div>
+                        </div>
                     </div>
-                    <div class="fr-col-md-3">
-                        <figure class="fr-m-2v">
-                            <img src="{{ asset('img/gazette.png') }}" alt="gazette">
-                            <figcaption class="fr-col fr-mt-5w">
-                                <div class="fr-text--bold">Prix Territorial 2020 de la Gazette des Communes.</div>
-                                <small>Ce prix récompense les projets locaux impliquant plusieurs métiers et
-                                    services.</small>
-                            </figcaption>
-                        </figure>
+                    <div class="fr-col-12 fr-col-md-4">
+                        <div class="fr-card fr-card--no-arrow">
+                            <div class="fr-card__body fr-text--center">
+                                <div class="fr-card__content">
+                                    <h3 class="fr-card__title fr-h1 fr-text-title--blue-france">
+                                        {{ stats.pris_en_compte }} %
+                                    </h3>
+                                    <p class="fr-card__desc fr-text--lg">des signalements pris en charge</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="fr-col-md-3">
-                        <figure class="fr-m-2v">
-                            <img src="{{ asset('img/exclusion-energetique.png') }}" alt="exclusion_energetique">
-                            <figcaption class="fr-col fr-mt-5w">
-                                <div class="fr-text--bold">Lauréat National de Stop Exclusion énergétique !</div>
-                                <small>Ce prix récompense les solutions qui améliorent la qualité des logements des
-                                    précaires (énergétique ou sanitaire).</small>
-                            </figcaption>
-                        </figure>
+                    <div class="fr-col-12 fr-col-md-4">
+                        <div class="fr-card fr-card--no-arrow">
+                            <div class="fr-card__body fr-text--center">
+                                <div class="fr-card__content">
+                                    <h3 class="fr-card__title fr-h1 fr-text-title--blue-france">
+                                        {{ stats.clotures }} %
+                                    </h3>
+                                    <p class="fr-card__desc fr-text--lg">de signalements clôturés</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="fr-col-md-3">
-                        <figure class="fr-m-2v">
-                            <img src="{{ asset('img/itheasfp.png') }}" alt="inititive_locale">
-                            <figcaption class="fr-col fr-mt-5w">
-                                <div class="fr-text--bold">Prix de la grande enquête Initiatives Locales 2020</div>
-                                <small>Histologe a été primé dans la catégorie "Cadre de vie" parmi plus de 400
-                                    candidatures.</small>
-                            </figcaption>
-                        </figure>
-                    </div>
+                </div>
+                <div class="fr-mt-5w fr-text--center">
+                    <a class="fr-btn fr-btn--icon-left fr-fi-arrow-right-line" href="{{ path('front_statistiques') }}">Voir les statistiques</a>
                 </div>
             </div>
         </section>
     </main>
-{% endblock %}
-{% block javascripts %}
-    <script type="text/javascript" src={{ asset('js/slider.js') }}></script>
-    <script>
-        new HistoSlider.init('#homeslider');
-    </script>
 {% endblock %}
