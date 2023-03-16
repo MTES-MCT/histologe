@@ -22,12 +22,13 @@
             <ul class="fr-sidemenu__list">
                 <li class="fr-sidemenu__item">
                     <a class="fr-sidemenu__link" href="{{ path('back_dashboard') }}">
-                       {{ feature.dashboard_enable ? 'Tableau de bord' : 'Accueil' }}
+                       Tableau de bord
                     </a>
                 </li>
                 <li class="fr-sidemenu__item">
-                    <a class="fr-sidemenu__link" href="{{ path('back_news_activities') }}">Notifications<span
-                                class="fr-puce fr-puce--danger">{{ app.user.notifications|filter(n=> n.isSeen != 1)|length }}</span></a>
+                    <a class="fr-sidemenu__link" href="{{ path('back_news_activities') }}">Notifications
+                        <span class="fr-puce fr-puce--danger">{{ count_notification(app.user) }} </span>
+                    </a>
                 </li>
                 <button class="fr-sidemenu__btn"
                         aria-expanded="{% if 'back_index' in app.request.get('_route') or 'back_signalement' in app.request.get('_route') %}true{% else %}false{% endif %}"
