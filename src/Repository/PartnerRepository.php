@@ -52,7 +52,7 @@ class PartnerRepository extends ServiceEntityRepository
     /**
      * @throws QueryException
      */
-    public function findAllList(Territory|null $territory)
+    public function findAllList(Territory|null $territory = null)
     {
         $qb = $this->createQueryBuilder('p')
             ->where('p.isArchive != 1');

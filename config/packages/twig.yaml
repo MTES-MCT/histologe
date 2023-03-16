@@ -4,8 +4,6 @@ twig:
         gitbook:
             documentation: https://documentation.histologe.beta.gouv.fr
             faq: https://faq.histologe.beta.gouv.fr
-        feature:
-            dashboard_enable: '%env(bool:FEATURE_DASHBOARD_ENABLE)%'
     paths:
         # point this wherever your images live
         '%kernel.project_dir%/public/img': images

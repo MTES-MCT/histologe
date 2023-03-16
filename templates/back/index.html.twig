@@ -1,63 +1,17 @@
 {% extends 'back/base_bo.html.twig' %}
 
 {% block content %}
-    {% if not feature.dashboard_enable %}
-        <section class="fr-background-alt--blue-france fr-p-2v">
-        <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
-            <span class="fr-text-default--info">{{ signalements.counts.total }}</span>
-            <strong class="fr-hint-text">&nbsp;SIGNALEMENTS</strong>
-        </div>
-        |
-        <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
-            <span class="fr-text-default--info">{% if signalements.counts[1] is defined %}{{ signalements.counts[1].count }}{% else %}0{% endif %}</span>
-            <strong class="fr-hint-text">&nbsp;Nouveaux</strong>
-        </div>
-        <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
-            <span class="fr-text-default--info">{% if signalements.counts[2] is defined %}{{ signalements.counts[2].count }}{% else %}0{% endif %}</span>
-            <strong class="fr-hint-text">&nbsp;En cours</strong>
-        </div>
-        <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
-            <span class="fr-text-default--info">{% if signalements.counts[6] is defined %}{{ signalements.counts[6].count }}{% else %}0{% endif %}</span>
-            <strong class="fr-hint-text">&nbsp;Fermés</strong>
-        </div>
-        {% if is_granted('ROLE_ADMIN_TERRITORY') %}
-            |
-            <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
-                <span class="fr-text-default--info">{{ users.active+users.inactive }}</span>
-                <strong class="fr-hint-text">&nbsp;COMPTES</strong>
-            </div>
-            <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
-                <span class="fr-text-default--info">{{ users.active }}</span>
-                <strong class="fr-hint-text">&nbsp;ACTIFS</strong>
-            </div>
-            <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
-                <span class="fr-text-default--info">{{ users.inactive }}</span>
-                <strong class="fr-hint-text">&nbsp;INACTIFS</strong>
-            </div>
-            |
-            <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
-                <span class="fr-text-default--info">{{ partners|filter(v=> v.isCommune == 0)|length }}</span>
-                <strong class="fr-hint-text">&nbsp;PARTENAIRES</strong>
-            </div>
-            <div class="fr-badge fr-p-2v fr-border--bottom--orange fr-background--white fr-m-1v">
-                <span class="fr-text-default--info">{{ partners|filter(v=> v.isCommune == 1  and not v.isArchive)|length }}</span>
-                <strong class="fr-hint-text">&nbsp;COMMUNES</strong>
-            </div>
-        {% endif %}
-    </section>
-    {% endif %}
-
     {% include '_partials/_search_filter_form.html.twig' %}
     <section class="fr-col-12 fr-table fr-table--bordered fr-background-alt--blue-france">
-        <table class="fr-display-inline-table fr-display-md-block sortable fr-mb-0">
+        <table class="fr-display-inline-table fr-display-md-block sortable fr-mb-0 disabled-link">
             <caption class="fr-w-100 fr-px-3v fr-pt-3v fr-pb-0">
                 <div class="fr-grid-row">
                     <div class="fr-col">
                         {{ signalements.total }} signalement(s)
                     </div>
                     <div class="fr-col fr-text--right">
-                        <a href="{{ path('back_index') }}?export={{ signalements.total }}&{{ app.request.content|replace({'%5B':'['})|replace({'%5D':']'}) }}&_token={{ csrf_token('export_token_'~app.user.id) }}"
-                           class="fr-link fr-link--icon-left fr-fi-download-line">Exporter
+                        <a href="#"
+                           class="fr-link fr-link--icon-left fr-fi-download-line disabled-link" title="La fonctionnalité est momentanément indisponible">Exporter
                             les résultats</a>
                     </div>
                 </div>
@@ -144,8 +98,19 @@
             strokeWidth: 0.1,
             color: '#000000'
         }
-        let ids = [{% if not is_granted('ROLE_ADMIN_TERRITORY')  or filters.partners or filters.affectations %}{{ signalements.list|map(p => "#{p.signalement.id}")|join(', ') }}{% else %}{{ signalements.list|map(p => "#{p.id}")|join(', ') }}{% endif %}],
-            scores = [{% if not is_granted('ROLE_ADMIN_TERRITORY')  or filters.partners or filters.affectations %}{{ signalements.list|map(p => "#{p.signalement.scoreCreation}")|join(', ') }}{% else %}{{ signalements.list|map(p => "#{p.scoreCreation}")|join(', ') }}{% endif %}];
+        let ids = [ {% if not is_granted('ROLE_ADMIN_TERRITORY')  or filters.partners or filters.affectations %}
+                        {{ signalements.list|map(signalement => "#{signalement.id}")|join(', ') }}
+                    {% else %}
+                        {{ signalements.list|map(signalement => "#{signalement.id}")|join(', ') }}
+                    {% endif %}],
+
+            scores = [
+                {% if not is_granted('ROLE_ADMIN_TERRITORY')  or filters.partners or filters.affectations %}
+                    {{ signalements.list|map(signalement => "#{signalement.scoreCreation}")|join(', ') }}
+                {% else %}
+                    {{ signalements.list|map(signalement => "#{signalement.scoreCreation}")|join(', ') }}
+                {% endif %}];
+
         ids.map((id, index) => {
             gauge = new Gauge(document.getElementById(`gauge-signalement-${id}`)).setOptions(opts);
             gauge.set(scores[index]);

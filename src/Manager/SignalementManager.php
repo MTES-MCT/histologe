@@ -2,16 +2,23 @@
 
 namespace App\Manager;
 
+use App\Dto\SignalementAffectationListView;
 use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Entity\User;
 use App\Event\SignalementCreatedEvent;
+use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementFactory;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class SignalementManager extends AbstractManager
 {
@@ -20,6 +27,9 @@ class SignalementManager extends AbstractManager
         private Security $security,
         private SignalementFactory $signalementFactory,
         private EventDispatcherInterface $eventDispatcher,
+        private SignalementAffectationListViewFactory $signalementAffectationListViewFactory,
+        private ParameterBagInterface $parameterBag,
+        private CsrfTokenManagerInterface $csrfTokenManager,
         string $entityName = Signalement::class
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -206,5 +216,52 @@ class SignalementManager extends AbstractManager
         );
 
         return array_merge($sendTo, $partnersEmail);
+    }
+
+    public function findSignalementAffectationList(User|UserInterface|null $user, array $options): array
+    {
+        $options['authorized_codes_insee'] = $this->parameterBag->get('authorized_codes_insee');
+        $signalementAffectationList = [];
+
+        /** @var Paginator $paginator */
+        $paginator = $this->getRepository()->findSignalementAffectationListPaginator($user, $options);
+        $total = $paginator->count();
+        $dataResultList = $paginator->getQuery()->getResult();
+
+        foreach ($dataResultList as $dataResultItem) {
+            $signalementAffectationList[] = $this->signalementAffectationListViewFactory->createInstanceFrom(
+                $this->security->getUser(),
+                $dataResultItem
+            );
+        }
+
+        return [
+            'list' => $signalementAffectationList,
+            'total' => $total,
+            'page' => (int) $options['page'],
+            'pages' => (int) ceil($total / SignalementAffectationListView::MAX_LIST_PAGINATION),
+            'csrfTokens' => $this->generateCsrfToken($signalementAffectationList),
+        ];
+    }
+
+    /**
+     * @todo: Investigate Twig\Error\RuntimeError in ajax request
+     * Hack: generate csrf token in side server for ajav request
+     * Fix Twig\Error\RuntimeError in order to do not generate csrf token (session) after the headers have been sent.
+     */
+    private function generateCsrfToken(array $signalementList): array
+    {
+        $csrfTokens = [];
+        /* @var SignalementAffectationListView $signalement */
+        foreach ($signalementList as $signalementItem) {
+            if ($signalementItem instanceof SignalementAffectationListView) {
+                $csrfTokens[$signalementItem->getUuid()] =
+                    $this->csrfTokenManager->getToken(
+                        'signalement_delete_'.$signalementItem->getId()
+                    )->getValue();
+            }
+        }
+
+        return $csrfTokens;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Notification;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -155,11 +156,13 @@ class NotificationRepository extends ServiceEntityRepository
             ->where('n.isSeen = :is_seen')
             ->andWhere('n.type = :type_notification')
             ->andWhere('n.user = :user')
+            ->andWhere('si.statut != :status_closed')
             ->andWhere('su.description NOT LIKE :description_all AND su.description LIKE :description_partner')
             ->setParameter('is_seen', 0)
             ->setParameter('type_notification', Notification::TYPE_SUIVI)
             ->setParameter('description_all', '%'.Suivi::DESCRIPTION_MOTIF_CLOTURE_ALL.'%')
             ->setParameter('description_partner', '%'.Suivi::DESCRIPTION_MOTIF_CLOTURE_PARTNER.'%')
+            ->setParameter('status_closed', SignalementStatus::CLOSED)
             ->setParameter('user', $user);
 
         if (null !== $territory) {

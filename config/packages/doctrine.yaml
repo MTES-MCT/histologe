@@ -31,4 +31,5 @@ doctrine:
                 IF: DoctrineExtensions\Query\Mysql\IfElse
                 SUBSTRING_INDEX: DoctrineExtensions\Query\Mysql\SubstringIndex
                 CAST: DoctrineExtensions\Query\Mysql\Cast
+                GROUP_CONCAT: DoctrineExtensions\Query\Mysql\GroupConcat
 

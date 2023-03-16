@@ -3,7 +3,10 @@
 namespace App\Repository;
 
 use App\Dto\CountSignalement;
+use App\Dto\SignalementAffectationListView;
 use App\Dto\StatisticsFilters;
+use App\Entity\Affectation;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -311,6 +314,94 @@ class SignalementRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    public function findSignalementAffectationListPaginator(
+        User|UserInterface|null $user,
+        array $options,
+    ): Paginator {
+        $maxResult = SignalementAffectationListView::MAX_LIST_PAGINATION;
+        $page = (int) $options['page'];
+        $firstResult = (($page ?: 1) - 1) * $maxResult;
+
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('
+            DISTINCT s.id,
+            s.uuid,
+            s.reference,
+            s.createdAt,
+            s.statut,
+            s.scoreCreation,
+            s.newScoreCreation,
+            s.isNotOccupant,
+            s.nomOccupant,
+            s.prenomOccupant,
+            s.adresseOccupant,
+            s.villeOccupant,
+            s.lastSuiviAt,
+            s.lastSuiviBy,
+            GROUP_CONCAT(CONCAT(p.nom, :concat_separator, a.statut) SEPARATOR :group_concat_separator) as rawAffectations,
+            GROUP_CONCAT(p.nom SEPARATOR :group_concat_separator) as affectationPartnerName,
+            GROUP_CONCAT(a.statut SEPARATOR :group_concat_separator) as affectationStatus,
+            GROUP_CONCAT(p.id SEPARATOR :group_concat_separator) as affectationPartnerId')
+            ->leftJoin('s.affectations', 'a')
+            ->leftJoin('a.partner', 'p')
+            ->where('s.statut != :status')
+            ->groupBy('s.id')
+            ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
+            ->setParameter('group_concat_separator', SignalementAffectationListView::SEPARATOR_GROUP_CONCAT);
+
+        if ($user->isTerritoryAdmin()) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $user->getTerritory());
+            if (\array_key_exists($user->getTerritory()->getZip(), $options['authorized_codes_insee'])) {
+                $qb = $this->filterForSpecificAgglomeration(
+                    $qb,
+                    $user->getTerritory()->getZip(),
+                    $user->getPartner()->getNom(),
+                    $options['authorized_codes_insee']
+                );
+            }
+        } elseif ($user->isUserPartner() || $user->isPartnerAdmin()) {
+            $statuses = [];
+            if (!empty($options['statuses'])) {
+                $statuses = array_map(function ($status) {
+                    return SignalementStatus::tryFrom($status)?->mapAffectationStatus();
+                }, $options['statuses']);
+            }
+
+            $subQueryBuilder = $this->createQueryBuilder('s2')
+                ->select('IDENTITY(a2.signalement)')
+                ->from(Affectation::class, 'a2')
+                ->where('a2.partner = :partner_1');
+
+            if (!empty($options['statuses'])) {
+                $subQueryBuilder->andWhere('a2.statut IN (:statut_affectation)');
+            }
+
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->eq('a.partner', ':partner_2'),
+                    $qb->expr()->in('s.id', $subQueryBuilder->getDQL())
+                )
+            );
+
+            $qb->setParameter('partner_1', $user->getPartner());
+            $qb->setParameter('partner_2', $user->getPartner());
+            if (!empty($options['statuses'])) {
+                $qb->setParameter('statut_affectation', $statuses);
+            }
+        }
+
+        $qb->setParameter('status', Signalement::STATUS_ARCHIVED);
+        $qb = $this->searchFilterService->applyFilters($qb, $options);
+        $qb->orderBy(isset($options['sort']) && 'lastSuiviAt' === $options['sort']
+                ? 's.lastSuiviAt'
+                : 's.createdAt', 'DESC')
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResult)
+            ->getQuery();
+
+        return new Paginator($qb, true);
+    }
+
     public function findByStatusAndOrCityForUser(User|UserInterface $user = null, array $options, int|null $export): array|Paginator
     {
         $pageSize = $export ?? self::ARRAY_LIST_PAGE_SIZE;
@@ -359,7 +450,7 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findCities(User|UserInterface|null $user, Territory|null $territory): array|int|string
+    public function findCities(User|UserInterface|null $user = null, Territory|null $territory = null): array|int|string
     {
         $qb = $this->createQueryBuilder('s')
             ->select('s.villeOccupant city')

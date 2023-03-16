@@ -26,6 +26,7 @@ final class Version20230313140816 extends AbstractMigration
         $this->addSql('UPDATE affectation SET motif_cloture = "DEPART_OCCUPANT" WHERE motif_cloture="LOCATAIRE PARTI"');
         $this->addSql('UPDATE affectation SET motif_cloture = "LOGEMENT_VENDU" WHERE motif_cloture="LOGEMENT VENDU"');
         $this->addSql('UPDATE affectation SET motif_cloture = "TRAVAUX_FAITS_OU_EN_COURS" WHERE motif_cloture="RESOLU"');
+        $this->addSql('UPDATE affectation SET motif_cloture = "NON_DECENCE" WHERE motif_cloture="INDECENCE"');
     }
 
     public function down(Schema $schema): void
@@ -40,5 +41,6 @@ final class Version20230313140816 extends AbstractMigration
         $this->addSql('UPDATE affectation SET motif_cloture = "LOCATAIRE PARTI" WHERE motif_cloture="DEPART_OCCUPANT"');
         $this->addSql('UPDATE affectation SET motif_cloture = "LOGEMENT VENDU" WHERE motif_cloture="LOGEMENT_VENDU"');
         $this->addSql('UPDATE affectation SET motif_cloture = "RESOLU" WHERE motif_cloture="TRAVAUX_FAITS_OU_EN_COURS"');
+        $this->addSql('UPDATE affectation SET motif_cloture = "INDECENCE" WHERE motif_cloture="NON_DECENCE"');
     }
 }
