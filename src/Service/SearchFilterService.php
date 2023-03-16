@@ -248,19 +248,25 @@ class SearchFilterService
                     ->innerJoin('a.signalement', 's')
                     ->where('a.statut = '.Affectation::STATUS_CLOSED)
                     ->andWhere('s.statut != :status_archived')
-                    ->andWhere('a.territory IN (:territories)')
-                    ->setParameter('territories', $filters['territories'])
                     ->setParameter('status_archived', Signalement::STATUS_ARCHIVED);
+
+                if (!empty($filters['territories'])) {
+                    $subqueryClosedAffectation->andWhere('a.territory IN (:territories)')
+                        ->setParameter('territories', $filters['territories']);
+                }
 
                 // les id de tous les signalements ayant au moins une affectation non fermée :
                 $subqueryUnclosedAffectation = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
                     ->select('DISTINCT IDENTITY(a.signalement)')
                     ->innerJoin('a.signalement', 's')
                     ->where('a.statut != '.Affectation::STATUS_CLOSED)
-                    ->andWhere('a.territory IN (:territories)')
-                    ->andWhere('s.statut != :status_closed')
-                    ->setParameter('territories', $filters['territories'])
-                    ->setParameter('status_closed', Signalement::STATUS_ARCHIVED);
+                    ->andWhere('s.statut != :status_archived')
+                    ->setParameter('status_archived', Signalement::STATUS_ARCHIVED);
+
+                if (!empty($filters['territories'])) {
+                    $subqueryUnclosedAffectation->andWhere('a.territory IN (:territories)')
+                        ->setParameter('territories', $filters['territories']);
+                }
 
                 // les signalements ayant au moins une affectation fermée :
                 $qb->andWhere('s.id IN (:subqueryClosedAffectation)')
