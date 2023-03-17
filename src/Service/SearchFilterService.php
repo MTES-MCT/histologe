@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Repository\NotificationRepository;
@@ -126,6 +127,11 @@ class SearchFilterService
             if ($request->query->get('closed_affectation')) {
                 ++$this->countActive;
                 $this->filters['closed_affectation'] = [$request->query->get('closed_affectation')];
+            }
+
+            if ($request->query->get('nde')) {
+                ++$this->countActive;
+                $this->filters['nde'] = [QualificationStatus::NDE_AVEREE->name, QualificationStatus::NDE_CHECK->name];
             }
 
             if ($request->query->get('sort')) {
