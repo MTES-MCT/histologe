@@ -9,6 +9,8 @@ use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Service\NotificationService;
+use Doctrine\ORM\NonUniqueResultException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ContactFormHandler
@@ -22,6 +24,7 @@ class ContactFormHandler
         private SuiviFactory $suiviFactory,
         private SuiviManager $suiviManager,
         private UserManager $userManager,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -34,9 +37,13 @@ class ContactFormHandler
 
         // add Suivi if signalement with this email for occupant or declarant
 
-        $signalementsByOccupants = $this->signalementRepository->findOneOpenedByMailOccupant($email);
-        $signalementsByDeclarants = $this->signalementRepository->findOneOpenedByMailDeclarant($email);
-
+        try {
+            $signalementsByOccupants = $this->signalementRepository->findOneOpenedByMailOccupant($email);
+            $signalementsByDeclarants = $this->signalementRepository->findOneOpenedByMailDeclarant($email);
+        } catch (NonUniqueResultException $exception) {
+            $signalementsByOccupants = $signalementsByDeclarants = null;
+            $this->logger->error($exception->getMessage());
+        }
         if (null !== $signalementsByOccupants || null !== $signalementsByDeclarants) {
             /** @var Signalement $signalement */
             $signalement = (null !== $signalementsByOccupants)
