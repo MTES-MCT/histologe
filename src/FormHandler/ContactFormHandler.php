@@ -40,35 +40,35 @@ class ContactFormHandler
         try {
             $signalementsByOccupants = $this->signalementRepository->findOneOpenedByMailOccupant($email);
             $signalementsByDeclarants = $this->signalementRepository->findOneOpenedByMailDeclarant($email);
-
-            if (null !== $signalementsByOccupants || null !== $signalementsByDeclarants) {
-                /** @var Signalement $signalement */
-                $signalement = (null !== $signalementsByOccupants)
-                    ? $signalementsByOccupants
-                    : $signalementsByDeclarants;
-                $params = [
-                    'description_contact_form' => nl2br($message).self::MENTION_SENT_BY_EMAIL,
-                ];
-                $userOccupant = $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::OCCUPANT);
-                $userDeclarant = $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::DECLARANT);
-
-                /** @var User $user */
-                $user = (null !== $signalementsByOccupants)
-                    ? $userOccupant
-                    : $userDeclarant;
-
-                if (null !== $user) {
-                    $suivi = $this->suiviFactory->createInstanceFrom(
-                        user: $user,
-                        signalement: $signalement,
-                        params: $params,
-                    );
-                    $this->suiviManager->save($suivi);
-                }
-                $hasNotificationToSend = false;
-            }
         } catch (NonUniqueResultException $exception) {
+            $signalementsByOccupants = $signalementsByDeclarants = null;
             $this->logger->error($exception->getMessage());
+        }
+        if (null !== $signalementsByOccupants || null !== $signalementsByDeclarants) {
+            /** @var Signalement $signalement */
+            $signalement = (null !== $signalementsByOccupants)
+                ? $signalementsByOccupants
+                : $signalementsByDeclarants;
+            $params = [
+                'description_contact_form' => nl2br($message).self::MENTION_SENT_BY_EMAIL,
+            ];
+            $userOccupant = $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::OCCUPANT);
+            $userDeclarant = $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::DECLARANT);
+
+            /** @var User $user */
+            $user = (null !== $signalementsByOccupants)
+                ? $userOccupant
+                : $userDeclarant;
+
+            if (null !== $user) {
+                $suivi = $this->suiviFactory->createInstanceFrom(
+                    user: $user,
+                    signalement: $signalement,
+                    params: $params,
+                );
+                $this->suiviManager->save($suivi);
+            }
+            $hasNotificationToSend = false;
         }
 
         if ($hasNotificationToSend) {

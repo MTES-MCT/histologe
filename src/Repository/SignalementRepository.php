@@ -289,6 +289,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @throws NonUniqueResultException
+     */
     public function findOneOpenedByMailOccupant(string $email): ?Signalement
     {
         return $this->createQueryBuilder('s')
@@ -300,6 +303,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    /**
+     * @throws NonUniqueResultException
+     */
     public function findOneOpenedByMailDeclarant(string $email): ?Signalement
     {
         return $this->createQueryBuilder('s')
@@ -346,7 +352,8 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->orderBy(
             isset($options['sort']) && 'lastSuiviAt' === $options['sort']
                 ? 's.lastSuiviAt'
-                : 's.createdAt', 'DESC'
+                : 's.createdAt',
+            'DESC'
         );
         if (!$export) {
             $qb->setFirstResult($firstResult)
@@ -816,7 +823,8 @@ class SignalementRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select(
-            sprintf('NEW %s(
+            sprintf(
+                'NEW %s(
                 COUNT(s.id),
                 SUM(CASE WHEN s.statut = :new     THEN 1 ELSE 0 END),
                 SUM(CASE WHEN s.statut = :active OR s.statut =:waiting THEN 1 ELSE 0 END),
