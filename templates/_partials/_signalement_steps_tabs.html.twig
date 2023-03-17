@@ -1,9 +1,16 @@
 <div class="fr-tabs" id="signalement-tabs">
     <ul class="fr-tabs__list" role="tablist" aria-label="Etapes signalement">
         <li role="presentation">
-            <button id="signalement-step-1-btn"
+            <button id="signalement-step-0-btn"
                     class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left" tabindex="0"
-                    role="tab" aria-selected="true" aria-controls="signalement-step-1-panel">1.
+                    role="tab" aria-selected="true" aria-controls="signalement-step-0-panel">
+                0. Avant-propos
+            </button>
+        </li>
+        <li role="presentation">
+            <button id="signalement-step-1-btn"
+                    class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left" tabindex="-1"
+                    role="tab" aria-selected="false" aria-controls="signalement-step-1-panel">1.
                 Identité
             </button>
         </li>
@@ -49,8 +56,12 @@
             </li>
         {% endif %}
     </ul>
-    <section id="signalement-step-1-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel"
-             aria-labelledby="signalement-step-1-btn" tabindex="0">
+    <section id="signalement-step-0-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel"
+             aria-labelledby="signalement-step-0-btn" tabindex="0">
+        {% include '_partials/_signalement_step_avantpropos.html.twig' %}
+    </section>
+    <section id="signalement-step-1-panel" class="fr-tabs__panel" role="tabpanel"
+             aria-labelledby="signalement-step-1-btn" tabindex="-1">
         {% if 'back_' not in app.request.get('_route') %}
             <header class="fr-callout bg-light fr-mb-5v">
                 <p class="fr-callout__title">Je renseigne mes coordonnées</p>
