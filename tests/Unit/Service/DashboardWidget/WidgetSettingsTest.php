@@ -22,7 +22,7 @@ class WidgetSettingsTest extends TestCase
         $widgetSettings = new WidgetSettings($user, [
             (new Territory())->setName('Ain')->setZip('01'),
             (new Territory())->setName('Aisne')->setZip('02'),
-        ]);
+        ], true);
 
         $this->assertEquals('John', $widgetSettings->getFirstname());
         $this->assertEquals('Doe', $widgetSettings->getLastname());
@@ -30,5 +30,6 @@ class WidgetSettingsTest extends TestCase
         $this->assertEquals('Partner', $widgetSettings->getPartnerName());
         $this->assertEquals('01-Ain', $widgetSettings->getTerritoryName());
         $this->assertCount(2, $widgetSettings->getTerritories());
+        $this->assertEquals('1', $widgetSettings->getCanSeeNDE());
     }
 }

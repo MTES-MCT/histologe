@@ -2,7 +2,6 @@
 
 namespace App\Service\DashboardWidget;
 
-use App\Entity\Enum\Qualification;
 use App\Entity\User;
 
 class WidgetSettings
@@ -16,12 +15,13 @@ class WidgetSettings
 
     private array $territories = [];
 
-    public function __construct(User $user, array $territories = [])
+    public function __construct(
+        User $user, array $territories, bool $canSeeNDE)
     {
         $this->firstname = $user->getPrenom();
         $this->lastname = $user->getNom();
         $this->roleLabel = $user->getRoleLabel();
-        $this->canSeeNDE = \in_array(Qualification::NON_DECENCE_ENERGETIQUE, $user->getPartner()->getCompetence());
+        $this->canSeeNDE = $canSeeNDE;
         $this->partnerName = $user->getPartner()->getNom();
         $this->territoryName = $user->getTerritory()?->getZip().'-'.$user->getTerritory()?->getName();
         $this->territories = $territories;

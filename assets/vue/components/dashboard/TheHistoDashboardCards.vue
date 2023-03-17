@@ -151,7 +151,7 @@
       </div>
     </div>
 
-    <div v-if="sharedState.user.isAdmin || sharedState.user.isResponsableTerritoire" class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+    <div v-if="sharedState.user.isAdmin || (sharedState.user.isResponsableTerritoire && sharedState.user.canSeeNonDecenceEnergetique)" class="fr-col-12 fr-col-md-6 fr-col-lg-4">
       <div class="fr-card fr-enlarge-link">
         <div class="fr-card__body">
           <ul class="fr-badges-group">
@@ -191,7 +191,7 @@
       </div>
     </div>
 
-    <div v-if="sharedState.user.isAdmin || sharedState.user.isResponsableTerritoire" class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+    <div v-if="sharedState.user.isAdmin || (sharedState.user.isResponsableTerritoire && sharedState.user.canSeeNonDecenceEnergetique)" class="fr-col-12 fr-col-md-6 fr-col-lg-4">
       <div class="fr-card fr-enlarge-link">
         <div class="fr-card__body">
           <ul class="fr-badges-group">

@@ -17,6 +17,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
+use App\Security\Voter\UserVoter;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -145,9 +146,7 @@ class WidgetDataKpiBuilder
 
     public function addWidgetCard(string $key, ?int $count = null, array $linkParameters = []): self
     {
-        $roles = $this->user->getRoles();
-        $role = array_shift($roles);
-        if (\in_array($role, $this->parameters[$key]['roles'])) {
+        if ($this->canAddCard($key)) {
             $widgetParams = $this->parameters[$key];
             $link = $widgetParams['link'] ?? null;
             $label = $widgetParams['label'] ?? null;
@@ -160,6 +159,21 @@ class WidgetDataKpiBuilder
         }
 
         return $this;
+    }
+
+    private function canAddCard($key)
+    {
+        $roles = $this->user->getRoles();
+        $role = array_shift($roles);
+        if (\in_array($role, $this->parameters[$key]['roles'])) {
+            if (isset($this->parameters[$key]['params']['nde']) && '1' === $this->parameters[$key]['params']['nde']) {
+                return $this->security->isGranted(UserVoter::SEE_NDE, $this->user);
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     public function hasWidgetCard(string $key): bool
