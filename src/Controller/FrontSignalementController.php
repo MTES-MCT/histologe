@@ -22,6 +22,7 @@ use App\Repository\UserRepository;
 use App\Service\NotificationService;
 use App\Service\Signalement\CriticiteCalculatorService;
 use App\Service\Signalement\PostalCodeHomeChecker;
+use App\Service\Signalement\QualificationStatusService;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\UploadHandlerService;
 use DateTimeImmutable;
@@ -110,7 +111,8 @@ class FrontSignalementController extends AbstractController
         EventDispatcherInterface $eventDispatcher,
         UrlGeneratorInterface $urlGenerator,
         CritereRepository $critereRepository,
-        SignalementQualificationFactory $signalementQualificationFactory
+        SignalementQualificationFactory $signalementQualificationFactory,
+        QualificationStatusService $qualificationStatusService
     ): Response {
         if ($this->isCsrfTokenValid('new_signalement', $request->request->get('_token'))
             && $data = $request->get('signalement')) {
@@ -252,6 +254,8 @@ class FrontSignalementController extends AbstractController
                     );
 
                     $signalement->addSignalementQualification($signalementQualification);
+                    // redéfinit le statut de la qualification après sa création
+                    $signalementQualification->setStatus($qualificationStatusService->getNDEStatus($signalementQualification));
                     $em->persist($signalementQualification);
                 }
             }

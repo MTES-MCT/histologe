@@ -12,7 +12,7 @@
     {% if signalement.statut is not same as(1) and not isClosed and not isClosedForMe and ((isAffected and isAccepted)) or is_granted('ROLE_ADMIN_TERRITORY') %}
         {% include '_partials/_modal_cloture.html.twig' %}
     {% endif %}
-    {% if isSignalementNDE %}
+    {% if isSignalementNDE and isUserNDE %}     
         {% include '_partials/_modal_edit_nde.html.twig' %}        
     {% endif %}
     <section
@@ -38,8 +38,8 @@
                     {% else %}
                         <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold{# fr-fi-information-fill fr-icon--sm #} fr-pr-3v">&nbsp;
                             Signalement par l'occupant</small>
-                    {% endif %}                    
-                    {% if isSignalementNDE %}
+                    {% endif %}                   
+                    {% if isSignalementNDE and isUserNDE %}     
                          <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold fr-pr-3v">&nbsp;
                             Non décence énergétique</small>
                     {% endif %}                               
@@ -449,7 +449,7 @@
                         {% else %}
                             {% set calcul = signalementQualificationNDE.details.consommation_energie %}
                         {% endif %}
-                       <strong>Consommation d'énergie :</strong> <span class="fr-badge fr-badge--info fr-badge--sm">{{ calcul }} kWh/m²/an</span>
+                       <strong>Consommation d'énergie :</strong> <span class="fr-badge fr-badge--info fr-badge--sm">{{ calcul|round(2) }} kWh/m²/an</span>
                     </div>
                     <div class="fr-col-12 fr-col-md-5">                    
                         <strong>Analyse :</strong> <span class="{{ signalementQualificationNDE.status|status_to_css }}">{{ signalementQualificationNDE.status.label }}</span>
@@ -472,7 +472,7 @@
                 </div>
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-6">
-                    <strong>Entrée dans le logement :</strong> {{ signalement.dateEntree ? signalement.dateEntree|date('d/m/Y') : ''}}
+                    <strong>Entrée dans le logement :</strong> {{ signalement.dateEntree  ? ( signalement.dateEntree|date('Y') < '2023' ? 'Avant 2023' : 'A partir de 2023' ) : ''}}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                     <strong>DPE :</strong> {{ signalementQualificationNDE.details.DPE ? 'Oui' : (signalementQualificationNDE.details.DPE is same as null ? 'A vérifier' : 'Non') }} 
@@ -480,10 +480,10 @@
                 </div>
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-6">
-                    <strong>Dernier bail :</strong> {{ signalementQualificationNDE.dernierBailAt ? signalementQualificationNDE.dernierBailAt|date('d/m/Y') : ''}}
+                    <strong>Dernier bail :</strong> {{ signalementQualificationNDE.dernierBailAt  ? ( signalementQualificationNDE.dernierBailAt|date('Y') < '2023' ? 'Avant 2023' : 'A partir de 2023' ) : ''}}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
-                    <strong>Date dernier DPE :</strong> {{ signalementQualificationNDE.details.date_dernier_dpe ? signalementQualificationNDE.details.date_dernier_dpe|date('d/m/Y') : '' }} 
+                    <strong>Date dernier DPE :</strong> {{ signalementQualificationNDE.details.date_dernier_dpe  ? ( signalementQualificationNDE.details.date_dernier_dpe|date('Y') < '2023' ? 'Avant 2023' : 'A partir de 2023' ) : ''}}
                     </div>
                 </div>
             </div>

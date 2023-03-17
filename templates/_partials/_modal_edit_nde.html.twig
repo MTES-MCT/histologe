@@ -34,12 +34,12 @@
                                         </legend>
                                         <div class="fr-fieldset__content">
                                             <div class="fr-radio-group">
-                                                <input type="radio" id="signalement-edit-nde-date-entree-before" name="dateEntree" value="before" {% if signalement.dateEntree and signalement.dateEntree|date('Y')<2023 %}checked{% endif %}>
+                                                <input type="radio" id="signalement-edit-nde-date-entree-before" name="dateEntree" value="1970-01-01" {% if signalement.dateEntree and signalement.dateEntree|date('Y')<2023 %}checked{% endif %}>
                                                 <label class="fr-label" for="signalement-edit-nde-date-entree-before">Avant 2023
                                                 </label>
                                             </div>
                                             <div class="fr-radio-group">
-                                                <input type="radio" id="signalement-edit-nde-date-entree-after" name="dateEntree" value="after" {% if signalement.dateEntree and signalement.dateEntree|date('Y')>=2023 %}checked{% endif %}>
+                                                <input type="radio" id="signalement-edit-nde-date-entree-after" name="dateEntree" value="2023-01-02" {% if signalement.dateEntree and signalement.dateEntree|date('Y')>=2023 %}checked{% endif %}>
                                                 <label class="fr-label" for="signalement-edit-nde-date-entree-after">A partir de 2023
                                                 </label>
                                             </div>
@@ -74,25 +74,42 @@
                             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle"
                                 id="signalement-edit-nde-form-row">
                                 <div class="fr-col-6">
-                                    <div class="fr-input-group">
-                                        <label class="fr-label" for="dateDernierBail">
+                                    <fieldset class="fr-fieldset fr-fieldset--inline">
+                                        <legend class="fr-fieldset__legend fr-text--regular" id='signalement-edit-nde-dernier-bail-legend'>
                                             Date du dernier bail
-                                        </label>
-                                        <div class="fr-input-group">
-                                            <input class="fr-input fr-col-10" type="date" id="signalement-edit-nde-dernier-bail" name="dateDernierBail" value="{{ signalementQualificationNDE.dernierBailAt ? signalementQualificationNDE.dernierBailAt|date('Y-m-d') }}">
+                                        </legend>
+                                        <div class="fr-fieldset__content">
+                                            <div class="fr-radio-group">
+                                                <input type="radio" id="signalement-edit-nde-dernier-bail-before" name="dateDernierBail" value="1970-01-01" {% if signalementQualificationNDE.dernierBailAt and signalementQualificationNDE.dernierBailAt|date('Y')<2023 %}checked{% endif %}>
+                                                <label class="fr-label" for="signalement-edit-nde-dernier-bail-before">Avant 2023
+                                                </label>
+                                            </div>
+                                            <div class="fr-radio-group">
+                                                <input type="radio" id="signalement-edit-nde-dernier-bail-after" name="dateDernierBail" value="2023-01-02" {% if signalementQualificationNDE.dernierBailAt and signalementQualificationNDE.dernierBailAt|date('Y')>=2023 %}checked{% endif %}>
+                                                <label class="fr-label" for="signalement-edit-nde-dernier-bail-after">A partir de 2023
+                                                </label>
+                                            </div>
                                         </div>
-
-                                    </div>
+                                    </fieldset>
                                 </div>
                                 <div class="fr-col-6">
-                                    <div class="fr-input-group">
-                                        <label class="fr-label" for="dateDernierDPE">
+                                    <fieldset class="fr-fieldset fr-fieldset--inline">
+                                        <legend class="fr-fieldset__legend fr-text--regular" id='signalement-edit-nde-dpe-date-legend'>
                                             Date du dernier DPE
-                                        </label>
-                                        <div class="fr-input-group">
-                                            <input class="fr-input fr-col-10" type="date" id="signalement-edit-nde-dpe-date" name="dateDernierDPE" value="{{ signalementQualificationNDE.details.date_dernier_dpe ? signalementQualificationNDE.details.date_dernier_dpe|date('Y-m-d') }}">
+                                        </legend>
+                                        <div class="fr-fieldset__content">
+                                            <div class="fr-radio-group">
+                                                <input type="radio" id="signalement-edit-nde-dpe-date-before" name="dateDernierDPE" value="1970-01-01" {% if signalementQualificationNDE.details.date_dernier_dpe and signalementQualificationNDE.details.date_dernier_dpe|date('Y')<2023 %}checked{% endif %}>
+                                                <label class="fr-label" for="signalement-edit-nde-dpe-date-before">Avant 2023
+                                                </label>
+                                            </div>
+                                            <div class="fr-radio-group">
+                                                <input type="radio" id="signalement-edit-nde-dpe-date-after" name="dateDernierDPE" value="2023-01-02" {% if signalementQualificationNDE.details.date_dernier_dpe and signalementQualificationNDE.details.date_dernier_dpe|date('Y')>=2023 %}checked{% endif %}>
+                                                <label class="fr-label" for="signalement-edit-nde-dpe-date-after">A partir de 2023
+                                                </label>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </fieldset>
                                 </div>
                             </div>
                             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle"

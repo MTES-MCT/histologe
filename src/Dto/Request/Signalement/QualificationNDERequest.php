@@ -2,14 +2,12 @@
 
 namespace App\Dto\Request\Signalement;
 
-use DateTimeImmutable;
-
 class QualificationNDERequest
 {
     public function __construct(
         private ?string $dateEntree = null,
-        private ?DateTimeImmutable $dateDernierBail = null,
-        private ?DateTimeImmutable $dateDernierDPE = null,
+        private ?string $dateDernierBail = null,
+        private ?string $dateDernierDPE = null,
         private ?int $superficie = null,
         private ?int $consommationEnergie = null,
         private ?bool $dpe = null,
@@ -26,12 +24,12 @@ class QualificationNDERequest
         return $this->superficie;
     }
 
-    public function getDateDernierBail(): ?DateTimeImmutable
+    public function getDateDernierBail(): ?string
     {
         return $this->dateDernierBail;
     }
 
-    public function getDateDernierDPE(): ?DateTimeImmutable
+    public function getDateDernierDPE(): ?string
     {
         return $this->dateDernierDPE;
     }
@@ -51,7 +49,7 @@ class QualificationNDERequest
         return [
             'consommation_energie' => $this->consommationEnergie,
             'DPE' => $this->dpe,
-            'date_dernier_dpe' => $this->dateDernierDPE?->format('Y-m-d'),
+            'date_dernier_dpe' => $this->dateDernierDPE,
         ];
     }
 }
