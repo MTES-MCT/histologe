@@ -41,7 +41,7 @@ class UpdatePartnerAndCommuneNDECommand extends Command
         $this->io = new SymfonyStyle($input, $output);
 
         $this->io->section('<info>Update communes in zone permis de louer in Puy de dôme</info>');
-        $communesInseePermisDeLouer63 = [63430, 63102, 63125];
+        $communesInseePermisDeLouer63 = [63430, 63102, 63125, 63231, 63291];
         $this->updateCommunes($communesInseePermisDeLouer63);
         $this->io->section('<info>Update communes in zone permis de louer in Yonne</info>');
         $communesInseePermisDeLouer89 = [89206, 89348, 89382, 89418];
