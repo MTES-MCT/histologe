@@ -391,6 +391,31 @@ a.disabled-link {
     }
 }
 
-.logo-list img {
+img.img-mw-100 {
     max-width: 100%;
+}
+
+@media (max-width: 767px) {
+    .comment-ca-marche {
+        img {
+            display: none;
+        }
+    }
+}
+@media (min-width: 768px) {
+    .comment-ca-marche {
+        span {
+            display: none;
+        }
+    }
+}
+
+div.procedure-items {
+    span.fr-icon-success-line {
+        color: var(--border-plain-blue-france);
+    }
+    p {
+        margin-top: -30px;
+        margin-left: 30px;
+    }
 }
