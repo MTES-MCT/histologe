@@ -127,7 +127,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function countByStatus(Territory|null $territory, int|null $year = null, bool $removeImported = false, Qualification $qualification = null): array
+    public function countByStatus(Territory|null $territory, int|null $year = null, bool $removeImported = false, Qualification $qualification = null, array $qualificationStatuses = null): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
@@ -150,6 +150,11 @@ class SignalementRepository extends ServiceEntityRepository
             $qb->innerJoin('s.signalementQualifications', 'sq')
                 ->andWhere('sq.qualification = :qualification')
                 ->setParameter('qualification', $qualification);
+
+            if (!empty($qualificationStatuses)) {
+                $qb->andWhere('sq.status IN (:statuses)')
+                ->setParameter('statuses', $qualificationStatuses);
+            }
         }
 
         $qb->indexBy('s', 's.statut')

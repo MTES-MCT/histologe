@@ -7,6 +7,7 @@ use App\Dto\CountSuivi;
 use App\Dto\CountUser;
 use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\QualificationStatus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -82,14 +83,25 @@ class WidgetDataKpiBuilder
             ->setClosedAllPartnersRecently($this->notificationRepository->countSignalementClosedNotSeen($this->user, $this->territory));
 
         if ($this->user->isSuperAdmin() || $this->user->isTerritoryAdmin()) {
-            $countSignalementByStatus = $this->signalementRepository->countByStatus($this->territory, null, false, Qualification::NON_DECENCE_ENERGETIQUE);
+            $countSignalementByStatus = $this->signalementRepository->countByStatus(
+                $this->territory,
+                null,
+                false,
+                Qualification::NON_DECENCE_ENERGETIQUE,
+                [QualificationStatus::NDE_AVEREE, QualificationStatus::NDE_CHECK]
+            );
             $newNDE = isset($countSignalementByStatus[Signalement::STATUS_NEED_VALIDATION]) ? $countSignalementByStatus[Signalement::STATUS_NEED_VALIDATION]['count'] : 0;
             $currentNDE = isset($countSignalementByStatus[Signalement::STATUS_ACTIVE]) ? $countSignalementByStatus[Signalement::STATUS_ACTIVE]['count'] : 0;
             $this->countSignalement
                 ->setNewNDE($newNDE)
                 ->setCurrentNDE($currentNDE);
         } else {
-            $countAffectationByStatus = $this->affectationRepository->countByStatusForUser($this->user, $this->territory, Qualification::NON_DECENCE_ENERGETIQUE);
+            $countAffectationByStatus = $this->affectationRepository->countByStatusForUser(
+                $this->user,
+                $this->territory,
+                Qualification::NON_DECENCE_ENERGETIQUE,
+                [QualificationStatus::NDE_AVEREE, QualificationStatus::NDE_CHECK]
+            );
             $newNDE = isset($countAffectationByStatus[Affectation::STATUS_WAIT]) ? $countAffectationByStatus[Affectation::STATUS_WAIT]['count'] : 0;
             $currentNDE = isset($countAffectationByStatus[Affectation::STATUS_ACCEPTED]) ? $countAffectationByStatus[Affectation::STATUS_ACCEPTED]['count'] : 0;
 
