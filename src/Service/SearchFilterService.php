@@ -128,10 +128,6 @@ class SearchFilterService
                 ++$this->countActive;
                 $this->filters['closed_affectation'] = [$request->query->get('closed_affectation')];
             }
-
-            if ($request->query->get('sort')) {
-                $this->filters['sort'] = $request->query->get('sort');
-            }
         }
 
         if (!empty($this->filters['delays'])
@@ -145,6 +141,10 @@ class SearchFilterService
             $this->filters['delays'] = (int) $period;
             $this->filters['delays_territory'] = $territory;
             $this->filters['delays_partner'] = $partner;
+        }
+
+        if ($request->query->get('sort')) {
+            $this->filters['sort'] = $request->query->get('sort');
         }
 
         return $this;
