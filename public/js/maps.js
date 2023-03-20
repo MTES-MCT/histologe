@@ -70,28 +70,30 @@ async function getMarkers(offset) {
         let marker;
         if (res.signalements) {
             res.signalements.forEach(signalement => {
-                let crit = [];
-                if (signalement.criteres instanceof Array) {
-                    signalement?.criteres?.map(c => {
-                        crit.push(c?.label);
+                if (!isNaN(parseFloat(signalement.geoloc?.lng)) && !isNaN(parseFloat(signalement.geoloc?.lat))) {
+                    let crit = [];
+                    if (signalement.criteres instanceof Array) {
+                        signalement?.criteres?.map(c => {
+                            crit.push(c?.label);
+                        })
+                    }
+                    marker = L.marker([signalement.geoloc.lng, signalement.geoloc.lat], {
+                        id: signalement.id,
+                        status: signalement.statut,
+                        address: signalement.adresseOccupant,
+                        zip: signalement.cpOccupant,
+                        city: signalement.villeOccupant,
+                        reference: signalement.reference,
+                        score: signalement.scoreCreation,
+                        newScore: signalement.newScoreCreation,
+                        name: signalement.nomOccupant.toUpperCase() +' '+ signalement.prenomOccupant,
+                        danger: signalement.scoreCreation > 66 ? 1 : 0,
+                        url: `/bo/signalements/${signalement.uuid}`,
+                        criteres: crit,
+                        details: `${signalement.details}`
                     })
+                    markers.addLayer(marker);
                 }
-                marker = L.marker([signalement.geoloc.lng, signalement.geoloc.lat], {
-                    id: signalement.id,
-                    status: signalement.statut,
-                    address: signalement.adresseOccupant,
-                    zip: signalement.cpOccupant,
-                    city: signalement.villeOccupant,
-                    reference: signalement.reference,
-                    score: signalement.scoreCreation,
-                    newScore: signalement.newScoreCreation,
-                    name: signalement.nomOccupant.toUpperCase() +' '+ signalement.prenomOccupant,
-                    danger: signalement.scoreCreation > 66 ? 1 : 0,
-                    url: `/bo/signalements/${signalement.uuid}`,
-                    criteres: crit,
-                    details: `${signalement.details}`
-                })
-                markers.addLayer(marker);
             })
             map.addLayer(markers);
             // console.log(offset,res.signalements.length)
