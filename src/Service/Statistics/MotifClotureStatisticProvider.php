@@ -106,31 +106,6 @@ class MotifClotureStatisticProvider
                 'color' => '#FC5D00',
                 'count' => 0,
             ],
-            'ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE' => [
-                'label' => 'Abandon de procédure / absence de réponse',
-                'color' => '#CACAFB',
-                'count' => 0,
-            ],
-            'PERIL' => [
-                'label' => 'Péril',
-                'color' => '#CACAFB',
-                'count' => 0,
-            ],
-            'REFUS_DE_VISITE' => [
-                'label' => 'Refus de visite',
-                'color' => '#CACAFB',
-                'count' => 0,
-            ],
-            'REFUS_DE_TRAVAUX' => [
-                'label' => 'Refus de travaux',
-                'color' => '#CACAFB',
-                'count' => 0,
-            ],
-            'RESPONSABILITE_DE_L_OCCUPANT' => [
-                'label' => "Responsabilité de l'occupant",
-                'color' => '#CACAFB',
-                'count' => 0,
-            ],
             'AUTRE' => [
                 'label' => 'Autre',
                 'color' => '#CECECE',

@@ -4,6 +4,7 @@ namespace App\Service\Signalement;
 
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\SignalementQualification;
+use DateTimeImmutable;
 
 class QualificationStatusService
 {
@@ -12,19 +13,32 @@ class QualificationStatusService
         if (null == $signalementQualification->getDernierBailAt()) {
             return QualificationStatus::NDE_CHECK;
         }
+        if ('' == $signalementQualification->getDetails()['DPE']) {
+            return QualificationStatus::NDE_CHECK;
+        }
 
         if ($signalementQualification->getDernierBailAt()->format('Y') >= '2023'
         && '0' === $signalementQualification->getDetails()['DPE']) {
             return QualificationStatus::NDE_AVEREE;
         }
 
+        $consoEnergie = $signalementQualification->getDetails()['consommation_energie'];
+        if (isset($signalementQualification->getDetails()['date_dernier_dpe'])) {
+            $dataDateDPEFormatted = new DateTimeImmutable($signalementQualification->getDetails()['date_dernier_dpe']);
+            if ($dataDateDPEFormatted->format('Y') < '2023'
+            && null !== $consoEnergie
+            && null !== $signalementQualification->getSignalement()?->getSuperficie()) {
+                $consoEnergie = $consoEnergie / $signalementQualification->getSignalement()?->getSuperficie();
+            }
+        }
+
         if ($signalementQualification->getDernierBailAt()->format('Y') >= '2023'
-        && $signalementQualification->getDetails()['consommation_energie'] > 450) {
+        && $consoEnergie > 450) {
             return QualificationStatus::NDE_AVEREE;
         }
 
         if ($signalementQualification->getDernierBailAt()->format('Y') >= '2023'
-        && $signalementQualification->getDetails()['consommation_energie'] <= 450) {
+        && $consoEnergie <= 450) {
             return QualificationStatus::NDE_OK;
         }
 

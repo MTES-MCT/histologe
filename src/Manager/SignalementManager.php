@@ -224,14 +224,14 @@ class SignalementManager extends AbstractManager
     ) {
         $signalement = $signalementQualification->getSignalement();
         // // mise à jour du signalement
-        if ('after' === $qualificationNDERequest->getDateEntree()
-        && $signalement->getDateEntree()->format('Y') < '2023 '
+        if ('2023-01-02' === $qualificationNDERequest->getDateEntree()
+        && $signalement->getDateEntree()->format('Y') < '2023'
         ) {
             $signalement->setDateEntree(new DateTimeImmutable('2023-01-02'));
         }
 
-        if ('before' === $qualificationNDERequest->getDateEntree()
-        && $signalement->getDateEntree()->format('Y') >= '2023 '
+        if ('1970-01-01' === $qualificationNDERequest->getDateEntree()
+        && $signalement->getDateEntree()->format('Y') >= '2023'
         ) {
             $signalement->setDateEntree(new DateTimeImmutable('1970-01-01'));
         }
@@ -241,18 +241,26 @@ class SignalementManager extends AbstractManager
         ) {
             $signalement->setSuperficie($qualificationNDERequest->getSuperficie());
         }
+        $this->save($signalement);
 
         // // mise à jour du signalementqualification
-        if (null !== $qualificationNDERequest->getDateDernierBail()
-        && $signalementQualification->getDernierBailAt()->format('Y-m-d') !== $qualificationNDERequest->getDateDernierBail()
+        if ('2023-01-02' === $qualificationNDERequest->getDateDernierBail()
+        && $signalementQualification->getDernierBailAt()->format('Y') < '2023'
         ) {
-            $signalementQualification->setDernierBailAt($qualificationNDERequest->getDateDernierBail());
+            $signalementQualification->setDernierBailAt(new DateTimeImmutable('2023-01-02'));
+        }
+        if ('1970-01-01' === $qualificationNDERequest->getDateDernierBail()
+        && $signalementQualification->getDernierBailAt()->format('Y') >= '2023'
+        ) {
+            $signalementQualification->setDernierBailAt(new DateTimeImmutable('1970-01-01'));
         }
 
         $signalementQualification->setDetails($qualificationNDERequest->getDetails());
 
+        $this->save($signalementQualification);
+
         $signalementQualification->setStatus($this->qualificationStatusService->getNDEStatus($signalementQualification));
 
-        $this->save($signalement);
+        $this->save($signalementQualification);
     }
 }

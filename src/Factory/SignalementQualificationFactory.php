@@ -13,7 +13,7 @@ class SignalementQualificationFactory
 {
     public function __construct(
         private QualificationStatusService $qualificationStatusService
-        ) {
+    ) {
     }
 
     public function createInstanceFrom(
@@ -38,8 +38,8 @@ class SignalementQualificationFactory
             } elseif (!empty($dataDateBail)) {
                 $signalementQualification->setDernierBailAt(new DateTimeImmutable($dataDateBail));
             }
-            $dataDateBailToSave = $signalementQualification->getDernierBailAt();
-            if (empty($dataConsoSizeYear) && !empty($dataConsoYear) && !empty($dataConsoSize)) {
+            $dataDateBailToSave = $signalementQualification->getDernierBailAt()?->format('Y-m-d');
+            if (isset($dataDateDPE) && '1970-01-01' === $dataDateDPE && !empty($dataConsoYear) && !empty($dataConsoSize)) {
                 $dataConsoToSave = $dataConsoYear;
             } elseif (!empty($dataConsoSizeYear)) {
                 $dataConsoToSave = $dataConsoSizeYear;
@@ -50,7 +50,7 @@ class SignalementQualificationFactory
         $qualificationNDERequest = new QualificationNDERequest(
             dateEntree: $signalement->getDateEntree()->format('Y-m-d'),
             dateDernierBail: $dataDateBailToSave,
-            dateDernierDPE: isset($dataDateDPE) ? new DateTimeImmutable($dataDateDPE) : null,
+            dateDernierDPE: isset($dataDateDPE) ? $dataDateDPE : null,
             superficie: !empty($dataConsoSize) ? $dataConsoSize : null,
             consommationEnergie: $dataConsoToSave,
             dpe: $dataHasDPEToSave

@@ -29,8 +29,8 @@ formBtn?.addEventListener('click', evt => {
         _token: document.getElementById('signalement-edit-nde-token').value,
         dateEntree: document.querySelector('input[name=dateEntree]:checked').value,
         dpe: stringToBoolean(document.querySelector('input[name=dpe]:checked').value),
-        dateDernierBail: document.getElementById('signalement-edit-nde-dernier-bail').value,
-        dateDernierDPE: document.getElementById('signalement-edit-nde-dpe-date').value,
+        dateDernierBail: document.querySelector('input[name=dateDernierBail]:checked').value,
+        dateDernierDPE: document.querySelector('input[name=dateDernierDPE]:checked').value,
         consommationEnergie: Number(document.getElementById('signalement-edit-nde-conso-energie').value),
         superficie: Number(document.getElementById('signalement-edit-nde-superficie')?.value),
     };
