@@ -48,13 +48,15 @@ class SearchFilterOptionDataProvider
 
     private function getCacheKey(?User $user): string
     {
+        $className = (new \ReflectionClass(__CLASS__))->getShortName();
+
         if (null == $user) {
-            return User::ROLE_ADMIN;
+            return $className.User::ROLE_ADMIN;
         }
         $role = $user->getRoles();
         $territory = !$user?->isSuperAdmin() ? $user?->getTerritory() : null;
         $partner = !$user?->isSuperAdmin() ? $user?->getPartner() : null;
 
-        return array_shift($role).'-partner-'.$partner?->getId().'-territory-'.$territory?->getZip();
+        return $className.array_shift($role).'-partner-'.$partner?->getId().'-territory-'.$territory?->getZip();
     }
 }
