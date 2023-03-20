@@ -198,6 +198,7 @@ class SuiviRepository extends ServiceEntityRepository
             'type_suivi_usager' => Suivi::TYPE_USAGER,
             'type_suivi_partner' => Suivi::TYPE_PARTNER,
             'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
+            'status_need_validation' => Signalement::STATUS_NEED_VALIDATION,
             'status_closed' => Signalement::STATUS_CLOSED,
             'status_archived' => Signalement::STATUS_ARCHIVED,
             'status_refused' => Signalement::STATUS_REFUSED,
@@ -207,7 +208,7 @@ class SuiviRepository extends ServiceEntityRepository
         FROM suivi su
         INNER JOIN signalement s on s.id = su.signalement_id
         WHERE type in (:type_suivi_usager,:type_suivi_partner,:type_suivi_technical)
-        AND s.statut NOT IN (:status_closed, :status_archived, :status_refused)
+        AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
         GROUP BY su.signalement_id
         HAVING DATEDIFF(NOW(),last_posted_at) > :day_period
         ORDER BY last_posted_at';
