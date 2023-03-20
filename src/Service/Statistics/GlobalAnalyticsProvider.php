@@ -2,6 +2,7 @@
 
 namespace App\Service\Statistics;
 
+use App\Entity\Enum\MotifCloture;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 
@@ -34,7 +35,9 @@ class GlobalAnalyticsProvider
             removeImported: true
         );
         foreach ($countPerMotifsCloture as $countPerMotifCloture) {
-            if ('RESOLU' == $countPerMotifCloture['motifCloture'] && !empty($countPerMotifCloture['count'])) {
+            if (MotifCloture::TRAVAUX_FAITS_OU_EN_COURS->value == $countPerMotifCloture['motifCloture']->value
+                && !empty($countPerMotifCloture['count'])
+            ) {
                 return $countPerMotifCloture['count'];
             }
         }
