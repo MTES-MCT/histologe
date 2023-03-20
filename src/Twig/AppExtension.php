@@ -3,8 +3,10 @@
 namespace App\Twig;
 
 use App\Entity\Enum\QualificationStatus;
+use App\Service\Notification\NotificationCounter;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension
 {
@@ -27,5 +29,12 @@ class AppExtension extends AbstractExtension
         }
 
         return $css;
+    }
+
+    public function getFunctions(): array
+    {
+        return [
+            new TwigFunction('count_notification', [NotificationCounter::class, 'countUnseenNotification']),
+        ];
     }
 }

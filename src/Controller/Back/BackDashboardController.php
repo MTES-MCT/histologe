@@ -14,12 +14,8 @@ class BackDashboardController extends AbstractController
     }
 
     #[Route('/', name: 'back_dashboard')]
-    public function index(bool $featureDashboardEnable): Response
+    public function index(): Response
     {
-        if (!$featureDashboardEnable) {
-            return $this->redirectToRoute('back_index');
-        }
-
         $title = 'Tableau de bord';
 
         return $this->render('back/dashboard/index.html.twig', [

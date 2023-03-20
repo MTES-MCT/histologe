@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Repository\SignalementRepository;
+use App\Service\Signalement\SuiviHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -40,7 +41,9 @@ class UpdateSignalementLastSuiviAtCommand extends Command
             $suivi = $signalement->getLastSuivi();
             if ($suivi instanceof Suivi) {
                 ++$count;
-                $signalement->setLastSuiviAt($suivi->getCreatedAt());
+                $signalement
+                    ->setLastSuiviAt($suivi->getCreatedAt())
+                    ->setLastSuiviBy(SuiviHelper::getLastLabelFromSignalement($signalement));
                 $this->entityManager->persist($signalement);
 
                 if (0 === $count % self::FLUSH_COUNT) {

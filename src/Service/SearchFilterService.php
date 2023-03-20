@@ -5,11 +5,14 @@ namespace App\Service;
 use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
+use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\NotificationRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Repository\SuiviRepository;
+use App\Repository\TerritoryRepository;
 use DateInterval;
 use DateTime;
 use Doctrine\DBAL\Exception;
@@ -51,6 +54,7 @@ class SearchFilterService
         private Security $security,
         private NotificationRepository $notificationRepository,
         private SuiviRepository $suiviRepository,
+        private TerritoryRepository $territoryRepository,
         private EntityManagerInterface $entityManager,
         private SignalementQualificationRepository $signalementQualificationRepository
     ) {
@@ -76,6 +80,7 @@ class SearchFilterService
         $user = $this->security->getUser();
         $filters = self::REQUESTS;
         $this->filters = [];
+        $territory = $this->getTerritory($user, $request);
         foreach ($filters as $filter) {
             $this->filters[$filter] = $request->get('bo-filters-'.$filter) ?? null;
 
@@ -115,7 +120,7 @@ class SearchFilterService
 
             if ($request->query->get('nouveau_suivi')) {
                 ++$this->countActive;
-                $signalementIds = $this->notificationRepository->findSignalementNewSuivi($user, $user->getTerritory());
+                $signalementIds = $this->notificationRepository->findSignalementNewSuivi($user, $territory);
                 $this->filters['signalement_ids'] = $signalementIds;
             }
 
@@ -146,11 +151,14 @@ class SearchFilterService
                 ++$this->countActive;
             }
             $period = $this->filters['delays'] ?? $request->query->get('sans_suivi_periode');
-            $territory = $user->getTerritory();
             $partner = \in_array(User::ROLE_USER_PARTNER, $user->getRoles()) ? $user->getPartner() : null;
             $this->filters['delays'] = (int) $period;
             $this->filters['delays_territory'] = $territory;
             $this->filters['delays_partner'] = $partner;
+        }
+
+        if ($request->query->get('sort')) {
+            $this->filters['sort'] = $request->query->get('sort');
         }
 
         return $this;
@@ -224,9 +232,9 @@ class SearchFilterService
         }
         if (!empty($filters['partners'])) {
             if (\in_array('AUCUN', $filters['partners'])) {
-                $qb->andWhere('affectations IS NULL');
+                $qb->andWhere('a.partner IS NULL');
             } else {
-                $qb->andWhere('partner IN (:partners)');
+                $qb->andWhere('a.partner IN (:partners)');
                 if (!empty($filters['affectations'])) {
                     $qb->andWhere('a.statut IN (:affectations)')
                     ->setParameter('affectations', $filters['affectations']);
@@ -235,7 +243,7 @@ class SearchFilterService
             }
         }
         if (!empty($filters['closed_affectation'])) {
-            $qb->andWhere('affectations IS NOT NULL');
+            $qb->having('affectationPartnerName IS NOT NULL');
             if (\in_array('ALL_OPEN', $filters['closed_affectation'])) {
                 // les id de tous les signalements ayant au moins une affectation fermée :
                 $subquery = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
@@ -250,14 +258,29 @@ class SearchFilterService
             if (\in_array('ONE_CLOSED', $filters['closed_affectation'])) {
                 // les id de tous les signalements ayant au moins une affectation fermée :
                 $subqueryClosedAffectation = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
-                    ->select('DISTINCT s.id')
-                    ->leftJoin('a.signalement', 's')
-                    ->where('a.statut = '.Affectation::STATUS_CLOSED);
+                    ->select('DISTINCT IDENTITY(a.signalement)')
+                    ->innerJoin('a.signalement', 's')
+                    ->where('a.statut = '.Affectation::STATUS_CLOSED)
+                    ->andWhere('s.statut != :status_archived')
+                    ->setParameter('status_archived', Signalement::STATUS_ARCHIVED);
+
+                if (!empty($filters['territories'])) {
+                    $subqueryClosedAffectation->andWhere('a.territory IN (:territories)')
+                        ->setParameter('territories', $filters['territories']);
+                }
+
                 // les id de tous les signalements ayant au moins une affectation non fermée :
                 $subqueryUnclosedAffectation = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
-                    ->select('DISTINCT s.id')
-                    ->leftJoin('a.signalement', 's')
-                    ->where('a.statut != '.Affectation::STATUS_CLOSED);
+                    ->select('DISTINCT IDENTITY(a.signalement)')
+                    ->innerJoin('a.signalement', 's')
+                    ->where('a.statut != '.Affectation::STATUS_CLOSED)
+                    ->andWhere('s.statut != :status_archived')
+                    ->setParameter('status_archived', Signalement::STATUS_ARCHIVED);
+
+                if (!empty($filters['territories'])) {
+                    $subqueryUnclosedAffectation->andWhere('a.territory IN (:territories)')
+                        ->setParameter('territories', $filters['territories']);
+                }
 
                 // les signalements ayant au moins une affectation fermée :
                 $qb->andWhere('s.id IN (:subqueryClosedAffectation)')
@@ -284,13 +307,24 @@ class SearchFilterService
             }
         }
         if (!empty($filters['tags'])) {
-            foreach ($filters['tags'] as $tag) {
-                $qb->andWhere(':tag IN (tags)')->setParameter('tag', $tag);
-            }
+            $qb->leftJoin('s.tags', 't');
+            $qb->andWhere('t.id IN (:tag)')->setParameter('tag', $filters['tags']);
         }
         if (!empty($filters['statuses'])) {
-            $qb->andWhere('s.statut IN (:statuses)')
-                ->setParameter('statuses', $filters['statuses']);
+            /** @var User $user */
+            $user = $this->security->getUser();
+            if ($user->isSuperAdmin() || $user->isTerritoryAdmin()) {
+                $qb->andWhere('s.statut IN (:statuses)')
+                    ->setParameter('statuses', $filters['statuses']);
+            } else {
+                // @todo: filter more than one status for partner
+                $statuses = array_map(function ($status) {
+                    return SignalementStatus::tryFrom($status)?->mapAffectationStatus();
+                }, $filters['statuses']);
+                $statuses = array_shift($statuses);
+                $qb->having('affectationStatus LIKE :status_affectation')
+                    ->setParameter('status_affectation', '%'.$statuses.'%');
+            }
         }
         if (!empty($filters['cities'])) {
             $qb->andWhere('s.villeOccupant IN (:cities)')
@@ -326,7 +360,8 @@ class SearchFilterService
         }
 
         if (!empty($filters['criteres'])) {
-            $qb->andWhere('criteres IN (:criteres)')
+            $qb->leftJoin('s.criteres', 'c');
+            $qb->andWhere('c.id IN (:criteres)')
                 ->setParameter('criteres', $filters['criteres']);
         }
         if (!empty($filters['housetypes'])) {
@@ -384,5 +419,17 @@ class SearchFilterService
         }
 
         return $qb;
+    }
+
+    private function getTerritory(User $user, Request $request): ?Territory
+    {
+        $territory = null;
+        if ($user->isSuperAdmin() && $request->query->get('territoire_id')) {
+            $territory = $this->territoryRepository->find($request->query->get('territoire_id'));
+        } elseif (!$user->isSuperAdmin()) {
+            $territory = $user->getTerritory();
+        }
+
+        return $territory;
     }
 }

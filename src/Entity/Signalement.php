@@ -194,6 +194,9 @@ class Signalement
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $lastSuiviAt = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?string $lastSuiviBy = null;
+
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $codeProcedure;
 
@@ -1538,8 +1541,10 @@ class Signalement
         return $this;
     }
 
-    // This function return the last suivis
-    public function getLastSuivi()
+    /**
+     * @return false|mixed|Suivi
+     */
+    public function getLastSuivi(): mixed
     {
         return $this->suivis->last();
     }
@@ -1658,5 +1663,17 @@ class Signalement
         }
 
         return false;
+    }
+
+    public function getLastSuiviBy(): ?string
+    {
+        return $this->lastSuiviBy;
+    }
+
+    public function setLastSuiviBy(?string $lastSuiviBy): self
+    {
+        $this->lastSuiviBy = $lastSuiviBy;
+
+        return $this;
     }
 }

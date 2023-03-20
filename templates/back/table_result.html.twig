@@ -1,9 +1,5 @@
 {% for index,signalement in signalements.list %}
 
-    {% if not is_granted('ROLE_ADMIN_TERRITORY') or filters.partners or filters.affectations %}
-        {% set signalement = signalement.signalement %}
-    {% endif %}
-    {% set affectations = signalement.affectations %}
     <tr class="{% if signalement.statut is same as(1) or signalement.statut is same as(3) %}fr-background-contrast--orange-terre-battue{% endif %} signalement-row"
         data-score="{{ signalement.scoreCreation }}">
         <td>
@@ -17,7 +13,7 @@
             {% else %}
                 <canvas id="gauge-signalement-{{ signalement.id }}"
                         class="fr-col-12 fr-col-md-10 fr-col-lg-6 gauge-signalement"></canvas>
-                        
+
             {% endif %}
             {% if userSeeNDE %}
                 {% if signalement.hasNDE %}
@@ -33,9 +29,7 @@
         <td>
             {{ signalement.nomOccupant|upper }}<br>{{ signalement.prenomOccupant|capitalize }}
         </td>
-        <td>{{ signalement.villeOccupant|upper }} <br>
-            <small>[{{ signalement.adresseOccupant }}]</small>
-        </td>
+        <td>{{ signalement.villeOccupant|upper }} <br><small>[{{ signalement.adresseOccupant }}]</small></td>
         <td>
             {% for affectation in signalement.affectations %}
                 {% set classe = '' %}
@@ -49,24 +43,18 @@
                     {% set classe = 'fr-badge fr-fi-close-circle-fill' %}
                 {% endif %}
                 <small class="{{ classe }} fr-ws-nowrap fr-badge--sm fr-my-1v fr-text--bold fr-display-block"><span
-                    > {{ affectation.partner.nom }}</span></small>
+                    > {{ affectation.partner }}</span></small>
             {% else %}
                 Aucune
             {% endfor %}
         </td>
         <td>
-            {% set suivi = (signalement.lastSuivi) %}
-            {% if suivi and suivi.createdBy is not null %}
-                <strong>{{ suivi.createdAt|date('d.m.Y') }}</strong> <br>{% set classe = '' %}
-                {% if 'ROLE_USAGER' in suivi.createdBy.roles %}
+            {% if signalement.lastSuiviBy is not null %}
+                <strong>{{ signalement.lastSuiviAt|date('d.m.Y') }}</strong> <br>{% set classe = '' %}
+                {% if 'OCCUPANT' == signalement.lastSuiviBy or 'DECLARANT' == signalement.lastSuiviBy %}
                     {% set classe = 'fr-badge fr-badge--warning' %}
                 {% endif %}
-                <small class="{{ classe }}">{{ 'ROLE_USAGER' in suivi.createdBy.roles ? (suivi.createdBy.email is same as signalement.mailOccupant ? 'OCCUPANT' : 'DECLARANT')  : (suivi.createdBy.partner ? suivi.createdBy.partner.nom : 'Aucun')|upper   }}</small> <br>
-            {% elseif suivi and suivi.createdBy is null %}
-                <strong>{{ suivi.createdAt|date('d.m.Y') }}</strong> <br>
-                <small class='fr-badge fr-badge--warning'>{{ signalement.isNotOccupant ? 'DECLARANT' : 'OCCUPANT'  }}</small> <br>
-            {% else %}
-                Aucun
+                <small class="{{ classe }}">{{ signalement.lastSuiviBy }}</small> <br>
             {% endif %}
         </td>
         <td>
