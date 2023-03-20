@@ -29,11 +29,10 @@ class SearchFilterOptionDataProvider
      */
     public function getData(?User $user = null): array
     {
-        $user = $user?->isUserPartner() || $user?->isPartnerAdmin() ? $user : null;
         $territory = !$user?->isSuperAdmin() ? $user?->getTerritory() : null;
 
         return $this->cache->get(
-            null === $user ? __FUNCTION__.'_all_user' : __FUNCTION__.'_partner_user',
+            $this->getCacheKey($user),
             function (ItemInterface $item) use ($territory, $user) {
                 $item->expiresAfter(3600);
 
@@ -45,5 +44,19 @@ class SearchFilterOptionDataProvider
                     'cities' => $this->signalementRepository->findCities($user, $territory),
                 ];
             });
+    }
+
+    private function getCacheKey(?User $user): string
+    {
+        $className = (new \ReflectionClass(__CLASS__))->getShortName();
+
+        if (null == $user) {
+            return $className.User::ROLE_ADMIN;
+        }
+        $role = $user->getRoles();
+        $territory = !$user?->isSuperAdmin() ? $user?->getTerritory() : null;
+        $partner = !$user?->isSuperAdmin() ? $user?->getPartner() : null;
+
+        return $className.array_shift($role).'-partner-'.$partner?->getId().'-territory-'.$territory?->getZip();
     }
 }
