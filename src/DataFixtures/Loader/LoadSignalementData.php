@@ -89,8 +89,11 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setSituationOccupant($row['situation_occupant'])
             ->setValidatedAt(Signalement::STATUS_ACTIVE === $row['statut'] ? new \DateTimeImmutable() : null)
             ->setOrigineSignalement($row['origine_signalement'])
-            ->setCreatedAt((new \DateTimeImmutable())->modify('-15 days'));
-
+            ->setCreatedAt(
+                isset($row['created_at'])
+                    ? new \DateTimeImmutable($row['created_at'])
+                    : (new \DateTimeImmutable())->modify('-15 days')
+            );
         if (isset($row['is_not_occupant'])) {
             $signalement
                 ->setIsNotOccupant($row['is_not_occupant'])
