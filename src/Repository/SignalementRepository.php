@@ -373,8 +373,8 @@ class SignalementRepository extends ServiceEntityRepository
                 }, $options['statuses']);
             }
 
-            $subQueryBuilder = $this->createQueryBuilder('s2')
-                ->select('IDENTITY(a2.signalement)')
+            $subQueryBuilder = $this->_em->createQueryBuilder()
+                ->select('DISTINCT IDENTITY(a2.signalement)')
                 ->from(Affectation::class, 'a2')
                 ->where('a2.partner = :partner_1');
 
