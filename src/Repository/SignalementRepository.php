@@ -459,6 +459,8 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function findCities(User|UserInterface|null $user = null, Territory|null $territory = null): array|int|string
     {
+        $user = $user?->isUserPartner() || $user?->isPartnerAdmin() ? $user : null;
+
         $qb = $this->createQueryBuilder('s')
             ->select('s.villeOccupant city')
             ->where('s.statut != :status')
