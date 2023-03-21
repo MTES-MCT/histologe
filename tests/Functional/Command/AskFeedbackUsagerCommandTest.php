@@ -13,7 +13,7 @@ class AskFeedbackUsagerCommandTest extends KernelTestCase
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
-        $command = $application->find('app:ask-feeback-usager');
+        $command = $application->find('app:ask-feedback-usager');
 
         $commandTester = new CommandTester($command);
 

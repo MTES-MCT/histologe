@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Suivi;
+use App\Factory\SuiviFactory;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
@@ -18,7 +19,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsCommand(
-    name: 'app:ask-feeback-usager',
+    name: 'app:ask-feedback-usager',
     description: 'Ask feedback to usager if no suivi from 30 days',
 )]
 class AskFeedbackUsagerCommand extends Command
@@ -33,6 +34,7 @@ class AskFeedbackUsagerCommand extends Command
         private ParameterBagInterface $parameterBag,
         private SuiviRepository $suiviRepository,
         private SignalementRepository $signalementRepository,
+        private SuiviFactory $suiviFactory,
     ) {
         parent::__construct();
     }
@@ -49,11 +51,11 @@ class AskFeedbackUsagerCommand extends Command
         $totalRead = 0;
         $io = new SymfonyStyle($input, $output);
 
-        $signalementsIds = $this->suiviRepository->findSignalementsNoSuiviUsagerFrom(30);
+        $signalementsIds = $this->suiviRepository->findSignalementsNoSuiviUsagerFrom(Suivi::DEFAULT_PERIOD_INACTIVITY);
         $signalements = $this->signalementRepository->findAllByIds($signalementsIds);
         $nbSignalements = \count($signalements);
         if ($input->getOption('debug')) {
-            $io->info(sprintf('%s signalement without suivi from more than 30 days', $nbSignalements));
+            $io->info(sprintf('%s signalement without suivi from more than '.Suivi::DEFAULT_PERIOD_INACTIVITY.' days', $nbSignalements));
 
             return Command::SUCCESS;
         }
@@ -75,11 +77,17 @@ class AskFeedbackUsagerCommand extends Command
                 }
             }
 
-            $suivi = new Suivi();
-            $suivi->setSignalement($signalement);
-            $suivi->setDescription("Un message automatique a été envoyé à l'usager pour lui demander de mettre à jour sa situation.");
-            $suivi->setIsPublic(false);
-            $suivi->setType(SUIVI::TYPE_TECHNICAL);
+            $params = [
+                'type' => SUIVI::TYPE_TECHNICAL,
+                'description' => "Un message automatique a été envoyé à l'usager pour lui demander de mettre à jour sa situation.",
+            ];
+
+            $suivi = $this->suiviFactory->createInstanceFrom(
+                user: null,
+                signalement: $signalement,
+                params: $params,
+                isPublic: false,
+            );
 
             if (0 === $totalRead % self::FLUSH_COUNT) {
                 $this->suiviManager->save($suivi);
@@ -90,7 +98,7 @@ class AskFeedbackUsagerCommand extends Command
 
         $this->suiviManager->flush();
 
-        $io->success(sprintf('%s signalement without suivi from more than 30 days', $nbSignalements));
+        $io->success(sprintf('%s signalement without suivi from more than '.Suivi::DEFAULT_PERIOD_INACTIVITY.' days', $nbSignalements));
 
         $this->notificationService->send(
             NotificationService::TYPE_CRON,
