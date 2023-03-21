@@ -11,7 +11,7 @@ class GlobalAnalyticsProvider
     public function __construct(
         private SignalementRepository $signalementRepository,
         private TerritoryRepository $territoryRepository
-        ) {
+    ) {
     }
 
     public function getData(): array
@@ -34,15 +34,17 @@ class GlobalAnalyticsProvider
             year: null,
             removeImported: true
         );
+        $countSignalementsResolus = 0;
         foreach ($countPerMotifsCloture as $countPerMotifCloture) {
-            if (MotifCloture::TRAVAUX_FAITS_OU_EN_COURS->value == $countPerMotifCloture['motifCloture']->value
+            if ((MotifCloture::TRAVAUX_FAITS_OU_EN_COURS->value == $countPerMotifCloture['motifCloture']->value
+                || MotifCloture::RELOGEMENT_OCCUPANT->value == $countPerMotifCloture['motifCloture']->value)
                 && !empty($countPerMotifCloture['count'])
             ) {
-                return $countPerMotifCloture['count'];
+                $countSignalementsResolus += $countPerMotifCloture['count'];
             }
         }
 
-        return 0;
+        return $countSignalementsResolus;
     }
 
     public function getCountSignalementData(): int
