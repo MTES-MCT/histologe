@@ -3,12 +3,10 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\Suivi;
-use App\EventSubscriber\SuiviCreatedSubscriber;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Yaml\Yaml;
 
