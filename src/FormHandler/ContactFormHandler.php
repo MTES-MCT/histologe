@@ -65,6 +65,7 @@ class ContactFormHandler
                     user: $user,
                     signalement: $signalement,
                     params: $params,
+                    isPublic: true
                 );
                 $this->suiviManager->save($suivi);
             }
