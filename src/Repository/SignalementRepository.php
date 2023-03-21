@@ -890,18 +890,28 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function countSignalementAcceptedNoSuivi(Territory $territory)
     {
-        $subquery = $this->createQueryBuilder('su')
-                ->select('su.signalement.id')
+        $subquery = $this->_em->createQueryBuilder()
+                ->select('IDENTITY(su.signalement)')
                 ->from(Suivi::class, 'su')
+                ->innerJoin('su.signalement', 'sig')
+                ->where('sig.territory = :territory_1')
+                ->andWhere('sig.statut IN (:statut)')
+                ->andWhere('su.type IN (:suivi_type)')
+                ->setParameter('suivi_type', [Suivi::TYPE_USAGER, Suivi::TYPE_PARTNER])
+                ->setParameter('statut', [Signalement::STATUS_ACTIVE, Signalement::STATUS_NEED_PARTNER_RESPONSE])
+                ->setParameter('territory_1', $territory)
                 ->distinct();
 
         $queryBuilder = $this->createQueryBuilder('s')
             ->select('COUNT(s.id) as count_no_suivi, p.nom')
             ->innerJoin('s.affectations', 'a')
             ->innerJoin('a.partner', 'p')
-            ->where('s.statut IN (:statut) AND s.id NOT IN (:subquery)')
+            ->where('s.statut IN (:statut)')
+            ->andWhere('p.territory = :territory')
+            ->andWhere('s.id NOT IN (:subquery)')
             ->setParameter('statut', [Signalement::STATUS_ACTIVE, Signalement::STATUS_NEED_PARTNER_RESPONSE])
-            ->setParameter('subquery', $subquery)
+            ->setParameter('subquery', $subquery->getQuery()->getSingleColumnResult())
+            ->setParameter('territory', $territory)
             ->groupBy('p.nom');
 
         return $queryBuilder->getQuery()->getResult();

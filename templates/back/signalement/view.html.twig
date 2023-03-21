@@ -617,8 +617,8 @@
                                             class="part-infos-hover" data-user="{{ affectation.affectedBy.nomComplet }}"
                                             data-mail="{{ affectation.affectedBy.email }}">{{ affectation.affectedBy.nomComplet }}</span></span>
                                 <span class="fr-hint-text"><strong>Accepté le :</strong> {{ affectation.answeredAt|date('d/m/Y') }} <br>par <span
-                                            class="part-infos-hover" data-user="{{ affectation.answeredBy.nomComplet }}"
-                                            data-mail="{{ affectation.answeredBy.email }}">{{ affectation.answeredBy.nomComplet }}</span></span>
+                                            class="part-infos-hover" data-user="{{ affectation.answeredBy ? affectation.answeredBy.nomComplet : ''}}"
+                                            data-mail="{{ affectation.answeredBy ? affectation.answeredBy.email : '' }}">{{ affectation.answeredBy ? affectation.answeredBy.nomComplet : '' }}</span></span>
                             </div>
                         </div>
                     {% elseif affectation.statut is same as(2) %}
