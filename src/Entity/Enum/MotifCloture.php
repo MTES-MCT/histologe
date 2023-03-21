@@ -37,7 +37,7 @@ enum MotifCloture: string
             'REFUS_DE_VISITE' => 'Refus de visite',
             'REFUS_DE_TRAVAUX' => 'Refus de travaux',
             'RELOGEMENT_OCCUPANT' => 'Relogement occupant', // précise Problème résolu
-            'RESPONSABILITE_DE_L_OCCUPANT' => "Responsabilité de l'occupant",
+            'RESPONSABILITE_DE_L_OCCUPANT' => "Responsabilité de l'occupant / assurantiel",
             'RSD' => 'RSD',
             'TRAVAUX_FAITS_OU_EN_COURS' => 'Travaux faits ou en cours', // précise Problème résolu
             'AUTRE' => 'Autre',

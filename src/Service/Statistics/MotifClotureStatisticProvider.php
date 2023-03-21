@@ -102,7 +102,7 @@ class MotifClotureStatisticProvider
                 'count' => 0,
             ],
             'RESPONSABILITE_DE_L_OCCUPANT' => [
-                'label' => "Responsabilité de l'occupant",
+                'label' => "Responsabilité de l'occupant / assurantiel",
                 'color' => '#FC5D00',
                 'count' => 0,
             ],
