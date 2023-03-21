@@ -15,7 +15,7 @@
                         class="fr-col-12 fr-col-md-10 fr-col-lg-6 gauge-signalement"></canvas>
 
             {% endif %}
-            {% if userSeeNDE %}
+            {% if is_granted('USER_SEE_NDE', app.user) %}
                 {% if signalement.hasNDE %}
                     <span class="fr-badge fr-badge--info fr-badge--no-icon" title="Non-décence énergétique">NDE</span>
                 {% endif %}

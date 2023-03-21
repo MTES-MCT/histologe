@@ -3,13 +3,9 @@
 namespace App\Controller\Back;
 
 use App\Repository\CritereRepository;
-use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
-use App\Repository\TerritoryRepository;
-use App\Security\Voter\UserVoter;
 use App\Service\SearchFilterService;
-use App\Service\Signalement\QualificationStatusService;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,10 +27,7 @@ class BackCartographieController extends AbstractController
         TagRepository $tagsRepository,
         Request $request,
         CritereRepository $critereRepository,
-        TerritoryRepository $territoryRepository,
-        PartnerRepository $partnerRepository,
-        QualificationStatusService $qualificationStatusService): Response
-    {
+    ): Response {
         $title = 'Cartographie';
         $filters = $this->searchFilterService->setRequest($request)->setFilters()->getFilters();
         $countActiveFilters = $this->searchFilterService->getCountActive();
@@ -44,11 +37,14 @@ class BackCartographieController extends AbstractController
             $filters['partner_name'] = $this->getUser()->getPartner()->getNom();
             $user = !$this->isGranted('ROLE_ADMIN_TERRITORY') ? $this->getUser() : null;
 
-            return $this->json([
+            return $this->json(
+                [
                 'signalements' => $signalementRepository->findAllWithGeoData(
-                    $user ?? null, $filters,
+                    $user ?? null,
+                    $filters,
                     (int) $request->get('offset'),
-                    $this->getUser()->getTerritory() ?? null), ]
+                    $this->getUser()->getTerritory() ?? null
+                ), ]
             );
         }
 
@@ -57,19 +53,15 @@ class BackCartographieController extends AbstractController
             $userToFilterCities = null;
         }
 
-        $userSeeNDE = $this->isGranted(UserVoter::SEE_NDE, $this->getUser());
-
         return $this->render('back/cartographie/index.html.twig', [
             'title' => $title,
             'filters' => $filters,
             'filtersOptionData' => $this->searchFilterOptionDataProvider->getData($userToFilterCities),
             'countActiveFilters' => $countActiveFilters,
-            'listQualificationStatus' => $qualificationStatusService->getList(),
             'displayRefreshAll' => false,
             'signalements' => [/* $signalements */],
             'criteres' => $critereRepository->findAllList(),
             'tags' => $tagsRepository->findAllActive($this->getUser()->getTerritory() ?? null),
-            'userSeeNDE' => $userSeeNDE,
         ]);
     }
 }

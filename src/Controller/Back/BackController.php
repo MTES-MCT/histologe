@@ -4,9 +4,7 @@ namespace App\Controller\Back;
 
 use App\Entity\User;
 use App\Manager\SignalementManager;
-use App\Security\Voter\UserVoter;
 use App\Service\SearchFilterService;
-use App\Service\Signalement\QualificationStatusService;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,7 +22,6 @@ class BackController extends AbstractController
     public function index(
         Request $request,
         SearchFilterService $searchFilterService,
-        QualificationStatusService $qualificationStatusService,
         SearchFilterOptionDataProvider $searchFilterOptionDataProvider,
         SignalementManager $signalementManager,
     ): Response {
@@ -42,17 +39,13 @@ class BackController extends AbstractController
             ]);
         }
 
-        $userSeeNDE = $this->isGranted(UserVoter::SEE_NDE, $user);
-
         return $this->render('back/index.html.twig', [
             'title' => $title,
             'filters' => $filters,
-            'listQualificationStatus' => $qualificationStatusService->getList(),
             'filtersOptionData' => $searchFilterOptionDataProvider->getData($user),
             'countActiveFilters' => $searchFilterService->getCountActive(),
             'displayRefreshAll' => true,
             'signalements' => $signalements,
-            'userSeeNDE' => $userSeeNDE,
         ]);
     }
 }

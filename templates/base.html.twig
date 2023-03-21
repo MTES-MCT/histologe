@@ -141,7 +141,7 @@
                         {% endfor %}
                     ];
              
-                    {% if isSignalementNDE and isUserNDE and files is defined and files.documents is defined %}  
+                    {% if isSignalementNDE and is_granted('USER_SEE_NDE', app.user) and files is defined and files.documents is defined %}  
                        {% for doc in files.documents %}
                             {% if enum('App\\Entity\\Enum\\Qualification').NON_DECENCE_ENERGETIQUE.name in doc.params.qualification|joinEnumKeys(',') %}
                                 items.push({

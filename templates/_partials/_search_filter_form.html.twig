@@ -3,6 +3,7 @@
 {% set partners = filtersOptionData['partners'] %}
 {% set tags = filtersOptionData['tags'] %}
 {% set cities = filtersOptionData['cities'] %}
+{% set listQualificationStatus = filtersOptionData['listQualificationStatus'] %}
 
 <form action="#" name="bo-filters-form" id="bo_filters_form" method="POST" class="fr-accordion fr-background--white"
       style="overflow: hidden">
@@ -515,7 +516,7 @@
                                     </div>
                                 </div>
                                 
-                                {% if userSeeNDE %}
+                                {% if is_granted('USER_SEE_NDE', app.user) %}
                                 <div class="fr-col-12 fr-col-md-6">
                                     <div class="fr-grid-row fr-grid-row--gutters">
                                         <div class="fr-col-6">

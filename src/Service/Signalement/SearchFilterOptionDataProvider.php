@@ -21,6 +21,7 @@ class SearchFilterOptionDataProvider
         private readonly TagRepository $tagsRepository,
         private readonly SignalementRepository $signalementRepository,
         private readonly CacheInterface $cache,
+        private readonly QualificationStatusService $qualificationStatusService,
     ) {
     }
 
@@ -43,7 +44,9 @@ class SearchFilterOptionDataProvider
                     'partners' => $this->partnerRepository->findAllList($territory),
                     'tags' => $this->tagsRepository->findAllActive($territory),
                     'cities' => $this->signalementRepository->findCities($user, $territory),
+                    'listQualificationStatus' => $this->qualificationStatusService->getList(),
                 ];
-            });
+            }
+        );
     }
 }
