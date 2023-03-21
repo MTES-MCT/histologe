@@ -50,6 +50,8 @@
                     {% set classe = 'fr-badge fr-badge--warning' %}
                 {% endif %}
                 <small class="{{ classe }}">{{ signalement.lastSuiviBy }}</small> <br>
+            {% else %}
+                Aucun
             {% endif %}
         </td>
         <td>

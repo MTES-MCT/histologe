@@ -707,7 +707,7 @@
             <hr class=" fr-mt-5v">
         {% endif %}
         {% for suivi in signalement.suivis|reverse %}            
-            {% if suivi.type is same as 4 %}
+            {% if suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}
                 <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-5v">
                     <div class="fr-col-2">
                         <strong>Message automatique</strong>
