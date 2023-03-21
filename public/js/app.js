@@ -442,6 +442,10 @@ forms.forEach((form) => {
                                     if (res.response === "success") {
                                         document.querySelectorAll('#signalement-tabs,#signalement-success').forEach(el => {
                                             el.classList.toggle('fr-hidden')
+                                            window.scroll({
+                                                top: 0,
+                                                behavior: 'smooth'
+                                            });
                                         })
                                         localStorage.clear();
                                     } else if (res.response === "success_edited") {

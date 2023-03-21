@@ -7,20 +7,336 @@
     {% include '_partials/_modal_cgu.html.twig' %}
     {% include '_partials/_modal_pictures_restrictions.html.twig' %}
     <main class="fr-container fr-py-5w">
-        <header class="fr-callout bg-light fr-mb-5v fr-hidden" id="signalement-success">
-            <p class="fr-callout__title">
-                Merci de votre signalement.</p>
-            <p class="fr-callout__text fr-mb-5v">
-                L'équipe Histologe vous recontactera très rapidement.
+        <div id="signalement-success" class="fr-mb-5v fr-hidden">
+            <header class="fr-callout bg-light">
+                <p class="fr-callout__title">
+                    Votre signalement a bien été enregistré !
+                </p>
+                <p class="fr-callout__text fr-mb-5v">
+                    Vous allez recevoir un email de confirmation.
+                    <br>
+                    N'oubliez pas de regarder dans vos courriers indésirables.
+                </p>
+            </header>
+
+            <h2 class="fr-mt-5w">J'ai déposé un signalement, et maintenant ?</h2>
+
+            <p>
+                Une fois réceptionné par nos services, <strong>votre signalement va être qualifié</strong>.
+                Nous déterminons à quelle procédure correspond votre situation parmi quatre procédures :
+                la non décence, l'infraction au RSD (règlement sanitaire départemental), l'insalubrité et le péril.
+                <br>
+                En fonction de la procédure, différents partenaires sont impliqués et différentes
+                mesures peuvent être prises.
             </p>
-            <em class="fr-fi-information-line fr-text--light fr-text-label--blue-france"> Un courriel de confirmation va
-                vous être transmis.</em>
-            <p class="fr-text--center fr-mt-5v">
+
+            <p>
+                <strong>Quelle que soit la procédure, gardez les infos suivantes à l'esprit :</strong>
+            </p>
+
+            <div class="fr-grid-row fr-grid-row--gutters procedure-items">
+                <div class="fr-col-12 fr-col-md-6">
+                    <span class="fr-icon-success-line" aria-hidden="true"></span>
+                    <p>
+                        Les procédures et la réalisation des travaux peuvent durer plusieurs mois,
+                        n'hésitez pas à mettre à jour votre dossier depuis la page de suivi.
+                    </p>
+                </div>
+                <div class="fr-col-12 fr-col-md-6">
+                    <span class="fr-icon-success-line" aria-hidden="true"></span>
+                    <p>
+                        L’entretien courant du logement est de votre responsabilité.
+                        Veillez à garder votre logement propre et ne pas casser ni abîmer les équipements.
+                    </p>
+                </div>
+                <div class="fr-col-12 fr-col-md-6">
+                    <span class="fr-icon-success-line" aria-hidden="true"></span>
+                    <p>
+                        Certains problèmes sont pris en charge par votre assurance habitation : contactez votre assureur !
+                    </p>
+                </div>
+                <div class="fr-col-12 fr-col-md-6">
+                    <span class="fr-icon-success-line" aria-hidden="true"></span>
+                    <p>
+                        Dans tous les cas, vous devez payer votre loyer.
+                    </p>
+                </div>
+            </div>
+
+            <hr class="fr-mt-5w">
+
+            <h3 class="fr-mt-5w">Les différentes procédures</h3>
+
+            <div class="fr-table fr-table-procedure fr-mt-3w">
+                <table>
+                    <caption class="fr-text-label--blue-france">La procédure de non décence</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Exemple de désordres</th>
+                            <th scope="col">Partenaires impliqués</th>
+                            <th scope="col">Propriétaire averti</th>
+                            <th scope="col">Visite</th>
+                            <th scope="col">Conciliation</th>
+                            <th scope="col">Mesures possibles</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong class="fr-hidden-md">Exemple de désordres</strong>
+                                <br>
+                                <ul>
+                                    <li>Mon logement est mal isolé</li>
+                                    <li>Le bruit extérieur est très gênant, même si je ferme les fenêtres</li>
+                                    <li>Je n'ai pas de douche ni de baignoire dans mon logement</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <strong class="fr-hidden-md">Partenaires impliqués</strong>
+                                <br>
+                                SCHS, Opérateur de visite
+                                <br>
+                                CAF ou MSA si allocataire
+                            </td>
+                            <td>
+                                <strong class="fr-hidden-md">Propriétaire averti</strong>
+                                <br>
+                                <span class="fr-badge fr-badge--success fr-badge--no-icon">Oui</span>
+                            </td>
+                            <td>
+                                <strong class="fr-hidden-md">Visite</strong>
+                                <br>
+                                <span class="fr-badge fr-badge--success fr-badge--no-icon">Oui</span>
+                            </td>
+                            <td>
+                                <strong class="fr-hidden-md">Conciliation</strong>
+                                <br>
+                                <span class="fr-badge fr-badge--success fr-badge--no-icon">Oui</span>
+                            </td>
+                            <td>
+                                <strong class="fr-hidden-md">Mesures possibles</strong>
+                                <br>
+                                Lettre de mise en demeure
+                                <br>
+                                Recours à un conciliateur de justice
+                                <br>
+                                Intervention de l'assurance habitation
+                                <br>
+                                Consignation de l'aide au logement*
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="fr-table fr-table-procedure fr-mt-3w">
+                <table>
+                    <caption class="fr-text-label--blue-france">La procédure d'infraction au RSD</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Exemple de désordres</th>
+                            <th scope="col">Partenaires impliqués</th>
+                            <th scope="col">Propriétaire averti</th>
+                            <th scope="col">Visite</th>
+                            <th scope="col">Conciliation</th>
+                            <th scope="col">Mesures possibles</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong class="fr-hidden-md">Exemple de désordres</strong>
+                                <br>
+                                <ul>
+                                    <li>Il y a des insectes (cafards, punaises, ...) ou des rongeurs (rats, ...) dans le bâtiment</li>
+                                    <li>Il y a très peu de lumière naturelle dans mon logement</li>
+                                    <li>La peinture est abimée et contient du plomb</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <strong class="fr-hidden-md">Partenaires impliqués</strong>
+                                <br>
+                                Mairie, DDT
+                                <br>
+                                CAF ou MSA si allocataire
+                            </td>
+                            <td>
+                                <strong class="fr-hidden-md">Propriétaire averti</strong>
+                                <br>
+                                <span class="fr-badge fr-badge--success fr-badge--no-icon">Oui</span>
+                            </td>
+                            <td>
+                                <strong class="fr-hidden-md">Visite</strong>
+                                <br>
+                                <span class="fr-badge fr-badge--success fr-badge--no-icon">Oui</span>
+                            </td>
+                            <td>
+                                <strong class="fr-hidden-md">Conciliation</strong>
+                                <br>
+                                <span class="fr-badge fr-badge--success fr-badge--no-icon">Oui</span>
+                            </td>
+                            <td>
+                                <strong class="fr-hidden-md">Mesures possibles</strong>
+                                <br>
+                                Recours à un conciliateur de justice
+                                <br>
+                                Arrêté municipal
+                                <br>
+                                Injonction à réaliser les travaux
+                                <br>
+                                Contravention de 3ème classe
+                                <br>
+                                Consignation de l'aide au logement*
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="fr-table fr-table-procedure fr-mt-3w">
+                <table>
+                    <caption class="fr-text-label--blue-france">La procédure d'insalubrité</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Exemple de désordres</th>
+                            <th scope="col">Partenaires impliqués</th>
+                            <th scope="col">Propriétaire averti</th>
+                            <th scope="col">Visite</th>
+                            <th scope="col">Conciliation</th>
+                            <th scope="col">Mesures possibles</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong class="fr-hidden-md">Exemple de désordres</strong>
+                                <br>
+                                <ul>
+                                    <li>Il n'y a pas de ventilation dans mon logement</li>
+                                    <li>Mon logement est en sous-sol, sans fenêtre</li>
+                                    <li>Mon logement est une pièce unique de moins de 9m²</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <strong class="fr-hidden-md">Partenaires impliqués</strong>
+                                <br>
+                                ARS, SCHS
+                                <br>
+                                CAF ou MSA si allocataire
+                            </td>
+                            <td>
+                                <strong class="fr-hidden-md">Propriétaire averti</strong>
+                                <br>
+                                <span class="fr-badge fr-badge--success fr-badge--no-icon">Oui</span>
+                            </td>
+                            <td>
+                                <strong class="fr-hidden-md">Visite</strong>
+                                <br>
+                                <span class="fr-badge fr-badge--success fr-badge--no-icon">Oui</span>
+                            </td>
+                            <td>
+                                <strong class="fr-hidden-md">Conciliation</strong>
+                                <br>
+                                <span class="fr-badge fr-badge--warning fr-badge--no-icon">Non</span>
+                            </td>
+                            <td>
+                                <strong class="fr-hidden-md">Mesures possibles</strong>
+                                <br>
+                                Arrêté municipal
+                                <br>
+                                Travaux effectués d'office à rembourser
+                                <br>
+                                Amende par jour de retard
+                                <br>
+                                Consignation de l'aide au logement*
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="fr-table fr-table-procedure fr-mt-3w">
+                <table>
+                    <caption class="fr-text-label--blue-france">La procédure de péril</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Exemple de désordres</th>
+                            <th scope="col">Partenaires impliqués</th>
+                            <th scope="col">Propriétaire averti</th>
+                            <th scope="col">Visite</th>
+                            <th scope="col">Conciliation</th>
+                            <th scope="col">Mesures possibles</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong class="fr-hidden-md">Exemple de désordres</strong>
+                                <br>
+                                <ul>
+                                    <li>Le bâtiment présente un risque d'effondrement</li>
+                                    <li>Le sol du logement est dangereux : il bouge et est fissuré</li>
+                                    <li>Il y a beaucoup de moisissure dans toutes les pièces du logement</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <strong class="fr-hidden-md">Partenaires impliqués</strong>
+                                <br>
+                                ARS, SCHS
+                                <br>
+                                CAF ou MSA si allocataire
+                            </td>
+                            <td>
+                                <strong class="fr-hidden-md">Propriétaire averti</strong>
+                                <br>
+                                <span class="fr-badge fr-badge--success fr-badge--no-icon">Oui</span>
+                            </td>
+                            <td>
+                                <strong class="fr-hidden-md">Visite</strong>
+                                <br>
+                                <span class="fr-badge fr-badge--success fr-badge--no-icon">Oui</span>
+                            </td>
+                            <td>
+                                <strong class="fr-hidden-md">Conciliation</strong>
+                                <br>
+                                <span class="fr-badge fr-badge--warning fr-badge--no-icon">Non</span>
+                            </td>
+                            <td>
+                                <strong class="fr-hidden-md">Mesures possibles</strong>
+                                <br>
+                                Arrêté municipal
+                                <br>
+                                Travaux effectués d'office à rembourser
+                                <br>
+                                Amende par jour de retard
+                                <br>
+                                Consignation de l'aide au logement*
+                                <br>
+                                Relogement si procédure d'urgence**
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p>
+                * La consignation de l'aide au logement concerne uniquement les allocataires.
+                La CAF ou la MSA peut suspendre le versement de l'allocation logement au propriétaire, le temps de la procédure.
+                <br>
+                ** Si le logement présente un danger immédiat pour la sécurité des personnes qui l'occupent,
+                la mairie peut décider de mettre en place une procédure de relogement d'urgence.
+            </p>
+
+            <p class="fr-text--center fr-mt-5w">
+                <span class="fr-h3">Qu'avez-vous pensé du service Histologe ?</span>
+                <br><br>
+                Cliquez sur le bouton ci-dessous et donnez votre avis !
+                <br><br>
                 <a href="https://voxusagers.numerique.gouv.fr/Demarches/3104?&amp;view-mode=formulaire-avis&amp;nd_mode=en-ligne-enti%C3%A8rement&amp;nd_source=button&amp;key=8a6945494dbe7dd6e52d3dd28d667c1d">
                     <img src="https://voxusagers.numerique.gouv.fr/static/bouton-bleu.svg" alt="Je donne mon avis">
                 </a>
             </p>
-        </header>
+        </div>
         {% include '_partials/_signalement_steps_tabs.html.twig' %}
     </main>
 {% endblock %}
