@@ -893,8 +893,8 @@ class SignalementRepository extends ServiceEntityRepository
         $subquery = $this->_em->createQueryBuilder()
                 ->select('IDENTITY(su.signalement)')
                 ->from(Suivi::class, 'su')
-                ->where('sig.territory = :territory_1')
                 ->innerJoin('su.signalement', 'sig')
+                ->where('sig.territory = :territory_1')
                 ->setParameter('territory_1', $territory)
                 ->distinct();
 
