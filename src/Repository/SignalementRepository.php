@@ -890,9 +890,12 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function countSignalementAcceptedNoSuivi(Territory $territory)
     {
-        $subquery = $this->createQueryBuilder('su')
-                ->select('su.signalement.id')
+        $subquery = $this->_em->createQueryBuilder()
+                ->select('IDENTITY(su.signalement)')
                 ->from(Suivi::class, 'su')
+                ->where('sig.territory = :territory_1')
+                ->innerJoin('su.signalement', 'sig')
+                ->setParameter('territory_1', $territory)
                 ->distinct();
 
         $queryBuilder = $this->createQueryBuilder('s')
@@ -900,8 +903,10 @@ class SignalementRepository extends ServiceEntityRepository
             ->innerJoin('s.affectations', 'a')
             ->innerJoin('a.partner', 'p')
             ->where('s.statut IN (:statut) AND s.id NOT IN (:subquery)')
+            ->andWhere('p.territory = :territory')
             ->setParameter('statut', [Signalement::STATUS_ACTIVE, Signalement::STATUS_NEED_PARTNER_RESPONSE])
             ->setParameter('subquery', $subquery)
+            ->setParameter('territory', $territory)
             ->groupBy('p.nom');
 
         return $queryBuilder->getQuery()->getResult();
