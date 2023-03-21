@@ -27,6 +27,10 @@ class SuiviFactory
 
     private function buildType(?User $user, array $params): string
     {
+        if (isset($params['type'])) {
+            return $params['type'];
+        }
+
         if ($user && \in_array('ROLE_USAGER', $user->getRoles())) {
             return SUIVI::TYPE_USAGER;
         }
@@ -59,8 +63,8 @@ class SuiviFactory
             return 'Signalement <b>'.$params['description'].'</b> par '.$params['name_partner'];
         }
 
-        if (isset($params['description_contact_form'])) {
-            return $params['description_contact_form'];
+        if (isset($params['description'])) {
+            return $params['description'];
         }
 
         return $description;

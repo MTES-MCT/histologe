@@ -24,46 +24,48 @@
                 </div>
             </header>
             <hr>
-            {% for suivi in signalement.suivis|reverse %}
-                {% if loop.first and suivi.createdBy and signalement.statut != 6 %}
-                    <div class="fr-grid-row fr-grid-row--middle fr-rounded fr-p-5v">
-                        <div class="fr-col-12">
-                            <form action="{{ path('front_suivi_signalement_user_response',{code:signalement.codeSuivi}) }}"
-                                  class="needs-validation" novalidate method="POST">
-                                <div class="fr-input-group">
-                                    <label for="signalement_front_response_content" class="fr-label">Votre
-                                        message:</label>
-                                    <p class="fr-hint-text">Dix (10) caractères minimum</p>
-                                    <input type="hidden" name="signalement_front_response[email]" value="{{ email }}">
-                                    <input type="hidden" name="signalement_front_response[type]" value="{{ type }}">
-                                    <textarea name="signalement_front_response[content]"
-                                              id="signalement_front_response_content" rows="10" class="fr-input"
-                                              required minlength="10"></textarea>
-                                    <p class="fr-error-text fr-hidden">Veuillez composer un message d'au moins 10
-                                        caractères.</p>
+            
+            {% if signalement.statut != constant('App\\Entity\\Signalement::STATUS_CLOSED') %}
+                <div class="fr-grid-row fr-grid-row--middle fr-rounded fr-p-5v">
+                    <div class="fr-col-12">
+                        <form action="{{ path('front_suivi_signalement_user_response',{code:signalement.codeSuivi}) }}"
+                                class="needs-validation" novalidate method="POST">
+                            <div class="fr-input-group">
+                                <label for="signalement_front_response_content" class="fr-label">Votre
+                                    message:</label>
+                                <p class="fr-hint-text">Dix (10) caractères minimum</p>
+                                <input type="hidden" name="signalement_front_response[email]" value="{{ email }}">
+                                <input type="hidden" name="signalement_front_response[type]" value="{{ type }}">
+                                <textarea name="signalement_front_response[content]"
+                                            id="signalement_front_response_content" rows="10" class="fr-input"
+                                            required minlength="10"></textarea>
+                                <p class="fr-error-text fr-hidden">Veuillez composer un message d'au moins 10
+                                    caractères.</p>
+                            </div>
+                            {% include '_partials/_signalement_upload.html.twig' with {
+                                limit:1
+                            } %}
+                            <div class="fr-grid-row">
+                                <div class="fr-col-12 fr-text--center">
+                                    <progress max="100" id="form_global_file_progress" value="0"
+                                                class="final-progress fr-hidden"></progress>
                                 </div>
-                                {% include '_partials/_signalement_upload.html.twig' with {
-                                    limit:1
-                                } %}
-                                <div class="fr-grid-row">
-                                    <div class="fr-col-12 fr-text--center">
-                                        <progress max="100" id="form_global_file_progress" value="0"
-                                                  class="final-progress fr-hidden"></progress>
-                                    </div>
+                            </div>
+                            <div class="fr-grid-row">
+                                <div class="fr-col-12 fr-text--center">
+                                    <button class="fr-btn fr-fi-checkbox-circle-fill fr-btn--icon-right"
+                                            type="submit" id="form_finish_submit">Confirmer
+                                    </button>
                                 </div>
-                                <div class="fr-grid-row">
-                                    <div class="fr-col-12 fr-text--center">
-                                        <button class="fr-btn fr-fi-checkbox-circle-fill fr-btn--icon-right"
-                                                type="submit" id="form_finish_submit">Confirmer
-                                        </button>
-                                    </div>
-                                </div>
-                                <input type="hidden" name="_token"
-                                       value="{{ csrf_token('signalement_front_response_'~signalement.uuid) }}">
-                            </form>
-                        </div>
+                            </div>
+                            <input type="hidden" name="_token"
+                                    value="{{ csrf_token('signalement_front_response_'~signalement.uuid) }}">
+                        </form>
                     </div>
-                {% endif %}
+                </div>
+            {% endif %}
+
+            {% for suivi in signalement.suivis|reverse %}
                 <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-5v {% if not suivi.createdBy %}fr-background-alt--orange-terre-battue{% endif %}">
                     <div class="fr-col-12 fr-col-md-2">
                         <small>[{{ suivi.createdBy ? (suivi.createdBy.partner ? suivi.createdBy.partner.nom : (suivi.createdBy.email ? (suivi.createdBy.email is same as signalement.mailOccupant ? 'OCCUPANT' : 'DECLARANT') : 'Aucun')): 'Vous' }}

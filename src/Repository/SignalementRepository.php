@@ -987,4 +987,13 @@ class SignalementRepository extends ServiceEntityRepository
 
         return $qb;
     }
+
+    public function findAllByIds(array $ids): array
+    {
+        return $this->createQueryBuilder('s')
+            ->where('s.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -314,6 +314,7 @@ signalements:
     statut: 2
     reference: "2022-8"
     geoloc: "{\"lat\":\"5.371573\",\"lng\":\"43.313719\"}"
+    created_at: "2022-03-08 17:06:33"
     score_creation: 100
     etage_occupant: "0"
     escalier_occupant: ""
