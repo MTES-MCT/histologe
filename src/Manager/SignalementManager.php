@@ -2,16 +2,21 @@
 
 namespace App\Manager;
 
+use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Dto\SignalementAffectationListView;
 use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Entity\SignalementQualification;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Event\SignalementCreatedEvent;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementFactory;
+use App\Repository\PartnerRepository;
+use App\Service\Signalement\QualificationStatusService;
+use DateTimeImmutable;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -27,6 +32,7 @@ class SignalementManager extends AbstractManager
         private Security $security,
         private SignalementFactory $signalementFactory,
         private EventDispatcherInterface $eventDispatcher,
+        private QualificationStatusService $qualificationStatusService,
         private SignalementAffectationListViewFactory $signalementAffectationListViewFactory,
         private ParameterBagInterface $parameterBag,
         private CsrfTokenManagerInterface $csrfTokenManager,
@@ -143,16 +149,20 @@ class SignalementManager extends AbstractManager
             ->setIsFondSolidariteLogement((bool) $data['isFondSolidariteLogement']);
     }
 
-    public function findAllPartners(Signalement $signalement): array
+    public function findAllPartners(Signalement $signalement, bool $addCompetences = false): array
     {
-        $partners['affected'] = $this->managerRegistry->getRepository(Partner::class)->findByLocalization(
+        /** @var PartnerRepository $partnerRepository */
+        $partnerRepository = $this->managerRegistry->getRepository(Partner::class);
+        $partners['affected'] = $partnerRepository->findByLocalization(
             signalement: $signalement,
-            affected: true
+            affected: true,
+            addCompetences: $addCompetences
         );
 
-        $partners['not_affected'] = $this->managerRegistry->getRepository(Partner::class)->findByLocalization(
+        $partners['not_affected'] = $partnerRepository->findByLocalization(
             signalement: $signalement,
-            affected: false
+            affected: false,
+            addCompetences: $addCompetences
         );
 
         return $partners;
@@ -216,6 +226,52 @@ class SignalementManager extends AbstractManager
         );
 
         return array_merge($sendTo, $partnersEmail);
+    }
+
+    public function updateFromSignalementQualification(
+        SignalementQualification $signalementQualification,
+        QualificationNDERequest $qualificationNDERequest
+    ) {
+        $signalement = $signalementQualification->getSignalement();
+        // // mise à jour du signalement
+        if ('2023-01-02' === $qualificationNDERequest->getDateEntree()
+        && $signalement->getDateEntree()->format('Y') < '2023'
+        ) {
+            $signalement->setDateEntree(new DateTimeImmutable('2023-01-02'));
+        }
+
+        if ('1970-01-01' === $qualificationNDERequest->getDateEntree()
+        && $signalement->getDateEntree()->format('Y') >= '2023'
+        ) {
+            $signalement->setDateEntree(new DateTimeImmutable('1970-01-01'));
+        }
+
+        if (null !== $qualificationNDERequest->getSuperficie()
+        && $signalement->getSuperficie() !== $qualificationNDERequest->getSuperficie()
+        ) {
+            $signalement->setSuperficie($qualificationNDERequest->getSuperficie());
+        }
+        $this->save($signalement);
+
+        // // mise à jour du signalementqualification
+        if ('2023-01-02' === $qualificationNDERequest->getDateDernierBail()
+        && $signalementQualification->getDernierBailAt()->format('Y') < '2023'
+        ) {
+            $signalementQualification->setDernierBailAt(new DateTimeImmutable('2023-01-02'));
+        }
+        if ('1970-01-01' === $qualificationNDERequest->getDateDernierBail()
+        && $signalementQualification->getDernierBailAt()->format('Y') >= '2023'
+        ) {
+            $signalementQualification->setDernierBailAt(new DateTimeImmutable('1970-01-01'));
+        }
+
+        $signalementQualification->setDetails($qualificationNDERequest->getDetails());
+
+        $this->save($signalementQualification);
+
+        $signalementQualification->setStatus($this->qualificationStatusService->getNDEStatus($signalementQualification));
+
+        $this->save($signalementQualification);
     }
 
     public function findSignalementAffectationList(User|UserInterface|null $user, array $options): array

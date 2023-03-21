@@ -1,0 +1,7 @@
+# `experimentation_territory` To define the territories on non-décence énergétique experimentation
+#
+
+parameters:
+    experimentation_territory:
+     63: 'Puy de dôme'
+     89: 'Yonne'

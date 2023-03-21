@@ -2,6 +2,8 @@
 
 namespace App\Dto;
 
+use App\Entity\Enum\Qualification;
+
 class SignalementAffectationListView
 {
     public const SEPARATOR_CONCAT = '||';
@@ -24,6 +26,7 @@ class SignalementAffectationListView
       private \DateTimeImmutable|string|null $lastSuiviAt = null,
       private ?string $lastSuiviBy = null,
       private ?array $affectations = null,
+      private ?array $qualifications = null,
     ) {
     }
 
@@ -100,5 +103,21 @@ class SignalementAffectationListView
     public function getAffectations(): array
     {
         return $this->affectations;
+    }
+
+    public function getQualifications(): array
+    {
+        return $this->qualifications;
+    }
+
+    public function hasNDE(): bool
+    {
+        foreach ($this->qualifications as $qualification) {
+            if (Qualification::NON_DECENCE_ENERGETIQUE->name === $qualification) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

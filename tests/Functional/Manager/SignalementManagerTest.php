@@ -9,6 +9,7 @@ use App\Entity\Territory;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementFactory;
 use App\Manager\SignalementManager;
+use App\Service\Signalement\QualificationStatusService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
@@ -27,6 +28,7 @@ class SignalementManagerTest extends KernelTestCase
     private ManagerRegistry $managerRegistry;
     private SignalementFactory $signalementFactory;
     private EventDispatcherInterface $eventDispatcher;
+    private QualificationStatusService $qualificationStatusService;
     private SignalementAffectationListViewFactory $signalementAffectationListViewFactory;
     private ParameterBagInterface $parameterBag;
     private SignalementManager $signalementManager;
@@ -40,6 +42,8 @@ class SignalementManagerTest extends KernelTestCase
         $this->security = static::getContainer()->get('security.helper');
         $this->signalementFactory = static::getContainer()->get(SignalementFactory::class);
         $this->eventDispatcher = static::getContainer()->get(EventDispatcherInterface::class);
+        /* @var QualificationStatusService $qualificationStatusService */
+        $this->qualificationStatusService = static::getContainer()->get(QualificationStatusService::class);
         $this->signalementAffectationListViewFactory = static::getContainer()->get(
             SignalementAffectationListViewFactory::class
         );
@@ -51,6 +55,7 @@ class SignalementManagerTest extends KernelTestCase
             $this->security,
             $this->signalementFactory,
             $this->eventDispatcher,
+            $this->qualificationStatusService,
             $this->signalementAffectationListViewFactory,
             $this->parameterBag,
             $this->csrfTokenManager,
@@ -67,6 +72,21 @@ class SignalementManagerTest extends KernelTestCase
 
         $this->assertCount(1, $partners['affected'], 'One partner should be affected');
         $this->assertCount(3, $partners['not_affected'], 'Three partners should not be affected');
+    }
+
+    public function testFindAllPartnersWithCompetences()
+    {
+        $signalement = $this->signalementManager->findOneBy(['reference' => '2023-8']);
+
+        $partners = $this->signalementManager->findAllPartners($signalement, true);
+
+        $this->assertArrayHasKey('affected', $partners);
+        $this->assertArrayHasKey('not_affected', $partners);
+
+        $this->assertCount(0, $partners['affected'], '0 partner should be affected');
+        $this->assertCount(19, $partners['not_affected'], '19 partners should not be affected');
+        $firstPartner = $partners['not_affected'][0];
+        $this->assertArrayHasKey('competence', $firstPartner);
     }
 
     public function testCloseSignalementForAllPartners()

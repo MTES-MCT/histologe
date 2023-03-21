@@ -38,6 +38,7 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
             'lastSuiviAt' => new \DateTimeImmutable(),
             'lastSuiviBy' => $faker->name(),
             'rawAffectations' => 'Partenaire 13-02||1;Partenaire 13-03||1;Partenaire 13-04||1',
+            'qualifications' => null,
         ];
 
         $expectedAffectations = [

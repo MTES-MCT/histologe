@@ -5,7 +5,11 @@ namespace App\Service\DashboardWidget;
 use App\Dto\CountSignalement;
 use App\Dto\CountSuivi;
 use App\Dto\CountUser;
+use App\Entity\Affectation;
+use App\Entity\Enum\Qualification;
+use App\Entity\Enum\QualificationStatus;
 use App\Entity\Partner;
+use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -14,6 +18,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
+use App\Security\Voter\UserVoter;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -77,6 +82,34 @@ class WidgetDataKpiBuilder
             ->setAffected($this->affectationRepository->countAffectationByPartner($this->user->getPartner()))
             ->setClosedAllPartnersRecently($this->notificationRepository->countSignalementClosedNotSeen($this->user, $this->territory));
 
+        if ($this->user->isSuperAdmin() || $this->user->isTerritoryAdmin()) {
+            $countSignalementByStatus = $this->signalementRepository->countByStatus(
+                $this->territory,
+                null,
+                false,
+                Qualification::NON_DECENCE_ENERGETIQUE,
+                [QualificationStatus::NDE_AVEREE, QualificationStatus::NDE_CHECK]
+            );
+            $newNDE = isset($countSignalementByStatus[Signalement::STATUS_NEED_VALIDATION]) ? $countSignalementByStatus[Signalement::STATUS_NEED_VALIDATION]['count'] : 0;
+            $currentNDE = isset($countSignalementByStatus[Signalement::STATUS_ACTIVE]) ? $countSignalementByStatus[Signalement::STATUS_ACTIVE]['count'] : 0;
+            $this->countSignalement
+                ->setNewNDE($newNDE)
+                ->setCurrentNDE($currentNDE);
+        } else {
+            $countAffectationByStatus = $this->affectationRepository->countByStatusForUser(
+                $this->user,
+                $this->territory,
+                Qualification::NON_DECENCE_ENERGETIQUE,
+                [QualificationStatus::NDE_AVEREE, QualificationStatus::NDE_CHECK]
+            );
+            $newNDE = isset($countAffectationByStatus[Affectation::STATUS_WAIT]) ? $countAffectationByStatus[Affectation::STATUS_WAIT]['count'] : 0;
+            $currentNDE = isset($countAffectationByStatus[Affectation::STATUS_ACCEPTED]) ? $countAffectationByStatus[Affectation::STATUS_ACCEPTED]['count'] : 0;
+
+            $this->countSignalement
+                ->setNewNDE($newNDE)
+                ->setCurrentNDE($currentNDE);
+        }
+
         return $this;
     }
 
@@ -125,9 +158,7 @@ class WidgetDataKpiBuilder
 
     public function addWidgetCard(string $key, ?int $count = null, array $linkParameters = []): self
     {
-        $roles = $this->user->getRoles();
-        $role = array_shift($roles);
-        if (\in_array($role, $this->parameters[$key]['roles'])) {
+        if ($this->canAddCard($key)) {
             $widgetParams = $this->parameters[$key];
             $link = $widgetParams['link'] ?? null;
             $label = $widgetParams['label'] ?? null;
@@ -140,6 +171,21 @@ class WidgetDataKpiBuilder
         }
 
         return $this;
+    }
+
+    private function canAddCard($key)
+    {
+        $roles = $this->user->getRoles();
+        $role = array_shift($roles);
+        if (\in_array($role, $this->parameters[$key]['roles'])) {
+            if (isset($this->parameters[$key]['params']['nde']) && '1' === $this->parameters[$key]['params']['nde']) {
+                return $this->security->isGranted(UserVoter::SEE_NDE, $this->user);
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     public function hasWidgetCard(string $key): bool
@@ -156,6 +202,8 @@ class WidgetDataKpiBuilder
             ->addWidgetCard('cardTousLesSignalements', $this->countSignalement->getTotal())
             ->addWidgetCard('cardCloturesGlobales', $this->countSignalement->getClosedAllPartnersRecently())
             ->addWidgetCard('cardNouvellesAffectations', $this->countSignalement->getNew())
+            ->addWidgetCard('cardSignalementsNouveauxNonDecence', $this->countSignalement->getNewNDE())
+            ->addWidgetCard('cardSignalementsEnCoursNonDecence', $this->countSignalement->getCurrentNDE())
             ->addWidgetCard('cardNouveauxSuivis', $this->countSuivi->getSignalementNewSuivi())
             ->addWidgetCard('cardSansSuivi', $this->countSuivi->getSignalementNoSuivi());
 

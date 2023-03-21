@@ -17,6 +17,14 @@ for (i = 0; i < tables.length; i++) {
         thead.addEventListener("click", sortTableFunction(table));
     }
 }
+let isZipForNDE = false
+let hasCriticiteForNDE = false
+let isNDEBail2023 = false;
+let isNDEMissingInfo = false;
+let isNDEDPEBefore2023 = false;
+let hasDPE = false;
+let totalNDEConso = -1;
+let superficieNDE = -1;
 localStorage.clear();
 forms.forEach((form) => {
     form?.querySelectorAll('.toggle-criticite input[type="radio"]')?.forEach((criticite) => {
@@ -62,8 +70,9 @@ forms.forEach((form) => {
     form?.querySelectorAll('#signalement_cpOccupant')?.forEach((element) => {
         element.addEventListener('change', (event) => {
             let cpOccupant = form.querySelector('#signalement_cpOccupant').value;
+            let zipOccupant = cpOccupant.substr(0, 2)
             // Only a few code postal available in territory 69
-            if (cpOccupant.substr(0, 2) == '69') {
+            if (zipOccupant == '69') {
                 const METROPOLE_RHONES_AUTHORIZED_CODES_POSTAL = [
                     69000, 69001, 69002, 69003, 69004, 69005, 69006, 69007, 69008, 69009,
                     69100, 69125, 69190, 69200, 69290, 69381,
@@ -82,12 +91,187 @@ forms.forEach((form) => {
                 }
             }
 
+            // Zip codes available for Non Conformité Energétique
+            isZipForNDE = (zipOccupant == '63' || zipOccupant == '89');
+
             refetchAddress(form)
         })
     })
     form?.querySelectorAll('#signalement_villeOccupant')?.forEach((element) => {
         element.addEventListener('change', (event) => {
             refetchAddress(form)
+        })
+    })
+    form?.querySelectorAll('#form-nde input')?.forEach((element) => {
+        element.addEventListener('change', (event) => {
+            let isEntreeSelected = false;
+            let isDPESelected = false;
+            let isDateBailSelected = false;
+
+            let isEntree2023 = false;
+            let isEntreeBefore2023 = false;
+            hasDPE = false;
+            let isDateDPE2023 = false;
+            let isDateDPEBefore2023 = false;
+            isNDEMissingInfo = false;
+
+            form.querySelectorAll('#form-nde input[name="signalement[dateEntree]"]')?.forEach((element) => {
+                if (element.checked) {
+                    isEntreeSelected = true;
+                    isEntree2023 = (element.value === '2023-01-02')
+                    isNDEBail2023 = isEntree2023
+                    isEntreeBefore2023 = (element.value === '1970-01-01')
+                }
+            })
+            if (isEntreeSelected) {
+                if (isEntreeBefore2023) {
+                    form.querySelectorAll('#form-nde input[name="signalement[dateBail]"]')?.forEach((element) => {
+                        if (element.checked) {
+                            isDateBailSelected = true;
+                            isNDEBail2023 = (element.value === '2023-01-02');
+                            isNDEMissingInfo = (element.value === 'Je ne sais pas');
+                        }
+                    })
+                }
+                if (isNDEBail2023) {
+                    form.querySelectorAll('#form-nde input[name="signalement[hasDPE]"]')?.forEach((element) => {
+                        if (element.checked) {
+                            isDPESelected = true;
+                            hasDPE = (element.value === '1');
+                            isNDEMissingInfo = (element.value === '');
+                        }
+                    })
+                }
+                if (hasDPE) {
+                    form.querySelectorAll('#form-nde input[name="signalement[dateDPE]"]')?.forEach((element) => {
+                        if (element.checked) {
+                            isDateDPE2023 = (element.value === '2023-01-02')
+                            isDateDPEBefore2023 = (element.value === '1970-01-01')
+                        }
+                    })
+                }
+            }
+
+            // Reinit display
+            form.querySelector('#form-nde .display-if-entree-2023')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .display-if-entree-before-2023')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .display-if-has-dpe')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .display-if-dpe-2023')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .display-if-dpe-before-2023')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .display-if-conso-complete')?.classList.add('fr-hidden');
+
+            form.querySelector('#form-nde .display-if-missing-info')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .display-if-bail-before-2023')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .display-if-not-nde')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .display-if-nde')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .display-if-finished')?.classList.add('fr-hidden');
+
+            // Logical display
+            if (isEntree2023) {
+                form.querySelector('#form-nde .display-if-entree-2023')?.classList.remove('fr-hidden');
+
+            } else if (isEntreeBefore2023) {
+                form.querySelector('#form-nde .display-if-entree-before-2023')?.classList.remove('fr-hidden');
+
+                if (isNDEBail2023) {
+                    form.querySelector('#form-nde .display-if-entree-2023')?.classList.remove('fr-hidden');
+                } else if (isNDEMissingInfo) {
+                    form.querySelector('#form-nde .display-if-missing-info')?.classList.remove('fr-hidden');
+                    form.querySelector('#form-nde .display-if-finished')?.classList.remove('fr-hidden');
+                    return;
+                } else if (isDateBailSelected) {
+                    form.querySelector('#form-nde .display-if-bail-before-2023')?.classList.remove('fr-hidden');
+                    form.querySelector('#form-nde .display-if-finished')?.classList.remove('fr-hidden');
+                    return;
+                }
+            }
+
+            if (hasDPE) {
+                form.querySelector('#form-nde .display-if-has-dpe')?.classList.remove('fr-hidden');
+                if (isDateDPE2023) {
+                    form.querySelector('#form-nde .display-if-dpe-2023')?.classList.remove('fr-hidden');
+                    form.querySelector('#form-nde button.calculate-conso')?.click();
+    
+                } else if (isDateDPEBefore2023) {
+                    form.querySelector('#form-nde .display-if-dpe-before-2023')?.classList.remove('fr-hidden');
+                    form.querySelector('#form-nde button.calculate-conso')?.click();
+                }
+            } else if (isNDEMissingInfo) {
+                form.querySelector('#form-nde .display-if-missing-info')?.classList.remove('fr-hidden');
+                form.querySelector('#form-nde .display-if-finished')?.classList.remove('fr-hidden');
+                return;
+            } else if (isDPESelected) {
+                form.querySelector('#form-nde .display-if-nde')?.classList.remove('fr-hidden');
+                form.querySelector('#form-nde .display-if-finished')?.classList.remove('fr-hidden');
+                return;
+            }
+        })
+    })
+    form?.querySelectorAll('#form-nde button.calculate-conso')?.forEach((element) => {
+        element.addEventListener('click', (event) => {
+            form.querySelector('#form-nde .display-if-conso-complete')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .display-if-finished')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .fr-error-consoSizeYear')?.classList.add('fr-hidden');
+            form.querySelector('#form-nde .fr-error-consoSizePlusYear')?.classList.add('fr-hidden');
+
+            let isDateDPE2023 = false;
+            let isDateDPEBefore2023 = false;
+            form.querySelectorAll('#form-nde input[name="signalement[dateDPE]"]')?.forEach((element) => {
+                if (element.checked) {
+                    isDateDPE2023 = (element.value === '2023-01-02')
+                    isDateDPEBefore2023 = (element.value === '1970-01-01')
+                }
+            })
+
+            let consoSizeYear = -1;
+            isNDEDPEBefore2023 = false;
+            totalNDEConso = -1;
+            if (isNDEBail2023) {
+                if (isDateDPE2023) {
+                    let consoSizeYearTxt = form.querySelector('#form-nde input[name="signalement[consoSizeYear]"]')?.value;
+                    if (consoSizeYearTxt.length > 0) {
+                        if (isNaN(consoSizeYear)) {
+                            form.querySelector('#form-nde .fr-error-consoSizeYear')?.classList.remove('fr-hidden');
+                        } else {
+                            consoSizeYear = consoSizeYearTxt;
+                            form.querySelector('#form-nde .display-if-conso-complete span').textContent = consoSizeYear;
+                            form.querySelector('#form-nde .display-if-conso-complete')?.classList.remove('fr-hidden');
+                            form.querySelector('#form-nde .display-if-finished')?.classList.remove('fr-hidden');
+                        }
+                    } else {
+                        form.querySelector('#form-nde .display-if-conso-complete')?.classList.add('fr-hidden');
+                        form.querySelector('#form-nde .display-if-finished')?.classList.add('fr-hidden');
+                    }
+                } else if (isDateDPEBefore2023) {
+                    isNDEDPEBefore2023 = true;
+                    superficieNDE = form.querySelector('#form-nde input[name="signalement[consoSize]"]')?.value;
+                    let consoYear = form.querySelector('#form-nde input[name="signalement[consoYear]"]')?.value;
+                    if (superficieNDE.length > 0 && consoYear.length > 0) {
+                        if (isNaN(superficieNDE) || isNaN(consoYear)) {
+                            form.querySelector('#form-nde .fr-error-consoSizePlusYear')?.classList.remove('fr-hidden');
+                        } else {
+                            consoSizeYear = Math.round(consoYear / superficieNDE, 2);
+                            form.querySelector('#form-nde .display-if-conso-complete span').textContent = consoSizeYear;
+                            form.querySelector('#form-nde .display-if-conso-complete')?.classList.remove('fr-hidden');
+                            form.querySelector('#form-nde .display-if-finished')?.classList.remove('fr-hidden');
+                        }
+                    } else {
+                        form.querySelector('#form-nde .display-if-conso-complete')?.classList.add('fr-hidden');
+                        form.querySelector('#form-nde .display-if-finished')?.classList.add('fr-hidden');
+                    }
+                }
+    
+                if (consoSizeYear > -1) {
+                    totalNDEConso = consoSizeYear;
+                    if (consoSizeYear > 450) {
+                        form.querySelector('#form-nde .display-if-nde')?.classList.remove('fr-hidden');
+                        form.querySelector('#form-nde .display-if-not-nde')?.classList.add('fr-hidden');
+                    } else {
+                        form.querySelector('#form-nde .display-if-nde')?.classList.add('fr-hidden');
+                        form.querySelector('#form-nde .display-if-not-nde')?.classList.remove('fr-hidden');
+                    }
+                }
+            }
         })
     })
     form?.querySelectorAll('[data-fr-toggle-show],[data-fr-toggle-hide]')?.forEach((toggle) => {
@@ -374,6 +558,24 @@ forms.forEach((form) => {
                         }
                     })
                 } else {
+                    if (form.id === "signalement-step-3") {
+                        if (isZipForNDE && hasCriticiteForNDE) {
+                            nextTabBtn = document.querySelector('#signalement-step-3b-btn');
+                            nextTabBtn.classList.remove('fr-hidden');
+                            document.querySelector('#signalement-step-4-btn > span').textContent = '5';
+                            document.querySelector('#signalement-step-last-btn > span').textContent = '6';
+                        } else {
+                            nextTabBtn = document.querySelector('#signalement-step-4-btn');
+                            document.querySelector('#signalement-step-4-btn > span').textContent = '4';
+                            document.querySelector('#signalement-step-last-btn > span').textContent = '5';
+                        }
+                    }
+                    if (form.id === "signalement-step-3b") {
+                        if (superficieNDE > -1) {
+                            document.querySelector('#signalement_superficie').value = superficieNDE;
+                        }
+                    }
+
                     if (nextTabBtn) {
                         if (nextTabBtn.hasAttribute('data-fr-last-step')) {
                             var nbDocs = 0;
@@ -411,6 +613,9 @@ forms.forEach((form) => {
 
                             document.querySelector('#recap-signalement_documents').innerHTML = nbDocs + ' document(s) transmis';
                             document.querySelector('#recap-signalement_photos').innerHTML = nbPhotos + ' photo(s) transmise(s)';
+
+                            // Reinit display for non-décence
+                            updateResultNDE();
                         }
                         nextTabBtn.disabled = false;
                         nextTabBtn.click();
@@ -499,6 +704,14 @@ document?.querySelectorAll('.toggle-criticite-smiley').forEach(iptSmiley => {
         })
         if (evt.target.checked === true)
             icon.src = evt.target.parentElement.querySelector('.fr-radio-rich__img img').getAttribute('data-fr-checked-icon')
+
+        // Browse all options to check if one nte is checked
+        hasCriticiteForNDE = false;
+        document?.querySelectorAll('.toggle-criticite-smiley').forEach(elmtSmiley => {
+            if (elmtSmiley.checked && elmtSmiley.dataset.nde !== undefined) {
+                hasCriticiteForNDE = true;
+            }
+        })
     })
 })
 document?.querySelector('#signalement-step-2-panel')?.addEventListener('dsfr.disclose', (ev => {
@@ -507,6 +720,9 @@ document?.querySelector('#signalement-step-2-panel')?.addEventListener('dsfr.dis
             document.querySelector('#' + exp.id).setAttribute('aria-expanded', "true"), localStorage.removeItem(exp.id)
         }
     })
+}))
+document?.querySelector('#signalement-step-last-panel')?.addEventListener('dsfr.disclose', (ev => {
+    updateResultNDE();
 }))
 document?.querySelectorAll(".fr-pagination__link").forEach((e => {
     let t, r, a, n = document.querySelector(".fr-pagination__link--prev"),
@@ -787,7 +1003,8 @@ const refetchAddress = (form) => {
         res.json().then((r) => {
             let feature = r.features[0];
             form.querySelector('#signalement-insee-occupant').value = feature.properties.citycode;
-            if (feature.properties.citycode.substr(0, 2) == '69') {
+            let zipOccupant = feature.properties.citycode.substr(0, 2)
+            if (zipOccupant == '69') {
                 const METROPOLE_RHONES_AUTHORIZED_INSEE_CODES = [
                     69091, 69096, 69123, 69149, 69199, 69205, 69290, 69259, 69266,
                     69381, 69382, 69383, 69384, 69385, 69386, 69387, 69388, 69389,
@@ -807,8 +1024,70 @@ const refetchAddress = (form) => {
                     form.querySelector('#fr-error-text-insee')?.classList?.add('fr-hidden');
                 }
             }
+
+            // Zip codes available for Non Conformité Energétique
+            isZipForNDE = (zipOccupant == '63' || zipOccupant == '89');
+
             form.querySelector('#signalement-geoloc-lat-occupant').value = feature.geometry.coordinates[0];
             form.querySelector('#signalement-geoloc-lng-occupant').value = feature.geometry.coordinates[1];
         })
     })
+}
+
+const updateResultNDE = () => {
+    document.querySelector('#result-nde').classList.add('fr-hidden');
+    document.querySelectorAll('#result-nde .display-if-missing-info').forEach(el => {
+        el.classList.add('fr-hidden')
+    })
+    document.querySelectorAll('#result-nde .display-if-dpe-before-2023').forEach(el => {
+        el.classList.add('fr-hidden')
+    })
+    document.querySelectorAll('#result-nde .display-if-conso').forEach(el => {
+        el.classList.add('fr-hidden')
+    })
+    document.querySelectorAll('#result-nde .display-if-not-nde').forEach(el => {
+        el.classList.add('fr-hidden')
+    })
+    document.querySelectorAll('#result-nde .display-if-nde').forEach(el => {
+        el.classList.add('fr-hidden')
+    })
+    document.querySelectorAll('#result-nde .display-if-nde-no-dpe').forEach(el => {
+        el.classList.add('fr-hidden')
+    })
+    // Results for non-décence
+    if (isZipForNDE && hasCriticiteForNDE && isNDEBail2023) {
+        document.querySelector('#result-nde').classList.remove('fr-hidden');
+        if (isNDEMissingInfo) {
+            document.querySelectorAll('#result-nde .display-if-missing-info').forEach(el => {
+                el.classList.remove('fr-hidden')
+            })
+        } else if (!hasDPE) {
+            document.querySelectorAll('#result-nde .display-if-nde-no-dpe').forEach(el => {
+                el.classList.remove('fr-hidden')
+            })
+           
+        } else if (isNDEBail2023 && totalNDEConso > -1) {
+            if (isNDEDPEBefore2023) {
+                document.querySelectorAll('#result-nde .display-if-dpe-before-2023').forEach(el => {
+                    el.classList.remove('fr-hidden')
+                })
+            }
+            document.querySelectorAll('#result-nde .display-if-conso').forEach(el => {
+                el.classList.remove('fr-hidden')
+            })
+            document.querySelector('#result-nde .conso-amount').textContent = totalNDEConso;
+            if (totalNDEConso > 450) {
+                document.querySelectorAll('#result-nde .display-if-nde').forEach(el => {
+                    el.classList.remove('fr-hidden')
+                })
+            } else {
+                document.querySelectorAll('#result-nde .display-if-not-nde').forEach(el => {
+                    el.classList.remove('fr-hidden')
+                })
+            }
+        } else {
+            document.querySelector('#result-nde').classList.add('fr-hidden');
+        }
+        
+    }
 }

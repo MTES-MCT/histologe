@@ -58,6 +58,9 @@ class Criticite
     #[ORM\Column(type: 'boolean')]
     private $isDefault;
 
+    #[ORM\Column(type: 'json', nullable: true)]
+    private $qualification = [];
+
     public function __construct()
     {
         $this->createdAt = new DateTimeImmutable();
@@ -206,10 +209,23 @@ class Criticite
 
     public function getScoreLabel(): string
     {
+        // TODO à revoir avec le nouvel algo de criticité (les scores ne sont plus forcément 1, 2, 3)
         return match ($this->score) {
             1 => self::ETAT_MOYEN,
             2 => self::ETAT_GRAVE,
             3 => self::ETAT_TRES_GRAVE,
         };
+    }
+
+    public function getQualification(): ?array
+    {
+        return $this->qualification;
+    }
+
+    public function setQualification(?array $qualification): self
+    {
+        $this->qualification = $qualification;
+
+        return $this;
     }
 }

@@ -26,12 +26,15 @@
         </div>
     </section>
     <section class="fr-col-12 fr-table fr-table--bordered fr-pt-0">
-        <table class="fr-display-inline-table">
+        <table class="fr-display-inline-table sortable">
             <thead>
             <tr>
                 <th>Id</th>
                 <th>Nom</th>
                 <th>Type</th>
+                {% if isExperimentationTerritory %}
+                    <th>Compétences</th>
+                {% endif %}
                 <th>INSEE</th>
                 <th>Mail générique ?</th>
                 <th class="fr-text--right">actions</th>
@@ -42,11 +45,29 @@
                 <tr class="partner-row">
                     <td>{{ partner.id }}</td>
                     <td>{{ partner.nom }}</td>
-                    <td>{{ partner.isCommune ? 'Commune':'Partenaire' }}</td>
+                    {% if isExperimentationTerritory %}
+                        <td>{{ partner.type ? partner.type.label : (partner.isCommune ? 'Commune':'Partenaire') }}</td>
+                    {% else %}
+                        <td>{{ partner.isCommune ? 'Commune':'Partenaire' }}</td>
+                    {% endif %}
+                    {% if isExperimentationTerritory %}
+                        <td>
+                            {% for competence in partner.competence %}
+                                <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ competence.label }}</div>
+                            {% endfor %}
+                        </td>
+                    {% endif %}
                     <td>
-                        {% for insee in partner.insee %}
-                            <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ insee }}</div>
+                        {% for insee in partner.insee|slice(0, 4) %}
+                            {% if insee %}
+                                <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ insee }}</div>
+                            {% else %}
+                                /
+                            {% endif %}
                         {% endfor %}
+                        {% if partner.insee|length > 4 %}
+                            + {{partner.insee|length - 4}}
+                        {% endif %}
                     </td>
                     <td>{{ partner.email }}</td>
                     <td class="fr-text--right">

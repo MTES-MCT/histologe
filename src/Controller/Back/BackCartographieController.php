@@ -2,7 +2,9 @@
 
 namespace App\Controller\Back;
 
+use App\Repository\CritereRepository;
 use App\Repository\SignalementRepository;
+use App\Repository\TagRepository;
 use App\Service\SearchFilterService;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,7 +24,9 @@ class BackCartographieController extends AbstractController
     #[Route('/', name: 'back_cartographie')]
     public function index(
         SignalementRepository $signalementRepository,
+        TagRepository $tagsRepository,
         Request $request,
+        CritereRepository $critereRepository,
     ): Response {
         $title = 'Cartographie';
         $filters = $this->searchFilterService->setRequest($request)->setFilters()->getFilters();
@@ -33,11 +37,14 @@ class BackCartographieController extends AbstractController
             $filters['partner_name'] = $this->getUser()->getPartner()->getNom();
             $user = !$this->isGranted('ROLE_ADMIN_TERRITORY') ? $this->getUser() : null;
 
-            return $this->json([
+            return $this->json(
+                [
                 'signalements' => $signalementRepository->findAllWithGeoData(
-                    $user ?? null, $filters,
+                    $user ?? null,
+                    $filters,
                     (int) $request->get('offset'),
-                    $this->getUser()->getTerritory() ?? null), ]
+                    $this->getUser()->getTerritory() ?? null
+                ), ]
             );
         }
 
@@ -53,6 +60,8 @@ class BackCartographieController extends AbstractController
             'countActiveFilters' => $countActiveFilters,
             'displayRefreshAll' => false,
             'signalements' => [/* $signalements */],
+            'criteres' => $critereRepository->findAllList(),
+            'tags' => $tagsRepository->findAllActive($this->getUser()->getTerritory() ?? null),
         ]);
     }
 }

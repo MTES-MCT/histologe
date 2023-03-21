@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Dto\CountSignalement;
 use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
+use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
@@ -31,7 +32,7 @@ class AffectationRepository extends ServiceEntityRepository
         parent::__construct($registry, Affectation::class);
     }
 
-    public function countByStatusForUser($user, Territory|null $territory)
+    public function countByStatusForUser($user, Territory|null $territory, Qualification $qualification = null, array $qualificationStatuses = null)
     {
         $qb = $this->createQueryBuilder('a')
             ->select('COUNT(a.signalement) as count')
@@ -43,6 +44,17 @@ class AffectationRepository extends ServiceEntityRepository
         if ($territory) {
             $qb->andWhere('s.territory = :territory')
                 ->setParameter('territory', $territory);
+        }
+
+        if ($qualification) {
+            $qb->innerJoin('s.signalementQualifications', 'sq')
+                ->andWhere('sq.qualification = :qualification')
+                ->setParameter('qualification', $qualification);
+
+            if (!empty($qualificationStatuses)) {
+                $qb->andWhere('sq.status IN (:statuses)')
+                ->setParameter('statuses', $qualificationStatuses);
+            }
         }
 
         return $qb->indexBy('a', 'a.statut')

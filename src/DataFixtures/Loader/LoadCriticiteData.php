@@ -3,6 +3,7 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\Criticite;
+use App\Entity\Enum\Qualification;
 use App\Repository\CritereRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
@@ -35,6 +36,16 @@ class LoadCriticiteData extends Fixture implements OrderedFixtureInterface
             ->setScore($row['score'])
             ->setNewScore($row['new_score'])
             ->setIsDanger($row['is_danger']);
+
+        if (isset($row['qualifications'])) {
+            $qualification = [];
+            foreach ($row['qualifications'] as $qualificationLabel) {
+                $qualification[] = Qualification::from($qualificationLabel);
+                $criticite
+                ->setQualification($qualification)
+                ->setModifiedAt(new \DateTimeImmutable());
+            }
+        }
 
         $manager->persist($criticite);
     }

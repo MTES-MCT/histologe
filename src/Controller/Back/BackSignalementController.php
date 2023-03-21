@@ -5,7 +5,10 @@ namespace App\Controller\Back;
 use App\Entity\Affectation;
 use App\Entity\Critere;
 use App\Entity\Criticite;
+use App\Entity\Enum\Qualification;
+use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
+use App\Entity\SignalementQualification;
 use App\Entity\Situation;
 use App\Entity\Suivi;
 use App\Event\SignalementClosedEvent;
@@ -14,12 +17,15 @@ use App\Form\ClotureType;
 use App\Form\SignalementType;
 use App\Manager\SignalementManager;
 use App\Repository\CritereRepository;
+use App\Repository\CriticiteRepository;
+use App\Repository\SignalementQualificationRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
 use App\Service\Signalement\CriticiteCalculatorService;
 use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,7 +41,10 @@ class BackSignalementController extends AbstractController
         Request $request,
         TagRepository $tagsRepository,
         SignalementManager $signalementManager,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        ParameterBagInterface $parameterBag,
+        SignalementQualificationRepository $signalementQualificationRepository,
+        CriticiteRepository $criticiteRepository
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
         if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
@@ -107,6 +116,19 @@ class BackSignalementController extends AbstractController
             $canExportSignalement = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY') || $isAccepted;
         }
 
+        $experimentationTerritories = $parameterBag->get('experimentation_territory');
+        $isExperimentationTerritory = \array_key_exists($signalement->getTerritory()->getZip(), $experimentationTerritories);
+
+        $signalementQualificationNDE = $signalementQualificationRepository->findOneBy([
+            'signalement' => $signalement,
+            'qualification' => Qualification::NON_DECENCE_ENERGETIQUE, ]);
+        $isSignalementNDEActif = $this->isSignalementNDEActif($signalementQualificationNDE);
+        $signalementQualificationNDECriticites = $signalementQualificationNDE ? $criticiteRepository->findBy(['id' => $signalementQualificationNDE->getCriticites()]) : null;
+
+        $partners = $signalementManager->findAllPartners($signalement, $isExperimentationTerritory && $isSignalementNDEActif);
+
+        $files = $parameterBag->get('files');
+
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
             'situations' => $criticitesArranged,
@@ -119,10 +141,24 @@ class BackSignalementController extends AbstractController
             'isClosedForMe' => $isClosedForMe,
             'isRefused' => $isRefused,
             'signalement' => $signalement,
-            'partners' => $signalementManager->findAllPartners($signalement),
+            'partners' => $partners,
             'clotureForm' => $clotureForm->createView(),
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
+            'isExperimentationTerritory' => $isExperimentationTerritory,
+            'isSignalementNDE' => $isSignalementNDEActif,
+            'signalementQualificationNDE' => $signalementQualificationNDE,
+            'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
+            'files' => $files,
         ]);
+    }
+
+    private function isSignalementNDEActif(?SignalementQualification $signalementQualification): bool
+    {
+        if (null !== $signalementQualification) {
+            return QualificationStatus::ARCHIVED != $signalementQualification->getStatus();
+        }
+
+        return false;
     }
 
     #[Route('/{uuid}/editer', name: 'back_signalement_edit', methods: ['GET', 'POST'])]

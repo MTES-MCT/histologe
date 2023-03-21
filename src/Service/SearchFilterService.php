@@ -3,11 +3,14 @@
 namespace App\Service;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\Qualification;
+use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\NotificationRepository;
+use App\Repository\SignalementQualificationRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
 use DateInterval;
@@ -43,6 +46,7 @@ class SearchFilterService
         'delays',
         'scores',
         'dates',
+        'nde',
         'tags',
     ];
 
@@ -52,6 +56,7 @@ class SearchFilterService
         private SuiviRepository $suiviRepository,
         private TerritoryRepository $territoryRepository,
         private EntityManagerInterface $entityManager,
+        private SignalementQualificationRepository $signalementQualificationRepository
     ) {
     }
 
@@ -127,6 +132,15 @@ class SearchFilterService
             if ($request->query->get('closed_affectation')) {
                 ++$this->countActive;
                 $this->filters['closed_affectation'] = [$request->query->get('closed_affectation')];
+            }
+
+            if ($request->query->get('nde')) {
+                ++$this->countActive;
+                $this->filters['nde'] = [QualificationStatus::NDE_AVEREE->name, QualificationStatus::NDE_CHECK->name];
+            }
+
+            if ($request->query->get('sort')) {
+                $this->filters['sort'] = $request->query->get('sort');
             }
         }
 
@@ -392,6 +406,13 @@ class SearchFilterService
             $qb->andWhere('s.territory IN (:territories)')
                 ->setParameter('territories', $filters['territories']);
         }
+
+        if (!empty($filters['nde'])) {
+            $subqueryResults = $this->signalementQualificationRepository->findSignalementsByQualification(Qualification::NON_DECENCE_ENERGETIQUE, $filters['nde']);
+            $qb->andWhere('s.id IN (:subqueryResults)')
+                ->setParameter('subqueryResults', $subqueryResults);
+        }
+
         if (!empty($filters['signalement_ids'])) {
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $filters['signalement_ids']);

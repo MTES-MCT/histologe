@@ -34,7 +34,8 @@ class SignalementAffectationListViewFactory
             villeOccupant: $data['villeOccupant'],
             lastSuiviAt: $data['lastSuiviAt'],
             lastSuiviBy: $data['lastSuiviBy'],
-            affectations: $affectations
+            affectations: $affectations,
+            qualifications: explode(SignalementAffectationListView::SEPARATOR_GROUP_CONCAT, $data['qualifications'])
         );
     }
 

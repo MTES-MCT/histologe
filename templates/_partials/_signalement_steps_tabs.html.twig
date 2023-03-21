@@ -1,9 +1,16 @@
 <div class="fr-tabs" id="signalement-tabs">
     <ul class="fr-tabs__list" role="tablist" aria-label="Etapes signalement">
         <li role="presentation">
-            <button id="signalement-step-1-btn"
+            <button id="signalement-step-0-btn"
                     class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left" tabindex="0"
-                    role="tab" aria-selected="true" aria-controls="signalement-step-1-panel">1.
+                    role="tab" aria-selected="true" aria-controls="signalement-step-0-panel">
+                0. Avant-propos
+            </button>
+        </li>
+        <li role="presentation">
+            <button id="signalement-step-1-btn"
+                    class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left" tabindex="-1"
+                    role="tab" aria-selected="false" aria-controls="signalement-step-1-panel">1.
                 Identité
             </button>
         </li>
@@ -22,12 +29,19 @@
                 Détails
             </button>
         </li>
-
+        <li role="presentation">
+            <button id="signalement-step-3b-btn"
+                    class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left fr-hidden" tabindex="-1"
+                    role="tab" aria-selected="false" aria-controls="signalement-step-3b-panel"
+                    {% if 'back_' not in app.request.get('_route') %}disabled{% endif %}>4.
+                Consommation énergétique
+            </button>
+        </li>
         <li role="presentation">
             <button id="signalement-step-4-btn"
                     class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left" tabindex="-1"
                     role="tab" aria-selected="false" aria-controls="signalement-step-4-panel"
-                    {% if 'back_' not in app.request.get('_route') %}disabled{% endif %}>4.
+                    {% if 'back_' not in app.request.get('_route') %}disabled{% endif %}><span>4</span>.
                 Logement
             </button>
         </li>
@@ -36,14 +50,18 @@
                 <button id="signalement-step-last-btn"
                         class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left" tabindex="-1"
                         role="tab" aria-selected="false" aria-controls="signalement-step-last-panel"
-                        data-fr-last-step="true" disabled>5.
+                        data-fr-last-step="true" disabled><span>5</span>.
                     Validation
                 </button>
             </li>
         {% endif %}
     </ul>
-    <section id="signalement-step-1-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel"
-             aria-labelledby="signalement-step-1-btn" tabindex="0">
+    <section id="signalement-step-0-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel"
+             aria-labelledby="signalement-step-0-btn" tabindex="0">
+        {% include '_partials/_signalement_step_avantpropos.html.twig' %}
+    </section>
+    <section id="signalement-step-1-panel" class="fr-tabs__panel" role="tabpanel"
+             aria-labelledby="signalement-step-1-btn" tabindex="-1">
         {% if 'back_' not in app.request.get('_route') %}
             <header class="fr-callout bg-light fr-mb-5v">
                 <p class="fr-callout__title">Je renseigne mes coordonnées</p>
@@ -378,6 +396,7 @@
                                                                name="signalement[situation][{{ situation.id }}][critere][{{ critere.id }}][criticite]"
                                                                value="{{ criticite.id }}"
                                                                class="toggle-criticite-smiley"
+                                                               {% if enum('App\\Entity\\Enum\\Qualification').NON_DECENCE_ENERGETIQUE.name in criticite.qualification %}data-nde="1"{% endif %}
                                                                {% if criticite in signalement.criticites %}checked{% endif %}>
                                                         <label class="fr-label"
                                                                for="signalement-critere-{{ critere.id }}-criticite-{{ criticite.id }}"><strong>{{ etats[criticite.score-1] }}</strong>
@@ -425,7 +444,7 @@
                 astérisque
                 (*) sont obligatoires.</em>
         </header>
-        <form action="#" name="signalement" class="needs-validation" novalidate>
+        <form action="#" name="signalement" class="needs-validation" novalidate id="signalement-step-3">
             <div class="fr-input-group">
                 {{ form_label(form.details) }}
                 {{ form_help(form.details) }}
@@ -444,6 +463,12 @@
             </div>
         </form>
     </section>
+
+    <section id="signalement-step-3b-panel" class="fr-tabs__panel" role="tabpanel"
+             aria-labelledby="signalement-step-3b-btn" tabindex="0">
+        {% include '_partials/_signalement_step_nde.html.twig' %}
+    </section>
+
     <section id="signalement-step-4-panel" class="fr-tabs__panel" role="tabpanel"
              aria-labelledby="signalement-step-4-btn" tabindex="0">
         {% if 'back_' not in app.request.get('_route') %}
@@ -720,6 +745,37 @@
                             <span id="recap-signalement_photos"></span>
                             <span id="recap-signalement_documents" class="fr-display-block"></span>
                         </p>
+                    </li>
+                </ul>
+            </div>
+            <div id="result-nde" class="fr-col-6 fr-hidden">
+                <ul>
+                    <li>
+                        <strong>Consommation énergétique
+                            <button class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-edit-fill"
+                                    title="Editer les informations" data-goto-step="3b"></button>
+                        </strong>
+                        <li class="fr-hidden display-if-missing-info">Situation : à vérifier</li>
+                        <li class="fr-hidden display-if-missing-info">DPE : à renseigner</li>
+                        <li class="fr-hidden display-if-missing-info">Bail : à renseigner</li>
+                        <li class="fr-hidden display-if-missing-info">Consommation : non calculée</li>
+
+                        <li class="fr-hidden display-if-nde-no-dpe">Situation : non décence énergétique</li>
+                        <li class="fr-hidden display-if-nde-no-dpe">DPE : Non</li>
+                        
+                        <li class="fr-hidden display-if-not-nde">Situation : décence énergétique OK</li>
+                        <li class="fr-hidden display-if-nde">Situation : non décence énergétique</li>
+                        <li class="fr-hidden display-if-conso">
+                            DPE :
+                            <span class="fr-hidden display-if-dpe-before-2023">Avant</span>
+                            2023
+                        </li>
+                        <li class="fr-hidden display-if-conso">Bail : 2023</li>
+                        <li class="fr-hidden display-if-conso">
+                            Consommation :
+                            <span class="conso-amount"></span>
+                            kWh/m²/an
+                        </li>
                     </li>
                 </ul>
             </div>

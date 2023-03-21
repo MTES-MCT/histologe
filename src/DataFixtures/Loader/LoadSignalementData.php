@@ -2,8 +2,12 @@
 
 namespace App\DataFixtures\Loader;
 
+use App\Entity\Criticite;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\Qualification;
+use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
+use App\Entity\SignalementQualification;
 use App\Entity\User;
 use App\Form\SignalementType;
 use App\Repository\CritereRepository;
@@ -108,6 +112,10 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 ->setModifiedAt(null);
         }
 
+        if (isset($row['date_entree'])) {
+            $signalement->setDateEntree(new \DateTimeImmutable($row['date_entree']));
+        }
+
         if (Signalement::STATUS_CLOSED === $row['statut']) {
             $signalement
                 ->setMotifCloture(MotifCloture::tryFrom($row['motif_cloture']))
@@ -132,6 +140,36 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         }
 
         $manager->persist($signalement);
+
+        if (isset($row['qualifications'])) {
+            foreach ($row['qualifications'] as $qualificationLabel) {
+                $signalementQualification = (new SignalementQualification())
+                ->setSignalement($signalement)
+                ->setQualification(Qualification::from($qualificationLabel))
+                ->setDernierBailAt(
+                    isset($row['date_entree'])
+                        ? new \DateTimeImmutable($row['date_entree'])
+                        : new \DateTimeImmutable()
+                )
+                ->setCriticites($signalement->getCriticites()->map(function (Criticite $criticite) {
+                    return $criticite->getId();
+                })->toArray());
+                if (Qualification::NON_DECENCE_ENERGETIQUE->name == $qualificationLabel) {
+                    $qualificationDetails = [];
+                    $qualificationDetails['consommation_energie'] = $faker->numberBetween(450, 700);
+                    $qualificationDetails['DPE'] = 1;
+                    $qualificationDetails['date_dernier_dpe'] = $faker->dateTimeThisYear()->format('Y-m-d');
+                    $signalementQualification
+                    ->setStatus(QualificationStatus::NDE_AVEREE)
+                    ->setDetails($qualificationDetails);
+                }
+
+                $manager->persist($signalementQualification);
+
+                $signalement->addSignalementQualification($signalementQualification);
+                $manager->persist($signalement);
+            }
+        }
     }
 
     public function getOrder(): int

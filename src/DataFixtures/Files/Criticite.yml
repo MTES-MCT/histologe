@@ -439,6 +439,8 @@ criticites:
     score: 1
     new_score: 0.5
     is_danger: 0
+    qualifications:
+      - "NON_DECENCE_ENERGETIQUE"
   -
     critere: "De l’air s’infiltre dans mon logement."
     label: "Infiltration ou fuite d'air dans deux des éléments suivants : toit, charpente, façades, murs extérieurs. Sensation de courant d'air régulièrement ou ponctuellement."
@@ -447,6 +449,8 @@ criticites:
     score: 2
     new_score: 1
     is_danger: 0
+    qualifications:
+      - "NON_DECENCE_ENERGETIQUE"
   -
     critere: "De l’air s’infiltre dans mon logement."
     label: "Infiltration ou fuite d'air dans plus de deux des éléments suivants : toit, charpente, façades, murs extérieurs. Sensation de courant d'air régulière ou très fréquente."
@@ -479,6 +483,8 @@ criticites:
     score: 3
     new_score: 1
     is_danger: 0
+    qualifications:
+      - "NON_DECENCE_ENERGETIQUE"
   -
     critere: "Mon logement est mal isolé."
     label: "Le DPE indique une étiquette énergie B ou C. J’ai rarement ou parfois la sensation d'avoir froid en hiver et/ou très chaud en été."
@@ -495,6 +501,8 @@ criticites:
     score: 2
     new_score: 1
     is_danger: 0
+    qualifications:
+      - "NON_DECENCE_ENERGETIQUE"
   -
     critere: "Mon logement est mal isolé."
     label: "Le DPE indique une étiquette énergie F ou G ou n’a pas été fait. J’ai tout le temps la sensation d'avoir froid en hiver et/ou très chaud en été."
@@ -503,6 +511,8 @@ criticites:
     score: 3
     new_score: 1
     is_danger: 0
+    qualifications:
+      - "NON_DECENCE_ENERGETIQUE"
   -
     critere: "De l'eau s’infiltre dans mon logement."
     label: "Il y a de l'humidité mais pas de traces de d'eau."
@@ -919,6 +929,8 @@ criticites:
     score: 2
     new_score: 2
     is_danger: 0
+    qualifications:
+      - "NON_DECENCE_ENERGETIQUE"
   -
     critere: "Le chauffage ne fonctionne pas bien."
     label: "il fait très chaud dans mon logement l’été (ex : baies vitrées avec forte exposition au soleil, absence de stores…) ou le système de chauffage ne fonctionne pas en hiver."
@@ -927,6 +939,8 @@ criticites:
     score: 3
     new_score: 1
     is_danger: 0
+    qualifications:
+      - "NON_DECENCE_ENERGETIQUE"
   -
     critere: "J'ai un problème avec l’eau potable."
     label: "j'ai accès à l’eau potable et à l’eau chaude dans le logement mais avec débit limité."
@@ -1015,6 +1029,8 @@ criticites:
     score: 2
     new_score: 1
     is_danger: 0
+    qualifications:
+      - "NON_DECENCE_ENERGETIQUE"
   -
     critere: "J’utilise un appareil d'appoint pour le chauffage."
     label: "J’utilise plusieurs chauffages d'appoint et/ou des pièces principales ne possèdent pas de moyen de chauffage."
@@ -1023,6 +1039,8 @@ criticites:
     score: 3
     new_score: 1
     is_danger: 0
+    qualifications:
+      - "NON_DECENCE_ENERGETIQUE"
   -
     critere: "L'installation de gaz n’est pas en bon état"
     label: "L’installation de gaz est ancienne mais fonctionne sans danger."

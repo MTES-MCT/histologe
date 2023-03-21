@@ -7,6 +7,8 @@ class CountSignalement
     private ?array $percentage = null;
     private ?int $closedByAtLeastOnePartner = null;
     private ?int $closedAllPartnersRecently = null;
+    private ?int $newNDE = null;
+    private ?int $currentNDE = null;
 
     private ?int $affected = null;
 
@@ -87,6 +89,30 @@ class CountSignalement
     public function setClosedAllPartnersRecently(?int $closedAllPartnersRecently): self
     {
         $this->closedAllPartnersRecently = $closedAllPartnersRecently;
+
+        return $this;
+    }
+
+    public function getNewNDE(): ?int
+    {
+        return $this->newNDE;
+    }
+
+    public function setNewNDE(?int $newNDE): self
+    {
+        $this->newNDE = $newNDE;
+
+        return $this;
+    }
+
+    public function getCurrentNDE(): ?int
+    {
+        return $this->currentNDE;
+    }
+
+    public function setCurrentNDE(?int $currentNDE): self
+    {
+        $this->currentNDE = $currentNDE;
 
         return $this;
     }

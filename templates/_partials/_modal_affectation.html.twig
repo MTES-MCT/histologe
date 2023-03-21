@@ -30,7 +30,13 @@
                                         id="signalement-affectation-select-disponible"
                                         size="10" multiple>
                                     {% for partner in partners['not_affected'] %}
-                                            <option value="{{ partner['id'] }}">{{ partner['name']|upper }}</option>
+                                            <option value="{{ partner['id'] }}">{{ partner['name']|upper }} 
+                                            {% if partner.competence|default %}
+                                               ({% for competence in partner.competence %}
+                                                    {{ competence.label }}
+                                                {% endfor %})
+                                            {% endif %}
+                                            </option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -51,7 +57,13 @@
                                             size="10" data-fr-select-count="fr-modal-affectation-count"
                                             name="signalement-affectation[partners][]">
                                         {% for partner in partners['affected'] %}
-                                            <option value="{{ partner['id'] }}">{{ partner['name']|upper }}</option>
+                                            <option value="{{ partner['id'] }}">{{ partner['name']|upper }}
+                                            {% if partner.competence|default %}
+                                                ({% for competence in partner.competence %}
+                                                    {{ competence.label }}
+                                                {% endfor %})
+                                            {% endif %}
+                                            </option>
                                         {% endfor %}
                                     </select>
                                     <input type="hidden" name="_token"

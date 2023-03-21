@@ -140,6 +140,20 @@
                         },
                         {% endfor %}
                     ];
+             
+                    {% if isSignalementNDE and is_granted('USER_SEE_NDE', app.user) and files is defined and files.documents is defined %}  
+                       {% for doc in files.documents %}
+                            {% if enum('App\\Entity\\Enum\\Qualification').NON_DECENCE_ENERGETIQUE.name in doc.params.qualification|joinEnumKeys(',') %}
+                                items.push({
+                                    type: 'menuitem',
+                                    text: "{{ doc.title|raw }}",
+                                    onAction: function () {
+                                        editor.insertContent('&nbsp;<a href="{{ asset(files.path~doc.file) }}?t=___TOKEN___" class="fr-link" title="Afficher le document" target="_blank">Consulter "{{ doc.title }}"</a></br>');
+                                    }
+                                })     
+                            {% endif %}   
+                        {% endfor %}
+                    {% endif %}
                     callback(items);
                 }
             });
