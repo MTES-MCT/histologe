@@ -17,14 +17,11 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
     public function __construct(
         private SignalementRepository $signalementRepository,
         private UserRepository $userRepository,
-        private EntityManagerInterface $entityManager,
-        private SuiviCreatedSubscriber $suiviCreatedSubscriber,
     ) {
     }
 
     public function load(ObjectManager $manager): void
     {
-        $this->entityManager->getEventManager()->removeEventSubscriber($this->suiviCreatedSubscriber);
         $suiviRows = Yaml::parseFile(__DIR__.'/../Files/Suivi.yml');
         foreach ($suiviRows['suivis'] as $row) {
             $this->loadSuivi($manager, $row);
