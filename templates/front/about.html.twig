@@ -4,13 +4,11 @@
 
 {% block body %}
     <main class="fr-container--fluid">
-        <header class="fr-background--blue-france fr-py-5w fr-py-md-10w">
+        <header class="fr-background-contrast--blue-france fr-py-5w fr-py-md-10w">
             <div class="fr-container fr-grid-row fr-grid-row--middle">
                 <div class="fr-col-12 fr-col-md-8">
-                    <h1 class="fr-h2 fr-text--white">
-                        Qui sommes-nous ?
-                    </h1>
-                    <h2 class="fr-h6 fr-text--xx-light fr-text--white">
+                    <h1>Qui sommes-nous ?</h1>
+                    <h2 class="fr-h6 fr-text--xx-light">
                         Histologe est un service public permettant de faciliter la détection, le signalement,
                         l’évaluation, l’envoi d’alertes et le suivi des logements pour accélérer la prise en charge du
                         “mal logement”.
@@ -34,5 +32,70 @@
                 </div>
             </div>
         </header>
+        
+        <h2 class="fr-mt-5w fr-text--center">Une solution reconnue !</h2>
+
+        <div class="fr-container fr-grid-row fr-py-5w">
+            <div class="fr-col-12 fr-col-md-6 fr-p-1v">
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-4">
+                        <img src="{{ asset('img/about/logo-territoire-innovant.png') }}" alt="Label territoire innovant" class="img-mw-100">
+                    </div>
+                    <div class="fr-col-8">
+                        <p>
+                            <strong>Lauréat du label Territoire Innovant (interconnectés 2021)</strong>
+                            <br>
+                            Le label « Territoire Innovant » est décerné aux collectivités qui ont mis en
+                            œuvre des initiatives marquantes en termes d’usages ou de services, ce label se
+                            différencie en reposant sur des valeurs comme critères d’attribution.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="fr-col-12 fr-col-md-6 fr-p-1v">
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-4">
+                        <img src="{{ asset('img/about/logo-exclusion-energetique.png') }}" alt="Lauréat Stop Exclusion énergétique" class="img-mw-100">
+                    </div>
+                    <div class="fr-col-8">
+                        <p>
+                            <strong>Lauréat National de Stop Exclusion énergétique</strong>
+                            <br>
+                            Ce prix récompense les solutions qui améliorent la qualité des
+                            logements des précaires (énergétique ou sanitaire).
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="fr-col-12 fr-col-md-6 fr-p-1v">
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-4">
+                        <img src="{{ asset('img/about/logo-prix-gazette-commues.png') }}" alt="Prix Territorial de la Gazette des Communes" class="img-mw-100">
+                    </div>
+                    <div class="fr-col-8">
+                        <p>
+                            <strong>Prix Territorial 2020 de la Gazette des Communes</strong>
+                            <br>
+                            Ce prix récompense les projets locaux impliquant plusieurs métiers et services.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="fr-col-12 fr-col-md-6 fr-p-1v">
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-4">
+                        <img src="{{ asset('img/about/logo-prix-initiatives-locales.png') }}" alt="Prix de la grande enquête Initiatives Locales 2020" class="img-mw-100">
+                    </div>
+                    <div class="fr-col-8">
+                        <p>
+                            <strong>Prix de la grande enquête Initiatives Locales 2020</strong>
+                            <br>
+                            Histologe a été primé dans la catégorie "Cadre de vie"
+                            parmi plus de 400 candidatures.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 {% endblock %}

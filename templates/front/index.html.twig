@@ -3,408 +3,324 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
-    <main class="fr-container--fluid">
-        <section class="fr-container--fluid fr-artwork-decorative--blue-france fr-background--blue-france fr-py-5w fr-py-md-10w">
-            <div class="fr-container">
-                <div class="fr-grid-row">
-                    <div class="fr-col-md-12">
-                        <h1 class="fr-h3 fr-text--white">Signalez votre problème de logement</h1>
 
-                        {% if display_modal != '' %}
-                            {% include '_partials/_modal_closed_territory.html.twig' with { 'autoopen': '1' } %}
-                        {% endif %}
-
-                        <!-- form code postal -->
+    {% if display_modal != '' %}
+        {% include '_partials/_modal_closed_territory.html.twig' with { 'autoopen': '1' } %}
+    {% endif %}
+    <main>
+        <section class="fr-background-contrast--blue-france fr-pt-3w">
+            <div class="fr-container fr-grid-row">
+                <div class="fr-col-12 fr-col-md-8">
+                    <p class="fr-mt-5w">
+                        <p class="fr-text--lead">Avec Histologe,</p>
+                        <h1>Sortez du mal-logement</h1>
                         {{ form_start(form_postalcode) }}
-                        <div class="fr-grid-row fr-grid-row--gutters fr-text--white fr-mb-5v home-form">
+                        <div class="fr-grid-row fr-grid-row--gutters fr-mb-5v">
                             {{ form_row(form_postalcode.postalcode) }}
 
-                            <div class="fr-col-12 fr-col-md-6 fr-col-xl-4 fr-pr-md-2v">
+                            <div class="fr-col-12 fr-col-md-6 fr-mt-3w">
                                 <button 
-                                    class="fr-col-12 fr-btn fr-btn--orange fr-text-label--blue-france fr-rounded"
-                                    form="front_postalcodesearch">Accéder au service</button>
+                                    class="fr-btn fr-btn--icon-left fr-rounded fr-fi-check-line"
+                                    form="front_postalcodesearch">Signaler mon problème</button>
                             </div>
                         </div>
                         {{ form_end(form_postalcode) }}
-                        
-                        {# <a role="button" href="{{ path('front_signalement') }}"
-                           class="fr-btn fr-btn--orange fr-text-label--blue-france fr-mb-5v fr-fi-arrow-right-line fr-btn--icon-right fr-rounded fr-py-5v">Je
-                            signale mon ou mes problèmes de logement</a> #}
-
-                        <!-- responsive icons -->
-                        <div class="fr-hidden-md fr-py-5v">
-                            <div class="fr-grid-row fr-grid-row--center">
-                                <div class="fr-text--center fr-text--white">
-                                    <div class="fr-grid-row fr-grid-row--center" id="homeslider">
-                                        <figure class="fr-col-12 histoslider--items">
-                                            <img src="{{ asset('img/icon-house-alert.svg') }}" width="150" alt="">
-                                            <figcaption>
-                                                Vous avez repéré un ou des problèmes dans votre logement ?
-                                            </figcaption>
-                                        </figure>
-                                        <figure class="fr-col-12 histoslider--items fr-hidden">
-                                            <img src="{{ asset('img/icon-house-touch.svg') }}" width="150" alt="">
-                                            <figcaption>
-                                                Saisissez votre problème en quelques clics sur le service Histologe.
-                                            </figcaption>
-
-                                        </figure>
-                                        <figure class="fr-col-12 histoslider--items fr-hidden">
-                                            <img src="{{ asset('img/icon-house-bar-graph.svg') }}" width="150" alt="">
-                                            <figcaption>
-                                                Histologe qualifie votre problème et le renvoie vers le service adapté.
-                                            </figcaption>
-
-                                        </figure>
-                                        <figure class="fr-col-12 histoslider--items fr-hidden">
-                                            <img src="{{ asset('img/icon-user-favorite.svg') }}" width="150" alt="">
-                                            <figcaption>
-                                                Votre problème est traité par le bon partenaire et vous gagnez du temps
-                                                !
-                                            </figcaption>
-
-                                        </figure>
-                                    </div>
-                                    <div class="fr-grid-row fr-grid-row--center fr-hidden-md">
-                                        <div class="fr-col-12">
-                                            <figure class="fr-pagination" id="homeslider_pagination">
-                                                <img src="{{ asset('img/bulle.PNG') }}" alt="bulle">
-                                                <img src="{{ asset('img/bulle_v.PNG') }}" alt="bulle">
-                                                <img src="{{ asset('img/bulle_v.PNG') }}" alt="bulle">
-                                                <img src="{{ asset('img/bulle_v.PNG') }}" alt="bulle">
-                                            </figure>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- full size icons -->
-                        <div class="fr-displayed-md">
-                            <div class="fr-grid-row">
-                                <div class="fr-col-12">
-                                    <h2 class="fr-text--white home">Comment ça marche ?</h2>
-                                </div>
-                            </div>
-                            <div class="fr-grid-row">
-                                <div class="fr-col-12 fr-text--white fr-text--center">
-                                    <div class="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
-                                        <figure class="fr-col fr-m-0">
-                                            <img src="{{ asset('img/icon-house-alert.svg') }}" width="100" height="100"
-                                                 alt="">
-                                            <figcaption>
-                                                Vous avez repéré un ou des problèmes dans votre logement ?
-                                            </figcaption>
-                                        </figure>
-                                        <figure class="fr-col fr-m-0">
-                                            <img src="{{ asset('img/icon-house-touch.svg') }}" width="100" height="100"
-                                                 alt="">
-                                            <figcaption>
-                                                Saisissez votre problème en quelques clics sur le service Histologe.
-                                            </figcaption>
-
-                                        </figure>
-                                        <figure class="fr-col fr-m-0">
-                                            <img src="{{ asset('img/icon-house-bar-graph.svg') }}" width="100"
-                                                 height="100" alt="">
-                                            <figcaption>
-                                                Histologe qualifie votre problème et le renvoie vers la bonne
-                                                administration.
-                                            </figcaption>
-
-                                        </figure>
-                                        <figure class="fr-col fr-m-0">
-                                            <img src="{{ asset('img/icon-user-favorite.svg') }}" width="100"
-                                                 height="100" alt="">
-                                            <figcaption>
-                                                Le service adapté reçoit votre signalement !
-                                            </figcaption>
-
-                                        </figure>
-                                    </div>
-                                    <div class="fr-grid-row fr-grid-row--center">
-                                        <figure class="fr-col bar-bulle bar-bulle-right">
-                                            <img src="{{ asset('img/bulle.PNG') }}" alt="bulle">
-                                        </figure>
-                                        <figure class="fr-col bar-bulle bar-bulle-middle">
-                                            <img src="{{ asset('img/bulle.PNG') }}" alt="bulle">
-                                        </figure>
-                                        <figure class="fr-col bar-bulle bar-bulle-middle">
-                                            <img src="{{ asset('img/bulle.PNG') }}" alt="bulle">
-                                        </figure>
-                                        <figure class="fr-col bar-bulle bar-bulle-left">
-                                            <img src="{{ asset('img/bulle.PNG') }}" alt="bulle">
-                                        </figure>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </p>
                 </div>
-
-            </div>
-        </section>
-        <section class="fr-container--fluid fr-py-5v fr-background-alt--blue-france">
-            <div class="fr-container fr-py-5w">
-                <header class="fr-grid-row">
-                    <h3 class="fr-col-12 fr-text-label--blue-france fr-text--center">Les types de problèmes pris en
-                        charge</h3>
-                    <p class="fr-hint-text fr-text--center fr-w-100"><strong>Cliquez sur les cartes ci-dessous</strong>
-                        pour afficher des exemples</p>
-                </header>
-                <div class="fr-grid-row fr-grid-row--gutters fr-mt-5v">
-                    <div class="fr-col-12 fr-col-md-4" role="button">
-                        <div class="fr-rounded fr-background--white fr-border--bottom--orange fr-p-3v"
-                             aria-controls="problemes-securite" aria-expanded="false">
-                            <figure class="fr-m-0 fr-grid-row fr-grid-row--middle fr-grid-row--gutters  fr-text--center">
-                                <img src="{{ asset('img/la-house-damage.svg') }}" alt="La sécurité des occupants"
-                                     width="50%" class="fr-col-3">
-                                <text class="fr-col-9 fr-text--bold fr-h6 fr-mb-0">Sécurité des occupants</text>
-                            </figure>
-                            <div class="fr-col-12 fr-collapse fr-pl-3v" id="problemes-securite">
-                                Par exemple
-                                <ul>
-                                    <li>Les planchers sont dangereux</li>
-                                    <li>L'installation du réseau de gaz a un problème</li>
-                                    <li>Le bâtiment n'est pas sécurisé contre les chutes</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="fr-col-12 fr-col-md-4" role="button">
-                        <div class="fr-rounded fr-background--white fr-border--bottom--orange fr-p-3v"
-                             aria-controls="problemes-proprete" aria-expanded="false">
-                            <figure class="fr-m-0 fr-grid-row fr-grid-row--middle fr-grid-row--gutters  fr-text--center">
-                                <img src="{{ asset('img/la-tint.svg') }}" alt="La propreté du logement" width="50%"
-                                     class="fr-col-3">
-                                <text class="fr-col-9 fr-text--bold fr-h6 fr-mb-0">Propreté du logement</text>
-                            </figure>
-                            <div class="fr-col-12 fr-collapse fr-pl-3v" id="problemes-proprete">
-                                Par exemple
-                                <ul>
-                                    <li>Il y a des traces importantes de moisissures</li>
-                                    <li>De l'eau s'infiltre dans mon logement</li>
-                                    <li>Il y a des nuisibles dans mon appartement (blattes, punaises de lit,
-                                        rongeurs...)
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="fr-col-12 fr-col-md-4" role="button">
-                        <div class="fr-rounded fr-background--white fr-border--bottom--orange fr-p-3v"
-                             aria-controls="problemes-confort" aria-expanded="false">
-                            <figure class="fr-m-0 fr-grid-row fr-grid-row--middle fr-grid-row--gutters  fr-text--center">
-                                <img src="{{ asset('img/la-temperature-low.svg') }}" alt="La propreté du logement"
-                                     width="50%" class="fr-col-3">
-                                <text class="fr-col-9 fr-text--bold fr-h6 fr-mb-0">Confort du logement</text>
-                            </figure>
-                            <div class="fr-col-12 fr-collapse fr-pl-3v" id="problemes-confort">
-                                Par exemple
-                                <ul>
-                                    <li>Mon logement est mal isolé</li>
-                                    <li>Le chauffage ne fonctionne pas bien</li>
-                                    <li>Les installations électriques ne sont pas en bon état</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="fr-col-12 fr-col-md-4" role="button">
-                        <div class="fr-rounded fr-background--white fr-border--bottom--orange fr-p-3v"
-                             aria-controls="problemes-batiment" aria-expanded="false">
-                            <figure class="fr-m-0 fr-grid-row fr-grid-row--middle fr-grid-row--gutters  fr-text--center">
-                                <img src="{{ asset('img/la-building.svg') }}" alt="La propreté du logement" width="50%"
-                                     class="fr-col-3">
-                                <text class="fr-col-9 fr-text--bold fr-h6 fr-mb-0">Etat du bâtiment</text>
-                            </figure>
-                            <div class="fr-col-12 fr-collapse fr-pl-3v" id="problemes-batiment">
-                                Par exemple
-                                <ul>
-                                    <li>Les escaliers du bâtiment sont abîmés</li>
-                                    <li>La toiture n'est pas en bon état</li>
-                                    <li>Les façades du bâtiment ne sont pas en bon état</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="fr-col-12 fr-col-md-4" role="button">
-                        <div class="fr-rounded fr-background--white fr-border--bottom--orange fr-p-3v"
-                             aria-controls="problemes-espace" aria-expanded="false">
-                            <figure class="fr-m-0 fr-grid-row fr-grid-row--middle fr-grid-row--gutters  fr-text--center">
-                                <img src="{{ asset('img/la-sun.svg') }}" alt="La propreté du logement" width="50%"
-                                     class="fr-col-3">
-                                <text class="fr-col-9 fr-text--bold fr-h6 fr-mb-0">Espaces de vie</text>
-                            </figure>
-                            <div class="fr-col-12 fr-collapse fr-pl-3v" id="problemes-espace">
-                                Par exemple
-                                <ul>
-                                    <li>Mon logement est en sous-sol</li>
-                                    <li>Il n'y a pas de fenêtre dans mon salon ou ma salle à manger</li>
-                                    <li>Les plafonds sont trop bas (moins de 2,20m)</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="fr-col-12 fr-col-md-4" role="button">
-                        <div class="fr-rounded fr-background--white fr-border--bottom--orange fr-p-3v"
-                             aria-controls="problemes-vie" aria-expanded="false">
-                            <figure class="fr-m-0 fr-grid-row fr-grid-row--middle fr-grid-row--gutters  fr-text--center">
-                                <img src="{{ asset('img/la-users.svg') }}" alt="La propreté du logement" width="50%"
-                                     class="fr-col-3">
-                                <text class="fr-col-9 fr-text--bold fr-h6 fr-mb-0">Vie commune</text>
-                            </figure>
-                            <div class="fr-col-12 fr-collapse fr-pl-3v" id="problemes-vie">
-                                Par exemple
-                                <ul>
-                                    <li>Le bruit extérieur est gênant</li>
-                                    <li>L'usage des lieux n'est pas respecté</li>
-                                    <li>Les déchets sont mal stockés</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                <div class="fr-col-12 fr-col-md-4">
+                    <img src="{{ asset('img/illustration-undraw-home.svg') }}" alt="Illustration cible">
                 </div>
             </div>
         </section>
-        <section class="fr-container fr-py-5w">
-            <div class="fr-grid-row fr-grid-row--center">
-                <header>
-                    <h4 class="fr-pb-5w fr-text--center fr-text-label--blue-france">Histologe améliore la prise en
-                        charge du mal-logement</h4>
-                </header>
+
+        <section class="fr-container fr-py-5w fr-py-md-10w">
+            <h2 class="fr-text--center">Comment ça marche ?</h2>
+
+            <div class="fr-grid-row fr-grid-row--center fr-grid-row--gutters comment-ca-marche">
+                <div class="fr-col-12 fr-col-md-3 fr-text--center">
+                    <img src="{{ asset('img/home/step-1.svg') }}" alt="Etape 1" class="img-mw-100">
+                    <br>
+                    <span>1. </span>
+                    Vous avez constaté des problèmes dans votre logement ?
+                </div>
+                <div class="fr-col-12 fr-col-md-3 fr-text--center">
+                    <img src="{{ asset('img/home/step-2.svg') }}" alt="Etape 2" class="img-mw-100">
+                    <br>
+                    <span>2. </span>
+                    Signalez votre problème en quelques clics sur le service Histologe.
+                </div>
+                <div class="fr-col-12 fr-col-md-3 fr-text--center">
+                    <img src="{{ asset('img/home/step-3.svg') }}" alt="Etape 3" class="img-mw-100">
+                    <br>
+                    <span>3. </span>
+                    Histologe transmet votre signalement à la bonne administration.
+                </div>
+                <div class="fr-col-12 fr-col-md-3 fr-text--center">
+                    <img src="{{ asset('img/home/step-4.svg') }}" alt="Etape 4" class="img-mw-100">
+                    <br>
+                    <span>4. </span>
+                    Le service adapté vous accompagne dans vos démarches.
+                </div>
+            </div>
+
+            <hr class="fr-mt-5w">
+
+            <h2 class="fr-text--center">J'ai un problème de logement : que faire ?</h2>
+            <p class="fr-text--center">
+                Cliquez sur les questions pour afficher les réponses.
+            </p>
+
+            <section class="fr-accordion">
+                <h3 class="fr-accordion__title">
+                    <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-quel-cas">
+                        Dans quel cas déposer un signalement ?
+                    </button>
+                </h3>
+                <div class="fr-collapse" id="accordion-quel-cas">
+                    Histologe permet de signaler les <strong>logements non décents</strong>.
+                    <br>
+                    Un logement est décent s’il remplit toutes les conditions suivantes :
+                    <ul>
+                        <li>Il est sécurisé</li>
+                        <li>Il ne met pas votre santé en danger</li>
+                        <li>Il contient des équipements essentiels (eau froide et eau chaude, chauffage, coin cuisine, etc.)</li>
+                        <li>Il est aéré correctement</li>
+                        <li>Il n'a pas d'infiltrations d’air</li>
+                        <li>Il n’a pas de parasites (cafards, punaises de lit…) ou nuisibles (rats…)</li>
+                    </ul>
+                    <em>
+                        Si votre logement ne respecte pas un ou plusieurs critères ou si vous avez un doute,
+                        déposez votre signalement sur Histologe !
+                    </em>
+                    <br>
+                    <div class="fr-alert fr-alert--warning fr-mt-3v">
+                        <p>
+                            L’entretien courant du logement est de votre responsabilité.
+                            Veillez à garder votre logement propre et ne pas casser ni abîmer les équipements.
+                            Contactez également votre assureur pour savoir si votre problème peut être pris en charge
+                            par l'assurance habitation.
+                        </p>
+                    </div>
+                </div>
+            </section>
+            <section class="fr-accordion">
+                <h3 class="fr-accordion__title">
+                    <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-arret-payer">
+                        Mon logement est indécent : est-ce que je peux arrêter de payer mon loyer ?
+                    </button>
+                </h3>
+                <div class="fr-collapse" id="accordion-arret-payer">
+                    Non.
+                    <br>
+                    C’est très important ! Même si votre logement est indécent, vous n’avez pas le droit d’arrêter
+                    de payer votre loyer ou une partie.
+                    <br>
+                    Si vous êtes allocataire, la CAF ou la MSA pourra par contre arrêter de 
+                    verser l’allocation logement à votre propriétaire. De votre côté, 
+                    <strong>vous devez continuer de payer votre loyer quoiqu’il arrive !</strong>
+                </div>
+            </section>
+            <section class="fr-accordion">
+                <h3 class="fr-accordion__title">
+                    <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-prevenir-proprietaire">
+                        Est-ce que je dois prévenir mon propriétaire que je dépose un signalement ?
+                    </button>
+                </h3>
+                <div class="fr-collapse" id="accordion-prevenir-proprietaire">
+                    Non.
+                    <br>
+                    Ce n’est pas obligatoire pour déposer un signalement, mais c’est recommandé !
+                    <br>
+                    Il est recommandé de prévenir votre propriétaire, bailleur ou agence immobilière par écrit. 
+                    Le meilleur moyen est d’envoyer une lettre recommandée. 
+                    Cette lettre doit contenir une description des problèmes dans votre logement 
+                    et doit informer votre propriétaire qu’il a 2 mois pour vous répondre et commencer les travaux.
+                    <div class="fr-alert fr-alert--success fr-mt-3v">
+                        <p>
+                            Pour vous aider, vous pouvez 
+                            <a href="https://faq.histologe.beta.gouv.fr/usager/probleme-logement/avertir-proprietaire" target="_blank" rel="noopener">
+                                consulter un modèle de lettre en cliquant ici
+                            </a>.
+                        </p>
+                    </div>
+                </div>
+            </section>
+            <section class="fr-accordion">
+                <h3 class="fr-accordion__title">
+                    <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-voir-signalement">
+                        Qui pourra voir mon signalement ?
+                    </button>
+                </h3>
+                <div class="fr-collapse" id="accordion-voir-signalement">
+                    Les services publics en charge de votre dossier.
+                    <br>
+                    En déposant un signalement sur Histologe, les acteurs publics compétents pouvant
+                    vous aider à trouver une solution auront accès à votre signalement. Les partenaires sont variés :
+                    l’ADIL, la mairie de votre commune, la CAF, l’agence régionale de santé…
+                    <br>
+                    Les partenaires qui vont voir vos signalements vont dépendre des problèmes dans votre logement !
+                </div>
+            </section>
+            <section class="fr-accordion">
+                <h3 class="fr-accordion__title">
+                    <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-proprietaire-prevenu">
+                        Si je dépose un signalement, est-ce que mon propriétaire sera prévenu ?
+                    </button>
+                </h3>
+                <div class="fr-collapse" id="accordion-proprietaire-prevenu">
+                    Oui.
+                    <br>
+                    Si votre logement est indécent, le propriétaire est obligé de faire les travaux pour régler les problèmes.
+                    Il sera donc prévenu par les services compétents.
+                </div>
+            </section>
+            <section class="fr-accordion">
+                <h3 class="fr-accordion__title">
+                    <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-nouveau-logement">
+                        Est-ce que Histologe va me permettre d'avoir un nouveau logement ?
+                    </button>
+                </h3>
+                <div class="fr-collapse" id="accordion-nouveau-logement">
+                    Non.
+                    <br>
+                    L’objectif du service Histologe et de (re)mettre votre logement aux normes.
+                    Ce n’est pas un service de relogement ou de demande de logement social.
+                </div>
+            </section>
+
+            <h2 class="fr-mt-5w">Un signalement, et après ?</h2>
+
+            <p>
+                Une fois réceptionné par nos services, <strong>votre signalement va être qualifié</strong>.
+                Nous déterminons à quelle procédure correspond votre situation parmi quatre procédures :
+                la non décence, l'infraction au RSD (règlement sanitaire départemental), l'insalubrité et
+                le péril. En fonction de la procédure, différents partenaires sont impliqués et différentes
+                mesures peuvent être prises.
+            </p>
+
+            <p>
+                <strong>Quelle que soit la procédure, gardez les infos suivantes à l'esprit :</strong>
+            </p>
+
+            <div class="fr-grid-row fr-grid-row--gutters procedure-items">
+                <div class="fr-col-12 fr-col-md-6">
+                    <span class="fr-icon-success-line" aria-hidden="true"></span>
+                    <p>
+                        Les procédures et la réalisation des travaux peuvent durer plusieurs mois,
+                        n'hésitez pas à mettre à jour votre dossier depuis la page de suivi.
+                    </p>
+                </div>
+                <div class="fr-col-12 fr-col-md-6">
+                    <span class="fr-icon-success-line" aria-hidden="true"></span>
+                    <p>
+                        L’entretien courant du logement est de votre responsabilité.
+                        Veillez à garder votre logement propre et ne pas casser ni abîmer les équipements.
+                    </p>
+                </div>
+                <div class="fr-col-12 fr-col-md-6">
+                    <span class="fr-icon-success-line" aria-hidden="true"></span>
+                    <p>
+                        Certains problèmes sont pris en charge par votre assurance habitation : contactez votre assureur !
+                    </p>
+                </div>
+                <div class="fr-col-12 fr-col-md-6">
+                    <span class="fr-icon-success-line" aria-hidden="true"></span>
+                    <p>
+                        Dans tous les cas, vous devez payer votre loyer.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="fr-py-5w fr-background-contrast--blue-france">
+            <h2 class="fr-container fr-pb-5w">Objectif : sortir du mal-logement</h2>
+
+            <div class="fr-container">
                 <div class="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
-                    <div class="fr-col-md-6">
-                        <figure class="fr-grid-row">
-                            <div>
-                                <img src="{{ asset('img/icon-user-comment.PNG') }}" alt="commentaire">
-                            </div>
-                            <figcaption class="fr-col">
-                                <blockquote class="fr-pl-5v fr-blockquote fr-text--alt">
+                    <div class="fr-col-12 fr-col-md-8">
+                        <figure class="fr-quote">
+                            <blockquote>
+                                <p>
                                     Logement plein de moisissures et mes vêtements ne sentent pas bon. J'ai honte
                                     d'inviter des amis et du coup j'ai tendance à m'isoler car je n'ai pas envie d'aller
                                     crier mon problème sur les toits. Avec Histologe j'ai pu de chez moi sortir de
                                     l'ombre en quelques clics via mon téléphone portable. Je suis maintenant accompagné
                                     pour m'aider à résoudre ces problèmes.
-                                    <strong class="fr-display-block fr-mt-3v">Mathieu F.</strong>
-                                </blockquote>
+                                </p>
+                            </blockquote>
+                            <figcaption>
+                                <p class="fr-quote__author">Mathieu F.</p>
                             </figcaption>
                         </figure>
-                    </div>
-                    <div class="fr-col-md-6">
-                        <figure class="fr-grid-row">
-                            <div>
-                                <img src="{{ asset('img/icon-user-comment.PNG') }}" alt="commentaire">
-                            </div>
-                            <figcaption class="fr-col">
-                                <blockquote class="fr-pl-5v fr-blockquote fr-text--alt">
+
+                        <figure class="fr-quote fr-mt-3w">
+                            <blockquote>
+                                <p>
                                     1 an et 11 mois que j'occupe un appartement sans chauffage malgré les promesses de
                                     mon propriétaire de résoudre ce problème. En déposant un signalement sur la
                                     plateforme Histologe et accompagnée par les bons acteurs, le propriétaire a
                                     finalement missionné un artisan pour m'installer les équipements de chauffage. Avec
                                     mon mari nous n'avons plus froid ! Merci
-                                    <strong class="fr-display-block fr-mt-3v">Suzanne R.</strong>
-                                </blockquote>
+                                </p>
+                            </blockquote>
+                            <figcaption>
+                                <p class="fr-quote__author">Suzanne R.</p>
                             </figcaption>
                         </figure>
+                    </div>
+                    <div class="fr-col-12 fr-col-md-4">
+                        <img src="{{ asset('img/illustration-undraw-target.svg') }}" alt="Illustration cible">
                     </div>
                 </div>
             </div>
         </section>
-        <section class="fr-container--fluid fr-background--blue-france fr-py-5w">
+        <section class="fr-container--fluid fr-py-5w">
             <div class="fr-container">
                 <header class="fr-pb-5w">
-                    <h5 class="fr-text--white fr-text--center">Histologe en quelques chiffres</h5>
+                    <h2 class="fr-text--center">Le service en quelques chiffres</h2>
                 </header>
-                <div class="fr-grid-row fr-grid-row--center fr-text--white">
-                    <div class="fr-col-12 fr-col-md-4 fr-py-2v fr-py-md-0">
-                        <figure class="fr-grid-row fr-grid-row--middle">
-                            <img src="{{ asset('img/icon-house-info.svg') }}" alt="Info" class="fr-col-2">
-                            <figcaption class="fr-col-10 text-white fr-pl-2v">
-                                <strong class="fr-display-block">{{ stats.total }}</strong>
-                                signalements enregistrés
-                            </figcaption>
-                        </figure>
-                    </div>
-                    <div class="fr-col-12 fr-col-md-4 fr-py-2v fr-py-md-0">
-                        <figure class="fr-grid-row fr-grid-row--middle">
-                            <img src="{{ asset('img/icon-chart-bubble.svg') }}" alt="Info" class="fr-col-2">
-                            <figcaption class="fr-col-10 text-white fr-pl-2v">
-                                <strong class="fr-display-block">{{ stats.pris_en_compte }} %</strong>
-                                des signalements pris en charge
-                            </figcaption>
-                        </figure>
-                    </div>
-                    <div class="fr-col-12 fr-col-md-4 fr-py-2v fr-py-md-0">
-                        <figure class="fr-grid-row fr-grid-row--middle">
-                            <img src="{{ asset('img/icon-pass.svg') }}" alt="Info" class="fr-col-2">
-                            <figcaption class="fr-col-10 text-white fr-pl-2v">
-                                <strong class="fr-display-block">{{ stats.clotures }} %</strong>
-                                de signalements clôturés
-                            </figcaption>
-                        </figure>
-                    </div>
-                </div>
-                <div class="fr-mt-5w fr-text--center fr-text--white">
-                    <a href="{{ path('front_statistiques') }}">Voir les statistiques</a>
-                </div>
-            </div>
-        </section>
-        <section class="fr-container--fluid fr-background-alt--blue-france fr-py-5w">
-            <div class="fr-container">
-                <header class="fr-pb-5w">
-                    <h4 class="fr-text-label--blue-france fr-text--center">Une solution reconnue !</h4>
-                </header>
-                <div class="fr-grid-row fr-grid-row--center fr-grid-row--gutters fr-text--center">
-                    <div class="fr-col-md-3">
-                        <figure class="fr-m-2v">
-                            <img src="{{ asset('img/Logo_label_2021.png') }}" alt="label_innovant">
-                            <figcaption class="fr-col fr-mt-5w">
-                                <div class="fr-text--bold">Lauréat du label Territoire Innovant (interconnectés 2021)
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12 fr-col-md-4">
+                        <div class="fr-card fr-card--no-arrow">
+                            <div class="fr-card__body fr-text--center">
+                                <div class="fr-card__content">
+                                    <h3 class="fr-card__title fr-h1 fr-text-title--blue-france">
+                                        {{ stats.total }}
+                                    </h3>
+                                    <p class="fr-card__desc fr-text--lg">signalements enregistrés</p>
                                 </div>
-                                <small>Le label « Territoire Innovant » est décerné aux collectivités qui ont mis en
-                                    œuvre des initiatives marquantes en termes d’usages ou de services, ce label se
-                                    différencie en reposant sur des valeurs comme critères d’attribution.</small>
-                            </figcaption>
-                        </figure>
+                            </div>
+                        </div>
                     </div>
-                    <div class="fr-col-md-3">
-                        <figure class="fr-m-2v">
-                            <img src="{{ asset('img/gazette.png') }}" alt="gazette">
-                            <figcaption class="fr-col fr-mt-5w">
-                                <div class="fr-text--bold">Prix Territorial 2020 de la Gazette des Communes.</div>
-                                <small>Ce prix récompense les projets locaux impliquant plusieurs métiers et
-                                    services.</small>
-                            </figcaption>
-                        </figure>
+                    <div class="fr-col-12 fr-col-md-4">
+                        <div class="fr-card fr-card--no-arrow">
+                            <div class="fr-card__body fr-text--center">
+                                <div class="fr-card__content">
+                                    <h3 class="fr-card__title fr-h1 fr-text-title--blue-france">
+                                        {{ stats.pris_en_compte }} %
+                                    </h3>
+                                    <p class="fr-card__desc fr-text--lg">des signalements pris en charge</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="fr-col-md-3">
-                        <figure class="fr-m-2v">
-                            <img src="{{ asset('img/exclusion-energetique.png') }}" alt="exclusion_energetique">
-                            <figcaption class="fr-col fr-mt-5w">
-                                <div class="fr-text--bold">Lauréat National de Stop Exclusion énergétique !</div>
-                                <small>Ce prix récompense les solutions qui améliorent la qualité des logements des
-                                    précaires (énergétique ou sanitaire).</small>
-                            </figcaption>
-                        </figure>
+                    <div class="fr-col-12 fr-col-md-4">
+                        <div class="fr-card fr-card--no-arrow">
+                            <div class="fr-card__body fr-text--center">
+                                <div class="fr-card__content">
+                                    <h3 class="fr-card__title fr-h1 fr-text-title--blue-france">
+                                        {{ stats.clotures }} %
+                                    </h3>
+                                    <p class="fr-card__desc fr-text--lg">de signalements clôturés</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="fr-col-md-3">
-                        <figure class="fr-m-2v">
-                            <img src="{{ asset('img/itheasfp.png') }}" alt="inititive_locale">
-                            <figcaption class="fr-col fr-mt-5w">
-                                <div class="fr-text--bold">Prix de la grande enquête Initiatives Locales 2020</div>
-                                <small>Histologe a été primé dans la catégorie "Cadre de vie" parmi plus de 400
-                                    candidatures.</small>
-                            </figcaption>
-                        </figure>
-                    </div>
+                </div>
+                <div class="fr-mt-5w fr-text--center">
+                    <a class="fr-btn fr-btn--icon-left fr-fi-arrow-right-line" href="{{ path('front_statistiques') }}">Voir les statistiques</a>
                 </div>
             </div>
         </section>
     </main>
-{% endblock %}
-{% block javascripts %}
-    <script type="text/javascript" src={{ asset('js/slider.js') }}></script>
-    <script>
-        new HistoSlider.init('#homeslider');
-    </script>
 {% endblock %}

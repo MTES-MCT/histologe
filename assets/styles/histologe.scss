@@ -150,10 +150,6 @@ small {
     }
 }
 
-.fr-blockquote {
-    border-left: .3rem solid var(--border-plain-blue-france);
-}
-
 .fr-list--hover li:hover {
     background-color: white;
 }
@@ -349,20 +345,8 @@ h2.home {
     line-height: 32px;
 }
 
-.home-form label {
-    font-weight: normal;
-    font-size: 20px;
-    line-height: 30px;
-    color: #FFFFFF;
-}
-
-@media (min-width: 768px) {
-    .home-form button {
-        position: relative;
-        display: block;
-        top: 100%;
-        margin-top: -40px;
-    }
+#postal_code_search_postalcode {
+    background-color: #FFFFFF;
 }
 
 label.fr-toggle__label[for="signalement-accept-cgu"] {
@@ -404,5 +388,34 @@ a.disabled-link {
 
     &:hover {
         background: var(--background-disabled-grey);
+    }
+}
+
+img.img-mw-100 {
+    max-width: 100%;
+}
+
+@media (max-width: 767px) {
+    .comment-ca-marche {
+        img {
+            display: none;
+        }
+    }
+}
+@media (min-width: 768px) {
+    .comment-ca-marche {
+        span {
+            display: none;
+        }
+    }
+}
+
+div.procedure-items {
+    span.fr-icon-success-line {
+        color: var(--border-plain-blue-france);
+    }
+    p {
+        margin-top: -30px;
+        margin-left: 30px;
     }
 }
