@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Manager\TerritoryManager;
 use App\Service\DashboardWidget\Widget;
 use App\Service\DashboardWidget\WidgetLoaderCollection;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,6 +22,7 @@ class WidgetController extends AbstractController
         WidgetLoaderCollection $widgetLoaderCollection,
         SerializerInterface $serializer,
         TerritoryManager $territoryManager,
+        LoggerInterface $logger,
         string $widgetType
     ): Response {
         if ($this->isGranted('ROLE_ADMIN')) {
@@ -28,7 +30,12 @@ class WidgetController extends AbstractController
         } else {
             /** @var User $user */
             $user = $this->getUser();
-            $territory = $territoryManager->find($user->getTerritory()->getId());
+            $territory = $user->getTerritory();
+            if (null === $territory) {
+                $logger->critical(sprintf('%s has no territory', $user->getEmail()));
+
+                return $this->json([], Response::HTTP_BAD_REQUEST);
+            }
         }
         $widget = new Widget($widgetType, $territory);
         $this->denyAccessUnlessGranted('VIEW_WIDGET', $widget);
