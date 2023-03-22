@@ -14,7 +14,7 @@
                 {% elseif is_granted('ROLE_ADMIN_TERRITORY') %}
                     {{ app.user.territory.name }}
                 {% else %}
-                    {{ app.user.partner.nom }}
+                    {{ app.user.partner ? app.user.partner.nom : '' }}
                 {% endif %}
                 <br>
                 <small class="fr-text-label--blue-france">{{ app.user.prenom ~' '~app.user.nom[:1]|capitalize~'.' }}</small>
