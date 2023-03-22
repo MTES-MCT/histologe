@@ -11,22 +11,22 @@ class SignalementAffectationListView
     public const MAX_LIST_PAGINATION = 30;
 
     public function __construct(
-      private ?int $id = null,
-      private ?string $uuid = null,
-      private ?string $reference = null,
-      private ?\DateTimeImmutable $createdAt = null,
-      private ?int $statut = null,
-      private ?string $scoreCreation = null,
-      private ?string $newScoreCreation = null,
-      private ?bool $isNotOccupant = null,
-      private ?string $nomOccupant = null,
-      private ?string $prenomOccupant = null,
-      private ?string $adresseOccupant = null,
-      private ?string $villeOccupant = null,
-      private \DateTimeImmutable|string|null $lastSuiviAt = null,
-      private ?string $lastSuiviBy = null,
-      private ?array $affectations = null,
-      private ?array $qualifications = null,
+        private ?int $id = null,
+        private ?string $uuid = null,
+        private ?string $reference = null,
+        private ?\DateTimeImmutable $createdAt = null,
+        private ?int $statut = null,
+        private ?string $scoreCreation = null,
+        private ?string $newScoreCreation = null,
+        private ?bool $isNotOccupant = null,
+        private ?string $nomOccupant = null,
+        private ?string $prenomOccupant = null,
+        private ?string $adresseOccupant = null,
+        private ?string $villeOccupant = null,
+        private \DateTimeImmutable|string|null $lastSuiviAt = null,
+        private ?string $lastSuiviBy = null,
+        private ?array $affectations = null,
+        private ?array $qualifications = null,
     ) {
     }
 
@@ -112,9 +112,11 @@ class SignalementAffectationListView
 
     public function hasNDE(): bool
     {
-        foreach ($this->qualifications as $qualification) {
-            if (Qualification::NON_DECENCE_ENERGETIQUE->name === $qualification) {
-                return true;
+        if (null !== $this->qualifications) {
+            foreach ($this->qualifications as $qualification) {
+                if (Qualification::NON_DECENCE_ENERGETIQUE->name === $qualification) {
+                    return true;
+                }
             }
         }
 

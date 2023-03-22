@@ -18,6 +18,11 @@ class SignalementAffectationListViewFactory
         } else {
             $status = $data['statut'];
         }
+        if (null !== $data['qualifications']) {
+            $qualifications = explode(SignalementAffectationListView::SEPARATOR_GROUP_CONCAT, $data['qualifications']);
+        } else {
+            $qualifications = null;
+        }
 
         return new SignalementAffectationListView(
             id: $data['id'],
@@ -35,7 +40,7 @@ class SignalementAffectationListViewFactory
             lastSuiviAt: $data['lastSuiviAt'],
             lastSuiviBy: $data['lastSuiviBy'],
             affectations: $affectations,
-            qualifications: explode(SignalementAffectationListView::SEPARATOR_GROUP_CONCAT, $data['qualifications'])
+            qualifications: $qualifications
         );
     }
 

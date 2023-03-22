@@ -157,7 +157,7 @@ class FrontSignalementController extends AbstractController
                                     $criticite = $em->getRepository(Criticite::class)->find($data[$key][$idSituation]['critere'][$idCritere]['criticite']);
                                     $signalement->addCriticite($criticite);
                                     // TODO : replace getQualification with an array of enum
-                                    if (\in_array(Qualification::NON_DECENCE_ENERGETIQUE->value, $criticite->getQualification())) {
+                                    if (null !== $criticite->getQualification() && \in_array(Qualification::NON_DECENCE_ENERGETIQUE->value, $criticite->getQualification())) {
                                         $listNDECriticites[] = $criticite->getId();
                                     }
                                 }
