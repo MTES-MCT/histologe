@@ -12,7 +12,10 @@
     {% if signalement.statut is not same as(1) and not isClosed and not isClosedForMe and ((isAffected and isAccepted)) or is_granted('ROLE_ADMIN_TERRITORY') %}
         {% include '_partials/_modal_cloture.html.twig' %}
     {% endif %}
-    {% if isSignalementNDE and is_granted('USER_SEE_NDE', app.user) %}     
+    {% if isSignalementNDE and is_granted('USER_SEE_NDE', app.user) 
+        and signalement.statut != constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') 
+        and signalement.statut != constant('App\\Entity\\Signalement::STATUS_REFUSED')
+        and not isClosed and not isClosedForMe and (isAccepted or is_granted('ROLE_ADMIN_TERRITORY') )  %}                       
         {% include '_partials/_modal_edit_nde.html.twig' %}        
     {% endif %}
     <section
@@ -438,7 +441,7 @@
         </div>
         {% if isSignalementNDE and is_granted('USER_SEE_NDE', app.user) %}       
         <section class="fr-accordion">
-            <h3 class="fr-accordion__title ">
+            <h3 class="fr-accordion__title">
                 <button class="fr-accordion__btn fr-btn--icon-left fr-fi-chat-quote-fill fr-icon--sm fr-text-label--blue-france" aria-expanded="true" aria-controls="accordion-nde">Non décence énergétique</button>
             </h3>
             <div class="fr-collapse" id="accordion-nde">
@@ -454,13 +457,15 @@
                     <div class="fr-col-12 fr-col-md-5">                    
                         <strong>Analyse :</strong> <span class="{{ signalementQualificationNDE.status|status_to_css }}">{{ signalementQualificationNDE.status.label }}</span>
                     </div>
-                    
-                    <div class="fr-col-12 fr-col-md-2 fr-text--right">
-                        <button class="fr-btn fr-btn--secondary fr-fi-edit-line fr-btn--icon-left" data-fr-opened="false"
-                                aria-controls="fr-modal-edit-nde">
-                            Modifier
-                        </button>
-                    </div>
+                                  
+                    {% if signalement.statut != constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') and signalement.statut != constant('App\\Entity\\Signalement::STATUS_REFUSED') and not isClosed and not isClosedForMe and (isAccepted or is_granted('ROLE_ADMIN_TERRITORY') ) %}
+                        <div class="fr-col-12 fr-col-md-2 fr-text--right">
+                            <button class="fr-btn fr-btn--secondary fr-fi-edit-line fr-btn--icon-left" data-fr-opened="false"
+                                    aria-controls="fr-modal-edit-nde">
+                                Modifier
+                            </button>
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="fr-grid-row">
                     <strong>Désordre(s) concerné(s) :</strong> 
