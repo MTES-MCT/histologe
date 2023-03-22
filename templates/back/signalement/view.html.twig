@@ -449,7 +449,14 @@
                         {% else %}
                             {% set calcul = signalementQualificationNDE.details.consommation_energie %}
                         {% endif %}
-                       <strong>Consommation d'énergie :</strong> <span class="fr-badge fr-badge--info fr-badge--sm">{{ calcul|round(2) }} kWh/m²/an</span>
+                       <strong>Consommation d'énergie :</strong> 
+                       <span class="fr-badge fr-badge--info fr-badge--sm">
+                        {% if signalementQualificationNDE.details.DPE is same as null  %}
+                           A vérifier
+                        {% else %} 
+                           {{calcul|round(2)}} kWh/m²/an
+                        {% endif %} 
+                        </span>
                     </div>
                     <div class="fr-col-12 fr-col-md-5">                    
                         <strong>Analyse :</strong> <span class="{{ signalementQualificationNDE.status|status_to_css }}">{{ signalementQualificationNDE.status.label }}</span>
