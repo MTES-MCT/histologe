@@ -113,34 +113,24 @@
                             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-my-3w"
                                 id="signalement-edit-nde-form-row">
                                 {# Si date de DPE à partir du 01/01/2023 -> On affiche un champ unique kWh/m²/an sur toute la largeur #}
-                                {% if signalementQualificationNDE.details.date_dernier_dpe and signalementQualificationNDE.details.date_dernier_dpe|date('Y') >= '2023' %}
-                                    <div class="fr-col-12">
-                                        <div class="fr-input-group">
-                                            <label class="fr-label" for="signalement-edit-nde-conso-energie">
-                                                Consommation énergétique
-                                            </label>
-                                            <input class="fr-input fr-col-10" style="display: inline;" pattern="[0-9]*" inputmode="numeric" type="number" id="signalement-edit-nde-conso-energie" name="consommationEnergie" value="{{ signalementQualificationNDE.details.consommation_energie }}"> kWh/m²/an
-                                        </div>
+                                {% set isDPE2023 = signalementQualificationNDE.details.date_dernier_dpe and signalementQualificationNDE.details.date_dernier_dpe|date('Y') >= '2023' %}
+                                <div class="{% if isDPE2023 %}fr-col-12{% else %}fr-col-6{% endif %} field-nde-conso-energie">
+                                    <div class="fr-input-group">
+                                        <label class="fr-label" for="signalement-edit-nde-conso-energie">
+                                            Consommation énergétique
+                                        </label>
+                                        <input class="fr-input fr-col-10" style="display: inline;" pattern="[0-9]*" inputmode="numeric" type="number" id="signalement-edit-nde-conso-energie" name="consommationEnergie" value="{{ signalementQualificationNDE.details.consommation_energie }}">
+                                        kWh<span class="{% if not isDPE2023 %}fr-hidden{% endif %} field-nde-conso-energie-unity">/m²</span>/an
                                     </div>
-
-                                {% else %}
-                                    <div class="fr-col-6">
-                                        <div class="fr-input-group">
-                                            <label class="fr-label" for="signalement-edit-nde-conso-energie">
-                                                Consommation énergétique
-                                            </label>
-                                            <input class="fr-input fr-col-10" style="display: inline;" pattern="[0-9]*" inputmode="numeric" type="number" id="signalement-edit-nde-conso-energie" name="consommationEnergie" value="{{ signalementQualificationNDE.details.consommation_energie }}"> kWh/an
-                                        </div>
+                                </div>
+                                <div class="{% if isDPE2023 %}fr-hidden{% else %}fr-col-6{% endif %} field-nde-superficie">
+                                    <div class="fr-input-group">
+                                        <label class="fr-label" for="signalement-edit-nde-superficie">
+                                            Superficie du logement
+                                        </label>
+                                        <input class="fr-input fr-col-10" style="display: inline;" pattern="[0-9]*" type="number" id="signalement-edit-nde-superficie" name="superficie" value="{{signalement.superficie}}"> m²
                                     </div>
-                                    <div class="fr-col-6">
-                                        <div class="fr-input-group">
-                                            <label class="fr-label" for="signalement-edit-nde-superficie">
-                                                Superficie du logement
-                                            </label>
-                                            <input class="fr-input fr-col-10" style="display: inline;" pattern="[0-9]*" type="number" id="signalement-edit-nde-superficie" name="superficie" value="{{signalement.superficie}}"> m²
-                                        </div>
-                                    </div>
-                                {% endif %}
+                                </div>
                             </div>                            
                             <input type="hidden" name="_token" id="signalement-edit-nde-token" value="{{ csrf_token('signalement_edit_nde_'~signalement.id) }}">
                         </form>
