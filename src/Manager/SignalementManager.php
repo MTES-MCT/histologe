@@ -255,12 +255,12 @@ class SignalementManager extends AbstractManager
 
         // // mise à jour du signalementqualification
         if ('2023-01-02' === $qualificationNDERequest->getDateDernierBail()
-        && $signalementQualification->getDernierBailAt()->format('Y') < '2023'
+        && (null === $signalementQualification->getDernierBailAt() || $signalementQualification->getDernierBailAt()?->format('Y') < '2023')
         ) {
             $signalementQualification->setDernierBailAt(new DateTimeImmutable('2023-01-02'));
         }
         if ('1970-01-01' === $qualificationNDERequest->getDateDernierBail()
-        && $signalementQualification->getDernierBailAt()->format('Y') >= '2023'
+        && (null === $signalementQualification->getDernierBailAt() || $signalementQualification->getDernierBailAt()?->format('Y') >= '2023')
         ) {
             $signalementQualification->setDernierBailAt(new DateTimeImmutable('1970-01-01'));
         }
