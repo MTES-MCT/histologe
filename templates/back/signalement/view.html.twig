@@ -12,7 +12,7 @@
     {% if signalement.statut is not same as(1) and not isClosed and not isClosedForMe and ((isAffected and isAccepted)) or is_granted('ROLE_ADMIN_TERRITORY') %}
         {% include '_partials/_modal_cloture.html.twig' %}
     {% endif %}
-    {% if isSignalementNDE and is_granted('USER_SEE_NDE', app.user) %}     
+    {% if canEditNDE %}
         {% include '_partials/_modal_edit_nde.html.twig' %}        
     {% endif %}
     <section
@@ -461,13 +461,15 @@
                     <div class="fr-col-12 fr-col-md-5">                    
                         <strong>Analyse :</strong> <span class="{{ signalementQualificationNDE.status|status_to_css }}">{{ signalementQualificationNDE.status.label }}</span>
                     </div>
-                    
-                    <div class="fr-col-12 fr-col-md-2 fr-text--right">
-                        <button class="fr-btn fr-btn--secondary fr-fi-edit-line fr-btn--icon-left" data-fr-opened="false"
-                                aria-controls="fr-modal-edit-nde">
-                            Modifier
-                        </button>
-                    </div>
+                                  
+                    {% if canEditNDE %}
+                        <div class="fr-col-12 fr-col-md-2 fr-text--right">
+                            <button class="fr-btn fr-btn--secondary fr-fi-edit-line fr-btn--icon-left" data-fr-opened="false"
+                                    aria-controls="fr-modal-edit-nde">
+                                Modifier
+                            </button>
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="fr-grid-row">
                     <strong>Désordre(s) concerné(s) :</strong> 
