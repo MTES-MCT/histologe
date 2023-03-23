@@ -21,11 +21,9 @@
                                 </div>
                             </div>
                         </div>
-                        </br>
-                        </br>
                         <form method="POST" name="signalement-edit-nde" id="signalement-edit-nde-form" enctype="application/json"
                         action="{{ path('back_signalement_qualification_editer',{uuid:signalement.uuid, signalement_qualification:signalementQualificationNDE.id}) }}">
-                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle"
+                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-my-3w"
                                 id="signalement-edit-nde-form-row">
                                 <div class="fr-col-6">
                                     <fieldset class="fr-fieldset fr-fieldset--inline">
@@ -71,9 +69,7 @@
                                     </fieldset>
                                 </div>
                             </div>
-                            </br>
-                            </br>
-                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle"
+                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-my-3w"
                                 id="signalement-edit-nde-form-row">
                                 <div class="fr-col-6">
                                     <fieldset class="fr-fieldset fr-fieldset--inline">
@@ -114,9 +110,7 @@
                                     </fieldset>
                                 </div>
                             </div>
-                            </br>
-                            </br>
-                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle"
+                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-my-3w"
                                 id="signalement-edit-nde-form-row">
                                 {# Si date de DPE à partir du 01/01/2023 -> On affiche un champ unique kWh/m²/an sur toute la largeur #}
                                 {% if signalementQualificationNDE.details.date_dernier_dpe and signalementQualificationNDE.details.date_dernier_dpe|date('Y') >= '2023' %}
