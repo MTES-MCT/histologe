@@ -12,7 +12,7 @@
     {% if signalement.statut is not same as(1) and not isClosed and not isClosedForMe and ((isAffected and isAccepted)) or is_granted('ROLE_ADMIN_TERRITORY') %}
         {% include '_partials/_modal_cloture.html.twig' %}
     {% endif %}
-    {% if canEditNDE %}                       
+    {% if canEditNDE %}
         {% include '_partials/_modal_edit_nde.html.twig' %}        
     {% endif %}
     <section
