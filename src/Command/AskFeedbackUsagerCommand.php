@@ -63,7 +63,7 @@ class AskFeedbackUsagerCommand extends Command
         foreach ($signalements as $signalement) {
             ++$totalRead;
             $toRecipients = $signalement->getMailUsagers();
-            if (!empty($toRecipients)) {
+            if (!empty($toRecipients) && null !== $signalement->getCodeSuivi()) {
                 foreach ($toRecipients as $toRecipient) {
                     $this->notificationService->send(
                         NotificationService::TYPE_SIGNALEMENT_FEEDBACK_USAGER,
