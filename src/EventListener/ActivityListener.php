@@ -76,8 +76,9 @@ class ActivityListener implements EventSubscriberInterface
                 }
 
                 if ($entity->getIsPublic() && Signalement::STATUS_REFUSED !== $entity->getSignalement()->getStatut()) {
-                    $toRecipients = $entity->getSignalement()->getMailUsagers();
-                    if (!empty($toRecipients) && Signalement::STATUS_CLOSED !== $entity->getSignalement()->getStatut()) {
+                    $toRecipients = new ArrayCollection($entity->getSignalement()->getMailUsagers());
+                    if (!$toRecipients->isEmpty() && Signalement::STATUS_CLOSED !== $entity->getSignalement()->getStatut()) {
+                        $toRecipients->removeElement($entity->getCreatedBy()?->getEmail());
                         foreach ($toRecipients as $toRecipient) {
                             $this->notifier->send(
                                 NotificationService::TYPE_NEW_COMMENT_FRONT,
