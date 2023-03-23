@@ -64,6 +64,9 @@ class AskFeedbackUsagerCommand extends Command
             ++$totalRead;
             $toRecipients = $signalement->getMailUsagers();
             if (!empty($toRecipients)) {
+                if (null !== $signalement->getCodeSuivi()) {
+                    $signalement->setCodeSuivi(md5(uniqid()));
+                }
                 foreach ($toRecipients as $toRecipient) {
                     $this->notificationService->send(
                         NotificationService::TYPE_SIGNALEMENT_FEEDBACK_USAGER,
