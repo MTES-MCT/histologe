@@ -21,6 +21,7 @@ use App\Repository\CriticiteRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
+use App\Security\Voter\UserVoter;
 use App\Service\Signalement\CriticiteCalculatorService;
 use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
@@ -129,6 +130,9 @@ class BackSignalementController extends AbstractController
 
         $files = $parameterBag->get('files');
 
+        $canEditNDE = $isSignalementNDEActif && $this->isGranted(UserVoter::SEE_NDE, $this->getUser())
+        && $canEditSignalement;
+
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
             'situations' => $criticitesArranged,
@@ -149,6 +153,7 @@ class BackSignalementController extends AbstractController
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
             'files' => $files,
+            'canEditNDE' => $canEditNDE,
         ]);
     }
 

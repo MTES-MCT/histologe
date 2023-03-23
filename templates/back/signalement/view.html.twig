@@ -12,10 +12,7 @@
     {% if signalement.statut is not same as(1) and not isClosed and not isClosedForMe and ((isAffected and isAccepted)) or is_granted('ROLE_ADMIN_TERRITORY') %}
         {% include '_partials/_modal_cloture.html.twig' %}
     {% endif %}
-    {% if isSignalementNDE and is_granted('USER_SEE_NDE', app.user) 
-        and signalement.statut != constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') 
-        and signalement.statut != constant('App\\Entity\\Signalement::STATUS_REFUSED')
-        and not isClosed and not isClosedForMe and (isAccepted or is_granted('ROLE_ADMIN_TERRITORY') )  %}                       
+    {% if canEditNDE %}                       
         {% include '_partials/_modal_edit_nde.html.twig' %}        
     {% endif %}
     <section
@@ -458,7 +455,7 @@
                         <strong>Analyse :</strong> <span class="{{ signalementQualificationNDE.status|status_to_css }}">{{ signalementQualificationNDE.status.label }}</span>
                     </div>
                                   
-                    {% if signalement.statut != constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') and signalement.statut != constant('App\\Entity\\Signalement::STATUS_REFUSED') and not isClosed and not isClosedForMe and (isAccepted or is_granted('ROLE_ADMIN_TERRITORY') ) %}
+                    {% if canEditNDE %}
                         <div class="fr-col-12 fr-col-md-2 fr-text--right">
                             <button class="fr-btn fr-btn--secondary fr-fi-edit-line fr-btn--icon-left" data-fr-opened="false"
                                     aria-controls="fr-modal-edit-nde">
