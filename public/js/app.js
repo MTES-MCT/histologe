@@ -1095,18 +1095,3 @@ const updateResultNDE = () => {
         
     }
 }
-
-document.querySelector('#signalement-edit-nde-dpe-date-before').addEventListener('change', (event) => {
-    document.querySelector('.field-nde-conso-energie').classList.add('fr-col-6')
-    document.querySelector('.field-nde-conso-energie').classList.remove('fr-col-12')
-    document.querySelector('.field-nde-conso-energie-unity').classList.add('fr-hidden')
-    document.querySelector('.field-nde-superficie').classList.add('fr-col-6')
-    document.querySelector('.field-nde-superficie').classList.remove('fr-hidden')
-});
-document.querySelector('#signalement-edit-nde-dpe-date-after').addEventListener('change', (event) => {
-    document.querySelector('.field-nde-conso-energie').classList.remove('fr-col-6')
-    document.querySelector('.field-nde-conso-energie').classList.add('fr-col-12')
-    document.querySelector('.field-nde-conso-energie-unity').classList.remove('fr-hidden')
-    document.querySelector('.field-nde-superficie').classList.remove('fr-col-6')
-    document.querySelector('.field-nde-superficie').classList.add('fr-hidden')
-});

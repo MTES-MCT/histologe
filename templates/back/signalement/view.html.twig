@@ -444,16 +444,16 @@
             <div class="fr-collapse" id="accordion-nde">
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-5">
-                        {% if signalementQualificationNDE.details.date_dernier_dpe|date('Y') < '2023' and signalement.superficie is not null and signalement.superficie > 0 %}
-                            {% set calcul = signalementQualificationNDE.details.consommation_energie / signalement.superficie %}
-                        {% else %}
-                            {% set calcul = signalementQualificationNDE.details.consommation_energie %}
-                        {% endif %}
                        <strong>Consommation d'énergie :</strong> 
                        <span class="fr-badge fr-badge--info fr-badge--sm">
                         {% if signalementQualificationNDE.details.DPE is same as null  %}
                            A renseigner
-                        {% else %} 
+                        {% else %}
+                            {% if signalementQualificationNDE.details.date_dernier_dpe|date('Y') < '2023' and signalement.superficie is not null and signalement.superficie > 0 %}
+                                {% set calcul = signalementQualificationNDE.details.consommation_energie / signalement.superficie %}
+                            {% else %}
+                                {% set calcul = signalementQualificationNDE.details.consommation_energie %}
+                            {% endif %}
                            {{calcul|round(2)}} kWh/m²/an
                         {% endif %} 
                         </span>
