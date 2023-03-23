@@ -266,7 +266,6 @@ class FrontSignalementController extends AbstractController
         string $code,
         SignalementRepository $signalementRepository,
         UserRepository $userRepository,
-        NotificationService $notificationService,
         UploadHandlerService $uploadHandlerService,
         Request $request,
         EntityManagerInterface $entityManager
@@ -280,7 +279,12 @@ class FrontSignalementController extends AbstractController
                 $suivi->setCreatedBy($user);
                 $suivi->setType(Suivi::TYPE_USAGER);
 
-                $description = nl2br(filter_var($request->get('signalement_front_response')['content'], \FILTER_SANITIZE_STRING));
+                $description = htmlspecialchars(
+                    nl2br($request->get('signalement_front_response')['content']),
+                    \ENT_QUOTES,
+                    'UTF-8'
+                );
+
                 $files_array = [
                     'documents' => $signalement->getDocuments(),
                     'photos' => $signalement->getPhotos(),
