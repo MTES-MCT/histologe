@@ -27,7 +27,8 @@ class QualificationStatusService
             $dataDateDPEFormatted = new DateTimeImmutable($signalementQualification->getDetails()['date_dernier_dpe']);
             if ($dataDateDPEFormatted->format('Y') < '2023'
             && null !== $consoEnergie
-            && null !== $signalementQualification->getSignalement()?->getSuperficie()) {
+            && null !== $signalementQualification->getSignalement()?->getSuperficie()
+            && $signalementQualification->getSignalement()?->getSuperficie() > 0) {
                 $consoEnergie = $consoEnergie / $signalementQualification->getSignalement()?->getSuperficie();
             }
         }

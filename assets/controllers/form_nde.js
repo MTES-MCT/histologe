@@ -27,11 +27,11 @@ formBtn?.addEventListener('click', evt => {
 
     const data = { 
         _token: document.getElementById('signalement-edit-nde-token').value,
-        dateEntree: document.querySelector('input[name=dateEntree]:checked').value,
-        dpe: stringToBoolean(document.querySelector('input[name=dpe]:checked').value),
-        dateDernierBail: document.querySelector('input[name=dateDernierBail]:checked').value,
-        dateDernierDPE: document.querySelector('input[name=dateDernierDPE]:checked').value,
-        consommationEnergie: Number(document.getElementById('signalement-edit-nde-conso-energie').value),
+        dateEntree: document.querySelector('input[name=dateEntree]:checked')?.value,
+        dpe: stringToBoolean(document.querySelector('input[name=dpe]:checked')?.value),
+        dateDernierBail: document.querySelector('input[name=dateDernierBail]:checked')?.value,
+        dateDernierDPE: document.querySelector('input[name=dateDernierDPE]:checked')?.value,
+        consommationEnergie: Number(document.getElementById('signalement-edit-nde-conso-energie')?.value),
         superficie: Number(document.getElementById('signalement-edit-nde-superficie')?.value),
     };
 
