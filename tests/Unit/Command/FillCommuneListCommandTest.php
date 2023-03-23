@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Command;
 
-use App\Command\FillCommuneListCommand;
+use App\DataFixtures\Loader\LoadCommuneData;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class FillCommuneListCommandTest extends KernelTestCase
@@ -17,7 +17,7 @@ class FillCommuneListCommandTest extends KernelTestCase
             '2B002' => '2B',
         ];
         foreach ($listTest as $codeCommune => $expectedZip) {
-            $resultZip = FillCommuneListCommand::getZipCodeByCodeCommune($codeCommune);
+            $resultZip = LoadCommuneData::getZipCodeByCodeCommune($codeCommune);
             $this->assertEquals($expectedZip, $resultZip);
         }
     }

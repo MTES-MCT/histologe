@@ -1,27 +1,20 @@
 <?php
 
-namespace App\Command;
+namespace App\DataFixtures\Loader;
 
 use App\Factory\CommuneFactory;
 use App\Manager\CommuneManager;
 use App\Manager\TerritoryManager;
 use App\Service\Import\CsvParser;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use Doctrine\Persistence\ObjectManager;
 
-#[AsCommand(
-    name: 'app:commune-filler',
-    description: 'Fill the Commune table with real communes from external json',
-)]
-class FillCommuneListCommand extends Command
+class LoadCommuneData extends Fixture implements OrderedFixtureInterface
 {
     // File found here: https://www.data.gouv.fr/fr/datasets/codes-postaux/
-    private const COMMUNE_LIST_CSV_URL = 'https://www.data.gouv.fr/fr/datasets/r/3b318b9e-e11b-4d57-a3e0-8fdc7bfb601a';
+    private const COMMUNE_LIST_CSV_PATH = '/../Files/codespostaux.csv';
 
     private const INDEX_CSV_CODE_POSTAL = 0;
     private const INDEX_CSV_CODE_COMMUNE = 1;
@@ -36,28 +29,19 @@ class FillCommuneListCommand extends Command
         private CommuneManager $communeManager,
         private CsvParser $csvParser,
     ) {
-        parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function load(ObjectManager $manager): void
     {
-        // ini_set("memory_limit", "-1"); // Hack for local env: uncomment this line if you have memory limit error
-
         $totalRead = 0;
-        $io = new SymfonyStyle($input, $output);
-
         $existingInseeCode = [];
         $territory = null;
 
-        $csvData = $this->csvParser->parse(self::COMMUNE_LIST_CSV_URL);
-
-        $progressBar = new ProgressBar($output, \count($csvData));
-        $progressBar->start();
+        $csvData = $this->csvParser->parse(__DIR__.self::COMMUNE_LIST_CSV_PATH);
 
         // Start reading
         foreach ($csvData as $lineNumber => $rowData) {
             ++$totalRead;
-            $progressBar->advance();
 
             if (0 === $lineNumber) {
                 continue;
@@ -94,11 +78,6 @@ class FillCommuneListCommand extends Command
 
         // Last flush for remaining communes
         $this->communeManager->flush();
-
-        $progressBar->finish();
-        $io->success($totalRead.' lignes traitées');
-
-        return Command::SUCCESS;
     }
 
     public static function getZipCodeByCodeCommune($itemCodeCommune)
@@ -111,5 +90,10 @@ class FillCommuneListCommand extends Command
         }
 
         return $zipCode;
+    }
+
+    public function getOrder(): int
+    {
+        return 12;
     }
 }
