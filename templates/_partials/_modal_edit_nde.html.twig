@@ -10,7 +10,16 @@
                             <button class="fr-link--close fr-link" aria-controls="fr-modal-edit-nde">Fermer</button>
                      </div>
                     <div class="fr-modal__content">
-                       <p class="fr-grid-row fr-grid-row--gutters fr-alert fr-alert--info fr-alert--sm">Valider les informations pour savoir si le logement dépasse le seuil de non décence énergétique ou non.</p>
+                        <p>
+                            Validez les informations pour savoir si le logement dépasse le seuil de non décence énergétique ou non.
+                            <br>
+                            Les champs marqués d'un astérisque sont obligatoires.
+                        </p>    
+                        <p class="fr-mt-3v fr-alert fr-alert--warning">
+                            Si le dernier bail a été établi avant 2023, le logement n'est pas concerné par 
+                            la nouvelle législation sur la non décence énergétique. Vous n'aurez plus accès à ces infos.
+                        </p>
+
                         <div class="fr-grid-row fr-grid-row--center fr-grid-row--middle fr-h-100 fr-hidden fr-mt-5w"
                              id="signalement-edit-nde-loader-row">
                             <div class="fr-col-12 fr-text--center">
@@ -28,7 +37,7 @@
                                 <div class="fr-col-6">
                                     <fieldset class="fr-fieldset fr-fieldset--inline">
                                         <legend class="fr-fieldset__legend fr-text--regular" id='signalement-edit-nde-date-entree-legend'>
-                                            Entrée dans le logement
+                                            Entrée dans le logement*
                                         </legend>
                                         <div class="fr-fieldset__content">
                                             <div class="fr-radio-group">
@@ -47,7 +56,7 @@
                                 <div class="fr-col-6">
                                     <fieldset class="fr-fieldset fr-fieldset--inline">
                                         <legend class="fr-fieldset__legend fr-text--regular" id='signalement-edit-nde-dpe-legend'>
-                                            DPE Disponible ?
+                                            DPE Disponible ?*
                                         </legend>
                                         <div class="fr-fieldset__content">
                                             <div class="fr-radio-group">
@@ -69,12 +78,12 @@
                                     </fieldset>
                                 </div>
                             </div>
-                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-my-3w"
+                            <div class="fr-grid-row fr-grid-row--gutters fr-my-3w"
                                 id="signalement-edit-nde-form-row">
                                 <div class="fr-col-6">
                                     <fieldset class="fr-fieldset fr-fieldset--inline">
                                         <legend class="fr-fieldset__legend fr-text--regular" id='signalement-edit-nde-dernier-bail-legend'>
-                                            Date du dernier bail
+                                            Date du dernier bail*
                                         </legend>
                                         <div class="fr-fieldset__content">
                                             <div class="fr-radio-group">
