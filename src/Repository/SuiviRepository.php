@@ -209,6 +209,7 @@ class SuiviRepository extends ServiceEntityRepository
         INNER JOIN signalement s on s.id = su.signalement_id
         WHERE type in (:type_suivi_usager,:type_suivi_partner,:type_suivi_technical)
         AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
+        AND s.is_imported != 1
         GROUP BY su.signalement_id
         HAVING DATEDIFF(NOW(),last_posted_at) > :day_period
         ORDER BY last_posted_at';
