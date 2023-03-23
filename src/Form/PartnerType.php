@@ -115,7 +115,7 @@ class PartnerType extends AbstractType
             },
             function ($tagsAsString) {
                 // transform the string back to an array
-                return explode(',', $tagsAsString);
+                return null !== $tagsAsString ? explode(',', $tagsAsString) : [];
             }
         ));
 
