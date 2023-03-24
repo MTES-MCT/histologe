@@ -7,6 +7,7 @@ use App\Dto\SignalementAffectationListView;
 use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -363,7 +364,7 @@ class SignalementRepository extends ServiceEntityRepository
             GROUP_CONCAT(sq.qualification SEPARATOR :group_concat_separator) as qualifications', )
             ->leftJoin('s.affectations', 'a')
             ->leftJoin('a.partner', 'p')
-            ->leftJoin('s.signalementQualifications', 'sq')
+            ->leftJoin('s.signalementQualifications', 'sq', 'WITH', 'sq.status = \''.QualificationStatus::NDE_AVEREE->name.'\' OR sq.status = \''.QualificationStatus::NDE_CHECK->name.'\'')
             ->where('s.statut != :status')
             ->groupBy('s.id')
             ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
