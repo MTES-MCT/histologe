@@ -85,7 +85,7 @@ class BackArchivedAccountController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('USER_REACTIVE', $this->getUser());
 
-        $isUserUnlinked = (!$user->getTerritory() && !$user->getPartner());
+        $isUserUnlinked = (!$user->getTerritory() || !$user->getPartner());
 
         if (User::STATUS_ARCHIVE !== $user->getStatut() && !$isUserUnlinked) {
             return $this->redirect($this->generateUrl('back_account_index'));

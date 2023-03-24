@@ -79,8 +79,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         if (empty($territory) && empty($partner)) {
             $queryBuilder
-                ->where('u.statut = :archived OR (u.territory IS NULL AND u.partner IS NULL)')
-                ->setParameter('archived', User::STATUS_ARCHIVE);
+                ->where('u.statut = :archived OR u.territory IS NULL OR u.partner IS NULL')
+                ->setParameter('archived', User::STATUS_ARCHIVE)
+                ->andWhere('u.roles NOT LIKE :roleadmin')
+                ->setParameter('roleadmin', '%ROLE_ADMIN%');
         } else {
             $queryBuilder
                 ->where('u.statut = :archived')
