@@ -77,28 +77,32 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $queryBuilder = $this->createQueryBuilder('u');
 
-        if (empty($territory) && empty($partner)) {
-            $queryBuilder
-                ->where('u.statut = :archived OR u.territory IS NULL OR u.partner IS NULL')
-                ->setParameter('archived', User::STATUS_ARCHIVE)
-                ->andWhere('u.roles NOT LIKE :roleadmin')
-                ->setParameter('roleadmin', '%ROLE_ADMIN%');
-        } else {
-            $queryBuilder
-                ->where('u.statut = :archived')
-                ->setParameter('archived', User::STATUS_ARCHIVE);
+        $builtOrCondition = '';
+        if (empty($territory)) {
+            $builtOrCondition .= ' OR u.territory IS NULL';
+        }
+        if (empty($partner)) {
+            $builtOrCondition .= ' OR u.partner IS NULL';
+        }
 
-            if (!empty($territory)) {
-                $queryBuilder
-                    ->andWhere('u.territory = :territory')
-                    ->setParameter('territory', $territory);
-            }
+        $queryBuilder
+            ->where('u.statut = :archived'.$builtOrCondition)
+            ->setParameter('archived', User::STATUS_ARCHIVE);
 
-            if (!empty($partner)) {
-                $queryBuilder
-                    ->andWhere('u.partner = :partner')
-                    ->setParameter('partner', $partner);
-            }
+        $queryBuilder
+            ->andWhere('u.roles NOT LIKE :roleadmin')
+            ->setParameter('roleadmin', '%ROLE_ADMIN%');
+
+        if (!empty($territory)) {
+            $queryBuilder
+                ->andWhere('u.territory = :territory')
+                ->setParameter('territory', $territory);
+        }
+
+        if (!empty($partner)) {
+            $queryBuilder
+                ->andWhere('u.partner = :partner')
+                ->setParameter('partner', $partner);
         }
 
         if (!empty($filterTerms)) {
