@@ -76,20 +76,27 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $firstResult = ($page - 1) * $maxResult;
 
         $queryBuilder = $this->createQueryBuilder('u');
-        $queryBuilder
-            ->where('u.statut = :archived')
-            ->setParameter('archived', User::STATUS_ARCHIVE);
 
-        if (!empty($territory)) {
+        if (empty($territory) && empty($partner)) {
             $queryBuilder
-                ->andWhere('u.territory = :territory')
-                ->setParameter('territory', $territory);
-        }
+                ->where('u.statut = :archived OR (u.territory IS NULL AND u.partner IS NULL)')
+                ->setParameter('archived', User::STATUS_ARCHIVE);
+        } else {
+            $queryBuilder
+                ->where('u.statut = :archived')
+                ->setParameter('archived', User::STATUS_ARCHIVE);
 
-        if (!empty($partner)) {
-            $queryBuilder
-                ->andWhere('u.partner = :partner')
-                ->setParameter('partner', $partner);
+            if (!empty($territory)) {
+                $queryBuilder
+                    ->andWhere('u.territory = :territory')
+                    ->setParameter('territory', $territory);
+            }
+
+            if (!empty($partner)) {
+                $queryBuilder
+                    ->andWhere('u.partner = :partner')
+                    ->setParameter('partner', $partner);
+            }
         }
 
         if (!empty($filterTerms)) {
