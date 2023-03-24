@@ -39,6 +39,9 @@
                                         <legend class="fr-fieldset__legend fr-text--regular" id='signalement-edit-nde-date-entree-legend'>
                                             Entrée dans le logement*
                                         </legend>
+                                        <p id="signalement-edit-nde-date-entree-error" class="fr-error-text fr-hidden fr-my-3v">
+                                            Veuillez préciser la date d'entrée dans le logement.
+                                        </p>
                                         <div class="fr-fieldset__content">
                                             <div class="fr-radio-group">
                                                 <input type="radio" id="signalement-edit-nde-date-entree-before" name="dateEntree" value="1970-01-01" {% if signalement.dateEntree and signalement.dateEntree|date('Y')<2023 %}checked{% endif %}>
@@ -58,6 +61,9 @@
                                         <legend class="fr-fieldset__legend fr-text--regular" id='signalement-edit-nde-dpe-legend'>
                                             DPE Disponible ?*
                                         </legend>
+                                        <p id="signalement-edit-nde-dpe-error" class="fr-error-text fr-hidden fr-my-3v">
+                                            Veuillez préciser la disponibilité du DPE.
+                                        </p>
                                         <div class="fr-fieldset__content">
                                             <div class="fr-radio-group">
                                                 <input type="radio" id="signalement-edit-nde-dpe-1" name="dpe" value='1' {% if signalementQualificationNDE.details and signalementQualificationNDE.details.DPE == 1 %}checked{% endif %}>
@@ -85,6 +91,9 @@
                                         <legend class="fr-fieldset__legend fr-text--regular" id='signalement-edit-nde-dernier-bail-legend'>
                                             Date du dernier bail*
                                         </legend>
+                                        <p id="signalement-edit-nde-dernier-bail-error" class="fr-error-text fr-hidden fr-my-3v">
+                                            Veuillez préciser la date du dernier bail.
+                                        </p>
                                         <div class="fr-fieldset__content">
                                             <div class="fr-radio-group">
                                                 <input type="radio" id="signalement-edit-nde-dernier-bail-before" name="dateDernierBail" value="1970-01-01" {% if signalementQualificationNDE.dernierBailAt and signalementQualificationNDE.dernierBailAt|date('Y')<2023 %}checked{% endif %}>
