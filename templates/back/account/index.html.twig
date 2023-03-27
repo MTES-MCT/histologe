@@ -94,7 +94,7 @@
                     <li>
                         <a class="fr-pagination__link fr-pagination__link--first"
                                 {% if pages > 1 %}
-                                    href="{{ path('back_account_index', {page : 1, territory: (currentTerritory ? currentTerritory.id : null ), partner: (currentPartner ? currentPartner.id : null), userTerms: userTerms }) }}"
+                                    href="{{ path('back_account_index', {page : 1, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partner: (currentPartner ? currentPartner.id : (isNonePartner ? 'none' : null)), userTerms: userTerms }) }}"
                                 {% else %}
                                     aria-disabled="true"
                                 {% endif %}>
@@ -104,7 +104,7 @@
                     <li>
                         <a class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
                                 {% if pages > 1 and page != 1 %}
-                                    href="{{ path('back_account_index', {page : page - 1, territory: (currentTerritory ? currentTerritory.id : null ), partner: (currentPartner ? currentPartner.id : null), userTerms: userTerms }) }}"
+                                    href="{{ path('back_account_index', {page : page - 1, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partner: (currentPartner ? currentPartner.id : (isNonePartner ? 'none' : null)), userTerms: userTerms }) }}"
                                 {% else %}
                                     aria-disabled="true"
                                 {% endif %} role="link">
@@ -115,7 +115,7 @@
                         <a class="fr-pagination__link" {{ page == 1 ? 'aria-current="page"' : '' }}
                            title="Page 1"
                            data-page="1"
-                                href="{{ path('back_account_index', {page : 1, territory: (currentTerritory ? currentTerritory.id : null ), partner: (currentPartner ? currentPartner.id : null), userTerms: userTerms }) }}"
+                                href="{{ path('back_account_index', {page : 1, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partner: (currentPartner ? currentPartner.id : (isNonePartner ? 'none' : null)), userTerms: userTerms }) }}"
                         >
                             1
                         </a>
@@ -124,7 +124,7 @@
                         {% for i in 2..pages %}
                             <li class="{% if loop.index > 2 and loop.index < pages-3 %}fr-hidden{% endif %}">
                                 <a class="fr-pagination__link" {{ page == i ? 'aria-current="page"' : '' }}
-                                        href="{{ path('back_account_index', {page : i, territory: (currentTerritory ? currentTerritory.id : null ), partner: (currentPartner ? currentPartner.id : null), userTerms: userTerms }) }}"
+                                        href="{{ path('back_account_index', {page : i, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partner: (currentPartner ? currentPartner.id : (isNonePartner ? 'none' : null)), userTerms: userTerms }) }}"
                                    title="Page {{ i }}"
                                    data-page="{{ i }}">
                                     {{ i }}
@@ -142,7 +142,7 @@
                     <li>
                         <a class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
                                 {% if pages > 1  and page < pages %}
-                                    href="{{ path('back_account_index', {page : page + 1, territory: (currentTerritory ? currentTerritory.id : null ), partner: (currentPartner ? currentPartner.id : null), userTerms: userTerms }) }}"
+                                    href="{{ path('back_account_index', {page : page + 1, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partner: (currentPartner ? currentPartner.id : (isNonePartner ? 'none' : null)), userTerms: userTerms }) }}"
                                 {% else %}
                                     aria-disabled="true"
                                 {% endif %} role="link">
@@ -152,7 +152,7 @@
                     <li>
                         <a class="fr-pagination__link fr-pagination__link--last"
                                 {% if pages > 1 %}
-                                    href="{{ path('back_account_index', {page : pages, territory: (currentTerritory ? currentTerritory.id : null ), partner: (currentPartner ? currentPartner.id : null), userTerms: userTerms }) }}"
+                                    href="{{ path('back_account_index', {page : pages, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partner: (currentPartner ? currentPartner.id : (isNonePartner ? 'none' : null)), userTerms: userTerms }) }}"
                                 {% else %}
                                     aria-disabled="true"
                                 {% endif %}

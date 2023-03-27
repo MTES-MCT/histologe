@@ -56,6 +56,21 @@ class BackArchivedAccountController extends AbstractController
             page: (int) $page
         );
 
+        if ($request->isMethod(Request::METHOD_POST)) {
+            $isNoneTerritory = 'none' == $request->request->get('territory');
+            $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
+            $isNonePartner = 'none' == $request->request->get('partner');
+            $currentPartner = $partnerRepository->find((int) $request->request->get('partner'));
+            $userTerms = $request->request->get('bo-filters-usersterms');
+
+            return $this->redirect($this->generateUrl('back_account_index', [
+                'page' => 1,
+                'territory' => $isNoneTerritory ? 'none' : $currentTerritory?->getId(),
+                'partner' => $isNonePartner ? 'none' : $currentPartner?->getId(),
+                'userTerms' => $userTerms,
+            ]));
+        }
+
         $totalArchivedUsers = \count($paginatedArchivedUsers);
 
         return $this->render('back/account/index.html.twig', [
