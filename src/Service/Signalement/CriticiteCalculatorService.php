@@ -10,44 +10,16 @@ use App\Repository\CritereRepository;
 class CriticiteCalculatorService
 {
     private Signalement $signalement;
-    private int $scoreSignalement;
     private float $scoreBatiment;
     private float $scoreLogement;
-    private bool $isDanger;
     private const MAX_SCORE_BATIMENT = 136;
     private const MAX_SCORE_LOGEMENT = 126;
 
     public function __construct(Signalement $signalement, private CritereRepository $critereRepository)
     {
         $this->signalement = $signalement;
-        $this->scoreSignalement = 0;
         $this->scoreBatiment = 0;
         $this->scoreLogement = 0;
-        $this->isDanger = false;
-    }
-
-    public function calculate(): float|int
-    {
-        $signalement = $this->signalement;
-        $scoreMax = $this->critereRepository->getMaxScore() * Criticite::SCORE_MAX;
-        $signalement->getCriticites()->map(function (Criticite $criticite) {
-            $this->scoreSignalement += ($criticite->getScore() * $criticite->getCritere()->getCoef());
-            if ($criticite->getCritere()->getIsDanger()) {
-                $this->isDanger = true;
-            }
-        });
-        $score = ($this->scoreSignalement / $scoreMax) * 1000;
-        if ($signalement->getNbEnfantsM6() || $signalement->getNbEnfantsP6()) {
-            $score = $score * 1.1;
-        }
-        if ($this->isDanger) {
-            $score = 100;
-        }
-        if ($score > 100) {
-            $score = 100;
-        }
-
-        return $score;
     }
 
     public function calculateNewCriticite(): float|int

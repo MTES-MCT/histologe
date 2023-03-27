@@ -23,6 +23,7 @@ use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
 use App\Security\Voter\UserVoter;
 use App\Service\Signalement\CriticiteCalculatorService;
+use App\Service\Signalement\QualificationStatusService;
 use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -31,7 +32,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[Route('/bo/signalements')]
 class SignalementController extends AbstractController
@@ -172,7 +172,7 @@ class SignalementController extends AbstractController
         ManagerRegistry $doctrine,
         SituationRepository $situationRepository,
         CritereRepository $critereRepository,
-        HttpClientInterface $httpClient
+        QualificationStatusService $qualificationStatusService
     ): Response {
         $title = 'Administration - Edition signalement #'.$signalement->getReference();
         $etats = ['Etat moyen', 'Mauvais état', 'Très mauvais état'];
@@ -184,8 +184,8 @@ class SignalementController extends AbstractController
                 $signalement->setModifiedBy($this->getUser());
                 $signalement->setModifiedAt(new DateTimeImmutable());
                 $score = new CriticiteCalculatorService($signalement, $critereRepository);
-                $signalement->setScoreCreation($score->calculate());
                 $signalement->setNewScoreCreation($score->calculateNewCriticite());
+                $qualificationStatusService->updateQualificationFromScore($signalement);
                 $data = [];
                 if (\array_key_exists('situation', $form->getExtraData())) {
                     $data['situation'] = $form->getExtraData()['situation'];

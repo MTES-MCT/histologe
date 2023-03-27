@@ -28,7 +28,6 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
             'reference' => '2022-1',
             'createdAt' => new \DateTimeImmutable(),
             'statut' => SignalementStatus::ACTIVE->value,
-            'scoreCreation' => 100,
             'newScoreCreation' => 25,
             'isNotOccupant' => false,
             'nomOccupant' => $faker->lastName(),
@@ -66,7 +65,6 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
         $this->assertEquals($dataSignalement['reference'], $signalementAffectationListView->getReference());
         $this->assertSame($dataSignalement['createdAt'], $signalementAffectationListView->getCreatedAt());
         $this->assertEquals($dataSignalement['statut'], $signalementAffectationListView->getStatut());
-        $this->assertEquals($dataSignalement['scoreCreation'], $signalementAffectationListView->getScoreCreation());
         $this->assertEquals($dataSignalement['newScoreCreation'], $signalementAffectationListView->getNewScoreCreation());
         $this->assertEquals($dataSignalement['isNotOccupant'], $signalementAffectationListView->getIsNotOccupant());
         $this->assertEquals($dataSignalement['nomOccupant'], $signalementAffectationListView->getNomOccupant());

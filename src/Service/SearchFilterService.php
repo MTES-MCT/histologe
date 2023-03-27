@@ -395,10 +395,10 @@ class SearchFilterService
         }
         if (!empty($filters['scores'])) {
             if (!empty($filters['scores']['on'])) {
-                $qb->andWhere('s.scoreCreation >= :score_on')
+                $qb->andWhere('s.newScoreCreation >= :score_on')
                     ->setParameter('score_on', $filters['scores']['on']);
             } elseif (!empty($filters['scores']['off'])) {
-                $qb->andWhere('s.scoreCreation <= :score_off')
+                $qb->andWhere('s.newScoreCreation <= :score_off')
                     ->setParameter('score_off', $filters['scores']['off']);
             }
         }

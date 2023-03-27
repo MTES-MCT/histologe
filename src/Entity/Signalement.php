@@ -203,9 +203,6 @@ class Signalement
     private $codeProcedure;
 
     #[ORM\Column(type: 'float')]
-    private $scoreCreation;
-
-    #[ORM\Column(type: 'float')]
     private $newScoreCreation;
 
     #[ORM\Column(type: 'float', nullable: true)]
@@ -339,7 +336,6 @@ class Signalement
         $this->uuid = Uuid::v4();
         $this->isOccupantPresentVisite = false;
         $this->suivis = new ArrayCollection();
-        $this->scoreCreation = 0;
         $this->newScoreCreation = 0;
         $this->affectations = new ArrayCollection();
         $this->tags = new ArrayCollection();
@@ -1079,18 +1075,6 @@ class Signalement
         }
 
         return $result;
-    }
-
-    public function getScoreCreation(): ?float
-    {
-        return $this->scoreCreation;
-    }
-
-    public function setScoreCreation(float $scoreCreation): self
-    {
-        $this->scoreCreation = $scoreCreation;
-
-        return $this;
     }
 
     public function getNewScoreCreation(): ?float

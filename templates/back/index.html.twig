@@ -23,12 +23,7 @@
             <tr>
                 <th>#Ref.</th>
                 <th>Date</th>
-                {% if is_granted('ROLE_ADMIN') %}
-                    <th>Criticité 1</th>
-                    <th>Criticité 2</th>
-                {% else %}
-                    <th>Criticité</th>
-                {% endif %}
+                <th>Criticité</th>
                 <th>Occupant</th>
                 <th>Adresse</th>
                 <th>Affectation</th>
@@ -109,9 +104,9 @@
 
             scores = [
                 {% if not is_granted('ROLE_ADMIN_TERRITORY')  or filters.partners or filters.affectations %}
-                    {{ signalements.list|map(signalement => "#{signalement.scoreCreation}")|join(', ') }}
+                    {{ signalements.list|map(signalement => "#{signalement.newScoreCreation}")|join(', ') }}
                 {% else %}
-                    {{ signalements.list|map(signalement => "#{signalement.scoreCreation}")|join(', ') }}
+                    {{ signalements.list|map(signalement => "#{signalement.newScoreCreation}")|join(', ') }}
                 {% endif %}];
 
         ids.map((id, index) => {

@@ -19,7 +19,6 @@ class SignalementAffectationListViewFactory
             reference: $data['reference'],
             createdAt: $data['createdAt'],
             statut: $status,
-            scoreCreation: $data['scoreCreation'],
             newScoreCreation: $data['newScoreCreation'],
             isNotOccupant: $data['isNotOccupant'],
             nomOccupant: $data['nomOccupant'],

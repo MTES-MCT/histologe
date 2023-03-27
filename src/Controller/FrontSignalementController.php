@@ -240,7 +240,6 @@ class FrontSignalementController extends AbstractController
             $signalement->setReference($referenceGenerator->generate($signalement->getTerritory()));
 
             $score = new CriticiteCalculatorService($signalement, $critereRepository);
-            $signalement->setScoreCreation($score->calculate());
             $signalement->setNewScoreCreation($score->calculateNewCriticite());
             $signalement->setCodeSuivi(md5(uniqid()));
 
@@ -254,7 +253,7 @@ class FrontSignalementController extends AbstractController
             if ($isExperimentationTerritory && \count($listNDECriticites) > 0) {
                 $isDateBail2023 = $signalement->getDateEntree()->format('Y') >= 2023 || '2023-01-02' === $dataDateBail || 'Je ne sais pas' === $dataDateBail;
                 if ($isDateBail2023) {
-                    $signalementQualification = $signalementQualificationFactory->createInstanceFrom(
+                    $signalementQualification = $signalementQualificationFactory->createNDEInstanceFrom(
                         signalement: $signalement,
                         listNDECriticites: $listNDECriticites,
                         dataDateBail: $dataDateBail,

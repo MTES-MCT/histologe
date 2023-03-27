@@ -2,13 +2,60 @@
 
 namespace App\Service\Signalement;
 
+use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
+use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
+use App\Factory\SignalementQualificationFactory;
 use DateTimeImmutable;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class QualificationStatusService implements RuntimeExtensionInterface
 {
+    public function __construct(
+        private SignalementQualificationFactory $signalementQualificationFactory
+    ) {
+    }
+
+    public function updateQualificationFromScore(Signalement $signalement): void
+    {
+        $addNonDecence = true;
+        $addRSD = true;
+        $addInsalubrite = true;
+
+        $listQualifications = $signalement->getSignalementQualifications();
+        foreach ($listQualifications as $qualification) {
+            if (Qualification::NON_DECENCE == $qualification->getQualification()) {
+                $addNonDecence = false;
+            }
+            if (Qualification::RSD == $qualification->getQualification()) {
+                $addRSD = false;
+            }
+            if (Qualification::INSALUBRITE == $qualification->getQualification()) {
+                $addInsalubrite = false;
+            }
+        }
+
+        $newScoreCreation = $signalement->getNewScoreCreation();
+
+        // IF NOT ADDED YET: In all cases, we add NON_DECENCE and RSD
+        if ($addNonDecence) {
+            $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::NON_DECENCE, QualificationStatus::NON_DECENCE_CHECK);
+            $signalement->addSignalementQualification($signalementQualification);
+        }
+        if ($addRSD) {
+            $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::RSD, QualificationStatus::RSD_CHECK);
+            $signalement->addSignalementQualification($signalementQualification);
+        }
+
+        // IF NOT ADDED YET: If score is higher than 10, we add INSALUBRITE with different status depending on score
+        if ($addInsalubrite && $newScoreCreation >= 10) {
+            $qualificationStatus = $newScoreCreation >= 30 ? QualificationStatus::INSALUBRITE_CHECK : QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK;
+            $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::INSALUBRITE, $qualificationStatus);
+            $signalement->addSignalementQualification($signalementQualification);
+        }
+    }
+
     public function getNDEStatus(SignalementQualification $signalementQualification): ?QualificationStatus
     {
         // pas de date de bail -> à vérifier

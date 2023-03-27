@@ -1,31 +1,20 @@
 {% for index,signalement in signalements.list %}
 
     <tr class="{% if signalement.statut is same as(1) or signalement.statut is same as(3) %}fr-background-contrast--orange-terre-battue{% endif %} signalement-row"
-        data-score="{{ signalement.scoreCreation }}">
+        data-score="{{ signalement.newScoreCreation }}">
         <td>
             <a href="{{ path('back_signalement_view',{uuid:signalement.uuid}) }}"
                class="fr-ws-nowrap">{{ signalement.reference }}</a>
         </td>
         <td>{{ signalement.createdAt|date('d/m/Y') }}</td>
         <td>
-            {% if is_granted('ROLE_ADMIN') %}
-                {{ signalement.scoreCreation|round(2) }}
-            {% else %}
-                <canvas id="gauge-signalement-{{ signalement.id }}"
-                        class="fr-col-12 fr-col-md-10 fr-col-lg-6 gauge-signalement"></canvas>
-
-            {% endif %}
+            {{ signalement.newScoreCreation|round(2) }}
             {% if is_granted('USER_SEE_NDE', app.user) %}
                 {% if signalement.hasNDE %}
                     <span class="fr-badge fr-badge--info fr-badge--no-icon" title="Non-décence énergétique">NDE</span>
                 {% endif %}
             {% endif %}
         </td>
-        {% if is_granted('ROLE_ADMIN') %}
-            <td>
-                {{ signalement.newScoreCreation|round(2) }}
-            </td>
-        {% endif %}
         <td>
             {{ signalement.nomOccupant|upper }}<br>{{ signalement.prenomOccupant|capitalize }}
         </td>

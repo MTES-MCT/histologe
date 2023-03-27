@@ -350,7 +350,6 @@ class SignalementRepository extends ServiceEntityRepository
             s.reference,
             s.createdAt,
             s.statut,
-            s.scoreCreation,
             s.newScoreCreation,
             s.isNotOccupant,
             s.nomOccupant,
@@ -571,7 +570,7 @@ class SignalementRepository extends ServiceEntityRepository
     public function getAverageCriticite(Territory|null $territory, bool $removeImported = false): ?float
     {
         $qb = $this->createQueryBuilder('s');
-        $qb->select('AVG(s.scoreCreation)');
+        $qb->select('AVG(s.newScoreCreation)');
 
         if ($removeImported) {
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
@@ -644,8 +643,8 @@ class SignalementRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s');
 
-        $qb->select('AVG(s.scoreCreation)');
-        $qb->andWhere('s.scoreCreation IS NOT NULL');
+        $qb->select('AVG(s.newScoreCreation)');
+        $qb->andWhere('s.newScoreCreation IS NOT NULL');
 
         $qb = self::addFiltersToQuery($qb, $statisticsFilters);
 
@@ -703,9 +702,9 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
             ->addSelect('case
-                when s.scoreCreation >= 0 and s.scoreCreation < 25 then \''.CriticitePercentStatisticProvider::CRITICITE_VERY_WEAK.'\'
-                when s.scoreCreation >= 25 and s.scoreCreation < 51 then \''.CriticitePercentStatisticProvider::CRITICITE_WEAK.'\'
-                when s.scoreCreation >= 51 and s.scoreCreation <= 75 then \''.CriticitePercentStatisticProvider::CRITICITE_STRONG.'\'
+                when s.newScoreCreation >= 0 and s.newScoreCreation < 25 then \''.CriticitePercentStatisticProvider::CRITICITE_VERY_WEAK.'\'
+                when s.newScoreCreation >= 25 and s.newScoreCreation < 51 then \''.CriticitePercentStatisticProvider::CRITICITE_WEAK.'\'
+                when s.newScoreCreation >= 51 and s.newScoreCreation <= 75 then \''.CriticitePercentStatisticProvider::CRITICITE_STRONG.'\'
                 else \''.CriticitePercentStatisticProvider::CRITICITE_VERY_STRONG.'\'
                 end as range');
 

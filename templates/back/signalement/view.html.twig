@@ -330,16 +330,13 @@
                             Consulter le(s) DPE
                         </button>
                     </li>
-                    {# <li>
-                        {{ dump(dpe) }}
-                    </li> #}
                 </ul>
             </div>
             <div class="fr-col-12 fr-col-md-6">
                 <strong class="fr-fi-alert-fill fr-icon--sm fr-text-label--blue-france"> Criticité du
                     signalement</strong>
                 <span class="fr-hint-text">La criticité est calculée automatiquement en fonction des situations signalées.</span>
-                {% if signalement.scoreCreation > 80 %}
+                {% if signalement.newScoreCreation > 80 %}
                     <p class="fr-badge fr-badge--warning ">danger pour l'occupant détecté</p>
                 {% endif %}
                 <ul class="fr-list--icon-img">
@@ -912,30 +909,6 @@
             input.remove()
         })
         {% endif %}
-        opts.renderTicks = {
-            divisions: 3,
-            divWidth: 0.1,
-            divLength: 0.7,
-            divColor: '#333333',
-            subDivisions: 3,
-            subLength: 0.5,
-            subWidth: 0.6,
-            subColor: '#666666'
-        }
-        opts.staticLabels = {
-            font: "10px sans-serif",
-            labels: [0, 33, 66, 100],
-            color: "#000000",
-            fractionDigits: 0
-        }
-        let target = document.getElementById('slider-criticite');
-        let text = document.getElementById('score-criticite');
-        let gauge = new Gauge(target).setOptions(opts);
-        gauge.maxValue = 100;
-        gauge.setMinValue(0);
-        gauge.setTextField(text);
-        gauge.animationSpeed = 1;
-        gauge.set({{ signalement.scoreCreation }});
         {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
         loadMap = async () => {
             let map = L.map('map-signalement-view').setView([{{ signalement.geoloc.lng }}, {{ signalement.geoloc.lat }}], 13);
