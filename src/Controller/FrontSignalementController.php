@@ -209,7 +209,8 @@ class FrontSignalementController extends AbstractController
             if (\count($errors) > 0) {
                 return $this->json(
                     ['response' => sprintf('Le formulaire comporte des erreurs: %s', $errors)],
-                    Response::HTTP_BAD_REQUEST);
+                    Response::HTTP_BAD_REQUEST
+                );
             }
 
             if (!$signalement->getIsNotOccupant()) {

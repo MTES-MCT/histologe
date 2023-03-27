@@ -76,12 +76,10 @@ class HomepageControllerTest extends WebTestCase
 
     public function testSubmitContactWithEmptyMessage(): void
     {
-        $faker = Factory::create();
-
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
-        $crawler = $client->request('GET', $generatorUrl->generate('front_contact'));
+        $client->request('GET', $generatorUrl->generate('front_contact'));
 
         $client->submitForm('Envoyer le message', [
                 'contact[nom]' => 'John Doe',
@@ -90,7 +88,8 @@ class HomepageControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertSelectorTextContains('[for="contact_message"] + ul',
+        $this->assertSelectorTextContains(
+            '[for="contact_message"] + ul',
             'Merci de renseigner votre message',
             $client->getResponse()->getContent()
         );
