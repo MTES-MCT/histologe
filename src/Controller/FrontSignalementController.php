@@ -37,6 +37,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/')]
 class FrontSignalementController extends AbstractController
@@ -112,7 +113,8 @@ class FrontSignalementController extends AbstractController
         UrlGeneratorInterface $urlGenerator,
         CritereRepository $critereRepository,
         SignalementQualificationFactory $signalementQualificationFactory,
-        QualificationStatusService $qualificationStatusService
+        QualificationStatusService $qualificationStatusService,
+        ValidatorInterface $validator,
     ): Response {
         if ($this->isCsrfTokenValid('new_signalement', $request->request->get('_token'))
             && $data = $request->get('signalement')) {
@@ -202,6 +204,14 @@ class FrontSignalementController extends AbstractController
                         }
                 }
             }
+            $errors = $validator->validate($signalement);
+
+            if (\count($errors) > 0) {
+                return $this->json(
+                    ['response' => sprintf('Le formulaire comporte des erreurs: %s', $errors)],
+                    Response::HTTP_BAD_REQUEST);
+            }
+
             if (!$signalement->getIsNotOccupant()) {
                 $signalement->setNomDeclarant(null);
                 $signalement->setPrenomDeclarant(null);

@@ -21,7 +21,7 @@ class FrontSignalementControllerTest extends WebTestCase
         $crawler = $client->request('GET', $routeSignalementSend);
         $token = $crawler->filter('input[name=_token]')->attr('value');
 
-        $payload = $this->getCommonPayload();
+        $payload = $this->getCommonValidPayload();
         $payloadSignalement = [
             'signalement' => array_merge($payload, $adressSignalement),
             '_token' => $token,
@@ -50,7 +50,7 @@ class FrontSignalementControllerTest extends WebTestCase
 
         $urlPostSignalement = $router->generate('envoi_signalement');
 
-        $payload = $this->getCommonPayload();
+        $payload = $this->getCommonValidPayload();
         $payloadSignalement = [
             'signalement' => array_merge($payload, $adressSignalement),
             '_token' => $token,
@@ -60,6 +60,32 @@ class FrontSignalementControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $client->getResponse()->getStatusCode());
         $bodyContent = $client->getResponse()->getContent();
         $this->assertEquals(json_decode($bodyContent, true)['response'], 'Territory is inactive');
+    }
+
+    public function testConstraintValidationSignalement()
+    {
+        $client = static::createClient();
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $routeSignalementSend = $router->generate('front_signalement');
+        $crawler = $client->request('GET', $routeSignalementSend);
+        $token = $crawler->filter('input[name=_token]')->attr('value');
+
+        $payloadSignalement = [
+            'signalement' => $this->getErrorPayload(),
+            '_token' => $token,
+        ];
+
+        $urlPostSignalement = $router->generate('envoi_signalement');
+        $client->request('POST', $urlPostSignalement, $payloadSignalement);
+
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $client->getResponse()->getStatusCode());
+        $bodyContent = $client->getResponse()->getContent();
+        $this->assertStringContainsString(
+            'Le formulaire comporte des erreurs',
+            json_decode($bodyContent, true)['response']
+        );
     }
 
     public function provideAdressSignalementWithTerritoryActive(): array
@@ -137,7 +163,7 @@ class FrontSignalementControllerTest extends WebTestCase
         ];
     }
 
-    private function getCommonPayload()
+    private function getCommonValidPayload(): array
     {
         return [
             'isNotOccupant' => '0',
@@ -172,6 +198,49 @@ class FrontSignalementControllerTest extends WebTestCase
             'isPreavisDepart' => '0',
             'isRelogement' => '0',
             'isCguAccepted' => 'on',
+        ];
+    }
+
+    private function getErrorPayload(): array
+    {
+        return [
+            'isNotOccupant' => '0',
+            'nomDeclarant' => 'John',
+            'prenomDeclarant' => 'Doe',
+            'telDeclarant' => '',
+            'mailDeclarant' => 'admin-01@histologe.fr',
+            'nomOccupant' => 'Doe',
+            'prenomOccupant' => 'Jenifer',
+            'telOccupant' => '0611571631',
+            'telOccupantBis' => '',
+            'mailOccupant' => 'john.doe@yopmail.com',
+            'etageOccupant' => '',
+            'escalierOccupant' => '',
+            'numAppartOccupant' => '',
+            'adresseAutreOccupant' => '',
+            'nomProprio' => 'Arnold Doe',
+            'adresseProprio' => '',
+            'telProprio' => '+331123456987854521452145245',
+            'mailProprio' => '',
+            'situation' => [8 => ['critere' => [10 => ['criticite' => 11]]]],
+            'details' => 'Trés problématique de vivre ici, pas mal de fssure dans le séjour et de l\'humidité dans la chambre des enfants',
+            'isProprioAverti' => '0',
+            'nbAdultes' => '2',
+            'nbEnfantsM6' => '1',
+            'nbEnfantsP6' => '2',
+            'natureLogement' => 'maison',
+            'superficie' => '1000',
+            'isAllocataire' => '0',
+            'numAllocataire' => '0',
+            'isLogementSocial' => '0',
+            'isPreavisDepart' => '0',
+            'isRelogement' => '0',
+            'isCguAccepted' => 'on',
+            'adresseOccupant' => '45 Rue du Général de Gaulle',
+            'villeOccupant' => 'Saint-Denis',
+            'cpOccupant' => '',
+            'geoloc' => ['lat' => 55.452091, 'lng' => -20.885586],
+            'inseeOccupant' => '97411',
         ];
     }
 }

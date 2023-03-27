@@ -94,6 +94,7 @@ class Signalement
     private $adresseProprio;
 
     #[ORM\Column(type: 'string', length: 15, nullable: true)]
+    #[Assert\Length(min: 10, max: 15)]
     private $telProprio;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -150,6 +151,7 @@ class Signalement
     private $adresseOccupant;
 
     #[ORM\Column(type: 'string', length: 5)]
+    #[Assert\NotBlank]
     private $cpOccupant;
 
     #[ORM\Column(type: 'string', length: 100)]
@@ -861,7 +863,7 @@ class Signalement
         return $this->cpOccupant;
     }
 
-    public function setCpOccupant(string $cpOccupant): self
+    public function setCpOccupant(?string $cpOccupant): self
     {
         $this->cpOccupant = $cpOccupant;
 
