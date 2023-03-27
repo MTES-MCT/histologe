@@ -49,15 +49,13 @@ class ActivityListener implements EventSubscriberInterface
 
     public function onFlush(OnFlushEventArgs $args): void
     {
-        $this->em = $args->getEntityManager();
+        $this->em = $args->getObjectManager();
         $this->uow = $this->em->getUnitOfWork();
         foreach ($this->uow->getScheduledEntityInsertions() as $entity) {
             if ($entity instanceof Signalement) {
-                $this->notifyAdmins($entity, Notification::TYPE_NEW_SIGNALEMENT, $entity->getTerritory());
                 $this->sendMail($entity, NotificationService::TYPE_SIGNALEMENT_NEW);
             } elseif ($entity instanceof Affectation) {
                 $partner = $entity->getPartner();
-                $this->notifyPartner($partner, $entity, Notification::TYPE_AFFECTATION);
                 $this->sendMail($entity, NotificationService::TYPE_ASSIGNMENT_NEW);
             } elseif ($entity instanceof Suivi) {
                 // pas de notification pour un suivi technique
@@ -149,27 +147,23 @@ class ActivityListener implements EventSubscriberInterface
 
     private function createInAppNotification($user, $entity, $type)
     {
-        $notification = new Notification();
-        $notification->setUser($user);
-        switch ($type) {
-            case Notification::TYPE_SUIVI:
-                $notification->setSuivi($entity);
-                $notification->setSignalement($entity->getSignalement());
-                break;
-            case Notification::TYPE_NEW_SIGNALEMENT:
-                $notification->setSignalement($entity);
-                break;
-            default:
-                $notification->setAffectation($entity);
-                $notification->setSignalement($entity->getSignalement());
-                break;
+        if (!$entity instanceof Suivi && Notification::TYPE_SUIVI !== $type) {
+            return;
         }
-        $notification->setType($type);
-        $this->em->persist($notification);
-        $this->uow->computeChangeSet(
-            $this->em->getClassMetadata(Notification::class),
-            $notification
-        );
+
+        if (Suivi::DESCRIPTION_SIGNALEMENT_VALIDE !== $entity->getDescription()) {
+            $notification = (new Notification())
+                ->setUser($user)
+                ->setSuivi($entity)
+                ->setSignalement($entity->getSignalement())
+                ->setType($type);
+
+            $this->em->persist($notification);
+            $this->uow->computeChangeSet(
+                $this->em->getClassMetadata(Notification::class),
+                $notification
+            );
+        }
     }
 
     private function sendMail($entity, $mailType)

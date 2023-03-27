@@ -30,9 +30,11 @@ class NotificationRepository extends ServiceEntityRepository
 
     public function findAllForUser(User $user, array $options)
     {
-        $qb = $this->createQueryBuilder('n');
-        $qb->andWhere('n.user = :user')
+        $qb = $this->createQueryBuilder('n')
+            ->where('n.user = :user')
+            ->andWhere('n.type = :type_notification')
             ->setParameter('user', $user)
+            ->setParameter('type_notification', Notification::TYPE_SUIVI)
             ->leftJoin('n.user', 'user')
             ->leftJoin('n.suivi', 'suivi')
             ->leftJoin('suivi.createdBy', 'createdBy')

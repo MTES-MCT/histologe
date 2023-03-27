@@ -17,6 +17,7 @@ class Suivi
 
     public const DESCRIPTION_MOTIF_CLOTURE_ALL = 'Le signalement a été cloturé pour tous';
     public const DESCRIPTION_MOTIF_CLOTURE_PARTNER = 'Le signalement a été cloturé pour';
+    public const DESCRIPTION_SIGNALEMENT_VALIDE = 'Signalement validé';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

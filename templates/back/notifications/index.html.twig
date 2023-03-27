@@ -27,48 +27,6 @@
             </thead>
             <tbody>
             <tr style="background: white!important">
-                <td colspan="5" class="fr-text--bold">{{ signalements|length }} Nouveau(x) signalement(s)</td>
-            </tr>
-            {% for notification in signalements|reverse %}
-                <tr class="partner-row">
-                    <td>{{ notification.signalement.reference }}</td>
-                    <td>{{ notification.createdAt|format_datetime(locale='fr') }}</td>
-                    <td>Un nouveau signalement vous attend</td>
-                    <td>{{ notification.signalement.nomOccupant|upper~' '~notification.signalement.prenomOccupant|capitalize }}</td>
-                    <td class="fr-text--right"><a
-                                href="{{ path('back_signalement_view',{uuid:notification.signalement.uuid}) }}"
-                                class="fr-btn fr-btn--sm {{ notification.isSeen ? 'fr-fi-check-line fr-btn--success':'fr-fi-eye-fill' }}"></a>
-                        <a href="{{ path('back_news_activities_delete_notification',{id:notification.id}) }}?_token={{ csrf_token('back_delete_notification_'~notification.id) }}"
-                           class="fr-btn fr-btn--sm fr-btn--danger fr-fi-delete-line"></a>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="5" class="fr-text--center">Aucun signalement en attente</td>
-                </tr>
-            {% endfor %}
-            <tr style="background: white!important">
-                <td colspan="5" class="fr-text--bold">{{ affectations|length }} Nouvelle(s) affectation(s)</td>
-            </tr>
-            {% for notification in affectations|reverse %}
-                <tr class="partner-row">
-                    <td>{{ notification.affectation.signalement.reference }}</td>
-                    <td>{{ notification.affectation.createdAt|format_datetime(locale='fr') }}</td>
-                    <td>Vous avez été affecté</td>
-                    <td>{{ notification.affectation.affectedBy.nomComplet }}</td>
-                    <td class="fr-text--right">
-                        <a href="{{ path('back_signalement_view',{uuid:notification.affectation.signalement.uuid}) }}"
-                           class="fr-btn fr-btn--sm {{ notification.isSeen ? 'fr-fi-check-line fr-btn--success':'fr-fi-eye-fill' }}"></a>
-                        <a href="{{ path('back_news_activities_delete_notification',{id:notification.id}) }}?_token={{ csrf_token('back_delete_notification_'~notification.id) }}"
-                           class="fr-btn fr-btn--sm fr-btn--danger fr-fi-delete-line"></a>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="5" class="fr-text--center">Aucune affectation en attente</td>
-                </tr>
-            {% endfor %}
-            <tr style="background: white!important">
                 <td colspan="5" class="fr-text--bold">{{ suivis|length }} Nouveau(x) suivi(s)</td>
             </tr>
             {% for notification in suivis|reverse %}
