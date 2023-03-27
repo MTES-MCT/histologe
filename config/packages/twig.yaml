@@ -4,6 +4,7 @@ twig:
         gitbook:
             documentation: https://documentation.histologe.beta.gouv.fr
             faq: https://faq.histologe.beta.gouv.fr
+        deprecated_js_cache_version: '202303271647'
     paths:
         # point this wherever your images live
         '%kernel.project_dir%/public/img': images
