@@ -10,10 +10,15 @@ class QualificationStatusService
 {
     public function getNDEStatus(SignalementQualification $signalementQualification): ?QualificationStatus
     {
-        if (null == $signalementQualification->getDernierBailAt()) {
+        if (null === $signalementQualification->getDernierBailAt()) {
             return QualificationStatus::NDE_CHECK;
         }
-        if ('' == $signalementQualification->getDetails()['DPE']) {
+
+        if ($signalementQualification->getDernierBailAt()->format('Y') < '2023') {
+            return QualificationStatus::ARCHIVED;
+        }
+
+        if ('' === $signalementQualification->getDetails()['DPE'] || null === $signalementQualification->getDetails()['DPE']) {
             return QualificationStatus::NDE_CHECK;
         }
 

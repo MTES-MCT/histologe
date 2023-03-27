@@ -61,6 +61,7 @@ class BackSignalementQualificationControllerTest extends WebTestCase
             [],
             json_encode([
                 'superficie' => 234,
+                'dpe' => null,
                 'consommationEnergie' => 545,
                 '_token' => $token,
             ])
