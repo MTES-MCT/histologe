@@ -45,7 +45,7 @@ class ContactType extends AbstractType
                     'minlength' => 10,
                 ], 'label' => 'Votre message',
                 'constraints' => [
-                    new Assert\NotBlank(message: 'Merci de renseigner votre message'),
+                    new Assert\NotBlank(message: 'Merci de renseigner votre message.'),
                     new Assert\Length(min: 10, minMessage: 'Votre message doit comporter au moins 10 caractères.'),
                 ],
             ]);
