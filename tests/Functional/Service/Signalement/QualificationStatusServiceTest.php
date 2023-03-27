@@ -24,7 +24,10 @@ class QualificationStatusServiceTest extends KernelTestCase
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
     }
 
-    public function testUpdateNdeStatusNoDateDernierBail()
+    /**
+     * @dataProvider provideNDERequestAndStatus
+     */
+    public function testUpdateNdeStatus(QualificationNDERequest $qualificationNDERequest, QualificationStatus $qualificationStatus): void
     {
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
 
@@ -32,43 +35,39 @@ class QualificationStatusServiceTest extends KernelTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-8']);
         /** @var SignalementQualification $signalementQualification */
         $signalementQualification = $signalement->getSignalementQualifications()[0];
-        $signalementQualification->setDernierBailAt(null);
+
+        $signalementQualification->setDernierBailAt(new DateTimeImmutable($qualificationNDERequest->getDateDernierBail()));
+        $signalementQualification->setDetails($qualificationNDERequest->getDetails());
+        $signalement->setSuperficie($qualificationNDERequest->getSuperficie());
 
         $qualificationService = new QualificationStatusService();
         $signalementQualification->setStatus($qualificationService->getNDEStatus($signalementQualification));
 
         $status = $qualificationService->getNDEStatus($signalementQualification);
 
-        $this->assertEquals(QualificationStatus::NDE_CHECK, $status);
+        $this->assertEquals($qualificationStatus, $status);
     }
 
-    public function testUpdateNdeStatusBailBefore2023()
+    private function provideNDERequestAndStatus(): \Generator
     {
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-
-        /** @var Signalement $signalement */
-        $signalement = $signalementRepository->findOneBy(['reference' => '2023-8']);
-        /** @var SignalementQualification $signalementQualification */
-        $signalementQualification = $signalement->getSignalementQualifications()[0];
-        $signalementQualification->setDernierBailAt(new DateTimeImmutable('2022-01-01'));
-
-        $qualificationService = new QualificationStatusService();
-        $signalementQualification->setStatus($qualificationService->getNDEStatus($signalementQualification));
-
-        $status = $qualificationService->getNDEStatus($signalementQualification);
-
-        $this->assertEquals(QualificationStatus::ARCHIVED, $status);
-    }
-
-    public function testUpdateNdeStatusUnknownDpe()
-    {
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-
-        /** @var Signalement $signalement */
-        $signalement = $signalementRepository->findOneBy(['reference' => '2023-8']);
-        /** @var SignalementQualification $signalementQualification */
-        $signalementQualification = $signalement->getSignalementQualifications()[0];
-
+        $qualificationNDERequest = new QualificationNDERequest(
+            dateEntree: null,
+            dateDernierBail: null,
+            dateDernierDPE: null,
+            superficie: null,
+            consommationEnergie: null,
+            dpe: null
+        );
+        yield 'No date bail Status Check' => [$qualificationNDERequest, QualificationStatus::NDE_CHECK];
+        $qualificationNDERequest = new QualificationNDERequest(
+            dateEntree: '2023-01-01',
+            dateDernierBail: '2022-01-01',
+            dateDernierDPE: null,
+            superficie: null,
+            consommationEnergie: null,
+            dpe: null
+        );
+        yield 'Bail before 2023 Status Archived' => [$qualificationNDERequest, QualificationStatus::ARCHIVED];
         $qualificationNDERequest = new QualificationNDERequest(
             dateEntree: '2023-02-01',
             dateDernierBail: '2023-02-01',
@@ -77,27 +76,7 @@ class QualificationStatusServiceTest extends KernelTestCase
             consommationEnergie: null,
             dpe: null
         );
-        $signalementQualification->setDernierBailAt(new DateTimeImmutable($qualificationNDERequest->getDateDernierBail()));
-        $signalementQualification->setDetails($qualificationNDERequest->getDetails());
-        $signalement->setSuperficie($qualificationNDERequest->getSuperficie());
-
-        $qualificationService = new QualificationStatusService();
-        $signalementQualification->setStatus($qualificationService->getNDEStatus($signalementQualification));
-
-        $status = $qualificationService->getNDEStatus($signalementQualification);
-
-        $this->assertEquals(QualificationStatus::NDE_CHECK, $status);
-    }
-
-    public function testUpdateNdeStatusNoDpe()
-    {
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-
-        /** @var Signalement $signalement */
-        $signalement = $signalementRepository->findOneBy(['reference' => '2023-8']);
-        /** @var SignalementQualification $signalementQualification */
-        $signalementQualification = $signalement->getSignalementQualifications()[0];
-
+        yield 'Unknown DPE Status NDE Check' => [$qualificationNDERequest, QualificationStatus::NDE_CHECK];
         $qualificationNDERequest = new QualificationNDERequest(
             dateEntree: '2023-02-01',
             dateDernierBail: '2023-02-01',
@@ -106,27 +85,7 @@ class QualificationStatusServiceTest extends KernelTestCase
             consommationEnergie: null,
             dpe: false
         );
-        $signalementQualification->setDernierBailAt(new DateTimeImmutable($qualificationNDERequest->getDateDernierBail()));
-        $signalementQualification->setDetails($qualificationNDERequest->getDetails());
-        $signalement->setSuperficie($qualificationNDERequest->getSuperficie());
-
-        $qualificationService = new QualificationStatusService();
-        $signalementQualification->setStatus($qualificationService->getNDEStatus($signalementQualification));
-
-        $status = $qualificationService->getNDEStatus($signalementQualification);
-
-        $this->assertEquals(QualificationStatus::NDE_AVEREE, $status);
-    }
-
-    public function testUpdateNdeStatusDpeOlder2023Averee()
-    {
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-
-        /** @var Signalement $signalement */
-        $signalement = $signalementRepository->findOneBy(['reference' => '2023-8']);
-        /** @var SignalementQualification $signalementQualification */
-        $signalementQualification = $signalement->getSignalementQualifications()[0];
-
+        yield 'No DPE Status NDE Avérée' => [$qualificationNDERequest, QualificationStatus::NDE_AVEREE];
         $qualificationNDERequest = new QualificationNDERequest(
             dateEntree: '2023-02-01',
             dateDernierBail: '2023-02-01',
@@ -135,27 +94,7 @@ class QualificationStatusServiceTest extends KernelTestCase
             consommationEnergie: 30000,
             dpe: true
         );
-        $signalementQualification->setDernierBailAt(new DateTimeImmutable($qualificationNDERequest->getDateDernierBail()));
-        $signalementQualification->setDetails($qualificationNDERequest->getDetails());
-        $signalement->setSuperficie($qualificationNDERequest->getSuperficie());
-
-        $qualificationService = new QualificationStatusService();
-        $signalementQualification->setStatus($qualificationService->getNDEStatus($signalementQualification));
-
-        $status = $qualificationService->getNDEStatus($signalementQualification);
-
-        $this->assertEquals(QualificationStatus::NDE_AVEREE, $status);
-    }
-
-    public function testUpdateNdeStatusDpeOlder2023Ok()
-    {
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-
-        /** @var Signalement $signalement */
-        $signalement = $signalementRepository->findOneBy(['reference' => '2023-8']);
-        /** @var SignalementQualification $signalementQualification */
-        $signalementQualification = $signalement->getSignalementQualifications()[0];
-
+        yield 'DPE Before 2023 Status NDE Avérée' => [$qualificationNDERequest, QualificationStatus::NDE_AVEREE];
         $qualificationNDERequest = new QualificationNDERequest(
             dateEntree: '2023-02-01',
             dateDernierBail: '2023-02-01',
@@ -164,27 +103,7 @@ class QualificationStatusServiceTest extends KernelTestCase
             consommationEnergie: 10000,
             dpe: true
         );
-        $signalementQualification->setDernierBailAt(new DateTimeImmutable($qualificationNDERequest->getDateDernierBail()));
-        $signalementQualification->setDetails($qualificationNDERequest->getDetails());
-        $signalement->setSuperficie($qualificationNDERequest->getSuperficie());
-
-        $qualificationService = new QualificationStatusService();
-        $signalementQualification->setStatus($qualificationService->getNDEStatus($signalementQualification));
-
-        $status = $qualificationService->getNDEStatus($signalementQualification);
-
-        $this->assertEquals(QualificationStatus::NDE_OK, $status);
-    }
-
-    public function testUpdateNdeStatusDpeAfter2023Averee()
-    {
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-
-        /** @var Signalement $signalement */
-        $signalement = $signalementRepository->findOneBy(['reference' => '2023-8']);
-        /** @var SignalementQualification $signalementQualification */
-        $signalementQualification = $signalement->getSignalementQualifications()[0];
-
+        yield 'DPE Before 2023 Status NDE OK' => [$qualificationNDERequest, QualificationStatus::NDE_OK];
         $qualificationNDERequest = new QualificationNDERequest(
             dateEntree: '2023-02-01',
             dateDernierBail: '2023-02-01',
@@ -193,27 +112,7 @@ class QualificationStatusServiceTest extends KernelTestCase
             consommationEnergie: 580,
             dpe: true
         );
-        $signalementQualification->setDernierBailAt(new DateTimeImmutable($qualificationNDERequest->getDateDernierBail()));
-        $signalementQualification->setDetails($qualificationNDERequest->getDetails());
-        $signalement->setSuperficie($qualificationNDERequest->getSuperficie());
-
-        $qualificationService = new QualificationStatusService();
-        $signalementQualification->setStatus($qualificationService->getNDEStatus($signalementQualification));
-
-        $status = $qualificationService->getNDEStatus($signalementQualification);
-
-        $this->assertEquals(QualificationStatus::NDE_AVEREE, $status);
-    }
-
-    public function testUpdateNdeStatusDpeAfter2023Ok()
-    {
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-
-        /** @var Signalement $signalement */
-        $signalement = $signalementRepository->findOneBy(['reference' => '2023-8']);
-        /** @var SignalementQualification $signalementQualification */
-        $signalementQualification = $signalement->getSignalementQualifications()[0];
-
+        yield 'DPE after 2023 Status NDE Avérée' => [$qualificationNDERequest, QualificationStatus::NDE_AVEREE];
         $qualificationNDERequest = new QualificationNDERequest(
             dateEntree: '2023-02-01',
             dateDernierBail: '2023-02-01',
@@ -222,15 +121,6 @@ class QualificationStatusServiceTest extends KernelTestCase
             consommationEnergie: 320,
             dpe: true
         );
-        $signalementQualification->setDernierBailAt(new DateTimeImmutable($qualificationNDERequest->getDateDernierBail()));
-        $signalementQualification->setDetails($qualificationNDERequest->getDetails());
-        $signalement->setSuperficie($qualificationNDERequest->getSuperficie());
-
-        $qualificationService = new QualificationStatusService();
-        $signalementQualification->setStatus($qualificationService->getNDEStatus($signalementQualification));
-
-        $status = $qualificationService->getNDEStatus($signalementQualification);
-
-        $this->assertEquals(QualificationStatus::NDE_OK, $status);
+        yield 'DPE after 2023 Status NDE OK' => [$qualificationNDERequest, QualificationStatus::NDE_OK];
     }
 }
