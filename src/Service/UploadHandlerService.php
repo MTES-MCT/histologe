@@ -2,7 +2,8 @@
 
 namespace App\Service;
 
-use App\Exception\MaxUploadSizeExceededException;
+use App\Exception\File\MaxUploadSizeExceededException;
+use App\Exception\File\UnsupportedFileFormatException;
 use App\Service\Files\HeicToJpegConverter;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -38,6 +39,11 @@ class UploadHandlerService
         if ($file->getSize() > self::MAX_FILESIZE) {
             throw new MaxUploadSizeExceededException(self::MAX_FILESIZE);
         }
+
+        if (\in_array($file->getMimeType(), HeicToJpegConverter::HEIC_FORMAT)) {
+            throw new UnsupportedFileFormatException($file->getMimeType());
+        }
+
         try {
             $distantFolder = $this->parameterBag->get('bucket_tmp_dir');
             $fileResource = fopen($file->getPathname(), 'r');

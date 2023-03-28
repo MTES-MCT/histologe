@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exception;
+namespace App\Exception\File;
 
 class MaxUploadSizeExceededException extends \Exception
 {

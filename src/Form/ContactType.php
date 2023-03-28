@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class ContactType extends AbstractType
 {
@@ -20,6 +21,9 @@ class ContactType extends AbstractType
                 ], 'attr' => [
                     'class' => 'fr-input',
                 ], 'label' => 'Votre nom',
+                'constraints' => [
+                    new Assert\NotBlank(message: 'Merci de renseigner votre nom complet.'),
+                ],
             ])
             ->add('email', EmailType::class, [
                 'row_attr' => [
@@ -27,6 +31,10 @@ class ContactType extends AbstractType
                 ], 'attr' => [
                     'class' => 'fr-input',
                 ], 'label' => 'Votre adresse courriel',
+                'constraints' => [
+                    new Assert\NotBlank(message: 'Merci de renseigner votre email.'),
+                    new Assert\Email(),
+                ],
             ])
             ->add('message', TextareaType::class, [
                 'row_attr' => [
@@ -36,6 +44,10 @@ class ContactType extends AbstractType
                     'rows' => 10,
                     'minlength' => 10,
                 ], 'label' => 'Votre message',
+                'constraints' => [
+                    new Assert\NotBlank(message: 'Merci de renseigner votre message.'),
+                    new Assert\Length(min: 10, minMessage: 'Votre message doit comporter au moins 10 caractères.'),
+                ],
             ]);
     }
 
@@ -47,7 +59,6 @@ class ContactType extends AbstractType
                 'class' => 'needs-validation',
                 'novalidate' => 'true',
             ],
-            // Configure your form options here
         ]);
     }
 }
