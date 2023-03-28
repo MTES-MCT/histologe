@@ -19,11 +19,13 @@ class SignalementQualificationFactory
 
     public function createInstanceFrom(
         Qualification $qualification,
-        QualificationStatus $qualificationStatus
+        QualificationStatus $qualificationStatus,
+        array $listCriticites = []
     ): SignalementQualification {
         $signalementQualification = new SignalementQualification();
         $signalementQualification->setQualification($qualification);
         $signalementQualification->setStatus($qualificationStatus);
+        $signalementQualification->setCriticites($listCriticites);
 
         return $signalementQualification;
     }

@@ -8,12 +8,17 @@
         </td>
         <td>{{ signalement.createdAt|date('d/m/Y') }}</td>
         <td>
-            {{ signalement.newScoreCreation|round(2) }}
+            {{ signalement.newScoreCreation|round(2) }}<br>
             {% if is_granted('USER_SEE_NDE', app.user) %}
                 {% if signalement.hasNDE %}
+                    <br>
                     <span class="fr-badge fr-badge--info fr-badge--no-icon" title="Non-décence énergétique">NDE</span>
                 {% endif %}
             {% endif %}
+            {% for qualificationLabel in signalement.qualificationsLabels %}
+                <br>
+                <span class="fr-badge fr-badge--info fr-badge--no-icon" title="{{ qualificationLabel }}">{{ qualificationLabel }}</span>
+            {% endfor %}
         </td>
         <td>
             {{ signalement.nomOccupant|upper }}<br>{{ signalement.prenomOccupant|capitalize }}

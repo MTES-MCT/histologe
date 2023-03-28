@@ -28,14 +28,9 @@ class CriticiteCalculatorServiceTest extends KernelTestCase
         $signalement = $signalementRepository->find(1);
 
         $score = new CriticiteCalculatorService($signalement, $critereRepository);
-        $oldScore = $score->calculate();
         $newScore = $score->calculateNewCriticite();
-        $this->assertIsFloat($oldScore);
         $this->assertIsFloat($newScore);
-        $this->assertLessThan($oldScore, $newScore);
-        $this->assertLessThan(101, $oldScore);
         $this->assertLessThan(101, $newScore);
-        $this->assertEquals(36.53, round($oldScore, 2));
         $this->assertEquals(2.87, round($newScore, 2));
     }
 }

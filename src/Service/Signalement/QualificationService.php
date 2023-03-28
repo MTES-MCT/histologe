@@ -54,18 +54,18 @@ class QualificationService
         // If criticité with qualification INSALUBRITE, we add INSALUBRITE
         if ($addInsalubrite) {
             $statusInsalubrite = null;
+            $listCriticiteInsalubrite = [];
             if ($newScoreCreation >= 10) {
                 $statusInsalubrite = $newScoreCreation >= 30 ? QualificationStatus::INSALUBRITE_CHECK : QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK;
             }
             foreach ($signalement->getCriticites() as $criticite) {
                 if (\in_array(Qualification::INSALUBRITE->value, $criticite->getQualification())) {
                     $statusInsalubrite = QualificationStatus::INSALUBRITE_CHECK;
-                    break;
+                    $listCriticiteInsalubrite[] = $criticite->getId();
                 }
             }
-
             if (!empty($statusInsalubrite)) {
-                $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::INSALUBRITE, $statusInsalubrite);
+                $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::INSALUBRITE, $statusInsalubrite, $listCriticiteInsalubrite);
                 $signalement->addSignalementQualification($signalementQualification);
             }
         }
@@ -73,12 +73,15 @@ class QualificationService
         // IF NOT ADDED YET:
         // If criticité is DANGER, we add DANGER
         if ($addDanger) {
+            $listCriticiteDanger = [];
             foreach ($signalement->getCriticites() as $criticite) {
                 if ($criticite->getIsDanger()) {
-                    $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::DANGER, QualificationStatus::DANGER_CHECK);
-                    $signalement->addSignalementQualification($signalementQualification);
-                    break;
+                    $listCriticiteDanger[] = $criticite->getId();
                 }
+            }
+            if (!empty($listCriticiteDanger)) {
+                $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::DANGER, QualificationStatus::DANGER_CHECK, $listCriticiteDanger);
+                $signalement->addSignalementQualification($signalementQualification);
             }
         }
 
