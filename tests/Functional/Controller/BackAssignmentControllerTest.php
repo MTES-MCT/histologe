@@ -98,7 +98,6 @@ class BackAssignmentControllerTest extends WebTestCase
                 $tos[] = $to->getAddress();
             }
         }
-        // @todo: test to review
-        // $this->assertEquals(\count($tos), \count(array_unique($tos)));
+        $this->assertEquals(\count($tos), \count(array_unique($tos)));
     }
 }
