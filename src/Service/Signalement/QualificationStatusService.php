@@ -10,18 +10,31 @@ class QualificationStatusService
 {
     public function getNDEStatus(SignalementQualification $signalementQualification): ?QualificationStatus
     {
-        if (null == $signalementQualification->getDernierBailAt()) {
-            return QualificationStatus::NDE_CHECK;
-        }
-        if ('' == $signalementQualification->getDetails()['DPE']) {
+        // pas de date de bail -> à vérifier
+        if (null === $signalementQualification->getDernierBailAt()) {
             return QualificationStatus::NDE_CHECK;
         }
 
-        if ($signalementQualification->getDernierBailAt()->format('Y') >= '2023'
-        && '0' === $signalementQualification->getDetails()['DPE']) {
+        // bail avant 2023 -> pas concerné
+        if ($signalementQualification->getDernierBailAt()->format('Y') < '2023') {
+            return QualificationStatus::ARCHIVED;
+        }
+
+        // bail après 2023, on passe aux vérifications DPE
+
+        // on ne sait pas si on a un DPE -> à vérifier
+        if ('' === $signalementQualification->getDetails()['DPE']
+        || null === $signalementQualification->getDetails()['DPE']) {
+            return QualificationStatus::NDE_CHECK;
+        }
+
+        // on n'a pas de DPE -> avérée
+        if ('0' === $signalementQualification->getDetails()['DPE']
+        || false === $signalementQualification->getDetails()['DPE']) {
             return QualificationStatus::NDE_AVEREE;
         }
 
+        // on a une DPE, on calcule la conso d'énergie en fonction de la date du DPE
         $consoEnergie = $signalementQualification->getDetails()['consommation_energie'];
         if (isset($signalementQualification->getDetails()['date_dernier_dpe'])) {
             $dataDateDPEFormatted = new DateTimeImmutable($signalementQualification->getDetails()['date_dernier_dpe']);
@@ -33,22 +46,16 @@ class QualificationStatusService
             }
         }
 
-        if ($signalementQualification->getDernierBailAt()->format('Y') >= '2023'
-        && $consoEnergie > 450) {
+        // en fonction de la conso, on est soit en NDE, soit OK
+        if ($consoEnergie > 450) {
             return QualificationStatus::NDE_AVEREE;
         }
 
-        if ($signalementQualification->getDernierBailAt()->format('Y') >= '2023'
-        && $consoEnergie <= 450) {
+        if ($consoEnergie <= 450) {
             return QualificationStatus::NDE_OK;
         }
 
-        if ($signalementQualification->getDernierBailAt()->format('Y') >= '2023') {
-            return QualificationStatus::NDE_CHECK;
-        }
-
-        // si avant 2023, on archive la qualification
-        return QualificationStatus::ARCHIVED;
+        return QualificationStatus::NDE_CHECK;
     }
 
     public function getList(): array

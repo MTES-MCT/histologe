@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Form\ContactType;
 use App\Form\PostalCodeSearchType;
 use App\FormHandler\ContactFormHandler;
-use App\Repository\AffectationRepository;
 use App\Repository\SignalementRepository;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,7 +18,6 @@ class HomepageController extends AbstractController
     public function index(
         Request $request,
         SignalementRepository $signalementRepository,
-        AffectationRepository $affectationRepository,
         PostalCodeHomeChecker $postalCodeHomeChecker
     ): Response {
         $title = 'Un service public pour les locataires et propriétaires';

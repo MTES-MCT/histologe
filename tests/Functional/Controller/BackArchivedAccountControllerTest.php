@@ -76,7 +76,9 @@ class BackArchivedAccountControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
 
-        $account = $userRepository->findOneBy(['statut' => USER::STATUS_ACTIVE]);
+        $accountEmail = 'user-01-01@histologe.fr';
+        /** @var User $account */
+        $account = $userRepository->findOneBy(['email' => $accountEmail]);
         $route = $router->generate('back_account_reactiver', [
             'id' => $account->getId(),
         ]);

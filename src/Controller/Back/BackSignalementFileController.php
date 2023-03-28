@@ -4,7 +4,7 @@ namespace App\Controller\Back;
 
 use App\Entity\Signalement;
 use App\Entity\Suivi;
-use App\Exception\MaxUploadSizeExceededException;
+use App\Exception\File\MaxUploadSizeExceededException;
 use App\Service\Files\HeicToJpegConverter;
 use App\Service\UploadHandlerService;
 use DateTimeImmutable;

@@ -40,21 +40,33 @@ class BackArchivedAccountController extends AbstractController
         $this->denyAccessUnlessGranted('USER_REACTIVE', $this->getUser());
         $page = $request->get('page') ?? 1;
 
-        $currentTerritory = $territoryRepository->find((int) $request->get('territory'));
-        $currentPartner = $partnerRepository->find((int) $request->get('partner'));
+        $isNoneTerritory = 'none' == $request->get('territory');
+        $currentTerritory = $isNoneTerritory ? null : $territoryRepository->find((int) $request->get('territory'));
+        $isNonePartner = 'none' == $request->get('partner');
+        $currentPartner = $isNonePartner ? null : $partnerRepository->find((int) $request->get('partner'));
         $userTerms = $request->get('userTerms');
 
-        $paginatedArchivedUsers = $userRepository->findAllArchived($currentTerritory, $currentPartner, $userTerms, false, (int) $page);
+        $paginatedArchivedUsers = $userRepository->findAllArchived(
+            territory: $currentTerritory,
+            isNoneTerritory: $isNoneTerritory,
+            partner: $currentPartner,
+            isNonePartner: $isNonePartner,
+            filterTerms: $userTerms,
+            includeUsagers: false,
+            page: (int) $page
+        );
 
         if ($request->isMethod(Request::METHOD_POST)) {
+            $isNoneTerritory = 'none' == $request->request->get('territory');
             $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
+            $isNonePartner = 'none' == $request->request->get('partner');
             $currentPartner = $partnerRepository->find((int) $request->request->get('partner'));
             $userTerms = $request->request->get('bo-filters-usersterms');
 
             return $this->redirect($this->generateUrl('back_account_index', [
                 'page' => 1,
-                'territory' => $currentTerritory?->getId(),
-                'partner' => $currentPartner?->getId(),
+                'territory' => $isNoneTerritory ? 'none' : $currentTerritory?->getId(),
+                'partner' => $isNonePartner ? 'none' : $currentPartner?->getId(),
                 'userTerms' => $userTerms,
             ]));
         }
@@ -62,7 +74,9 @@ class BackArchivedAccountController extends AbstractController
         $totalArchivedUsers = \count($paginatedArchivedUsers);
 
         return $this->render('back/account/index.html.twig', [
+            'isNoneTerritory' => $isNoneTerritory,
             'currentTerritory' => $currentTerritory,
+            'isNonePartner' => $isNonePartner,
             'currentPartner' => $currentPartner,
             'userTerms' => $userTerms,
             'territories' => $territoryRepository->findAllList(),
@@ -85,7 +99,9 @@ class BackArchivedAccountController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('USER_REACTIVE', $this->getUser());
 
-        if (User::STATUS_ARCHIVE !== $user->getStatut()) {
+        $isUserUnlinked = (!$user->getTerritory() || !$user->getPartner());
+
+        if (User::STATUS_ARCHIVE !== $user->getStatut() && !$isUserUnlinked) {
             return $this->redirect($this->generateUrl('back_account_index'));
         }
 

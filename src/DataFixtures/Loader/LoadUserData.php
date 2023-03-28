@@ -55,11 +55,17 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
             ->setRoles(json_decode($row['roles'], true))
             ->setStatut($row['statut'])
             ->setIsMailingActive($row['is_mailing_active'])
-            ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
-            ->setPartner($this->partnerRepository->findOneBy(['nom' => $row['partner']]))
             ->setEmail($row['email'])
             ->setPrenom($faker->firstName())
             ->setNom($faker->lastName());
+
+        if (isset($row['territory'])) {
+            $user->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]));
+        }
+
+        if (isset($row['partner'])) {
+            $user->setPartner($this->partnerRepository->findOneBy(['nom' => $row['partner']]));
+        }
 
         if (isset($row['token'])) {
             $user

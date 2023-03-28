@@ -46,7 +46,9 @@ class BackControllerTest extends WebTestCase
         $users = $userRepository->findAll();
         /** @var User $user */
         foreach ($users as $user) {
-            yield $user->getEmail() => [$user->getEmail()];
+            if ($user->getTerritory()) {
+                yield $user->getEmail() => [$user->getEmail()];
+            }
         }
     }
 
