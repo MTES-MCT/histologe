@@ -565,9 +565,13 @@ forms.forEach((form) => {
                             document.querySelector('#signalement-step-4-btn > span').textContent = '5';
                             document.querySelector('#signalement-step-last-btn > span').textContent = '6';
                         } else {
+                            nextTabBtn = document.querySelector('#signalement-step-3b-btn');
+                            nextTabBtn.classList.add('fr-hidden');
                             nextTabBtn = document.querySelector('#signalement-step-4-btn');
                             document.querySelector('#signalement-step-4-btn > span').textContent = '4';
-                            document.querySelector('#signalement-step-last-btn > span').textContent = '5';
+                            document.querySelectorAll('#signalement-step-last-btn > span')?.forEach(element => {
+                                element.textContent = '5';
+                            })
                         }
                     }
                     if (form.id === "signalement-step-3b") {
