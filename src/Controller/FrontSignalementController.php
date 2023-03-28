@@ -10,7 +10,6 @@ use App\Entity\Situation;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementCreatedEvent;
-use App\Exception\MaxUploadSizeExceededException;
 use App\Factory\SignalementQualificationFactory;
 use App\Form\SignalementType;
 use App\Manager\UserManager;
@@ -33,7 +32,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -79,14 +77,17 @@ class FrontSignalementController extends AbstractController
     }
 
     #[Route('/signalement/handle', name: 'handle_upload', methods: 'POST')]
-    public function handleUpload(UploadHandlerService $uploadHandlerService, Request $request, RequestStack $requestStack, LoggerInterface $logger)
-    {
+    public function handleUpload(
+        UploadHandlerService $uploadHandlerService,
+        Request $request,
+        LoggerInterface $logger
+    ) {
         if (null !== ($files = $request->files->get('signalement'))) {
             try {
                 foreach ($files as $key => $file) {
                     return $this->json($uploadHandlerService->toTempFolder($file)->setKey($key));
                 }
-            } catch (MaxUploadSizeExceededException $exception) {
+            } catch (\Exception $exception) {
                 $logger->error($exception->getMessage());
 
                 return $this->json(['error' => $exception->getMessage()], 400);
