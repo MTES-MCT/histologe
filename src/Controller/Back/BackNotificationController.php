@@ -22,7 +22,7 @@ class BackNotificationController extends AbstractController
 
         $page = $request->get('page') ?? 1;
         $options = $this->getParameter('authorized_codes_insee');
-        $notifications = $notificationRepository->getFromUser($this->getUser(), (int) $page, $options);
+        $notifications = $notificationRepository->getNotificationUser($this->getUser(), (int) $page, $options);
 
         return $this->render('back/notifications/index.html.twig', [
             'title' => $title,

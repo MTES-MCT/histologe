@@ -30,7 +30,7 @@ class NotificationRepository extends ServiceEntityRepository
         parent::__construct($registry, Notification::class);
     }
 
-    public function getFromUserQueryBuilder(User $user, array $options): QueryBuilder
+    public function getNotificationUserQueryBuilder(User $user, array $options): QueryBuilder
     {
         $qb = $this->createQueryBuilder('n')
             ->orderBy('suivi.createdAt', 'DESC')
@@ -57,12 +57,12 @@ class NotificationRepository extends ServiceEntityRepository
         return $qb;
     }
 
-    public function getFromUser(User $user, int $page, array $options): Paginator
+    public function getNotificationUser(User $user, int $page, array $options): Paginator
     {
         $maxResult = Notification::MAX_LIST_PAGINATION;
         $firstResult = ($page - 1) * $maxResult;
 
-        $queryBuilder = $this->getFromUserQueryBuilder($user, $options);
+        $queryBuilder = $this->getNotificationUserQueryBuilder($user, $options);
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         return new Paginator($queryBuilder->getQuery(), true);
