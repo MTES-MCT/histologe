@@ -13,6 +13,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -28,9 +30,10 @@ class NotificationRepository extends ServiceEntityRepository
         parent::__construct($registry, Notification::class);
     }
 
-    public function findAllForUser(User $user, array $options)
+    public function getFromUserQueryBuilder(User $user, array $options): QueryBuilder
     {
         $qb = $this->createQueryBuilder('n')
+            ->orderBy('suivi.createdAt', 'DESC')
             ->where('n.user = :user')
             ->andWhere('n.type = :type_notification')
             ->setParameter('user', $user)
@@ -51,7 +54,18 @@ class NotificationRepository extends ServiceEntityRepository
             }
         }
 
-        return $qb->getQuery()->getResult();
+        return $qb;
+    }
+
+    public function getFromUser(User $user, int $page, array $options): Paginator
+    {
+        $maxResult = Notification::MAX_LIST_PAGINATION;
+        $firstResult = ($page - 1) * $maxResult;
+
+        $queryBuilder = $this->getFromUserQueryBuilder($user, $options);
+        $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
+
+        return new Paginator($queryBuilder->getQuery(), true);
     }
 
     public function findOlderThan(int $diff)
