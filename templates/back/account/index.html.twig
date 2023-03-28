@@ -3,10 +3,19 @@
 {% block title %}Comptes archivés ou sans territoires et/ou partenaires{% endblock %}
 
 {% block content %}
+    <section class="fr-p-5v">
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-6 fr-text--left">
+                    <h1 class="fr-h1 fr-mb-0">Comptes archivés</h1>
+                </div>
+            </div>
+        </header>
+    </section>
     {% if is_granted('ROLE_ADMIN') %}
     <section class="fr-container--fluid">
         <form action="#" name="bo-filters-form" id="bo_filters_form" method="POST"
-              class="fr-accordion fr-background--white fr-p-2v fr-grid-row fr-grid-row--bottom">
+              class="fr-background--grey fr-p-2v fr-grid-row fr-grid-row--bottom">
               
             <div class="fr-col-4 fr-p-2v">
                 <div class="fr-search-bar fr-mt-2v" id="header-search">

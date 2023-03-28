@@ -3,26 +3,55 @@
 {% block title %}Partenaire index{% endblock %}
 
 {% block content %}
-    {% if is_granted('ROLE_ADMIN') %}
-        <form action="#" name="bo-filters-form" id="bo_filters_form" method="POST"
-              class="fr-accordion fr-background--white">
-            <div class="fr-p-5v">
-                <label class="fr-label" for="bo-filters-territories"><strong>Filtrer par territoire</strong></label>
+    <section class="fr-p-5v">
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-6 fr-text--left">
+                    <h1 class="fr-h1 fr-mb-0">Partenaires</h1>
+                </div>
+                <div class="fr-col-6 fr-text--right">
+                    <a class="fr-btn fr-btn--success fr-btn--icon-left fr-btn--lg fr-fi-add-circle-line" href="{{ path('back_partner_new') }}">Ajouter
+                        un partenaire</a>
+                </div>
+            </div>
+        </header>
+    </section>
+    <form action="#" name="bo-filters-form" id="bo_filters_form" method="POST"
+              class="fr-background--grey fr-p-2v fr-grid-row fr-grid-row--bottom">
+        <div class="fr-col-4 fr-p-2v">
+            <div class="fr-search-bar fr-mt-2v" id="header-search">
+                <input class="fr-input" placeholder="Rechercher un partenaire" type="search" id="header-search-input"
+                    name="bo-filters-usersterms" value="{{ userTerms ?? '' }}">
+                <button class="fr-btn" title="Rechercher">
+                    {{userTerms is null ? 'Rechercher un partenaire' : userTerms}}
+                </button>&nbsp;
+            </div>
+        </div>
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="fr-col-3 fr-p-2v">
                 <select id="bo-filters-territories" class="fr-select" onchange="this.form.submit()" name="territory">
+                    <option value="" {{ currentTerritory is null ? 'selected' : '' }}>Territoires</option>
                     {% for territory in territories %}
-                        <option value="{{ territory.id }}" {{ territory.id == currentTerritory.id ? 'selected' : '' }}>{{ territory.name|upper }}</option>
+                        <option value="{{ territory.id }}" {{ currentTerritory ? (territory.id == currentTerritory.id ? 'selected' : '') : ''  }}>{{ territory.name|upper }}</option>
                     {% endfor %}
                 </select>
             </div>
-        </form>
-    {% endif %}
+        {% endif %}
+        <div class="fr-col-3 fr-p-2v">
+            <select id="bo-filters-types" class="fr-select" onchange="this.form.submit()" name="type">
+                <option value="" {{ currentType is null ? 'selected' : '' }}>Type</option>
+                {% for key, type in types %}
+                    <option value="{{ key }}" {{ currentType ? (key == currentType ? 'selected' : '') : '' }}>{{ type|upper }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="fr-col-2 fr-p-2v">
+            <a href="{{ path('back_partner_index') }}" class="fr-link fr-link--icon-left fr-fi-close-circle-line">Réinitialiser</a>
+        </div>
+    </form>
     <section class="fr-grid-row fr-grid-row--middle fr-p-5v ">
         <div class="fr-col-6">
-            <h1 class="fr-h2 fr-mb-0">Partenaires</h1>
-        </div>
-        <div class="fr-col-6 fr-text--right">
-            <a class="fr-btn fr-btn--icon-left fr-fi-add-circle-line" href="{{ path('back_partner_new') }}">Ajouter
-                un partenaire</a>
+            <h1 class="fr-h2 fr-mb-0" id="desc-table">{{total}} partenaires trouvés</h1>
         </div>
     </section>
     <section class="fr-col-12 fr-table fr-table--bordered fr-pt-0">
@@ -30,33 +59,34 @@
             <thead>
             <tr>
                 <th>Id</th>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <th>Dpt.</th>
+                {% endif %}
                 <th>Nom</th>
                 <th>Type</th>
-                {% if isExperimentationTerritory %}
-                    <th>Compétences</th>
-                {% endif %}
-                <th>INSEE</th>
-                <th>Mail générique ?</th>
-                <th class="fr-text--right">actions</th>
+                <th>Compétences</th>
+                <th>Codes INSEE</th>
+                <th class="fr-text--right">Actions</th>
             </tr>
             </thead>
             <tbody>
             {% for partner in partners %}
                 <tr class="partner-row">
                     <td>{{ partner.id }}</td>
-                    <td>{{ partner.nom }}</td>
-                    {% if isExperimentationTerritory %}
-                        <td>{{ partner.type ? partner.type.label : (partner.isCommune ? 'Commune':'Partenaire') }}</td>
-                    {% else %}
-                        <td>{{ partner.isCommune ? 'Commune':'Partenaire' }}</td>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <td>{{ partner.territory ? partner.territory.id : 0 }}</td>
                     {% endif %}
-                    {% if isExperimentationTerritory %}
-                        <td>
+                    <td>{{ partner.nom }}</td>
+                    <td>{{ partner.type ? partner.type.label : (partner.isCommune ? 'Commune':'Partenaire') }}</td>
+                    <td>
+                        {% if partner.competence %}
                             {% for competence in partner.competence %}
                                 <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ competence.label }}</div>
                             {% endfor %}
-                        </td>
-                    {% endif %}
+                        {% else %}
+                            /
+                        {% endif %}
+                    </td>
                     <td>
                         {% for insee in partner.insee|slice(0, 4) %}
                             {% if insee %}
@@ -69,7 +99,6 @@
                             + {{partner.insee|length - 4}}
                         {% endif %}
                     </td>
-                    <td>{{ partner.email }}</td>
                     <td class="fr-text--right">
                         <a href="{{ path('back_partner_edit', {'id': partner.id}) }}"
                            class="fr-btn fr-fi-eye-fill fr-btn--sm"></a>
@@ -91,11 +120,7 @@
                     <li>
                         <a class="fr-pagination__link fr-pagination__link--first"
                                 {% if pages > 1 %}
-                                    {% if is_granted('ROLE_ADMIN') %}
-                                        href="{{ path('back_partner_index', {page : 1, territory: currentTerritory.id}) }}"
-                                    {% else %}
-                                        href="{{ path('back_partner_index', {page : 1 }) }}"
-                                    {% endif %}
+                                    href="{{ path('back_partner_index', {page : 1, territory: (currentTerritory ? currentTerritory.id : null ), type: (currentType ? currentType : null), userTerms: userTerms }) }}"
                                 {% else %}
                                     aria-disabled="true"
                                 {% endif %}>
@@ -105,11 +130,7 @@
                     <li>
                         <a class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
                                 {% if pages > 1 and page != 1 %}
-                                    {% if is_granted('ROLE_ADMIN') %}
-                                        href="{{ path('back_partner_index', {page : page - 1, territory: currentTerritory.id}) }}"
-                                    {% else %}
-                                        href="{{ path('back_partner_index', {page : page - 1 }) }}"
-                                    {% endif %}
+                                    href="{{ path('back_partner_index', {page : page - 1, territory: (currentTerritory ? currentTerritory.id : null ), type: (currentType ? currentType : null), userTerms: userTerms }) }}"
                                 {% else %}
                                     aria-disabled="true"
                                 {% endif %} role="link">
@@ -120,11 +141,7 @@
                         <a class="fr-pagination__link" {{ page == 1 ? 'aria-current="page"' : '' }}
                            title="Page 1"
                            data-page="1"
-                                {% if is_granted('ROLE_ADMIN') %}
-                                    href="{{ path('back_partner_index', {page : 1 , territory: currentTerritory.id}) }}"
-                                {% else %}
-                                    href="{{ path('back_partner_index', {page : 1 }) }}"
-                                {% endif %}
+                                href="{{ path('back_partner_index', {page : 1, territory: (currentTerritory ? currentTerritory.id : null ), type: (currentType ? currentType : null), userTerms: userTerms }) }}"
                         >
                             1
                         </a>
@@ -133,11 +150,7 @@
                         {% for i in 2..pages %}
                             <li class="{% if loop.index > 2 and loop.index < pages-3 %}fr-hidden{% endif %}">
                                 <a class="fr-pagination__link" {{ page == i ? 'aria-current="page"' : '' }}
-                                        {% if is_granted('ROLE_ADMIN') %}
-                                            href="{{ path('back_partner_index', {page : i, territory: currentTerritory.id}) }}"
-                                        {% else %}
-                                            href="{{ path('back_partner_index', {page : i }) }}"
-                                        {% endif %}
+                                    href="{{ path('back_partner_index', {page : i, territory: (currentTerritory ? currentTerritory.id : null ), type: (currentType ? currentType : null), userTerms: userTerms }) }}"
                                    title="Page {{ i }}"
                                    data-page="{{ i }}">
                                     {{ i }}
@@ -155,11 +168,7 @@
                     <li>
                         <a class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
                                 {% if pages > 1  and page < pages %}
-                                    {% if is_granted('ROLE_ADMIN') %}
-                                        href="{{ path('back_partner_index', {page : page + 1, territory: currentTerritory.id }) }}"
-                                    {% else %}
-                                        href="{{ path('back_partner_index', {page : page + 1 }) }}"
-                                    {% endif %}
+                                    href="{{ path('back_partner_index', {page : page + 1, territory: (currentTerritory ? currentTerritory.id : null ), type: (currentType ? currentType : null), userTerms: userTerms }) }}"
                                 {% else %}
                                     aria-disabled="true"
                                 {% endif %} role="link">
@@ -169,11 +178,7 @@
                     <li>
                         <a class="fr-pagination__link fr-pagination__link--last"
                                 {% if pages > 1 %}
-                                    {% if is_granted('ROLE_ADMIN') %}
-                                        href="{{ path('back_partner_index', {page : pages, territory: currentTerritory.id }) }}"
-                                    {% else %}
-                                        href="{{ path('back_partner_index', {page : pages }) }}"
-                                    {% endif %}
+                                    href="{{ path('back_partner_index', {page : pages, territory: (currentTerritory ? currentTerritory.id : null ), type: (currentType ? currentType : null), userTerms: userTerms }) }}"
                                 {% else %}
                                     aria-disabled="true"
                                 {% endif %}

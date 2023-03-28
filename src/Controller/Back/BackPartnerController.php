@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Enum\PartnerType as EnumPartnerType;
 use App\Entity\Partner;
 use App\Entity\User;
 use App\Form\PartnerType;
@@ -38,36 +39,40 @@ class BackPartnerController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if ($this->isGranted('ROLE_ADMIN')) {
-            $territory = empty($request->get('territory')) ? self::DEFAULT_TERRITORY_AIN : (int) $request->get('territory');
-            $currentTerritory = $territoryRepository->find($territory);
-        } else {
-            $currentTerritory = $user->getTerritory();
-        }
+        $currentTerritory = $territoryRepository->find((int) $request->get('territory'));
+        $currentType = $request->get('type');
+        $enumType = $request->get('type') ? EnumPartnerType::tryFrom($request->get('type')) : null;
+        $userTerms = $request->get('userTerms');
 
-        $paginatedPartners = $partnerRepository->getPartners($currentTerritory, (int) $page);
+        $paginatedPartners = $partnerRepository->getPartners($currentTerritory, $enumType, $userTerms, (int) $page);
+
+        $types = EnumPartnerType::getLabelList();
 
         if (Request::METHOD_POST === $request->getMethod()) {
             $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
+            $currentType = $request->request->get('type');
+            $userTerms = $request->request->get('bo-filters-usersterms');
 
             return $this->redirect($this->generateUrl('back_partner_index', [
                 'page' => 1,
-                'territory' => $currentTerritory->getId(),
+                'territory' => $currentTerritory?->getId(),
+                'type' => $currentType,
+                'userTerms' => $userTerms,
             ]));
         }
 
         $totalPartners = \count($paginatedPartners);
 
-        $experimentationTerritories = $parameterBag->get('experimentation_territory');
-
         return $this->render('back/partner/index.html.twig', [
-            'currentTerritory' => $currentTerritory,
-            'territories' => $territoryRepository->findAllList(),
-            'partners' => $paginatedPartners,
-            'total' => $totalPartners,
-            'page' => $page,
-            'pages' => (int) ceil($totalPartners / Partner::MAX_LIST_PAGINATION),
-            'isExperimentationTerritory' => \array_key_exists($currentTerritory->getZip(), $experimentationTerritories),
+           'currentTerritory' => $currentTerritory,
+           'territories' => $territoryRepository->findAllList(),
+           'partners' => $paginatedPartners,
+           'currentType' => $currentType,
+           'types' => $types,
+           'userTerms' => $userTerms,
+           'total' => $totalPartners,
+           'page' => $page,
+           'pages' => (int) ceil($totalPartners / Partner::MAX_LIST_PAGINATION),
         ]);
     }
 
