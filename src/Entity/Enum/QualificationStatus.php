@@ -5,6 +5,7 @@ namespace App\Entity\Enum;
 enum QualificationStatus: string
 {
     case ARCHIVED = 'ARCHIVED';
+    case DANGER_CHECK = 'DANGER_CHECK';
     case INSALUBRITE_CHECK = 'INSALUBRITE_CHECK';
     case INSALUBRITE_MANQUEMENT_CHECK = 'INSALUBRITE_MANQUEMENT_CHECK';
     case NDE_AVEREE = 'NDE_AVEREE';
@@ -22,6 +23,9 @@ enum QualificationStatus: string
     {
         return [
             'ARCHIVED' => 'archived',
+            'DANGER_CHECK' => 'Danger à vérifier',
+            'INSALUBRITE_CHECK' => 'Insalubrité à vérifier',
+            'INSALUBRITE_MANQUEMENT_CHECK' => 'Manquement à l\'insalubrité à vérifier',
             'NDE_AVEREE' => 'Non décence énergétique avérée',
             'NDE_OK' => 'Décence énergétique OK',
             'NDE_CHECK' => 'Non décence énergétique à vérifier',

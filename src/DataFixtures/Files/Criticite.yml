@@ -23,6 +23,8 @@ criticites:
     score: 3
     new_score: 3
     is_danger: 0
+    qualifications:
+      - "INSALUBRITE"
   -
     critere: "L'entrée du bâtiment est abîmée ou mal sécurisée"
     label: "La porte ferme à clef mais difficilement."
@@ -649,6 +651,8 @@ criticites:
     score: 3
     new_score: 3
     is_danger: 0
+    qualifications:
+      - "INSALUBRITE"
   -
     critere: "Mon logement est sous les combles."
     label: "mon logement est peu fonctionnel mais je peux vivre dedans."
@@ -721,6 +725,8 @@ criticites:
     score: 3
     new_score: 3
     is_danger: 0
+    qualifications:
+      - "INSALUBRITE"
   -
     critere: "Mon salon ou ma salle à manger mesure moins de 7m²."
     label: "Non concerné"

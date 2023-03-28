@@ -22,6 +22,7 @@ class QualificationStatusService implements RuntimeExtensionInterface
         $addNonDecence = true;
         $addRSD = true;
         $addInsalubrite = true;
+        $addDanger = true;
 
         $listQualifications = $signalement->getSignalementQualifications();
         foreach ($listQualifications as $qualification) {
@@ -33,6 +34,9 @@ class QualificationStatusService implements RuntimeExtensionInterface
             }
             if (Qualification::INSALUBRITE == $qualification->getQualification()) {
                 $addInsalubrite = false;
+            }
+            if (Qualification::DANGER == $qualification->getQualification()) {
+                $addDanger = false;
             }
         }
 
@@ -48,12 +52,40 @@ class QualificationStatusService implements RuntimeExtensionInterface
             $signalement->addSignalementQualification($signalementQualification);
         }
 
-        // IF NOT ADDED YET: If score is higher than 10, we add INSALUBRITE with different status depending on score
-        if ($addInsalubrite && $newScoreCreation >= 10) {
-            $qualificationStatus = $newScoreCreation >= 30 ? QualificationStatus::INSALUBRITE_CHECK : QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK;
-            $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::INSALUBRITE, $qualificationStatus);
-            $signalement->addSignalementQualification($signalementQualification);
+        // IF NOT ADDED YET:
+        // If score is higher than 10, we add INSALUBRITE with different status depending on score
+        // If criticité with qualification INSALUBRITE, we add INSALUBRITE
+        if ($addInsalubrite) {
+            $statusInsalubrite = null;
+            if ($newScoreCreation >= 10) {
+                $statusInsalubrite = $newScoreCreation >= 30 ? QualificationStatus::INSALUBRITE_CHECK : QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK;
+            }
+            foreach ($signalement->getCriticites() as $criticite) {
+                if (\in_array(Qualification::INSALUBRITE->value, $criticite->getQualification())) {
+                    $statusInsalubrite = QualificationStatus::INSALUBRITE_CHECK;
+                    break;
+                }
+            }
+
+            if (!empty($statusInsalubrite)) {
+                $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::INSALUBRITE, $statusInsalubrite);
+                $signalement->addSignalementQualification($signalementQualification);
+            }
         }
+
+        // IF NOT ADDED YET:
+        // If criticité is DANGER, we add DANGER
+        if ($addDanger) {
+            foreach ($signalement->getCriticites() as $criticite) {
+                if ($criticite->getIsDanger()) {
+                    $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::DANGER, QualificationStatus::DANGER_CHECK);
+                    $signalement->addSignalementQualification($signalementQualification);
+                    break;
+                }
+            }
+        }
+
+        // TODO : remove qualifications when score / criticités are updated
     }
 
     public function getNDEStatus(SignalementQualification $signalementQualification): ?QualificationStatus

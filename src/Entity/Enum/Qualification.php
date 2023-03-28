@@ -21,6 +21,7 @@ enum Qualification: string
     case NUISIBLES = 'NUISIBLES';
     case RSD = 'RSD';
     case VISITES = 'VISITES';
+    case DANGER = 'DANGER';
 
     public function label(): string
     {
@@ -47,6 +48,7 @@ enum Qualification: string
             'NUISIBLES' => 'Nuisibles',
             'RSD' => 'RSD',
             'VISITES' => 'Visites',
+            'DANGER' => 'Danger',
         ];
     }
 }
