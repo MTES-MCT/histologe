@@ -7,7 +7,7 @@ use App\Manager\SignalementManager;
 use App\Repository\CritereRepository;
 use App\Repository\SignalementRepository;
 use App\Service\Signalement\CriticiteCalculatorService;
-use App\Service\Signalement\QualificationStatusService;
+use App\Service\Signalement\QualificationService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -26,7 +26,7 @@ class CalculateNewCriticiteCommand extends Command
     public function __construct(
         private SignalementManager $signalementManager,
         private CritereRepository $critereRepository,
-        private QualificationStatusService $qualificationStatusService
+        private QualificationService $qualificationService
         ) {
         parent::__construct();
     }
@@ -53,7 +53,7 @@ class CalculateNewCriticiteCommand extends Command
             $progressBar->advance();
             $score = new CriticiteCalculatorService($signalement, $this->critereRepository);
             $signalement->setNewScoreCreation($score->calculateNewCriticite());
-            $this->qualificationStatusService->updateQualificationFromScore($signalement);
+            $this->qualificationService->updateQualificationFromScore($signalement);
 
             if (0 === $totalRead % self::FLUSH_COUNT) {
                 $this->signalementManager->save($signalement);

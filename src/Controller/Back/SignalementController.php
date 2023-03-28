@@ -23,7 +23,7 @@ use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
 use App\Security\Voter\UserVoter;
 use App\Service\Signalement\CriticiteCalculatorService;
-use App\Service\Signalement\QualificationStatusService;
+use App\Service\Signalement\QualificationService;
 use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -172,7 +172,7 @@ class SignalementController extends AbstractController
         ManagerRegistry $doctrine,
         SituationRepository $situationRepository,
         CritereRepository $critereRepository,
-        QualificationStatusService $qualificationStatusService
+        QualificationService $qualificationService
     ): Response {
         $title = 'Administration - Edition signalement #'.$signalement->getReference();
         $etats = ['Etat moyen', 'Mauvais état', 'Très mauvais état'];
@@ -185,7 +185,7 @@ class SignalementController extends AbstractController
                 $signalement->setModifiedAt(new DateTimeImmutable());
                 $score = new CriticiteCalculatorService($signalement, $critereRepository);
                 $signalement->setNewScoreCreation($score->calculateNewCriticite());
-                $qualificationStatusService->updateQualificationFromScore($signalement);
+                $qualificationService->updateQualificationFromScore($signalement);
                 $data = [];
                 if (\array_key_exists('situation', $form->getExtraData())) {
                     $data['situation'] = $form->getExtraData()['situation'];
