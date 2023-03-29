@@ -78,8 +78,11 @@ class NotificationController extends AbstractController
     }
 
     #[Route('/notifications/{id}/supprimer', name: 'back_notifications_delete_notification')]
-    public function deleteNotification(Notification $notification, EntityManagerInterface $em, Request $request): Response
-    {
+    public function deleteNotification(
+        Notification $notification,
+        EntityManagerInterface $em,
+        Request $request
+    ): Response {
         $this->denyAccessUnlessGranted('NOTIF_DELETE', $notification);
         if ($this->isCsrfTokenValid('back_delete_notification_'.$notification->getId(), $request->get('_token'))) {
             $em->remove($notification);
