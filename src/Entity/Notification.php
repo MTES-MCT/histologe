@@ -12,7 +12,7 @@ class Notification
     public const TYPE_AFFECTATION = 0;
     public const TYPE_SUIVI = 1;
     public const TYPE_NEW_SIGNALEMENT = 2;
-    public const MAX_LIST_PAGINATION = 50;
+    public const MAX_LIST_PAGINATION = 100;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

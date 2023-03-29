@@ -11,21 +11,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/bo')]
-class BackNotificationController extends AbstractController
+class NotificationController extends AbstractController
 {
     #[Route('/notifications', name: 'back_notifications_list')]
-    public function newsActivitiesSinceLastLogin(
+    public function list(
         Request $request,
         NotificationRepository $notificationRepository,
     ): Response {
-        $title = 'Administration - Nouveauté(s)';
-
         $page = $request->get('page') ?? 1;
         $options = $this->getParameter('authorized_codes_insee');
         $notifications = $notificationRepository->getNotificationUser($this->getUser(), (int) $page, $options);
 
         return $this->render('back/notifications/index.html.twig', [
-            'title' => $title,
             'notifications' => $notifications,
             'page' => $page,
             'pages' => (int) ceil($notifications->count() / Notification::MAX_LIST_PAGINATION),

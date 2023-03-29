@@ -8,9 +8,6 @@ use App\Entity\Notification;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20230328163747 extends AbstractMigration
 {
     public const DESC_SIGNALEMENT_VALIDE = '%Signalement validé%';

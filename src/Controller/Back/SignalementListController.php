@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/bo')]
-class BackController extends AbstractController
+class SignalementListController extends AbstractController
 {
     /**
      * @throws InvalidArgumentException
@@ -25,7 +25,6 @@ class BackController extends AbstractController
         SearchFilterOptionDataProvider $searchFilterOptionDataProvider,
         SignalementManager $signalementManager,
     ): Response {
-        $title = 'Administration - Tableau de bord';
         $filters = $searchFilterService->setRequest($request)->setFilters()->getFilters();
 
         /** @var User $user */
@@ -40,7 +39,6 @@ class BackController extends AbstractController
         }
 
         return $this->render('back/index.html.twig', [
-            'title' => $title,
             'filters' => $filters,
             'filtersOptionData' => $searchFilterOptionDataProvider->getData($user),
             'countActiveFilters' => $searchFilterService->getCountActive(),
