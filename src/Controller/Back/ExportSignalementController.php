@@ -16,8 +16,7 @@ class ExportSignalementController extends AbstractController
     public function exportCsv(
         Request $request,
         SignalementManager $signalementManager,
-        SignalementRepository $signalementRepository
-    ) {
+    ): StreamedResponse {
         $filters = $request->getSession()->get('filters');
         /** @var User $user */
         $user = $this->getUser();
@@ -31,9 +30,11 @@ class ExportSignalementController extends AbstractController
             fclose($handle);
         });
 
-        // Set response headers to force download and set filename
         $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Disposition', 'attachment; filename="export_s.csv"');
+        $response->headers->set(
+            'Content-Disposition',
+            'attachment; filename="export-histologe-'.date('dmY').'.csv"'
+        );
 
         return $response;
     }
