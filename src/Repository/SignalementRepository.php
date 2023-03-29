@@ -340,7 +340,19 @@ class SignalementRepository extends ServiceEntityRepository
         $maxResult = SignalementAffectationListView::MAX_LIST_PAGINATION;
         $page = (int) $options['page'];
         $firstResult = (($page ?: 1) - 1) * $maxResult;
+        $qb = $this->findSignalementAffectationQuery($user, $options);
+        $qb
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResult)
+            ->getQuery();
 
+        return new Paginator($qb, true);
+    }
+
+    public function findSignalementAffectationQuery(
+        User|UserInterface|null $user,
+        array $options
+    ): QueryBuilder {
         $qb = $this->createQueryBuilder('s');
         $qb->select('
             DISTINCT s.id,
@@ -414,13 +426,53 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->setParameter('status', Signalement::STATUS_ARCHIVED);
         $qb = $this->searchFilterService->applyFilters($qb, $options);
         $qb->orderBy(isset($options['sort']) && 'lastSuiviAt' === $options['sort']
-                ? 's.lastSuiviAt'
-                : 's.createdAt', 'DESC')
-            ->setFirstResult($firstResult)
-            ->setMaxResults($maxResult)
+            ? 's.lastSuiviAt'
+            : 's.createdAt', 'DESC')
             ->getQuery();
 
-        return new Paginator($qb, true);
+        return $qb;
+    }
+
+    public function findSignalementAffectationIterable(User|UserInterface|null $user, array $options): iterable
+    {
+        $qb = $this->findSignalementAffectationQuery($user, $options);
+        $qb->addSelect(
+            's.details,
+            s.telOccupant,
+            s.telOccupantBis,
+            s.mailOccupant,
+            s.cpOccupant,
+            s.inseeOccupant,
+            s.etageOccupant,
+            s.escalierOccupant,
+            s.numAppartOccupant,
+            s.adresseAutreOccupant,
+            s.photos,
+            s.documents,
+            s.isProprioAverti,
+            s.nbAdultes,
+            s.nbEnfantsM6,
+            s.nbEnfantsP6,
+            s.isAllocataire,
+            s.numAllocataire,
+            s.natureLogement,
+            s.superficie,
+            s.nomProprio,
+            s.isLogementSocial,
+            s.isPreavisDepart,
+            s.isRelogement,
+            s.nomDeclarant,
+            s.structureDeclarant,
+            s.lienDeclarantOccupant,
+            s.dateVisite,
+            s.isOccupantPresentVisite,
+            s.modifiedAt,
+            s.closedAt,
+            s.motifCloture,
+            s.scoreCloture'
+        );
+
+        return $qb->getQuery()->toIterable();
     }
 
     public function findByStatusAndOrCityForUser(User|UserInterface $user = null, array $options, int|null $export): array|Paginator

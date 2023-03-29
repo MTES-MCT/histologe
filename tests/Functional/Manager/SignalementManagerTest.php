@@ -7,6 +7,7 @@ use App\Entity\Enum\MotifCloture;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Factory\SignalementAffectationListViewFactory;
+use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementFactory;
 use App\Manager\SignalementManager;
 use App\Service\Signalement\QualificationStatusService;
@@ -30,6 +31,7 @@ class SignalementManagerTest extends KernelTestCase
     private EventDispatcherInterface $eventDispatcher;
     private QualificationStatusService $qualificationStatusService;
     private SignalementAffectationListViewFactory $signalementAffectationListViewFactory;
+    private SignalementExportFactory $signalementExportFactory;
     private ParameterBagInterface $parameterBag;
     private SignalementManager $signalementManager;
     private CsrfTokenManagerInterface $csrfTokenManager;
@@ -47,6 +49,7 @@ class SignalementManagerTest extends KernelTestCase
         $this->signalementAffectationListViewFactory = static::getContainer()->get(
             SignalementAffectationListViewFactory::class
         );
+        $this->signalementExportFactory = static::getContainer()->get(SignalementExportFactory::class);
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
         $this->csrfTokenManager = static::getContainer()->get(CsrfTokenManagerInterface::class);
 
@@ -57,6 +60,7 @@ class SignalementManagerTest extends KernelTestCase
             $this->eventDispatcher,
             $this->qualificationStatusService,
             $this->signalementAffectationListViewFactory,
+            $this->signalementExportFactory,
             $this->parameterBag,
             $this->csrfTokenManager,
         );

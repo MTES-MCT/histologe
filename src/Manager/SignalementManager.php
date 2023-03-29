@@ -13,6 +13,7 @@ use App\Entity\Territory;
 use App\Entity\User;
 use App\Event\SignalementCreatedEvent;
 use App\Factory\SignalementAffectationListViewFactory;
+use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementFactory;
 use App\Repository\PartnerRepository;
 use App\Service\Signalement\QualificationStatusService;
@@ -34,6 +35,7 @@ class SignalementManager extends AbstractManager
         private EventDispatcherInterface $eventDispatcher,
         private QualificationStatusService $qualificationStatusService,
         private SignalementAffectationListViewFactory $signalementAffectationListViewFactory,
+        private SignalementExportFactory $signalementExportFactory,
         private ParameterBagInterface $parameterBag,
         private CsrfTokenManagerInterface $csrfTokenManager,
         string $entityName = Signalement::class
@@ -298,6 +300,19 @@ class SignalementManager extends AbstractManager
             'pages' => (int) ceil($total / SignalementAffectationListView::MAX_LIST_PAGINATION),
             'csrfTokens' => $this->generateCsrfToken($signalementAffectationList),
         ];
+    }
+
+    public function findSignalementAffectationIterable(User|UserInterface|null $user, ?array $options = null): iterable
+    {
+        $options['authorized_codes_insee'] = $this->parameterBag->get('authorized_codes_insee');
+
+        $signalementAffectationIterable = $this->getRepository()->findSignalementAffectationIterable($user, $options);
+        foreach ($signalementAffectationIterable as $row) {
+            yield $this->signalementExportFactory->createInstanceFrom(
+                $this->security->getUser(),
+                $row
+            );
+        }
     }
 
     /**

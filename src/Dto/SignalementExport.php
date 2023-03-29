@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Dto;
+
+class SignalementExport
+{
+    public function __construct(
+        public ?string $reference = null,
+        public ?string $createdAt = null,
+        public ?string $statut = null,
+        public ?string $description = null,
+        public ?string $nomOccupant = null,
+        public ?string $prenomOccupant = null,
+        public ?string $telephoneOccupant = null,
+        public ?string $telephoneOccupantBis = null,
+        public ?string $emailOccupant = null,
+        public ?string $adresseOccupant = null,
+        public ?string $cpOccupant = null,
+        public ?string $villeOccupant = null,
+        public ?string $inseeOccupant = null,
+        public ?string $etageOccupant = null,
+        public ?string $escalierOccupant = null,
+        public ?string $numAppartOccupant = null,
+        public ?string $adresseAutreOccupant = null,
+        public ?string $situations = null,
+        public ?string $criteres = null,
+        public ?string $etiquettes = null,
+        public ?bool $photos = null,
+        public ?bool $documents = null,
+        public ?bool $isProprioAverti = null,
+        public ?string $nbAdultes = null,
+        public ?string $nbEnfantsM6 = null,
+        public ?string $nbEnfantsP6 = null,
+        public ?bool $isAllocataire = null,
+        public ?string $numAllocataire = null,
+        public ?string $natureLogement = null,
+        public ?string $superficie = null,
+        public ?string $nomProprio = null,
+        public ?bool $isLogementSocial = null,
+        public ?bool $isPreavisDepart = null,
+        public ?bool $isRelogement = null,
+        public ?bool $isNotOccupant = null,
+        public ?string $nomDeclarant = null,
+        public ?string $structureDeclarant = null,
+        public ?string $lienDeclarantOccupant = null,
+        public ?bool $isSituationHandicap = null,
+        public ?string $scoreCreation = null,
+        public ?string $dateVisite = null,
+        public ?bool $isOccupantPresentVisite = null,
+        public ?string $modifiedAt = null,
+        public ?string $closedAt = null,
+        public ?string $motifCloture = null,
+        public ?string $scoreCloture = null,
+    ) {
+    }
+}
