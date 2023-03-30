@@ -12,12 +12,12 @@
             {% if is_granted('USER_SEE_NDE', app.user) %}
                 {% if signalement.hasNDE %}
                     <br>
-                    <span class="fr-badge fr-badge--info fr-badge--no-icon" title="Non-décence énergétique">NDE</span>
+                    <span class="fr-badge fr-badge--info fr-badge--no-icon fr-mb-1v" title="Non-décence énergétique">NDE</span>
                 {% endif %}
             {% endif %}
             {% for qualificationLabel in signalement.qualificationsLabels %}
                 <br>
-                <span class="fr-badge fr-badge--info fr-badge--no-icon" title="{{ qualificationLabel }}">{{ qualificationLabel }}</span>
+                <span class="fr-badge fr-badge--info fr-badge--no-icon fr-mb-1v" title="{{ qualificationLabel }}">{{ qualificationLabel }}</span>
             {% endfor %}
         </td>
         <td>

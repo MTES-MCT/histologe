@@ -32,18 +32,28 @@
                                 class="fr-btn fr-btn--sm fr-btn--success fr-fi-file-pdf-fill" title="Exporter en PDF"></a>
                         {% endif %}
                     </h1>
-                    {% if signalement.isNotOccupant %}
-                        <small class="fr-background-contrast--red-marianne fr-text-default--error fr-rounded fr-p-1v fr-text--bold {# fr-fi-information-fill fr-badge--icon-left #} fr-pr-3v">&nbsp;
-                            Signalement par un tiers</small>
-                    {% else %}
-                        <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold{# fr-fi-information-fill fr-icon--sm #} fr-pr-3v">&nbsp;
-                            Signalement par l'occupant</small>
-                    {% endif %}                   
-                    {% if can_see_nde_qualification(signalementQualificationNDE) and is_granted('USER_SEE_NDE', app.user) %}     
-                         <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold fr-pr-3v">&nbsp;
-                            Non décence énergétique</small>
-                    {% endif %}                               
                     <text><strong>Déposé le:</strong> {{ signalement.createdAt|format_datetime(locale='fr') }}</text>
+                    <div class="fr-my-3v">
+                        {% if signalement.isNotOccupant %}
+                            <small class="fr-background-contrast--red-marianne fr-text-default--error fr-rounded fr-p-1v fr-text--bold fr-px-3v">
+                                Signalement par un tiers
+                            </small>
+                        {% else %}
+                            <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold fr-px-3v">
+                                Signalement par l'occupant
+                            </small>
+                        {% endif %}                   
+                        {% if can_see_nde_qualification(signalementQualificationNDE) and is_granted('USER_SEE_NDE', app.user) %}     
+                            <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold fr-px-3v">
+                                Non décence énergétique
+                            </small>
+                        {% endif %}
+                        {% for qualification in listQualificationLabels %}
+                            <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold fr-px-3v">
+                                {{ qualification }}
+                            </small>
+                        {% endfor %}
+                    </div>
                 </div>
                 <div class="fr-col-12 fr-col-md-6 fr-text--right">
                     {% if isAffected and not isAccepted and not isRefused and not needValidation and  not isClosed and not isClosedForMe %}

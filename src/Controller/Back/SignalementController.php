@@ -133,6 +133,15 @@ class SignalementController extends AbstractController
         $canEditNDE = $isSignalementNDEActif && $this->isGranted(UserVoter::SEE_NDE, $this->getUser())
         && $canEditSignalement;
 
+        $listQualificationLabels = [];
+        if (null !== $signalement->getSignalementQualifications()) {
+            foreach ($signalement->getSignalementQualifications() as $qualification) {
+                if (Qualification::NON_DECENCE_ENERGETIQUE->name !== $qualification->getQualification()->name) {
+                    $listQualificationLabels[] = $qualification->getQualification()->label();
+                }
+            }
+        }
+
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
             'situations' => $criticitesArranged,
@@ -153,6 +162,7 @@ class SignalementController extends AbstractController
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
             'files' => $files,
             'canEditNDE' => $canEditNDE,
+            'listQualificationLabels' => $listQualificationLabels,
         ]);
     }
 
@@ -185,7 +195,6 @@ class SignalementController extends AbstractController
                 $signalement->setModifiedAt(new DateTimeImmutable());
                 $score = new CriticiteCalculatorService($signalement, $critereRepository);
                 $signalement->setNewScoreCreation($score->calculateNewCriticite());
-                $qualificationService->updateQualificationFromScore($signalement);
                 $data = [];
                 if (\array_key_exists('situation', $form->getExtraData())) {
                     $data['situation'] = $form->getExtraData()['situation'];
@@ -208,6 +217,7 @@ class SignalementController extends AbstractController
                     }
                 }
                 !empty($data['situation']) && $signalement->setJsonContent($data['situation']);
+                $qualificationService->updateQualificationFromScore($signalement);
                 $suivi = new Suivi();
                 $suivi->setCreatedBy($this->getUser());
                 $suivi->setSignalement($signalement);

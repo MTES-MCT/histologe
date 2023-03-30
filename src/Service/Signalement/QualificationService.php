@@ -18,8 +18,8 @@ class QualificationService
     {
         $addNonDecence = true;
         $addRSD = true;
-        $addInsalubrite = true;
-        $addDanger = true;
+        $existingQualificationInsalubrite = null;
+        $existingQualificationDanger = null;
 
         $listQualifications = $signalement->getSignalementQualifications();
         foreach ($listQualifications as $qualification) {
@@ -30,10 +30,10 @@ class QualificationService
                 $addRSD = false;
             }
             if (Qualification::INSALUBRITE == $qualification->getQualification()) {
-                $addInsalubrite = false;
+                $existingQualificationInsalubrite = $qualification;
             }
             if (Qualification::DANGER == $qualification->getQualification()) {
-                $addDanger = false;
+                $existingQualificationDanger = $qualification;
             }
         }
 
@@ -49,42 +49,52 @@ class QualificationService
             $signalement->addSignalementQualification($signalementQualification);
         }
 
-        // IF NOT ADDED YET:
-        // If score is higher than 10, we add INSALUBRITE with different status depending on score
-        // If criticité with qualification INSALUBRITE, we add INSALUBRITE
-        if ($addInsalubrite) {
-            $statusInsalubrite = null;
-            $listCriticiteInsalubrite = [];
-            if ($newScoreCreation >= 10) {
-                $statusInsalubrite = $newScoreCreation >= 30 ? QualificationStatus::INSALUBRITE_CHECK : QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK;
-            }
-            foreach ($signalement->getCriticites() as $criticite) {
-                if (\in_array(Qualification::INSALUBRITE->value, $criticite->getQualification())) {
-                    $statusInsalubrite = QualificationStatus::INSALUBRITE_CHECK;
-                    $listCriticiteInsalubrite[] = $criticite->getId();
-                }
-            }
-            if (!empty($statusInsalubrite)) {
-                $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::INSALUBRITE, $statusInsalubrite, $listCriticiteInsalubrite);
-                $signalement->addSignalementQualification($signalementQualification);
+        // INSALUBRITE
+        // If score is higher than 10, we add INSALUBRITE_CHECK or INSALUBRITE_MANQUEMENT_CHECK depending on score
+        // If criticité with qualification INSALUBRITE, we add INSALUBRITE_CHECK
+        $statusInsalubrite = null;
+        if ($newScoreCreation >= 10) {
+            $statusInsalubrite = $newScoreCreation >= 30 ? QualificationStatus::INSALUBRITE_CHECK : QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK;
+        }
+        $listCriticiteInsalubrite = [];
+        foreach ($signalement->getCriticites() as $criticite) {
+            if (\in_array(Qualification::INSALUBRITE->value, $criticite->getQualification())) {
+                $statusInsalubrite = QualificationStatus::INSALUBRITE_CHECK;
+                $listCriticiteInsalubrite[] = $criticite->getId();
             }
         }
+        // If already exists
+        if ($existingQualificationInsalubrite) {
+            // But should be deleted
+            if (empty($statusInsalubrite)) {
+                $signalement->removeSignalementQualification($existingQualificationInsalubrite);
+            }
+        // TODO : but should be changed of status
 
-        // IF NOT ADDED YET:
+        // If not added yet, but should be added
+        } elseif (!empty($statusInsalubrite)) {
+            $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::INSALUBRITE, $statusInsalubrite, $listCriticiteInsalubrite);
+            $signalement->addSignalementQualification($signalementQualification);
+        }
+
+        // DANGER
         // If criticité is DANGER, we add DANGER
-        if ($addDanger) {
-            $listCriticiteDanger = [];
-            foreach ($signalement->getCriticites() as $criticite) {
-                if ($criticite->getIsDanger()) {
-                    $listCriticiteDanger[] = $criticite->getId();
-                }
-            }
-            if (!empty($listCriticiteDanger)) {
-                $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::DANGER, QualificationStatus::DANGER_CHECK, $listCriticiteDanger);
-                $signalement->addSignalementQualification($signalementQualification);
+        $listCriticiteDanger = [];
+        foreach ($signalement->getCriticites() as $criticite) {
+            if ($criticite->getIsDanger()) {
+                $listCriticiteDanger[] = $criticite->getId();
             }
         }
-
-        // TODO : remove qualifications when score / criticités are updated
+        // If already exists
+        if ($existingQualificationDanger) {
+            // But should be deleted
+            if (empty($listCriticiteDanger)) {
+                $signalement->removeSignalementQualification($existingQualificationDanger);
+            }
+        // If not added yet, but should be added
+        } elseif (!empty($listCriticiteDanger)) {
+            $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::DANGER, QualificationStatus::DANGER_CHECK, $listCriticiteDanger);
+            $signalement->addSignalementQualification($signalementQualification);
+        }
     }
 }
