@@ -2,8 +2,10 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\User;
 use App\Manager\SignalementManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,27 +17,33 @@ class ExportSignalementController extends AbstractController
     public function exportCsv(
         Request $request,
         SignalementManager $signalementManager,
-    ): StreamedResponse {
-        $filters = $request->getSession()->get('filters');
-        $signalementAffectationIterable = $signalementManager->findSignalementAffectationIterable($this->getUser(), $filters);
-        $response = new StreamedResponse();
-        $response->setCallback(function () use ($signalementAffectationIterable) {
-            $handle = fopen('php://output', 'w');
-            foreach ($signalementAffectationIterable as $key => $signalementAffectationItem) {
-                if (0 === $key) {
-                    fputcsv($handle, array_keys(get_object_vars($signalementAffectationItem)), ';');
+    ) {
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($this->isCsrfTokenValid('export_token_'.$user->getId(), $request->get('_token'))) {
+            $filters = $request->getSession()->get('filters');
+            $response = new StreamedResponse();
+            $response->setCallback(function () use ($signalementManager, $filters, $user) {
+                $handle = fopen('php://output', 'w');
+                foreach ($signalementManager->findSignalementAffectationIterable($user, $filters) as $key => $signalementAffectationItem) {
+                    if (0 === $key) {
+                        fputcsv($handle, array_keys(get_object_vars($signalementAffectationItem)), ';');
+                    }
+                    fputcsv($handle, get_object_vars($signalementAffectationItem), ';');
                 }
-                fputcsv($handle, get_object_vars($signalementAffectationItem), ';');
-            }
-            fclose($handle);
-        });
+                fclose($handle);
+            });
 
-        $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set(
-            'Content-Disposition',
-            'attachment; filename="export-histologe-'.date('dmY').'.csv"'
-        );
+            $disposition = HeaderUtils::makeDisposition(
+                HeaderUtils::DISPOSITION_ATTACHMENT,
+                'export-histologe-'.date('dmY').'.csv'
+            );
+            $response->headers->set('Content-Type', 'text/csv');
+            $response->headers->set('Content-Disposition', $disposition);
 
-        return $response;
+            $response->send();
+        } else {
+            return $this->redirectToRoute('back_index');
+        }
     }
 }

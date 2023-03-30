@@ -434,9 +434,13 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb;
     }
 
-    public function findSignalementAffectationIterable(User|UserInterface|null $user, array $options): iterable
+    public function findSignalementAffectationIterable(User|UserInterface|null $user, array $options): \Generator
     {
         $qb = $this->findSignalementAffectationQuery($user, $options);
+        if ($user->isSuperAdmin()) {
+            $qb->andWhere('s.isImported = :is_imported')->setParameter('is_imported', 0);
+        }
+
         $qb->addSelect(
             's.details,
             s.telOccupant,
