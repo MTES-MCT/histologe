@@ -41,7 +41,7 @@ class ExportSignalementController extends AbstractController
             $response->headers->set('Content-Type', 'text/csv');
             $response->headers->set('Content-Disposition', $disposition);
 
-            $response->send();
+            return $response->send();
         } else {
             return $this->redirectToRoute('back_index');
         }
