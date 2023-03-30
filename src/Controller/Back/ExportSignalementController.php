@@ -3,7 +3,6 @@
 namespace App\Controller\Back;
 
 use App\Manager\SignalementManager;
-use App\Repository\SignalementRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -18,14 +17,15 @@ class ExportSignalementController extends AbstractController
         SignalementManager $signalementManager,
     ): StreamedResponse {
         $filters = $request->getSession()->get('filters');
-        /** @var User $user */
-        $user = $this->getUser();
-        $signalementAffectationList = $signalementManager->findSignalementAffectationIterable($user, $filters);
+        $signalementAffectationIterable = $signalementManager->findSignalementAffectationIterable($this->getUser(), $filters);
         $response = new StreamedResponse();
-        $response->setCallback(function () use ($signalementAffectationList) {
+        $response->setCallback(function () use ($signalementAffectationIterable) {
             $handle = fopen('php://output', 'w');
-            foreach ($signalementAffectationList as $signalementAffectationItem) {
-                fputcsv($handle, get_object_vars($signalementAffectationItem));
+            foreach ($signalementAffectationIterable as $key => $signalementAffectationItem) {
+                if (0 === $key) {
+                    fputcsv($handle, array_keys(get_object_vars($signalementAffectationItem)), ';');
+                }
+                fputcsv($handle, get_object_vars($signalementAffectationItem), ';');
             }
             fclose($handle);
         });

@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Dto\CountSignalement;
 use App\Dto\SignalementAffectationListView;
+use App\Dto\SignalementExport;
 use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
@@ -373,7 +374,7 @@ class SignalementRepository extends ServiceEntityRepository
             GROUP_CONCAT(p.nom SEPARATOR :group_concat_separator) as affectationPartnerName,
             GROUP_CONCAT(a.statut SEPARATOR :group_concat_separator) as affectationStatus,
             GROUP_CONCAT(p.id SEPARATOR :group_concat_separator) as affectationPartnerId,
-            GROUP_CONCAT(sq.qualification SEPARATOR :group_concat_separator) as qualifications', )
+            GROUP_CONCAT(sq.qualification SEPARATOR :group_concat_separator) as qualifications')
             ->leftJoin('s.affectations', 'a')
             ->leftJoin('a.partner', 'p')
             ->leftJoin('s.signalementQualifications', 'sq', 'WITH', 'sq.status = \''.QualificationStatus::NDE_AVEREE->name.'\' OR sq.status = \''.QualificationStatus::NDE_CHECK->name.'\'')
@@ -469,8 +470,15 @@ class SignalementRepository extends ServiceEntityRepository
             s.modifiedAt,
             s.closedAt,
             s.motifCloture,
-            s.scoreCloture'
-        );
+            s.scoreCloture,
+            GROUP_CONCAT(situations.label SEPARATOR :group_concat_separator_1) as familleSituation,
+            GROUP_CONCAT(criteres.label SEPARATOR :group_concat_separator_1) as desordres,
+            GROUP_CONCAT(tags.label SEPARATOR :group_concat_separator_1) as etiquettes
+            '
+        )->leftJoin('s.situations', 'situations')
+            ->leftJoin('s.criteres', 'criteres')
+            ->leftJoin('s.tags', 'tags')
+            ->setParameter('group_concat_separator_1', SignalementExport::SEPARATOR_GROUP_CONCAT);
 
         return $qb->getQuery()->toIterable();
     }

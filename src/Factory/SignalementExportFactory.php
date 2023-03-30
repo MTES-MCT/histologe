@@ -4,12 +4,14 @@ namespace App\Factory;
 
 use App\Dto\SignalementExport;
 use App\Entity\Enum\MotifCloture;
-use App\Entity\User;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class SignalementExportFactory
 {
-    public function createInstanceFrom(UserInterface|User $user, array $data): SignalementExport
+    public const OUI = 'Oui';
+    public const NON = 'Non';
+    public const NON_RENSEIGNE = 'Non renseigné';
+
+    public function createInstanceFrom(array $data): SignalementExport
     {
         $createdAt = $data['createdAt'] instanceof \DateTimeImmutable ? $data['createdAt']->format('d/m/y') : null;
         $modifiedAt = $data['modifiedAt'] instanceof \DateTimeImmutable ? $data['modifiedAt']->format('d/m/y') : null;
@@ -25,36 +27,40 @@ class SignalementExportFactory
             nomOccupant: $data['nomOccupant'],
             prenomOccupant: $data['prenomOccupant'],
             telephoneOccupant: $data['telOccupant'],
-            telephoneOccupantBis: $data['telOccupantBis'],
+            telephoneOccupantBis: $data['telOccupantBis'] ?? self::NON_RENSEIGNE,
             emailOccupant: $data['mailOccupant'],
             adresseOccupant: $data['adresseOccupant'],
             cpOccupant: $data['cpOccupant'],
             villeOccupant: $data['villeOccupant'],
             inseeOccupant: $data['inseeOccupant'],
-            etageOccupant: $data['etageOccupant'],
-            escalierOccupant: $data['escalierOccupant'],
-            numAppartOccupant: $data['numAppartOccupant'],
-            adresseAutreOccupant: $data['adresseAutreOccupant'],
-            photos: !empty($data['photos']),
-            documents: !empty($data['documents']),
-            isProprioAverti: $data['isProprioAverti'],
+            etageOccupant: $data['etageOccupant'] ?? self::NON_RENSEIGNE,
+            escalierOccupant: $data['escalierOccupant'] ?? self::NON_RENSEIGNE,
+            numAppartOccupant: $data['numAppartOccupant'] ?? self::NON_RENSEIGNE,
+            adresseAutreOccupant: $data['adresseAutreOccupant'] ?? self::NON_RENSEIGNE,
+            situations: $data['familleSituation'],
+            desordres: $data['desordres'],
+            etiquettes: $data['etiquettes'],
+            photos: empty($data['photos']) ? self::NON : self::OUI,
+            documents: empty($data['documents']) ? self::NON : self::OUI,
+            isProprioAverti: 1 == $data['isProprioAverti'] ? self::OUI : self::NON,
             nbAdultes: $data['nbAdultes'],
-            nbEnfantsM6: $data['nbEnfantsM6'],
-            nbEnfantsP6: $data['nbEnfantsP6'],
-            isAllocataire: $data['isAllocataire'],
-            numAllocataire: $data['numAllocataire'],
-            superficie: $data['superficie'],
+            nbEnfantsM6: $data['nbEnfantsM6'] ?? self::NON_RENSEIGNE,
+            nbEnfantsP6: $data['nbEnfantsP6'] ?? self::NON_RENSEIGNE,
+            isAllocataire: 1 == $data['isAllocataire'] ? self::OUI : self::NON,
+            numAllocataire: $data['numAllocataire'] ?? self::NON_RENSEIGNE,
+            natureLogement: $data['natureLogement'] ?? self::NON_RENSEIGNE,
+            superficie: $data['superficie'] ?? self::NON_RENSEIGNE,
             nomProprio: $data['nomProprio'],
-            isLogementSocial: $data['isLogementSocial'],
-            isPreavisDepart: $data['isPreavisDepart'],
-            isRelogement: $data['isRelogement'],
-            isNotOccupant: $data['isNotOccupant'],
+            isLogementSocial: 1 == $data['isLogementSocial'] ? self::OUI : self::NON,
+            isPreavisDepart: 1 == $data['isPreavisDepart'] ? self::OUI : self::NON,
+            isRelogement: 1 == $data['isRelogement'] ? self::OUI : self::NON,
+            isNotOccupant: 1 == $data['isNotOccupant'] ? self::OUI : self::NON,
             nomDeclarant: $data['nomDeclarant'],
             structureDeclarant: $data['structureDeclarant'],
             lienDeclarantOccupant: $data['lienDeclarantOccupant'],
             scoreCreation: $data['scoreCreation'],
             dateVisite: $dateVisite,
-            isOccupantPresentVisite: $data['isOccupantPresentVisite'],
+            isOccupantPresentVisite: 1 == $data['isOccupantPresentVisite'] ? self::OUI : self::NON,
             modifiedAt: $modifiedAt,
             closedAt: $closedAt,
             motifCloture: $motifCloture,

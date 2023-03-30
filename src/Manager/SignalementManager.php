@@ -309,7 +309,6 @@ class SignalementManager extends AbstractManager
         $signalementAffectationIterable = $this->getRepository()->findSignalementAffectationIterable($user, $options);
         foreach ($signalementAffectationIterable as $row) {
             yield $this->signalementExportFactory->createInstanceFrom(
-                $this->security->getUser(),
                 $row
             );
         }
