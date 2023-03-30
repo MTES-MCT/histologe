@@ -49,7 +49,7 @@ class ActivityListener implements EventSubscriberInterface
 
     public function onFlush(OnFlushEventArgs $args): void
     {
-        $this->em = $args->getEntityManager();
+        $this->em = $args->getObjectManager();
         $this->uow = $this->em->getUnitOfWork();
         foreach ($this->uow->getScheduledEntityInsertions() as $entity) {
             if ($entity instanceof Signalement) {
@@ -149,27 +149,23 @@ class ActivityListener implements EventSubscriberInterface
 
     private function createInAppNotification($user, $entity, $type)
     {
-        $notification = new Notification();
-        $notification->setUser($user);
-        switch ($type) {
-            case Notification::TYPE_SUIVI:
-                $notification->setSuivi($entity);
-                $notification->setSignalement($entity->getSignalement());
-                break;
-            case Notification::TYPE_NEW_SIGNALEMENT:
-                $notification->setSignalement($entity);
-                break;
-            default:
-                $notification->setAffectation($entity);
-                $notification->setSignalement($entity->getSignalement());
-                break;
+        if (!$entity instanceof Suivi && Notification::TYPE_SUIVI !== $type) {
+            return;
         }
-        $notification->setType($type);
-        $this->em->persist($notification);
-        $this->uow->computeChangeSet(
-            $this->em->getClassMetadata(Notification::class),
-            $notification
-        );
+
+        if (Suivi::DESCRIPTION_SIGNALEMENT_VALIDE !== $entity->getDescription()) {
+            $notification = (new Notification())
+                ->setUser($user)
+                ->setSuivi($entity)
+                ->setSignalement($entity->getSignalement())
+                ->setType($type);
+
+            $this->em->persist($notification);
+            $this->uow->computeChangeSet(
+                $this->em->getClassMetadata(Notification::class),
+                $notification
+            );
+        }
     }
 
     private function sendMail($entity, $mailType)

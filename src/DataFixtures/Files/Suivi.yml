@@ -85,3 +85,9 @@ suivis:
   is_public: 1
   signalement: "2022-4"
   type: 2
+-
+  created_by: admin-01@histologe.fr
+  description: "Un petit message de rappel afin d'y revenir plus tard"
+  is_public: 0
+  signalement: "2023-6"
+  type: 1

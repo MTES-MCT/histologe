@@ -1,6 +1,6 @@
 {% extends 'back/base_bo.html.twig' %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %} Administration - Nouveauté(s) {% endblock %}
 
 {% block content %}
     <section class="fr-grid-row fr-grid-row--middle fr-p-5v ">
@@ -8,9 +8,9 @@
             <h1 class="fr-h2 fr-mb-0">Notification(s)</h1>
         </div>
         <div class="fr-col-6 fr-text--right">
-            <a href="{{ path('back_news_activities') }}?mark_as_read={{ csrf_token('mark_as_read_'~app.user.id) }}"
+            <a href="{{ path('back_notifications_list_read') }}?mark_as_read={{ csrf_token('mark_as_read_'~app.user.id) }}"
                class="fr-btn fr-fi-check-line fr-btn--icon-left">Marquer comme lus (tous)</a>
-            <a href="{{ path('back_news_activities') }}?delete_all_notifications={{ csrf_token('delete_all_notifications_'~app.user.id) }}"
+            <a href="{{ path('back_notifications_list_delete') }}?delete_all_notifications={{ csrf_token('delete_all_notifications_'~app.user.id) }}"
                class="fr-btn fr-fi-delete-line fr-btn--danger fr-btn--icon-left">Vider</a>
         </div>
     </section>
@@ -27,51 +27,9 @@
             </thead>
             <tbody>
             <tr style="background: white!important">
-                <td colspan="5" class="fr-text--bold">{{ signalements|length }} Nouveau(x) signalement(s)</td>
+                <td colspan="5" class="fr-text--bold">{{ count_notification(app.user) }}  Nouveau(x) suivi(s)</td>
             </tr>
-            {% for notification in signalements|reverse %}
-                <tr class="partner-row">
-                    <td>{{ notification.signalement.reference }}</td>
-                    <td>{{ notification.createdAt|format_datetime(locale='fr') }}</td>
-                    <td>Un nouveau signalement vous attend</td>
-                    <td>{{ notification.signalement.nomOccupant|upper~' '~notification.signalement.prenomOccupant|capitalize }}</td>
-                    <td class="fr-text--right"><a
-                                href="{{ path('back_signalement_view',{uuid:notification.signalement.uuid}) }}"
-                                class="fr-btn fr-btn--sm {{ notification.isSeen ? 'fr-fi-check-line fr-btn--success':'fr-fi-eye-fill' }}"></a>
-                        <a href="{{ path('back_news_activities_delete_notification',{id:notification.id}) }}?_token={{ csrf_token('back_delete_notification_'~notification.id) }}"
-                           class="fr-btn fr-btn--sm fr-btn--danger fr-fi-delete-line"></a>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="5" class="fr-text--center">Aucun signalement en attente</td>
-                </tr>
-            {% endfor %}
-            <tr style="background: white!important">
-                <td colspan="5" class="fr-text--bold">{{ affectations|length }} Nouvelle(s) affectation(s)</td>
-            </tr>
-            {% for notification in affectations|reverse %}
-                <tr class="partner-row">
-                    <td>{{ notification.affectation.signalement.reference }}</td>
-                    <td>{{ notification.affectation.createdAt|format_datetime(locale='fr') }}</td>
-                    <td>Vous avez été affecté</td>
-                    <td>{{ notification.affectation.affectedBy.nomComplet }}</td>
-                    <td class="fr-text--right">
-                        <a href="{{ path('back_signalement_view',{uuid:notification.affectation.signalement.uuid}) }}"
-                           class="fr-btn fr-btn--sm {{ notification.isSeen ? 'fr-fi-check-line fr-btn--success':'fr-fi-eye-fill' }}"></a>
-                        <a href="{{ path('back_news_activities_delete_notification',{id:notification.id}) }}?_token={{ csrf_token('back_delete_notification_'~notification.id) }}"
-                           class="fr-btn fr-btn--sm fr-btn--danger fr-fi-delete-line"></a>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="5" class="fr-text--center">Aucune affectation en attente</td>
-                </tr>
-            {% endfor %}
-            <tr style="background: white!important">
-                <td colspan="5" class="fr-text--bold">{{ suivis|length }} Nouveau(x) suivi(s)</td>
-            </tr>
-            {% for notification in suivis|reverse %}
+            {% for notification in notifications %}
                 <tr class="partner-row">
                     <td>{{ notification.suivi.signalement.reference }}</td>
                     <td>{{ notification.suivi.createdAt|format_datetime(locale='fr') }}</td>
@@ -80,7 +38,7 @@
                     <td class="fr-text--right">
                         <a href="{{ path('back_signalement_view',{uuid:notification.suivi.signalement.uuid}) }}#suivis"
                            class="fr-btn fr-btn--sm {{ notification.isSeen ? 'fr-fi-check-line fr-btn--success':'fr-fi-eye-fill' }}"></a>
-                        <a href="{{ path('back_news_activities_delete_notification',{id:notification.id}) }}?_token={{ csrf_token('back_delete_notification_'~notification.id) }}"
+                        <a href="{{ path('back_notifications_delete_notification',{id:notification.id}) }}?_token={{ csrf_token('back_delete_notification_'~notification.id) }}"
                            class="fr-btn fr-btn--sm fr-btn--danger fr-fi-delete-line"></a>
                     </td>
                 </tr>
@@ -91,5 +49,79 @@
             {% endfor %}
             </tbody>
         </table>
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+            <nav role="navigation" class="fr-pagination" aria-label="Pagination">
+                <ul class="fr-pagination__list">
+                    <li>
+                        <a class="fr-pagination__link fr-pagination__link--first"
+                                {% if pages > 1 %}
+                            href="{{ path('back_notifications_list', {page : 1 }) }}"
+                        {% else %}
+                            aria-disabled="true"
+                                {% endif %}>
+                            Première page
+                        </a>
+                    </li>
+                    <li>
+                        <a class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+                                {% if pages > 1 and page != 1 %}
+                                    href="{{ path('back_notifications_list', {page : page - 1 }) }}"
+                                {% else %}
+                                    aria-disabled="true"
+                                {% endif %} role="link">
+                            Page précédente
+                        </a>
+                    </li>
+                    <li>
+                        <a class="fr-pagination__link" {{ page == 1 ? 'aria-current="page"' : '' }}
+                           title="Page 1"
+                           data-page="1"
+                           href="{{ path('back_notifications_list', {page : 1 }) }}">
+                            1
+                        </a>
+                    </li>
+                    {% if pages > 1 %}
+                        {% for i in 2..pages %}
+                            <li class="{% if loop.index > 2 and loop.index < pages-3 %}fr-hidden{% endif %}">
+                                <a class="fr-pagination__link" {{ page == i ? 'aria-current="page"' : '' }}
+                                   href="{{ path('back_notifications_list', {page : i }) }}"
+                                   title="Page {{ i }}"
+                                   data-page="{{ i }}">
+                                    {{ i }}
+                                </a>
+                            </li>
+                            {% if loop.index is same as(3) %}
+                                <li>
+                                    <a class="fr-pagination__link" title="placeholder">
+                                        ...
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    <li>
+                        <a class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+                                {% if pages > 1  and page < pages %}
+                                    href="{{ path('back_notifications_list', {page : page + 1 }) }}"
+                                {% else %}
+                                    aria-disabled="true"
+                                {% endif %} role="link">
+                            Page suivante
+                        </a>
+                    </li>
+                    <li>
+                        <a class="fr-pagination__link fr-pagination__link--last"
+                                {% if pages > 1 %}
+                                    href="{{ path('back_notifications_list', {page : pages }) }}"
+                                {% else %}
+                                    aria-disabled="true"
+                                {% endif %}
+                           data-page="{{ pages }}">
+                            Dernière page
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </section>
 {% endblock %}

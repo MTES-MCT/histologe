@@ -10,7 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class BackControllerTest extends WebTestCase
+class SignalementListControllerTest extends WebTestCase
 {
     protected function setUp(): void
     {
