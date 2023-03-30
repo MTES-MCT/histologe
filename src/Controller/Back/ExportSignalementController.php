@@ -42,8 +42,8 @@ class ExportSignalementController extends AbstractController
             $response->headers->set('Content-Disposition', $disposition);
 
             return $response->send();
-        } else {
-            return $this->redirectToRoute('back_index');
         }
+
+        return $this->redirectToRoute('back_index');
     }
 }
