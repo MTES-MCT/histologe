@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Dto\CountSignalement;
 use App\Dto\SignalementAffectationListView;
+use App\Dto\SignalementExport;
 use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
@@ -340,7 +341,19 @@ class SignalementRepository extends ServiceEntityRepository
         $maxResult = SignalementAffectationListView::MAX_LIST_PAGINATION;
         $page = (int) $options['page'];
         $firstResult = (($page ?: 1) - 1) * $maxResult;
+        $qb = $this->findSignalementAffectationQuery($user, $options);
+        $qb
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResult)
+            ->getQuery();
 
+        return new Paginator($qb, true);
+    }
+
+    public function findSignalementAffectationQuery(
+        User|UserInterface|null $user,
+        array $options
+    ): QueryBuilder {
         $qb = $this->createQueryBuilder('s');
         $qb->select('
             DISTINCT s.id,
@@ -361,7 +374,7 @@ class SignalementRepository extends ServiceEntityRepository
             GROUP_CONCAT(p.nom SEPARATOR :group_concat_separator) as affectationPartnerName,
             GROUP_CONCAT(a.statut SEPARATOR :group_concat_separator) as affectationStatus,
             GROUP_CONCAT(p.id SEPARATOR :group_concat_separator) as affectationPartnerId,
-            GROUP_CONCAT(sq.qualification SEPARATOR :group_concat_separator) as qualifications', )
+            GROUP_CONCAT(sq.qualification SEPARATOR :group_concat_separator) as qualifications')
             ->leftJoin('s.affectations', 'a')
             ->leftJoin('a.partner', 'p')
             ->leftJoin('s.signalementQualifications', 'sq', 'WITH', 'sq.status = \''.QualificationStatus::NDE_AVEREE->name.'\' OR sq.status = \''.QualificationStatus::NDE_CHECK->name.'\'')
@@ -414,13 +427,64 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->setParameter('status', Signalement::STATUS_ARCHIVED);
         $qb = $this->searchFilterService->applyFilters($qb, $options);
         $qb->orderBy(isset($options['sort']) && 'lastSuiviAt' === $options['sort']
-                ? 's.lastSuiviAt'
-                : 's.createdAt', 'DESC')
-            ->setFirstResult($firstResult)
-            ->setMaxResults($maxResult)
+            ? 's.lastSuiviAt'
+            : 's.createdAt', 'DESC')
             ->getQuery();
 
-        return new Paginator($qb, true);
+        return $qb;
+    }
+
+    public function findSignalementAffectationIterable(User|UserInterface|null $user, array $options): \Generator
+    {
+        $qb = $this->findSignalementAffectationQuery($user, $options);
+        if ($user->isSuperAdmin()) {
+            $qb->andWhere('s.isImported = :is_imported')->setParameter('is_imported', 0);
+        }
+
+        $qb->addSelect(
+            's.details,
+            s.telOccupant,
+            s.telOccupantBis,
+            s.mailOccupant,
+            s.cpOccupant,
+            s.inseeOccupant,
+            s.etageOccupant,
+            s.escalierOccupant,
+            s.numAppartOccupant,
+            s.adresseAutreOccupant,
+            s.photos,
+            s.documents,
+            s.isProprioAverti,
+            s.nbAdultes,
+            s.nbEnfantsM6,
+            s.nbEnfantsP6,
+            s.isAllocataire,
+            s.numAllocataire,
+            s.natureLogement,
+            s.superficie,
+            s.nomProprio,
+            s.isLogementSocial,
+            s.isPreavisDepart,
+            s.isRelogement,
+            s.nomDeclarant,
+            s.structureDeclarant,
+            s.lienDeclarantOccupant,
+            s.dateVisite,
+            s.isOccupantPresentVisite,
+            s.modifiedAt,
+            s.closedAt,
+            s.motifCloture,
+            s.scoreCloture,
+            GROUP_CONCAT(situations.label SEPARATOR :group_concat_separator_1) as familleSituation,
+            GROUP_CONCAT(criteres.label SEPARATOR :group_concat_separator_1) as desordres,
+            GROUP_CONCAT(tags.label SEPARATOR :group_concat_separator_1) as etiquettes
+            '
+        )->leftJoin('s.situations', 'situations')
+            ->leftJoin('s.criteres', 'criteres')
+            ->leftJoin('s.tags', 'tags')
+            ->setParameter('group_concat_separator_1', SignalementExport::SEPARATOR_GROUP_CONCAT);
+
+        return $qb->getQuery()->toIterable();
     }
 
     public function findByStatusAndOrCityForUser(User|UserInterface $user = null, array $options, int|null $export): array|Paginator

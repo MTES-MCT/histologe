@@ -26,7 +26,7 @@ class SignalementListController extends AbstractController
         SignalementManager $signalementManager,
     ): Response {
         $filters = $searchFilterService->setRequest($request)->setFilters()->getFilters();
-
+        $request->getSession()->set('filters', $filters);
         /** @var User $user */
         $user = $this->getUser();
         $signalements = $signalementManager->findSignalementAffectationList($user, $filters);
