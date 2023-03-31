@@ -23,8 +23,8 @@ class UserFactory
         ?string $firstname,
         ?string $lastname,
         ?string $email,
-        ?bool $isMailActive = true): User
-    {
+        ?bool $isMailActive = true
+    ): User {
         return (new User())
             ->setRoles(\in_array($roleLabel, User::ROLES) ? [$roleLabel] : [User::ROLES[$roleLabel]])
             ->setPartner($partner)

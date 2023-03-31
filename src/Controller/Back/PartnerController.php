@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/bo/partenaires')]
-class BackPartnerController extends AbstractController
+class PartnerController extends AbstractController
 {
     public const DEFAULT_TERRITORY_AIN = 1;
 
@@ -38,8 +38,12 @@ class BackPartnerController extends AbstractController
         $page = $request->get('page') ?? 1;
         /** @var User $user */
         $user = $this->getUser();
-
-        $currentTerritory = $territoryRepository->find((int) $request->get('territory'));
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $currentTerritory = $territoryRepository->find((int) $request->get('territory'));
+        } else {
+            $userTerms = $request->get('userTerms');
+            $currentTerritory = $user->getTerritory();
+        }
         $currentType = $request->get('type');
         $enumType = $request->get('type') ? EnumPartnerType::tryFrom($request->get('type')) : null;
         $userTerms = $request->get('userTerms');
@@ -95,7 +99,6 @@ class BackPartnerController extends AbstractController
             if (!$user->isSuperAdmin()) {
                 $partner->setTerritory($user->getTerritory());
             }
-
             $entityManager->persist($partner);
             $entityManager->flush();
             $this->addFlash('success', 'Mise à jour partenaire effectuée.');
@@ -105,9 +108,32 @@ class BackPartnerController extends AbstractController
 
         $this->displayErrors($form);
 
-        return $this->renderForm('back/partner/edit.html.twig', [
+        return $this->render('back/partner/edit.html.twig', [
             'partner' => $partner,
             'form' => $form,
+            'create' => true,
+        ]);
+    }
+
+    #[Route('/{id}/voir', name: 'back_partner_view', methods: ['GET', 'POST'])]
+    public function view(
+        Request $request,
+        Partner $partner,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
+        if ($partner->getIsArchive()) {
+            return $this->redirect($this->generateUrl('back_partner_index', [
+                'page' => 1,
+                'territory' => $partner->getTerritory()->getId(),
+            ]));
+        }
+        /** @var User $user */
+        $user = $this->getUser();
+
+        return $this->renderForm('back/partner/view.html.twig', [
+            'partner' => $partner,
+            'partners' => $entityManager->getRepository(Partner::class)->findAllList($partner->getTerritory()),
         ]);
     }
 
@@ -146,7 +172,32 @@ class BackPartnerController extends AbstractController
             'partner' => $partner,
             'partners' => $entityManager->getRepository(Partner::class)->findAllList($partner->getTerritory()),
             'form' => $form,
+            'create' => false,
         ]);
+    }
+
+    #[Route('/{id}/adduser', name: 'back_partner_add_user', methods: ['POST'])]
+    public function addUser(
+        Request $request,
+        Partner $partner,
+        UserManager $userManager,
+    ): Response {
+        $this->denyAccessUnlessGranted('USER_CREATE', $this->getUser());
+        if (
+            $this->isCsrfTokenValid('partner_user_create', $request->request->get('_token'))
+            && $data = $request->get('user_create')
+        ) {
+            $user = $userManager->createUserFromData($partner, $data);
+            // TODO envoyer un email d'activation
+            // TODO ne pas pouvoir créer si email identique
+            // TODO revoir les messages d'erreur sur les champs
+            $this->addFlash('success', 'L\'utilisateur a bien été créé. Un email de confirmation a été envoyé à '.$user->getEmail());
+
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+        }
+        $this->addFlash('error', 'Une erreur est survenue lors du transfert...');
+
+        return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/transferuser', name: 'back_partner_user_transfer', methods: ['POST'])]

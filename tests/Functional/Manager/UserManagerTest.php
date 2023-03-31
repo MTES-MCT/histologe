@@ -44,6 +44,8 @@ class UserManagerTest extends KernelTestCase
         $this->userFactory = static::getContainer()->get(UserFactory::class);
     }
 
+    // TODO : ajouter un test sur createUserFromData
+
     public function testTransferActiveUserToAnotherPartner()
     {
         $userManager = new UserManager(

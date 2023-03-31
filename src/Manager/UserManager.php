@@ -45,6 +45,20 @@ class UserManager extends AbstractManager
         return $user;
     }
 
+    public function createUserFromData(Partner $partner, array $data): User
+    {
+        $user = $this->userFactory->createInstanceFromArray($partner, $data);
+
+        $this->save($user);
+        // TODO envoi du mail
+        return $user;
+    }
+
+    public function getUserFrom(Partner $partner, int $userId): ?User
+    {
+        return $this->getRepository()->findOneBy(['partner' => $partner, 'id' => $userId]);
+    }
+
     public function transferUserToPartner(User $user, Partner $partner): void
     {
         $user->setPartner($partner);

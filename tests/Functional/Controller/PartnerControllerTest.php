@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\Entity\Enum\PartnerType;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
@@ -9,7 +10,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
-class BackPartnerControllerTest extends WebTestCase
+class PartnerControllerTest extends WebTestCase
 {
     use SessionHelper;
 
@@ -45,7 +46,8 @@ class BackPartnerControllerTest extends WebTestCase
         $client->request('GET', $route);
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('.fr-display-inline-table',
+        $this->assertSelectorTextContains(
+            '.fr-display-inline-table',
             'Compétences',
         );
     }
@@ -68,18 +70,20 @@ class BackPartnerControllerTest extends WebTestCase
         $client->request('GET', $route);
 
         $client->submitForm(
-            'Enregistrer',
+            'Créer le partenaire',
             [
+                'partner[territory]' => 1,
                 'partner[nom]' => $faker->company(),
                 'partner[email]' => $faker->companyEmail(),
-                'partner[isCommune]' => 0,
-                'partner[esaboraUrl]' => 'https://api.random-partner.com',
-                'partner[esaboraToken]' => 'token',
+                'partner[type]' => PartnerType::ARS->value,
+                'partner[insee]' => [],
             ]
         );
 
         $this->assertResponseRedirects('/bo/partenaires/');
     }
+    // TODO : faire un test avec un type nécessitant esabora et codes insee
+    // TODO : tester les nouvelles routes (view, adduser, edituser)
 
     public function testTransferUserAccount(): void
     {

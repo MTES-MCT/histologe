@@ -35,8 +35,9 @@ class Partner
     #[ORM\Column(type: 'boolean')]
     private $isArchive;
 
-    #[ORM\Column(type: 'boolean')]
-    private $isCommune;
+    // TODO : à supprimer ?
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private ?bool $isCommune;
 
     #[ORM\Column(type: 'json')]
     private $insee = [];
@@ -139,7 +140,11 @@ class Partner
 
     public function getIsCommune(): ?bool
     {
-        return $this->isCommune;
+        if (null !== $this->isCommune) {
+            return $this->isCommune;
+        }
+
+        return PartnerType::COMMUNE_SCHS === $this->type;
     }
 
     public function setIsCommune(bool $isCommune): self

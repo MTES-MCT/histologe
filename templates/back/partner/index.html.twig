@@ -60,7 +60,7 @@
             <tr>
                 <th>Id</th>
                 {% if is_granted('ROLE_ADMIN') %}
-                    <th>Dpt.</th>
+                    <th class="number">Dpt.</th>
                 {% endif %}
                 <th>Nom</th>
                 <th>Type</th>
@@ -80,28 +80,29 @@
                     <td>{{ partner.type ? partner.type.label : (partner.isCommune ? 'Commune':'Partenaire') }}</td>
                     <td>
                         {% if partner.competence %}
-                            {% for competence in partner.competence %}
-                                <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ competence.label }}</div>
-                            {% endfor %}
+                            <div class="fr-tag fr-background-open--blue-france fr-mb-1v">{{ partner.competence|length }}</div>
                         {% else %}
                             /
                         {% endif %}
                     </td>
                     <td>
-                        {% for insee in partner.insee|slice(0, 4) %}
-                            {% if insee %}
+                        {% if partner.insee %}
+                            {% for insee in partner.insee|slice(0, 4) %}
                                 <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ insee }}</div>
-                            {% else %}
-                                /
+                            {% endfor %}
+                            {% if partner.insee|length > 4 %}
+                                + {{partner.insee|length - 4}}
                             {% endif %}
-                        {% endfor %}
-                        {% if partner.insee|length > 4 %}
-                            + {{partner.insee|length - 4}}
+                        {% else %}
+                            /
                         {% endif %}
                     </td>
                     <td class="fr-text--right">
-                        <a href="{{ path('back_partner_edit', {'id': partner.id}) }}"
-                           class="fr-btn fr-fi-eye-fill fr-btn--sm"></a>
+                        <a href="{{ path('back_partner_view', {'id': partner.id}) }}"
+                           class="fr-btn fr-fi-arrow-right-line fr-btn--sm"></a>
+                        <button data-delete="{{ path('back_partner_add_user', {'id': partner.id}) }}"
+                                data-token="{{ csrf_token('partner_add_user_' ~ partner.id) }}"
+                                class="fr-btn fr-fi-user-fill fr-btn--sm partner-row-delete"></button>
                         <button data-delete="{{ path('back_partner_delete', {'id': partner.id}) }}"
                                 data-token="{{ csrf_token('partner_delete_' ~ partner.id) }}"
                                 class="fr-btn fr-btn--danger fr-fi-delete-line fr-btn--sm partner-row-delete"></button>
