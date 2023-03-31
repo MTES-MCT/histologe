@@ -34,7 +34,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[Route('/bo/signalements')]
-class BackSignalementController extends AbstractController
+class SignalementController extends AbstractController
 {
     #[Route('/{uuid}', name: 'back_signalement_view')]
     public function viewSignalement(
@@ -149,12 +149,23 @@ class BackSignalementController extends AbstractController
             'clotureForm' => $clotureForm->createView(),
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
             'isExperimentationTerritory' => $isExperimentationTerritory,
-            'isSignalementNDE' => $isSignalementNDEActif,
+            'isQualificationNDEDisplayed' => $this->isQualificationNDEDisplayed($signalementQualificationNDE),
+            'isZoneNDEDisplayed' => $isSignalementNDEActif,
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
             'files' => $files,
             'canEditNDE' => $canEditNDE,
         ]);
+    }
+
+    private function isQualificationNDEDisplayed(?SignalementQualification $signalementQualification): bool
+    {
+        if (null !== $signalementQualification) {
+            return QualificationStatus::NDE_AVEREE == $signalementQualification->getStatus()
+                || QualificationStatus::NDE_CHECK == $signalementQualification->getStatus();
+        }
+
+        return false;
     }
 
     private function isSignalementNDEActif(?SignalementQualification $signalementQualification): bool
