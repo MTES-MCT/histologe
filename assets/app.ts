@@ -19,4 +19,5 @@ import './vue/dashboard';
 import './controllers/form_partner';
 import './controllers/form_account';
 import './controllers/form_nde';
+import './controllers/form_helper';
 
