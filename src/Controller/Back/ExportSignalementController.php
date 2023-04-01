@@ -3,9 +3,10 @@
 namespace App\Controller\Back;
 
 use App\Entity\User;
-use App\Manager\SignalementManager;
+use App\Service\Signalement\Export\SignalementExportLoader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,22 +17,15 @@ class ExportSignalementController extends AbstractController
     #[Route('/export/signalement', name: 'back_signalement_list_export')]
     public function exportCsv(
         Request $request,
-        SignalementManager $signalementManager,
-    ) {
+        SignalementExportLoader $signalementExportLoader
+    ): RedirectResponse|StreamedResponse {
         /** @var User $user */
         $user = $this->getUser();
         if ($this->isCsrfTokenValid('export_token_'.$user->getId(), $request->get('_token'))) {
             $filters = $request->getSession()->get('filters');
             $response = new StreamedResponse();
-            $response->setCallback(function () use ($signalementManager, $filters, $user) {
-                $handle = fopen('php://output', 'w');
-                foreach ($signalementManager->findSignalementAffectationIterable($user, $filters) as $key => $signalementAffectationItem) {
-                    if (0 === $key) {
-                        fputcsv($handle, array_keys(get_object_vars($signalementAffectationItem)), ';');
-                    }
-                    fputcsv($handle, get_object_vars($signalementAffectationItem), ';');
-                }
-                fclose($handle);
+            $response->setCallback(function () use ($signalementExportLoader, $filters, $user) {
+                $signalementExportLoader->load($user, $filters);
             });
 
             $disposition = HeaderUtils::makeDisposition(
@@ -43,6 +37,7 @@ class ExportSignalementController extends AbstractController
 
             return $response->send();
         }
+        $this->addFlash('error', 'Le jeton CSRF n\'est pas valide. Veuillez réessayer.');
 
         return $this->redirectToRoute('back_index');
     }

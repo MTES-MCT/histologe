@@ -370,11 +370,11 @@ class SignalementRepository extends ServiceEntityRepository
             s.villeOccupant,
             s.lastSuiviAt,
             s.lastSuiviBy,
-            GROUP_CONCAT(CONCAT(p.nom, :concat_separator, a.statut) SEPARATOR :group_concat_separator) as rawAffectations,
-            GROUP_CONCAT(p.nom SEPARATOR :group_concat_separator) as affectationPartnerName,
-            GROUP_CONCAT(a.statut SEPARATOR :group_concat_separator) as affectationStatus,
-            GROUP_CONCAT(p.id SEPARATOR :group_concat_separator) as affectationPartnerId,
-            GROUP_CONCAT(sq.qualification SEPARATOR :group_concat_separator) as qualifications')
+            GROUP_CONCAT(DISTINCT CONCAT(p.nom, :concat_separator, a.statut) SEPARATOR :group_concat_separator) as rawAffectations,
+            GROUP_CONCAT(DISTINCT p.nom SEPARATOR :group_concat_separator) as affectationPartnerName,
+            GROUP_CONCAT(DISTINCT a.statut SEPARATOR :group_concat_separator) as affectationStatus,
+            GROUP_CONCAT(DISTINCT p.id SEPARATOR :group_concat_separator) as affectationPartnerId,
+            GROUP_CONCAT(DISTINCT sq.qualification SEPARATOR :group_concat_separator) as qualifications')
             ->leftJoin('s.affectations', 'a')
             ->leftJoin('a.partner', 'p')
             ->leftJoin('s.signalementQualifications', 'sq', 'WITH', 'sq.status = \''.QualificationStatus::NDE_AVEREE->name.'\' OR sq.status = \''.QualificationStatus::NDE_CHECK->name.'\'')
@@ -482,55 +482,6 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('group_concat_separator_1', SignalementExport::SEPARATOR_GROUP_CONCAT);
 
         return $qb->getQuery()->toIterable();
-    }
-
-    public function findByStatusAndOrCityForUser(User|UserInterface $user = null, array $options, int|null $export): array|Paginator
-    {
-        $pageSize = $export ?? self::ARRAY_LIST_PAGE_SIZE;
-        $firstResult = (($options['page'] ?? 1) - 1) * $pageSize;
-        $qb = $this->createQueryBuilder('s');
-        $qb->where('s.statut != :status')
-            ->setParameter('status', Signalement::STATUS_ARCHIVED);
-        if (!$export) {
-            $qb->select('PARTIAL s.{id,uuid,reference,isNotOccupant, nomOccupant,prenomOccupant,
-                adresseOccupant, cpOccupant,inseeOccupant, villeOccupant,mailOccupant,
-                scoreCreation, newScoreCreation, statut,createdAt,geoloc}');
-            $qb->leftJoin('s.affectations', 'affectations');
-            $qb->leftJoin('s.tags', 'tags');
-            $qb->leftJoin('affectations.partner', 'partner');
-            $qb->leftJoin('s.suivis', 'suivis');
-            $qb->leftJoin('s.criteres', 'criteres');
-            $qb->addSelect('affectations', 'partner', 'suivis');
-        }
-        if (!$user->isSuperAdmin()) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $user->getTerritory());
-            if ($user->isTerritoryAdmin()
-                && \array_key_exists($user->getTerritory()->getZip(), $options['authorized_codes_insee'])
-            ) {
-                $qb = $this->filterForSpecificAgglomeration(
-                    $qb,
-                    $user->getTerritory()->getZip(),
-                    $user->getPartner()->getNom(),
-                    $options['authorized_codes_insee']
-                );
-            }
-        }
-        $qb = $this->searchFilterService->applyFilters($qb, $options);
-        $qb->orderBy(
-            isset($options['sort']) && 'lastSuiviAt' === $options['sort']
-                ? 's.lastSuiviAt'
-                : 's.createdAt',
-            'DESC'
-        );
-        if (!$export) {
-            $qb->setFirstResult($firstResult)
-                ->setMaxResults($pageSize);
-            $qb->getQuery();
-
-            return new Paginator($qb, true);
-        }
-
-        return $qb->getQuery()->getResult();
     }
 
     public function findCities(User|UserInterface|null $user = null, Territory|null $territory = null): array|int|string

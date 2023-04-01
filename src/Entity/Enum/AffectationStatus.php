@@ -17,4 +17,19 @@ enum AffectationStatus: int
             self::STATUS_CLOSED, self::STATUS_REFUSED => SignalementStatus::CLOSED->value,
         };
     }
+
+    public function label(): string
+    {
+        return self::getLabel($this);
+    }
+
+    public static function getLabel(self $value): string
+    {
+        return match ($value) {
+            self::STATUS_WAIT => 'nouveau',
+            self::STATUS_ACCEPTED => 'en cours',
+            self::STATUS_CLOSED => 'fermé',
+            self::STATUS_REFUSED => 'refusé',
+        };
+    }
 }
