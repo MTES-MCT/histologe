@@ -51,7 +51,7 @@ class SignalementRepository extends ServiceEntityRepository
         $firstResult = $offset;
         $qb = $this->createQueryBuilder('s');
         $qb->select('PARTIAL s.{id,details,uuid,reference,nomOccupant,prenomOccupant,adresseOccupant,cpOccupant,
-        inseeOccupant, villeOccupant,scoreCreation,statut,createdAt,geoloc,territory},
+        inseeOccupant, villeOccupant,newScoreCreation,statut,createdAt,geoloc,territory},
             PARTIAL a.{id,partner,createdAt},
             PARTIAL criteres.{id,label},
             PARTIAL partner.{id,nom}');

@@ -45,7 +45,7 @@ class SignalementExport
         public ?string $nomDeclarant = null,
         public ?string $structureDeclarant = null,
         public ?string $lienDeclarantOccupant = null,
-        public ?string $scoreCreation = null,
+        public ?string $newScoreCreation = null,
         public ?string $dateVisite = null,
         public ?string $isOccupantPresentVisite = null,
         public ?string $modifiedAt = null,

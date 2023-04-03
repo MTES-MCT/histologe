@@ -75,7 +75,7 @@ class SignalementExportFactory
             nomDeclarant: $data['nomDeclarant'] ?? '-',
             structureDeclarant: $data['structureDeclarant'] ?? '-',
             lienDeclarantOccupant: $data['lienDeclarantOccupant'],
-            scoreCreation: $data['scoreCreation'],
+            newScoreCreation: $data['newScoreCreation'],
             dateVisite: $dateVisite,
             isOccupantPresentVisite: 1 == $data['isOccupantPresentVisite'] ? self::OUI : self::NON,
             modifiedAt: $modifiedAt,

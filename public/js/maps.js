@@ -47,7 +47,7 @@ const popupTemplate = (options) => {
                         </div>
                         <div class="fr-col-4 fr-col--top fr-text--center">
                         <canvas class="fr-col-12" id="gauge-signalement-${options.id}"></canvas>`;
-    TEMPLATE += `<span class="fr-badge fr-badge--info fr-m-0">${parseInt(options.score).toFixed(2)}%</span></div>`;
+    TEMPLATE += `<span class="fr-badge fr-badge--info fr-m-0">${parseInt(options.newScore).toFixed(2)}%</span></div>`;
     TEMPLATE += `<div class="fr-p-3v fr-rounded fr-background-alt--blue-france fr-col-12">${options.details}</div>`;
     TEMPLATE += `<ul class="fr-mt-5v">`;
     options.criteres.forEach(critere => {
@@ -86,7 +86,6 @@ async function getMarkers(offset) {
                         reference: signalement.reference,
                         newScore: signalement.newScoreCreation,
                         name: signalement.nomOccupant.toUpperCase() +' '+ signalement.prenomOccupant,
-                        danger: signalement.newScoreCreation > 66 ? 1 : 0,
                         url: `/bo/signalements/${signalement.uuid}`,
                         criteres: crit,
                         details: `${signalement.details}`
@@ -121,7 +120,7 @@ async function getMarkers(offset) {
                         map.panTo(map.unproject(px), {animate: true}); // pan to new center
                         gauge = new Gauge(event.popup._wrapper.querySelector(`#gauge-signalement-${layer.options.id}`)).setOptions(opts);
                         gauge.maxValue = 100;
-                        gauge.set(layer.options.score);
+                        gauge.set(layer.options.newScore);
                         gauge.setMinValue(0);
                         gauge.animationSpeed = 32;
                     });
