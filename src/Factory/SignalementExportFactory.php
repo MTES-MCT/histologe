@@ -13,13 +13,14 @@ class SignalementExportFactory
     public const NON = 'Non';
     public const NON_RENSEIGNE = 'Non renseigné';
     public const ALLOCATAIRE = ['CAF', 'MSA', 'Oui', 1];
+    public const DATE_FORMAT = 'd/m/Y';
 
     public function createInstanceFrom(User $user, array $data): SignalementExport
     {
-        $createdAt = $data['createdAt'] instanceof \DateTimeImmutable ? $data['createdAt']->format('d/m/y') : null;
-        $modifiedAt = $data['modifiedAt'] instanceof \DateTimeImmutable ? $data['modifiedAt']->format('d/m/y') : null;
-        $closedAt = $data['closedAt'] instanceof \DateTimeImmutable ? $data['closedAt']->format('d/m/y') : null;
-        $dateVisite = $data['dateVisite'] instanceof \DateTimeImmutable ? $data['dateVisite']->format('d/m/y') : null;
+        $createdAt = $data['createdAt'] instanceof \DateTimeImmutable ? $data['createdAt']->format(self::DATE_FORMAT) : null;
+        $modifiedAt = $data['modifiedAt'] instanceof \DateTimeImmutable ? $data['modifiedAt']->format(self::DATE_FORMAT) : null;
+        $closedAt = $data['closedAt'] instanceof \DateTimeImmutable ? $data['closedAt']->format(self::DATE_FORMAT) : null;
+        $dateVisite = $data['dateVisite'] instanceof \DateTimeImmutable ? $data['dateVisite']->format(self::DATE_FORMAT) : null;
 
         $motifCloture = $data['motifCloture'] instanceof MotifCloture ? $data['motifCloture']->label() : null;
         $status = SignalementAffectationHelper::getStatusLabelFrom($user, $data);
@@ -47,18 +48,18 @@ class SignalementExportFactory
             etiquettes: $data['etiquettes'] ?? null,
             photos: empty($data['photos']) ? self::NON : self::OUI,
             documents: empty($data['documents']) ? self::NON : self::OUI,
-            isProprioAverti: null === $data['isProprioAverti'] ? self::NON_RENSEIGNE : (1 == $data['isProprioAverti'] ? self::OUI : self::NON),
+            isProprioAverti: $this->mapData($data, 'isProprioAverti'),
             nbAdultes: $data['nbAdultes'],
             nbEnfantsM6: $data['nbEnfantsM6'] ?? self::NON_RENSEIGNE,
             nbEnfantsP6: $data['nbEnfantsP6'] ?? self::NON_RENSEIGNE,
-            isAllocataire: null === $data['isAllocataire'] ? self::NON_RENSEIGNE : (\in_array($data['isAllocataire'], self::ALLOCATAIRE) ? self::OUI : self::NON),
+            isAllocataire: $this->mapData($data, 'isAllocataire'),
             numAllocataire: $data['numAllocataire'] ?? self::NON_RENSEIGNE,
             natureLogement: $data['natureLogement'] ?? self::NON_RENSEIGNE,
             superficie: $data['superficie'] ?? self::NON_RENSEIGNE,
             nomProprio: $data['nomProprio'],
-            isLogementSocial: null === $data['isLogementSocial'] ? self::NON_RENSEIGNE : (1 == $data['isLogementSocial'] ? self::OUI : self::NON),
-            isPreavisDepart: null === $data['isPreavisDepart'] ? self::NON_RENSEIGNE : (1 == $data['isPreavisDepart'] ? self::OUI : self::NON),
-            isRelogement: null === $data['isRelogement'] ? self::NON_RENSEIGNE : (1 == $data['isRelogement'] ? self::OUI : self::NON),
+            isLogementSocial: $this->mapData($data, 'isLogementSocial'),
+            isPreavisDepart: $this->mapData($data, 'isPreavisDepart'),
+            isRelogement: $this->mapData($data, 'isRelogement'),
             isNotOccupant: 1 == $data['isNotOccupant'] ? self::OUI : self::NON,
             nomDeclarant: $data['nomDeclarant'] ?? '-',
             structureDeclarant: $data['structureDeclarant'] ?? '-',
@@ -71,5 +72,29 @@ class SignalementExportFactory
             motifCloture: $motifCloture,
             scoreCloture: $data['scoreCloture']
         );
+    }
+
+    private function mapData(array $data, string $keyColumn): ?string
+    {
+        $value = null;
+        switch ($keyColumn) {
+            case 'isProprioAverti':
+            case 'isLogementSocial':
+            case 'isPreavisDepart':
+            case 'isRelogement':
+                $value = null === $data[$keyColumn]
+                    ? self::NON_RENSEIGNE
+                    : (1 == $data[$keyColumn] ? self::OUI : self::NON);
+                break;
+            case 'isAllocataire':
+                $value = null === $data[$keyColumn]
+                    ? self::NON_RENSEIGNE
+                    : (\in_array($data[$keyColumn], self::ALLOCATAIRE) ? self::OUI : self::NON);
+                break;
+            default:
+                break;
+        }
+
+        return $value;
     }
 }
