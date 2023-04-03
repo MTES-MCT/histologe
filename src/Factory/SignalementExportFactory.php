@@ -17,10 +17,21 @@ class SignalementExportFactory
 
     public function createInstanceFrom(User $user, array $data): SignalementExport
     {
-        $createdAt = $data['createdAt'] instanceof \DateTimeImmutable ? $data['createdAt']->format(self::DATE_FORMAT) : null;
-        $modifiedAt = $data['modifiedAt'] instanceof \DateTimeImmutable ? $data['modifiedAt']->format(self::DATE_FORMAT) : null;
-        $closedAt = $data['closedAt'] instanceof \DateTimeImmutable ? $data['closedAt']->format(self::DATE_FORMAT) : null;
-        $dateVisite = $data['dateVisite'] instanceof \DateTimeImmutable ? $data['dateVisite']->format(self::DATE_FORMAT) : null;
+        $createdAt = $data['createdAt'] instanceof \DateTimeImmutable
+            ? $data['createdAt']->format(self::DATE_FORMAT)
+            : null;
+
+        $modifiedAt = $data['modifiedAt'] instanceof \DateTimeImmutable
+            ? $data['modifiedAt']->format(self::DATE_FORMAT)
+            : null;
+
+        $closedAt = $data['closedAt'] instanceof \DateTimeImmutable
+            ? $data['closedAt']->format(self::DATE_FORMAT)
+            : null;
+
+        $dateVisite = $data['dateVisite'] instanceof \DateTimeImmutable
+            ? $data['dateVisite']->format(self::DATE_FORMAT)
+            : null;
 
         $motifCloture = $data['motifCloture'] instanceof MotifCloture ? $data['motifCloture']->label() : null;
         $status = SignalementAffectationHelper::getStatusLabelFrom($user, $data);
