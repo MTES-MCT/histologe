@@ -75,13 +75,12 @@ class SignalementExportFactory
             nomDeclarant: $data['nomDeclarant'] ?? '-',
             structureDeclarant: $data['structureDeclarant'] ?? '-',
             lienDeclarantOccupant: $data['lienDeclarantOccupant'],
-            newScoreCreation: $data['newScoreCreation'],
+            score: $data['score'],
             dateVisite: $dateVisite,
             isOccupantPresentVisite: 1 == $data['isOccupantPresentVisite'] ? self::OUI : self::NON,
             modifiedAt: $modifiedAt,
             closedAt: $closedAt,
-            motifCloture: $motifCloture,
-            scoreCloture: $data['scoreCloture']
+            motifCloture: $motifCloture
         );
     }
 

@@ -77,7 +77,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setIsAllocataire($row['is_allocataire'])
             ->setNumAllocataire($faker->randomNumber(6))
             ->setStatut($row['statut'])
-            ->setNewScoreCreation($row['score_creation'])
+            ->setScore($row['score'])
             ->setReference($row['reference'])
             ->setIsBailEnCours(false)
             ->setIsRelogement(false)

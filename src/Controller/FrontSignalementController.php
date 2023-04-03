@@ -242,7 +242,7 @@ class FrontSignalementController extends AbstractController
             $signalement->setReference($referenceGenerator->generate($signalement->getTerritory()));
 
             $score = new CriticiteCalculator($signalement, $critereRepository);
-            $signalement->setNewScoreCreation($score->calculateNewCriticite());
+            $signalement->setScore($score->calculateNewCriticite());
             $signalementQualificationUpdater->updateQualificationFromScore($signalement);
             $signalement->setCodeSuivi(md5(uniqid()));
 

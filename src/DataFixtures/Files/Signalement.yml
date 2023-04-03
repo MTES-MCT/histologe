@@ -17,7 +17,7 @@ signalements:
     statut: 2
     reference: "2022-1"
     geoloc: "{\"lat\":\"5.415151\",\"lng\":\"43.358246\"}"
-    score_creation: 100
+    score: 100
     etage_occupant: "A"
     escalier_occupant: "1"
     insee_occupant: "13213"
@@ -60,7 +60,7 @@ signalements:
     motif_cloture: 'NON_DECENCE'
     reference: "2022-2"
     geoloc: "[]"
-    score_creation: 5.420054200542
+    score: 5.420054200542
     insee_occupant: "01173"
     type_energie_logement: "Electrique"
     origine_signalement: "Guichet Unique"
@@ -103,7 +103,7 @@ signalements:
     motif_cloture: 'NON_DECENCE'
     reference: "2022-3"
     geoloc: "{\"lat\":\"5.371573\",\"lng\":\"43.313719\"}"
-    score_creation: 100
+    score: 100
     etage_occupant: "0"
     escalier_occupant: ""
     mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
@@ -146,7 +146,7 @@ signalements:
     statut: 2
     reference: "2022-4"
     geoloc: "{\"lat\":\"5.371573\",\"lng\":\"43.313719\"}"
-    score_creation: 100
+    score: 100
     etage_occupant: "0"
     escalier_occupant: ""
     mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
@@ -188,7 +188,7 @@ signalements:
     statut: 2
     reference: "2022-5"
     geoloc: "{\"lat\":\"5.371573\",\"lng\":\"43.313719\"}"
-    score_creation: 100
+    score: 100
     etage_occupant: "0"
     escalier_occupant: ""
     mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
@@ -230,7 +230,7 @@ signalements:
     statut: 2
     reference: "2022-6"
     geoloc: "{\"lat\":\"5.371573\",\"lng\":\"43.313719\"}"
-    score_creation: 100
+    score: 100
     etage_occupant: "0"
     escalier_occupant: ""
     mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
@@ -272,7 +272,7 @@ signalements:
     statut: 2
     reference: "2022-7"
     geoloc: "{\"lat\":\"5.371573\",\"lng\":\"43.313719\"}"
-    score_creation: 100
+    score: 100
     etage_occupant: "0"
     escalier_occupant: ""
     mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
@@ -315,7 +315,7 @@ signalements:
     reference: "2022-8"
     geoloc: "{\"lat\":\"5.371573\",\"lng\":\"43.313719\"}"
     created_at: "2022-03-08 17:06:33"
-    score_creation: 100
+    score: 100
     etage_occupant: "0"
     escalier_occupant: ""
     mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
@@ -357,7 +357,7 @@ signalements:
     statut: 2
     reference: "2022-9"
     geoloc: "{\"lat\":\"5.371573\",\"lng\":\"43.313719\"}"
-    score_creation: 100
+    score: 100
     etage_occupant: "0"
     escalier_occupant: ""
     mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
@@ -399,7 +399,7 @@ signalements:
     statut: 2
     reference: "2022-10"
     geoloc: "{\"lat\":\"5.371573\",\"lng\":\"43.313719\"}"
-    score_creation: 100
+    score: 100
     etage_occupant: "0"
     escalier_occupant: ""
     mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
@@ -441,7 +441,7 @@ signalements:
     statut: 2
     reference: "2022-11"
     geoloc: "{\"lat\":\"5.371573\",\"lng\":\"43.313719\"}"
-    score_creation: 100
+    score: 100
     etage_occupant: "0"
     escalier_occupant: ""
     mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
@@ -485,7 +485,7 @@ signalements:
     motif_cloture: 'TRAVAUX_FAITS_OU_EN_COURS'
     reference: "2022-12"
     geoloc: "[]"
-    score_creation: 5.420054200542
+    score: 5.420054200542
     insee_occupant: "01173"
     type_energie_logement: "Electrique"
     origine_signalement: "Guichet Unique"
@@ -529,7 +529,7 @@ signalements:
     motif_cloture: 'ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE'
     reference: "2022-13"
     geoloc: "[]"
-    score_creation: 5.420054200542
+    score: 5.420054200542
     insee_occupant: "01173"
     type_energie_logement: "Electrique"
     origine_signalement: "Guichet Unique"
@@ -574,7 +574,7 @@ signalements:
     motif_cloture: 'RESPONSABILITE_DE_L_OCCUPANT'
     reference: "2022-14"
     geoloc: "[]"
-    score_creation: 5.420054200542
+    score: 5.420054200542
     insee_occupant: "01173"
     type_energie_logement: "Electrique"
     origine_signalement: "Guichet Unique"
@@ -618,7 +618,7 @@ signalements:
     motif_cloture: 'NON_DECENCE'
     reference: "2023-1"
     geoloc: "[]"
-    score_creation: 5.420054200542
+    score: 5.420054200542
     insee_occupant: "01173"
     type_energie_logement: "Electrique"
     origine_signalement: "Guichet Unique"
@@ -653,7 +653,7 @@ signalements:
     statut: 2
     reference: "2023-2"
     geoloc: "{\"lat\":\"48.862725\", \"lng\":\"2.287592\"}"
-    score_creation: 5.420054200542
+    score: 5.420054200542
     insee_occupant: "69001"
     type_energie_logement: "Electrique"
     origine_signalement: "Guichet Unique"
@@ -687,7 +687,7 @@ signalements:
     statut: 2
     reference: "2023-3"
     geoloc: "[]"
-    score_creation: 5.420054200542
+    score: 5.420054200542
     insee_occupant: "69381"
     type_energie_logement: "Electrique"
     origine_signalement: "Guichet Unique"
@@ -721,7 +721,7 @@ signalements:
     statut: 2
     reference: "2023-4"
     geoloc: "[]"
-    score_creation: 5.420054200542
+    score: 5.420054200542
     insee_occupant: "69205"
     type_energie_logement: "Electrique"
     origine_signalement: "Guichet Unique"
@@ -755,7 +755,7 @@ signalements:
     statut: 2
     reference: "2023-5"
     geoloc: "[]"
-    score_creation: 5.420054200542
+    score: 5.420054200542
     insee_occupant: "69054"
     type_energie_logement: "Electrique"
     origine_signalement: "Guichet Unique"
@@ -787,7 +787,7 @@ signalements:
     statut: 2
     reference: "2023-6"
     geoloc: "{\"lat\":\"5.371573\",\"lng\":\"43.313719\"}"
-    score_creation: 100
+    score: 100
     etage_occupant: "0"
     escalier_occupant: ""
     mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
@@ -831,7 +831,7 @@ signalements:
     statut: 2
     reference: "2023-7"
     geoloc: "[]"
-    score_creation: 43
+    score: 43
     insee_occupant: "89024"
     type_energie_logement: "Electrique"
     origine_signalement: "Guichet Unique"
@@ -874,7 +874,7 @@ signalements:
     statut: 2
     reference: "2023-8"
     geoloc: "[]"
-    score_creation: 43
+    score: 43
     insee_occupant: "63113"
     type_energie_logement: "Electrique"
     origine_signalement: "Guichet Unique"

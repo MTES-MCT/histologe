@@ -35,7 +35,7 @@ class QualificationServiceTest extends KernelTestCase
 
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-1']);
-        $signalement->setNewScoreCreation($score);
+        $signalement->setScore($score);
         foreach ($listCriticites as $criticite) {
             $signalement->addCriticite($criticiteRepository->findOneBy(['label' => $criticite]));
         }

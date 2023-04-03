@@ -51,7 +51,7 @@ class SignalementRepository extends ServiceEntityRepository
         $firstResult = $offset;
         $qb = $this->createQueryBuilder('s');
         $qb->select('PARTIAL s.{id,details,uuid,reference,nomOccupant,prenomOccupant,adresseOccupant,cpOccupant,
-        inseeOccupant, villeOccupant,newScoreCreation,statut,createdAt,geoloc,territory},
+        inseeOccupant, villeOccupant,score,statut,createdAt,geoloc,territory},
             PARTIAL a.{id,partner,createdAt},
             PARTIAL criteres.{id,label},
             PARTIAL partner.{id,nom}');
@@ -349,7 +349,7 @@ class SignalementRepository extends ServiceEntityRepository
             s.reference,
             s.createdAt,
             s.statut,
-            s.newScoreCreation,
+            s.score,
             s.isNotOccupant,
             s.nomOccupant,
             s.prenomOccupant,
@@ -458,7 +458,6 @@ class SignalementRepository extends ServiceEntityRepository
             s.modifiedAt,
             s.closedAt,
             s.motifCloture,
-            s.scoreCloture,
             GROUP_CONCAT(DISTINCT situations.label SEPARATOR :group_concat_separator_1) as familleSituation,
             GROUP_CONCAT(DISTINCT criteres.label SEPARATOR :group_concat_separator_1) as desordres,
             GROUP_CONCAT(DISTINCT tags.label SEPARATOR :group_concat_separator_1) as etiquettes
@@ -569,7 +568,7 @@ class SignalementRepository extends ServiceEntityRepository
     public function getAverageCriticite(Territory|null $territory, bool $removeImported = false): ?float
     {
         $qb = $this->createQueryBuilder('s');
-        $qb->select('AVG(s.newScoreCreation)');
+        $qb->select('AVG(s.score)');
 
         if ($removeImported) {
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
@@ -642,8 +641,8 @@ class SignalementRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s');
 
-        $qb->select('AVG(s.newScoreCreation)');
-        $qb->andWhere('s.newScoreCreation IS NOT NULL');
+        $qb->select('AVG(s.score)');
+        $qb->andWhere('s.score IS NOT NULL');
 
         $qb = self::addFiltersToQuery($qb, $statisticsFilters);
 
@@ -701,9 +700,9 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
             ->addSelect('case
-                when s.newScoreCreation >= 0 and s.newScoreCreation < 25 then \''.CriticitePercentStatisticProvider::CRITICITE_VERY_WEAK.'\'
-                when s.newScoreCreation >= 25 and s.newScoreCreation < 51 then \''.CriticitePercentStatisticProvider::CRITICITE_WEAK.'\'
-                when s.newScoreCreation >= 51 and s.newScoreCreation <= 75 then \''.CriticitePercentStatisticProvider::CRITICITE_STRONG.'\'
+                when s.score >= 0 and s.score < 25 then \''.CriticitePercentStatisticProvider::CRITICITE_VERY_WEAK.'\'
+                when s.score >= 25 and s.score < 51 then \''.CriticitePercentStatisticProvider::CRITICITE_WEAK.'\'
+                when s.score >= 51 and s.score <= 75 then \''.CriticitePercentStatisticProvider::CRITICITE_STRONG.'\'
                 else \''.CriticitePercentStatisticProvider::CRITICITE_VERY_STRONG.'\'
                 end as range');
 

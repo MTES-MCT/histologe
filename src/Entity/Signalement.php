@@ -202,12 +202,6 @@ class Signalement
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $codeProcedure;
 
-    #[ORM\Column(type: 'float')]
-    private $newScoreCreation;
-
-    #[ORM\Column(type: 'float', nullable: true)]
-    private $scoreCloture;
-
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $etageOccupant;
 
@@ -326,6 +320,9 @@ class Signalement
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: SignalementQualification::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $signalementQualifications;
 
+    #[ORM\Column]
+    private ?float $score = null;
+
     public function __construct()
     {
         $this->situations = new ArrayCollection();
@@ -336,7 +333,7 @@ class Signalement
         $this->uuid = Uuid::v4();
         $this->isOccupantPresentVisite = false;
         $this->suivis = new ArrayCollection();
-        $this->newScoreCreation = 0;
+        $this->score = 0;
         $this->affectations = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->isImported = false;
@@ -1077,30 +1074,6 @@ class Signalement
         return $result;
     }
 
-    public function getNewScoreCreation(): ?float
-    {
-        return $this->newScoreCreation;
-    }
-
-    public function setNewScoreCreation(float $newScoreCreation): self
-    {
-        $this->newScoreCreation = $newScoreCreation;
-
-        return $this;
-    }
-
-    public function getScoreCloture(): ?float
-    {
-        return $this->scoreCloture;
-    }
-
-    public function setScoreCloture(?float $scoreCloture): self
-    {
-        $this->scoreCloture = $scoreCloture;
-
-        return $this;
-    }
-
     public function getEtageOccupant(): ?string
     {
         return $this->etageOccupant;
@@ -1659,6 +1632,18 @@ class Signalement
     public function setLastSuiviBy(?string $lastSuiviBy): self
     {
         $this->lastSuiviBy = $lastSuiviBy;
+
+        return $this;
+    }
+
+    public function getScore(): ?float
+    {
+        return $this->score;
+    }
+
+    public function setScore(float $score): self
+    {
+        $this->score = $score;
 
         return $this;
     }

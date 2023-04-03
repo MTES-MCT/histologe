@@ -16,7 +16,7 @@ class SignalementAffectationListView
         private ?string $reference = null,
         private ?\DateTimeImmutable $createdAt = null,
         private ?int $statut = null,
-        private ?string $newScoreCreation = null,
+        private ?string $score = null,
         private ?bool $isNotOccupant = null,
         private ?string $nomOccupant = null,
         private ?string $prenomOccupant = null,
@@ -54,9 +54,9 @@ class SignalementAffectationListView
         return $this->statut;
     }
 
-    public function getNewScoreCreation(): ?string
+    public function getScore(): ?string
     {
-        return $this->newScoreCreation;
+        return $this->score;
     }
 
     public function getIsNotOccupant(): ?bool

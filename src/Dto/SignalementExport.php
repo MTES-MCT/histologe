@@ -45,13 +45,12 @@ class SignalementExport
         public ?string $nomDeclarant = null,
         public ?string $structureDeclarant = null,
         public ?string $lienDeclarantOccupant = null,
-        public ?string $newScoreCreation = null,
+        public ?string $score = null,
         public ?string $dateVisite = null,
         public ?string $isOccupantPresentVisite = null,
         public ?string $modifiedAt = null,
         public ?string $closedAt = null,
         public ?string $motifCloture = null,
-        public ?string $scoreCloture = null,
     ) {
     }
 }

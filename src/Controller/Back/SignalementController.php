@@ -199,7 +199,7 @@ class SignalementController extends AbstractController
                 $signalement->setModifiedBy($this->getUser());
                 $signalement->setModifiedAt(new DateTimeImmutable());
                 $score = new CriticiteCalculator($signalement, $critereRepository);
-                $signalement->setNewScoreCreation($score->calculateNewCriticite());
+                $signalement->setScore($score->calculateNewCriticite());
                 $data = [];
                 if (\array_key_exists('situation', $form->getExtraData())) {
                     $data['situation'] = $form->getExtraData()['situation'];

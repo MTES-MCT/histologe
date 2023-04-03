@@ -104,9 +104,9 @@
 
             scores = [
                 {% if not is_granted('ROLE_ADMIN_TERRITORY')  or filters.partners or filters.affectations %}
-                    {{ signalements.list|map(signalement => "#{signalement.newScoreCreation}")|join(', ') }}
+                    {{ signalements.list|map(signalement => "#{signalement.score}")|join(', ') }}
                 {% else %}
-                    {{ signalements.list|map(signalement => "#{signalement.newScoreCreation}")|join(', ') }}
+                    {{ signalements.list|map(signalement => "#{signalement.score}")|join(', ') }}
                 {% endif %}];
 
         ids.map((id, index) => {

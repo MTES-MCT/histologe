@@ -195,7 +195,6 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEmpty($signalement->getDocuments());
         $this->assertEmpty($signalement->getTelOccupantBis());
         $this->assertEmpty($signalement->getIsDiagSocioTechnique());
-        $this->assertEmpty($signalement->getScoreCloture());
         $this->assertEmpty($signalement->getJsonContent());
         $this->assertEmpty($signalement->getModifiedBy());
         $this->assertEmpty($signalement->getAffectationStatusByPartner());

@@ -64,11 +64,11 @@ class SignalementQualificationUpdater
      */
     private function updateInsalubriteQualification(Signalement $signalement, ?SignalementQualification $existingQualificationInsalubrite)
     {
-        $newScoreCreation = $signalement->getNewScoreCreation();
+        $score = $signalement->getScore();
 
         $statusInsalubrite = null;
-        if ($newScoreCreation >= 10) {
-            $statusInsalubrite = $newScoreCreation >= 30 ? QualificationStatus::INSALUBRITE_CHECK : QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK;
+        if ($score >= 10) {
+            $statusInsalubrite = $score >= 30 ? QualificationStatus::INSALUBRITE_CHECK : QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK;
         }
         $listCriticiteInsalubrite = [];
         foreach ($signalement->getCriticites() as $criticite) {
