@@ -37,7 +37,7 @@ class ExportSignalementController extends AbstractController
 
             return $response->send();
         }
-        $this->addFlash('error', 'Le jeton CSRF n\'est pas valide. Veuillez réessayer.');
+        $this->addFlash('error', 'Problème d\'identification de votre demande. Merci de réessayer.');
 
         return $this->redirectToRoute('back_index');
     }
