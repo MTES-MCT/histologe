@@ -5,7 +5,7 @@ namespace App\Tests\Functional\Service\Signalement;
 use App\Entity\Criticite;
 use App\Entity\Enum\Qualification;
 use App\Entity\Signalement;
-use App\Service\Signalement\QualificationService;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -14,7 +14,7 @@ class QualificationServiceTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
     protected ManagerRegistry $managerRegistry;
-    private QualificationService $qualificationService;
+    private SignalementQualificationUpdater $signalementQualificationUpdater;
 
     protected function setUp(): void
     {
@@ -22,7 +22,7 @@ class QualificationServiceTest extends KernelTestCase
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $container = static::getContainer();
-        $this->qualificationService = $container->get(QualificationService::class);
+        $this->signalementQualificationUpdater = $container->get(SignalementQualificationUpdater::class);
     }
 
     /**
@@ -40,7 +40,7 @@ class QualificationServiceTest extends KernelTestCase
             $signalement->addCriticite($criticiteRepository->findOneBy(['label' => $criticite]));
         }
 
-        $this->qualificationService->updateQualificationFromScore($signalement);
+        $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
         $signalementQualifications = $signalement->getSignalementQualifications();
 
         $this->assertEquals(\count($qualificationsToCheck), \count($signalementQualifications));

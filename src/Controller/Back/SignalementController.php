@@ -23,7 +23,7 @@ use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
 use App\Security\Voter\UserVoter;
 use App\Service\Signalement\CriticiteCalculator;
-use App\Service\Signalement\QualificationService;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -187,7 +187,7 @@ class SignalementController extends AbstractController
         ManagerRegistry $doctrine,
         SituationRepository $situationRepository,
         CritereRepository $critereRepository,
-        QualificationService $qualificationService
+        SignalementQualificationUpdater $signalementQualificationUpdater
     ): Response {
         $title = 'Administration - Edition signalement #'.$signalement->getReference();
         $etats = ['Etat moyen', 'Mauvais état', 'Très mauvais état'];
@@ -222,7 +222,7 @@ class SignalementController extends AbstractController
                     }
                 }
                 !empty($data['situation']) && $signalement->setJsonContent($data['situation']);
-                $qualificationService->updateQualificationFromScore($signalement);
+                $signalementQualificationUpdater->updateQualificationFromScore($signalement);
                 $suivi = new Suivi();
                 $suivi->setCreatedBy($this->getUser());
                 $suivi->setSignalement($signalement);

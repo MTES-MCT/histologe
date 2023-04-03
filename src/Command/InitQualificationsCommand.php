@@ -5,7 +5,7 @@ namespace App\Command;
 use App\Entity\Signalement;
 use App\Manager\SignalementManager;
 use App\Repository\SignalementRepository;
-use App\Service\Signalement\QualificationService;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -23,7 +23,7 @@ class InitQualificationsCommand extends Command
 
     public function __construct(
         private SignalementManager $signalementManager,
-        private QualificationService $qualificationService
+        private SignalementQualificationUpdater $signalementQualificationUpdater
         ) {
         parent::__construct();
     }
@@ -46,7 +46,7 @@ class InitQualificationsCommand extends Command
         foreach ($signalements as $signalement) {
             ++$totalRead;
             $progressBar->advance();
-            $this->qualificationService->updateQualificationFromScore($signalement);
+            $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
 
             if (0 === $totalRead % self::FLUSH_COUNT) {
                 $this->signalementManager->save($signalement);

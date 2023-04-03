@@ -21,7 +21,7 @@ use App\Repository\UserRepository;
 use App\Service\NotificationService;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\PostalCodeHomeChecker;
-use App\Service\Signalement\QualificationService;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\QualificationStatusService;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\UploadHandlerService;
@@ -117,7 +117,7 @@ class FrontSignalementController extends AbstractController
         SignalementQualificationFactory $signalementQualificationFactory,
         QualificationStatusService $qualificationStatusService,
         ValidatorInterface $validator,
-        QualificationService $qualificationService
+        SignalementQualificationUpdater $signalementQualificationUpdater
     ): Response {
         if ($this->isCsrfTokenValid('new_signalement', $request->request->get('_token'))
             && $data = $request->get('signalement')) {
@@ -243,7 +243,7 @@ class FrontSignalementController extends AbstractController
 
             $score = new CriticiteCalculator($signalement, $critereRepository);
             $signalement->setNewScoreCreation($score->calculateNewCriticite());
-            $qualificationService->updateQualificationFromScore($signalement);
+            $signalementQualificationUpdater->updateQualificationFromScore($signalement);
             $signalement->setCodeSuivi(md5(uniqid()));
 
             // Non-décence énergétique

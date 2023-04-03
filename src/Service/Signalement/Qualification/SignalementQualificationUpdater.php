@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Service\Signalement;
+namespace App\Service\Signalement\Qualification;
 
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
 use App\Factory\SignalementQualificationFactory;
 
-class QualificationService
+class SignalementQualificationUpdater
 {
     public function __construct(
         private SignalementQualificationFactory $signalementQualificationFactory
