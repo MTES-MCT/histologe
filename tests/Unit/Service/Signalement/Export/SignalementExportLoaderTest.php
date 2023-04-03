@@ -17,7 +17,7 @@ class SignalementExportLoaderTest extends TestCase
     public function testLoad()
     {
         $signalementManager = $this->createMock(SignalementManager::class);
-        $filters = ['foo' => 'bar'];
+        $filters = ['territories' => ['1']];
         $user = $this->getUserFromRole(User::ROLE_ADMIN);
 
         $signalementExports = [
@@ -30,7 +30,7 @@ class SignalementExportLoaderTest extends TestCase
             ->with($user, $filters)
             ->willReturn($this->getSignalementExportGenerator($signalementExports));
 
-        $expectedOutput = $this->getHeaderAsString()."2023-01;31-03-2023;nouveau;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n2023-02;31-03-2023;nouveau;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n";
+        $expectedOutput = $this->getHeaderAsString() . "2023-01;31-03-2023;nouveau;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n2023-02;31-03-2023;nouveau;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n";
 
         $loader = new SignalementExportLoader($signalementManager);
         ob_start();
@@ -52,12 +52,12 @@ class SignalementExportLoaderTest extends TestCase
         $headers = array_map(function ($header) {
             if (str_contains($header, ' ')) {
                 $header = str_replace('"', '""', $header);
-                $header = '"'.$header.'"';
+                $header = '"' . $header . '"';
             }
 
             return $header;
         }, $headers);
 
-        return implode(SignalementExportHeader::SEPARATOR, $headers)."\n";
+        return implode(SignalementExportHeader::SEPARATOR, $headers) . "\n";
     }
 }
