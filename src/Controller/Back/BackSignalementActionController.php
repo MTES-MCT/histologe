@@ -6,7 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Tag;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;

@@ -18,7 +18,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationService;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;

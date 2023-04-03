@@ -6,7 +6,7 @@ use App\Entity\Territory;
 use App\Manager\TerritoryManager;
 use App\Service\Import\CsvParser;
 use App\Service\Import\GridAffectation\GridAffectationLoader;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationService;
 use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;

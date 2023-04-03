@@ -4,7 +4,7 @@ namespace App\Command;
 
 use App\Entity\User;
 use App\Manager\UserManager;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationService;
 use App\Service\Token\TokenGenerator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

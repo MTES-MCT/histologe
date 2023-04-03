@@ -10,7 +10,7 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Faker\Factory;
 use Psr\Log\LoggerInterface;

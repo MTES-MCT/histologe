@@ -4,7 +4,7 @@ namespace App\Tests\Functional\Service;
 
 use App\Entity\Suivi;
 use App\Entity\Territory;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;

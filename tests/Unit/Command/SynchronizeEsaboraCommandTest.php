@@ -11,7 +11,7 @@ use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
 use App\Service\Esabora\DossierResponse;
 use App\Service\Esabora\EsaboraService;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;

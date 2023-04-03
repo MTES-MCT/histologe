@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Mailer;
 
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -11,6 +11,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
+use function App\Service\mb_strtoupper;
 
 class NotificationService
 {
@@ -55,7 +56,7 @@ class NotificationService
         $message->from(
             new Address(
                 $this->parameterBag->get('notifications_email'),
-                'HISTOLOGE - '.mb_strtoupper($territoryName)
+                'HISTOLOGE - '.\mb_strtoupper($territoryName)
             )
         );
         if (!empty($params['attach'])) {
@@ -79,7 +80,7 @@ class NotificationService
 
         return $notification->htmlTemplate('emails/'.$config['template'].'.html.twig')
             ->context(array_merge($params, $config))
-            ->subject('HISTOLOGE '.mb_strtoupper((!empty($territory) && null !== $territory->getName()) ? $territory->getName() : 'ALERTE').' - '.$config['subject']);
+            ->subject('HISTOLOGE '.\mb_strtoupper((!empty($territory) && null !== $territory->getName()) ? $territory->getName() : 'ALERTE').' - '.$config['subject']);
     }
 
     private function config(int $type, array $params = []): array

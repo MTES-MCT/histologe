@@ -8,7 +8,7 @@ use App\Entity\Territory;
 use App\Repository\CommuneRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

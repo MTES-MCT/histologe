@@ -44,9 +44,6 @@ services:
     App\EventListener\ActivityListener:
         tags:
             - name: 'doctrine.event_subscriber'
-        arguments:
-            - '@App\Service\NotificationService'
-            - '@Symfony\Component\Routing\Generator\UrlGeneratorInterface'
     App\EventListener\LoginListener:
         tags:
             - { name: 'kernel.event_listener', event: 'security.interactive_login' }
@@ -60,8 +57,6 @@ services:
     App\EventListener\ExceptionListener:
         tags:
             - { name: 'kernel.event_listener', event: 'kernel.exception' }
-        arguments:
-            - '@App\Service\NotificationService'
 
     App\EventListener\SeoPageNotFoundRedirectListener:
         tags:

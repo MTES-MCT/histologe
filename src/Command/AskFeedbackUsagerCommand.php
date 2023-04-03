@@ -7,7 +7,7 @@ use App\Factory\SuiviFactory;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationService;
 use App\Service\Token\TokenGenerator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
