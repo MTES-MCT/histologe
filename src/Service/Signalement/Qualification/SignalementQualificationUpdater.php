@@ -5,6 +5,7 @@ namespace App\Service\Signalement\Qualification;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
+use App\Entity\SignalementQualification;
 use App\Factory\SignalementQualificationFactory;
 
 class SignalementQualificationUpdater
@@ -37,9 +38,16 @@ class SignalementQualificationUpdater
             }
         }
 
-        $newScoreCreation = $signalement->getNewScoreCreation();
+        $this->addNonDecenceAndRSDQualification($signalement, $addNonDecence, $addRSD);
+        $this->updateInsalubriteQualification($signalement, $existingQualificationInsalubrite);
+        $this->updateDangerQualification($signalement, $existingQualificationDanger);
+    }
 
-        // IF NOT ADDED YET: In all cases, we add NON_DECENCE and RSD
+    /**
+     * IF NOT ADDED YET: In all cases, we add NON_DECENCE and RSD.
+     */
+    private function addNonDecenceAndRSDQualification(Signalement $signalement, bool $addNonDecence, bool $addRSD)
+    {
         if ($addNonDecence) {
             $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::NON_DECENCE, QualificationStatus::NON_DECENCE_CHECK);
             $signalement->addSignalementQualification($signalementQualification);
@@ -48,10 +56,16 @@ class SignalementQualificationUpdater
             $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::RSD, QualificationStatus::RSD_CHECK);
             $signalement->addSignalementQualification($signalementQualification);
         }
+    }
 
-        // INSALUBRITE
-        // If score is higher than 10, we add INSALUBRITE_CHECK or INSALUBRITE_MANQUEMENT_CHECK depending on score
-        // If criticité with qualification INSALUBRITE, we add INSALUBRITE_CHECK
+    /**
+     * If score is higher than 10, we add INSALUBRITE_CHECK or INSALUBRITE_MANQUEMENT_CHECK depending on score
+     * If criticité with qualification INSALUBRITE, we add INSALUBRITE_CHECK.
+     */
+    private function updateInsalubriteQualification(Signalement $signalement, ?SignalementQualification $existingQualificationInsalubrite)
+    {
+        $newScoreCreation = $signalement->getNewScoreCreation();
+
         $statusInsalubrite = null;
         if ($newScoreCreation >= 10) {
             $statusInsalubrite = $newScoreCreation >= 30 ? QualificationStatus::INSALUBRITE_CHECK : QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK;
@@ -63,22 +77,32 @@ class SignalementQualificationUpdater
                 $listCriticiteInsalubrite[] = $criticite->getId();
             }
         }
+
         // If already exists
         if ($existingQualificationInsalubrite) {
             // But should be deleted
             if (empty($statusInsalubrite)) {
                 $signalement->removeSignalementQualification($existingQualificationInsalubrite);
+
+            // But should be changed of status
+            } elseif ($statusInsalubrite !== $existingQualificationInsalubrite->getStatus()) {
+                $signalement->removeSignalementQualification($existingQualificationInsalubrite);
+                $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::INSALUBRITE, $statusInsalubrite, $listCriticiteInsalubrite);
+                $signalement->addSignalementQualification($signalementQualification);
             }
-        // TODO : but should be changed of status
 
         // If not added yet, but should be added
         } elseif (!empty($statusInsalubrite)) {
             $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::INSALUBRITE, $statusInsalubrite, $listCriticiteInsalubrite);
             $signalement->addSignalementQualification($signalementQualification);
         }
+    }
 
-        // DANGER
-        // If criticité is DANGER, we add DANGER
+    /**
+     * If one criticité is DANGER, we add DANGER.
+     */
+    private function updateDangerQualification(Signalement $signalement, ?SignalementQualification $existingQualificationDanger)
+    {
         $listCriticiteDanger = [];
         foreach ($signalement->getCriticites() as $criticite) {
             if ($criticite->getIsDanger()) {
