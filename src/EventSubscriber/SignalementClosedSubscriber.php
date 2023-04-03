@@ -9,7 +9,7 @@ use App\Event\SignalementClosedEvent;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\UserRepository;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationService;
 use App\Service\Token\TokenGeneratorInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;

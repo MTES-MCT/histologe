@@ -7,7 +7,7 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Exception\User\UserEmailNotFoundException;
 use App\Factory\UserFactory;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationService;
 use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;

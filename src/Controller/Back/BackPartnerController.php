@@ -9,7 +9,7 @@ use App\Manager\PartnerManager;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;

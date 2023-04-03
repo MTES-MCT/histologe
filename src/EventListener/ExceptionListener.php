@@ -3,7 +3,7 @@
 namespace App\EventListener;
 
 use App\Entity\Signalement;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;

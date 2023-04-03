@@ -10,7 +10,7 @@ use App\Manager\SignalementUsagerManager;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationService;
 use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;

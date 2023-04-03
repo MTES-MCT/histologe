@@ -7,7 +7,7 @@ use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
 use App\Service\Esabora\EsaboraService;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

@@ -3,7 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Entity\User;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationService;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;

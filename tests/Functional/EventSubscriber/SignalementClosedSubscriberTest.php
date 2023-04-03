@@ -10,7 +10,7 @@ use App\EventSubscriber\SignalementClosedSubscriber;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\UserRepository;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationService;
 use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;

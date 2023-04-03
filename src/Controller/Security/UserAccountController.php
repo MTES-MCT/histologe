@@ -6,7 +6,7 @@ use App\Entity\User;
 use App\Manager\UserManager;
 use App\Repository\UserRepository;
 use App\Security\BackOfficeAuthenticator;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationService;
 use App\Service\Token\ActivationTokenGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
