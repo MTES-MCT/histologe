@@ -124,7 +124,7 @@ class SignalementAffectationListView
         if (null !== $this->qualifications) {
             foreach ($this->qualifications as $qualification) {
                 if (Qualification::NON_DECENCE_ENERGETIQUE->name !== $qualification) {
-                    $listLabels[] = Qualification::tryFrom($qualification)->label();
+                    $listLabels[] = Qualification::tryFrom($qualification)?->label();
                 }
             }
         }

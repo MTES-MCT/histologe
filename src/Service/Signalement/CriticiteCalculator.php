@@ -7,7 +7,7 @@ use App\Entity\Criticite;
 use App\Entity\Signalement;
 use App\Repository\CritereRepository;
 
-class CriticiteCalculatorService
+class CriticiteCalculator
 {
     private Signalement $signalement;
     private float $scoreBatiment;

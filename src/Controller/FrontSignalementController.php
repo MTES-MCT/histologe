@@ -19,7 +19,7 @@ use App\Repository\SituationRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\NotificationService;
-use App\Service\Signalement\CriticiteCalculatorService;
+use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\QualificationService;
 use App\Service\Signalement\QualificationStatusService;
@@ -241,7 +241,7 @@ class FrontSignalementController extends AbstractController
             }
             $signalement->setReference($referenceGenerator->generate($signalement->getTerritory()));
 
-            $score = new CriticiteCalculatorService($signalement, $critereRepository);
+            $score = new CriticiteCalculator($signalement, $critereRepository);
             $signalement->setNewScoreCreation($score->calculateNewCriticite());
             $qualificationService->updateQualificationFromScore($signalement);
             $signalement->setCodeSuivi(md5(uniqid()));

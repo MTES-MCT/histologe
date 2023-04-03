@@ -352,9 +352,7 @@
                 <ul class="fr-list--icon-img">
                     <li>
                         <div class="fr-responsive-img fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
-                            <canvas id="slider-criticite" class="fr-col-4"></canvas>
                             <div class="fr-col-8 fr-col--middle">
-                                <text class="fr-display-sm"><span id="score-criticite"></span>%</text>
                             {% if is_granted('ROLE_ADMIN') %}
                                 <text class="fr-display-xs"><span id="new-score-criticite">{{ signalement.newScoreCreation|round(2) }}</span>%</text>
                             {% endif %}

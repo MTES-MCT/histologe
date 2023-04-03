@@ -22,7 +22,7 @@ use App\Repository\SignalementQualificationRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
 use App\Security\Voter\UserVoter;
-use App\Service\Signalement\CriticiteCalculatorService;
+use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\QualificationService;
 use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
@@ -193,7 +193,7 @@ class SignalementController extends AbstractController
             if ($form->isValid()) {
                 $signalement->setModifiedBy($this->getUser());
                 $signalement->setModifiedAt(new DateTimeImmutable());
-                $score = new CriticiteCalculatorService($signalement, $critereRepository);
+                $score = new CriticiteCalculator($signalement, $critereRepository);
                 $signalement->setNewScoreCreation($score->calculateNewCriticite());
                 $data = [];
                 if (\array_key_exists('situation', $form->getExtraData())) {
