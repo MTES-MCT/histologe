@@ -3,6 +3,7 @@
 {% block title %}Partenaire index{% endblock %}
 
 {% block content %}
+    {% include '_partials/_modal_partner_delete.html.twig' %}
     <section class="fr-p-5v">
         <header>
             <div class="fr-grid-row">
@@ -100,12 +101,9 @@
                     <td class="fr-text--right">
                         <a href="{{ path('back_partner_view', {'id': partner.id}) }}"
                            class="fr-btn fr-fi-arrow-right-line fr-btn--sm"></a>
-                        <button data-add="{{ path('back_partner_user_add', {'id': partner.id}) }}"
-                                data-token="{{ csrf_token('partner_add_user_' ~ partner.id) }}"
-                                class="fr-btn fr-fi-user-fill fr-btn--sm partner-row-delete"></button>
-                        <button data-delete="{{ path('back_partner_delete', {'id': partner.id}) }}"
-                                data-token="{{ csrf_token('partner_delete_' ~ partner.id) }}"
-                                class="fr-btn fr-btn--danger fr-fi-delete-line fr-btn--sm partner-row-delete"></button>
+                        <a href="#" class="fr-btn fr-btn--danger fr-fi-delete-line fr-btn--sm partner-delete_btn"
+                            id="partners_delete_{{ partner.id }}" aria-controls="fr-modal-partner-delete"
+                            data-fr-opened="false" data-partnername="{{ partner.nom }}" data-partnerid="{{ partner.id }}"></a>
                     </td>
                 </tr>
             {% else %}
@@ -193,4 +191,7 @@
     </section>
 
 
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
 {% endblock %}

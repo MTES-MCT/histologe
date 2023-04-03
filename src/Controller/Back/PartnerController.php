@@ -201,7 +201,6 @@ class PartnerController extends AbstractController
     #[Route('/edituser', name: 'back_partner_user_edit', methods: ['POST'])]
     public function editUser(
         Request $request,
-        // Partner $partner,
         UserManager $userManager,
     ): Response {
         $this->denyAccessUnlessGranted('USER_EDIT', $this->getUser());
@@ -213,11 +212,12 @@ class PartnerController extends AbstractController
             $user = $userManager->find((int) $userId);
             $data = $request->get('user_edit');
             $user = $userManager->updateUserFromData($user, $data);
+            $partnerId = $user->getPartner()->getId();
 
             $message = 'L\'utilisateur a bien été créé. Un email de confirmation a été envoyé à '.$user->getEmail();
             $this->addFlash('success', $message);
 
-            return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_view', ['id' => $partnerId], Response::HTTP_SEE_OTHER);
         }
         $this->addFlash('error', 'Une erreur est survenue lors de l\'édition de l\'utilisateur.');
 
@@ -293,18 +293,31 @@ class PartnerController extends AbstractController
         return $this->json(['success' => 'email_ok']);
     }
 
-    #[Route('/{id}', name: 'back_partner_delete', methods: ['POST'])]
-    public function delete(Request $request, Partner $partner, EntityManagerInterface $entityManager): Response
-    {
+    #[Route('/deletepartner', name: 'back_partner_delete', methods: ['POST'])]
+    public function delete(
+        Request $request,
+        PartnerManager $partnerManager,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $partnerId = $request->request->get('partner_id');
+        /** @var Partner $partner */
+        $partner = $partnerManager->find($partnerId);
         $this->denyAccessUnlessGranted('PARTNER_DELETE', $partner);
-        if ($this->isCsrfTokenValid('partner_delete_'.$partner->getId(), $request->request->get('_token'))) {
+        if ($partner
+            && $this->isCsrfTokenValid('partner_delete', $request->request->get('_token'))
+        ) {
             $partner->setIsArchive(true);
             foreach ($partner->getUsers() as $user) {
-                $user->setStatut(User::STATUS_ARCHIVE) && $entityManager->persist($user);
+                $user->setStatut(User::STATUS_ARCHIVE);
+                $entityManager->persist($user);
             }
             $entityManager->persist($partner);
             $entityManager->flush();
+            $this->addFlash('success', $partner->getNom().' supprimé avec succès !');
+
+            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
         }
+        $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
 
         return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
     }

@@ -26,6 +26,20 @@ document.querySelectorAll('.partner-user-delete_btn').forEach(swbtn => {
   })
 })
 
+document.querySelectorAll('.partner-delete_btn').forEach(swbtn => {
+  swbtn.addEventListener('click', evt => {
+    const target = evt.target
+    document.querySelectorAll('.fr-modal-partner-delete_name').forEach(userItem => {
+      userItem.innerHTML = target.getAttribute('data-partnername')
+    })
+    document.querySelector('#fr-modal-partner-delete_partnerid').value = target.getAttribute('data-partnerid')
+    document.querySelector('#partner_delete_form').addEventListener('submit', (e) => {
+      document.querySelector('#partner_delete_form_submit').innerHTML = 'Suppression en cours...'
+      document.querySelector('#partner_delete_form_submit').disabled = true
+    })
+  })
+})
+
 document.querySelectorAll('.partner-user-edit_btn').forEach(swbtn => {
   swbtn.addEventListener('click', evt => {
     const target = evt.target
@@ -44,9 +58,7 @@ document.querySelectorAll('.partner-user-edit_btn').forEach(swbtn => {
     }
 
     const userRoles = target.getAttribute('data-userrole').split(',')
-    console.log(userRoles)
     const rolesSelect = document.querySelector('#user_edit_roles')
-    console.log(rolesSelect)
     if (userRoles.includes('ROLE_ADMIN')){
       rolesSelect.value  = 'ROLE_ADMIN'
     } else if (userRoles.includes('ROLE_ADMIN_TERRITORY')) {
