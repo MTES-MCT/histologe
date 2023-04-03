@@ -61,8 +61,7 @@
                               class="tinyCheck" id="signalement-affectation-response-form"
                               name="signalement-affectation-response-form" method="POST">
                             <button class="fr-btn fr-fi-checkbox-circle-fill fr-btn--icon-left"
-                                    name="signalement-affectation-response[accept]" value="1"
-                                    {# onclick="return confirm('Êtes-vous certain de vouloir acccepter ce signalement ?')" #}>
+                                    name="signalement-affectation-response[accept]" value="1">
                                 Accepter
                             </button>
                             <a href="#" class="fr-btn fr-btn--danger fr-fi-close-circle-fill fr-btn--icon-left"
@@ -188,11 +187,6 @@
             </div>
         </template>
         <div class="fr-grid-row fr-grid-row--middle fr-my-3v">
-            {# <div class="fr-col-12 fr-col-md-9">
-                <strong class="fr-fi-information-fill fr-icon--sm fr-text-label--blue-france"> Etiquettes</strong>
-                <span class="fr-hint-text">Ci-dessous la liste des étiquettes attribuées à ce signalement. Vous pouvez en ajouter au besoin</span>
-            </div> #}
-
             <div class="fr-col-10 fr-col-md-11" id="tags_active_container">
                 {% set visible = 'fr-hidden' %}
                 {% for tag in signalement.tags %}
@@ -206,22 +200,6 @@
                 {% endfor %}
                 <em class="fr-text-default--warning fr-fi-close-line fr-icon--xs {{ visible }}"> <small>Aucune étiquette
                         attribuée à ce signalement.</small></em>
-                {# <span class="fr-badge fr-badge--blue-cumulus">PROVENANCE ARS</span>
-                <span class="fr-badge fr-badge--blue-ecume">LOCATAIRE MECHANT</span>
-                <span class="fr-badge fr-badge--brown-cafe-creme">COQUILLAGES</span>
-                <span class="fr-badge fr-badge--brown-opera">CRUSTACés</span>
-                <span class="fr-badge fr-badge--brown-caramel">LOREM</span>
-                <span class="fr-badge fr-badge--green-archipel">RSD</span>
-                <span class="fr-badge fr-badge--green-bourgeon">IPSUM</span>
-                <span class="fr-badge fr-badge--green-emeraude">IPSUM</span>
-                <span class="fr-badge fr-badge--green-menthe">IPSUM</span>
-                <span class="fr-badge fr-badge--green-tilleul-verveine">IPSUM</span>
-                <span class="fr-badge fr-badge--orange-terre-battue">IPSUM</span>
-                <span class="fr-badge fr-badge--pink-macaron">IPSUM</span>
-                <span class="fr-badge fr-badge--pink-tuile">IPSUM</span>
-                <span class="fr-badge fr-badge--purple-glycine">IPSUM</span>
-                <span class="fr-badge fr-badge--yellow-moutarde">IPSUM</span>
-                <span class="fr-badge fr-badge--yellow-tournesol">IPSUM</span> #}
             </div>
             <div class="fr-col-2 fr-col-md-1 fr-text--right">
                 <button class="fr-btn fr-fi-equalizer-line" id="tags_select_tooltip_btn"></button>
@@ -271,7 +249,6 @@
             </div>
         </div>
 
-        {# {{ dump(signalement) }} #}
         <div class="fr-grid-row">
             <div class="fr-col-12 fr-col-md-6">
                 {% if signalement.isNotOccupant %}
@@ -346,7 +323,7 @@
                 <strong class="fr-fi-alert-fill fr-icon--sm fr-text-label--blue-france"> Criticité du
                     signalement</strong>
                 <span class="fr-hint-text">La criticité est calculée automatiquement en fonction des situations signalées.</span>
-                {% if signalement.newScoreCreation > 80 %}
+                {% if isDanger %}
                     <p class="fr-badge fr-badge--warning ">danger pour l'occupant détecté</p>
                 {% endif %}
                 <ul class="fr-list--icon-img">

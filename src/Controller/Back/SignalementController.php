@@ -103,9 +103,13 @@ class SignalementController extends AbstractController
 
             return $this->redirectToRoute('back_index');
         }
+        $isDanger = false;
         $criticitesArranged = [];
         foreach ($signalement->getCriticites() as $criticite) {
             $criticitesArranged[$criticite->getCritere()->getSituation()->getLabel()][$criticite->getCritere()->getLabel()] = $criticite;
+            if ($criticite->getIsDanger()) {
+                $isDanger = true;
+            }
         }
 
         $canEditSignalement = false;
@@ -153,6 +157,7 @@ class SignalementController extends AbstractController
             'isClosed' => Signalement::STATUS_CLOSED === $signalement->getStatut(),
             'isClosedForMe' => $isClosedForMe,
             'isRefused' => $isRefused,
+            'isDanger' => $isDanger,
             'signalement' => $signalement,
             'partners' => $partners,
             'clotureForm' => $clotureForm->createView(),
