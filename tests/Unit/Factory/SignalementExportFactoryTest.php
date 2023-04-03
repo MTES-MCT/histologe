@@ -31,10 +31,8 @@ class SignalementExportFactoryTest extends TestCase
             'prenomOccupant' => $faker->firstName(),
             'adresseOccupant' => $faker->streetAddress(),
             'villeOccupant' => $faker->city(),
-            'rawAffectations' =>
-                'DDETS-PS-DL PE - Mission Logement indigne||0;M.A.M.P. - CT1 / EAH Marseille||0;MARSEILLE||1',
-            'affectationPartnerName' =>
-                'DDETS-PS-DL PE - Mission Logement indigne;M.A.M.P. - CT1 / EAH Marseille;MARSEILLE',
+            'rawAffectations' => 'DDETS-PS-DL PE - Mission Logement indigne||0;M.A.M.P. - CT1 / EAH Marseille||0;MARSEILLE||1',
+            'affectationPartnerName' => 'DDETS-PS-DL PE - Mission Logement indigne;M.A.M.P. - CT1 / EAH Marseille;MARSEILLE',
             'affectationStatus' => '0;1',
             'affectationPartnerId' => '636;645;708',
             'details' => $faker->text(),
@@ -71,8 +69,7 @@ class SignalementExportFactoryTest extends TestCase
             'motifCloture' => MotifCloture::INSALUBRITE,
             'scoreCloture' => null,
             'familleSituation' => "l'état et propreté du logement|l'état et propreté du logement|",
-            'desordres' =>
-                "Les sols sont humides.|Les installations électriques ne sont pas en bon état.|
+            'desordres' => "Les sols sont humides.|Les installations électriques ne sont pas en bon état.|
                 Les murs ont des fissures.|De l'eau s’infiltre dans mon logement.|Il y a des trace ",
             'etiquettes' => null,
         ];
@@ -84,7 +81,7 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals('en cours', $signalementExportFactory->statut);
         $this->assertEquals(MotifCloture::INSALUBRITE->label(), $signalementExportFactory->motifCloture);
 
-        $dateFormatted =(new \DateTimeImmutable())->format(SignalementExportFactory::DATE_FORMAT);
+        $dateFormatted = (new \DateTimeImmutable())->format(SignalementExportFactory::DATE_FORMAT);
         $this->assertEquals($dateFormatted, $signalementExportFactory->createdAt);
         $this->assertEquals($dateFormatted, $signalementExportFactory->modifiedAt);
         $this->assertEquals($dateFormatted, $signalementExportFactory->closedAt);
