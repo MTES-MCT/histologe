@@ -461,9 +461,9 @@ class SignalementRepository extends ServiceEntityRepository
             s.closedAt,
             s.motifCloture,
             s.scoreCloture,
-            GROUP_CONCAT(situations.label SEPARATOR :group_concat_separator_1) as familleSituation,
-            GROUP_CONCAT(criteres.label SEPARATOR :group_concat_separator_1) as desordres,
-            GROUP_CONCAT(tags.label SEPARATOR :group_concat_separator_1) as etiquettes
+            GROUP_CONCAT(DISTINCT situations.label SEPARATOR :group_concat_separator_1) as familleSituation,
+            GROUP_CONCAT(DISTINCT criteres.label SEPARATOR :group_concat_separator_1) as desordres,
+            GROUP_CONCAT(DISTINCT tags.label SEPARATOR :group_concat_separator_1) as etiquettes
             '
         )->leftJoin('s.situations', 'situations')
             ->leftJoin('s.criteres', 'criteres')
