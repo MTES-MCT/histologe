@@ -34,7 +34,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[Route('/bo/signalements')]
-class BackSignalementController extends AbstractController
+class SignalementController extends AbstractController
 {
     #[Route('/{uuid}', name: 'back_signalement_view')]
     public function viewSignalement(
@@ -149,7 +149,6 @@ class BackSignalementController extends AbstractController
             'clotureForm' => $clotureForm->createView(),
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
             'isExperimentationTerritory' => $isExperimentationTerritory,
-            'isSignalementNDE' => $isSignalementNDEActif,
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
             'files' => $files,
