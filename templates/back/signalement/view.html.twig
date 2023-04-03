@@ -39,7 +39,7 @@
                         <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold{# fr-fi-information-fill fr-icon--sm #} fr-pr-3v">&nbsp;
                             Signalement par l'occupant</small>
                     {% endif %}                   
-                    {% if isQualificationNDEDisplayed and is_granted('USER_SEE_NDE', app.user) %}     
+                    {% if can_see_nde_qualification(signalementQualificationNDE) and is_granted('USER_SEE_NDE', app.user) %}     
                          <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold fr-pr-3v">&nbsp;
                             Non décence énergétique</small>
                     {% endif %}                               
@@ -436,7 +436,7 @@
                 </ul>
             </div>
         </div>
-        {% if isZoneNDEDisplayed and is_granted('USER_SEE_NDE', app.user) %}       
+        {% if can_see_nde_edit_zone(signalementQualificationNDE) and is_granted('USER_SEE_NDE', app.user) %}       
         <section class="fr-accordion">
             <h3 class="fr-accordion__title">
                 <button class="fr-accordion__btn fr-btn--icon-left fr-fi-chat-quote-fill fr-icon--sm fr-text-label--blue-france" aria-expanded="true" aria-controls="accordion-nde">Non décence énergétique</button>

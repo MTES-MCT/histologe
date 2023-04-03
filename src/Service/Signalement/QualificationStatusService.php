@@ -5,8 +5,9 @@ namespace App\Service\Signalement;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\SignalementQualification;
 use DateTimeImmutable;
+use Twig\Extension\RuntimeExtensionInterface;
 
-class QualificationStatusService
+class QualificationStatusService implements RuntimeExtensionInterface
 {
     public function getNDEStatus(SignalementQualification $signalementQualification): ?QualificationStatus
     {
@@ -56,6 +57,24 @@ class QualificationStatusService
         }
 
         return QualificationStatus::NDE_CHECK;
+    }
+
+    public function canSeenNDEQualification(?SignalementQualification $signalementQualification): bool
+    {
+        if (empty($signalementQualification)) {
+            return false;
+        }
+
+        return QualificationStatus::NDE_AVEREE == $signalementQualification->getStatus() || QualificationStatus::NDE_CHECK == $signalementQualification->getStatus();
+    }
+
+    public function canSeenNDEEditZone(?SignalementQualification $signalementQualification): bool
+    {
+        if (empty($signalementQualification)) {
+            return false;
+        }
+
+        return QualificationStatus::NDE_AVEREE == $signalementQualification->getStatus() || QualificationStatus::NDE_CHECK == $signalementQualification->getStatus() || QualificationStatus::NDE_OK == $signalementQualification->getStatus();
     }
 
     public function getList(): array

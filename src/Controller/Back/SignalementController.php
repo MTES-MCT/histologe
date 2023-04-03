@@ -149,23 +149,11 @@ class SignalementController extends AbstractController
             'clotureForm' => $clotureForm->createView(),
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
             'isExperimentationTerritory' => $isExperimentationTerritory,
-            'isQualificationNDEDisplayed' => $this->isQualificationNDEDisplayed($signalementQualificationNDE),
-            'isZoneNDEDisplayed' => $isSignalementNDEActif,
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
             'files' => $files,
             'canEditNDE' => $canEditNDE,
         ]);
-    }
-
-    private function isQualificationNDEDisplayed(?SignalementQualification $signalementQualification): bool
-    {
-        if (null !== $signalementQualification) {
-            return QualificationStatus::NDE_AVEREE == $signalementQualification->getStatus()
-                || QualificationStatus::NDE_CHECK == $signalementQualification->getStatus();
-        }
-
-        return false;
     }
 
     private function isSignalementNDEActif(?SignalementQualification $signalementQualification): bool
