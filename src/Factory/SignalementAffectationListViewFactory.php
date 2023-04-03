@@ -3,26 +3,15 @@
 namespace App\Factory;
 
 use App\Dto\SignalementAffectationListView;
-use App\Entity\Enum\AffectationStatus;
 use App\Entity\User;
+use App\Service\Signalement\SignalementAffectationHelper;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class SignalementAffectationListViewFactory
 {
     public function createInstanceFrom(UserInterface|User $user, array $data): SignalementAffectationListView
     {
-        $affectations = $this->parseAffectations($data['rawAffectations']);
-        if ($user->isUserPartner() || $user->isPartnerAdmin()) {
-            $statusAffectation = $affectations[$user->getPartner()->getNom()]['statut'];
-            $status = AffectationStatus::tryFrom($statusAffectation)?->mapSignalementStatus();
-        } else {
-            $status = $data['statut'];
-        }
-        if (null !== $data['qualifications']) {
-            $qualifications = explode(SignalementAffectationListView::SEPARATOR_GROUP_CONCAT, $data['qualifications']);
-        } else {
-            $qualifications = null;
-        }
+        list($status, $affectations) = SignalementAffectationHelper::getStatusAndAffectationFrom($user, $data);
 
         return new SignalementAffectationListView(
             id: $data['id'],
@@ -40,27 +29,7 @@ class SignalementAffectationListViewFactory
             lastSuiviAt: $data['lastSuiviAt'],
             lastSuiviBy: $data['lastSuiviBy'],
             affectations: $affectations,
-            qualifications: $qualifications
+            qualifications: SignalementAffectationHelper::getQualificationFrom($data)
         );
-    }
-
-    private function parseAffectations(?string $rawAffectations): array
-    {
-        if (null === $rawAffectations) {
-            return [];
-        }
-
-        $affectations = [];
-        $affectationsList = explode(SignalementAffectationListView::SEPARATOR_GROUP_CONCAT, $rawAffectations);
-        foreach ($affectationsList as $affectationItem) {
-            list($partner, $status) = explode(SignalementAffectationListView::SEPARATOR_CONCAT, $affectationItem);
-            $statusAffectation = AffectationStatus::from($status)->value;
-            $affectations[$partner] = [
-                'partner' => $partner,
-                'statut' => $statusAffectation,
-            ];
-        }
-
-        return $affectations;
     }
 }
