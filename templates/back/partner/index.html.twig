@@ -100,7 +100,7 @@
                     <td class="fr-text--right">
                         <a href="{{ path('back_partner_view', {'id': partner.id}) }}"
                            class="fr-btn fr-fi-arrow-right-line fr-btn--sm"></a>
-                        <button data-delete="{{ path('back_partner_add_user', {'id': partner.id}) }}"
+                        <button data-add="{{ path('back_partner_user_add', {'id': partner.id}) }}"
                                 data-token="{{ csrf_token('partner_add_user_' ~ partner.id) }}"
                                 class="fr-btn fr-fi-user-fill fr-btn--sm partner-row-delete"></button>
                         <button data-delete="{{ path('back_partner_delete', {'id': partner.id}) }}"

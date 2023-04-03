@@ -8,6 +8,7 @@
     {% endif %}
     {% include '_partials/_modal_user_create.html.twig' %}
     {% include '_partials/_modal_user_delete.html.twig' %}
+    {% include '_partials/_modal_user_edit.html.twig' %}
     <section class="fr-p-5v">
         <header>
             <div class="fr-grid-row">
@@ -27,7 +28,7 @@
                 <div><b>Nom :</b> {{ partner.nom }}</div>
             </div>
             <div class="fr-col-6">
-                <div><b>Territoire :</b> {{ partner.territory.name }}</div>
+                <div><b>Territoire :</b> {{ partner.territory ? partner.territory.name : ''}}</div>
             </div>
         </div>
         <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
@@ -99,7 +100,7 @@
 
     
     <section class="fr-col-12 fr-table fr-table--bordered fr-pt-0">
-        <table class="fr-display-inline-table sortable">
+        <table class="fr-display-inline-table sortable" aria-label="Liste des utilisateurs du partenaire">
             <thead>
             <tr>
                 <th>Dernière connexion</th>
@@ -143,16 +144,19 @@
                             {% endif %}
                         </td>
                         <td class="fr-text--right">
-                        {# TODO changer la route #}
-                            {# <a href="{{ path('back_partner_view', {'id': partner.id}) }}"
-                            class="fr-btn fr-fi-edit-line fr-btn--sm"></a>                          #}
-                            <a href="#" class="fr-btn fr-fi-edit-line fr-mt-3v partner_users_edit_btn"
+                            <a href="#" class="fr-btn fr-fi-edit-line fr-mt-3v partner-user-edit_btn"
                             id="partner_users_edit_{{ user.id }}" aria-controls="fr-modal-user-edit"
-                            data-fr-opened="false" data-username="{{ user.nomComplet }}" data-userid="{{ user.id }}"></a>
-                            <a href="#" class="fr-btn fr-btn--orange fr-fi-upload-2-fill fr-mt-3v partner_users_transfer_btn"
+                            data-fr-opened="false" 
+                            data-usernom="{{ user.nom }}" 
+                            data-userprenom="{{ user.prenom }}" 
+                            data-userrole="{{ user.roles|join(',') }}" 
+                            data-userismailingactive="{{ user.isMailingActive }}" 
+                            data-userid="{{ user.id }}" 
+                            data-useremail="{{ user.email }}"></a>
+                            <a href="#" class="fr-btn fr-btn--orange fr-fi-upload-2-fill fr-mt-3v partner_user_transfer_btn"
                             id="partner_users_transfer_{{ user.id }}" aria-controls="fr-modal-user-transfer"
                             data-fr-opened="false" data-username="{{ user.nomComplet }}" data-userid="{{ user.id }}"></a>
-                            <a href="#" class="fr-btn fr-btn--danger fr-fi-delete-line fr-mt-3v partner-user-delete"
+                            <a href="#" class="fr-btn fr-btn--danger fr-fi-delete-line fr-mt-3v partner-user-delete_btn"
                             id="partner_users_delete_{{ user.id }}" aria-controls="fr-modal-user-delete"
                             data-fr-opened="false" data-username="{{ user.nomComplet }}" data-userid="{{ user.id }}" data-useremail="{{ user.email }}"></a>
                         </td>

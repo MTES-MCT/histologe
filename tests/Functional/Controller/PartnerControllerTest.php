@@ -107,11 +107,14 @@ class PartnerControllerTest extends WebTestCase
         $client->request(
             'POST',
             $router->generate('back_partner_user_transfer'),
-            ['user_transfer' => ['user' => $userId, 'partner' => $newPartnerId], '_token' => $this->generateCsrfToken($client, 'partner_user_transfer')]
+            [
+                'user_transfer' => ['user' => $userId, 'partner' => $newPartnerId],
+                '_token' => $this->generateCsrfToken($client, 'partner_user_transfer'),
+            ]
         );
 
         $this->assertEquals($newPartnerId, $user->getPartner()->getId());
-        $this->assertResponseRedirects('/bo/partenaires/'.$newPartnerId.'/editer');
+        $this->assertResponseRedirects('/bo/partenaires/'.$newPartnerId.'/voir');
     }
 
     public function testTransferUserAccountWithUserNotAllowed(): void
@@ -137,7 +140,10 @@ class PartnerControllerTest extends WebTestCase
         $client->request(
             'POST',
             $router->generate('back_partner_user_transfer'),
-            ['user_transfer' => ['user' => $userId, 'partner' => $newPartnerId], '_token' => $this->generateCsrfToken($client, 'partner_user_transfer')]
+            [
+                'user_transfer' => ['user' => $userId, 'partner' => $newPartnerId],
+                '_token' => $this->generateCsrfToken($client, 'partner_user_transfer'),
+            ]
         );
 
         $this->assertEquals($userOldPartner, $user->getPartner()->getId());
@@ -166,7 +172,10 @@ class PartnerControllerTest extends WebTestCase
         $client->request(
             'POST',
             $router->generate('back_partner_user_transfer'),
-            ['user_transfer' => ['user' => $userId, 'partner' => $newPartnerId], '_token' => $this->generateCsrfToken($client, 'bad_csrf')]
+            [
+                'user_transfer' => ['user' => $userId, 'partner' => $newPartnerId],
+                '_token' => $this->generateCsrfToken($client, 'bad_csrf'),
+            ]
         );
 
         $this->assertEquals($userOldPartner, $user->getPartner()->getId());

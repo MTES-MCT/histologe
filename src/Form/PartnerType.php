@@ -150,7 +150,9 @@ class PartnerType extends AbstractType
             },
             function ($tagsAsString) {
                 // transform the string back to an array
-                return null !== $tagsAsString ? preg_split('/(\s*,*\s*)*,+(\s*,*\s*)*/', $tagsAsString, -1, \PREG_SPLIT_NO_EMPTY) : [];
+                $pattern = '/(\s*,*\s*)*,+(\s*,*\s*)*/';
+
+                return null !== $tagsAsString ? preg_split($pattern, $tagsAsString, -1, \PREG_SPLIT_NO_EMPTY) : [];
             }
         ));
 

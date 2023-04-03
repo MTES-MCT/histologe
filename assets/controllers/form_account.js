@@ -31,24 +31,3 @@ territory?.addEventListeners('change', (event) => {
             console.warn('Something went wrong.', err);
         });
 })
-
-if (document.querySelector('#partner_type')) {
-    document.querySelector('#partner_type').addEventListener('change', (event) => {
-        // TODO améliorer
-        var x = document.getElementById("partner_type");
-        x.value = x.value.toUpperCase();
-        if (x.value === 'COMMUNE_SCHS'){
-            document.querySelector('#partner_create_zone_pdl').classList.remove('fr-hidden')
-            document.querySelector('#partner_create_esabora_title').classList.remove('fr-hidden')
-            document.querySelector('#partner_create_esabora_div').classList.remove('fr-hidden')
-        } else if (x.value === 'EPCI'){
-            document.querySelector('#partner_create_zone_pdl').classList.remove('fr-hidden')
-            document.querySelector('#partner_create_esabora_title').classList.add('fr-hidden')
-            document.querySelector('#partner_create_esabora_div').classList.add('fr-hidden')
-        }else{
-            document.querySelector('#partner_create_zone_pdl').classList.add('fr-hidden')
-            document.querySelector('#partner_create_esabora_title').classList.add('fr-hidden')
-            document.querySelector('#partner_create_esabora_div').classList.add('fr-hidden')
-        }
-    });
-}

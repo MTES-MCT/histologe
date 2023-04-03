@@ -1,4 +1,4 @@
-document.querySelectorAll('.partner_users_transfer_btn').forEach(swbtn => {
+document.querySelectorAll('.partner_user_transfer_btn').forEach(swbtn => {
   swbtn.addEventListener('click', evt => {
     const target = evt.target
     document.querySelector('#fr-modal-user-transfer_username').innerHTML = target.getAttribute('data-username')
@@ -9,7 +9,7 @@ document.querySelectorAll('.partner_users_transfer_btn').forEach(swbtn => {
     })
   })
 })
-document.querySelectorAll('.partner-user-delete').forEach(swbtn => {
+document.querySelectorAll('.partner-user-delete_btn').forEach(swbtn => {
   swbtn.addEventListener('click', evt => {
     const target = evt.target
     document.querySelectorAll('.fr-modal-user-delete_username').forEach(userItem => {
@@ -25,3 +25,65 @@ document.querySelectorAll('.partner-user-delete').forEach(swbtn => {
     })
   })
 })
+
+document.querySelectorAll('.partner-user-edit_btn').forEach(swbtn => {
+  swbtn.addEventListener('click', evt => {
+    const target = evt.target
+    document.querySelectorAll('.fr-modal-user-edit_useremail').forEach(userItem => {
+      userItem.innerHTML = target.getAttribute('data-useremail')
+    })
+    document.querySelector('#user-edit_userid').value = target.getAttribute('data-userid')
+    document.querySelector('#user_edit_email').value = target.getAttribute('data-useremail')
+    document.querySelector('#user_edit_nom').value = target.getAttribute('data-usernom')
+    document.querySelector('#user_edit_prenom').value = target.getAttribute('data-userprenom')
+    const isMailingActive = target.getAttribute('data-userismailingactive')
+    if ( '1' === isMailingActive ){
+      document.querySelector('#user_edit_is_mailing_active-1').checked = true
+    } else {
+      document.querySelector('#user_edit_is_mailing_active-2').checked = true
+    }
+
+    const userRoles = target.getAttribute('data-userrole').split(',')
+    console.log(userRoles)
+    const rolesSelect = document.querySelector('#user_edit_roles')
+    console.log(rolesSelect)
+    if (userRoles.includes('ROLE_ADMIN')){
+      rolesSelect.value  = 'ROLE_ADMIN'
+    } else if (userRoles.includes('ROLE_ADMIN_TERRITORY')) {
+      rolesSelect.value  = 'ROLE_ADMIN_TERRITORY'
+    }else if (userRoles.includes('ROLE_ADMIN_PARTNER')) {
+      rolesSelect.value  = 'ROLE_ADMIN_PARTNER'
+    }else if (userRoles.includes('ROLE_USER_PARTNER')) {
+      rolesSelect.value  = 'ROLE_USER_PARTNER'
+    }else{
+      rolesSelect.value  = 'ROLE_USER_PARTNER'
+    }
+
+    document.querySelector('#user_edit_form').addEventListener('submit', (e) => {
+      document.querySelector('#user_edit_form_submit').innerHTML = 'Edition en cours...'
+      document.querySelector('#user_edit_form_submit').disabled = true
+    })
+  })
+})
+
+
+if (document.querySelector('#partner_type')) {
+  document.querySelector('#partner_type').addEventListener('change', (event) => {
+      // TODO améliorer
+      const x = document.getElementById("partner_type");
+      x.value = x.value.toUpperCase();
+      if (x.value === 'COMMUNE_SCHS'){
+          document.querySelector('#partner_create_zone_pdl').classList.remove('fr-hidden')
+          document.querySelector('#partner_create_esabora_title').classList.remove('fr-hidden')
+          document.querySelector('#partner_create_esabora_div').classList.remove('fr-hidden')
+      } else if (x.value === 'EPCI'){
+          document.querySelector('#partner_create_zone_pdl').classList.remove('fr-hidden')
+          document.querySelector('#partner_create_esabora_title').classList.add('fr-hidden')
+          document.querySelector('#partner_create_esabora_div').classList.add('fr-hidden')
+      }else{
+          document.querySelector('#partner_create_zone_pdl').classList.add('fr-hidden')
+          document.querySelector('#partner_create_esabora_title').classList.add('fr-hidden')
+          document.querySelector('#partner_create_esabora_div').classList.add('fr-hidden')
+      }
+  });
+}

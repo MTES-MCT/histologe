@@ -41,7 +41,6 @@ class PartnerController extends AbstractController
         if ($this->isGranted('ROLE_ADMIN')) {
             $currentTerritory = $territoryRepository->find((int) $request->get('territory'));
         } else {
-            $userTerms = $request->get('userTerms');
             $currentTerritory = $user->getTerritory();
         }
         $currentType = $request->get('type');
@@ -128,8 +127,6 @@ class PartnerController extends AbstractController
                 'territory' => $partner->getTerritory()->getId(),
             ]));
         }
-        /** @var User $user */
-        $user = $this->getUser();
 
         return $this->renderForm('back/partner/view.html.twig', [
             'partner' => $partner,
@@ -176,7 +173,7 @@ class PartnerController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/adduser', name: 'back_partner_add_user', methods: ['POST'])]
+    #[Route('/{id}/adduser', name: 'back_partner_user_add', methods: ['POST'])]
     public function addUser(
         Request $request,
         Partner $partner,
@@ -191,11 +188,38 @@ class PartnerController extends AbstractController
             // TODO envoyer un email d'activation
             // TODO ne pas pouvoir créer si email identique
             // TODO revoir les messages d'erreur sur les champs
-            $this->addFlash('success', 'L\'utilisateur a bien été créé. Un email de confirmation a été envoyé à '.$user->getEmail());
+            $message = 'L\'utilisateur a bien été créé. Un email de confirmation a été envoyé à '.$user->getEmail();
+            $this->addFlash('success', $message);
 
             return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         }
-        $this->addFlash('error', 'Une erreur est survenue lors du transfert...');
+        $this->addFlash('error', 'Une erreur est survenue lors de l\'ajout d\'utilisateur.');
+
+        return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/edituser', name: 'back_partner_user_edit', methods: ['POST'])]
+    public function editUser(
+        Request $request,
+        // Partner $partner,
+        UserManager $userManager,
+    ): Response {
+        $this->denyAccessUnlessGranted('USER_EDIT', $this->getUser());
+        if (
+            $this->isCsrfTokenValid('partner_user_edit', $request->request->get('_token'))
+            && $userId = $request->request->get('user_id')
+        ) {
+            /** @var User $user */
+            $user = $userManager->find((int) $userId);
+            $data = $request->get('user_edit');
+            $user = $userManager->updateUserFromData($user, $data);
+
+            $message = 'L\'utilisateur a bien été créé. Un email de confirmation a été envoyé à '.$user->getEmail();
+            $this->addFlash('success', $message);
+
+            return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+        }
+        $this->addFlash('error', 'Une erreur est survenue lors de l\'édition de l\'utilisateur.');
 
         return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
     }
@@ -213,7 +237,7 @@ class PartnerController extends AbstractController
             $userManager->transferUserToPartner($user, $partner);
             $this->addFlash('success', $user->getNomComplet().' transféré avec succès !');
 
-            return $this->redirectToRoute('back_partner_edit', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         }
         $this->addFlash('error', 'Une erreur est survenue lors du transfert...');
 
@@ -229,10 +253,10 @@ class PartnerController extends AbstractController
         $this->denyAccessUnlessGranted('USER_DELETE', $this->getUser());
         if (
             $this->isCsrfTokenValid('partner_user_delete', $request->request->get('_token'))
-            && $user_id = $request->request->get('user_id')
+            && $userId = $request->request->get('user_id')
         ) {
             /** @var User $user */
-            $user = $userManager->find($user_id);
+            $user = $userManager->find($userId);
             $user->setStatut(User::STATUS_ARCHIVE);
             $userManager->save($user);
             $notificationMailerRegistry->send(
@@ -244,7 +268,11 @@ class PartnerController extends AbstractController
             );
             $this->addFlash('success', $user->getNomComplet().' supprimé avec succès !');
 
-            return $this->redirectToRoute('back_partner_edit', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute(
+                'back_partner_edit',
+                ['id' => $user->getPartner()->getId()],
+                Response::HTTP_SEE_OTHER
+            );
         }
         $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
 
@@ -255,10 +283,11 @@ class PartnerController extends AbstractController
     public function checkMail(Request $request, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('USER_CHECKMAIL', $this->getUser());
-        if ($this->isCsrfTokenValid('partner_checkmail', $request->request->get('_token'))) {
-            if ($entityManager->getRepository(User::class)->findOneBy(['email' => $request->get('email')])) {
-                return $this->json(['error' => 'email_exist'], 400);
-            }
+        if (
+            $this->isCsrfTokenValid('partner_checkmail', $request->request->get('_token'))
+            && $entityManager->getRepository(User::class)->findOneBy(['email' => $request->get('email')])
+        ) {
+            return $this->json(['error' => 'email_exist'], 400);
         }
 
         return $this->json(['success' => 'email_ok']);

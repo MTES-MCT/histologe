@@ -42,6 +42,8 @@ class UserManager extends AbstractManager
             ->setEmail($data['email'])
             ->setIsMailingActive($data['isMailingActive']);
 
+        $this->save($user);
+        // TODO envoi du mail ?
         return $user;
     }
 
@@ -50,7 +52,7 @@ class UserManager extends AbstractManager
         $user = $this->userFactory->createInstanceFromArray($partner, $data);
 
         $this->save($user);
-        // TODO envoi du mail
+        // TODO envoi du mail ?
         return $user;
     }
 
