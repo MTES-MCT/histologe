@@ -88,17 +88,6 @@ class SignalementRepository extends ServiceEntityRepository
             ->getQuery()->getArrayResult();
     }
 
-    public function findAllWithAffectations($year): array
-    {
-        return $this->createQueryBuilder('s')
-            ->where('s.statut != 7')
-            ->andWhere('YEAR(s.createdAt) = '.$year)
-            ->leftJoin('s.affectations', 'affectations')
-            ->addSelect('affectations', 's')
-            ->getQuery()
-            ->getResult();
-    }
-
     public function countAll(Territory|null $territory, bool $removeImported = false, bool $removeArchived = false): int
     {
         $qb = $this->createQueryBuilder('s');
