@@ -10,7 +10,7 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
-use App\Service\Mailer\NotificationService;
+use App\Service\Mailer\NotificationMailer;
 use Doctrine\ORM\EntityManagerInterface;
 use Faker\Factory;
 use Psr\Log\LoggerInterface;
@@ -32,7 +32,7 @@ class ContactFormHandlerTest extends KernelTestCase
         $this->signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $mailer = static::getContainer()->get(MailerInterface::class);
         $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-        $notificationService = new NotificationService($mailer, $parameterBag);
+        $notificationService = new NotificationMailer($mailer, $parameterBag);
         $suiviFactory = new SuiviFactory();
         $suiviManager = self::getContainer()->get(SuiviManager::class);
         $this->signalementManager = self::getContainer()->get(SignalementManager::class);

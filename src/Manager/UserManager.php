@@ -7,7 +7,9 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Exception\User\UserEmailNotFoundException;
 use App\Factory\UserFactory;
-use App\Service\Mailer\NotificationService;
+use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -22,7 +24,7 @@ class UserManager extends AbstractManager
 
     public function __construct(
         private LoginLinkHandlerInterface $loginLinkHandler,
-        private NotificationService $notificationService,
+        private NotificationMailerRegistry $notificationMailerRegistry,
         private UrlGeneratorInterface $urlGenerator,
         private PasswordHasherFactoryInterface $passwordHasherFactory,
         private TokenGeneratorInterface $tokenGenerator,
@@ -64,16 +66,18 @@ class UserManager extends AbstractManager
             $this->urlGenerator->generate('back_dashboard') :
             $loginLink;
 
-        $this->notificationService->send(
-            NotificationService::TYPE_ACCOUNT_TRANSFER,
-            $user->getEmail(),
-            [
-            'btntext' => User::STATUS_ACTIVE === $user->getStatut() ? 'Accéder à mon compte' : 'Activer mon compte',
-            'link' => $link,
-            'user_status' => $user->getStatut(),
-            'partner_name' => $partner->getNom(),
-        ],
-            $user->getTerritory()
+        $this->notificationMailerRegistry->send(
+            new Notification(
+                NotificationMailerType::TYPE_ACCOUNT_TRANSFER,
+                $user->getEmail(),
+                [
+                    'btntext' => User::STATUS_ACTIVE === $user->getStatut() ? 'Accéder à mon compte' : 'Activer mon compte',
+                    'link' => $link,
+                    'user_status' => $user->getStatut(),
+                    'partner_name' => $partner->getNom(),
+                ],
+                $user->getTerritory()
+            )
         );
     }
 

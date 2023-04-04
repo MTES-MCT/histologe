@@ -6,7 +6,7 @@ use App\Entity\Territory;
 use App\Manager\TerritoryManager;
 use App\Service\Import\CsvParser;
 use App\Service\Import\GridAffectation\GridAffectationLoader;
-use App\Service\Mailer\NotificationService;
+use App\Service\Mailer\NotificationMailer;
 use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -30,7 +30,7 @@ class ImportGridAffectationCommand extends Command
         private TerritoryManager $territoryManager,
         private GridAffectationLoader $gridAffectationLoader,
         private UploadHandlerService $uploadHandlerService,
-        private NotificationService $notificationService,
+        private NotificationMailer $notificationService,
     ) {
         parent::__construct();
     }
@@ -78,7 +78,7 @@ class ImportGridAffectationCommand extends Command
         $io->success($territory->getName().' has been activated');
 
         $this->notificationService->send(
-            NotificationService::TYPE_CRON,
+            NotificationMailer::TYPE_CRON,
             $this->parameterBag->get('admin_email'),
             [
                 'url' => $this->parameterBag->get('host_url'),

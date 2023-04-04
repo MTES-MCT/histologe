@@ -6,14 +6,15 @@ use App\Entity\User;
 use App\Manager\UserManager;
 use App\Repository\UserRepository;
 use App\Security\BackOfficeAuthenticator;
-use App\Service\Mailer\NotificationService;
+use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use App\Service\Token\ActivationTokenGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
@@ -22,15 +23,26 @@ use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 class UserAccountController extends AbstractController
 {
     #[Route('/activation', name: 'login_activation')]
-    public function requestLoginLink(NotificationService $notificationService, LoginLinkHandlerInterface $loginLinkHandler, UserRepository $userRepository, Request $request, MailerInterface $mailer): Response
-    {
+    public function requestLoginLink(
+        NotificationMailerRegistry $notificationMailerRegistry,
+        LoginLinkHandlerInterface $loginLinkHandler,
+        UserRepository $userRepository,
+        Request $request
+    ): Response {
         $title = 'Activation de votre compte';
         if ($request->isMethod('POST') && $email = $request->request->get('email')) {
             $user = $userRepository->findOneBy(['email' => $email]);
             if ($user) {
                 $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
                 $loginLink = $loginLinkDetails->getUrl();
-                $notificationService->send(NotificationService::TYPE_ACCOUNT_ACTIVATION, $email, ['link' => $loginLink], $user->getTerritory());
+                $notificationMailerRegistry->send(
+                    new Notification(
+                        NotificationMailerType::TYPE_ACCOUNT_ACTIVATION,
+                        $email,
+                        ['link' => $loginLink],
+                        $user->getTerritory()
+                    )
+                );
 
                 return $this->render('security/login_link_sent.html.twig', [
                     'title' => 'Lien de connexion envoyé !',
@@ -48,21 +60,6 @@ class UserAccountController extends AbstractController
         ]);
     }
 
-    #[Route('/bo/activation/all', name: 'login_activation_all')]
-    public function requestLoginLinkAll(NotificationService $notificationService, LoginLinkHandlerInterface $loginLinkHandler, UserRepository $userRepository, Request $request, MailerInterface $mailer): Response
-    {
-        $title = 'Activation de tout les comptes votre compte';
-        $count = 0;
-        foreach ($userRepository->findAll() as $user) {
-            $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
-            $loginLink = $loginLinkDetails->getUrl();
-            $notificationService->send(NotificationService::TYPE_ACCOUNT_ACTIVATION, $user->getEmail(), ['link' => $loginLink], $user->getTerritory());
-            ++$count;
-        }
-
-        return $this->json(['response' => $count.' Mails envoyés']);
-    }
-
     #[Route('/activation-incorrecte', name: 'login_activation_fail')]
     public function activationFail(): Response
     {
@@ -72,19 +69,25 @@ class UserAccountController extends AbstractController
     }
 
     #[Route('/mot-de-pass-perdu', name: 'login_mdp_perdu')]
-    public function requestNewPass(LoginLinkHandlerInterface $loginLinkHandler, UserRepository $userRepository, Request $request, NotificationService $notificationService): Response
-    {
+    public function requestNewPass(
+        LoginLinkHandlerInterface $loginLinkHandler,
+        UserRepository $userRepository,
+        Request $request,
+        NotificationMailerRegistry $notificationMailerRegistry
+    ): Response {
         $title = 'Récupération de votre mot de passe';
         if ($request->isMethod('POST') && $email = $request->request->get('email')) {
             $user = $userRepository->findOneBy(['email' => $email]);
             if ($user) {
                 $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
                 $loginLink = $loginLinkDetails->getUrl();
-                $notificationService->send(
-                    NotificationService::TYPE_LOST_PASSWORD,
-                    $email,
-                    ['link' => $loginLink],
-                    $user->getTerritory()
+                $notificationMailerRegistry->send(
+                    new Notification(
+                        NotificationMailerType::TYPE_LOST_PASSWORD,
+                        $email,
+                        ['link' => $loginLink],
+                        $user->getTerritory()
+                    )
                 );
 
                 return $this->render('security/login_link_sent.html.twig', [

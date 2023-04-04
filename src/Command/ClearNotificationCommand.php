@@ -3,7 +3,9 @@
 namespace App\Command;
 
 use App\Entity\Notification;
-use App\Service\Mailer\NotificationService;
+use App\Service\Mailer\Notification as MailerNotification;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -19,7 +21,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class ClearNotificationCommand extends Command
 {
     public function __construct(private EntityManagerInterface $entityManager,
-                                private NotificationService $notificationService,
+                                private NotificationMailerRegistry $notificationMailerRegistry,
                                 private ParameterBagInterface $parameterBag
     ) {
         parent::__construct();
@@ -38,16 +40,18 @@ class ClearNotificationCommand extends Command
         $nbNotifications = \count($notifications);
         $io->success($nbNotifications.' notification(s) deleted !');
 
-        $this->notificationService->send(
-            NotificationService::TYPE_CRON,
-            $this->parameterBag->get('admin_email'),
-            [
-                'url' => $this->parameterBag->get('host_url'),
-                'cron_label' => 'Suppression des notifications',
-                'count' => $nbNotifications,
-                'message' => $nbNotifications > 1 ? 'notifications ont été supprimées' : 'notification a été supprimée',
-            ],
-            null
+        $this->notificationMailerRegistry->send(
+            new MailerNotification(
+                NotificationMailerType::TYPE_CRON,
+                $this->parameterBag->get('admin_email'),
+                [
+                    'url' => $this->parameterBag->get('host_url'),
+                    'cron_label' => 'Suppression des notifications',
+                    'count' => $nbNotifications,
+                    'message' => $nbNotifications > 1 ? 'notifications ont été supprimées' : 'notification a été supprimée',
+                ],
+                null
+            )
         );
 
         return Command::SUCCESS;

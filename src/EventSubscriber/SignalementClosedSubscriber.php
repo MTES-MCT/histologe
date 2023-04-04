@@ -9,7 +9,8 @@ use App\Event\SignalementClosedEvent;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\UserRepository;
-use App\Service\Mailer\NotificationService;
+use App\Service\Mailer\NotificationMailer;
+use App\Service\Mailer\NotificationMailerType;
 use App\Service\Token\TokenGeneratorInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -19,7 +20,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class SignalementClosedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private NotificationService $notificationService,
+        private NotificationMailer $notificationService,
         private SignalementManager $signalementManager,
         private UserRepository $userRepository,
         private UrlGeneratorInterface $urlGenerator,
@@ -98,7 +99,7 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
         if (!empty($toRecipients)) {
             foreach ($toRecipients as $toRecipient) {
                 $this->notificationService->send(
-                    NotificationService::TYPE_SIGNALEMENT_CLOSED_TO_USAGER,
+                    NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_USAGER,
                     [$toRecipient],
                     [
                         'motif_cloture' => $signalement->getMotifCloture()->label(),
@@ -118,7 +119,7 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
         }
 
         $this->notificationService->send(
-            NotificationService::TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS,
+            NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS,
             $sendTo,
             [
                 'ref_signalement' => $signalement->getReference(),
@@ -143,7 +144,7 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
         }
 
         $this->notificationService->send(
-            NotificationService::TYPE_SIGNALEMENT_CLOSED_TO_PARTNER,
+            NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_PARTNER,
             $sendTo,
             [
                 'ref_signalement' => $signalement->getReference(),

@@ -4,7 +4,7 @@ namespace App\Tests\Functional\Service;
 
 use App\Entity\Suivi;
 use App\Entity\Territory;
-use App\Service\Mailer\NotificationService;
+use App\Service\Mailer\NotificationMailer;
 use Doctrine\ORM\EntityManagerInterface;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -28,7 +28,7 @@ class NotificationServiceTest extends KernelTestCase
         $mailer = static::getContainer()->get(MailerInterface::class);
         $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
 
-        $notificationService = new NotificationService($mailer, $parameterBag);
+        $notificationService = new NotificationMailer($mailer, $parameterBag);
 
         $reflection = new \ReflectionClass(\get_class($notificationService));
         $method = $reflection->getMethod('getValuePropertySignalementFrom');
@@ -53,9 +53,9 @@ class NotificationServiceTest extends KernelTestCase
 
         $territory = (new Territory())->setZip('01')->setName('Ain')->setIsActive(1);
 
-        $notificationService = new NotificationService($mailer, $parameterBag);
+        $notificationService = new NotificationMailer($mailer, $parameterBag);
         $mailSended = $notificationService->send(
-            NotificationService::TYPE_ERROR_SIGNALEMENT,
+            NotificationMailer::TYPE_ERROR_SIGNALEMENT,
             $parameterBag->get('admin_email'),
             $params,
             $territory

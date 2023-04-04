@@ -8,7 +8,7 @@ use App\Factory\SuiviFactory;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
-use App\Service\Mailer\NotificationService;
+use App\Service\Mailer\NotificationMailer;
 use Doctrine\ORM\NonUniqueResultException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -18,7 +18,7 @@ class ContactFormHandler
     public const MENTION_SENT_BY_EMAIL = '<br>Envoyé par email';
 
     public function __construct(
-        private NotificationService $notificationService,
+        private NotificationMailer $notificationService,
         private ParameterBagInterface $parameterBag,
         private SignalementRepository $signalementRepository,
         private SuiviFactory $suiviFactory,
@@ -74,7 +74,7 @@ class ContactFormHandler
 
         if ($hasNotificationToSend) {
             $this->notificationService->send(
-                NotificationService::TYPE_CONTACT_FORM,
+                NotificationMailer::TYPE_CONTACT_FORM,
                 $this->parameterBag->get('contact_email'),
                 [
                     'nom' => $nom,

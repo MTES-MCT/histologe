@@ -10,7 +10,7 @@ use App\EventSubscriber\SignalementClosedSubscriber;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\UserRepository;
-use App\Service\Mailer\NotificationService;
+use App\Service\Mailer\NotificationMailer;
 use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -52,13 +52,13 @@ class SignalementClosedSubscriberTest extends KernelTestCase
 
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['statut' => User::STATUS_ACTIVE]);
 
-        $notitificationServiceMock = $this->createMock(NotificationService::class);
+        $notitificationServiceMock = $this->createMock(NotificationMailer::class);
         $notitificationServiceMock
             ->expects($this->exactly(2))
             ->method('send')
             ->withConsecutive(
                 [
-                    NotificationService::TYPE_SIGNALEMENT_CLOSED_TO_USAGER,
+                    NotificationMailer::TYPE_SIGNALEMENT_CLOSED_TO_USAGER,
                     $signalementClosed->getMailUsagers(),
                     [
                         'motif_cloture' => $signalementClosed->getMotifCloture()->label(),
@@ -67,7 +67,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
                     $signalementClosed->getTerritory(),
                 ],
                 [
-                    NotificationService::TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS,
+                    NotificationMailer::TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS,
                     $sendToPartners,
                     [
                         'ref_signalement' => $signalementClosed->getReference(),

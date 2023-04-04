@@ -3,7 +3,9 @@
 namespace App\EventListener;
 
 use App\Entity\Signalement;
-use App\Service\Mailer\NotificationService;
+use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
@@ -11,7 +13,7 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 class ExceptionListener
 {
     public function __construct(
-        private NotificationService $notificationService,
+        private NotificationMailerRegistry $notificationMailerRegistry,
         private ParameterBagInterface $params,
     ) {
     }
@@ -33,18 +35,20 @@ class ExceptionListener
             if ($event->getRequest()->get('signalement') instanceof Signalement) {
                 $territory = $event->getRequest()->get('signalement')->getTerritory();
             }
-            $this->notificationService->send(
-                NotificationService::TYPE_ERROR_SIGNALEMENT,
-                $this->params->get('admin_email'),
-                [
-                    'url' => $_SERVER['SERVER_NAME'],
-                    'code' => $event->getThrowable()->getCode(),
-                    'error' => $event->getThrowable()->getMessage(),
-                    'req' => $event->getRequest()->getContent(),
-                    'signalement' => $event->getRequest()->get('signalement'),
-                    'attachment' => $attachment,
-                ],
-                $territory
+            $this->notificationMailerRegistry->send(
+                new Notification(
+                    NotificationMailerType::TYPE_ERROR_SIGNALEMENT,
+                    $this->params->get('admin_email'),
+                    [
+                        'url' => $_SERVER['SERVER_NAME'],
+                        'code' => $event->getThrowable()->getCode(),
+                        'error' => $event->getThrowable()->getMessage(),
+                        'req' => $event->getRequest()->getContent(),
+                        'signalement' => $event->getRequest()->get('signalement'),
+                        'attachment' => $attachment,
+                    ],
+                    $territory
+                )
             );
         }
     }

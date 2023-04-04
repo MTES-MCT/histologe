@@ -7,7 +7,9 @@ use App\Factory\SuiviFactory;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
-use App\Service\Mailer\NotificationService;
+use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use App\Service\Token\TokenGenerator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -28,7 +30,7 @@ class AskFeedbackUsagerCommand extends Command
 
     public function __construct(
         private SuiviManager $suiviManager,
-        private NotificationService $notificationService,
+        private NotificationMailerRegistry $notificationMailerRegistry,
         private UrlGeneratorInterface $urlGenerator,
         private TokenGenerator $tokenGenerator,
         private ParameterBagInterface $parameterBag,
@@ -68,14 +70,16 @@ class AskFeedbackUsagerCommand extends Command
                     $signalement->setCodeSuivi(md5(uniqid()));
                 }
                 foreach ($toRecipients as $toRecipient) {
-                    $this->notificationService->send(
-                        NotificationService::TYPE_SIGNALEMENT_FEEDBACK_USAGER,
-                        [$toRecipient],
-                        [
-                            'signalement' => $signalement,
-                            'lien_suivi' => $this->generateLinkCodeSuivi($signalement->getCodeSuivi(), $toRecipient),
-                        ],
-                        $signalement->getTerritory()
+                    $this->notificationMailerRegistry->send(
+                        new Notification(
+                            NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER,
+                            [$toRecipient],
+                            [
+                                'signalement' => $signalement,
+                                'lien_suivi' => $this->generateLinkCodeSuivi($signalement->getCodeSuivi(), $toRecipient),
+                            ],
+                            $signalement->getTerritory()
+                        )
                     );
                 }
             }
@@ -103,16 +107,18 @@ class AskFeedbackUsagerCommand extends Command
 
         $io->success(sprintf('%s signalement without suivi from more than '.Suivi::DEFAULT_PERIOD_INACTIVITY.' days', $nbSignalements));
 
-        $this->notificationService->send(
-            NotificationService::TYPE_CRON,
-            $this->parameterBag->get('admin_email'),
-            [
-                'url' => $this->parameterBag->get('host_url'),
-                'cron_label' => 'demande de feedback à l\'usager',
-                'count' => $nbSignalements,
-                'message' => 'signalement(s) pour lesquels une demande de feedback a été envoyée à l\'usager',
-            ],
-            null
+        $this->notificationMailerRegistry->send(
+            new Notification(
+                NotificationMailerType::TYPE_CRON,
+                $this->parameterBag->get('admin_email'),
+                [
+                    'url' => $this->parameterBag->get('host_url'),
+                    'cron_label' => 'demande de feedback à l\'usager',
+                    'count' => $nbSignalements,
+                    'message' => 'signalement(s) pour lesquels une demande de feedback a été envoyée à l\'usager',
+                ],
+                null
+            )
         );
 
         return Command::SUCCESS;

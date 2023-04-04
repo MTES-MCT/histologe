@@ -7,7 +7,7 @@ use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
 use App\Service\Esabora\EsaboraService;
-use App\Service\Mailer\NotificationService;
+use App\Service\Mailer\NotificationMailer;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,7 +28,7 @@ class SynchronizeEsaboraCommand extends Command
         private AffectationManager $affectationManager,
         private JobEventManager $jobEventManager,
         private SerializerInterface $serializer,
-        private NotificationService $notificationService,
+        private NotificationMailer $notificationService,
         private ParameterBagInterface $parameterBag,
         string $name = null
     ) {
@@ -86,7 +86,7 @@ class SynchronizeEsaboraCommand extends Command
         }
 
         $this->notificationService->send(
-            NotificationService::TYPE_CRON,
+            NotificationMailer::TYPE_CRON,
             $this->parameterBag->get('admin_email'),
             [
                 'url' => $this->parameterBag->get('host_url'),

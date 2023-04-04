@@ -6,7 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Tag;
-use App\Service\Mailer\NotificationService;
+use App\Service\Mailer\NotificationMailer;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class BackSignalementActionController extends AbstractController
 {
     #[Route('/{uuid}/validation/response', name: 'back_signalement_validation_response', methods: 'GET')]
-    public function validationResponseSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine, UrlGeneratorInterface $urlGenerator, NotificationService $notificationService): Response
+    public function validationResponseSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine, UrlGeneratorInterface $urlGenerator, NotificationMailer $notificationService): Response
     {
         $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_validation_response_'.$signalement->getId(), $request->get('_token'))
@@ -35,7 +35,7 @@ class BackSignalementActionController extends AbstractController
                 $toRecipients = $signalement->getMailUsagers();
                 foreach ($toRecipients as $toRecipient) {
                     $notificationService->send(
-                        NotificationService::TYPE_SIGNALEMENT_VALIDATION,
+                        NotificationMailer::TYPE_SIGNALEMENT_VALIDATION,
                         [$toRecipient],
                         [
                             'signalement' => $signalement,
@@ -57,7 +57,7 @@ class BackSignalementActionController extends AbstractController
 
                 $toRecipients = $signalement->getMailUsagers();
                 $notificationService->send(
-                    NotificationService::TYPE_SIGNALEMENT_REFUSAL,
+                    NotificationMailer::TYPE_SIGNALEMENT_REFUSAL,
                     $toRecipients,
                     [
                         'signalement' => $signalement,
@@ -86,7 +86,7 @@ class BackSignalementActionController extends AbstractController
     }
 
     #[Route('/{uuid}/suivi/add', name: 'back_signalement_add_suivi', methods: 'POST')]
-    public function addSuiviSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine, NotificationService $notificationService, UrlGeneratorInterface $urlGenerator): Response
+    public function addSuiviSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine, NotificationMailer $notificationService, UrlGeneratorInterface $urlGenerator): Response
     {
         $this->denyAccessUnlessGranted('COMMENT_CREATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_add_suivi_'.$signalement->getId(), $request->get('_token'))

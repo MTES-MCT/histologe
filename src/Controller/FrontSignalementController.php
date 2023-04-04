@@ -18,7 +18,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
-use App\Service\Mailer\NotificationService;
+use App\Service\Mailer\NotificationMailer;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
@@ -107,7 +107,7 @@ class FrontSignalementController extends AbstractController
         Request $request,
         ManagerRegistry $doctrine,
         TerritoryRepository $territoryRepository,
-        NotificationService $notificationService,
+        NotificationMailer $notificationService,
         UploadHandlerService $uploadHandlerService,
         ReferenceGenerator $referenceGenerator,
         PostalCodeHomeChecker $postalCodeHomeChecker,
@@ -281,7 +281,7 @@ class FrontSignalementController extends AbstractController
             $toRecipients = $signalement->getMailUsagers();
             foreach ($toRecipients as $toRecipient) {
                 $notificationService->send(
-                    NotificationService::TYPE_CONFIRM_RECEPTION,
+                    NotificationMailer::TYPE_CONFIRM_RECEPTION,
                     [$toRecipient],
                     [
                         'signalement' => $signalement,
