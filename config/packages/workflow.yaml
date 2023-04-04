@@ -1,0 +1,29 @@
+framework:
+    workflows:
+        affectation_management:
+            type: 'state_machine'
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Entity\Affectation
+            initial_marking: 'wait'
+            places:
+                - wait
+                - accepted
+                - refused
+                - closed
+            transitions:
+                to_accepted:
+                    from: wait
+                    to: accepted
+                to_refused:
+                    from: wait
+                    to: refused
+                to_closed:
+                    from: accepted
+                    to: closed
+                to_reopened:
+                    from: closed
+                    to: wait
+            

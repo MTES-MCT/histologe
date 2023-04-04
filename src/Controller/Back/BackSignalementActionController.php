@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 #[Route('/bo/signalements')]
 class BackSignalementActionController extends AbstractController
@@ -111,18 +112,25 @@ class BackSignalementActionController extends AbstractController
     }
 
     #[Route('/{uuid}/reopen', name: 'back_signalement_reopen')]
-    public function reopenSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine): RedirectResponse|JsonResponse
+    public function reopenSignalement(
+        Signalement $signalement,
+        Request $request,
+        ManagerRegistry $doctrine,
+        WorkflowInterface $affectationManagementStateMachine
+        ): RedirectResponse|JsonResponse
     {
 //        $this->denyAccessUnlessGranted('SIGN_REOPEN', $signalement);
         if ($this->isCsrfTokenValid('signalement_reopen_'.$signalement->getId(), $request->get('_token')) && $response = $request->get('signalement-action')) {
             if ($this->isGranted('ROLE_ADMIN_TERRITORY') && isset($response['reopenAll'])) {
-                $signalement->getAffectations()->filter(function (Affectation $affectation) use ($doctrine) {
+                $signalement->getAffectations()->filter(function (Affectation $affectation) use ($doctrine, $affectationManagementStateMachine) {
+                    $affectationManagementStateMachine->apply($affectation, 'to_reopened');
                     $affectation->setStatut(Affectation::STATUS_WAIT) && $doctrine->getManager()->persist($affectation);
                 });
                 $reopenFor = 'tous les partenaires';
             } else {
-                $this->getUser()->getPartner()->getAffectations()->filter(function (Affectation $affectation) use ($signalement, $doctrine) {
+                $this->getUser()->getPartner()->getAffectations()->filter(function (Affectation $affectation) use ($signalement, $doctrine, $affectationManagementStateMachine) {
                     if ($affectation->getSignalement()->getId() === $signalement->getId()) {
+                        $affectationManagementStateMachine->apply($affectation, 'to_reopened');
                         $affectation->setStatut(Affectation::STATUS_WAIT) && $doctrine->getManager()->persist($affectation);
                     }
                 });

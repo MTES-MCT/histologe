@@ -25,6 +25,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 class SignalementManager extends AbstractManager
 {
@@ -38,6 +39,7 @@ class SignalementManager extends AbstractManager
         private SignalementExportFactory $signalementExportFactory,
         private ParameterBagInterface $parameterBag,
         private CsrfTokenManagerInterface $csrfTokenManager,
+        private WorkflowInterface $affectationManagementStateMachine,
         string $entityName = Signalement::class
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -207,6 +209,7 @@ class SignalementManager extends AbstractManager
             ->setStatut(Affectation::STATUS_CLOSED)
             ->setAnsweredAt(new \DateTimeImmutable())
             ->setMotifCloture($motif);
+        $this->affectationManagementStateMachine->apply($affectation, 'to_closed');
 
         $this->managerRegistry->getManager()->persist($affectation);
         $this->managerRegistry->getManager()->flush();

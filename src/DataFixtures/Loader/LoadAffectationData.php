@@ -44,6 +44,20 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
             ->setAnsweredBy($this->userRepository->findOneBy(['email' => $row['affected_by']]))
             ->setAnsweredAt(new \DateTimeImmutable())
         ;
+        switch ($row['statut']) {
+            case Affectation::STATUS_WAIT:
+                $affectation->setStatus('wait');
+                break;
+            case Affectation::STATUS_ACCEPTED:
+                $affectation->setStatus('accepted');
+                break;
+            case Affectation::STATUS_REFUSED:
+                $affectation->setStatus('refused');
+                break;
+            case Affectation::STATUS_CLOSED:
+                $affectation->setStatus('closed');
+                break;
+        }
 
         if (Affectation::STATUS_CLOSED === $row['statut'] && '' !== $row['motif_cloture']) {
             $affectation

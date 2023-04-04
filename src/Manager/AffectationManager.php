@@ -11,6 +11,7 @@ use App\Service\Esabora\DossierResponse;
 use App\Service\Esabora\EsaboraService;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 class AffectationManager extends Manager
 {
@@ -18,6 +19,7 @@ class AffectationManager extends Manager
         protected ManagerRegistry $managerRegistry,
         protected SuiviManager $suiviManager,
         protected LoggerInterface $logger,
+        private WorkflowInterface $affectationManagementStateMachine,
         string $entityName = Affectation::class
     ) {
         parent::__construct($this->managerRegistry, $entityName);
@@ -29,6 +31,21 @@ class AffectationManager extends Manager
             ->setStatut($status)
             ->setAnsweredBy($user)
             ->setAnsweredAt(new \DateTimeImmutable());
+        
+        switch ($status) {
+            case Affectation::STATUS_WAIT:
+                $this->affectationManagementStateMachine->apply($affectation, 'to_reopened');
+                break;
+            case Affectation::STATUS_ACCEPTED:
+                $this->affectationManagementStateMachine->apply($affectation, 'to_accepted');
+                break;
+            case Affectation::STATUS_REFUSED:
+                $this->affectationManagementStateMachine->apply($affectation, 'to_refused');
+                break;
+            case Affectation::STATUS_CLOSED:
+                $this->affectationManagementStateMachine->apply($affectation, 'to_closed');
+                break;
+        }
 
         $this->save($affectation);
 
@@ -71,6 +88,7 @@ class AffectationManager extends Manager
             ->setStatut(Affectation::STATUS_CLOSED)
             ->setMotifCloture($motif)
             ->setAnsweredBy($user);
+        $this->affectationManagementStateMachine->apply($affectation, 'to_closed');
 
         return $affectation;
     }

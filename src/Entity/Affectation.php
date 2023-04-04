@@ -54,6 +54,9 @@ class Affectation
     #[ORM\JoinColumn(nullable: true)]
     private ?Territory $territory;
 
+    #[ORM\Column(length: 40)]
+    private ?string $status = null;
+
     public function __construct()
     {
         $this->statut = self::STATUS_WAIT;
@@ -212,5 +215,17 @@ class Affectation
             self::STATUS_REFUSED => 'Refusé',
             self::STATUS_CLOSED => 'Cloturé',
         };
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
+
+        return $this;
     }
 }
