@@ -22,7 +22,7 @@ class SuiviNewCommentBackMailer extends AbstractNotificationMailer
         parent::__construct($this->mailer, $this->parameterBag, $this->logger);
     }
 
-    public function setMailerSubjectWithParams(?array $params = null)
+    public function setMailerSubjectWithParams(?array $params = null): void
     {
         $this->mailerSubject = sprintf('Nouveau suivi sur le signalement #%s', $params['ref_signalement']);
     }

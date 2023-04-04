@@ -23,7 +23,7 @@ class SignalementClosedToAllPartnersMailer extends AbstractNotificationMailer
         parent::__construct($this->mailer, $this->parameterBag, $this->logger);
     }
 
-    public function setMailerSubjectWithParams(?array $params = null)
+    public function setMailerSubjectWithParams(?array $params = null): void
     {
         $this->mailerSubject = sprintf($this->mailerSubject, $params['ref_signalement']);
     }

@@ -95,12 +95,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
             );
     }
 
-    public function getMailerSubject(): ?string
-    {
-        return $this->mailerSubject;
-    }
-
-    public function setMailerSubjectWithParams(?array $params = null)
+    public function setMailerSubjectWithParams(?array $params = null): void
     {
     }
 }
