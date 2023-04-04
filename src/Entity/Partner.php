@@ -35,7 +35,6 @@ class Partner
     #[ORM\Column(type: 'boolean')]
     private $isArchive;
 
-    // TODO : à supprimer ?
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $isCommune;
 

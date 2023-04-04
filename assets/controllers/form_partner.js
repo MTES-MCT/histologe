@@ -81,14 +81,13 @@ document.querySelectorAll('.partner-user-edit_btn').forEach(swbtn => {
 
 if (document.querySelector('#partner_type')) {
   document.querySelector('#partner_type').addEventListener('change', (event) => {
-      // TODO améliorer
-      const x = document.getElementById("partner_type");
-      x.value = x.value.toUpperCase();
-      if (x.value === 'COMMUNE_SCHS'){
+      const partner_type = document.getElementById("partner_type");
+      partner_type.value = partner_type.value.toUpperCase();
+      if (partner_type.value === 'COMMUNE_SCHS'){
           document.querySelector('#partner_create_zone_pdl').classList.remove('fr-hidden')
           document.querySelector('#partner_create_esabora_title').classList.remove('fr-hidden')
           document.querySelector('#partner_create_esabora_div').classList.remove('fr-hidden')
-      } else if (x.value === 'EPCI'){
+      } else if (partner_type.value === 'EPCI'){
           document.querySelector('#partner_create_zone_pdl').classList.remove('fr-hidden')
           document.querySelector('#partner_create_esabora_title').classList.add('fr-hidden')
           document.querySelector('#partner_create_esabora_div').classList.add('fr-hidden')

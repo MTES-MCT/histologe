@@ -216,6 +216,8 @@ class PartnerController extends AbstractController
             $user = $userManager->createUserFromData($partner, $data);
             // TODO ne pas pouvoir créer si email identique
             // TODO revoir les messages d'erreur sur les champs
+            // TODO ajouter l'adresse email invalide dans le message d'erreur
+            // TODO ne pas prendre en compte les utilisateurs archivés dans la validation
             $message = 'L\'utilisateur a bien été créé. Un email de confirmation a été envoyé à '.$user->getEmail();
             $this->addFlash('success', $message);
 

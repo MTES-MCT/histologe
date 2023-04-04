@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use App\Entity\User;
 use App\Service\NotificationService;
+use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
@@ -15,7 +16,8 @@ class UserUpdatedSubscriber implements EventSubscriberInterface
     public function __construct(
         private ParameterBagInterface $parameterBag,
         private UrlGeneratorInterface $urlGenerator,
-        private NotificationService $notificationService
+        private NotificationService $notificationService,
+        private TokenGeneratorInterface $tokenGenerator,
     ) {
     }
 
@@ -33,6 +35,12 @@ class UserUpdatedSubscriber implements EventSubscriberInterface
         foreach ($unitOfWork->getScheduledEntityUpdates() as $entity) {
             $changes = $unitOfWork->getEntityChangeSet($entity);
             if ($entity instanceof User && \array_key_exists('email', $changes)) {
+                $entity->setPassword($this->tokenGenerator->generateToken())
+                ->setToken($this->tokenGenerator->generateToken())
+                ->setTokenExpiredAt(
+                    (new \DateTimeImmutable())->modify($this->parameterBag->get('token_lifetime'))
+                );
+
                 $this->sendNotification($entity);
             }
         }
