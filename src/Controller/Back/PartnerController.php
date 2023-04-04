@@ -156,9 +156,9 @@ class PartnerController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-            $this->addFlash('success', 'Mise à jour partenaire effectuée.');
+            $this->addFlash('success', 'Le partenaire a bien été modifié.');
 
-            return $this->redirectToRoute('back_partner_edit', [
+            return $this->redirectToRoute('back_partner_view', [
                 'id' => $partner->getId(),
             ]);
         }
@@ -173,7 +173,36 @@ class PartnerController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/adduser', name: 'back_partner_user_add', methods: ['POST'])]
+    #[Route('/supprimer', name: 'back_partner_delete', methods: ['POST'])]
+    public function delete(
+        Request $request,
+        PartnerManager $partnerManager,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $partnerId = $request->request->get('partner_id');
+        /** @var Partner $partner */
+        $partner = $partnerManager->find($partnerId);
+        $this->denyAccessUnlessGranted('PARTNER_DELETE', $partner);
+        if ($partner
+            && $this->isCsrfTokenValid('partner_delete', $request->request->get('_token'))
+        ) {
+            $partner->setIsArchive(true);
+            foreach ($partner->getUsers() as $user) {
+                $user->setStatut(User::STATUS_ARCHIVE);
+                $entityManager->persist($user);
+            }
+            $entityManager->persist($partner);
+            $entityManager->flush();
+            $this->addFlash('success', 'Le partenaire a bien été supprimé.');
+
+            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+        }
+        $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
+
+        return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/{id}/ajoututilisateur', name: 'back_partner_user_add', methods: ['POST'])]
     public function addUser(
         Request $request,
         Partner $partner,
@@ -185,7 +214,6 @@ class PartnerController extends AbstractController
             && $data = $request->get('user_create')
         ) {
             $user = $userManager->createUserFromData($partner, $data);
-            // TODO envoyer un email d'activation
             // TODO ne pas pouvoir créer si email identique
             // TODO revoir les messages d'erreur sur les champs
             $message = 'L\'utilisateur a bien été créé. Un email de confirmation a été envoyé à '.$user->getEmail();
@@ -198,7 +226,7 @@ class PartnerController extends AbstractController
         return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/edituser', name: 'back_partner_user_edit', methods: ['POST'])]
+    #[Route('/editerutilisateur', name: 'back_partner_user_edit', methods: ['POST'])]
     public function editUser(
         Request $request,
         UserManager $userManager,
@@ -214,7 +242,7 @@ class PartnerController extends AbstractController
             $user = $userManager->updateUserFromData($user, $data);
             $partnerId = $user->getPartner()->getId();
 
-            $message = 'L\'utilisateur a bien été créé. Un email de confirmation a été envoyé à '.$user->getEmail();
+            $message = 'L\'utilisateur a bien été modifié.';
             $this->addFlash('success', $message);
 
             return $this->redirectToRoute('back_partner_view', ['id' => $partnerId], Response::HTTP_SEE_OTHER);
@@ -224,7 +252,7 @@ class PartnerController extends AbstractController
         return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/transferuser', name: 'back_partner_user_transfer', methods: ['POST'])]
+    #[Route('/transfererutilisateur', name: 'back_partner_user_transfer', methods: ['POST'])]
     public function transferUser(Request $request, UserManager $userManager, PartnerManager $partnerManager): Response
     {
         $this->denyAccessUnlessGranted('USER_TRANSFER', $this->getUser());
@@ -235,7 +263,7 @@ class PartnerController extends AbstractController
             $partner = $partnerManager->find($data['partner']);
             $user = $userManager->find($data['user']);
             $userManager->transferUserToPartner($user, $partner);
-            $this->addFlash('success', $user->getNomComplet().' transféré avec succès !');
+            $this->addFlash('success', 'L\'utilisateur a bien été transféré.');
 
             return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         }
@@ -244,7 +272,7 @@ class PartnerController extends AbstractController
         return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/deleteuser', name: 'back_partner_user_delete', methods: ['POST'])]
+    #[Route('/supprimerutilisateur', name: 'back_partner_user_delete', methods: ['POST'])]
     public function deleteUser(
         Request $request,
         UserManager $userManager,
@@ -266,10 +294,10 @@ class PartnerController extends AbstractController
                     territory: $user->getTerritory()
                 )
             );
-            $this->addFlash('success', $user->getNomComplet().' supprimé avec succès !');
+            $this->addFlash('success', 'L\'utilisateur a bien été supprimé.');
 
             return $this->redirectToRoute(
-                'back_partner_edit',
+                'back_partner_view',
                 ['id' => $user->getPartner()->getId()],
                 Response::HTTP_SEE_OTHER
             );
@@ -291,35 +319,6 @@ class PartnerController extends AbstractController
         }
 
         return $this->json(['success' => 'email_ok']);
-    }
-
-    #[Route('/deletepartner', name: 'back_partner_delete', methods: ['POST'])]
-    public function delete(
-        Request $request,
-        PartnerManager $partnerManager,
-        EntityManagerInterface $entityManager
-    ): Response {
-        $partnerId = $request->request->get('partner_id');
-        /** @var Partner $partner */
-        $partner = $partnerManager->find($partnerId);
-        $this->denyAccessUnlessGranted('PARTNER_DELETE', $partner);
-        if ($partner
-            && $this->isCsrfTokenValid('partner_delete', $request->request->get('_token'))
-        ) {
-            $partner->setIsArchive(true);
-            foreach ($partner->getUsers() as $user) {
-                $user->setStatut(User::STATUS_ARCHIVE);
-                $entityManager->persist($user);
-            }
-            $entityManager->persist($partner);
-            $entityManager->flush();
-            $this->addFlash('success', $partner->getNom().' supprimé avec succès !');
-
-            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
-        }
-        $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
-
-        return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
     }
 
     private function displayErrors(FormInterface $form): void

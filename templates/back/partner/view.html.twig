@@ -153,12 +153,14 @@
                             data-userismailingactive="{{ user.isMailingActive }}" 
                             data-userid="{{ user.id }}" 
                             data-useremail="{{ user.email }}"></a>
-                            <a href="#" class="fr-btn fr-btn--orange fr-fi-upload-2-fill fr-mt-3v partner_user_transfer_btn"
-                            id="partner_users_transfer_{{ user.id }}" aria-controls="fr-modal-user-transfer"
-                            data-fr-opened="false" data-username="{{ user.nomComplet }}" data-userid="{{ user.id }}"></a>
-                            <a href="#" class="fr-btn fr-btn--danger fr-fi-delete-line fr-mt-3v partner-user-delete_btn"
-                            id="partner_users_delete_{{ user.id }}" aria-controls="fr-modal-user-delete"
-                            data-fr-opened="false" data-username="{{ user.nomComplet }}" data-userid="{{ user.id }}" data-useremail="{{ user.email }}"></a>
+                            {% if is_granted('ROLE_ADMIN_TERRITORY') and app.request.get('_route') is not same as('back_partner_new') %}
+                                <a href="#" class="fr-btn fr-btn--orange fr-fi-upload-2-fill fr-mt-3v partner_user_transfer_btn"
+                                id="partner_users_transfer_{{ user.id }}" aria-controls="fr-modal-user-transfer"
+                                data-fr-opened="false" data-username="{{ user.nomComplet }}" data-userid="{{ user.id }}"></a>
+                                <a href="#" class="fr-btn fr-btn--danger fr-fi-delete-line fr-mt-3v partner-user-delete_btn"
+                                id="partner_users_delete_{{ user.id }}" aria-controls="fr-modal-user-delete"
+                                data-fr-opened="false" data-username="{{ user.nomComplet }}" data-userid="{{ user.id }}" data-useremail="{{ user.email }}"></a>
+                            {% endif %}
                         </td>
                     </tr>
                 {% else %}
