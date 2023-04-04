@@ -18,7 +18,9 @@ use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
-use App\Service\Mailer\NotificationMailer;
+use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
@@ -107,7 +109,7 @@ class FrontSignalementController extends AbstractController
         Request $request,
         ManagerRegistry $doctrine,
         TerritoryRepository $territoryRepository,
-        NotificationMailer $notificationService,
+        NotificationMailerRegistry $notificationMailerRegistry,
         UploadHandlerService $uploadHandlerService,
         ReferenceGenerator $referenceGenerator,
         PostalCodeHomeChecker $postalCodeHomeChecker,
@@ -227,7 +229,7 @@ class FrontSignalementController extends AbstractController
             if (!empty($signalement->getCpOccupant())) {
                 $signalement->setTerritory(
                     $territoryRepository->findOneBy([
-                    'zip' => $postalCodeHomeChecker->getZipCode($signalement->getCpOccupant()), 'isActive' => 1, ])
+                        'zip' => $postalCodeHomeChecker->getZipCode($signalement->getCpOccupant()), 'isActive' => 1, ])
                 );
             }
 
@@ -280,22 +282,24 @@ class FrontSignalementController extends AbstractController
 
             $toRecipients = $signalement->getMailUsagers();
             foreach ($toRecipients as $toRecipient) {
-                $notificationService->send(
-                    NotificationMailer::TYPE_CONFIRM_RECEPTION,
-                    [$toRecipient],
-                    [
-                        'signalement' => $signalement,
-                        'attach' => $attachment ?? null,
-                        'lien_suivi' => $urlGenerator->generate(
-                            'front_suivi_signalement',
-                            [
-                                'code' => $signalement->getCodeSuivi(),
-                                'from' => $toRecipient,
-                            ],
-                            UrlGeneratorInterface::ABSOLUTE_URL
-                        ),
-                    ],
-                    $signalement->getTerritory()
+                $notificationMailerRegistry->send(
+                    new Notification(
+                        NotificationMailerType::TYPE_CONFIRM_RECEPTION,
+                        [$toRecipient],
+                        [
+                            'signalement' => $signalement,
+                            'attach' => $attachment ?? null,
+                            'lien_suivi' => $urlGenerator->generate(
+                                'front_suivi_signalement',
+                                [
+                                    'code' => $signalement->getCodeSuivi(),
+                                    'from' => $toRecipient,
+                                ],
+                                UrlGeneratorInterface::ABSOLUTE_URL
+                            ),
+                        ],
+                        $signalement->getTerritory()
+                    )
                 );
             }
 

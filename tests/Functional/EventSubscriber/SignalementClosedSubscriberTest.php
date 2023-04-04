@@ -10,7 +10,9 @@ use App\EventSubscriber\SignalementClosedSubscriber;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\UserRepository;
-use App\Service\Mailer\NotificationMailer;
+use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -52,31 +54,35 @@ class SignalementClosedSubscriberTest extends KernelTestCase
 
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['statut' => User::STATUS_ACTIVE]);
 
-        $notitificationServiceMock = $this->createMock(NotificationMailer::class);
-        $notitificationServiceMock
+        $notificationMailerRegistryMock = $this->createMock(NotificationMailerRegistry::class);
+        $notificationMailerRegistryMock
             ->expects($this->exactly(2))
             ->method('send')
             ->withConsecutive(
                 [
-                    NotificationMailer::TYPE_SIGNALEMENT_CLOSED_TO_USAGER,
-                    $signalementClosed->getMailUsagers(),
-                    [
-                        'motif_cloture' => $signalementClosed->getMotifCloture()->label(),
-                        'link' => '',
-                    ],
-                    $signalementClosed->getTerritory(),
+                    new Notification(
+                        NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_USAGER,
+                        $signalementClosed->getMailUsagers(),
+                        [
+                            'motif_cloture' => $signalementClosed->getMotifCloture()->label(),
+                            'link' => '',
+                        ],
+                        $signalementClosed->getTerritory()
+                    ),
                 ],
                 [
-                    NotificationMailer::TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS,
-                    $sendToPartners,
-                    [
-                        'ref_signalement' => $signalementClosed->getReference(),
-                        'motif_cloture' => $signalementClosed->getMotifCloture()->label(),
-                        'closed_by' => $signalementClosed->getClosedBy()->getNomComplet(),
-                        'partner_name' => $signalementClosed->getClosedBy()->getPartner()->getNom(),
-                        'link' => '',
-                    ],
-                    $signalementClosed->getTerritory(),
+                    new Notification(
+                        NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS,
+                        $sendToPartners,
+                        [
+                            'ref_signalement' => $signalementClosed->getReference(),
+                            'motif_cloture' => $signalementClosed->getMotifCloture()->label(),
+                            'closed_by' => $signalementClosed->getClosedBy()->getNomComplet(),
+                            'partner_name' => $signalementClosed->getClosedBy()->getPartner()->getNom(),
+                            'link' => '',
+                        ],
+                        $signalementClosed->getTerritory()
+                    ),
                 ]
             )->willReturn(true);
         $userRepositoryMock = $this->createMock(UserRepository::class);
@@ -90,7 +96,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
         $suiviManager = static::getContainer()->get(SuiviManager::class);
 
         $signalementClosedSubscriber = new SignalementClosedSubscriber(
-            $notitificationServiceMock,
+            $notificationMailerRegistryMock,
             $signalementManager,
             $userRepositoryMock,
             $urlGeneratorMock,

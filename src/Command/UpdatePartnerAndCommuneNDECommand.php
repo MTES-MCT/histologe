@@ -8,7 +8,6 @@ use App\Entity\Territory;
 use App\Repository\CommuneRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
-use App\Service\Mailer\NotificationMailer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -27,7 +26,6 @@ class UpdatePartnerAndCommuneNDECommand extends Command
 
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private NotificationMailer $notificationService,
         private ParameterBagInterface $parameterBag,
         private CommuneRepository $communeRepository,
         private PartnerRepository $partnerRepository,

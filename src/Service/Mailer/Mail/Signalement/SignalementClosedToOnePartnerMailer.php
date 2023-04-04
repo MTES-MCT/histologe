@@ -23,12 +23,11 @@ class SignalementClosedToOnePartnerMailer extends AbstractNotificationMailer
         parent::__construct($this->mailer, $this->parameterBag, $this->logger);
     }
 
-
     public function setMailerSubjectWithParams(?array $params = null)
     {
         $this->mailerSubject = sprintf(
             $this->mailerSubject,
-            $params['partner_name'] ,
+            $params['partner_name'],
             $params['ref_signalement']
         );
     }

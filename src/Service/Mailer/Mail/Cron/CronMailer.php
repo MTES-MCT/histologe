@@ -12,7 +12,7 @@ class CronMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_CRON;
     protected ?string $mailerTemplate = 'cron_email';
-    protected  ?string $mailerSubject = 'La tache planifiée s\'est bien éxécutée.';
+    protected ?string $mailerSubject = 'La tache planifiée s\'est bien éxécutée.';
 
     public function __construct(
         protected MailerInterface $mailer,

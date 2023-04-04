@@ -10,7 +10,7 @@ use App\Manager\SignalementUsagerManager;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
-use App\Service\Mailer\NotificationMailer;
+use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -23,7 +23,7 @@ use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 class UserManagerTest extends KernelTestCase
 {
     private LoginLinkHandlerInterface $loginLinkHandler;
-    private NotificationMailer $notificationService;
+    private NotificationMailerRegistry $notificationMailerRegistry;
     private UrlGeneratorInterface $urlGenerator;
     private EntityManagerInterface $entityManager;
     private PasswordHasherFactoryInterface $passwordHasherFactory;
@@ -39,7 +39,7 @@ class UserManagerTest extends KernelTestCase
         $kernel = self::bootKernel();
 
         $this->loginLinkHandler = $this->createMock(LoginLinkHandlerInterface::class);
-        $this->notificationService = static::getContainer()->get(NotificationMailer::class);
+        $this->notificationMailerRegistry = static::getContainer()->get(NotificationMailerRegistry::class);
         $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->passwordHasherFactory = static::getContainer()->get(PasswordHasherFactoryInterface::class);
@@ -54,7 +54,7 @@ class UserManagerTest extends KernelTestCase
     {
         $userManager = new UserManager(
             $this->loginLinkHandler,
-            $this->notificationService,
+            $this->notificationMailerRegistry,
             $this->urlGenerator,
             $this->passwordHasherFactory,
             $this->tokenGenerator,
@@ -87,7 +87,7 @@ class UserManagerTest extends KernelTestCase
     {
         $userManager = new UserManager(
             $this->loginLinkHandler,
-            $this->notificationService,
+            $this->notificationMailerRegistry,
             $this->urlGenerator,
             $this->passwordHasherFactory,
             $this->tokenGenerator,

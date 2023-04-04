@@ -20,9 +20,10 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 )]
 class ClearNotificationCommand extends Command
 {
-    public function __construct(private EntityManagerInterface $entityManager,
-                                private NotificationMailerRegistry $notificationMailerRegistry,
-                                private ParameterBagInterface $parameterBag
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private NotificationMailerRegistry $notificationMailerRegistry,
+        private ParameterBagInterface $parameterBag
     ) {
         parent::__construct();
     }

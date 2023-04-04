@@ -8,12 +8,12 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 
-class SignalementFeedbackUsagerMailer extends AbstractNotificationMailer
+class AssignementNewMailer extends AbstractNotificationMailer
 {
-    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER;
-    protected ?string $mailerSubject = 'Histologe : faites le point sur votre problème de logement !';
-    protected ?string $mailerButtonText = 'Mettre à jour ma situation';
-    protected ?string $mailerTemplate = 'demande_feedback_usager_email';
+    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_ASSIGNMENT_NEW;
+    protected ?string $mailerSubject = 'Un nouveau signalement vous attend sur Histologe.';
+    protected ?string $mailerButtonText = 'Accéder au signalemen';
+    protected ?string $mailerTemplate = 'affectation_email';
 
     public function __construct(
         protected MailerInterface $mailer,

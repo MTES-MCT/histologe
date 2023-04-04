@@ -10,13 +10,12 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
-use App\Service\Mailer\NotificationMailer;
+use App\Service\Mailer\NotificationMailerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Faker\Factory;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Mailer\MailerInterface;
 
 class ContactFormHandlerTest extends KernelTestCase
 {
@@ -30,16 +29,15 @@ class ContactFormHandlerTest extends KernelTestCase
         $kernel = self::bootKernel();
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
         $this->signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $mailer = static::getContainer()->get(MailerInterface::class);
+        $notificationMailerRegistry = static::getContainer()->get(NotificationMailerRegistry::class);
         $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-        $notificationService = new NotificationMailer($mailer, $parameterBag);
         $suiviFactory = new SuiviFactory();
         $suiviManager = self::getContainer()->get(SuiviManager::class);
         $this->signalementManager = self::getContainer()->get(SignalementManager::class);
         $userManager = self::getContainer()->get(UserManager::class);
         $loggerInterface = self::getContainer()->get(LoggerInterface::class);
         $this->contactFormHandler = new ContactFormHandler(
-            $notificationService,
+            $notificationMailerRegistry,
             $parameterBag,
             $this->signalementRepository,
             $suiviFactory,

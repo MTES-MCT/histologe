@@ -7,7 +7,9 @@ use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
 use App\Service\Esabora\EsaboraService;
-use App\Service\Mailer\NotificationMailer;
+use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,7 +30,7 @@ class SynchronizeEsaboraCommand extends Command
         private AffectationManager $affectationManager,
         private JobEventManager $jobEventManager,
         private SerializerInterface $serializer,
-        private NotificationMailer $notificationService,
+        private NotificationMailerRegistry $notificationMailerRegistry,
         private ParameterBagInterface $parameterBag,
         string $name = null
     ) {
@@ -48,7 +50,7 @@ class SynchronizeEsaboraCommand extends Command
             $message = [
                 'criterionName' => 'SAS_Référence',
                 'criterionValueList' => [
-                        $affectation->getSignalement()->getUuid(),
+                    $affectation->getSignalement()->getUuid(),
                 ],
             ];
 
@@ -85,22 +87,24 @@ class SynchronizeEsaboraCommand extends Command
             );
         }
 
-        $this->notificationService->send(
-            NotificationMailer::TYPE_CRON,
-            $this->parameterBag->get('admin_email'),
-            [
-                'url' => $this->parameterBag->get('host_url'),
-                'cron_label' => 'Synchronisation des signalements depuis Esabora',
-                'count_success' => $countSyncSuccess,
-                'count_failed' => $countSyncFailed,
-                'message_success' => $countSyncSuccess > 1
-                    ? 'signalements ont été synchronisés'
-                    : 'signalement a été synchronisé',
-                'message_failed' => $countSyncFailed > 1
-                    ? 'signalements n\'ont pas été synchronisés'
-                    : 'signalement n\'a pas été synchronisé',
-            ],
-            null
+        $this->notificationMailerRegistry->send(
+            new Notification(
+                NotificationMailerType::TYPE_CRON,
+                $this->parameterBag->get('admin_email'),
+                [
+                    'url' => $this->parameterBag->get('host_url'),
+                    'cron_label' => 'Synchronisation des signalements depuis Esabora',
+                    'count_success' => $countSyncSuccess,
+                    'count_failed' => $countSyncFailed,
+                    'message_success' => $countSyncSuccess > 1
+                        ? 'signalements ont été synchronisés'
+                        : 'signalement a été synchronisé',
+                    'message_failed' => $countSyncFailed > 1
+                        ? 'signalements n\'ont pas été synchronisés'
+                        : 'signalement n\'a pas été synchronisé',
+                ],
+                null
+            )
         );
 
         return Command::SUCCESS;

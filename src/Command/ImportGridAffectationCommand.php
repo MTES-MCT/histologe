@@ -6,7 +6,9 @@ use App\Entity\Territory;
 use App\Manager\TerritoryManager;
 use App\Service\Import\CsvParser;
 use App\Service\Import\GridAffectation\GridAffectationLoader;
-use App\Service\Mailer\NotificationMailer;
+use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -30,7 +32,7 @@ class ImportGridAffectationCommand extends Command
         private TerritoryManager $territoryManager,
         private GridAffectationLoader $gridAffectationLoader,
         private UploadHandlerService $uploadHandlerService,
-        private NotificationMailer $notificationService,
+        private NotificationMailerRegistry $notificationMailerRegistry,
     ) {
         parent::__construct();
     }
@@ -77,19 +79,21 @@ class ImportGridAffectationCommand extends Command
         $this->territoryManager->save($territory);
         $io->success($territory->getName().' has been activated');
 
-        $this->notificationService->send(
-            NotificationMailer::TYPE_CRON,
-            $this->parameterBag->get('admin_email'),
-            [
-                'url' => $this->parameterBag->get('host_url'),
-                'cron_label' => 'Ouverture de territoire',
-                'message' => sprintf('Félicitation, le térritoire %s est ouvert: %s partenaires et %s utilsateurs ont été crées',
-                    $territory->getName(),
-                    $metadata['nb_partners'],
-                    $metadata['nb_users']
-                ),
-            ],
-            null
+        $this->notificationMailerRegistry->send(
+            new Notification(
+                NotificationMailerType::TYPE_CRON,
+                $this->parameterBag->get('admin_email'),
+                [
+                    'url' => $this->parameterBag->get('host_url'),
+                    'cron_label' => 'Ouverture de territoire',
+                    'message' => sprintf('Félicitation, le térritoire %s est ouvert: %s partenaires et %s utilsateurs ont été crées',
+                        $territory->getName(),
+                        $metadata['nb_partners'],
+                        $metadata['nb_users']
+                    ),
+                ],
+                null
+            )
         );
 
         return Command::SUCCESS;
