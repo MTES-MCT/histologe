@@ -7,7 +7,6 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Tag;
 use App\Service\Mailer\Notification;
-use App\Service\Mailer\NotificationMailer;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use DateTimeImmutable;
@@ -98,8 +97,11 @@ class BackSignalementActionController extends AbstractController
     }
 
     #[Route('/{uuid}/suivi/add', name: 'back_signalement_add_suivi', methods: 'POST')]
-    public function addSuiviSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine, NotificationMailer $notificationService, UrlGeneratorInterface $urlGenerator): Response
-    {
+    public function addSuiviSignalement(
+        Signalement $signalement,
+        Request $request,
+        ManagerRegistry $doctrine,
+    ): Response {
         $this->denyAccessUnlessGranted('COMMENT_CREATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_add_suivi_'.$signalement->getId(), $request->get('_token'))
             && $form = $request->get('signalement-add-suivi')) {
