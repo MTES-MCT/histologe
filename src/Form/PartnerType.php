@@ -184,31 +184,12 @@ class PartnerType extends AbstractType
             'route' => null,
             'can_edit_territory' => true,
             'constraints' => [
-                new Assert\Callback([$this, 'validateUserEmailList']),
                 new Assert\Callback([$this, 'validatePartnerCanBeNotified']),
             ],
             // TODO : ajouter une contrainte pour vérifier que les codes insee correspondent aux territoires ?
         ]);
     }
 
-    // TODO : supprimer ou déplacer
-    public function validateUserEmailList(mixed $value, ExecutionContextInterface $context)
-    {
-        if ($value instanceof Partner) {
-            $usersEmail = array_map(function ($user) {
-                /* @var User $user */
-                return $user->getEmail();
-            }, $value->getUsers()->toArray());
-            $uniqueUsersEmail = array_unique($usersEmail);
-
-            $conflictsEmail = array_diff_assoc($usersEmail, $uniqueUsersEmail);
-            if (\count($conflictsEmail) > 0) {
-                $context->addViolation('Les addresses emails doivent être unique.');
-            }
-        }
-    }
-
-    // TODO : vérifier si à modifier
     public function validatePartnerCanBeNotified(mixed $value, ExecutionContextInterface $context)
     {
         if ($value instanceof Partner) {

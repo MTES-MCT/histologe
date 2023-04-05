@@ -214,10 +214,6 @@ class PartnerController extends AbstractController
             && $data = $request->get('user_create')
         ) {
             $user = $userManager->createUserFromData($partner, $data);
-            // TODO ne pas pouvoir créer si email identique
-            // TODO revoir les messages d'erreur sur les champs
-            // TODO ajouter l'adresse email invalide dans le message d'erreur
-            // TODO ne pas prendre en compte les utilisateurs archivés dans la validation
             $message = 'L\'utilisateur a bien été créé. Un email de confirmation a été envoyé à '.$user->getEmail();
             $this->addFlash('success', $message);
 
@@ -316,6 +312,7 @@ class PartnerController extends AbstractController
         if (
             $this->isCsrfTokenValid('partner_checkmail', $request->request->get('_token'))
             && $entityManager->getRepository(User::class)->findOneBy(['email' => $request->get('email')])
+            // TODO : trouver un moyen de vérifier que l'email comply with addr-spec of RFC 2822.
         ) {
             return $this->json(['error' => 'email_exist'], 400);
         }

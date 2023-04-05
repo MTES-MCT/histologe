@@ -78,7 +78,6 @@ document.querySelectorAll('.partner-user-edit_btn').forEach(swbtn => {
   })
 })
 
-
 if (document.querySelector('#partner_type')) {
   document.querySelector('#partner_type').addEventListener('change', (event) => {
       const partner_type = document.getElementById("partner_type");

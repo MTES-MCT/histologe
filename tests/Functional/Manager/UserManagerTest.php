@@ -108,9 +108,6 @@ class UserManagerTest extends KernelTestCase
 
     public function testUpdateUserFromDataEmailChanged()
     {
-        /** @var PartnerRepository $partnerRepository */
-        $partnerRepository = $this->entityManager->getRepository(Partner::class);
-        $partner = $partnerRepository->findOneBy(['nom' => 'Partenaire 01-02']);
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => 'user-01-01@histologe.fr']);
