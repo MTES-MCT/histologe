@@ -290,8 +290,7 @@ class FrontSignalementController extends AbstractController
                             'signalement' => $signalement,
                             'attach' => $attachment ?? null,
                             'lien_suivi' => $urlGenerator->generate(
-                                'front_suivi_signalement',
-                                [
+                                'front_suivi_signalement', [
                                     'code' => $signalement->getCodeSuivi(),
                                     'from' => $toRecipient,
                                 ],

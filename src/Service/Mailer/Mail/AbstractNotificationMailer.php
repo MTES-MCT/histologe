@@ -33,7 +33,6 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         $params = [
             'template' => $this->mailerTemplate,
             'subject' => $this->mailerSubject,
-            'btnText' => $this->mailerButtonText,
             'btntext' => $this->mailerButtonText,
             'url' => $this->parameterBag->get('host_url'),
         ];
