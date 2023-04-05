@@ -53,7 +53,7 @@ class AskFeedbackUsagerCommand extends Command
         $totalRead = 0;
         $io = new SymfonyStyle($input, $output);
 
-        $signalementsIds = $this->suiviRepository->findSignalementsNoSuiviUsagerFrom(Suivi::DEFAULT_PERIOD_INACTIVITY);
+        $signalementsIds = $this->suiviRepository->findSignalementsNoSuiviUsagerFrom();
         $signalements = $this->signalementRepository->findAllByIds($signalementsIds);
         $nbSignalements = \count($signalements);
         if ($input->getOption('debug')) {
@@ -73,7 +73,7 @@ class AskFeedbackUsagerCommand extends Command
                     $this->notificationMailerRegistry->send(
                         new Notification(
                             NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER,
-                            [$toRecipient],
+                            $toRecipient,
                             [
                                 'signalement' => $signalement,
                                 'lien_suivi' => $this->generateLinkCodeSuivi($signalement->getCodeSuivi(), $toRecipient),
@@ -112,7 +112,6 @@ class AskFeedbackUsagerCommand extends Command
                 NotificationMailerType::TYPE_CRON,
                 $this->parameterBag->get('admin_email'),
                 [
-                    'url' => $this->parameterBag->get('host_url'),
                     'cron_label' => 'demande de feedback à l\'usager',
                     'count' => $nbSignalements,
                     'message' => 'signalement(s) pour lesquels une demande de feedback a été envoyée à l\'usager',

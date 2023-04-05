@@ -285,7 +285,7 @@ class FrontSignalementController extends AbstractController
                 $notificationMailerRegistry->send(
                     new Notification(
                         NotificationMailerType::TYPE_CONFIRM_RECEPTION,
-                        [$toRecipient],
+                        $toRecipient,
                         [
                             'signalement' => $signalement,
                             'attach' => $attachment ?? null,

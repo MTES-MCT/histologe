@@ -79,7 +79,6 @@ class RemindInactiveUserCommand extends Command
                 NotificationMailerType::TYPE_CRON,
                 $this->parameterBag->get('admin_email'),
                 [
-                    'url' => $this->parameterBag->get('host_url'),
                     'cron_label' => 'demande d\'activation de compte',
                     'count' => $nbUsers,
                     'message' => $nbUsers > 1 ? 'utilisateurs ont été notifiées' : 'utilisateur a été notifiée',

@@ -84,7 +84,6 @@ class ImportGridAffectationCommand extends Command
                 NotificationMailerType::TYPE_CRON,
                 $this->parameterBag->get('admin_email'),
                 [
-                    'url' => $this->parameterBag->get('host_url'),
                     'cron_label' => 'Ouverture de territoire',
                     'message' => sprintf('Félicitation, le térritoire %s est ouvert: %s partenaires et %s utilsateurs ont été crées',
                         $territory->getName(),

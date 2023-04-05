@@ -35,6 +35,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
             'subject' => $this->mailerSubject,
             'btnText' => $this->mailerButtonText,
             'btntext' => $this->mailerButtonText,
+            'url' => $this->parameterBag->get('host_url'),
         ];
 
         $params = array_merge($params, $notification->getParams());
@@ -67,7 +68,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
 
             return true;
         } catch (TransportExceptionInterface $exception) {
-            $this->logger->error($exception->getMessage());
+            $this->logger->error(sprintf('[%s] %s',$notification->getType(), $exception->getMessage()));
         }
 
         return false;

@@ -44,7 +44,7 @@ class BackSignalementActionController extends AbstractController
                     $notificationMailerRegistry->send(
                         new Notification(
                             NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION,
-                            [$toRecipient],
+                            $toRecipient,
                             [
                                 'signalement' => $signalement,
                                 'lien_suivi' => $urlGenerator->generate(

@@ -46,7 +46,6 @@ class ClearNotificationCommand extends Command
                 NotificationMailerType::TYPE_CRON,
                 $this->parameterBag->get('admin_email'),
                 [
-                    'url' => $this->parameterBag->get('host_url'),
                     'cron_label' => 'Suppression des notifications',
                     'count' => $nbNotifications,
                     'message' => $nbNotifications > 1 ? 'notifications ont été supprimées' : 'notification a été supprimée',

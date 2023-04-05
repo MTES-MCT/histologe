@@ -92,7 +92,6 @@ class SynchronizeEsaboraCommand extends Command
                 NotificationMailerType::TYPE_CRON,
                 $this->parameterBag->get('admin_email'),
                 [
-                    'url' => $this->parameterBag->get('host_url'),
                     'cron_label' => 'Synchronisation des signalements depuis Esabora',
                     'count_success' => $countSyncSuccess,
                     'count_failed' => $countSyncFailed,
