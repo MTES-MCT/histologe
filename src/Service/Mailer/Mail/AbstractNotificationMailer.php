@@ -68,7 +68,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
 
             return true;
         } catch (TransportExceptionInterface $exception) {
-            $this->logger->error(sprintf('[%s] %s',$notification->getType(), $exception->getMessage()));
+            $this->logger->error(sprintf('[%s] %s', $notification->getType(), $exception->getMessage()));
         }
 
         return false;
