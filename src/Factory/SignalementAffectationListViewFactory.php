@@ -28,7 +28,8 @@ class SignalementAffectationListViewFactory
             lastSuiviAt: $data['lastSuiviAt'],
             lastSuiviBy: $data['lastSuiviBy'],
             affectations: $affectations,
-            qualifications: SignalementAffectationHelper::getQualificationFrom($data)
+            qualifications: SignalementAffectationHelper::getQualificationFrom($data),
+            qualificationsStatuses: SignalementAffectationHelper::getQualificationStatusesFrom($data)
         );
     }
 }

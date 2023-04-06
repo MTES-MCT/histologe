@@ -3,6 +3,7 @@
 namespace App\Dto;
 
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\QualificationStatus;
 
 class SignalementAffectationListView
 {
@@ -26,6 +27,7 @@ class SignalementAffectationListView
         private ?string $lastSuiviBy = null,
         private ?array $affectations = null,
         private ?array $qualifications = null,
+        private ?array $qualificationsStatuses = null,
     ) {
     }
 
@@ -125,6 +127,21 @@ class SignalementAffectationListView
             foreach ($this->qualifications as $qualification) {
                 if (Qualification::NON_DECENCE_ENERGETIQUE->name !== $qualification) {
                     $listLabels[] = Qualification::tryFrom($qualification)?->label();
+                }
+            }
+        }
+
+        return $listLabels;
+    }
+
+    public function getQualificationsStatusesLabels(): array
+    {
+        $listLabels = [];
+
+        if (null !== $this->qualificationsStatuses) {
+            foreach ($this->qualificationsStatuses as $qualificationStatus) {
+                if (false === strpos(Qualification::NON_DECENCE_ENERGETIQUE->name, 'NDE')) {
+                    $listLabels[] = QualificationStatus::tryFrom($qualificationStatus)?->label();
                 }
             }
         }

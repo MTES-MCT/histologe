@@ -15,7 +15,7 @@
                     <span class="fr-badge fr-badge--sm fr-badge--info fr-badge--no-icon fr-mb-1v" title="Non-décence énergétique">NDE</span>
                 {% endif %}
             {% endif %}
-            {% for qualificationLabel in signalement.qualificationsLabels %}
+            {% for qualificationStatusLabel in signalement.qualificationsStatusesLabels %}
                 {% include '_partials/signalement/qualification.html.twig' with { 'inlist': true } %}
             {% endfor %}
         </td>

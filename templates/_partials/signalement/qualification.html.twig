@@ -1,16 +1,18 @@
-{% if qualificationLabel is same as 'RSD' %}
+{% if qualificationStatusLabel is same as 'Suspicion Danger occupant' 
+    or qualificationStatusLabel is same as 'Suspicion Insalubrité'
+    or qualificationStatusLabel is same as 'Suspicion Manquement à l\'insalubrité'
+    or qualificationStatusLabel is same as 'Suspicion Non décence/RSD' %}
+
+    {% set typeBadge = 'info' %}
+    {% if qualificationStatusLabel is same as 'Suspicion Danger occupant' %}
+        {% set typeBadge = 'error' %}
+    {% elseif qualificationStatusLabel is same as 'Suspicion Insalubrité'
+        or qualificationStatusLabel is same as 'Suspicion Manquement à l\'insalubrité' %}
+        {% set typeBadge = 'warning' %}
+    {% endif %}
+
     {% if inlist %}
         <br>
     {% endif %}
-    <small class="fr-badge {% if inlist %}fr-badge--sm{% endif %} fr-badge--info fr-badge--no-icon fr-mb-1v">Suspicion Non décence/RSD</small>
-{% elseif qualificationLabel is same as 'Insalubrité' %}
-    {% if inlist %}
-        <br>
-    {% endif %}
-    <small class="fr-badge {% if inlist %}fr-badge--sm{% endif %} fr-badge--warning fr-badge--no-icon fr-mb-1v">Suspicion Insalubrité</small>
-{% elseif qualificationLabel is same as 'Danger' %}
-    {% if inlist %}
-        <br>
-    {% endif %}
-    <small class="fr-badge {% if inlist %}fr-badge--sm{% endif %} fr-badge--error fr-badge--no-icon fr-mb-1v">Danger occupant</small>
+    <small class="fr-badge {% if inlist %}fr-badge--sm{% endif %} fr-badge--{{ typeBadge }} fr-badge--no-icon fr-mb-1v">{{ qualificationStatusLabel }}</small>
 {% endif %}

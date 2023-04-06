@@ -23,14 +23,14 @@ enum QualificationStatus: string
     {
         return [
             'ARCHIVED' => 'archived',
-            'DANGER_CHECK' => 'Danger à vérifier',
-            'INSALUBRITE_CHECK' => 'Insalubrité à vérifier',
-            'INSALUBRITE_MANQUEMENT_CHECK' => 'Manquement à l\'insalubrité à vérifier',
+            'DANGER_CHECK' => 'Suspicion Danger occupant',
+            'INSALUBRITE_CHECK' => 'Suspicion Insalubrité',
+            'INSALUBRITE_MANQUEMENT_CHECK' => 'Suspicion Manquement à l\'insalubrité',
             'NDE_AVEREE' => 'Non décence énergétique avérée',
             'NDE_OK' => 'Décence énergétique OK',
             'NDE_CHECK' => 'Non décence énergétique à vérifier',
-            'NON_DECENCE_CHECK' => 'Non décence à vérifier',
-            'RSD_CHECK' => 'RSD à vérifier',
+            'NON_DECENCE_CHECK' => 'Suspicion Non décence',
+            'RSD_CHECK' => 'Suspicion Non décence/RSD',
         ];
     }
 }
