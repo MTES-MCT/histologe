@@ -8,7 +8,7 @@ use App\Factory\SuiviFactory;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
-use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Doctrine\ORM\NonUniqueResultException;
@@ -76,7 +76,7 @@ class ContactFormHandler
 
         if ($hasNotificationToSend) {
             $this->notificationMailerRegistry->send(
-                new Notification(
+                new NotificationMail(
                     NotificationMailerType::TYPE_CONTACT_FORM,
                     $this->parameterBag->get('contact_email'),
                     [

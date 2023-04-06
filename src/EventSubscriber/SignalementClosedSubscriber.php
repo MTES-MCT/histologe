@@ -9,7 +9,7 @@ use App\Event\SignalementClosedEvent;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\UserRepository;
-use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Token\TokenGeneratorInterface;
@@ -100,7 +100,7 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
         if (!empty($toRecipients)) {
             foreach ($toRecipients as $toRecipient) {
                 $this->notificationMailerRegistry->send(
-                    new Notification(
+                    new NotificationMail(
                         NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_USAGER,
                         [$toRecipient],
                         [
@@ -122,7 +122,7 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
         }
 
         $this->notificationMailerRegistry->send(
-            new Notification(
+            new NotificationMail(
                 NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS,
                 $sendTo,
                 [
@@ -148,7 +148,7 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
         }
 
         $this->notificationMailerRegistry->send(
-            new Notification(
+            new NotificationMail(
                 NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_PARTNER,
                 $sendTo,
                 [

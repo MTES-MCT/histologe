@@ -7,7 +7,7 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Exception\User\UserEmailNotFoundException;
 use App\Factory\UserFactory;
-use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Token\TokenGeneratorInterface;
@@ -67,7 +67,7 @@ class UserManager extends AbstractManager
             $loginLink;
 
         $this->notificationMailerRegistry->send(
-            new Notification(
+            new NotificationMail(
                 NotificationMailerType::TYPE_ACCOUNT_TRANSFER,
                 $user->getEmail(),
                 [

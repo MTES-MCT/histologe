@@ -3,7 +3,7 @@
 namespace App\EventListener;
 
 use App\Entity\Signalement;
-use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -36,7 +36,7 @@ class ExceptionListener
                 $territory = $event->getRequest()->get('signalement')->getTerritory();
             }
             $this->notificationMailerRegistry->send(
-                new Notification(
+                new NotificationMail(
                     NotificationMailerType::TYPE_ERROR_SIGNALEMENT,
                     $this->params->get('admin_email'),
                     [

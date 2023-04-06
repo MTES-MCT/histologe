@@ -4,7 +4,7 @@ namespace App\Command;
 
 use App\Entity\User;
 use App\Manager\UserManager;
-use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Token\TokenGenerator;
@@ -58,7 +58,7 @@ class RemindInactiveUserCommand extends Command
 
             $link = $this->generateLink($user);
             $this->notificationMailerRegistry->send(
-                new Notification(
+                new NotificationMail(
                     NotificationMailerType::TYPE_ACCOUNT_ACTIVATION,
                     $user->getEmail(),
                     [
@@ -75,7 +75,7 @@ class RemindInactiveUserCommand extends Command
         $io->success(sprintf('%s users has been notified', $nbUsers));
 
         $this->notificationMailerRegistry->send(
-            new Notification(
+            new NotificationMail(
                 NotificationMailerType::TYPE_CRON,
                 $this->parameterBag->get('admin_email'),
                 [

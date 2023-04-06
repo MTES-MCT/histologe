@@ -9,7 +9,7 @@ use App\Manager\PartnerManager;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
-use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -180,7 +180,7 @@ class BackPartnerController extends AbstractController
             $user->setStatut(User::STATUS_ARCHIVE);
             $userManager->save($user);
             $notificationMailerRegistry->send(
-                new Notification(
+                new NotificationMail(
                     NotificationMailerType::TYPE_ACCOUNT_DELETE,
                     $user->getEmail(),
                     [],

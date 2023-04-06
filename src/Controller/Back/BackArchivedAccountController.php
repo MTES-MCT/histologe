@@ -8,7 +8,7 @@ use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Security\BackOfficeAuthenticator;
-use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -120,7 +120,7 @@ class BackArchivedAccountController extends AbstractController
             $link = $this->generateLink($user);
 
             $notificationMailerRegistry->send(
-                new Notification(
+                new NotificationMail(
                     NotificationMailerType::TYPE_ACCOUNT_REACTIVATION,
                     $user->getEmail(),
                     [

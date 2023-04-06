@@ -3,7 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Notification;
-use App\Service\Mailer\Notification as MailerNotification;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,7 +42,7 @@ class ClearNotificationCommand extends Command
         $io->success($nbNotifications.' notification(s) deleted !');
 
         $this->notificationMailerRegistry->send(
-            new MailerNotification(
+            new NotificationMail(
                 NotificationMailerType::TYPE_CRON,
                 $this->parameterBag->get('admin_email'),
                 [

@@ -7,7 +7,7 @@ use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
 use App\Service\Esabora\EsaboraService;
-use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -88,7 +88,7 @@ class SynchronizeEsaboraCommand extends Command
         }
 
         $this->notificationMailerRegistry->send(
-            new Notification(
+            new NotificationMail(
                 NotificationMailerType::TYPE_CRON,
                 $this->parameterBag->get('admin_email'),
                 [

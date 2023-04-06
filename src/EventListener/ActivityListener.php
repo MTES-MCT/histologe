@@ -10,7 +10,7 @@ use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\PartnerRepository;
-use App\Service\Mailer\Notification as MailerNotification;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
@@ -83,7 +83,7 @@ class ActivityListener implements EventSubscriberInterface
                         $toRecipients->removeElement($entity->getCreatedBy()?->getEmail());
                         foreach ($toRecipients as $toRecipient) {
                             $this->notificationMailerRegistry->send(
-                                new MailerNotification(
+                                new NotificationMail(
                                     NotificationMailerType::TYPE_NEW_COMMENT_FRONT,
                                     [$toRecipient],
                                     [
@@ -203,7 +203,7 @@ class ActivityListener implements EventSubscriberInterface
                 $sendErrorMail = true;
             } else {
                 $this->notificationMailerRegistry->send(
-                    new MailerNotification(
+                    new NotificationMail(
                         $mailType,
                         array_unique($this->tos->toArray()),
                         $options,
@@ -217,7 +217,7 @@ class ActivityListener implements EventSubscriberInterface
         }
         if ($sendErrorMail) {
             $this->notificationMailerRegistry->send(
-                new MailerNotification(
+                new NotificationMail(
                     NotificationMailerType::TYPE_ERROR_SIGNALEMENT_NO_USER,
                     $this->parameterBag->get('notifications_email'),
                     [

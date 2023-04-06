@@ -6,7 +6,7 @@ use App\Entity\Territory;
 use App\Manager\TerritoryManager;
 use App\Service\Import\CsvParser;
 use App\Service\Import\GridAffectation\GridAffectationLoader;
-use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\UploadHandlerService;
@@ -80,7 +80,7 @@ class ImportGridAffectationCommand extends Command
         $io->success($territory->getName().' has been activated');
 
         $this->notificationMailerRegistry->send(
-            new Notification(
+            new NotificationMail(
                 NotificationMailerType::TYPE_CRON,
                 $this->parameterBag->get('admin_email'),
                 [

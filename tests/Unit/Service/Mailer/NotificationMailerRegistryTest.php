@@ -3,7 +3,7 @@
 namespace App\Tests\Service\Mailer;
 
 use App\Service\Mailer\Mail\NotificationMailerInterface;
-use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use PHPUnit\Framework\TestCase;
@@ -12,7 +12,7 @@ class NotificationMailerRegistryTest extends TestCase
 {
     public function testSend(): void
     {
-        $notification = new Notification(
+        $notification = new NotificationMail(
             NotificationMailerType::TYPE_CRON,
             'john.doe@yopmail.com',
             [],

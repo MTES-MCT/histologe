@@ -6,7 +6,7 @@ use App\Entity\User;
 use App\Manager\UserManager;
 use App\Repository\UserRepository;
 use App\Security\BackOfficeAuthenticator;
-use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Token\ActivationTokenGenerator;
@@ -36,7 +36,7 @@ class UserAccountController extends AbstractController
                 $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
                 $loginLink = $loginLinkDetails->getUrl();
                 $notificationMailerRegistry->send(
-                    new Notification(
+                    new NotificationMail(
                         NotificationMailerType::TYPE_ACCOUNT_ACTIVATION,
                         $email,
                         ['link' => $loginLink],
@@ -82,7 +82,7 @@ class UserAccountController extends AbstractController
                 $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
                 $loginLink = $loginLinkDetails->getUrl();
                 $notificationMailerRegistry->send(
-                    new Notification(
+                    new NotificationMail(
                         NotificationMailerType::TYPE_LOST_PASSWORD,
                         $email,
                         ['link' => $loginLink],

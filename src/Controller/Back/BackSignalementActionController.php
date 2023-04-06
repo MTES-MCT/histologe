@@ -6,7 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Tag;
-use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use DateTimeImmutable;
@@ -42,7 +42,7 @@ class BackSignalementActionController extends AbstractController
                 $toRecipients = $signalement->getMailUsagers();
                 foreach ($toRecipients as $toRecipient) {
                     $notificationMailerRegistry->send(
-                        new Notification(
+                        new NotificationMail(
                             NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION,
                             $toRecipient,
                             [
@@ -66,7 +66,7 @@ class BackSignalementActionController extends AbstractController
 
                 $toRecipients = $signalement->getMailUsagers();
                 $notificationMailerRegistry->send(
-                    new Notification(
+                    new NotificationMail(
                         NotificationMailerType::TYPE_SIGNALEMENT_REFUSAL,
                         $toRecipients,
                         [

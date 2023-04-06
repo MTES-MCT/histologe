@@ -18,7 +18,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
-use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\CriticiteCalculator;
@@ -283,7 +283,7 @@ class FrontSignalementController extends AbstractController
             $toRecipients = $signalement->getMailUsagers();
             foreach ($toRecipients as $toRecipient) {
                 $notificationMailerRegistry->send(
-                    new Notification(
+                    new NotificationMail(
                         NotificationMailerType::TYPE_CONFIRM_RECEPTION,
                         $toRecipient,
                         [

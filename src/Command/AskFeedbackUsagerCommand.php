@@ -7,7 +7,7 @@ use App\Factory\SuiviFactory;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
-use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Token\TokenGenerator;
@@ -71,7 +71,7 @@ class AskFeedbackUsagerCommand extends Command
                 }
                 foreach ($toRecipients as $toRecipient) {
                     $this->notificationMailerRegistry->send(
-                        new Notification(
+                        new NotificationMail(
                             NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER,
                             $toRecipient,
                             [
@@ -108,7 +108,7 @@ class AskFeedbackUsagerCommand extends Command
         $io->success(sprintf('%s signalement without suivi from more than '.Suivi::DEFAULT_PERIOD_INACTIVITY.' days', $nbSignalements));
 
         $this->notificationMailerRegistry->send(
-            new Notification(
+            new NotificationMail(
                 NotificationMailerType::TYPE_CRON,
                 $this->parameterBag->get('admin_email'),
                 [

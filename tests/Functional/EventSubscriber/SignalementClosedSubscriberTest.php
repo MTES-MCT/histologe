@@ -10,7 +10,7 @@ use App\EventSubscriber\SignalementClosedSubscriber;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\UserRepository;
-use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Token\TokenGeneratorInterface;
@@ -60,7 +60,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
             ->method('send')
             ->withConsecutive(
                 [
-                    new Notification(
+                    new NotificationMail(
                         NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_USAGER,
                         $signalementClosed->getMailUsagers(),
                         [
@@ -71,7 +71,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
                     ),
                 ],
                 [
-                    new Notification(
+                    new NotificationMail(
                         NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS,
                         $sendToPartners,
                         [

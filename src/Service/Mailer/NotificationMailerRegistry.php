@@ -15,7 +15,7 @@ class NotificationMailerRegistry
         $this->notificationMailers = $notificationMailers;
     }
 
-    public function send(Notification $notification): bool
+    public function send(NotificationMail $notification): bool
     {
         /** @var NotificationMailerInterface $notificationMailer */
         foreach ($this->notificationMailers as $notificationMailer) {

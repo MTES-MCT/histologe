@@ -4,7 +4,7 @@ namespace App\Service\Mailer;
 
 use App\Entity\Territory;
 
-class Notification
+class NotificationMail
 {
     public function __construct(
         private readonly NotificationMailerType $type,

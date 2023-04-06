@@ -3,7 +3,7 @@
 namespace App\Service\Mailer\Mail;
 
 use App\Entity\Territory;
-use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
@@ -26,7 +26,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
     ) {
     }
 
-    public function send(Notification $notification): bool
+    public function send(NotificationMail $notification): bool
     {
         $territory = $notification->getTerritory();
         $this->setMailerSubjectWithParams($notification->getParams());

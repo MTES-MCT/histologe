@@ -3,7 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Entity\User;
-use App\Service\Mailer\Notification;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
@@ -43,7 +43,7 @@ class UserCreatedSubscriber implements EventSubscriberInterface
     {
         if (!\in_array('ROLE_USAGER', $user->getRoles())) {
             $this->notificationMailerRegistry->send(
-                new Notification(
+                new NotificationMail(
                     NotificationMailerType::TYPE_ACCOUNT_ACTIVATION,
                     $user->getEmail(),
                     ['link' => $this->generateLink($user)],
