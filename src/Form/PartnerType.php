@@ -163,11 +163,10 @@ class PartnerType extends AbstractType
 
             if ($form->get('zones_pdl')?->getData()) {
                 $zonesPdlList = explode(',', $form->get('zones_pdl')?->getData());
-                // TODO : vérifier que le code insee correspond au territoire avant de modifier la commune ?
                 foreach ($zonesPdlList as $zonePdl) {
                     /** @var Commune $commune */
                     $commune = $this->communeManager->findOneBy(['codeInsee' => trim($zonePdl)]);
-                    if ($commune) {
+                    if ($commune && $commune->getTerritory() === $partner->getTerritory()) {
                         $commune->setIsZonePermisLouer(true);
                     }
                 }
@@ -185,8 +184,8 @@ class PartnerType extends AbstractType
             'can_edit_territory' => true,
             'constraints' => [
                 new Assert\Callback([$this, 'validatePartnerCanBeNotified']),
+                new Assert\Callback([$this, 'validateInseeInTerritory']),
             ],
-            // TODO : ajouter une contrainte pour vérifier que les codes insee correspondent aux territoires ?
         ]);
     }
 
@@ -209,6 +208,30 @@ class PartnerType extends AbstractType
             if (!$canBeNotified) {
                 $context->addViolation('Email générique manquante: Il faut donc obligatoirement qu\'au moins
                 1 compte utilisateur accepte de recevoir les emails.');
+            }
+        }
+    }
+
+    public function validateInseeInTerritory(mixed $value, ExecutionContextInterface $context)
+    {
+        if ($value instanceof Partner) {
+            $partner = $value;
+            $codesInsee = $partner->getInsee();
+            if (null === $codesInsee) {
+                return;
+            }
+            if (null === $partner->getTerritory()) {
+                return;
+            }
+
+            foreach ($codesInsee as $insee) {
+                /** @var Commune $commune */
+                $commune = $this->communeManager->findOneBy(['codeInsee' => trim($insee)]);
+                if (null === $commune) {
+                    $context->addViolation('Il n\'existe pas de commune avec le code insee '.$insee);
+                } elseif ($commune->getTerritory() !== $partner->getTerritory()) {
+                    $context->addViolation('La commune avec le code insee '.$insee.' ne fait pas partie du territoire du partenaire');
+                }
             }
         }
     }

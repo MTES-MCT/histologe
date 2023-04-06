@@ -14,6 +14,8 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Doctrine\ORM\EntityManagerInterface;
+use Egulias\EmailValidator\EmailValidator;
+use Egulias\EmailValidator\Validation\RFCValidation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
@@ -312,9 +314,15 @@ class PartnerController extends AbstractController
         if (
             $this->isCsrfTokenValid('partner_checkmail', $request->request->get('_token'))
             && $entityManager->getRepository(User::class)->findOneBy(['email' => $request->get('email')])
-            // TODO : trouver un moyen de vérifier que l'email comply with addr-spec of RFC 2822.
         ) {
             return $this->json(['error' => 'email_exist'], 400);
+        }
+
+        $validator = new EmailValidator();
+        $emailValid = $validator->isValid($request->get('email'), new RFCValidation());
+
+        if (!$emailValid) {
+            return $this->json(['error' => 'email_unvalid'], 400);
         }
 
         return $this->json(['success' => 'email_ok']);
