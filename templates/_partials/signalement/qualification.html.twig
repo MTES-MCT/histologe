@@ -1,0 +1,16 @@
+{% if qualificationLabel is same as 'RSD' %}
+    {% if inlist %}
+        <br>
+    {% endif %}
+    <small class="fr-badge {% if inlist %}fr-badge--sm{% endif %} fr-badge--info fr-badge--no-icon fr-mb-1v">Suspicion Non décence/RSD</small>
+{% elseif qualificationLabel is same as 'Insalubrité' %}
+    {% if inlist %}
+        <br>
+    {% endif %}
+    <small class="fr-badge {% if inlist %}fr-badge--sm{% endif %} fr-badge--warning fr-badge--no-icon fr-mb-1v">Suspicion Insalubrité</small>
+{% elseif qualificationLabel is same as 'Danger' %}
+    {% if inlist %}
+        <br>
+    {% endif %}
+    <small class="fr-badge {% if inlist %}fr-badge--sm{% endif %} fr-badge--error fr-badge--no-icon fr-mb-1v">Danger occupant</small>
+{% endif %}

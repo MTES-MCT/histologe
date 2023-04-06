@@ -700,10 +700,9 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
             ->addSelect('case
-                when s.score >= 0 and s.score < 25 then \''.CriticitePercentStatisticProvider::CRITICITE_VERY_WEAK.'\'
-                when s.score >= 25 and s.score < 51 then \''.CriticitePercentStatisticProvider::CRITICITE_WEAK.'\'
-                when s.score >= 51 and s.score <= 75 then \''.CriticitePercentStatisticProvider::CRITICITE_STRONG.'\'
-                else \''.CriticitePercentStatisticProvider::CRITICITE_VERY_STRONG.'\'
+                when s.score >= 0 and s.score < 10 then \''.CriticitePercentStatisticProvider::CRITICITE_VERY_WEAK.'\'
+                when s.score >= 10 and s.score < 30 then \''.CriticitePercentStatisticProvider::CRITICITE_WEAK.'\'
+                else \''.CriticitePercentStatisticProvider::CRITICITE_STRONG.'\'
                 end as range');
 
         $qb = self::addFiltersToQuery($qb, $statisticsFilters);

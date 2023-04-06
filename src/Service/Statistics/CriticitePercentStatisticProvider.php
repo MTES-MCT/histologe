@@ -7,10 +7,9 @@ use App\Repository\SignalementRepository;
 
 class CriticitePercentStatisticProvider
 {
-    public const CRITICITE_VERY_WEAK = '< 25 %';
-    public const CRITICITE_WEAK = 'De 25 à 50 %';
-    public const CRITICITE_STRONG = 'De 51 à 75 %';
-    public const CRITICITE_VERY_STRONG = '> 75 %';
+    public const CRITICITE_VERY_WEAK = '< 10 %';
+    public const CRITICITE_WEAK = 'De 10 à 30 %';
+    public const CRITICITE_STRONG = '> 30 %';
 
     public function __construct(private SignalementRepository $signalementRepository)
     {
@@ -47,11 +46,6 @@ class CriticitePercentStatisticProvider
             self::CRITICITE_STRONG => [
                 'label' => self::CRITICITE_STRONG,
                 'color' => '#A558A0',
-                'count' => 0,
-            ],
-            self::CRITICITE_VERY_STRONG => [
-                'label' => self::CRITICITE_VERY_STRONG,
-                'color' => '#E4794A',
                 'count' => 0,
             ],
         ];
