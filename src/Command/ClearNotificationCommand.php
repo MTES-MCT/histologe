@@ -43,14 +43,11 @@ class ClearNotificationCommand extends Command
 
         $this->notificationMailerRegistry->send(
             new NotificationMail(
-                NotificationMailerType::TYPE_CRON,
-                $this->parameterBag->get('admin_email'),
-                [
-                    'cron_label' => 'Suppression des notifications',
-                    'count' => $nbNotifications,
-                    'message' => $nbNotifications > 1 ? 'notifications ont été supprimées' : 'notification a été supprimée',
-                ],
-                null
+                type: NotificationMailerType::TYPE_CRON,
+                to: $this->parameterBag->get('admin_email'),
+                message: $nbNotifications > 1 ? 'notifications ont été supprimées' : 'notification a été supprimée',
+                cronLabel: 'Suppression des notifications',
+                cronCount: $nbNotifications,
             )
         );
 

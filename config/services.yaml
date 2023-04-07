@@ -109,3 +109,15 @@ when@test:
     parameters:
         uploads_tmp_dir: '%kernel.project_dir%/tmp/'
         url_bucket: '/app/public/img'
+
+    services:
+        App\Service\Mailer\Mail\Account\AccountTransferMailer:
+            public: true
+            arguments:
+                $mailer: '@Symfony\Component\Mailer\MailerInterface'
+                $parameterBag: '@Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface'
+                $logger: '@Psr\Log\LoggerInterface'
+                $urlGenerator: '@Symfony\Component\Routing\Generator\UrlGeneratorInterface'
+                $loginLinkHandler: '@security.authenticator.login_link_handler.main'
+            tags:
+                - name: 'app.notification_mailer'

@@ -14,8 +14,6 @@ use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
 class UserManager extends AbstractManager
 {
@@ -23,9 +21,7 @@ class UserManager extends AbstractManager
     public const DECLARANT = 'declarant';
 
     public function __construct(
-        private LoginLinkHandlerInterface $loginLinkHandler,
         private NotificationMailerRegistry $notificationMailerRegistry,
-        private UrlGeneratorInterface $urlGenerator,
         private PasswordHasherFactoryInterface $passwordHasherFactory,
         private TokenGeneratorInterface $tokenGenerator,
         private ParameterBagInterface $parameterBag,
@@ -49,34 +45,17 @@ class UserManager extends AbstractManager
         return $user;
     }
 
-    public function getUserFrom(Partner $partner, int $userId): ?User
-    {
-        return $this->getRepository()->findOneBy(['partner' => $partner, 'id' => $userId]);
-    }
-
     public function transferUserToPartner(User $user, Partner $partner): void
     {
         $user->setPartner($partner);
         $this->save($user);
 
-        $loginLinkDetails = $this->loginLinkHandler->createLoginLink($user);
-        $loginLink = $loginLinkDetails->getUrl();
-
-        $link = User::STATUS_ACTIVE === $user->getStatut() ?
-            $this->urlGenerator->generate('back_dashboard') :
-            $loginLink;
-
         $this->notificationMailerRegistry->send(
             new NotificationMail(
-                NotificationMailerType::TYPE_ACCOUNT_TRANSFER,
-                $user->getEmail(),
-                [
-                    'btntext' => User::STATUS_ACTIVE === $user->getStatut() ? 'Accéder à mon compte' : 'Activer mon compte',
-                    'link' => $link,
-                    'user_status' => $user->getStatut(),
-                    'partner_name' => $partner->getNom(),
-                ],
-                $user->getTerritory()
+                type: NotificationMailerType::TYPE_ACCOUNT_TRANSFER,
+                to: $user->getEmail(),
+                territory: $user->getTerritory(),
+                user: $user
             )
         );
     }

@@ -43,20 +43,10 @@ class BackSignalementActionController extends AbstractController
                 foreach ($toRecipients as $toRecipient) {
                     $notificationMailerRegistry->send(
                         new NotificationMail(
-                            NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION,
-                            $toRecipient,
-                            [
-                                'signalement' => $signalement,
-                                'lien_suivi' => $urlGenerator->generate(
-                                    'front_suivi_signalement',
-                                    [
-                                        'code' => $signalement->getCodeSuivi(),
-                                        'from' => $toRecipient,
-                                    ],
-                                    0
-                                ),
-                            ],
-                            $signalement->getTerritory()
+                            type: NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION,
+                            to: $toRecipient,
+                            territory: $signalement->getTerritory,
+                            signalement: $signalement,
                         )
                     );
                 }
@@ -67,13 +57,10 @@ class BackSignalementActionController extends AbstractController
                 $toRecipients = $signalement->getMailUsagers();
                 $notificationMailerRegistry->send(
                     new NotificationMail(
-                        NotificationMailerType::TYPE_SIGNALEMENT_REFUSAL,
-                        $toRecipients,
-                        [
-                            'signalement' => $signalement,
-                            'motif' => $response['suivi'],
-                        ],
-                        $signalement->getTerritory()
+                        type: NotificationMailerType::TYPE_SIGNALEMENT_REFUSAL,
+                        to: $toRecipients,
+                        territory: $signalement->getTerritory(),
+                        motif: $response['suivi']
                     )
                 );
             }

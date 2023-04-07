@@ -3,10 +3,12 @@
 namespace App\Service\Mailer\Mail\Signalement;
 
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SignalementNewMailer extends AbstractNotificationMailer
 {
@@ -18,8 +20,22 @@ class SignalementNewMailer extends AbstractNotificationMailer
     public function __construct(
         protected MailerInterface $mailer,
         protected ParameterBagInterface $parameterBag,
-        protected LoggerInterface $logger
+        protected LoggerInterface $logger,
+        protected UrlGeneratorInterface $urlGenerator,
     ) {
-        parent::__construct($this->mailer, $this->parameterBag, $this->logger);
+        parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator);
+    }
+
+    public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
+    {
+        $signalement = $notificationMail->getSignalement();
+        $uuid = $signalement->getUuid();
+
+        return [
+            'ref_signalement' => $signalement->getReference(),
+            'link' => $this->urlGenerator->generate('back_signalement_view', [
+                'uuid' => $uuid,
+            ], UrlGeneratorInterface::ABSOLUTE_URL),
+        ];
     }
 }

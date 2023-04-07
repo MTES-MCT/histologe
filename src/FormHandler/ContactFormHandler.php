@@ -77,15 +77,11 @@ class ContactFormHandler
         if ($hasNotificationToSend) {
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
-                    NotificationMailerType::TYPE_CONTACT_FORM,
-                    $this->parameterBag->get('contact_email'),
-                    [
-                        'nom' => $nom,
-                        'mail' => $email,
-                        'reply' => $email,
-                        'message' => nl2br($message),
-                    ],
-                    null
+                    type: NotificationMailerType::TYPE_CONTACT_FORM,
+                    to: $this->parameterBag->get('contact_email'),
+                    fromEmail: $email,
+                    fromFullname: $nom,
+                    message: nl2br($message)
                 )
             );
         }

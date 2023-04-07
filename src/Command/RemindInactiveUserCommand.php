@@ -7,7 +7,6 @@ use App\Manager\UserManager;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use App\Service\Token\TokenGenerator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,7 +26,6 @@ class RemindInactiveUserCommand extends Command
         private UserManager $userManager,
         private NotificationMailerRegistry $notificationMailerRegistry,
         private UrlGeneratorInterface $urlGenerator,
-        private TokenGenerator $tokenGenerator,
         private ParameterBagInterface $parameterBag,
     ) {
         parent::__construct();
@@ -56,17 +54,15 @@ class RemindInactiveUserCommand extends Command
             $user = $this->userManager->loadUserToken($userItem['email']);
             $this->userManager->save($user);
 
-            $link = $this->generateLink($user);
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
-                    NotificationMailerType::TYPE_ACCOUNT_ACTIVATION,
-                    $user->getEmail(),
-                    [
-                        'link' => $link,
+                    type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_REMINDER,
+                    to: $user->getEmail(),
+                    territory: $user->getTerritory(),
+                    user: $user,
+                    params: [
                         'nb_signalements' => $userItem['nb_signalements'],
-                        'reminder' => true,
                     ],
-                    $user->getTerritory()
                 )
             );
         }
@@ -76,14 +72,11 @@ class RemindInactiveUserCommand extends Command
 
         $this->notificationMailerRegistry->send(
             new NotificationMail(
-                NotificationMailerType::TYPE_CRON,
-                $this->parameterBag->get('admin_email'),
-                [
-                    'cron_label' => 'demande d\'activation de compte',
-                    'count' => $nbUsers,
-                    'message' => $nbUsers > 1 ? 'utilisateurs ont été notifiées' : 'utilisateur a été notifiée',
-                ],
-                null
+                type: NotificationMailerType::TYPE_CRON,
+                to: $this->parameterBag->get('admin_email'),
+                message: $nbUsers > 1 ? 'utilisateurs ont été notifiées' : 'utilisateur a été notifiée',
+                cronLabel: 'demande d\'activation de compte',
+                cronCount: $nbUsers,
             )
         );
 

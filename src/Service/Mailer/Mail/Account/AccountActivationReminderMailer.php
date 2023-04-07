@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Mailer\Mail\Signalement;
+namespace App\Service\Mailer\Mail\Account;
 
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
 use App\Service\Mailer\NotificationMail;
@@ -10,11 +10,12 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class SignalementRefusalMailer extends AbstractNotificationMailer
+class AccountActivationReminderMailer extends AbstractNotificationMailer
 {
-    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_REFUSAL;
-    protected ?string $mailerSubject = 'Votre signalement ne peut pas être traité';
-    protected ?string $mailerTemplate = 'refus_signalement_email';
+    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_REMINDER;
+    protected ?string $mailerSubject = 'Activez votre compte sur Histologe';
+    protected ?string $mailerButtonText = 'Activer mon compte';
+    protected ?string $mailerTemplate = 'login_link_email';
 
     public function __construct(
         protected MailerInterface $mailer,
@@ -27,9 +28,11 @@ class SignalementRefusalMailer extends AbstractNotificationMailer
 
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
+        $link = $this->generateLink('activate_account', ['token' => $notificationMail?->getUser()?->getToken()]);
+
         return [
-            'signalement' => $notificationMail->getSignalement(),
-            'motif' => $notificationMail->getMotif(),
+            'link' => $link,
+            'reminder' => true,
         ];
     }
 }

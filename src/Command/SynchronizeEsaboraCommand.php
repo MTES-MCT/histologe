@@ -89,10 +89,10 @@ class SynchronizeEsaboraCommand extends Command
 
         $this->notificationMailerRegistry->send(
             new NotificationMail(
-                NotificationMailerType::TYPE_CRON,
-                $this->parameterBag->get('admin_email'),
-                [
-                    'cron_label' => 'Synchronisation des signalements depuis Esabora',
+                type: NotificationMailerType::TYPE_CRON,
+                to: $this->parameterBag->get('admin_email'),
+                cronLabel: 'Synchronisation des signalements depuis Esabora',
+                params: [
                     'count_success' => $countSyncSuccess,
                     'count_failed' => $countSyncFailed,
                     'message_success' => $countSyncSuccess > 1
@@ -102,7 +102,6 @@ class SynchronizeEsaboraCommand extends Command
                         ? 'signalements n\'ont pas été synchronisés'
                         : 'signalement n\'a pas été synchronisé',
                 ],
-                null
             )
         );
 

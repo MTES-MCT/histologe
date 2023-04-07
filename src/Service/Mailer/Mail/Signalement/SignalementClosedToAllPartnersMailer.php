@@ -3,10 +3,12 @@
 namespace App\Service\Mailer\Mail\Signalement;
 
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SignalementClosedToAllPartnersMailer extends AbstractNotificationMailer
 {
@@ -18,13 +20,27 @@ class SignalementClosedToAllPartnersMailer extends AbstractNotificationMailer
     public function __construct(
         protected MailerInterface $mailer,
         protected ParameterBagInterface $parameterBag,
-        protected LoggerInterface $logger
+        protected LoggerInterface $logger,
+        protected UrlGeneratorInterface $urlGenerator,
     ) {
-        parent::__construct($this->mailer, $this->parameterBag, $this->logger);
+        parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator);
     }
 
-    public function setMailerSubjectWithParams(?array $params = null): void
+    public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
-        $this->mailerSubject = sprintf($this->mailerSubject, $params['ref_signalement']);
+        $signalement = $notificationMail->getSignalement();
+
+        return [
+            'ref_signalement' => $signalement->getReference(),
+            'motif_cloture' => $signalement->getMotifCloture()->label(),
+            'closed_by' => $signalement->getClosedBy()->getNomComplet(),
+            'partner_name' => $signalement->getClosedBy()->getPartner()->getNom(),
+            'link' => $this->generateLinkSignalementView($signalement->getUuid()),
+        ];
+    }
+
+    public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
+    {
+        $this->mailerSubject = sprintf($this->mailerSubject, $notificationMail->getSignalement()->getReference());
     }
 }

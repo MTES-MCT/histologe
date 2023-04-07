@@ -181,10 +181,9 @@ class BackPartnerController extends AbstractController
             $userManager->save($user);
             $notificationMailerRegistry->send(
                 new NotificationMail(
-                    NotificationMailerType::TYPE_ACCOUNT_DELETE,
-                    $user->getEmail(),
-                    [],
-                    $user->getTerritory()
+                    type: NotificationMailerType::TYPE_ACCOUNT_DELETE,
+                    to: $user->getEmail(),
+                    territory: $user->getTerritory()
                 )
             );
             $this->addFlash('success', $user->getNomComplet().' supprimé avec succès !');

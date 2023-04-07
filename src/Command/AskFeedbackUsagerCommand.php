@@ -72,13 +72,10 @@ class AskFeedbackUsagerCommand extends Command
                 foreach ($toRecipients as $toRecipient) {
                     $this->notificationMailerRegistry->send(
                         new NotificationMail(
-                            NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER,
-                            $toRecipient,
-                            [
-                                'signalement' => $signalement,
-                                'lien_suivi' => $this->generateLinkCodeSuivi($signalement->getCodeSuivi(), $toRecipient),
-                            ],
-                            $signalement->getTerritory()
+                            type: NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER,
+                            to: $toRecipient,
+                            territory: $signalement->getTerritory(),
+                            signalement: $signalement,
                         )
                     );
                 }
@@ -109,14 +106,11 @@ class AskFeedbackUsagerCommand extends Command
 
         $this->notificationMailerRegistry->send(
             new NotificationMail(
-                NotificationMailerType::TYPE_CRON,
-                $this->parameterBag->get('admin_email'),
-                [
-                    'cron_label' => 'demande de feedback à l\'usager',
-                    'count' => $nbSignalements,
-                    'message' => 'signalement(s) pour lesquels une demande de feedback a été envoyée à l\'usager',
-                ],
-                null
+                type: NotificationMailerType::TYPE_CRON,
+                to: $this->parameterBag->get('admin_email'),
+                message: 'signalement(s) pour lesquels une demande de feedback a été envoyée à l\'usager',
+                cronLabel: 'demande de feedback à l\'usager',
+                cronCount: $nbSignalements,
             )
         );
 

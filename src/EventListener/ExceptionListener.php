@@ -13,12 +13,12 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 class ExceptionListener
 {
     public function __construct(
-        private NotificationMailerRegistry $notificationMailerRegistry,
-        private ParameterBagInterface $params,
+        private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly ParameterBagInterface $params,
     ) {
     }
 
-    public function onKernelException(ExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event): void
     {
         if (!$event->getThrowable() instanceof MethodNotAllowedException &&
             null !== $event->getRequest()->get('signalement')) {
@@ -37,17 +37,11 @@ class ExceptionListener
             }
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
-                    NotificationMailerType::TYPE_ERROR_SIGNALEMENT,
-                    $this->params->get('admin_email'),
-                    [
-                        'url' => $_SERVER['SERVER_NAME'],
-                        'code' => $event->getThrowable()->getCode(),
-                        'error' => $event->getThrowable()->getMessage(),
-                        'req' => $event->getRequest()->getContent(),
-                        'signalement' => $event->getRequest()->get('signalement'),
-                        'attachment' => $attachment,
-                    ],
-                    $territory
+                    type: NotificationMailerType::TYPE_ERROR_SIGNALEMENT,
+                    to: $this->params->get('admin_email'),
+                    territory: $territory,
+                    event: $event,
+                    attachment: $attachment,
                 )
             );
         }

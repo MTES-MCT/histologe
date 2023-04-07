@@ -21,7 +21,6 @@ use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ActivityListener implements EventSubscriberInterface
 {
@@ -31,7 +30,6 @@ class ActivityListener implements EventSubscriberInterface
 
     public function __construct(
         private NotificationMailerRegistry $notificationMailerRegistry,
-        private UrlGeneratorInterface $urlGenerator,
         private Security $security,
         private ParameterBagInterface $parameterBag,
         private PartnerRepository $partnerRepository,
@@ -84,20 +82,10 @@ class ActivityListener implements EventSubscriberInterface
                         foreach ($toRecipients as $toRecipient) {
                             $this->notificationMailerRegistry->send(
                                 new NotificationMail(
-                                    NotificationMailerType::TYPE_NEW_COMMENT_FRONT,
-                                    [$toRecipient],
-                                    [
-                                        'signalement' => $entity->getSignalement(),
-                                        'lien_suivi' => $this->urlGenerator->generate(
-                                            'front_suivi_signalement',
-                                            [
-                                                'code' => $entity->getSignalement()->getCodeSuivi(),
-                                                'from' => $toRecipient,
-                                            ],
-                                            UrlGeneratorInterface::ABSOLUTE_URL
-                                        ),
-                                    ],
-                                    $entity->getSignalement()->getTerritory()
+                                    type: NotificationMailerType::TYPE_NEW_COMMENT_FRONT,
+                                    to: $toRecipient,
+                                    territory: $entity->getSignalement()->getTerritory(),
+                                    signalement: $entity->getSignalement(),
                                 )
                             );
                         }
@@ -172,29 +160,19 @@ class ActivityListener implements EventSubscriberInterface
         }
     }
 
-    private function sendMail($entity, $mailType)
+    private function sendMail($entity, $mailType): void
     {
         $options = [];
         $options['entity'] = $entity;
         $sendErrorMail = false;
         if ($entity instanceof Signalement) {
-            /** @var Signalement $signalement */
             $signalement = $entity;
         } else {
             /** @var Signalement $signalement */
             $signalement = $entity->getSignalement();
         }
         if (!$this->tos->isEmpty()) {
-            $uuid = $signalement->getUuid();
-            $options = array_merge($options, [
-                'ref_signalement' => $signalement->getReference(),
-                'link' => $this->urlGenerator->generate('back_signalement_view', [
-                    'uuid' => $uuid,
-                ], UrlGeneratorInterface::ABSOLUTE_URL),
-            ]);
-
             $this->removeCurrentUserEmailForNotification();
-
             $this->tos = $this->tos->filter(function ($element) {
                 return '' !== trim($element) && null !== $element;
             });
@@ -204,10 +182,11 @@ class ActivityListener implements EventSubscriberInterface
             } else {
                 $this->notificationMailerRegistry->send(
                     new NotificationMail(
-                        $mailType,
-                        array_unique($this->tos->toArray()),
-                        $options,
-                        $signalement->getTerritory()
+                        type: $mailType,
+                        to: array_unique($this->tos->toArray()),
+                        territory: $signalement->getTerritory(),
+                        signalement: $signalement,
+                        params: $options,
                     )
                 );
                 $this->tos->clear();
@@ -218,16 +197,10 @@ class ActivityListener implements EventSubscriberInterface
         if ($sendErrorMail) {
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
-                    NotificationMailerType::TYPE_ERROR_SIGNALEMENT_NO_USER,
-                    $this->parameterBag->get('notifications_email'),
-                    [
-                        'error' => sprintf(
-                            'Aucun utilisateur est notifiable pour le signalement #%s, notification prévue %s (TYPE_SIGNALEMENT_NEW = 3, TYPE_ASSIGNMENT_NEW = 4, TYPE_NEW_COMMENT_BACK = 10)',
-                            $signalement->getReference(),
-                            $mailType->name
-                        ),
-                    ],
-                    $signalement->getTerritory()
+                    type: NotificationMailerType::TYPE_ERROR_SIGNALEMENT_NO_USER,
+                    to: $this->parameterBag->get('notifications_email'),
+                    territory: $signalement->getTerritory(),
+                    signalement: $signalement
                 )
             );
         }

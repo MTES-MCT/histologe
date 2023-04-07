@@ -22,9 +22,7 @@ use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
 class UserManagerTest extends KernelTestCase
 {
-    private LoginLinkHandlerInterface $loginLinkHandler;
     private NotificationMailerRegistry $notificationMailerRegistry;
-    private UrlGeneratorInterface $urlGenerator;
     private EntityManagerInterface $entityManager;
     private PasswordHasherFactoryInterface $passwordHasherFactory;
     private TokenGeneratorInterface $tokenGenerator;
@@ -38,9 +36,7 @@ class UserManagerTest extends KernelTestCase
     {
         $kernel = self::bootKernel();
 
-        $this->loginLinkHandler = $this->createMock(LoginLinkHandlerInterface::class);
         $this->notificationMailerRegistry = static::getContainer()->get(NotificationMailerRegistry::class);
-        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->passwordHasherFactory = static::getContainer()->get(PasswordHasherFactoryInterface::class);
         $this->tokenGenerator = static::getContainer()->get(TokenGeneratorInterface::class);
@@ -53,9 +49,7 @@ class UserManagerTest extends KernelTestCase
     public function testTransferActiveUserToAnotherPartner()
     {
         $userManager = new UserManager(
-            $this->loginLinkHandler,
             $this->notificationMailerRegistry,
-            $this->urlGenerator,
             $this->passwordHasherFactory,
             $this->tokenGenerator,
             $this->parameterBag,
@@ -86,9 +80,7 @@ class UserManagerTest extends KernelTestCase
     public function testTransferInactiveUserToAnotherPartner()
     {
         $userManager = new UserManager(
-            $this->loginLinkHandler,
             $this->notificationMailerRegistry,
-            $this->urlGenerator,
             $this->passwordHasherFactory,
             $this->tokenGenerator,
             $this->parameterBag,

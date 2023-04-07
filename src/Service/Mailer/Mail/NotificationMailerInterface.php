@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 #[AutoconfigureTag('app.notification_mailer')]
 interface NotificationMailerInterface
 {
-    public function send(NotificationMail $notification): bool;
+    public function send(NotificationMail $notificationMail): bool;
 
     public function supports(NotificationMailerType $type): bool;
 }

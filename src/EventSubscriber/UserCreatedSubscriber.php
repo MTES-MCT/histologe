@@ -9,14 +9,10 @@ use App\Service\Mailer\NotificationMailerType;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class UserCreatedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private ParameterBagInterface $parameterBag,
-        private UrlGeneratorInterface $urlGenerator,
         private NotificationMailerRegistry $notificationMailerRegistry
     ) {
     }
@@ -44,19 +40,12 @@ class UserCreatedSubscriber implements EventSubscriberInterface
         if (!\in_array('ROLE_USAGER', $user->getRoles())) {
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
-                    NotificationMailerType::TYPE_ACCOUNT_ACTIVATION,
-                    $user->getEmail(),
-                    ['link' => $this->generateLink($user)],
-                    $user->getTerritory()
+                    type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_FROM_BO,
+                    to: $user->getEmail(),
+                    territory: $user->getTerritory(),
+                    user: $user,
                 )
             );
         }
-    }
-
-    private function generateLink(User $user): string
-    {
-        return
-            $this->parameterBag->get('host_url').
-            $this->urlGenerator->generate('activate_account', ['token' => $user->getToken()]);
     }
 }

@@ -284,20 +284,11 @@ class FrontSignalementController extends AbstractController
             foreach ($toRecipients as $toRecipient) {
                 $notificationMailerRegistry->send(
                     new NotificationMail(
-                        NotificationMailerType::TYPE_CONFIRM_RECEPTION,
-                        $toRecipient,
-                        [
-                            'signalement' => $signalement,
-                            'attach' => $attachment ?? null,
-                            'lien_suivi' => $urlGenerator->generate(
-                                'front_suivi_signalement', [
-                                    'code' => $signalement->getCodeSuivi(),
-                                    'from' => $toRecipient,
-                                ],
-                                UrlGeneratorInterface::ABSOLUTE_URL
-                            ),
-                        ],
-                        $signalement->getTerritory()
+                        type: NotificationMailerType::TYPE_CONFIRM_RECEPTION,
+                        to: $toRecipient,
+                        territory: $signalement->getTerritory(),
+                        signalement: $signalement,
+                        attachment: $attachment ?? null,
                     )
                 );
             }

@@ -13,10 +13,11 @@ class NotificationMailerRegistryTest extends TestCase
     public function testSend(): void
     {
         $notification = new NotificationMail(
-            NotificationMailerType::TYPE_CRON,
-            'john.doe@yopmail.com',
-            [],
-            null
+            type: NotificationMailerType::TYPE_CRON,
+            to: 'john.doe@yopmail.com',
+            message: 'Hi',
+            cronLabel: 'Cron run successfully',
+            cronCount: 5
         );
 
         $notificationMailer1 = $this->createMock(NotificationMailerInterface::class);

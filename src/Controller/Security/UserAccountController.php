@@ -18,14 +18,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
-use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
 class UserAccountController extends AbstractController
 {
     #[Route('/activation', name: 'login_activation')]
     public function requestLoginLink(
         NotificationMailerRegistry $notificationMailerRegistry,
-        LoginLinkHandlerInterface $loginLinkHandler,
         UserRepository $userRepository,
         Request $request
     ): Response {
@@ -33,14 +31,12 @@ class UserAccountController extends AbstractController
         if ($request->isMethod('POST') && $email = $request->request->get('email')) {
             $user = $userRepository->findOneBy(['email' => $email]);
             if ($user) {
-                $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
-                $loginLink = $loginLinkDetails->getUrl();
                 $notificationMailerRegistry->send(
                     new NotificationMail(
-                        NotificationMailerType::TYPE_ACCOUNT_ACTIVATION,
-                        $email,
-                        ['link' => $loginLink],
-                        $user->getTerritory()
+                        type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_FROM_FO,
+                        to: $email,
+                        territory: $user->getTerritory(),
+                        user: $user,
                     )
                 );
 
@@ -70,7 +66,6 @@ class UserAccountController extends AbstractController
 
     #[Route('/mot-de-pass-perdu', name: 'login_mdp_perdu')]
     public function requestNewPass(
-        LoginLinkHandlerInterface $loginLinkHandler,
         UserRepository $userRepository,
         Request $request,
         NotificationMailerRegistry $notificationMailerRegistry
@@ -79,14 +74,12 @@ class UserAccountController extends AbstractController
         if ($request->isMethod('POST') && $email = $request->request->get('email')) {
             $user = $userRepository->findOneBy(['email' => $email]);
             if ($user) {
-                $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
-                $loginLink = $loginLinkDetails->getUrl();
                 $notificationMailerRegistry->send(
                     new NotificationMail(
-                        NotificationMailerType::TYPE_LOST_PASSWORD,
-                        $email,
-                        ['link' => $loginLink],
-                        $user->getTerritory()
+                        type: NotificationMailerType::TYPE_LOST_PASSWORD,
+                        to: $email,
+                        territory: $user->getTerritory(),
+                        user: $user
                     )
                 );
 
