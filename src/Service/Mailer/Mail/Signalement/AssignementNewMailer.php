@@ -14,7 +14,7 @@ class AssignementNewMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_ASSIGNMENT_NEW;
     protected ?string $mailerSubject = 'Un nouveau signalement vous attend sur Histologe.';
-    protected ?string $mailerButtonText = 'Accéder au signalemen';
+    protected ?string $mailerButtonText = 'Accéder au signalement';
     protected ?string $mailerTemplate = 'affectation_email';
 
     public function __construct(
