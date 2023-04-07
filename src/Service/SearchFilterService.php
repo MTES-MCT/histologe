@@ -330,10 +330,13 @@ class SearchFilterService
             $qb->andWhere('s.villeOccupant IN (:cities)')
                 ->setParameter('cities', $filters['cities']);
         }
+        /*
+        TODO : dateVisite
         if (!empty($filters['visites'])) {
             $qb->andWhere('IF(s.dateVisite IS NOT NULL,1,0) IN (:visites)')
                 ->setParameter('visites', $filters['visites']);
         }
+        */
         if (!empty($filters['enfantsM6'])) {
             $qb->andWhere('IF(s.nbEnfantsM6 IS NOT NULL AND s.nbEnfantsM6 != 0,1,0) IN (:enfantsM6)')
                 ->setParameter('enfantsM6', $filters['enfantsM6']);
@@ -344,9 +347,12 @@ class SearchFilterService
         }
         if (!empty($filters['dates'])) {
             $field = 's.createdAt';
+            /*
+            TODO : dateVisite
             if (!empty($filters['visites'])) {
                 $field = 's.dateVisite';
             }
+            */
             if (!empty($filters['dates']['on'])) {
                 $qb->andWhere($field.' >= :date_in')
                     ->setParameter('date_in', $filters['dates']['on']);

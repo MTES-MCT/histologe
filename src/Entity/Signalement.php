@@ -178,9 +178,6 @@ class Signalement
     #[ORM\Column(type: 'json')]
     private $geoloc = [];
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private $dateVisite;
-
     #[ORM\Column(type: 'boolean', nullable: true)]
     private $isOccupantPresentVisite;
 
@@ -322,6 +319,9 @@ class Signalement
 
     #[ORM\Column]
     private ?float $score = null;
+    
+    #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Intervention::class, orphanRemoval: true)]
+    private Collection $interventions;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $isUsagerAbandonProcedure;
@@ -986,18 +986,6 @@ class Signalement
     public function setUuid(string $uuid): self
     {
         $this->uuid = $uuid;
-
-        return $this;
-    }
-
-    public function getDateVisite(): ?DateTimeImmutable
-    {
-        return $this->dateVisite;
-    }
-
-    public function setDateVisite(?DateTimeImmutable $dateVisite): self
-    {
-        $this->dateVisite = $dateVisite;
 
         return $this;
     }

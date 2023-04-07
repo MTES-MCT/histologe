@@ -67,6 +67,9 @@ class Partner
 
     #[ORM\Column(nullable: true)]
     private ?bool $isEsaboraActive = null;
+    
+    #[ORM\OneToMany(mappedBy: 'partner', targetEntity: Intervention::class)]
+    private Collection $interventions;
 
     #[ORM\OneToMany(mappedBy: 'partner', targetEntity: Intervention::class)]
     private Collection $interventions;
@@ -304,7 +307,7 @@ class Partner
 
         return $this;
     }
-
+    
     public function getInterventions(): Collection
     {
         return $this->interventions;

@@ -175,10 +175,6 @@ class BackSignalementActionController extends AbstractController
                     $signalement->addTag($tag);
                 }
             } else {
-                if ('DateVisite' === $item) {
-                    $value = new DateTimeImmutable($value);
-                    $item = 'La date de visite';
-                }
                 if (!$value) {
                     $value = !(int) $signalement->$getMethod() ?? 1;
                     $return = 1;
