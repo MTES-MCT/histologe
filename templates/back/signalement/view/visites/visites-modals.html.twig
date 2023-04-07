@@ -1,0 +1,55 @@
+<dialog aria-labelledby="fr-modal-title-ajouter-visite-modal" role="dialog" id="ajouter-visite-modal" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                        <button class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="ajouter-visite-modal">Fermer</button>
+                    </div>
+                    <div class="fr-modal__content">
+                        <h1 id="fr-modal-title-ajouter-visite-modal" class="fr-modal__title">Définir une date de visite</h1>
+
+                        <div class="fr-alert fr-alert--warning">
+                            <p>
+                                Si vous choisissez une <strong>date à venir</strong>,
+                                un email sera automatiquement envoyé à l'usager.
+                            </p>
+                        </div>
+
+                        <p>TODO : Formulaire d'ajout de date</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>
+
+{% if signalement.interventions is not empty %}
+    {% if intervention.date|date('U') > 'now'|date('U') %}
+        <dialog aria-labelledby="fr-modal-title-editer-visite-modal-{{intervention.id}}" role="dialog" id="editer-visite-modal-{{intervention.id}}" class="fr-modal">
+            <div class="fr-container fr-container--fluid fr-container-md">
+                <div class="fr-grid-row fr-grid-row--center">
+                    <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                        <div class="fr-modal__body">
+                            <div class="fr-modal__header">
+                                <button class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="editer-visite-modal-{{intervention.id}}">Fermer</button>
+                            </div>
+                            <div class="fr-modal__content">
+                                <h1 id="fr-modal-title-editer-visite-modal-{{intervention.id}}" class="fr-modal__title">Modifier la date de visite</h1>
+
+                                <div class="fr-alert fr-alert--warning">
+                                    <p>
+                                        Si vous choisissez une <strong>date à venir</strong>,
+                                        un email sera automatiquement envoyé à l'usager.
+                                    </p>
+                                </div>
+
+                                <p>TODO : Formulaire de modification de date</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </dialog>
+    {% endif %}
+{% endif %}

@@ -450,7 +450,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->leftJoin('s.criteres', 'criteres')
             ->leftJoin('s.tags', 'tags')
             ->setParameter('group_concat_separator_1', SignalementExport::SEPARATOR_GROUP_CONCAT);
-// TODO : dateVisite
+        // TODO : dateVisite
         return $qb->getQuery()->toIterable();
     }
 

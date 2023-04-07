@@ -695,6 +695,9 @@
         {% else %}
             <hr style="visibility: hidden">
         {% endif %}
+
+        {% include 'back/signalement/view/visites/visites-list.html.twig' %}
+        
         <hr id="suivis">
         {% if (is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted)) and signalement.statut is not same as(1) and signalement.statut is not same as(6) and not isClosedForMe %}
             <div class="fr-grid-row">

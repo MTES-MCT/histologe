@@ -1,0 +1,16 @@
+<div class="signalement-visites-buttons fr-text--right">
+    {% if signalement.interventions is empty %}
+        <a href="#" class="fr-btn fr-btn--sm fr-fi-calendar-line fr-btn--icon-left" aria-controls="ajouter-visite-modal" data-fr-opened="false">
+            Ajouter une visite
+        </a>
+    {% else %}
+        {% if intervention.date|date('U') > 'now'|date('U') %}
+            <a href="#" class="fr-btn fr-btn--sm fr-btn--danger fr-fi-close-line fr-btn--icon-left" onclick="alert('TODO confirm form');">
+                Annuler la visite
+            </a>
+            <a href="#" class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-edit-line fr-btn--icon-left" aria-controls="editer-visite-modal-{{intervention.id}}" data-fr-opened="false">
+                Modifier la date
+            </a>
+        {% endif %}
+    {% endif %}
+</div>
