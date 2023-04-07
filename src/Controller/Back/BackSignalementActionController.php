@@ -45,7 +45,7 @@ class BackSignalementActionController extends AbstractController
                         new NotificationMail(
                             type: NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION,
                             to: $toRecipient,
-                            territory: $signalement->getTerritory,
+                            territory: $signalement->getTerritory(),
                             signalement: $signalement,
                         )
                     );
@@ -60,7 +60,8 @@ class BackSignalementActionController extends AbstractController
                         type: NotificationMailerType::TYPE_SIGNALEMENT_REFUSAL,
                         to: $toRecipients,
                         territory: $signalement->getTerritory(),
-                        motif: $response['suivi']
+                        signalement: $signalement,
+                        motif: $response['suivi'],
                     )
                 );
             }

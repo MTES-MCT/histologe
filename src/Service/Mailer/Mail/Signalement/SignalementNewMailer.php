@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class SignalementNewMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_NEW;
-    protected ?string $mailerSubject = 'Activez votre compte sur Histologe.';
+    protected ?string $mailerSubject = 'Un nouveau signalement vous attend';
     protected ?string $mailerButtonText = 'Voir le signalement';
     protected ?string $mailerTemplate = 'new_signalement_email';
 

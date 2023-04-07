@@ -35,7 +35,7 @@ class AccountTransferMailer extends AbstractNotificationMailer
         $loginLink = $loginLinkDetails->getUrl();
 
         $link = User::STATUS_ACTIVE === $user->getStatut() ?
-            $this->urlGenerator->generate('back_dashboard') :
+            $this->urlGenerator->generate('back_dashboard', [], UrlGeneratorInterface::ABSOLUTE_URL) :
             $loginLink;
 
         return [

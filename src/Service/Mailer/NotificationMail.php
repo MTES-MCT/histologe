@@ -17,7 +17,7 @@ class NotificationMail
         private readonly ?Territory $territory = null,
         private readonly ?User $user = null,
         private readonly ?Signalement $signalement = null,
-        private readonly ?\Throwable $event = null,
+        private readonly mixed $event = null,
         private readonly mixed $attachment = null,
         private readonly ?string $motif = null,
         private readonly ?string $cronLabel = null,
@@ -61,7 +61,7 @@ class NotificationMail
         return $this->signalement;
     }
 
-    public function getEvent(): \Throwable
+    public function getEvent(): mixed
     {
         return $this->event;
     }

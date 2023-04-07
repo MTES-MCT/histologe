@@ -36,7 +36,7 @@ security:
                 signature_properties: [id, email]
                 default_target_path: login_creation_pass
                 failure_path: login_activation_fail
-                max_uses: 1
+                max_uses: 3
                 lifetime: 7200
             remember_me:
                 secret: '%kernel.secret%'

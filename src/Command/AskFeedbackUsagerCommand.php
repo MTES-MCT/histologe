@@ -10,7 +10,6 @@ use App\Repository\SuiviRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use App\Service\Token\TokenGenerator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,7 +17,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsCommand(
     name: 'app:ask-feedback-usager',
@@ -31,8 +29,6 @@ class AskFeedbackUsagerCommand extends Command
     public function __construct(
         private SuiviManager $suiviManager,
         private NotificationMailerRegistry $notificationMailerRegistry,
-        private UrlGeneratorInterface $urlGenerator,
-        private TokenGenerator $tokenGenerator,
         private ParameterBagInterface $parameterBag,
         private SuiviRepository $suiviRepository,
         private SignalementRepository $signalementRepository,
@@ -115,16 +111,5 @@ class AskFeedbackUsagerCommand extends Command
         );
 
         return Command::SUCCESS;
-    }
-
-    private function generateLinkCodeSuivi(string $codeSuivi, string $email): string
-    {
-        return $this->parameterBag->get('host_url').$this->urlGenerator->generate(
-            'front_suivi_signalement',
-            [
-                'code' => $codeSuivi,
-                'from' => $email,
-            ]
-        );
     }
 }
