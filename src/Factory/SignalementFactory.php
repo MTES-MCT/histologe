@@ -63,6 +63,10 @@ class SignalementFactory
                 Signalement::STATUS_ACTIVE === $data['statut'] ? $data['createdAt'] : new \DateTimeImmutable()
             )
             ->setReference($data['reference'])
+<<<<<<< HEAD
+=======
+            ->setIsOccupantPresentVisite((bool) $data['isOccupantPresentVisite'])
+>>>>>>> b1ba351b (add intervention table and migrate date_visite)
             ->setMontantAllocation((float) $data['montantAllocation'])
             ->setCodeProcedure($data['codeProcedure'])
             ->setEtageOccupant($data['etageOccupant'])

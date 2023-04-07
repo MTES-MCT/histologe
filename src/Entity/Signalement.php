@@ -316,6 +316,9 @@ class Signalement
 
     #[ORM\Column]
     private ?float $score = null;
+    
+    #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Intervention::class, orphanRemoval: true)]
+    private Collection $interventions;
 
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Intervention::class, orphanRemoval: true)]
     private Collection $interventions;
