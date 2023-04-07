@@ -15,7 +15,7 @@ class SignalementClosedToOnePartnerMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_PARTNER;
     protected ?string $mailerSubject = '%s a terminé son intervention sur #%s';
-    protected ?string $mailerButtonText = 'Accéder à mon signalement';
+    protected ?string $mailerButtonText = 'Accéder au signalement';
     protected ?string $mailerTemplate = 'closed_to_partner_signalement_email';
 
     public function __construct(
