@@ -29,9 +29,7 @@ class SignalementExportFactory
             ? $data['closedAt']->format(self::DATE_FORMAT)
             : null;
 
-        $dateVisite = $data['dateVisite'] instanceof \DateTimeImmutable
-            ? $data['dateVisite']->format(self::DATE_FORMAT)
-            : null;
+        $dateVisite = 'TODO'; // TODO
 
         $motifCloture = $data['motifCloture'] instanceof MotifCloture ? $data['motifCloture']->label() : null;
         $status = SignalementAffectationHelper::getStatusLabelFrom($user, $data);

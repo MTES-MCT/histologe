@@ -362,41 +362,6 @@
                 <strong class="fr-fi-eye-fill fr-icon--sm fr-text-label--blue-france"> Constatation du
                     signalement</strong>
                 <span class="fr-hint-text">Le signalement doit être constaté afin d'optimiser le temps de traitement</span>
-                <ul class="fr-list--icon-img">
-                    <li>
-                        <strong>Visite effectuée: </strong>
-                        {% if signalement.dateVisite %}
-                            <p class="fr-badge fr-badge--success">{{ signalement.dateVisite|date('d.m.Y') }}</p>
-                        {% else %}
-                            <p class="fr-badge fr-badge--error fr-mb-3v" id="signalement-toggle-visite-calendar">
-                                NON</p>
-                            <form action="{{ path('back_signalement_switch_value',{uuid:signalement.uuid}) }}"
-                                    method="POST" class="needs-validation" novalidate>
-                                <div class="fr-display-inline-flex">
-                                    <div class="fr-input-group">
-                                        <input type="date" class="fr-input" name="value" required>
-                                        <p class="fr-error-text fr-hidden">Vous devez saisir une date valide
-                                            (JJ/MM/AAAA)</p>
-                                    </div>
-                                    <button class="fr-btn fr-fi-check-line" type="submit"></button>
-                                </div>
-                                <input type="hidden" name="item" value="DateVisite">
-                                <input type="hidden" name="_token"
-                                        value="{{ csrf_token('signalement_switch_value_'~signalement.uuid) }}">
-                            </form>
-                        {% endif %}
-                    </li>
-                    {% if signalement.dateVisite %}
-                        <li>
-                            <strong>Occupant présent: </strong>
-                            {% if signalement.isOccupantPresentVisite %}
-                                {{ picto_yes|format('IsOccupantPresentVisite')|raw }}
-                            {% else %}
-                                {{ picto_no|format('IsOccupantPresentVisite')|raw }}
-                            {% endif %}
-                        </li>
-                    {% endif %}
-                </ul>
                 <strong class="fr-fi-alert-fill fr-icon--sm fr-text-label--blue-france"> Ce signalement concerne les
                     points
                     suivants:</strong>

@@ -116,7 +116,6 @@ class SignalementManager extends AbstractManager
                 Signalement::STATUS_ACTIVE === $data['statut'] ? $data['createdAt'] : new \DateTimeImmutable()
             )
             ->setReference($data['reference'])
-            ->setDateVisite($data['dateVisite'])
             ->setIsOccupantPresentVisite((bool) $data['isOccupantPresentVisite'])
             ->setMontantAllocation((float) $data['montantAllocation'])
             ->setCodeProcedure($data['codeProcedure'])

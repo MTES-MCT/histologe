@@ -53,7 +53,6 @@ class SignalementFactoryTest extends KernelTestCase
             'cpOccupant' => $faker->postcode(),
             'villeOccupant' => $faker->city(),
             'inseeOccupant' => $faker->postcode(),
-            'dateVisite' => new \DateTimeImmutable(),
             'isOccupantPresentVisite' => true,
             'etageOccupant' => $faker->randomDigit(),
             'escalierOccupant' => $faker->randomDigit(),
@@ -179,7 +178,7 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEquals($data['closedAt'], $signalement->getClosedAt());
         $this->assertEquals($data['numeroInvariant'], $signalement->getNumeroInvariant());
         $this->assertEquals($data['dateEntree'], $signalement->getDateEntree());
-        $this->assertEquals($data['dateVisite'], $signalement->getDateVisite());
+        // $this->assertEquals($data['dateVisite'], $signalement->getDateVisite()); TODO : dateVisite
         $this->assertEquals($data['origineSignalement'], $signalement->getOrigineSignalement());
         $this->assertEquals($data['typeEnergieLogement'], $signalement->getTypeEnergieLogement());
         $this->assertEquals($data['anneeConstruction'], $signalement->getAnneeConstruction());

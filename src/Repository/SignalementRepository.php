@@ -450,7 +450,6 @@ class SignalementRepository extends ServiceEntityRepository
             s.nomDeclarant,
             s.structureDeclarant,
             s.lienDeclarantOccupant,
-            s.dateVisite,
             s.isOccupantPresentVisite,
             s.modifiedAt,
             s.closedAt,
@@ -463,7 +462,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->leftJoin('s.criteres', 'criteres')
             ->leftJoin('s.tags', 'tags')
             ->setParameter('group_concat_separator_1', SignalementExport::SEPARATOR_GROUP_CONCAT);
-
+// TODO : dateVisite
         return $qb->getQuery()->toIterable();
     }
 
@@ -724,7 +723,9 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function countByVisiteFiltered(StatisticsFilters $statisticsFilters): array
     {
+        // TODO : dateVisite
         $qb = $this->createQueryBuilder('s');
+        /*
         $qb->select('COUNT(s.id) as count')
             ->addSelect('case
             when s.dateVisite IS NULL then \'Non\'
@@ -734,6 +735,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = self::addFiltersToQuery($qb, $statisticsFilters);
 
         $qb->groupBy('visite');
+        */
 
         return $qb->getQuery()
             ->getResult();
