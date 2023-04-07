@@ -19,10 +19,10 @@ class AccountTransferMailer extends AbstractNotificationMailer
     protected ?string $mailerTemplate = 'transfer_account_email';
 
     public function __construct(
-        protected MailerInterface                  $mailer,
-        protected ParameterBagInterface            $parameterBag,
-        protected LoggerInterface                  $logger,
-        protected UrlGeneratorInterface            $urlGenerator,
+        protected MailerInterface $mailer,
+        protected ParameterBagInterface $parameterBag,
+        protected LoggerInterface $logger,
+        protected UrlGeneratorInterface $urlGenerator,
         private readonly LoginLinkHandlerInterface $loginLinkHandler,
     ) {
         parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator);
