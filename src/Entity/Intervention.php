@@ -148,12 +148,12 @@ class Intervention
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): ?InterventionStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): self
+    public function setStatus(InterventionStatus $status): self
     {
         $this->status = $status;
 
