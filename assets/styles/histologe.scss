@@ -460,3 +460,9 @@ table tr.partner-row table {
 #notification-selected-buttons form {
     display: inline-block;
 }
+
+@media (min-width: 768px) {
+    .signalement-visites-buttons {
+        margin-top: -30px;
+    }
+}

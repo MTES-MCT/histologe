@@ -1,0 +1,45 @@
+<div class="fr-grid-row fr-mt-3v fr-mb-3w">
+    <div class="fr-col-12 fr-col-md-6">
+        <div class="fr-mb-3v">
+            {% include 'back/signalement/view/visites/visite-status.html.twig' %}
+        </div>
+        <div class="fr-mb-3v">
+            <strong>Date de visite :</strong>
+            {% if signalement.interventions is empty or intervention.date is empty %}
+                Non renseignée
+            {% else %}
+                {{ intervention.date.format('d/m/Y') }}
+            {% endif %}
+        </div>
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <div class="fr-mb-3v">
+            <strong>Analyse :</strong>
+            {% if signalement.interventions is empty %}
+                <span class="fr-badge fr-badge--no-icon" title="Non disponible">Non disponible</span>
+            {% else %}
+                TODO fichier
+            {% endif %}
+        </div>
+        <div class="fr-mb-3v">
+            <strong>Partenaire</strong>
+            {% if signalement.interventions is empty or intervention.partner is empty %}
+                Non renseigné
+            {% else %}
+                TODO partenaire
+            {% endif %}
+        </div>
+    </div>
+    <div class="fr-col-12">
+        <strong>Commentaire du partenaire :</strong>
+        <div class="fr-highlight fr-mt-3v">
+            <p>
+            {% if signalement.interventions is empty or intervention.details is empty %}
+                Non renseigné
+            {% else %}
+                {{ intervention.details }}
+            {% endif %}
+            </p>
+        </div>
+    </div>
+</div>
