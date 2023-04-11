@@ -18,7 +18,9 @@ use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
@@ -35,7 +37,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/')]
@@ -107,12 +108,11 @@ class FrontSignalementController extends AbstractController
         Request $request,
         ManagerRegistry $doctrine,
         TerritoryRepository $territoryRepository,
-        NotificationService $notificationService,
+        NotificationMailerRegistry $notificationMailerRegistry,
         UploadHandlerService $uploadHandlerService,
         ReferenceGenerator $referenceGenerator,
         PostalCodeHomeChecker $postalCodeHomeChecker,
         EventDispatcherInterface $eventDispatcher,
-        UrlGeneratorInterface $urlGenerator,
         CritereRepository $critereRepository,
         SignalementQualificationFactory $signalementQualificationFactory,
         QualificationStatusService $qualificationStatusService,
@@ -227,7 +227,7 @@ class FrontSignalementController extends AbstractController
             if (!empty($signalement->getCpOccupant())) {
                 $signalement->setTerritory(
                     $territoryRepository->findOneBy([
-                    'zip' => $postalCodeHomeChecker->getZipCode($signalement->getCpOccupant()), 'isActive' => 1, ])
+                        'zip' => $postalCodeHomeChecker->getZipCode($signalement->getCpOccupant()), 'isActive' => 1, ])
                 );
             }
 
@@ -280,22 +280,14 @@ class FrontSignalementController extends AbstractController
 
             $toRecipients = $signalement->getMailUsagers();
             foreach ($toRecipients as $toRecipient) {
-                $notificationService->send(
-                    NotificationService::TYPE_CONFIRM_RECEPTION,
-                    [$toRecipient],
-                    [
-                        'signalement' => $signalement,
-                        'attach' => $attachment ?? null,
-                        'lien_suivi' => $urlGenerator->generate(
-                            'front_suivi_signalement',
-                            [
-                                'code' => $signalement->getCodeSuivi(),
-                                'from' => $toRecipient,
-                            ],
-                            UrlGeneratorInterface::ABSOLUTE_URL
-                        ),
-                    ],
-                    $signalement->getTerritory()
+                $notificationMailerRegistry->send(
+                    new NotificationMail(
+                        type: NotificationMailerType::TYPE_CONFIRM_RECEPTION,
+                        to: $toRecipient,
+                        territory: $signalement->getTerritory(),
+                        signalement: $signalement,
+                        attachment: $attachment ?? null,
+                    )
                 );
             }
 

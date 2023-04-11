@@ -3,19 +3,17 @@
 namespace App\EventSubscriber;
 
 use App\Entity\User;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class UserCreatedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private ParameterBagInterface $parameterBag,
-        private UrlGeneratorInterface $urlGenerator,
-        private NotificationService $notificationService
+        private NotificationMailerRegistry $notificationMailerRegistry
     ) {
     }
 
@@ -39,20 +37,15 @@ class UserCreatedSubscriber implements EventSubscriberInterface
 
     private function sendNotification(User $user): void
     {
-        if (\in_array('ROLE_USER_PARTNER', $user->getRoles()) || \in_array('ROLE_ADMIN_PARTNER', $user->getRoles()) || \in_array('ROLE_ADMIN_TERRITORY', $user->getRoles()) || \in_array('ROLE_ADMIN', $user->getRoles())) {
-            $this->notificationService->send(
-                NotificationService::TYPE_ACCOUNT_ACTIVATION,
-                $user->getEmail(),
-                ['link' => $this->generateLink($user)],
-                $user->getTerritory()
+        if (!\in_array('ROLE_USAGER', $user->getRoles())) {
+            $this->notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_FROM_BO,
+                    to: $user->getEmail(),
+                    territory: $user->getTerritory(),
+                    user: $user,
+                )
             );
         }
-    }
-
-    private function generateLink(User $user): string
-    {
-        return
-            $this->parameterBag->get('host_url').
-            $this->urlGenerator->generate('activate_account', ['token' => $user->getToken()]);
     }
 }

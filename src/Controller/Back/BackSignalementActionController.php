@@ -6,7 +6,9 @@ use App\Entity\Affectation;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Tag;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -22,8 +24,13 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class BackSignalementActionController extends AbstractController
 {
     #[Route('/{uuid}/validation/response', name: 'back_signalement_validation_response', methods: 'GET')]
-    public function validationResponseSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine, UrlGeneratorInterface $urlGenerator, NotificationService $notificationService): Response
-    {
+    public function validationResponseSignalement(
+        Signalement $signalement,
+        Request $request,
+        ManagerRegistry $doctrine,
+        UrlGeneratorInterface $urlGenerator,
+        NotificationMailerRegistry $notificationMailerRegistry
+    ): Response {
         $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_validation_response_'.$signalement->getId(), $request->get('_token'))
             && $response = $request->get('signalement-validation-response')) {
@@ -34,21 +41,13 @@ class BackSignalementActionController extends AbstractController
                 $signalement->setCodeSuivi(md5(uniqid()));
                 $toRecipients = $signalement->getMailUsagers();
                 foreach ($toRecipients as $toRecipient) {
-                    $notificationService->send(
-                        NotificationService::TYPE_SIGNALEMENT_VALIDATION,
-                        [$toRecipient],
-                        [
-                            'signalement' => $signalement,
-                            'lien_suivi' => $urlGenerator->generate(
-                                'front_suivi_signalement',
-                                [
-                                    'code' => $signalement->getCodeSuivi(),
-                                    'from' => $toRecipient,
-                                ],
-                                0
-                            ),
-                        ],
-                        $signalement->getTerritory()
+                    $notificationMailerRegistry->send(
+                        new NotificationMail(
+                            type: NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION,
+                            to: $toRecipient,
+                            territory: $signalement->getTerritory(),
+                            signalement: $signalement,
+                        )
                     );
                 }
             } else {
@@ -56,14 +55,14 @@ class BackSignalementActionController extends AbstractController
                 $description = 'cloturé car non-valide avec le motif suivant :<br>'.$response['suivi'];
 
                 $toRecipients = $signalement->getMailUsagers();
-                $notificationService->send(
-                    NotificationService::TYPE_SIGNALEMENT_REFUSAL,
-                    $toRecipients,
-                    [
-                        'signalement' => $signalement,
-                        'motif' => $response['suivi'],
-                    ],
-                    $signalement->getTerritory()
+                $notificationMailerRegistry->send(
+                    new NotificationMail(
+                        type: NotificationMailerType::TYPE_SIGNALEMENT_REFUSAL,
+                        to: $toRecipients,
+                        territory: $signalement->getTerritory(),
+                        signalement: $signalement,
+                        motif: $response['suivi'],
+                    )
                 );
             }
             $suivi = new Suivi();
@@ -86,8 +85,11 @@ class BackSignalementActionController extends AbstractController
     }
 
     #[Route('/{uuid}/suivi/add', name: 'back_signalement_add_suivi', methods: 'POST')]
-    public function addSuiviSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine, NotificationService $notificationService, UrlGeneratorInterface $urlGenerator): Response
-    {
+    public function addSuiviSignalement(
+        Signalement $signalement,
+        Request $request,
+        ManagerRegistry $doctrine,
+    ): Response {
         $this->denyAccessUnlessGranted('COMMENT_CREATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_add_suivi_'.$signalement->getId(), $request->get('_token'))
             && $form = $request->get('signalement-add-suivi')) {

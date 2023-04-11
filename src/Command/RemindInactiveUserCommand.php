@@ -4,8 +4,9 @@ namespace App\Command;
 
 use App\Entity\User;
 use App\Manager\UserManager;
-use App\Service\NotificationService;
-use App\Service\Token\TokenGenerator;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,9 +24,8 @@ class RemindInactiveUserCommand extends Command
 {
     public function __construct(
         private UserManager $userManager,
-        private NotificationService $notificationService,
+        private NotificationMailerRegistry $notificationMailerRegistry,
         private UrlGeneratorInterface $urlGenerator,
-        private TokenGenerator $tokenGenerator,
         private ParameterBagInterface $parameterBag,
     ) {
         parent::__construct();
@@ -54,32 +54,30 @@ class RemindInactiveUserCommand extends Command
             $user = $this->userManager->loadUserToken($userItem['email']);
             $this->userManager->save($user);
 
-            $link = $this->generateLink($user);
-            $this->notificationService->send(
-                NotificationService::TYPE_ACCOUNT_ACTIVATION,
-                $user->getEmail(),
-                [
-                    'link' => $link,
-                    'nb_signalements' => $userItem['nb_signalements'],
-                    'reminder' => true,
-                ],
-                $user->getTerritory()
+            $this->notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_REMINDER,
+                    to: $user->getEmail(),
+                    territory: $user->getTerritory(),
+                    user: $user,
+                    params: [
+                        'nb_signalements' => $userItem['nb_signalements'],
+                    ],
+                )
             );
         }
 
         $nbUsers = \count($userList);
         $io->success(sprintf('%s users has been notified', $nbUsers));
 
-        $this->notificationService->send(
-            NotificationService::TYPE_CRON,
-            $this->parameterBag->get('admin_email'),
-            [
-                'url' => $this->parameterBag->get('host_url'),
-                'cron_label' => 'demande d\'activation de compte',
-                'count' => $nbUsers,
-                'message' => $nbUsers > 1 ? 'utilisateurs ont été notifiées' : 'utilisateur a été notifiée',
-            ],
-            null
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_CRON,
+                to: $this->parameterBag->get('admin_email'),
+                message: $nbUsers > 1 ? 'utilisateurs ont été notifiées' : 'utilisateur a été notifiée',
+                cronLabel: 'demande d\'activation de compte',
+                cronCount: $nbUsers,
+            )
         );
 
         return Command::SUCCESS;

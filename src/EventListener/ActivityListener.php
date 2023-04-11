@@ -10,7 +10,9 @@ use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\PartnerRepository;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -19,7 +21,6 @@ use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ActivityListener implements EventSubscriberInterface
 {
@@ -28,8 +29,7 @@ class ActivityListener implements EventSubscriberInterface
     private ArrayCollection $tos;
 
     public function __construct(
-        private NotificationService $notifier,
-        private UrlGeneratorInterface $urlGenerator,
+        private NotificationMailerRegistry $notificationMailerRegistry,
         private Security $security,
         private ParameterBagInterface $parameterBag,
         private PartnerRepository $partnerRepository,
@@ -54,11 +54,11 @@ class ActivityListener implements EventSubscriberInterface
         foreach ($this->uow->getScheduledEntityInsertions() as $entity) {
             if ($entity instanceof Signalement) {
                 $this->notifyAdmins($entity, Notification::TYPE_NEW_SIGNALEMENT, $entity->getTerritory());
-                $this->sendMail($entity, NotificationService::TYPE_SIGNALEMENT_NEW);
+                $this->sendMail($entity, NotificationMailerType::TYPE_SIGNALEMENT_NEW);
             } elseif ($entity instanceof Affectation) {
                 $partner = $entity->getPartner();
                 $this->notifyPartner($partner, $entity, Notification::TYPE_AFFECTATION);
-                $this->sendMail($entity, NotificationService::TYPE_ASSIGNMENT_NEW);
+                $this->sendMail($entity, NotificationMailerType::TYPE_ASSIGNMENT_NEW);
             } elseif ($entity instanceof Suivi) {
                 // pas de notification pour un suivi technique
                 if (Suivi::TYPE_TECHNICAL === $entity->getType()) {
@@ -72,7 +72,7 @@ class ActivityListener implements EventSubscriberInterface
                 });
 
                 if (Signalement::STATUS_CLOSED !== $entity->getSignalement()->getStatut()) {
-                    $this->sendMail($entity, NotificationService::TYPE_NEW_COMMENT_BACK);
+                    $this->sendMail($entity, NotificationMailerType::TYPE_NEW_COMMENT_BACK);
                 }
 
                 if ($entity->getIsPublic() && Signalement::STATUS_REFUSED !== $entity->getSignalement()->getStatut()) {
@@ -80,21 +80,13 @@ class ActivityListener implements EventSubscriberInterface
                     if (!$toRecipients->isEmpty() && Signalement::STATUS_CLOSED !== $entity->getSignalement()->getStatut()) {
                         $toRecipients->removeElement($entity->getCreatedBy()?->getEmail());
                         foreach ($toRecipients as $toRecipient) {
-                            $this->notifier->send(
-                                NotificationService::TYPE_NEW_COMMENT_FRONT,
-                                [$toRecipient],
-                                [
-                                    'signalement' => $entity->getSignalement(),
-                                    'lien_suivi' => $this->urlGenerator->generate(
-                                        'front_suivi_signalement',
-                                        [
-                                            'code' => $entity->getSignalement()->getCodeSuivi(),
-                                            'from' => $toRecipient,
-                                        ],
-                                        UrlGeneratorInterface::ABSOLUTE_URL
-                                    ),
-                                ],
-                                $entity->getSignalement()->getTerritory()
+                            $this->notificationMailerRegistry->send(
+                                new NotificationMail(
+                                    type: NotificationMailerType::TYPE_NEW_COMMENT_FRONT,
+                                    to: $toRecipient,
+                                    territory: $entity->getSignalement()->getTerritory(),
+                                    signalement: $entity->getSignalement(),
+                                )
                             );
                         }
                     }
@@ -168,28 +160,19 @@ class ActivityListener implements EventSubscriberInterface
         }
     }
 
-    private function sendMail($entity, $mailType)
+    private function sendMail($entity, $mailType): void
     {
         $options = [];
         $options['entity'] = $entity;
         $sendErrorMail = false;
         if ($entity instanceof Signalement) {
-            /** @var Signalement $signalement */
             $signalement = $entity;
         } else {
             /** @var Signalement $signalement */
             $signalement = $entity->getSignalement();
         }
         if (!$this->tos->isEmpty()) {
-            $uuid = $signalement->getUuid();
-            $options = array_merge($options, [
-                'link' => $this->urlGenerator->generate('back_signalement_view', [
-                    'uuid' => $uuid,
-                ], UrlGeneratorInterface::ABSOLUTE_URL),
-            ]);
-
             $this->removeCurrentUserEmailForNotification();
-
             $this->tos = $this->tos->filter(function ($element) {
                 return '' !== trim($element) && null !== $element;
             });
@@ -197,25 +180,28 @@ class ActivityListener implements EventSubscriberInterface
             if ($this->tos->isEmpty()) {
                 $sendErrorMail = true;
             } else {
-                $this->notifier->send($mailType, array_unique($this->tos->toArray()), $options, $signalement->getTerritory());
+                $this->notificationMailerRegistry->send(
+                    new NotificationMail(
+                        type: $mailType,
+                        to: array_unique($this->tos->toArray()),
+                        territory: $signalement->getTerritory(),
+                        signalement: $signalement,
+                        params: $options,
+                    )
+                );
                 $this->tos->clear();
             }
         } else {
             $sendErrorMail = true;
         }
         if ($sendErrorMail) {
-            $this->notifier->send(
-                NotificationService::TYPE_ERROR_SIGNALEMENT_NO_USER,
-                $this->parameterBag->get('notifications_email'),
-                [
-                    'url' => $this->parameterBag->get('host_url'),
-                    'error' => sprintf(
-                        'Aucun utilisateur est notifiable pour le signalement #%s, notification prévue %s (TYPE_SIGNALEMENT_NEW = 3, TYPE_ASSIGNMENT_NEW = 4, TYPE_NEW_COMMENT_BACK = 10)',
-                        $signalement->getReference(),
-                        $mailType,
-                    ),
-                ],
-                $signalement->getTerritory()
+            $this->notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_ERROR_SIGNALEMENT_NO_USER,
+                    to: $this->parameterBag->get('notifications_email'),
+                    territory: $signalement->getTerritory(),
+                    signalement: $signalement
+                )
             );
         }
     }

@@ -9,13 +9,10 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
-use App\Entity\User;
 use App\Service\SearchFilterService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method Affectation|null find($id, $lockMode = null, $lockVersion = null)
@@ -25,8 +22,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class AffectationRepository extends ServiceEntityRepository
 {
-    public const ARRAY_LIST_PAGE_SIZE = 30;
-
     public function __construct(ManagerRegistry $registry, private SearchFilterService $searchFilterService)
     {
         parent::__construct($registry, Affectation::class);
@@ -61,63 +56,6 @@ class AffectationRepository extends ServiceEntityRepository
             ->groupBy('a.statut')
             ->getQuery()
             ->getResult();
-    }
-
-    public function findByStatusAndOrCityForUser(User|UserInterface|null $user, array $options, int|null $export): Paginator|array
-    {
-        $page = (int) $options['page'];
-        $pageSize = $export ?? self::ARRAY_LIST_PAGE_SIZE;
-        $firstResult = (($page ?: 1) - 1) * $pageSize;
-        $qb = $this->createQueryBuilder('a');
-        $qb->where('s.statut != :status')
-            ->setParameter('status', Signalement::STATUS_ARCHIVED);
-        if (!$export) {
-            $qb->select('a,PARTIAL s.{id,uuid,reference,nomOccupant,prenomOccupant,adresseOccupant,cpOccupant,villeOccupant,score,statut,createdAt,geoloc,territory}');
-        }
-        $qb->leftJoin('a.signalement', 's')
-            ->leftJoin('s.tags', 'tags')
-            ->leftJoin('s.affectations', 'affectations')
-            ->leftJoin('a.partner', 'partner')
-            ->leftJoin('s.suivis', 'suivis')
-            ->leftJoin('s.criteres', 'criteres')
-            ->addSelect('s', 'partner', 'suivis', 'affectations');
-        $stat = $statOr = null;
-        if ($options['statuses']) {
-            foreach ($options['statuses'] as $k => $statu) {
-                if ($statu === (string) Signalement::STATUS_CLOSED) {
-                    $options['statuses'][$k] = Affectation::STATUS_CLOSED;
-                    $options['statuses'][\count($options['statuses'])] = Affectation::STATUS_REFUSED;
-                } elseif ($statu === (string) Signalement::STATUS_ACTIVE) {
-                    $options['statuses'][$k] = Affectation::STATUS_ACCEPTED;
-                } elseif ($statu === (string) Signalement::STATUS_NEED_VALIDATION) {
-                    $options['statuses'][$k] = Affectation::STATUS_WAIT;
-                }
-            }
-            $qb->andWhere('a.statut IN (:statuses)');
-            /* if ($statOr)
-                 $qb->orWhere('a.statut IN (:statuses)');*/
-            $qb->setParameter('statuses', $options['statuses']);
-            unset($options['statuses']);
-        }
-        $qb = $this->searchFilterService->applyFilters($qb, $options);
-        if ($user && $user->getTerritory()) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $user->getTerritory());
-        }
-        if ($user && !$user->isSuperAdmin() && !$user->isTerritoryAdmin()) {
-            $qb->andWhere(':partner IN (partner)')
-                ->setParameter('partner', $user->getPartner());
-        }
-
-        $qb->orderBy('s.createdAt', 'DESC');
-        if (!$export) {
-            $qb->setFirstResult($firstResult)
-                ->setMaxResults($pageSize)
-                ->getQuery();
-
-            return new Paginator($qb, true);
-        }
-
-        return $qb->getQuery()->getResult();
     }
 
     public function countByPartenaireFiltered(StatisticsFilters $statisticsFilters): array

@@ -3,7 +3,9 @@
 namespace App\Command;
 
 use App\Entity\Notification;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -18,9 +20,10 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 )]
 class ClearNotificationCommand extends Command
 {
-    public function __construct(private EntityManagerInterface $entityManager,
-                                private NotificationService $notificationService,
-                                private ParameterBagInterface $parameterBag
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private NotificationMailerRegistry $notificationMailerRegistry,
+        private ParameterBagInterface $parameterBag
     ) {
         parent::__construct();
     }
@@ -38,16 +41,14 @@ class ClearNotificationCommand extends Command
         $nbNotifications = \count($notifications);
         $io->success($nbNotifications.' notification(s) deleted !');
 
-        $this->notificationService->send(
-            NotificationService::TYPE_CRON,
-            $this->parameterBag->get('admin_email'),
-            [
-                'url' => $this->parameterBag->get('host_url'),
-                'cron_label' => 'Suppression des notifications',
-                'count' => $nbNotifications,
-                'message' => $nbNotifications > 1 ? 'notifications ont été supprimées' : 'notification a été supprimée',
-            ],
-            null
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_CRON,
+                to: $this->parameterBag->get('admin_email'),
+                message: $nbNotifications > 1 ? 'notifications ont été supprimées' : 'notification a été supprimée',
+                cronLabel: 'Suppression des notifications',
+                cronCount: $nbNotifications,
+            )
         );
 
         return Command::SUCCESS;

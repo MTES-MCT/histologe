@@ -9,7 +9,9 @@ use App\Manager\PartnerManager;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -166,8 +168,7 @@ class BackPartnerController extends AbstractController
     public function deleteUser(
         Request $request,
         UserManager $userManager,
-        PartnerManager $partnerManager,
-        NotificationService $notificationService
+        NotificationMailerRegistry $notificationMailerRegistry
     ): Response {
         $this->denyAccessUnlessGranted('USER_DELETE', $this->getUser());
         if (
@@ -178,11 +179,12 @@ class BackPartnerController extends AbstractController
             $user = $userManager->find($user_id);
             $user->setStatut(User::STATUS_ARCHIVE);
             $userManager->save($user);
-            $notificationService->send(
-                NotificationService::TYPE_ACCOUNT_DELETE,
-                $user->getEmail(),
-                [],
-                $user->getTerritory()
+            $notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_ACCOUNT_DELETE,
+                    to: $user->getEmail(),
+                    territory: $user->getTerritory()
+                )
             );
             $this->addFlash('success', $user->getNomComplet().' supprimé avec succès !');
 

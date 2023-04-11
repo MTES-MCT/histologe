@@ -6,7 +6,9 @@ use App\Entity\Territory;
 use App\Manager\TerritoryManager;
 use App\Service\Import\CsvParser;
 use App\Service\Import\GridAffectation\GridAffectationLoader;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -30,7 +32,7 @@ class ImportGridAffectationCommand extends Command
         private TerritoryManager $territoryManager,
         private GridAffectationLoader $gridAffectationLoader,
         private UploadHandlerService $uploadHandlerService,
-        private NotificationService $notificationService,
+        private NotificationMailerRegistry $notificationMailerRegistry,
     ) {
         parent::__construct();
     }
@@ -77,19 +79,17 @@ class ImportGridAffectationCommand extends Command
         $this->territoryManager->save($territory);
         $io->success($territory->getName().' has been activated');
 
-        $this->notificationService->send(
-            NotificationService::TYPE_CRON,
-            $this->parameterBag->get('admin_email'),
-            [
-                'url' => $this->parameterBag->get('host_url'),
-                'cron_label' => 'Ouverture de territoire',
-                'message' => sprintf('Félicitation, le térritoire %s est ouvert: %s partenaires et %s utilsateurs ont été crées',
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_CRON,
+                to: $this->parameterBag->get('admin_email'),
+                message: sprintf('Félicitation, le térritoire %s est ouvert: %s partenaires et %s utilsateurs ont été crées',
                     $territory->getName(),
                     $metadata['nb_partners'],
                     $metadata['nb_users']
                 ),
-            ],
-            null
+                cronLabel: 'Ouverture de territoire',
+            )
         );
 
         return Command::SUCCESS;

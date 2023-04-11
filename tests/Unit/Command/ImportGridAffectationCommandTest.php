@@ -7,7 +7,7 @@ use App\Entity\Territory;
 use App\Manager\TerritoryManager;
 use App\Service\Import\CsvParser;
 use App\Service\Import\GridAffectation\GridAffectationLoader;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -49,8 +49,8 @@ class ImportGridAffectationCommandTest extends KernelTestCase
             ->expects($this->once())
             ->method('createTmpFileFromBucket');
 
-        $notificationServiceMock = $this->createMock(NotificationService::class);
-        $notificationServiceMock
+        $notificationMailerRegistryMock = $this->createMock(NotificationMailerRegistry::class);
+        $notificationMailerRegistryMock
             ->expects($this->once())
             ->method('send')
             ->willReturn(true);
@@ -62,7 +62,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
             $territoryManager,
             $gridAffectationLoader,
             $uploadHandlerServiceMock,
-            $notificationServiceMock,
+            $notificationMailerRegistryMock,
         ));
 
         $commandTester = new CommandTester($command);

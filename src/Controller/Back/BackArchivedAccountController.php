@@ -7,29 +7,20 @@ use App\Form\UserType;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
-use App\Security\BackOfficeAuthenticator;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('/bo/comptes-archives')]
 class BackArchivedAccountController extends AbstractController
 {
-    public const DEFAULT_TERRITORY_AIN = 1;
-
-    public function __construct(
-        private UrlGeneratorInterface $urlGenerator,
-        private ParameterBagInterface $parameterBag,
-    ) {
-    }
-
     #[Route('/', name: 'back_account_index', methods: ['GET', 'POST'])]
     public function index(
         Request $request,
@@ -95,7 +86,7 @@ class BackArchivedAccountController extends AbstractController
         TerritoryRepository $territoryRepository,
         PartnerRepository $partnerRepository,
         EntityManagerInterface $entityManager,
-        NotificationService $notificationService,
+        NotificationMailerRegistry $notificationMailerRegistry,
     ): Response {
         $this->denyAccessUnlessGranted('USER_REACTIVE', $this->getUser());
 
@@ -115,17 +106,13 @@ class BackArchivedAccountController extends AbstractController
             $entityManager->flush();
             $this->addFlash('success', 'Réactivation du compte effectuée.');
 
-            $link = $this->generateLink($user);
-
-            $notificationService->send(
-                NotificationService::TYPE_ACCOUNT_REACTIVATION,
-                $user->getEmail(),
-                [
-                    'link' => $link,
-                    'territoire_name' => $user->getTerritory()?->getName(),
-                    'partner_name' => $user->getPartner()->getNom(),
-                ],
-                $user->getTerritory()
+            $notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_ACCOUNT_REACTIVATION,
+                    to: $user->getEmail(),
+                    territory: $user->getTerritory(),
+                    user: $user,
+                )
             );
 
             return $this->redirectToRoute('back_account_index');
@@ -133,7 +120,7 @@ class BackArchivedAccountController extends AbstractController
 
         $this->displayErrors($form);
 
-        return $this->renderForm('back/account/edit.html.twig', [
+        return $this->render('back/account/edit.html.twig', [
             'user' => $user,
             'territories' => $territoryRepository->findAllList(),
             'partners' => $partnerRepository->findAllList(null),
@@ -147,12 +134,5 @@ class BackArchivedAccountController extends AbstractController
         foreach ($form->getErrors(true) as $error) {
             $this->addFlash('error', $error->getMessage());
         }
-    }
-
-    private function generateLink(User $user): string
-    {
-        return
-            $this->parameterBag->get('host_url').
-            $this->urlGenerator->generate(BackOfficeAuthenticator::LOGIN_ROUTE, ['token' => $user->getToken()]);
     }
 }

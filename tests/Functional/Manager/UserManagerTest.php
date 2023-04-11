@@ -10,21 +10,17 @@ use App\Manager\SignalementUsagerManager;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
-use App\Service\NotificationService;
+use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
 class UserManagerTest extends KernelTestCase
 {
-    private LoginLinkHandlerInterface $loginLinkHandler;
-    private NotificationService $notificationService;
-    private UrlGeneratorInterface $urlGenerator;
+    private NotificationMailerRegistry $notificationMailerRegistry;
     private EntityManagerInterface $entityManager;
     private PasswordHasherFactoryInterface $passwordHasherFactory;
     private TokenGeneratorInterface $tokenGenerator;
@@ -38,9 +34,7 @@ class UserManagerTest extends KernelTestCase
     {
         $kernel = self::bootKernel();
 
-        $this->loginLinkHandler = $this->createMock(LoginLinkHandlerInterface::class);
-        $this->notificationService = static::getContainer()->get(NotificationService::class);
-        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
+        $this->notificationMailerRegistry = static::getContainer()->get(NotificationMailerRegistry::class);
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->passwordHasherFactory = static::getContainer()->get(PasswordHasherFactoryInterface::class);
         $this->tokenGenerator = static::getContainer()->get(TokenGeneratorInterface::class);
@@ -53,9 +47,7 @@ class UserManagerTest extends KernelTestCase
     public function testTransferActiveUserToAnotherPartner()
     {
         $userManager = new UserManager(
-            $this->loginLinkHandler,
-            $this->notificationService,
-            $this->urlGenerator,
+            $this->notificationMailerRegistry,
             $this->passwordHasherFactory,
             $this->tokenGenerator,
             $this->parameterBag,
@@ -86,9 +78,7 @@ class UserManagerTest extends KernelTestCase
     public function testTransferInactiveUserToAnotherPartner()
     {
         $userManager = new UserManager(
-            $this->loginLinkHandler,
-            $this->notificationService,
-            $this->urlGenerator,
+            $this->notificationMailerRegistry,
             $this->passwordHasherFactory,
             $this->tokenGenerator,
             $this->parameterBag,
