@@ -1,13 +1,13 @@
 {% if qualificationStatusLabel is same as 'Suspicion Danger occupant' 
     or qualificationStatusLabel is same as 'Suspicion Insalubrité'
-    or qualificationStatusLabel is same as 'Suspicion Manquement à l\'insalubrité'
+    or qualificationStatusLabel is same as 'Suspicion Manquement à la salubrité'
     or qualificationStatusLabel is same as 'Suspicion Non décence/RSD' %}
 
     {% set typeBadge = 'info' %}
     {% if qualificationStatusLabel is same as 'Suspicion Danger occupant' %}
         {% set typeBadge = 'error' %}
     {% elseif qualificationStatusLabel is same as 'Suspicion Insalubrité'
-        or qualificationStatusLabel is same as 'Suspicion Manquement à l\'insalubrité' %}
+        or qualificationStatusLabel is same as 'Suspicion Manquement à la salubrité' %}
         {% set typeBadge = 'warning' %}
     {% endif %}
 

@@ -25,7 +25,7 @@ enum QualificationStatus: string
             'ARCHIVED' => 'archived',
             'DANGER_CHECK' => 'Suspicion Danger occupant',
             'INSALUBRITE_CHECK' => 'Suspicion Insalubrité',
-            'INSALUBRITE_MANQUEMENT_CHECK' => 'Suspicion Manquement à l\'insalubrité',
+            'INSALUBRITE_MANQUEMENT_CHECK' => 'Suspicion Manquement à la salubrité',
             'NDE_AVEREE' => 'Non décence énergétique avérée',
             'NDE_OK' => 'Décence énergétique OK',
             'NDE_CHECK' => 'Non décence énergétique à vérifier',
