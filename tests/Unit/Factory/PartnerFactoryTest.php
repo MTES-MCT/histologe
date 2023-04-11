@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Factory;
 
+use App\Entity\Enum\PartnerType;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Factory\PartnerFactory;
@@ -19,7 +20,8 @@ class PartnerFactoryTest extends KernelTestCase
         $partner = (new PartnerFactory())->createInstanceFrom(
             territory: new Territory(),
             name: 'HTL',
-            email: 'htl@example.com'
+            email: 'htl@example.com',
+            type: PartnerType::ADIL,
         );
 
         $errors = $validator->validate($partner);
@@ -42,7 +44,7 @@ class PartnerFactoryTest extends KernelTestCase
             territory: new Territory(),
             name: 'HTL',
             email: 'htl@example.com',
-            isCommune: true,
+            type: PartnerType::COMMUNE_SCHS,
             insee: '99000, 99001'
         );
 

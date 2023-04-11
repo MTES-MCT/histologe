@@ -2,6 +2,7 @@
 
 namespace App\Factory;
 
+use App\Entity\Enum\PartnerType;
 use App\Entity\Partner;
 use App\Entity\Territory;
 
@@ -15,14 +16,14 @@ class PartnerFactory
         Territory $territory,
         string $name = null,
         string $email = null,
-        bool $isCommune = false,
+        PartnerType $type = null,
         string $insee = null): Partner
     {
         $partner = (new Partner())
             ->setTerritory($territory)
             ->setNom($name)
             ->setEmail($email)
-            ->setIsCommune($isCommune)
+            ->setType($type)
             ->setIsArchive(false);
 
         if (!empty($insee)) {

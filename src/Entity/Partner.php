@@ -35,9 +35,6 @@ class Partner
     #[ORM\Column(type: 'boolean')]
     private $isArchive;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $isCommune;
-
     #[ORM\Column(type: 'json')]
     private $insee = [];
 
@@ -61,6 +58,8 @@ class Partner
 
     #[ORM\Column(type: 'string', enumType: PartnerType::class, nullable: true)]
     private ?PartnerType $type = null;
+
+    private $isCommune;
 
     #[ORM\Column(type: Types::SIMPLE_ARRAY, length: 255, nullable: true, enumType: Qualification::class)]
     private array $competence = [];
@@ -133,22 +132,6 @@ class Partner
     public function setIsArchive(bool $isArchive): self
     {
         $this->isArchive = $isArchive;
-
-        return $this;
-    }
-
-    public function getIsCommune(): ?bool
-    {
-        if (null !== $this->isCommune) {
-            return $this->isCommune;
-        }
-
-        return PartnerType::COMMUNE_SCHS === $this->type;
-    }
-
-    public function setIsCommune(bool $isCommune): self
-    {
-        $this->isCommune = $isCommune;
 
         return $this;
     }
@@ -283,6 +266,11 @@ class Partner
         $this->type = $type;
 
         return $this;
+    }
+
+    public function getIsCommune(): ?bool
+    {
+        return PartnerType::COMMUNE_SCHS === $this->type;
     }
 
     public function getCompetence(): ?array

@@ -40,7 +40,7 @@ class GridAffectationLoader
                     territory: $territory,
                     name: $row[GridAffectationHeader::PARTNER_NAME_INSTITUTION],
                     email: !empty($row[GridAffectationHeader::PARTNER_EMAIL]) ? $row[GridAffectationHeader::PARTNER_EMAIL] : null,
-                    isCommune: !empty($row[GridAffectationHeader::PARTNER_TYPE]) ? true : false,
+                    type: !empty($row[GridAffectationHeader::PARTNER_TYPE]) ? $row[GridAffectationHeader::PARTNER_TYPE] : null,
                     insee: $row[GridAffectationHeader::PARTNER_CODE_INSEE]
                 );
                 $this->partnerManager->save($partner, false);

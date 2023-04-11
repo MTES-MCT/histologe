@@ -3,149 +3,148 @@ partners:
     nom: "Administrateurs Histologe ALL"
     email: "admin@histologe.fr"
     is_archive: 0
-    is_commune: 0
     territory: null
+    type: "AUTRE"
   -
     nom: "Partenaire 13-01"
     email: "partenaire-13-01@histologe.fr"
     is_archive: 0
-    is_commune: 0
     territory: "Bouches-du-Rhône"
     esabora_url: "http://histologe_wiremock:8080/ws/rest"
+    type: "AUTRE"
   -
     nom: "Partenaire 13-02"
     email: "partenaire-13-02@histologe.fr"
     is_archive: 0
-    is_commune: 0
     territory: "Bouches-du-Rhône"
     esabora_url: "http://histologe_wiremock:8080/ws/rest"
+    type: "AUTRE"
   -
     nom: "Partenaire 13-03"
     email: "partenaire-13-03@histologe.fr"
     is_archive: 0
-    is_commune: 0
     territory: "Bouches-du-Rhône"
     esabora_url: "http://histologe_wiremock:8080/ws/rest"
+    type: "AUTRE"
   -
     nom: "Partenaire 13-04"
     email: "partenaire-13-04@histologe.fr"
     is_archive: 0
-    is_commune: 0
     territory: "Bouches-du-Rhône"
     esabora_url: "http://histologe_wiremock:8080/ws/rest"
+    type: "AUTRE"
   -
     nom: "Partenaire 01-01"
     email: "partenaire-01-01@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Ain"
     esabora_url: "http://histologe_wiremock:8080/ws/rest"
+    type: "AUTRE"
   -
     nom: "Partenaire 01-02"
     email: "partenaire-01-02@histologe.fr"
     is_archive: 0
-    is_commune: 1
     insee: "[\"01173\"]"
     territory: "Ain"
+    type: "COMMUNE_SCHS"
   -
     nom: "Partenaire 01-03"
     email: "partenaire-01-03@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Ain"
+    type: "AUTRE"
   -
     nom: "Partenaire 01-04"
     email: "partenaire-01-04@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Ain"
+    type: "AUTRE"
   -
     nom: "Partenaire 2A-01"
     email: "partenaire-2A-01@histologe.fr"
     is_archive: 0
-    is_commune: 1
     insee: "[\"2A247\"]"
     territory: "Corse-du-Sud"
     esabora_url: "http://histologe_wiremock:8080/ws/rest"
+    type: "COMMUNE_SCHS"
   -
     nom: "Partenaire 63-01"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     esabora_url: "http://histologe_wiremock:8080/ws/rest"
+    type: "AUTRE"
   -
     nom: "Partenaire 06-01"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Alpes-Maritimes"
     esabora_url: "http://histologe_wiremock:8080/ws/rest"
+    type: "AUTRE"
   -
     nom: "Partenaire 59-01"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Nord"
     esabora_url: "http://histologe_wiremock:8080/ws/rest"
+    type: "AUTRE"
   -
     nom: "Partenaire 974-01"
     email: "partenaire-01-974@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "La Réunion"
     esabora_url: "http://histologe_wiremock:8080/ws/rest"
+    type: "AUTRE"
   -
     nom: "EMHA - Métropole de Lyon"
     email: "partenaire-01-69@histologe.fr"
     is_archive: 0
-    is_commune: 1
     insee: "[\"69091\", \"69091\", \"69096\", \"69123\", \"69149\", \"69199\",\"69205\", \"69290\", \"69259\", \"69266\", \"69381\", \"69382\", \"69383\", \"69384\", \"69385\", \"69386\", \"69387\", \"69388\", \"69389\", \"69901\"]"
     territory: "Rhône"
+    type: "COMMUNE_SCHS"
   -
     nom: "COR"
     email: "partenaire-02-69@histologe.fr"
     is_archive: 0
-    is_commune: 1
     insee: "[\"69001\", \"69006\", \"69008\", \"69037\", \"69054\", \"69060\", \"69066\", \"69070\", \"69075\", \"69093\", \"69102\", \"69107\", \"69174\", \"69130\", \"69160\", \"69164\", \"69169\", \"69181\", \"69183\", \"69188\", \"69200\", \"69214\", \"69217\", \"69225\", \"69229\", \"69234\", \"69240\", \"69243\", \"69248\", \"69254\", \"69157\"]"
     territory: "Rhône"
+    type: "COMMUNE_SCHS"
   -
     nom: "Commune 69-03 MDL"
     email: "partenaire-03-69@histologe.fr"
     is_archive: 0
-    is_commune: 1
     insee: "[\"69205\"]"
     territory: "Rhône"
+    type: "COMMUNE_SCHS"
   -
     nom: "Commune 69-04 COR"
     email: "partenaire-04-69@histologe.fr"
     is_archive: 0
-    is_commune: 1
     insee: "[\"69054\"]"
     territory: "Rhône"
+    type: "COMMUNE_SCHS"
   -
     nom: "Partenaire 69-05"
     email: "partenaire-05-69@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Rhône"
+    type: "DISPOSITIF_RENOVATION_HABITAT"
   -
     nom: "Partenaire 69-06"
     email: "partenaire-06-69@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Rhône"
+    type: "ADIL"
   -
     nom: "ADIL"
     email: "partenaire-63-01@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "ADIL"
@@ -153,7 +152,6 @@ partners:
     nom: "ALF (OPAH)"
     email: "partenaire-63-02@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "DISPOSITIF_RENOVATION_HABITAT"
@@ -161,7 +159,6 @@ partners:
     nom: "MSA"
     email: "partenaire-63-03@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "CAF_MSA"
@@ -169,7 +166,6 @@ partners:
     nom: "API"
     email: "partenaire-63-04@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "EPCI"
@@ -177,7 +173,6 @@ partners:
     nom: "ARS"
     email: "partenaire-63-05@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "ARS"
@@ -185,7 +180,6 @@ partners:
     nom: "Soliha"
     email: "partenaire-63-06@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "OPERATEUR_VISITES_ET_TRAVAUX"
@@ -193,7 +187,6 @@ partners:
     nom: "BILLOM-CO"
     email: "partenaire-63-07@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "EPCI"
@@ -201,7 +194,6 @@ partners:
     nom: "CAF"
     email: "partenaire-63-08@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "CAF_MSA"
@@ -209,7 +201,6 @@ partners:
     nom: "DDTM"
     email: "partenaire-63-09@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "DDT_M"
@@ -217,7 +208,6 @@ partners:
     nom: "Métropole de Clermont"
     email: "partenaire-63-10@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "EPCI"
@@ -225,7 +215,6 @@ partners:
     nom: "PAYS DE SAINT-ELOY"
     email: "partenaire-63-11@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "EPCI"
@@ -233,7 +222,6 @@ partners:
     nom: "PIG CD"
     email: "partenaire-63-12@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "DISPOSITIF_RENOVATION_HABITAT"
@@ -241,7 +229,6 @@ partners:
     nom: "RLV"
     email: "partenaire-63-13@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "EPCI"
@@ -249,7 +236,6 @@ partners:
     nom: "SCHS CF"
     email: "partenaire-63-14@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "COMMUNE_SCHS"
@@ -257,7 +243,6 @@ partners:
     nom: "SCHS Royat"
     email: "partenaire-63-15@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "COMMUNE_SCHS"
@@ -265,7 +250,6 @@ partners:
     nom: "TDM"
     email: "partenaire-63-16@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "EPCI"
@@ -273,7 +257,6 @@ partners:
     nom: "Urbanis"
     email: "partenaire-63-17@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "OPERATEUR_VISITES_ET_TRAVAUX"
@@ -281,7 +264,6 @@ partners:
     nom: "DDETS"
     email: "partenaire-63-18@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "DDETS"
@@ -289,7 +271,6 @@ partners:
     nom: "ADIL"
     email: "partenaire-89-01@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "ADIL"
@@ -297,7 +278,6 @@ partners:
     nom: "DDT"
     email: "partenaire-89-02@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "DDT_M"
@@ -305,7 +285,6 @@ partners:
     nom: "CAF"
     email: "partenaire-89-03@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "CAF_MSA"
@@ -313,7 +292,6 @@ partners:
     nom: "ARS"
     email: "partenaire-89-04@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "ARS"
@@ -321,7 +299,6 @@ partners:
     nom: "CD"
     email: "partenaire-89-05@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "CONSEIL_DEPARTEMENTAL"
@@ -329,7 +306,6 @@ partners:
     nom: "URBANIS"
     email: "partenaire-89-06@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "OPERATEUR_VISITES_ET_TRAVAUX"
@@ -337,7 +313,6 @@ partners:
     nom: "SOLIHA89"
     email: "partenaire-89-07@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "OPERATEUR_VISITES_ET_TRAVAUX"
@@ -345,7 +320,6 @@ partners:
     nom: "Mairie de Tonnerre"
     email: "partenaire-89-08@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
@@ -353,7 +327,6 @@ partners:
     nom: "Mairie de Avallon"
     email: "partenaire-89-09@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
@@ -361,7 +334,6 @@ partners:
     nom: "CAGS"
     email: "partenaire-89-10@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
@@ -369,7 +341,6 @@ partners:
     nom: "DDTESPP"
     email: "partenaire-89-11@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "DDETS"
@@ -377,7 +348,6 @@ partners:
     nom: "SCHS Auxerre"
     email: "partenaire-89-12@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
@@ -385,7 +355,6 @@ partners:
     nom: "Maison de l'Habitat du Jovinien"
     email: "partenaire-89-13@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
@@ -393,7 +362,6 @@ partners:
     nom: "Mairie de Saint Florentin"
     email: "partenaire-89-14@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
@@ -401,7 +369,6 @@ partners:
     nom: "ADIL MISSION CAF"
     email: "partenaire-89-15@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "ADIL"
@@ -409,7 +376,6 @@ partners:
     nom: "Mairie d'Egriselles le Bocage"
     email: "partenaire-89-16@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
@@ -417,7 +383,6 @@ partners:
     nom: "Mairie d'Epineau les voves"
     email: "partenaire-89-17@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
@@ -425,7 +390,6 @@ partners:
     nom: "Mairie de Saint Fargeau"
     email: "partenaire-89-18@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
@@ -433,7 +397,6 @@ partners:
     nom: "Mairie de Saint Sauveur en Puisaye"
     email: "partenaire-89-19@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
@@ -441,7 +404,6 @@ partners:
     nom: "Mairie de Charbuy"
     email: "partenaire-89-20@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
@@ -449,7 +411,6 @@ partners:
     nom: "Mairie de Tronchoy"
     email: "partenaire-89-21@histologe.fr"
     is_archive: 0
-    is_commune: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"

@@ -127,7 +127,7 @@ class PartnerRepository extends ServiceEntityRepository
             ->setParameter('territory', $signalement->getTerritory())
             ->andWhere(
                 $queryBuilder->expr()->orX(
-                    $queryBuilder->expr()->eq('p.isCommune', 0),
+                    $queryBuilder->expr()->neq('p.type', "'COMMUNE_SCHS'"),
                     $queryBuilder->expr()->like('p.insee', ':insee')
                 )
             )

@@ -25,7 +25,7 @@ class AddPartnerCommandTest extends KernelTestCase
             'territory' => '01',
             'name' => $namePartner,
             'email' => $email,
-            'is_commune' => false,
+            'type' => 'AUTRE',
         ]);
 
         $commandTester->assertCommandIsSuccessful('Name Partner: '.$namePartner.' Email : '.$email);
@@ -50,7 +50,7 @@ class AddPartnerCommandTest extends KernelTestCase
             'territory' => '66',
             'name' => $namePartner,
             'email' => $faker->companyEmail(),
-            'is_commune' => true,
+            'type' => 'COMMUNE_SCHS',
             'insee' => '66136',
         ]);
 
