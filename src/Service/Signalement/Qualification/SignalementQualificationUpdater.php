@@ -72,7 +72,7 @@ class SignalementQualificationUpdater
         }
         $listCriticiteInsalubrite = [];
         foreach ($signalement->getCriticites() as $criticite) {
-            if (\in_array(Qualification::INSALUBRITE->value, $criticite->getQualification())) {
+            if ($criticite->getQualification() && \in_array(Qualification::INSALUBRITE->value, $criticite->getQualification())) {
                 $statusInsalubrite = QualificationStatus::INSALUBRITE_CHECK;
                 $listCriticiteInsalubrite[] = $criticite->getId();
             }
