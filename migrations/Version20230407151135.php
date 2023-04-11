@@ -57,6 +57,7 @@ final class Version20230407151135 extends AbstractMigration
 
         $this->addSql('UPDATE partner SET type = "'.PartnerType::POLICE_GENDARMERIE->name.'" WHERE lower(nom) LIKE "%police%"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::POLICE_GENDARMERIE->name.'" WHERE lower(nom) LIKE "%gendarmerie%"');
+        $this->addSql('UPDATE partner SET type = "'.PartnerType::POLICE_GENDARMERIE->name.'" WHERE nom="PM de Ligueil"');
 
         $this->addSql('UPDATE partner SET type = "'.PartnerType::PREFECTURE->name.'" WHERE lower(nom) LIKE "%prefecture%"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::PREFECTURE->name.'" WHERE lower(nom) LIKE "%préfecture%"');
@@ -83,9 +84,11 @@ final class Version20230407151135 extends AbstractMigration
         $this->addSql('UPDATE partner SET type = "'.PartnerType::ASSOCIATION->name.'" WHERE nom="Marjolaine BOLZER - Mission Locale pays de Conouaille"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::ASSOCIATION->name.'" WHERE nom="Thumette RIOUAL - Educatrice - Association Croix-Rouge - ASLL"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::ASSOCIATION->name.'" WHERE nom="UDAF 08"');
+        $this->addSql('UPDATE partner SET type = "'.PartnerType::ASSOCIATION->name.'" WHERE nom="Udaf"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::ASSOCIATION->name.'" WHERE nom="Valérie BOULC\'H - CLCV"');
 
         $this->addSql('UPDATE partner SET type = "'.PartnerType::AUTRE->name.'" WHERE nom="Administrateurs Histologe ALL"');
+        $this->addSql('UPDATE partner SET type = "'.PartnerType::AUTRE->name.'" WHERE nom="Altair"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::AUTRE->name.'" WHERE nom="Compagnons Bâtisseurs de Provence"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::AUTRE->name.'" WHERE nom="CMS de SISTERON"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::AUTRE->name.'" WHERE nom="SOLIHA-DALO"');
@@ -189,6 +192,9 @@ final class Version20230407151135 extends AbstractMigration
         $this->addSql('UPDATE partner SET type = "'.PartnerType::BAILLEUR_SOCIAL->name.'" WHERE nom="DOMOFRANCE (bailleur social)"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::BAILLEUR_SOCIAL->name.'" WHERE nom="UNICIL"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::BAILLEUR_SOCIAL->name.'" WHERE nom="VILOGIA"');
+        $this->addSql('UPDATE partner SET type = "'.PartnerType::BAILLEUR_SOCIAL->name.'" WHERE nom="Domofrance"');
+        $this->addSql('UPDATE partner SET type = "'.PartnerType::BAILLEUR_SOCIAL->name.'" WHERE nom="Mesolia"');
+        $this->addSql('UPDATE partner SET type = "'.PartnerType::BAILLEUR_SOCIAL->name.'" WHERE nom="Perigord Habitat"');
 
         $this->addSql('UPDATE partner SET type = "'.PartnerType::CONCILIATEURS->name.'" WHERE nom="Commission de conciliation"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::CONCILIATEURS->name.'" WHERE nom="Conciliateur de justice (en attente)"');
@@ -201,6 +207,8 @@ final class Version20230407151135 extends AbstractMigration
         $this->addSql('UPDATE partner SET type = "'.PartnerType::CONCILIATEURS->name.'" WHERE nom="Conciliateur de justice"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::CONCILIATEURS->name.'" WHERE nom="DDETS - Conciliation"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::CONCILIATEURS->name.'" WHERE nom="Médiateur urbain"');
+        $this->addSql('UPDATE partner SET type = "'.PartnerType::CONCILIATEURS->name.'" WHERE nom="commission de conciliation"');
+        $this->addSql('UPDATE partner SET type = "'.PartnerType::CONCILIATEURS->name.'" WHERE nom="conciliateur de justice"');
 
         $this->addSql('UPDATE partner SET type = "'.PartnerType::EPCI->name.'" WHERE nom="EPCI - CARF"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::EPCI->name.'" WHERE nom="EPCI – CAPG"');
@@ -344,7 +352,6 @@ final class Version20230407151135 extends AbstractMigration
         $this->addSql('UPDATE partner SET type = "'.PartnerType::DISPOSITIF_RENOVATION_HABITAT->name.'" WHERE nom="DDT Anah"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::DISPOSITIF_RENOVATION_HABITAT->name.'" WHERE nom="Anah"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::DISPOSITIF_RENOVATION_HABITAT->name.'" WHERE nom="ANAH"');
-        $this->addSql('UPDATE partner SET type = "'.PartnerType::DISPOSITIF_RENOVATION_HABITAT->name.'" WHERE nom="Anah"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::DISPOSITIF_RENOVATION_HABITAT->name.'" WHERE nom="Citémetrie"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::DISPOSITIF_RENOVATION_HABITAT->name.'" WHERE nom="Citémétrie - Cyril BENARD"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::DISPOSITIF_RENOVATION_HABITAT->name.'" WHERE nom="Citémétrie - Paula RODRIGUEZ"');
@@ -386,24 +393,19 @@ final class Version20230407151135 extends AbstractMigration
         $this->addSql('UPDATE partner SET type = "'.PartnerType::DISPOSITIF_RENOVATION_HABITAT->name.'" WHERE nom="URBANIS - AMO-Lot7- Amelio"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::DISPOSITIF_RENOVATION_HABITAT->name.'" WHERE nom="Urbanis - OPAH RU Lesneven"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::DISPOSITIF_RENOVATION_HABITAT->name.'" WHERE nom="URBANIS - Opérateur Amelio France renov"');
+        $this->addSql('UPDATE partner SET type = "'.PartnerType::DISPOSITIF_RENOVATION_HABITAT->name.'" WHERE nom="Expertise & Patrimoine"');
 
         $this->addSql('UPDATE partner SET type = "'.PartnerType::CONSEIL_DEPARTEMENTAL->name.'" WHERE nom="CD Ain"');
-        $this->addSql('UPDATE partner SET type = "'.PartnerType::CONSEIL_DEPARTEMENTAL->name.'" WHERE nom="CD"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::CONSEIL_DEPARTEMENTAL->name.'" WHERE nom="CD"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::CONSEIL_DEPARTEMENTAL->name.'" WHERE nom="CD 08"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::CONSEIL_DEPARTEMENTAL->name.'" WHERE nom="conseil départemental"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::CONSEIL_DEPARTEMENTAL->name.'" WHERE nom="Conseil Départemental"');
-        $this->addSql('UPDATE partner SET type = "'.PartnerType::CONSEIL_DEPARTEMENTAL->name.'" WHERE nom="CD"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::CONSEIL_DEPARTEMENTAL->name.'" WHERE nom="Conseil départemental- Habitat logement"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::CONSEIL_DEPARTEMENTAL->name.'" WHERE nom="CD33"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::CONSEIL_DEPARTEMENTAL->name.'" WHERE nom="CD38"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::CONSEIL_DEPARTEMENTAL->name.'" WHERE nom="CD (Département de la Haute-Loire)"');
-        $this->addSql('UPDATE partner SET type = "'.PartnerType::CONSEIL_DEPARTEMENTAL->name.'" WHERE nom="CD"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::CONSEIL_DEPARTEMENTAL->name.'" WHERE nom="CD - Département"');
-        $this->addSql('UPDATE partner SET type = "'.PartnerType::CONSEIL_DEPARTEMENTAL->name.'" WHERE nom="CD"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::CONSEIL_DEPARTEMENTAL->name.'" WHERE nom="CD 66"');
-        $this->addSql('UPDATE partner SET type = "'.PartnerType::CONSEIL_DEPARTEMENTAL->name.'" WHERE nom="CD"');
-        $this->addSql('UPDATE partner SET type = "'.PartnerType::CONSEIL_DEPARTEMENTAL->name.'" WHERE nom="CD"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::CONSEIL_DEPARTEMENTAL->name.'" WHERE nom="Adeline KERHERVE - AS CDAS"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::CONSEIL_DEPARTEMENTAL->name.'" WHERE nom="Anaïs Hervé - Assistante sociale - CDAS Landerneau"');
         $this->addSql('UPDATE partner SET type = "'.PartnerType::CONSEIL_DEPARTEMENTAL->name.'" WHERE nom="Aude QUELFETER - AS CDAS Quimperlé"');
