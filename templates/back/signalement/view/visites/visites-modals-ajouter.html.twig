@@ -1,0 +1,71 @@
+<dialog aria-labelledby="fr-modal-ajouter-visite-modal" role="dialog" id="ajouter-visite-modal" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <form method="POST" name="signalement-add-visite" id="form-signalement-add-visite" enctype="application/json" action="{{ path('back_signalement_visite_add',{uuid:signalement.uuid}) }}">
+                        
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="ajouter-visite-modal">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="fr-modal-ajouter-visite-modal" class="fr-modal__title">Définir une date de visite</h1>
+
+                            <div class="fr-alert fr-alert--warning">
+                                <p>
+                                    Si vous choisissez une <strong>date à venir</strong>,
+                                    un email sera automatiquement envoyé à l'usager.
+                                </p>
+                            </div>
+
+                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-my-3w">
+                                <div class="fr-col-12 fr-mb-3v">
+                                    <fieldset class="fr-fieldset fr-fieldset--inline">
+                                        <legend class="fr-fieldset__legend fr-text--regular">
+                                            Date de la visite*
+                                        </legend>
+                                        <p id="signalement-add-visite-date-error" class="fr-error-text fr-hidden fr-my-3v">
+                                            Veuillez préciser la date de la visite.
+                                        </p>
+                                        <input type="date" class="fr-input" name="visite-add[date]" required>
+                                    </fieldset>
+                                </div>
+                                <div class="fr-col-12">
+                                    <fieldset class="fr-fieldset fr-fieldset--inline">
+                                        <legend class="fr-fieldset__legend fr-text--regular">
+                                            Opérateur de visite*
+                                        </legend>
+                                        <p id="signalement-add-visite-partner-error" class="fr-error-text fr-hidden fr-my-3v">
+                                            Veuillez sélectionner le partenaire en charge de la visite
+                                        </p>
+                                        <select name="visite-add[partner]" class="fr-select">
+                                            {% for partner in partnersCanVisite %}
+                                                <option value="{{ partner.id }}">{{ partner.nom|upper }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </fieldset>
+                                </div>
+                            </div>                   
+                            <input type="hidden" name="_token" id="signalement-visite-add-token" value="{{ csrf_token('signalement_add_visit_'~signalement.id) }}">
+                        </div>
+                        <div class="fr-modal__footer">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <li>
+                                    <button class="fr-btn fr-fi-checkbox-line fr-btn--secondary" aria-controls="ajouter-visite-modal">
+                                        Annuler
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="fr-btn fr-fi-checkbox-line" type="submit"
+                                            id="form-signalement-add-visite-submit">
+                                        Valider
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</dialog>
