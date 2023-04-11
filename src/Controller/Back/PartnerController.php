@@ -10,6 +10,7 @@ use App\Manager\PartnerManager;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
+use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -120,10 +121,12 @@ class PartnerController extends AbstractController
     public function view(
         Request $request,
         Partner $partner,
-        EntityManagerInterface $entityManager
+        PartnerRepository $partnerRepository,
     ): Response {
         $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
         if ($partner->getIsArchive()) {
+            $this->addFlash('error', 'Ce partenaire est archivé.');
+
             return $this->redirect($this->generateUrl('back_partner_index', [
                 'page' => 1,
                 'territory' => $partner->getTerritory()->getId(),
@@ -132,7 +135,7 @@ class PartnerController extends AbstractController
 
         return $this->renderForm('back/partner/view.html.twig', [
             'partner' => $partner,
-            'partners' => $entityManager->getRepository(Partner::class)->findAllList($partner->getTerritory()),
+            'partners' => $partnerRepository->findAllList($partner->getTerritory()),
         ]);
     }
 
@@ -140,7 +143,8 @@ class PartnerController extends AbstractController
     public function edit(
         Request $request,
         Partner $partner,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        PartnerRepository $partnerRepository,
     ): Response {
         $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
         if ($partner->getIsArchive()) {
@@ -169,7 +173,7 @@ class PartnerController extends AbstractController
 
         return $this->renderForm('back/partner/edit.html.twig', [
             'partner' => $partner,
-            'partners' => $entityManager->getRepository(Partner::class)->findAllList($partner->getTerritory()),
+            'partners' => $partnerRepository->findAllList($partner->getTerritory()),
             'form' => $form,
             'create' => false,
         ]);
@@ -308,21 +312,23 @@ class PartnerController extends AbstractController
     }
 
     #[Route('/checkmail', name: 'back_partner_check_user_email', methods: ['POST'])]
-    public function checkMail(Request $request, EntityManagerInterface $entityManager): Response
-    {
+    public function checkMail(
+        Request $request,
+        UserRepository $userRepository
+    ): Response {
         $this->denyAccessUnlessGranted('USER_CHECKMAIL', $this->getUser());
         if (
             $this->isCsrfTokenValid('partner_checkmail', $request->request->get('_token'))
-            && $entityManager->getRepository(User::class)->findOneBy(['email' => $request->get('email')])
+            && $userRepository->findOneBy(['email' => $request->get('email')])
         ) {
-            return $this->json(['error' => 'email_exist'], 400);
+            return $this->json(['error' => 'email_exist'], Response::HTTP_BAD_REQUEST);
         }
 
         $validator = new EmailValidator();
         $emailValid = $validator->isValid($request->get('email'), new RFCValidation());
 
         if (!$emailValid) {
-            return $this->json(['error' => 'email_unvalid'], 400);
+            return $this->json(['error' => 'email_unvalid'], Response::HTTP_BAD_REQUEST);
         }
 
         return $this->json(['success' => 'email_ok']);

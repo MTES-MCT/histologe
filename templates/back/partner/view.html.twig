@@ -11,12 +11,13 @@
     {% include '_partials/_modal_user_edit.html.twig' %}
     <section class="fr-p-5v">
         <header>
-            <div class="fr-grid-row">
+            <a class="fr-link" href="{{ path('back_partner_index') }}">Retour</a>
+            <div class="fr-grid-row"> 
                 <div class="fr-col-6 fr-text--left">
                     <h1 class="fr-h1 fr-mb-0">{{ partner.nom }}</h1>
                 </div>
                 <div class="fr-col-6 fr-text--right">
-                    <a class="fr-btn fr-btn--icon-left fr-btn--lg fr-fi-edit-line" href="{{ path('back_partner_edit', {'id': partner.id}) }}">Modifier
+                    <a class="fr-btn fr-btn--icon-left fr-btn--md fr-fi-edit-line" href="{{ path('back_partner_edit', {'id': partner.id}) }}">Modifier
                         le partenaire</a>
                 </div>
             </div>
@@ -43,7 +44,7 @@
             <div class="fr-col-6"><b>Compétences :</b>
                 {% if partner.competence %}
                     {% for competence in partner.competence %}
-                        <span class="fr-tag fr-tag--blue-cumulus fr-mb-1v">{{ competence.label }}</span>
+                        <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ competence.label }}</span>
                     {% endfor %}
                 {% else %}
                     /
@@ -89,7 +90,7 @@
                     <h1 class="fr-h1 fr-mb-0">Utilisateurs</h1>
                 </div>
                 <div class="fr-col-6 fr-text--right">
-                    <a href="#" class="fr-btn fr-btn--success fr-btn--icon-left fr-btn--lg fr-fi-add-line"
+                    <a href="#" class="fr-btn fr-btn--success fr-btn--icon-left fr-btn--md fr-fi-add-line"
                         id="partner_users_create" aria-controls="fr-modal-user-create"
                         data-fr-opened="false" data-partnerid="{{ partner.id }}">Ajouter
                         un utilisateur</a>
@@ -114,7 +115,6 @@
             </tr>
             </thead>
             <tbody>
-            {# TODO afficher les archivés si SA ? #}
                 {% for user in partner.users|filter(user => user.id is not null) %}
                     <tr class="user-row">
                         <td>{{ user.getLastLoginAtStr('d/m/Y') }}</td>
@@ -144,7 +144,7 @@
                             {% endif %}
                         </td>
                         <td class="fr-text--right">
-                            <a href="#" class="fr-btn fr-fi-edit-line fr-mt-3v partner-user-edit_btn"
+                            <a href="#" class="fr-btn fr-fi-edit-line fr-mt-3v btn-edit-partner-user"
                             id="partner_users_edit_{{ user.id }}" aria-controls="fr-modal-user-edit"
                             data-fr-opened="false" 
                             data-usernom="{{ user.nom }}" 
@@ -154,10 +154,10 @@
                             data-userid="{{ user.id }}" 
                             data-useremail="{{ user.email }}"></a>
                             {% if is_granted('ROLE_ADMIN_TERRITORY') and app.request.get('_route') is not same as('back_partner_new') %}
-                                <a href="#" class="fr-btn fr-btn--orange fr-fi-upload-2-fill fr-mt-3v partner_user_transfer_btn"
+                                <a href="#" class="fr-btn fr-btn--orange fr-fi-upload-2-fill fr-mt-3v btn-transfer-partner-user"
                                 id="partner_users_transfer_{{ user.id }}" aria-controls="fr-modal-user-transfer"
                                 data-fr-opened="false" data-username="{{ user.nomComplet }}" data-userid="{{ user.id }}"></a>
-                                <a href="#" class="fr-btn fr-btn--danger fr-fi-delete-line fr-mt-3v partner-user-delete_btn"
+                                <a href="#" class="fr-btn fr-btn--danger fr-fi-delete-line fr-mt-3v btn-delete-partner-user"
                                 id="partner_users_delete_{{ user.id }}" aria-controls="fr-modal-user-delete"
                                 data-fr-opened="false" data-username="{{ user.nomComplet }}" data-userid="{{ user.id }}" data-useremail="{{ user.email }}"></a>
                             {% endif %}

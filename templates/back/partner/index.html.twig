@@ -11,7 +11,7 @@
                     <h1 class="fr-h1 fr-mb-0">Partenaires</h1>
                 </div>
                 <div class="fr-col-6 fr-text--right">
-                    <a class="fr-btn fr-btn--success fr-btn--icon-left fr-btn--lg fr-fi-add-circle-line" href="{{ path('back_partner_new') }}">Ajouter
+                    <a class="fr-btn fr-btn--success fr-btn--icon-left fr-btn--md fr-fi-add-circle-line" href="{{ path('back_partner_new') }}">Ajouter
                         un partenaire</a>
                 </div>
             </div>
@@ -81,7 +81,7 @@
                     <td>{{ partner.type ? partner.type.label : (partner.isCommune ? 'Commune':'Partenaire') }}</td>
                     <td>
                         {% if partner.competence %}
-                            <div class="fr-tag fr-background-open--blue-france fr-mb-1v">{{ partner.competence|length }}</div>
+                            <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ partner.competence|length }}</div>
                         {% else %}
                             /
                         {% endif %}
@@ -101,7 +101,7 @@
                     <td class="fr-text--right">
                         <a href="{{ path('back_partner_view', {'id': partner.id}) }}"
                            class="fr-btn fr-fi-arrow-right-line fr-btn--sm"></a>
-                        <a href="#" class="fr-btn fr-btn--danger fr-fi-delete-line fr-btn--sm partner-delete_btn"
+                        <a href="#" class="fr-btn fr-btn--danger fr-fi-delete-line fr-btn--sm btn-delete-partner"
                             id="partners_delete_{{ partner.id }}" aria-controls="fr-modal-partner-delete"
                             data-fr-opened="false" data-partnername="{{ partner.nom }}" data-partnerid="{{ partner.id }}"></a>
                     </td>
