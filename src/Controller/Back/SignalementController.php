@@ -18,6 +18,7 @@ use App\Form\SignalementType;
 use App\Manager\SignalementManager;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
+use App\Repository\PartnerRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
@@ -45,11 +46,12 @@ class SignalementController extends AbstractController
         EventDispatcherInterface $eventDispatcher,
         ParameterBagInterface $parameterBag,
         SignalementQualificationRepository $signalementQualificationRepository,
-        CriticiteRepository $criticiteRepository
+        CriticiteRepository $criticiteRepository,
+        PartnerRepository $partnerRepository
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
         if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
-            $this->addFlash('error', "Ce signalement à été archivé et n'est pas consultable.");
+            $this->addFlash('error', "Ce signalement a été archivé et n'est pas consultable.");
 
             return $this->redirectToRoute('back_index');
         }
@@ -168,6 +170,7 @@ class SignalementController extends AbstractController
             'files' => $files,
             'canEditNDE' => $canEditNDE,
             'listQualificationStatusesLabels' => $listQualificationStatusesLabels,
+            'partnersCanVisite' => $partnerRepository->findPartnersWithQualification(Qualification::VISITES, $signalement->getTerritory()),
         ]);
     }
 

@@ -13,10 +13,12 @@
         </div>
         <div class="fr-mb-3v">
             <strong>Occupant présent :</strong>
-            {% if signalement.interventions is empty %}
+            {% if signalement.interventions is empty or intervention.occupantPresent is empty %}
                 Non renseigné
+            {% elseif intervention.occupantPresent %}
+                Oui
             {% else %}
-                TODO occupant présent
+                Non
             {% endif %}
         </div>
     </div>
@@ -34,7 +36,7 @@
             {% if signalement.interventions is empty or intervention.partner is empty %}
                 Non renseigné
             {% else %}
-                TODO partenaire
+                {{ intervention.partner.nom }}
             {% endif %}
         </div>
     </div>

@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
+use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
@@ -144,5 +145,22 @@ class PartnerRepository extends ServiceEntityRepository
         }
 
         return $queryBuilder->getQuery()->getArrayResult();
+    }
+
+    public function findPartnersWithQualification(Qualification $qualification, ?Territory $territory)
+    {
+        $qb = $this->createQueryBuilder('p');
+        if ($qualification) {
+            $qb->andWhere('p.competence LIKE :qualification')
+                ->setParameter('qualification', "%{$qualification->name}%");
+        }
+        if ($territory) {
+            $qb->andWhere('p.territory = :territory')
+                ->setParameter('territory', $territory);
+        }
+
+        return $qb->indexBy('p', 'p.id')
+            ->getQuery()
+            ->getResult();
     }
 }
