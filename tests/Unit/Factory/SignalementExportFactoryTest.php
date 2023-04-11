@@ -61,7 +61,6 @@ class SignalementExportFactoryTest extends TestCase
             'nomDeclarant' => null,
             'structureDeclarant' => null,
             'lienDeclarantOccupant' => null,
-            'isOccupantPresentVisite' => false,
             'modifiedAt' => new \DateTimeImmutable(),
             'closedAt' => new \DateTimeImmutable(),
             'motifCloture' => MotifCloture::INSALUBRITE,

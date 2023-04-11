@@ -30,6 +30,7 @@ class SignalementExportFactory
             : null;
 
         $dateVisite = 'TODO'; // TODO
+        $isOccupantPresentVisite = 'TODO'; // TODO
 
         $motifCloture = $data['motifCloture'] instanceof MotifCloture ? $data['motifCloture']->label() : null;
         $status = SignalementAffectationHelper::getStatusLabelFrom($user, $data);
@@ -75,7 +76,7 @@ class SignalementExportFactory
             structureDeclarant: $data['structureDeclarant'] ?? '-',
             lienDeclarantOccupant: $data['lienDeclarantOccupant'],
             dateVisite: $dateVisite,
-            isOccupantPresentVisite: 1 == $data['isOccupantPresentVisite'] ? self::OUI : self::NON,
+            isOccupantPresentVisite: $isOccupantPresentVisite,
             modifiedAt: $modifiedAt,
             closedAt: $closedAt,
             motifCloture: $motifCloture

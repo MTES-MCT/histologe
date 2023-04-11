@@ -207,7 +207,6 @@ class Intervention
 
         return $this;
     }
-<<<<<<< HEAD
 
     public function isOccupantPresent(): ?bool
     {
@@ -256,6 +255,4 @@ class Intervention
 
         return $this;
     }
-=======
->>>>>>> 5fac7631 (add intervention table and migrate date_visite)
 }

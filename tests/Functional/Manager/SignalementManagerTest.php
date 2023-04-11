@@ -233,7 +233,6 @@ class SignalementManagerTest extends KernelTestCase
             'cpOccupant' => $faker->postcode(),
             'villeOccupant' => $faker->city(),
             'inseeOccupant' => $faker->postcode(),
-            'isOccupantPresentVisite' => true,
             'etageOccupant' => $faker->randomDigit(),
             'escalierOccupant' => $faker->randomDigit(),
             'numAppartOccupant' => $faker->randomDigit(),
