@@ -10,6 +10,7 @@ class SignalementExport
         public ?string $reference = null,
         public ?string $createdAt = null,
         public ?string $statut = null,
+        public ?string $score = null,
         public ?string $description = null,
         public ?string $nomOccupant = null,
         public ?string $prenomOccupant = null,
@@ -45,13 +46,11 @@ class SignalementExport
         public ?string $nomDeclarant = null,
         public ?string $structureDeclarant = null,
         public ?string $lienDeclarantOccupant = null,
-        public ?string $scoreCreation = null,
         public ?string $dateVisite = null,
         public ?string $isOccupantPresentVisite = null,
         public ?string $modifiedAt = null,
         public ?string $closedAt = null,
         public ?string $motifCloture = null,
-        public ?string $scoreCloture = null,
     ) {
     }
 }

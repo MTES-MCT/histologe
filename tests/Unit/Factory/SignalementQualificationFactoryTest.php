@@ -29,7 +29,7 @@ class SignalementQualificationFactoryTest extends KernelTestCase
         $dataConsoSize = '40';
         $dataHasDPE = '1';
         $dataDateDPE = '2023-01-02';
-        $signalementQualification = (new SignalementQualificationFactory($qualificationStatusServiceMock))->createInstanceFrom(
+        $signalementQualification = (new SignalementQualificationFactory($qualificationStatusServiceMock))->createNDEInstanceFrom(
             signalement: $signalement,
             listNDECriticites: $listNDECriticites,
             dataDateBail: $dataDateBail,

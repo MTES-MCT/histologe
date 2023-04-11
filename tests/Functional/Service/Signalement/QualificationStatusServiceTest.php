@@ -40,10 +40,10 @@ class QualificationStatusServiceTest extends KernelTestCase
         $signalementQualification->setDetails($qualificationNDERequest->getDetails());
         $signalement->setSuperficie($qualificationNDERequest->getSuperficie());
 
-        $qualificationService = new QualificationStatusService();
-        $signalementQualification->setStatus($qualificationService->getNDEStatus($signalementQualification));
+        $qualificationStatusService = new QualificationStatusService();
+        $signalementQualification->setStatus($qualificationStatusService->getNDEStatus($signalementQualification));
 
-        $status = $qualificationService->getNDEStatus($signalementQualification);
+        $status = $qualificationStatusService->getNDEStatus($signalementQualification);
 
         $this->assertEquals($qualificationStatus, $status);
     }

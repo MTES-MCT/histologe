@@ -4,12 +4,12 @@ namespace App\Tests\Functional\Service\Signalement;
 
 use App\Entity\Critere;
 use App\Entity\Signalement;
-use App\Service\Signalement\CriticiteCalculatorService;
+use App\Service\Signalement\CriticiteCalculator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class CriticiteCalculatorServiceTest extends KernelTestCase
+class CriticiteCalculatorTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
     protected ManagerRegistry $managerRegistry;
@@ -27,15 +27,10 @@ class CriticiteCalculatorServiceTest extends KernelTestCase
         $critereRepository = $this->entityManager->getRepository(Critere::class);
         $signalement = $signalementRepository->find(1);
 
-        $score = new CriticiteCalculatorService($signalement, $critereRepository);
-        $oldScore = $score->calculate();
+        $score = new CriticiteCalculator($signalement, $critereRepository);
         $newScore = $score->calculateNewCriticite();
-        $this->assertIsFloat($oldScore);
         $this->assertIsFloat($newScore);
-        $this->assertLessThan($oldScore, $newScore);
-        $this->assertLessThan(101, $oldScore);
         $this->assertLessThan(101, $newScore);
-        $this->assertEquals(36.53, round($oldScore, 2));
         $this->assertEquals(2.87, round($newScore, 2));
     }
 }

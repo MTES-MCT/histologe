@@ -72,7 +72,7 @@ class AffectationRepository extends ServiceEntityRepository
         $qb->where('s.statut != :status')
             ->setParameter('status', Signalement::STATUS_ARCHIVED);
         if (!$export) {
-            $qb->select('a,PARTIAL s.{id,uuid,reference,nomOccupant,prenomOccupant,adresseOccupant,cpOccupant,villeOccupant,scoreCreation,statut,createdAt,geoloc,territory}');
+            $qb->select('a,PARTIAL s.{id,uuid,reference,nomOccupant,prenomOccupant,adresseOccupant,cpOccupant,villeOccupant,score,statut,createdAt,geoloc,territory}');
         }
         $qb->leftJoin('a.signalement', 's')
             ->leftJoin('s.tags', 'tags')

@@ -42,6 +42,15 @@ class SignalementAffectationHelper
         return null;
     }
 
+    public static function getQualificationStatusesFrom(array $data): ?array
+    {
+        if (null !== $data['qualificationsStatuses']) {
+            return explode(SignalementAffectationListView::SEPARATOR_GROUP_CONCAT, $data['qualificationsStatuses']);
+        }
+
+        return null;
+    }
+
     public static function parseAffectations(?string $rawAffectations): ?array
     {
         if (empty($rawAffectations)) {

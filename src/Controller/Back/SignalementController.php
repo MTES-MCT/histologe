@@ -22,7 +22,8 @@ use App\Repository\SignalementQualificationRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
 use App\Security\Voter\UserVoter;
-use App\Service\Signalement\CriticiteCalculatorService;
+use App\Service\Signalement\CriticiteCalculator;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -31,7 +32,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[Route('/bo/signalements')]
 class SignalementController extends AbstractController
@@ -103,9 +103,13 @@ class SignalementController extends AbstractController
 
             return $this->redirectToRoute('back_index');
         }
+        $isDanger = false;
         $criticitesArranged = [];
         foreach ($signalement->getCriticites() as $criticite) {
             $criticitesArranged[$criticite->getCritere()->getSituation()->getLabel()][$criticite->getCritere()->getLabel()] = $criticite;
+            if ($criticite->getIsDanger()) {
+                $isDanger = true;
+            }
         }
 
         $canEditSignalement = false;
@@ -133,6 +137,15 @@ class SignalementController extends AbstractController
         $canEditNDE = $isSignalementNDEActif && $this->isGranted(UserVoter::SEE_NDE, $this->getUser())
         && $canEditSignalement;
 
+        $listQualificationStatusesLabels = [];
+        if (null !== $signalement->getSignalementQualifications()) {
+            foreach ($signalement->getSignalementQualifications() as $qualification) {
+                if (Qualification::NON_DECENCE_ENERGETIQUE->name !== $qualification->getQualification()->name) {
+                    $listQualificationStatusesLabels[] = $qualification->getStatus()->label();
+                }
+            }
+        }
+
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
             'situations' => $criticitesArranged,
@@ -144,6 +157,7 @@ class SignalementController extends AbstractController
             'isClosed' => Signalement::STATUS_CLOSED === $signalement->getStatut(),
             'isClosedForMe' => $isClosedForMe,
             'isRefused' => $isRefused,
+            'isDanger' => $isDanger,
             'signalement' => $signalement,
             'partners' => $partners,
             'clotureForm' => $clotureForm->createView(),
@@ -153,6 +167,7 @@ class SignalementController extends AbstractController
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
             'files' => $files,
             'canEditNDE' => $canEditNDE,
+            'listQualificationStatusesLabels' => $listQualificationStatusesLabels,
         ]);
     }
 
@@ -172,7 +187,7 @@ class SignalementController extends AbstractController
         ManagerRegistry $doctrine,
         SituationRepository $situationRepository,
         CritereRepository $critereRepository,
-        HttpClientInterface $httpClient
+        SignalementQualificationUpdater $signalementQualificationUpdater
     ): Response {
         $title = 'Administration - Edition signalement #'.$signalement->getReference();
         $etats = ['Etat moyen', 'Mauvais état', 'Très mauvais état'];
@@ -183,9 +198,8 @@ class SignalementController extends AbstractController
             if ($form->isValid()) {
                 $signalement->setModifiedBy($this->getUser());
                 $signalement->setModifiedAt(new DateTimeImmutable());
-                $score = new CriticiteCalculatorService($signalement, $critereRepository);
-                $signalement->setScoreCreation($score->calculate());
-                $signalement->setNewScoreCreation($score->calculateNewCriticite());
+                $score = new CriticiteCalculator($signalement, $critereRepository);
+                $signalement->setScore($score->calculateNewCriticite());
                 $data = [];
                 if (\array_key_exists('situation', $form->getExtraData())) {
                     $data['situation'] = $form->getExtraData()['situation'];
@@ -208,6 +222,7 @@ class SignalementController extends AbstractController
                     }
                 }
                 !empty($data['situation']) && $signalement->setJsonContent($data['situation']);
+                $signalementQualificationUpdater->updateQualificationFromScore($signalement);
                 $suivi = new Suivi();
                 $suivi->setCreatedBy($this->getUser());
                 $suivi->setSignalement($signalement);

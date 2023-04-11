@@ -32,18 +32,26 @@
                                 class="fr-btn fr-btn--sm fr-btn--success fr-fi-file-pdf-fill" title="Exporter en PDF"></a>
                         {% endif %}
                     </h1>
-                    {% if signalement.isNotOccupant %}
-                        <small class="fr-background-contrast--red-marianne fr-text-default--error fr-rounded fr-p-1v fr-text--bold {# fr-fi-information-fill fr-badge--icon-left #} fr-pr-3v">&nbsp;
-                            Signalement par un tiers</small>
-                    {% else %}
-                        <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold{# fr-fi-information-fill fr-icon--sm #} fr-pr-3v">&nbsp;
-                            Signalement par l'occupant</small>
-                    {% endif %}                   
-                    {% if can_see_nde_qualification(signalementQualificationNDE) and is_granted('USER_SEE_NDE', app.user) %}     
-                         <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold fr-pr-3v">&nbsp;
-                            Non décence énergétique</small>
-                    {% endif %}                               
                     <text><strong>Déposé le:</strong> {{ signalement.createdAt|format_datetime(locale='fr') }}</text>
+                    <div class="fr-my-3v">
+                        {% if signalement.isNotOccupant %}
+                            <small class="fr-background-contrast--red-marianne fr-text-default--error fr-rounded fr-p-1v fr-text--bold fr-px-3v">
+                                Signalement par un tiers
+                            </small>
+                        {% else %}
+                            <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold fr-px-3v">
+                                Signalement par l'occupant
+                            </small>
+                        {% endif %}                   
+                        {% if can_see_nde_qualification(signalementQualificationNDE) and is_granted('USER_SEE_NDE', app.user) %}     
+                            <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold fr-px-3v">
+                                Non décence énergétique
+                            </small>
+                        {% endif %}
+                        {% for qualificationStatusLabel in listQualificationStatusesLabels %}
+                            {% include '_partials/signalement/qualification.html.twig' with { 'inlist': false } %}
+                        {% endfor %}
+                    </div>
                 </div>
                 <div class="fr-col-12 fr-col-md-6 fr-text--right">
                     {% if isAffected and not isAccepted and not isRefused and not needValidation and  not isClosed and not isClosedForMe %}
@@ -51,8 +59,7 @@
                               class="tinyCheck" id="signalement-affectation-response-form"
                               name="signalement-affectation-response-form" method="POST">
                             <button class="fr-btn fr-fi-checkbox-circle-fill fr-btn--icon-left"
-                                    name="signalement-affectation-response[accept]" value="1"
-                                    {# onclick="return confirm('Êtes-vous certain de vouloir acccepter ce signalement ?')" #}>
+                                    name="signalement-affectation-response[accept]" value="1">
                                 Accepter
                             </button>
                             <a href="#" class="fr-btn fr-btn--danger fr-fi-close-circle-fill fr-btn--icon-left"
@@ -178,11 +185,6 @@
             </div>
         </template>
         <div class="fr-grid-row fr-grid-row--middle fr-my-3v">
-            {# <div class="fr-col-12 fr-col-md-9">
-                <strong class="fr-fi-information-fill fr-icon--sm fr-text-label--blue-france"> Etiquettes</strong>
-                <span class="fr-hint-text">Ci-dessous la liste des étiquettes attribuées à ce signalement. Vous pouvez en ajouter au besoin</span>
-            </div> #}
-
             <div class="fr-col-10 fr-col-md-11" id="tags_active_container">
                 {% set visible = 'fr-hidden' %}
                 {% for tag in signalement.tags %}
@@ -196,22 +198,6 @@
                 {% endfor %}
                 <em class="fr-text-default--warning fr-fi-close-line fr-icon--xs {{ visible }}"> <small>Aucune étiquette
                         attribuée à ce signalement.</small></em>
-                {# <span class="fr-badge fr-badge--blue-cumulus">PROVENANCE ARS</span>
-                <span class="fr-badge fr-badge--blue-ecume">LOCATAIRE MECHANT</span>
-                <span class="fr-badge fr-badge--brown-cafe-creme">COQUILLAGES</span>
-                <span class="fr-badge fr-badge--brown-opera">CRUSTACés</span>
-                <span class="fr-badge fr-badge--brown-caramel">LOREM</span>
-                <span class="fr-badge fr-badge--green-archipel">RSD</span>
-                <span class="fr-badge fr-badge--green-bourgeon">IPSUM</span>
-                <span class="fr-badge fr-badge--green-emeraude">IPSUM</span>
-                <span class="fr-badge fr-badge--green-menthe">IPSUM</span>
-                <span class="fr-badge fr-badge--green-tilleul-verveine">IPSUM</span>
-                <span class="fr-badge fr-badge--orange-terre-battue">IPSUM</span>
-                <span class="fr-badge fr-badge--pink-macaron">IPSUM</span>
-                <span class="fr-badge fr-badge--pink-tuile">IPSUM</span>
-                <span class="fr-badge fr-badge--purple-glycine">IPSUM</span>
-                <span class="fr-badge fr-badge--yellow-moutarde">IPSUM</span>
-                <span class="fr-badge fr-badge--yellow-tournesol">IPSUM</span> #}
             </div>
             <div class="fr-col-2 fr-col-md-1 fr-text--right">
                 <button class="fr-btn fr-fi-equalizer-line" id="tags_select_tooltip_btn"></button>
@@ -261,7 +247,6 @@
             </div>
         </div>
 
-        {# {{ dump(signalement) }} #}
         <div class="fr-grid-row">
             <div class="fr-col-12 fr-col-md-6">
                 {% if signalement.isNotOccupant %}
@@ -330,26 +315,21 @@
                             Consulter le(s) DPE
                         </button>
                     </li>
-                    {# <li>
-                        {{ dump(dpe) }}
-                    </li> #}
                 </ul>
             </div>
             <div class="fr-col-12 fr-col-md-6">
                 <strong class="fr-fi-alert-fill fr-icon--sm fr-text-label--blue-france"> Criticité du
                     signalement</strong>
                 <span class="fr-hint-text">La criticité est calculée automatiquement en fonction des situations signalées.</span>
-                {% if signalement.scoreCreation > 80 %}
+                {% if isDanger %}
                     <p class="fr-badge fr-badge--warning ">danger pour l'occupant détecté</p>
                 {% endif %}
                 <ul class="fr-list--icon-img">
                     <li>
                         <div class="fr-responsive-img fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
-                            <canvas id="slider-criticite" class="fr-col-4"></canvas>
                             <div class="fr-col-8 fr-col--middle">
-                                <text class="fr-display-sm"><span id="score-criticite"></span>%</text>
                             {% if is_granted('ROLE_ADMIN') %}
-                                <text class="fr-display-xs"><span id="new-score-criticite">{{ signalement.newScoreCreation|round(2) }}</span>%</text>
+                                <text class="fr-display-xs"><span id="new-score-criticite">{{ signalement.score|round(2) }}</span>%</text>
                             {% endif %}
                             </div>
                         </div>
@@ -912,30 +892,6 @@
             input.remove()
         })
         {% endif %}
-        opts.renderTicks = {
-            divisions: 3,
-            divWidth: 0.1,
-            divLength: 0.7,
-            divColor: '#333333',
-            subDivisions: 3,
-            subLength: 0.5,
-            subWidth: 0.6,
-            subColor: '#666666'
-        }
-        opts.staticLabels = {
-            font: "10px sans-serif",
-            labels: [0, 33, 66, 100],
-            color: "#000000",
-            fractionDigits: 0
-        }
-        let target = document.getElementById('slider-criticite');
-        let text = document.getElementById('score-criticite');
-        let gauge = new Gauge(target).setOptions(opts);
-        gauge.maxValue = 100;
-        gauge.setMinValue(0);
-        gauge.setTextField(text);
-        gauge.animationSpeed = 1;
-        gauge.set({{ signalement.scoreCreation }});
         {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
         loadMap = async () => {
             let map = L.map('map-signalement-view').setView([{{ signalement.geoloc.lng }}, {{ signalement.geoloc.lat }}], 13);

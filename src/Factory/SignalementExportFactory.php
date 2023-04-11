@@ -40,6 +40,7 @@ class SignalementExportFactory
             reference: $data['reference'],
             createdAt: $createdAt,
             statut: $status,
+            score: $data['score'],
             description: $data['details'],
             nomOccupant: $data['nomOccupant'],
             prenomOccupant: $data['prenomOccupant'],
@@ -75,13 +76,11 @@ class SignalementExportFactory
             nomDeclarant: $data['nomDeclarant'] ?? '-',
             structureDeclarant: $data['structureDeclarant'] ?? '-',
             lienDeclarantOccupant: $data['lienDeclarantOccupant'],
-            scoreCreation: $data['scoreCreation'],
             dateVisite: $dateVisite,
             isOccupantPresentVisite: 1 == $data['isOccupantPresentVisite'] ? self::OUI : self::NON,
             modifiedAt: $modifiedAt,
             closedAt: $closedAt,
-            motifCloture: $motifCloture,
-            scoreCloture: $data['scoreCloture']
+            motifCloture: $motifCloture
         );
     }
 

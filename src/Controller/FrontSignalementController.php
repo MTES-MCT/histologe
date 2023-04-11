@@ -19,8 +19,9 @@ use App\Repository\SituationRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\NotificationService;
-use App\Service\Signalement\CriticiteCalculatorService;
+use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\PostalCodeHomeChecker;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\QualificationStatusService;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\UploadHandlerService;
@@ -116,6 +117,7 @@ class FrontSignalementController extends AbstractController
         SignalementQualificationFactory $signalementQualificationFactory,
         QualificationStatusService $qualificationStatusService,
         ValidatorInterface $validator,
+        SignalementQualificationUpdater $signalementQualificationUpdater
     ): Response {
         if ($this->isCsrfTokenValid('new_signalement', $request->request->get('_token'))
             && $data = $request->get('signalement')) {
@@ -239,9 +241,9 @@ class FrontSignalementController extends AbstractController
             }
             $signalement->setReference($referenceGenerator->generate($signalement->getTerritory()));
 
-            $score = new CriticiteCalculatorService($signalement, $critereRepository);
-            $signalement->setScoreCreation($score->calculate());
-            $signalement->setNewScoreCreation($score->calculateNewCriticite());
+            $score = new CriticiteCalculator($signalement, $critereRepository);
+            $signalement->setScore($score->calculateNewCriticite());
+            $signalementQualificationUpdater->updateQualificationFromScore($signalement);
             $signalement->setCodeSuivi(md5(uniqid()));
 
             // Non-décence énergétique
@@ -254,7 +256,7 @@ class FrontSignalementController extends AbstractController
             if ($isExperimentationTerritory && \count($listNDECriticites) > 0) {
                 $isDateBail2023 = $signalement->getDateEntree()->format('Y') >= 2023 || '2023-01-02' === $dataDateBail || 'Je ne sais pas' === $dataDateBail;
                 if ($isDateBail2023) {
-                    $signalementQualification = $signalementQualificationFactory->createInstanceFrom(
+                    $signalementQualification = $signalementQualificationFactory->createNDEInstanceFrom(
                         signalement: $signalement,
                         listNDECriticites: $listNDECriticites,
                         dataDateBail: $dataDateBail,

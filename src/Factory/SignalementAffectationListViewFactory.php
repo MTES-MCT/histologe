@@ -19,8 +19,7 @@ class SignalementAffectationListViewFactory
             reference: $data['reference'],
             createdAt: $data['createdAt'],
             statut: $status,
-            scoreCreation: $data['scoreCreation'],
-            newScoreCreation: $data['newScoreCreation'],
+            score: $data['score'],
             isNotOccupant: $data['isNotOccupant'],
             nomOccupant: $data['nomOccupant'],
             prenomOccupant: $data['prenomOccupant'],
@@ -29,7 +28,8 @@ class SignalementAffectationListViewFactory
             lastSuiviAt: $data['lastSuiviAt'],
             lastSuiviBy: $data['lastSuiviBy'],
             affectations: $affectations,
-            qualifications: SignalementAffectationHelper::getQualificationFrom($data)
+            qualifications: SignalementAffectationHelper::getQualificationFrom($data),
+            qualificationsStatuses: SignalementAffectationHelper::getQualificationStatusesFrom($data)
         );
     }
 }

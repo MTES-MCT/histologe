@@ -4,6 +4,7 @@ namespace App\Factory;
 
 use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Service\Signalement\QualificationStatusService;
@@ -17,6 +18,19 @@ class SignalementQualificationFactory
     }
 
     public function createInstanceFrom(
+        Qualification $qualification,
+        QualificationStatus $qualificationStatus,
+        array $listCriticites = []
+    ): SignalementQualification {
+        $signalementQualification = new SignalementQualification();
+        $signalementQualification->setQualification($qualification);
+        $signalementQualification->setStatus($qualificationStatus);
+        $signalementQualification->setCriticites($listCriticites);
+
+        return $signalementQualification;
+    }
+
+    public function createNDEInstanceFrom(
         Signalement $signalement,
         array $listNDECriticites = [],
         ?string $dataDateBail = '',

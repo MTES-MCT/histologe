@@ -4,9 +4,8 @@ namespace App\Command;
 
 use App\Entity\Signalement;
 use App\Manager\SignalementManager;
-use App\Repository\CritereRepository;
 use App\Repository\SignalementRepository;
-use App\Service\Signalement\CriticiteCalculatorService;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -15,15 +14,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'app:calculate-new-criticite',
-    description: 'Calculate new criticite score for all signalements',
+    name: 'app:init-qualifications',
+    description: 'Initializes qualifications for existing signalements',
 )]
-class CalculateNewCriticiteCommand extends Command
+class InitQualificationsCommand extends Command
 {
     private const FLUSH_COUNT = 1000;
 
-    public function __construct(private SignalementManager $signalementManager, private CritereRepository $critereRepository)
-    {
+    public function __construct(
+        private SignalementManager $signalementManager,
+        private SignalementQualificationUpdater $signalementQualificationUpdater
+        ) {
         parent::__construct();
     }
 
@@ -36,9 +37,7 @@ class CalculateNewCriticiteCommand extends Command
 
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->signalementManager->getRepository();
-        $signalements = $signalementRepository->findBy([
-            'newScoreCreation' => 0,
-        ]);
+        $signalements = $signalementRepository->findAll();
 
         $progressBar = new ProgressBar($output, \count($signalements));
         $progressBar->start();
@@ -47,8 +46,7 @@ class CalculateNewCriticiteCommand extends Command
         foreach ($signalements as $signalement) {
             ++$totalRead;
             $progressBar->advance();
-            $score = new CriticiteCalculatorService($signalement, $this->critereRepository);
-            $signalement->setNewScoreCreation($score->calculateNewCriticite());
+            $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
 
             if (0 === $totalRead % self::FLUSH_COUNT) {
                 $this->signalementManager->save($signalement);

@@ -8,7 +8,6 @@ use App\Dto\SignalementExport;
 use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
-use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -52,7 +51,7 @@ class SignalementRepository extends ServiceEntityRepository
         $firstResult = $offset;
         $qb = $this->createQueryBuilder('s');
         $qb->select('PARTIAL s.{id,details,uuid,reference,nomOccupant,prenomOccupant,adresseOccupant,cpOccupant,
-        inseeOccupant, villeOccupant,scoreCreation,statut,createdAt,geoloc,territory},
+        inseeOccupant, villeOccupant,score,statut,createdAt,geoloc,territory},
             PARTIAL a.{id,partner,createdAt},
             PARTIAL criteres.{id,label},
             PARTIAL partner.{id,nom}');
@@ -350,8 +349,7 @@ class SignalementRepository extends ServiceEntityRepository
             s.reference,
             s.createdAt,
             s.statut,
-            s.scoreCreation,
-            s.newScoreCreation,
+            s.score,
             s.isNotOccupant,
             s.nomOccupant,
             s.prenomOccupant,
@@ -363,10 +361,11 @@ class SignalementRepository extends ServiceEntityRepository
             GROUP_CONCAT(DISTINCT p.nom SEPARATOR :group_concat_separator) as affectationPartnerName,
             GROUP_CONCAT(DISTINCT a.statut SEPARATOR :group_concat_separator) as affectationStatus,
             GROUP_CONCAT(DISTINCT p.id SEPARATOR :group_concat_separator) as affectationPartnerId,
-            GROUP_CONCAT(DISTINCT sq.qualification SEPARATOR :group_concat_separator) as qualifications')
+            GROUP_CONCAT(DISTINCT sq.qualification SEPARATOR :group_concat_separator) as qualifications,
+            GROUP_CONCAT(DISTINCT sq.status SEPARATOR :group_concat_separator) as qualificationsStatuses')
             ->leftJoin('s.affectations', 'a')
             ->leftJoin('a.partner', 'p')
-            ->leftJoin('s.signalementQualifications', 'sq', 'WITH', 'sq.status = \''.QualificationStatus::NDE_AVEREE->name.'\' OR sq.status = \''.QualificationStatus::NDE_CHECK->name.'\'')
+            ->leftJoin('s.signalementQualifications', 'sq', 'WITH', 'sq.status LIKE \'%AVEREE%\' OR sq.status LIKE \'%CHECK%\'')
             ->where('s.statut != :status')
             ->groupBy('s.id')
             ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
@@ -460,7 +459,6 @@ class SignalementRepository extends ServiceEntityRepository
             s.modifiedAt,
             s.closedAt,
             s.motifCloture,
-            s.scoreCloture,
             GROUP_CONCAT(DISTINCT situations.label SEPARATOR :group_concat_separator_1) as familleSituation,
             GROUP_CONCAT(DISTINCT criteres.label SEPARATOR :group_concat_separator_1) as desordres,
             GROUP_CONCAT(DISTINCT tags.label SEPARATOR :group_concat_separator_1) as etiquettes
@@ -571,7 +569,7 @@ class SignalementRepository extends ServiceEntityRepository
     public function getAverageCriticite(Territory|null $territory, bool $removeImported = false): ?float
     {
         $qb = $this->createQueryBuilder('s');
-        $qb->select('AVG(s.scoreCreation)');
+        $qb->select('AVG(s.score)');
 
         if ($removeImported) {
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
@@ -644,8 +642,8 @@ class SignalementRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s');
 
-        $qb->select('AVG(s.scoreCreation)');
-        $qb->andWhere('s.scoreCreation IS NOT NULL');
+        $qb->select('AVG(s.score)');
+        $qb->andWhere('s.score IS NOT NULL');
 
         $qb = self::addFiltersToQuery($qb, $statisticsFilters);
 
@@ -703,10 +701,9 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
             ->addSelect('case
-                when s.scoreCreation >= 0 and s.scoreCreation < 25 then \''.CriticitePercentStatisticProvider::CRITICITE_VERY_WEAK.'\'
-                when s.scoreCreation >= 25 and s.scoreCreation < 51 then \''.CriticitePercentStatisticProvider::CRITICITE_WEAK.'\'
-                when s.scoreCreation >= 51 and s.scoreCreation <= 75 then \''.CriticitePercentStatisticProvider::CRITICITE_STRONG.'\'
-                else \''.CriticitePercentStatisticProvider::CRITICITE_VERY_STRONG.'\'
+                when s.score >= 0 and s.score < 10 then \''.CriticitePercentStatisticProvider::CRITICITE_VERY_WEAK.'\'
+                when s.score >= 10 and s.score < 30 then \''.CriticitePercentStatisticProvider::CRITICITE_WEAK.'\'
+                else \''.CriticitePercentStatisticProvider::CRITICITE_STRONG.'\'
                 end as range');
 
         $qb = self::addFiltersToQuery($qb, $statisticsFilters);

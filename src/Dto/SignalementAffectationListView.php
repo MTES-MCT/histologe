@@ -3,6 +3,7 @@
 namespace App\Dto;
 
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\QualificationStatus;
 
 class SignalementAffectationListView
 {
@@ -16,8 +17,7 @@ class SignalementAffectationListView
         private ?string $reference = null,
         private ?\DateTimeImmutable $createdAt = null,
         private ?int $statut = null,
-        private ?string $scoreCreation = null,
-        private ?string $newScoreCreation = null,
+        private ?string $score = null,
         private ?bool $isNotOccupant = null,
         private ?string $nomOccupant = null,
         private ?string $prenomOccupant = null,
@@ -27,6 +27,7 @@ class SignalementAffectationListView
         private ?string $lastSuiviBy = null,
         private ?array $affectations = null,
         private ?array $qualifications = null,
+        private ?array $qualificationsStatuses = null,
     ) {
     }
 
@@ -55,14 +56,9 @@ class SignalementAffectationListView
         return $this->statut;
     }
 
-    public function getScoreCreation(): ?string
+    public function getScore(): ?string
     {
-        return $this->scoreCreation;
-    }
-
-    public function getNewScoreCreation(): ?string
-    {
-        return $this->newScoreCreation;
+        return $this->score;
     }
 
     public function getIsNotOccupant(): ?bool
@@ -121,5 +117,35 @@ class SignalementAffectationListView
         }
 
         return false;
+    }
+
+    public function getQualificationsLabels(): array
+    {
+        $listLabels = [];
+
+        if (null !== $this->qualifications) {
+            foreach ($this->qualifications as $qualification) {
+                if (Qualification::NON_DECENCE_ENERGETIQUE->name !== $qualification) {
+                    $listLabels[] = Qualification::tryFrom($qualification)?->label();
+                }
+            }
+        }
+
+        return $listLabels;
+    }
+
+    public function getQualificationsStatusesLabels(): array
+    {
+        $listLabels = [];
+
+        if (null !== $this->qualificationsStatuses) {
+            foreach ($this->qualificationsStatuses as $qualificationStatus) {
+                if (false === strpos(Qualification::NON_DECENCE_ENERGETIQUE->name, 'NDE')) {
+                    $listLabels[] = QualificationStatus::tryFrom($qualificationStatus)?->label();
+                }
+            }
+        }
+
+        return $listLabels;
     }
 }
