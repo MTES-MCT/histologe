@@ -178,9 +178,6 @@ class Signalement
     #[ORM\Column(type: 'json')]
     private $geoloc = [];
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private $isOccupantPresentVisite;
-
     #[ORM\Column(type: 'float', nullable: true)]
     private $montantAllocation;
 
@@ -337,7 +334,6 @@ class Signalement
         $this->createdAt = new DateTimeImmutable();
         $this->statut = self::STATUS_NEED_VALIDATION;
         $this->uuid = Uuid::v4();
-        $this->isOccupantPresentVisite = false;
         $this->suivis = new ArrayCollection();
         $this->score = 0;
         $this->affectations = new ArrayCollection();
@@ -986,18 +982,6 @@ class Signalement
     public function setUuid(string $uuid): self
     {
         $this->uuid = $uuid;
-
-        return $this;
-    }
-
-    public function getIsOccupantPresentVisite(): ?bool
-    {
-        return $this->isOccupantPresentVisite;
-    }
-
-    public function setIsOccupantPresentVisite(?bool $isOccupantPresentVisite): self
-    {
-        $this->isOccupantPresentVisite = $isOccupantPresentVisite;
 
         return $this;
     }

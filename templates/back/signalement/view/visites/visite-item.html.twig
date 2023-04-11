@@ -11,6 +11,14 @@
                 {{ intervention.date.format('d/m/Y') }}
             {% endif %}
         </div>
+        <div class="fr-mb-3v">
+            <strong>Occupant présent :</strong>
+            {% if signalement.interventions is empty %}
+                Non renseigné
+            {% else %}
+                TODO occupant présent
+            {% endif %}
+        </div>
     </div>
     <div class="fr-col-12 fr-col-md-6">
         <div class="fr-mb-3v">
