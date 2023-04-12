@@ -21,6 +21,7 @@ use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -168,6 +169,10 @@ class PartnerType extends AbstractType
                     $commune = $this->communeManager->findOneBy(['codeInsee' => trim($zonePdl)]);
                     if ($commune && $commune->getTerritory() === $partner->getTerritory()) {
                         $commune->setIsZonePermisLouer(true);
+                    } elseif (null === $commune) {
+                        $form->get('zones_pdl')->addError(new FormError('Il n\'existe pas de commune avec le code insee '.trim($zonePdl)));
+                    } elseif ($commune->getTerritory() !== $partner->getTerritory()) {
+                        $form->get('zones_pdl')->addError(new FormError('La commune avec le code insee '.trim($zonePdl).' ne fait pas partie du territoire du partenaire'));
                     }
                 }
             }

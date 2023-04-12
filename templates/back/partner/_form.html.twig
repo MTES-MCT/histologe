@@ -45,6 +45,16 @@
             </div>
         </div>
         <h3 class="fr-h3 fr-mb-0">Périmètre</h3>
+        {% if partner and partner.type is same as enum('App\\Entity\\Enum\\PartnerType').COMMUNE_SCHS %}
+            {% set classePdl = '' %}
+            {% set classeEsabora = '' %}
+        {% elseif partner and partner.type is same as enum('App\\Entity\\Enum\\PartnerType').EPCI %}
+            {% set classePdl = '' %}
+            {% set classeEsabora = 'fr-hidden' %}
+        {% else %}
+            {% set classePdl = 'fr-hidden' %}
+            {% set classeEsabora = 'fr-hidden' %}
+        {% endif %}
         <div class="fr-col-12 fr-mb-5v">
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-12 fr-col-md-6 fr-pl-0 fr-pl-md-0">
@@ -52,15 +62,15 @@
                     {{ form_widget(form.insee) }}
                     <span class="fr-hint-text">Renseignez le ou les codes INSEE, séparés par une virgule. Exemple: 67001, 67002, 67003.</span>
                 </div>
-                <div class="fr-col-12 fr-col-md-6 fr-pl-0 fr-pl-md-0 fr-hidden" id="partner_create_zone_pdl">
+                <div class="fr-col-12 fr-col-md-6 fr-pl-0 fr-pl-md-0 {{classePdl}}" id="partner_create_zone_pdl">
                     <label for="{{ form.zones_pdl.vars.id }}" class="fr-label">Zones permis de louer (facultatif)</label>
                     {{ form_widget(form.zones_pdl) }}
                     <span class="fr-hint-text">Renseignez le ou les codes INSEE des communes concernées, séparées par une virgule. Exemple: 67001, 67002, 67003.</span>
                 </div>
             </div>
         </div>
-        <h3 class="fr-h3 fr-mb-0 fr-hidden" id="partner_create_esabora_title">Interfaçage</h3>
-        <div class="fr-col-12 fr-mb-5v fr-hidden" id="partner_create_esabora_div">
+        <h3 class="fr-h3 fr-mb-0 {{classeEsabora}}" id="partner_create_esabora_title">Interfaçage</h3>
+        <div class="fr-col-12 fr-mb-5v {{classeEsabora}}" id="partner_create_esabora_div">
         {# TODO : ajouter un bouton synchro si édition #}
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-12 fr-col-md-6 fr-pl-0 fr-pl-md-0">
