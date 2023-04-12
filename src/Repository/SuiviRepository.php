@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -75,6 +76,8 @@ class SuiviRepository extends ServiceEntityRepository
         }
         if (null !== $partner) {
             $parameters['partner_id'] = $partner->getId();
+            $parameters['status_wait'] = AffectationStatus::STATUS_WAIT->value;
+            $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
         }
 
         $sql = 'SELECT COUNT(*) as count_signalement
@@ -109,6 +112,8 @@ class SuiviRepository extends ServiceEntityRepository
 
         if (null != $partner) {
             $parameters['partner_id'] = $partner->getId();
+            $parameters['status_wait'] = AffectationStatus::STATUS_WAIT->value;
+            $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
         }
 
         $sql = $this->getSignalementsQuery($territory, $partner);
@@ -172,7 +177,7 @@ class SuiviRepository extends ServiceEntityRepository
 
         if (null != $partner) {
             $wherePartner = 'AND a.partner_id = :partner_id';
-            $innerPartnerJoin = 'INNER JOIN affectation a ON a.signalement_id = su.signalement_id';
+            $innerPartnerJoin = 'INNER JOIN affectation a ON a.signalement_id = su.signalement_id AND a.statut IN (:status_wait, :status_accepted)';
         }
 
         return 'SELECT su.signalement_id, MAX(su.created_at) as last_posted_at
