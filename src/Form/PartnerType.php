@@ -139,7 +139,7 @@ class PartnerType extends AbstractType
                     'class' => 'fr-select',
                 ],
                 'row_attr' => [
-                    'class' => 'fr-input-group',
+                    'class' => !$options['can_edit_territory'] ? 'fr-input-group fr-hidden' : 'fr-input-group',
                 ],
                 'label' => 'Territoire',
                 'required' => true,
@@ -163,15 +163,26 @@ class PartnerType extends AbstractType
             $form = $event->getForm();
 
             if ($form->get('zones_pdl')?->getData()) {
+                if (null === $partner->getTerritory()) {
+                    $options = $form->getConfig()->getOptions();
+                    if ($options['territory']) {
+                        $territory = $options['territory'];
+                    } else {
+                        $territory = $options['data']->getTerritory();
+                    }
+                } else {
+                    $territory = $partner->getTerritory();
+                }
+
                 $zonesPdlList = explode(',', $form->get('zones_pdl')?->getData());
                 foreach ($zonesPdlList as $zonePdl) {
                     /** @var Commune $commune */
                     $commune = $this->communeManager->findOneBy(['codeInsee' => trim($zonePdl)]);
-                    if ($commune && $commune->getTerritory() === $partner->getTerritory()) {
+                    if ($commune && $commune->getTerritory() === $territory) {
                         $commune->setIsZonePermisLouer(true);
                     } elseif (null === $commune) {
                         $form->get('zones_pdl')->addError(new FormError('Il n\'existe pas de commune avec le code insee '.trim($zonePdl)));
-                    } elseif ($commune->getTerritory() !== $partner->getTerritory()) {
+                    } elseif ($commune->getTerritory() !== $territory) {
                         $form->get('zones_pdl')->addError(new FormError('La commune avec le code insee '.trim($zonePdl).' ne fait pas partie du territoire du partenaire'));
                     }
                 }
@@ -226,7 +237,14 @@ class PartnerType extends AbstractType
                 return;
             }
             if (null === $partner->getTerritory()) {
-                return;
+                $options = $context->getRoot()->getConfig()->getOptions();
+                if ($options['territory']) {
+                    $territory = $options['territory'];
+                } else {
+                    $territory = $options['data']->getTerritory();
+                }
+            } else {
+                $territory = $partner->getTerritory();
             }
 
             foreach ($codesInsee as $insee) {
@@ -234,7 +252,7 @@ class PartnerType extends AbstractType
                 $commune = $this->communeManager->findOneBy(['codeInsee' => trim($insee)]);
                 if (null === $commune) {
                     $context->addViolation('Il n\'existe pas de commune avec le code insee '.$insee);
-                } elseif ($commune->getTerritory() !== $partner->getTerritory()) {
+                } elseif ($commune->getTerritory() !== $territory) {
                     $context->addViolation('La commune avec le code insee '.$insee.' ne fait pas partie du territoire du partenaire');
                 }
             }
