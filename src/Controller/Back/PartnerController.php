@@ -183,7 +183,8 @@ class PartnerController extends AbstractController
     public function delete(
         Request $request,
         PartnerManager $partnerManager,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        NotificationMailerRegistry $notificationMailerRegistry
     ): Response {
         $partnerId = $request->request->get('partner_id');
         /** @var Partner $partner */
@@ -196,6 +197,13 @@ class PartnerController extends AbstractController
             foreach ($partner->getUsers() as $user) {
                 $user->setStatut(User::STATUS_ARCHIVE);
                 $entityManager->persist($user);
+                $notificationMailerRegistry->send(
+                    new NotificationMail(
+                        type: NotificationMailerType::TYPE_ACCOUNT_DELETE,
+                        to: $user->getEmail(),
+                        territory: $user->getTerritory()
+                    )
+                );
             }
             $entityManager->persist($partner);
             $entityManager->flush();
