@@ -26,57 +26,57 @@ suivis:
 -
   created_by: admin-01@histologe.fr
   description: "Signalement validé"
-  is_public: 0
+  is_public: 1
   signalement: "2022-5"
   type: 1
 -
   created_by: admin-01@histologe.fr
   description: "Signalement validé"
-  is_public: 0
+  is_public: 1
   signalement: "2022-6"
   type: 1
 -
   created_by: admin-01@histologe.fr
   description: "Signalement validé"
-  is_public: 0
+  is_public: 1
   signalement: "2022-7"
   type: 1
 -
   created_by: admin-01@histologe.fr
   description: "Signalement validé"
   created_at: "2022-03-08 17:06:33"
-  is_public: 0
+  is_public: 1
   signalement: "2022-8"
   type: 1
 -
   created_by: admin-territoire-13-01@histologe.fr
   description: "Ceci est vieux suivi de partenaire 13-01"
   created_at: "2022-06-08 17:06:33"
-  is_public: 0
+  is_public: 1
   signalement: "2022-8"
   type: 3
 -
   created_by: admin-01@histologe.fr
   description: "Signalement validé"
-  is_public: 0
+  is_public: 1
   signalement: "2022-9"
   type: 1
 -
   created_by: admin-01@histologe.fr
   description: "Signalement validé"
-  is_public: 0
+  is_public: 1
   signalement: "2022-10"
   type: 1
 -
   created_by: admin-01@histologe.fr
   description: "Signalement validé"
-  is_public: 0
+  is_public: 1
   signalement: "2022-11"
   type: 1
 -
   created_by: admin-territoire-13-01@histologe.fr
   description: "Le signalement à été refusé avec le motif suivant: <br>Ne me concerne pas, voir avec la DDT."
-  is_public: 0
+  is_public: 1
   signalement: "2022-3"
   type: 1
 -

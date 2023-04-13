@@ -195,8 +195,6 @@ class SuiviRepository extends ServiceEntityRepository
 
         $parameters = [
             'day_period' => $period,
-            'type_suivi_usager' => Suivi::TYPE_USAGER,
-            'type_suivi_partner' => Suivi::TYPE_PARTNER,
             'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
             'status_need_validation' => Signalement::STATUS_NEED_VALIDATION,
             'status_closed' => Signalement::STATUS_CLOSED,
@@ -207,7 +205,7 @@ class SuiviRepository extends ServiceEntityRepository
         $sql = 'SELECT su.signalement_id, MAX(su.created_at) as last_posted_at
         FROM suivi su
         INNER JOIN signalement s on s.id = su.signalement_id
-        WHERE type in (:type_suivi_usager,:type_suivi_partner,:type_suivi_technical)
+        WHERE (su.type = :type_suivi_technical OR su.is_public = 1)
         AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
         AND s.is_imported != 1
         GROUP BY su.signalement_id
