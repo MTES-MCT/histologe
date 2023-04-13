@@ -14,5 +14,5 @@
     {% if inlist %}
         <br>
     {% endif %}
-    <small class="fr-badge {% if inlist %}fr-badge--sm{% endif %} fr-badge--{{ typeBadge }} fr-badge--no-icon fr-mb-1v">{{ qualificationStatusLabel }}</small>
+    <small class="fr-badge {% if inlist %}fr-badge--sm{% endif %} fr-badge--{{ typeBadge }} fr-badge--no-icon fr-mb-1v">{{ qualificationStatusLabel|replace({'Suspicion ': ''}) }}</small>
 {% endif %}
