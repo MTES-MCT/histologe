@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
-use App\Entity\Enum\InterventionStatus;
 use App\Entity\Enum\InterventionType;
+use App\Entity\Intervention;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -37,7 +37,7 @@ final class Version20230407084228 extends AbstractMigration
                         'date' => $dateVisite,
                         'occupant_present' => $isOccupantPresentVisite,
                         'type' => InterventionType::VISITE->name,
-                        'status' => InterventionStatus::PLANNED->name,
+                        'status' => Intervention::STATUS_PLANNED,
                         'documents' => '[]',
                     ]
                 );
