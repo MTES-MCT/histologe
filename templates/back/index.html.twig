@@ -108,13 +108,5 @@
                 {% else %}
                     {{ signalements.list|map(signalement => "#{signalement.score}")|join(', ') }}
                 {% endif %}];
-
-        ids.map((id, index) => {
-            gauge = new Gauge(document.getElementById(`gauge-signalement-${id}`)).setOptions(opts);
-            gauge.set(scores[index]);
-            gauge.maxValue = 100;
-            gauge.setMinValue(0);
-            gauge.animationSpeed = 32;
-        })
     </script>
 {% endblock %}

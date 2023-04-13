@@ -118,11 +118,6 @@ async function getMarkers(offset) {
                         var px = map.project(event.target._popup._latlng); // find the pixel location on the map where the popup anchor is
                         px.y -= event.target._popup._container.clientHeight / 2; // find the height of the popup container, divide by 2, subtract from the Y axis of marker location
                         map.panTo(map.unproject(px), {animate: true}); // pan to new center
-                        gauge = new Gauge(event.popup._wrapper.querySelector(`#gauge-signalement-${layer.options.id}`)).setOptions(opts);
-                        gauge.maxValue = 100;
-                        gauge.set(layer.options.score);
-                        gauge.setMinValue(0);
-                        gauge.animationSpeed = 32;
                     });
                 })
             }
