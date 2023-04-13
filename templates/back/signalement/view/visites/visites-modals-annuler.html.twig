@@ -1,0 +1,55 @@
+<dialog aria-labelledby="fr-modal-annuler-visite-modal-{{intervention.id}}" role="dialog" id="annuler-visite-modal-{{intervention.id}}" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <form method="POST" name="signalement-annuler-visite" enctype="application/json" action="{{ path('back_signalement_visite_cancel',{uuid:signalement.uuid}) }}">
+                        
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button type="button" class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="annuler-visite-modal-{{intervention.id}}">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="fr-modal-annuler-visite-modal-{{intervention.id}}" class="fr-modal__title">Annuler la visite du {{ intervention.date.format('d/m/Y') }}</h1>
+
+                            <div class="fr-alert fr-alert--warning">
+                                <p>
+                                    Un suivi d'annulation sera envoyé à l'usager.
+                                </p>
+                            </div>
+
+                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-my-3w">
+                                <div class="fr-col-12 fr-mb-3v">
+                                    <fieldset class="fr-fieldset fr-fieldset--inline">
+                                        <legend class="fr-fieldset__legend fr-text--regular">
+                                            Motif de l'annulation*
+                                        </legend>
+                                        <p id="signalement-cancel-visite-details-error" class="fr-error-text fr-hidden fr-my-3v">
+                                            Veuillez préciser le motif de l'annulation.
+                                        </p>
+                                        <textarea class="fr-input fr-input--no-resize editor" name="visite-cancel[details]" minlength="10"></textarea>
+                                    </fieldset>
+                                </div>
+                            </div>                   
+                            <input type="hidden" name="visite-cancel[intervention]" value="{{intervention.id}}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('signalement_cancel_visit_'~intervention.id) }}">
+                        </div>
+                        <div class="fr-modal__footer">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <li>
+                                    <button type="button" class="fr-btn fr-fi-checkbox-line fr-btn--secondary" aria-controls="annuler-visite-modal-{{intervention.id}}">
+                                        Annuler
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="submit" class="fr-btn fr-fi-checkbox-line">
+                                        Valider
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</dialog>

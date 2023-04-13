@@ -79,6 +79,9 @@ composer: ## Install composer dependencies
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer install --working-dir=tools/php-cs-fixer  --no-interaction --optimize-autoloader
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer install --working-dir=tools/wiremock  --no-interaction --optimize-autoloader
 
+require: ## Symfony require
+	@$(DOCKER_COMP) exec -it histologe_phpfpm composer require
+
 clear-cache: ## Clear cache prod: make-clear-cache env=[dev|prod|test]
 	@$(DOCKER_COMP) exec -it histologe_phpfpm $(SYMFONY) c:c --env=$(env)
 

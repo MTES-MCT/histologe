@@ -3,19 +3,21 @@
         <a href="#" class="fr-btn fr-btn--sm fr-fi-calendar-line fr-btn--icon-left" aria-controls="ajouter-visite-modal" data-fr-opened="false">
             Ajouter une visite
         </a>
-    {% else %}
-        {% if intervention.date|date('U') > 'now'|date('U') %}
-            <a href="#" class="fr-btn fr-btn--sm fr-btn--danger fr-fi-close-line fr-btn--icon-left" onclick="alert('TODO confirm form');">
+    {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_PLANNED') %}
+        {% if workflow_can(intervention, 'cancel') %}
+            <a href="#" class="fr-btn fr-btn--sm fr-btn--danger fr-fi-close-line fr-btn--icon-left" aria-controls="annuler-visite-modal-{{intervention.id}}" data-fr-opened="false">
                 Annuler la visite
             </a>
         {% endif %}
         <a href="#" class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-edit-line fr-btn--icon-left" aria-controls="editer-visite-modal-{{intervention.id}}" data-fr-opened="false">
             Modifier la date
         </a>
-        {% if intervention.date|date('U') <= 'now'|date('U') %}
+        {% if workflow_can(intervention, 'confirm') %}
             <a href="#" class="fr-btn fr-btn--sm fr-fi-check-line fr-btn--icon-left" aria-controls="confirmer-visite-modal-{{intervention.id}}" data-fr-opened="false">
                 Confirmer la visite
             </a>
         {% endif %}
+    {% else %}
+        &nbsp;
     {% endif %}
 </div>

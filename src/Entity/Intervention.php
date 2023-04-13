@@ -6,6 +6,7 @@ use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProcedureType;
 use App\Repository\InterventionRepository;
+use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -103,6 +104,11 @@ class Intervention
         return $this;
     }
 
+    public function hasDatePassed(): bool
+    {
+        return $this->getDate() <= new DateTime();
+    }
+
     public function getSignalement(): ?Signalement
     {
         return $this->signalement;
@@ -139,12 +145,12 @@ class Intervention
         return $this;
     }
 
-    public function getStatus(): ?InterventionStatus
+    public function getStatus(): ?string
     {
         return $this->status;
     }
 
-    public function setStatus(InterventionStatus $status): self
+    public function setStatus(string $status): self
     {
         $this->status = $status;
 
