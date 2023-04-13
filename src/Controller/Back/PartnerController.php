@@ -103,7 +103,7 @@ class PartnerController extends AbstractController
             }
             $entityManager->persist($partner);
             $entityManager->flush();
-            $this->addFlash('success', 'Mise à jour partenaire effectuée.');
+            $this->addFlash('success', 'Le partenaire a bien été créé.');
 
             return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
         }
