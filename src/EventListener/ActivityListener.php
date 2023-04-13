@@ -234,7 +234,6 @@ class ActivityListener implements EventSubscriberInterface
             $entity->getNotifications()->filter(function (Notification $notification) use ($args) {
                 $args->getObjectManager()->remove($notification);
             });
-            $args->getObjectManager()->flush();
         }
     }
 }

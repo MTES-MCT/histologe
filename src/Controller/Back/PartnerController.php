@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType as EnumPartnerType;
 use App\Entity\Partner;
 use App\Entity\User;
@@ -204,6 +205,14 @@ class PartnerController extends AbstractController
                         territory: $user->getTerritory()
                     )
                 );
+            }
+            // delete affectations "en attente" et "acceptées"
+            $affectations = $partner->getAffectations();
+            foreach ($affectations as $affectation) {
+                if (Affectation::STATUS_ACCEPTED === $affectation->getStatut()
+                || Affectation::STATUS_WAIT === $affectation->getStatut()) {
+                    $partner->removeAffectation($affectation);
+                }
             }
             $entityManager->persist($partner);
             $entityManager->flush();
