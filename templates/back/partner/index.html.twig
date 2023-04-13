@@ -75,7 +75,7 @@
                 <tr class="partner-row">
                     <td>{{ partner.id }}</td>
                     {% if is_granted('ROLE_ADMIN') %}
-                        <td>{{ partner.territory ? partner.territory.id : 0 }}</td>
+                        <td>{{ partner.territory ? partner.territory.zip : 0 }}</td>
                     {% endif %}
                     <td>{{ partner.nom }}</td>
                     <td>{{ partner.type ? partner.type.label : (partner.isCommune ? 'Commune':'Partenaire') }}</td>
