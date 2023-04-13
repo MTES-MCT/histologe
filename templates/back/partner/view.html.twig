@@ -11,7 +11,9 @@
     {% include '_partials/_modal_user_edit.html.twig' %}
     <section class="fr-p-5v">
         <header>
+        {% if is_granted('ROLE_ADMIN_TERRITORY') %}
             <a class="fr-link fr-fi-arrow-left-line fr-link--icon-left" href="{{ path('back_partner_index') }}">Retour</a>
+        {% endif %}            
             <div class="fr-grid-row"> 
                 <div class="fr-col-6 fr-text--left">
                     <h1 class="fr-h1 fr-mb-0">{{ partner.nom }}</h1>
