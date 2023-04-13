@@ -88,7 +88,7 @@ class SignalementManagerTest extends KernelTestCase
         $this->assertArrayHasKey('not_affected', $partners);
 
         $this->assertCount(0, $partners['affected'], '0 partner should be affected');
-        $this->assertCount(17, $partners['not_affected'], '17 partners should not be affected');
+        $this->assertCount(19, $partners['not_affected'], '19 partners should not be affected');
         $firstPartner = $partners['not_affected'][0];
         $this->assertArrayHasKey('competence', $firstPartner);
     }
