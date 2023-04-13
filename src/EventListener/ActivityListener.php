@@ -3,12 +3,14 @@
 namespace App\EventListener;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Notification;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Factory\NotificationFactory;
 use App\Repository\PartnerRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -33,6 +35,7 @@ class ActivityListener implements EventSubscriberInterface
         private Security $security,
         private ParameterBagInterface $parameterBag,
         private PartnerRepository $partnerRepository,
+        private NotificationFactory $notificationFactory,
     ) {
         $this->tos = new ArrayCollection();
         $this->uow = null;
@@ -68,7 +71,10 @@ class ActivityListener implements EventSubscriberInterface
                 $this->notifyAdmins($entity, Notification::TYPE_SUIVI, $entity->getSignalement()->getTerritory());
                 $entity->getSignalement()->getAffectations()->filter(function (Affectation $affectation) use ($entity) {
                     $partner = $affectation->getPartner();
-                    $this->notifyPartner($partner, $entity, Notification::TYPE_SUIVI);
+                    if (AffectationStatus::STATUS_WAIT->value === $affectation->getStatut()
+                        || AffectationStatus::STATUS_ACCEPTED->value === $affectation->getStatut()) {
+                        $this->notifyPartner($partner, $entity, Notification::TYPE_SUIVI);
+                    }
                 });
 
                 if (Signalement::STATUS_CLOSED !== $entity->getSignalement()->getStatut()) {
@@ -139,19 +145,14 @@ class ActivityListener implements EventSubscriberInterface
         }
     }
 
-    private function createInAppNotification($user, $entity, $type)
+    private function createInAppNotification($user, $entity, $type): void
     {
         if (!$entity instanceof Suivi && Notification::TYPE_SUIVI !== $type) {
             return;
         }
 
         if (Suivi::DESCRIPTION_SIGNALEMENT_VALIDE !== $entity->getDescription()) {
-            $notification = (new Notification())
-                ->setUser($user)
-                ->setSuivi($entity)
-                ->setSignalement($entity->getSignalement())
-                ->setType($type);
-
+            $notification = $this->notificationFactory->createInstanceFrom($user, $entity);
             $this->em->persist($notification);
             $this->uow->computeChangeSet(
                 $this->em->getClassMetadata(Notification::class),

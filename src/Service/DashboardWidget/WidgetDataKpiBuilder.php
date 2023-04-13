@@ -92,9 +92,6 @@ class WidgetDataKpiBuilder
             );
             $newNDE = isset($countSignalementByStatus[Signalement::STATUS_NEED_VALIDATION]) ? $countSignalementByStatus[Signalement::STATUS_NEED_VALIDATION]['count'] : 0;
             $currentNDE = isset($countSignalementByStatus[Signalement::STATUS_ACTIVE]) ? $countSignalementByStatus[Signalement::STATUS_ACTIVE]['count'] : 0;
-            $this->countSignalement
-                ->setNewNDE($newNDE)
-                ->setCurrentNDE($currentNDE);
         } else {
             $countAffectationByStatus = $this->affectationRepository->countByStatusForUser(
                 $this->user,
@@ -104,11 +101,9 @@ class WidgetDataKpiBuilder
             );
             $newNDE = isset($countAffectationByStatus[Affectation::STATUS_WAIT]) ? $countAffectationByStatus[Affectation::STATUS_WAIT]['count'] : 0;
             $currentNDE = isset($countAffectationByStatus[Affectation::STATUS_ACCEPTED]) ? $countAffectationByStatus[Affectation::STATUS_ACCEPTED]['count'] : 0;
-
-            $this->countSignalement
-                ->setNewNDE($newNDE)
-                ->setCurrentNDE($currentNDE);
         }
+
+        $this->countSignalement->setNewNDE($newNDE)->setCurrentNDE($currentNDE);
 
         return $this;
     }
