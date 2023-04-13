@@ -6,7 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Service\Esabora\DossierResponse;
-use App\Service\Esabora\EsaboraService;
+use App\Service\Esabora\EsaboraSCHSService;
 use App\Service\UploadHandlerService;
 use App\Tests\FileHelper;
 use App\Tests\Unit\Messenger\DossierMessageTrait;
@@ -45,7 +45,7 @@ class EsaboraServiceTest extends KernelTestCase
             ->method('getTmpFilepath')
             ->willReturn($this->tempFilepath);
 
-        $esaboraService = new EsaboraService($mockHttpClient, $this->uploadHandlerService, $this->logger);
+        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->uploadHandlerService, $this->logger);
         $response = $esaboraService->pushDossier($this->getDossierMessage());
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
@@ -60,7 +60,7 @@ class EsaboraServiceTest extends KernelTestCase
             ->expects($this->atLeast(1))
             ->method('getTmpFilepath')
             ->willReturn($this->tempFilepath);
-        $esaboraService = new EsaboraService($mockHttpClient, $this->uploadHandlerService, $this->logger);
+        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->uploadHandlerService, $this->logger);
         $response = $esaboraService->pushDossier($this->getDossierMessage());
 
         $this->assertEquals(Response::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
@@ -72,7 +72,7 @@ class EsaboraServiceTest extends KernelTestCase
         $mockResponse = new MockResponse(file_get_contents($filepath));
 
         $mockHttpClient = new MockHttpClient($mockResponse);
-        $esaboraService = new EsaboraService($mockHttpClient, $this->uploadHandlerService, $this->logger);
+        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->uploadHandlerService, $this->logger);
         $dossierResponse = $esaboraService->getStateDossier($this->getAffectation());
 
         $this->assertInstanceOf(DossierResponse::class, $dossierResponse);
@@ -88,7 +88,7 @@ class EsaboraServiceTest extends KernelTestCase
             throw new TransportException();
         });
 
-        $esaboraService = new EsaboraService($mockHttpClient, $this->uploadHandlerService, $this->logger);
+        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->uploadHandlerService, $this->logger);
         $dossierResponse = $esaboraService->getStateDossier($this->getAffectation());
         $this->assertEquals(Response::HTTP_SERVICE_UNAVAILABLE, $dossierResponse->getStatusCode());
     }
@@ -103,7 +103,7 @@ class EsaboraServiceTest extends KernelTestCase
             ->expects($this->atLeast(1))
             ->method('getTmpFilepath')
             ->willReturn($this->tempFilepath);
-        $esaboraService = new EsaboraService($mockHttpClient, $this->uploadHandlerService, $this->logger);
+        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->uploadHandlerService, $this->logger);
         $response = $esaboraService->pushDossier($this->getDossierMessage());
         $this->assertEquals(Response::HTTP_SERVICE_UNAVAILABLE, $response->getStatusCode());
     }

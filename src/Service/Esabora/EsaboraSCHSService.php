@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
-class EsaboraService
+class EsaboraSCHSService
 {
     public const ESABORA_WAIT = 'A traiter';
     public const ESABORA_ACCEPTED = 'Importé';

@@ -30,19 +30,19 @@ class JobEventRepository extends ServiceEntityRepository
         ?Territory $territory
     ): array {
         $qb = $this->createQueryBuilder('j')
-            ->select('MAX(j.createdAt) AS last_event, p.id, p.nom, s.reference, j.status, j.title, j.response')
+            ->select('MAX(j.createdAt) AS last_event, p.id, p.nom, s.reference, j.status, j.action, j.response')
             ->innerJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId')
             ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
-            ->where('j.type LIKE :type')
+            ->where('j.service LIKE :service')
             ->andWhere('DATEDIFF(NOW(),j.createdAt) <= :day_period');
 
         if (null !== $territory) {
             $qb->andWhere('p.territory = :territory')->setParameter('territory', $territory);
         }
 
-        $qb->setParameter('type', '%'.$type.'%')
+        $qb->setParameter('service', '%'.$type.'%')
             ->setParameter('day_period', $dayPeriod)
-            ->groupBy('p.id, p.nom, s.reference,j.title, j.status, j.response')
+            ->groupBy('p.id, p.nom, s.reference, j.action, j.status, j.response')
             ->orderBy('last_event', 'DESC');
 
         return $qb->getQuery()->getArrayResult();

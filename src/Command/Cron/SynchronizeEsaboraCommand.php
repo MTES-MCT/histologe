@@ -6,8 +6,8 @@ use App\Entity\JobEvent;
 use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
+use App\Service\Esabora\EsaboraSCHSService;
 use App\Service\Esabora\DossierResponse;
-use App\Service\Esabora\EsaboraService;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -27,7 +27,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 class SynchronizeEsaboraCommand extends AbstractCronCommand
 {
     public function __construct(
-        private readonly EsaboraService $esaboraService,
+        private readonly EsaboraSCHSService $esaboraService,
         private readonly AffectationManager $affectationManager,
         private readonly JobEventManager $jobEventManager,
         private readonly SerializerInterface $serializer,
@@ -75,15 +75,17 @@ class SynchronizeEsaboraCommand extends AbstractCronCommand
                 ++$countSyncFailed;
             }
             $this->jobEventManager->createJobEvent(
-                type: EsaboraService::TYPE_SERVICE,
-                title: EsaboraService::ACTION_SYNC_DOSSIER,
+                service: EsaboraSCHSService::TYPE_SERVICE,
+                action: EsaboraSCHSService::ACTION_SYNC_DOSSIER,
                 message: json_encode($message),
                 response: $this->serializer->serialize($dossierResponse, 'json'),
                 status: $this->hasSuccess($dossierResponse)
                     ? JobEvent::STATUS_SUCCESS
                     : JobEvent::STATUS_FAILED,
+                codeStatus: $dossierResponse->getStatusCode(),
                 signalementId: $affectation->getSignalement()->getId(),
-                partnerId: $affectation->getPartner()->getId()
+                partnerId: $affectation->getPartner()->getId(),
+                partnerType: $affectation->getPartner()->getType(),
             );
         }
 

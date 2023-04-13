@@ -2,36 +2,50 @@ job_event:
   -
     partner: "partenaire-13-01@histologe.fr"
     signalement: "2022-7"
-    type: "esabora"
-    title: "sync_dossier"
+    service: "esabora"
+    action: "sync_dossier"
     status: success
+    code_status: 200
+    partner_type: "COMMUNE_SCHS"
   -
     partner: "partenaire-13-02@histologe.fr"
     signalement: "2022-8"
-    type: "esabora"
-    title: "push_dossier"
+    service: "esabora"
+    action: "push_dossier"
     status: failed
+    code_status: 500
+    partner_type: "COMMUNE_SCHS"
+
   -
     partner: "partenaire-13-01@histologe.fr"
     signalement: "2022-10"
-    type: "esabora"
-    title: "sync_dossier"
+    service: "esabora"
+    action: "sync_dossier"
     status: success
+    code_status: 200
+    partner_type: "COMMUNE_SCHS"
+
   -
     partner: "partenaire-13-02@histologe.fr"
     signalement: "2022-11"
-    type: "esabora"
-    title: "push_dossier"
+    service: "esabora"
+    action: "push_dossier"
     status: failed
+    code_status: 400
+    partner_type: "COMMUNE_SCHS"
   -
     partner: "partenaire-13-01@histologe.fr"
     signalement: "2022-12"
-    type: "esabora"
-    title: "sync_dossier"
+    service: "esabora"
+    action: "sync_dossier"
     status: success
+    code_status: 200
+    partner_type: "COMMUNE_SCHS"
   -
     partner: "partenaire-13-02@histologe.fr"
     signalement: "2022-13"
-    type: "esabora"
-    title: "push_dossier"
+    service: "esabora"
+    action: "push_dossier"
     status: failed
+    code_status: 400
+    partner_type: "COMMUNE_SCHS"

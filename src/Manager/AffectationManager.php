@@ -8,7 +8,7 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Service\Esabora\DossierResponse;
-use App\Service\Esabora\EsaboraService;
+use App\Service\Esabora\EsaboraSCHSService;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 
@@ -128,13 +128,13 @@ class AffectationManager extends Manager
         $esaboraDossierStatus = $dossierResponse->getEtat();
 
         switch ($esaboraStatus) {
-            case EsaboraService::ESABORA_WAIT:
+            case EsaboraSCHSService::ESABORA_WAIT:
                 if (Affectation::STATUS_WAIT !== $currentStatus) {
                     $this->updateAffectation($affectation, $user, Affectation::STATUS_WAIT);
                     $description = 'remis en attente via Esabora';
                 }
                 break;
-            case EsaboraService::ESABORA_ACCEPTED:
+            case EsaboraSCHSService::ESABORA_ACCEPTED:
                 if ($this->shouldBeAcceptedViaEsabora($esaboraDossierStatus, $currentStatus)) {
                     $this->updateAffectation($affectation, $user, Affectation::STATUS_ACCEPTED);
                     $description = 'accepté via Esabora';
@@ -145,7 +145,7 @@ class AffectationManager extends Manager
                     $description = 'cloturé via Esabora';
                 }
                 break;
-            case EsaboraService::ESABORA_REFUSED:
+            case EsaboraSCHSService::ESABORA_REFUSED:
                 if (Affectation::STATUS_REFUSED !== $currentStatus) {
                     $this->updateAffectation($affectation, $user, Affectation::STATUS_REFUSED);
                     $description = 'refusé via Esabora';
@@ -158,13 +158,13 @@ class AffectationManager extends Manager
 
     private function shouldBeAcceptedViaEsabora(string $esaboraDossierStatus, int $currentStatus): bool
     {
-        return EsaboraService::ESABORA_IN_PROGRESS === $esaboraDossierStatus
+        return EsaboraSCHSService::ESABORA_IN_PROGRESS === $esaboraDossierStatus
             && Affectation::STATUS_ACCEPTED !== $currentStatus;
     }
 
     private function shouldBeClosedViaEsabora(string $esaboraDossierStatus, int $currentStatus): bool
     {
-        return EsaboraService::ESABORA_CLOSED === $esaboraDossierStatus
+        return EsaboraSCHSService::ESABORA_CLOSED === $esaboraDossierStatus
             && Affectation::STATUS_CLOSED !== $currentStatus;
     }
 }

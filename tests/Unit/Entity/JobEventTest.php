@@ -12,8 +12,8 @@ class JobEventTest extends TestCase
         $jobEvent = (new JobEvent())
             ->setPartnerId(1)
             ->setSignalementId(1)
-            ->setType('esabora')
-            ->setTitle('sync_dossier')
+            ->setService('esabora')
+            ->setAction('sync_dossier')
             ->setMessage('{"criterionName":"SAS_Référence"}')
             ->setResponse('{"sasReference":"00000000-0000-0000-2022-000000000008"}')
             ->setStatus(JobEvent::STATUS_SUCCESS);
@@ -22,8 +22,8 @@ class JobEventTest extends TestCase
         $this->assertEquals(1, $jobEvent->getPartnerId());
         $this->assertEquals(1, $jobEvent->getSignalementId());
         $this->assertEquals(JobEvent::STATUS_SUCCESS, $jobEvent->getStatus());
-        $this->assertEquals('esabora', $jobEvent->getType());
-        $this->assertEquals('sync_dossier', $jobEvent->getTitle());
+        $this->assertEquals('esabora', $jobEvent->getService());
+        $this->assertEquals('sync_dossier', $jobEvent->getAction());
         $this->assertEquals('{"criterionName":"SAS_Référence"}', $jobEvent->getMessage());
         $this->assertEquals('{"sasReference":"00000000-0000-0000-2022-000000000008"}', $jobEvent->getResponse());
     }

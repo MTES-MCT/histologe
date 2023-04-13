@@ -10,7 +10,7 @@ use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
 use App\Service\Esabora\DossierResponse;
-use App\Service\Esabora\EsaboraService;
+use App\Service\Esabora\EsaboraSCHSService;
 use App\Service\Mailer\NotificationMailerRegistry;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -33,7 +33,7 @@ class SynchronizeEsaboraCommandTest extends KernelTestCase
         $dossierResponse = new DossierResponse($responseEsabora, 200);
         $affectation = (new Affectation())->setSignalement(new Signalement())->setPartner(new Partner());
 
-        $esaboraServiceMock = $this->createMock(EsaboraService::class);
+        $esaboraServiceMock = $this->createMock(EsaboraSCHSService::class);
         $esaboraServiceMock
             ->expects($this->atLeast(1))
             ->method('getStateDossier')

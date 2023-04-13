@@ -2,14 +2,17 @@
 
 namespace App\Tests\Unit\EventSubscriber;
 
+use App\Entity\Enum\InterfacageType;
 use App\Entity\JobEvent;
 use App\EventSubscriber\WorkerMessageEventSubscriber;
 use App\Manager\JobEventManager;
 use App\Messenger\Message\DossierMessage;
-use App\Service\Esabora\EsaboraService;
+use App\Repository\PartnerRepository;
+use App\Service\Esabora\EsaboraSCHSService;
 use App\Tests\Unit\Messenger\DossierMessageTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
@@ -32,7 +35,8 @@ class WorkerMessageEventSubscriberTest extends TestCase
     {
         $jobEventManagerMock = $this->createMock(JobEventManager::class);
         $serializerMock = $this->createMock(SerializerInterface::class);
-        $subscriber = new WorkerMessageEventSubscriber($jobEventManagerMock, $serializerMock);
+        $partnerRepositoryMock = $this->createMock(PartnerRepository::class);
+        $subscriber = new WorkerMessageEventSubscriber($jobEventManagerMock, $serializerMock, $partnerRepositoryMock);
 
         $dossierMessage = new DossierMessage();
         $envelope = new Envelope($dossierMessage, [
@@ -48,11 +52,13 @@ class WorkerMessageEventSubscriberTest extends TestCase
             ->expects($this->atLeast(1))
             ->method('createJobEvent')
             ->with(
-                EsaboraService::TYPE_SERVICE,
-                EsaboraService::ACTION_PUSH_DOSSIER,
+                InterfacageType::ESABORA->value,
+                EsaboraSCHSService::ACTION_PUSH_DOSSIER,
                 '',
                 json_encode(['message' => 'custom error', 'stack_trace' => $event->getThrowable()->getTraceAsString()]),
                 JobEvent::STATUS_FAILED,
+                Response::HTTP_SERVICE_UNAVAILABLE,
+                null,
                 null,
                 null
             );

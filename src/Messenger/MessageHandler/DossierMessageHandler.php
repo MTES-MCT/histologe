@@ -5,7 +5,8 @@ namespace App\Messenger\MessageHandler;
 use App\Entity\JobEvent;
 use App\Manager\JobEventManager;
 use App\Messenger\Message\DossierMessage;
-use App\Service\Esabora\EsaboraService;
+use App\Repository\PartnerRepository;
+use App\Service\Esabora\EsaboraSCHSService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
@@ -17,9 +18,10 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 final class DossierMessageHandler
 {
     public function __construct(
-        private EsaboraService $esaboraService,
-        private JobEventManager $jobEventManager,
-        private SerializerInterface $serializer,
+        private readonly EsaboraSCHSService $esaboraService,
+        private readonly JobEventManager $jobEventManager,
+        private readonly SerializerInterface $serializer,
+        private readonly PartnerRepository $partnerRepository,
     ) {
     }
 
@@ -32,14 +34,18 @@ final class DossierMessageHandler
     public function __invoke(DossierMessage $dossierMessage): void
     {
         $response = $this->esaboraService->pushDossier($dossierMessage);
+        $partner = $this->partnerRepository->find($partnerId = $dossierMessage->getPartnerId());
+
         $this->jobEventManager->createJobEvent(
-            type: EsaboraService::TYPE_SERVICE,
-            title: EsaboraService::ACTION_PUSH_DOSSIER,
+            service: EsaboraSCHSService::TYPE_SERVICE,
+            action: EsaboraSCHSService::ACTION_PUSH_DOSSIER,
             message: $this->serializer->serialize($dossierMessage, 'json'),
             response: $response->getContent(),
             status: 200 === $response->getStatusCode() ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,
+            codeStatus: $response->getStatusCode(),
             signalementId: $dossierMessage->getSignalementId(),
-            partnerId: $dossierMessage->getPartnerId()
+            partnerId: $partnerId,
+            partnerType: $partner?->getType(),
         );
     }
 }

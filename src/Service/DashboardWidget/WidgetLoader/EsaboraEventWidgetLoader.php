@@ -2,7 +2,7 @@
 
 namespace App\Service\DashboardWidget\WidgetLoader;
 
-use App\Entity\JobEvent;
+use App\Entity\Enum\InterfacageType;
 use App\Service\DashboardWidget\Widget;
 use App\Service\DashboardWidget\WidgetDataManagerInterface;
 use App\Service\DashboardWidget\WidgetType;
@@ -23,8 +23,8 @@ class EsaboraEventWidgetLoader extends AbstractWidgetLoader
     {
         parent::load($widget);
         $widget->setData(
-            $this->widgetDataManager->findLastJobEventByType(
-                JobEvent::TYPE_JOB_EVENT_ESABORA,
+            $this->widgetDataManager->findLastJobEventByServiceType(
+                InterfacageType::ESABORA->value,
                 $this->widgetParameter['data'],
                 $widget->getTerritory()
             )
