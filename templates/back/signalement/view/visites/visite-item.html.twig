@@ -25,20 +25,26 @@
     <div class="fr-col-12 fr-col-md-6">
         <div class="fr-mb-3v">
             <strong>Analyse :</strong>
-            {% if signalement.interventions is empty %}
-                <span class="fr-badge fr-badge--no-icon" title="Non disponible">Non disponible</span>
-            {% elseif intervention.documents is empty %}
+            {% if signalement.interventions is empty or intervention.concludeProcedure is empty %}
                 <span class="fr-badge fr-badge--no-icon" title="Non disponible">Non disponible</span>
             {% else %}
-                {{ intervention.documents }}
+                {{ intervention.concludeProcedure.label }}
             {% endif %}
         </div>
         <div class="fr-mb-3v">
-            <strong>Partenaire</strong>
+            <strong>Partenaire :</strong>
             {% if signalement.interventions is empty or intervention.partner is empty %}
                 Non renseigné
             {% else %}
                 {{ intervention.partner.nom }}
+            {% endif %}
+        </div>
+        <div class="fr-mb-3v">
+            <strong>Rapport :</strong>
+            {% if signalement.interventions is empty or intervention.documents is empty %}
+                <span class="fr-badge fr-badge--no-icon" title="Non disponible">Non disponible</span>
+            {% else %}
+                {{ intervention.documents }}
             {% endif %}
         </div>
     </div>

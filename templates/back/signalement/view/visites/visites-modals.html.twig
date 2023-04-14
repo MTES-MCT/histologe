@@ -1,58 +1,11 @@
-{% include 'back/signalement/view/visites/visites-modals-ajouter.html.twig' %}
+{% include 'back/signalement/view/visites/visites-modal-ajouter.html.twig' %}
 
 {% if signalement.interventions is not empty and intervention.status is same as constant('App\\Entity\\Intervention::STATUS_PLANNED') %}
     {% if workflow_can(intervention, 'cancel') %}
-        {% include 'back/signalement/view/visites/visites-modals-annuler.html.twig' %}
+        {% include 'back/signalement/view/visites/visites-modal-annuler.html.twig' %}
     {% endif %}
     {% if workflow_can(intervention, 'confirm') %}
-        <dialog aria-labelledby="fr-modal-title-confirmer-visite-modal-{{intervention.id}}" role="dialog" id="confirmer-visite-modal-{{intervention.id}}" class="fr-modal">
-            <div class="fr-container fr-container--fluid fr-container-md">
-                <div class="fr-grid-row fr-grid-row--center">
-                    <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
-                        <div class="fr-modal__body">
-                            <div class="fr-modal__header">
-                                <button class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="confirmer-visite-modal-{{intervention.id}}">Fermer</button>
-                            </div>
-                            <div class="fr-modal__content">
-                                <h1 id="fr-modal-title-confirmer-visite-modal-{{intervention.id}}" class="fr-modal__title">Confirmer la visite</h1>
-
-                                <div class="fr-alert fr-alert--warning">
-                                    <p>
-                                        Blabla
-                                    </p>
-                                </div>
-
-                                <p>TODO : Formulaire de confirmation de visite</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </dialog>
+        {% include 'back/signalement/view/visites/visites-modal-confirm.html.twig' %}
     {% endif %}
-    <dialog aria-labelledby="fr-modal-title-editer-visite-modal-{{intervention.id}}" role="dialog" id="editer-visite-modal-{{intervention.id}}" class="fr-modal">
-        <div class="fr-container fr-container--fluid fr-container-md">
-            <div class="fr-grid-row fr-grid-row--center">
-                <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
-                    <div class="fr-modal__body">
-                        <div class="fr-modal__header">
-                            <button class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="editer-visite-modal-{{intervention.id}}">Fermer</button>
-                        </div>
-                        <div class="fr-modal__content">
-                            <h1 id="fr-modal-title-editer-visite-modal-{{intervention.id}}" class="fr-modal__title">Modifier la date de visite</h1>
-
-                            <div class="fr-alert fr-alert--warning">
-                                <p>
-                                    Si vous choisissez une <strong>date à venir</strong>,
-                                    un email sera automatiquement envoyé à l'usager.
-                                </p>
-                            </div>
-
-                            <p>TODO : Formulaire de modification de date</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </dialog>
+    {% include 'back/signalement/view/visites/visites-modal-reschedule.html.twig' %}
 {% endif %}
