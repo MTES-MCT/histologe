@@ -47,10 +47,15 @@ class SignalementVisitesController extends AbstractController
             return $errorRedirect;
         }
 
-        $requestData = $request->get('visite-add');
+        $requestAddData = $request->get('visite-add');
         $visiteRequest = new VisiteRequest(
-            date: $requestData['date'],
-            idPartner: $requestData['partner'],
+            date: $requestAddData['date'],
+            idPartner: $requestAddData['partner'],
+            idIntervention: $requestAddData['intervention'] ?? null,
+            details: $requestAddData['details'] ?? null,
+            concludeProcedure: $requestAddData['concludeProcedure'] ?? null,
+            isVisiteDone: $requestAddData['visiteDone'] ?? null,
+            isOccupantPresent: $requestAddData['occupantPresent'] ?? null,
         );
 
         if (!$interventionManager->createVisiteFromRequest($signalement, $visiteRequest)) {
@@ -81,33 +86,37 @@ class SignalementVisitesController extends AbstractController
             details: $requestData['details'],
         );
 
-        if (!$interventionManager->cancelVisiteFromRequest($signalement, $visiteRequest)) {
+        if (!$interventionManager->cancelVisiteFromRequest($visiteRequest)) {
             $this->addFlash('error', "Erreur lors de l'annulation de la visite.");
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 
-    #[Route('/{uuid}/visites/editer', name: 'back_signalement_visite_reschedule')]
+    #[Route('/{uuid}/visites/reprogrammer', name: 'back_signalement_visite_reschedule')]
     public function rescheduleVisiteFromSignalement(
         Signalement $signalement,
         Request $request,
         InterventionManager $interventionManager,
     ): Response {
-        $requestData = $request->get('visite-reschedule');
+        $requestRescheduleData = $request->get('visite-reschedule');
         $errorRedirect = $this->getSecurityRedirect(
             $signalement,
             $request,
-            'signalement_reschedule_visit_'.$requestData['intervention']
+            'signalement_reschedule_visit_'.$requestRescheduleData['intervention']
         );
         if ($errorRedirect) {
             return $errorRedirect;
         }
 
         $visiteRequest = new VisiteRequest(
-            idIntervention: $requestData['intervention'],
-            date: $requestData['date'],
-            idPartner: $requestData['partner'],
+            date: $requestRescheduleData['date'],
+            idPartner: $requestRescheduleData['partner'],
+            idIntervention: $requestRescheduleData['intervention'],
+            details: $requestRescheduleData['details'] ?? null,
+            concludeProcedure: $requestRescheduleData['concludeProcedure'] ?? null,
+            isVisiteDone: $requestRescheduleData['visiteDone'] ?? null,
+            isOccupantPresent: $requestRescheduleData['occupantPresent'] ?? null,
         );
 
         if (!$interventionManager->rescheduleVisiteFromRequest($signalement, $visiteRequest)) {
@@ -141,7 +150,7 @@ class SignalementVisitesController extends AbstractController
             isOccupantPresent: $requestData['occupantPresent'],
         );
 
-        if (!$interventionManager->confirmVisiteFromRequest($signalement, $visiteRequest)) {
+        if (!$interventionManager->confirmVisiteFromRequest($visiteRequest)) {
             $this->addFlash('error', 'Erreur lors de la conclusion de la visite.');
         }
 

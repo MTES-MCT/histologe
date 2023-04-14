@@ -56,10 +56,16 @@ class InterventionManager extends AbstractManager
 
         $this->save($intervention);
 
+        $todayDate = new DateTime();
+        if ($intervention->getDate() <= $todayDate) {
+            $this->confirmVisiteFromRequest($visiteRequest, $intervention);
+        }
+        // TODO : dispatch event visite created
+
         return $intervention;
     }
 
-    public function cancelVisiteFromRequest(Signalement $signalement, VisiteRequest $visiteRequest): ?Intervention
+    public function cancelVisiteFromRequest(VisiteRequest $visiteRequest): ?Intervention
     {
         if (!$visiteRequest->getIntervention() || !$visiteRequest->getDetails()) {
             return null;
@@ -106,16 +112,24 @@ class InterventionManager extends AbstractManager
             ->setDate(new DateTime($visiteRequest->getDate()));
         $this->save($intervention);
 
+        $todayDate = new DateTime();
+        if ($intervention->getDate() <= $todayDate) {
+            $this->confirmVisiteFromRequest($visiteRequest, $intervention);
+        }
+        // TODO : dispatch event visite date rescheduled
+
         return $intervention;
     }
 
-    public function confirmVisiteFromRequest(Signalement $signalement, VisiteRequest $visiteRequest): ?Intervention
+    public function confirmVisiteFromRequest(VisiteRequest $visiteRequest, ?Intervention $intervention = null): ?Intervention
     {
-        if (!$visiteRequest->getIntervention() || !$visiteRequest->getDetails() || !$visiteRequest->getConcludeProcedure()) {
+        if (!$visiteRequest->getDetails() || !$visiteRequest->getConcludeProcedure()) {
             return null;
         }
 
-        $intervention = $this->interventionRepository->findOneBy(['id' => $visiteRequest->getIntervention()]);
+        if (!$intervention && $visiteRequest->getIntervention()) {
+            $intervention = $this->interventionRepository->findOneBy(['id' => $visiteRequest->getIntervention()]);
+        }
         if (!$intervention) {
             return null;
         }

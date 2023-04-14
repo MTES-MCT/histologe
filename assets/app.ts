@@ -21,4 +21,5 @@ import './controllers/form_helper';
 import './controllers/form_nde';
 import './controllers/form_notification';
 import './controllers/form_partner';
+import './controllers/form_visite';
 
