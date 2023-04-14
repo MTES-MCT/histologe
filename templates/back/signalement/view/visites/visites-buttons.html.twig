@@ -1,11 +1,11 @@
 <div class="signalement-visites-buttons fr-text--right">
     {% if signalement.interventions is empty %}
-        <a href="#" class="fr-btn fr-btn--sm fr-fi-calendar-line fr-btn--icon-left" aria-controls="ajouter-visite-modal" data-fr-opened="false">
+        <a href="#" class="fr-btn fr-btn--sm fr-fi-calendar-line fr-btn--icon-left" aria-controls="add-visite-modal" data-fr-opened="false">
             Ajouter une visite
         </a>
     {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_PLANNED') %}
         {% if workflow_can(intervention, 'cancel') %}
-            <a href="#" class="fr-btn fr-btn--sm fr-btn--danger fr-fi-close-line fr-btn--icon-left" aria-controls="annuler-visite-modal-{{intervention.id}}" data-fr-opened="false">
+            <a href="#" class="fr-btn fr-btn--sm fr-btn--danger fr-fi-close-line fr-btn--icon-left" aria-controls="cancel-visite-modal-{{intervention.id}}" data-fr-opened="false">
                 Annuler la visite
             </a>
         {% endif %}

@@ -13,7 +13,7 @@
         </div>
         <div class="fr-mb-3v">
             <strong>Occupant présent :</strong>
-            {% if signalement.interventions is empty or intervention.occupantPresent is empty %}
+            {% if signalement.interventions is empty or intervention.occupantPresent is not defined %}
                 Non renseigné
             {% elseif intervention.occupantPresent %}
                 Oui
