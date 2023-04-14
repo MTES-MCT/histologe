@@ -9,11 +9,11 @@
                 Annuler la visite
             </a>
         {% endif %}
-        <a href="#" class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-edit-line fr-btn--icon-left" aria-controls="editer-visite-modal-{{intervention.id}}" data-fr-opened="false">
+        <a href="#" class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-edit-line fr-btn--icon-left" aria-controls="reschedule-visite-modal-{{intervention.id}}" data-fr-opened="false">
             Modifier la date
         </a>
         {% if workflow_can(intervention, 'confirm') %}
-            <a href="#" class="fr-btn fr-btn--sm fr-fi-check-line fr-btn--icon-left" aria-controls="confirmer-visite-modal-{{intervention.id}}" data-fr-opened="false">
+            <a href="#" class="fr-btn fr-btn--sm fr-fi-check-line fr-btn--icon-left" aria-controls="confirm-visite-modal-{{intervention.id}}" data-fr-opened="false">
                 Confirmer la visite
             </a>
         {% endif %}

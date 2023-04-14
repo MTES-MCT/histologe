@@ -9,6 +9,9 @@ class VisiteRequest
         private ?string $date = null,
         private ?int $idPartner = null,
         private ?string $details = null,
+        private ?string $concludeProcedure = null,
+        private ?bool $isVisiteDone = null,
+        private ?bool $isOccupantPresent = null,
     ) {
     }
 
@@ -30,5 +33,20 @@ class VisiteRequest
     public function getDetails(): ?string
     {
         return $this->details;
+    }
+
+    public function getConcludeProcedure(): ?string
+    {
+        return $this->concludeProcedure;
+    }
+
+    public function isVisiteDone(): ?bool
+    {
+        return $this->isVisiteDone;
+    }
+
+    public function isOccupantPresent(): ?bool
+    {
+        return $this->isOccupantPresent;
     }
 }

@@ -4,6 +4,7 @@ namespace App\Manager;
 
 use App\Dto\Request\Signalement\VisiteRequest;
 use App\Entity\Enum\InterventionType;
+use App\Entity\Enum\ProcedureType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
@@ -33,22 +34,22 @@ class InterventionManager extends AbstractManager
             return null;
         }
 
-        $hasFoundPartner = false;
+        $partnerFound = null;
         $visitesPartners = $this->partnerRepository->findPartnersWithQualification(Qualification::VISITES, $signalement->getTerritory());
         foreach ($visitesPartners as $partner) {
             if ($partner->getId() == $visiteRequest->getPartner()) {
-                $hasFoundPartner = $partner;
+                $partnerFound = $partner;
                 break;
             }
         }
 
-        if (!$hasFoundPartner) {
+        if (!$partnerFound) {
             return null;
         }
 
         $intervention = new Intervention();
         $intervention->setSignalement($signalement)
-            ->setPartner($partner)
+            ->setPartner($partnerFound)
             ->setDate(new DateTime($visiteRequest->getDate()))
             ->setType(InterventionType::VISITE)
             ->setStatus(Intervention::STATUS_PLANNED);
@@ -71,6 +72,64 @@ class InterventionManager extends AbstractManager
 
         $this->interventionPlanningStateMachine->apply($intervention, 'cancel');
         $intervention->setDetails($visiteRequest->getDetails());
+        $this->save($intervention);
+
+        return $intervention;
+    }
+
+    public function rescheduleVisiteFromRequest(Signalement $signalement, VisiteRequest $visiteRequest): ?Intervention
+    {
+        if (!$visiteRequest->getIntervention() || !$visiteRequest->getDate() || !$visiteRequest->getPartner()) {
+            return null;
+        }
+
+        $intervention = $this->interventionRepository->findOneBy(['id' => $visiteRequest->getIntervention()]);
+        if (!$intervention) {
+            return null;
+        }
+
+        $partnerFound = null;
+        $visitesPartners = $this->partnerRepository->findPartnersWithQualification(Qualification::VISITES, $signalement->getTerritory());
+        foreach ($visitesPartners as $partner) {
+            if ($partner->getId() == $visiteRequest->getPartner()) {
+                $partnerFound = $partner;
+                break;
+            }
+        }
+
+        if (!$partnerFound) {
+            return null;
+        }
+
+        $intervention
+            ->setPartner($partnerFound)
+            ->setDate(new DateTime($visiteRequest->getDate()));
+        $this->save($intervention);
+
+        return $intervention;
+    }
+
+    public function confirmVisiteFromRequest(Signalement $signalement, VisiteRequest $visiteRequest): ?Intervention
+    {
+        if (!$visiteRequest->getIntervention() || !$visiteRequest->getDetails() || !$visiteRequest->getConcludeProcedure()) {
+            return null;
+        }
+
+        $intervention = $this->interventionRepository->findOneBy(['id' => $visiteRequest->getIntervention()]);
+        if (!$intervention) {
+            return null;
+        }
+
+        if ($visiteRequest->isVisiteDone()) {
+            $this->interventionPlanningStateMachine->apply($intervention, 'confirm');
+        } else {
+            $this->interventionPlanningStateMachine->apply($intervention, 'abort');
+        }
+
+        $intervention
+            ->setDetails($visiteRequest->getDetails())
+            ->setConcludeProcedure(ProcedureType::tryFrom($visiteRequest->getConcludeProcedure()))
+            ->setOccupantPresent($visiteRequest->isOccupantPresent());
         $this->save($intervention);
 
         return $intervention;
