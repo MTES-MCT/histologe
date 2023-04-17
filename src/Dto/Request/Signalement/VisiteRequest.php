@@ -13,6 +13,7 @@ class VisiteRequest
         private ?bool $isVisiteDone = null,
         private ?bool $isOccupantPresent = null,
         private ?bool $isUsagerNotified = null,
+        private ?string $document = null,
     ) {
     }
 
@@ -54,5 +55,10 @@ class VisiteRequest
     public function isUsagerNotified(): ?bool
     {
         return $this->isUsagerNotified;
+    }
+
+    public function getDocument(): ?string
+    {
+        return $this->document;
     }
 }

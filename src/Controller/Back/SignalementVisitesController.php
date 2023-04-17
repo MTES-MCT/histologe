@@ -4,13 +4,16 @@ namespace App\Controller\Back;
 
 use App\Dto\Request\Signalement\VisiteRequest;
 use App\Entity\Signalement;
+use App\Exception\File\MaxUploadSizeExceededException;
 use App\Manager\InterventionManager;
 use App\Repository\InterventionRepository;
+use App\Service\UploadHandlerService;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/bo/signalements')]
 class SignalementVisitesController extends AbstractController
@@ -20,7 +23,6 @@ class SignalementVisitesController extends AbstractController
 
     private function getSecurityRedirect(Signalement $signalement, Request $request, string $tokenName): ?Response
     {
-        // TODO : denyAccess ADD_INTERVENTION
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
         if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
             $this->addFlash('error', "Ce signalement a été archivé et n'est pas consultable.");
@@ -37,11 +39,36 @@ class SignalementVisitesController extends AbstractController
         return null;
     }
 
+    private function getUploadedFile(
+        Request $request,
+        string $inputName,
+        SluggerInterface $slugger,
+        UploadHandlerService $uploadHandler,
+    ): ?string {
+        $files = $request->files->get($inputName);
+        if (empty($files) || empty($files['rapport'])) {
+            return null;
+        }
+
+        $file = $files['rapport'];
+        $originalFilename = pathinfo($file->getClientOriginalName(), \PATHINFO_FILENAME);
+        $safeFilename = $slugger->slug($originalFilename);
+        $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+        try {
+            return $uploadHandler->uploadFromFile($file, $newFilename);
+        } catch (MaxUploadSizeExceededException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+            return null;
+        }
+    }
+
     #[Route('/{uuid}/visites/ajouter', name: 'back_signalement_visite_add')]
     public function addVisiteToSignalement(
         Signalement $signalement,
         Request $request,
         InterventionManager $interventionManager,
+        SluggerInterface $slugger,
+        UploadHandlerService $uploadHandler,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_ADD_VISITE', $signalement);
 
@@ -54,6 +81,8 @@ class SignalementVisitesController extends AbstractController
             return $errorRedirect;
         }
 
+        $fileName = $this->getUploadedFile($request, 'visite-add', $slugger, $uploadHandler);
+
         $requestAddData = $request->get('visite-add');
         $visiteRequest = new VisiteRequest(
             date: $requestAddData['date'],
@@ -63,6 +92,7 @@ class SignalementVisitesController extends AbstractController
             concludeProcedure: $requestAddData['concludeProcedure'] ?? null,
             isVisiteDone: $requestAddData['visiteDone'] ?? null,
             isOccupantPresent: $requestAddData['occupantPresent'] ?? null,
+            document: $fileName,
         );
 
         if ($intervention = $interventionManager->createVisiteFromRequest($signalement, $visiteRequest)) {
@@ -123,6 +153,8 @@ class SignalementVisitesController extends AbstractController
         Request $request,
         InterventionManager $interventionManager,
         InterventionRepository $interventionRepository,
+        SluggerInterface $slugger,
+        UploadHandlerService $uploadHandler,
     ): Response {
         $requestRescheduleData = $request->get('visite-reschedule');
 
@@ -141,6 +173,8 @@ class SignalementVisitesController extends AbstractController
             return $errorRedirect;
         }
 
+        $fileName = $this->getUploadedFile($request, 'visite-reschedule', $slugger, $uploadHandler);
+
         $visiteRequest = new VisiteRequest(
             date: $requestRescheduleData['date'],
             idPartner: $requestRescheduleData['partner'],
@@ -149,6 +183,7 @@ class SignalementVisitesController extends AbstractController
             concludeProcedure: $requestRescheduleData['concludeProcedure'] ?? null,
             isVisiteDone: $requestRescheduleData['visiteDone'] ?? null,
             isOccupantPresent: $requestRescheduleData['occupantPresent'] ?? null,
+            document: $fileName,
         );
 
         if ($intervention = $interventionManager->rescheduleVisiteFromRequest($signalement, $visiteRequest)) {
@@ -171,6 +206,8 @@ class SignalementVisitesController extends AbstractController
         Request $request,
         InterventionManager $interventionManager,
         InterventionRepository $interventionRepository,
+        SluggerInterface $slugger,
+        UploadHandlerService $uploadHandler,
     ): Response {
         $requestData = $request->get('visite-confirm');
 
@@ -189,12 +226,15 @@ class SignalementVisitesController extends AbstractController
             return $errorRedirect;
         }
 
+        $fileName = $this->getUploadedFile($request, 'visite-confirm', $slugger, $uploadHandler);
+
         $visiteRequest = new VisiteRequest(
             idIntervention: $requestData['intervention'],
             details: $requestData['details'],
             concludeProcedure: $requestData['concludeProcedure'],
             isVisiteDone: $requestData['visiteDone'],
             isOccupantPresent: $requestData['occupantPresent'],
+            document: $fileName,
         );
 
         if ($interventionManager->confirmVisiteFromRequest($visiteRequest)) {
@@ -212,6 +252,8 @@ class SignalementVisitesController extends AbstractController
         Request $request,
         InterventionManager $interventionManager,
         InterventionRepository $interventionRepository,
+        SluggerInterface $slugger,
+        UploadHandlerService $uploadHandler,
     ): Response {
         $requestData = $request->get('visite-edit');
 
@@ -230,10 +272,13 @@ class SignalementVisitesController extends AbstractController
             return $errorRedirect;
         }
 
+        $fileName = $this->getUploadedFile($request, 'visite-edit', $slugger, $uploadHandler);
+
         $visiteRequest = new VisiteRequest(
             idIntervention: $requestData['intervention'],
             details: $requestData['details'],
             isUsagerNotified: !empty($requestData['notifyUsager']),
+            document: $fileName,
         );
 
         if ($interventionManager->editVisiteFromRequest($visiteRequest)) {
