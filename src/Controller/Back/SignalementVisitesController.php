@@ -5,6 +5,7 @@ namespace App\Controller\Back;
 use App\Dto\Request\Signalement\VisiteRequest;
 use App\Entity\Signalement;
 use App\Manager\InterventionManager;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,6 +14,9 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/bo/signalements')]
 class SignalementVisitesController extends AbstractController
 {
+    private const SUCCESS_MSG_ADD = 'La date de visite a bien été définie.';
+    private const SUCCESS_MSG_CONFIRM = 'Les informations de la visite ont bien été renseignées.';
+
     private function getSecurityRedirect(Signalement $signalement, Request $request, string $tokenName): ?Response
     {
         // TODO : denyAccess ADD_INTERVENTION
@@ -58,7 +62,14 @@ class SignalementVisitesController extends AbstractController
             isOccupantPresent: $requestAddData['occupantPresent'] ?? null,
         );
 
-        if (!$interventionManager->createVisiteFromRequest($signalement, $visiteRequest)) {
+        if ($intervention = $interventionManager->createVisiteFromRequest($signalement, $visiteRequest)) {
+            $todayDate = new DateTime();
+            if ($intervention->getDate() <= $todayDate) {
+                $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
+            } else {
+                $this->addFlash('success', self::SUCCESS_MSG_ADD);
+            }
+        } else {
             $this->addFlash('error', "Erreur lors de l'enregistrement de la visite.");
         }
 
@@ -86,7 +97,9 @@ class SignalementVisitesController extends AbstractController
             details: $requestData['details'],
         );
 
-        if (!$interventionManager->cancelVisiteFromRequest($visiteRequest)) {
+        if ($interventionManager->cancelVisiteFromRequest($visiteRequest)) {
+            $this->addFlash('success', 'La visite a bien été annulée.');
+        } else {
             $this->addFlash('error', "Erreur lors de l'annulation de la visite.");
         }
 
@@ -119,7 +132,14 @@ class SignalementVisitesController extends AbstractController
             isOccupantPresent: $requestRescheduleData['occupantPresent'] ?? null,
         );
 
-        if (!$interventionManager->rescheduleVisiteFromRequest($signalement, $visiteRequest)) {
+        if ($intervention = $interventionManager->rescheduleVisiteFromRequest($signalement, $visiteRequest)) {
+            $todayDate = new DateTime();
+            if ($intervention->getDate() <= $todayDate) {
+                $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
+            } else {
+                $this->addFlash('success', self::SUCCESS_MSG_ADD);
+            }
+        } else {
             $this->addFlash('error', 'Erreur lors de la modification de la visite.');
         }
 
@@ -150,7 +170,40 @@ class SignalementVisitesController extends AbstractController
             isOccupantPresent: $requestData['occupantPresent'],
         );
 
-        if (!$interventionManager->confirmVisiteFromRequest($visiteRequest)) {
+        if ($interventionManager->confirmVisiteFromRequest($visiteRequest)) {
+            $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
+        } else {
+            $this->addFlash('error', 'Erreur lors de la conclusion de la visite.');
+        }
+
+        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+    }
+
+    #[Route('/{uuid}/visites/editer', name: 'back_signalement_visite_edit')]
+    public function editVisiteFromSignalement(
+        Signalement $signalement,
+        Request $request,
+        InterventionManager $interventionManager,
+    ): Response {
+        $requestData = $request->get('visite-edit');
+        $errorRedirect = $this->getSecurityRedirect(
+            $signalement,
+            $request,
+            'signalement_edit_visit_'.$requestData['intervention']
+        );
+        if ($errorRedirect) {
+            return $errorRedirect;
+        }
+
+        $visiteRequest = new VisiteRequest(
+            idIntervention: $requestData['intervention'],
+            details: $requestData['details'],
+            isUsagerNotified: !empty($requestData['notifyUsager']),
+        );
+
+        if ($interventionManager->editVisiteFromRequest($visiteRequest)) {
+            $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
+        } else {
             $this->addFlash('error', 'Erreur lors de la conclusion de la visite.');
         }
 
