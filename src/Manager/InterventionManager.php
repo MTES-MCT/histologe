@@ -144,6 +144,10 @@ class InterventionManager extends AbstractManager
             ->setDetails($visiteRequest->getDetails())
             ->setConcludeProcedure(ProcedureType::tryFrom($visiteRequest->getConcludeProcedure()))
             ->setOccupantPresent($visiteRequest->isOccupantPresent());
+        if ($visiteRequest->getDocument()) {
+            $intervention->setDocuments([$visiteRequest->getDocument()]);
+        }
+            
         $this->save($intervention);
 
         return $intervention;
@@ -162,6 +166,9 @@ class InterventionManager extends AbstractManager
 
         $intervention
             ->setDetails($visiteRequest->getDetails());
+        if ($visiteRequest->getDocument()) {
+            $intervention->setDocuments([$visiteRequest->getDocument()]);
+        }
         $this->save($intervention);
 
         if ($visiteRequest->isUsagerNotified()) {
