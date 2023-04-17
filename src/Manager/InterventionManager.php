@@ -148,4 +148,26 @@ class InterventionManager extends AbstractManager
 
         return $intervention;
     }
+
+    public function editVisiteFromRequest(VisiteRequest $visiteRequest): ?Intervention
+    {
+        if (!$visiteRequest->getDetails()) {
+            return null;
+        }
+
+        $intervention = $visiteRequest->getIntervention() ? $this->interventionRepository->findOneBy(['id' => $visiteRequest->getIntervention()]) : null;
+        if (!$intervention) {
+            return null;
+        }
+
+        $intervention
+            ->setDetails($visiteRequest->getDetails());
+        $this->save($intervention);
+
+        if ($visiteRequest->isUsagerNotified()) {
+            // TODO
+        }
+
+        return $intervention;
+    }
 }

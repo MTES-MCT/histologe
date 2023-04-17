@@ -17,6 +17,10 @@
                 Confirmer la visite
             </a>
         {% endif %}
+    {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_DONE') %}
+        <a href="#" class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-edit-line fr-btn--icon-left" aria-controls="edit-visite-modal-{{intervention.id}}" data-fr-opened="false">
+            Editer le rapport
+        </a>
     {% else %}
         &nbsp;
     {% endif %}

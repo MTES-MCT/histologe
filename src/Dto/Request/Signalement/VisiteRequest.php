@@ -12,6 +12,7 @@ class VisiteRequest
         private ?string $concludeProcedure = null,
         private ?bool $isVisiteDone = null,
         private ?bool $isOccupantPresent = null,
+        private ?bool $isUsagerNotified = null,
     ) {
     }
 
@@ -48,5 +49,10 @@ class VisiteRequest
     public function isOccupantPresent(): ?bool
     {
         return $this->isOccupantPresent;
+    }
+
+    public function isUsagerNotified(): ?bool
+    {
+        return $this->isUsagerNotified;
     }
 }
