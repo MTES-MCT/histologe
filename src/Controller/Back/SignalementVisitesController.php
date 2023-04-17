@@ -5,6 +5,7 @@ namespace App\Controller\Back;
 use App\Dto\Request\Signalement\VisiteRequest;
 use App\Entity\Signalement;
 use App\Manager\InterventionManager;
+use App\Repository\InterventionRepository;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,6 +43,8 @@ class SignalementVisitesController extends AbstractController
         Request $request,
         InterventionManager $interventionManager,
     ): Response {
+        $this->denyAccessUnlessGranted('SIGN_ADD_VISITE', $signalement);
+
         $errorRedirect = $this->getSecurityRedirect(
             $signalement,
             $request,
@@ -81,8 +84,16 @@ class SignalementVisitesController extends AbstractController
         Signalement $signalement,
         Request $request,
         InterventionManager $interventionManager,
+        InterventionRepository $interventionRepository,
     ): Response {
         $requestData = $request->get('visite-cancel');
+
+        $intervention = $interventionRepository->findOneBy(['id' => $requestData['intervention']]);
+        if (!$intervention) {
+            return null;
+        }
+        $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
+
         $errorRedirect = $this->getSecurityRedirect(
             $signalement,
             $request,
@@ -111,8 +122,16 @@ class SignalementVisitesController extends AbstractController
         Signalement $signalement,
         Request $request,
         InterventionManager $interventionManager,
+        InterventionRepository $interventionRepository,
     ): Response {
         $requestRescheduleData = $request->get('visite-reschedule');
+
+        $intervention = $interventionRepository->findOneBy(['id' => $requestRescheduleData['intervention']]);
+        if (!$intervention) {
+            return null;
+        }
+        $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
+
         $errorRedirect = $this->getSecurityRedirect(
             $signalement,
             $request,
@@ -151,8 +170,16 @@ class SignalementVisitesController extends AbstractController
         Signalement $signalement,
         Request $request,
         InterventionManager $interventionManager,
+        InterventionRepository $interventionRepository,
     ): Response {
         $requestData = $request->get('visite-confirm');
+
+        $intervention = $interventionRepository->findOneBy(['id' => $requestData['intervention']]);
+        if (!$intervention) {
+            return null;
+        }
+        $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
+
         $errorRedirect = $this->getSecurityRedirect(
             $signalement,
             $request,
@@ -184,8 +211,16 @@ class SignalementVisitesController extends AbstractController
         Signalement $signalement,
         Request $request,
         InterventionManager $interventionManager,
+        InterventionRepository $interventionRepository,
     ): Response {
         $requestData = $request->get('visite-edit');
+
+        $intervention = $interventionRepository->findOneBy(['id' => $requestData['intervention']]);
+        if (!$intervention) {
+            return null;
+        }
+        $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
+
         $errorRedirect = $this->getSecurityRedirect(
             $signalement,
             $request,

@@ -6,23 +6,30 @@
     </div>
 </div>
 
-{% include 'back/signalement/view/visites/visites-modal-add.html.twig' %}
+{% if is_granted('SIGN_ADD_VISITE', signalement) %}
+    {% include 'back/signalement/view/visites/visites-modal-add.html.twig' %}
+{% endif %}
 
 {% if signalement.interventions is empty %}
-    {% include 'back/signalement/view/visites/visites-modals.html.twig' %}
-    {% include 'back/signalement/view/visites/visites-buttons.html.twig' %}
+    {% if is_granted('SIGN_ADD_VISITE', signalement) %}
+        {% include 'back/signalement/view/visites/visites-buttons.html.twig' %}
+    {% endif %}
     {% include 'back/signalement/view/visites/visite-item.html.twig' %}
 {% else %}
     {% for intervention in signalement.interventions %}
-        {% include 'back/signalement/view/visites/visites-modals.html.twig' %}
-        {% include 'back/signalement/view/visites/visites-buttons.html.twig' %}
+        {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
+            {% include 'back/signalement/view/visites/visites-modals.html.twig' %}
+            {% include 'back/signalement/view/visites/visites-buttons.html.twig' %}
+        {% endif %}
         {% include 'back/signalement/view/visites/visite-item.html.twig' %}
     {% endfor %}
 
-    <div class="fr-my-5v fr-text--center">
-        <a href="#" class="fr-btn fr-btn--sm fr-fi-calendar-line fr-btn--icon-left" aria-controls="add-visite-modal" data-fr-opened="false">
-            Ajouter une visite
-        </a>
-    </div>
+    {% if is_granted('SIGN_ADD_VISITE', signalement) %}
+        <div class="fr-my-5v fr-text--center">
+            <a href="#" class="fr-btn fr-btn--sm fr-fi-calendar-line fr-btn--icon-left" aria-controls="add-visite-modal" data-fr-opened="false">
+                Ajouter une visite
+            </a>
+        </div>
+    {% endif %}
 {% endif %}
 

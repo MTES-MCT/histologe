@@ -3,6 +3,8 @@
 namespace App\Security\Voter;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\Qualification;
+use App\Entity\Intervention;
 use App\Entity\Signalement;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -18,10 +20,11 @@ class SignalementVoter extends Voter
     public const VIEW = 'SIGN_VIEW';
     public const REOPEN = 'SIGN_REOPEN';
     public const EXPORT = 'SIGN_EXPORT';
+    public const ADD_VISITE = 'SIGN_ADD_VISITE';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::VALIDATE, self::REOPEN, self::CLOSE, self::EXPORT])
+        return \in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::VALIDATE, self::REOPEN, self::CLOSE, self::EXPORT, self::ADD_VISITE])
             && ($subject instanceof Signalement || $subject instanceof ArrayCollection);
     }
 
@@ -43,6 +46,7 @@ class SignalementVoter extends Voter
             self::EDIT => $this->canEdit($subject, $user),
             self::VIEW => $this->canView($subject, $user),
             self::EXPORT => $this->canExport($subject, $user),
+            self::ADD_VISITE => $this->canAddVisite($subject, $user),
             default => false,
         };
     }
@@ -88,5 +92,12 @@ class SignalementVoter extends Voter
         return $user->isTerritoryAdmin() && 0 == $signalements->filter(function (Signalement $signalement) use ($user) {
             return $signalement->getTerritory() !== $user->getTerritory();
         })->count();
+    }
+
+    public function canAddVisite(Signalement $signalement, UserInterface $user): bool
+    {
+        return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
+            return $affectation->getPartner()->getId() === $user->getPartner()->getId() && \in_array(Qualification::VISITES, $user->getPartner()->getCompetence());
+        })->count() > 0 || $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
     }
 }
