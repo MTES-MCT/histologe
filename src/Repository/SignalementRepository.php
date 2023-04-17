@@ -328,7 +328,7 @@ class SignalementRepository extends ServiceEntityRepository
     ): Paginator {
         $maxResult = SignalementAffectationListView::MAX_LIST_PAGINATION;
         $page = (int) $options['page'];
-        $firstResult = (($page ?: 1) - 1) * $maxResult;
+        $firstResult = (($page < 1 ? 1 : $page) - 1) * $maxResult;
         $qb = $this->findSignalementAffectationQuery($user, $options);
         $qb
             ->setFirstResult($firstResult)
