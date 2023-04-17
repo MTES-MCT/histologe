@@ -4,7 +4,7 @@ namespace App\Messenger\MessageHandler;
 
 use App\Entity\JobEvent;
 use App\Manager\JobEventManager;
-use App\Messenger\Message\DossierMessage;
+use App\Messenger\Message\DossierMessageSCHS;
 use App\Repository\PartnerRepository;
 use App\Service\Esabora\EsaboraSCHSService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -15,7 +15,7 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 #[AsMessageHandler]
-final class DossierMessageHandler
+final class DossierMessageSCHSHandler
 {
     public function __construct(
         private readonly EsaboraSCHSService $esaboraService,
@@ -31,19 +31,19 @@ final class DossierMessageHandler
      * @throws RedirectionExceptionInterface
      * @throws ClientExceptionInterface
      */
-    public function __invoke(DossierMessage $dossierMessage): void
+    public function __invoke(DossierMessageSCHS $schsDossierMessage): void
     {
-        $response = $this->esaboraService->pushDossier($dossierMessage);
-        $partner = $this->partnerRepository->find($partnerId = $dossierMessage->getPartnerId());
+        $response = $this->esaboraService->pushDossier($schsDossierMessage);
+        $partner = $this->partnerRepository->find($partnerId = $schsDossierMessage->getPartnerId());
 
         $this->jobEventManager->createJobEvent(
             service: EsaboraSCHSService::TYPE_SERVICE,
             action: EsaboraSCHSService::ACTION_PUSH_DOSSIER,
-            message: $this->serializer->serialize($dossierMessage, 'json'),
+            message: $this->serializer->serialize($schsDossierMessage, 'json'),
             response: $response->getContent(),
             status: 200 === $response->getStatusCode() ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,
             codeStatus: $response->getStatusCode(),
-            signalementId: $dossierMessage->getSignalementId(),
+            signalementId: $schsDossierMessage->getSignalementId(),
             partnerId: $partnerId,
             partnerType: $partner?->getType(),
         );

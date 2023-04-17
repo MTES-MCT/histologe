@@ -4,7 +4,7 @@ namespace App\Messenger\Message;
 
 use App\Entity\Enum\SISHDossierType;
 
-final class SISHDossierMessage
+final class DossierMessageSISH
 {
     private ?string $url = null;
     private ?string $token = null;
@@ -62,6 +62,17 @@ final class SISHDossierMessage
     private ?string $signalementProblemes = null;
     private ?string $piecesJointesObservation = null;
     private array $piecesJointesDocuments = [];
+
+    private ?int $sasDossierId = null;
+    private ?string $personneType = null;
+    private ?string $personneNom = null;
+    private ?string $personnePrenom = null;
+    private ?string $personneTelephone = null;
+    private ?string $personneEmail = null;
+    private ?string $personneLienOccupant = null;
+    private ?string $personneStructure = null;
+    private ?string $personneAdresse = null;
+    private ?string $personneRepresentant = null;
 
     public function getUrl(): ?string
     {
@@ -731,6 +742,126 @@ final class SISHDossierMessage
     public function setPiecesJointesDocuments(array $piecesJointesDocuments): self
     {
         $this->piecesJointesDocuments = $piecesJointesDocuments;
+
+        return $this;
+    }
+
+    public function getSasDossierId(): ?int
+    {
+        return $this->sasDossierId;
+    }
+
+    public function setSasDossierId(?int $sasDossierId): self
+    {
+        $this->sasDossierId = $sasDossierId;
+
+        return $this;
+    }
+
+    public function getPersonneType(): ?string
+    {
+        return $this->personneType;
+    }
+
+    public function setPersonneType(?string $personneType): self
+    {
+        $this->personneType = $personneType;
+
+        return $this;
+    }
+
+    public function getPersonneNom(): ?string
+    {
+        return $this->personneNom;
+    }
+
+    public function setPersonneNom(?string $personneNom): self
+    {
+        $this->personneNom = $personneNom;
+
+        return $this;
+    }
+
+    public function getPersonnePrenom(): ?string
+    {
+        return $this->personnePrenom;
+    }
+
+    public function setPersonnePrenom(?string $personnePrenom): self
+    {
+        $this->personnePrenom = $personnePrenom;
+
+        return $this;
+    }
+
+    public function getPersonneTelephone(): ?string
+    {
+        return $this->personneTelephone;
+    }
+
+    public function setPersonneTelephone(?string $personneTelephone): self
+    {
+        $this->personneTelephone = $personneTelephone;
+
+        return $this;
+    }
+
+    public function getPersonneEmail(): ?string
+    {
+        return $this->personneEmail;
+    }
+
+    public function setPersonneEmail(?string $personneEmail): self
+    {
+        $this->personneEmail = $personneEmail;
+
+        return $this;
+    }
+
+    public function getPersonneLienOccupant(): ?string
+    {
+        return $this->personneLienOccupant;
+    }
+
+    public function setPersonneLienOccupant(?string $personneLienOccupant): self
+    {
+        $this->personneLienOccupant = $personneLienOccupant;
+
+        return $this;
+    }
+
+    public function getPersonneStructure(): ?string
+    {
+        return $this->personneStructure;
+    }
+
+    public function setPersonneStructure(?string $personneStructure): self
+    {
+        $this->personneStructure = $personneStructure;
+
+        return $this;
+    }
+
+    public function getPersonneAdresse(): ?string
+    {
+        return $this->personneAdresse;
+    }
+
+    public function setPersonneAdresse(?string $personneAdresse): self
+    {
+        $this->personneAdresse = $personneAdresse;
+
+        return $this;
+    }
+
+    public function getPersonneRepresentant(): ?string
+    {
+        return $this->personneRepresentant;
+    }
+
+    public function setPersonneRepresentant(?string $personneRepresentant): self
+    {
+        $this->personneRepresentant = $personneRepresentant;
 
         return $this;
     }

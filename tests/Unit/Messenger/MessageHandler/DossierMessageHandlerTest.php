@@ -4,7 +4,7 @@ namespace App\Tests\Unit\Messenger\MessageHandler;
 
 use App\Entity\Partner;
 use App\Manager\JobEventManager;
-use App\Messenger\MessageHandler\DossierMessageHandler;
+use App\Messenger\MessageHandler\DossierMessageSCHSHandler;
 use App\Repository\PartnerRepository;
 use App\Service\Esabora\EsaboraSCHSService;
 use App\Tests\Unit\Messenger\DossierMessageTrait;
@@ -53,7 +53,7 @@ class DossierMessageHandlerTest extends TestCase
             ->with($dossierMessage->getPartnerId())
             ->willReturn(new Partner());
 
-        $dossierMessageHandler = new DossierMessageHandler(
+        $dossierMessageHandler = new DossierMessageSCHSHandler(
             $esaboraServiceMock,
             $jobEventManagerMock,
             $serializerMock,

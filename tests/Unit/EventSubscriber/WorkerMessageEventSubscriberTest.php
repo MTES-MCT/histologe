@@ -6,7 +6,7 @@ use App\Entity\Enum\InterfacageType;
 use App\Entity\JobEvent;
 use App\EventSubscriber\WorkerMessageEventSubscriber;
 use App\Manager\JobEventManager;
-use App\Messenger\Message\DossierMessage;
+use App\Messenger\Message\DossierMessageSCHS;
 use App\Repository\PartnerRepository;
 use App\Service\Esabora\EsaboraSCHSService;
 use App\Tests\Unit\Messenger\DossierMessageTrait;
@@ -38,14 +38,14 @@ class WorkerMessageEventSubscriberTest extends TestCase
         $partnerRepositoryMock = $this->createMock(PartnerRepository::class);
         $subscriber = new WorkerMessageEventSubscriber($jobEventManagerMock, $serializerMock, $partnerRepositoryMock);
 
-        $dossierMessage = new DossierMessage();
+        $dossierMessage = new DossierMessageSCHS();
         $envelope = new Envelope($dossierMessage, [
             new DelayStamp(0),
             new ReceivedStamp('async'),
         ]);
         $event = new WorkerMessageFailedEvent($envelope, 'async', new \Exception('custom error'));
 
-        /** @var DossierMessage $dossierMessageFromEnvelope */
+        /** @var DossierMessageSCHS $dossierMessageFromEnvelope */
         $dossierMessageFromEnvelope = $event->getEnvelope()->getMessage();
 
         $jobEventManagerMock

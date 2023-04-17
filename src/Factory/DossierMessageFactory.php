@@ -4,7 +4,7 @@ namespace App\Factory;
 
 use App\Entity\Affectation;
 use App\Entity\Signalement;
-use App\Messenger\Message\DossierMessage;
+use App\Messenger\Message\DossierMessageSCHS;
 use App\Service\UploadHandlerService;
 
 class DossierMessageFactory
@@ -13,12 +13,12 @@ class DossierMessageFactory
     {
     }
 
-    public function createInstance(Affectation $affectation): DossierMessage
+    public function createInstance(Affectation $affectation): DossierMessageSCHS
     {
         $signalement = $affectation->getSignalement();
         $partner = $affectation->getPartner();
 
-        return (new DossierMessage())
+        return (new DossierMessageSCHS())
             ->setUrl($partner->getEsaboraUrl())
             ->setToken($partner->getEsaboraToken())
             ->setPartnerId($partner->getId())

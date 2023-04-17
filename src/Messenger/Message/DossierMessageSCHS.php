@@ -2,7 +2,7 @@
 
 namespace App\Messenger\Message;
 
-final class DossierMessage
+final class DossierMessageSCHS
 {
     private ?string $url = null;
 

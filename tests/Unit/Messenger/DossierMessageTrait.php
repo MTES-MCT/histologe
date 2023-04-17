@@ -2,16 +2,16 @@
 
 namespace App\Tests\Unit\Messenger;
 
-use App\Messenger\Message\DossierMessage;
+use App\Messenger\Message\DossierMessageSCHS;
 use Faker\Factory;
 
 trait DossierMessageTrait
 {
-    protected function getDossierMessage(): DossierMessage
+    protected function getDossierMessage(): DossierMessageSCHS
     {
         $faker = Factory::create();
 
-        return (new DossierMessage())
+        return (new DossierMessageSCHS())
             ->setUrl($faker->url())
             ->setToken($faker->password(20))
             ->setPartnerId($faker->randomDigit())

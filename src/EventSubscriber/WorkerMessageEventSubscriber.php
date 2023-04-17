@@ -5,7 +5,7 @@ namespace App\EventSubscriber;
 use App\Entity\Enum\InterfacageType;
 use App\Entity\JobEvent;
 use App\Manager\JobEventManager;
-use App\Messenger\Message\DossierMessage;
+use App\Messenger\Message\DossierMessageSCHS;
 use App\Repository\PartnerRepository;
 use App\Service\Esabora\EsaboraSCHSService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -33,7 +33,7 @@ class WorkerMessageEventSubscriber implements EventSubscriberInterface
     {
         if (!$event->willRetry()) {
             $dossierMessage = $event->getEnvelope()->getMessage();
-            if ($dossierMessage instanceof DossierMessage) {
+            if ($dossierMessage instanceof DossierMessageSCHS) {
                 $error = [
                   'message' => $event->getThrowable()->getMessage(),
                   'stack_trace' => $event->getThrowable()->getTraceAsString(),

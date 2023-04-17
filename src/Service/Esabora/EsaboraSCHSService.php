@@ -3,7 +3,7 @@
 namespace App\Service\Esabora;
 
 use App\Entity\Affectation;
-use App\Messenger\Message\DossierMessage;
+use App\Messenger\Message\DossierMessageSCHS;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
-class EsaboraSCHSService
+class EsaboraSCHSService extends AbstractEsaboraService
 {
     public const ESABORA_WAIT = 'A traiter';
     public const ESABORA_ACCEPTED = 'Importé';
@@ -24,13 +24,14 @@ class EsaboraSCHSService
     public const ACTION_SYNC_DOSSIER = 'sync_dossier';
 
     public function __construct(
-        private HttpClientInterface $client,
-        private UploadHandlerService $uploadHandlerService,
-        private LoggerInterface $logger,
+        private readonly HttpClientInterface $client,
+        private readonly LoggerInterface $logger,
+        private readonly UploadHandlerService $uploadHandlerService,
     ) {
+        parent::__construct($this->client, $this->logger);
     }
 
-    public function pushDossier(DossierMessage $dossierMessage): ResponseInterface|JsonResponse
+    public function pushDossier(DossierMessageSCHS $dossierMessage): ResponseInterface|JsonResponse
     {
         $url = $dossierMessage->getUrl();
         $token = $dossierMessage->getToken();
@@ -39,22 +40,7 @@ class EsaboraSCHSService
             'fieldList' => $this->preparePayloadPushDossier($dossierMessage),
         ];
 
-        try {
-            return $this->client->request('POST', $url.'/modbdd/?task=doTreatment', [
-                    'headers' => [
-                        'Authorization: Bearer '.$token,
-                        'Content-Type: application/json',
-                    ],
-                    'body' => json_encode($payload, \JSON_THROW_ON_ERROR),
-                ]
-            );
-        } catch (\Throwable $exception) {
-            $this->logger->error($exception->getMessage());
-        }
-
-        return (new JsonResponse([
-            'message' => $exception->getMessage(),
-        ]))->setStatusCode(Response::HTTP_SERVICE_UNAVAILABLE);
+        return $this->request($url, $token, AbstractEsaboraService::TASK_INSERT, $payload);
     }
 
     public function getStateDossier(Affectation $affectation): DossierResponse
@@ -97,7 +83,7 @@ class EsaboraSCHSService
         return new DossierResponse(['message' => $exception->getMessage(), 'status_code' => $statusCode], $statusCode);
     }
 
-    public function preparePayloadPushDossier(DossierMessage $dossierMessage, bool $encodeDocuments = true): array
+    public function preparePayloadPushDossier(DossierMessageSCHS $dossierMessage, bool $encodeDocuments = true): array
     {
         $piecesJointes = [];
         if ($encodeDocuments) {
