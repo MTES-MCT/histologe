@@ -1,4 +1,7 @@
 <div class="fr-grid-row fr-mt-3v fr-mb-3w">
+    <div class="fr-col-12 fr-h4 fr-mb-3v">
+        Visite #{{loop.index}}
+    </div>
     <div class="fr-col-12 fr-col-md-6">
         <div class="fr-mb-3v">
             {% include 'back/signalement/view/visites/visite-status.html.twig' %}
@@ -28,7 +31,7 @@
             {% if signalement.interventions is empty or intervention.concludeProcedure is empty %}
                 <span class="fr-badge fr-badge--no-icon" title="Non disponible">Non disponible</span>
             {% else %}
-                {{ intervention.concludeProcedure.label }}
+                <span class="fr-badge fr-badge--no-icon fr-badge--warning" title="{{ intervention.concludeProcedure.label }}">{{ intervention.concludeProcedure.label }}</span>
             {% endif %}
         </div>
         <div class="fr-mb-3v">
