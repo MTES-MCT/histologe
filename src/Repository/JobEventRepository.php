@@ -48,7 +48,7 @@ class JobEventRepository extends ServiceEntityRepository
         $results = $qb->getQuery()->getArrayResult();
 
         return array_map(function ($item) {
-            $response = json_decode($item['response'], true);
+            $response = json_decode($item['response']);
 
             return [
                 'reference' => $item['reference'],
@@ -56,7 +56,7 @@ class JobEventRepository extends ServiceEntityRepository
                 'title' => $item['title'],
                 'id' => $item['id'],
                 'nom' => $item['nom'],
-                'status' => null === $response['errorReason'] ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,
+                'status' => null === $response?->errorReason ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,
                 'response' => json_decode($item['response']),
             ];
         }, $results);
