@@ -30,7 +30,7 @@ class UserAccountController extends AbstractController
         $title = 'Activation de votre compte';
         if ($request->isMethod('POST') && $email = $request->request->get('email')) {
             $user = $userRepository->findOneBy(['email' => $email]);
-            if ($user) {
+            if ($user && User::STATUS_ARCHIVE != $user->getStatut()) {
                 $notificationMailerRegistry->send(
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_FROM_FO,
@@ -48,7 +48,6 @@ class UserAccountController extends AbstractController
             $this->addFlash('error', 'Cette adresse ne correspond à aucun compte, verifiez votre saisie');
         }
 
-        // if it's not submitted, render the "login" form
         return $this->render('security/login_activation.html.twig', [
             'title' => $title,
             'actionTitle' => 'Activation de votre compte',
@@ -73,7 +72,7 @@ class UserAccountController extends AbstractController
         $title = 'Récupération de votre mot de passe';
         if ($request->isMethod('POST') && $email = $request->request->get('email')) {
             $user = $userRepository->findOneBy(['email' => $email]);
-            if ($user) {
+            if ($user && User::STATUS_ARCHIVE != $user->getStatut()) {
                 $notificationMailerRegistry->send(
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_LOST_PASSWORD,
@@ -105,8 +104,11 @@ class UserAccountController extends AbstractController
     }
 
     #[Route('/bo/nouveau-mot-de-passe', name: 'login_creation_pass')]
-    public function createPassword(Request $request, PasswordHasherFactoryInterface $hasherFactory, EntityManagerInterface $entityManager): RedirectResponse|Response
-    {
+    public function createPassword(
+        Request $request,
+        PasswordHasherFactoryInterface $hasherFactory,
+        EntityManagerInterface $entityManager
+    ): RedirectResponse|Response {
         $title = 'Création de votre mot de passe';
         if ($request->isMethod('POST') && $this->isCsrfTokenValid('create_password_'.$this->getUser()->getId(), $request->get('_csrf_token'))) {
             $user = $this->getUser();
