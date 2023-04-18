@@ -6,8 +6,11 @@ use App\Dto\Request\Signalement\VisiteRequest;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\InterventionCreatedEvent;
+<<<<<<< HEAD
 use App\Event\InterventionEditedEvent;
 use App\Event\InterventionRescheduledEvent;
+=======
+>>>>>>> 30ba9c69 (notifications for add and cancel intervention)
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Manager\InterventionManager;
 use App\Repository\InterventionRepository;
@@ -72,7 +75,10 @@ class SignalementVisitesController extends AbstractController
         InterventionManager $interventionManager,
         UploadHandlerService $uploadHandler,
         EventDispatcherInterface $eventDispatcher,
+<<<<<<< HEAD
         FilenameGenerator $filenameGenerator,
+=======
+>>>>>>> 30ba9c69 (notifications for add and cancel intervention)
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_ADD_VISITE', $signalement);
 
