@@ -308,7 +308,7 @@ class FrontSignalementController extends AbstractController
     ) {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
             $requestEmail = $request->get('from');
-            $fromEmail = is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
+            $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
 
             /** @var User $userOccupant */
             $userOccupant = $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
