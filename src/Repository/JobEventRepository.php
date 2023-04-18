@@ -30,7 +30,7 @@ class JobEventRepository extends ServiceEntityRepository
         ?Territory $territory
     ): array {
         $qb = $this->createQueryBuilder('j')
-            ->select('MAX(j.createdAt) AS last_event, p.id, p.nom, s.reference, j.status, j.title')
+            ->select('MAX(j.createdAt) AS last_event, p.id, p.nom, s.reference, j.status, j.title, j.response')
             ->innerJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId')
             ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
             ->where('j.type LIKE :type')
@@ -42,10 +42,23 @@ class JobEventRepository extends ServiceEntityRepository
 
         $qb->setParameter('type', '%'.$type.'%')
             ->setParameter('day_period', $dayPeriod)
-            ->groupBy('p.id, p.nom, s.reference,j.title, j.status')
-            ->orderBy('p.id', 'ASC')
-            ->addOrderBy('last_event', 'DESC');
+            ->groupBy('p.id, p.nom, s.reference,j.title, j.status, j.response')
+            ->orderBy('last_event', 'DESC');
 
-        return $qb->getQuery()->getArrayResult();
+        $results = $qb->getQuery()->getArrayResult();
+
+        return array_map(function ($item) {
+            $response = json_decode($item['response'], true);
+
+            return [
+                'reference' => $item['reference'],
+                'last_event' => $item['last_event'],
+                'title' => $item['title'],
+                'id' => $item['id'],
+                'nom' => $item['nom'],
+                'status' => null === $response['errorReason'] ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,
+                'response' => json_decode($item['response']),
+            ];
+        }, $results);
     }
 }

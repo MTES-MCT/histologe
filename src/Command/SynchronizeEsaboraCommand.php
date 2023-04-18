@@ -6,6 +6,7 @@ use App\Entity\JobEvent;
 use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
+use App\Service\Esabora\DossierResponse;
 use App\Service\Esabora\EsaboraService;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -55,7 +56,7 @@ class SynchronizeEsaboraCommand extends Command
             ];
 
             $dossierResponse = $this->esaboraService->getStateDossier($affectation);
-            if (Response::HTTP_OK === $dossierResponse->getStatusCode() && null !== $dossierResponse->getSasEtat()) {
+            if ($this->hasSuccess($dossierResponse)) {
                 $this->affectationManager->synchronizeAffectationFrom($dossierResponse, $affectation);
                 $io->success(
                     sprintf(
@@ -79,7 +80,7 @@ class SynchronizeEsaboraCommand extends Command
                 title: EsaboraService::ACTION_SYNC_DOSSIER,
                 message: json_encode($message),
                 response: $this->serializer->serialize($dossierResponse, 'json'),
-                status: Response::HTTP_OK === $dossierResponse->getStatusCode()
+                status: $this->hasSuccess($dossierResponse)
                     ? JobEvent::STATUS_SUCCESS
                     : JobEvent::STATUS_FAILED,
                 signalementId: $affectation->getSignalement()->getId(),
@@ -106,5 +107,12 @@ class SynchronizeEsaboraCommand extends Command
         );
 
         return Command::SUCCESS;
+    }
+
+    private function hasSuccess(DossierResponse $dossierResponse): bool
+    {
+        return Response::HTTP_OK === $dossierResponse->getStatusCode()
+            && null !== $dossierResponse->getSasEtat()
+            && null === $dossierResponse->getErrorReason();
     }
 }
