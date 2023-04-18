@@ -88,25 +88,3 @@
         </div>
     </section>
 {% endblock %}
-{% block javascripts %}
-
-    <script>
-        opts.pointer = {
-            length: 0.49,
-            strokeWidth: 0.1,
-            color: '#000000'
-        }
-        let ids = [ {% if not is_granted('ROLE_ADMIN_TERRITORY')  or filters.partners or filters.affectations %}
-                        {{ signalements.list|map(signalement => "#{signalement.id}")|join(', ') }}
-                    {% else %}
-                        {{ signalements.list|map(signalement => "#{signalement.id}")|join(', ') }}
-                    {% endif %}],
-
-            scores = [
-                {% if not is_granted('ROLE_ADMIN_TERRITORY')  or filters.partners or filters.affectations %}
-                    {{ signalements.list|map(signalement => "#{signalement.score}")|join(', ') }}
-                {% else %}
-                    {{ signalements.list|map(signalement => "#{signalement.score}")|join(', ') }}
-                {% endif %}];
-    </script>
-{% endblock %}
