@@ -31,7 +31,7 @@
     <link rel="icon" href={{ asset('favicon.ico') }}>
     <link rel="stylesheet" href={{ asset('dsfr/dsfr.min.css') }}>
     <link rel="stylesheet" href={{ asset('build/app.css') }}>
-    {% if 'back_cartographie' in app.request.get('_route') %}
+    {% if 'back_cartographie' in app.request.get('_route') or 'back_signalement_view' in app.request.get('_route') %}
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
         <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
         <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
@@ -104,7 +104,7 @@
 <script src="{{ asset('js/app.js?v='~''|date('YmdH')) }}"></script>
 <script src={{ asset('js/img_box.js') }}></script>
 
-{% if 'back_cartographie' in app.request.get('_route') %}
+{% if 'back_cartographie' in app.request.get('_route') or 'back_signalement_view' in app.request.get('_route') %}
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 {% endif %}
