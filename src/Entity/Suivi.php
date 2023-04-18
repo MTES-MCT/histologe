@@ -13,6 +13,9 @@ class Suivi
     public const TYPE_USAGER = 2;
     public const TYPE_PARTNER = 3;
     public const TYPE_TECHNICAL = 4;
+
+    public const CONTEXT_INTERVENTION = 'intervention';
+
     public const DEFAULT_PERIOD_INACTIVITY = 30;
     public const DEFAULT_PERIOD_RELANCE = 45;
 
@@ -47,6 +50,9 @@ class Suivi
     #[ORM\ManyToOne(targetEntity: Signalement::class, inversedBy: 'suivis')]
     #[ORM\JoinColumn(nullable: false)]
     private $signalement;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $context = null;
 
     public function __construct()
     {
@@ -127,6 +133,18 @@ class Suivi
     public function setType(int $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getContext(): ?string
+    {
+        return $this->context;
+    }
+
+    public function setContext(?string $context): self
+    {
+        $this->context = $context;
 
         return $this;
     }

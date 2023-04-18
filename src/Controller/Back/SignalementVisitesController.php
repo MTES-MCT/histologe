@@ -4,12 +4,15 @@ namespace App\Controller\Back;
 
 use App\Dto\Request\Signalement\VisiteRequest;
 use App\Entity\Signalement;
+use App\Entity\User;
+use App\Event\InterventionCreatedEvent;
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Manager\InterventionManager;
 use App\Repository\InterventionRepository;
 use App\Service\UploadHandlerService;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -58,6 +61,7 @@ class SignalementVisitesController extends AbstractController
             return $uploadHandler->uploadFromFile($file, $newFilename);
         } catch (MaxUploadSizeExceededException $exception) {
             $this->addFlash('error', $exception->getMessage());
+
             return null;
         }
     }
@@ -69,6 +73,7 @@ class SignalementVisitesController extends AbstractController
         InterventionManager $interventionManager,
         SluggerInterface $slugger,
         UploadHandlerService $uploadHandler,
+        EventDispatcherInterface $eventDispatcher,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_ADD_VISITE', $signalement);
 
@@ -101,6 +106,9 @@ class SignalementVisitesController extends AbstractController
                 $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
             } else {
                 $this->addFlash('success', self::SUCCESS_MSG_ADD);
+                /** @var User $user */
+                $user = $this->getUser();
+                $eventDispatcher->dispatch(new InterventionCreatedEvent($intervention, $user), InterventionCreatedEvent::NAME);
             }
         } else {
             $this->addFlash('error', "Erreur lors de l'enregistrement de la visite.");

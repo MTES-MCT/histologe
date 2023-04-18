@@ -21,6 +21,9 @@
             {% include 'back/signalement/view/visites/visites-modals.html.twig' %}
             {% include 'back/signalement/view/visites/visites-buttons.html.twig' %}
         {% endif %}
+        <div class="fr-col-12 fr-h4 fr-mb-3v">
+            Visite #{{loop.index}}
+        </div>
         {% include 'back/signalement/view/visites/visite-item.html.twig' %}
     {% endfor %}
 

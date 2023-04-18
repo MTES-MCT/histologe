@@ -64,7 +64,7 @@ class ActivityListener implements EventSubscriberInterface
                 $this->sendMail($entity, NotificationMailerType::TYPE_ASSIGNMENT_NEW);
             } elseif ($entity instanceof Suivi) {
                 // pas de notification pour un suivi technique
-                if (Suivi::TYPE_TECHNICAL === $entity->getType()) {
+                if (Suivi::TYPE_TECHNICAL === $entity->getType() || Suivi::CONTEXT_INTERVENTION === $entity->getContext()) {
                     continue;
                 }
 
