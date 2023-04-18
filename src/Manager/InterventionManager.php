@@ -60,7 +60,6 @@ class InterventionManager extends AbstractManager
         if ($intervention->getDate() <= $todayDate) {
             $this->confirmVisiteFromRequest($visiteRequest, $intervention);
         }
-        // TODO : dispatch event visite created
 
         return $intervention;
     }
@@ -76,8 +75,8 @@ class InterventionManager extends AbstractManager
             return null;
         }
 
-        $this->interventionPlanningStateMachine->apply($intervention, 'cancel');
         $intervention->setDetails($visiteRequest->getDetails());
+        $this->interventionPlanningStateMachine->apply($intervention, 'cancel');
         $this->save($intervention);
 
         return $intervention;
@@ -147,7 +146,7 @@ class InterventionManager extends AbstractManager
         if ($visiteRequest->getDocument()) {
             $intervention->setDocuments([$visiteRequest->getDocument()]);
         }
-            
+
         $this->save($intervention);
 
         return $intervention;

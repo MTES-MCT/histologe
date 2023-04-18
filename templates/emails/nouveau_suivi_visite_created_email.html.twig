@@ -1,0 +1,34 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour,</p>
+    <p>
+        Suite au signalement du logement situé
+        <br>
+        <strong>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</strong>,
+        <br>
+        une visite est prévue à cette adresse le {{ intervention.date.format('d/m/Y')}}.
+        <br><br>
+        La visite sera effectuée par {{ intervention.partner.nom }}.
+        <br><br>
+        Si vous n'êtes pas disponible à cette date, veuillez nous le signaler au plus vite en cliquant sur le bouton ci-dessous.
+    </p>
+
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="text-align: center">
+        <tbody>
+        <tr>
+            <td align="left">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                    <tbody>
+                    <tr style="text-align: center;width: 100%">
+                        <td>
+                            <a href="{{ lien_suivi|raw }}" target="_blank" rel="noopener">{{ btntext|capitalize }}</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p>Si le bouton ne fonctionne pas <a href="{{ lien_suivi|raw }}">cliquez ici</a></p>
+{% endblock %}

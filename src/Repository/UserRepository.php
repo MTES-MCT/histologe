@@ -41,6 +41,23 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
+    public function findActiveTerritoryAdmins(?Territory $territory): ?array
+    {
+        if (empty($territory)) {
+            return null;
+        }
+
+        $queryBuilder = $this->createQueryBuilder('u');
+
+        return $queryBuilder
+            ->andWhere('u.territory = :territory')
+            ->setParameter('territory', $territory)
+            ->andWhere('u.roles LIKE :role')
+            ->setParameter('role', '%ROLE_ADMIN_TERRITORY%')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findInactiveWithNbAffectationPending(): array
     {
         $connection = $this->getEntityManager()->getConnection();

@@ -4,7 +4,6 @@ namespace App\Security\Voter;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
-use App\Entity\Intervention;
 use App\Entity\Signalement;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
