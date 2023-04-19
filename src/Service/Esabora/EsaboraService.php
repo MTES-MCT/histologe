@@ -15,8 +15,9 @@ class EsaboraService
 {
     public const ESABORA_WAIT = 'A traiter';
     public const ESABORA_ACCEPTED = 'Importé';
-    public const ESABORA_REFUSED = 'Non importé';
+    public const ESABORA_IN_PROGRESS = 'en cours';
     public const ESABORA_CLOSED = 'terminé';
+    public const ESABORA_REFUSED = 'Non importé';
 
     public const TYPE_SERVICE = 'esabora';
     public const ACTION_PUSH_DOSSIER = 'push_dossier';

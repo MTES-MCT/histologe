@@ -8,7 +8,7 @@
     "Doss_Statut_Abrégé",
     "Doss_Statut",
     "Doss_Etat",
-    "DOss_Cloture"
+    "Doss_Cloture"
   ],
   "keyList": [
     "i1.iaff_id"
@@ -17,11 +17,11 @@
     {
       "columnDataList": [
         "00000000-0000-0000-2022-000000000010",
-        "terminé",
+        "Importé",
         "202210",
         "2022-10",
-        null,
-        null,
+        "Traité",
+        "Traité",
         "terminé",
         "30/11/2022"
       ],
