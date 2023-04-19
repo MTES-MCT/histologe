@@ -103,7 +103,7 @@ class AffectationManager extends Manager
         $user = $affectation->getPartner()->getUsers()->first();
         $signalement = $affectation->getSignalement();
 
-        $description = $this->updateStatusFor($affectation, $user, $dossierResponse->getSasEtat());
+        $description = $this->updateStatusFor($affectation, $user, $dossierResponse);
         if (!empty($description)) {
             $suivi = $this->suiviManager->createSuivi(
                 $user,
@@ -119,10 +119,14 @@ class AffectationManager extends Manager
         }
     }
 
-    public function updateStatusFor(Affectation $affectation, User $user, string $esaboraStatus): string
+    public function updateStatusFor(Affectation $affectation, User $user, DossierResponse $dossierResponse): string
     {
         $description = '';
         $currentStatus = $affectation->getStatut();
+
+        $esaboraStatus = $dossierResponse->getSasEtat();
+        $esaboraDossierStatus = $dossierResponse->getEtat();
+
         switch ($esaboraStatus) {
             case EsaboraService::ESABORA_WAIT:
                 if (Affectation::STATUS_WAIT !== $currentStatus) {
@@ -131,9 +135,14 @@ class AffectationManager extends Manager
                 }
                 break;
             case EsaboraService::ESABORA_ACCEPTED:
-                if (Affectation::STATUS_ACCEPTED !== $currentStatus) {
+                if ($this->shouldBeAcceptedViaEsabora($esaboraDossierStatus, $currentStatus)) {
                     $this->updateAffectation($affectation, $user, Affectation::STATUS_ACCEPTED);
                     $description = 'accepté via Esabora';
+                }
+
+                if ($this->shouldBeClosedViaEsabora($esaboraDossierStatus, $currentStatus)) {
+                    $this->updateAffectation($affectation, $user, Affectation::STATUS_CLOSED);
+                    $description = 'cloturé via Esabora';
                 }
                 break;
             case EsaboraService::ESABORA_REFUSED:
@@ -142,15 +151,20 @@ class AffectationManager extends Manager
                     $description = 'refusé via Esabora';
                 }
                 break;
-            default:
-                if (EsaboraService::ESABORA_CLOSED === $esaboraStatus &&
-                    Affectation::STATUS_CLOSED !== $affectation->getStatut()) {
-                    $this->updateAffectation($affectation, $user, Affectation::STATUS_CLOSED);
-                    $description = 'cloturé via Esabora';
-                }
-                break;
         }
 
         return $description;
+    }
+
+    private function shouldBeAcceptedViaEsabora(string $esaboraDossierStatus, int $currentStatus): bool
+    {
+        return EsaboraService::ESABORA_IN_PROGRESS === $esaboraDossierStatus
+            && Affectation::STATUS_ACCEPTED !== $currentStatus;
+    }
+
+    private function shouldBeClosedViaEsabora(string $esaboraDossierStatus, int $currentStatus): bool
+    {
+        return EsaboraService::ESABORA_CLOSED === $esaboraDossierStatus
+            && Affectation::STATUS_CLOSED !== $currentStatus;
     }
 }
