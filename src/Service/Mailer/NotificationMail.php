@@ -6,6 +6,7 @@ use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
+use DateTimeInterface;
 
 class NotificationMail
 {
@@ -19,6 +20,7 @@ class NotificationMail
         private readonly ?User $user = null,
         private readonly ?Signalement $signalement = null,
         private readonly ?Intervention $intervention = null,
+        private readonly ?DateTimeInterface $previousVisiteDate = null,
         private readonly mixed $event = null,
         private readonly mixed $attachment = null,
         private readonly ?string $motif = null,
@@ -66,6 +68,11 @@ class NotificationMail
     public function getIntervention(): ?Intervention
     {
         return $this->intervention;
+    }
+
+    public function getPreviousVisiteDate(): ?DateTimeInterface
+    {
+        return $this->previousVisiteDate;
     }
 
     public function getEvent(): mixed

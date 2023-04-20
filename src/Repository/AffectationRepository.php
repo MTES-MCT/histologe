@@ -157,4 +157,18 @@ class AffectationRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getOneOrNullResult();
     }
+
+    public function findAffectationWithQualification(Qualification $qualification, Signalement $signalement)
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb->select('p.id, p.nom')
+            ->where('a.signalement = :signalement')
+            ->setParameter('signalement', $signalement)
+            ->innerJoin('a.partner', 'p')
+            ->andWhere('p.competence LIKE :qualification')
+            ->setParameter('qualification', "%{$qualification->name}%");
+
+        return $qb->getQuery()
+                    ->getResult();
+    }
 }
