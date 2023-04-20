@@ -6,7 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\AffectationAnsweredEvent;
-use App\Factory\DossierMessageFactory;
+use App\Factory\Esabora\DossierMessageSCHSFactory;
 use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
 use App\Manager\SignalementManager;
@@ -28,7 +28,7 @@ class BackAssignmentController extends AbstractController
         private SignalementManager $signalementManager,
         private AffectationManager $affectationManager,
         private PartnerRepository $partnerRepository,
-        private DossierMessageFactory $dossierMessageFactory,
+        private DossierMessageSCHSFactory $dossierMessageFactory,
         private MessageBusInterface $messageBus,
         private EventDispatcherInterface $eventDispatcher,
         private JobEventManager $jobEventManager,

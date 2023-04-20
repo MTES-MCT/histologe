@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Factory;
+namespace App\Factory\Esabora;
 
 use App\Entity\Affectation;
 use App\Entity\Signalement;
 use App\Messenger\Message\DossierMessageSCHS;
 use App\Service\UploadHandlerService;
 
-class DossierMessageFactory
+class DossierMessageSCHSFactory
 {
-    public function __construct(private UploadHandlerService $uploadHandlerService)
+    public function __construct(private readonly UploadHandlerService $uploadHandlerService)
     {
     }
 

@@ -8,6 +8,8 @@ final class DossierMessageSISH
 {
     private ?string $url = null;
     private ?string $token = null;
+    private ?int $signalementId = null;
+    private ?int $partnerId = null;
     private ?string $referenceAdresse = null;
     private ?string $localisationNumero = null;
     private ?string $localisationNumeroExt = null;
@@ -94,6 +96,29 @@ final class DossierMessageSISH
     public function setToken(?string $token): self
     {
         $this->token = $token;
+
+        return $this;
+    }
+
+    public function getSignalementId(): ?int
+    {
+        return $this->signalementId;
+    }
+
+    public function setSignalementId(?int $signalementId): self
+    {
+        $this->signalementId = $signalementId;
+        return $this;
+    }
+
+    public function getPartnerId(): ?int
+    {
+        return $this->partnerId;
+    }
+
+    public function setPartnerId(?int $partnerId): self
+    {
+        $this->partnerId = $partnerId;
 
         return $this;
     }
