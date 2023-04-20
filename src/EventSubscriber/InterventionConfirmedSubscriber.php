@@ -9,7 +9,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
 
-class InterventionCanceledSubscriber implements EventSubscriberInterface
+class InterventionConfirmedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private Security $security,
@@ -20,18 +20,18 @@ class InterventionCanceledSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            'workflow.intervention_planning.transition.cancel' => 'onInterventionCanceled',
+            'workflow.intervention_planning.transition.confirm' => 'onInterventionConfirmed',
         ];
     }
 
-    public function onInterventionCanceled(Event $event): void
+    public function onInterventionConfirmed(Event $event): void
     {
         $intervention = $event->getSubject();
         $currentUser = $this->security->getUser();
         if (InterventionType::VISITE == $intervention->getType()) {
-            $description = 'Annulation de visite :';
-            $description .= ' la visite du logement prévue le '.$intervention->getDate()->format('d/m/Y');
-            $description .= ' a été annulée pour le motif suivant : <br>';
+            $description = 'Après visite du logement par '.$intervention->getPartner()->getNom().',';
+            $description .= ' la situation observée du logement est : ' . $intervention->getConcludeProcedure()->label() . '.<br>';
+            $description .= 'Commentaire opérateur :<br>';
             $description .= $intervention->getDetails();
             $suivi = $this->visiteNotifier->createSuivi(
                 description: $description,
@@ -40,14 +40,14 @@ class InterventionCanceledSubscriber implements EventSubscriberInterface
             );
 
             // Send mails to usager
-            $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_CANCELED_TO_USAGER);
+            $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_CONFIRMED_TO_USAGER);
 
             // Send notifications to agents
             $this->visiteNotifier->notifyAgents(
                 intervention: $intervention,
                 suivi: $suivi,
                 currentUser: $currentUser,
-                notificationMailerType: null,
+                notificationMailerType: NotificationMailerType::TYPE_VISITE_CONFIRMED_TO_PARTNER,
             );
         }
     }

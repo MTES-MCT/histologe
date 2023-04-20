@@ -17,9 +17,9 @@ use App\Event\SignalementViewedEvent;
 use App\Form\ClotureType;
 use App\Form\SignalementType;
 use App\Manager\SignalementManager;
+use App\Repository\AffectationRepository;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
-use App\Repository\PartnerRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
@@ -48,7 +48,7 @@ class SignalementController extends AbstractController
         ParameterBagInterface $parameterBag,
         SignalementQualificationRepository $signalementQualificationRepository,
         CriticiteRepository $criticiteRepository,
-        PartnerRepository $partnerRepository
+        AffectationRepository $affectationRepository,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
         if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
@@ -171,7 +171,7 @@ class SignalementController extends AbstractController
             'files' => $files,
             'canEditNDE' => $canEditNDE,
             'listQualificationStatusesLabels' => $listQualificationStatusesLabels,
-            'partnersCanVisite' => $partnerRepository->findPartnersWithQualification(Qualification::VISITES, $signalement->getTerritory()),
+            'partnersCanVisite' => $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement),
             'listProceduresTypes' => ProcedureType::getLabelList(),
         ]);
     }

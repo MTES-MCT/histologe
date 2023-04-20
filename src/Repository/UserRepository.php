@@ -54,6 +54,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('territory', $territory)
             ->andWhere('u.roles LIKE :role')
             ->setParameter('role', '%ROLE_ADMIN_TERRITORY%')
+            ->andWhere('u.statut LIKE :active')
+            ->setParameter('active', User::STATUS_ACTIVE)
             ->getQuery()
             ->getResult();
     }

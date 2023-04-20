@@ -6,6 +6,7 @@ use App\Dto\Request\Signalement\VisiteRequest;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\InterventionCreatedEvent;
+use App\Event\InterventionRescheduledEvent;
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Manager\InterventionManager;
 use App\Repository\InterventionRepository;
@@ -163,6 +164,7 @@ class SignalementVisitesController extends AbstractController
         InterventionRepository $interventionRepository,
         SluggerInterface $slugger,
         UploadHandlerService $uploadHandler,
+        EventDispatcherInterface $eventDispatcher,
     ): Response {
         $requestRescheduleData = $request->get('visite-reschedule');
 
@@ -181,6 +183,7 @@ class SignalementVisitesController extends AbstractController
             return $errorRedirect;
         }
 
+        $previousDate = $intervention->getDate();
         $fileName = $this->getUploadedFile($request, 'visite-reschedule', $slugger, $uploadHandler);
 
         $visiteRequest = new VisiteRequest(
@@ -200,6 +203,9 @@ class SignalementVisitesController extends AbstractController
                 $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
             } else {
                 $this->addFlash('success', self::SUCCESS_MSG_ADD);
+                /** @var User $user */
+                $user = $this->getUser();
+                $eventDispatcher->dispatch(new InterventionRescheduledEvent($intervention, $user, $previousDate), InterventionRescheduledEvent::NAME);
             }
         } else {
             $this->addFlash('error', 'Erreur lors de la modification de la visite.');

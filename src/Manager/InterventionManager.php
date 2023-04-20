@@ -115,7 +115,6 @@ class InterventionManager extends AbstractManager
         if ($intervention->getDate() <= $todayDate) {
             $this->confirmVisiteFromRequest($visiteRequest, $intervention);
         }
-        // TODO : dispatch event visite date rescheduled
 
         return $intervention;
     }
@@ -133,18 +132,18 @@ class InterventionManager extends AbstractManager
             return null;
         }
 
-        if ($visiteRequest->isVisiteDone()) {
-            $this->interventionPlanningStateMachine->apply($intervention, 'confirm');
-        } else {
-            $this->interventionPlanningStateMachine->apply($intervention, 'abort');
-        }
-
         $intervention
             ->setDetails($visiteRequest->getDetails())
             ->setConcludeProcedure(ProcedureType::tryFrom($visiteRequest->getConcludeProcedure()))
             ->setOccupantPresent($visiteRequest->isOccupantPresent());
         if ($visiteRequest->getDocument()) {
             $intervention->setDocuments([$visiteRequest->getDocument()]);
+        }
+
+        if ($visiteRequest->isVisiteDone()) {
+            $this->interventionPlanningStateMachine->apply($intervention, 'confirm');
+        } else {
+            $this->interventionPlanningStateMachine->apply($intervention, 'abort');
         }
 
         $this->save($intervention);

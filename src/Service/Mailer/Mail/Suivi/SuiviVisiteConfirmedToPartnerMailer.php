@@ -10,12 +10,12 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class SuiviVisiteCanceledMailer extends AbstractNotificationMailer
+class SuiviVisiteConfirmedToPartnerMailer extends AbstractNotificationMailer
 {
-    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_VISITE_CANCELED;
-    protected ?string $mailerSubject = 'Annulation de la visite de votre logement';
+    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_VISITE_CONFIRMED_TO_PARTNER;
+    protected ?string $mailerSubject = '#%s Conclusion de visite disponible';
     protected ?string $mailerButtonText = 'Accéder à mon signalement';
-    protected ?string $mailerTemplate = 'nouveau_suivi_visite_canceled_email';
+    protected ?string $mailerTemplate = 'nouveau_suivi_visite_confirmed_email';
 
     public function __construct(
         protected MailerInterface $mailer,
@@ -40,5 +40,10 @@ class SuiviVisiteCanceledMailer extends AbstractNotificationMailer
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
         ];
+    }
+
+    public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
+    {
+        $this->mailerSubject = sprintf($this->mailerSubject, $notificationMail->getSignalement()->getReference());
     }
 }
