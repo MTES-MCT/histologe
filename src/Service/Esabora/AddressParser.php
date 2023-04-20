@@ -14,9 +14,9 @@ class AddressParser
         preg_match('/^(\d+)\s*(\w+)?\s*/', $address, $matches);
         if (isset($matches[1])) {
             $number = $matches[1];
-            if (isset($matches[2]) && in_array(strtoupper($matches[2]), ExtensionAdresse::values())) {
-                    $suffix = strtoupper($matches[2]);
-                    $street = preg_replace('/^\d+\s*(?:\w+)?\s*/', '', $address);
+            if (isset($matches[2]) && \in_array(strtoupper($matches[2]), ExtensionAdresse::toArray())) {
+                $suffix = strtoupper($matches[2]);
+                $street = preg_replace('/^\d+\s*(?:\w+)?\s*/', '', $address);
             } else {
                 preg_match('/^(\d+)\s+(.*)$/', $address, $matches);
                 $street = $matches[2];
@@ -28,7 +28,7 @@ class AddressParser
         return [
             'number' => $number,
             'suffix' => $suffix,
-            'street' => ucfirst($street)
+            'street' => ucfirst($street),
         ];
     }
 }

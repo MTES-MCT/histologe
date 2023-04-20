@@ -3,6 +3,8 @@
 namespace App\Messenger\Message;
 
 use App\Entity\Enum\SISHDossierType;
+use App\Factory\Esabora\DossierMessageSISHPersonne;
+use App\Service\Esabora\Enum\PersonneType;
 
 final class DossierMessageSISH
 {
@@ -66,15 +68,13 @@ final class DossierMessageSISH
     private array $piecesJointesDocuments = [];
 
     private ?int $sasDossierId = null;
-    private ?string $personneType = null;
-    private ?string $personneNom = null;
-    private ?string $personnePrenom = null;
-    private ?string $personneTelephone = null;
-    private ?string $personneEmail = null;
-    private ?string $personneLienOccupant = null;
-    private ?string $personneStructure = null;
-    private ?string $personneAdresse = null;
-    private ?string $personneRepresentant = null;
+
+    private ?array $personnes = null;
+
+    public function __construct()
+    {
+        $this->personnes = [];
+    }
 
     public function getUrl(): ?string
     {
@@ -108,6 +108,7 @@ final class DossierMessageSISH
     public function setSignalementId(?int $signalementId): self
     {
         $this->signalementId = $signalementId;
+
         return $this;
     }
 
@@ -783,110 +784,27 @@ final class DossierMessageSISH
         return $this;
     }
 
-    public function getPersonneType(): ?string
+    public function getPersonnes(): ?array
     {
-        return $this->personneType;
+        return $this->personnes;
     }
 
-    public function setPersonneType(?string $personneType): self
+    public function setPersonnes(?array $personnes): self
     {
-        $this->personneType = $personneType;
+        /** @var DossierMessageSISHPersonne $personne */
+        foreach ($personnes as $personne) {
+            $this->addPersonne($personne);
+        }
 
         return $this;
     }
 
-    public function getPersonneNom(): ?string
+    public function addPersonne(DossierMessageSISHPersonne $dossierMessageSISHPersonne): self
     {
-        return $this->personneNom;
-    }
-
-    public function setPersonneNom(?string $personneNom): self
-    {
-        $this->personneNom = $personneNom;
-
-        return $this;
-    }
-
-    public function getPersonnePrenom(): ?string
-    {
-        return $this->personnePrenom;
-    }
-
-    public function setPersonnePrenom(?string $personnePrenom): self
-    {
-        $this->personnePrenom = $personnePrenom;
-
-        return $this;
-    }
-
-    public function getPersonneTelephone(): ?string
-    {
-        return $this->personneTelephone;
-    }
-
-    public function setPersonneTelephone(?string $personneTelephone): self
-    {
-        $this->personneTelephone = $personneTelephone;
-
-        return $this;
-    }
-
-    public function getPersonneEmail(): ?string
-    {
-        return $this->personneEmail;
-    }
-
-    public function setPersonneEmail(?string $personneEmail): self
-    {
-        $this->personneEmail = $personneEmail;
-
-        return $this;
-    }
-
-    public function getPersonneLienOccupant(): ?string
-    {
-        return $this->personneLienOccupant;
-    }
-
-    public function setPersonneLienOccupant(?string $personneLienOccupant): self
-    {
-        $this->personneLienOccupant = $personneLienOccupant;
-
-        return $this;
-    }
-
-    public function getPersonneStructure(): ?string
-    {
-        return $this->personneStructure;
-    }
-
-    public function setPersonneStructure(?string $personneStructure): self
-    {
-        $this->personneStructure = $personneStructure;
-
-        return $this;
-    }
-
-    public function getPersonneAdresse(): ?string
-    {
-        return $this->personneAdresse;
-    }
-
-    public function setPersonneAdresse(?string $personneAdresse): self
-    {
-        $this->personneAdresse = $personneAdresse;
-
-        return $this;
-    }
-
-    public function getPersonneRepresentant(): ?string
-    {
-        return $this->personneRepresentant;
-    }
-
-    public function setPersonneRepresentant(?string $personneRepresentant): self
-    {
-        $this->personneRepresentant = $personneRepresentant;
+        $type = $dossierMessageSISHPersonne->getType();
+        if (\in_array($type, PersonneType::toArray()) && !isset($this->personnes[$type])) {
+            $this->personnes[] = $dossierMessageSISHPersonne;
+        }
 
         return $this;
     }
