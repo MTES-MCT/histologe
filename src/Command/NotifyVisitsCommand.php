@@ -1,0 +1,135 @@
+<?php
+
+namespace App\Command;
+
+use App\Entity\Suivi;
+use App\Repository\InterventionRepository;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
+use App\Service\Signalement\VisiteNotifier;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+
+#[AsCommand(
+    name: 'app:notify-visits',
+    description: 'Sends notifications concerning visits'
+)]
+class NotifyVisitsCommand extends Command
+{
+    public function __construct(
+        private InterventionRepository $interventionRepository,
+        private VisiteNotifier $visiteNotifier,
+        private NotificationMailerRegistry $notificationMailerRegistry,
+        private ParameterBagInterface $parameterBag,
+    ) {
+        parent::__construct();
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $io = new SymfonyStyle($input, $output);
+
+        $countFutureVisits = 0;
+        $countPastVisits = 0;
+
+        $listFutureVisits = $this->interventionRepository->getFutureVisits();
+        foreach ($listFutureVisits as $intervention) {
+            $signalement = $intervention->getSignalement();
+            $description = '<strong>Rappel de visite :</strong> la visite du logement situé';
+            $description .= $signalement->getAdresseOccupant(). ' ' .$signalement->getCpOccupant(). ' ' .$signalement->getVilleOccupant();
+            $description .= 'aura lieu le ' .$intervention->getDate()->format('d/m/Y');
+            $description .= '<br>La visite sera effectuée par ' .$intervention->getPartner()->getNom(). '.';
+            $suivi = $this->visiteNotifier->createSuivi(
+                description: $description,
+                currentUser: null,
+                signalement: $intervention->getSignalement(),
+                typeSuivi: Suivi::TYPE_TECHNICAL
+            );
+
+            // Send mails to usager
+            $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_USAGER);
+
+            // Send notifications to agents
+            $this->visiteNotifier->notifyAgents(
+                intervention: $intervention,
+                suivi: $suivi,
+                currentUser: null,
+                notificationMailerType: NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_PARTNER,
+            );
+
+            $io->success(
+                sprintf(
+                    'Le signalement #%s a une visite prévue le %s.',
+                    $signalement->getReference(),
+                    $intervention->getDate()->format('d/m/Y'),
+                )
+            );
+            ++$countFutureVisits;
+        }
+
+
+        $listPastVisits = $this->interventionRepository->getPastVisits();
+        foreach ($listPastVisits as $intervention) {
+            /*
+            $signalement = $intervention->getSignalement();
+            $description = '<strong>Rappel de visite :</strong> la visite du logement situé';
+            $description .= $signalement->getAdresseOccupant(). ' ' .$signalement->getCpOccupant(). ' ' .$signalement->getVilleOccupant();
+            $description .= 'aura lieu le ' .$intervention->getDate()->format('d/m/Y');
+            $description .= '<br>La visite sera effectuée par ' .$intervention->getPartner()->getNom(). '.';
+            $suivi = $this->visiteNotifier->createSuivi(
+                description: $description,
+                currentUser: null,
+                signalement: $intervention->getSignalement(),
+                typeSuivi: Suivi::TYPE_TECHNICAL
+            );
+
+            // Send mails to usager
+            $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_USAGER);
+
+            // Send notifications to agents
+            $this->visiteNotifier->notifyAgents(
+                intervention: $intervention,
+                suivi: $suivi,
+                currentUser: null,
+                notificationMailerType: NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_PARTNER,
+            );
+
+            $io->success(
+                sprintf(
+                    'Le signalement #%s a une visite prévue le %s.',
+                    $signalement->getReference(),
+                    $intervention->getDate()->format('d/m/Y'),
+                )
+            );
+            */
+            ++$countPastVisits;
+        }
+
+
+
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_CRON,
+                to: $this->parameterBag->get('admin_email'),
+                cronLabel: 'Envoi de notifications de visites',
+                params: [
+                    'count_success' => $countFutureVisits,
+                    'count_failed' => $countPastVisits,
+                    'message_success' => $countFutureVisits > 1
+                        ? 'notifications ont été envoyées pour des visites à venir'
+                        : 'notification a été envoyée pour une visite à venir',
+                    'message_failed' => $countPastVisits > 1
+                        ? 'notifications ont été envoyées pour des visites passées'
+                        : 'notification a été envoyée pour une visite passée',
+                ],
+            )
+        );
+
+        return Command::SUCCESS;
+    }
+}
