@@ -6,6 +6,7 @@ use App\Dto\Request\Signalement\VisiteRequest;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\InterventionCreatedEvent;
+use App\Event\InterventionEditedEvent;
 use App\Event\InterventionRescheduledEvent;
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Manager\InterventionManager;
@@ -268,6 +269,7 @@ class SignalementVisitesController extends AbstractController
         InterventionRepository $interventionRepository,
         SluggerInterface $slugger,
         UploadHandlerService $uploadHandler,
+        EventDispatcherInterface $eventDispatcher,
     ): Response {
         $requestData = $request->get('visite-edit');
 
@@ -287,16 +289,20 @@ class SignalementVisitesController extends AbstractController
         }
 
         $fileName = $this->getUploadedFile($request, 'visite-edit', $slugger, $uploadHandler);
+        $isUsagerNotified = !empty($requestData['notifyUsager']);
 
         $visiteRequest = new VisiteRequest(
             idIntervention: $requestData['intervention'],
             details: $requestData['details'],
-            isUsagerNotified: !empty($requestData['notifyUsager']),
+            isUsagerNotified: $isUsagerNotified,
             document: $fileName,
         );
 
         if ($interventionManager->editVisiteFromRequest($visiteRequest)) {
             $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
+            /** @var User $user */
+            $user = $this->getUser();
+            $eventDispatcher->dispatch(new InterventionEditedEvent($intervention, $user, $isUsagerNotified), InterventionEditedEvent::NAME);
         } else {
             $this->addFlash('error', 'Erreur lors de la conclusion de la visite.');
         }

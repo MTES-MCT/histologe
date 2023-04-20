@@ -33,13 +33,13 @@ class VisiteNotifier
     /**
      * Creates a suivi corresponding to a Visite
      */
-    public function createSuivi(string $description, User $currentUser, Signalement $signalement): Suivi
+    public function createSuivi(string $description, ?User $currentUser, Signalement $signalement, int $typeSuivi = Suivi::TYPE_AUTO): Suivi
     {
         $suivi = $this->suiviFactory->createInstanceFrom(
             user: $currentUser,
             signalement: $signalement,
             params: [
-                'type' => SUIVI::TYPE_AUTO,
+                'type' => $typeSuivi,
                 'description' => $description,
             ],
             isPublic: true,
@@ -75,7 +75,7 @@ class VisiteNotifier
     /**
      * Send emails and notifications to agents about a Visite
      */
-    public function notifyAgents(Intervention $intervention, Suivi $suivi, User $currentUser, ?NotificationMailerType $notificationMailerType): void
+    public function notifyAgents(Intervention $intervention, Suivi $suivi, ?User $currentUser, ?NotificationMailerType $notificationMailerType): void
     {
         // Territory admins
         $listUsersTerritoryAdmin = $this->userRepository->findActiveTerritoryAdmins($intervention->getSignalement()->getTerritory());

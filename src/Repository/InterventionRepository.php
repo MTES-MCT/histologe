@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Enum\InterventionType;
 use App\Entity\Intervention;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -16,6 +17,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class InterventionRepository extends ServiceEntityRepository
 {
+    private const NB_DAYS_DELAY_NOTIFICATION_VISIT_TO_COME = 2;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Intervention::class);
@@ -37,5 +40,32 @@ class InterventionRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function getVisitsToNotify(int $delayMultiplicator): array
+    {
+        $queryBuilder = $this->createQueryBuilder('i');
+
+        $delay = $delayMultiplicator * self::NB_DAYS_DELAY_NOTIFICATION_VISIT_TO_COME;
+
+        return $queryBuilder
+            ->where('i.status = :planned')
+            ->setParameter('planned', Intervention::STATUS_PLANNED)
+            ->andWhere('i.type = :visite')
+            ->setParameter('visite', InterventionType::VISITE->name)
+            ->andWhere('DATEDIFF(CURRENT_DATE(),i.date) = :day_delay')
+            ->setParameter('day_delay', $delay)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getFutureVisits(): array
+    {
+        return $this->getVisitsToNotify(-1);
+    }
+
+    public function getPastVisits(): array
+    {
+        return $this->getVisitsToNotify(1);
     }
 }
