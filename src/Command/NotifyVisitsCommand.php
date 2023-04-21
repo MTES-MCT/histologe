@@ -3,8 +3,11 @@
 namespace App\Command;
 
 use App\Entity\Suivi;
+<<<<<<< HEAD
 use App\Manager\InterventionManager;
 use App\Manager\SuiviManager;
+=======
+>>>>>>> 9a7ae509 (notifications for visites j+2 and affectations j+15)
 use App\Repository\AffectationRepository;
 use App\Repository\InterventionRepository;
 use App\Service\Mailer\NotificationMail;
@@ -26,9 +29,13 @@ class NotifyVisitsCommand extends Command
 {
     public function __construct(
         private InterventionRepository $interventionRepository,
+<<<<<<< HEAD
         private InterventionManager $interventionManager,
         private AffectationRepository $affectationRepository,
         private SuiviManager $suiviManager,
+=======
+        private AffectationRepository $affectationRepository,
+>>>>>>> 9a7ae509 (notifications for visites j+2 and affectations j+15)
         private VisiteNotifier $visiteNotifier,
         private NotificationMailerRegistry $notificationMailerRegistry,
         private ParameterBagInterface $parameterBag,
@@ -44,6 +51,7 @@ class NotifyVisitsCommand extends Command
         $countPastVisits = 0;
         $countVisitsToPlan = 0;
 
+        // Future visits
         $listFutureVisits = $this->interventionRepository->getFutureVisits();
         foreach ($listFutureVisits as $intervention) {
             $signalement = $intervention->getSignalement();
@@ -72,12 +80,19 @@ class NotifyVisitsCommand extends Command
                 notificationMailerType: NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_PARTNER,
             );
 
+<<<<<<< HEAD
             $intervention->setReminderBeforeSentAt(new \DateTimeImmutable());
             $this->interventionManager->save($intervention);
 
             ++$countFutureVisits;
         }
 
+=======
+            ++$countFutureVisits;
+        }
+
+        // Past visits
+>>>>>>> 9a7ae509 (notifications for visites j+2 and affectations j+15)
         $listPastVisits = $this->interventionRepository->getPastVisits();
         foreach ($listPastVisits as $intervention) {
             foreach ($intervention->getPartner()->getUsers() as $user) {
@@ -87,15 +102,46 @@ class NotifyVisitsCommand extends Command
                         to: $user->getEmail(),
                         territory: $intervention->getSignalement()->getTerritory(),
                         signalement: $intervention->getSignalement(),
+<<<<<<< HEAD
                         intervention: $intervention,
                     )
                 );
             }
             $intervention->setReminderConclusionSentAt(new \DateTimeImmutable());
             $this->interventionManager->save($intervention);
+=======
+                    )
+                );
+            }
+>>>>>>> 9a7ae509 (notifications for visites j+2 and affectations j+15)
             ++$countPastVisits;
         }
+        
+        // Notifs for visits that should be planned
+        if (!empty($this->parameterBag->get('feature_ask_visite'))) {
+            $listAffectations = $this->affectationRepository->findAffectationsCheckVisite();
+            foreach ($listAffectations as $affectation) {
+                if (count($affectation->getSignalement()->getInterventions()) == 0) {
+                    $description = 'Aucune information de visite n\'a été renseignée pour le logement.';
+                    $description .= ' Merci de programmer une visite dès que possible !';
+                    $suivi = $this->visiteNotifier->createSuivi(
+                        description: $description,
+                        currentUser: null,
+                        signalement: $intervention->getSignalement(),
+                        typeSuivi: Suivi::TYPE_TECHNICAL,
+                        isPublic: false,
+                    );
+        
+                    // Send notifications to agents
+                    $this->visiteNotifier->notifyAgents(
+                        intervention: $intervention,
+                        suivi: $suivi,
+                        currentUser: null,
+                        notificationMailerType: NotificationMailerType::TYPE_VISITE_NEEDED,
+                        notifyAdminTerritory: false,
+                    );
 
+<<<<<<< HEAD
         // Notifs for visits that should be planned
         if (!empty($this->parameterBag->get('feature_ask_visite'))) {
             $listAffectations = $this->affectationRepository->findAcceptedAffectationsFromVisitesPartner();
@@ -123,6 +169,12 @@ class NotifyVisitsCommand extends Command
                         notifyAdminTerritory: false,
                         affectation: $affectation,
                     );
+=======
+                    $countVisitsToPlan++;
+                }
+            }
+        }
+>>>>>>> 9a7ae509 (notifications for visites j+2 and affectations j+15)
 
                     ++$countVisitsToPlan;
                 }
