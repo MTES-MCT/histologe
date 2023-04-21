@@ -14,7 +14,7 @@ class SuiviVisiteFutureReminderToPartnerMailer extends AbstractNotificationMaile
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_PARTNER;
     protected ?string $mailerSubject = '#%s Rappel : visite du logement prévue';
-    protected ?string $mailerButtonText = 'Accéder à mon signalement';
+    protected ?string $mailerButtonText = 'Accéder au signalement';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_future_reminder_to_partner_email';
 
     public function __construct(
