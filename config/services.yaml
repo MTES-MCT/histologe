@@ -28,6 +28,7 @@ parameters:
     token_lifetime: '1 day'
     cron_enable: '%env(bool:CRON_ENABLE)%'
     mail_enable: '%env(bool:MAIL_ENABLE)%'
+    feature_ask_visite: '%env(FEATURE_ASK_VISITE_ENABLE)%'
 
 services:
     # default configuration for services in *this* file

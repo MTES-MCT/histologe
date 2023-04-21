@@ -14,7 +14,7 @@ class SuiviVisiteConfirmedToPartnerMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_VISITE_CONFIRMED_TO_PARTNER;
     protected ?string $mailerSubject = '#%s Conclusion de visite disponible';
-    protected ?string $mailerButtonText = 'Accéder à mon signalement';
+    protected ?string $mailerButtonText = 'Accéder au signalement';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_confirmed_email';
 
     public function __construct(

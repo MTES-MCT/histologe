@@ -33,7 +33,7 @@ class VisiteNotifier
     /**
      * Creates a suivi corresponding to a Visite
      */
-    public function createSuivi(string $description, ?User $currentUser, Signalement $signalement, int $typeSuivi = Suivi::TYPE_AUTO): Suivi
+    public function createSuivi(string $description, ?User $currentUser, Signalement $signalement, int $typeSuivi = Suivi::TYPE_AUTO, bool $isPublic = true): Suivi
     {
         $suivi = $this->suiviFactory->createInstanceFrom(
             user: $currentUser,
@@ -42,7 +42,7 @@ class VisiteNotifier
                 'type' => $typeSuivi,
                 'description' => $description,
             ],
-            isPublic: true,
+            isPublic: $isPublic,
             context: Suivi::CONTEXT_INTERVENTION,
         );
         $this->suiviManager->save($suivi);
@@ -75,12 +75,15 @@ class VisiteNotifier
     /**
      * Send emails and notifications to agents about a Visite
      */
-    public function notifyAgents(Intervention $intervention, Suivi $suivi, ?User $currentUser, ?NotificationMailerType $notificationMailerType): void
+    public function notifyAgents(Intervention $intervention, Suivi $suivi, ?User $currentUser, ?NotificationMailerType $notificationMailerType, bool $notifyAdminTerritory = true): void
     {
-        // Territory admins
-        $listUsersTerritoryAdmin = $this->userRepository->findActiveTerritoryAdmins($intervention->getSignalement()->getTerritory());
-        $listUsersPartner = $intervention->getPartner()->getUsers();
-        $listUsersToNotify = array_unique(array_merge($listUsersTerritoryAdmin, $listUsersPartner->toArray()), SORT_REGULAR);
+        if ($notifyAdminTerritory) {
+            $listUsersTerritoryAdmin = $this->userRepository->findActiveTerritoryAdmins($intervention->getSignalement()->getTerritory());
+            $listUsersPartner = $intervention->getPartner()->getUsers();
+            $listUsersToNotify = array_unique(array_merge($listUsersTerritoryAdmin, $listUsersPartner->toArray()), SORT_REGULAR);
+        } else {
+            $listUsersToNotify = $intervention->getPartner()->getUsers();
+        }
         foreach ($listUsersToNotify as $user) {
             if ($user != $currentUser) {
                 $this->notifyAgent($user, $intervention, $suivi, $notificationMailerType);

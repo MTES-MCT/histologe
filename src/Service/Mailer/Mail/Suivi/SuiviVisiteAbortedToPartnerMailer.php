@@ -10,12 +10,12 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class SuiviVisiteCreatedToPartnerMailer extends AbstractNotificationMailer
+class SuiviVisiteAbortedToPartnerMailer extends AbstractNotificationMailer
 {
-    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_VISITE_CREATED_TO_PARTNER;
-    protected ?string $mailerSubject = '#%s Visite du logement prévue';
+    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_VISITE_ABORTED_TO_PARTNER;
+    protected ?string $mailerSubject = '#%s Visite non effectuée';
     protected ?string $mailerButtonText = 'Accéder au signalement';
-    protected ?string $mailerTemplate = 'nouveau_suivi_visite_created_to_partner_email';
+    protected ?string $mailerTemplate = 'nouveau_suivi_visite_aborted_email';
 
     public function __construct(
         protected MailerInterface $mailer,
