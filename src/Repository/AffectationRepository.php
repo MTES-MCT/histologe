@@ -190,4 +190,23 @@ class AffectationRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findAffectationsCheckVisite(): array
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb
+            ->innerJoin('a.partner', 'p')
+            ->innerJoin('a.signalement', 's')
+            ->where('a.statut = :statusAffectation')
+            ->setParameter('statusAffectation', Affectation::STATUS_ACCEPTED)
+            ->andWhere('s.statut IN (:statusSignalement)')
+            ->setParameter('statusSignalement', [Signalement::STATUS_ACTIVE, Signalement::STATUS_NEED_PARTNER_RESPONSE])
+            ->andWhere('p.competence LIKE :qualification')
+            ->setParameter('qualification', Qualification::VISITES->name)
+            ->andWhere('DATEDIFF(CURRENT_DATE(),a.answeredAt) = :day_delay')
+            ->setParameter('day_delay', self::DELAY_VISITE_AFTER_AFFECTATION);
+
+        return $qb->getQuery()
+                    ->getResult();
+    }
 }
