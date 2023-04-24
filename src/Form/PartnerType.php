@@ -16,6 +16,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -82,6 +83,13 @@ class PartnerType extends AbstractType
             ])
             ->add('competence', EnumType::class, [
                 'class' => Qualification::class,
+                'choice_filter' => ChoiceList::filter(
+                    $this,
+                    function ($choice) {
+                        return Qualification::DANGER == $choice ? false : $choice;
+                    },
+                    'competence'
+                ),
                 'choice_label' => function ($choice) {
                     return $choice->label();
                 },
