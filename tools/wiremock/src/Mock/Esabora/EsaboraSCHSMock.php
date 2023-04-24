@@ -3,6 +3,7 @@
 namespace Mock\Esabora;
 
 use Mock\AppMock;
+use WireMock\Client\JsonPathValueMatchingStrategy;
 use WireMock\Client\WireMock;
 
 class EsaboraSCHSMock
@@ -13,134 +14,96 @@ class EsaboraSCHSMock
     private const RESPONSE_CONTENT_TYPE = 'application/json';
     private const RESOURCES_DIR = 'Esabora/schs/';
 
-    public static function prepareMockForEsabora(WireMock $wiremock)
+    private static function createMock(WireMock $wiremock, string $task, string $service, string $response): void
     {
-        /* WS Import Histologe */
         $wiremock->stubFor(
-            WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/modbdd/\\?task=doTreatment'))
+            WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/modbdd/\\?task='.$task))
                 ->withHeader('Authorization', WireMock::containing(self::REQUEST_AUTHORIZATION))
                 ->withHeader('Content-Type', WireMock::containing(self::REQUEST_CONTENT_TYPE))
-                ->withRequestBody(WireMock::matchingJsonPath('$.treatmentName', WireMock::equalTo('Import HISTOLOGE')))
+                ->withRequestBody(WireMock::matchingJsonPath('$.treatmentName', WireMock::equalTo($service)))
                 ->willReturn(
                     WireMock::aResponse()
                         ->withStatus(200)
                         ->withHeader('Content-Type', self::RESPONSE_CONTENT_TYPE)
-                        ->withBody(AppMock::getMockContent(self::RESOURCES_DIR.'ws_import.json'))
+                        ->withBody(AppMock::getMockContent(self::RESOURCES_DIR.$response))
                 )
         );
+    }
 
-        /* WS Etat SAS */
+    private static function createCustomMock(
+        WireMock $wiremock,
+        string $task,
+        JsonPathValueMatchingStrategy $body,
+        string $response
+    ): void {
         $wiremock->stubFor(
-            WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/mult/\\?task=doSearch'))
-                ->withHeader('Authorization', WireMock::containing(self::REQUEST_AUTHORIZATION))
-                ->withHeader('Content-Type', WireMock::containing(self::REQUEST_CONTENT_TYPE))
-                ->withRequestBody(WireMock::matchingJsonPath('$.searchName', WireMock::equalTo('WS_ETAT_SAS')))
-                ->willReturn(
-                    WireMock::aResponse()
-                        ->withStatus(200)
-                        ->withHeader('Content-Type', self::RESPONSE_CONTENT_TYPE)
-                        ->withBody(AppMock::getMockContent(self::RESOURCES_DIR.'ws_etat_sas.json'))
-                )
-        );
-
-        /* WS Etat Dossier SAS  Cas: A Traiter */
-        $wiremock->stubFor(
-            WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/mult/\\?task=doSearch'))
+            WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/mult/\\?task='.$task))
                 ->withHeader('Authorization', WireMock::containing(self::REQUEST_AUTHORIZATION))
                 ->withHeader('Content-Type', WireMock::containing(self::REQUEST_CONTENT_TYPE))
                 ->withRequestBody(WireMock::matchingJsonPath('$.searchName', WireMock::equalTo('WS_ETAT_DOSSIER_SAS')))
-                ->withRequestBody(
-                    WireMock::matchingJsonPath(
-                        '$.criterionList[0].criterionValueList[0]',
-                        WireMock::equalTo('00000000-0000-0000-2022-000000000008')
-                    )
-                )
+                ->withRequestBody($body)
                 ->willReturn(
                     WireMock::aResponse()
                         ->withStatus(200)
                         ->withHeader('Content-Type', self::RESPONSE_CONTENT_TYPE)
-                        ->withBody(AppMock::getMockContent(self::RESOURCES_DIR.'ws_etat_dossier_sas/etat_a_traiter.json'))
+                        ->withBody(AppMock::getMockContent(self::RESOURCES_DIR.$response))
                 )
         );
+    }
 
-        /* WS Etat Dossier SAS  Cas: Importé */
-        $wiremock->stubFor(
-            WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/mult/\\?task=doSearch'))
-                ->withHeader('Authorization', WireMock::containing(self::REQUEST_AUTHORIZATION))
-                ->withHeader('Content-Type', WireMock::containing(self::REQUEST_CONTENT_TYPE))
-                ->withRequestBody(WireMock::matchingJsonPath('$.searchName', WireMock::equalTo('WS_ETAT_DOSSIER_SAS')))
-                ->withRequestBody(
-                    WireMock::matchingJsonPath(
-                        '$.criterionList[0].criterionValueList[0]',
-                        WireMock::equalTo('00000000-0000-0000-2022-000000000001')
-                    )
-                )
-                ->willReturn(
-                    WireMock::aResponse()
-                        ->withStatus(200)
-                        ->withHeader('Content-Type', self::RESPONSE_CONTENT_TYPE)
-                        ->withBody(AppMock::getMockContent(self::RESOURCES_DIR.'ws_etat_dossier_sas/etat_importe.json'))
-                )
+    public static function prepareMockForEsabora(WireMock $wiremock): void
+    {
+        self::createMock($wiremock, 'doTreatment', 'Import HISTOLOGE', 'ws_import.json');
+        self::createMock($wiremock, 'doSearch', 'WS_ETAT_SAS', 'ws_etat_sas.json');
+
+        self::createCustomMock(
+            $wiremock,
+            'doSearch',
+            WireMock::matchingJsonPath(
+                '$.criterionList[0].criterionValueList[0]',
+                WireMock::equalTo('00000000-0000-0000-2022-000000000008')
+            ),
+            'ws_etat_dossier_sas/etat_a_traiter.json'
         );
 
-        /* WS Etat Dossier SAS  Cas: Non importé */
-        $wiremock->stubFor(
-            WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/mult/\\?task=doSearch'))
-                ->withHeader('Authorization', WireMock::containing(self::REQUEST_AUTHORIZATION))
-                ->withHeader('Content-Type', WireMock::containing(self::REQUEST_CONTENT_TYPE))
-                ->withRequestBody(WireMock::matchingJsonPath('$.searchName', WireMock::equalTo('WS_ETAT_DOSSIER_SAS')))
-                ->withRequestBody(
-                    WireMock::matchingJsonPath(
-                        '$.criterionList[0].criterionValueList[0]',
-                        WireMock::equalTo('00000000-0000-0000-2022-000000000002')
-                    )
-                )
-                ->willReturn(
-                    WireMock::aResponse()
-                        ->withStatus(200)
-                        ->withHeader('Content-Type', self::RESPONSE_CONTENT_TYPE)
-                        ->withBody(AppMock::getMockContent(self::RESOURCES_DIR.'ws_etat_dossier_sas/etat_non_importe.json'))
-                )
+        self::createCustomMock(
+            $wiremock,
+            'doSearch',
+            WireMock::matchingJsonPath(
+                '$.criterionList[0].criterionValueList[0]',
+                WireMock::equalTo('00000000-0000-0000-2022-000000000001')
+            ),
+            'ws_etat_dossier_sas/etat_importe.json'
         );
 
-        /* WS Etat Dossier SAS  Cas: Terminé */
-        $wiremock->stubFor(
-            WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/mult/\\?task=doSearch'))
-                ->withHeader('Authorization', WireMock::containing(self::REQUEST_AUTHORIZATION))
-                ->withHeader('Content-Type', WireMock::containing(self::REQUEST_CONTENT_TYPE))
-                ->withRequestBody(WireMock::matchingJsonPath('$.searchName', WireMock::equalTo('WS_ETAT_DOSSIER_SAS')))
-                ->withRequestBody(
-                    WireMock::matchingJsonPath(
-                        '$.criterionList[0].criterionValueList[0]',
-                        WireMock::equalTo('00000000-0000-0000-2022-000000000010')
-                    )
-                )
-                ->willReturn(
-                    WireMock::aResponse()
-                        ->withStatus(200)
-                        ->withHeader('Content-Type', self::RESPONSE_CONTENT_TYPE)
-                        ->withBody(AppMock::getMockContent(self::RESOURCES_DIR.'ws_etat_dossier_sas/etat_termine.json'))
-                )
+        self::createCustomMock(
+            $wiremock,
+            'doSearch',
+            WireMock::matchingJsonPath(
+                '$.criterionList[0].criterionValueList[0]',
+                WireMock::equalTo('00000000-0000-0000-2022-000000000002')
+            ),
+            'ws_etat_dossier_sas/etat_non_importe.json'
         );
 
-        /* WS Etat Dossier SAS  Cas: Dossier non trouvé */
-        $wiremock->stubFor(
-            WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/mult/\\?task=doSearch'))
-                ->withHeader('Authorization', WireMock::containing(self::REQUEST_AUTHORIZATION))
-                ->withHeader('Content-Type', WireMock::containing(self::REQUEST_CONTENT_TYPE))
-                ->withRequestBody(WireMock::matchingJsonPath('$.searchName', WireMock::equalTo('WS_ETAT_DOSSIER_SAS')))
-                ->withRequestBody(
-                    WireMock::matchingJsonPath(
-                        '$.criterionList[0].criterionValueList[0]',
-                        WireMock::notMatching('00000000-0000-0000-2022-000000000001|00000000-0000-0000-2022-000000000002|00000000-0000-0000-2022-000000000010|00000000-0000-0000-2022-000000000008')
-                    )
-                )
-                ->willReturn(
-                    WireMock::aResponse()
-                        ->withStatus(200)
-                        ->withHeader('Content-Type', self::RESPONSE_CONTENT_TYPE)
-                        ->withBody(AppMock::getMockContent(self::RESOURCES_DIR.'ws_etat_dossier_sas/etat_non_trouve.json'))
-                )
+        self::createCustomMock(
+            $wiremock,
+            'doSearch',
+            WireMock::matchingJsonPath(
+                '$.criterionList[0].criterionValueList[0]',
+                WireMock::equalTo('00000000-0000-0000-2022-000000000010')
+            ),
+            'ws_etat_dossier_sas/etat_termine.json'
+        );
+
+        self::createCustomMock(
+            $wiremock,
+            'doSearch',
+            WireMock::matchingJsonPath(
+                '$.criterionList[0].criterionValueList[0]',
+                WireMock::notMatching('00000000-0000-0000-2022-000000000001|00000000-0000-0000-2022-000000000002|00000000-0000-0000-2022-000000000010|00000000-0000-0000-2022-000000000008')
+            ),
+            'ws_etat_dossier_sas/etat_non_trouve.json'
         );
     }
 }

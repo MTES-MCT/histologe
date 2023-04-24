@@ -20,7 +20,7 @@ class EsaboraSISHMock
         self::createMock($wiremock, 'SISH_DOSSIER_PERSONNE', 'ws_dossier_personne.json');
     }
 
-    private static function createMock(WireMock $wiremock, string $service, string $reponse): void
+    private static function createMock(WireMock $wiremock, string $service, string $response): void
     {
         $wiremock->stubFor(
             WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/modbdd/\\?task=doTreatment'))
@@ -31,7 +31,7 @@ class EsaboraSISHMock
                     WireMock::aResponse()
                         ->withStatus(200)
                         ->withHeader('Content-Type', self::RESPONSE_CONTENT_TYPE)
-                        ->withBody(AppMock::getMockContent(self::RESOURCES_DIR.$reponse))
+                        ->withBody(AppMock::getMockContent(self::RESOURCES_DIR.$response))
                 )
         );
     }
