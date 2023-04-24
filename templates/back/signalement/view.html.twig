@@ -791,7 +791,19 @@
                         data-mail="{{ suivi.createdBy.email }}">
                         <strong>{{ suivi.createdBy.nom|upper~' '~ suivi.createdBy.prenom|capitalize }}</strong>
                         <br>
-                        <small>[{{ 'ROLE_USAGER' in suivi.createdBy.roles ? (suivi.createdBy.email is same as signalement.mailDeclarant ? 'DECLARANT' : 'OCCUPANT') : (suivi.createdBy.partner ? (suivi.createdBy.partner.isArchive ? 'Partenaire supprimé' : suivi.createdBy.partner.nom ) : 'Aucun')  }}]</small> <br>
+                        <small>[{{ 
+                            'ROLE_USAGER' in suivi.createdBy.roles
+                                ? (suivi.createdBy.email is same as signalement.mailDeclarant
+                                    ? 'DECLARANT'
+                                    : 'OCCUPANT'
+                                )
+                                : (suivi.createdBy.partner
+                                    ? (suivi.createdBy.partner.isArchive or ('ROLE_ADMIN' not in suivi.createdBy.roles and suivi.createdBy.partner.territory is not same as(signalement.territory))
+                                        ? 'Partenaire supprimé'
+                                        : suivi.createdBy.partner.nom
+                                    )
+                                    : 'Aucun')
+                        }}]</small> <br>
                         <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
                     </div>
                     <div class="fr-col-9 bloc-suivi-content-row fr-pl-3v">

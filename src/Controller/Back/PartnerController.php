@@ -146,6 +146,7 @@ class PartnerController extends AbstractController
         Partner $partner,
         EntityManagerInterface $entityManager,
         PartnerRepository $partnerRepository,
+        NotificationMailerRegistry $notificationMailerRegistry,
     ): Response {
         $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
         if ($partner->getIsArchive()) {
@@ -154,6 +155,9 @@ class PartnerController extends AbstractController
                 'territory' => $partner->getTerritory()->getId(),
             ]));
         }
+
+        $previousTerritory = $partner->getTerritory();
+
         /** @var User $user */
         $user = $this->getUser();
         $form = $this->createForm(PartnerType::class, $partner, [
@@ -162,6 +166,30 @@ class PartnerController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($partner->getTerritory() != $previousTerritory) {
+                /** @var User $partnerUser */
+                foreach ($partner->getUsers() as $partnerUser) {
+                    $partnerUser->setTerritory($partner->getTerritory());
+                    $entityManager->persist($partnerUser);
+                    $notificationMailerRegistry->send(
+                        new NotificationMail(
+                            type: NotificationMailerType::TYPE_ACCOUNT_TRANSFER,
+                            to: $partnerUser->getEmail(),
+                            territory: $partner->getTerritory(),
+                            user: $partnerUser,
+                        )
+                    );
+                }
+                // delete affectations "en attente" et "acceptées"
+                $affectations = $partner->getAffectations();
+                foreach ($affectations as $affectation) {
+                    if (Affectation::STATUS_ACCEPTED === $affectation->getStatut()
+                    || Affectation::STATUS_WAIT === $affectation->getStatut()) {
+                        $partner->removeAffectation($affectation);
+                    }
+                }
+            }
+
             $entityManager->flush();
             $this->addFlash('success', 'Le partenaire a bien été modifié.');
 
