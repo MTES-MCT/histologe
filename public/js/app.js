@@ -746,9 +746,7 @@ document?.querySelectorAll(".fr-pagination__link").forEach((e => {
             body: p
         }).then((e => e.text().then((e => {
             let p = document.querySelector("#signalements-result");
-            p.innerHTML = e, p.querySelectorAll("tr").forEach((e => {
-                gauge = new Gauge(e.querySelector(".gauge-signalement")).setOptions(opts), gauge.set(e.getAttribute("data-score"))
-            })), d.removeAttribute('aria-current'), d.href = "#", t.removeAttribute("href"), t.setAttribute('aria-current', 'page'), 1 !== o && o !== c ? r = [u, n, i, l] : 1 === o ? (r = [i, l], a = [u, n]) : o === c && (r = [u, n], a = [i, l]), r.forEach((e => {
+            p.innerHTML = e, d.removeAttribute('aria-current'), d.href = "#", t.removeAttribute("href"), t.setAttribute('aria-current', 'page'), 1 !== o && o !== c ? r = [u, n, i, l] : 1 === o ? (r = [i, l], a = [u, n]) : o === c && (r = [u, n], a = [i, l]), r.forEach((e => {
                 e.removeAttribute("aria-disabled"), e.href = "#"
             })), a && a.forEach((e => {
                 e.removeAttribute("href"), e.setAttribute('aria-disabled', "true")
