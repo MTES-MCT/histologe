@@ -7,8 +7,8 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
-use App\Service\Esabora\DossierResponse;
-use App\Service\Esabora\EsaboraSCHSService;
+use App\Service\Esabora\AbstractEsaboraService;
+use App\Service\Esabora\Response\DossierStateResponse;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -95,10 +95,10 @@ class AffectationManagerTest extends KernelTestCase
         $affectation = $signalement->getAffectations()->get(0);
         $this->assertNotEquals($expectedAffectationStatus, $affectation->getStatut());
 
-        $basePath = __DIR__.'/../../../tools/wiremock/src/Resources/Esabora/ws_etat_dossier_sas/';
+        $basePath = __DIR__.'/../../../tools/wiremock/src/Resources/Esabora/schs/ws_etat_dossier_sas/';
         $responseEsabora = file_get_contents($basePath.$filename);
 
-        $dossierResponse = new DossierResponse(json_decode($responseEsabora, true), 200);
+        $dossierResponse = new DossierStateResponse(json_decode($responseEsabora, true), 200);
         $affectationManager = new AffectationManager(
             $this->managerRegistry,
             $this->suiviManager,
@@ -125,28 +125,28 @@ class AffectationManagerTest extends KernelTestCase
 
     public function provideDataForSynchronization(): \Generator
     {
-        yield EsaboraSCHSService::ESABORA_WAIT => [
+        yield AbstractEsaboraService::ESABORA_WAIT => [
             '2022-8',
             'etat_a_traiter.json',
             'remis en attente',
             Affectation::STATUS_WAIT,
         ];
 
-        yield EsaboraSCHSService::ESABORA_ACCEPTED => [
+        yield AbstractEsaboraService::ESABORA_ACCEPTED => [
             '2022-1',
             'etat_importe.json',
             'accepté via Esabora',
             Affectation::STATUS_ACCEPTED,
         ];
 
-        yield EsaboraSCHSService::ESABORA_CLOSED => [
+        yield AbstractEsaboraService::ESABORA_CLOSED => [
             '2022-10',
             'etat_termine.json',
             'cloturé via Esabora',
             Affectation::STATUS_CLOSED,
         ];
 
-        yield EsaboraSCHSService::ESABORA_REFUSED => [
+        yield AbstractEsaboraService::ESABORA_REFUSED => [
             '2022-2',
             'etat_non_importe.json',
             'refusé via Esabora',

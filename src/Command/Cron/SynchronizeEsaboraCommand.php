@@ -6,8 +6,9 @@ use App\Entity\JobEvent;
 use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
-use App\Service\Esabora\DossierResponse;
+use App\Service\Esabora\AbstractEsaboraService;
 use App\Service\Esabora\EsaboraSCHSService;
+use App\Service\Esabora\Response\DossierStateResponse;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -75,8 +76,8 @@ class SynchronizeEsaboraCommand extends AbstractCronCommand
                 ++$countSyncFailed;
             }
             $this->jobEventManager->createJobEvent(
-                service: EsaboraSCHSService::TYPE_SERVICE,
-                action: EsaboraSCHSService::ACTION_SYNC_DOSSIER,
+                service: AbstractEsaboraService::TYPE_SERVICE,
+                action: AbstractEsaboraService::ACTION_SYNC_DOSSIER,
                 message: json_encode($message),
                 response: $this->serializer->serialize($dossierResponse, 'json'),
                 status: $this->hasSuccess($dossierResponse)
@@ -110,7 +111,7 @@ class SynchronizeEsaboraCommand extends AbstractCronCommand
         return Command::SUCCESS;
     }
 
-    private function hasSuccess(DossierResponse $dossierResponse): bool
+    private function hasSuccess(DossierStateResponse $dossierResponse): bool
     {
         return Response::HTTP_OK === $dossierResponse->getStatusCode()
             && null !== $dossierResponse->getSasEtat()

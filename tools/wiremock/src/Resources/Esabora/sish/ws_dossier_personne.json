@@ -1,0 +1,9 @@
+{
+  "action": "insert",
+  "keyList": [
+    "imp_dossier_pers.imdp_id"
+  ],
+  "keyDataList": [
+    1
+  ]
+}

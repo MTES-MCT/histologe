@@ -3,10 +3,10 @@
 namespace App\Service\Esabora;
 
 use App\Messenger\Message\DossierMessageSISH;
+use App\Service\Esabora\Response\DossierPushResponse;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class EsaboraSISHService extends AbstractEsaboraService
 {
@@ -17,7 +17,7 @@ class EsaboraSISHService extends AbstractEsaboraService
         parent::__construct($this->client, $this->logger);
     }
 
-    public function pushAdresse(DossierMessageSISH $dossierMessageSISH): ResponseInterface|JsonResponse
+    public function pushAdresse(DossierMessageSISH $dossierMessageSISH): DossierPushResponse
     {
         $url = $dossierMessageSISH->getUrl();
         $token = $dossierMessageSISH->getToken();
@@ -27,10 +27,10 @@ class EsaboraSISHService extends AbstractEsaboraService
             'fieldList' => $this->preparePayloadPushAdresse($dossierMessageSISH),
         ];
 
-        return $this->request($url, $token, AbstractEsaboraService::TASK_INSERT, $payload);
+        return $this->getDossierPushResponse($url, $token, $payload);
     }
 
-    public function pushDossier(DossierMessageSISH $dossierMessageSISH): ResponseInterface|JsonResponse
+    public function pushDossier(DossierMessageSISH $dossierMessageSISH): DossierPushResponse
     {
         $url = $dossierMessageSISH->getUrl();
         $token = $dossierMessageSISH->getToken();
@@ -40,25 +40,47 @@ class EsaboraSISHService extends AbstractEsaboraService
             'fieldList' => $this->preparePayloadPushDossier($dossierMessageSISH),
         ];
 
-        return $this->request($url, $token, AbstractEsaboraService::TASK_INSERT, $payload);
+        return $this->getDossierPushResponse($url, $token, $payload);
     }
 
-    public function pushPersonne(DossierMessageSISH $dossierMessageSISH): ResponseInterface|JsonResponse
-    {
+    public function pushPersonne(
+        DossierMessageSISH $dossierMessageSISH,
+        DossierMessageSISHPersonne $dossierMessageSISHPersonne
+    ): DossierPushResponse {
         $url = $dossierMessageSISH->getUrl();
         $token = $dossierMessageSISH->getToken();
 
         $payload = [
             'treatmentName' => 'SISH_DOSSIER_PERSONNE',
-            'fieldList' => $this->preparePayloadPushPersonne($dossierMessageSISH),
+            'fieldList' => $this->preparePayloadPushPersonne($dossierMessageSISH, $dossierMessageSISHPersonne),
         ];
 
-        return $this->request($url, $token, AbstractEsaboraService::TASK_INSERT, $payload);
+        return $this->getDossierPushResponse($url, $token, $payload);
     }
 
     public function getStateDossier(): void
     {
         // WS_ETAT_DOSSIER_SAS
+    }
+
+    private function getDossierPushResponse(string $url, string $token, array $payload): DossierPushResponse
+    {
+        $statusCode = Response::HTTP_SERVICE_UNAVAILABLE;
+        try {
+            $response = $this->request($url, $token, AbstractEsaboraService::TASK_INSERT, $payload);
+            $statusCode = $response->getStatusCode();
+
+            return new DossierPushResponse(
+                Response::HTTP_INTERNAL_SERVER_ERROR >= $statusCode
+                    ? $response->toArray()
+                    : [],
+                $statusCode
+            );
+        } catch (\Throwable $exception) {
+            $this->logger->error($exception->getMessage());
+        }
+
+        return new DossierPushResponse(['message' => $exception->getMessage()], $statusCode);
     }
 
     private function preparePayloadPushAdresse(DossierMessageSISH $dossierMessageSISH): array
@@ -290,8 +312,10 @@ class EsaboraSISHService extends AbstractEsaboraService
         ];
     }
 
-    private function preparePayloadPushPersonne(DossierMessageSISH $dossierMessageSISH): array
-    {
+    private function preparePayloadPushPersonne(
+        DossierMessageSISH $dossierMessageSISH,
+        DossierMessageSISHPersonne $dossierMessageSISHPersonne
+    ): array {
         return [
             [
                 'fieldName' => 'Sas_Dossier_ID',
@@ -299,39 +323,39 @@ class EsaboraSISHService extends AbstractEsaboraService
             ],
             [
                 'fieldName' => 'Personne_Type',
-                'fieldValue' => $dossierMessageSISH->getPersonneType(),
+                'fieldValue' => $dossierMessageSISHPersonne->getType(),
             ],
             [
                 'fieldName' => 'Personne_Nom',
-                'fieldValue' => $dossierMessageSISH->getPersonneNom(),
+                'fieldValue' => $dossierMessageSISHPersonne->getNom(),
             ],
             [
                 'fieldName' => 'Personne_Prenom',
-                'fieldValue' => $dossierMessageSISH->getPersonnePrenom(),
+                'fieldValue' => $dossierMessageSISHPersonne->getPrenom(),
             ],
             [
                 'fieldName' => 'Personne_Telephone',
-                'fieldValue' => $dossierMessageSISH->getPersonneTelephone(),
+                'fieldValue' => $dossierMessageSISHPersonne->getTelephone(),
             ],
             [
                 'fieldName' => 'Personne_Mail',
-                'fieldValue' => $dossierMessageSISH->getPersonneEmail(),
+                'fieldValue' => $dossierMessageSISHPersonne->getEmail(),
             ],
             [
                 'fieldName' => 'Personne_LienOccupant',
-                'fieldValue' => $dossierMessageSISH->getPersonneLienOccupant(),
+                'fieldValue' => $dossierMessageSISHPersonne->getLienOccupant(),
             ],
             [
                 'fieldName' => 'Personne_Structure',
-                'fieldValue' => $dossierMessageSISH->getPersonneStructure(),
+                'fieldValue' => $dossierMessageSISHPersonne->getStructure(),
             ],
             [
                 'fieldName' => 'Personne_Adresse',
-                'fieldValue' => $dossierMessageSISH->getPersonneAdresse(),
+                'fieldValue' => $dossierMessageSISHPersonne->getAdresse(),
             ],
             [
                 'fieldName' => 'Personne_Representant',
-                'fieldValue' => $dossierMessageSISH->getPersonneRepresentant(),
+                'fieldValue' => $dossierMessageSISHPersonne->getRepresentant(),
             ],
         ];
     }

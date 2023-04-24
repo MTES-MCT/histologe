@@ -4,6 +4,7 @@ namespace App\Service\Esabora;
 
 use App\Entity\Affectation;
 use App\Messenger\Message\DossierMessageSCHS;
+use App\Service\Esabora\Response\DossierStateResponse;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,16 +14,6 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class EsaboraSCHSService extends AbstractEsaboraService
 {
-    public const ESABORA_WAIT = 'A traiter';
-    public const ESABORA_ACCEPTED = 'Importé';
-    public const ESABORA_IN_PROGRESS = 'en cours';
-    public const ESABORA_CLOSED = 'terminé';
-    public const ESABORA_REFUSED = 'Non importé';
-
-    public const TYPE_SERVICE = 'esabora';
-    public const ACTION_PUSH_DOSSIER = 'push_dossier';
-    public const ACTION_SYNC_DOSSIER = 'sync_dossier';
-
     public function __construct(
         private readonly HttpClientInterface $client,
         private readonly LoggerInterface $logger,
@@ -43,7 +34,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
         return $this->request($url, $token, AbstractEsaboraService::TASK_INSERT, $payload);
     }
 
-    public function getStateDossier(Affectation $affectation): DossierResponse
+    public function getStateDossier(Affectation $affectation): DossierStateResponse
     {
         list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
         $payload = [
@@ -70,7 +61,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
             );
             $statusCode = $response->getStatusCode();
 
-            return new DossierResponse(
+            return new DossierStateResponse(
                 Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
                     ? $response->toArray()
                     : [],
@@ -80,7 +71,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
             $this->logger->error($exception->getMessage());
         }
 
-        return new DossierResponse(['message' => $exception->getMessage(), 'status_code' => $statusCode], $statusCode);
+        return new DossierStateResponse(['message' => $exception->getMessage(), 'status_code' => $statusCode], $statusCode);
     }
 
     public function preparePayloadPushDossier(DossierMessageSCHS $dossierMessage, bool $encodeDocuments = true): array

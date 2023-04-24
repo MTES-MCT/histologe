@@ -8,7 +8,7 @@ use App\EventSubscriber\WorkerMessageEventSubscriber;
 use App\Manager\JobEventManager;
 use App\Messenger\Message\DossierMessageSCHS;
 use App\Repository\PartnerRepository;
-use App\Service\Esabora\EsaboraSCHSService;
+use App\Service\Esabora\AbstractEsaboraService;
 use App\Tests\Unit\Messenger\DossierMessageTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -53,7 +53,7 @@ class WorkerMessageEventSubscriberTest extends TestCase
             ->method('createJobEvent')
             ->with(
                 InterfacageType::ESABORA->value,
-                EsaboraSCHSService::ACTION_PUSH_DOSSIER,
+                AbstractEsaboraService::ACTION_PUSH_DOSSIER,
                 '',
                 json_encode(['message' => 'custom error', 'stack_trace' => $event->getThrowable()->getTraceAsString()]),
                 JobEvent::STATUS_FAILED,

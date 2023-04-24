@@ -3,6 +3,7 @@
 namespace App\Messenger\MessageHandler;
 
 use App\Messenger\Message\DossierMessageSISH;
+use App\Service\Esabora\DossierMessageSISHPersonne;
 use App\Service\Esabora\EsaboraSISHService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -13,12 +14,17 @@ class DossierMessageSISHHandler
     {
     }
 
-    public function __invoke(DossierMessageSISH $sishDossierMessage)
+    public function __invoke(DossierMessageSISH $sishDossierMessage): void
     {
-        $response = $this->esaboraSISHService->pushAdresse($sishDossierMessage);
+        $responsePushAdresse = $this->esaboraSISHService->pushAdresse($sishDossierMessage);
+        $sishDossierMessage->setSasAdresse($responsePushAdresse->getSasId());
 
-        $response = $this->esaboraSISHService->pushDossier($sishDossierMessage);
+        $responsePushDossier = $this->esaboraSISHService->pushDossier($sishDossierMessage);
+        $sishDossierMessage->setSasDossierId($responsePushDossier->getSasId());
 
-        $response = $this->esaboraSISHService->pushPersonne($sishDossierMessage);
+        /** @var DossierMessageSISHPersonne $dossierPersonne */
+        foreach ($sishDossierMessage->getPersonnes() as $dossierPersonne) {
+            $this->esaboraSISHService->pushPersonne($sishDossierMessage, $dossierPersonne);
+        }
     }
 }

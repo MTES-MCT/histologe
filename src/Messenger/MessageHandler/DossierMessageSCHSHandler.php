@@ -6,6 +6,7 @@ use App\Entity\JobEvent;
 use App\Manager\JobEventManager;
 use App\Messenger\Message\DossierMessageSCHS;
 use App\Repository\PartnerRepository;
+use App\Service\Esabora\AbstractEsaboraService;
 use App\Service\Esabora\EsaboraSCHSService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -37,8 +38,8 @@ final class DossierMessageSCHSHandler
         $partner = $this->partnerRepository->find($partnerId = $schsDossierMessage->getPartnerId());
 
         $this->jobEventManager->createJobEvent(
-            service: EsaboraSCHSService::TYPE_SERVICE,
-            action: EsaboraSCHSService::ACTION_PUSH_DOSSIER,
+            service: AbstractEsaboraService::TYPE_SERVICE,
+            action: AbstractEsaboraService::ACTION_PUSH_DOSSIER,
             message: $this->serializer->serialize($schsDossierMessage, 'json'),
             response: $response->getContent(),
             status: 200 === $response->getStatusCode() ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,

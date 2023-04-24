@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Signalement;
 use App\Messenger\Message\DossierMessageSISH;
 use App\Service\Esabora\AddressParser;
+use App\Service\Esabora\DossierMessageSISHPersonne;
 use App\Service\Esabora\Enum\PersonneType;
 
 class DossierMessageSISHFactory
@@ -25,6 +26,7 @@ class DossierMessageSISHFactory
             ->setUrl($partner->getEsaboraUrl())
             ->setToken($partner->getEsaboraToken())
             ->setPartnerId($partner->getId())
+            ->setPartnerType($partner->getType()->value)
             ->setSignalementId($signalement->getId())
             ->setReferenceAdresse($signalement->getUuid())
             ->setLocalisationNumero($numero)

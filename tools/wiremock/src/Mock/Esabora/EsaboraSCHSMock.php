@@ -5,13 +5,13 @@ namespace Mock\Esabora;
 use Mock\AppMock;
 use WireMock\Client\WireMock;
 
-class EsaboraMock
+class EsaboraSCHSMock
 {
     private const BASE_PATH = '/ws/rest';
     private const REQUEST_CONTENT_TYPE = 'application/json';
     private const REQUEST_AUTHORIZATION = 'Bearer';
     private const RESPONSE_CONTENT_TYPE = 'application/json';
-    private const RESOURCES_DIR = 'Esabora/';
+    private const RESOURCES_DIR = 'Esabora/schs/';
 
     public static function prepareMockForEsabora(WireMock $wiremock)
     {

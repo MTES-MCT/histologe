@@ -5,8 +5,8 @@ namespace App\Tests\Unit\Service\Esabora;
 use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
-use App\Service\Esabora\DossierResponse;
 use App\Service\Esabora\EsaboraSCHSService;
+use App\Service\Esabora\Response\DossierStateResponse;
 use App\Service\UploadHandlerService;
 use App\Tests\FileHelper;
 use App\Tests\Unit\Messenger\DossierMessageTrait;
@@ -36,7 +36,7 @@ class EsaboraServiceTest extends KernelTestCase
 
     public function testPushDossierToEsaboraSasSuccess(): void
     {
-        $filepath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/ws_import.json';
+        $filepath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/schs/ws_import.json';
         $mockResponse = new MockResponse(file_get_contents($filepath));
 
         $mockHttpClient = new MockHttpClient($mockResponse);
@@ -68,14 +68,14 @@ class EsaboraServiceTest extends KernelTestCase
 
     public function testGetStateDossierFromEsaboraSas(): void
     {
-        $filepath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/ws_etat_dossier_sas/etat_importe.json';
+        $filepath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/schs/ws_etat_dossier_sas/etat_importe.json';
         $mockResponse = new MockResponse(file_get_contents($filepath));
 
         $mockHttpClient = new MockHttpClient($mockResponse);
         $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
         $dossierResponse = $esaboraService->getStateDossier($this->getAffectation());
 
-        $this->assertInstanceOf(DossierResponse::class, $dossierResponse);
+        $this->assertInstanceOf(DossierStateResponse::class, $dossierResponse);
         $this->assertEquals('00000000-0000-0000-2022-000000000001', $dossierResponse->getSasReference());
         $this->assertEquals('Importé', $dossierResponse->getSasEtat());
         $this->assertEquals(Response::HTTP_OK, $dossierResponse->getStatusCode());

@@ -3,7 +3,7 @@
 namespace App\Messenger\Message;
 
 use App\Entity\Enum\SISHDossierType;
-use App\Factory\Esabora\DossierMessageSISHPersonne;
+use App\Service\Esabora\DossierMessageSISHPersonne;
 use App\Service\Esabora\Enum\PersonneType;
 
 final class DossierMessageSISH
@@ -12,6 +12,7 @@ final class DossierMessageSISH
     private ?string $token = null;
     private ?int $signalementId = null;
     private ?int $partnerId = null;
+    private ?string $partnerType = null;
     private ?string $referenceAdresse = null;
     private ?string $localisationNumero = null;
     private ?string $localisationNumeroExt = null;
@@ -120,6 +121,18 @@ final class DossierMessageSISH
     public function setPartnerId(?int $partnerId): self
     {
         $this->partnerId = $partnerId;
+
+        return $this;
+    }
+
+    public function getPartnerType(): ?string
+    {
+        return $this->partnerType;
+    }
+
+    public function setPartnerType(?string $partnerType): self
+    {
+        $this->partnerType = $partnerType;
 
         return $this;
     }
