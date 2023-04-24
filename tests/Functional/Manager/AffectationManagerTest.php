@@ -7,7 +7,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
-use App\Service\Esabora\AbstractEsaboraService;
+use App\Service\Esabora\Enum\EsaboraStatus;
 use App\Service\Esabora\Response\DossierStateResponse;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -125,28 +125,28 @@ class AffectationManagerTest extends KernelTestCase
 
     public function provideDataForSynchronization(): \Generator
     {
-        yield AbstractEsaboraService::ESABORA_WAIT => [
+        yield EsaboraStatus::ESABORA_WAIT->value => [
             '2022-8',
             'etat_a_traiter.json',
             'remis en attente',
             Affectation::STATUS_WAIT,
         ];
 
-        yield AbstractEsaboraService::ESABORA_ACCEPTED => [
+        yield EsaboraStatus::ESABORA_ACCEPTED->value => [
             '2022-1',
             'etat_importe.json',
             'accepté via Esabora',
             Affectation::STATUS_ACCEPTED,
         ];
 
-        yield AbstractEsaboraService::ESABORA_CLOSED => [
+        yield EsaboraStatus::ESABORA_CLOSED->value => [
             '2022-10',
             'etat_termine.json',
             'cloturé via Esabora',
             Affectation::STATUS_CLOSED,
         ];
 
-        yield AbstractEsaboraService::ESABORA_REFUSED => [
+        yield EsaboraStatus::ESABORA_REFUSED->value => [
             '2022-2',
             'etat_non_importe.json',
             'refusé via Esabora',
