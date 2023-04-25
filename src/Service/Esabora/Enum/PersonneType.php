@@ -9,7 +9,7 @@ enum PersonneType: string
     case PROPRIETAIRE = 'P';
     case REFERENT_SOCIAL = 'S';
     case SCI = 'I';
-    case SYNDIC = 'y';
+    case SYNDIC = 'Y';
 
     public static function toArray(): array
     {
