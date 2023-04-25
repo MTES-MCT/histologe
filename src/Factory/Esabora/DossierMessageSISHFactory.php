@@ -8,8 +8,8 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Messenger\Message\DossierMessageSISH;
 use App\Service\Esabora\AddressParser;
-use App\Service\Esabora\DossierMessageSISHPersonne;
 use App\Service\Esabora\Enum\PersonneType;
+use App\Service\Esabora\Model\DossierMessageSISHPersonne;
 use App\Service\UploadHandlerService;
 
 class DossierMessageSISHFactory extends AbstractDossierMessageFactory

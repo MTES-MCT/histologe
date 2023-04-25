@@ -2,8 +2,11 @@
 
 namespace App\Service\Esabora;
 
+use App\Entity\Affectation;
 use App\Messenger\Message\DossierMessageSISH;
-use App\Service\Esabora\Response\DossierPushResponse;
+use App\Service\Esabora\Model\DossierMessageSISHPersonne;
+use App\Service\Esabora\Response\DossierPushSISHResponse;
+use App\Service\Esabora\Response\DossierStateSISHResponse;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,7 +22,7 @@ class EsaboraSISHService extends AbstractEsaboraService
         parent::__construct($this->client, $this->logger);
     }
 
-    public function pushAdresse(DossierMessageSISH $dossierMessageSISH): DossierPushResponse
+    public function pushAdresse(DossierMessageSISH $dossierMessageSISH): DossierPushSISHResponse
     {
         $url = $dossierMessageSISH->getUrl();
         $token = $dossierMessageSISH->getToken();
@@ -32,7 +35,7 @@ class EsaboraSISHService extends AbstractEsaboraService
         return $this->getDossierPushResponse($url, $token, $payload);
     }
 
-    public function pushDossier(DossierMessageSISH $dossierMessageSISH): DossierPushResponse
+    public function pushDossier(DossierMessageSISH $dossierMessageSISH): DossierPushSISHResponse
     {
         $url = $dossierMessageSISH->getUrl();
         $token = $dossierMessageSISH->getToken();
@@ -48,7 +51,7 @@ class EsaboraSISHService extends AbstractEsaboraService
     public function pushPersonne(
         DossierMessageSISH $dossierMessageSISH,
         DossierMessageSISHPersonne $dossierMessageSISHPersonne
-    ): DossierPushResponse {
+    ): DossierPushSISHResponse {
         $url = $dossierMessageSISH->getUrl();
         $token = $dossierMessageSISH->getToken();
 
@@ -60,19 +63,55 @@ class EsaboraSISHService extends AbstractEsaboraService
         return $this->getDossierPushResponse($url, $token, $payload);
     }
 
-    public function getStateDossier(): void
+    public function getStateDossier(Affectation $affectation): DossierStateSISHResponse
     {
-        // WS_ETAT_DOSSIER_SAS
+        list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
+        $payload = [
+            'searchName' => 'SISH_ETAT_DOSSIER_SAS',
+            'criterionList' => [
+                [
+                    'criterionName' => '"Reference_Dossier',
+                    'criterionValueList' => [
+                        $affectation->getSignalement()->getUuid(),
+                    ],
+                ],
+            ],
+        ];
+
+        $statusCode = Response::HTTP_SERVICE_UNAVAILABLE;
+        try {
+            $response = $this->client->request('POST', $url.'/mult/?task=doSearch', [
+                    'headers' => [
+                        'Authorization: Bearer '.$token,
+                        'Content-Type: application/json',
+                    ],
+                    'body' => json_encode($payload, \JSON_THROW_ON_ERROR),
+                ]
+            );
+
+            $statusCode = $response->getStatusCode();
+
+            return new DossierStateSISHResponse(
+                Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
+                    ? $response->toArray()
+                    : [],
+                $statusCode
+            );
+        } catch (\Throwable $exception) {
+            $this->logger->error($exception->getMessage());
+        }
+
+        return new DossierStateSISHResponse(['message' => $exception->getMessage(), 'status_code' => $statusCode], $statusCode);
     }
 
-    private function getDossierPushResponse(string $url, string $token, array $payload): DossierPushResponse
+    private function getDossierPushResponse(string $url, string $token, array $payload): DossierPushSISHResponse
     {
         $statusCode = Response::HTTP_SERVICE_UNAVAILABLE;
         try {
             $response = $this->request($url, $token, AbstractEsaboraService::TASK_INSERT, $payload);
             $statusCode = $response->getStatusCode();
 
-            return new DossierPushResponse(
+            return new DossierPushSISHResponse(
                 Response::HTTP_INTERNAL_SERVER_ERROR >= $statusCode
                     ? $response->toArray()
                     : [],
@@ -82,7 +121,7 @@ class EsaboraSISHService extends AbstractEsaboraService
             $this->logger->error($exception->getMessage());
         }
 
-        return new DossierPushResponse(['message' => $exception->getMessage()], $statusCode);
+        return new DossierPushSISHResponse(['message' => $exception->getMessage()], $statusCode);
     }
 
     private function preparePayloadPushAdresse(DossierMessageSISH $dossierMessageSISH): array

@@ -20,7 +20,6 @@ class DossierMessageSISHHandler
 
     public function __invoke(DossierMessageSISH $dossierMessageSISH): void
     {
-        dump($this->dossierSISHHandlers);
         /** @var DossierSISHHandlerInterface $dossierSISHHandler */
         foreach ($this->dossierSISHHandlers as $dossierSISHHandler) {
             $dossierSISHHandler->handle($dossierMessageSISH);

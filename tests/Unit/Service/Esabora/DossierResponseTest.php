@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Service\Esabora;
 
-use App\Service\Esabora\Response\DossierStateResponse;
+use App\Service\Esabora\Response\DossierStateSCHSResponse;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -13,7 +13,7 @@ class DossierResponseTest extends TestCase
         $filepath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/schs/ws_etat_dossier_sas/etat_importe.json';
         $responseEsabora = json_decode(file_get_contents($filepath), true);
 
-        $dossierResponse = new DossierStateResponse($responseEsabora, 200);
+        $dossierResponse = new DossierStateSCHSResponse($responseEsabora, 200);
         $this->assertEquals('00000000-0000-0000-2022-000000000001', $dossierResponse->getSasReference());
         $this->assertEquals('Importé', $dossierResponse->getSasEtat());
         $this->assertEquals('20221', $dossierResponse->getId());
@@ -30,7 +30,7 @@ class DossierResponseTest extends TestCase
     {
         $responseEsabora = ['message' => 'Lorem ipsum', 'statusCode' => Response::HTTP_BAD_REQUEST];
 
-        $dossierResponse = new DossierStateResponse($responseEsabora, Response::HTTP_BAD_REQUEST);
+        $dossierResponse = new DossierStateSCHSResponse($responseEsabora, Response::HTTP_BAD_REQUEST);
         $this->assertNull($dossierResponse->getSasReference());
         $this->assertNull($dossierResponse->getSasEtat());
         $this->assertNull($dossierResponse->getId());

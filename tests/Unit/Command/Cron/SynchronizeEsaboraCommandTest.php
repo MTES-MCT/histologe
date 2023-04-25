@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Command\Cron;
 
-use App\Command\Cron\SynchronizeEsaboraCommand;
+use App\Command\SynchronizeEsaboraSCHSCommand;
 use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -10,7 +10,7 @@ use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
 use App\Service\Esabora\EsaboraSCHSService;
-use App\Service\Esabora\Response\DossierStateResponse;
+use App\Service\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\Mailer\NotificationMailerRegistry;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -30,7 +30,7 @@ class SynchronizeEsaboraCommandTest extends KernelTestCase
 
         $filepath = __DIR__.self::PATH_MOCK.'etat_non_importe.json';
         $responseEsabora = json_decode(file_get_contents($filepath), true);
-        $dossierResponse = new DossierStateResponse($responseEsabora, 200);
+        $dossierResponse = new DossierStateSCHSResponse($responseEsabora, 200);
         $affectation = (new Affectation())->setSignalement(new Signalement())->setPartner(new Partner());
 
         $esaboraServiceMock = $this->createMock(EsaboraSCHSService::class);
@@ -64,7 +64,7 @@ class SynchronizeEsaboraCommandTest extends KernelTestCase
         $notificationMailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);
         $parameterBag = self::getContainer()->get(ParameterBagInterface::class);
 
-        $command = $application->add(new SynchronizeEsaboraCommand(
+        $command = $application->add(new SynchronizeEsaboraSCHSCommand(
             $esaboraServiceMock,
             $affectationManagerMock,
             $jobEventManagerMock,

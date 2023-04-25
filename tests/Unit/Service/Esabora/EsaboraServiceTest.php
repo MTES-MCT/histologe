@@ -6,7 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Service\Esabora\EsaboraSCHSService;
-use App\Service\Esabora\Response\DossierStateResponse;
+use App\Service\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\UploadHandlerService;
 use App\Tests\FileHelper;
 use App\Tests\Unit\Messenger\DossierMessageTrait;
@@ -75,7 +75,7 @@ class EsaboraServiceTest extends KernelTestCase
         $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
         $dossierResponse = $esaboraService->getStateDossier($this->getAffectation());
 
-        $this->assertInstanceOf(DossierStateResponse::class, $dossierResponse);
+        $this->assertInstanceOf(DossierStateSCHSResponse::class, $dossierResponse);
         $this->assertEquals('00000000-0000-0000-2022-000000000001', $dossierResponse->getSasReference());
         $this->assertEquals('Importé', $dossierResponse->getSasEtat());
         $this->assertEquals(Response::HTTP_OK, $dossierResponse->getStatusCode());

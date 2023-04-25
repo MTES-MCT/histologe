@@ -14,7 +14,63 @@ class EsaboraSCHSMock
     private const RESPONSE_CONTENT_TYPE = 'application/json';
     private const RESOURCES_DIR = 'Esabora/schs/';
 
-    private static function createMock(WireMock $wiremock, string $task, string $service, string $response): void
+    public static function prepareMockForEsabora(WireMock $wiremock): void
+    {
+        self::createPushDossierMock($wiremock, 'doTreatment', 'Import HISTOLOGE', 'ws_import.json');
+        self::createPushDossierMock($wiremock, 'doSearch', 'WS_ETAT_SAS', 'ws_etat_sas.json');
+
+        self::createStateDossierMock(
+            $wiremock,
+            'doSearch',
+            WireMock::matchingJsonPath(
+                '$.criterionList[0].criterionValueList[0]',
+                WireMock::equalTo('00000000-0000-0000-2022-000000000008')
+            ),
+            'ws_etat_dossier_sas/etat_a_traiter.json'
+        );
+
+        self::createStateDossierMock(
+            $wiremock,
+            'doSearch',
+            WireMock::matchingJsonPath(
+                '$.criterionList[0].criterionValueList[0]',
+                WireMock::equalTo('00000000-0000-0000-2022-000000000001')
+            ),
+            'ws_etat_dossier_sas/etat_importe.json'
+        );
+
+        self::createStateDossierMock(
+            $wiremock,
+            'doSearch',
+            WireMock::matchingJsonPath(
+                '$.criterionList[0].criterionValueList[0]',
+                WireMock::equalTo('00000000-0000-0000-2022-000000000002')
+            ),
+            'ws_etat_dossier_sas/etat_non_importe.json'
+        );
+
+        self::createStateDossierMock(
+            $wiremock,
+            'doSearch',
+            WireMock::matchingJsonPath(
+                '$.criterionList[0].criterionValueList[0]',
+                WireMock::equalTo('00000000-0000-0000-2022-000000000010')
+            ),
+            'ws_etat_dossier_sas/etat_termine.json'
+        );
+
+        self::createStateDossierMock(
+            $wiremock,
+            'doSearch',
+            WireMock::matchingJsonPath(
+                '$.criterionList[0].criterionValueList[0]',
+                WireMock::notMatching('00000000-0000-0000-2022-000000000001|00000000-0000-0000-2022-000000000002|00000000-0000-0000-2022-000000000010|00000000-0000-0000-2022-000000000008')
+            ),
+            'ws_etat_dossier_sas/etat_non_trouve.json'
+        );
+    }
+
+    private static function createPushDossierMock(WireMock $wiremock, string $task, string $service, string $response): void
     {
         $wiremock->stubFor(
             WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/modbdd/\\?task='.$task))
@@ -30,7 +86,7 @@ class EsaboraSCHSMock
         );
     }
 
-    private static function createCustomMock(
+    private static function createStateDossierMock(
         WireMock $wiremock,
         string $task,
         JsonPathValueMatchingStrategy $body,
@@ -48,62 +104,6 @@ class EsaboraSCHSMock
                         ->withHeader('Content-Type', self::RESPONSE_CONTENT_TYPE)
                         ->withBody(AppMock::getMockContent(self::RESOURCES_DIR.$response))
                 )
-        );
-    }
-
-    public static function prepareMockForEsabora(WireMock $wiremock): void
-    {
-        self::createMock($wiremock, 'doTreatment', 'Import HISTOLOGE', 'ws_import.json');
-        self::createMock($wiremock, 'doSearch', 'WS_ETAT_SAS', 'ws_etat_sas.json');
-
-        self::createCustomMock(
-            $wiremock,
-            'doSearch',
-            WireMock::matchingJsonPath(
-                '$.criterionList[0].criterionValueList[0]',
-                WireMock::equalTo('00000000-0000-0000-2022-000000000008')
-            ),
-            'ws_etat_dossier_sas/etat_a_traiter.json'
-        );
-
-        self::createCustomMock(
-            $wiremock,
-            'doSearch',
-            WireMock::matchingJsonPath(
-                '$.criterionList[0].criterionValueList[0]',
-                WireMock::equalTo('00000000-0000-0000-2022-000000000001')
-            ),
-            'ws_etat_dossier_sas/etat_importe.json'
-        );
-
-        self::createCustomMock(
-            $wiremock,
-            'doSearch',
-            WireMock::matchingJsonPath(
-                '$.criterionList[0].criterionValueList[0]',
-                WireMock::equalTo('00000000-0000-0000-2022-000000000002')
-            ),
-            'ws_etat_dossier_sas/etat_non_importe.json'
-        );
-
-        self::createCustomMock(
-            $wiremock,
-            'doSearch',
-            WireMock::matchingJsonPath(
-                '$.criterionList[0].criterionValueList[0]',
-                WireMock::equalTo('00000000-0000-0000-2022-000000000010')
-            ),
-            'ws_etat_dossier_sas/etat_termine.json'
-        );
-
-        self::createCustomMock(
-            $wiremock,
-            'doSearch',
-            WireMock::matchingJsonPath(
-                '$.criterionList[0].criterionValueList[0]',
-                WireMock::notMatching('00000000-0000-0000-2022-000000000001|00000000-0000-0000-2022-000000000002|00000000-0000-0000-2022-000000000010|00000000-0000-0000-2022-000000000008')
-            ),
-            'ws_etat_dossier_sas/etat_non_trouve.json'
         );
     }
 }

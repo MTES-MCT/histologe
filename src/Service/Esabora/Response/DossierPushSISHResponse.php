@@ -2,7 +2,7 @@
 
 namespace App\Service\Esabora\Response;
 
-class DossierPushResponse
+class DossierPushSISHResponse implements DossierResponseInterface
 {
     private ?int $sasId = null;
     private ?int $statusCode = null;
@@ -34,5 +34,10 @@ class DossierPushResponse
     public function getErrorReason(): ?string
     {
         return $this->errorReason;
+    }
+
+    public function getSasEtat(): ?string
+    {
+        return null;
     }
 }

@@ -3,8 +3,8 @@
 namespace App\Messenger\Message;
 
 use App\Entity\Enum\SISHDossierType;
-use App\Service\Esabora\DossierMessageSISHPersonne;
 use App\Service\Esabora\Enum\PersonneType;
+use App\Service\Esabora\Model\DossierMessageSISHPersonne;
 
 final class DossierMessageSISH implements DossierMessageInterface
 {

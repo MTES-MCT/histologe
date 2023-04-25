@@ -6,8 +6,8 @@ use App\Manager\JobEventManager;
 use App\Messenger\Message\DossierMessageSISH;
 use App\Repository\PartnerRepository;
 use App\Service\Esabora\AbstractEsaboraService;
-use App\Service\Esabora\DossierMessageSISHPersonne;
 use App\Service\Esabora\EsaboraSISHService;
+use App\Service\Esabora\Model\DossierMessageSISHPersonne;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class DossierPersonneServiceHandler extends AbstractDossierSISHHandler

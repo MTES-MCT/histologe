@@ -8,7 +8,7 @@ use App\Entity\Suivi;
 use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
 use App\Service\Esabora\Enum\EsaboraStatus;
-use App\Service\Esabora\Response\DossierStateResponse;
+use App\Service\Esabora\Response\DossierStateSCHSResponse;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -98,7 +98,7 @@ class AffectationManagerTest extends KernelTestCase
         $basePath = __DIR__.'/../../../tools/wiremock/src/Resources/Esabora/schs/ws_etat_dossier_sas/';
         $responseEsabora = file_get_contents($basePath.$filename);
 
-        $dossierResponse = new DossierStateResponse(json_decode($responseEsabora, true), 200);
+        $dossierResponse = new DossierStateSCHSResponse(json_decode($responseEsabora, true), 200);
         $affectationManager = new AffectationManager(
             $this->managerRegistry,
             $this->suiviManager,

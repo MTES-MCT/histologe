@@ -4,7 +4,7 @@ namespace App\Service\Esabora;
 
 use App\Entity\Affectation;
 use App\Messenger\Message\DossierMessageSCHS;
-use App\Service\Esabora\Response\DossierStateResponse;
+use App\Service\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,7 +34,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
         return $this->request($url, $token, AbstractEsaboraService::TASK_INSERT, $payload);
     }
 
-    public function getStateDossier(Affectation $affectation): DossierStateResponse
+    public function getStateDossier(Affectation $affectation): DossierStateSCHSResponse
     {
         list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
         $payload = [
@@ -61,7 +61,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
             );
             $statusCode = $response->getStatusCode();
 
-            return new DossierStateResponse(
+            return new DossierStateSCHSResponse(
                 Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
                     ? $response->toArray()
                     : [],
@@ -71,7 +71,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
             $this->logger->error($exception->getMessage());
         }
 
-        return new DossierStateResponse(['message' => $exception->getMessage(), 'status_code' => $statusCode], $statusCode);
+        return new DossierStateSCHSResponse(['message' => $exception->getMessage(), 'status_code' => $statusCode], $statusCode);
     }
 
     public function preparePayloadPushDossier(DossierMessageSCHS $dossierMessage, bool $encodeDocuments = true): array

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Esabora;
+namespace App\Service\Esabora\Model;
 
 class DossierMessageSISHPersonne
 {
