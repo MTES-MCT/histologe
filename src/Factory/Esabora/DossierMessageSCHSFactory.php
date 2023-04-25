@@ -3,14 +3,21 @@
 namespace App\Factory\Esabora;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\PartnerType;
 use App\Entity\Signalement;
 use App\Messenger\Message\DossierMessageSCHS;
 use App\Service\UploadHandlerService;
 
-class DossierMessageSCHSFactory
+class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
 {
     public function __construct(private readonly UploadHandlerService $uploadHandlerService)
     {
+        parent::__construct($this->uploadHandlerService);
+    }
+
+    public function supports(Affectation $affectation): bool
+    {
+        return PartnerType::COMMUNE_SCHS === $affectation->getPartner()->getType();
     }
 
     public function createInstance(Affectation $affectation): DossierMessageSCHS
@@ -84,28 +91,5 @@ class DossierMessageSCHSFactory
         }
 
         return $piecesJointesObservation;
-    }
-
-    private function buildPiecesJointes(Signalement $signalement): array
-    {
-        $piecesJointes = [];
-        foreach ($signalement->getDocuments() as $document) {
-            $filepath = $this->uploadHandlerService->getTmpFilepath($document['file']);
-            $piecesJointes[] = [
-                'documentName' => $document['titre'],
-                'documentSize' => filesize($filepath),
-                'documentContent' => $document['file'],
-            ];
-        }
-        foreach ($signalement->getPhotos() as $photo) {
-            $filepath = $this->uploadHandlerService->getTmpFilepath($photo['file']);
-            $piecesJointes[] = [
-                'documentName' => 'Image téléversée',
-                'documentSize' => filesize($filepath),
-                'documentContent' => $photo['file'],
-            ];
-        }
-
-        return $piecesJointes;
     }
 }

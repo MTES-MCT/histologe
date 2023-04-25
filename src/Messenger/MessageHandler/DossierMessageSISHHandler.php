@@ -3,28 +3,27 @@
 namespace App\Messenger\MessageHandler;
 
 use App\Messenger\Message\DossierMessageSISH;
-use App\Service\Esabora\DossierMessageSISHPersonne;
-use App\Service\Esabora\EsaboraSISHService;
+use App\Service\Esabora\Handler\DossierSISHHandlerInterface;
+use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 class DossierMessageSISHHandler
 {
-    public function __construct(private readonly EsaboraSISHService $esaboraSISHService)
-    {
+    private iterable $dossierSISHHandlers;
+
+    public function __construct(
+        #[TaggedIterator('app.dossier_sish_handler', defaultPriorityMethod: 'getPriority')] iterable $dossierSISHHandlers
+    ) {
+        $this->dossierSISHHandlers = $dossierSISHHandlers;
     }
 
-    public function __invoke(DossierMessageSISH $sishDossierMessage): void
+    public function __invoke(DossierMessageSISH $dossierMessageSISH): void
     {
-        $responsePushAdresse = $this->esaboraSISHService->pushAdresse($sishDossierMessage);
-        $sishDossierMessage->setSasAdresse($responsePushAdresse->getSasId());
-
-        $responsePushDossier = $this->esaboraSISHService->pushDossier($sishDossierMessage);
-        $sishDossierMessage->setSasDossierId($responsePushDossier->getSasId());
-
-        /** @var DossierMessageSISHPersonne $dossierPersonne */
-        foreach ($sishDossierMessage->getPersonnes() as $dossierPersonne) {
-            $this->esaboraSISHService->pushPersonne($sishDossierMessage, $dossierPersonne);
+        dump($this->dossierSISHHandlers);
+        /** @var DossierSISHHandlerInterface $dossierSISHHandler */
+        foreach ($this->dossierSISHHandlers as $dossierSISHHandler) {
+            $dossierSISHHandler->handle($dossierMessageSISH);
         }
     }
 }

@@ -12,6 +12,8 @@ class AbstractEsaboraService
 {
     public const TYPE_SERVICE = 'esabora';
     public const ACTION_PUSH_DOSSIER = 'push_dossier';
+    public const ACTION_PUSH_DOSSIER_PERSONNE = 'push_dossier_personne';
+    public const ACTION_PUSH_DOSSIER_ADRESSE = 'push_dossier_adresse';
     public const ACTION_SYNC_DOSSIER = 'sync_dossier';
     public const TASK_INSERT = 'doTreatment';
     public const TASK_SEARCH = 'doSearch';

@@ -6,7 +6,7 @@ use App\Entity\Enum\SISHDossierType;
 use App\Service\Esabora\DossierMessageSISHPersonne;
 use App\Service\Esabora\Enum\PersonneType;
 
-final class DossierMessageSISH
+final class DossierMessageSISH implements DossierMessageInterface
 {
     private ?string $url = null;
     private ?string $token = null;
@@ -65,7 +65,7 @@ final class DossierMessageSISH
     private ?string $signalementDate = null;
     private ?string $signalementDetails = null;
     private ?string $signalementProblemes = null;
-    private ?string $piecesJointesObservation = null;
+    private ?array $piecesJointesObservation = null;
     private array $piecesJointesDocuments = [];
 
     private ?int $sasDossierId = null;
@@ -761,12 +761,12 @@ final class DossierMessageSISH
         return $this;
     }
 
-    public function getPiecesJointesObservation(): ?string
+    public function getPiecesJointesObservation(): ?array
     {
         return $this->piecesJointesObservation;
     }
 
-    public function setPiecesJointesObservation(?string $piecesJointesObservation): self
+    public function setPiecesJointesObservation(?array $piecesJointesObservation): self
     {
         $this->piecesJointesObservation = $piecesJointesObservation;
 

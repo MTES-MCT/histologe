@@ -6,10 +6,9 @@ use App\Entity\Affectation;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\AffectationAnsweredEvent;
-use App\Factory\Esabora\DossierMessageSCHSFactory;
 use App\Manager\AffectationManager;
-use App\Manager\JobEventManager;
 use App\Manager\SignalementManager;
+use App\Messenger\EsaboraBus;
 use App\Repository\PartnerRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -17,22 +16,17 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/bo/signalements')]
-class BackAssignmentController extends AbstractController
+class AffectationController extends AbstractController
 {
     public function __construct(
         private SignalementManager $signalementManager,
         private AffectationManager $affectationManager,
         private PartnerRepository $partnerRepository,
-        private DossierMessageSCHSFactory $dossierMessageFactory,
-        private MessageBusInterface $messageBus,
+        private EsaboraBus $esaboraBus,
         private EventDispatcherInterface $eventDispatcher,
-        private JobEventManager $jobEventManager,
-        private SerializerInterface $serializer
     ) {
     }
 
@@ -115,8 +109,7 @@ class BackAssignmentController extends AbstractController
     {
         $partner = $affectation->getPartner();
         if ($partner->getEsaboraToken() && $partner->getEsaboraUrl()) {
-            $dossierMessage = $this->dossierMessageFactory->createInstance($affectation);
-            $this->messageBus->dispatch($dossierMessage);
+            $this->esaboraBus->dispatch($affectation);
         }
     }
 }

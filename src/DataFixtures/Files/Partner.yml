@@ -3,6 +3,7 @@ partners:
     nom: "Administrateurs Histologe ALL"
     email: "admin@histologe.fr"
     is_archive: 0
+    is_commune: 0
     territory: null
     type: "AUTRE"
   -

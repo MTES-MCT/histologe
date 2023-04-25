@@ -54,7 +54,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setNomOccupant($faker->lastName())
             ->setPrenomOccupant($faker->firstName())
             ->setTelOccupant($phoneNumber)
-            ->setAdresseOccupant($row['adresse_occupant'] ?? $faker->streetAddress())
+            ->setAdresseOccupant($row['adresse_occupant'] ?? str_replace(',', '', $faker->streetAddress()))
             ->setVilleOccupant($row['ville_occupant'])
             ->setCpOccupant($row['cp_occupant'])
             ->setInseeOccupant($row['insee_occupant'])
