@@ -38,13 +38,13 @@ class SynchronizeEsaboraCommand extends AbstractCronCommand
 class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
 {
     public function __construct(
-        private EsaboraSCHSService $esaboraService,
-        private AffectationManager $affectationManager,
-        private JobEventManager $jobEventManager,
-        private SerializerInterface $serializer,
-        private NotificationMailerRegistry $notificationMailerRegistry,
-        private ParameterBagInterface $parameterBag,
-        string $name = 'app:sync-esabora-schs'
+        private readonly EsaboraSCHSService         $esaboraService,
+        private readonly AffectationManager         $affectationManager,
+        private readonly JobEventManager            $jobEventManager,
+        private readonly SerializerInterface        $serializer,
+        private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly ParameterBagInterface      $parameterBag,
+        string                                      $name = 'app:sync-esabora-schs'
     ) {
         parent::__construct($this->notificationMailerRegistry, $this->parameterBag, $name);
 >>>>>>>> eb38b489 (implement get state dossier sih #1119):src/Command/SynchronizeEsaboraSCHSCommand.php
