@@ -30,7 +30,7 @@ class JobEventRepository extends ServiceEntityRepository
         ?Territory $territory
     ): array {
         $qb = $this->createQueryBuilder('j')
-            ->select('MAX(j.createdAt) AS last_event, p.id, p.nom, s.reference, j.status, j.action, j.response')
+            ->select('MAX(j.createdAt) AS last_event, p.id, p.nom, s.reference, j.status, j.action, j.codeStatus')
             ->innerJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId')
             ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
             ->where('j.service LIKE :service')
@@ -42,7 +42,7 @@ class JobEventRepository extends ServiceEntityRepository
 
         $qb->setParameter('service', '%'.$type.'%')
             ->setParameter('day_period', $dayPeriod)
-            ->groupBy('p.id, p.nom, s.reference, j.action, j.status, j.response')
+            ->groupBy('p.id, p.nom, s.reference, j.action, j.status, j.codeStatus')
             ->orderBy('last_event', 'DESC');
 
         return $qb->getQuery()->getArrayResult();
