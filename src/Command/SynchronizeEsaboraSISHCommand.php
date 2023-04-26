@@ -3,18 +3,14 @@
 namespace App\Command;
 
 use App\Entity\Enum\PartnerType;
-use App\Entity\JobEvent;
 use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
-use App\Repository\AffectationRepository;
-use App\Service\Esabora\AbstractEsaboraService;
 use App\Service\Esabora\EsaboraSISHService;
 use App\Service\Mailer\NotificationMailerRegistry;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -33,43 +29,25 @@ class SynchronizeEsaboraSISHCommand extends AbstractSynchronizeEsaboraCommand
         private readonly ParameterBagInterface $parameterBag,
         string $name = 'app:sync-esabora-sish'
     ) {
-        parent::__construct($this->notificationMailerRegistry, $this->parameterBag, $name);
+        parent::__construct(
+            $this->parameterBag,
+            $this->affectationManager,
+            $this->jobEventManager,
+            $this->serializer,
+            $this->notificationMailerRegistry,
+            $name
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
-
-        /** @var AffectationRepository $affectationRepository */
-        $affectationRepository = $this->affectationManager->getRepository();
-        $affectations = $affectationRepository->findAffectationSubscribedToEsabora(PartnerType::ARS);
-        $countSyncSuccess = 0;
-        $countSyncFailed = 0;
-        foreach ($affectations as $affectation) {
-            $dossierResponse = $this->esaboraService->getStateDossier($affectation);
-            if ($this->hasSuccess($dossierResponse)) {
-                $this->affectationManager->synchronizeAffectationFrom($dossierResponse, $affectation);
-                $io->success($this->printInfoSISH($dossierResponse));
-                ++$countSyncSuccess;
-            } else {
-                $io->error(sprintf('%s', $this->serializer->serialize($dossierResponse, 'json')));
-                ++$countSyncFailed;
-            }
-            $this->jobEventManager->createJobEvent(
-                service: AbstractEsaboraService::TYPE_SERVICE,
-                action: AbstractEsaboraService::ACTION_SYNC_DOSSIER,
-                message: json_encode($this->getMessage($affectation, 'Reference_Dossier')),
-                response: $this->serializer->serialize($dossierResponse, 'json'),
-                status: $this->hasSuccess($dossierResponse)
-                    ? JobEvent::STATUS_SUCCESS
-                    : JobEvent::STATUS_FAILED,
-                codeStatus: $dossierResponse->getStatusCode(),
-                signalementId: $affectation->getSignalement()->getId(),
-                partnerId: $affectation->getPartner()->getId(),
-                partnerType: $affectation->getPartner()->getType(),
-            );
-        }
-        $this->notify($countSyncSuccess, $countSyncFailed);
+        $this->synchronize(
+            $input,
+            $output,
+            $this->esaboraService,
+            PartnerType::ARS,
+            'Reference_Dossier'
+        );
 
         return Command::SUCCESS;
     }

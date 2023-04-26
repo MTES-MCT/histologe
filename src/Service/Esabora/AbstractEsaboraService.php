@@ -2,13 +2,15 @@
 
 namespace App\Service\Esabora;
 
+use App\Entity\Affectation;
+use App\Service\Esabora\Response\DossierResponseInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
-class AbstractEsaboraService
+class AbstractEsaboraService implements EsaboraServiceInterface
 {
     public const TYPE_SERVICE = 'esabora';
     public const ACTION_PUSH_DOSSIER = 'push_dossier';
@@ -42,5 +44,10 @@ class AbstractEsaboraService
         return (new JsonResponse([
             'message' => $exception->getMessage(),
         ]))->setStatusCode(Response::HTTP_SERVICE_UNAVAILABLE);
+    }
+
+    public function getStateDossier(Affectation $affectation): ?DossierResponseInterface
+    {
+        return null;
     }
 }

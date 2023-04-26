@@ -63,14 +63,14 @@ class EsaboraSISHService extends AbstractEsaboraService
         return $this->getDossierPushResponse($url, $token, $payload);
     }
 
-    public function getStateDossier(Affectation $affectation): DossierStateSISHResponse
+    public function getStateDossier(Affectation $affectation): ?DossierStateSISHResponse
     {
         list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
         $payload = [
             'searchName' => 'SISH_ETAT_DOSSIER_SAS',
             'criterionList' => [
                 [
-                    'criterionName' => '"Reference_Dossier',
+                    'criterionName' => 'Reference_Dossier',
                     'criterionValueList' => [
                         $affectation->getSignalement()->getUuid(),
                     ],

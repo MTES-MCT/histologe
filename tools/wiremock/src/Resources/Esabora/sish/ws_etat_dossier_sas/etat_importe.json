@@ -14,7 +14,7 @@
     "SISH_DossStatut",
     "SISH_DossEtat",
     "SISH_DossTypeCode",
-    "SISH_DossTypeLib",
+    "SISH_DossTypeLib"
   ],
   "keyList": [
     "i1.imdo_id"

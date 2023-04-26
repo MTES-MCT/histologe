@@ -11,18 +11,17 @@ abstract class AbstractEsaboraMock
     protected const REQUEST_CONTENT_TYPE = 'application/json';
     protected const REQUEST_AUTHORIZATION = 'Bearer';
     protected const RESPONSE_CONTENT_TYPE = self::REQUEST_CONTENT_TYPE;
-    protected const BASE_PATH = '';
-    protected const RESOURCES_DIR = '';
-    protected const REQUEST_SEARCH_NAME = '';
 
     protected static function createPushDossierMock(
         WireMock $wiremock,
         string $task,
         string $service,
-        string $response
+        string $response,
+        ?string $basePath,
+        ?string $resourcesDir,
     ): void {
         $wiremock->stubFor(
-            WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/modbdd/\\?task='.$task))
+            WireMock::post(WireMock::urlMatching($basePath.'/modbdd/\\?task='.$task))
                 ->withHeader('Authorization', WireMock::containing(self::REQUEST_AUTHORIZATION))
                 ->withHeader('Content-Type', WireMock::containing(self::REQUEST_CONTENT_TYPE))
                 ->withRequestBody(WireMock::matchingJsonPath('$.treatmentName', WireMock::equalTo($service)))
@@ -30,7 +29,7 @@ abstract class AbstractEsaboraMock
                     WireMock::aResponse()
                         ->withStatus(200)
                         ->withHeader('Content-Type', self::RESPONSE_CONTENT_TYPE)
-                        ->withBody(AppMock::getMockContent(static::RESOURCES_DIR.$response))
+                        ->withBody(AppMock::getMockContent($resourcesDir.$response))
                 )
         );
     }
@@ -39,22 +38,25 @@ abstract class AbstractEsaboraMock
         WireMock $wiremock,
         string $task,
         JsonPathValueMatchingStrategy $body,
-        string $response
+        string $response,
+        ?string $basePath,
+        ?string $resourcesDir,
+        ?string $requestSearchName,
     ): void {
         $wiremock->stubFor(
-            WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/mult/\\?task='.$task))
+            WireMock::post(WireMock::urlMatching($basePath.'/mult/\\?task='.$task))
                 ->withHeader('Authorization', WireMock::containing(self::REQUEST_AUTHORIZATION))
                 ->withHeader('Content-Type', WireMock::containing(self::REQUEST_CONTENT_TYPE))
                 ->withRequestBody(WireMock::matchingJsonPath(
                     '$.searchName',
-                    WireMock::equalTo(self::REQUEST_SEARCH_NAME))
+                    WireMock::equalTo($requestSearchName))
                 )
                 ->withRequestBody($body)
                 ->willReturn(
                     WireMock::aResponse()
                         ->withStatus(200)
                         ->withHeader('Content-Type', self::RESPONSE_CONTENT_TYPE)
-                        ->withBody(AppMock::getMockContent(static::RESOURCES_DIR.$response))
+                        ->withBody(AppMock::getMockContent($resourcesDir.$response))
                 )
         );
     }

@@ -119,4 +119,9 @@ class DossierStateSISHResponse implements DossierResponseInterface
     {
         return $this->errorReason;
     }
+
+    public function getEtat(): ?string
+    {
+        return $this->getDossEtat();
+    }
 }

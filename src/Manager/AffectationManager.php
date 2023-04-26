@@ -8,7 +8,7 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Service\Esabora\Enum\EsaboraStatus;
-use App\Service\Esabora\Response\DossierStateSCHSResponse;
+use App\Service\Esabora\Response\DossierResponseInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 
@@ -98,7 +98,7 @@ class AffectationManager extends Manager
         }
     }
 
-    public function synchronizeAffectationFrom(DossierStateSCHSResponse $dossierResponse, Affectation $affectation): void
+    public function synchronizeAffectationFrom(DossierResponseInterface $dossierResponse, Affectation $affectation): void
     {
         $user = $affectation->getPartner()->getUsers()->first();
         $signalement = $affectation->getSignalement();
@@ -119,8 +119,11 @@ class AffectationManager extends Manager
         }
     }
 
-    public function updateStatusFor(Affectation $affectation, User $user, DossierStateSCHSResponse $dossierResponse): string
-    {
+    public function updateStatusFor(
+        Affectation $affectation,
+        User $user,
+        DossierResponseInterface $dossierResponse
+    ): string {
         $description = '';
         $currentStatus = $affectation->getStatut();
 
