@@ -254,53 +254,6 @@
 					"response": []
 				},
 				{
-					"name": "etat_sas",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "test",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"searchName\": \"WS_ETAT_SAS\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:8082/ws/rest/mult/?task=doSearch",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8082",
-							"path": [
-								"ws",
-								"rest",
-								"mult",
-								""
-							],
-							"query": [
-								{
-									"key": "task",
-									"value": "doSearch"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "etat_dossier_sas_a_traiter",
 					"request": {
 						"auth": {
