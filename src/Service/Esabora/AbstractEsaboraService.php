@@ -19,6 +19,7 @@ class AbstractEsaboraService implements EsaboraServiceInterface
     public const ACTION_SYNC_DOSSIER = 'sync_dossier';
     public const TASK_INSERT = 'doTreatment';
     public const TASK_SEARCH = 'doSearch';
+    public const SIGNALEMENT_ORIGINE = 'interfaçage';
 
     public function __construct(
         private readonly HttpClientInterface $client,
@@ -29,6 +30,8 @@ class AbstractEsaboraService implements EsaboraServiceInterface
     protected function request(string $url, string $token, string $task, array $payload): ResponseInterface|JsonResponse
     {
         try {
+            $this->logger->info(json_encode($payload));
+
             return $this->client->request('POST', $url.'/modbdd/?task='.$task, [
                     'headers' => [
                         'Authorization: Bearer '.$token,

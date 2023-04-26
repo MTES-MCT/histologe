@@ -7,6 +7,7 @@ use App\Entity\Enum\PartnerType;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Messenger\Message\DossierMessageSISH;
+use App\Service\Esabora\AbstractEsaboraService;
 use App\Service\Esabora\AddressParser;
 use App\Service\Esabora\Enum\PersonneType;
 use App\Service\Esabora\Model\DossierMessageSISHPersonne;
@@ -84,10 +85,10 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setProprietaireAvertiDate($signalement->getProprioAvertiAt()?->format('d/m/Y'))
             ->setProprietaireAvertiMoyen(implode(',', $signalement->getModeContactProprio()))
             ->setSignalementScore($signalement->getScore())
-            ->setSignalementOrigine($signalement->getOrigineSignalement())
+            ->setSignalementOrigine(AbstractEsaboraService::SIGNALEMENT_ORIGINE)
             ->setSignalementNumero($signalement->getReference())
             ->setSignalementCommentaire($firstSuivi->getDescription())
-            ->setSignalementDate($signalement->getCreatedAt()?->format('Y-m-d'))
+            ->setSignalementDate($signalement->getCreatedAt()?->format('d/m/Y'))
             ->setSignalementDetails($signalement->getDetails())
             ->setSignalementProblemes($this->buildProblemes($signalement))
             ->setPiecesJointesObservation($this->buildPiecesJointes($signalement))

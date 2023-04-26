@@ -156,7 +156,7 @@ class EsaboraSISHService extends AbstractEsaboraService
                 'fieldValue' => $dossierMessageSISH->getLocalisationCodePostal(),
             ],
             [
-                'fieldName' => 'Localisation_CodePostal',
+                'fieldName' => 'Localisation_Ville',
                 'fieldValue' => $dossierMessageSISH->getLocalisationVille(),
             ],
             [
