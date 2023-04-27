@@ -65,8 +65,8 @@ export default defineComponent({
         'Référence',
         'Dernière synchro',
         'Partenaire',
+        'Action',
         'Statut',
-        'Code'
       ]
     }
   },

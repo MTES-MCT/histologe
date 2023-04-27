@@ -97,31 +97,40 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->addPersonne($this->createDossierPersonne($signalement, PersonneType::PROPRIETAIRE));
     }
 
-    public function createDossierPersonne(Signalement $signalement, PersonneType $personneType): ?DossierMessageSISHPersonne
-    {
-        return match ($personneType) {
-            PersonneType::OCCUPANT => (new DossierMessageSISHPersonne())
+    public function createDossierPersonne(
+        Signalement $signalement,
+        PersonneType $personneType
+    ): ?DossierMessageSISHPersonne {
+        if (PersonneType::OCCUPANT === $personneType) {
+            return (new DossierMessageSISHPersonne())
                 ->setType(PersonneType::OCCUPANT->value)
                 ->setNom($signalement->getNomOccupant())
                 ->setPrenom($signalement->getPrenomOccupant())
                 ->setEmail($signalement->getMailOccupant())
-                ->setTelephone($signalement->getTelOccupant()),
-            PersonneType::PROPRIETAIRE => (new DossierMessageSISHPersonne())
+                ->setTelephone($signalement->getTelOccupant());
+        }
+
+        if (PersonneType::PROPRIETAIRE === $personneType && !empty($signalement->getNomProprio())) {
+            return (new DossierMessageSISHPersonne())
                 ->setType(PersonneType::PROPRIETAIRE->value)
                 ->setNom($signalement->getNomProprio())
                 ->setAdresse($signalement->getAdresseProprio())
                 ->setEmail($signalement->getMailProprio())
-                ->setTelephone($signalement->getTelProprio()),
-            PersonneType::DECLARANT => (new DossierMessageSISHPersonne())
+                ->setTelephone($signalement->getTelProprio());
+        }
+
+        if (PersonneType::DECLARANT === $personneType && !empty($signalement->getLienDeclarantOccupant())) {
+            return (new DossierMessageSISHPersonne())
                 ->setType(PersonneType::DECLARANT->value)
                 ->setNom($signalement->getNomDeclarant())
                 ->setPrenom($signalement->getPrenomDeclarant())
                 ->setEmail($signalement->getMailDeclarant())
                 ->setTelephone($signalement->getTelDeclarant())
                 ->setStructure($signalement->getStructureDeclarant())
-                ->setLienOccupant($signalement->getLienDeclarantOccupant()),
-            default => null,
-        };
+                ->setLienOccupant($signalement->getLienDeclarantOccupant());
+        }
+
+        return null;
     }
 
     private function buildProblemes(Signalement $signalement): string

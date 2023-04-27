@@ -84,6 +84,9 @@ clear-cache: ## Clear cache prod: make-clear-cache env=[dev|prod|test]
 
 cc: clear-cache
 
+clear-pool:
+	@$(DOCKER_COMP) exec -it histologe_phpfpm $(SYMFONY) cache:pool:clear $(pool)
+
 create-db: ## Create database
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:database:drop --force --no-interaction || true"
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:database:create --no-interaction"

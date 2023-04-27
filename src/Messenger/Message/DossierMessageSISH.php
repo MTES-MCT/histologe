@@ -812,9 +812,9 @@ final class DossierMessageSISH implements DossierMessageInterface
         return $this;
     }
 
-    public function addPersonne(DossierMessageSISHPersonne $dossierMessageSISHPersonne): self
+    public function addPersonne(?DossierMessageSISHPersonne $dossierMessageSISHPersonne): self
     {
-        $type = $dossierMessageSISHPersonne->getType();
+        $type = $dossierMessageSISHPersonne?->getType();
         if (\in_array($type, PersonneType::toArray()) && !isset($this->personnes[$type])) {
             $this->personnes[] = $dossierMessageSISHPersonne;
         }
