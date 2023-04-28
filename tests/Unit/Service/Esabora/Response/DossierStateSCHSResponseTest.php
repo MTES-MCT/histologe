@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Tests\Unit\Service\Esabora;
+namespace App\Tests\Unit\Service\Esabora\Response;
 
 use App\Service\Esabora\Response\DossierStateSCHSResponse;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class DossierResponseTest extends TestCase
+class DossierStateSCHSResponseTest extends TestCase
 {
     public function testDossierResponseSuccessfullyCreated(): void
     {
-        $filepath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/schs/ws_etat_dossier_sas/etat_importe.json';
+        $filepath = __DIR__.'/../../../../../tools/wiremock/src/Resources/Esabora/schs/ws_etat_dossier_sas/etat_importe.json';
         $responseEsabora = json_decode(file_get_contents($filepath), true);
 
         $dossierResponse = new DossierStateSCHSResponse($responseEsabora, 200);

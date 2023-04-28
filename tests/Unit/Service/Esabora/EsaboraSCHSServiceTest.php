@@ -18,7 +18,7 @@ use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class EsaboraServiceTest extends KernelTestCase
+class EsaboraSCHSServiceTest extends KernelTestCase
 {
     use DossierMessageTrait;
     use FileHelper;
@@ -46,7 +46,7 @@ class EsaboraServiceTest extends KernelTestCase
             ->willReturn($this->tempFilepath);
 
         $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
-        $response = $esaboraService->pushDossier($this->getDossierMessage());
+        $response = $esaboraService->pushDossier($this->getDossierMessageSCHS());
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $this->assertStringContainsString('insert', $response->getContent());
@@ -61,7 +61,7 @@ class EsaboraServiceTest extends KernelTestCase
             ->method('getTmpFilepath')
             ->willReturn($this->tempFilepath);
         $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
-        $response = $esaboraService->pushDossier($this->getDossierMessage());
+        $response = $esaboraService->pushDossier($this->getDossierMessageSCHS());
 
         $this->assertEquals(Response::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
     }
@@ -104,7 +104,7 @@ class EsaboraServiceTest extends KernelTestCase
             ->method('getTmpFilepath')
             ->willReturn($this->tempFilepath);
         $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
-        $response = $esaboraService->pushDossier($this->getDossierMessage());
+        $response = $esaboraService->pushDossier($this->getDossierMessageSCHS());
         $this->assertEquals(Response::HTTP_SERVICE_UNAVAILABLE, $response->getStatusCode());
     }
 

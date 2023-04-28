@@ -25,7 +25,7 @@ class DossierMessageHandlerTest extends TestCase
     public function testProcessDossierMessage(): void
     {
         $faker = Factory::create();
-        $dossierMessage = $this->getDossierMessage();
+        $dossierMessage = $this->getDossierMessageSCHS();
         $filepath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/schs/ws_import.json';
         $mockResponse = new MockResponse(file_get_contents($filepath));
         $mockHttpClient = new MockHttpClient($mockResponse);
