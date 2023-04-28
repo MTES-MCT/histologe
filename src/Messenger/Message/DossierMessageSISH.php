@@ -65,7 +65,7 @@ final class DossierMessageSISH implements DossierMessageInterface
     private ?string $signalementDate = null;
     private ?string $signalementDetails = null;
     private ?string $signalementProblemes = null;
-    private ?array $piecesJointesObservation = null;
+    private ?string $piecesJointesObservation = null;
     private array $piecesJointesDocuments = [];
 
     private ?int $sasDossierId = null;
@@ -761,12 +761,12 @@ final class DossierMessageSISH implements DossierMessageInterface
         return $this;
     }
 
-    public function getPiecesJointesObservation(): ?array
+    public function getPiecesJointesObservation(): ?string
     {
         return $this->piecesJointesObservation;
     }
 
-    public function setPiecesJointesObservation(?array $piecesJointesObservation): self
+    public function setPiecesJointesObservation(?string $piecesJointesObservation): self
     {
         $this->piecesJointesObservation = $piecesJointesObservation;
 

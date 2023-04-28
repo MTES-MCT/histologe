@@ -59,6 +59,10 @@ class EsaboraSISHServiceTest extends KernelTestCase
     {
         $mockResponse = new MockResponse(file_get_contents($filepath));
         $mockHttpClient = new MockHttpClient($mockResponse);
+        $this->uploadHandlerService
+            ->expects($this->atLeast(str_contains('ws_dossier', $filepath) ? 1 : 0))
+            ->method('getTmpFilepath')
+            ->willReturn($this->tempFilepath);
 
         return new EsaboraSISHService($mockHttpClient, $this->logger, $this->uploadHandlerService);
     }

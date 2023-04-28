@@ -114,7 +114,19 @@ trait DossierMessageTrait
             ->setSignalementDate('25/04/2023')
             ->setSignalementDetails($faker->realText)
             ->setSignalementProblemes($faker->text)
-            ->setPiecesJointesObservation([])
+            ->setPiecesJointesObservation(null)
+            ->setPiecesJointesDocuments([
+                [
+                    'documentName' => 'file',
+                    'documentSize' => 80,
+                    'documentContent' => 'file.pdf',
+                ],
+                [
+                    'documentName' => 'Image téléversée',
+                    'documentSize' => 80,
+                    'documentContent' => 'image.jpg',
+                ],
+            ])
             ->addPersonne($this->getDossierMessageSISHPersonne());
     }
 

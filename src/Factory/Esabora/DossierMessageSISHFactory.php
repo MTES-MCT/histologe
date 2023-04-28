@@ -91,7 +91,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setSignalementDate($signalement->getCreatedAt()?->format('d/m/Y'))
             ->setSignalementDetails($signalement->getDetails())
             ->setSignalementProblemes($this->buildProblemes($signalement))
-            ->setPiecesJointesObservation($this->buildPiecesJointes($signalement))
+            ->setPiecesJointesDocuments($this->buildPiecesJointes($signalement))
             ->addPersonne($this->createDossierPersonne($signalement, PersonneType::OCCUPANT))
             ->addPersonne($this->createDossierPersonne($signalement, PersonneType::DECLARANT))
             ->addPersonne($this->createDossierPersonne($signalement, PersonneType::PROPRIETAIRE));
@@ -133,11 +133,11 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         return null;
     }
 
-    private function buildProblemes(Signalement $signalement): string
+    private function buildProblemes(Signalement $signalement): ?string
     {
         $commentaire = null;
         foreach ($signalement->getCriticites() as $criticite) {
-            $commentaire = $criticite->getCritere()->getLabel().' => Etat '.$criticite->getScoreLabel().'\n';
+            $commentaire .= $criticite->getCritere()->getLabel().' => Etat '.$criticite->getScoreLabel().'\n';
         }
 
         return $commentaire;
