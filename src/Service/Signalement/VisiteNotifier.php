@@ -2,6 +2,7 @@
 
 namespace App\Service\Signalement;
 
+use App\Entity\Affectation;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -19,7 +20,6 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class VisiteNotifier
 {
-
     public function __construct(
         private EntityManagerInterface $entityManager,
         private SuiviFactory $suiviFactory,
@@ -31,7 +31,7 @@ class VisiteNotifier
     }
 
     /**
-     * Creates a suivi corresponding to a Visite
+     * Creates a suivi corresponding to a Visite.
      */
     public function createSuivi(string $description, ?User $currentUser, Signalement $signalement, int $typeSuivi = Suivi::TYPE_AUTO, bool $isPublic = true): Suivi
     {
@@ -51,7 +51,7 @@ class VisiteNotifier
     }
 
     /**
-     * Send emails to usagers about a Visite
+     * Send emails to usagers about a Visite.
      */
     public function notifyUsagers(Intervention $intervention, NotificationMailerType $notificationMailerType, ?DateTimeInterface $previousDate = null): void
     {
@@ -73,16 +73,26 @@ class VisiteNotifier
     }
 
     /**
-     * Send emails and notifications to agents about a Visite
+     * Send emails and notifications to agents about a Visite.
      */
-    public function notifyAgents(Intervention $intervention, Suivi $suivi, ?User $currentUser, ?NotificationMailerType $notificationMailerType, bool $notifyAdminTerritory = true): void
-    {
-        if ($notifyAdminTerritory) {
-            $listUsersTerritoryAdmin = $this->userRepository->findActiveTerritoryAdmins($intervention->getSignalement()->getTerritory());
-            $listUsersPartner = $intervention->getPartner()->getUsers();
-            $listUsersToNotify = array_unique(array_merge($listUsersTerritoryAdmin, $listUsersPartner->toArray()), SORT_REGULAR);
+    public function notifyAgents(
+        ?Intervention $intervention,
+        Suivi $suivi,
+        ?User $currentUser,
+        ?NotificationMailerType $notificationMailerType,
+        bool $notifyAdminTerritory = true,
+        ?Affectation $affectation = null,
+    ): void {
+        if ($intervention) {
+            if ($notifyAdminTerritory) {
+                $listUsersTerritoryAdmin = $this->userRepository->findActiveTerritoryAdmins($intervention->getSignalement()->getTerritory());
+                $listUsersPartner = $intervention->getPartner()->getUsers();
+                $listUsersToNotify = array_unique(array_merge($listUsersTerritoryAdmin, $listUsersPartner->toArray()), \SORT_REGULAR);
+            } else {
+                $listUsersToNotify = $intervention->getPartner()->getUsers();
+            }
         } else {
-            $listUsersToNotify = $intervention->getPartner()->getUsers();
+            $listUsersToNotify = $affectation->getPartner()->getUsers();
         }
         foreach ($listUsersToNotify as $user) {
             if ($user != $currentUser) {
@@ -91,15 +101,20 @@ class VisiteNotifier
         }
     }
 
-    private function notifyAgent(User $user, Intervention $intervention, Suivi $suivi, ?NotificationMailerType $notificationMailerType)
-    {
+    private function notifyAgent(
+        User $user,
+        ?Intervention $intervention,
+        Suivi $suivi,
+        ?NotificationMailerType $notificationMailerType,
+        ?Affectation $affectation = null,
+    ) {
         if ($notificationMailerType) {
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
                     type: $notificationMailerType,
                     to: $user->getEmail(),
-                    territory: $intervention->getSignalement()->getTerritory(),
-                    signalement: $intervention->getSignalement(),
+                    territory: $intervention ? $intervention->getSignalement()->getTerritory() : $affectation->getSignalement()->getTerritory(),
+                    signalement: $intervention ? $intervention->getSignalement() : $affectation->getSignalement(),
                     intervention: $intervention,
                 )
             );

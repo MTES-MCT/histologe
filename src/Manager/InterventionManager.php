@@ -10,7 +10,7 @@ use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Repository\InterventionRepository;
 use App\Repository\PartnerRepository;
-use DateTime;
+use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -22,6 +22,7 @@ class InterventionManager extends AbstractManager
         private Security $security,
         private InterventionRepository $interventionRepository,
         private PartnerRepository $partnerRepository,
+        private PartnerManager $partnerManager,
         private WorkflowInterface $interventionPlanningStateMachine,
         string $entityName = Intervention::class
     ) {
@@ -34,15 +35,11 @@ class InterventionManager extends AbstractManager
             return null;
         }
 
-        $partnerFound = null;
-        $visitesPartners = $this->partnerRepository->findPartnersWithQualification(Qualification::VISITES, $signalement->getTerritory());
-        foreach ($visitesPartners as $partner) {
-            if ($partner->getId() == $visiteRequest->getPartner()) {
-                $partnerFound = $partner;
-                break;
-            }
-        }
-
+        $partnerFound = $this->partnerManager->getPartnerIfQualification(
+            $visiteRequest->getPartner(),
+            Qualification::VISITES,
+            $signalement->getTerritory()
+        );
         if (!$partnerFound) {
             return null;
         }
@@ -50,14 +47,13 @@ class InterventionManager extends AbstractManager
         $intervention = new Intervention();
         $intervention->setSignalement($signalement)
             ->setPartner($partnerFound)
-            ->setDate(new DateTime($visiteRequest->getDate()))
+            ->setDate(new DateTimeImmutable($visiteRequest->getDate()))
             ->setType(InterventionType::VISITE)
             ->setStatus(Intervention::STATUS_PLANNED);
 
         $this->save($intervention);
 
-        $todayDate = new DateTime();
-        if ($intervention->getDate() <= $todayDate) {
+        if ($intervention->getDate() <= new DateTimeImmutable()) {
             $this->confirmVisiteFromRequest($visiteRequest, $intervention);
         }
 
@@ -93,26 +89,21 @@ class InterventionManager extends AbstractManager
             return null;
         }
 
-        $partnerFound = null;
-        $visitesPartners = $this->partnerRepository->findPartnersWithQualification(Qualification::VISITES, $signalement->getTerritory());
-        foreach ($visitesPartners as $partner) {
-            if ($partner->getId() == $visiteRequest->getPartner()) {
-                $partnerFound = $partner;
-                break;
-            }
-        }
-
+        $partnerFound = $this->partnerManager->getPartnerIfQualification(
+            $visiteRequest->getPartner(),
+            Qualification::VISITES,
+            $signalement->getTerritory()
+        );
         if (!$partnerFound) {
             return null;
         }
 
         $intervention
             ->setPartner($partnerFound)
-            ->setDate(new DateTime($visiteRequest->getDate()));
+            ->setDate(new DateTimeImmutable($visiteRequest->getDate()));
         $this->save($intervention);
 
-        $todayDate = new DateTime();
-        if ($intervention->getDate() <= $todayDate) {
+        if ($intervention->getDate() <= new DateTimeImmutable()) {
             $this->confirmVisiteFromRequest($visiteRequest, $intervention);
         }
 
@@ -162,16 +153,11 @@ class InterventionManager extends AbstractManager
             return null;
         }
 
-        $intervention
-            ->setDetails($visiteRequest->getDetails());
+        $intervention->setDetails($visiteRequest->getDetails());
         if ($visiteRequest->getDocument()) {
             $intervention->setDocuments([$visiteRequest->getDocument()]);
         }
         $this->save($intervention);
-
-        if ($visiteRequest->isUsagerNotified()) {
-            // TODO
-        }
 
         return $intervention;
     }

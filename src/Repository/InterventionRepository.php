@@ -17,7 +17,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class InterventionRepository extends ServiceEntityRepository
 {
-    private const NB_DAYS_DELAY_NOTIFICATION_VISIT_TO_COME = 2;
+    private const NB_DAYS_DELAY_NOTIFICATION_VISIT_PAST = 2;
+    private const NB_DAYS_DELAY_NOTIFICATION_VISIT_FUTURE = -2;
 
     public function __construct(ManagerRegistry $registry)
     {
@@ -42,11 +43,9 @@ class InterventionRepository extends ServiceEntityRepository
         }
     }
 
-    public function getVisitsToNotify(int $delayMultiplicator): array
+    public function getVisitsToNotify(int $delay): array
     {
         $queryBuilder = $this->createQueryBuilder('i');
-
-        $delay = $delayMultiplicator * self::NB_DAYS_DELAY_NOTIFICATION_VISIT_TO_COME;
 
         return $queryBuilder
             ->where('i.status = :planned')
@@ -61,11 +60,11 @@ class InterventionRepository extends ServiceEntityRepository
 
     public function getFutureVisits(): array
     {
-        return $this->getVisitsToNotify(-1);
+        return $this->getVisitsToNotify(self::NB_DAYS_DELAY_NOTIFICATION_VISIT_FUTURE);
     }
 
     public function getPastVisits(): array
     {
-        return $this->getVisitsToNotify(1);
+        return $this->getVisitsToNotify(self::NB_DAYS_DELAY_NOTIFICATION_VISIT_PAST);
     }
 }

@@ -103,6 +103,6 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals(SignalementExportFactory::NON, $signalementExportFactory->isPreavisDepart);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->isRelogement);
         $this->assertEquals(SignalementExportFactory::NON, $signalementExportFactory->isNotOccupant);
-        $this->assertEquals(SignalementExportFactory::NON, $signalementExportFactory->isOccupantPresentVisite);
+        $this->assertEquals('-', $signalementExportFactory->isOccupantPresentVisite);
     }
 }

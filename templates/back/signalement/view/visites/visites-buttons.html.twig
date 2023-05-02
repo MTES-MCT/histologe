@@ -1,26 +1,26 @@
 <div class="signalement-visites-buttons fr-text--right">
     {% if signalement.interventions is empty %}
-        <a href="#" class="fr-btn fr-btn--sm fr-fi-calendar-line fr-btn--icon-left" aria-controls="add-visite-modal" data-fr-opened="false">
+        <button class="fr-btn fr-btn--sm fr-fi-calendar-line fr-btn--icon-left" aria-controls="add-visite-modal" data-fr-opened="false">
             Ajouter une visite
-        </a>
+        </button>
     {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_PLANNED') %}
         {% if workflow_can(intervention, 'cancel') %}
-            <a href="#" class="fr-btn fr-btn--sm fr-btn--danger fr-fi-close-line fr-btn--icon-left" aria-controls="cancel-visite-modal-{{intervention.id}}" data-fr-opened="false">
+            <button class="fr-btn fr-btn--sm fr-btn--danger fr-fi-close-line fr-btn--icon-left" aria-controls="cancel-visite-modal-{{intervention.id}}" data-fr-opened="false">
                 Annuler la visite
-            </a>
+            </button>
         {% endif %}
-        <a href="#" class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-edit-line fr-btn--icon-left" aria-controls="reschedule-visite-modal-{{intervention.id}}" data-fr-opened="false">
+        <button class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-edit-line fr-btn--icon-left" aria-controls="reschedule-visite-modal-{{intervention.id}}" data-fr-opened="false">
             Modifier la date
-        </a>
+        </button>
         {% if workflow_can(intervention, 'confirm') %}
-            <a href="#" class="fr-btn fr-btn--sm fr-fi-check-line fr-btn--icon-left" aria-controls="confirm-visite-modal-{{intervention.id}}" data-fr-opened="false">
+            <button class="fr-btn fr-btn--sm fr-fi-check-line fr-btn--icon-left" aria-controls="confirm-visite-modal-{{intervention.id}}" data-fr-opened="false">
                 Confirmer la visite
-            </a>
+            </button>
         {% endif %}
     {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_DONE') %}
-        <a href="#" class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-edit-line fr-btn--icon-left" aria-controls="edit-visite-modal-{{intervention.id}}" data-fr-opened="false">
+        <button class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-edit-line fr-btn--icon-left" aria-controls="edit-visite-modal-{{intervention.id}}" data-fr-opened="false">
             Editer le rapport
-        </a>
+        </button>
     {% else %}
         &nbsp;
     {% endif %}

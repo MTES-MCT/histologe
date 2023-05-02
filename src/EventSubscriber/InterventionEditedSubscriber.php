@@ -8,7 +8,6 @@ use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Workflow\Event\Event;
 
 class InterventionEditedSubscriber implements EventSubscriberInterface
 {
@@ -28,7 +27,7 @@ class InterventionEditedSubscriber implements EventSubscriberInterface
     public function onInterventionEdited(InterventionEditedEvent $event): void
     {
         $intervention = $event->getIntervention();
-        if ($event->isUsagerNotified() && InterventionType::VISITE == $intervention->getType()) {
+        if ($event->isUsagerNotified() && InterventionType::VISITE === $intervention->getType()) {
             $currentUser = $event->getUser();
             $description = 'Edition de la conclusion de la visite par '.$intervention->getPartner()->getNom().'.<br>';
             $description .= 'Commentaire opérateur :<br>';
@@ -39,10 +38,8 @@ class InterventionEditedSubscriber implements EventSubscriberInterface
                 signalement: $intervention->getSignalement(),
             );
 
-            // Send mails to usager
             $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_EDITED_TO_USAGER);
 
-            // Send notifications to agents
             $this->visiteNotifier->notifyAgents(
                 intervention: $intervention,
                 suivi: $suivi,

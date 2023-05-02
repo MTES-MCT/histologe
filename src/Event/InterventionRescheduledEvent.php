@@ -4,7 +4,7 @@ namespace App\Event;
 
 use App\Entity\Intervention;
 use App\Entity\User;
-use DateTimeInterface;
+use DateTimeImmutable;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class InterventionRescheduledEvent extends Event
@@ -14,7 +14,7 @@ class InterventionRescheduledEvent extends Event
     public function __construct(
         private Intervention $intervention,
         private User $user,
-        private DateTimeInterface $previousDate,
+        private DateTimeImmutable $previousDate,
     ) {
     }
 
@@ -28,7 +28,7 @@ class InterventionRescheduledEvent extends Event
         return $this->user;
     }
 
-    public function getPreviousDate(): ?DateTimeInterface
+    public function getPreviousDate(): ?DateTimeImmutable
     {
         return $this->previousDate;
     }

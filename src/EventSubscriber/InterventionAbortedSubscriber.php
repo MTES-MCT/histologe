@@ -28,7 +28,7 @@ class InterventionAbortedSubscriber implements EventSubscriberInterface
     {
         $intervention = $event->getSubject();
         $currentUser = $this->security->getUser();
-        if (InterventionType::VISITE == $intervention->getType()) {
+        if (InterventionType::VISITE === $intervention->getType()) {
             $description = 'La visite du logement prévue le '.$intervention->getDate()->format('d/m/Y');
             $description .= ' n\'a pas pu avoir lieu pour le motif suivant :<br>';
             $description .= $intervention->getDetails();
@@ -39,10 +39,8 @@ class InterventionAbortedSubscriber implements EventSubscriberInterface
                 signalement: $intervention->getSignalement(),
             );
 
-            // Send mails to usager
             $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_ABORTED_TO_USAGER);
 
-            // Send notifications to agents
             $this->visiteNotifier->notifyAgents(
                 intervention: $intervention,
                 suivi: $suivi,

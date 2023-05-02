@@ -170,11 +170,10 @@ class AffectationRepository extends ServiceEntityRepository
             ->andWhere('p.competence LIKE :qualification')
             ->setParameter('qualification', "%{$qualification->name}%");
 
-        return $qb->getQuery()
-                    ->getResult();
+        return $qb->getQuery()->getResult();
     }
 
-    public function findAffectationsCheckVisite(): array
+    public function findAcceptedAffectationsFromVisitesPartner(): array
     {
         $qb = $this->createQueryBuilder('a');
         $qb
@@ -189,7 +188,6 @@ class AffectationRepository extends ServiceEntityRepository
             ->andWhere('DATEDIFF(CURRENT_DATE(),a.answeredAt) = :day_delay')
             ->setParameter('day_delay', self::DELAY_VISITE_AFTER_AFFECTATION);
 
-        return $qb->getQuery()
-                    ->getResult();
+        return $qb->getQuery()->getResult();
     }
 }

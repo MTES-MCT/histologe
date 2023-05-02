@@ -12,7 +12,7 @@ use App\Exception\File\MaxUploadSizeExceededException;
 use App\Manager\InterventionManager;
 use App\Repository\InterventionRepository;
 use App\Service\UploadHandlerService;
-use DateTime;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -68,7 +68,7 @@ class SignalementVisitesController extends AbstractController
         }
     }
 
-    #[Route('/{uuid}/visites/ajouter', name: 'back_signalement_visite_add')]
+    #[Route('/{uuid}/visites/ajouter', name: 'back_signalement_visite_add', methods: 'POST')]
     public function addVisiteToSignalement(
         Signalement $signalement,
         Request $request,
@@ -103,7 +103,7 @@ class SignalementVisitesController extends AbstractController
         );
 
         if ($intervention = $interventionManager->createVisiteFromRequest($signalement, $visiteRequest)) {
-            $todayDate = new DateTime();
+            $todayDate = new DateTimeImmutable();
             if ($intervention->getDate() <= $todayDate) {
                 $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
             } else {
@@ -119,7 +119,7 @@ class SignalementVisitesController extends AbstractController
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 
-    #[Route('/{uuid}/visites/annuler', name: 'back_signalement_visite_cancel')]
+    #[Route('/{uuid}/visites/annuler', name: 'back_signalement_visite_cancel', methods: 'POST')]
     public function cancelVisiteFromSignalement(
         Signalement $signalement,
         Request $request,
@@ -157,7 +157,7 @@ class SignalementVisitesController extends AbstractController
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 
-    #[Route('/{uuid}/visites/reprogrammer', name: 'back_signalement_visite_reschedule')]
+    #[Route('/{uuid}/visites/reprogrammer', name: 'back_signalement_visite_reschedule', methods: 'POST')]
     public function rescheduleVisiteFromSignalement(
         Signalement $signalement,
         Request $request,
@@ -189,7 +189,7 @@ class SignalementVisitesController extends AbstractController
 
         $visiteRequest = new VisiteRequest(
             date: $requestRescheduleData['date'],
-            idPartner: $requestRescheduleData['partner'],
+            idPartner: $requestRescheduleData['partner'] ?? $intervention->getPartner()->getId(),
             idIntervention: $requestRescheduleData['intervention'],
             details: $requestRescheduleData['details'] ?? null,
             concludeProcedure: $requestRescheduleData['concludeProcedure'] ?? null,
@@ -199,8 +199,7 @@ class SignalementVisitesController extends AbstractController
         );
 
         if ($intervention = $interventionManager->rescheduleVisiteFromRequest($signalement, $visiteRequest)) {
-            $todayDate = new DateTime();
-            if ($intervention->getDate() <= $todayDate) {
+            if ($intervention->getDate() <= new DateTimeImmutable()) {
                 $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
             } else {
                 $this->addFlash('success', self::SUCCESS_MSG_ADD);
@@ -215,7 +214,7 @@ class SignalementVisitesController extends AbstractController
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 
-    #[Route('/{uuid}/visites/confirmer', name: 'back_signalement_visite_confirm')]
+    #[Route('/{uuid}/visites/confirmer', name: 'back_signalement_visite_confirm', methods: 'POST')]
     public function confirmVisiteFromSignalement(
         Signalement $signalement,
         Request $request,
@@ -261,7 +260,7 @@ class SignalementVisitesController extends AbstractController
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 
-    #[Route('/{uuid}/visites/editer', name: 'back_signalement_visite_edit')]
+    #[Route('/{uuid}/visites/editer', name: 'back_signalement_visite_edit', methods: 'POST')]
     public function editVisiteFromSignalement(
         Signalement $signalement,
         Request $request,
