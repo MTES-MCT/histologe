@@ -382,6 +382,7 @@ class SignalementRepository extends ServiceEntityRepository
                 );
             }
         } elseif ($user->isUserPartner() || $user->isPartnerAdmin()) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $user->getTerritory());
             $statuses = [];
             if (!empty($options['statuses'])) {
                 $statuses = array_map(function ($status) {

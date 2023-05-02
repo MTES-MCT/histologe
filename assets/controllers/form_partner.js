@@ -19,7 +19,7 @@ function histoUpdateFieldsVisibility(showZonePDL, showEsaboraTitle, showEsaboraD
     document.querySelector('#partner_create_esabora_div').classList.add('fr-hidden')
   }
 }
-function histoUpdateValueFromData(elementName, elementData) {
+function histoUpdateValueFromData(elementName, elementData, target) {
   document.querySelector(elementName).value = target.getAttribute(elementData)
 }
 
@@ -27,7 +27,7 @@ document.querySelectorAll('.btn-transfer-partner-user').forEach(swbtn => {
   swbtn.addEventListener('click', evt => {
     const target = evt.target
     document.querySelector('#fr-modal-user-transfer_username').innerHTML = target.getAttribute('data-username')
-    histoUpdateValueFromData('#fr-modal-user-transfer_userid', 'data-userid')
+    histoUpdateValueFromData('#fr-modal-user-transfer_userid', 'data-userid', target)
     document.querySelector('#user_transfer_form').addEventListener('submit', (e) => {
       histoUpdateSubmitButton('#user_transfer_form_submit', 'Transfert en cours...')
     })
@@ -42,7 +42,7 @@ document.querySelectorAll('.btn-delete-partner-user').forEach(swbtn => {
     document.querySelectorAll('.fr-modal-user-delete_useremail').forEach(userItem => {
       userItem.innerHTML = target.getAttribute('data-useremail')
     })
-    histoUpdateValueFromData('#fr-modal-user-delete_userid', 'data-userid')
+    histoUpdateValueFromData('#fr-modal-user-delete_userid', 'data-userid', target)
     document.querySelector('#user_delete_form').addEventListener('submit', (e) => {
       histoUpdateSubmitButton('#user_delete_form_submit', 'Suppression en cours...')
     })
@@ -55,7 +55,7 @@ document.querySelectorAll('.btn-delete-partner').forEach(swbtn => {
     document.querySelectorAll('.fr-modal-partner-delete_name').forEach(userItem => {
       userItem.innerHTML = target.getAttribute('data-partnername')
     })
-    histoUpdateValueFromData('#fr-modal-partner-delete_partnerid', 'data-partnerid')
+    histoUpdateValueFromData('#fr-modal-partner-delete_partnerid', 'data-partnerid', target)
     document.querySelector('#partner_delete_form').addEventListener('submit', (e) => {
       histoUpdateSubmitButton('#partner_delete_form_submit', 'Suppression en cours...')
     })
@@ -68,10 +68,10 @@ document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
     document.querySelectorAll('.fr-modal-user-edit_useremail').forEach(userItem => {
       userItem.innerHTML = target.getAttribute('data-useremail')
     })
-    histoUpdateValueFromData('#user_edit_userid', 'data-userid')
-    histoUpdateValueFromData('#user_edit_email', 'data-useremail')
-    histoUpdateValueFromData('#user_edit_nom', 'data-usernom')
-    histoUpdateValueFromData('#user_edit_prenom', 'data-userprenom')
+    histoUpdateValueFromData('#user_edit_userid', 'data-userid', target)
+    histoUpdateValueFromData('#user_edit_email', 'data-useremail', target)
+    histoUpdateValueFromData('#user_edit_nom', 'data-usernom', target)
+    histoUpdateValueFromData('#user_edit_prenom', 'data-userprenom', target)
     const isMailingActive = target.getAttribute('data-userismailingactive')
     if ( '1' === isMailingActive ) {
       document.querySelector('#user_edit_is_mailing_active-1').checked = true
