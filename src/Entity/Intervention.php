@@ -6,7 +6,7 @@ use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProcedureType;
 use App\Repository\InterventionRepository;
-use DateTime;
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -103,7 +103,7 @@ class Intervention
 
     public function hasDatePassed(): bool
     {
-        return $this->getDate() <= new DateTime();
+        return $this->getDate() <= new DateTimeImmutable();
     }
 
     public function getSignalement(): ?Signalement
@@ -190,24 +190,24 @@ class Intervention
         return $this;
     }
 
-    public function getReminderBeforeSentAt(): ?\DateTimeImmutable
+    public function getReminderBeforeSentAt(): ?DateTimeImmutable
     {
         return $this->reminderBeforeSentAt;
     }
 
-    public function setReminderBeforeSentAt(?\DateTimeImmutable $reminderBeforeSentAt): self
+    public function setReminderBeforeSentAt(?DateTimeImmutable $reminderBeforeSentAt): self
     {
         $this->reminderBeforeSentAt = $reminderBeforeSentAt;
 
         return $this;
     }
 
-    public function getReminderConclusionSentAt(): ?\DateTimeImmutable
+    public function getReminderConclusionSentAt(): ?DateTimeImmutable
     {
         return $this->reminderConclusionSentAt;
     }
 
-    public function setReminderConclusionSentAt(?\DateTimeImmutable $reminderConclusionSentAt): self
+    public function setReminderConclusionSentAt(?DateTimeImmutable $reminderConclusionSentAt): self
     {
         $this->reminderConclusionSentAt = $reminderConclusionSentAt;
 

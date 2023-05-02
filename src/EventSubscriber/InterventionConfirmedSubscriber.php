@@ -28,9 +28,9 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
     {
         $intervention = $event->getSubject();
         $currentUser = $this->security->getUser();
-        if (InterventionType::VISITE == $intervention->getType()) {
+        if (InterventionType::VISITE === $intervention->getType()) {
             $description = 'Après visite du logement par '.$intervention->getPartner()->getNom().',';
-            $description .= ' la situation observée du logement est : ' . $intervention->getConcludeProcedure()->label() . '.<br>';
+            $description .= ' la situation observée du logement est : '.$intervention->getConcludeProcedure()->label().'.<br>';
             $description .= 'Commentaire opérateur :<br>';
             $description .= $intervention->getDetails();
             $suivi = $this->visiteNotifier->createSuivi(
@@ -39,10 +39,8 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
                 signalement: $intervention->getSignalement(),
             );
 
-            // Send mails to usager
             $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_CONFIRMED_TO_USAGER);
 
-            // Send notifications to agents
             $this->visiteNotifier->notifyAgents(
                 intervention: $intervention,
                 suivi: $suivi,

@@ -40,14 +40,13 @@ class NotifyVisitsCommand extends Command
         $countPastVisits = 0;
         $countVisitsToPlan = 0;
 
-        // Future visits
         $listFutureVisits = $this->interventionRepository->getFutureVisits();
         foreach ($listFutureVisits as $intervention) {
             $signalement = $intervention->getSignalement();
             $description = '<strong>Rappel de visite :</strong> la visite du logement situé';
-            $description .= $signalement->getAdresseOccupant(). ' ' .$signalement->getCpOccupant(). ' ' .$signalement->getVilleOccupant();
-            $description .= 'aura lieu le ' .$intervention->getDate()->format('d/m/Y');
-            $description .= '<br>La visite sera effectuée par ' .$intervention->getPartner()->getNom(). '.';
+            $description .= $signalement->getAdresseOccupant().' '.$signalement->getCpOccupant().' '.$signalement->getVilleOccupant();
+            $description .= 'aura lieu le '.$intervention->getDate()->format('d/m/Y');
+            $description .= '<br>La visite sera effectuée par '.$intervention->getPartner()->getNom().'.';
             $suivi = $this->visiteNotifier->createSuivi(
                 description: $description,
                 currentUser: null,
@@ -55,10 +54,8 @@ class NotifyVisitsCommand extends Command
                 typeSuivi: Suivi::TYPE_TECHNICAL
             );
 
-            // Send mails to usager
             $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_USAGER);
 
-            // Send notifications to agents
             $this->visiteNotifier->notifyAgents(
                 intervention: $intervention,
                 suivi: $suivi,
@@ -69,7 +66,6 @@ class NotifyVisitsCommand extends Command
             ++$countFutureVisits;
         }
 
-        // Past visits
         $listPastVisits = $this->interventionRepository->getPastVisits();
         foreach ($listPastVisits as $intervention) {
             foreach ($intervention->getPartner()->getUsers() as $user) {
@@ -84,32 +80,32 @@ class NotifyVisitsCommand extends Command
             }
             ++$countPastVisits;
         }
-        
+
         // Notifs for visits that should be planned
         if (!empty($this->parameterBag->get('feature_ask_visite'))) {
-            $listAffectations = $this->affectationRepository->findAffectationsCheckVisite();
+            $listAffectations = $this->affectationRepository->findAcceptedAffectationsFromVisitesPartner();
             foreach ($listAffectations as $affectation) {
-                if (count($affectation->getSignalement()->getInterventions()) == 0) {
+                if (0 == \count($affectation->getSignalement()->getInterventions())) {
                     $description = 'Aucune information de visite n\'a été renseignée pour le logement.';
                     $description .= ' Merci de programmer une visite dès que possible !';
                     $suivi = $this->visiteNotifier->createSuivi(
                         description: $description,
                         currentUser: null,
-                        signalement: $intervention->getSignalement(),
+                        signalement: $affectation->getSignalement(),
                         typeSuivi: Suivi::TYPE_TECHNICAL,
                         isPublic: false,
                     );
-        
-                    // Send notifications to agents
+
                     $this->visiteNotifier->notifyAgents(
-                        intervention: $intervention,
+                        intervention: null,
                         suivi: $suivi,
                         currentUser: null,
                         notificationMailerType: NotificationMailerType::TYPE_VISITE_NEEDED,
                         notifyAdminTerritory: false,
+                        affectation: $affectation,
                     );
 
-                    $countVisitsToPlan++;
+                    ++$countVisitsToPlan;
                 }
             }
         }

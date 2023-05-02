@@ -34,10 +34,9 @@ class SuiviVisiteCreatedToPartnerMailer extends AbstractNotificationMailer
         return [
             'signalement' => $signalement,
             'intervention' => $intervention,
-            'lien_suivi' => $this->urlGenerator->generate(
+            'lien_suivi' => $this->generateLink(
                 'front_suivi_signalement',
                 ['code' => $signalement->getCodeSuivi(), 'from' => $notificationMail->getTo()],
-                UrlGeneratorInterface::ABSOLUTE_URL
             ),
         ];
     }

@@ -11,10 +11,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class InterventionVoter extends Voter
 {
     public const EDIT_VISITE = 'INTERVENTION_EDIT_VISITE';
+    public const EDIT_VISITE_PARTNER = 'INTERVENTION_EDIT_VISITE_PARTNER';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::EDIT_VISITE])
+        return \in_array($attribute, [self::EDIT_VISITE, self::EDIT_VISITE_PARTNER])
             && ($subject instanceof Intervention || $subject instanceof ArrayCollection);
     }
 
@@ -30,6 +31,7 @@ class InterventionVoter extends Voter
 
         return match ($attribute) {
             self::EDIT_VISITE => $this->canEditVisite($subject, $user),
+            self::EDIT_VISITE_PARTNER => $this->canEditVisitePartner($subject, $user),
             default => false,
         };
     }
@@ -37,5 +39,10 @@ class InterventionVoter extends Voter
     public function canEditVisite(Intervention $intervention, UserInterface $user): bool
     {
         return $intervention->getPartner()->getId() === $user->getPartner()->getId() || $user->isTerritoryAdmin() && $user->getTerritory() === $intervention->getSignalement()->getTerritory();
+    }
+
+    public function canEditVisitePartner(Intervention $intervention, UserInterface $user): bool
+    {
+        return $user->isTerritoryAdmin() && $user->getTerritory() === $intervention->getSignalement()->getTerritory();
     }
 }

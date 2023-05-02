@@ -698,19 +698,18 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function countByVisiteFiltered(StatisticsFilters $statisticsFilters): array
     {
-        // TODO : dateVisite
         $qb = $this->createQueryBuilder('s');
-        /*
         $qb->select('COUNT(s.id) as count')
             ->addSelect('case
-            when s.dateVisite IS NULL then \'Non\'
-            else \'Oui\'
-            end as visite');
+                when i.id IS NULL then \'Non\'
+                else \'Oui\'
+                end as visite'
+            )
+            ->leftJoin('s.interventions', 'i');
 
         $qb = self::addFiltersToQuery($qb, $statisticsFilters);
 
         $qb->groupBy('visite');
-        */
 
         return $qb->getQuery()
             ->getResult();

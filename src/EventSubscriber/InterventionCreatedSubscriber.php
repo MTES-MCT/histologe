@@ -25,8 +25,7 @@ class InterventionCreatedSubscriber implements EventSubscriberInterface
     public function onInterventionCreated(InterventionCreatedEvent $event): void
     {
         $intervention = $event->getIntervention();
-        if (InterventionType::VISITE == $intervention->getType()) {
-            // Creation of suivi
+        if (InterventionType::VISITE === $intervention->getType()) {
             $description = 'Visite programmée : une visite du logement situé '.$intervention->getSignalement()->getAdresseOccupant();
             $description .= ' est prévue le '.$intervention->getDate()->format('d/m/Y').'.';
             $description .= '<br>';
@@ -37,10 +36,8 @@ class InterventionCreatedSubscriber implements EventSubscriberInterface
                 signalement: $intervention->getSignalement(),
             );
 
-            // Send mails to usager
             $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER);
 
-            // Send mails and notifications to agents
             $this->visiteNotifier->notifyAgents(
                 intervention: $intervention,
                 suivi: $suivi,

@@ -30,7 +30,8 @@
                                         </p>
                                         <input type="date" class="fr-input add-fields-if-past-date" data-fields="visite-reschedule-{{intervention.id}}-past-date-complementary-fields" name="visite-reschedule[date]" value="{{ intervention.date.format('Y-m-d') }}" required>
                                     </fieldset>
-                                    {# TODO : uniquement pour les RT et admin #}
+                                    
+                                    {% if is_granted('INTERVENTION_EDIT_VISITE_PARTNER', intervention) %}
                                     <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
                                         <legend class="fr-fieldset__legend fr-text--regular">
                                             Opérateur de visite*
@@ -44,6 +45,7 @@
                                             {% endfor %}
                                         </select>
                                     </fieldset>
+                                    {% endif %}
 
                                     <div id="visite-reschedule-{{intervention.id}}-past-date-complementary-fields" class="fr-hidden">
                                         {% set formType = 'reschedule' %}
