@@ -40,8 +40,9 @@
         </p>
         <select name="visite-{{ formType }}[concludeProcedure]" class="fr-select">
             <option value=""></option>
-            {% for procedureTypeName, procedureTypeValue in listProceduresTypes %}
-                <option value="{{ procedureTypeName }}">{{ procedureTypeValue }}</option>
+            {% set listProceduresTypes = enum('\\App\\Entity\\Enum\\ProcedureType') %}
+            {% for type in listProceduresTypes.cases() %}
+                <option value="{{ type.value }}">{{ type.label() }}</option>
             {% endfor %}
         </select>
     </fieldset>
