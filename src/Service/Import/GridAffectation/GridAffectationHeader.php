@@ -4,12 +4,12 @@ namespace App\Service\Import\GridAffectation;
 
 class GridAffectationHeader
 {
-    public const PARTNER_NAME_INSTITUTION = 0;
-    public const PARTNER_TYPE = 1;
-    public const PARTNER_CODE_INSEE = 2;
-    public const PARTNER_EMAIL = 3;
-    public const USER_ROLE = 4;
-    public const USER_FIRSTNAME = 5;
-    public const USER_LASTNAME = 6;
-    public const USER_EMAIL = 7;
+    public const PARTNER_NAME_INSTITUTION = 'Institution';
+    public const PARTNER_TYPE = 'TYPE';
+    public const PARTNER_CODE_INSEE = 'Codes insee';
+    public const PARTNER_EMAIL = 'E-mail d\'équipe';
+    public const USER_ROLE = 'Rôle';
+    public const USER_FIRSTNAME = 'Prénom';
+    public const USER_LASTNAME = 'Nom';
+    public const USER_EMAIL = 'E-mail';
 }
