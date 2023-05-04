@@ -1,0 +1,179 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Partenaire{% endblock %}
+
+{% block content %}
+    {% if is_granted('ROLE_ADMIN_TERRITORY') and app.request.get('_route') is not same as('back_partner_new') %}
+        {% include '_partials/_modal_user_transfer.html.twig' %}
+    {% endif %}
+    {% include '_partials/_modal_user_create.html.twig' %}
+    {% include '_partials/_modal_user_delete.html.twig' %}
+    {% include '_partials/_modal_user_edit.html.twig' %}
+    <section class="fr-p-5v">
+        <header>
+        {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+            <a class="fr-link fr-fi-arrow-left-line fr-link--icon-left" href="{{ path('back_partner_index') }}">Retour</a>
+        {% endif %}            
+            <div class="fr-grid-row"> 
+                <div class="fr-col-6 fr-text--left">
+                    <h1 class="fr-h1 fr-mb-0">{{ partner.nom }}</h1>
+                </div>
+                <div class="fr-col-6 fr-text--right">
+                    <a class="fr-btn fr-btn--icon-left fr-btn--md fr-fi-edit-line" href="{{ path('back_partner_edit', {'id': partner.id}) }}">Modifier
+                        le partenaire</a>
+                </div>
+            </div>
+        </header>
+    </section>
+    <section class="fr-p-5v">
+        <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-6">
+                <div><b>Nom :</b> {{ partner.nom }}</div>
+            </div>
+            <div class="fr-col-6">
+                <div><b>Territoire :</b> {{ partner.territory ? partner.territory.name : ''}}</div>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-6">
+                <div><b>Email générique :</b> {{ partner.email }}</div>
+            </div>
+            <div class="fr-col-6">
+                <div><b>Type :</b> {{ partner.type ? partner.type.label : (partner.isCommune ? 'Commune':'Partenaire') }}</div>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-6"><b>Compétences :</b>
+                {% if partner.competence %}
+                    {% for competence in partner.competence %}
+                        <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ competence.label }}</span>
+                    {% endfor %}
+                {% else %}
+                    /
+                {% endif %}
+            </div>
+            <div class="fr-col-6"><b>Code(s) INSEE :</b>
+                {% if partner.insee %}
+                    {% for insee in partner.insee %}
+                        <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ insee }}</span>
+                    {% endfor %}
+                {% else %}
+                    /
+                {% endif %}
+            </div>
+        </div>
+        {% if partner.esaboraUrl %}<div>
+            <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-6">
+                        <div><b>URL ESABORA :</b> {{ partner.esaboraUrl }}</div>
+                </div>
+                {# TODO #}
+                {# <div class="fr-col-6">
+                    <div><b>Synchronisation ESABORA :</b> ACTIVE</div>
+                </div> #}
+            </div>
+            <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-6">
+                        <div><b>Token ESABORA :</b> {{ partner.esaboraToken }}</div>
+                </div>
+                {# TODO #}
+                {# <div class="fr-col-6">
+                    <div><b>Dernière synchro : </b></div>
+                </div> #}
+            </div>
+        {% endif %}
+
+    </section>
+    <hr>
+    <section class="fr-p-5v">
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-6 fr-text--left">
+                    <h1 class="fr-h1 fr-mb-0">Utilisateurs</h1>
+                </div>
+                <div class="fr-col-6 fr-text--right">
+                    <a href="#" class="fr-btn fr-btn--success fr-btn--icon-left fr-btn--md fr-fi-add-line"
+                        id="partner_users_create" aria-controls="fr-modal-user-create"
+                        data-fr-opened="false" data-partnerid="{{ partner.id }}">Ajouter
+                        un utilisateur</a>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    
+    <section class="fr-col-12 fr-table fr-table--bordered fr-pt-0">
+        <table class="fr-display-inline-table sortable" aria-label="Liste des utilisateurs du partenaire">
+            <thead>
+            <tr>
+                <th>Dernière connexion</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Courriel</th>
+                <th>Emails</th>
+                <th>Statut</th>
+                <th>Rôle</th>
+                <th class="fr-text--right">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for user in partner.users|filter(user => user.id is not null) %}
+                    <tr class="user-row">
+                        <td>{{ user.getLastLoginAtStr('d/m/Y') }}</td>
+                        <td>{{ user.nom }}</td>
+                        <td>{{ user.prenom }}</td>
+                        <td>{{ user.email }}</td>
+                        <td><span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ user.isMailingActive ? 'OUI' : 'NON' }}</span></td>
+                        <td>{% if user.statut == 0 %}
+                                {% set classe = 'fr-badge--orange-terre-battue' %}
+                                {% set label = 'INACTIF' %}
+                            {% elseif user.statut == 1 %}
+                                {% set classe = 'fr-badge--green-emeraude' %}
+                                {% set label = 'ACTIF' %}
+                            {% elseif user.statut == 2 %}
+                                {% set classe = 'fr-badge--blue-ecume' %}
+                                {% set label = 'ARCHIVE' %}
+                            {% endif %}
+                            <span class="fr-badge {{ classe }} fr-mb-1v">{{ label }}</span></td>
+                        <td>{% if 'ROLE_ADMIN' in user.roles %}
+                                Super Admin
+                            {% elseif 'ROLE_ADMIN_TERRITORY' in user.roles %}
+                                Responsable Territoire
+                            {% elseif 'ROLE_ADMIN_PARTNER' in user.roles %}
+                                Administrateur
+                            {% elseif 'ROLE_USER_PARTNER' in user.roles %}
+                                Utilisateur
+                            {% endif %}
+                        </td>
+                        <td class="fr-text--right">
+                            <a href="#" class="fr-btn fr-fi-edit-line fr-mt-3v btn-edit-partner-user"
+                            id="partner_users_edit_{{ user.id }}" aria-controls="fr-modal-user-edit"
+                            data-fr-opened="false" 
+                            data-usernom="{{ user.nom }}" 
+                            data-userprenom="{{ user.prenom }}" 
+                            data-userrole="{{ user.roles|join(',') }}" 
+                            data-userismailingactive="{{ user.isMailingActive }}" 
+                            data-userid="{{ user.id }}" 
+                            data-useremail="{{ user.email }}"></a>
+                            {% if is_granted('ROLE_ADMIN_TERRITORY') and app.request.get('_route') is not same as('back_partner_new') %}
+                                <a href="#" class="fr-btn fr-btn--orange fr-fi-upload-2-fill fr-mt-3v btn-transfer-partner-user"
+                                id="partner_users_transfer_{{ user.id }}" aria-controls="fr-modal-user-transfer"
+                                data-fr-opened="false" data-username="{{ user.nomComplet }}" data-userid="{{ user.id }}"></a>
+                                <a href="#" class="fr-btn fr-btn--danger fr-fi-delete-line fr-mt-3v btn-delete-partner-user"
+                                id="partner_users_delete_{{ user.id }}" aria-controls="fr-modal-user-delete"
+                                data-fr-opened="false" data-username="{{ user.nomComplet }}" data-userid="{{ user.id }}" data-useremail="{{ user.email }}"></a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3">no records found</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}

@@ -87,14 +87,17 @@ const checkUserMail = (el) => {
             el.classList.add('fr-input--error');
             el.parentElement.classList.add('fr-input-group--error');
             el.parentElement.querySelector('p.fr-error-text').classList.remove('fr-hidden');
-            document.querySelector('#submit_btn_partner').disabled = true;
+            document.querySelector('#user_create_form_submit').disabled = true;
         } else {
             el.classList.remove('fr-input--error');
             el.parentElement.classList.remove('fr-input-group--error');
             el.parentElement.querySelector('p.fr-error-text').classList.add('fr-hidden');
-            document.querySelector('#submit_btn_partner').disabled = false;
+            document.querySelector('#user_create_form_submit').disabled = false;
         }
     })
+    .catch(function (err) {
+        console.warn('Something went wrong.', err);
+    });
 }
 const serializeArray = (form) => {
     return Array.from(new FormData(form)

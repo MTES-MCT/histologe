@@ -14,6 +14,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Email;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity('email', message: '{{ value }} existe déja, merci de saisir un nouvel email')]
@@ -50,7 +51,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $uuid;
 
     #[ORM\Column(type: 'string', length: 180, unique: false)]
-    #[Assert\Email]
+    #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
     #[Assert\NotBlank]
     private $email;
 

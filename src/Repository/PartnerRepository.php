@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\PartnerType;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
@@ -37,12 +38,31 @@ class PartnerRepository extends ServiceEntityRepository
         return $queryBuilder;
     }
 
-    public function getPartners(Territory|null $territory, $page): Paginator
-    {
+    public function getPartners(
+        Territory|null $territory,
+        PartnerType|null $type,
+        ?string $filterTerms,
+        $page
+    ): Paginator {
         $maxResult = Partner::MAX_LIST_PAGINATION;
         $firstResult = ($page - 1) * $maxResult;
 
         $queryBuilder = $this->getPartnersQueryBuilder($territory);
+
+        if (!empty($type)) {
+            $queryBuilder
+                ->andWhere('p.type = :type')
+                ->setParameter('type', $type);
+        }
+
+        if (!empty($filterTerms)) {
+            $queryBuilder
+                ->andWhere('LOWER(p.nom) LIKE :usersterms
+                OR LOWER(p.email) LIKE :usersterms');
+            $queryBuilder
+                ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
+        }
+
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         $paginator = new Paginator($queryBuilder->getQuery(), false);
@@ -107,7 +127,8 @@ class PartnerRepository extends ServiceEntityRepository
             ->setParameter('territory', $signalement->getTerritory())
             ->andWhere(
                 $queryBuilder->expr()->orX(
-                    $queryBuilder->expr()->eq('p.isCommune', 0),
+                    $queryBuilder->expr()->like('p.insee', "'[\"\"]'"),
+                    $queryBuilder->expr()->like('p.insee', "'[]'"),
                     $queryBuilder->expr()->like('p.insee', ':insee')
                 )
             )

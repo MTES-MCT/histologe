@@ -29,7 +29,6 @@ class BackAssignmentControllerTest extends WebTestCase
         $routeSignalementView = $router->generate('back_signalement_view', [
             'uuid' => $signalement->getUuid(),
         ]);
-
         $crawler = $client->request('GET', $routeSignalementView);
         $token = $crawler->filter('#signalement-affectation-response-form input[name=_token]')->attr('value');
         $routeAffectationResponse = $router->generate('back_signalement_affectation_response', [

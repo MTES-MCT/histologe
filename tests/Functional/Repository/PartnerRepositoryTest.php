@@ -100,7 +100,7 @@ class PartnerRepositoryTest extends KernelTestCase
     public function testGetPartnerPaginator(): void
     {
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '69']);
-        $partnerPaginator = $this->partnerRepository->getPartners($territory, 1);
+        $partnerPaginator = $this->partnerRepository->getPartners($territory, null, null, 1);
 
         $this->assertGreaterThan(1, $partnerPaginator->count());
     }

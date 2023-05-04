@@ -1,0 +1,121 @@
+<dialog aria-labelledby="fr-user-edit-title" id="fr-modal-user-edit" class="fr-modal" role="dialog">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                        <h1 id="fr-modal-user-edit-title" class="fr-modal__title">
+                            <span class="fr-fi-arrow-right-line" aria-hidden="true"></span>
+                            Modifier le compte de :  <span class="fr-modal-user-edit_useremail"></span>
+                        </h1>   
+                       <button class="fr-link--close fr-link" aria-controls="fr-modal-user-edit">Fermer</button>
+                    </div>
+                    <div class="fr-modal__content">
+                        <span class="fr-grid-row fr-grid-row--gutters">Tous les champs sont obligatoires</span><br>
+                        <form action="{{ path('back_partner_user_edit') }}" name="user_edit"
+                              id="user_edit_form" method="POST" class='needs-validation' novalidate="novalidate">
+                            <div class="fr-col-12 fr-mb-5v">
+                                <div class="fr-grid-row fr-grid-row--gutters">
+                                    <div class="fr-input-group fr-col-12 fr-col-md-6 fr-pl-0 fr-pl-md-0">
+                                        <label for="user_edit_nom" class="fr-label">Nom</label>
+                                        <input type="text" id="user_edit_nom" name="user_edit[nom]"
+                                            required="required" class="fr-input">
+                                        <p class="fr-error-text fr-hidden">
+                                            Vous devez renseigner le nom du nouvel utilisateur.
+                                        </p>
+                                    </div>
+                                    <div class="fr-input-group fr-col-12 fr-col-md-6 fr-pl-0 fr-pl-md-0">
+                                        <label for="user_edit_prenom" class="fr-label">Prénom</label>
+                                        <input type="text" id="user_edit_prenom" name="user_edit[prenom]"
+                                            required="required" class="fr-input">
+                                        <p class="fr-error-text fr-hidden">
+                                            Vous devez renseigner le prénom de l'utilisateur
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="fr-grid-row fr-grid-row--gutters">
+                                    <div class="fr-input-group fr-col-12 fr-col-md-6 fr-pl-0 fr-pl-md-0">
+                                        <label for="user_edit_roles" class="fr-label">Rôle</label>
+                                        <select id="user_edit_roles" name="user_edit[roles]" required="required"
+                                                class="fr-select">
+                                            <option value="" selected="selected">--- Selectionnez ---</option>
+                                            {% if is_granted('ROLE_ADMIN') %}
+                                                <option value="ROLE_ADMIN">
+                                                    Super Admin
+                                                </option>
+                                            {% endif %}
+                                            {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+                                                <option value="ROLE_ADMIN_TERRITORY">
+                                                    Responsable Territoire
+                                                </option>
+                                            {% endif %}
+                                            <option value="ROLE_ADMIN_PARTNER">Administrateur</option>
+                                            <option value="ROLE_USER_PARTNER">Utilisateur</option>
+                                        </select>
+                                        <p class="fr-error-text fr-hidden">
+                                            Vous devez sélectionner le rôle de l'utilisateur
+                                        </p>
+                                    </div>
+                                    <div class="fr-input-group fr-col-12 fr-col-md-6 fr-pl-0 fr-pl-md-0">
+                                        <label for="user_edit_email" class="fr-label">Courriel</label>
+                                        <input type="email" id="user_edit_email" name="user_edit[email]"
+                                            required="required" class="fr-input" onchange="checkUserMail(this)"
+                                            data-token="{{ csrf_token('partner_checkmail') }}">
+                                        <span class="fr-hint-text">Un email d'activation du compte sera envoyé à cette adresse email.</span>
+                                        <p class="fr-error-text fr-hidden">
+                                            Courriel invalide
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="fr-grid-row fr-grid-row--gutters">
+                                    <fieldset class="fr-fieldset fr-fieldset--inline fr-input-group fr-col-12 fr-col-md-6 fr-pl-0 fr-pl-md-0">
+                                        <legend class="fr-fieldset__legend fr-text--regular">
+                                            <label class="fr-label">Recevoir les emails ?</label>
+                                        </legend>
+                                        <div class="fr-fieldset__content">
+                                            <div class="fr-fieldset__element fr-fieldset__element--inline">
+                                                <div class="fr-radio-group">
+                                                    <input type="radio" id="user_edit_is_mailing_active-1" value='1' name="user_edit[isMailingActive]">
+                                                    <label class="fr-label" for="user_edit_is_mailing_active-1">
+                                                        Oui
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="fr-fieldset__element fr-fieldset__element--inline fr-ml-2w">
+                                                <div class="fr-radio-group">
+                                                    <input type="radio" id="user_edit_is_mailing_active-2" value='0' name="user_edit[isMailingActive]">
+                                                    <label class="fr-label" for="user_edit_is_mailing_active-2">
+                                                        Non
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span class="fr-hint-text">Si vous cochez oui, des emails concernant les signalements seront envoyés à cette adresse.</span>
+                                    </fieldset>
+                                </div>
+                            </div>
+                            <input type="hidden" name="user_id" id="user_edit_userid">
+                            <input type="hidden" name="_token" value="{{ csrf_token('partner_user_edit') }}">
+                        </form>
+                    </div>
+                    <div class="fr-modal__footer">
+                        <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                            <li>
+                                <button class="fr-btn fr-fi-checkbox-line" form="user_edit_form"
+                                        id="user_create_form_submit">
+                                    Enregistrer
+                                </button>
+                            </li>
+                            <li>
+                                <button class="fr-btn fr-fi-checkbox-line fr-btn--secondary"
+                                        aria-controls="fr-modal-user-edit">
+                                    Annuler
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>

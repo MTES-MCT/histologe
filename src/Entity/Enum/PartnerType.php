@@ -51,4 +51,18 @@ enum PartnerType: string
             'AUTRE' => 'Autre',
         ];
     }
+
+    public static function fromLabel(string $label): self
+    {
+        $key = array_search($label, self::getLabelList());
+
+        return self::from($key);
+    }
+
+    public static function tryFromLabel(string $label): ?self
+    {
+        $key = array_search($label, self::getLabelList());
+
+        return self::tryFrom($key);
+    }
 }

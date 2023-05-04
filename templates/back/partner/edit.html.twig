@@ -3,18 +3,16 @@
 {% block title %}Partenaire{% endblock %}
 
 {% block content %}
-    {% if is_granted('ROLE_ADMIN_TERRITORY') and app.request.get('_route') is not same as('back_partner_new') %}
-        {% include '_partials/_modal_user_transfer.html.twig' %}
-    {% endif %}
-    {% include '_partials/_modal_user_delete.html.twig' %}
     <section class="fr-col-12 fr-p-5v">
-        <h2 class="fr-h2 fr-mb-0">Partenaire {{ partner.nom ? '"'~partner.nom~'"' : '' }}</h2>
-        {% if partner.competence %}
-            ({% for competence in partner.competence %}
-                <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ competence.label }}</span>
-            {% endfor %})
+        {% if create %}
+            <h2 class="fr-h2 fr-mb-0"> Ajouter un partenaire </h2>
+            <span>Remplissez le formulaire ci-dessous pour créer un partenaire.</span><br>
+            <span>Tous les champs sont obligatoires, sauf mention contraire.</span>
+                
+        {% else %}
+            <h2 class="fr-h2 fr-mb-0"> Modifier le partenaire : {{ partner.nom }} </h2>
+            <span>Tous les champs sont obligatoires, sauf mention contraire.</span>
         {% endif %}
-        <span class="fr-hint-text">Ci dessous les informations du partenaire, vous pouvez les éditer si nécessaire.</span>
         <div class="fr-pt-5v">
             {{ include('back/partner/_form.html.twig') }}
         </div>

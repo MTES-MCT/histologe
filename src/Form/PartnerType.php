@@ -2,21 +2,27 @@
 
 namespace App\Form;
 
+use App\Entity\Commune;
+use App\Entity\Enum\PartnerType as EnumPartnerType;
+use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Factory\UserFactory;
+use App\Manager\CommuneManager;
 use App\Manager\UserManager;
 use App\Repository\TerritoryRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -29,6 +35,7 @@ class PartnerType extends AbstractType
         private UserManager $userManager,
         private UserFactory $userFactory,
         private ParameterBagInterface $parameterBag,
+        private CommuneManager $communeManager,
     ) {
     }
 
@@ -51,20 +58,55 @@ class PartnerType extends AbstractType
                     'readonly' => isset($insee[$partner?->getTerritory()?->getZip()][$partner->getNom()]),
                 ],
             ])
-            ->add('isCommune', ChoiceType::class, [
+            ->add('email', EmailType::class, [
+                'attr' => [
+                    'class' => 'fr-input',
+                ],
+                'required' => false,
+            ])
+            ->add('type', EnumType::class, [
+                'class' => EnumPartnerType::class,
+                'choice_label' => function ($choice) {
+                    return $choice->label();
+                },
                 'row_attr' => [
                     'class' => 'fr-select-group',
-                ], 'attr' => [
+                ],
+                'placeholder' => 'Sélectionner un type',
+                'attr' => [
                     'class' => 'fr-select',
                 ],
-                'choices' => [
-                    'Commune' => 1,
-                    'Partenaire' => 0,
+                'help' => 'Choisissez un type de partenaire parmi la liste ci-dessous.',
+                'help_attr' => [
+                    'class' => 'fr-hint-text',
                 ],
-                'label_attr' => [
-                    'class' => 'fr-label',
+            ])
+            ->add('competence', EnumType::class, [
+                'class' => Qualification::class,
+                'choice_filter' => ChoiceList::filter(
+                    $this,
+                    function ($choice) {
+                        return Qualification::DANGER == $choice ? false : $choice;
+                    },
+                    'competence'
+                ),
+                'choice_label' => function ($choice) {
+                    return $choice->label();
+                },
+                'row_attr' => [
+                    'class' => 'fr-select-group',
                 ],
-                'label' => 'Type de partenaire',
+                'placeholder' => 'Sélectionner une ou plusieurs compétences',
+                'multiple' => true,
+                'expanded' => false,
+                'attr' => [
+                    'class' => 'fr-select',
+                ],
+                'help' => 'Choisissez une ou plusieurs compétences parmi la liste ci-dessous.',
+                'help_attr' => [
+                    'class' => 'fr-hint-text',
+                ],
+                'required' => false,
             ])
             ->add('insee', TextType::class, [
                 'attr' => [
@@ -73,11 +115,13 @@ class PartnerType extends AbstractType
                 ],
                 'required' => false,
             ])
-            ->add('email', EmailType::class, [
+            ->add('zones_pdl', TextType::class, [
                 'attr' => [
                     'class' => 'fr-input',
+                    'readonly' => isset($insee[$partner?->getTerritory()?->getZip()][$partner->getNom()]),
                 ],
                 'required' => false,
+                'mapped' => false,
             ])
             ->add('esaboraUrl', UrlType::class, [
                 'attr' => [
@@ -94,7 +138,7 @@ class PartnerType extends AbstractType
             ->add('territory', EntityType::class, [
                 'class' => Territory::class,
                 'query_builder' => function (TerritoryRepository $tr) {
-                    return $tr->createQueryBuilder('t')->orderBy('t.id', 'ASC');
+                    return $tr->createQueryBuilder('t')->andWhere('t.isActive = 1')->orderBy('t.id', 'ASC');
                 },
                 'data' => !empty($territory) ? $territory : null,
                 'disabled' => !$options['can_edit_territory'],
@@ -103,7 +147,7 @@ class PartnerType extends AbstractType
                     'class' => 'fr-select',
                 ],
                 'row_attr' => [
-                    'class' => 'fr-input-group',
+                    'class' => !$options['can_edit_territory'] ? 'fr-input-group fr-hidden' : 'fr-input-group',
                 ],
                 'label' => 'Territoire',
                 'required' => true,
@@ -115,7 +159,9 @@ class PartnerType extends AbstractType
             },
             function ($tagsAsString) {
                 // transform the string back to an array
-                return null !== $tagsAsString ? explode(',', $tagsAsString) : [];
+                $pattern = '/(\s*,*\s*)*,+(\s*,*\s*)*/';
+
+                return null !== $tagsAsString ? preg_split($pattern, $tagsAsString, -1, \PREG_SPLIT_NO_EMPTY) : [];
             }
         ));
 
@@ -124,24 +170,28 @@ class PartnerType extends AbstractType
             $partner = $event->getData();
             $form = $event->getForm();
 
-            if (\array_key_exists('users', $form->getExtraData())) {
-                $userList = $form->getExtraData()['users'];
-                foreach ($userList as $userId => $userData) {
-                    if ('new' !== $userId) {
-                        $partner->getUsers()->filter(function (User $user) use ($userId, $userData) {
-                            if ($user->getId() === $userId) {
-                                return $this->userManager->updateUserFromData($user, $userData);
-                            }
-                        });
+            if ($form->get('zones_pdl')?->getData()) {
+                if (null === $partner->getTerritory()) {
+                    $options = $form->getConfig()->getOptions();
+                    if ($options['territory']) {
+                        $territory = $options['territory'];
                     } else {
-                        foreach ($userData as $userDataItem) {
-                            /** @var User $user */
-                            $user = $this->userManager->findOneBy(['email' => $userDataItem['email']]);
-                            if (null === $user) {
-                                $user = $this->userFactory->createInstanceFromArray($partner, $userDataItem);
-                                $partner->addUser($user);
-                            }
-                        }
+                        $territory = $options['data']->getTerritory();
+                    }
+                } else {
+                    $territory = $partner->getTerritory();
+                }
+
+                $zonesPdlList = explode(',', $form->get('zones_pdl')?->getData());
+                foreach ($zonesPdlList as $zonePdl) {
+                    /** @var Commune $commune */
+                    $commune = $this->communeManager->findOneBy(['codeInsee' => trim($zonePdl)]);
+                    if ($commune && $commune->getTerritory() === $territory) {
+                        $commune->setIsZonePermisLouer(true);
+                    } elseif (null === $commune) {
+                        $form->get('zones_pdl')->addError(new FormError('Il n\'existe pas de commune avec le code insee '.trim($zonePdl)));
+                    } elseif ($commune->getTerritory() !== $territory) {
+                        $form->get('zones_pdl')->addError(new FormError('La commune avec le code insee '.trim($zonePdl).' ne fait pas partie du territoire du partenaire'));
                     }
                 }
             }
@@ -157,26 +207,10 @@ class PartnerType extends AbstractType
             'route' => null,
             'can_edit_territory' => true,
             'constraints' => [
-                new Assert\Callback([$this, 'validateUserEmailList']),
                 new Assert\Callback([$this, 'validatePartnerCanBeNotified']),
+                new Assert\Callback([$this, 'validateInseeInTerritory']),
             ],
         ]);
-    }
-
-    public function validateUserEmailList(mixed $value, ExecutionContextInterface $context)
-    {
-        if ($value instanceof Partner) {
-            $usersEmail = array_map(function ($user) {
-                /* @var User $user */
-                return $user->getEmail();
-            }, $value->getUsers()->toArray());
-            $uniqueUsersEmail = array_unique($usersEmail);
-
-            $conflictsEmail = array_diff_assoc($usersEmail, $uniqueUsersEmail);
-            if (\count($conflictsEmail) > 0) {
-                $context->addViolation('Les addresses emails doivent être unique.');
-            }
-        }
     }
 
     public function validatePartnerCanBeNotified(mixed $value, ExecutionContextInterface $context)
@@ -198,6 +232,37 @@ class PartnerType extends AbstractType
             if (!$canBeNotified) {
                 $context->addViolation('Email générique manquante: Il faut donc obligatoirement qu\'au moins
                 1 compte utilisateur accepte de recevoir les emails.');
+            }
+        }
+    }
+
+    public function validateInseeInTerritory(mixed $value, ExecutionContextInterface $context)
+    {
+        if ($value instanceof Partner) {
+            $partner = $value;
+            $codesInsee = $partner->getInsee();
+            if (null === $codesInsee) {
+                return;
+            }
+            if (null === $partner->getTerritory()) {
+                $options = $context->getRoot()->getConfig()->getOptions();
+                if ($options['territory']) {
+                    $territory = $options['territory'];
+                } else {
+                    $territory = $options['data']->getTerritory();
+                }
+            } else {
+                $territory = $partner->getTerritory();
+            }
+
+            foreach ($codesInsee as $insee) {
+                /** @var Commune $commune */
+                $commune = $this->communeManager->findOneBy(['codeInsee' => trim($insee)]);
+                if (null === $commune) {
+                    $context->addViolation('Il n\'existe pas de commune avec le code insee '.$insee);
+                } elseif ($commune->getTerritory() !== $territory) {
+                    $context->addViolation('La commune avec le code insee '.$insee.' ne fait pas partie du territoire du partenaire');
+                }
             }
         }
     }
