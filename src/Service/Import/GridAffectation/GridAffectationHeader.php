@@ -5,7 +5,7 @@ namespace App\Service\Import\GridAffectation;
 class GridAffectationHeader
 {
     public const PARTNER_NAME_INSTITUTION = 'Institution';
-    public const PARTNER_TYPE = 'TYPE';
+    public const PARTNER_TYPE = 'Type';
     public const PARTNER_CODE_INSEE = 'Codes insee';
     public const PARTNER_EMAIL = 'E-mail d\'équipe';
     public const USER_ROLE = 'Rôle';

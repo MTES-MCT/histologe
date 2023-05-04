@@ -37,7 +37,7 @@ class UserUpdatedSubscriber implements EventSubscriberInterface
 
             if ($entity instanceof User &&
             (\array_key_exists('email', $changes) // if email has changed
-            || (\array_key_exists('roles', $changes) && \in_array('ROLE_USAGER', $changes['roles'][0])))) { // is usager becomes user
+            || (\array_key_exists('roles', $changes) && \in_array('ROLE_USAGER', $changes['roles'][0])))) { // if usager becomes user
                 $entity->setPassword($this->tokenGenerator->generateToken())
                 ->setToken($this->tokenGenerator->generateToken())
                 ->setTokenExpiredAt(
