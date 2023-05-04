@@ -151,8 +151,8 @@ class PartnerRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('p');
         if ($qualification) {
-            $qb->andWhere('p.competence LIKE :qualification')
-                ->setParameter('qualification', "%{$qualification->name}%");
+            $qb->andWhere('REGEXP(p.competence, :regexp) = true')
+                ->setParameter('regexp', '(^'.$qualification->name.',)|(,'.$qualification->name.',)|(,'.$qualification->name.'$)|(^'.$qualification->name.'$)');
         }
         if ($territory) {
             $qb->andWhere('p.territory = :territory')
