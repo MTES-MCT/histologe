@@ -46,7 +46,7 @@ class DossierMessageFactoryTest extends TestCase
             ->setNbEnfantsP6(1)
             ->setNbEnfantsM6(1)
             ->setTelOccupant($faker->phoneNumber())
-            ->setAdresseOccupant($faker->address())
+            ->setAdresseOccupant('25 rue du test')
             ->setEtageOccupant(2)
             ->setVilleOccupant($faker->city())
             ->setCpOccupant($faker->postcode())
@@ -83,5 +83,7 @@ class DossierMessageFactoryTest extends TestCase
         $this->assertStringContainsString('Doc', $dossierMessage->getPiecesJointesObservation());
         $this->assertStringContainsString('Points signalés', $dossierMessage->getDossierCommentaire());
         $this->assertStringContainsString('Etat grave', $dossierMessage->getDossierCommentaire());
+        $this->assertStringContainsString('25', $dossierMessage->getNumeroAdresseSignalement());
+        $this->assertStringContainsString('rue du test', $dossierMessage->getAdresseSignalement());
     }
 }
