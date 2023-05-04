@@ -167,8 +167,8 @@ class AffectationRepository extends ServiceEntityRepository
             ->where('a.signalement = :signalement')
             ->setParameter('signalement', $signalement)
             ->innerJoin('a.partner', 'p')
-            ->andWhere('p.competence LIKE :qualification')
-            ->setParameter('qualification', "%{$qualification->name}%");
+            ->andWhere('REGEXP(p.competence, :regexp) = true')
+            ->setParameter('regexp', '(^'.$qualification->name.',)|(,'.$qualification->name.',)|(,'.$qualification->name.'$)|(^'.$qualification->name.'$)');
 
         return $qb->getQuery()->getResult();
     }
