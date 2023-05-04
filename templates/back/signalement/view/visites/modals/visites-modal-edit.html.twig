@@ -16,12 +16,12 @@
                                     {% set formType = 'edit' %}
                                     {% include 'back/signalement/view/visites/visites-form-confirm-fields.html.twig' %}
 
-                                    <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
+                                    <div class="fr-fieldset fr-fieldset--inline fr-mb-5v">
                                         <div class="fr-toggle">
                                             <input type="checkbox" class="fr-toggle__input" id="visite-{{ formType }}-{{ intervention.id }}-notify-usager" name="visite-{{ formType }}[notifyUsager]" value="1">
                                             <label for="visite-{{ formType }}-{{ intervention.id }}-notify-usager">En cochant cette case, l'usager sera notifié des modifications</label>
                                         </div>
-                                    </fieldset>
+                                    </div>
                                 </div>
                             </div>
                             <input type="hidden" name="visite-edit[intervention]" value="{{intervention.id}}">

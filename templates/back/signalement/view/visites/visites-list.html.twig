@@ -7,7 +7,7 @@
 </div>
 
 {% if is_granted('SIGN_ADD_VISITE', signalement) %}
-    {% include 'back/signalement/view/visites/visites-modal-add.html.twig' %}
+    {% include 'back/signalement/view/visites/modals/visites-modal-add.html.twig' %}
 {% endif %}
 
 {% if signalement.interventions is empty %}
@@ -18,7 +18,7 @@
 {% else %}
     {% for intervention in signalement.interventions %}
         {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
-            {% include 'back/signalement/view/visites/visites-modals.html.twig' %}
+            {% include 'back/signalement/view/visites/modals/visites-modals.html.twig' %}
             {% include 'back/signalement/view/visites/visites-buttons.html.twig' %}
         {% endif %}
         <div class="fr-col-12 fr-h4 fr-mb-3v">
