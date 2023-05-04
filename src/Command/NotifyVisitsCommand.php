@@ -59,6 +59,7 @@ class NotifyVisitsCommand extends Command
                     'type' => Suivi::TYPE_TECHNICAL,
                 ],
             );
+            $this->suiviManager->save($suivi);
 
             $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_USAGER);
 
@@ -104,6 +105,7 @@ class NotifyVisitsCommand extends Command
                             'type' => Suivi::TYPE_TECHNICAL,
                         ],
                     );
+                    $this->suiviManager->save($suivi);
 
                     $this->visiteNotifier->notifyAgents(
                         intervention: null,

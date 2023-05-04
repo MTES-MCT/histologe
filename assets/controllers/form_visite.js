@@ -37,11 +37,15 @@ function histoCheckVisiteForms(formType) {
             if (!dateField || dateField.value <= todayDate.toISOString().split('T')[0]) {
                 let stopSubmit = false
         
+                let isVisiteDone = false
                 let hasCheckedVisiteDone = false
                 const listInputVisiteDone = visiteForm.querySelectorAll('input[name="visite-'+formType+'[visiteDone]"]')
                 listInputVisiteDone.forEach(checkField => {
                     if (checkField.checked) {
                         hasCheckedVisiteDone = true
+                        if (checkField.value === '1') {
+                            isVisiteDone = true
+                        }
                     }
                 })
                 if (!hasCheckedVisiteDone) {
@@ -59,10 +63,12 @@ function histoCheckVisiteForms(formType) {
                     listInputOccupantPresentError.classList.remove('fr-hidden')
                     stopSubmit = true
                 }
-                const selectConcludeProcedure = visiteForm.querySelector('select[name="visite-'+formType+'[concludeProcedure]"]')
-                if (selectConcludeProcedure.value == '') {
-                    selectConcludeProcedureError.classList.remove('fr-hidden')
-                    stopSubmit = true
+                if (isVisiteDone) {
+                    const selectConcludeProcedure = visiteForm.querySelector('select[name="visite-'+formType+'[concludeProcedure]"]')
+                    if (selectConcludeProcedure.value == '') {
+                        selectConcludeProcedureError.classList.remove('fr-hidden')
+                        stopSubmit = true
+                    }
                 }
                 const textareaDetails = visiteForm.querySelector('textarea[name="visite-'+formType+'[details]"]')
                 if (textareaDetails.value == '') {
@@ -74,6 +80,21 @@ function histoCheckVisiteForms(formType) {
                     evt.preventDefault()
                 }
             }
+        })
+
+        const listInputVisiteDone = visiteForm.querySelectorAll('input[name="visite-'+formType+'[visiteDone]"]')
+        listInputVisiteDone.forEach(checkField => {
+            checkField.addEventListener('change', evt => {
+                const isVisiteDone = (evt.currentTarget.value === '1')
+                const fieldsetConcludeProcedure = visiteForm.querySelector('#fieldset-conclude-procedure')
+                if (isVisiteDone) {
+                    fieldsetConcludeProcedure.classList.remove('fr-hidden')
+                } else {
+                    fieldsetConcludeProcedure.classList.add('fr-hidden')
+                    const selectConcludeProcedure = visiteForm.querySelector('select[name="visite-'+formType+'[concludeProcedure]"]')
+                    selectConcludeProcedure.value = ''
+                }
+            })
         })
     })
 }
