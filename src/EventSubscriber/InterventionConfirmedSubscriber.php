@@ -46,6 +46,7 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
                     'type' => Suivi::TYPE_AUTO,
                 ],
             );
+            $this->suiviManager->save($suivi);
 
             $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_CONFIRMED_TO_USAGER);
 

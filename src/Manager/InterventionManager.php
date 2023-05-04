@@ -112,7 +112,7 @@ class InterventionManager extends AbstractManager
 
     public function confirmVisiteFromRequest(VisiteRequest $visiteRequest, ?Intervention $intervention = null): ?Intervention
     {
-        if (!$visiteRequest->getDetails() || !$visiteRequest->getConcludeProcedure()) {
+        if (!$visiteRequest->getDetails()) {
             return null;
         }
 
@@ -125,8 +125,10 @@ class InterventionManager extends AbstractManager
 
         $intervention
             ->setDetails($visiteRequest->getDetails())
-            ->setConcludeProcedure(ProcedureType::tryFrom($visiteRequest->getConcludeProcedure()))
             ->setOccupantPresent($visiteRequest->isOccupantPresent());
+        if ($visiteRequest->getConcludeProcedure()) {
+            $intervention->setConcludeProcedure(ProcedureType::tryFrom($visiteRequest->getConcludeProcedure()));
+        }
         if ($visiteRequest->getDocument()) {
             $intervention->setDocuments([$visiteRequest->getDocument()]);
         }

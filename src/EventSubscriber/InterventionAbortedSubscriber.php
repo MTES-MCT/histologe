@@ -45,6 +45,7 @@ class InterventionAbortedSubscriber implements EventSubscriberInterface
                     'type' => Suivi::TYPE_AUTO,
                 ],
             );
+            $this->suiviManager->save($suivi);
 
             $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_ABORTED_TO_USAGER);
 
