@@ -28,7 +28,7 @@ class DossierMessageFactory
             ->setPrenomUsager($signalement->getPrenomOccupant())
             ->setMailUsager($signalement->getMailOccupant())
             ->setTelephoneUsager($signalement->getTelOccupant())
-            ->setAdresseSignalement($signalement->getAdresseOccupant())
+            ->setAdresseSignalement($this->getAdresseWithoutNumero($signalement->getAdresseOccupant()))
             ->setCodepostaleSignalement($signalement->getCpOccupant())
             ->setVilleSignalement($signalement->getVilleOccupant())
             ->setEtageSignalement($signalement->getEtageOccupant())
@@ -47,6 +47,14 @@ class DossierMessageFactory
         preg_match('!\d+!', $adresse, $matches);
 
         return $matches[0] ?? '';
+    }
+
+    private function getAdresseWithoutNumero(string $adresse): string
+    {
+        $numero = $this->getNumeroAdresse($adresse);
+        $adresse = trim(substr($adresse, \strlen($numero)));
+
+        return $adresse;
     }
 
     private function buildCommentaire(Signalement $signalement): string
