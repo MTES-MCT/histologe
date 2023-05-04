@@ -95,6 +95,9 @@ const checkUserMail = (el) => {
             document.querySelector('#user_create_form_submit').disabled = false;
         }
     })
+    .catch(function (err) {
+        console.warn('Something went wrong.', err);
+    });
 }
 const serializeArray = (form) => {
     return Array.from(new FormData(form)
