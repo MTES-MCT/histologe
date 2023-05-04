@@ -3,7 +3,9 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
+use App\Entity\Suivi;
 use App\Event\InterventionEditedEvent;
+use App\Manager\SuiviManager;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -14,6 +16,7 @@ class InterventionEditedSubscriber implements EventSubscriberInterface
     public function __construct(
         private Security $security,
         private VisiteNotifier $visiteNotifier,
+        private SuiviManager $suiviManager,
     ) {
     }
 
@@ -32,10 +35,15 @@ class InterventionEditedSubscriber implements EventSubscriberInterface
             $description = 'Edition de la conclusion de la visite par '.$intervention->getPartner()->getNom().'.<br>';
             $description .= 'Commentaire opérateur :<br>';
             $description .= $intervention->getDetails();
-            $suivi = $this->visiteNotifier->createSuivi(
-                description: $description,
-                currentUser: $currentUser,
+            $suivi = $this->suiviManager->createSuivi(
+                user: $currentUser,
                 signalement: $intervention->getSignalement(),
+                isPublic: true,
+                context: Suivi::CONTEXT_INTERVENTION,
+                params: [
+                    'description' => $description,
+                    'type' => Suivi::TYPE_AUTO,
+                ],
             );
 
             $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_EDITED_TO_USAGER);

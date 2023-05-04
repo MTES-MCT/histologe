@@ -3,6 +3,8 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
+use App\Entity\Suivi;
+use App\Manager\SuiviManager;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -14,6 +16,7 @@ class InterventionCanceledSubscriber implements EventSubscriberInterface
     public function __construct(
         private Security $security,
         private VisiteNotifier $visiteNotifier,
+        private SuiviManager $suiviManager,
     ) {
     }
 
@@ -33,10 +36,15 @@ class InterventionCanceledSubscriber implements EventSubscriberInterface
             $description .= ' la visite du logement prévue le '.$intervention->getDate()->format('d/m/Y');
             $description .= ' a été annulée pour le motif suivant : <br>';
             $description .= $intervention->getDetails();
-            $suivi = $this->visiteNotifier->createSuivi(
-                description: $description,
-                currentUser: $currentUser,
+            $suivi = $this->suiviManager->createSuivi(
+                user: $currentUser,
                 signalement: $intervention->getSignalement(),
+                isPublic: true,
+                context: Suivi::CONTEXT_INTERVENTION,
+                params: [
+                    'description' => $description,
+                    'type' => Suivi::TYPE_AUTO,
+                ],
             );
 
             $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_CANCELED_TO_USAGER);

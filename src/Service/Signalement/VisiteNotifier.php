@@ -4,7 +4,6 @@ namespace App\Service\Signalement;
 
 use App\Entity\Affectation;
 use App\Entity\Intervention;
-use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Factory\NotificationFactory;
@@ -28,26 +27,6 @@ class VisiteNotifier
         private NotificationMailerRegistry $notificationMailerRegistry,
         private UserRepository $userRepository,
     ) {
-    }
-
-    /**
-     * Creates a suivi corresponding to a Visite.
-     */
-    public function createSuivi(string $description, ?User $currentUser, Signalement $signalement, int $typeSuivi = Suivi::TYPE_AUTO, bool $isPublic = true): Suivi
-    {
-        $suivi = $this->suiviFactory->createInstanceFrom(
-            user: $currentUser,
-            signalement: $signalement,
-            params: [
-                'type' => $typeSuivi,
-                'description' => $description,
-            ],
-            isPublic: $isPublic,
-            context: Suivi::CONTEXT_INTERVENTION,
-        );
-        $this->suiviManager->save($suivi);
-
-        return $suivi;
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Suivi;
+use App\Manager\SuiviManager;
 use App\Repository\AffectationRepository;
 use App\Repository\InterventionRepository;
 use App\Service\Mailer\NotificationMail;
@@ -25,6 +26,7 @@ class NotifyVisitsCommand extends Command
     public function __construct(
         private InterventionRepository $interventionRepository,
         private AffectationRepository $affectationRepository,
+        private SuiviManager $suiviManager,
         private VisiteNotifier $visiteNotifier,
         private NotificationMailerRegistry $notificationMailerRegistry,
         private ParameterBagInterface $parameterBag,
@@ -47,11 +49,15 @@ class NotifyVisitsCommand extends Command
             $description .= $signalement->getAdresseOccupant().' '.$signalement->getCpOccupant().' '.$signalement->getVilleOccupant();
             $description .= 'aura lieu le '.$intervention->getDate()->format('d/m/Y');
             $description .= '<br>La visite sera effectuée par '.$intervention->getPartner()->getNom().'.';
-            $suivi = $this->visiteNotifier->createSuivi(
-                description: $description,
-                currentUser: null,
+            $suivi = $this->suiviManager->createSuivi(
+                user: null,
                 signalement: $intervention->getSignalement(),
-                typeSuivi: Suivi::TYPE_TECHNICAL
+                isPublic: true,
+                context: Suivi::CONTEXT_INTERVENTION,
+                params: [
+                    'description' => $description,
+                    'type' => Suivi::TYPE_TECHNICAL,
+                ],
             );
 
             $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_USAGER);
@@ -88,12 +94,15 @@ class NotifyVisitsCommand extends Command
                 if (0 == \count($affectation->getSignalement()->getInterventions())) {
                     $description = 'Aucune information de visite n\'a été renseignée pour le logement.';
                     $description .= ' Merci de programmer une visite dès que possible !';
-                    $suivi = $this->visiteNotifier->createSuivi(
-                        description: $description,
-                        currentUser: null,
+                    $suivi = $this->suiviManager->createSuivi(
+                        user: null,
                         signalement: $affectation->getSignalement(),
-                        typeSuivi: Suivi::TYPE_TECHNICAL,
                         isPublic: false,
+                        context: Suivi::CONTEXT_INTERVENTION,
+                        params: [
+                            'description' => $description,
+                            'type' => Suivi::TYPE_TECHNICAL,
+                        ],
                     );
 
                     $this->visiteNotifier->notifyAgents(

@@ -3,7 +3,9 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
+use App\Entity\Suivi;
 use App\Event\InterventionRescheduledEvent;
+use App\Manager\SuiviManager;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -12,6 +14,7 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private VisiteNotifier $visiteNotifier,
+        private SuiviManager $suiviManager,
     ) {
     }
 
@@ -32,10 +35,15 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
             $description .= $intervention->getDate()->format('d/m/Y').'.';
             $description .= '<br>';
             $description .= 'La visite sera effectuée par '.$intervention->getPartner()->getNom().'.';
-            $suivi = $this->visiteNotifier->createSuivi(
-                description: $description,
-                currentUser: $event->getUser(),
+            $suivi = $this->suiviManager->createSuivi(
+                user: $event->getUser(),
                 signalement: $intervention->getSignalement(),
+                isPublic: true,
+                context: Suivi::CONTEXT_INTERVENTION,
+                params: [
+                    'description' => $description,
+                    'type' => Suivi::TYPE_AUTO,
+                ],
             );
 
             $this->visiteNotifier->notifyUsagers(
