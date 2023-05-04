@@ -12,12 +12,14 @@ partners:
     is_archive: 0
     territory: "Bouches-du-Rhône"
     type: "AUTRE"
+    competence: "VISITES"
   -
     nom: "Partenaire 13-02"
     email: "partenaire-13-02@histologe.fr"
     is_archive: 0
     territory: "Bouches-du-Rhône"
     type: "AUTRE"
+    competence: "VISITES"
   -
     nom: "Partenaire 13-03"
     email: "partenaire-13-03@histologe.fr"
