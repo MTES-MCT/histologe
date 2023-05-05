@@ -70,8 +70,10 @@ function histoCheckVisiteForms(formType) {
                         stopSubmit = true
                     }
                 }
-                const textareaDetails = visiteForm.querySelector('textarea[name="visite-'+formType+'[details]"]')
-                if (textareaDetails.value == '') {
+                
+                const tinyMCE = tinymce.get('visite-'+formType+'[details]')
+                const textContent = tinyMCE ? tinyMCE.getContent() : ''
+                if (textContent == '') {
                     textareaDetailsError.classList.remove('fr-hidden')
                     stopSubmit = true
                 }
@@ -92,7 +94,9 @@ function histoCheckVisiteForms(formType) {
                 } else {
                     fieldsetConcludeProcedure.classList.add('fr-hidden')
                     const selectConcludeProcedure = visiteForm.querySelector('select[name="visite-'+formType+'[concludeProcedure]"]')
-                    selectConcludeProcedure.value = ''
+                    if (selectConcludeProcedure) {
+                        selectConcludeProcedure.value = ''
+                    }
                 }
             })
         })
