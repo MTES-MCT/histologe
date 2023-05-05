@@ -227,6 +227,16 @@ class PartnerController extends AbstractController
         if ($partner
             && $this->isCsrfTokenValid('partner_delete', $request->request->get('_token'))
         ) {
+            /*
+            TODO :
+            Si partenaire a la compétence "visite"
+            Les visites planifiées sont annulées
+            Les visites terminées (la date est dépassée) sans conclusion :
+                on retire le partenaire de la visite pour que le responsable territoire ou un autre partenaire
+                avec la compétence visite puisse compléter la conclusion
+                Ce qui voudrait dire qu'on envoie ensuite la notif "conclusion de visite à renseigner"
+                aux responsables territoires + autres partenaires affectés ayant la compétence visite
+            */
             $partner->setIsArchive(true);
             foreach ($partner->getUsers() as $user) {
                 $user->setStatut(User::STATUS_ARCHIVE);
