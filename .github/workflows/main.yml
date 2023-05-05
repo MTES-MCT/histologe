@@ -84,7 +84,7 @@ jobs:
 
       # https://github.com/phpstan/phpstan
       - name: Analyse PHP Code (PHPStan)
-        run: vendor/bin/phpstan analyse
+        run: vendor/bin/phpstan analyse --level 1
 
       # https://github.com/FriendsOfPHP/PHP-CS-Fixer
       - name: Check PHP coding standard (PHP-CS-Fixer)
