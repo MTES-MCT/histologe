@@ -168,7 +168,7 @@ class SignalementQualificationUpdater
                     }
                     $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::INSALUBRITE, QualificationStatus::INSALUBRITE_AVEREE);
                     break;
-                case ProcedureType::PERIL->name:
+                case ProcedureType::MISE_EN_SECURITE_PERIL->name:
                     if ($existingQualificationPeril) {
                         $signalement->removeSignalementQualification($existingQualificationPeril);
                     }
