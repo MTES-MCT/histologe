@@ -13,6 +13,8 @@ use Symfony\Component\Workflow\Event\Event;
 
 class InterventionAbortedSubscriber implements EventSubscriberInterface
 {
+    public const NAME = 'workflow.intervention_planning.transition.abort';
+
     public function __construct(
         private Security $security,
         private VisiteNotifier $visiteNotifier,
@@ -23,7 +25,7 @@ class InterventionAbortedSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            'workflow.intervention_planning.transition.abort' => 'onInterventionAborted',
+            self::NAME => 'onInterventionAborted',
         ];
     }
 
