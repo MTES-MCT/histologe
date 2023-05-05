@@ -9,7 +9,7 @@ class VisiteRequest
         private ?string $date = null,
         private ?int $idPartner = null,
         private ?string $details = null,
-        private ?string $concludeProcedure = null,
+        private ?array $concludeProcedure = [],
         private ?bool $isVisiteDone = null,
         private ?bool $isOccupantPresent = null,
         private ?bool $isUsagerNotified = null,
@@ -37,7 +37,7 @@ class VisiteRequest
         return $this->details;
     }
 
-    public function getConcludeProcedure(): ?string
+    public function getConcludeProcedure(): ?array
     {
         return $this->concludeProcedure;
     }

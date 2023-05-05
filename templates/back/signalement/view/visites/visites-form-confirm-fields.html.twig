@@ -38,8 +38,7 @@
         <p id="signalement-confirm-visite-procedure-error" class="fr-error-text fr-hidden fr-my-3v">
             Veuillez préciser la conclusion de la visite.
         </p>
-        <select name="visite-{{ formType }}[concludeProcedure]" class="fr-select">
-            <option value=""></option>
+        <select name="visite-{{ formType }}[concludeProcedure][]" class="fr-select" multiple="multiple">
             {% set listProceduresTypes = enum('\\App\\Entity\\Enum\\ProcedureType') %}
             {% for type in listProceduresTypes.cases() %}
                 <option value="{{ type.value }}">{{ type.label() }}</option>
