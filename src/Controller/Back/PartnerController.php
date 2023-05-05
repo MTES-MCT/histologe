@@ -10,6 +10,7 @@ use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Entity\User;
 use App\Form\PartnerType;
+use App\Manager\InterventionManager;
 use App\Manager\PartnerManager;
 use App\Manager\UserManager;
 use App\Repository\JobEventRepository;
@@ -158,6 +159,9 @@ class PartnerController extends AbstractController
         EntityManagerInterface $entityManager,
         PartnerRepository $partnerRepository,
         NotificationMailerRegistry $notificationMailerRegistry,
+        VisiteNotifier $visiteNotifier,
+        WorkflowInterface $interventionPlanningStateMachine,
+        InterventionManager $interventionManager,
     ): Response {
         $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
         if ($partner->getIsArchive()) {
@@ -199,6 +203,13 @@ class PartnerController extends AbstractController
                         $partner->removeAffectation($affectation);
                     }
                 }
+
+                $this->cancelOrReplanVisites(
+                    partner: $partner,
+                    visiteNotifier: $visiteNotifier,
+                    interventionPlanningStateMachine: $interventionPlanningStateMachine,
+                    interventionManager: $interventionManager,
+                );
             }
 
             $entityManager->flush();
@@ -227,6 +238,7 @@ class PartnerController extends AbstractController
         NotificationMailerRegistry $notificationMailerRegistry,
         VisiteNotifier $visiteNotifier,
         WorkflowInterface $interventionPlanningStateMachine,
+        InterventionManager $interventionManager,
     ): Response {
         $partnerId = $request->request->get('partner_id');
         /** @var Partner $partner */
@@ -257,26 +269,12 @@ class PartnerController extends AbstractController
                 }
             }
 
-            // cancel or re-plan visites
-            if (\in_array(Qualification::VISITES, $partner->getCompetence())) {
-                foreach ($partner->getInterventions() as $intervention) {
-                    if (InterventionType::VISITE == $intervention->getType() && Intervention::STATUS_PLANNED == $intervention->getStatus()) {
-                        // planned visites in the future are canceled
-                        if ($intervention->getDate() > new DateTimeImmutable()) {
-                            $interventionPlanningStateMachine->apply($intervention, 'cancel');
-                            $entityManager->persist($intervention);
-
-                        // planned visites in the past are un-assigned
-                        } else {
-                            $intervention->setPartner(null);
-                            $entityManager->persist($intervention);
-
-                            // send notif to other partners
-                            $visiteNotifier->notifyVisiteToConclude($intervention->getSignalement());
-                        }
-                    }
-                }
-            }
+            $this->cancelOrReplanVisites(
+                partner: $partner,
+                visiteNotifier: $visiteNotifier,
+                interventionPlanningStateMachine: $interventionPlanningStateMachine,
+                interventionManager: $interventionManager,
+            );
 
             $entityManager->persist($partner);
             $entityManager->flush();
@@ -287,6 +285,33 @@ class PartnerController extends AbstractController
         $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
 
         return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    private function cancelOrReplanVisites(
+        Partner $partner,
+        VisiteNotifier $visiteNotifier,
+        WorkflowInterface $interventionPlanningStateMachine,
+        InterventionManager $interventionManager,
+    ) {
+        if (\in_array(Qualification::VISITES, $partner->getCompetence())) {
+            foreach ($partner->getInterventions() as $intervention) {
+                if (InterventionType::VISITE == $intervention->getType() && Intervention::STATUS_PLANNED == $intervention->getStatus()) {
+                    // planned visites in the future are canceled
+                    if ($intervention->getDate() > new DateTimeImmutable()) {
+                        $interventionPlanningStateMachine->apply($intervention, 'cancel');
+                        $interventionManager->save($intervention);
+
+                    // planned visites in the past are un-assigned
+                    } else {
+                        $intervention->setPartner(null);
+                        $interventionManager->save($intervention);
+
+                        // send notif to other partners
+                        $visiteNotifier->notifyVisiteToConclude($intervention->getSignalement());
+                    }
+                }
+            }
+        }
     }
 
     #[Route('/{id}/ajoututilisateur', name: 'back_partner_user_add', methods: ['POST'])]

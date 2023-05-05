@@ -37,6 +37,9 @@
                 Non renseigné
             {% else %}
                 {{ intervention.partner.nom }}
+                {% if intervention.partner.territory is not same as signalement.territory or intervention.partner.isArchive %}
+                    (partenaire supprimé)
+                {% endif %}
             {% endif %}
         </div>
         <div class="fr-mb-3v">
