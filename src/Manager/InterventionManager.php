@@ -130,9 +130,12 @@ class InterventionManager extends AbstractManager
             ->setOccupantPresent($visiteRequest->isOccupantPresent());
 
         if ($visiteRequest->isVisiteDone() && $visiteRequest->getConcludeProcedure()) {
-            $procedureType = ProcedureType::tryFrom($visiteRequest->getConcludeProcedure());
-            $intervention->setConcludeProcedure($procedureType);
-            $this->signalementQualificationUpdater->updateQualificationFromVisiteProcedure($intervention->getSignalement(), $procedureType);
+            $procedures = [];
+            foreach ($visiteRequest->getConcludeProcedure() as $concludeProcedure) {
+                $procedures[] = ProcedureType::tryFrom($concludeProcedure);
+            }
+            $intervention->setConcludeProcedure($procedures);
+            $this->signalementQualificationUpdater->updateQualificationFromVisiteProcedureList($intervention->getSignalement(), $procedures);
         }
 
         if ($visiteRequest->getDocument()) {
