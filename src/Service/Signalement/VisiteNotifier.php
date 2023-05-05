@@ -3,7 +3,9 @@
 namespace App\Service\Signalement;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\Qualification;
 use App\Entity\Intervention;
+use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Factory\NotificationFactory;
@@ -102,5 +104,28 @@ class VisiteNotifier
         $notification = $this->notificationFactory->createInstanceFrom($user, $suivi);
         $this->entityManager->persist($notification);
         $this->entityManager->flush();
+    }
+
+    public function notifyVisiteToConclude(Signalement $signalement)
+    {
+        $listUsersToNotify = $this->userRepository->findActiveTerritoryAdmins($signalement->getTerritory());
+        $affectations = $signalement->getAffectations();
+        foreach ($affectations as $affectation) {
+            if ($affectation->getPartner()->hasCompetence(Qualification::VISITES)) {
+                $listUsersPartner = $affectation->getPartner()->getUsers();
+                $listUsersToNotify = array_unique(array_merge($listUsersToNotify, $listUsersPartner->toArray()), \SORT_REGULAR);
+            }
+        }
+
+        foreach ($listUsersToNotify as $user) {
+            $this->notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_VISITE_PAST_REMINDER_TO_PARTNER,
+                    to: $user->getEmail(),
+                    territory: $signalement->getTerritory(),
+                    signalement: $signalement,
+                )
+            );
+        }
     }
 }
