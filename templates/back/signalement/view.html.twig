@@ -51,10 +51,18 @@
                                 Non décence énergétique
                             </small>
                         {% endif %}
-                        {% for qualificationStatusLabel in listQualificationStatusesLabels %}
+                        {% for qualificationStatusLabel in listQualificationStatusesLabelsCheck %}
                             {% include '_partials/signalement/qualification.html.twig' with { 'inlist': false } %}
                         {% endfor %}
                     </div>
+                    {% if listQualificationStatusesLabelsConfirmed %}
+                    <div class="fr-my-3v">
+                        <strong>Situation(s) avérée(s) :</strong>
+                        {% for qualificationStatusLabel in listQualificationStatusesLabelsConfirmed %}
+                            {% include '_partials/signalement/qualification.html.twig' with { 'inlist': false } %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="fr-col-12 fr-col-md-6 fr-text--right">
                     {% if isAffected and not isAccepted and not isRefused and not needValidation and  not isClosed and not isClosedForMe %}

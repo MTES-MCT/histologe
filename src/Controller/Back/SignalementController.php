@@ -144,11 +144,16 @@ class SignalementController extends AbstractController
         $canEditNDE = $isSignalementNDEActif && $this->isGranted(UserVoter::SEE_NDE, $this->getUser())
         && $canEditSignalement;
 
-        $listQualificationStatusesLabels = [];
+        $listQualificationStatusesLabelsCheck = [];
+        $listQualificationStatusesLabelsConfirmed = [];
         if (null !== $signalement->getSignalementQualifications()) {
             foreach ($signalement->getSignalementQualifications() as $qualification) {
                 if (Qualification::NON_DECENCE_ENERGETIQUE->name !== $qualification->getQualification()->name) {
-                    $listQualificationStatusesLabels[] = $qualification->getStatus()->label();
+                    if (strpos($qualification->getStatus()->name, 'CHECK') > -1) {
+                        $listQualificationStatusesLabelsCheck[] = $qualification->getStatus()->label();
+                    } else {
+                        $listQualificationStatusesLabelsConfirmed[] = $qualification->getStatus()->label();
+                    }
                 }
             }
         }
@@ -174,7 +179,8 @@ class SignalementController extends AbstractController
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
             'files' => $files,
             'canEditNDE' => $canEditNDE,
-            'listQualificationStatusesLabels' => $listQualificationStatusesLabels,
+            'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
+            'listQualificationStatusesLabelsConfirmed' => $listQualificationStatusesLabelsConfirmed,
             'partnersCanVisite' => $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement),
         ]);
     }
