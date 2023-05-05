@@ -2,16 +2,19 @@
 
 namespace App\Service\Signalement\Qualification;
 
+use App\Entity\Enum\ProcedureType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Factory\SignalementQualificationFactory;
+use App\Manager\SignalementManager;
 
 class SignalementQualificationUpdater
 {
     public function __construct(
-        private SignalementQualificationFactory $signalementQualificationFactory
+        private SignalementQualificationFactory $signalementQualificationFactory,
+        private SignalementManager $signalementManager,
     ) {
     }
 
@@ -119,6 +122,66 @@ class SignalementQualificationUpdater
         } elseif (!empty($listCriticiteDanger)) {
             $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::DANGER, QualificationStatus::DANGER_CHECK, $listCriticiteDanger);
             $signalement->addSignalementQualification($signalementQualification);
+        }
+    }
+
+    public function updateQualificationFromVisiteProcedure(Signalement $signalement, ?ProcedureType $procedureType)
+    {
+        $existingQualificationNonDecence = null;
+        $existingQualificationRSD = null;
+        $existingQualificationInsalubrite = null;
+        $existingQualificationPeril = null;
+        $listQualifications = $signalement->getSignalementQualifications();
+        foreach ($listQualifications as $qualification) {
+            if (Qualification::NON_DECENCE == $qualification->getQualification()) {
+                $existingQualificationNonDecence = false;
+            }
+            if (Qualification::RSD == $qualification->getQualification()) {
+                $existingQualificationRSD = false;
+            }
+            if (Qualification::INSALUBRITE == $qualification->getQualification()) {
+                $existingQualificationInsalubrite = $qualification;
+            }
+            if (Qualification::MISE_EN_SECURITE_PERIL == $qualification->getQualification()) {
+                $existingQualificationPeril = $qualification;
+            }
+        }
+
+        if ($procedureType) {
+            $signalementQualification = null;
+            switch ($procedureType->name) {
+                case ProcedureType::NON_DECENCE->name:
+                    if ($existingQualificationNonDecence) {
+                        $signalement->removeSignalementQualification($existingQualificationNonDecence);
+                    }
+                    $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::NON_DECENCE, QualificationStatus::NON_DECENCE_AVEREE);
+                    break;
+                case ProcedureType::RSD->name:
+                    if ($existingQualificationRSD) {
+                        $signalement->removeSignalementQualification($existingQualificationRSD);
+                    }
+                    $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::RSD, QualificationStatus::RSD_AVEREE);
+                    break;
+                case ProcedureType::INSALUBRITE->name:
+                    if ($existingQualificationInsalubrite) {
+                        $signalement->removeSignalementQualification($existingQualificationInsalubrite);
+                    }
+                    $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::INSALUBRITE, QualificationStatus::INSALUBRITE_AVEREE);
+                    break;
+                case ProcedureType::PERIL->name:
+                    if ($existingQualificationPeril) {
+                        $signalement->removeSignalementQualification($existingQualificationPeril);
+                    }
+                    $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::MISE_EN_SECURITE_PERIL, QualificationStatus::MISE_EN_SECURITE_PERIL_AVEREE);
+                    break;
+                case ProcedureType::AUTRE->name:
+                    break;
+            }
+            if (!$signalementQualification) {
+                return;
+            }
+            $signalement->addSignalementQualification($signalementQualification);
+            $this->signalementManager->save($signalement);
         }
     }
 }

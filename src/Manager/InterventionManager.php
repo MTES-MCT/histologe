@@ -10,6 +10,7 @@ use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Repository\InterventionRepository;
 use App\Repository\PartnerRepository;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -24,6 +25,7 @@ class InterventionManager extends AbstractManager
         private PartnerRepository $partnerRepository,
         private PartnerManager $partnerManager,
         private WorkflowInterface $interventionPlanningStateMachine,
+        private SignalementQualificationUpdater $signalementQualificationUpdater,
         string $entityName = Intervention::class
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -126,9 +128,13 @@ class InterventionManager extends AbstractManager
         $intervention
             ->setDetails($visiteRequest->getDetails())
             ->setOccupantPresent($visiteRequest->isOccupantPresent());
-        if ($visiteRequest->getConcludeProcedure()) {
-            $intervention->setConcludeProcedure(ProcedureType::tryFrom($visiteRequest->getConcludeProcedure()));
+
+        if ($visiteRequest->isVisiteDone() && $visiteRequest->getConcludeProcedure()) {
+            $procedureType = ProcedureType::tryFrom($visiteRequest->getConcludeProcedure());
+            $intervention->setConcludeProcedure($procedureType);
+            $this->signalementQualificationUpdater->updateQualificationFromVisiteProcedure($intervention->getSignalement(), $procedureType);
         }
+
         if ($visiteRequest->getDocument()) {
             $intervention->setDocuments([$visiteRequest->getDocument()]);
         }
