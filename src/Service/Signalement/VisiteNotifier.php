@@ -106,7 +106,7 @@ class VisiteNotifier
         $this->entityManager->flush();
     }
 
-    public function notifyVisiteToConclude(Signalement $signalement)
+    public function notifyVisiteToConclude(Signalement $signalement): int
     {
         $listUsersToNotify = $this->userRepository->findActiveTerritoryAdmins($signalement->getTerritory());
         $affectations = $signalement->getAffectations();
@@ -127,5 +127,7 @@ class VisiteNotifier
                 )
             );
         }
+
+        return \count($listUsersToNotify);
     }
 }
