@@ -3,7 +3,10 @@
 namespace App\Controller\Back;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\PartnerType as EnumPartnerType;
+use App\Entity\Enum\Qualification;
+use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Entity\User;
 use App\Form\PartnerType;
@@ -16,6 +19,8 @@ use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\Signalement\VisiteNotifier;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
@@ -26,6 +31,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 #[Route('/bo/partenaires')]
 class PartnerController extends AbstractController
@@ -218,7 +224,9 @@ class PartnerController extends AbstractController
         Request $request,
         PartnerManager $partnerManager,
         EntityManagerInterface $entityManager,
-        NotificationMailerRegistry $notificationMailerRegistry
+        NotificationMailerRegistry $notificationMailerRegistry,
+        VisiteNotifier $visiteNotifier,
+        WorkflowInterface $interventionPlanningStateMachine,
     ): Response {
         $partnerId = $request->request->get('partner_id');
         /** @var Partner $partner */
@@ -227,16 +235,6 @@ class PartnerController extends AbstractController
         if ($partner
             && $this->isCsrfTokenValid('partner_delete', $request->request->get('_token'))
         ) {
-            /*
-            TODO :
-            Si partenaire a la compétence "visite"
-            Les visites planifiées sont annulées
-            Les visites terminées (la date est dépassée) sans conclusion :
-                on retire le partenaire de la visite pour que le responsable territoire ou un autre partenaire
-                avec la compétence visite puisse compléter la conclusion
-                Ce qui voudrait dire qu'on envoie ensuite la notif "conclusion de visite à renseigner"
-                aux responsables territoires + autres partenaires affectés ayant la compétence visite
-            */
             $partner->setIsArchive(true);
             foreach ($partner->getUsers() as $user) {
                 $user->setStatut(User::STATUS_ARCHIVE);
@@ -249,6 +247,7 @@ class PartnerController extends AbstractController
                     )
                 );
             }
+
             // delete affectations "en attente" et "acceptées"
             $affectations = $partner->getAffectations();
             foreach ($affectations as $affectation) {
@@ -257,6 +256,28 @@ class PartnerController extends AbstractController
                     $partner->removeAffectation($affectation);
                 }
             }
+
+            // cancel or re-plan visites
+            if (\in_array(Qualification::VISITES, $partner->getCompetence())) {
+                foreach ($partner->getInterventions() as $intervention) {
+                    if (InterventionType::VISITE == $intervention->getType() && Intervention::STATUS_PLANNED == $intervention->getStatus()) {
+                        // planned visites in the future are canceled
+                        if ($intervention->getDate() > new DateTimeImmutable()) {
+                            $interventionPlanningStateMachine->apply($intervention, 'cancel');
+                            $entityManager->persist($intervention);
+
+                        // planned visites in the past are un-assigned
+                        } else {
+                            $intervention->setPartner(null);
+                            $entityManager->persist($intervention);
+
+                            // send notif to other partners
+                            $visiteNotifier->notifyVisiteToConclude($intervention->getSignalement());
+                        }
+                    }
+                }
+            }
+
             $entityManager->persist($partner);
             $entityManager->flush();
             $this->addFlash('success', 'Le partenaire a bien été supprimé.');

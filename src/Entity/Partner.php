@@ -295,6 +295,11 @@ class Partner
 
         return $this;
     }
+    
+    public function hasCompetence(Qualification $qualification): bool
+    {
+        return \in_array($qualification, $this->getCompetence());
+    }
 
     public function isEsaboraActive(): ?bool
     {
@@ -307,7 +312,7 @@ class Partner
 
         return $this;
     }
-    
+
     public function getInterventions(): Collection
     {
         return $this->interventions;
