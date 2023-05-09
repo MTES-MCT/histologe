@@ -9,6 +9,7 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Situation;
 use App\Factory\Esabora\DossierMessageSCHSFactory;
+use App\Service\Esabora\AddressParser;
 use App\Service\UploadHandlerService;
 use Faker\Factory;
 use PHPUnit\Framework\TestCase;
@@ -76,7 +77,7 @@ class DossierMessageSCHSFactoryTest extends TestCase
             ->setSignalement($signalement)
             ->setPartner($partner);
 
-        $dossierMessageFactory = new DossierMessageSCHSFactory($uploadHandlerServiceMock);
+        $dossierMessageFactory = new DossierMessageSCHSFactory(new AddressParser(), $uploadHandlerServiceMock);
         $dossierMessage = $dossierMessageFactory->createInstance($affectation);
 
         $this->assertCount(2, $dossierMessage->getPiecesJointes());
@@ -84,6 +85,6 @@ class DossierMessageSCHSFactoryTest extends TestCase
         $this->assertStringContainsString('Points signalés', $dossierMessage->getDossierCommentaire());
         $this->assertStringContainsString('Etat grave', $dossierMessage->getDossierCommentaire());
         $this->assertStringContainsString('25', $dossierMessage->getNumeroAdresseSignalement());
-        $this->assertStringContainsString('rue du test', $dossierMessage->getAdresseSignalement());
+        $this->assertStringContainsString('Rue du test', $dossierMessage->getAdresseSignalement());
     }
 }

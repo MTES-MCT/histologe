@@ -6,12 +6,15 @@ use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Signalement;
 use App\Messenger\Message\DossierMessageSCHS;
+use App\Service\Esabora\AddressParser;
 use App\Service\UploadHandlerService;
 
 class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
 {
-    public function __construct(private readonly UploadHandlerService $uploadHandlerService)
-    {
+    public function __construct(
+        private readonly AddressParser $addressParser,
+        private readonly UploadHandlerService $uploadHandlerService
+    ) {
         parent::__construct($this->uploadHandlerService);
     }
 
@@ -24,6 +27,7 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
     {
         $signalement = $affectation->getSignalement();
         $partner = $affectation->getPartner();
+        $address = $this->addressParser->parse($signalement->getAdresseOccupant());
 
         return (new DossierMessageSCHS())
             ->setUrl($partner->getEsaboraUrl())
@@ -35,33 +39,18 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
             ->setPrenomUsager($signalement->getPrenomOccupant())
             ->setMailUsager($signalement->getMailOccupant())
             ->setTelephoneUsager($signalement->getTelOccupant())
-            ->setAdresseSignalement($this->getAdresseWithoutNumero($signalement->getAdresseOccupant()))
+            ->setAdresseSignalement($address['street'])
             ->setCodepostaleSignalement($signalement->getCpOccupant())
             ->setVilleSignalement($signalement->getVilleOccupant())
             ->setEtageSignalement($signalement->getEtageOccupant())
             ->setNumeroAppartementSignalement($signalement->getNumAppartOccupant())
-            ->setNumeroAdresseSignalement($this->getNumeroAdresse($signalement->getAdresseOccupant()))
+            ->setNumeroAdresseSignalement($address['number'])
             ->setLatitudeSignalement($signalement->getGeoloc()['lat'] ?? 0)
             ->setLongitudeSignalement($signalement->getGeoloc()['lng'] ?? 0)
             ->setDateOuverture($signalement->getCreatedAt()->format('d/m/Y'))
             ->setDossierCommentaire($this->buildCommentaire($signalement))
             ->setPiecesJointesObservation($this->buildPiecesJointesObservation($signalement))
             ->setPiecesJointes($this->buildPiecesJointes($signalement));
-    }
-
-    private function getNumeroAdresse(string $adresse): string
-    {
-        preg_match('!\d+!', $adresse, $matches);
-
-        return $matches[0] ?? '';
-    }
-
-    private function getAdresseWithoutNumero(string $adresse): string
-    {
-        $numero = $this->getNumeroAdresse($adresse);
-        $adresse = trim(substr($adresse, \strlen($numero)));
-
-        return $adresse;
     }
 
     private function buildCommentaire(Signalement $signalement): string

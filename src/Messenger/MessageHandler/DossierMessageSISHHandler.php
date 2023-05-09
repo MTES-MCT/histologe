@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class DossierMessageSISHHandler
+final class DossierMessageSISHHandler
 {
     private iterable $dossierSISHHandlers;
 

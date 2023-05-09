@@ -23,7 +23,7 @@ class EsaboraEventWidgetLoader extends AbstractWidgetLoader
     {
         parent::load($widget);
         $widget->setData(
-            $this->widgetDataManager->findLastJobEventByServiceType(
+            $this->widgetDataManager->findLastJobEventByInterfacageType(
                 InterfacageType::ESABORA->value,
                 $this->widgetParameter['data'],
                 $widget->getTerritory()

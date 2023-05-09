@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Entity;
 
+use App\Entity\Enum\PartnerType;
 use App\Entity\JobEvent;
 use PHPUnit\Framework\TestCase;
 
@@ -16,6 +17,8 @@ class JobEventTest extends TestCase
             ->setAction('sync_dossier')
             ->setMessage('{"criterionName":"SAS_Référence"}')
             ->setResponse('{"sasReference":"00000000-0000-0000-2022-000000000008"}')
+            ->setPartnerType(PartnerType::ARS)
+            ->setCodeStatus(200)
             ->setStatus(JobEvent::STATUS_SUCCESS);
 
         $this->assertNull($jobEvent->getId());
@@ -26,5 +29,7 @@ class JobEventTest extends TestCase
         $this->assertEquals('sync_dossier', $jobEvent->getAction());
         $this->assertEquals('{"criterionName":"SAS_Référence"}', $jobEvent->getMessage());
         $this->assertEquals('{"sasReference":"00000000-0000-0000-2022-000000000008"}', $jobEvent->getResponse());
+        $this->assertEquals(200, $jobEvent->getCodeStatus());
+        $this->assertEquals(PartnerType::ARS, $jobEvent->getPartnerType());
     }
 }

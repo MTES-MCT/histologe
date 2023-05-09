@@ -24,7 +24,7 @@ class JobEventRepository extends ServiceEntityRepository
         parent::__construct($registry, JobEvent::class);
     }
 
-    public function findLastJobEventByType(
+    public function findLastJobEventByInterfacageType(
         string $type,
         int $dayPeriod,
         ?Territory $territory

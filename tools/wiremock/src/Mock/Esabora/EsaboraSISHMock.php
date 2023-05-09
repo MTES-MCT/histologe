@@ -44,7 +44,7 @@ class EsaboraSISHMock extends AbstractEsaboraMock
             'doSearch',
             WireMock::matchingJsonPath(
                 '$.criterionList[0].criterionValueList[0]',
-                WireMock::equalTo('00000000-0000-0000-2022-000000000001')
+                WireMock::equalTo('00000000-0000-0000-2023-000000000010')
             ),
             'ws_etat_dossier_sas/etat_importe.json',
             self::BASE_PATH,

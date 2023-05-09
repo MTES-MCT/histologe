@@ -84,11 +84,11 @@ class WidgetDataManagerTest extends TestCase
     {
         $this->jobEventRepositoryMock
             ->expects($this->once())
-            ->method('findLastJobEventByType')
+            ->method('findLastJobEventByInterfacageType')
             ->with(InterfacageType::ESABORA->value)
             ->willReturn([]);
 
-        $this->assertEquals([], $this->widgetDataManager->findLastJobEventByServiceType(
+        $this->assertEquals([], $this->widgetDataManager->findLastJobEventByInterfacageType(
             InterfacageType::ESABORA->value,
             ['period' => 5])
         );

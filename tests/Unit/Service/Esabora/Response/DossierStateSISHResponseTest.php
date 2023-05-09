@@ -14,12 +14,12 @@ class DossierStateSISHResponseTest extends TestCase
         $responseEsabora = json_decode(file_get_contents($filepath), true);
 
         $dossierResponse = new DossierStateSISHResponse($responseEsabora, 200);
-        $this->assertEquals('00000000-0000-0000-2022-000000000008', $dossierResponse->getReferenceDossier());
+        $this->assertEquals('00000000-0000-0000-2023-000000000010', $dossierResponse->getReferenceDossier());
         $this->assertEquals('Importé', $dossierResponse->getSasEtat());
         $this->assertEquals('14/04/2023 10:16', $dossierResponse->getSasDateDecision());
         $this->assertNull($dossierResponse->getSasCauseRefus());
         $this->assertEquals('2023', $dossierResponse->getDossId());
-        $this->assertEquals('2023/SISH/0001', $dossierResponse->getDossNum());
+        $this->assertEquals('2023/SISH/0010', $dossierResponse->getDossNum());
         $this->assertEquals('45 Boulevard Auguste Blanquis - PARIS', $dossierResponse->getDossObjet());
         $this->assertNull($dossierResponse->getDossDateCloture());
         $this->assertEquals(EsaboraStatus::ESABORA_IN_PROGRESS->value, $dossierResponse->getEtat());
