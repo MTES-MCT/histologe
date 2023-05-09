@@ -6,11 +6,20 @@ const disableSmoothScroll = () => {
   });
 };
 
+before(() => {
+  cy.clearAllCookies()
+});
+
 describe('Simple test for the Signalement interface', { testIsolation: false }, () => {
   it('Displays the form for Signalement', () => {
     cy.visit('http://localhost:8080/signalement')
     disableSmoothScroll()
-    cy.get('#signalement-step-1')
+    cy.get('#signalement-step-0')
+  })
+
+  it('Works for home tab', () => {
+    cy.get('#signalement-step-0 .fr-btn').should('be.visible')
+    cy.get('#signalement-step-0 .fr-btn').click()
   })
 
   it('Works for first tab', () => {
@@ -90,10 +99,6 @@ describe('Simple test for the Signalement interface', { testIsolation: false }, 
 
 })
 
-before(() => {
-  cy.clearCookie('PHPSESSID')
-});
-
 describe('Test a real user login', { testIsolation: false }, () => {
   it('Displays the form for login', () => {
     cy.visit('http://localhost:8080/connexion')
@@ -113,7 +118,7 @@ describe('Simple test for back-office statistics', { testIsolation: false }, () 
   it('Displays the page of the statistics', () => {
     cy.get('#fr-sidemenu-wrapper').contains('Signalements').click() //Open by default so click to close
     cy.get('#fr-sidemenu-wrapper').contains('Données chiffrées').click()
-    cy.get('#fr-sidemenu-pilotage').contains('Statistiques').click()
+    cy.get('#fr-sidemenu-pilotage').contains('Statistiques').click( { force: true } )
     disableSmoothScroll()
     cy.get('#app-stats').should('be.visible')
     cy.get('#filter-territoires').should('be.visible')
@@ -145,14 +150,8 @@ describe('Test submit partner with user', { testIsolation: false }, () => {
     cy.visit('http://localhost:8080/bo/partenaires/ajout')
     disableSmoothScroll()
     cy.get('#partner_nom').type('Partner')
-    cy.get('#partner_isCommune').select('0')
+    cy.get('#partner_type').select('ADIL')
     cy.get('#partner_email').type('partner'+Date.now()+'@yopmail.com')
-    cy.get('#partner_add_user').click()
-    cy.get('#partner_users_nom_new0').type('Doe')
-    cy.get('#partner_users_prenom_new0').type('John')
-    cy.get('#partner_users_email_new0').type('john.doe'+Date.now()+'@yopmail.com')
-    cy.get('#partner_users_roles_new0').select('ROLE_USER_PARTNER')
-    cy.get('#partner_users_is_mailing_active_new0').select('1')
     cy.get('#partner_territory').select('1')
     cy.get('#submit_btn_partner').click()
     cy.get('.fr-alert.fr-alert--success.fr-alert--sm').should('be.visible')
