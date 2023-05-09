@@ -71,22 +71,21 @@ class ImportGridAffectationCommand extends Command
 
         $this->uploadHandlerService->createTmpFileFromBucket($fromFile, $toFile);
 
-        // first check datas
-        $checkErrors = $this->gridAffectationLoader->check(
-            $this->csvParser->parseAsDict($toFile),
+        $csvData = $this->csvParser->parseAsDict($toFile);
+        $checkErrors = $this->gridAffectationLoader->validate(
+            $csvData,
         );
 
-        if (null !== $checkErrors) {
+        if (\count($checkErrors) > 0) {
             $io->error($checkErrors);
 
             return Command::FAILURE;
         }
         $io->success('No error detected in file');
 
-        // then create partners and users
         $this->gridAffectationLoader->load(
             $territory,
-            $this->csvParser->parseAsDict($toFile)
+            $csvData
         );
 
         $metadata = $this->gridAffectationLoader->getMetadata();

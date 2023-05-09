@@ -35,9 +35,7 @@ class UserUpdatedSubscriber implements EventSubscriberInterface
         foreach ($unitOfWork->getScheduledEntityUpdates() as $entity) {
             $changes = $unitOfWork->getEntityChangeSet($entity);
 
-            if ($entity instanceof User &&
-            (\array_key_exists('email', $changes) // if email has changed
-            || (\array_key_exists('roles', $changes) && \in_array('ROLE_USAGER', $changes['roles'][0])))) { // if usager becomes user
+            if ($entity instanceof User && $this->shouldChangePassword($changes)) {
                 $entity->setPassword($this->tokenGenerator->generateToken())
                 ->setToken($this->tokenGenerator->generateToken())
                 ->setTokenExpiredAt(
@@ -61,5 +59,16 @@ class UserUpdatedSubscriber implements EventSubscriberInterface
                 )
             );
         }
+    }
+
+    private function shouldChangePassword(array $changes): bool
+    {
+        if (\array_key_exists('email', $changes) // if email has changed
+            || (\array_key_exists('roles', $changes) && \in_array('ROLE_USAGER', $changes['roles'][0]))// if usager becomes user
+        ) {
+            return true;
+        }
+
+        return false;
     }
 }
