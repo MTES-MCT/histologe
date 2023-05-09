@@ -11,29 +11,39 @@ partners:
     email: "partenaire-13-01@histologe.fr"
     is_archive: 0
     territory: "Bouches-du-Rhône"
-    esabora_url: "http://histologe_wiremock:8080/ws/rest"
     type: "AUTRE"
   -
     nom: "Partenaire 13-02"
     email: "partenaire-13-02@histologe.fr"
     is_archive: 0
     territory: "Bouches-du-Rhône"
-    esabora_url: "http://histologe_wiremock:8080/ws/rest"
     type: "AUTRE"
   -
     nom: "Partenaire 13-03"
     email: "partenaire-13-03@histologe.fr"
     is_archive: 0
     territory: "Bouches-du-Rhône"
-    esabora_url: "http://histologe_wiremock:8080/ws/rest"
     type: "AUTRE"
   -
     nom: "Partenaire 13-04"
     email: "partenaire-13-04@histologe.fr"
     is_archive: 0
     territory: "Bouches-du-Rhône"
-    esabora_url: "http://histologe_wiremock:8080/ws/rest"
     type: "AUTRE"
+  -
+    nom: "Partenaire 13-05 ESABORA SCHS"
+    email: "partenaire-13-05@histologe.fr"
+    is_archive: 0
+    territory: "Bouches-du-Rhône"
+    esabora_url: "http://histologe_wiremock:8080/ws/rest"
+    type: "COMMUNE_SCHS"
+  -
+    nom: "Partenaire 13-06 ESABORA ARS"
+    email: "partenaire-13-06@histologe.fr"
+    is_archive: 0
+    territory: "Bouches-du-Rhône"
+    esabora_url: "http://histologe_wiremock:8080/ARS/ws/rest"
+    type: "ARS"
   -
     nom: "Partenaire 01-01"
     email: "partenaire-01-01@histologe.fr"
@@ -69,28 +79,24 @@ partners:
     is_archive: 0
     insee: "[\"2A247\"]"
     territory: "Corse-du-Sud"
-    esabora_url: "http://histologe_wiremock:8080/ws/rest"
     type: "COMMUNE_SCHS"
   -
     nom: "Partenaire 63-01"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
-    esabora_url: "http://histologe_wiremock:8080/ws/rest"
     type: "AUTRE"
   -
     nom: "Partenaire 06-01"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Alpes-Maritimes"
-    esabora_url: "http://histologe_wiremock:8080/ws/rest"
     type: "AUTRE"
   -
     nom: "Partenaire 59-01"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Nord"
-    esabora_url: "http://histologe_wiremock:8080/ws/rest"
     type: "AUTRE"
   -
     nom: "Partenaire 974-01"
@@ -98,7 +104,6 @@ partners:
     is_archive: 0
     insee: "[\"\"]"
     territory: "La Réunion"
-    esabora_url: "http://histologe_wiremock:8080/ws/rest"
     type: "AUTRE"
   -
     nom: "EMHA - Métropole de Lyon"
