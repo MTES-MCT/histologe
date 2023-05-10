@@ -58,8 +58,8 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
         if ($input->getOption('debug')) {
             $io->info(sprintf(
                 '%s signalement without suivi from more than '.Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
-                $nbSignalements)
-            );
+                $nbSignalements
+            ));
 
             return Command::SUCCESS;
         }
@@ -105,8 +105,8 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
 
         $io->success(sprintf(
             '%s signalement without suivi from more than '.Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
-            $nbSignalements)
-        );
+            $nbSignalements
+        ));
 
         $this->notificationMailerRegistry->send(
             new NotificationMail(
