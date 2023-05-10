@@ -20,6 +20,8 @@ class AbstractEsaboraService implements EsaboraServiceInterface
     public const TASK_INSERT = 'doTreatment';
     public const TASK_SEARCH = 'doSearch';
     public const SIGNALEMENT_ORIGINE = 'interfaçage';
+    public const FORMAT_DATE = 'd/m/Y';
+    public const FORMAT_DATE_TIME = 'd/m/Y H:i';
 
     public function __construct(
         private readonly HttpClientInterface $client,

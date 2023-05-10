@@ -71,7 +71,10 @@ class EsaboraSCHSService extends AbstractEsaboraService
             $this->logger->error($exception->getMessage());
         }
 
-        return new DossierStateSCHSResponse(['message' => $exception->getMessage(), 'status_code' => $statusCode], $statusCode);
+        return new DossierStateSCHSResponse(
+            ['message' => $exception->getMessage(), 'status_code' => $statusCode],
+            $statusCode
+        );
     }
 
     public function preparePayloadPushDossier(DossierMessageSCHS $dossierMessage, bool $encodeDocuments = true): array

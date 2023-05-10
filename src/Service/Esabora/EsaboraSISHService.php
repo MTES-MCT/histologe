@@ -166,8 +166,10 @@ class EsaboraSISHService extends AbstractEsaboraService
         ];
     }
 
-    private function preparePayloadPushDossier(DossierMessageSISH $dossierMessageSISH, bool $encodeDocuments = true): array
-    {
+    private function preparePayloadPushDossier(
+        DossierMessageSISH $dossierMessageSISH,
+        bool $encodeDocuments = true
+    ): array {
         $piecesJointes = [];
         if ($encodeDocuments) {
             $piecesJointes = array_map(function ($pieceJointe) {

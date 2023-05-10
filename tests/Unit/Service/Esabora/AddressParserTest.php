@@ -59,102 +59,102 @@ class AddressParserTest extends TestCase
             'Route(s) DE GRENOBLE',
         ];
 
-        yield '12 Rue de la république' => [
-            '12 Rue de la république',
+        yield '12 boulevard de la république' => [
+            '12 Boulevard de la république',
             '12',
             null,
-            'Rue de la république',
+            'Boulevard de la république',
         ];
 
-        yield 'Rue de la république' => [
-            'Rue de la république',
+        yield 'Avenue de la joliette' => [
+            'Avenue de la joliette',
             null,
             null,
-            'Rue de la république',
+            'Avenue de la joliette',
         ];
 
-        yield '12 A Rue de la république' => [
-            '12 A Rue de la république',
+        yield '12 A Square de la france' => [
+            '12 A Square de la france',
             '12',
             ExtensionAdresse::A->name,
-            'Rue de la république',
+            'Square de la france',
         ];
 
-        yield '12 B Rue de la république' => [
-            '12 B Rue de la république',
+        yield '12 B Quai de la roumanie' => [
+            '12 B Quai de la roumanie',
             '12',
             ExtensionAdresse::B->name,
-            'Rue de la république',
+            'Quai de la roumanie',
         ];
 
-        yield '12 C Rue de la république' => [
-            '12 C Rue de la république',
+        yield '12 C Impasse de la jordanie' => [
+            '12 C Impasse de la jordanie',
             '12',
             ExtensionAdresse::C->name,
-            'Rue de la république',
+            'Impasse de la jordanie',
         ];
 
-        yield '12 D Rue de la république' => [
-            '12 D Rue de la république',
+        yield '12 D Allée de la mer' => [
+            '12 D Allée de la mer',
             '12',
             ExtensionAdresse::D->name,
-            'Rue de la république',
+            'Allée de la mer',
         ];
 
-        yield '12 Q Rue de la république' => [
-            '12 Q Rue de la république',
+        yield '12 Q Chemin de la brise' => [
+            '12 Q Chemin de la brise',
             '12',
             ExtensionAdresse::Q->name,
-            'Rue de la république',
+            'Chemin de la brise',
         ];
 
-        yield '12 T Rue de la république' => [
-            '12 T Rue de la république',
+        yield '12 T Chaussée de la table' => [
+            '12 T Chaussée de la table',
             '12',
             ExtensionAdresse::T->name,
-            'Rue de la république',
+            'Chaussée de la table',
         ];
 
-        yield '12 QUINQUIES Rue de la république' => [
-            '12 QUINQUIES Rue de la république',
+        yield '12 QUINQUIES Cours de la rivière' => [
+            '12 QUINQUIES Cours de la rivière',
             '12',
             ExtensionAdresse::QUINQUIES->name,
-            'Rue de la république',
+            'Cours de la rivière',
         ];
 
-        yield '12 SEXIES Rue de la république' => [
-            '12 SEXIES Rue de la république',
+        yield '12 SEXIES Place de la sorbonne' => [
+            '12 SEXIES Place de la sorbonne',
             '12',
             ExtensionAdresse::SEXIES->name,
-            'Rue de la république',
+            'Place de la sorbonne',
         ];
 
-        yield '12 SEPTIES Rue de la république' => [
-            '12 SEPTIES Rue de la république',
+        yield '12 SEPTIES Montée de la poire' => [
+            '12 SEPTIES Montée de la poire',
             '12',
             ExtensionAdresse::SEPTIES->name,
-            'Rue de la république',
+            'Montée de la poire',
         ];
 
-        yield '12 OCTIES Rue de la république' => [
-            '12 OCTIES Rue de la république',
+        yield '12 OCTIES Passage de la pomme' => [
+            '12 OCTIES Passage de la pomme',
             '12',
             ExtensionAdresse::OCTIES->name,
-            'Rue de la république',
+            'Passage de la pomme',
         ];
 
-        yield '12 NONIES Rue de la république' => [
-            '12 NONIES Rue de la république',
+        yield '12 NONIES Rond-point de la pastorale' => [
+            '12 NONIES Rond-point de la pastorale',
             '12',
             ExtensionAdresse::NONIES->name,
-            'Rue de la république',
+            'Rond-point de la pastorale',
         ];
 
-        yield '12 DECIES Rue de la république' => [
-            '12 DECIES Rue de la république',
+        yield '12 DECIES Parvis de la coupe' => [
+            '12 DECIES Parvis de la coupe',
             '12',
             ExtensionAdresse::DECIES->name,
-            'Rue de la république',
+            'Parvis de la coupe',
         ];
     }
 }

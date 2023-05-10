@@ -35,6 +35,8 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         $address = $this->addressParser->parse($signalement->getAdresseOccupant());
         /** @var Suivi $firstSuivi */
         $firstSuivi = $signalement->getSuivis()->first();
+        $formatDate = AbstractEsaboraService::FORMAT_DATE;
+        $formatDateTime = AbstractEsaboraService::FORMAT_DATE_TIME;
 
         return (new DossierMessageSISH())
             ->setUrl($partner->getEsaboraUrl())
@@ -52,7 +54,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setLocalisationLocalisationInsee($signalement->getInseeOccupant())
             ->setSasLogicielProvenance('H')
             ->setReferenceDossier($signalement->getUuid())
-            ->setSasDateAffectation($affectation->getCreatedAt()?->format('d/m/Y H:i'))
+            ->setSasDateAffectation($affectation->getCreatedAt()?->format($formatDateTime))
             ->setLocalisationEtage($signalement->getEtageOccupant())
             ->setLocalisationEscalier($signalement->getEscalierOccupant())
             ->setLocalisationNumPorte($signalement->getNumAppartOccupant())
@@ -63,7 +65,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setSitOccupantNumAllocataire($signalement->getNumAllocataire())
             ->setSitOccupantMontantAlloc($signalement->getMontantAllocation())
             ->setSitLogementBailEncours((int) $signalement->getIsBailEnCours())
-            ->setSitLogementBailDateEntree($signalement->getDateEntree()?->format('d/m/Y'))
+            ->setSitLogementBailDateEntree($signalement->getDateEntree()?->format($formatDate))
             ->setSitLogementPreavisDepart((int) $signalement->getIsPreavisDepart())
             ->setSitLogementRelogement((int) $signalement->getIsRelogement())
             ->setSitLogementSuperficie($signalement->getSuperficie())
@@ -82,13 +84,13 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setLogementNbChambres($signalement->getNbChambresLogement())
             ->setLogementNbNiveaux($signalement->getNbNiveauxLogement())
             ->setProprietaireAverti((int) $signalement->getIsProprioAverti())
-            ->setProprietaireAvertiDate($signalement->getProprioAvertiAt()?->format('d/m/Y'))
+            ->setProprietaireAvertiDate($signalement->getProprioAvertiAt()?->format($formatDate))
             ->setProprietaireAvertiMoyen(implode(',', $signalement->getModeContactProprio()))
             ->setSignalementScore($signalement->getScore())
             ->setSignalementOrigine(AbstractEsaboraService::SIGNALEMENT_ORIGINE)
             ->setSignalementNumero($signalement->getReference())
             ->setSignalementCommentaire($firstSuivi->getDescription())
-            ->setSignalementDate($signalement->getCreatedAt()?->format('d/m/Y'))
+            ->setSignalementDate($signalement->getCreatedAt()?->format($formatDate))
             ->setSignalementDetails($signalement->getDetails())
             ->setSignalementProblemes($this->buildProblemes($signalement))
             ->setPiecesJointesDocuments($this->buildPiecesJointes($signalement))
@@ -137,7 +139,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
     {
         $commentaire = null;
         foreach ($signalement->getCriticites() as $criticite) {
-            $commentaire .= $criticite->getCritere()->getLabel().' => Etat '.$criticite->getScoreLabel().'\n';
+            $commentaire .= $criticite->getCritere()->getLabel().' => Etat '.$criticite->getScoreLabel().\PHP_EOL;
         }
 
         return $commentaire;

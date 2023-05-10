@@ -50,7 +50,10 @@ class EsaboraSISHServiceTest extends KernelTestCase
     {
         $filepath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/sish/ws_dossier_personne.json';
         $esaboraService = $this->getEsaboraSISHService($filepath);
-        $response = $esaboraService->pushPersonne($this->getDossierMessageSISH(), $this->getDossierMessageSISHPersonne());
+        $response = $esaboraService->pushPersonne(
+            $this->getDossierMessageSISH(),
+            $this->getDossierMessageSISHPersonne()
+        );
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $this->assertEquals(1, $response->getSasId());
     }

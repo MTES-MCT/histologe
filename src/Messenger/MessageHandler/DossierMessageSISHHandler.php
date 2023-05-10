@@ -13,7 +13,10 @@ final class DossierMessageSISHHandler
     private iterable $dossierSISHHandlers;
 
     public function __construct(
-        #[TaggedIterator('app.dossier_sish_handler', defaultPriorityMethod: 'getPriority')] iterable $dossierSISHHandlers
+        #[TaggedIterator(
+            'app.dossier_sish_handler',
+            defaultPriorityMethod: 'getPriority'
+        )] iterable $dossierSISHHandlers
     ) {
         $this->dossierSISHHandlers = $dossierSISHHandlers;
     }

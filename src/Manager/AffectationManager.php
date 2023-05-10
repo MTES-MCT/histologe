@@ -98,8 +98,10 @@ class AffectationManager extends Manager
         }
     }
 
-    public function synchronizeAffectationFrom(DossierResponseInterface $dossierResponse, Affectation $affectation): void
-    {
+    public function synchronizeAffectationFrom(
+        DossierResponseInterface $dossierResponse,
+        Affectation $affectation
+    ): void {
         $user = $affectation->getPartner()->getUsers()->first();
         $signalement = $affectation->getSignalement();
 
