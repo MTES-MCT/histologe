@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Repository\PartnerRepository;
@@ -16,6 +17,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity('email', ignoreNull: true)]
 class Partner
 {
+    use TimestampableTrait;
+
     public const DEFAULT_PARTNER = 'Administrateurs Histologe ALL';
     public const MAX_LIST_PAGINATION = 50;
 
@@ -58,8 +61,6 @@ class Partner
 
     #[ORM\Column(type: 'string', enumType: PartnerType::class, nullable: true)]
     private ?PartnerType $type = null;
-
-    private $isCommune;
 
     #[ORM\Column(type: Types::SIMPLE_ARRAY, length: 255, nullable: true, enumType: Qualification::class)]
     private array $competence = [];

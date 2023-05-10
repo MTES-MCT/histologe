@@ -9,6 +9,7 @@ imports:
     - { resource: 'app/insee.yaml'}
     - { resource: 'app/nondecence.yaml'}
     - { resource: 'app/documents.yaml'}
+    - { resource: 'app/competences.yaml'}
 parameters:
     container.dumper.inline_factories: true
     uploads_dir: '%kernel.project_dir%/uploaded_files/signalement/'

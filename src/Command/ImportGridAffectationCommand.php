@@ -70,10 +70,26 @@ class ImportGridAffectationCommand extends Command
         }
 
         $this->uploadHandlerService->createTmpFileFromBucket($fromFile, $toFile);
-        $this->gridAffectationLoader->load($this->csvParser->parse($toFile), $territory);
+
+        $csvData = $this->csvParser->parseAsDict($toFile);
+        $checkErrors = $this->gridAffectationLoader->validate(
+            $csvData,
+        );
+
+        if (\count($checkErrors) > 0) {
+            $io->error($checkErrors);
+
+            return Command::FAILURE;
+        }
+        $io->success('No error detected in file');
+
+        $this->gridAffectationLoader->load(
+            $territory,
+            $csvData
+        );
 
         $metadata = $this->gridAffectationLoader->getMetadata();
-        $io->success($metadata['nb_partners'].' partner(s) created, '.$metadata['nb_users'].' user(s) created');
+        $io->success($metadata['nb_partners'].' partner(s) created, '.$metadata['nb_users_created'].' user(s) created, '.$metadata['nb_users_updated'].' user(s) updated');
 
         $territory->setIsActive(true);
         $this->territoryManager->save($territory);
@@ -83,10 +99,12 @@ class ImportGridAffectationCommand extends Command
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
                 to: $this->parameterBag->get('admin_email'),
-                message: sprintf('Félicitation, le térritoire %s est ouvert: %s partenaires et %s utilsateurs ont été crées',
+                message: sprintf(
+                    'Félicitation, le territoire %s est ouvert: %s partenaires, %s utilisateurs ont été crées et %s utilisateurs ont été mis à jour',
                     $territory->getName(),
                     $metadata['nb_partners'],
-                    $metadata['nb_users']
+                    $metadata['nb_users_created'],
+                    $metadata['nb_users_updated']
                 ),
                 cronLabel: 'Ouverture de territoire',
             )

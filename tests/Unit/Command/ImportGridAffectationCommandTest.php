@@ -42,7 +42,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
         $gridAffectationLoader
             ->expects($this->once())
             ->method('getMetaData')
-            ->willReturn(['nb_partners' => 10, 'nb_users' => 55]);
+            ->willReturn(['nb_partners' => 10, 'nb_users_created' => 55, 'nb_users_updated' => 0]);
 
         $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
         $uploadHandlerServiceMock

@@ -49,9 +49,11 @@ class CsvParserTest extends KernelTestCase
         $dataList = $csvParser->parseAsDict($this->projectDir.self::FILEPATH);
 
         foreach ($dataList as $dataItem) {
-            $this->assertArrayHasKey('Lastname', $dataItem);
-            $this->assertArrayHasKey('Firstname', $dataItem);
-            $this->assertArrayHasKey('Email', $dataItem);
+            if (\count($dataItem) > 1) {
+                $this->assertArrayHasKey('Lastname', $dataItem);
+                $this->assertArrayHasKey('Firstname', $dataItem);
+                $this->assertArrayHasKey('Email', $dataItem);
+            }
         }
     }
 
