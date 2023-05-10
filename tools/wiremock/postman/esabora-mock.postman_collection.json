@@ -170,7 +170,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"searchName\": \"SISH_ETAT_DOSSIER_SAS\",\n    \"criterionList\": [\n        {\n            \"criterionName\": \"Reference_Dossier\",\n            \"criterionValueList\": [\n                \"00000000-0000-0000-2022-000000000001\"\n            ]\n        }\n    ]\n}",
+							"raw": "{\n    \"searchName\": \"SISH_ETAT_DOSSIER_SAS\",\n    \"criterionList\": [\n        {\n            \"criterionName\": \"Reference_Dossier\",\n            \"criterionValueList\": [\n                \"00000000-0000-0000-2023-000000000010\"\n            ]\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -317,7 +317,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"searchName\": \"WS_ETAT_DOSSIER_SAS\",\n    \"criterionList\": [\n        {\n            \"criterionName\": \"SAS_Référence\",\n            \"criterionValueList\": [\n                \"00000000-0000-0000-2022-000000000010\"\n            ]\n        }\n    ]\n}",
+							"raw": "{\n    \"searchName\": \"WS_ETAT_DOSSIER_SAS\",\n    \"criterionList\": [\n        {\n            \"criterionName\": \"SAS_Référence\",\n            \"criterionValueList\": [\n                \"00000000-0000-0000-2023-000000000009\"\n            ]\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
