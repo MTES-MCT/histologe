@@ -25,6 +25,7 @@ parameters:
     user_system_email: '%env(resolve:USER_SYSTEM_EMAIL)%'
     host_url: '%env(resolve:HISTOLOGE_URL)%'
     token_lifetime: '1 day'
+    cron_enable: '%env(bool:CRON_ENABLE)%'
 
 services:
     # default configuration for services in *this* file

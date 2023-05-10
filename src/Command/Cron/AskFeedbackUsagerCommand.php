@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Cron;
 
 use App\Entity\Suivi;
 use App\Factory\SuiviFactory;
@@ -22,26 +22,29 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
     name: 'app:ask-feedback-usager',
     description: 'Ask feedback to usager if no suivi from 30 days',
 )]
-class AskFeedbackUsagerCommand extends Command
+class AskFeedbackUsagerCommand extends AbstractCronCommand
 {
     private const FLUSH_COUNT = 1000;
 
     public function __construct(
-        private SuiviManager $suiviManager,
-        private NotificationMailerRegistry $notificationMailerRegistry,
-        private ParameterBagInterface $parameterBag,
-        private SuiviRepository $suiviRepository,
-        private SignalementRepository $signalementRepository,
-        private SuiviFactory $suiviFactory,
+        private readonly SuiviManager $suiviManager,
+        private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly ParameterBagInterface $parameterBag,
+        private readonly SuiviRepository $suiviRepository,
+        private readonly SignalementRepository $signalementRepository,
+        private readonly SuiviFactory $suiviFactory,
     ) {
-        parent::__construct();
+        parent::__construct($this->parameterBag);
     }
 
     protected function configure(): void
     {
-        $this
-            ->addOption('--debug', null, InputOption::VALUE_NONE, 'Check how many emails will be send')
-        ;
+        $this->addOption(
+            '--debug',
+            null,
+            InputOption::VALUE_NONE,
+            'Check how many emails will be send'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -53,7 +56,10 @@ class AskFeedbackUsagerCommand extends Command
         $signalements = $this->signalementRepository->findAllByIds($signalementsIds);
         $nbSignalements = \count($signalements);
         if ($input->getOption('debug')) {
-            $io->info(sprintf('%s signalement without suivi from more than '.Suivi::DEFAULT_PERIOD_INACTIVITY.' days', $nbSignalements));
+            $io->info(sprintf(
+                '%s signalement without suivi from more than '.Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
+                $nbSignalements)
+            );
 
             return Command::SUCCESS;
         }
@@ -86,7 +92,6 @@ class AskFeedbackUsagerCommand extends Command
                 user: null,
                 signalement: $signalement,
                 params: $params,
-                isPublic: false,
             );
 
             if (0 === $totalRead % self::FLUSH_COUNT) {
@@ -98,7 +103,10 @@ class AskFeedbackUsagerCommand extends Command
 
         $this->suiviManager->flush();
 
-        $io->success(sprintf('%s signalement without suivi from more than '.Suivi::DEFAULT_PERIOD_INACTIVITY.' days', $nbSignalements));
+        $io->success(sprintf(
+            '%s signalement without suivi from more than '.Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
+            $nbSignalements)
+        );
 
         $this->notificationMailerRegistry->send(
             new NotificationMail(

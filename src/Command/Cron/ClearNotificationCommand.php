@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Cron;
 
 use App\Entity\Notification;
 use App\Service\Mailer\NotificationMail;
@@ -18,14 +18,14 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
     name: 'app:clear-notification',
     description: 'Clear notification older than 30 days',
 )]
-class ClearNotificationCommand extends Command
+class ClearNotificationCommand extends AbstractCronCommand
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private NotificationMailerRegistry $notificationMailerRegistry,
-        private ParameterBagInterface $parameterBag
+        private readonly EntityManagerInterface $entityManager,
+        private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly ParameterBagInterface $parameterBag
     ) {
-        parent::__construct();
+        parent::__construct($this->parameterBag);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
