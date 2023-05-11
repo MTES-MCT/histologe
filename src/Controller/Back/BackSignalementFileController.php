@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
@@ -26,22 +27,30 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class BackSignalementFileController extends AbstractController
 {
     #[Route('/{uuid}/pdf', name: 'back_signalement_gen_pdf')]
-    public function generatePdfSignalement(Signalement $signalement, Pdf $knpSnappyPdf, EntityManagerInterface $entityManager)
+    public function generatePdfSignalement(Signalement $signalement, Pdf $knpSnappyPdf, EntityManagerInterface $entityManager, ?Profiler $profiler)
     {
         $criticitesArranged = [];
         foreach ($signalement->getCriticites() as $criticite) {
             $criticitesArranged[$criticite->getCritere()->getSituation()->getLabel()][$criticite->getCritere()->getLabel()] = $criticite;
         }
+        if (null !== $profiler) {
+            $profiler->disable();
+        }
+
         $html = $this->renderView('pdf/signalement.html.twig', [
             'signalement' => $signalement,
             'situations' => $criticitesArranged,
         ]);
         $options = [
+            'images' => true,
+            'enable-local-file-access' => true,
             'margin-top' => 0,
             'margin-right' => 0,
             'margin-bottom' => 0,
             'margin-left' => 0,
+            'load-media-error-handling' => 'abort', // à repasser en ignore Specify how to handle media files that fail to load: abort, ignore or skip (default ignore)
         ];
+        $knpSnappyPdf->setTimeout(120);
 
         return new Response(
             $knpSnappyPdf->getOutputFromHtml($html, $options),
