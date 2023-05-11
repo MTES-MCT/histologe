@@ -8,9 +8,7 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
-use App\Factory\UserFactory;
 use App\Manager\CommuneManager;
-use App\Manager\UserManager;
 use App\Repository\TerritoryRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -32,10 +30,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 class PartnerType extends AbstractType
 {
     public function __construct(
-        private UserManager $userManager,
-        private UserFactory $userFactory,
-        private ParameterBagInterface $parameterBag,
-        private CommuneManager $communeManager,
+        private readonly ParameterBagInterface $parameterBag,
+        private readonly CommuneManager $communeManager,
     ) {
     }
 

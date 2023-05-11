@@ -3,6 +3,7 @@
 namespace App\Twig;
 
 use App\Entity\Enum\QualificationStatus;
+use App\Service\Esabora\EsaboraPartnerTypeSubscription;
 use App\Service\Notification\NotificationCounter;
 use App\Service\Signalement\QualificationStatusService;
 use Twig\Extension\AbstractExtension;
@@ -38,6 +39,7 @@ class AppExtension extends AbstractExtension
             new TwigFunction('count_notification', [NotificationCounter::class, 'countUnseenNotification']),
             new TwigFunction('can_see_nde_qualification', [QualificationStatusService::class, 'canSeenNDEQualification']),
             new TwigFunction('can_see_nde_edit_zone', [QualificationStatusService::class, 'canSeenNDEEditZone']),
+            new TwigFunction('can_edit_esabora_credentials', [EsaboraPartnerTypeSubscription::class, 'isSubscribed']),
         ];
     }
 }
