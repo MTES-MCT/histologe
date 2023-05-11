@@ -3,11 +3,11 @@ const histoNotificationSelected = []
 
 histoNotificationCheckboxes?.forEach(element => {
     element.addEventListener('change', (event) => {
-        let idNotification = element.getAttribute('data-notification-id')
+        const idNotification = element.getAttribute('data-notification-id')
         if (element.checked) {
             histoNotificationSelected.push(idNotification)
         } else {
-            let indexNotification = histoNotificationSelected.indexOf(idNotification);
+            const indexNotification = histoNotificationSelected.indexOf(idNotification);
             if (indexNotification > -1) {
                 histoNotificationSelected.splice(indexNotification, 1);
             }
@@ -17,7 +17,7 @@ histoNotificationCheckboxes?.forEach(element => {
 })
 
 function histoRefreshNotificationButtons() {
-    let countNotificationsSelected = histoNotificationSelected.length
+    const countNotificationsSelected = histoNotificationSelected.length
     if (countNotificationsSelected > 0) {
         document.querySelector('#notification-selected-buttons')?.classList.remove('fr-hidden')
         document.querySelector('#notification-all-buttons')?.classList.add('fr-hidden')
