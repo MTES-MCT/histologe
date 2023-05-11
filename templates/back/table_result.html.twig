@@ -35,7 +35,7 @@
                 {% elseif affectation.statut is same as (3) %}
                     {% set classe = 'fr-badge fr-fi-close-circle-fill' %}
                 {% endif %}
-                <small class="{{ classe }} fr-ws-nowrap fr-badge--sm fr-my-1v fr-text--bold fr-display-block"><span
+                <small class="{{ classe }} fr-ws-nowrap fr-badge--sm fr-my-1v fr-text--bold fr-display-block fr-limit-chars"><span
                     > {{ affectation.partner }}</span></small>
             {% else %}
                 Aucune

@@ -116,12 +116,12 @@ label.required::after {
 .fr-display-inline-table {
     display: inline-table !important;
     display: -moz-inline-table !important;
-    .fr-badge.fr-fi-close-circle-fill {
+    .fr-badge.fr-limit-chars {
         display:inline-block;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 20ch;
+        max-width: 22ch;
     }
 }
 @media (max-width: 1250px) {
