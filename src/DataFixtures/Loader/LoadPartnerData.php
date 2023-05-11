@@ -33,7 +33,8 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
         $partner = (new Partner())
             ->setNom($row['nom'])
             ->setEmail($row['email'] ?? null)
-            ->setIsArchive($row['is_archive']);
+            ->setIsArchive($row['is_archive'])
+            ->setIsEsaboraActive($row['is_esabora_active'] ?? false);
 
         if (isset($row['insee'])) {
             $partner->setInsee(json_decode($row['insee'], true));

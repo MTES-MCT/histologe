@@ -26,23 +26,33 @@ class JobEventRepository extends ServiceEntityRepository
 
     public function findLastJobEventByInterfacageType(
         string $type,
-        int $dayPeriod,
-        ?Territory $territory
+        ?int $dayPeriod,
+        ?Territory $territory,
+        ?Partner $partner = null,
     ): array {
         $qb = $this->createQueryBuilder('j')
             ->select('MAX(j.createdAt) AS last_event, p.id, p.nom, s.reference, j.status, j.action, j.codeStatus')
             ->innerJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId')
             ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
             ->where('j.service LIKE :service')
-            ->andWhere('DATEDIFF(NOW(),j.createdAt) <= :day_period');
+            ->andWhere('DATEDIFF(NOW(),j.createdAt) <= :day_period')
+            ->andWhere('j.type LIKE :type');
 
+        if ($dayPeriod) {
+            $qb->andWhere('DATEDIFF(NOW(),j.createdAt) <= :day_period')
+                ->setParameter('day_period', $dayPeriod);
+        }
         if (null !== $territory) {
             $qb->andWhere('p.territory = :territory')->setParameter('territory', $territory);
+        }
+        if (null !== $partner) {
+            $qb->andWhere('p.id = :partner')->setParameter('partner', $partner->getId());
         }
 
         $qb->setParameter('service', '%'.$type.'%')
             ->setParameter('day_period', $dayPeriod)
-            ->groupBy('p.id, p.nom, s.reference, j.action, j.status, j.codeStatus')
+            ->setParameter('type', '%'.$type.'%')
+            ->groupBy('p.id, p.nom, s.reference, j.action, j.status, j.codeStatus, j.response')
             ->orderBy('last_event', 'DESC');
 
         return $qb->getQuery()->getArrayResult();

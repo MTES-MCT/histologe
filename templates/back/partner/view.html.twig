@@ -62,24 +62,29 @@
                 {% endif %}
             </div>
         </div>
-        {% if partner.esaboraUrl %}<div>
+        {% if partner.esaboraUrl %}
             <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-6">
-                        <div><b>URL ESABORA :</b> {{ partner.esaboraUrl }}</div>
+                    <div><b>URL ESABORA :</b> {{ partner.esaboraUrl }}</div>
                 </div>
-                {# TODO #}
-                {# <div class="fr-col-6">
-                    <div><b>Synchronisation ESABORA :</b> ACTIVE</div>
-                </div> #}
+                <div class="fr-col-6">
+                    <div>
+                        <b>Synchronisation ESABORA :</b>
+                        {% if partner.isEsaboraActive %}
+                            <span class="fr-badge fr-badge--success">Active</span>
+                        {% else %}
+                            <span class="fr-badge fr-badge--info">Inactive</span>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
             <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-6">
-                        <div><b>Token ESABORA :</b> {{ partner.esaboraToken }}</div>
+                    <div><b>Token ESABORA :</b> {{ partner.esaboraToken }}</div>
                 </div>
-                {# TODO #}
-                {# <div class="fr-col-6">
-                    <div><b>Dernière synchro : </b></div>
-                </div> #}
+                <div class="fr-col-6">
+                    <div><b>Dernière synchro : </b>{{ last_job_date ? last_job_date.format('d/m/Y à H:i') : '-' }}</div>
+                </div>
             </div>
         {% endif %}
 
