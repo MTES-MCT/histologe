@@ -289,7 +289,7 @@ class Partner
         return $this;
     }
 
-    public function isIsEsaboraActive(): ?bool
+    public function isEsaboraActive(): ?bool
     {
         return $this->isEsaboraActive;
     }
