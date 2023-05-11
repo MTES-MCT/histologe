@@ -265,7 +265,7 @@
                         <small>Ajouté par {{ photo.username ?? 'N/R' }}</small><br>
                         <small>le {{ photo.date ?? 'N/R' }}</small><br>
                         {{ absolute_url(asset('_up/'~photo.file)) }}<br>{#  TODO a supprimer#}
-                        <img src="{{ absolute_url(asset('_up/'~photo.file)) }}" style="width:100%" id="{{photo.file}}" />{# KO mais sensé fonctionner #}
+                        <img src="{{ absolute_url(asset('_up/'~photo.file)) }}" style="width:100%" id="{{photo.file}}" alt="{{photo.file}}"/>{# KO mais sensé fonctionner #}
                         </div>
                     {% endfor %}
 
@@ -274,7 +274,7 @@
                 
                 {# <img src="{{'data:image/png;base64,'.base64_encode(file_get_contents(absolute_url('assets/img/anil.png')))}}"> #}{# KO #}
                 <figure>
-                    <img src="{{ absolute_url(asset('img/anil.png')) }}" alt="" style="width:50%" > {# KO mais sensé fonctionner  #}
+                    <img src="{{ absolute_url(asset('img/anil.png')) }}" alt="Logo anil pour tester" style="width:50%" > {# KO mais sensé fonctionner  #}
                     <figcaption>A picture with an absolute URL : {{ absolute_url(asset('img/anil.png')) }}</figcaption>
                 </figure>
 

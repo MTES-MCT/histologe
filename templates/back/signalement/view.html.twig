@@ -28,7 +28,7 @@
                                 class="fr-btn fr-btn--sm fr-fi-edit-fill" title="Editer le signalement"></a>&nbsp;
                         {% endif %}
                         {% if canExportSignalement %}
-                            <a target="_blank"  href="{{ path('back_signalement_gen_pdf',{uuid:signalement.uuid}) }}"
+                            <a target="_blank" rel="noopener" href="{{ path('back_signalement_gen_pdf',{uuid:signalement.uuid}) }}"
                                 class="fr-btn fr-btn--sm fr-btn--success fr-fi-file-pdf-fill" title="Exporter en PDF"></a>
                         {% endif %}
                     </h1>

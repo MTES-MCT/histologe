@@ -8,7 +8,6 @@ use App\Exception\File\MaxUploadSizeExceededException;
 use App\Service\Files\HeicToJpegConverter;
 use App\Service\UploadHandlerService;
 use DateTimeImmutable;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Snappy\Pdf;
 use League\Flysystem\FilesystemOperator;
@@ -27,8 +26,11 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class BackSignalementFileController extends AbstractController
 {
     #[Route('/{uuid}/pdf', name: 'back_signalement_gen_pdf')]
-    public function generatePdfSignalement(Signalement $signalement, Pdf $knpSnappyPdf, EntityManagerInterface $entityManager, ?Profiler $profiler)
-    {
+    public function generatePdfSignalement(
+        Signalement $signalement,
+        Pdf $knpSnappyPdf,
+        ?Profiler $profiler
+    ) {
         $criticitesArranged = [];
         foreach ($signalement->getCriticites() as $criticite) {
             $criticitesArranged[$criticite->getCritere()->getSituation()->getLabel()][$criticite->getCritere()->getLabel()] = $criticite;
@@ -48,7 +50,7 @@ class BackSignalementFileController extends AbstractController
             'margin-right' => 0,
             'margin-bottom' => 0,
             'margin-left' => 0,
-            'load-media-error-handling' => 'abort', // à repasser en ignore Specify how to handle media files that fail to load: abort, ignore or skip (default ignore)
+            'load-media-error-handling' => 'abort', // TODO :  à repasser en ignore
         ];
         $knpSnappyPdf->setTimeout(120);
 
