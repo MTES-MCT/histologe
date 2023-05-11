@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional\Command;
+namespace App\Tests\Functional\Command\Cron;
 
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Tests\Unit\Command;
+namespace App\Tests\Unit\Command\Cron;
 
-use App\Command\SynchronizeEsaboraCommand;
+use App\Command\Cron\SynchronizeEsaboraCommand;
 use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -21,12 +21,14 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class SynchronizeEsaboraCommandTest extends KernelTestCase
 {
+    public const PATH_MOCK = '/../../../../tools/wiremock/src/Resources/Esabora/ws_etat_dossier_sas/';
+
     public function testSyncDossierEsabora(): void
     {
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
-        $filepath = __DIR__.'/../../../tools/wiremock/src/Resources/Esabora/ws_etat_dossier_sas/etat_non_importe.json';
+        $filepath = __DIR__.self::PATH_MOCK.'etat_non_importe.json';
         $responseEsabora = json_decode(file_get_contents($filepath), true);
         $dossierResponse = new DossierResponse($responseEsabora, 200);
         $affectation = (new Affectation())->setSignalement(new Signalement())->setPartner(new Partner());

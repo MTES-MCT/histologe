@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Cron;
 
-use App\Entity\User;
 use App\Manager\UserManager;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -14,28 +13,29 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsCommand(
     name: 'app:remind-inactive-user',
     description: 'Remind inactive users with nb pending affectations',
 )]
-class RemindInactiveUserCommand extends Command
+class RemindInactiveUserCommand extends AbstractCronCommand
 {
     public function __construct(
-        private UserManager $userManager,
-        private NotificationMailerRegistry $notificationMailerRegistry,
-        private UrlGeneratorInterface $urlGenerator,
-        private ParameterBagInterface $parameterBag,
+        private readonly UserManager $userManager,
+        private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly ParameterBagInterface $parameterBag,
     ) {
-        parent::__construct();
+        parent::__construct($this->parameterBag);
     }
 
     protected function configure(): void
     {
-        $this
-            ->addOption('--debug', null, InputOption::VALUE_NONE, 'Check how many emails will be send')
-        ;
+        $this->addOption(
+            '--debug',
+            null,
+            InputOption::VALUE_NONE,
+            'Check how many emails will be send'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -81,12 +81,5 @@ class RemindInactiveUserCommand extends Command
         );
 
         return Command::SUCCESS;
-    }
-
-    private function generateLink(User $user): string
-    {
-        return
-            $this->parameterBag->get('host_url').
-            $this->urlGenerator->generate('activate_account', ['token' => $user->getToken()]);
     }
 }

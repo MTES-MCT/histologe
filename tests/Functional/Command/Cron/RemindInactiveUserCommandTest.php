@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Tests\Functional\Command;
+namespace App\Tests\Functional\Command\Cron;
 
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class ClearNotificationCommandTest extends KernelTestCase
+class RemindInactiveUserCommandTest extends KernelTestCase
 {
     public function testDisplayMessageSuccessfully(): void
     {
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
-        $command = $application->find('app:clear-notification');
+        $command = $application->find('app:remind-inactive-user');
 
         $commandTester = new CommandTester($command);
 
@@ -22,7 +22,7 @@ class ClearNotificationCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('notification(s) deleted', $output);
-        $this->assertEmailCount(1);
+        $this->assertStringContainsString('8 users has been notified', $output);
+        $this->assertEmailCount(9); // with cron notification email (6+1)
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Cron;
 
 use App\Entity\JobEvent;
 use App\Manager\AffectationManager;
@@ -24,18 +24,17 @@ use Symfony\Component\Serializer\SerializerInterface;
     name: 'app:sync-esabora',
     description: 'Commande qui permet de mettre à jour l\'état d\'une affectation depuis Esabora',
 )]
-class SynchronizeEsaboraCommand extends Command
+class SynchronizeEsaboraCommand extends AbstractCronCommand
 {
     public function __construct(
-        private EsaboraService $esaboraService,
-        private AffectationManager $affectationManager,
-        private JobEventManager $jobEventManager,
-        private SerializerInterface $serializer,
-        private NotificationMailerRegistry $notificationMailerRegistry,
-        private ParameterBagInterface $parameterBag,
-        string $name = null
+        private readonly EsaboraService $esaboraService,
+        private readonly AffectationManager $affectationManager,
+        private readonly JobEventManager $jobEventManager,
+        private readonly SerializerInterface $serializer,
+        private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly ParameterBagInterface $parameterBag,
     ) {
-        parent::__construct($name);
+        parent::__construct($this->parameterBag);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
