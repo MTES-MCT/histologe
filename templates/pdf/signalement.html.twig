@@ -258,24 +258,26 @@
     {% if signalement.photos|length %}
         <div class="page" style="padding-top: 25px!important;">
             <section>
-                {{ absolute_url(asset('img/anil.png')) }}
-                {# <img src="{{'data:image/png;base64,'.base64_encode(file_get_contents(absolute_url('assets/img/anil.png')))}}"> #}{# KO #}
-                <figure>
-                    <img src="{{ absolute_url(asset('img/anil.png')) }}" alt="" style="width:50%" > {# KO mais sensé fonctionner  #}
-                    {# <img src="<?php echo 'data:image/jpg;base64,'.base64_encode(file_get_contents('http://localhost:8080/img/anil.png')); ?>" style="width:100%;"> #}
-                    <figcaption>A picture with an absolute URL</figcaption>
-                </figure>
-
                 <h2>Photo(s)</h2>    
                     {% for index,photo in signalement.photos %}
                         <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
                         <h4>{{photo.file}}</h4>
                         <small>Ajouté par {{ photo.username ?? 'N/R' }}</small><br>
                         <small>le {{ photo.date ?? 'N/R' }}</small><br>
-                        {{ absolute_url(asset('_up/'~photo.file)) }}<br>
+                        {{ absolute_url(asset('_up/'~photo.file)) }}<br>{#  TODO a supprimer#}
                         <img src="{{ absolute_url(asset('_up/'~photo.file)) }}" style="width:100%" id="{{photo.file}}" />{# KO mais sensé fonctionner #}
                         </div>
                     {% endfor %}
+
+                    
+                <h4>TEST</h4>   {#  TODO a supprimer#}
+                
+                {# <img src="{{'data:image/png;base64,'.base64_encode(file_get_contents(absolute_url('assets/img/anil.png')))}}"> #}{# KO #}
+                <figure>
+                    <img src="{{ absolute_url(asset('img/anil.png')) }}" alt="" style="width:50%" > {# KO mais sensé fonctionner  #}
+                    <figcaption>A picture with an absolute URL : {{ absolute_url(asset('img/anil.png')) }}</figcaption>
+                </figure>
+
             </section>
         </div>
     {% endif %}
