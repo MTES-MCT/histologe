@@ -29,7 +29,7 @@ class BackSignalementFileController extends AbstractController
     public function generatePdfSignalement(
         Signalement $signalement,
         Pdf $knpSnappyPdf,
-        ?Profiler $profiler
+        ?Profiler $profiler,
     ) {
         $criticitesArranged = [];
         foreach ($signalement->getCriticites() as $criticite) {
@@ -50,7 +50,6 @@ class BackSignalementFileController extends AbstractController
             'margin-right' => 0,
             'margin-bottom' => 0,
             'margin-left' => 0,
-            'load-media-error-handling' => 'abort', // TODO :  à repasser en ignore
         ];
         $knpSnappyPdf->setTimeout(120);
 
