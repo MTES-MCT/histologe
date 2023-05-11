@@ -256,19 +256,18 @@
     {% endif %}
 
     {% if signalement.photos|length %}
-        <div class="page" style="padding-top: 25px!important;">
-            <section>
-                <h2>Photo(s)</h2>    
-                {% for index,photo in signalement.photos %}
+        <section>
+            {% for index,photo in signalement.photos %}
+                <div class="page" style="padding-top: 25px!important;">
                     <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
-                        <h4>{{photo.titre}}</h4>
+                        <h2>Photo : {{photo.titre}}</h2>
                         <small>Ajouté par {{ photo.username ?? 'N/R' }}</small><br>
                         <small>le {{ photo.date ?? 'N/R' }}</small><br>
                         <img src="{{ photo.file | image64 }}" style="width:100%" id="{{photo.file}}" alt="{{photo.titre}}"/>
                     </div>
-                {% endfor %}
-            </section>
-        </div>
+                </div>
+            {% endfor %}
+        </section>
     {% endif %}
 
 {% endblock %}
