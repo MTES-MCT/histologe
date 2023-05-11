@@ -18,7 +18,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
@@ -29,14 +28,10 @@ class BackSignalementFileController extends AbstractController
     public function generatePdfSignalement(
         Signalement $signalement,
         Pdf $knpSnappyPdf,
-        ?Profiler $profiler,
     ) {
         $criticitesArranged = [];
         foreach ($signalement->getCriticites() as $criticite) {
             $criticitesArranged[$criticite->getCritere()->getSituation()->getLabel()][$criticite->getCritere()->getLabel()] = $criticite;
-        }
-        if (null !== $profiler) {
-            $profiler->disable();
         }
 
         $html = $this->renderView('pdf/signalement.html.twig', [
