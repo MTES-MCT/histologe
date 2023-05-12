@@ -1,6 +1,7 @@
 
 
 {{ form_start(form,{attr:{'class':'needs-validation','novalidate':true}}) }}
+{% set  classeEsabora = can_edit_esabora_credentials(partner.type) ? '' : 'fr-hidden' %}
 
 <div class="fr-col-6 fr-mb-5v">
     {{ form_row(form.territory,{}) }}
@@ -47,13 +48,10 @@
         <h3 class="fr-h3 fr-mb-0">Périmètre</h3>
         {% if partner and partner.type is same as enum('App\\Entity\\Enum\\PartnerType').COMMUNE_SCHS %}
             {% set classePdl = '' %}
-            {% set classeEsabora = '' %}
         {% elseif partner and partner.type is same as enum('App\\Entity\\Enum\\PartnerType').EPCI %}
             {% set classePdl = '' %}
-            {% set classeEsabora = 'fr-hidden' %}
         {% else %}
             {% set classePdl = 'fr-hidden' %}
-            {% set classeEsabora = 'fr-hidden' %}
         {% endif %}
         <div class="fr-col-12 fr-mb-5v">
             <div class="fr-grid-row fr-grid-row--gutters">

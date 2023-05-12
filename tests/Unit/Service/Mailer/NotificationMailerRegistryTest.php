@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Service\Mailer;
+namespace App\Tests\Unit\Service\Mailer;
 
 use App\Service\Mailer\Mail\NotificationMailerInterface;
 use App\Service\Mailer\NotificationMail;

@@ -1,0 +1,65 @@
+parameters:
+  competence_per_type:
+    ADIL:
+    - !php/enum App\Entity\Enum\Qualification::ACCOMPAGNEMENT_JURIDIQUE
+    - !php/enum App\Entity\Enum\Qualification::CONCILIATION
+    - !php/enum App\Entity\Enum\Qualification::NON_DECENCE_ENERGETIQUE
+    ARS:
+    - !php/enum App\Entity\Enum\Qualification::ARRETES
+    - !php/enum App\Entity\Enum\Qualification::DIOGENE
+    - !php/enum App\Entity\Enum\Qualification::INSALUBRITE
+    - !php/enum App\Entity\Enum\Qualification::VISITES
+    BAILLEUR_SOCIAL:
+    - !php/enum App\Entity\Enum\Qualification::DIOGENE
+    - !php/enum App\Entity\Enum\Qualification::HEBERGEMENT_RELOGEMENT
+    - !php/enum App\Entity\Enum\Qualification::MISE_EN_SECURITE_PERIL
+    - !php/enum App\Entity\Enum\Qualification::NON_DECENCE
+    - !php/enum App\Entity\Enum\Qualification::NUISIBLES
+    - !php/enum App\Entity\Enum\Qualification::RSD
+    - !php/enum App\Entity\Enum\Qualification::NON_DECENCE_ENERGETIQUE
+    CAF_MSA:
+    - !php/enum App\Entity\Enum\Qualification::CONSIGNATION_AL
+    - !php/enum App\Entity\Enum\Qualification::NON_DECENCE
+    - !php/enum App\Entity\Enum\Qualification::VISITES
+    - !php/enum App\Entity\Enum\Qualification::NON_DECENCE_ENERGETIQUE
+    CCAS:
+    - !php/enum App\Entity\Enum\Qualification::ACCOMPAGNEMENT_SOCIAL
+    - !php/enum App\Entity\Enum\Qualification::CONCILIATION
+    - !php/enum App\Entity\Enum\Qualification::DIOGENE
+    COMMUNE_SCHS:
+    - !php/enum App\Entity\Enum\Qualification::ARRETES
+    - !php/enum App\Entity\Enum\Qualification::CONCILIATION
+    - !php/enum App\Entity\Enum\Qualification::DIOGENE
+    - !php/enum App\Entity\Enum\Qualification::INSALUBRITE
+    - !php/enum App\Entity\Enum\Qualification::MISE_EN_SECURITE_PERIL
+    - !php/enum App\Entity\Enum\Qualification::NUISIBLES
+    - !php/enum App\Entity\Enum\Qualification::RSD
+    - !php/enum App\Entity\Enum\Qualification::VISITES
+    - !php/enum App\Entity\Enum\Qualification::NON_DECENCE_ENERGETIQUE
+    CONCILIATEURS:
+    - !php/enum App\Entity\Enum\Qualification::CONCILIATION
+    CONSEIL_DEPARTEMENTAL:
+    - !php/enum App\Entity\Enum\Qualification::ACCOMPAGNEMENT_SOCIAL
+    - !php/enum App\Entity\Enum\Qualification::ACCOMPAGNEMENT_TRAVAUX
+    - !php/enum App\Entity\Enum\Qualification::FSL
+    DDETS:
+    - !php/enum App\Entity\Enum\Qualification::DALO
+    - !php/enum App\Entity\Enum\Qualification::HEBERGEMENT_RELOGEMENT
+    DDT_M:
+    - !php/enum App\Entity\Enum\Qualification::ARRETES
+    - !php/enum App\Entity\Enum\Qualification::CONCILIATION
+    - !php/enum App\Entity\Enum\Qualification::DALO
+    - !php/enum App\Entity\Enum\Qualification::HEBERGEMENT_RELOGEMENT
+    DISPOSITIF_RENOVATION_HABITAT:
+    - !php/enum App\Entity\Enum\Qualification::ACCOMPAGNEMENT_TRAVAUX
+    - !php/enum App\Entity\Enum\Qualification::CONCILIATION
+    - !php/enum App\Entity\Enum\Qualification::VISITES
+    - !php/enum App\Entity\Enum\Qualification::NON_DECENCE_ENERGETIQUE
+    EPCI:
+    - !php/enum App\Entity\Enum\Qualification::CONCILIATION
+    OPERATEUR_VISITES_ET_TRAVAUX:
+    - !php/enum App\Entity\Enum\Qualification::ACCOMPAGNEMENT_TRAVAUX
+    - !php/enum App\Entity\Enum\Qualification::CONCILIATION
+    - !php/enum App\Entity\Enum\Qualification::NON_DECENCE_ENERGETIQUE
+    PREFECTURE:
+    - !php/enum App\Entity\Enum\Qualification::DALO

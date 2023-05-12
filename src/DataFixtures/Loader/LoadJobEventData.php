@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures\Loader;
 
+use App\Entity\Enum\PartnerType;
 use App\Entity\JobEvent;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -37,11 +38,13 @@ class LoadJobEventData extends Fixture implements OrderedFixtureInterface
         $signalement = $this->signalementRepository->findOneBy(['reference' => $row['signalement']]);
 
         $jobEvent = (new JobEvent())
-            ->setType($row['type'])
+            ->setService($row['service'])
             ->setPartnerId($partner->getId())
             ->setSignalementId($signalement->getId())
             ->setStatus($row['status'])
-            ->setTitle($row['title']);
+            ->setCodeStatus($row['code_status'])
+            ->setAction($row['action'])
+            ->setPartnerType(PartnerType::tryFrom($row['partner_type']));
         $manager->persist($jobEvent);
     }
 
