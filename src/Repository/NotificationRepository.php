@@ -187,4 +187,15 @@ class NotificationRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getSingleScalarResult();
     }
+
+    public function findUserNotificationsInList(?User $user, array $listNotificationsId): array
+    {
+        $qb = $this->createQueryBuilder('n')
+            ->andWhere('n.user = :user')
+            ->andWhere('n.id IN (:notificationIds)')
+            ->setParameter('user', $user)
+            ->setParameter('notificationIds', $listNotificationsId);
+
+        return $qb->getQuery()->getResult();
+    }
 }

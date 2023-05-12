@@ -8,29 +8,53 @@
             <h1 class="fr-h2 fr-mb-0">Notification(s)</h1>
         </div>
         <div class="fr-col-6 fr-text--right">
-            <a href="{{ path('back_notifications_list_read') }}?mark_as_read={{ csrf_token('mark_as_read_'~app.user.id) }}"
-               class="fr-btn fr-fi-check-line fr-btn--icon-left">Marquer comme lus (tous)</a>
-            <a href="{{ path('back_notifications_list_delete') }}?delete_all_notifications={{ csrf_token('delete_all_notifications_'~app.user.id) }}"
-               class="fr-btn fr-fi-delete-line fr-btn--danger fr-btn--icon-left">Vider</a>
+            <div id="notification-selected-buttons" class="fr-hidden">
+                <span id="notification-selected-buttons-count"></span> sélectionnée(s) :
+                <form method="POST" action="{{ path('back_notifications_list_read') }}">
+                    <button type="submit" class="fr-btn fr-fi-check-line fr-btn--icon-left">Marquer comme lue(s)</button>
+                    <input type="hidden" name="selected_notifications" value="">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token('mark_as_read_'~app.user.id) }}">
+                </form>
+                <form method="POST" action="{{ path('back_notifications_list_delete') }}">
+                    <button type="submit" class="fr-btn fr-fi-delete-line fr-btn--danger fr-btn--icon-left">Supprimer</button>
+                    <input type="hidden" name="selected_notifications" value="">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token('delete_notifications_'~app.user.id) }}">
+                </form>
+            </div>
+            <div id="notification-all-buttons">
+                <a href="{{ path('back_notifications_list_read') }}?mark_as_read={{ csrf_token('mark_as_read_'~app.user.id) }}"
+                class="fr-btn fr-fi-check-line fr-btn--icon-left">Marquer comme lus (tous)</a>
+                <a href="{{ path('back_notifications_list_delete') }}?delete_all_notifications={{ csrf_token('delete_all_notifications_'~app.user.id) }}"
+                class="fr-btn fr-fi-delete-line fr-btn--danger fr-btn--icon-left">Vider</a>
+            </div>
         </div>
     </section>
     <section class="fr-col-12 fr-table fr-table--bordered fr-pt-0">
         <table class="fr-display-inline-table">
             <thead>
             <tr>
-                <th>Signalement</th>
-                <th>Date</th>
-                <td>Desc.</td>
-                <th>Par</th>
-                <th class="fr-text--right">actions</th>
+                <th scope="col"></th>
+                <th scope="col">Signalement</th>
+                <th scope="col">Date</th>
+                <td scope="col">Desc.</td>
+                <th scope="col">Par</th>
+                <th scope="col" class="fr-text--right">actions</th>
             </tr>
             </thead>
             <tbody>
             <tr style="background: white!important">
-                <td colspan="5" class="fr-text--bold">{{ count_notification(app.user) }}  Nouveau(x) suivi(s)</td>
+                <td colspan="6" class="fr-text--bold">{{ count_notification(app.user) }}  Nouveau(x) suivi(s)</td>
             </tr>
             {% for notification in notifications %}
                 <tr class="partner-row">
+                    <td>
+                        <div class="fr-fieldset__element">
+                            <div class="fr-checkbox-group">
+                                <input name="check-notification-{{ notification.id }}" id="check-notification-{{ notification.id }}" type="checkbox" class="check-notification" data-notification-id="{{ notification.id }}">
+                                <label class="fr-label" for="check-notification-{{ notification.id }}">&nbsp;</label>
+                            </div>
+                        </div>
+                    </td>
                     <td>{{ notification.suivi.signalement.reference }}</td>
                     <td>{{ notification.suivi.createdAt|format_datetime(locale='fr') }}</td>
                     <td>{{ notification.suivi.description|replace({'&t=___TOKEN___':''})|replace({'?t=___TOKEN___':''})|raw }}</td>
@@ -44,7 +68,7 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="5" class="fr-text--center">Aucun suivi non lu</td>
+                    <td colspan="6" class="fr-text--center">Aucun suivi non lu</td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -124,4 +148,8 @@
             </nav>
         </div>
     </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
 {% endblock %}
