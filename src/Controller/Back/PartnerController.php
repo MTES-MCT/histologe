@@ -308,7 +308,7 @@ class PartnerController extends AbstractController
                         $intervention->setPartner(null);
                         $interventionManager->save($intervention);
 
-                        $visiteNotifier->notifyVisiteToConclude($intervention->getSignalement());
+                        $visiteNotifier->notifyVisiteToConclude($intervention);
                     }
                 }
             }

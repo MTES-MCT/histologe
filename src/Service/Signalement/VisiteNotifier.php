@@ -5,7 +5,6 @@ namespace App\Service\Signalement;
 use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
 use App\Entity\Intervention;
-use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Factory\NotificationFactory;
@@ -100,8 +99,9 @@ class VisiteNotifier
         $this->entityManager->flush();
     }
 
-    public function notifyVisiteToConclude(Signalement $signalement): int
+    public function notifyVisiteToConclude(Intervention $intervention): int
     {
+        $signalement = $intervention->getSignalement();
         $listUsersToNotify = $this->userRepository->findActiveTerritoryAdmins($signalement->getTerritory());
         $affectations = $signalement->getAffectations();
         foreach ($affectations as $affectation) {
@@ -118,6 +118,7 @@ class VisiteNotifier
                     to: $user->getEmail(),
                     territory: $signalement->getTerritory(),
                     signalement: $signalement,
+                    intervention: $intervention,
                 )
             );
         }

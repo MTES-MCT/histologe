@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Service\Signalement;
 
+use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Factory\NotificationFactory;
 use App\Factory\SuiviFactory;
@@ -42,8 +43,10 @@ class VisiteNotifierTest extends KernelTestCase
     public function testNotifyVisiteToConclude()
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
+        /** @var Intervention $intervention * */
+        $intervention = $signalement->getInterventions()[0];
 
-        $nbNotified = $this->visiteNotifier->notifyVisiteToConclude($signalement);
+        $nbNotified = $this->visiteNotifier->notifyVisiteToConclude($intervention);
         $this->assertEquals($nbNotified, 2);
     }
 }

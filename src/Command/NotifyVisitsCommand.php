@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Suivi;
+use App\Manager\InterventionManager;
 use App\Manager\SuiviManager;
 use App\Repository\AffectationRepository;
 use App\Repository\InterventionRepository;
@@ -25,6 +26,7 @@ class NotifyVisitsCommand extends Command
 {
     public function __construct(
         private InterventionRepository $interventionRepository,
+        private InterventionManager $interventionManager,
         private AffectationRepository $affectationRepository,
         private SuiviManager $suiviManager,
         private VisiteNotifier $visiteNotifier,
@@ -70,6 +72,9 @@ class NotifyVisitsCommand extends Command
                 notificationMailerType: NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_PARTNER,
             );
 
+            $intervention->setReminderBeforeSentAt(new \DateTimeImmutable());
+            $this->interventionManager->save($intervention);
+
             ++$countFutureVisits;
         }
 
@@ -82,9 +87,12 @@ class NotifyVisitsCommand extends Command
                         to: $user->getEmail(),
                         territory: $intervention->getSignalement()->getTerritory(),
                         signalement: $intervention->getSignalement(),
+                        intervention: $intervention,
                     )
                 );
             }
+            $intervention->setReminderConclusionSentAt(new \DateTimeImmutable());
+            $this->interventionManager->save($intervention);
             ++$countPastVisits;
         }
 
@@ -122,8 +130,8 @@ class NotifyVisitsCommand extends Command
         }
 
         $description = 'notifications ont été envoyées pour des visites à venir';
-        $description .= ' --- ' . $countPastVisits . ' notifications ont été envoyées pour des visites passées';
-        $description .= ' --- ' . $countVisitsToPlan . ' notifications ont été envoyées pour des visites non planifiées';
+        $description .= ' --- '.$countPastVisits.' notifications ont été envoyées pour des visites passées';
+        $description .= ' --- '.$countVisitsToPlan.' notifications ont été envoyées pour des visites non planifiées';
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
@@ -131,7 +139,7 @@ class NotifyVisitsCommand extends Command
                 cronLabel: 'Envoi de notifications de visites',
                 params: [
                     'count_success' => $countFutureVisits,
-                    'message_success' => $description
+                    'message_success' => $description,
                 ],
             )
         );
