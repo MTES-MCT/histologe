@@ -11,8 +11,8 @@ use App\Event\InterventionRescheduledEvent;
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Manager\InterventionManager;
 use App\Repository\InterventionRepository;
+use App\Service\Files\FilenameGenerator;
 use App\Service\UploadHandlerService;
-use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,8 +47,8 @@ class SignalementVisitesController extends AbstractController
     private function getUploadedFile(
         Request $request,
         string $inputName,
-        SluggerInterface $slugger,
         UploadHandlerService $uploadHandler,
+        FilenameGenerator $filenameGenerator,
     ): ?string {
         $files = $request->files->get($inputName);
         if (empty($files) || empty($files['rapport'])) {
@@ -56,9 +56,7 @@ class SignalementVisitesController extends AbstractController
         }
 
         $file = $files['rapport'];
-        $originalFilename = pathinfo($file->getClientOriginalName(), \PATHINFO_FILENAME);
-        $safeFilename = $slugger->slug($originalFilename);
-        $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+        $newFilename = $filenameGenerator->generateSafeName($file);
         try {
             return $uploadHandler->uploadFromFile($file, $newFilename);
         } catch (MaxUploadSizeExceededException $exception) {
@@ -76,6 +74,7 @@ class SignalementVisitesController extends AbstractController
         SluggerInterface $slugger,
         UploadHandlerService $uploadHandler,
         EventDispatcherInterface $eventDispatcher,
+        FilenameGenerator $filenameGenerator,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_ADD_VISITE', $signalement);
 
@@ -88,7 +87,7 @@ class SignalementVisitesController extends AbstractController
             return $errorRedirect;
         }
 
-        $fileName = $this->getUploadedFile($request, 'visite-add', $slugger, $uploadHandler);
+        $fileName = $this->getUploadedFile($request, 'visite-add', $uploadHandler, $filenameGenerator);
 
         $requestAddData = $request->get('visite-add');
         $visiteRequest = new VisiteRequest(
@@ -103,7 +102,7 @@ class SignalementVisitesController extends AbstractController
         );
 
         if ($intervention = $interventionManager->createVisiteFromRequest($signalement, $visiteRequest)) {
-            $todayDate = new DateTimeImmutable();
+            $todayDate = new \DateTimeImmutable();
             if ($intervention->getDate() <= $todayDate) {
                 $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
             } else {
@@ -166,6 +165,7 @@ class SignalementVisitesController extends AbstractController
         SluggerInterface $slugger,
         UploadHandlerService $uploadHandler,
         EventDispatcherInterface $eventDispatcher,
+        FilenameGenerator $filenameGenerator,
     ): Response {
         $requestRescheduleData = $request->get('visite-reschedule');
 
@@ -185,7 +185,7 @@ class SignalementVisitesController extends AbstractController
         }
 
         $previousDate = $intervention->getDate();
-        $fileName = $this->getUploadedFile($request, 'visite-reschedule', $slugger, $uploadHandler);
+        $fileName = $this->getUploadedFile($request, 'visite-reschedule', $uploadHandler, $filenameGenerator);
 
         $visiteRequest = new VisiteRequest(
             date: $requestRescheduleData['date'],
@@ -199,7 +199,7 @@ class SignalementVisitesController extends AbstractController
         );
 
         if ($intervention = $interventionManager->rescheduleVisiteFromRequest($signalement, $visiteRequest)) {
-            if ($intervention->getDate() <= new DateTimeImmutable()) {
+            if ($intervention->getDate() <= new \DateTimeImmutable()) {
                 $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
             } else {
                 $this->addFlash('success', self::SUCCESS_MSG_ADD);
@@ -222,6 +222,7 @@ class SignalementVisitesController extends AbstractController
         InterventionRepository $interventionRepository,
         SluggerInterface $slugger,
         UploadHandlerService $uploadHandler,
+        FilenameGenerator $filenameGenerator,
     ): Response {
         $requestData = $request->get('visite-confirm');
 
@@ -240,7 +241,7 @@ class SignalementVisitesController extends AbstractController
             return $errorRedirect;
         }
 
-        $fileName = $this->getUploadedFile($request, 'visite-confirm', $slugger, $uploadHandler);
+        $fileName = $this->getUploadedFile($request, 'visite-confirm', $uploadHandler, $filenameGenerator);
 
         $visiteRequest = new VisiteRequest(
             idIntervention: $requestData['intervention'],
@@ -269,6 +270,7 @@ class SignalementVisitesController extends AbstractController
         SluggerInterface $slugger,
         UploadHandlerService $uploadHandler,
         EventDispatcherInterface $eventDispatcher,
+        FilenameGenerator $filenameGenerator,
     ): Response {
         $requestData = $request->get('visite-edit');
 
@@ -287,7 +289,7 @@ class SignalementVisitesController extends AbstractController
             return $errorRedirect;
         }
 
-        $fileName = $this->getUploadedFile($request, 'visite-edit', $slugger, $uploadHandler);
+        $fileName = $this->getUploadedFile($request, 'visite-edit', $uploadHandler, $filenameGenerator);
         $isUsagerNotified = !empty($requestData['notifyUsager']);
 
         $visiteRequest = new VisiteRequest(

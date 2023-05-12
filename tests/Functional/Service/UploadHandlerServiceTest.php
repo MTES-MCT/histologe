@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Service;
 
+use App\Service\Files\FilenameGenerator;
 use App\Service\Files\HeicToJpegConverter;
 use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemOperator;
@@ -10,8 +11,6 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\String\Slugger\AsciiSlugger;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 class UploadHandlerServiceTest extends KernelTestCase
 {
@@ -39,17 +38,17 @@ class UploadHandlerServiceTest extends KernelTestCase
         /** @var ParameterBagInterface $parameterBag */
         $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
 
-        $sluggerMock = $this->createMock(SluggerInterface::class);
-        $sluggerMock
-            ->method('slug')
-            ->willReturn((new AsciiSlugger())->slug($this->targetFilename));
+        $filenameMock = $this->createMock(FilenameGenerator::class);
+        $filenameMock
+            ->method('generateSafeName')
+            ->willReturn('test.jpg');
 
         $uploadHandlerService = new UploadHandlerService(
             $this->createMock(FilesystemOperator::class),
             $parameterBag,
-            $sluggerMock,
             $this->createMock(LoggerInterface::class),
-            $this->createMock(HeicToJpegConverter::class)
+            $this->createMock(HeicToJpegConverter::class),
+            $filenameMock,
         );
 
         $uploadFile = new UploadedFile(
@@ -72,14 +71,13 @@ class UploadHandlerServiceTest extends KernelTestCase
     {
         /** @var ParameterBagInterface $parameterBag */
         $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-        $sluggerMock = $this->createMock(SluggerInterface::class);
 
         $uploadHandlerService = new UploadHandlerService(
             $this->createMock(FilesystemOperator::class),
             $parameterBag,
-            $sluggerMock,
             $this->createMock(LoggerInterface::class),
-            $this->createMock(HeicToJpegConverter::class)
+            $this->createMock(HeicToJpegConverter::class),
+            $this->createMock(FilenameGenerator::class),
         );
 
         $uploadedFileMock = $this->createMock(UploadedFile::class);

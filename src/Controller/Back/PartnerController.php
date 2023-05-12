@@ -21,7 +21,6 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
@@ -465,6 +464,6 @@ class PartnerController extends AbstractController
 
     private function shouldCancelFutureVisite(Intervention $intervention): bool
     {
-        return $intervention->getDate() > new DateTimeImmutable();
+        return $intervention->getDate() > new \DateTimeImmutable();
     }
 }
