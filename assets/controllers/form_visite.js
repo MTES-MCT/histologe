@@ -106,8 +106,9 @@ function histoCheckVisiteForms(formType) {
 const cancelVisiteForms = document.querySelectorAll('form[name="signalement-cancel-visite"]')
 cancelVisiteForms.forEach(cancelVisiteForm => {
     cancelVisiteForm.addEventListener('submit', evt => {
-        const textareaDetails = cancelVisiteForm.querySelector('textarea[name="visite-cancel[details]"]')
-        if (textareaDetails.value == '') {
+        const tinyMCE = tinymce.get('visite-cancel[details]')
+        const textContent = tinyMCE ? tinyMCE.getContent() : ''
+        if (textContent == '') {
             const textareaDetailsError = cancelVisiteForm.querySelector('#signalement-cancel-visite-details-error')
             textareaDetailsError.classList.remove('fr-hidden')
             evt.preventDefault()

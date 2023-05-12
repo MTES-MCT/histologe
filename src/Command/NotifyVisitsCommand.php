@@ -47,7 +47,7 @@ class NotifyVisitsCommand extends Command
             $signalement = $intervention->getSignalement();
             $description = '<strong>Rappel de visite :</strong> la visite du logement situé';
             $description .= $signalement->getAdresseOccupant().' '.$signalement->getCpOccupant().' '.$signalement->getVilleOccupant();
-            $description .= 'aura lieu le '.$intervention->getDate()->format('d/m/Y');
+            $description .= ' aura lieu le '.$intervention->getDate()->format('d/m/Y');
             $description .= '<br>La visite sera effectuée par '.$intervention->getPartner()->getNom().'.';
             $suivi = $this->suiviManager->createSuivi(
                 user: null,
@@ -121,6 +121,9 @@ class NotifyVisitsCommand extends Command
             }
         }
 
+        $description = 'notifications ont été envoyées pour des visites à venir';
+        $description .= ' --- ' . $countPastVisits . ' notifications ont été envoyées pour des visites passées';
+        $description .= ' --- ' . $countVisitsToPlan . ' notifications ont été envoyées pour des visites non planifiées';
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
@@ -128,13 +131,7 @@ class NotifyVisitsCommand extends Command
                 cronLabel: 'Envoi de notifications de visites',
                 params: [
                     'count_success' => $countFutureVisits,
-                    'count_failed' => $countPastVisits,
-                    'message_success' => $countFutureVisits > 1
-                        ? 'notifications ont été envoyées pour des visites à venir'
-                        : 'notification a été envoyée pour une visite à venir',
-                    'message_failed' => $countPastVisits > 1
-                        ? 'notifications ont été envoyées pour des visites passées'
-                        : 'notification a été envoyée pour une visite passée',
+                    'message_success' => $description
                 ],
             )
         );

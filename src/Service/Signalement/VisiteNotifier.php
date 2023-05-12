@@ -71,7 +71,7 @@ class VisiteNotifier
         }
         foreach ($listUsersToNotify as $user) {
             if ($user != $currentUser) {
-                $this->notifyAgent($user, $intervention, $suivi, $notificationMailerType);
+                $this->notifyAgent($user, $intervention, $suivi, $notificationMailerType, $affectation);
             }
         }
     }
