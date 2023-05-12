@@ -12,34 +12,31 @@ partners:
     is_archive: 0
     territory: "Bouches-du-Rhône"
     type: "AUTRE"
-    is_esabora_active: 1
   -
     nom: "Partenaire 13-02"
     email: "partenaire-13-02@histologe.fr"
     is_archive: 0
     territory: "Bouches-du-Rhône"
     type: "AUTRE"
-    is_esabora_active: 1
   -
     nom: "Partenaire 13-03"
     email: "partenaire-13-03@histologe.fr"
     is_archive: 0
     territory: "Bouches-du-Rhône"
     type: "AUTRE"
-    is_esabora_active: 1
   -
     nom: "Partenaire 13-04"
     email: "partenaire-13-04@histologe.fr"
     is_archive: 0
     territory: "Bouches-du-Rhône"
     type: "AUTRE"
-    is_esabora_active: 1
   -
     nom: "Partenaire 13-05 ESABORA SCHS"
     email: "partenaire-13-05@histologe.fr"
     is_archive: 0
     territory: "Bouches-du-Rhône"
     esabora_url: "http://histologe_wiremock:8080/ws/rest"
+    is_esabora_active: 1
     type: "COMMUNE_SCHS"
   -
     nom: "Partenaire 13-06 ESABORA ARS"
@@ -47,6 +44,7 @@ partners:
     is_archive: 0
     territory: "Bouches-du-Rhône"
     esabora_url: "http://histologe_wiremock:8080/ARS/ws/rest"
+    is_esabora_active: 1
     type: "ARS"
   -
     nom: "Partenaire 01-01"
@@ -55,8 +53,8 @@ partners:
     insee: "[\"\"]"
     territory: "Ain"
     esabora_url: "http://histologe_wiremock:8080/ws/rest"
+    is_esabora_active: 0
     type: "AUTRE"
-    is_esabora_active: 1
   -
     nom: "Partenaire 01-02"
     email: "partenaire-01-02@histologe.fr"
@@ -85,28 +83,24 @@ partners:
     insee: "[\"2A247\"]"
     territory: "Corse-du-Sud"
     type: "COMMUNE_SCHS"
-    is_esabora_active: 1
   -
     nom: "Partenaire 63-01"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "AUTRE"
-    is_esabora_active: 1
   -
     nom: "Partenaire 06-01"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Alpes-Maritimes"
     type: "AUTRE"
-    is_esabora_active: 1
   -
     nom: "Partenaire 59-01"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Nord"
     type: "AUTRE"
-    is_esabora_active: 1
   -
     nom: "Partenaire 974-01"
     email: "partenaire-01-974@histologe.fr"
@@ -114,7 +108,6 @@ partners:
     insee: "[\"\"]"
     territory: "La Réunion"
     type: "AUTRE"
-    is_esabora_active: 1
   -
     nom: "EMHA - Métropole de Lyon"
     email: "partenaire-01-69@histologe.fr"

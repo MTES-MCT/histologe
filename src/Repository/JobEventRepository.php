@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Enum\InterfacageType;
 use App\Entity\JobEvent;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -56,5 +57,19 @@ class JobEventRepository extends ServiceEntityRepository
             ->orderBy('last_event', 'DESC');
 
         return $qb->getQuery()->getArrayResult();
+    }
+
+    public function findLastEsaboraJobByPartner(
+        Partner $partner
+    ): ?JobEvent {
+        return $this->createQueryBuilder('j')
+            ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
+            ->where('p.id = :partner')->setParameter('partner', $partner->getId())
+            ->andWhere('j.service LIKE :service')
+            ->setParameter('service', '%'.InterfacageType::ESABORA->value.'%')
+            ->orderBy('j.createdAt', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

@@ -4,7 +4,6 @@ namespace App\Controller\Back;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType as EnumPartnerType;
-use App\Entity\JobEvent;
 use App\Entity\Partner;
 use App\Entity\User;
 use App\Form\PartnerType;
@@ -17,7 +16,6 @@ use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
@@ -123,7 +121,6 @@ class PartnerController extends AbstractController
 
     #[Route('/{id}/voir', name: 'back_partner_view', methods: ['GET', 'POST'])]
     public function view(
-        Request $request,
         Partner $partner,
         PartnerRepository $partnerRepository,
         JobEventRepository $jobEventRepository,
@@ -138,18 +135,13 @@ class PartnerController extends AbstractController
             ]));
         }
 
-        $lastJob = $jobEventRepository->findLastJobEventByType(
-            JobEvent::TYPE_JOB_EVENT_ESABORA,
-            null,
-            $partner->getTerritory(),
-            $partner,
-        );
-        $lastJobDate = $lastJob && $lastJob[0] && $lastJob[0]['last_event'] ? new DateTime($lastJob[0]['last_event']) : null;
+        $lastJobEvent = $jobEventRepository->findLastEsaboraJobByPartner($partner);
+        $lastJobEventDate = $lastJobEvent ? $lastJobEvent->getCreatedAt() : null;
 
         return $this->renderForm('back/partner/view.html.twig', [
             'partner' => $partner,
             'partners' => $partnerRepository->findAllList($partner->getTerritory()),
-            'last_job_date' => $lastJobDate,
+            'last_job_date' => $lastJobEventDate,
         ]);
     }
 
