@@ -4,7 +4,8 @@ namespace Mock;
 
 include_once __DIR__.'/../../vendor/autoload.php';
 
-use Mock\Esabora\EsaboraMock;
+use Mock\Esabora\EsaboraSCHSMock;
+use Mock\Esabora\EsaboraSISHMock;
 use WireMock\Client\WireMock;
 
 class AppMock
@@ -15,7 +16,8 @@ class AppMock
     {
         try {
             $wireMock = WireMock::create(getenv('WIREMOCK_HOSTNAME'), getenv('WIREMOCK_PORT'));
-            EsaboraMock::prepareMockForEsabora($wireMock);
+            EsaboraSCHSMock::prepareMockForEsabora($wireMock);
+            EsaboraSISHMock::prepareMockForEsabora($wireMock);
         } catch (\Throwable $exception) {
             printf('Error message: %s', $exception->getMessage());
         }

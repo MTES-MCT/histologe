@@ -2,9 +2,11 @@
 
 namespace App\Tests\Unit\Messenger\MessageHandler;
 
+use App\Entity\Partner;
 use App\Manager\JobEventManager;
-use App\Messenger\MessageHandler\DossierMessageHandler;
-use App\Service\Esabora\EsaboraService;
+use App\Messenger\MessageHandler\DossierMessageSCHSHandler;
+use App\Repository\PartnerRepository;
+use App\Service\Esabora\EsaboraSCHSService;
 use App\Tests\Unit\Messenger\DossierMessageTrait;
 use Faker\Factory;
 use PHPUnit\Framework\TestCase;
@@ -23,13 +25,13 @@ class DossierMessageHandlerTest extends TestCase
     public function testProcessDossierMessage(): void
     {
         $faker = Factory::create();
-        $dossierMessage = $this->getDossierMessage();
-        $filepath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/ws_import.json';
+        $dossierMessage = $this->getDossierMessageSCHS();
+        $filepath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/schs/ws_import.json';
         $mockResponse = new MockResponse(file_get_contents($filepath));
         $mockHttpClient = new MockHttpClient($mockResponse);
         $response = $mockHttpClient->request('POST', $faker->url());
 
-        $esaboraServiceMock = $this->createMock(EsaboraService::class);
+        $esaboraServiceMock = $this->createMock(EsaboraSCHSService::class);
         $esaboraServiceMock
             ->expects($this->once())
             ->method('pushDossier')
@@ -44,10 +46,18 @@ class DossierMessageHandlerTest extends TestCase
             ->with($dossierMessage, 'json')
             ->willReturn(json_encode([]));
 
-        $dossierMessageHandler = new DossierMessageHandler(
+        $partnerRepositoryMock = $this->createMock(PartnerRepository::class);
+        $partnerRepositoryMock
+            ->expects($this->once())
+            ->method('find')
+            ->with($dossierMessage->getPartnerId())
+            ->willReturn(new Partner());
+
+        $dossierMessageHandler = new DossierMessageSCHSHandler(
             $esaboraServiceMock,
             $jobEventManagerMock,
-            $serializerMock
+            $serializerMock,
+            $partnerRepositoryMock,
         );
 
         $dossierMessageHandler($dossierMessage);

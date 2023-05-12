@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Service\Esabora;
+namespace App\Service\Esabora\Response;
 
-class DossierResponse
+class DossierStateSCHSResponse implements DossierResponseInterface
 {
     private ?string $sasReference = null;
     private ?string $sasEtat = null;

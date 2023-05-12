@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Dto\CountSignalement;
 use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
+use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -74,11 +75,13 @@ class AffectationRepository extends ServiceEntityRepository
     /**
      * @return Affectation[]
      */
-    public function findAffectationSubscribedToEsabora(): array
+    public function findAffectationSubscribedToEsabora(PartnerType $partnerType): array
     {
         $qb = $this->createQueryBuilder('a');
         $qb = $qb->innerJoin('a.partner', 'p')
-            ->where('p.esaboraUrl IS NOT NULL AND p.esaboraToken IS NOT NULL');
+            ->where('p.esaboraUrl IS NOT NULL AND p.esaboraToken IS NOT NULL')
+            ->andWhere('p.type = :partner_type')
+            ->setParameter('partner_type', $partnerType);
 
         return $qb->getQuery()->getResult();
     }

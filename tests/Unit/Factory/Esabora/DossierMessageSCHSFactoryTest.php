@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit\Factory;
+namespace App\Tests\Unit\Factory\Esabora;
 
 use App\Entity\Affectation;
 use App\Entity\Critere;
@@ -8,14 +8,15 @@ use App\Entity\Criticite;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Situation;
-use App\Factory\DossierMessageFactory;
+use App\Factory\Esabora\DossierMessageSCHSFactory;
+use App\Service\Esabora\AddressParser;
 use App\Service\UploadHandlerService;
 use Faker\Factory;
 use PHPUnit\Framework\TestCase;
 
-class DossierMessageFactoryTest extends TestCase
+class DossierMessageSCHSFactoryTest extends TestCase
 {
-    private const FILE = __DIR__.'/../../../src/DataFixtures/Images/sample.png';
+    private const FILE = __DIR__.'/../../../../src/DataFixtures/Images/sample.png';
 
     public function testDossierMessageFactoryIsFullyCreated(): void
     {
@@ -76,7 +77,7 @@ class DossierMessageFactoryTest extends TestCase
             ->setSignalement($signalement)
             ->setPartner($partner);
 
-        $dossierMessageFactory = new DossierMessageFactory($uploadHandlerServiceMock);
+        $dossierMessageFactory = new DossierMessageSCHSFactory(new AddressParser(), $uploadHandlerServiceMock);
         $dossierMessage = $dossierMessageFactory->createInstance($affectation);
 
         $this->assertCount(2, $dossierMessage->getPiecesJointes());
@@ -84,6 +85,6 @@ class DossierMessageFactoryTest extends TestCase
         $this->assertStringContainsString('Points signalés', $dossierMessage->getDossierCommentaire());
         $this->assertStringContainsString('Etat grave', $dossierMessage->getDossierCommentaire());
         $this->assertStringContainsString('25', $dossierMessage->getNumeroAdresseSignalement());
-        $this->assertStringContainsString('rue du test', $dossierMessage->getAdresseSignalement());
+        $this->assertStringContainsString('Rue du test', $dossierMessage->getAdresseSignalement());
     }
 }

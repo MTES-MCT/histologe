@@ -2,7 +2,7 @@
 
 namespace App\Messenger\Message;
 
-final class DossierMessage
+final class DossierMessageSCHS implements DossierMessageInterface
 {
     private ?string $url = null;
 

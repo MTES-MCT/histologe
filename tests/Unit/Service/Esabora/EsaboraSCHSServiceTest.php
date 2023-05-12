@@ -5,8 +5,8 @@ namespace App\Tests\Unit\Service\Esabora;
 use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
-use App\Service\Esabora\DossierResponse;
-use App\Service\Esabora\EsaboraService;
+use App\Service\Esabora\EsaboraSCHSService;
+use App\Service\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\UploadHandlerService;
 use App\Tests\FileHelper;
 use App\Tests\Unit\Messenger\DossierMessageTrait;
@@ -18,7 +18,7 @@ use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class EsaboraServiceTest extends KernelTestCase
+class EsaboraSCHSServiceTest extends KernelTestCase
 {
     use DossierMessageTrait;
     use FileHelper;
@@ -36,7 +36,7 @@ class EsaboraServiceTest extends KernelTestCase
 
     public function testPushDossierToEsaboraSasSuccess(): void
     {
-        $filepath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/ws_import.json';
+        $filepath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/schs/ws_import.json';
         $mockResponse = new MockResponse(file_get_contents($filepath));
 
         $mockHttpClient = new MockHttpClient($mockResponse);
@@ -45,8 +45,8 @@ class EsaboraServiceTest extends KernelTestCase
             ->method('getTmpFilepath')
             ->willReturn($this->tempFilepath);
 
-        $esaboraService = new EsaboraService($mockHttpClient, $this->uploadHandlerService, $this->logger);
-        $response = $esaboraService->pushDossier($this->getDossierMessage());
+        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
+        $response = $esaboraService->pushDossier($this->getDossierMessageSCHS());
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $this->assertStringContainsString('insert', $response->getContent());
@@ -60,22 +60,22 @@ class EsaboraServiceTest extends KernelTestCase
             ->expects($this->atLeast(1))
             ->method('getTmpFilepath')
             ->willReturn($this->tempFilepath);
-        $esaboraService = new EsaboraService($mockHttpClient, $this->uploadHandlerService, $this->logger);
-        $response = $esaboraService->pushDossier($this->getDossierMessage());
+        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
+        $response = $esaboraService->pushDossier($this->getDossierMessageSCHS());
 
         $this->assertEquals(Response::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
     }
 
     public function testGetStateDossierFromEsaboraSas(): void
     {
-        $filepath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/ws_etat_dossier_sas/etat_importe.json';
+        $filepath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/schs/ws_etat_dossier_sas/etat_importe.json';
         $mockResponse = new MockResponse(file_get_contents($filepath));
 
         $mockHttpClient = new MockHttpClient($mockResponse);
-        $esaboraService = new EsaboraService($mockHttpClient, $this->uploadHandlerService, $this->logger);
+        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
         $dossierResponse = $esaboraService->getStateDossier($this->getAffectation());
 
-        $this->assertInstanceOf(DossierResponse::class, $dossierResponse);
+        $this->assertInstanceOf(DossierStateSCHSResponse::class, $dossierResponse);
         $this->assertEquals('00000000-0000-0000-2022-000000000001', $dossierResponse->getSasReference());
         $this->assertEquals('Importé', $dossierResponse->getSasEtat());
         $this->assertEquals(Response::HTTP_OK, $dossierResponse->getStatusCode());
@@ -88,7 +88,7 @@ class EsaboraServiceTest extends KernelTestCase
             throw new TransportException();
         });
 
-        $esaboraService = new EsaboraService($mockHttpClient, $this->uploadHandlerService, $this->logger);
+        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
         $dossierResponse = $esaboraService->getStateDossier($this->getAffectation());
         $this->assertEquals(Response::HTTP_SERVICE_UNAVAILABLE, $dossierResponse->getStatusCode());
     }
@@ -103,8 +103,8 @@ class EsaboraServiceTest extends KernelTestCase
             ->expects($this->atLeast(1))
             ->method('getTmpFilepath')
             ->willReturn($this->tempFilepath);
-        $esaboraService = new EsaboraService($mockHttpClient, $this->uploadHandlerService, $this->logger);
-        $response = $esaboraService->pushDossier($this->getDossierMessage());
+        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
+        $response = $esaboraService->pushDossier($this->getDossierMessageSCHS());
         $this->assertEquals(Response::HTTP_SERVICE_UNAVAILABLE, $response->getStatusCode());
     }
 

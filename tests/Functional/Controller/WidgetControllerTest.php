@@ -66,7 +66,7 @@ class WidgetControllerTest extends WebTestCase
             $this->assertArrayHasKey('nom', $event);
             $this->assertArrayHasKey('reference', $event);
             $this->assertArrayHasKey('status', $event);
-            $this->assertArrayHasKey('title', $event);
+            $this->assertArrayHasKey('action', $event);
         }
     }
 

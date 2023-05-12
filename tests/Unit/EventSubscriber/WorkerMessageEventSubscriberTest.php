@@ -2,14 +2,17 @@
 
 namespace App\Tests\Unit\EventSubscriber;
 
+use App\Entity\Enum\InterfacageType;
 use App\Entity\JobEvent;
 use App\EventSubscriber\WorkerMessageEventSubscriber;
 use App\Manager\JobEventManager;
-use App\Messenger\Message\DossierMessage;
-use App\Service\Esabora\EsaboraService;
+use App\Messenger\Message\DossierMessageSCHS;
+use App\Repository\PartnerRepository;
+use App\Service\Esabora\AbstractEsaboraService;
 use App\Tests\Unit\Messenger\DossierMessageTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
@@ -32,27 +35,30 @@ class WorkerMessageEventSubscriberTest extends TestCase
     {
         $jobEventManagerMock = $this->createMock(JobEventManager::class);
         $serializerMock = $this->createMock(SerializerInterface::class);
-        $subscriber = new WorkerMessageEventSubscriber($jobEventManagerMock, $serializerMock);
+        $partnerRepositoryMock = $this->createMock(PartnerRepository::class);
+        $subscriber = new WorkerMessageEventSubscriber($jobEventManagerMock, $serializerMock, $partnerRepositoryMock);
 
-        $dossierMessage = new DossierMessage();
+        $dossierMessage = new DossierMessageSCHS();
         $envelope = new Envelope($dossierMessage, [
             new DelayStamp(0),
             new ReceivedStamp('async'),
         ]);
         $event = new WorkerMessageFailedEvent($envelope, 'async', new \Exception('custom error'));
 
-        /** @var DossierMessage $dossierMessageFromEnvelope */
+        /** @var DossierMessageSCHS $dossierMessageFromEnvelope */
         $dossierMessageFromEnvelope = $event->getEnvelope()->getMessage();
 
         $jobEventManagerMock
             ->expects($this->atLeast(1))
             ->method('createJobEvent')
             ->with(
-                EsaboraService::TYPE_SERVICE,
-                EsaboraService::ACTION_PUSH_DOSSIER,
+                InterfacageType::ESABORA->value,
+                AbstractEsaboraService::ACTION_PUSH_DOSSIER,
                 '',
                 json_encode(['message' => 'custom error', 'stack_trace' => $event->getThrowable()->getTraceAsString()]),
                 JobEvent::STATUS_FAILED,
+                Response::HTTP_SERVICE_UNAVAILABLE,
+                null,
                 null,
                 null
             );
