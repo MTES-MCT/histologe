@@ -175,7 +175,7 @@ class SignalementQualificationUpdater
                         }
                         $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::MISE_EN_SECURITE_PERIL, QualificationStatus::MISE_EN_SECURITE_PERIL_AVEREE);
                         break;
-                    case ProcedureType::AUTRE->name:
+                    default:
                         break;
                 }
                 if ($signalementQualification) {

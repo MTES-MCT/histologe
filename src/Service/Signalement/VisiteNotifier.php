@@ -31,9 +31,6 @@ class VisiteNotifier
     ) {
     }
 
-    /**
-     * Send emails to usagers about a Visite.
-     */
     public function notifyUsagers(Intervention $intervention, NotificationMailerType $notificationMailerType, ?DateTimeInterface $previousDate = null): void
     {
         $toRecipients = new ArrayCollection($intervention->getSignalement()->getMailUsagers());
@@ -53,9 +50,6 @@ class VisiteNotifier
         }
     }
 
-    /**
-     * Send emails and notifications to agents about a Visite.
-     */
     public function notifyAgents(
         ?Intervention $intervention,
         Suivi $suivi,

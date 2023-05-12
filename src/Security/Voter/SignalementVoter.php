@@ -96,7 +96,8 @@ class SignalementVoter extends Voter
     public function canAddVisite(Signalement $signalement, UserInterface $user): bool
     {
         $isUserInAffectedPartnerWithQualificationVisite = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
-            return $affectation->getPartner()->getId() === $user->getPartner()->getId() && \in_array(Qualification::VISITES, $user->getPartner()->getCompetence());
+            return $affectation->getPartner()->getId() === $user->getPartner()->getId()
+                && \in_array(Qualification::VISITES, $user->getPartner()->getCompetence());
         })->count() > 0;
         $isUserTerritoryAdminOfSignalementTerritory = $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
 

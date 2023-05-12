@@ -17,12 +17,6 @@ class SuiviVisiteRescheduledToUsagerMailer extends AbstractNotificationMailer
     protected ?string $mailerButtonText = 'Accéder à mon signalement';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_rescheduled_email';
 
-    /*La visite du logement initialement prévue le {{ancienne date}} a été décalée au {{nouvelle date}}.
-La visite sera effectuée par {{nom partenaire opérateur}}.
-
-Si vous n'êtes pas disponible à cette date, veuillez nous le signaler au plus vite en cliquant sur le bouton ci-dessous.
-    */
-
     public function __construct(
         protected MailerInterface $mailer,
         protected ParameterBagInterface $parameterBag,
