@@ -294,10 +294,13 @@ class PartnerController extends AbstractController
         InterventionManager $interventionManager,
     ) {
         if (\in_array(Qualification::VISITES, $partner->getCompetence())) {
+            /** @var Intervention $intervention */
             foreach ($partner->getInterventions() as $intervention) {
-                if (InterventionType::VISITE == $intervention->getType() && Intervention::STATUS_PLANNED == $intervention->getStatus()) {
-                    // planned visites in the future are canceled
-                    if ($intervention->getDate() > new DateTimeImmutable()) {
+                if (
+                    InterventionType::VISITE == $intervention->getType()
+                    && Intervention::STATUS_PLANNED == $intervention->getStatus()
+                ) {
+                    if ($this->shouldCancelFutureVisite($intervention)) {
                         $interventionPlanningStateMachine->apply($intervention, 'cancel');
                         $interventionManager->save($intervention);
 
@@ -306,7 +309,6 @@ class PartnerController extends AbstractController
                         $intervention->setPartner(null);
                         $interventionManager->save($intervention);
 
-                        // send notif to other partners
                         $visiteNotifier->notifyVisiteToConclude($intervention->getSignalement());
                     }
                 }
@@ -459,5 +461,10 @@ class PartnerController extends AbstractController
         foreach ($form->getErrors(true) as $error) {
             $this->addFlash('error', $error->getMessage());
         }
+    }
+
+    private function shouldCancelFutureVisite(Intervention $intervention): bool
+    {
+        return $intervention->getDate() > new DateTimeImmutable();
     }
 }

@@ -38,7 +38,8 @@ class InterventionVoter extends Voter
 
     public function canEditVisite(Intervention $intervention, UserInterface $user): bool
     {
-        return $intervention->getPartner()->getId() === $user->getPartner()->getId() || $user->isTerritoryAdmin() && $user->getTerritory() === $intervention->getSignalement()->getTerritory();
+        return $intervention->getPartner()->getId() === $user->getPartner()->getId()
+        || $user->isTerritoryAdmin() && $user->getTerritory() === $intervention->getSignalement()->getTerritory();
     }
 
     public function canEditVisitePartner(Intervention $intervention, UserInterface $user): bool
