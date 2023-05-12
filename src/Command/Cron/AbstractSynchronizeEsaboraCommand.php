@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Cron;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
@@ -16,6 +16,7 @@ use App\Service\Esabora\Response\DossierStateSISHResponse;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -24,7 +25,11 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class AbstractSynchronizeEsaboraCommand extends Command
+#[AsCommand(
+    name: 'app:sync-esabora',
+    description: 'Commande qui permet de mettre à jour l\'état d\'une affectation depuis Esabora',
+)]
+class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
 {
     public function __construct(
         private readonly ParameterBagInterface $parameterBag,
@@ -32,19 +37,13 @@ class AbstractSynchronizeEsaboraCommand extends Command
         private readonly JobEventManager $jobEventManager,
         private readonly SerializerInterface $serializer,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
-        string $name = null
     ) {
-        parent::__construct($name);
-    }
-
-    protected function configure(): void
-    {
-        $this->setName('app:sync-esabora');
+        parent::__construct($this->parameterBag);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->writeln('Please extends AbstractSynchronizeEsaboraCommand');
+        $output->writeln('Please execute app:sync-esabora-sish or app:sync-esabora-schs');
 
         return Command::FAILURE;
     }

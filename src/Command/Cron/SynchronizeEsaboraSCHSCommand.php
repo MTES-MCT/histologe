@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Cron;
 
 use App\Entity\Enum\PartnerType;
 use App\Manager\AffectationManager;
@@ -27,7 +27,6 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
         private readonly SerializerInterface $serializer,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
-        string $name = 'app:sync-esabora-schs'
     ) {
         parent::__construct(
             $this->parameterBag,
@@ -35,7 +34,6 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
             $this->jobEventManager,
             $this->serializer,
             $this->notificationMailerRegistry,
-            $name
         );
     }
 

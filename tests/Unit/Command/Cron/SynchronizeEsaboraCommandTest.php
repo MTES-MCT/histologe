@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Command\Cron;
 
-use App\Command\SynchronizeEsaboraSCHSCommand;
+use App\Command\Cron\SynchronizeEsaboraSCHSCommand;
 use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -21,7 +21,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class SynchronizeEsaboraCommandTest extends KernelTestCase
 {
-    public const PATH_MOCK = '/../../../../tools/wiremock/src/Resources/Esabora/ws_etat_dossier_sas/';
+    public const PATH_MOCK = '/../../../../tools/wiremock/src/Resources/Esabora/schs/ws_etat_dossier_sas/';
 
     public function testSyncDossierEsabora(): void
     {
