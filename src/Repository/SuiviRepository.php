@@ -67,6 +67,7 @@ class SuiviRepository extends ServiceEntityRepository
             'day_period' => $period,
             'type_suivi_usager' => Suivi::TYPE_USAGER,
             'type_suivi_partner' => Suivi::TYPE_PARTNER,
+            'type_suivi_auto' => Suivi::TYPE_AUTO,
             'status_archived' => Signalement::STATUS_ARCHIVED,
             'status_closed' => Signalement::STATUS_CLOSED,
         ];
@@ -102,6 +103,7 @@ class SuiviRepository extends ServiceEntityRepository
             'day_period' => $period,
             'type_suivi_usager' => Suivi::TYPE_USAGER,
             'type_suivi_partner' => Suivi::TYPE_PARTNER,
+            'type_suivi_auto' => Suivi::TYPE_AUTO,
             'status_archived' => Signalement::STATUS_ARCHIVED,
             'status_closed' => Signalement::STATUS_CLOSED,
         ];
@@ -184,7 +186,7 @@ class SuiviRepository extends ServiceEntityRepository
                 FROM suivi su
                 INNER JOIN signalement s on s.id = su.signalement_id
                 '.$innerPartnerJoin.'
-                WHERE type in (:type_suivi_usager,:type_suivi_partner)
+                WHERE type in (:type_suivi_usager,:type_suivi_partner, :type_suivi_auto)
                 AND s.statut NOT IN (:status_closed, :status_archived)
                 '.$whereTerritory.'
                 '.$wherePartner.'
