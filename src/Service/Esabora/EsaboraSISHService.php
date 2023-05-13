@@ -5,8 +5,10 @@ namespace App\Service\Esabora;
 use App\Entity\Affectation;
 use App\Messenger\Message\DossierMessageSISH;
 use App\Service\Esabora\Model\DossierMessageSISHPersonne;
+use App\Service\Esabora\Response\DossierArreteSISHCollectionResponse;
 use App\Service\Esabora\Response\DossierPushSISHResponse;
 use App\Service\Esabora\Response\DossierStateSISHResponse;
+use App\Service\Esabora\Response\DossierVisiteSISHCollectionResponse;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -63,7 +65,7 @@ class EsaboraSISHService extends AbstractEsaboraService
         return $this->getDossierPushResponse($url, $token, $payload);
     }
 
-    public function getStateDossier(Affectation $affectation): ?DossierStateSISHResponse
+    public function getStateDossier(Affectation $affectation): DossierStateSISHResponse
     {
         list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
         $payload = [
@@ -101,7 +103,110 @@ class EsaboraSISHService extends AbstractEsaboraService
             $this->logger->error($exception->getMessage());
         }
 
-        return new DossierStateSISHResponse(['message' => $exception->getMessage(), 'status_code' => $statusCode], $statusCode);
+        return new DossierStateSISHResponse(
+            ['message' => $exception->getMessage(), 'status_code' => $statusCode],
+            $statusCode
+        );
+    }
+
+    public function getVisiteDossier(Affectation $affectation): DossierVisiteSISHCollectionResponse
+    {
+        list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
+        $payload = [
+            'searchName' => 'SISH_VISITES_DOSSIER_SAS',
+            'criterionList' => [
+                [
+                    'criterionName' => 'Reference_Dossier',
+                    'criterionValueList' => [
+                        $affectation->getSignalement()->getUuid(),
+                    ],
+                ],
+                [
+                    'criterionName' => 'Logiciel_Provenance',
+                    'criterionValueList' => [
+                        'H',
+                    ],
+                ],
+            ],
+        ];
+
+        $statusCode = Response::HTTP_SERVICE_UNAVAILABLE;
+        try {
+            $response = $this->client->request('POST', $url.'/mult/?task=doSearch', [
+                    'headers' => [
+                        'Authorization: Bearer '.$token,
+                        'Content-Type: application/json',
+                    ],
+                    'body' => json_encode($payload, \JSON_THROW_ON_ERROR),
+                ]
+            );
+
+            $statusCode = $response->getStatusCode();
+
+            return new DossierVisiteSISHCollectionResponse(
+                Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
+                    ? $response->toArray()
+                    : [],
+                $statusCode
+            );
+        } catch (\Throwable $exception) {
+            $this->logger->error($exception->getMessage());
+        }
+
+        return new DossierVisiteSISHCollectionResponse(
+            ['message' => $exception->getMessage(), 'status_code' => $statusCode],
+            $statusCode
+        );
+    }
+
+    public function getArreteDossier(Affectation $affectation): DossierArreteSISHCollectionResponse
+    {
+        list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
+        $payload = [
+            'searchName' => 'SISH_ARRETES_DOSSIER_SAS',
+            'criterionList' => [
+                [
+                    'criterionName' => 'Reference_Dossier',
+                    'criterionValueList' => [
+                        $affectation->getSignalement()->getUuid(),
+                    ],
+                ],
+                [
+                    'criterionName' => 'Logiciel_Provenance',
+                    'criterionValueList' => [
+                        'H',
+                    ],
+                ],
+            ],
+        ];
+
+        $statusCode = Response::HTTP_SERVICE_UNAVAILABLE;
+        try {
+            $response = $this->client->request('POST', $url.'/mult/?task=doSearch', [
+                    'headers' => [
+                        'Authorization: Bearer '.$token,
+                        'Content-Type: application/json',
+                    ],
+                    'body' => json_encode($payload, \JSON_THROW_ON_ERROR),
+                ]
+            );
+
+            $statusCode = $response->getStatusCode();
+
+            return new DossierArreteSISHCollectionResponse(
+                Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
+                    ? $response->toArray()
+                    : [],
+                $statusCode
+            );
+        } catch (\Throwable $exception) {
+            $this->logger->error($exception->getMessage());
+        }
+
+        return new DossierArreteSISHCollectionResponse(
+            ['message' => $exception->getMessage(), 'status_code' => $statusCode],
+            $statusCode
+        );
     }
 
     private function getDossierPushResponse(string $url, string $token, array $payload): DossierPushSISHResponse

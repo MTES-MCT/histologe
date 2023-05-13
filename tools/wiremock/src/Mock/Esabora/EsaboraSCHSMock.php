@@ -8,7 +8,7 @@ class EsaboraSCHSMock extends AbstractEsaboraMock
 {
     protected const BASE_PATH = '/ws/rest';
     protected const RESOURCES_DIR = 'Esabora/schs/';
-    protected const REQUEST_SEARCH_NAME = 'WS_ETAT_DOSSIER_SAS';
+    protected const WS_ETAT_DOSSIER_SAS = 'WS_ETAT_DOSSIER_SAS';
 
     public static function prepareMockForEsabora(WireMock $wiremock): void
     {
@@ -52,9 +52,10 @@ class EsaboraSCHSMock extends AbstractEsaboraMock
             '00000000-0000-0000-2022-000000000008',
         ];
 
-        self::createStateDossierMock(
+        self::createSearchDossierMock(
             $wiremock,
             'doSearch',
+            self::WS_ETAT_DOSSIER_SAS,
             WireMock::matchingJsonPath(
                 '$.criterionList[0].criterionValueList[0]',
                 WireMock::notMatching(implode('|', $uuids))
@@ -62,15 +63,15 @@ class EsaboraSCHSMock extends AbstractEsaboraMock
             'ws_etat_dossier_sas/etat_non_trouve.json',
             self::BASE_PATH,
             self::RESOURCES_DIR,
-            self::REQUEST_SEARCH_NAME
         );
     }
 
     private static function createCustomStateDossierMock(WireMock $wiremock, string $uuid, string $jsonFilename): void
     {
-        self::createStateDossierMock(
+        self::createSearchDossierMock(
             $wiremock,
             'doSearch',
+            self::WS_ETAT_DOSSIER_SAS,
             WireMock::matchingJsonPath(
                 '$.criterionList[0].criterionValueList[0]',
                 WireMock::equalTo($uuid)
@@ -78,7 +79,6 @@ class EsaboraSCHSMock extends AbstractEsaboraMock
             'ws_etat_dossier_sas/'.$jsonFilename,
             self::BASE_PATH,
             self::RESOURCES_DIR,
-            self::REQUEST_SEARCH_NAME
         );
     }
 }

@@ -200,6 +200,102 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "visites_dossier_sas",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "test",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"searchName\": \"SISH_VISITES_DOSSIER_SAS\",\n    \"criterionList\": [\n        {\n            \"criterionName\": \"Reference_Dossier\",\n            \"criterionValueList\": [\n                \"00000000-0000-0000-2023-000000000010\"\n            ]\n        },\n        {\n            \"criterionName\": \"Logiciel_Provenance\",\n            \"criterionValueList\": [\n                \"H\"\n            ]\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8082/ARS/ws/rest/mult/?task=doSearch",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"ARS",
+								"ws",
+								"rest",
+								"mult",
+								""
+							],
+							"query": [
+								{
+									"key": "task",
+									"value": "doSearch"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "arretes_dossier_sas",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "test",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"searchName\": \"SISH_ARRETES_DOSSIER_SAS\",\n    \"criterionList\": [\n        {\n            \"criterionName\": \"Reference_Dossier\",\n            \"criterionValueList\": [\n                \"00000000-0000-0000-2023-000000000010\"\n            ]\n        },\n        {\n            \"criterionName\": \"Logiciel_Provenance\",\n            \"criterionValueList\": [\n                \"H\"\n            ]\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8082/ARS/ws/rest/mult/?task=doSearch",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"ARS",
+								"ws",
+								"rest",
+								"mult",
+								""
+							],
+							"query": [
+								{
+									"key": "task",
+									"value": "doSearch"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

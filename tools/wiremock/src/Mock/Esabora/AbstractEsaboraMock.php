@@ -34,14 +34,14 @@ abstract class AbstractEsaboraMock
         );
     }
 
-    protected static function createStateDossierMock(
+    protected static function createSearchDossierMock(
         WireMock $wiremock,
         string $task,
+        string $service,
         JsonPathValueMatchingStrategy $body,
         string $response,
         ?string $basePath,
         ?string $resourcesDir,
-        ?string $requestSearchName,
     ): void {
         $wiremock->stubFor(
             WireMock::post(WireMock::urlMatching($basePath.'/mult/\\?task='.$task))
@@ -49,7 +49,7 @@ abstract class AbstractEsaboraMock
                 ->withHeader('Content-Type', WireMock::containing(self::REQUEST_CONTENT_TYPE))
                 ->withRequestBody(WireMock::matchingJsonPath(
                     '$.searchName',
-                    WireMock::equalTo($requestSearchName))
+                    WireMock::equalTo($service))
                 )
                 ->withRequestBody($body)
                 ->willReturn(
