@@ -264,7 +264,18 @@ class PartnerController extends AbstractController
             $this->isCsrfTokenValid('partner_user_create', $request->request->get('_token'))
             && $data = $request->get('user_create')
         ) {
-            $user = $userManager->createUserFromData($partner, $data);
+            /** @var User $user */
+            $user = $userManager->findOneBy(['email' => $data['email']]);
+
+            if (null !== $user && \in_array('ROLE_USAGER', $user->getRoles())) {
+                $data['territory'] = $partner->getTerritory();
+                $data['partner'] = $partner;
+                $data['statut'] = User::STATUS_INACTIVE;
+                $userManager->updateUserFromData($user, $data);
+            } else {
+                $user = $userManager->createUserFromData($partner, $data);
+            }
+
             $message = 'L\'utilisateur a bien été créé. Un email de confirmation a été envoyé à '.$user->getEmail();
             $this->addFlash('success', $message);
 
@@ -362,21 +373,23 @@ class PartnerController extends AbstractController
         UserRepository $userRepository
     ): Response {
         $this->denyAccessUnlessGranted('USER_CHECKMAIL', $this->getUser());
-        if (
-            $this->isCsrfTokenValid('partner_checkmail', $request->request->get('_token'))
-            && $userRepository->findOneBy(['email' => $request->get('email')])
-        ) {
-            return $this->json(['error' => 'email_exist'], Response::HTTP_BAD_REQUEST);
+        if ($this->isCsrfTokenValid('partner_checkmail', $request->request->get('_token'))) {
+            $userExist = $userRepository->findOneBy(['email' => $request->get('email')]);
+            if ($userExist && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
+                return $this->json(['error' => 'email_exist'], Response::HTTP_BAD_REQUEST);
+            }
+
+            $validator = new EmailValidator();
+            $emailValid = $validator->isValid($request->get('email'), new RFCValidation());
+
+            if (!$emailValid) {
+                return $this->json(['error' => 'email_unvalid'], Response::HTTP_BAD_REQUEST);
+            }
+
+            return $this->json(['success' => 'email_ok']);
         }
 
-        $validator = new EmailValidator();
-        $emailValid = $validator->isValid($request->get('email'), new RFCValidation());
-
-        if (!$emailValid) {
-            return $this->json(['error' => 'email_unvalid'], Response::HTTP_BAD_REQUEST);
-        }
-
-        return $this->json(['success' => 'email_ok']);
+        return $this->json(['status' => 'denied'], 400);
     }
 
     private function displayErrors(FormInterface $form): void
