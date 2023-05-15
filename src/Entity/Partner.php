@@ -68,11 +68,15 @@ class Partner
     #[ORM\Column(nullable: true)]
     private ?bool $isEsaboraActive = null;
 
+    #[ORM\OneToMany(mappedBy: 'partner', targetEntity: Intervention::class)]
+    private Collection $interventions;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->isArchive = false;
         $this->affectations = new ArrayCollection();
+        $this->interventions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -297,6 +301,32 @@ class Partner
     public function setIsEsaboraActive(?bool $isEsaboraActive): self
     {
         $this->isEsaboraActive = $isEsaboraActive;
+
+        return $this;
+    }
+
+    public function getInterventions(): Collection
+    {
+        return $this->interventions;
+    }
+
+    public function addIntervention(Intervention $intervention): self
+    {
+        if (!$this->interventions->contains($intervention)) {
+            $this->interventions->add($intervention);
+            $intervention->setPartner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIntervention(Intervention $intervention): self
+    {
+        if ($this->interventions->removeElement($intervention)) {
+            if ($intervention->getPartner() === $this) {
+                $intervention->setPartner(null);
+            }
+        }
 
         return $this;
     }

@@ -21,7 +21,6 @@ class AbstractEsaboraService implements EsaboraServiceInterface
     public const ACTION_PUSH_DOSSIER_ADRESSE = 'push_dossier_adresse';
     public const ACTION_SYNC_DOSSIER = 'sync_dossier';
     public const TASK_INSERT = 'doTreatment';
-    public const TASK_SEARCH = 'doSearch';
     public const SIGNALEMENT_ORIGINE = 'interfaçage';
     public const FORMAT_DATE = 'd/m/Y';
     public const FORMAT_DATE_TIME = 'd/m/Y H:i';
