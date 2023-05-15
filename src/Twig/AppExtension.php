@@ -4,6 +4,7 @@ namespace App\Twig;
 
 use App\Entity\Enum\QualificationStatus;
 use App\Service\Esabora\EsaboraPartnerTypeSubscription;
+use App\Service\Files\ImageBase64Encoder;
 use App\Service\Notification\NotificationCounter;
 use App\Service\Signalement\QualificationStatusService;
 use Twig\Extension\AbstractExtension;
@@ -16,6 +17,7 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFilter('status_to_css', [$this, 'getCssFromStatus']),
+            new TwigFilter('image64', [ImageBase64Encoder::class, 'encode']),
         ];
     }
 

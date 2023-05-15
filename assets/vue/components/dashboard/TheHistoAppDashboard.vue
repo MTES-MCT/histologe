@@ -223,7 +223,7 @@ export default defineComponent({
           responseItem.last_event,
           responseItem.nom,
           responseItem.action,
-          responseItem.status,
+          responseItem.status
         ]
         this.sharedState.esaboraEvents.push(item)
       }
