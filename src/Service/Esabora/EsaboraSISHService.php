@@ -112,32 +112,18 @@ class EsaboraSISHService extends AbstractEsaboraService
     public function getVisiteDossier(Affectation $affectation): DossierVisiteSISHCollectionResponse
     {
         list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
-        $payload = [
-            'searchName' => 'SISH_VISITES_DOSSIER_SAS',
-            'criterionList' => [
-                [
-                    'criterionName' => 'Reference_Dossier',
-                    'criterionValueList' => [
-                        $affectation->getSignalement()->getUuid(),
-                    ],
-                ],
-                [
-                    'criterionName' => 'Logiciel_Provenance',
-                    'criterionValueList' => [
-                        'H',
-                    ],
-                ],
-            ],
-        ];
-
         $statusCode = Response::HTTP_SERVICE_UNAVAILABLE;
+
         try {
             $response = $this->client->request('POST', $url.'/mult/?task=doSearch', [
                     'headers' => [
                         'Authorization: Bearer '.$token,
                         'Content-Type: application/json',
                     ],
-                    'body' => json_encode($payload, \JSON_THROW_ON_ERROR),
+                    'body' => json_encode(
+                        $this->prepareInterventionPayload($affectation, self::SISH_VISITES_DOSSIER_SAS),
+                        \JSON_THROW_ON_ERROR
+                    ),
                 ]
             );
 
@@ -162,32 +148,18 @@ class EsaboraSISHService extends AbstractEsaboraService
     public function getArreteDossier(Affectation $affectation): DossierArreteSISHCollectionResponse
     {
         list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
-        $payload = [
-            'searchName' => 'SISH_ARRETES_DOSSIER_SAS',
-            'criterionList' => [
-                [
-                    'criterionName' => 'Reference_Dossier',
-                    'criterionValueList' => [
-                        $affectation->getSignalement()->getUuid(),
-                    ],
-                ],
-                [
-                    'criterionName' => 'Logiciel_Provenance',
-                    'criterionValueList' => [
-                        'H',
-                    ],
-                ],
-            ],
-        ];
-
         $statusCode = Response::HTTP_SERVICE_UNAVAILABLE;
+
         try {
             $response = $this->client->request('POST', $url.'/mult/?task=doSearch', [
                     'headers' => [
                         'Authorization: Bearer '.$token,
                         'Content-Type: application/json',
                     ],
-                    'body' => json_encode($payload, \JSON_THROW_ON_ERROR),
+                    'body' => json_encode(
+                        $this->prepareInterventionPayload($affectation, self::SISH_ARRETES_DOSSIER_SAS),
+                        \JSON_THROW_ON_ERROR
+                    ),
                 ]
             );
 

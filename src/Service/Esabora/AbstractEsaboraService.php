@@ -13,6 +13,9 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 class AbstractEsaboraService implements EsaboraServiceInterface
 {
     public const TYPE_SERVICE = 'esabora';
+    public const SISH_VISITES_DOSSIER_SAS = 'SISH_VISITES_DOSSIER_SAS';
+    public const SISH_ARRETES_DOSSIER_SAS = 'SISH_ARRETES_DOSSIER_SAS';
+
     public const ACTION_PUSH_DOSSIER = 'push_dossier';
     public const ACTION_PUSH_DOSSIER_PERSONNE = 'push_dossier_personne';
     public const ACTION_PUSH_DOSSIER_ADRESSE = 'push_dossier_adresse';
@@ -54,5 +57,26 @@ class AbstractEsaboraService implements EsaboraServiceInterface
     public function getStateDossier(Affectation $affectation): ?DossierResponseInterface
     {
         return null;
+    }
+
+    protected function prepareInterventionPayload(Affectation $affectation, string $serviceName): array
+    {
+        return [
+            'searchName' => $serviceName,
+            'criterionList' => [
+                [
+                    'criterionName' => 'Reference_Dossier',
+                    'criterionValueList' => [
+                        $affectation->getSignalement()->getUuid(),
+                    ],
+                ],
+                [
+                    'criterionName' => 'Logiciel_Provenance',
+                    'criterionValueList' => [
+                        'H',
+                    ],
+                ],
+            ],
+        ];
     }
 }
