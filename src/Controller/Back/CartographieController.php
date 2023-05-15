@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/bo/cartographie')]
-class BackCartographieController extends AbstractController
+class CartographieController extends AbstractController
 {
     public function __construct(
         private SearchFilterService $searchFilterService,
@@ -32,23 +32,24 @@ class BackCartographieController extends AbstractController
         $filters = $this->searchFilterService->setRequest($request)->setFilters()->getFilters();
         $countActiveFilters = $this->searchFilterService->getCountActive();
 
+        /** @var User $user */
+        $user = $this->getUser();
         if ($request->get('load_markers')) {
             $filters['authorized_codes_insee'] = $this->getParameter('authorized_codes_insee');
-            $filters['partner_name'] = $this->getUser()->getPartner()->getNom();
-            $user = !$this->isGranted('ROLE_ADMIN_TERRITORY') ? $this->getUser() : null;
+            $filters['partner_name'] = $user->getPartner()->getNom();
 
             return $this->json(
                 [
                 'signalements' => $signalementRepository->findAllWithGeoData(
-                    $user ?? null,
+                    $user,
                     $filters,
                     (int) $request->get('offset'),
-                    $this->getUser()->getTerritory() ?? null
+                    $user->getTerritory() ?? null
                 ), ]
             );
         }
 
-        $userToFilterCities = $this->getUser() ?? null;
+        $userToFilterCities = $user;
         if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY')) {
             $userToFilterCities = null;
         }
@@ -61,7 +62,7 @@ class BackCartographieController extends AbstractController
             'displayRefreshAll' => false,
             'signalements' => [/* $signalements */],
             'criteres' => $critereRepository->findAllList(),
-            'tags' => $tagsRepository->findAllActive($this->getUser()->getTerritory() ?? null),
+            'tags' => $tagsRepository->findAllActive($user->getTerritory() ?? null),
         ]);
     }
 }
