@@ -136,7 +136,7 @@ class PartnerController extends AbstractController
         }
 
         $lastJobEvent = $jobEventRepository->findLastEsaboraJobByPartner($partner);
-        $lastJobEventDate = $lastJobEvent ? $lastJobEvent->getCreatedAt() : null;
+        $lastJobEventDate = $lastJobEvent ? new \DateTimeImmutable($lastJobEvent['last_event']) : null;
 
         return $this->renderForm('back/partner/view.html.twig', [
             'partner' => $partner,

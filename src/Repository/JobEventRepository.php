@@ -27,17 +27,15 @@ class JobEventRepository extends ServiceEntityRepository
 
     public function findLastJobEventByInterfacageType(
         string $type,
-        ?int $dayPeriod,
+        int $dayPeriod,
         ?Territory $territory,
-        ?Partner $partner = null,
     ): array {
         $qb = $this->createQueryBuilder('j')
             ->select('MAX(j.createdAt) AS last_event, p.id, p.nom, s.reference, j.status, j.action, j.codeStatus')
             ->innerJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId')
             ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
             ->where('j.service LIKE :service')
-            ->andWhere('DATEDIFF(NOW(),j.createdAt) <= :day_period')
-            ->andWhere('j.type LIKE :type');
+            ->andWhere('DATEDIFF(NOW(),j.createdAt) <= :day_period');
 
         if ($dayPeriod) {
             $qb->andWhere('DATEDIFF(NOW(),j.createdAt) <= :day_period')
@@ -46,13 +44,9 @@ class JobEventRepository extends ServiceEntityRepository
         if (null !== $territory) {
             $qb->andWhere('p.territory = :territory')->setParameter('territory', $territory);
         }
-        if (null !== $partner) {
-            $qb->andWhere('p.id = :partner')->setParameter('partner', $partner->getId());
-        }
 
         $qb->setParameter('service', '%'.$type.'%')
             ->setParameter('day_period', $dayPeriod)
-            ->setParameter('type', '%'.$type.'%')
             ->groupBy('p.id, p.nom, s.reference, j.action, j.status, j.codeStatus, j.response')
             ->orderBy('last_event', 'DESC');
 
@@ -61,14 +55,13 @@ class JobEventRepository extends ServiceEntityRepository
 
     public function findLastEsaboraJobByPartner(
         Partner $partner
-    ): ?JobEvent {
+    ): ?array {
         return $this->createQueryBuilder('j')
+            ->select('MAX(j.createdAt) AS last_event')
             ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
             ->where('p.id = :partner')->setParameter('partner', $partner->getId())
             ->andWhere('j.service LIKE :service')
             ->setParameter('service', '%'.InterfacageType::ESABORA->value.'%')
-            ->orderBy('j.createdAt', 'DESC')
-            ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
     }
