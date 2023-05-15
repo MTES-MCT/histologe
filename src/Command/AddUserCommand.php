@@ -165,14 +165,31 @@ class AddUserCommand extends Command
 
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => $territory]);
 
-        $user = $this->userFactory->createInstanceFrom(
-            roleLabel: $input->getArgument('role'),
-            partner: $partner,
-            territory: $territory,
-            firstname: $input->getArgument('firstname'),
-            lastname: $input->getArgument('lastname'),
-            email: $input->getArgument('email')
-        );
+        /** @var User $user */
+        $user = $this->userManager->findOneBy(['email' => $input->getArgument('email')]);
+
+        if (null !== $user && \in_array('ROLE_USAGER', $user->getRoles())) {
+            $this->io->text(' > <info>'.$input->getArgument('email').' existe déjà avec le rôle </info>: '.implode(',', $user->getRoles()));
+            $data = [];
+            $data['nom'] = $input->getArgument('lastname');
+            $data['prenom'] = $input->getArgument('firstname');
+            $data['roles'] = \in_array($input->getArgument('role'), User::ROLES) ? $input->getArgument('role') : User::ROLES[$input->getArgument('role')];
+            $data['email'] = $input->getArgument('email');
+            $data['isMailingActive'] = true;
+            $data['territory'] = $territory;
+            $data['partner'] = $partner;
+            $data['statut'] = User::STATUS_INACTIVE;
+            $this->userManager->updateUserFromData($user, $data);
+        } else {
+            $user = $this->userFactory->createInstanceFrom(
+                roleLabel: $input->getArgument('role'),
+                partner: $partner,
+                territory: $territory,
+                firstname: $input->getArgument('firstname'),
+                lastname: $input->getArgument('lastname'),
+                email: $input->getArgument('email')
+            );
+        }
 
         $password = $this->hasher->hashPassword($user, 'histologe');
 
@@ -189,7 +206,8 @@ class AddUserCommand extends Command
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        $this->io->success(sprintf('%s was successfully created: %s',
+        $this->io->success(sprintf(
+            '%s was successfully created: %s',
             $user->getNomComplet(),
             $user->getEmail()
         ));
