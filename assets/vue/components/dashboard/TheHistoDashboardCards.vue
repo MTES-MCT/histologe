@@ -74,7 +74,7 @@
               <a :href=getSanitizedUrl(sharedState.noSuivis.link)>Sans suivi</a>
             </h3>
             <p class="fr-card__desc">
-              Accédez aux signalements sans nouveau suivi depuis au moins 30 jours.
+              Accédez aux signalements sans nouveau suivi partenaire ou usager depuis au moins 30 jours.
             </p>
           </div>
         </div>
