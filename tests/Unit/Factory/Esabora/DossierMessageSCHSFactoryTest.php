@@ -2,83 +2,31 @@
 
 namespace App\Tests\Unit\Factory\Esabora;
 
-use App\Entity\Affectation;
-use App\Entity\Critere;
-use App\Entity\Criticite;
-use App\Entity\Partner;
-use App\Entity\Signalement;
-use App\Entity\Situation;
+use App\Entity\Enum\PartnerType;
 use App\Factory\Esabora\DossierMessageSCHSFactory;
 use App\Service\Esabora\AddressParser;
 use App\Service\UploadHandlerService;
-use Faker\Factory;
+use App\Tests\FixturesHelper;
 use PHPUnit\Framework\TestCase;
 
 class DossierMessageSCHSFactoryTest extends TestCase
 {
+    use FixturesHelper;
+
     private const FILE = __DIR__.'/../../../../src/DataFixtures/Images/sample.png';
 
     public function testDossierMessageFactoryIsFullyCreated(): void
     {
-        $faker = Factory::create('fr_FR');
         $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
         $uploadHandlerServiceMock
             ->expects($this->exactly(2))
             ->method('getTmpFilepath')
             ->willReturn(self::FILE);
 
-        $criticite = (new Criticite())
-            ->setCritere(
-                (new Critere())
-                    ->setLabel('critere')
-                    ->setDescription('description critere')
-                    ->setSituation(
-                        (new Situation())
-                            ->setLabel('situation')
-                            ->setMenuLabel('menu-situation')
-                    ))
-            ->setLabel('criticite')
-            ->setScore(2);
-
-        $signalement = (new Signalement())
-            ->addCriticite($criticite)
-            ->setIsProprioAverti(false)
-            ->setNbAdultes(2)
-            ->setNbEnfantsP6(1)
-            ->setNbEnfantsM6(1)
-            ->setTelOccupant($faker->phoneNumber())
-            ->setAdresseOccupant('25 rue du test')
-            ->setEtageOccupant(2)
-            ->setVilleOccupant($faker->city())
-            ->setCpOccupant($faker->postcode())
-            ->setNumAppartOccupant(2)
-            ->setNomOccupant($faker->lastName())
-            ->setPrenomOccupant($faker->firstName())
-            ->setDocuments([
-                [
-                    'file' => self::FILE,
-                    'titre' => 'Doc',
-                    'date' => '02.12.2022', ],
-            ])
-            ->setPhotos([
-                [
-                    'file' => self::FILE,
-                    'titre' => 'Photo',
-                    'date' => '02.12.2022',
-                ],
-            ]);
-
-        $partner = (new Partner())
-            ->setNom($faker->company())
-            ->setEsaboraUrl($faker->url())
-            ->setEsaboraToken($faker->password(20));
-
-        $affectation = (new Affectation())
-            ->setSignalement($signalement)
-            ->setPartner($partner);
-
         $dossierMessageFactory = new DossierMessageSCHSFactory(new AddressParser(), $uploadHandlerServiceMock);
-        $dossierMessage = $dossierMessageFactory->createInstance($affectation);
+        $dossierMessage = $dossierMessageFactory->createInstance(
+            $this->getSignalementAffectation(PartnerType::COMMUNE_SCHS)
+        );
 
         $this->assertCount(2, $dossierMessage->getPiecesJointes());
         $this->assertStringContainsString('Doc', $dossierMessage->getPiecesJointesObservation());

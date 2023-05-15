@@ -9,6 +9,7 @@ use App\Service\UploadHandlerService;
 use App\Tests\FileHelper;
 use App\Tests\FixturesHelper;
 use App\Tests\Unit\Messenger\DossierMessageTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpClient\Exception\TransportException;
@@ -24,7 +25,7 @@ class EsaboraSCHSServiceTest extends KernelTestCase
 
     public const PATH_RESOURCE_JSON = '/../../../../tools/wiremock/src/Resources/Esabora/schs/';
 
-    private UploadHandlerService $uploadHandlerService;
+    private MockObject|UploadHandlerService $uploadHandlerService;
     private LoggerInterface $logger;
     private ?string $tempFilepath;
 
@@ -75,7 +76,7 @@ class EsaboraSCHSServiceTest extends KernelTestCase
         $mockHttpClient = new MockHttpClient($mockResponse);
         $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
         $dossierResponse = $esaboraService->getStateDossier(
-            $this->getAffectationEsabora(PartnerType::COMMUNE_SCHS)
+            $this->getAffectation(PartnerType::COMMUNE_SCHS)
         );
 
         $this->assertInstanceOf(DossierStateSCHSResponse::class, $dossierResponse);
@@ -93,7 +94,7 @@ class EsaboraSCHSServiceTest extends KernelTestCase
 
         $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
         $dossierResponse = $esaboraService->getStateDossier(
-            $this->getAffectationEsabora(PartnerType::COMMUNE_SCHS)
+            $this->getAffectation(PartnerType::COMMUNE_SCHS)
         );
         $this->assertEquals(Response::HTTP_SERVICE_UNAVAILABLE, $dossierResponse->getStatusCode());
     }

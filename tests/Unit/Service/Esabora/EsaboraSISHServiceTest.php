@@ -8,6 +8,7 @@ use App\Service\UploadHandlerService;
 use App\Tests\FileHelper;
 use App\Tests\FixturesHelper;
 use App\Tests\Unit\Messenger\DossierMessageTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -22,7 +23,7 @@ class EsaboraSISHServiceTest extends KernelTestCase
 
     public const PATH_RESOURCE_JSON = '/../../../../tools/wiremock/src/Resources/Esabora/sish/';
 
-    private UploadHandlerService $uploadHandlerService;
+    private MockObject|UploadHandlerService $uploadHandlerService;
     private LoggerInterface $logger;
     private ?string $tempFilepath;
 
@@ -71,7 +72,7 @@ class EsaboraSISHServiceTest extends KernelTestCase
         $mockHttpClient = new MockHttpClient($mockResponse);
         $esaboraService = new EsaboraSISHService($mockHttpClient, $this->logger, $this->uploadHandlerService);
 
-        $dossierStateSISHResponse = $esaboraService->getStateDossier($this->getAffectationEsabora(PartnerType::ARS));
+        $dossierStateSISHResponse = $esaboraService->getStateDossier($this->getAffectation(PartnerType::ARS));
 
         $this->assertEquals(200, $dossierStateSISHResponse->getStatusCode());
         $this->assertNull($dossierStateSISHResponse->getErrorReason());
@@ -84,7 +85,7 @@ class EsaboraSISHServiceTest extends KernelTestCase
 
         $mockHttpClient = new MockHttpClient($mockResponse);
         $esaboraService = new EsaboraSISHService($mockHttpClient, $this->logger, $this->uploadHandlerService);
-        $dossierVisiteSISHCollectionResponse = $esaboraService->getVisiteDossier($this->getAffectationEsabora(PartnerType::ARS));
+        $dossierVisiteSISHCollectionResponse = $esaboraService->getVisiteDossier($this->getAffectation(PartnerType::ARS));
 
         $this->assertEquals(200, $dossierVisiteSISHCollectionResponse->getStatusCode());
         $this->assertNull($dossierVisiteSISHCollectionResponse->getErrorReason());
@@ -98,7 +99,7 @@ class EsaboraSISHServiceTest extends KernelTestCase
 
         $mockHttpClient = new MockHttpClient($mockResponse);
         $esaboraService = new EsaboraSISHService($mockHttpClient, $this->logger, $this->uploadHandlerService);
-        $dossierArreteSISHCollectionResponse = $esaboraService->getArreteDossier($this->getAffectationEsabora(PartnerType::ARS));
+        $dossierArreteSISHCollectionResponse = $esaboraService->getArreteDossier($this->getAffectation(PartnerType::ARS));
 
         $this->assertEquals(200, $dossierArreteSISHCollectionResponse->getStatusCode());
         $this->assertNull($dossierArreteSISHCollectionResponse->getErrorReason());

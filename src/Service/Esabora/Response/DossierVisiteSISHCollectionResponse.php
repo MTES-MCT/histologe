@@ -8,6 +8,8 @@ class DossierVisiteSISHCollectionResponse
 {
     private ?int $statusCode = null;
     private ?string $errorReason = null;
+
+    /** @var DossierVisiteSISH[] */
     private array $dossiersVisiteSISH = [];
 
     public function __construct(array $response, int $statusCode)
