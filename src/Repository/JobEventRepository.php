@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Enum\InterfacageType;
 use App\Entity\JobEvent;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -24,27 +25,40 @@ class JobEventRepository extends ServiceEntityRepository
         parent::__construct($registry, JobEvent::class);
     }
 
-    public function findLastJobEventByType(
+    public function findLastJobEventByInterfacageType(
         string $type,
         int $dayPeriod,
-        ?Territory $territory
+        ?Territory $territory,
     ): array {
         $qb = $this->createQueryBuilder('j')
-            ->select('MAX(j.createdAt) AS last_event, p.id, p.nom, s.reference, j.status, j.title, j.response')
+            ->select('MAX(j.createdAt) AS last_event, p.id, p.nom, s.reference, j.status, j.action, j.codeStatus')
             ->innerJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId')
             ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
-            ->where('j.type LIKE :type')
+            ->where('j.service LIKE :service')
             ->andWhere('DATEDIFF(NOW(),j.createdAt) <= :day_period');
 
         if (null !== $territory) {
             $qb->andWhere('p.territory = :territory')->setParameter('territory', $territory);
         }
 
-        $qb->setParameter('type', '%'.$type.'%')
+        $qb->setParameter('service', '%'.$type.'%')
             ->setParameter('day_period', $dayPeriod)
-            ->groupBy('p.id, p.nom, s.reference,j.title, j.status, j.response')
+            ->groupBy('p.id, p.nom, s.reference, j.action, j.status, j.codeStatus')
             ->orderBy('last_event', 'DESC');
 
         return $qb->getQuery()->getArrayResult();
+    }
+
+    public function findLastEsaboraJobByPartner(
+        Partner $partner
+    ): ?array {
+        return $this->createQueryBuilder('j')
+            ->select('MAX(j.createdAt) AS last_event')
+            ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
+            ->where('p.id = :partner')->setParameter('partner', $partner->getId())
+            ->andWhere('j.service LIKE :service')
+            ->setParameter('service', '%'.InterfacageType::ESABORA->value.'%')
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

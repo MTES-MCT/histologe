@@ -168,6 +168,22 @@ users:
     is_mailing_active: 0
     territory: "Bouches-du-Rhône"
   -
+    email: user-13-05@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Partenaire 13-05 ESABORA SCHS"
+    statut: 1
+    is_generique: 0
+    is_mailing_active: 1
+    territory: "Bouches-du-Rhône"
+  -
+    email: user-13-06@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Partenaire 13-06 ESABORA ARS"
+    statut: 1
+    is_generique: 0
+    is_mailing_active: 1
+    territory: "Bouches-du-Rhône"
+  -
     email: user-2A-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 2A-01"

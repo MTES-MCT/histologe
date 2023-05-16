@@ -1,0 +1,22 @@
+{
+  "searchId": "23555",
+  "nbResults": 1,
+  "columnList": [
+    "SAS_Référence",
+    "SAS_Etat"
+  ],
+  "keyList": [
+    "i1.iaff_id"
+  ],
+  "rowList": [
+    {
+      "columnDataList": [
+        "00000000-0000-0000-2022-000000000008",
+        "A traiter"
+      ],
+      "keyDataList": [
+        "24"
+      ]
+    }
+  ]
+}

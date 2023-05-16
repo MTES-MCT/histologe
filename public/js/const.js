@@ -87,14 +87,17 @@ const checkUserMail = (el) => {
             el.classList.add('fr-input--error');
             el.parentElement.classList.add('fr-input-group--error');
             el.parentElement.querySelector('p.fr-error-text').classList.remove('fr-hidden');
-            document.querySelector('#submit_btn_partner').disabled = true;
+            document.querySelector('#user_create_form_submit').disabled = true;
         } else {
             el.classList.remove('fr-input--error');
             el.parentElement.classList.remove('fr-input-group--error');
             el.parentElement.querySelector('p.fr-error-text').classList.add('fr-hidden');
-            document.querySelector('#submit_btn_partner').disabled = false;
+            document.querySelector('#user_create_form_submit').disabled = false;
         }
     })
+    .catch(function (err) {
+        console.warn('Something went wrong.', err);
+    });
 }
 const serializeArray = (form) => {
     return Array.from(new FormData(form)
@@ -283,7 +286,12 @@ const searchAddress = (form, autocomplete) => {
                                 const METROPOLE_RHONES_AUTHORIZED_INSEE_CODES = [
                                     69091, 69096, 69123, 69149, 69199, 69205, 69290, 69259, 69266,
                                     69381, 69382, 69383, 69384, 69385, 69386, 69387, 69388, 69389,
-                                    69901 ];
+                                    69003, 69029, 69033, 69034, 69040, 69044, 69046, 69271, 69063,
+                                    69273, 69068, 69069, 69071, 69072, 69275, 69081, 69276, 69085,
+                                    69087, 69088, 69089, 69100, 69279, 69142, 69250, 69116, 69117,
+                                    69127, 69282, 69283, 69284, 69143, 69152, 69153, 69163, 69286,
+                                    69168, 69191, 69194, 69204, 69207, 69202, 69292, 69293, 69296,
+                                    69244, 69256, 69260, 69233, 69278 ];
                                 const COR_RHONES_AUTHORIZED_INSEE_CODES = [
                                     69001, 69006, 69008, 69037, 69054, 69060, 69066, 69070, 69075,
                                     69093, 69102, 69107, 69174, 69130, 69160, 69164, 69169, 69181,

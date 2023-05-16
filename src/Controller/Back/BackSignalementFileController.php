@@ -8,7 +8,6 @@ use App\Exception\File\MaxUploadSizeExceededException;
 use App\Service\Files\HeicToJpegConverter;
 use App\Service\UploadHandlerService;
 use DateTimeImmutable;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Snappy\Pdf;
 use League\Flysystem\FilesystemOperator;
@@ -26,22 +25,28 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class BackSignalementFileController extends AbstractController
 {
     #[Route('/{uuid}/pdf', name: 'back_signalement_gen_pdf')]
-    public function generatePdfSignalement(Signalement $signalement, Pdf $knpSnappyPdf, EntityManagerInterface $entityManager)
-    {
+    public function generatePdfSignalement(
+        Signalement $signalement,
+        Pdf $knpSnappyPdf,
+    ) {
         $criticitesArranged = [];
         foreach ($signalement->getCriticites() as $criticite) {
             $criticitesArranged[$criticite->getCritere()->getSituation()->getLabel()][$criticite->getCritere()->getLabel()] = $criticite;
         }
+
         $html = $this->renderView('pdf/signalement.html.twig', [
             'signalement' => $signalement,
             'situations' => $criticitesArranged,
         ]);
         $options = [
+            'images' => true,
+            'enable-local-file-access' => true,
             'margin-top' => 0,
             'margin-right' => 0,
             'margin-bottom' => 0,
             'margin-left' => 0,
         ];
+        $knpSnappyPdf->setTimeout(120);
 
         return new Response(
             $knpSnappyPdf->getOutputFromHtml($html, $options),

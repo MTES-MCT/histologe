@@ -32,11 +32,19 @@ class NotificationController extends AbstractController
     #[Route('/notifications/lue', name: 'back_notifications_list_read')]
     public function read(
         Request $request,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        NotificationRepository $notificationRepository,
     ) {
-        if ($this->isCsrfTokenValid('mark_as_read_'.$this->getUser()->getId(), $request->get('mark_as_read'))) {
-            $this->markAllAsRead($entityManager);
-            $this->addFlash('success', 'Toutes les notifications marquées comme lues.');
+        if ($request->get('selected_notifications')) {
+            if ($this->isCsrfTokenValid('mark_as_read_'.$this->getUser()->getId(), $request->get('csrf_token'))) {
+                $this->markSelectedAsRead($entityManager, $notificationRepository, explode(',', $request->get('selected_notifications')));
+                $this->addFlash('success', 'Les notifications sélectionnées ont été marquées comme lues.');
+            }
+        } else {
+            if ($this->isCsrfTokenValid('mark_as_read_'.$this->getUser()->getId(), $request->get('mark_as_read'))) {
+                $this->markAllAsRead($entityManager);
+                $this->addFlash('success', 'Toutes les notifications ont été marquées comme lues.');
+            }
         }
 
         return $this->redirectToRoute('back_notifications_list');
@@ -45,15 +53,37 @@ class NotificationController extends AbstractController
     #[Route('/notifications/supprimer', name: 'back_notifications_list_delete')]
     public function delete(
         Request $request,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        NotificationRepository $notificationRepository,
     ) {
-        if ($this->isCsrfTokenValid('delete_all_notifications_'.$this->getUser()->getId(),
-            $request->get('delete_all_notifications'))) {
-            $this->deleteAllNotifications($entityManager);
-            $this->addFlash('success', 'Toutes les notifications ont été supprimées.');
+        if ($request->get('selected_notifications')) {
+            if ($this->isCsrfTokenValid('delete_notifications_'.$this->getUser()->getId(), $request->get('csrf_token'))) {
+                $this->deleteSelected($entityManager, $notificationRepository, explode(',', $request->get('selected_notifications')));
+                $this->addFlash('success', 'Les notifications sélectionnées ont été supprimées.');
+            }
+        } else {
+            if ($this->isCsrfTokenValid('delete_all_notifications_'.$this->getUser()->getId(),
+                $request->get('delete_all_notifications'))) {
+                $this->deleteAllNotifications($entityManager);
+                $this->addFlash('success', 'Toutes les notifications ont été supprimées.');
+            }
         }
 
         return $this->redirectToRoute('back_notifications_list');
+    }
+
+    private function markSelectedAsRead(
+        EntityManagerInterface $em,
+        NotificationRepository $notificationRepository,
+        array $listIdNotifications
+    ) {
+        $notifications = $notificationRepository->findUserNotificationsInList($this->getUser(), $listIdNotifications);
+        foreach ($notifications as $notification) {
+            $this->denyAccessUnlessGranted('NOTIF_MARK_AS_READ', $notification);
+            $notification->setIsSeen(true);
+            $em->persist($notification);
+        }
+        $em->flush();
     }
 
     private function markAllAsRead($em)
@@ -64,6 +94,19 @@ class NotificationController extends AbstractController
             $notification->setIsSeen(true);
             $em->persist($notification);
         });
+        $em->flush();
+    }
+
+    private function deleteSelected(
+        EntityManagerInterface $em,
+        NotificationRepository $notificationRepository,
+        array $listIdNotifications
+    ) {
+        $notifications = $notificationRepository->findUserNotificationsInList($this->getUser(), $listIdNotifications);
+        foreach ($notifications as $notification) {
+            $this->denyAccessUnlessGranted('NOTIF_DELETE', $notification);
+            $em->remove($notification);
+        }
         $em->flush();
     }
 

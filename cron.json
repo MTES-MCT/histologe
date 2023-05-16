@@ -1,3 +1,16 @@
 {
-  "jobs": []
+  "jobs": [
+    {
+      "command": "0 7 */10 * * php bin/console app:remind-inactive-user"
+    },
+    {
+      "command": "0 0 * * 0 php bin/console app:clear-notification"
+    },
+    {
+      "command": "0 6,18 * * * php bin/console app:sync-esabora-schs"
+    },
+    {
+      "command": "0 6 * * * php bin/console app:ask-feedback-usager"
+    }
+  ]
 }

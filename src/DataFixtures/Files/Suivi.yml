@@ -75,7 +75,7 @@ suivis:
   type: 1
 -
   created_by: admin-territoire-13-01@histologe.fr
-  description: "Le signalement à été refusé avec le motif suivant: <br>Ne me concerne pas, voir avec la DDT."
+  description: "Le signalement a été refusé avec le motif suivant: <br>Ne me concerne pas, voir avec la DDT."
   is_public: 1
   signalement: "2022-3"
   type: 1
@@ -90,4 +90,28 @@ suivis:
   description: "Un petit message de rappel afin d'y revenir plus tard"
   is_public: 0
   signalement: "2023-6"
+  type: 1
+-
+  created_by: admin-01@histologe.fr
+  description: "Signalement validé"
+  is_public: 1
+  signalement: "2023-7"
+  type: 1
+-
+  created_by: admin-01@histologe.fr
+  description: "Signalement validé"
+  is_public: 1
+  signalement: "2023-8"
+  type: 1
+-
+  created_by: admin-01@histologe.fr
+  description: "Signalement validé"
+  is_public: 1
+  signalement: "2023-9"
+  type: 1
+-
+  created_by: admin-01@histologe.fr
+  description: "Signalement validé"
+  is_public: 1
+  signalement: "2023-10"
   type: 1

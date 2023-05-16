@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Repository\PartnerRepository;
@@ -16,6 +17,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity('email', ignoreNull: true)]
 class Partner
 {
+    use TimestampableTrait;
+
     public const DEFAULT_PARTNER = 'Administrateurs Histologe ALL';
     public const MAX_LIST_PAGINATION = 50;
 
@@ -34,9 +37,6 @@ class Partner
 
     #[ORM\Column(type: 'boolean')]
     private $isArchive;
-
-    #[ORM\Column(type: 'boolean')]
-    private $isCommune;
 
     #[ORM\Column(type: 'json')]
     private $insee = [];
@@ -64,6 +64,9 @@ class Partner
 
     #[ORM\Column(type: Types::SIMPLE_ARRAY, length: 255, nullable: true, enumType: Qualification::class)]
     private array $competence = [];
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $isEsaboraActive = null;
 
     public function __construct()
     {
@@ -133,18 +136,6 @@ class Partner
     public function setIsArchive(bool $isArchive): self
     {
         $this->isArchive = $isArchive;
-
-        return $this;
-    }
-
-    public function getIsCommune(): ?bool
-    {
-        return $this->isCommune;
-    }
-
-    public function setIsCommune(bool $isCommune): self
-    {
-        $this->isCommune = $isCommune;
 
         return $this;
     }
@@ -281,6 +272,11 @@ class Partner
         return $this;
     }
 
+    public function getIsCommune(): ?bool
+    {
+        return PartnerType::COMMUNE_SCHS === $this->type;
+    }
+
     public function getCompetence(): ?array
     {
         return $this->competence;
@@ -289,6 +285,18 @@ class Partner
     public function setCompetence(?array $competence): self
     {
         $this->competence = $competence;
+
+        return $this;
+    }
+
+    public function isEsaboraActive(): ?bool
+    {
+        return $this->isEsaboraActive;
+    }
+
+    public function setIsEsaboraActive(?bool $isEsaboraActive): self
+    {
+        $this->isEsaboraActive = $isEsaboraActive;
 
         return $this;
     }

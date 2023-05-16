@@ -56,6 +56,6 @@ class SuiviFactoryTest extends KernelTestCase
         $this->assertEquals(Suivi::TYPE_PARTNER, $suivi->getType());
         $this->assertInstanceOf(UserInterface::class, $suivi->getCreatedBy());
         $this->assertTrue(str_contains($suivi->getDescription(), MotifCloture::tryFrom('INSALUBRITE')->label()));
-        $this->assertTrue(str_contains($suivi->getDescription(), 'Le signalement à été cloturé pour'));
+        $this->assertTrue(str_contains($suivi->getDescription(), 'Le signalement a été cloturé pour'));
     }
 }

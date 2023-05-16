@@ -46,7 +46,7 @@ class PartnerRepositoryTest extends KernelTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2022-1']);
 
         $partners = $this->partnerRepository->findByLocalization($signalement, false);
-        $this->assertCount(3, $partners);
+        $this->assertCount(5, $partners);
     }
 
     public function testFindPartnersWithCompetences(): void
@@ -100,7 +100,7 @@ class PartnerRepositoryTest extends KernelTestCase
     public function testGetPartnerPaginator(): void
     {
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '69']);
-        $partnerPaginator = $this->partnerRepository->getPartners($territory, 1);
+        $partnerPaginator = $this->partnerRepository->getPartners($territory, null, null, 1);
 
         $this->assertGreaterThan(1, $partnerPaginator->count());
     }

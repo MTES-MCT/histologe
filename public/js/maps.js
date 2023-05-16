@@ -22,8 +22,8 @@ const blueIcon = new L.Icon({
     popupAnchor: [1, -34],
     shadowSize: [41, 41]
 });
-const sudOuest = L.latLng(58, -2);
-const nordEst = L.latLng(41, 9);
+const sudOuest = L.latLng(58, -5);
+const nordEst = L.latLng(41, 10);
 const bounds = L.latLngBounds(sudOuest, nordEst);
 const markers = L.markerClusterGroup();
 let map = L.map('map-signalements-view', {

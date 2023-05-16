@@ -2,27 +2,38 @@
 
 namespace App\Tests\Unit\Factory;
 
+use App\Entity\Enum\PartnerType;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Factory\PartnerFactory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PartnerFactoryTest extends KernelTestCase
 {
-    public function testCreatePartnerInstanceWhenIsNotCommune(): void
+    private ParameterBagInterface $parameterBag;
+    private ValidatorInterface $validator;
+
+    protected function setUp(): void
     {
         self::bootKernel();
-        /** @var ValidatorInterface $validator */
-        $validator = static::getContainer()->get(ValidatorInterface::class);
-        $territory = new Territory();
-        $partner = (new PartnerFactory())->createInstanceFrom(
+        /* @var ParameterBagInterface parameterBag */
+        $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
+        /* @var ValidatorInterface validator */
+        $this->validator = static::getContainer()->get(ValidatorInterface::class);
+    }
+
+    public function testCreatePartnerInstanceWhenIsNotCommune(): void
+    {
+        $partner = (new PartnerFactory($this->parameterBag))->createInstanceFrom(
             territory: new Territory(),
             name: 'HTL',
-            email: 'htl@example.com'
+            email: 'htl@example.com',
+            type: PartnerType::ADIL,
         );
 
-        $errors = $validator->validate($partner);
+        $errors = $this->validator->validate($partner);
         $this->assertEmpty($errors, (string) $errors);
 
         $this->assertInstanceOf(Partner::class, $partner);
@@ -34,19 +45,15 @@ class PartnerFactoryTest extends KernelTestCase
 
     public function testCreatePartnerInstanceWhenIsCommune(): void
     {
-        self::bootKernel();
-        /** @var ValidatorInterface $validator */
-        $validator = static::getContainer()->get(ValidatorInterface::class);
-        $territory = new Territory();
-        $partner = (new PartnerFactory())->createInstanceFrom(
+        $partner = (new PartnerFactory($this->parameterBag))->createInstanceFrom(
             territory: new Territory(),
             name: 'HTL',
             email: 'htl@example.com',
-            isCommune: true,
+            type: PartnerType::COMMUNE_SCHS,
             insee: '99000, 99001'
         );
 
-        $errors = $validator->validate($partner);
+        $errors = $this->validator->validate($partner);
         $this->assertEmpty($errors, (string) $errors);
 
         $this->assertInstanceOf(Partner::class, $partner);

@@ -27,6 +27,7 @@ class UserManagerTest extends KernelTestCase
     private ParameterBagInterface $parameterBag;
     private SignalementUsagerManager $signalementUsagerManager;
     private UserFactory $userFactory;
+    private UserManager $userManager;
 
     protected ManagerRegistry $managerRegistry;
 
@@ -42,11 +43,7 @@ class UserManagerTest extends KernelTestCase
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
         $this->signalementUsagerManager = new SignalementUsagerManager($this->managerRegistry, SignalementUsager::class);
         $this->userFactory = static::getContainer()->get(UserFactory::class);
-    }
-
-    public function testTransferActiveUserToAnotherPartner()
-    {
-        $userManager = new UserManager(
+        $this->userManager = new UserManager(
             $this->notificationMailerRegistry,
             $this->passwordHasherFactory,
             $this->tokenGenerator,
@@ -56,18 +53,82 @@ class UserManagerTest extends KernelTestCase
             $this->userFactory,
             User::class,
         );
+    }
 
+    public function testCreateUserFromData()
+    {
         /** @var PartnerRepository $partnerRepository */
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
         $partner = $partnerRepository->findOneBy(['nom' => 'Partenaire 01-02']);
+
+        $user = $this->userManager->createUserFromData(
+            $partner,
+            [
+                'roles' => 'ROLE_USER_PARTNER',
+                'prenom' => 'John',
+                'nom' => 'Doe',
+                'email' => 'john.doe@example.com',
+                'isMailingActive' => false,
+            ]
+        );
+
+        $this->assertInstanceOf(User::class, $user);
+
+        $this->assertEquals($user->getIsMailingActive(), false);
+        $this->assertEquals($user->getPrenom(), 'John');
+        $this->assertEquals($user->getStatut(), User::STATUS_INACTIVE);
+        $this->assertEmailCount(1);
+    }
+
+    public function testUpdateUserFromDataNameChanged()
+    {
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => 'user-01-01@histologe.fr']);
 
-        $userManager->transferUserToPartner($user, $partner);
+        $user = $this->userManager->updateUserFromData(
+            $user,
+            [
+                'roles' => 'ROLE_USER_PARTNER',
+                'prenom' => $user->getPrenom(),
+                'nom' => 'Pantani',
+                'email' => $user->getEmail(),
+                'isMailingActive' => $user->getIsMailingActive(),
+            ]
+        );
 
+        $this->assertInstanceOf(User::class, $user);
+        $this->assertEquals($user->getNom(), 'Pantani');
+        $this->assertEmailCount(0);
+    }
+
+    public function testUpdateUserFromDataEmailChanged()
+    {
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $user = $userRepository->findOneBy(['email' => 'user-01-01@histologe.fr']);
+
+        $user = $this->userManager->updateUserFromData(
+            $user,
+            [
+                'roles' => 'ROLE_USER_PARTNER',
+                'prenom' => $user->getPrenom(),
+                'nom' => 'Lennon',
+                'email' => 'john.lennon@example.com',
+                'isMailingActive' => true,
+            ]
+        );
+
+        $this->assertInstanceOf(User::class, $user);
+        $this->assertEquals($user->getNom(), 'Lennon');
+        $this->assertEquals($user->getEmail(), 'john.lennon@example.com');
+        $this->assertEmailCount(1);
+    }
+
+    public function testTransferActiveUserToAnotherPartner()
+    {
         /** @var User $userNewPartner */
-        $userNewPartner = $userRepository->findOneBy(['email' => 'user-01-01@histologe.fr']);
+        $userNewPartner = $this->getTransferedUserToPartner('user-01-01@histologe.fr', 'Partenaire 01-02');
 
         $this->assertEquals('Partenaire 01-02', $userNewPartner->getPartner()->getNom());
         $this->assertEmailCount(1);
@@ -77,32 +138,26 @@ class UserManagerTest extends KernelTestCase
 
     public function testTransferInactiveUserToAnotherPartner()
     {
-        $userManager = new UserManager(
-            $this->notificationMailerRegistry,
-            $this->passwordHasherFactory,
-            $this->tokenGenerator,
-            $this->parameterBag,
-            $this->managerRegistry,
-            $this->signalementUsagerManager,
-            $this->userFactory,
-            User::class,
-        );
-
-        /** @var PartnerRepository $partnerRepository */
-        $partnerRepository = $this->entityManager->getRepository(Partner::class);
-        $partner = $partnerRepository->findOneBy(['nom' => 'Partenaire 13-03']);
-        /** @var UserRepository $userRepository */
-        $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => 'user-13-03@histologe.fr']);
-
-        $userManager->transferUserToPartner($user, $partner);
-
         /** @var User $userNewPartner */
-        $userNewPartner = $userRepository->findOneBy(['email' => 'user-13-03@histologe.fr']);
+        $userNewPartner = $this->getTransferedUserToPartner('user-13-03@histologe.fr', 'Partenaire 13-03');
 
         $this->assertEquals('Partenaire 13-03', $userNewPartner->getPartner()->getNom());
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
         $this->assertEmailHtmlBodyContains($email, 'Cliquez ci-dessous pour activer votre compte et définir votre mot de passe');
+    }
+
+    private function getTransferedUserToPartner(string $userEmail, string $partnerName): User
+    {
+        /** @var PartnerRepository $partnerRepository */
+        $partnerRepository = $this->entityManager->getRepository(Partner::class);
+        $partner = $partnerRepository->findOneBy(['nom' => $partnerName]);
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $user = $userRepository->findOneBy(['email' => $userEmail]);
+
+        $this->userManager->transferUserToPartner($user, $partner);
+
+        return $userRepository->findOneBy(['email' => $userEmail]);
     }
 }

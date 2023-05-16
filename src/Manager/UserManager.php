@@ -41,8 +41,32 @@ class UserManager extends AbstractManager
             ->setRoles([$data['roles']])
             ->setEmail($data['email'])
             ->setIsMailingActive($data['isMailingActive']);
+        if (\array_key_exists('territory', $data)) {
+            $user->setTerritory($data['territory']);
+        }
+        if (\array_key_exists('partner', $data)) {
+            $user->setPartner($data['partner']);
+        }
+        if (\array_key_exists('statut', $data)) {
+            $user->setStatut($data['statut']);
+        }
+        $this->save($user);
 
         return $user;
+    }
+
+    public function createUserFromData(Partner $partner, array $data): User
+    {
+        $user = $this->userFactory->createInstanceFromArray($partner, $data);
+
+        $this->save($user);
+
+        return $user;
+    }
+
+    public function getUserFrom(Partner $partner, int $userId): ?User
+    {
+        return $this->getRepository()->findOneBy(['partner' => $partner, 'id' => $userId]);
     }
 
     public function transferUserToPartner(User $user, Partner $partner): void

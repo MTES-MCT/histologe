@@ -32,6 +32,9 @@ class UploadHandlerService
     public function toTempFolder(UploadedFile $file): self|array
     {
         $originalFilename = pathinfo($file->getClientOriginalName(), \PATHINFO_FILENAME);
+        if (empty($originalFilename) || !$file->isValid()) {
+            return ['error' => 'Erreur lors du téléversement.', 'message' => 'Fichier vide', 'status' => 500];
+        }
         $titre = $originalFilename.'.'.$file->guessExtension();
         // this is needed to safely include the file name as part of the URL
         $safeFilename = $this->slugger->slug($originalFilename);

@@ -3,6 +3,8 @@
 namespace App\Twig;
 
 use App\Entity\Enum\QualificationStatus;
+use App\Service\Esabora\EsaboraPartnerTypeSubscription;
+use App\Service\Files\ImageBase64Encoder;
 use App\Service\Notification\NotificationCounter;
 use App\Service\Signalement\QualificationStatusService;
 use Twig\Extension\AbstractExtension;
@@ -15,6 +17,7 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFilter('status_to_css', [$this, 'getCssFromStatus']),
+            new TwigFilter('image64', [ImageBase64Encoder::class, 'encode']),
         ];
     }
 
@@ -38,6 +41,7 @@ class AppExtension extends AbstractExtension
             new TwigFunction('count_notification', [NotificationCounter::class, 'countUnseenNotification']),
             new TwigFunction('can_see_nde_qualification', [QualificationStatusService::class, 'canSeenNDEQualification']),
             new TwigFunction('can_see_nde_edit_zone', [QualificationStatusService::class, 'canSeenNDEEditZone']),
+            new TwigFunction('can_edit_esabora_credentials', [EsaboraPartnerTypeSubscription::class, 'isSubscribed']),
         ];
     }
 }

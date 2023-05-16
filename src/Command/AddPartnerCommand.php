@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Entity\Enum\PartnerType;
 use App\Entity\Territory;
 use App\Factory\PartnerFactory;
 use App\Manager\PartnerManager;
@@ -30,8 +31,8 @@ class AddPartnerCommand extends Command
         'TERRITORY' => 'territory',
         'NAME' => 'name',
         'EMAIL' => 'email',
-        'IS_COMMUNE' => 'is_commune',
         'INSEE' => 'insee',
+        'TYPE' => 'type',
     ];
 
     public function __construct(
@@ -50,8 +51,8 @@ class AddPartnerCommand extends Command
             ->addArgument(self::FIELDS['TERRITORY'], InputArgument::REQUIRED, 'The territory of the partner')
             ->addArgument(self::FIELDS['NAME'], InputArgument::REQUIRED, 'The name of the partner')
             ->addArgument(self::FIELDS['EMAIL'], InputArgument::REQUIRED)
-            ->addArgument(self::FIELDS['IS_COMMUNE'], InputArgument::OPTIONAL, 'Is the partner a commune ?')
-            ->addArgument(self::FIELDS['INSEE'], InputArgument::OPTIONAL, 'Add insee code separated with comma');
+            ->addArgument(self::FIELDS['INSEE'], InputArgument::OPTIONAL, 'Add insee code separated with comma')
+            ->addArgument(self::FIELDS['TYPE'], InputArgument::OPTIONAL, 'Type of partner');
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output): void
@@ -74,7 +75,7 @@ class AddPartnerCommand extends Command
             'If you prefer to not use this interactive wizard, provide the',
             'arguments required by this command as follows:',
             '',
-            ' $ php bin/console app:add-partner territory nom email is_commune insee',
+            ' $ php bin/console app:add-partner territory nom email type insee',
             '',
             'Now we\'ll ask you for the value of all the missing command arguments.',
         ]);
@@ -103,23 +104,42 @@ class AddPartnerCommand extends Command
             $input->setArgument(self::FIELDS['EMAIL'], $email);
         }
 
-        $isCommune = $input->getArgument(self::FIELDS['IS_COMMUNE']);
-        if (null !== $isCommune) {
-            $this->io->text(' > <info>'.ucfirst(self::FIELDS['IS_COMMUNE']).'</info>: '.$isCommune);
+        $type = $input->getArgument(self::FIELDS['TYPE']);
+        if (null !== $type) {
+            $this->io->text(' > <info>'.ucfirst(self::FIELDS['TYPE']).'</info>: '.$type);
         } else {
             $helper = $this->getHelper('question');
             $question = new ChoiceQuestion(
-                'Is the partner a commune ?',
-                ['no', 'yes'],
-                'no',
+                'Which type is the partner',
+                [
+                    'ADIL',
+                    'ARS',
+                    'ASSOCIATION',
+                    'BAILLEUR_SOCIAL',
+                    'CAF_MSA',
+                    'CCAS',
+                    'COMMUNE_SCHS',
+                    'CONCILIATEURS',
+                    'CONSEIL_DEPARTEMENTAL',
+                    'DDETS',
+                    'DDT_M',
+                    'DISPOSITIF_RENOVATION_HABITAT',
+                    'EPCI',
+                    'OPERATEUR_VISITES_ET_TRAVAUX',
+                    'POLICE_GENDARMERIE',
+                    'PREFECTURE',
+                    'TRIBUNAL',
+                    'AUTRE',
+                ],
+                'ADIL',
             );
 
-            $isCommune = $helper->ask($input, $output, $question);
-            $this->io->text(' > <info> You have just selected: </info>'.$isCommune);
-            $input->setArgument(self::FIELDS['IS_COMMUNE'], 'yes' === $isCommune ? true : false);
+            $type = $helper->ask($input, $output, $question);
+            $this->io->text(' > <info> You have just selected: </info>'.$type);
+            $input->setArgument(self::FIELDS['TYPE'], $type);
         }
 
-        if ($input->getArgument(self::FIELDS['IS_COMMUNE'])) {
+        if ($input->getArgument(self::FIELDS['TYPE'])) {
             $insee = $input->getArgument(self::FIELDS['INSEE']);
             if (!empty($insee)) {
                 $this->io->table([self::FIELDS['INSEE']], $insee);
@@ -137,7 +157,7 @@ class AddPartnerCommand extends Command
         $territory = $input->getArgument('territory');
         $name = $input->getArgument('name');
         $email = $input->getArgument('email');
-        $isCommune = $input->getArgument('is_commune');
+        $type = $input->getArgument('type');
         $insee = $input->getArgument('insee');
         $territory = $this->territoryManager->findOneBy(['zip' => $territory]);
 
@@ -147,7 +167,7 @@ class AddPartnerCommand extends Command
             return Command::FAILURE;
         }
 
-        $partner = $this->partnerFactory->createInstanceFrom($territory, $name, $email, $isCommune, $insee);
+        $partner = $this->partnerFactory->createInstanceFrom($territory, $name, $email, PartnerType::tryFrom($type), $insee);
         $errors = $this->validator->validate($partner);
 
         if (\count($errors) > 0) {

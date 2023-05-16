@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Entity;
 
+use App\Entity\Enum\PartnerType;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -32,10 +33,10 @@ class PartnerTest extends KernelTestCase
             ->setNom($faker->company())
             ->setEmail($faker->companyEmail())
             ->setIsArchive(false)
-            ->setIsCommune(false)
             ->setTerritory($territory)
             ->setEsaboraUrl($faker->url())
-            ->setEsaboraToken($faker->randomKey());
+            ->setEsaboraToken($faker->randomKey())
+            ->setType(PartnerType::ADIL);
 
         for ($i = 0; $i < 3; ++$i) {
             $user = (new User())

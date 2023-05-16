@@ -1,0 +1,33 @@
+{
+  "searchId": "00000000-0000-0000-2023-000000000009",
+  "nbResults": 1,
+  "columnList": [
+    "SAS_Référence",
+    "SAS_Etat",
+    "Doss_ID",
+    "Doss_Statut_Abrégé",
+    "Doss_Statut",
+    "Doss_Etat",
+    "Doss_Cloture"
+  ],
+  "keyList": [
+    "i1.iaff_id"
+  ],
+  "rowList": [
+    {
+      "columnDataList": [
+        "00000000-0000-0000-2023-000000000009",
+        "Importé",
+        "202309",
+        "2023-09",
+        "Traité",
+        "Traité",
+        "terminé",
+        "30/04/2023"
+      ],
+      "keyDataList": [
+        "23"
+      ]
+    }
+  ]
+}

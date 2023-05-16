@@ -116,3 +116,4 @@ jobs:
           HISTOLOGE_URL: http://localhost:8080
           SERVER_NAME: localhost:8080
           MAILER_DSN: ${{ secrets.MAILER_DSN_CI }}
+          CRON_ENABLE: 1

@@ -2,27 +2,31 @@
 
 namespace App\Factory;
 
+use App\Entity\Enum\PartnerType;
 use App\Entity\Partner;
 use App\Entity\Territory;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class PartnerFactory
 {
-    public function __construct()
-    {
+    public function __construct(
+        private ParameterBagInterface $parameterBag
+    ) {
     }
 
     public function createInstanceFrom(
         Territory $territory,
         string $name = null,
         string $email = null,
-        bool $isCommune = false,
-        string $insee = null): Partner
-    {
+        PartnerType $type = null,
+        string $insee = null
+    ): Partner {
         $partner = (new Partner())
             ->setTerritory($territory)
             ->setNom($name)
             ->setEmail($email)
-            ->setIsCommune($isCommune)
+            ->setType($type)
+            ->setCompetence($this->buildCompetences($type))
             ->setIsArchive(false);
 
         if (!empty($insee)) {
@@ -30,5 +34,19 @@ class PartnerFactory
         }
 
         return $partner;
+    }
+
+    // build default competences according to partner type
+    public function buildCompetences(PartnerType $type): ?array
+    {
+        $types = $this->parameterBag->get('competence_per_type');
+        $competences = [];
+        if (\array_key_exists($type->name, $types)) {
+            foreach ($types[$type->name] as $competence) {
+                $competences[] = $competence;
+            }
+        }
+
+        return $competences;
     }
 }

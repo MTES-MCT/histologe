@@ -5,7 +5,7 @@ namespace App\Tests\Unit\Manager;
 use App\Dto\CountSignalement;
 use App\Dto\CountSuivi;
 use App\Dto\CountUser;
-use App\Entity\JobEvent;
+use App\Entity\Enum\InterfacageType;
 use App\Entity\Territory;
 use App\Repository\AffectationRepository;
 use App\Repository\JobEventRepository;
@@ -84,12 +84,12 @@ class WidgetDataManagerTest extends TestCase
     {
         $this->jobEventRepositoryMock
             ->expects($this->once())
-            ->method('findLastJobEventByType')
-            ->with(JobEvent::TYPE_JOB_EVENT_ESABORA)
+            ->method('findLastJobEventByInterfacageType')
+            ->with(InterfacageType::ESABORA->value)
             ->willReturn([]);
 
-        $this->assertEquals([], $this->widgetDataManager->findLastJobEventByType(
-            JobEvent::TYPE_JOB_EVENT_ESABORA,
+        $this->assertEquals([], $this->widgetDataManager->findLastJobEventByInterfacageType(
+            InterfacageType::ESABORA->value,
             ['period' => 5])
         );
     }

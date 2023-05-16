@@ -114,10 +114,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             }
         }
 
-        $queryBuilder
-            ->andWhere('u.roles NOT LIKE :roleadmin')
-            ->setParameter('roleadmin', '%ROLE_ADMIN%');
-
         if (!empty($filterTerms)) {
             $queryBuilder
                 ->andWhere('LOWER(u.nom) LIKE :usersterms
@@ -133,9 +129,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 OR u.roles LIKE :role2
                 OR u.roles LIKE :role3');
             $queryBuilder
-                ->setParameter('role', '%ROLE_ADMIN%')
+                ->setParameter('role', '%ROLE_ADMIN_PARTNER%')
                 ->setParameter('role2', '%ROLE_ADMIN_TERRITORY%')
                 ->setParameter('role3', '%ROLE_USER_PARTNER%');
+        } else {
+            $queryBuilder
+                ->andWhere('u.roles NOT LIKE :roleadmin')
+                ->setParameter('roleadmin', '%"ROLE_ADMIN%"');
         }
 
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
@@ -149,10 +149,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function countUserByStatus(?Territory $territory = null, ?User $user = null): CountUser
     {
         $qb = $this->createQueryBuilder('u');
-        $qb->select(sprintf('NEW %s(
+        $qb->select(sprintf(
+            'NEW %s(
             SUM(CASE WHEN u.statut = :active THEN 1 ELSE 0 END),
             SUM(CASE WHEN u.statut = :inactive THEN 1 ELSE 0 END))',
-            CountUser::class))
+            CountUser::class
+        ))
             ->setParameter('active', User::STATUS_ACTIVE)
             ->setParameter('inactive', User::STATUS_INACTIVE)
             ->where('u.statut != :statut')

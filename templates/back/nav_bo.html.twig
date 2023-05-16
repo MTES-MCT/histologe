@@ -77,20 +77,12 @@
                             {% if not is_granted('ROLE_ADMIN_TERRITORY') %}
                                 <li class="fr-sidemenu__item {% if 'back_partner' is same as(app.request.get('_route')) %}fr-sidemenu__item--active{% endif %}">
                                     <a class="fr-sidemenu__link"
-                                       href="{{ path('back_partner_edit',{id:app.user.partner.id}) }}"
+                                       href="{{ path('back_partner_view',{id:app.user.partner.id}) }}"
                                        target="_self"
-                                       {% if 'back_partner' is same as(app.request.get('_route')) %}aria-current="page"{% endif %}>Gestion
-                                        des comptes</a>
+                                       {% if 'back_partner' is same as(app.request.get('_route')) %}aria-current="page"{% endif %}>Mon partenaire</a>
                                 </li>
                             {% endif %}
                             {% if is_granted('ROLE_ADMIN_TERRITORY') %}
-                                {% if is_granted('ROLE_ADMIN') %}
-                                    <li class="fr-sidemenu__item {% if 'back_territory_index' is same as(app.request.get('_route')) %}fr-sidemenu__item--active{% endif %}">
-                                        <a class="fr-sidemenu__link"
-                                           href="#" target="_self"
-                                           {% if 'back_territory_index' is same as(app.request.get('_route')) %}aria-current="page"{% endif %}><s>Territoires</s> <small class="fr-text-default--warning">&nbsp;(maintenance)</small></a>
-                                    </li>
-                                {% endif %}
                                 <li class="fr-sidemenu__item {% if 'back_partner' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
                                     <a class="fr-sidemenu__link" href="{{ path('back_partner_index') }}"
                                        target="_self"

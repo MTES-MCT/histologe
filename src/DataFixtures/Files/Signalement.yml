@@ -898,3 +898,81 @@ signalements:
     qualifications: 
       - "NON_DECENCE_ENERGETIQUE"
     date_entree: "2023-01-08 17:06:33"
+  -
+    uuid: "00000000-0000-0000-2023-000000000009"
+    details: "appartement insalubre avec des problèmes d'humidité, moisissures, infiltrations d'eau, électricité défectueuse et absence de chauffage adéquat. La situation est inacceptable et nécessite une intervention urgente des autorités compétentes pour assurer la sécurité et la santé des occupants. Il est important de prendre des mesures immédiates pour remédier à ces problèmes et garantir un logement décent pour tous."
+    is_proprio_averti: 1
+    nb_adultes: "2"
+    is_allocataire: ""
+    is_logement_social: 0
+    nature_logement: "Appartement"
+    type_logement: "T2"
+    superficie: 30
+    loyer: 300
+    phone_number: 0621127286
+    cp_occupant: "13005"
+    ville_occupant: "Marseille"
+    statut: 2
+    reference: "2023-9"
+    geoloc: "{\"lat\":\"5.371573\",\"lng\":\"43.313719\"}"
+    score: 100
+    etage_occupant: "0"
+    escalier_occupant: ""
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    insee_occupant: "13205"
+    is_rsa: 0
+    type_energie_logement: "Electrique"
+    origine_signalement: ""
+    nb_occupants_logement: 3
+    situation_occupant: "1"
+    territory: "Bouches-du-Rhône"
+    tags:
+      - "Urgent"
+    situations:
+      - "l'état du bâtiment"
+      - "le confort du logement"
+    criteres:
+      - "Les murs et plafonds intérieurs sont mal entretenus"
+      - "J'ai un problème de ventilation dans mon logement."
+    criticites:
+      - "la peinture est sale et non entretenue."
+      - "il n’y a pas de ventilation dans au moins deux pièces parmi : les WC, la salle de bain et la cuisine."
+  -
+    uuid: "00000000-0000-0000-2023-000000000010"
+    details: "Malgré nos multiples tentatives pour résoudre les problèmes de cet appartement insalubre, les conditions de vie restent précaires pour les occupants. Les moisissures et les odeurs nauséabondes persistent, l'électricité est toujours défectueuse, et le manque de chauffage en hiver est inquiétant. Nous sollicitons votre aide pour trouver une solution rapide et efficace à cette situation difficile. Les locataires méritent un logement sûr et salubre, et nous sommes prêts à travailler avec vous pour y parvenir."
+    is_proprio_averti: 1
+    nb_adultes: "2"
+    is_allocataire: ""
+    is_logement_social: 0
+    nature_logement: "Appartement"
+    type_logement: "T2"
+    superficie: 30
+    loyer: 300
+    phone_number: 0621127286
+    cp_occupant: "13004"
+    ville_occupant: "Marseille"
+    statut: 2
+    reference: "2023-10"
+    geoloc: "{\"lat\":\"5.371573\",\"lng\":\"43.313719\"}"
+    score: 80
+    etage_occupant: "0"
+    escalier_occupant: ""
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    insee_occupant: "13204"
+    is_rsa: 0
+    type_energie_logement: "Electrique"
+    origine_signalement: ""
+    nb_occupants_logement: 2
+    situation_occupant: "1"
+    territory: "Bouches-du-Rhône"
+    tags:
+      - "Urgent"
+    situations:
+      - "l'état du bâtiment"
+      - "le confort du logement"
+    criteres:
+      - "Les murs et plafonds intérieurs sont mal entretenus"
+      - "J'ai un problème de ventilation dans mon logement."
+    criticites:
+      - "la peinture est sale et non entretenue."
+      - "il n’y a pas de ventilation dans au moins deux pièces parmi : les WC, la salle de bain et la cuisine."

@@ -1,8 +1,8 @@
 {% extends 'back/base_bo.html.twig' %}
 
-{% set picto_yes = '<p class="fr-badge fr-badge--success value-switcher" data-action="click" data-item="%s" data-url="'~path('back_signalement_switch_value',{uuid:signalement.uuid})~'" data-token="'~csrf_token('signalement_switch_value_'~signalement.uuid)~'">Oui</p>' %}
-{% set picto_no = '<p class="fr-badge fr-badge--error value-switcher" data-action="click" data-item="%s" data-url="'~path('back_signalement_switch_value',{uuid:signalement.uuid})~'" data-token="'~csrf_token('signalement_switch_value_'~signalement.uuid)~'">Non</p>' %}
-{% set picto_nsp = '<p class="fr-badge fr-badge--warning value-switcher" data-action="click" data-item="%s" data-url="'~path('back_signalement_switch_value',{uuid:signalement.uuid})~'" data-token="'~csrf_token('signalement_switch_value_'~signalement.uuid)~'">NSP</p>' %}
+{% set picto_yes = '<p class="fr-badge fr-badge--success" data-action="click" data-item="%s" data-url="'~path('back_signalement_switch_value',{uuid:signalement.uuid})~'" data-token="'~csrf_token('signalement_switch_value_'~signalement.uuid)~'">Oui</p>' %}
+{% set picto_no = '<p class="fr-badge fr-badge--error" data-action="click" data-item="%s" data-url="'~path('back_signalement_switch_value',{uuid:signalement.uuid})~'" data-token="'~csrf_token('signalement_switch_value_'~signalement.uuid)~'">Non</p>' %}
+{% set picto_nsp = '<p class="fr-badge fr-badge--warning" data-action="click" data-item="%s" data-url="'~path('back_signalement_switch_value',{uuid:signalement.uuid})~'" data-token="'~csrf_token('signalement_switch_value_'~signalement.uuid)~'">NSP</p>' %}
 {% set procedures = ["RSD" , "Mise en sécurité","Incurie","Insalubrité", "Décence", "ADIL"] %}
 
 
@@ -28,7 +28,7 @@
                                 class="fr-btn fr-btn--sm fr-fi-edit-fill" title="Editer le signalement"></a>&nbsp;
                         {% endif %}
                         {% if canExportSignalement %}
-                            <a href="{{ path('back_signalement_gen_pdf',{uuid:signalement.uuid}) }}"
+                            <a target="_blank" rel="noopener" href="{{ path('back_signalement_gen_pdf',{uuid:signalement.uuid}) }}"
                                 class="fr-btn fr-btn--sm fr-btn--success fr-fi-file-pdf-fill" title="Exporter en PDF"></a>
                         {% endif %}
                     </h1>
@@ -277,7 +277,13 @@
                     <li><strong>Téléphone: </strong><a
                                 href="tel:{{ signalement.telOccupant }}">{{ signalement.telOccupant }}</a></li>
                     <li>
-                        <strong>Adresse: </strong> {{ signalement.adresseOccupant ~', '~signalement.cpOccupant ~' '~ signalement.villeOccupant|upper }}
+                        <strong>Adresse: </strong>
+                        {{ signalement.adresseOccupant }},
+                        {{ signalement.etageOccupant ? 'étage ' ~ signalement.etageOccupant ~ ',' : '' }}
+                        {{ signalement.escalierOccupant ? 'escalier ' ~ signalement.escalierOccupant ~ ',' : '' }}
+                        {{ signalement.numAppartOccupant ? 'appartement ' ~ signalement.numAppartOccupant ~ ',' : '' }}
+                        {{ signalement.adresseAutreOccupant ? signalement.adresseAutreOccupant ~ ',' : '' }}
+                        {{ signalement.cpOccupant ~' '~ signalement.villeOccupant|upper }}
                     </li>
                     <li><strong>Occupant(s): </strong> {{ signalement.nbAdultes }}
                         <strong>Adulte(s)</strong>{% if signalement.nbEnfantsM6 %} - {{ signalement.nbEnfantsM6 }} Enfant(s)
@@ -617,8 +623,7 @@
             {% endfor %}
         </div>
         {% for doc in signalement.documents %}
-            <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-3v signalement-file-item"
-                 style="position: relative;z-index: 1001">
+            <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-3v signalement-file-item">
                 <div class="fr-col-10">
                     <a href="{{ asset('_up/'~doc.file) }}" target="_blank" class="fr-link part-infos-hover"
                        data-user="{{ doc.username ?? 'N/R' }}" data-mail="{{ doc.date ?? 'N/R' }}">{{ doc.titre }}</a>
@@ -791,7 +796,19 @@
                         data-mail="{{ suivi.createdBy.email }}">
                         <strong>{{ suivi.createdBy.nom|upper~' '~ suivi.createdBy.prenom|capitalize }}</strong>
                         <br>
-                        <small>[{{ 'ROLE_USAGER' in suivi.createdBy.roles ? (suivi.createdBy.email is same as signalement.mailDeclarant ? 'DECLARANT' : 'OCCUPANT') : (suivi.createdBy.partner ? suivi.createdBy.partner.nom : 'Aucun')  }}]</small> <br>
+                        <small>[{{ 
+                            'ROLE_USAGER' in suivi.createdBy.roles
+                                ? (suivi.createdBy.email is same as signalement.mailDeclarant
+                                    ? 'DECLARANT'
+                                    : 'OCCUPANT'
+                                )
+                                : (suivi.createdBy.partner
+                                    ? (suivi.createdBy.partner.isArchive or ('ROLE_ADMIN' not in suivi.createdBy.roles and suivi.createdBy.partner.territory is not same as(signalement.territory))
+                                        ? 'Partenaire supprimé'
+                                        : suivi.createdBy.partner.nom
+                                    )
+                                    : 'Aucun')
+                        }}]</small> <br>
                         <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
                     </div>
                     <div class="fr-col-9 bloc-suivi-content-row fr-pl-3v">
