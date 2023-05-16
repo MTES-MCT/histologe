@@ -37,17 +37,13 @@ class JobEventRepository extends ServiceEntityRepository
             ->where('j.service LIKE :service')
             ->andWhere('DATEDIFF(NOW(),j.createdAt) <= :day_period');
 
-        if ($dayPeriod) {
-            $qb->andWhere('DATEDIFF(NOW(),j.createdAt) <= :day_period')
-                ->setParameter('day_period', $dayPeriod);
-        }
         if (null !== $territory) {
             $qb->andWhere('p.territory = :territory')->setParameter('territory', $territory);
         }
 
         $qb->setParameter('service', '%'.$type.'%')
             ->setParameter('day_period', $dayPeriod)
-            ->groupBy('p.id, p.nom, s.reference, j.action, j.status, j.codeStatus, j.response')
+            ->groupBy('p.id, p.nom, s.reference, j.action, j.status, j.codeStatus')
             ->orderBy('last_event', 'DESC');
 
         return $qb->getQuery()->getArrayResult();
