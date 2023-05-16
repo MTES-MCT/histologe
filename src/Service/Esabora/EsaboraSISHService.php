@@ -175,8 +175,6 @@ class EsaboraSISHService extends AbstractEsaboraService
             $piecesJointes = array_map(function ($pieceJointe) {
                 $filepath = $this->uploadHandlerService->getTmpFilepath($pieceJointe['documentContent']);
                 $pieceJointe['documentContent'] = base64_encode(file_get_contents($filepath));
-                $pieceJointe['documentSize'] = $pieceJointe['documentSize'];
-                $pieceJointe['documentName'] = $pieceJointe['documentName'];
 
                 return $pieceJointe;
             }, $dossierMessageSISH->getPiecesJointesDocuments());
