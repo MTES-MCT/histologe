@@ -178,7 +178,6 @@ class AddUserCommand extends Command
             $data['isMailingActive'] = true;
             $data['territory'] = $territory;
             $data['partner'] = $partner;
-            $data['statut'] = User::STATUS_INACTIVE;
             $this->userManager->updateUserFromData($user, $data);
         } else {
             $user = $this->userFactory->createInstanceFrom(
