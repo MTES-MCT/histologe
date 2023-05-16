@@ -976,27 +976,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-document.querySelectorAll('.value-switcher').forEach(sw => {
-    sw.addEventListener(sw.getAttribute('data-action') ?? 'change', (evt => {
-        let url = evt.target.getAttribute('data-url'), formData = new FormData();
-        formData.append('_token', evt.target.getAttribute('data-token'))
-        formData.append('item', evt.target.getAttribute('data-item'))
-        formData.append('value', evt?.target?.selectedIndex ? evt?.target?.options[evt?.target?.selectedIndex]?.value : '')
-        fetch(url, {
-            method: 'POST',
-            body: formData
-        }).then(r => r.json().then(res => {
-            if (res.return === 1) {
-                ['fr-badge--error', 'fr-badge--success'].map(c => {
-                    evt.target.classList.toggle(c);
-                })
-                evt.target.innerText === "OUI" ? evt.target.innerText = "NON" : evt.target.innerText = "OUI"
-            }
-        }))
-
-    }))
-})
-
 const refetchAddress = (form) => {
     // If the code postal is manually edited, we reinit the insee/geoloc and fetch the first result
     form.querySelector('#signalement-insee-occupant').value = '';
