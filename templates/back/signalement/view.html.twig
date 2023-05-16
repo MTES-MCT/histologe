@@ -277,7 +277,13 @@
                     <li><strong>Téléphone: </strong><a
                                 href="tel:{{ signalement.telOccupant }}">{{ signalement.telOccupant }}</a></li>
                     <li>
-                        <strong>Adresse: </strong> {{ signalement.adresseOccupant ~', '~signalement.cpOccupant ~' '~ signalement.villeOccupant|upper }}
+                        <strong>Adresse: </strong>
+                        {{ signalement.adresseOccupant }},
+                        {{ signalement.etageOccupant ? 'étage ' ~ signalement.etageOccupant ~ ',' : '' }}
+                        {{ signalement.escalierOccupant ? 'escalier ' ~ signalement.escalierOccupant ~ ',' : '' }}
+                        {{ signalement.numAppartOccupant ? 'appartement ' ~ signalement.numAppartOccupant ~ ',' : '' }}
+                        {{ signalement.adresseAutreOccupant ? signalement.adresseAutreOccupant ~ ',' : '' }}
+                        {{ signalement.cpOccupant ~' '~ signalement.villeOccupant|upper }}
                     </li>
                     <li><strong>Occupant(s): </strong> {{ signalement.nbAdultes }}
                         <strong>Adulte(s)</strong>{% if signalement.nbEnfantsM6 %} - {{ signalement.nbEnfantsM6 }} Enfant(s)
