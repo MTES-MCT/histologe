@@ -196,7 +196,7 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     public function findSignalementsNoSuiviUsagerFrom(
-        int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
+        int $period = Suivi::DEFAULT_PERIOD_RELANCE,
     ): array {
         $connection = $this->getEntityManager()->getConnection();
 
@@ -218,6 +218,38 @@ class SuiviRepository extends ServiceEntityRepository
         GROUP BY su.signalement_id
         HAVING DATEDIFF(NOW(),last_posted_at) > :day_period
         ORDER BY last_posted_at';
+
+        $statement = $connection->prepare($sql);
+
+        return $statement->executeQuery($parameters)->fetchFirstColumn();
+    }
+
+    public function findSignalementsWithLastSuiviTechnical(
+        int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
+    ): array {
+        $connection = $this->getEntityManager()->getConnection();
+
+        $parameters = [
+            'day_period' => $period,
+            'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
+            'status_need_validation' => Signalement::STATUS_NEED_VALIDATION,
+            'status_closed' => Signalement::STATUS_CLOSED,
+            'status_archived' => Signalement::STATUS_ARCHIVED,
+            'status_refused' => Signalement::STATUS_REFUSED,
+        ];
+
+        $sql = 'SELECT s.id
+        FROM signalement s
+        INNER JOIN (
+            SELECT signalement_id, MAX(created_at) AS date_suivi
+            FROM suivi
+            WHERE type = :type_suivi_technical
+            GROUP BY signalement_id
+        ) su ON s.id = su.signalement_id
+        LEFT JOIN suivi su_last ON su_last.signalement_id = su.signalement_id AND su_last.created_at > su.date_suivi
+        WHERE su_last.id IS NULL AND su.date_suivi < DATE_SUB(NOW(), INTERVAL :day_period DAY)
+        AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
+        AND s.is_imported != 1';
 
         $statement = $connection->prepare($sql);
 
