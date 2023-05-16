@@ -10,6 +10,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CartographieControllerTest extends WebTestCase
 {
+    private const SUPER_ADMIN = 'admin-01@histologe.fr';
+    private const ADMIN_TERRITOIRE = 'admin-territoire-13-01@histologe.fr';
+    private const PARTNER = 'user-13-01@histologe.fr';
+
     protected function setUp(): void
     {
         self::ensureKernelShutdown();
@@ -66,7 +70,7 @@ class CartographieControllerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => $email]);
         $client->loginUser($user);
         $route = $generatorUrl->generate('back_cartographie');
-        $crawler = $client->request('POST', $route, [
+        $client->request('POST', $route, [
             $filter => $terms,
         ]);
 
@@ -75,75 +79,57 @@ class CartographieControllerTest extends WebTestCase
 
     public function provideFilterSearch(): \Generator
     {
-        yield 'Super Admin by statut Nouveau' => ['admin-01@histologe.fr', 'bo-filters-statuses', ['1']];
-        yield 'Resp territoire by statut Nouveau' => ['admin-territoire-13-01@histologe.fr', 'bo-filters-statuses', ['1']];
-        yield 'Partenaire by statut Nouveau' => ['user-13-01@histologe.fr', 'bo-filters-statuses', ['1']];
-
-        yield 'Super Admin by Parc public/prive' => ['admin-01@histologe.fr', 'bo-filters-housetypes', ['1']];
-        yield 'Resp territoire by Parc public/prive' => ['admin-territoire-13-01@histologe.fr', 'bo-filters-housetypes', ['1']];
-        yield 'Partenaire by Parc public/prive' => ['user-13-01@histologe.fr', 'bo-filters-housetypes', ['1']];
-
-        yield 'Super Admin by affectation closed' => ['admin-01@histologe.fr', 'bo-filters-closed_affectation', ['ONE_CLOSED']];
-        yield 'Resp territoire by affectation closed' => ['admin-territoire-13-01@histologe.fr', 'bo-filters-closed_affectation', ['ONE_CLOSED']];
-
-        yield 'Super Admin by city' => ['admin-01@histologe.fr', 'bo-filters-cities', ['Marseille']];
-        yield 'Resp territoire by city' => ['admin-territoire-13-01@histologe.fr', 'bo-filters-cities', ['Marseille']];
-        yield 'Partenaire by city' => ['user-13-01@histologe.fr', 'bo-filters-cities', ['Marseille']];
-
-        yield 'Super Admin by partenaire' => ['admin-01@histologe.fr', 'bo-filters-partners', ['5']];
-        yield 'Resp territoire by partenaire' => ['admin-territoire-13-01@histologe.fr', 'bo-filters-partners', ['5']];
-
-        yield 'Super Admin by critère' => ['admin-01@histologe.fr', 'bo-filters-criteres', ['17']];
-        yield 'Resp territoire by critère' => ['admin-territoire-13-01@histologe.fr', 'bo-filters-criteres', ['17']];
-        yield 'Partenaire by critère' => ['user-13-01@histologe.fr', 'bo-filters-criteres', ['17']];
-
-        yield 'Super Admin by territory' => ['admin-01@histologe.fr', 'bo-filters-territories', ['1']];
-
-        yield 'Super Admin by Search Terms with Reference' => ['admin-01@histologe.fr', 'bo-filters-searchterms', '2022-1'];
-        yield 'Resp territoire by Search Terms with cp Occupant' => ['admin-territoire-13-01@histologe.fr', 'bo-filters-searchterms', '13003'];
-        yield 'Partenaire by Search Terms with cp Occupant 13005' => ['user-13-01@histologe.fr', 'bo-filters-searchterms', '13005'];
-        yield 'Partenaire by Search Terms with city Occupant' => ['user-13-01@histologe.fr', 'bo-filters-searchterms', 'Gex'];
-
-        yield 'Super Admin by Tags' => ['admin-01@histologe.fr', 'bo-filters-tags', ['3']];
-        yield 'Resp territoire by Tags' => ['admin-territoire-13-01@histologe.fr', 'bo-filters-tags', ['3']];
-        yield 'Partenaire by Tags' => ['user-13-01@histologe.fr', 'bo-filters-tags', ['3']];
-
-        yield 'Super Admin by scores' => ['admin-01@histologe.fr', 'bo-filters-scores', ['on' => '3', 'off' => '20']];
-        yield 'Resp territoire by scores' => ['admin-territoire-13-01@histologe.fr', 'bo-filters-scores', ['on' => '3', 'off' => '20']];
-        yield 'Partenaire by scores' => ['user-13-01@histologe.fr', 'bo-filters-scores', ['on' => '3', 'off' => '20']];
-
-        yield 'Super Admin by allocs' => ['admin-01@histologe.fr', 'bo-filters-allocs', ['CAF']];
-        yield 'Resp territoire by allocs' => ['admin-territoire-13-01@histologe.fr', 'bo-filters-allocs', ['CAF']];
-        yield 'Partenaire by allocs' => ['user-13-01@histologe.fr', 'bo-filters-allocs', ['CAF']];
-
-        yield 'Super Admin by avant1949' => ['admin-01@histologe.fr', 'bo-filters-avant1949', ['1']];
-        yield 'Resp territoire by avant1949' => ['admin-territoire-13-01@histologe.fr', 'bo-filters-avant1949', ['1']];
-        yield 'Partenaire by avant1949' => ['user-13-01@histologe.fr', 'bo-filters-avant1949', ['1']];
-
-        yield 'Super Admin by dates' => ['admin-01@histologe.fr', 'bo-filters-dates', ['on' => '2023-05-01', 'off' => '2023-05-16']];
-        yield 'Resp territoire by dates' => ['admin-territoire-13-01@histologe.fr', 'bo-filters-dates', ['on' => '2023-05-01', 'off' => '2023-05-16']];
-        yield 'Partenaire by dates' => ['user-13-01@histologe.fr', 'bo-filters-dates', ['on' => '2023-05-01', 'off' => '2023-05-16']];
-
-        yield 'Super Admin by declarants' => ['admin-01@histologe.fr', 'bo-filters-declarants', '15'];
-        yield 'Resp territoire by declarants' => ['admin-territoire-13-01@histologe.fr', 'bo-filters-declarants', '15'];
-        yield 'Partenaire by declarants' => ['user-13-01@histologe.fr', 'bo-filters-declarants', '15'];
-
-        yield 'Super Admin by enfantsM6' => ['admin-01@histologe.fr', 'bo-filters-enfantsM6', ['1']];
-        yield 'Resp territoire by enfantsM6' => ['admin-territoire-13-01@histologe.fr', 'bo-filters-enfantsM6', ['1']];
-        yield 'Partenaire by enfantsM6' => ['user-13-01@histologe.fr', 'bo-filters-enfantsM6', ['1']];
-
-        yield 'Super Admin by interventions' => ['admin-01@histologe.fr', 'bo-filters-interventions', ['0']];
-        yield 'Resp territoire by interventions' => ['admin-territoire-13-01@histologe.fr', 'bo-filters-interventions', ['0']];
-        yield 'Partenaire by interventions' => ['user-13-01@histologe.fr', 'bo-filters-interventions', ['0']];
-
-        yield 'Super Admin by nde' => ['admin-01@histologe.fr', 'bo-filters-nde', ['NDE_AVEREE']];
-
-        yield 'Super Admin by proprios' => ['admin-01@histologe.fr', 'bo-filters-proprios', ['0']];
-        yield 'Resp territoire by proprios' => ['admin-territoire-13-01@histologe.fr', 'bo-filters-proprios', ['0']];
-        yield 'Partenaire by proprios' => ['user-13-01@histologe.fr', 'bo-filters-proprios', ['0']];
-
-        yield 'Super Admin by visites' => ['admin-01@histologe.fr', 'bo-filters-visites', ['0']];
-        yield 'Resp territoire by visites' => ['admin-territoire-13-01@histologe.fr', 'bo-filters-visites', ['0']];
-        yield 'Partenaire by visites' => ['user-13-01@histologe.fr', 'bo-filters-visites', ['0']];
+        yield 'Super Admin by statut Nouveau' => [self::SUPER_ADMIN, 'bo-filters-statuses', ['1']];
+        yield 'Resp territoire by statut Nouveau' => [self::ADMIN_TERRITOIRE, 'bo-filters-statuses', ['1']];
+        yield 'Partenaire by statut Nouveau' => [self::PARTNER, 'bo-filters-statuses', ['1']];
+        yield 'Super Admin by Parc public/prive' => [self::SUPER_ADMIN, 'bo-filters-housetypes', ['1']];
+        yield 'Resp territoire by Parc public/prive' => [self::ADMIN_TERRITOIRE, 'bo-filters-housetypes', ['1']];
+        yield 'Partenaire by Parc public/prive' => [self::PARTNER, 'bo-filters-housetypes', ['1']];
+        yield 'Super Admin by affectation closed' => [self::SUPER_ADMIN, 'bo-filters-closed_affectation', ['ONE_CLOSED']];
+        yield 'Resp territoire by affectation closed' => [self::ADMIN_TERRITOIRE, 'bo-filters-closed_affectation', ['ONE_CLOSED']];
+        yield 'Super Admin by city' => [self::SUPER_ADMIN, 'bo-filters-cities', ['Marseille']];
+        yield 'Resp territoire by city' => [self::ADMIN_TERRITOIRE, 'bo-filters-cities', ['Marseille']];
+        yield 'Partenaire by city' => [self::PARTNER, 'bo-filters-cities', ['Marseille']];
+        yield 'Super Admin by partenaire' => [self::SUPER_ADMIN, 'bo-filters-partners', ['5']];
+        yield 'Resp territoire by partenaire' => [self::ADMIN_TERRITOIRE, 'bo-filters-partners', ['5']];
+        yield 'Super Admin by critère' => [self::SUPER_ADMIN, 'bo-filters-criteres', ['17']];
+        yield 'Resp territoire by critère' => [self::ADMIN_TERRITOIRE, 'bo-filters-criteres', ['17']];
+        yield 'Partenaire by critère' => [self::PARTNER, 'bo-filters-criteres', ['17']];
+        yield 'Super Admin by territory' => [self::SUPER_ADMIN, 'bo-filters-territories', ['1']];
+        yield 'Super Admin by Search Terms with Reference' => [self::SUPER_ADMIN, 'bo-filters-searchterms', '2022-1'];
+        yield 'Resp territoire by Search Terms with cp Occupant' => [self::ADMIN_TERRITOIRE, 'bo-filters-searchterms', '13003'];
+        yield 'Partenaire by Search Terms with cp Occupant 13005' => [self::PARTNER, 'bo-filters-searchterms', '13005'];
+        yield 'Partenaire by Search Terms with city Occupant' => [self::PARTNER, 'bo-filters-searchterms', 'Gex'];
+        yield 'Super Admin by Tags' => [self::SUPER_ADMIN, 'bo-filters-tags', ['3']];
+        yield 'Resp territoire by Tags' => [self::ADMIN_TERRITOIRE, 'bo-filters-tags', ['3']];
+        yield 'Partenaire by Tags' => [self::PARTNER, 'bo-filters-tags', ['3']];
+        yield 'Super Admin by scores' => [self::SUPER_ADMIN, 'bo-filters-scores', ['on' => '3', 'off' => '20']];
+        yield 'Resp territoire by scores' => [self::ADMIN_TERRITOIRE, 'bo-filters-scores', ['on' => '3', 'off' => '20']];
+        yield 'Partenaire by scores' => [self::PARTNER, 'bo-filters-scores', ['on' => '3', 'off' => '20']];
+        yield 'Super Admin by allocs' => [self::SUPER_ADMIN, 'bo-filters-allocs', ['CAF']];
+        yield 'Resp territoire by allocs' => [self::ADMIN_TERRITOIRE, 'bo-filters-allocs', ['CAF']];
+        yield 'Partenaire by allocs' => [self::PARTNER, 'bo-filters-allocs', ['CAF']];
+        yield 'Super Admin by avant1949' => [self::SUPER_ADMIN, 'bo-filters-avant1949', ['1']];
+        yield 'Resp territoire by avant1949' => [self::ADMIN_TERRITOIRE, 'bo-filters-avant1949', ['1']];
+        yield 'Partenaire by avant1949' => [self::PARTNER, 'bo-filters-avant1949', ['1']];
+        yield 'Super Admin by dates' => [self::SUPER_ADMIN, 'bo-filters-dates', ['on' => '2023-05-01', 'off' => '2023-05-16']];
+        yield 'Resp territoire by dates' => [self::ADMIN_TERRITOIRE, 'bo-filters-dates', ['on' => '2023-05-01', 'off' => '2023-05-16']];
+        yield 'Partenaire by dates' => [self::PARTNER, 'bo-filters-dates', ['on' => '2023-05-01', 'off' => '2023-05-16']];
+        yield 'Super Admin by declarants' => [self::SUPER_ADMIN, 'bo-filters-declarants', '15'];
+        yield 'Resp territoire by declarants' => [self::ADMIN_TERRITOIRE, 'bo-filters-declarants', '15'];
+        yield 'Partenaire by declarants' => [self::PARTNER, 'bo-filters-declarants', '15'];
+        yield 'Super Admin by enfantsM6' => [self::SUPER_ADMIN, 'bo-filters-enfantsM6', ['1']];
+        yield 'Resp territoire by enfantsM6' => [self::ADMIN_TERRITOIRE, 'bo-filters-enfantsM6', ['1']];
+        yield 'Partenaire by enfantsM6' => [self::PARTNER, 'bo-filters-enfantsM6', ['1']];
+        yield 'Super Admin by interventions' => [self::SUPER_ADMIN, 'bo-filters-interventions', ['0']];
+        yield 'Resp territoire by interventions' => [self::ADMIN_TERRITOIRE, 'bo-filters-interventions', ['0']];
+        yield 'Partenaire by interventions' => [self::PARTNER, 'bo-filters-interventions', ['0']];
+        yield 'Super Admin by nde' => [self::SUPER_ADMIN, 'bo-filters-nde', ['NDE_AVEREE']];
+        yield 'Super Admin by proprios' => [self::SUPER_ADMIN, 'bo-filters-proprios', ['0']];
+        yield 'Resp territoire by proprios' => [self::ADMIN_TERRITOIRE, 'bo-filters-proprios', ['0']];
+        yield 'Partenaire by proprios' => [self::PARTNER, 'bo-filters-proprios', ['0']];
+        yield 'Super Admin by visites' => [self::SUPER_ADMIN, 'bo-filters-visites', ['0']];
+        yield 'Resp territoire by visites' => [self::ADMIN_TERRITOIRE, 'bo-filters-visites', ['0']];
+        yield 'Partenaire by visites' => [self::PARTNER, 'bo-filters-visites', ['0']];
     }
 }
