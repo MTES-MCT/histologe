@@ -46,7 +46,7 @@ class SignalementRepository extends ServiceEntityRepository
         parent::__construct($registry, Signalement::class);
     }
 
-    public function findAllWithGeoData($user, $options, int $offset, Territory|null $territory): array
+    public function findAllWithGeoData($user, $options, int $offset): array
     {
         $firstResult = $offset;
 

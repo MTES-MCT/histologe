@@ -43,8 +43,7 @@ class CartographieController extends AbstractController
                 'signalements' => $signalementRepository->findAllWithGeoData(
                     $user,
                     $filters,
-                    (int) $request->get('offset'),
-                    $user->getTerritory() ?? null
+                    (int) $request->get('offset')
                 ), ]
             );
         }
