@@ -65,6 +65,9 @@ class Partner
     #[ORM\Column(type: Types::SIMPLE_ARRAY, length: 255, nullable: true, enumType: Qualification::class)]
     private array $competence = [];
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $isEsaboraActive = null;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -282,6 +285,18 @@ class Partner
     public function setCompetence(?array $competence): self
     {
         $this->competence = $competence;
+
+        return $this;
+    }
+
+    public function isEsaboraActive(): ?bool
+    {
+        return $this->isEsaboraActive;
+    }
+
+    public function setIsEsaboraActive(?bool $isEsaboraActive): self
+    {
+        $this->isEsaboraActive = $isEsaboraActive;
 
         return $this;
     }

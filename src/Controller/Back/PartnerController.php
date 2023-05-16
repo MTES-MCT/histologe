@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Form\PartnerType;
 use App\Manager\PartnerManager;
 use App\Manager\UserManager;
+use App\Repository\JobEventRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
@@ -36,7 +37,7 @@ class PartnerController extends AbstractController
         Request $request,
         PartnerRepository $partnerRepository,
         TerritoryRepository $territoryRepository,
-        ParameterBagInterface $parameterBag
+        ParameterBagInterface $parameterBag,
     ): Response {
         $this->denyAccessUnlessGranted('PARTNER_LIST', null);
         $page = $request->get('page') ?? 1;
@@ -120,9 +121,9 @@ class PartnerController extends AbstractController
 
     #[Route('/{id}/voir', name: 'back_partner_view', methods: ['GET', 'POST'])]
     public function view(
-        Request $request,
         Partner $partner,
         PartnerRepository $partnerRepository,
+        JobEventRepository $jobEventRepository,
     ): Response {
         $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
         if ($partner->getIsArchive()) {
@@ -134,9 +135,13 @@ class PartnerController extends AbstractController
             ]));
         }
 
+        $lastJobEvent = $jobEventRepository->findLastEsaboraJobByPartner($partner);
+        $lastJobEventDate = $lastJobEvent && !empty($lastJobEvent['last_event']) ? new \DateTimeImmutable($lastJobEvent['last_event']) : null;
+
         return $this->renderForm('back/partner/view.html.twig', [
             'partner' => $partner,
             'partners' => $partnerRepository->findAllList($partner->getTerritory()),
+            'last_job_date' => $lastJobEventDate,
         ]);
     }
 

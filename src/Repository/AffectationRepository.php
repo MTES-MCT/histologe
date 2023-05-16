@@ -79,7 +79,7 @@ class AffectationRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('a');
         $qb = $qb->innerJoin('a.partner', 'p')
-            ->where('p.esaboraUrl IS NOT NULL AND p.esaboraToken IS NOT NULL')
+            ->where('p.esaboraUrl IS NOT NULL AND p.esaboraToken IS NOT NULL AND p.isEsaboraActive = 1')
             ->andWhere('p.type = :partner_type')
             ->setParameter('partner_type', $partnerType);
 

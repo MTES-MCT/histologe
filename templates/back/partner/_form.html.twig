@@ -69,13 +69,21 @@
         </div>
         <h3 class="fr-h3 fr-mb-0 {{classeEsabora}}" id="partner_create_esabora_title">Interfaçage</h3>
         <div class="fr-col-12 fr-mb-5v {{classeEsabora}}" id="partner_create_esabora_div">
-        {# TODO : ajouter un bouton synchro si édition #}
             <div class="fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col-12 fr-col-md-6 fr-pl-0 fr-pl-md-0">
+                <div class="fr-col-12 fr-col-md-6 fr-p-1v">
+                    <span class="fr-label">Sychronisation Esabora (facultatif)</span>
+                    <div class="fr-toggle">
+                        {{ form_widget(form.isEsaboraActive) }}
+                        <label class="fr-toggle__label" for="{{ form.isEsaboraActive.vars.id }}"
+                            data-fr-checked-label="Activée" data-fr-unchecked-label="Désactivée">
+                        </label>
+                    </div>
+                </div>
+                <div class="fr-col-12 fr-col-md-6 fr-p-1v">
                     <label for="{{ form.esaboraUrl.vars.id }}" class="fr-label">URL Esabora (facultatif)</label>
                     {{ form_widget(form.esaboraUrl) }}
                 </div>
-                <div class="fr-col-12 fr-col-md-6 fr-pr-md-0">
+                <div class="fr-col-12 fr-col-md-6 fr-p-1v">
                     <label for="{{ form.esaboraToken.vars.id }}" class="fr-label">Token Esabora (facultatif)</label>
                     {{ form_widget(form.esaboraToken) }}</div>
             </div>
