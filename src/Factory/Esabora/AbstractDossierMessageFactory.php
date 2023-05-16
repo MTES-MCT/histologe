@@ -25,7 +25,7 @@ abstract class AbstractDossierMessageFactory implements DossierMessageFactoryInt
         foreach ($signalement->getPhotos() as $photo) {
             $filepath = $this->uploadHandlerService->getTmpFilepath($photo['file']);
             $piecesJointes[] = [
-                'documentName' => 'Image téléversée',
+                'documentName' => $photo['titre'],
                 'documentSize' => filesize($filepath),
                 'documentContent' => $photo['file'],
             ];
