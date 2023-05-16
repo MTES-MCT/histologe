@@ -597,8 +597,9 @@
                     <div class="fr-px-5w fr-py-10w fr-rounded fr-border fr-text--center part-infos-hover"
                          data-user="{{ photo.username ?? 'N/R' }}" data-mail="{{ photo.date ?? 'N/R' }}"
                          style="background: url('{{ asset('_up/'~photo.file) }}')no-repeat center center/cover">
-                        <button class="fr-btn fr-btn--sm fr-fi-eye-line img-box" title="Voir la photo"
-                                onclick="img_box('{{ asset('_up/'~photo.file) }}')"></button>
+                        <a href="{{ asset('_up/'~photo.file) }}"
+                            class="fr-btn fr-btn--sm fr-fi-eye-line img-box" title="Voir la photo"
+                            target="_blank" rel="noopener"></a>
                         {% if is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted) %}
                             {% if photo.user is not defined or photo.user is same as(app.user.id) %}
                                 <button title="Supprimer la photo"
@@ -608,11 +609,6 @@
                             {% endif %}
                         {% endif %}
                     </div>
-                    {# <div class="fr-grid-row">
-                        <div class="fr-col-12 fr-text--center">
-                            {{ photo.titre ?? 'image' }}
-                        </div>
-                    </div> #}
                 </div>
             {% endfor %}
         </div>
@@ -624,7 +620,8 @@
                 </div>
                 <div class="fr-col-2 fr-text--right">
                     <a href="{{ asset('_up/'~doc.file) }}"
-                       class="fr-btn fr-fi-eye-fill fr-btn--icon-left" title="Afficher le document" target="_blank">Consulter</a>
+                       class="fr-btn fr-fi-eye-fill fr-btn--icon-left" title="Afficher le document"
+                       target="_blank" rel="noopener">Consulter</a>
                     <button title="Supprimer le document"
                             data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'documents',filename:doc.file}) }}"
                             data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
