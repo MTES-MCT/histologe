@@ -22,7 +22,7 @@ class AskFeedbackUsagerCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('1 signalement without suivi from more than 30 days', $output);
+        $this->assertStringContainsString('1 signalement without suivi public from more than 45 days', $output);
         $this->assertEmailCount(2); // with cron notification email (1+1)
     }
 }
