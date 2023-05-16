@@ -89,7 +89,7 @@ class EsaboraSISHServiceTest extends KernelTestCase
 
         $this->assertEquals(200, $dossierVisiteSISHCollectionResponse->getStatusCode());
         $this->assertNull($dossierVisiteSISHCollectionResponse->getErrorReason());
-        $this->assertCount(2, $dossierVisiteSISHCollectionResponse->getDossiersVisiteSISH());
+        $this->assertCount(2, $dossierVisiteSISHCollectionResponse->getCollection());
     }
 
     public function testGetArretesDossierFromEsaboraSas(): void
@@ -103,7 +103,7 @@ class EsaboraSISHServiceTest extends KernelTestCase
 
         $this->assertEquals(200, $dossierArreteSISHCollectionResponse->getStatusCode());
         $this->assertNull($dossierArreteSISHCollectionResponse->getErrorReason());
-        $this->assertCount(1, $dossierArreteSISHCollectionResponse->getDossiersArreteSISH());
+        $this->assertCount(1, $dossierArreteSISHCollectionResponse->getCollection());
     }
 
     private function getEsaboraSISHService(string $filepath): EsaboraSISHService

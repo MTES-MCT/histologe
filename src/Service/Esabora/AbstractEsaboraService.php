@@ -3,6 +3,7 @@
 namespace App\Service\Esabora;
 
 use App\Entity\Affectation;
+use App\Service\Esabora\Response\DossierCollectionResponseInterface;
 use App\Service\Esabora\Response\DossierResponseInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -54,6 +55,16 @@ class AbstractEsaboraService implements EsaboraServiceInterface
     }
 
     public function getStateDossier(Affectation $affectation): ?DossierResponseInterface
+    {
+        return null;
+    }
+
+    public function getArreteDossier(Affectation $affectation): ?DossierCollectionResponseInterface
+    {
+        return null;
+    }
+
+    public function getVisiteDossier(Affectation $affectation): ?DossierCollectionResponseInterface
     {
         return null;
     }

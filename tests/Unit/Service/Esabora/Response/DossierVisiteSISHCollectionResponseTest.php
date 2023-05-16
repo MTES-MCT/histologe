@@ -13,7 +13,7 @@ class DossierVisiteSISHCollectionResponseTest extends TestCase
         $responseEsabora = json_decode(file_get_contents($filepath), true);
 
         $dossierVisiteCollectionResponse = new DossierVisiteSISHCollectionResponse($responseEsabora, 200);
-        $dossiersVisiteSISH = $dossierVisiteCollectionResponse->getDossiersVisiteSISH();
+        $dossiersVisiteSISH = $dossierVisiteCollectionResponse->getCollection();
         $this->assertCount(2, $dossiersVisiteSISH);
 
         foreach ($dossiersVisiteSISH as $dossierVisiteSISH) {

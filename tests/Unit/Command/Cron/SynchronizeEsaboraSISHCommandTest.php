@@ -4,9 +4,9 @@ namespace App\Tests\Unit\Command\Cron;
 
 use App\Command\Cron\SynchronizeEsaboraSISHCommand;
 use App\Entity\Enum\PartnerType;
-use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
+use App\Service\Esabora\EsaboraManager;
 use App\Service\Esabora\EsaboraSISHService;
 use App\Service\Esabora\Response\DossierStateSISHResponse;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -23,7 +23,7 @@ class SynchronizeEsaboraSISHCommandTest extends KernelTestCase
     use FixturesHelper;
     public const PATH_MOCK = '/../../../../tools/wiremock/src/Resources/Esabora/sish/';
 
-    public function testSyncDossierEsaboraSCHS(): void
+    public function testSyncDossierEsaboraSISH(): void
     {
         $kernel = self::bootKernel();
         $application = new Application($kernel);
@@ -40,17 +40,12 @@ class SynchronizeEsaboraSISHCommandTest extends KernelTestCase
             ->willReturn($dossierResponse);
 
         $affectationRepositoryMock = $this->createMock(AffectationRepository::class);
-        $affectationManagerMock = $this->createMock(AffectationManager::class);
-        $affectationManagerMock
-            ->expects($this->once())
-            ->method('getRepository')
-            ->willReturn($affectationRepositoryMock);
 
         $collection = (new ArrayCollection());
         $collection->add($affectation);
 
         $affectationRepositoryMock
-            ->expects($this->once())
+            ->expects($this->atLeast(2))
             ->method('findAffectationSubscribedToEsabora')
             ->willReturn($collection->toArray());
 
@@ -63,10 +58,13 @@ class SynchronizeEsaboraSISHCommandTest extends KernelTestCase
         $notificationMailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);
         $parameterBag = self::getContainer()->get(ParameterBagInterface::class);
 
+        $esaboraManagerMock = $this->createMock(EsaboraManager::class);
+
         $command = $application->add(new SynchronizeEsaboraSISHCommand(
             $esaboraServiceMock,
-            $affectationManagerMock,
+            $esaboraManagerMock,
             $jobEventManagerMock,
+            $affectationRepositoryMock,
             $serializerMock,
             $notificationMailerRegistry,
             $parameterBag,

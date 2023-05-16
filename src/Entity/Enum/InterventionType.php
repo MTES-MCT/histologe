@@ -16,6 +16,7 @@ enum InterventionType: string
     {
         return [
             'VISITE' => 'Visite',
+            'VISITE_CONTROLE' => 'Visite de contrôle',
             'ARRETE' => 'Arrêté préfectoral',
         ];
     }

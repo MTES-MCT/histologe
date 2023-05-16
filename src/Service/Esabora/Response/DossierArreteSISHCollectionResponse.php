@@ -2,26 +2,35 @@
 
 namespace App\Service\Esabora\Response;
 
+use App\Service\Esabora\Enum\EsaboraStatus;
 use App\Service\Esabora\Response\Model\DossierArreteSISH;
 
-class DossierArreteSISHCollectionResponse
+class DossierArreteSISHCollectionResponse implements DossierCollectionResponseInterface
 {
-    private ?int $statusCode = null;
+    private int $statusCode;
+    private string $sasEtat;
     private ?string $errorReason = null;
-    private array $dossiersArreteSISH = [];
+
+    /** @var DossierArreteSISH[] */
+    private array $collection = [];
 
     public function __construct(array $response, int $statusCode)
     {
         if (!empty($response)) {
             foreach ($response['rowList'] as $item) {
-                $this->dossiersArreteSISH[] = new DossierArreteSISH($item);
+                $this->collection[] = new DossierArreteSISH($item);
             }
         }
-
         $this->statusCode = $statusCode;
+        $this->sasEtat = EsaboraStatus::ESABORA_ACCEPTED->value;
     }
 
-    public function getStatusCode(): ?int
+    public function getSasEtat(): string
+    {
+        return $this->sasEtat;
+    }
+
+    public function getStatusCode(): int
     {
         return $this->statusCode;
     }
@@ -34,8 +43,8 @@ class DossierArreteSISHCollectionResponse
     /**
      * @return DossierArreteSISH[]
      */
-    public function getDossiersArreteSISH(): array
+    public function getCollection(): array
     {
-        return $this->dossiersArreteSISH;
+        return $this->collection;
     }
 }

@@ -24,6 +24,9 @@ class Intervention
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $scheduledAt = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $registeredAt = null;
+
     #[ORM\ManyToOne(inversedBy: 'interventions')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Signalement $signalement = null;
@@ -55,6 +58,11 @@ class Intervention
     #[ORM\Column(nullable: true)]
     private ?bool $occupantPresent = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?string $doneBy = null;
+
+    private ?string $providerId = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -68,6 +76,18 @@ class Intervention
     public function setScheduledAt(?\DateTimeImmutable $scheduledAt): self
     {
         $this->scheduledAt = $scheduledAt;
+
+        return $this;
+    }
+
+    public function getRegisteredAt(): ?\DateTimeImmutable
+    {
+        return $this->registeredAt;
+    }
+
+    public function setRegisteredAt(?\DateTimeImmutable $registeredAt): self
+    {
+        $this->registeredAt = $registeredAt;
 
         return $this;
     }
@@ -188,6 +208,30 @@ class Intervention
     public function setOccupantPresent(?bool $occupantPresent): self
     {
         $this->occupantPresent = $occupantPresent;
+
+        return $this;
+    }
+
+    public function getDoneBy(): ?string
+    {
+        return $this->doneBy;
+    }
+
+    public function setDoneBy(?string $doneBy): self
+    {
+        $this->doneBy = $doneBy;
+
+        return $this;
+    }
+
+    public function getProviderId(): ?string
+    {
+        return $this->providerId;
+    }
+
+    public function setProviderId(?string $providerId): self
+    {
+        $this->providerId = $providerId;
 
         return $this;
     }

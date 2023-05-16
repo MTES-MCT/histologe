@@ -6,9 +6,9 @@ use App\Command\Cron\SynchronizeEsaboraSCHSCommand;
 use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
-use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
+use App\Service\Esabora\EsaboraManager;
 use App\Service\Esabora\EsaboraSCHSService;
 use App\Service\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -41,11 +41,6 @@ class SynchronizeEsaboraSCHSCommandTest extends KernelTestCase
             ->willReturn($dossierResponse);
 
         $affectationRepositoryMock = $this->createMock(AffectationRepository::class);
-        $affectationManagerMock = $this->createMock(AffectationManager::class);
-        $affectationManagerMock
-            ->expects($this->once())
-            ->method('getRepository')
-            ->willReturn($affectationRepositoryMock);
 
         $collection = (new ArrayCollection());
         $collection->add($affectation);
@@ -64,10 +59,13 @@ class SynchronizeEsaboraSCHSCommandTest extends KernelTestCase
         $notificationMailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);
         $parameterBag = self::getContainer()->get(ParameterBagInterface::class);
 
+        $esaboraManagerMock = $this->createMock(EsaboraManager::class);
+
         $command = $application->add(new SynchronizeEsaboraSCHSCommand(
             $esaboraServiceMock,
-            $affectationManagerMock,
+            $esaboraManagerMock,
             $jobEventManagerMock,
+            $affectationRepositoryMock,
             $serializerMock,
             $notificationMailerRegistry,
             $parameterBag,

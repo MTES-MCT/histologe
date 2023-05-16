@@ -3,8 +3,9 @@
 namespace App\Command\Cron;
 
 use App\Entity\Enum\PartnerType;
-use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
+use App\Repository\AffectationRepository;
+use App\Service\Esabora\EsaboraManager;
 use App\Service\Esabora\EsaboraSISHService;
 use App\Service\Mailer\NotificationMailerRegistry;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -22,29 +23,38 @@ class SynchronizeEsaboraSISHCommand extends AbstractSynchronizeEsaboraCommand
 {
     public function __construct(
         private readonly EsaboraSISHService $esaboraService,
-        private readonly AffectationManager $affectationManager,
+        private readonly EsaboraManager $esaboraManager,
         private readonly JobEventManager $jobEventManager,
+        private readonly AffectationRepository $affectationRepository,
         private readonly SerializerInterface $serializer,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
     ) {
         parent::__construct(
-            $this->parameterBag,
-            $this->affectationManager,
+            $this->esaboraManager,
             $this->jobEventManager,
+            $this->affectationRepository,
             $this->serializer,
             $this->notificationMailerRegistry,
+            $this->parameterBag,
         );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->synchronize(
+        $this->synchronizeStatus(
             $input,
             $output,
             $this->esaboraService,
             PartnerType::ARS,
             'Reference_Dossier'
+        );
+
+        $this->synchronizeIntervention(
+            $input,
+            $output,
+            $this->esaboraService,
+            PartnerType::ARS
         );
 
         return Command::SUCCESS;

@@ -5,11 +5,12 @@ namespace App\Command\Cron;
 use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
 use App\Entity\JobEvent;
-use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
 use App\Service\Esabora\AbstractEsaboraService;
+use App\Service\Esabora\EsaboraManager;
 use App\Service\Esabora\EsaboraServiceInterface;
+use App\Service\Esabora\Response\DossierCollectionResponseInterface;
 use App\Service\Esabora\Response\DossierResponseInterface;
 use App\Service\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\Esabora\Response\DossierStateSISHResponse;
@@ -32,11 +33,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
 {
     public function __construct(
-        private readonly ParameterBagInterface $parameterBag,
-        private readonly AffectationManager $affectationManager,
+        private readonly EsaboraManager $esaboraManager,
         private readonly JobEventManager $jobEventManager,
+        private readonly AffectationRepository $affectationRepository,
         private readonly SerializerInterface $serializer,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly ParameterBagInterface $parameterBag,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -48,7 +50,7 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
         return Command::FAILURE;
     }
 
-    protected function synchronize(
+    protected function synchronizeStatus(
         InputInterface $input,
         OutputInterface $output,
         EsaboraServiceInterface $esaboraService,
@@ -57,15 +59,13 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
     ): void {
         $io = new SymfonyStyle($input, $output);
 
-        /** @var AffectationRepository $affectationRepository */
-        $affectationRepository = $this->affectationManager->getRepository();
-        $affectations = $affectationRepository->findAffectationSubscribedToEsabora($partnerType);
+        $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora($partnerType);
         $countSyncSuccess = 0;
         $countSyncFailed = 0;
         foreach ($affectations as $affectation) {
             $dossierResponse = $esaboraService->getStateDossier($affectation);
             if ($this->hasSuccess($dossierResponse)) {
-                $this->affectationManager->synchronizeAffectationFrom($dossierResponse, $affectation);
+                $this->esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
                 $io->success($this->printInfo($dossierResponse));
                 ++$countSyncSuccess;
             } else {
@@ -89,7 +89,25 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
         $this->notify($partnerType, $countSyncSuccess, $countSyncFailed);
     }
 
-    protected function hasSuccess(DossierResponseInterface $dossierResponse): bool
+    public function synchronizeIntervention(
+        InputInterface $input,
+        OutputInterface $output,
+        EsaboraServiceInterface $esaboraService,
+        PartnerType $partnerType,
+    ): void {
+        $io = new SymfonyStyle($input, $output);
+
+        $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora($partnerType);
+
+        foreach ($affectations as $affectation) {
+            $dossierVisiteResponse = $esaboraService->getVisiteDossier($affectation);
+            $dossierArreteResponse = $esaboraService->getArreteDossier($affectation);
+            $dossierCollection = [...$dossierVisiteResponse->getCollection(), ...$dossierArreteResponse->getCollection()];
+            $this->esaboraManager->createInterventions($affectation, $dossierCollection);
+        }
+    }
+
+    protected function hasSuccess(DossierResponseInterface|DossierCollectionResponseInterface $dossierResponse): bool
     {
         return Response::HTTP_OK === $dossierResponse->getStatusCode()
             && null !== $dossierResponse->getSasEtat()

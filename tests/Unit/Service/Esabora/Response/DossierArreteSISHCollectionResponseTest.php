@@ -13,7 +13,7 @@ class DossierArreteSISHCollectionResponseTest extends TestCase
         $responseEsabora = json_decode(file_get_contents($filepath), true);
 
         $dossierArreteSISHCollectionResponse = new DossierArreteSISHCollectionResponse($responseEsabora, 200);
-        $dossiersArreteSISH = $dossierArreteSISHCollectionResponse->getDossiersArreteSISH();
+        $dossiersArreteSISH = $dossierArreteSISHCollectionResponse->getCollection();
         $this->assertCount(1, $dossiersArreteSISH);
         $this->assertEquals('Histologe', $dossiersArreteSISH[0]->getLogicielProvenance());
         $this->assertEquals('00000000-0000-0000-2023-000000000010', $dossiersArreteSISH[0]->getReferenceDossier());
