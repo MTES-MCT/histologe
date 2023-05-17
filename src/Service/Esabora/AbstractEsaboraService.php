@@ -16,7 +16,6 @@ class AbstractEsaboraService implements EsaboraServiceInterface
     public const TYPE_SERVICE = 'esabora';
     public const SISH_VISITES_DOSSIER_SAS = 'SISH_VISITES_DOSSIER_SAS';
     public const SISH_ARRETES_DOSSIER_SAS = 'SISH_ARRETES_DOSSIER_SAS';
-
     public const ACTION_PUSH_DOSSIER = 'push_dossier';
     public const ACTION_PUSH_DOSSIER_PERSONNE = 'push_dossier_personne';
     public const ACTION_PUSH_DOSSIER_ADRESSE = 'push_dossier_adresse';

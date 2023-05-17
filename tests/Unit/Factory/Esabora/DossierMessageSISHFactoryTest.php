@@ -9,6 +9,8 @@ use App\Service\Esabora\AddressParser;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class DossierMessageSISHFactoryTest extends TestCase
 {
@@ -22,8 +24,27 @@ class DossierMessageSISHFactoryTest extends TestCase
             ->expects($this->exactly(2))
             ->method('getTmpFilepath')
             ->willReturn(self::FILE);
+        $parameterBagMock = $this->createMock(ParameterBagInterface::class);
+        $parameterBagMock
+            ->expects($this->once())
+            ->method('get')
+            ->with('host_url')
+            ->willReturn('https://localhost');
 
-        $dossierMessageFactory = new DossierMessageSISHFactory(new AddressParser(), $uploadHandlerServiceMock);
+        $urlGeneratorMock = $this->createMock(UrlGeneratorInterface::class);
+        $urlGeneratorMock
+            ->expects($this->once())
+            ->method('generate')
+            ->with('back_signalement_view')
+            ->willReturn('/bo/signalements/00000000-0000-0000-2022-000000000001');
+
+        $dossierMessageFactory = new DossierMessageSISHFactory(
+            new AddressParser(),
+            $uploadHandlerServiceMock,
+            $parameterBagMock,
+            $urlGeneratorMock
+        );
+
         $dossierMessage = $dossierMessageFactory->createInstance(
             $this->getSignalementAffectation(PartnerType::ARS)
         );

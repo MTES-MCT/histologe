@@ -10,5 +10,7 @@ interface InterventionSISHHandlerInterface
 {
     public function handle(Affectation $affectation);
 
+    public function getServiceName(): string;
+
     public static function getPriority(): int;
 }

@@ -46,6 +46,11 @@ class InterventionVisiteServiceHandler implements InterventionSISHHandlerInterfa
         );
     }
 
+    public function getServiceName(): string
+    {
+        return AbstractEsaboraService::ACTION_SYNC_DOSSIER_VISITE;
+    }
+
     public static function getPriority(): int
     {
         return 1;

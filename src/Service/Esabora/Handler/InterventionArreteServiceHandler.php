@@ -46,6 +46,11 @@ class InterventionArreteServiceHandler implements InterventionSISHHandlerInterfa
         );
     }
 
+    public function getServiceName(): string
+    {
+        return AbstractEsaboraService::ACTION_SYNC_DOSSIER_ARRETE;
+    }
+
     public static function getPriority(): int
     {
         return 2;
