@@ -46,45 +46,22 @@ class SignalementRepository extends ServiceEntityRepository
         parent::__construct($registry, Signalement::class);
     }
 
-    public function findAllWithGeoData($user, $options, int $offset, Territory|null $territory): array
+    public function findAllWithGeoData($user, $options, int $offset): array
     {
         $firstResult = $offset;
-        $qb = $this->createQueryBuilder('s');
-        $qb->select('PARTIAL s.{id,details,uuid,reference,nomOccupant,prenomOccupant,adresseOccupant,cpOccupant,
-        inseeOccupant, villeOccupant,score,statut,createdAt,geoloc,territory},
-            PARTIAL a.{id,partner,createdAt},
-            PARTIAL criteres.{id,label},
-            PARTIAL partner.{id,nom}');
 
-        $qb->leftJoin('s.affectations', 'a')
-            ->leftJoin('s.criteres', 'criteres')
-            ->leftJoin('a.partner', 'partner');
-        if ($user) {
-            $qb->andWhere('partner = :partner')->setParameter('partner', $user->getPartner());
-        }
-        if ($territory) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        $qb = $this->findSignalementAffectationQuery($user, $options);
 
-            if (\array_key_exists($territory->getZip(), $options['authorized_codes_insee'])
-            ) {
-                $qb = $this->filterForSpecificAgglomeration(
-                    $qb,
-                    $territory->getZip(),
-                    $options['partner_name'],
-                    $options['authorized_codes_insee']
-                );
-            }
-        }
+        $qb->addSelect('s.geoloc, s.details, s.cpOccupant, s.inseeOccupant');
 
-        $qb = $this->searchFilterService->applyFilters($qb, $options);
-        $qb->addSelect('a', 'partner', 'criteres');
-
-        return $qb->andWhere("JSON_EXTRACT(s.geoloc,'$.lat') != ''")
+        $qb->andWhere("JSON_EXTRACT(s.geoloc,'$.lat') != ''")
             ->andWhere("JSON_EXTRACT(s.geoloc,'$.lng') != ''")
-            ->andWhere('s.statut != 7')
-            ->setFirstResult($firstResult)
-            ->setMaxResults(self::MARKERS_PAGE_SIZE)
-            ->getQuery()->getArrayResult();
+            ->andWhere('s.statut != 7');
+
+        $qb->setFirstResult($firstResult)
+            ->setMaxResults(self::MARKERS_PAGE_SIZE);
+
+        return $qb->getQuery()->getArrayResult();
     }
 
     public function countAll(Territory|null $territory, bool $removeImported = false, bool $removeArchived = false): int
@@ -363,13 +340,13 @@ class SignalementRepository extends ServiceEntityRepository
             GROUP_CONCAT(DISTINCT p.id SEPARATOR :group_concat_separator) as affectationPartnerId,
             GROUP_CONCAT(DISTINCT sq.qualification SEPARATOR :group_concat_separator) as qualifications,
             GROUP_CONCAT(DISTINCT sq.status SEPARATOR :group_concat_separator) as qualificationsStatuses')
-            ->leftJoin('s.affectations', 'a')
-            ->leftJoin('a.partner', 'p')
-            ->leftJoin('s.signalementQualifications', 'sq', 'WITH', 'sq.status LIKE \'%AVEREE%\' OR sq.status LIKE \'%CHECK%\'')
-            ->where('s.statut != :status')
-            ->groupBy('s.id')
-            ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
-            ->setParameter('group_concat_separator', SignalementAffectationListView::SEPARATOR_GROUP_CONCAT);
+             ->leftJoin('s.affectations', 'a')
+             ->leftJoin('a.partner', 'p')
+             ->leftJoin('s.signalementQualifications', 'sq', 'WITH', 'sq.status LIKE \'%AVEREE%\' OR sq.status LIKE \'%CHECK%\'')
+             ->where('s.statut != :status')
+             ->groupBy('s.id')
+             ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
+             ->setParameter('group_concat_separator', SignalementAffectationListView::SEPARATOR_GROUP_CONCAT);
 
         if ($user->isTerritoryAdmin()) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $user->getTerritory());
