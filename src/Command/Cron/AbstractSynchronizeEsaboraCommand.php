@@ -89,24 +89,6 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
         $this->notify($partnerType, $countSyncSuccess, $countSyncFailed);
     }
 
-    public function synchronizeIntervention(
-        InputInterface $input,
-        OutputInterface $output,
-        EsaboraServiceInterface $esaboraService,
-        PartnerType $partnerType,
-    ): void {
-        $io = new SymfonyStyle($input, $output);
-
-        $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora($partnerType);
-
-        foreach ($affectations as $affectation) {
-            $dossierVisiteResponse = $esaboraService->getVisiteDossier($affectation);
-            $dossierArreteResponse = $esaboraService->getArreteDossier($affectation);
-            $dossierCollection = [...$dossierVisiteResponse->getCollection(), ...$dossierArreteResponse->getCollection()];
-            $this->esaboraManager->createInterventions($affectation, $dossierCollection);
-        }
-    }
-
     protected function hasSuccess(DossierResponseInterface|DossierCollectionResponseInterface $dossierResponse): bool
     {
         return Response::HTTP_OK === $dossierResponse->getStatusCode()

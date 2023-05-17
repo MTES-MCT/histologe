@@ -48,19 +48,6 @@ class EsaboraManager
         }
     }
 
-    public function createInterventions(
-        Affectation $affectation,
-        array $dossierCollection,
-    ): void {
-        foreach ($dossierCollection as $dossier) {
-            if ($dossier instanceof DossierVisiteSISH) {
-                $this->createVisite($affectation, $dossier);
-            } else {
-                $this->createArrete($affectation, $dossier);
-            }
-        }
-    }
-
     public function updateStatusFor(
         Affectation $affectation,
         User $user,
@@ -113,7 +100,7 @@ class EsaboraManager
             && Affectation::STATUS_CLOSED !== $currentStatus;
     }
 
-    private function createVisite(Affectation $affectation, DossierVisiteSISH $dossierVisiteSISH): void
+    public function createVisite(Affectation $affectation, DossierVisiteSISH $dossierVisiteSISH): void
     {
         $intervention = $this->interventionFactory->createInstanceFrom(
             affectation: $affectation,
@@ -131,7 +118,7 @@ class EsaboraManager
         $this->interventionRepository->save($intervention);
     }
 
-    private function createArrete(Affectation $affectation, DossierArreteSISH $dossierArreteSISH): void
+    public function createArrete(Affectation $affectation, DossierArreteSISH $dossierArreteSISH): void
     {
         $intervention = $this->interventionFactory->createInstanceFrom(
             affectation: $affectation,

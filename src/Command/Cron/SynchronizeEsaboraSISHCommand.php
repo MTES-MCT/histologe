@@ -50,13 +50,6 @@ class SynchronizeEsaboraSISHCommand extends AbstractSynchronizeEsaboraCommand
             'Reference_Dossier'
         );
 
-        $this->synchronizeIntervention(
-            $input,
-            $output,
-            $this->esaboraService,
-            PartnerType::ARS
-        );
-
         return Command::SUCCESS;
     }
 }

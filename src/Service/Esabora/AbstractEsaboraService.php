@@ -21,6 +21,8 @@ class AbstractEsaboraService implements EsaboraServiceInterface
     public const ACTION_PUSH_DOSSIER_PERSONNE = 'push_dossier_personne';
     public const ACTION_PUSH_DOSSIER_ADRESSE = 'push_dossier_adresse';
     public const ACTION_SYNC_DOSSIER = 'sync_dossier';
+    public const ACTION_SYNC_DOSSIER_VISITE = 'sync_dossier_visite';
+    public const ACTION_SYNC_DOSSIER_ARRETE = 'sync_dossier_arrete';
     public const TASK_INSERT = 'doTreatment';
     public const SIGNALEMENT_ORIGINE = 'interfaçage';
     public const FORMAT_DATE = 'd/m/Y';
@@ -69,7 +71,7 @@ class AbstractEsaboraService implements EsaboraServiceInterface
         return null;
     }
 
-    protected function prepareInterventionPayload(Affectation $affectation, string $serviceName): array
+    public function prepareInterventionPayload(Affectation $affectation, string $serviceName): array
     {
         return [
             'searchName' => $serviceName,
