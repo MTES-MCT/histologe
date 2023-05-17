@@ -354,6 +354,10 @@ class EsaboraSISHService extends AbstractEsaboraService
                 'fieldValue' => $dossierMessageSISH->getSignalementProblemes(),
             ],
             [
+                'fieldName' => 'Signalement_URL',
+                'fieldValue' => $dossierMessageSISH->getSignalementUrl(),
+            ],
+            [
                 'fieldName' => 'PJ_Observations',
                 'fieldValue' => $dossierMessageSISH->getPiecesJointesObservation(),
             ],

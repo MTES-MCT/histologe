@@ -10,6 +10,7 @@ final class DossierMessageSISH implements DossierMessageInterface
 {
     private ?string $url = null;
     private ?string $token = null;
+    private ?string $signalementUrl = null;
     private ?int $signalementId = null;
     private ?int $partnerId = null;
     private ?string $partnerType = null;
@@ -67,9 +68,7 @@ final class DossierMessageSISH implements DossierMessageInterface
     private ?string $signalementProblemes = null;
     private ?string $piecesJointesObservation = null;
     private array $piecesJointesDocuments = [];
-
     private ?int $sasDossierId = null;
-
     private ?array $personnes = null;
 
     public function __construct()
@@ -97,6 +96,18 @@ final class DossierMessageSISH implements DossierMessageInterface
     public function setToken(?string $token): self
     {
         $this->token = $token;
+
+        return $this;
+    }
+
+    public function getSignalementUrl(): ?string
+    {
+        return $this->signalementUrl;
+    }
+
+    public function setSignalementUrl(?string $signalementUrl): self
+    {
+        $this->signalementUrl = $signalementUrl;
 
         return $this;
     }

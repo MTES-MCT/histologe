@@ -12,12 +12,16 @@ use App\Service\Esabora\AddressParser;
 use App\Service\Esabora\Enum\PersonneType;
 use App\Service\Esabora\Model\DossierMessageSISHPersonne;
 use App\Service\UploadHandlerService;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class DossierMessageSISHFactory extends AbstractDossierMessageFactory
 {
     public function __construct(
         private readonly AddressParser $addressParser,
-        private readonly UploadHandlerService $uploadHandlerService
+        private readonly UploadHandlerService $uploadHandlerService,
+        private readonly ParameterBagInterface $parameterBag,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
         parent::__construct($this->uploadHandlerService);
     }
@@ -37,6 +41,10 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         $firstSuivi = $signalement->getSuivis()->first();
         $formatDate = AbstractEsaboraService::FORMAT_DATE;
         $formatDateTime = AbstractEsaboraService::FORMAT_DATE_TIME;
+        $routeSignalement = $this->urlGenerator->generate(
+            'back_signalement_view',
+            ['uuid' => $signalement->getUuid()]
+        );
 
         return (new DossierMessageSISH())
             ->setUrl($partner->getEsaboraUrl())
@@ -44,6 +52,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setPartnerId($partner->getId())
             ->setPartnerType($partner->getType()->value)
             ->setSignalementId($signalement->getId())
+            ->setSignalementUrl($this->parameterBag->get('host_url').$routeSignalement)
             ->setReferenceAdresse($signalement->getUuid())
             ->setLocalisationNumero($address['number'] ?? null)
             ->setLocalisationNumeroExt($address['suffix'] ?? null)
