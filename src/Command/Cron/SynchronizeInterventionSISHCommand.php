@@ -57,7 +57,7 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
             /** @var InterventionSISHHandlerInterface $interventionHandler */
             foreach ($this->interventionHandlers as $key => $interventionHandler) {
                 $interventionHandler->handle($affectation);
-                $io->writeln(sprintf('#%s: %s was called', $key, $interventionHandler->getServiceName()));
+                $io->writeln(sprintf('#%s: %s was executed', $key, $interventionHandler->getServiceName()));
             }
         }
 

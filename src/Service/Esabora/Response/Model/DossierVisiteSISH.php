@@ -4,6 +4,7 @@ namespace App\Service\Esabora\Response\Model;
 
 class DossierVisiteSISH
 {
+    private ?int $visiteId = null;
     private ?string $sasLogicielProvenance = null;
     private ?string $referenceDossier = null;
     private ?string $dossNum = null;
@@ -19,6 +20,7 @@ class DossierVisiteSISH
     public function __construct(array $item)
     {
         if (!empty($item)) {
+            $this->visiteId = $item['keyDataList'][1] ?? null;
             $data = $item['columnDataList'] ?? null;
             if (null !== $data) {
                 $this->sasLogicielProvenance = $data[0];
@@ -34,6 +36,11 @@ class DossierVisiteSISH
                 $this->visitePar = $data[10];
             }
         }
+    }
+
+    public function getVisiteId(): ?int
+    {
+        return $this->visiteId;
     }
 
     public function getSasLogicielProvenance(): ?string

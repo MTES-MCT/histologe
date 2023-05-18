@@ -3,6 +3,7 @@
 namespace App\Service\Esabora;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\InterfacageType;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Intervention;
 use App\Entity\User;
@@ -88,6 +89,80 @@ class EsaboraManager
         return $description;
     }
 
+    public function createOrUpdateVisite(Affectation $affectation, DossierVisiteSISH $dossierVisiteSISH): void
+    {
+        $intervention = $this->interventionRepository->findOneBy(['providerId' => $dossierVisiteSISH->getVisiteId()]);
+        if (null !== $intervention) {
+            $this->updateFromDossierVisite($intervention, $dossierVisiteSISH);
+        } else {
+            $newIntervention = $this->interventionFactory->createInstanceFrom(
+                affectation: $affectation,
+                type: InterventionType::VISITE,
+                scheduledAt: DateParser::parse($dossierVisiteSISH->getVisiteDate()),
+                registeredAt: DateParser::parse($dossierVisiteSISH->getVisiteDateEnreg()),
+                status: EsaboraStatus::ESABORA_IN_PROGRESS === $dossierVisiteSISH->getVisiteEtat()
+                    ? Intervention::STATUS_PLANNED
+                    : Intervention::STATUS_DONE,
+                providerName: InterfacageType::ESABORA->value,
+                providerId: $dossierVisiteSISH->getVisiteId(),
+                doneBy: $dossierVisiteSISH->getVisitePar(),
+                details: $dossierVisiteSISH->getVisiteObservations()
+            );
+
+            $this->interventionRepository->save($newIntervention, true);
+        }
+    }
+
+    public function createOrUpdateArrete(Affectation $affectation, DossierArreteSISH $dossierArreteSISH): void
+    {
+        $intervention = $this->interventionRepository->findOneBy(['providerId' => $dossierArreteSISH->getArreteId()]);
+        if (null !== $intervention) {
+            $this->updateFromDossierArrete($intervention, $dossierArreteSISH);
+        } else {
+            $intervention = $this->interventionFactory->createInstanceFrom(
+                affectation: $affectation,
+                type: InterventionType::ARRETE_PREFECTORAL,
+                scheduledAt: DateParser::parse($dossierArreteSISH->getArreteDatePresc()),
+                registeredAt: DateParser::parse($dossierArreteSISH->getArreteDate()),
+                status: EsaboraStatus::ESABORA_IN_PROGRESS === $dossierArreteSISH->getArreteEtat()
+                    ? Intervention::STATUS_PLANNED
+                    : Intervention::STATUS_DONE,
+                providerName: InterfacageType::ESABORA->value,
+                providerId: $dossierArreteSISH->getArreteId(),
+                details: $dossierArreteSISH->getArreteCommentaire()
+            );
+
+            $this->interventionRepository->save($intervention, true);
+        }
+    }
+
+    private function updateFromDossierVisite(Intervention $intervention, DossierVisiteSISH $dossierVisiteSISH): void
+    {
+        $intervention
+            ->setScheduledAt(DateParser::parse($dossierVisiteSISH->getVisiteDate()))
+            ->setRegisteredAt(DateParser::parse($dossierVisiteSISH->getVisiteDateEnreg()))
+            ->setStatus(EsaboraStatus::ESABORA_IN_PROGRESS === $dossierVisiteSISH->getVisiteEtat()
+                ? Intervention::STATUS_PLANNED
+                : Intervention::STATUS_DONE)
+            ->setDoneBy($dossierVisiteSISH->getVisitePar())
+            ->setDetails($dossierVisiteSISH->getVisiteObservations());
+
+        $this->interventionRepository->save($intervention);
+    }
+
+    private function updateFromDossierArrete(Intervention $intervention, DossierArreteSISH $dossierArreteSISH): void
+    {
+        $intervention
+            ->setScheduledAt(DateParser::parse($dossierArreteSISH->getArreteDatePresc()))
+            ->setRegisteredAt(DateParser::parse($dossierArreteSISH->getArreteDate()))
+            ->setStatus(EsaboraStatus::ESABORA_IN_PROGRESS === $dossierArreteSISH->getArreteEtat()
+                ? Intervention::STATUS_PLANNED
+                : Intervention::STATUS_DONE)
+            ->setDetails($dossierArreteSISH->getArreteCommentaire());
+
+        $this->interventionRepository->save($intervention);
+    }
+
     private function shouldBeAcceptedViaEsabora(string $esaboraDossierStatus, int $currentStatus): bool
     {
         return EsaboraStatus::ESABORA_IN_PROGRESS->value === $esaboraDossierStatus
@@ -98,52 +173,5 @@ class EsaboraManager
     {
         return EsaboraStatus::ESABORA_CLOSED->value === $esaboraDossierStatus
             && Affectation::STATUS_CLOSED !== $currentStatus;
-    }
-
-    public function createVisite(Affectation $affectation, DossierVisiteSISH $dossierVisiteSISH): void
-    {
-        $intervention = $this->interventionFactory->createInstanceFrom(
-            affectation: $affectation,
-            type: InterventionType::VISITE,
-            scheduledAt: $this->parseDate($dossierVisiteSISH->getVisiteDate()),
-            registeredAt: $this->parseDate($dossierVisiteSISH->getVisiteDateEnreg()),
-            status: EsaboraStatus::ESABORA_IN_PROGRESS === $dossierVisiteSISH->getVisiteEtat()
-                ? Intervention::STATUS_PLANNED
-                : Intervention::STATUS_DONE,
-            providerId: $dossierVisiteSISH->getVisiteNum(),
-            doneBy: $dossierVisiteSISH->getVisitePar(),
-            details: $dossierVisiteSISH->getVisiteObservations()
-        );
-
-        $this->interventionRepository->save($intervention);
-    }
-
-    public function createArrete(Affectation $affectation, DossierArreteSISH $dossierArreteSISH): void
-    {
-        $intervention = $this->interventionFactory->createInstanceFrom(
-            affectation: $affectation,
-            type: InterventionType::ARRETE_PREFECTORAL,
-            scheduledAt: $this->parseDate($dossierArreteSISH->getArreteDatePresc()),
-            registeredAt: $this->parseDate($dossierArreteSISH->getArreteDate()),
-            status: EsaboraStatus::ESABORA_IN_PROGRESS === $dossierArreteSISH->getArreteEtat()
-                ? Intervention::STATUS_PLANNED
-                : Intervention::STATUS_DONE,
-            providerId: $dossierArreteSISH->getArreteNumero(),
-            details: $dossierArreteSISH->getArreteCommentaire()
-        );
-
-        $this->interventionRepository->save($intervention, true);
-    }
-
-    private function parseDate(string $date): \DateTimeImmutable
-    {
-        if (false !== $dateParsed = \DateTimeImmutable::createFromFormat(
-            AbstractEsaboraService::FORMAT_DATE_TIME,
-            $date)
-        ) {
-            return $dateParsed;
-        }
-
-        return \DateTimeImmutable::createFromFormat(AbstractEsaboraService::FORMAT_DATE, $date);
     }
 }

@@ -23,8 +23,8 @@ class InterventionVisiteServiceHandler implements InterventionSISHHandlerInterfa
     public function handle(Affectation $affectation): void
     {
         $dossierVisiteCollection = $this->esaboraSISHService->getVisiteDossier($affectation);
-        foreach ($dossierVisiteCollection as $dossierVisite) {
-            $this->esaboraManager->createVisite($affectation, $dossierVisite);
+        foreach ($dossierVisiteCollection->getCollection() as $dossierVisite) {
+            $this->esaboraManager->createOrUpdateVisite($affectation, $dossierVisite);
         }
 
         $this->jobEventManager->createJobEvent(

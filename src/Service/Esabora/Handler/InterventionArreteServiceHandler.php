@@ -23,8 +23,8 @@ class InterventionArreteServiceHandler implements InterventionSISHHandlerInterfa
     public function handle(Affectation $affectation): void
     {
         $dossierArreteCollection = $this->esaboraSISHService->getArreteDossier($affectation);
-        foreach ($dossierArreteCollection as $dossierArrete) {
-            $this->esaboraManager->createArrete($affectation, $dossierArrete);
+        foreach ($dossierArreteCollection->getCollection() as $dossierArrete) {
+            $this->esaboraManager->createOrUpdateArrete($affectation, $dossierArrete);
         }
 
         $this->jobEventManager->createJobEvent(

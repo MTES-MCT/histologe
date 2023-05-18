@@ -6,7 +6,7 @@ use App\Service\Esabora\Enum\ExtensionAdresse;
 
 class AddressParser
 {
-    public function parse(string $address): array
+    public static function parse(string $address): array
     {
         $number = null;
         $suffix = null;

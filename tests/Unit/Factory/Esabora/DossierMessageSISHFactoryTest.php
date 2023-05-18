@@ -39,7 +39,6 @@ class DossierMessageSISHFactoryTest extends TestCase
             ->willReturn('/bo/signalements/00000000-0000-0000-2022-000000000001');
 
         $dossierMessageFactory = new DossierMessageSISHFactory(
-            new AddressParser(),
             $uploadHandlerServiceMock,
             $parameterBagMock,
             $urlGeneratorMock

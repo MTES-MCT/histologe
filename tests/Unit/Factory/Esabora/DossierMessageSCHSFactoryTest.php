@@ -23,7 +23,7 @@ class DossierMessageSCHSFactoryTest extends TestCase
             ->method('getTmpFilepath')
             ->willReturn(self::FILE);
 
-        $dossierMessageFactory = new DossierMessageSCHSFactory(new AddressParser(), $uploadHandlerServiceMock);
+        $dossierMessageFactory = new DossierMessageSCHSFactory($uploadHandlerServiceMock);
         $dossierMessage = $dossierMessageFactory->createInstance(
             $this->getSignalementAffectation(PartnerType::COMMUNE_SCHS)
         );

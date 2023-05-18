@@ -13,7 +13,7 @@ class AddressParserTest extends TestCase
      */
     public function testAdressParser(string $address, ?string $number, ?string $suffix, ?string $street): void
     {
-        $result = (new AddressParser())->parse($address);
+        $result = AddressParser::parse($address);
         $this->assertArrayHasKey('number', $result);
         $this->assertArrayHasKey('suffix', $result);
         $this->assertArrayHasKey('street', $result);

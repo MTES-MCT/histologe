@@ -61,7 +61,11 @@ class Intervention
     #[ORM\Column(nullable: true)]
     private ?string $doneBy = null;
 
-    private ?string $providerId = null;
+    #[ORM\Column(nullable: true, options: ['comment' => 'Provider name have created the intervention'])]
+    private ?string $providerName = null;
+
+    #[ORM\Column(nullable: true, options: ['comment' => 'Unique id used by the provider'])]
+    private ?int $providerId = null;
 
     public function getId(): ?int
     {
@@ -224,12 +228,24 @@ class Intervention
         return $this;
     }
 
-    public function getProviderId(): ?string
+    public function getProviderName(): ?string
+    {
+        return $this->providerName;
+    }
+
+    public function setProviderName(?string $providerName): self
+    {
+        $this->providerName = $providerName;
+
+        return $this;
+    }
+
+    public function getProviderId(): ?int
     {
         return $this->providerId;
     }
 
-    public function setProviderId(?string $providerId): self
+    public function setProviderId(?int $providerId): self
     {
         $this->providerId = $providerId;
 

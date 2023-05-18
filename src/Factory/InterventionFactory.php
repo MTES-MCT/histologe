@@ -14,7 +14,8 @@ class InterventionFactory
         \DateTimeImmutable $scheduledAt,
         \DateTimeImmutable $registeredAt,
         string $status,
-        ?string $providerId = null,
+        ?string $providerName = null,
+        ?int $providerId = null,
         ?string $doneBy = null,
         ?string $details = null,
     ): Intervention {
@@ -25,6 +26,7 @@ class InterventionFactory
             ->setScheduledAt($scheduledAt)
             ->setRegisteredAt($registeredAt)
             ->setStatus($status)
+            ->setProviderName($providerName)
             ->setProviderId($providerId)
             ->setDoneBy($doneBy)
             ->setDetails($details);

@@ -4,6 +4,7 @@ namespace App\Service\Esabora\Response\Model;
 
 class DossierArreteSISH
 {
+    private ?int $arreteId = null;
     private ?string $logicielProvenance = null;
     private ?string $referenceDossier = null;
     private ?string $dossNum = null;
@@ -18,6 +19,7 @@ class DossierArreteSISH
     public function __construct(array $item)
     {
         if (!empty($item)) {
+            $this->arreteId = $item['keyDataList'][1] ?? null;
             $data = $item['columnDataList'] ?? null;
             if (null !== $data) {
                 $this->logicielProvenance = $data[0];
@@ -32,6 +34,11 @@ class DossierArreteSISH
                 $this->arreteStatut = $data[9];
             }
         }
+    }
+
+    public function getArreteId(): ?int
+    {
+        return $this->arreteId;
     }
 
     public function getLogicielProvenance(): ?string

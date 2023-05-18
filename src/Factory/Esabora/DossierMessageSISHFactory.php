@@ -18,7 +18,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class DossierMessageSISHFactory extends AbstractDossierMessageFactory
 {
     public function __construct(
-        private readonly AddressParser $addressParser,
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly ParameterBagInterface $parameterBag,
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -36,7 +35,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         $signalement = $affectation->getSignalement();
         $partner = $affectation->getPartner();
 
-        $address = $this->addressParser->parse($signalement->getAdresseOccupant());
+        $address = AddressParser::parse($signalement->getAdresseOccupant());
         /** @var Suivi $firstSuivi */
         $firstSuivi = $signalement->getSuivis()->first();
         $formatDate = AbstractEsaboraService::FORMAT_DATE;
