@@ -323,6 +323,9 @@ class Signalement
     #[ORM\Column]
     private ?float $score = null;
 
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private ?bool $isAbandonProcedure;
+
     public function __construct()
     {
         $this->situations = new ArrayCollection();
@@ -1644,6 +1647,18 @@ class Signalement
     public function setScore(float $score): self
     {
         $this->score = $score;
+
+        return $this;
+    }
+
+    public function getIsAbandonProcedure(): ?bool
+    {
+        return $this->isAbandonProcedure;
+    }
+
+    public function setIsAbandonProcedure(?bool $isAbandonProcedure): self
+    {
+        $this->isAbandonProcedure = $isAbandonProcedure;
 
         return $this;
     }

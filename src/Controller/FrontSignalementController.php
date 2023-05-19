@@ -326,14 +326,15 @@ class FrontSignalementController extends AbstractController
                 $user = $userDeclarant;
             }
             if ($user && $suiviAuto) {
-                // Si arrêt de procédure demandé par usager, créer un suivi auto usager Abandon procédure demanndé
                 $suivi = new Suivi();
-                $suivi->setIsPublic(false);
+                $suivi->setIsPublic(true);
                 $suivi->setCreatedBy($user);
-                $suivi->setType(Suivi::TYPE_TECHNICAL); // TYPE_TECHNICAL ou TYPE_AUTO ?
+                $suivi->setType(Suivi::TYPE_USAGER);
                 $description = '';
                 if ('arret-procedure' == $suiviAuto) {
                     $description = $user->getNomComplet().' ('.$type.") a demandé l'arrêt de la procédure.";
+                    $signalement->setIsAbandonProcedure(true);
+                    $entityManager->persist($signalement);
                 }
                 if ('poursuivre-procedure' == $suiviAuto) {
                     $description = $user->getNomComplet().' ('.$type.') a indiqué vouloir poursuivre la procédure.';
