@@ -169,7 +169,8 @@ class SignalementListControllerTest extends WebTestCase
     public function provideFilterSearch(): \Generator
     {
         yield 'Search Terms with Reference' => ['bo-filters-searchterms', '2022-1', '1 signalement(s)'];
-        yield 'Search Terms with cp Occupant' => ['bo-filters-searchterms', '13003', '13 signalement(s)'];
+        yield 'Search Terms with cp Occupant' => ['bo-filters-searchterms', '13003', '5 signalement(s)'];
+        yield 'Search Terms with cp Occupant 13005' => ['bo-filters-searchterms', '13005', '3 signalement(s)'];
         yield 'Search Terms with city Occupant' => ['bo-filters-searchterms', 'Gex', '5 signalement(s)'];
         yield 'Search by Territory' => ['bo-filters-territories', ['1'], '5 signalement(s)'];
         yield 'Search by Partner' => ['bo-filters-partners', ['5'], '2 signalement(s)'];

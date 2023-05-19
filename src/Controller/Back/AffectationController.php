@@ -108,7 +108,7 @@ class AffectationController extends AbstractController
     private function dispatchDossierEsabora(Affectation $affectation): void
     {
         $partner = $affectation->getPartner();
-        if ($partner->getEsaboraToken() && $partner->getEsaboraUrl()) {
+        if ($partner->getEsaboraToken() && $partner->getEsaboraUrl() && $partner->isEsaboraActive()) {
             $this->esaboraBus->dispatch($affectation);
         }
     }

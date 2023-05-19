@@ -1,8 +1,8 @@
 {% extends 'back/base_bo.html.twig' %}
 
-{% set picto_yes = '<p class="fr-badge fr-badge--success value-switcher" data-action="click" data-item="%s" data-url="'~path('back_signalement_switch_value',{uuid:signalement.uuid})~'" data-token="'~csrf_token('signalement_switch_value_'~signalement.uuid)~'">Oui</p>' %}
-{% set picto_no = '<p class="fr-badge fr-badge--error value-switcher" data-action="click" data-item="%s" data-url="'~path('back_signalement_switch_value',{uuid:signalement.uuid})~'" data-token="'~csrf_token('signalement_switch_value_'~signalement.uuid)~'">Non</p>' %}
-{% set picto_nsp = '<p class="fr-badge fr-badge--warning value-switcher" data-action="click" data-item="%s" data-url="'~path('back_signalement_switch_value',{uuid:signalement.uuid})~'" data-token="'~csrf_token('signalement_switch_value_'~signalement.uuid)~'">NSP</p>' %}
+{% set picto_yes = '<p class="fr-badge fr-badge--success" data-action="click" data-item="%s" data-url="'~path('back_signalement_switch_value',{uuid:signalement.uuid})~'" data-token="'~csrf_token('signalement_switch_value_'~signalement.uuid)~'">Oui</p>' %}
+{% set picto_no = '<p class="fr-badge fr-badge--error" data-action="click" data-item="%s" data-url="'~path('back_signalement_switch_value',{uuid:signalement.uuid})~'" data-token="'~csrf_token('signalement_switch_value_'~signalement.uuid)~'">Non</p>' %}
+{% set picto_nsp = '<p class="fr-badge fr-badge--warning" data-action="click" data-item="%s" data-url="'~path('back_signalement_switch_value',{uuid:signalement.uuid})~'" data-token="'~csrf_token('signalement_switch_value_'~signalement.uuid)~'">NSP</p>' %}
 {% set procedures = ["RSD" , "Mise en sécurité","Incurie","Insalubrité", "Décence", "ADIL"] %}
 
 
@@ -277,7 +277,13 @@
                     <li><strong>Téléphone: </strong><a
                                 href="tel:{{ signalement.telOccupant }}">{{ signalement.telOccupant }}</a></li>
                     <li>
-                        <strong>Adresse: </strong> {{ signalement.adresseOccupant ~', '~signalement.cpOccupant ~' '~ signalement.villeOccupant|upper }}
+                        <strong>Adresse: </strong>
+                        {{ signalement.adresseOccupant }},
+                        {{ signalement.etageOccupant ? 'étage ' ~ signalement.etageOccupant ~ ',' : '' }}
+                        {{ signalement.escalierOccupant ? 'escalier ' ~ signalement.escalierOccupant ~ ',' : '' }}
+                        {{ signalement.numAppartOccupant ? 'appartement ' ~ signalement.numAppartOccupant ~ ',' : '' }}
+                        {{ signalement.adresseAutreOccupant ? signalement.adresseAutreOccupant ~ ',' : '' }}
+                        {{ signalement.cpOccupant ~' '~ signalement.villeOccupant|upper }}
                     </li>
                     <li><strong>Occupant(s): </strong> {{ signalement.nbAdultes }}
                         <strong>Adulte(s)</strong>{% if signalement.nbEnfantsM6 %} - {{ signalement.nbEnfantsM6 }} Enfant(s)
@@ -597,8 +603,9 @@
                     <div class="fr-px-5w fr-py-10w fr-rounded fr-border fr-text--center part-infos-hover"
                          data-user="{{ photo.username ?? 'N/R' }}" data-mail="{{ photo.date ?? 'N/R' }}"
                          style="background: url('{{ asset('_up/'~photo.file) }}')no-repeat center center/cover">
-                        <button class="fr-btn fr-btn--sm fr-fi-eye-line img-box" title="Voir la photo"
-                                onclick="img_box('{{ asset('_up/'~photo.file) }}')"></button>
+                        <a href="{{ asset('_up/'~photo.file) }}"
+                            class="fr-btn fr-btn--sm fr-fi-eye-line img-box" title="Voir la photo"
+                            target="_blank" rel="noopener"></a>
                         {% if is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted) %}
                             {% if photo.user is not defined or photo.user is same as(app.user.id) %}
                                 <button title="Supprimer la photo"
@@ -608,24 +615,19 @@
                             {% endif %}
                         {% endif %}
                     </div>
-                    {# <div class="fr-grid-row">
-                        <div class="fr-col-12 fr-text--center">
-                            {{ photo.titre ?? 'image' }}
-                        </div>
-                    </div> #}
                 </div>
             {% endfor %}
         </div>
         {% for doc in signalement.documents %}
-            <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-3v signalement-file-item"
-                 style="position: relative;z-index: 1001">
+            <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-3v signalement-file-item">
                 <div class="fr-col-10">
                     <a href="{{ asset('_up/'~doc.file) }}" target="_blank" class="fr-link part-infos-hover"
                        data-user="{{ doc.username ?? 'N/R' }}" data-mail="{{ doc.date ?? 'N/R' }}">{{ doc.titre }}</a>
                 </div>
                 <div class="fr-col-2 fr-text--right">
                     <a href="{{ asset('_up/'~doc.file) }}"
-                       class="fr-btn fr-fi-eye-fill fr-btn--icon-left" title="Afficher le document" target="_blank">Consulter</a>
+                       class="fr-btn fr-fi-eye-fill fr-btn--icon-left" title="Afficher le document"
+                       target="_blank" rel="noopener">Consulter</a>
                     <button title="Supprimer le document"
                             data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'documents',filename:doc.file}) }}"
                             data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
