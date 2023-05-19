@@ -255,4 +255,53 @@ class SuiviRepository extends ServiceEntityRepository
 
         return $statement->executeQuery($parameters)->fetchFirstColumn();
     }
+
+    public function findSignalementsThirdRelance(
+        int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
+    ): array {
+        $connection = $this->getEntityManager()->getConnection();
+
+        $parameters = [
+            'day_period' => $period,
+            'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
+            'status_need_validation' => Signalement::STATUS_NEED_VALIDATION,
+            'status_closed' => Signalement::STATUS_CLOSED,
+            'status_archived' => Signalement::STATUS_ARCHIVED,
+            'status_refused' => Signalement::STATUS_REFUSED,
+        ];
+
+        $sql = 'SELECT s.id
+        FROM signalement s
+        INNER JOIN (
+            SELECT signalement_id, MAX(created_at) AS date_suivi
+            FROM suivi
+            GROUP BY signalement_id
+        ) su ON s.id = su.signalement_id
+        INNER JOIN (
+          SELECT su.signalement_id
+          FROM suivi su
+          WHERE su.type = :type_suivi_technical
+          GROUP BY su.signalement_id
+          HAVING COUNT(*) >= 2
+        ) t1 ON s.id = t1.signalement_id
+        LEFT JOIN (
+          SELECT su.signalement_id
+          FROM suivi su
+          WHERE su.type <> :type_suivi_technical
+            AND su.created_at > (
+              SELECT MIN(su2.created_at)
+              FROM suivi su2
+              WHERE su2.signalement_id = su.signalement_id
+                AND su2.type = :type_suivi_technical
+            )
+        ) t2 ON s.id = t2.signalement_id
+        WHERE t2.signalement_id IS NULL
+        AND su.date_suivi < DATE_SUB(NOW(), INTERVAL :day_period DAY)
+        AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
+        AND s.is_imported != 1';
+
+        $statement = $connection->prepare($sql);
+
+        return $statement->executeQuery($parameters)->fetchFirstColumn();
+    }
 }

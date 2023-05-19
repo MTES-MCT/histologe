@@ -333,6 +333,58 @@ class FrontSignalementController extends AbstractController
         return $this->redirectToRoute('front_signalement');
     }
 
+    #[Route('/arreter-la-procedure/{code}', name: 'front_suivi_auto_signalement', methods: 'GET')]
+    public function suiviAutoSignalement(
+        string $code,
+        SignalementRepository $signalementRepository,
+        Request $request,
+        UserManager $userManager,
+        EntityManagerInterface $entityManager
+    ) {
+        if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
+            $requestEmail = $request->get('from');
+            $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
+
+            /** @var User $userOccupant */
+            $userOccupant = $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
+            /** @var User $userDeclarant */
+            $userDeclarant = $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
+            $type = null;
+            $user = null;
+            if ($userOccupant && $fromEmail === $userOccupant->getEmail()) {
+                $type = UserManager::OCCUPANT;
+                $user = $userOccupant;
+            } elseif ($userDeclarant && $fromEmail === $userDeclarant->getEmail()) {
+                $type = UserManager::DECLARANT;
+                $user = $userDeclarant;
+            }
+
+            if ($user) {
+                // Si arrêt de procédure demandé par usager, créer un suivi auto usager Abandon procédure demanndé
+                $suivi = new Suivi();
+                $suivi->setIsPublic(false);
+                $suivi->setCreatedBy($user);
+                $suivi->setType(Suivi::TYPE_TECHNICAL); // TYPE_TECHNICAL ou TYPE_AUTO ?
+                $description = $fromEmail." a demandé l'arrêt de la procédure.";
+                $suivi->setDescription($description);
+                $suivi->setSignalement($signalement);
+                $entityManager->persist($suivi);
+                $entityManager->flush();
+                $this->addFlash('success', "Les services ont été informés de votre volonté d'arrêter la procédure.");
+
+                // TODO : est-ce qu'on affiche la page habituelle ?
+                return $this->render('front/suivi_signalement.html.twig', [
+                    'signalement' => $signalement,
+                    'email' => $fromEmail,
+                    'type' => $type,
+                ]);
+            }
+        }
+        $this->addFlash('error', 'Le lien utilisé est expiré ou invalide, verifier votre saisie.');
+
+        return $this->redirectToRoute('front_signalement');
+    }
+
     #[Route('/suivre-mon-signalement/{code}/response', name: 'front_suivi_signalement_user_response', methods: 'POST')]
     public function postUserResponse(
         string $code,

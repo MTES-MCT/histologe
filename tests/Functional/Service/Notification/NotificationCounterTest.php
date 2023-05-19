@@ -25,6 +25,6 @@ class NotificationCounterTest extends KernelTestCase
 
         $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
         $notificationCount = (new NotificationCounter($notificationRepository))->countUnseenNotification($user);
-        $this->assertEquals(4, $notificationCount);
+        $this->assertEquals(6, $notificationCount);
     }
 }

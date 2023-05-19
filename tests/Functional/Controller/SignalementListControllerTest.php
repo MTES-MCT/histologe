@@ -169,11 +169,11 @@ class SignalementListControllerTest extends WebTestCase
     public function provideFilterSearch(): \Generator
     {
         yield 'Search Terms with Reference' => ['bo-filters-searchterms', '2022-1', '1 signalement(s)'];
-        yield 'Search Terms with cp Occupant' => ['bo-filters-searchterms', '13003', '10 signalement(s)'];
+        yield 'Search Terms with cp Occupant' => ['bo-filters-searchterms', '13003', '13 signalement(s)'];
         yield 'Search Terms with city Occupant' => ['bo-filters-searchterms', 'Gex', '5 signalement(s)'];
         yield 'Search by Territory' => ['bo-filters-territories', ['1'], '5 signalement(s)'];
         yield 'Search by Partner' => ['bo-filters-partners', ['5'], '2 signalement(s)'];
-        yield 'Search by Critere' => ['bo-filters-criteres', ['17'], '15 signalement(s)'];
+        yield 'Search by Critere' => ['bo-filters-criteres', ['17'], '18 signalement(s)'];
         yield 'Search by Tags' => ['bo-filters-tags', ['3'], '4 signalement(s)'];
         yield 'Search by Parc public/prive' => ['bo-filters-housetypes', ['1'], '4 signalement(s)'];
     }
