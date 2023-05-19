@@ -217,18 +217,6 @@ small {
     color: black;
 }
 
-#img_box::after {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 5rem;
-    height: 5rem;
-    color: white;
-    content: "X";
-    font-size: 1.5rem;
-    line-height: 5rem;
-}
-
 .fr-text--orange {
     color: #FF9940;
 }
