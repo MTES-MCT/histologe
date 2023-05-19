@@ -105,7 +105,7 @@ class AddUserCommand extends Command
             $question = new ChoiceQuestion(
                 'Please select a role (default: ROLE_USER_PARTNER)',
                 User::ROLES,
-                User::ROLES['Super Admin']
+                User::ROLES['Utilisateur']
             );
 
             $role = $helper->ask($input, $output, $question);
@@ -170,7 +170,6 @@ class AddUserCommand extends Command
 
         if (null !== $user && \in_array('ROLE_USAGER', $user->getRoles())) {
             $this->io->text(' > <info>'.$input->getArgument('email').' existe déjà avec le rôle </info>: '.implode(',', $user->getRoles()));
-            $data = [];
             $data['nom'] = $input->getArgument('lastname');
             $data['prenom'] = $input->getArgument('firstname');
             $data['roles'] = \in_array($input->getArgument('role'), User::ROLES) ? $input->getArgument('role') : User::ROLES[$input->getArgument('role')];
