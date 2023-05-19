@@ -52,6 +52,9 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
     {
         $this->io = new SymfonyStyle($input, $output);
 
+        // TODO : ne pas envoyer de relance s'il y a eu un suivi technique "abandon de procédure"
+        // TODO : s'il y a eu un suivi technique "poursuite de procédure", il faut envoyer le mail "classique"
+
         // on récupère les signalements dont les deux derniers suivis sont des suivis techniques demande de feedback
         // et dont le dernier suivi a plus de 30 jours
         $signalementsIdsThirdRelance = $this->suiviRepository->findSignalementsThirdRelance();

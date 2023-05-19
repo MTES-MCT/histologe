@@ -304,46 +304,13 @@ class FrontSignalementController extends AbstractController
         string $code,
         SignalementRepository $signalementRepository,
         Request $request,
-        UserManager $userManager
-    ) {
-        if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
-            $requestEmail = $request->get('from');
-            $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
-
-            /** @var User $userOccupant */
-            $userOccupant = $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
-            /** @var User $userDeclarant */
-            $userDeclarant = $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
-            $type = null;
-            if ($userOccupant && $fromEmail === $userOccupant->getEmail()) {
-                $type = UserManager::OCCUPANT;
-            } elseif ($userDeclarant && $fromEmail === $userDeclarant->getEmail()) {
-                $type = UserManager::DECLARANT;
-            }
-
-            // TODO: Verif info perso pour plus de sécu
-            return $this->render('front/suivi_signalement.html.twig', [
-                'signalement' => $signalement,
-                'email' => $fromEmail,
-                'type' => $type,
-            ]);
-        }
-        $this->addFlash('error', 'Le lien utilisé est expiré ou invalide, verifier votre saisie.');
-
-        return $this->redirectToRoute('front_signalement');
-    }
-
-    #[Route('/arreter-la-procedure/{code}', name: 'front_suivi_auto_signalement', methods: 'GET')]
-    public function suiviAutoSignalement(
-        string $code,
-        SignalementRepository $signalementRepository,
-        Request $request,
         UserManager $userManager,
         EntityManagerInterface $entityManager
     ) {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
             $requestEmail = $request->get('from');
             $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
+            $suiviAuto = $request->get('suiviAuto');
 
             /** @var User $userOccupant */
             $userOccupant = $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
@@ -358,27 +325,40 @@ class FrontSignalementController extends AbstractController
                 $type = UserManager::DECLARANT;
                 $user = $userDeclarant;
             }
-
-            if ($user) {
+            if ($user && $suiviAuto) {
                 // Si arrêt de procédure demandé par usager, créer un suivi auto usager Abandon procédure demanndé
                 $suivi = new Suivi();
                 $suivi->setIsPublic(false);
                 $suivi->setCreatedBy($user);
                 $suivi->setType(Suivi::TYPE_TECHNICAL); // TYPE_TECHNICAL ou TYPE_AUTO ?
-                $description = $fromEmail." a demandé l'arrêt de la procédure.";
+                $description = '';
+                if ('arret-procedure' == $suiviAuto) {
+                    $description = $user->getNomComplet().' ('.$type.") a demandé l'arrêt de la procédure.";
+                }
+                if ('poursuivre-procedure' == $suiviAuto) {
+                    $description = $user->getNomComplet().' ('.$type.') a indiqué vouloir poursuivre la procédure.';
+                }
                 $suivi->setDescription($description);
                 $suivi->setSignalement($signalement);
                 $entityManager->persist($suivi);
                 $entityManager->flush();
-                $this->addFlash('success', "Les services ont été informés de votre volonté d'arrêter la procédure.");
-
-                // TODO : est-ce qu'on affiche la page habituelle ?
-                return $this->render('front/suivi_signalement.html.twig', [
-                    'signalement' => $signalement,
-                    'email' => $fromEmail,
-                    'type' => $type,
-                ]);
+                if ('arret-procedure' == $suiviAuto) {
+                    $this->addFlash('success', "Les services ont été informés de votre volonté d'arrêter la procédure.
+                Si vous le souhaitez, vous pouvez préciser la raison de l'arrêt de procédure
+                en envoyant un message via le formulaire ci-dessous.");
+                }
+                if ('poursuivre-procedure' == $suiviAuto) {
+                    $this->addFlash('success', "Les services ont été informés de votre volonté de poursuivre la procédure.
+                N'hésitez pas à mettre à jour votre situation en envoyant un message via le formulaire ci-dessous.");
+                }
             }
+
+            // TODO: Verif info perso pour plus de sécu
+            return $this->render('front/suivi_signalement.html.twig', [
+                'signalement' => $signalement,
+                'email' => $fromEmail,
+                'type' => $type,
+            ]);
         }
         $this->addFlash('error', 'Le lien utilisé est expiré ou invalide, verifier votre saisie.');
 
