@@ -45,15 +45,14 @@ const popupTemplate = (options) => {
                             ${options.address} <br>
                             ${options.zip} ${options.city}</small></p>
                         </div>
-                        <div class="fr-col-4 fr-col--top fr-text--center">
-                        <canvas class="fr-col-12" id="gauge-signalement-${options.id}"></canvas>`;
+                        <div class="fr-col-4 fr-mt-1v fr-mb-0 fr-text--center">`;
     TEMPLATE += `<span class="fr-badge fr-badge--info fr-m-0">${parseInt(options.score).toFixed(2)}%</span></div>`;
     TEMPLATE += `<div class="fr-p-3v fr-rounded fr-background-alt--blue-france fr-col-12">${options.details}</div>`;
     TEMPLATE += `<ul class="fr-mt-5v">`;
     options.criteres.forEach(critere => {
-        TEMPLATE += `<li class="">${critere}</li></ul>`
+        TEMPLATE += `<li class="">${critere}</li>`
     })
-    TEMPLATE += `</div>`;
+    TEMPLATE += `</ul></div>`;
 
     return TEMPLATE;
 }
@@ -68,15 +67,16 @@ async function getMarkers(offset) {
         body: new FormData(document.querySelector('form#bo_filters_form'))
     }).then(r => r.json().then(res => {
         let marker;
+        console.log('signalements reçus '+res.signalements);
         if (res.signalements) {
             res.signalements.forEach(signalement => {
+                console.log(signalement);
                 if (!isNaN(parseFloat(signalement.geoloc?.lng)) && !isNaN(parseFloat(signalement.geoloc?.lat))) {
                     let crit = [];
-                    if (signalement.criteres instanceof Array) {
-                        signalement?.criteres?.map(c => {
-                            crit.push(c?.label);
-                        })
+                    if (null !== signalement.desordres){
+                        crit = signalement.desordres.split('|');
                     }
+                    
                     marker = L.marker([signalement.geoloc.lng, signalement.geoloc.lat], {
                         id: signalement.id,
                         status: signalement.statut,

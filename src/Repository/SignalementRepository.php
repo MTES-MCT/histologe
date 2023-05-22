@@ -52,7 +52,12 @@ class SignalementRepository extends ServiceEntityRepository
 
         $qb = $this->findSignalementAffectationQuery($user, $options);
 
-        $qb->addSelect('s.geoloc, s.details, s.cpOccupant, s.inseeOccupant');
+        $qb->addSelect('s.geoloc, s.details, s.cpOccupant, s.inseeOccupant, GROUP_CONCAT(DISTINCT c.label SEPARATOR :group_concat_separator_1) as desordres');
+        $qb->setParameter('group_concat_separator_1', SignalementExport::SEPARATOR_GROUP_CONCAT);
+
+        if (null === $options['criteres']) {
+            $qb->leftJoin('s.criteres', 'c');
+        }
 
         $qb->andWhere("JSON_EXTRACT(s.geoloc,'$.lat') != ''")
             ->andWhere("JSON_EXTRACT(s.geoloc,'$.lng') != ''")
