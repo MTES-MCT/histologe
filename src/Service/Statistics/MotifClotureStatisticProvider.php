@@ -67,7 +67,7 @@ class MotifClotureStatisticProvider
                 'count' => 0,
             ],
             'LOGEMENT_DECENT' => [
-                'label' => 'Logement décent',
+                'label' => "Logement décent / Pas d'infraction",
                 'color' => '#C3FAD5',
                 'count' => 0,
             ],
@@ -87,7 +87,7 @@ class MotifClotureStatisticProvider
                 'count' => 0,
             ],
             'PERIL' => [
-                'label' => 'Péril',
+                'label' => 'Mise en sécurité / Péril',
                 'color' => '#313178',
                 'count' => 0,
             ],

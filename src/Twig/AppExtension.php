@@ -3,6 +3,7 @@
 namespace App\Twig;
 
 use App\Entity\Enum\QualificationStatus;
+use App\Form\SignalementType;
 use App\Service\Esabora\EsaboraPartnerTypeSubscription;
 use App\Service\Files\ImageBase64Encoder;
 use App\Service\Notification\NotificationCounter;
@@ -17,6 +18,7 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFilter('status_to_css', [$this, 'getCssFromStatus']),
+            new TwigFilter('signalement_lien_declarant_occupant', [$this, 'getLabelLienDeclarantOccupant']),
             new TwigFilter('image64', [ImageBase64Encoder::class, 'encode']),
         ];
     }
@@ -33,6 +35,15 @@ class AppExtension extends AbstractExtension
         }
 
         return $css;
+    }
+
+    public function getLabelLienDeclarantOccupant(string $lienDeclarantOccupant): string
+    {
+        if ($label = array_search($lienDeclarantOccupant, SignalementType::LINK_CHOICES)) {
+            return $label;
+        }
+
+        return '';
     }
 
     public function getFunctions(): array

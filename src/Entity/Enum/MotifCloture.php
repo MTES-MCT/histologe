@@ -30,10 +30,10 @@ enum MotifCloture: string
             'ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE' => 'Abandon de procédure / absence de réponse',
             'DEPART_OCCUPANT' => 'Départ occupant', // renommage de locataire parti
             'INSALUBRITE' => 'Insalubrité',
-            'LOGEMENT_DECENT' => 'Logement décent',
+            'LOGEMENT_DECENT' => "Logement décent / Pas d'infraction",
             'LOGEMENT_VENDU' => 'Logement vendu',
             'NON_DECENCE' => 'Non décence',
-            'PERIL' => 'Péril',
+            'PERIL' => 'Mise en sécurité / Péril',
             'REFUS_DE_VISITE' => 'Refus de visite',
             'REFUS_DE_TRAVAUX' => 'Refus de travaux',
             'RELOGEMENT_OCCUPANT' => 'Relogement occupant', // précise Problème résolu
