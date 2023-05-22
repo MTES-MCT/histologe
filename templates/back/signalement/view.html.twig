@@ -16,9 +16,9 @@
         {% include '_partials/_modal_edit_nde.html.twig' %}        
     {% endif %}
     <section id="signalement-{{ signalement.id }}-content"
-        class="fr-p-5v {{ isClosedForMe or signalement.statut is same as(6) or signalement.statut is same as(8) ? 'signalement-invalid':'' }}">
+        class="fr-p-5v fr-background--white {{ isClosedForMe or signalement.statut is same as(6) or signalement.statut is same as(8) ? 'signalement-invalid':'' }}">
         <header>
-            <div class="fr-grid-row fr-grid-row--middle fr-mb-2v">
+            <div class="fr-grid-row">
                 <div class="fr-col-9 fr-col-md-6">
                     <h1 class="fr-h2 fr-text-label--blue-france">#{{ signalement.reference }} - {{ signalement.prenomOccupant }} {{ signalement.nomOccupant }}</h1>
                 </div>
@@ -93,7 +93,7 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="fr-grid-row fr-grid-row--middle">
+            <div class="fr-grid-row">
                 <div class="fr-col-12">
                     Déposé le : {{ signalement.createdAt|format_datetime(locale='fr') }}
                     {% if signalement.isNotOccupant %}
@@ -103,7 +103,7 @@
                     {% endif %}
                     <br>
 
-                    {% if isAffected and not isAccepted and not isRefused and not needValidation and  not isClosed and not isClosedForMe %}
+                    {% if isAffected and not isAccepted and not isRefused and not needValidation and not isClosed and not isClosedForMe %}
                         Vous a été attribué le {{ isAffected.createdAt|date('d/m/Y') }}
                     {% elseif isAccepted %}
                         {% if isAccepted.answeredBy is same as (app.user) %}
@@ -129,18 +129,30 @@
                 </div>
 
                 <div class="fr-col-12 fr-mt-3v">
-                    {% if false and signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}
-                        <span class="fr-badge fr-badge--warning">Nouveau signalement</span>
-                    {% elseif true or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ACTIVE')
-                        or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_PARTNER_RESPONSE') %}
-                        <span class="fr-badge fr-badge--success">Signalement en cours</span>
-                    {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
-                        or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ARCHIVED')
-                        or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
-                        <span class="fr-badge fr-badge--error fr-fi-close-line">Signalement fermé</span>
+                    {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+                        {% if signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}
+                            <span class="fr-badge fr-badge--warning">Nouveau signalement</span>
+                        {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ACTIVE')
+                            or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_PARTNER_RESPONSE') %}
+                            <span class="fr-badge fr-badge--success">Signalement en cours</span>
+                        {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
+                            or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ARCHIVED')
+                            or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
+                            <span class="fr-badge fr-badge--error">Signalement fermé</span>
+                        {% endif %}
+                    {% else %}
+                        {% if isAffected and not isAccepted and not isRefused and not needValidation and not isClosed and not isClosedForMe %}
+                            <span class="fr-badge fr-badge--warning">Nouveau signalement</span>
+                        {% elseif true or isAccepted %}
+                            <span class="fr-badge fr-badge--success">Signalement en cours</span>
+                        {% elseif isRefused or isClosedForMe %}
+                            <span class="fr-badge fr-badge--error">Signalement fermé</span>
+                        {% endif %}
                     {% endif %}
                 </div>
+            </div>
 
+            <div class="fr-grid-row fr-mt-3v">
                 <div class="fr-col-10 fr-col-md-11" id="tags_active_container">
                     {% set visible = 'fr-hidden' %}
                     {% for tag in signalement.tags %}
@@ -161,10 +173,9 @@
                 </div>
             </div>
 
-            <div class="fr-grid-row fr-grid-row--middle">
+            <div class="fr-grid-row fr-mt-3w">
                 <div class="fr-col-12 fr-col-md-6">
-                    <strong>Adresse du logement</strong>
-                    <br>
+                    <h3 class="fr-h5">Adresse du logement</h3>
                     {{ signalement.adresseOccupant }},
                     <br>
                     {{ signalement.etageOccupant ? 'étage ' ~ signalement.etageOccupant ~ ',' : '' }}
@@ -174,28 +185,26 @@
                     <br>
                     {{ signalement.cpOccupant ~' '~ signalement.villeOccupant|upper }}
                     <br>
-                    <a href="">Voir sur la carte</a>
-                    
-                    <div class="fr-responsive-img fr-grid-row fr-grid-row--gutters fr-p-4v">
-                        <div id="map-signalement-view" class="fr-rounded fr-mt-5v fr-col-12"
-                                style="height: 300px;"></div>
-                    </div>
+                    {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
+                        <a target="_blank" rel="noreferrer"
+                            href="http://www.openstreetmap.org/?mlat={{ signalement.geoloc.lng }}&mlon={{ signalement.geoloc.lat }}#map=18/{{ signalement.geoloc.lng }}/{{ signalement.geoloc.lat }}">
+                            Voir sur la carte
+                        </a>
+                    {% endif %}
                 </div>
                 
                 <div class="fr-col-12 fr-col-md-6">
-                    <div class="fr-my-3v">
-                        <strong>Situation(s) suspectée(s) :</strong>
-                        {% if can_see_nde_qualification(signalementQualificationNDE) and is_granted('USER_SEE_NDE', app.user) %}
-                            <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold fr-px-3v">
-                                Non décence énergétique
-                            </small>
-                        {% endif %}
-                        {% for qualificationStatusLabel in listQualificationStatusesLabelsCheck %}
-                            {% include '_partials/signalement/qualification.html.twig' with { 'inlist': false } %}
-                        {% endfor %}
-                    </div>
+                    <h3 class="fr-h5">Situation(s) suspectée(s)</h3>
+                    {% if can_see_nde_qualification(signalementQualificationNDE) and is_granted('USER_SEE_NDE', app.user) %}
+                        <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold fr-px-3v">
+                            Non décence énergétique
+                        </small>
+                    {% endif %}
+                    {% for qualificationStatusLabel in listQualificationStatusesLabelsCheck %}
+                        {% include '_partials/signalement/qualification.html.twig' with { 'inlist': false } %}
+                    {% endfor %}
                     {% if listQualificationStatusesLabelsConfirmed %}
-                    <div class="fr-my-3v">
+                    <div class="fr-mt-3v">
                         <strong>Situation(s) avérée(s) :</strong>
                         {% for qualificationStatusLabel in listQualificationStatusesLabelsConfirmed %}
                             {% include '_partials/signalement/qualification.html.twig' with { 'inlist': false } %}
@@ -205,7 +214,7 @@
                 </div>
             </div>
         </header>
-        <hr class="fr-pb-1v">
+
         <template id="tags_tooltip_template">
             <div class="fr-grid-row fr-grid-row--middle fr-background-alt--grey fr-p-3v fr-rounded fr-text--left fr-my-1v">
                 <div class="fr-col-12">
@@ -255,14 +264,78 @@
                 </div>
             </div>
         </template>
-        <div class="fr-grid-row fr-grid-row--middle fr-mb-3v">
-            <div class="fr-col-12 fr-col-md-9">
-                <strong class="fr-fi-chat-quote-fill fr-icon--sm fr-text-label--blue-france"> Description par
-                    l'usager</strong>
-                <span class="fr-hint-text">Ci-dessous le détail du signalement tel que rapporté par l'usager</span>
+
+        <hr class="fr-mt-3w fr-mt-3v">
+
+        <h3 class="fr-h5">Déclaration usager</h3>
+
+        <div class="fr-grid-row">
+            <div class="fr-col-12 fr-col-md-6">
+                <strong>Désordres signalés</strong>
+                <br>
+                Récapitulatif des situations rencontrées par l'occupant du logement.
+                <ul class="fr-list--icon-img fr-mr-3v fr-pl-0" id="signalement-toggle-situations">
+                    {% for situation,criteres in situations %}
+                        <li role="button"
+                            class="fr-background-alt--grey fr-mb-5v fr-pl-5v fr-pt-5v fr-fi-arrow-down-line fr-input-wrap"
+                            aria-controls="situation-collapse-{{ loop.index }}" aria-expanded="false">
+                            <strong>{{ situation|capitalize }}</strong>
+                            <ul class="fr-list--icon-img fr-collapse" id="situation-collapse-{{ loop.index }}">
+                                {% for critere,criticite in criteres %}
+                                    {# TODO à revoir avec le nouvel algo de criticité (les scores ne sont plus forcément 1, 2, 3, et le isDanger est au niveau de la criticité) #}
+                                    {% if criticite.score is same as(1) %}
+                                        {% set icon = 'moyen' %}
+                                    {% elseif criticite.score is same as(2) %}
+                                        {% set icon = 'grave' %}
+                                    {% else %}
+                                        {% set icon = 'tres-grave' %}
+                                    {% endif %}
+                                    <li>
+                                        {% if criticite.critere.isDanger %}
+                                            <p class="fr-badge fr-badge--warning">danger</p>
+                                            &nbsp;&nbsp;
+                                        {% endif %}
+                                        <strong>{{ critere }}</strong>
+                                        <ul class="fr-list fr-skiplinks__list fr-list--icon-img">
+                                            <li class="fr-grid-row fr-grid-row--middle fr-w-100">
+                                                <div class="fr-col-md-2 fr-col-lg-1 fr-col--middle">
+                                                    <img src="{{ asset('img/'~icon~'-actif.svg') }}" alt=""
+                                                         width="50"
+                                                         class=" fr-text--center">
+                                                </div>
+                                                <div class="fr-col-md-10 fr-col-lg-11 fr-pl-5v fr-rounded">
+                                                    {{ criticite.label|capitalize }}
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endfor %}
+                </ul>
             </div>
+
+            <div class="fr-col-12 fr-col-md-6">
+                <strong>Criticité du signalement</strong>
+                <br>
+                La criticité est calculée automatiquement en fonction des situations signalées.
+                
+                <div class="fr-p-3v fr-background-alt--grey">
+                    {% if isDanger %}
+                        <p class="fr-badge fr-badge--warning">danger pour l'occupant détecté</p>
+                    {% endif %}
+                    <br>
+                    <text class="fr-display-xs">{{ signalement.score|round(2) }} %</text>
+                </div>
+            </div>
+        </div>
+
+        <div class="fr-grid-row fr-mt-3v">
             <div class="fr-col-12">
-                <ul class="fr-background-alt--blue-france fr-list--icon-img fr-rounded">
+                <strong>Description par l'usager</strong>
+                <br>
+                <ul class="fr-background-alt--grey fr-list--icon-img">
                     <li class="fr-p-5v">
                         {{ signalement.details|raw }}
                     </li>
@@ -351,69 +424,6 @@
                             Consulter le(s) DPE
                         </button>
                     </li>
-                </ul>
-            </div>
-            <div class="fr-col-12 fr-col-md-6">
-                <strong class="fr-fi-alert-fill fr-icon--sm fr-text-label--blue-france"> Criticité du
-                    signalement</strong>
-                <span class="fr-hint-text">La criticité est calculée automatiquement en fonction des situations signalées.</span>
-                {% if isDanger %}
-                    <p class="fr-badge fr-badge--warning ">danger pour l'occupant détecté</p>
-                {% endif %}
-                <ul class="fr-list--icon-img">
-                    <li>
-                        <div class="fr-responsive-img fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
-                            <div class="fr-col-8 fr-col--middle">
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <text class="fr-display-xs"><span id="new-score-criticite">{{ signalement.score|round(2) }}</span>%</text>
-                            {% endif %}
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-                <strong class="fr-fi-eye-fill fr-icon--sm fr-text-label--blue-france"> Constatation du
-                    signalement</strong>
-                <span class="fr-hint-text">Le signalement doit être constaté afin d'optimiser le temps de traitement</span>
-                <strong class="fr-fi-alert-fill fr-icon--sm fr-text-label--blue-france"> Ce signalement concerne les
-                    points
-                    suivants:</strong>
-                <span class="fr-hint-text">Récapitulatif des situations rencontrées par l'occupant du logement</span>
-                <ul class="fr-list--icon-img" id="signalement-toggle-situations">
-                    {% for situation,criteres in situations %}
-                        <li role="button"
-                            class="fr-background-alt--blue-france fr-mb-5v fr-px-5v fr-pt-5v fr-rounded fr-fi-arrow-down-line fr-input-wrap"
-                            aria-controls="situation-collapse-{{ loop.index }}" aria-expanded="false">
-                            <strong>{{ situation|capitalize }}</strong>
-                            <ul class="fr-list--icon-img fr-collapse" id="situation-collapse-{{ loop.index }}">
-                                {% for critere,criticite in criteres %}
-                                    {# TODO à revoir avec le nouvel algo de criticité (les scores ne sont plus forcément 1, 2, 3, et le isDanger est au niveau de la criticité) #}
-                                    {% if criticite.score is same as(1) %}
-                                        {% set icon = 'moyen' %}
-                                    {% elseif criticite.score is same as(2) %}
-                                        {% set icon = 'grave' %}
-                                    {% else %}
-                                        {% set icon = 'tres-grave' %}
-                                    {% endif %}
-                                    <li>{% if criticite.critere.isDanger %}<p class="fr-badge fr-badge--warning">
-                                        danger</p>&nbsp;&nbsp;{% endif %}<strong>{{ critere }}</strong>
-                                        <ul class="fr-list fr-skiplinks__list fr-list--icon-img">
-                                            <li class="fr-grid-row fr-grid-row--middle fr-w-100">
-                                                <div class="fr-col-md-2 fr-col-lg-1 fr-col--middle">
-
-                                                    <img src="{{ asset('img/'~icon~'-actif.svg') }}" alt=""
-                                                         width="50"
-                                                         class=" fr-text--center">
-                                                </div>
-                                                <div class="fr-col-md-10 fr-col-lg-11 fr-pl-5v fr-rounded">
-                                                    {{ criticite.label|capitalize }}
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </li>
-                    {% endfor %}
                 </ul>
             </div>
         </div>
@@ -885,7 +895,6 @@
                     }).catch(e => {
                     });
                 });
-                /*console.log(template.firstChild);*/
                 newEl?.querySelectorAll('span.tag--deleter')?.forEach(tagDeleter => {
                     tagDeleter.addEventListener('click', persistRemoveTagEvent);
                 });
@@ -900,32 +909,11 @@
             maxWidth: "500px",
             arrow: false,
         })
-    </script>
-    <script>
+        
         {% if isClosedForMe or signalement.statut is same as(6) %}
         document?.querySelector('#signalement-{{ signalement.id }}-content').querySelectorAll('button:not(.reopen,.reaffect,.img-box,.fr-accordion__btn),.fr-btn:not(.reopen,.reaffect,.img-box,.fr-fi-file-pdf-fill)').forEach(input => {
             input.remove()
         })
         {% endif %}
-        {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
-        loadMap = async () => {
-            let map = L.map('map-signalement-view').setView([{{ signalement.geoloc.lng }}, {{ signalement.geoloc.lat }}], 13);
-            map.scrollWheelZoom.disable();
-            map.on('focus', function () {
-                map.scrollWheelZoom.enable();
-            });
-            map.on('blur', function () {
-                map.scrollWheelZoom.disable();
-            });
-
-            L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
-                attribution: '&copy;'
-            }).addTo(map);
-            L.marker([{{ signalement.geoloc.lng }}, {{ signalement.geoloc.lat }}]).addTo(map)
-                .bindPopup('{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}')
-                .openPopup();
-        }
-        {% endif %}
-        document.onload = loadMap();
     </script>
 {% endblock %}
