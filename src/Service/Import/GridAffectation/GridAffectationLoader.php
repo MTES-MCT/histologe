@@ -73,11 +73,13 @@ class GridAffectationLoader
                         .$partnerToCreate->getTerritory()->getName().' avec le nom '.$partnerToCreate->getNom();
                     }
                     // store partner mail to check duplicates
-                    $mailPartners[$item[GridAffectationHeader::PARTNER_NAME_INSTITUTION]] = $item[GridAffectationHeader::PARTNER_EMAIL];
+                    if (!empty($item[GridAffectationHeader::PARTNER_EMAIL])) {
+                        $mailPartners[$item[GridAffectationHeader::PARTNER_NAME_INSTITUTION]] = $item[GridAffectationHeader::PARTNER_EMAIL];
+                    }
                 }
 
                 $emailUser = trim($item[GridAffectationHeader::USER_EMAIL]);
-                if (empty($emailUser)) {
+                if (empty($emailUser) && !empty($item[GridAffectationHeader::USER_ROLE])) {
                     $errors[] = 'line '.$numLine.' : Email manquant pour '.$item[GridAffectationHeader::USER_FIRSTNAME].' '
                     .$item[GridAffectationHeader::USER_LASTNAME].', partenaire '.$item[GridAffectationHeader::PARTNER_NAME_INSTITUTION];
                 } else {
@@ -97,9 +99,12 @@ class GridAffectationLoader
                         .' avec le rôle '.$userToCreate->getRoleLabel();
                     }
                     // store user mail to check duplicates
-                    $mailUsers[] = $item[GridAffectationHeader::USER_EMAIL];
+                    if (!empty($item[GridAffectationHeader::USER_EMAIL])) {
+                        $mailUsers[] = $item[GridAffectationHeader::USER_EMAIL];
+                    }
                 }
-                if (!\in_array($item[GridAffectationHeader::USER_ROLE], array_keys(User::ROLES))) {
+                if (!empty($item[GridAffectationHeader::USER_ROLE])
+                    && !\in_array($item[GridAffectationHeader::USER_ROLE], array_keys(User::ROLES))) {
                     $errors[] = 'line '.$numLine.' : Rôle incorrect pour '.$item[GridAffectationHeader::USER_EMAIL].' --> '.$item[GridAffectationHeader::USER_ROLE];
                 }
             }
@@ -132,8 +137,6 @@ class GridAffectationLoader
         // TODO LATER : command should be usable several times (update partners and users)
         $countUsers = 0;
         $partner = null;
-        $user = null;
-        $userToCreate = null;
         $newPartnerName = [];
         foreach ($data as $item) {
             if (\count($item) > 1) {
