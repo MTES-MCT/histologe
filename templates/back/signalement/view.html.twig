@@ -264,11 +264,7 @@
                         {% if signalement.lienDeclarantOccupant %}
                         <li>
                             <strong>Lien :</strong>
-                            {% for key,value in constant('App\\Form\\SignalementType::LINK_CHOICES') %}
-                                {% if value is same as signalement.lienDeclarantOccupant %}
-                                    {{ key }}
-                                {% endif %}
-                            {% endfor %}
+                            {{ signalement.lienDeclarantOccupant|signalement_lien_declarant_occupant }}
                         </li>
                         {% endif %}
                         <li>
