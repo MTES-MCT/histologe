@@ -3,7 +3,6 @@
 namespace App\Service\Esabora;
 
 use App\Entity\Affectation;
-use App\Service\Esabora\Response\DossierCollectionResponseInterface;
 use App\Service\Esabora\Response\DossierResponseInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -11,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
-class AbstractEsaboraService implements EsaboraServiceInterface
+abstract class AbstractEsaboraService implements EsaboraServiceInterface
 {
     public const TYPE_SERVICE = 'esabora';
     public const SISH_VISITES_DOSSIER_SAS = 'SISH_VISITES_DOSSIER_SAS';
@@ -55,20 +54,7 @@ class AbstractEsaboraService implements EsaboraServiceInterface
         ]))->setStatusCode(Response::HTTP_SERVICE_UNAVAILABLE);
     }
 
-    public function getStateDossier(Affectation $affectation): ?DossierResponseInterface
-    {
-        return null;
-    }
-
-    public function getArreteDossier(Affectation $affectation): ?DossierCollectionResponseInterface
-    {
-        return null;
-    }
-
-    public function getVisiteDossier(Affectation $affectation): ?DossierCollectionResponseInterface
-    {
-        return null;
-    }
+    abstract public function getStateDossier(Affectation $affectation): DossierResponseInterface;
 
     public function prepareInterventionPayload(Affectation $affectation, string $serviceName): array
     {
