@@ -7,7 +7,9 @@ use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
 use App\Service\Esabora\EsaboraManager;
 use App\Service\Esabora\Handler\InterventionSISHHandlerInterface;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -60,6 +62,14 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
                 $io->writeln(sprintf('#%s: %s was executed', $key, $interventionHandler->getServiceName()));
             }
         }
+
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_CRON,
+                to: $this->parameterBag->get('admin_email'),
+                cronLabel: '[ARS] Synchronisation des interventions depuis Esabora',
+            )
+        );
 
         return Command::SUCCESS;
     }

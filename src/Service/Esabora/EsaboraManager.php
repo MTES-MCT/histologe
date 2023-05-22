@@ -97,7 +97,7 @@ class EsaboraManager
         } else {
             $newIntervention = $this->interventionFactory->createInstanceFrom(
                 affectation: $affectation,
-                type: InterventionType::VISITE,
+                type: InterventionType::fromLabel($dossierVisiteSISH->getVisiteType()),
                 scheduledAt: DateParser::parse($dossierVisiteSISH->getVisiteDate()),
                 registeredAt: DateParser::parse($dossierVisiteSISH->getVisiteDateEnreg()),
                 status: EsaboraStatus::ESABORA_IN_PROGRESS === $dossierVisiteSISH->getVisiteEtat()
@@ -129,7 +129,7 @@ class EsaboraManager
                     : Intervention::STATUS_DONE,
                 providerName: InterfacageType::ESABORA->value,
                 providerId: $dossierArreteSISH->getArreteId(),
-                details: $dossierArreteSISH->getArreteCommentaire()
+                details: $this->buildDetailArrete($dossierArreteSISH)
             );
 
             $this->interventionRepository->save($intervention, true);
@@ -147,20 +147,30 @@ class EsaboraManager
             ->setDoneBy($dossierVisiteSISH->getVisitePar())
             ->setDetails($dossierVisiteSISH->getVisiteObservations());
 
-        $this->interventionRepository->save($intervention);
+        $this->interventionRepository->save($intervention, true);
     }
 
     private function updateFromDossierArrete(Intervention $intervention, DossierArreteSISH $dossierArreteSISH): void
     {
         $intervention
             ->setScheduledAt(DateParser::parse($dossierArreteSISH->getArreteDatePresc()))
+            ->setDetails($this->buildDetailArrete($dossierArreteSISH))
             ->setRegisteredAt(DateParser::parse($dossierArreteSISH->getArreteDate()))
             ->setStatus(EsaboraStatus::ESABORA_IN_PROGRESS === $dossierArreteSISH->getArreteEtat()
                 ? Intervention::STATUS_PLANNED
                 : Intervention::STATUS_DONE)
-            ->setDetails($dossierArreteSISH->getArreteCommentaire());
+            ->setDetails($this->buildDetailArrete($dossierArreteSISH));
 
-        $this->interventionRepository->save($intervention);
+        $this->interventionRepository->save($intervention, true);
+    }
+
+    private function buildDetailArrete(DossierArreteSISH $dossierArreteSISH): string
+    {
+        return sprintf('Commentaire: %s<br>Type arrêté: %s<br>Statut arrêté: %s',
+            $dossierArreteSISH->getArreteCommentaire(),
+            $dossierArreteSISH->getArreteType(),
+            $dossierArreteSISH->getArreteStatut()
+        );
     }
 
     private function shouldBeAcceptedViaEsabora(string $esaboraDossierStatus, int $currentStatus): bool

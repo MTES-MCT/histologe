@@ -5,7 +5,6 @@ namespace App\Tests\Unit\Factory\Esabora;
 use App\Entity\Enum\PartnerType;
 use App\Factory\Esabora\DossierMessageSISHFactory;
 use App\Service\Esabora\AbstractEsaboraService;
-use App\Service\Esabora\AddressParser;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\TestCase;

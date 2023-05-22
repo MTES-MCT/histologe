@@ -11,7 +11,7 @@ final class Version20230515174855 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Add intervention table';
     }
 
     public function up(Schema $schema): void
