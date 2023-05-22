@@ -2,6 +2,7 @@
 
 namespace App\Service\Signalement;
 
+use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\SignalementQualification;
 use DateTimeImmutable;
@@ -62,6 +63,10 @@ class QualificationStatusService implements RuntimeExtensionInterface
     public function canSeenNDEQualification(?SignalementQualification $signalementQualification): bool
     {
         if (empty($signalementQualification)) {
+            return false;
+        }
+
+        if (Qualification::NON_DECENCE_ENERGETIQUE->name !== $signalementQualification->getQualification()->name) {
             return false;
         }
 

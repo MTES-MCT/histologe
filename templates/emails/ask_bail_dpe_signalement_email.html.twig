@@ -1,0 +1,32 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour {{ signalement.nomOccupant|upper ~' '~signalement.prenomOccupant|capitalize }}</p>
+    <p>
+        Vous avez signalé un problème dans le logement au <br>
+        <strong>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</strong> <br>
+        Les services compétents ont bien pris en charge votre dossier.<br>
+        Les renseignements fournis indiquent, entre autres, une possible "non décence énergétique" de votre logement.<br>
+    </p>
+    
+    <p>Afin d'aider les services à vérifier ces informations et agir dans les plus brefs délais, veuillez nous envoyer 
+        le bail du logement et le diagnostic de performance énergétique (DPE) en cliquant sur le bouton ci-dessous.</p>
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary"
+           style="text-align: center">
+        <tbody>
+        <tr>
+            <td align="left">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                    <tbody>
+                    <tr style="text-align: center;width: 100%">
+                        <td>
+                            <a href="{{ lien_suivi|raw }}" target="_blank">{{ btntext|capitalize }}</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p>Si le bouton ne fonctionne pas <a href="{{ lien_suivi|raw }}">cliquez ici</a></p>
+{% endblock %}
