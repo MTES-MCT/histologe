@@ -51,18 +51,19 @@ class BackSignalementActionController extends AbstractController
                     }
                 }
                 foreach ($toRecipients as $toRecipient) {
-                    $notificationMailerRegistry->send(
-                        new NotificationMail(
-                            type: NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION,
-                            to: $toRecipient,
-                            territory: $signalement->getTerritory(),
-                            signalement: $signalement,
-                        )
-                    );
                     if ($isSignalementNDE) {
                         $notificationMailerRegistry->send(
                             new NotificationMail(
                                 type: NotificationMailerType::TYPE_SIGNALEMENT_ASK_BAIL_DPE,
+                                to: $toRecipient,
+                                territory: $signalement->getTerritory(),
+                                signalement: $signalement,
+                            )
+                        );
+                    } else {
+                        $notificationMailerRegistry->send(
+                            new NotificationMail(
+                                type: NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION,
                                 to: $toRecipient,
                                 territory: $signalement->getTerritory(),
                                 signalement: $signalement,
