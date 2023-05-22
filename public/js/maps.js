@@ -67,10 +67,8 @@ async function getMarkers(offset) {
         body: new FormData(document.querySelector('form#bo_filters_form'))
     }).then(r => r.json().then(res => {
         let marker;
-        console.log('signalements reçus '+res.signalements);
         if (res.signalements) {
             res.signalements.forEach(signalement => {
-                console.log(signalement);
                 if (!isNaN(parseFloat(signalement.geoloc?.lng)) && !isNaN(parseFloat(signalement.geoloc?.lat))) {
                     let crit = [];
                     if (null !== signalement.desordres){
