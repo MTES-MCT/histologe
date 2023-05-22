@@ -98,7 +98,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                     ? new \DateTimeImmutable($row['created_at'])
                     : (new \DateTimeImmutable())->modify('-15 days')
             )
-            ->setIsAbandonProcedure(0);
+            ->setIsUsagerAbandonProcedure(0);
         if (isset($row['is_not_occupant'])) {
             $signalement
                 ->setIsNotOccupant($row['is_not_occupant'])

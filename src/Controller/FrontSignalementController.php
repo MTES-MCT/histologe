@@ -11,6 +11,7 @@ use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementCreatedEvent;
 use App\Factory\SignalementQualificationFactory;
+use App\Factory\SuiviFactory;
 use App\Form\SignalementType;
 use App\Manager\UserManager;
 use App\Repository\CritereRepository;
@@ -305,7 +306,8 @@ class FrontSignalementController extends AbstractController
         SignalementRepository $signalementRepository,
         Request $request,
         UserManager $userManager,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        SuiviFactory $suiviFactory,
     ) {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
             $requestEmail = $request->get('from');
@@ -326,29 +328,35 @@ class FrontSignalementController extends AbstractController
                 $user = $userDeclarant;
             }
             if ($user && $suiviAuto) {
-                $suivi = new Suivi();
-                $suivi->setIsPublic(true);
-                $suivi->setCreatedBy($user);
-                $suivi->setType(Suivi::TYPE_USAGER);
                 $description = '';
                 if ('arret-procedure' == $suiviAuto) {
-                    $description = $user->getNomComplet().' ('.$type.") a demandé l'arrêt de la procédure.";
-                    $signalement->setIsAbandonProcedure(true);
+                    $description = $user->getNomComplet().' ('.$type.') a demandé l\'arrêt de la procédure.';
+                    $signalement->setIsUsagerAbandonProcedure(true);
                     $entityManager->persist($signalement);
                 }
                 if ('poursuivre-procedure' == $suiviAuto) {
                     $description = $user->getNomComplet().' ('.$type.') a indiqué vouloir poursuivre la procédure.';
                 }
-                $suivi->setDescription($description);
-                $suivi->setSignalement($signalement);
+
+                $params = [
+                    'type' => SUIVI::TYPE_USAGER,
+                    'description' => $description,
+                ];
+
+                $suivi = $suiviFactory->createInstanceFrom(
+                    $user,
+                    $signalement,
+                    $params,
+                    true
+                );
                 $entityManager->persist($suivi);
                 $entityManager->flush();
-                if ('arret-procedure' == $suiviAuto) {
+                if ('arret-procedure' === $suiviAuto) {
                     $this->addFlash('success', "Les services ont été informés de votre volonté d'arrêter la procédure.
                 Si vous le souhaitez, vous pouvez préciser la raison de l'arrêt de procédure
                 en envoyant un message via le formulaire ci-dessous.");
                 }
-                if ('poursuivre-procedure' == $suiviAuto) {
+                if ('poursuivre-procedure' === $suiviAuto) {
                     $this->addFlash('success', "Les services ont été informés de votre volonté de poursuivre la procédure.
                 N'hésitez pas à mettre à jour votre situation en envoyant un message via le formulaire ci-dessous.");
                 }

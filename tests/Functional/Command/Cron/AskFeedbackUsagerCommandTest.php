@@ -22,8 +22,8 @@ class AskFeedbackUsagerCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('1 signalement(s) with two last suivis are technicals', $output);
-        $this->assertStringContainsString('1 signalement(s) with last suivi technical', $output);
+        $this->assertStringContainsString('1 signalement(s) for which the two last suivis are technicals ', $output);
+        $this->assertStringContainsString('1 signalement(s) for which the last suivi is technical', $output);
         $this->assertStringContainsString('2 signalement(s) without suivi public', $output);
         $this->assertEmailCount(5); // with cron notification email (4+1)
     }

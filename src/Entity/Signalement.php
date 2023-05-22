@@ -324,7 +324,7 @@ class Signalement
     private ?float $score = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $isAbandonProcedure;
+    private ?bool $isUsagerAbandonProcedure;
 
     public function __construct()
     {
@@ -1651,14 +1651,14 @@ class Signalement
         return $this;
     }
 
-    public function getIsAbandonProcedure(): ?bool
+    public function getIsUsagerAbandonProcedure(): ?bool
     {
-        return $this->isAbandonProcedure;
+        return $this->isUsagerAbandonProcedure;
     }
 
-    public function setIsAbandonProcedure(?bool $isAbandonProcedure): self
+    public function setIsUsagerAbandonProcedure(?bool $isUsagerAbandonProcedure): self
     {
-        $this->isAbandonProcedure = $isAbandonProcedure;
+        $this->isUsagerAbandonProcedure = $isUsagerAbandonProcedure;
 
         return $this;
     }

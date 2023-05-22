@@ -52,34 +52,9 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
     {
         $this->io = new SymfonyStyle($input, $output);
 
-        // on récupère les signalements dont les deux derniers suivis sont des suivis techniques demande de feedback
-        // et dont le dernier suivi a plus de 30 jours
-        $signalementsIdsThirdRelance = $this->suiviRepository->findSignalementsThirdRelance();
-        $nbSignalementsThirdRelance = $this->sendMailToUsagers(
-            $input,
-            $signalementsIdsThirdRelance,
-            NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER_THIRD
-        );
-        $this->io->success(sprintf(
-            '%s signalement(s) with two last suivis are technicals and last one older than '.Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
-            $nbSignalementsThirdRelance
-        ));
-
-        // on récupère ensuite les signalements dont le dernier suivi est un suivi technique demande de feedback et date de plus de 30 jours
-        $signalementsIdsLastSuiviTechnical = $this->suiviRepository->findSignalementsWithLastSuiviTechnical();
-        $nbSignalementsLastSuiviTechnical = $this->sendMailToUsagers($input, $signalementsIdsLastSuiviTechnical);
-        $this->io->success(sprintf(
-            '%s signalement(s) with last suivi technical and older than '.Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
-            $nbSignalementsLastSuiviTechnical
-        ));
-
-        // on récupère enfin les signalements dont le dernier suivi public a plus de 45 jours (et le dernier suivi technique aussi)
-        $signalementsIdsLastSuiviPublic = $this->suiviRepository->findSignalementsNoSuiviUsagerFrom();
-        $nbSignalementsLastSuiviPublic = $this->sendMailToUsagers($input, $signalementsIdsLastSuiviPublic);
-        $this->io->success(sprintf(
-            '%s signalement(s) without suivi public from more than '.Suivi::DEFAULT_PERIOD_RELANCE.' days',
-            $nbSignalementsLastSuiviPublic
-        ));
+        $nbSignalementsThirdRelance = $this->processSignalementsThirdRelance($input);
+        $nbSignalementsLastSuiviTechnical = $this->processSignalementsLastSuiviTechnical($input);
+        $nbSignalementsLastSuiviPublic = $this->processSignalementsLastSuiviPublic($input);
 
         $nbSignalements = $nbSignalementsThirdRelance + $nbSignalementsLastSuiviTechnical + $nbSignalementsLastSuiviPublic;
         if ($input->getOption('debug')) {
@@ -110,6 +85,57 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
         );
 
         return Command::SUCCESS;
+    }
+
+    protected function processSignalementsThirdRelance(
+        InputInterface $input,
+    ): int {
+        $signalementsIds = $this->suiviRepository->findSignalementsThirdRelance();
+        $nbSignalements = $this->sendMailToUsagers(
+            $input,
+            $signalementsIds,
+            NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER_THIRD
+        );
+        $this->io->success(sprintf(
+            '%s signalement(s) for which the two last suivis are technicals and the last one is older than '
+            .Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
+            $nbSignalements
+        ));
+
+        return $nbSignalements;
+    }
+
+    protected function processSignalementsLastSuiviTechnical(
+        InputInterface $input,
+    ): int {
+        $signalementsIds = $this->suiviRepository->findSignalementsLastSuiviTechnical();
+        $nbSignalements = $this->sendMailToUsagers(
+            $input,
+            $signalementsIds,
+        );
+        $this->io->success(sprintf(
+            '%s signalement(s) for which the last suivi is technical and is older than '
+            .Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
+            $nbSignalements
+        ));
+
+        return $nbSignalements;
+    }
+
+    protected function processSignalementsLastSuiviPublic(
+        InputInterface $input,
+    ): int {
+        $signalementsIds = $this->suiviRepository->findSignalementsLastSuiviPublic();
+        $nbSignalements = $this->sendMailToUsagers(
+            $input,
+            $signalementsIds,
+        );
+        $this->io->success(sprintf(
+            '%s signalement(s) without suivi public from more than '.Suivi::DEFAULT_PERIOD_RELANCE.' days',
+            $nbSignalements
+        ));
+
+        return $nbSignalements;
     }
 
     protected function sendMailToUsagers(

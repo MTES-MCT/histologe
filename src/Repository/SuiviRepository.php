@@ -195,7 +195,7 @@ class SuiviRepository extends ServiceEntityRepository
                 ORDER BY last_posted_at';
     }
 
-    public function findSignalementsNoSuiviUsagerFrom(
+    public function findSignalementsLastSuiviPublic(
         int $period = Suivi::DEFAULT_PERIOD_RELANCE,
     ): array {
         $connection = $this->getEntityManager()->getConnection();
@@ -215,7 +215,7 @@ class SuiviRepository extends ServiceEntityRepository
         WHERE (su.type = :type_suivi_technical OR su.is_public = 1)
         AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
         AND s.is_imported != 1
-        AND s.is_abandon_procedure != 1
+        AND s.is_usager_abandon_procedure != 1
         GROUP BY su.signalement_id
         HAVING DATEDIFF(NOW(),last_posted_at) > :day_period
         ORDER BY last_posted_at';
@@ -225,7 +225,7 @@ class SuiviRepository extends ServiceEntityRepository
         return $statement->executeQuery($parameters)->fetchFirstColumn();
     }
 
-    public function findSignalementsWithLastSuiviTechnical(
+    public function findSignalementsLastSuiviTechnical(
         int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
     ): array {
         $connection = $this->getEntityManager()->getConnection();
@@ -251,7 +251,7 @@ class SuiviRepository extends ServiceEntityRepository
         WHERE su_last.id IS NULL AND su.date_suivi < DATE_SUB(NOW(), INTERVAL :day_period DAY)
         AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
         AND s.is_imported != 1
-        AND s.is_abandon_procedure != 1';
+        AND s.is_usager_abandon_procedure != 1';
 
         $statement = $connection->prepare($sql);
 
@@ -301,7 +301,7 @@ class SuiviRepository extends ServiceEntityRepository
         AND su.date_suivi < DATE_SUB(NOW(), INTERVAL :day_period DAY)
         AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
         AND s.is_imported != 1
-        AND s.is_abandon_procedure != 1';
+        AND s.is_usager_abandon_procedure != 1';
 
         $statement = $connection->prepare($sql);
 
