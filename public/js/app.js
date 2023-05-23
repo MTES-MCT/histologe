@@ -792,6 +792,16 @@ document?.querySelector('#signalement-affectation-form-submit')?.addEventListene
     })
 })
 
+console.log("patate")
+document?.querySelector('#btn-display-all-suivis')?.addEventListeners('click touchdown', (e) => {
+    console.log("douce")
+    e.preventDefault()
+    document.querySelectorAll('.suivi-item').forEach(item => {
+        item.classList.remove('fr-hidden')
+    })
+    document.querySelector('#btn-display-all-suivis').classList.add('fr-hidden')
+})
+
 document?.querySelectorAll('.fr-input--file-signalement').forEach(inputFile => {
     inputFile.addEventListener('change', evt => {
         const files = evt.target.files;
