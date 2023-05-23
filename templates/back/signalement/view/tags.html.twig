@@ -1,0 +1,70 @@
+<div class="fr-grid-row fr-mt-3v">
+    <div class="fr-col-10 fr-col-md-11" id="tags_active_container">
+        {% set visible = 'fr-hidden' %}
+        {% for tag in signalement.tags %}
+            <span class="fr-badge fr-badge--blue-ecume fr-fi-close-line fr-mr-1v" data-value="{{ tag.id }}"
+                data-tag-delete="{{ path('back_signalement_switch_value',{uuid:signalement.uuid}) }}"
+                data-token="{{ csrf_token('signalement_switch_value_'~signalement.uuid) }}"
+                data-remove-url="{{ path('back_tag_delete',{id:tag.id}) }}?_token={{ csrf_token('signalement_delete_tag') }}">{{ tag.label }}&nbsp;&nbsp;<span
+                        class="fr-fi-delete-line fr-icon--sm fr-mt-2v fr-text-label--red-marianne tag--deleter fr-hidden"></span></span>
+        {% else %}
+            {% set visible = '' %}
+        {% endfor %}
+        <em class="fr-text-default--warning fr-fi-close-line fr-icon--xs {{ visible }}">
+            <small>Aucune étiquette attribuée à ce signalement.</small>
+        </em>
+    </div>
+    <div class="fr-col-2 fr-col-md-1 fr-text--right">
+        <button class="fr-btn fr-fi-filter-line" id="tags_select_tooltip_btn"></button>
+    </div>
+</div>
+
+<template id="tags_tooltip_template">
+    <div class="fr-grid-row fr-grid-row--middle fr-background-alt--grey fr-p-3v fr-rounded fr-text--left fr-my-1v">
+        <div class="fr-col-12">
+            <strong class="fr-fi-information-fill fr-icon--sm fr-text-label--blue-france"> Gestion des
+                étiquettes</strong>
+            <span class="fr-hint-text">Ci-dessous la liste des étiquettes existantes.</span>
+        </div>
+        {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+            <div class="fr-col-12">
+                <form action="{{ path('back_tag_create',{uuid:signalement.uuid}) }}" method="POST" name="new-tag-form">
+                    <div class="fr-grid-row fr-grid-row--no-gutters">
+                        <label class="fr-col-11">
+                            <input type="text" class="fr-input " name="new-tag-label" required minlength="2">
+                            <span class="fr-error-text fr-hidden">Veuillez saisir un label</span>
+                        </label>
+                        <button class="fr-btn fr-col-1 fr-fi-add-line" type="submit"></button>
+                    </div>
+                    <input type="hidden" name="_token" value="{{ csrf_token('signalement_create_tag') }}">
+                </form>
+            </div>
+        {% endif %}
+        <div class="fr-col-12 fr-py-2v">
+            <strong>Etiquettes existantes</strong> <small>(Cliquez pour ajouter)</small>
+            <hr class="fr-pb-1v">
+        </div>
+        <div class="fr-col-12" id="tags_inactive_container">
+            <template id="tag_template">
+                <span class="fr-badge fr-badge--blue-ecume fr-fi-add-line fr-mr-1v"
+                        data-value="__ID__"
+                        data-tag-add="{{ path('back_signalement_switch_value',{uuid:signalement.uuid}) }}"
+                        data-token="{{ csrf_token('signalement_switch_value_'~signalement.uuid) }}"
+                        data-remove-url="{{ path('back_tag_delete') }}/__ID__?_token={{ csrf_token('signalement_delete_tag') }}">__LABEL__
+                </span>
+            </template>
+            {% for tag in tags|filter(t=>t not in signalement.tags) %}
+                <span class="fr-badge fr-badge--blue-ecume fr-fi-add-line fr-mr-1v"
+                        data-value="{{ tag.id }}"
+                        data-tag-add="{{ path('back_signalement_switch_value',{uuid:signalement.uuid}) }}"
+                        data-token="{{ csrf_token('signalement_switch_value_'~signalement.uuid) }}"
+                        data-remove-url="{{ path('back_tag_delete',{id:tag.id}) }}?_token={{ csrf_token('signalement_delete_tag') }}">{{ tag.label }}
+                    {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+                        &nbsp;&nbsp;<span
+                            class="fr-fi-delete-line fr-icon--sm fr-mt-2v fr-text-label--red-marianne tag--deleter"></span>
+                    {% endif %}
+                </span>
+            {% endfor %}
+        </div>
+    </div>
+</template>

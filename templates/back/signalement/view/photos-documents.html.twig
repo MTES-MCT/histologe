@@ -1,0 +1,82 @@
+<hr class="fr-mt-3w">
+
+<div class="fr-grid-row">
+    <div class="fr-col-9 fr-col-md-6">
+        <h3 class="fr-h5">Photos et documents</h3>
+    </div>
+    <div class="fr-col-3 fr-col-md-6 fr-text--right">
+        {% if (is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted)) and signalement.statut is not same as(1) %}
+            <form method="POST" enctype="multipart/form-data" class="inline-form"
+                action="{{ path('back_signalement_add_file',{uuid:signalement.uuid}) }}">
+                <label class="fr-btn fr-btn--sm fr-fi-file-fill fr-btn--icon-left"> Ajouter des documents
+                    <input type="file" accept="application/*" name="signalement-add-file[documents][]"
+                        class="fr-hidden fr-input--file-signalement" multiple>
+                </label>
+                <input type="hidden" name="_token"
+                    value="{{ csrf_token('signalement_add_file_'~signalement.id) }}">
+            </form>
+            
+            <form method="POST" enctype="multipart/form-data" class="inline-form"
+                action="{{ path('back_signalement_add_file',{uuid:signalement.uuid}) }}">
+                <label class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-instagram-fill fr-btn--icon-left"> Ajouter des
+                    photos
+                    <input type="file" accept="image/*" name="signalement-add-file[photos][]"
+                        class="fr-hidden fr-input--file-signalement" multiple>
+                </label>
+                <input type="hidden" name="_token"
+                    value="{{ csrf_token('signalement_add_file_'~signalement.id) }}">
+            </form>
+        {% endif %}
+    </div>
+</div>
+
+<div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v"
+        style="position: relative;z-index: 1001">
+    {% for index,photo in signalement.photos %}
+        <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
+            <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover"
+                    data-user="{{ photo.username ?? 'N/R' }}" data-mail="{{ photo.date ?? 'N/R' }}"
+                    style="background: url('{{ asset('_up/'~photo.file) }}')no-repeat center center/cover">
+                <a href="{{ asset('_up/'~photo.file) }}"
+                    class="fr-btn fr-btn--sm fr-fi-eye-line img-box" title="Voir la photo"
+                    target="_blank" rel="noopener"></a>
+                {% if is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted) %}
+                    {% if photo.user is not defined or photo.user is same as(app.user.id) %}
+                        <button title="Supprimer la photo"
+                                data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'photos',filename:photo.file}) }}"
+                                data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
+                                class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line signalement-file-delete"></button>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% for doc in signalement.documents %}
+    <div class="fr-grid-row fr-grid-row--middle fr-background-alt--grey fr-rounded fr-p-3v signalement-file-item">
+        <div class="fr-col-9">
+            <div class="fr-grid-row">
+                <div class="fr-col-12 fr-col-lg-2">
+                    {{ doc.date ?? 'N/R' }}
+                </div>
+                <div class="fr-col-12 fr-col-lg-5">
+                    {{ doc.titre }}
+                </div>
+                <div class="fr-col-12 fr-col-lg-5">
+                    {{ doc.username ?? 'N/R' }}
+                </div>
+            </div>
+        </div>
+        <div class="fr-col-3 fr-text--right">
+            <a href="{{ asset('_up/'~doc.file) }}"
+                class="fr-btn fr-btn--sm fr-fi-eye-fill" title="Afficher le document"
+                target="_blank" rel="noopener"></a>
+            {% if (is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted)) and signalement.statut is not same as(1) %}
+            <button title="Supprimer le document"
+                    data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'documents',filename:doc.file}) }}"
+                    data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
+                    class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line signalement-file-delete"></button>
+            {% endif %}
+        </div>
+    </div>
+{% endfor %}

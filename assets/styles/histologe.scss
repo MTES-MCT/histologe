@@ -470,3 +470,10 @@ table tr.partner-row table {
 form.inline-form {
     display: inline;
 }
+
+hr.blue-border {
+    background-color: var(--background-action-high-blue-france);
+    padding-bottom: 2px;
+    background-image: none;
+    margin-bottom: 1.5rem;
+}
