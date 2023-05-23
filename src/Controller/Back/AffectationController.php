@@ -8,9 +8,11 @@ use App\Entity\User;
 use App\Event\AffectationAnsweredEvent;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
+use App\Manager\SuiviManager;
 use App\Messenger\EsaboraBus;
 use App\Repository\PartnerRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -34,13 +36,25 @@ class AffectationController extends AbstractController
     public function toggleAffectationSignalement(
         Request $request,
         Signalement $signalement,
+        SuiviManager $suiviManager,
+        ParameterBagInterface $parameterBag,
     ): RedirectResponse|JsonResponse {
         $this->denyAccessUnlessGranted('ASSIGN_TOGGLE', $signalement);
         if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), $request->get('_token'))) {
             $data = $request->get('signalement-affectation');
             if (isset($data['partners'])) {
+                /** @var User $user */
+                $user = $this->getUser();
                 $postedPartner = $data['partners'];
                 $alreadyAffectedPartner = $this->signalementManager->findPartners($signalement);
+                if (empty($alreadyAffectedPartner)) {
+                    $suiviManager->createSuivi(
+                        $user,
+                        $signalement,
+                        ['description' => $parameterBag->get('suivi_message')['first_affectation']],
+                        true,
+                        true);
+                }
                 $partnersIdToAdd = array_diff($postedPartner, $alreadyAffectedPartner);
                 $partnersIdToRemove = array_diff($alreadyAffectedPartner, $postedPartner);
 
@@ -49,7 +63,7 @@ class AffectationController extends AbstractController
                     $affectation = $this->affectationManager->createAffectationFrom(
                         $signalement,
                         $partner,
-                        $this->getUser()
+                        $user
                     );
                     if ($affectation instanceof Affectation) {
                         $this->affectationManager->persist($affectation);
