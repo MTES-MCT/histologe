@@ -12,6 +12,7 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Messenger\EsaboraBus;
+use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SuiviRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -69,6 +70,30 @@ class AffectationController extends AbstractController
             }
             $this->affectationManager->flush();
             $this->addFlash('success', 'Les affectations ont bien été effectuées.');
+
+            return $this->json(['status' => 'success']);
+        }
+
+        return $this->json(['status' => 'denied'], 400);
+    }
+
+    #[Route('/{uuid}/affectation/remove', name: 'back_signalement_remove_partner')]
+    public function removePartnerAffectation(
+        Request $request,
+        Signalement $signalement,
+        AffectationRepository $affectationRepository,
+    ): RedirectResponse|JsonResponse {
+        $this->denyAccessUnlessGranted('ASSIGN_TOGGLE', $signalement);
+        if ($this->isCsrfTokenValid('signalement_remove_partner_'.$signalement->getId(), $request->get('_token'))) {
+            $idAffectation = $request->get('affectation');
+            if (!empty($idAffectation)) {
+                $affectation = $affectationRepository->findOneBy(['id' => $idAffectation]);
+                $partnersIdToRemove = [];
+                $partnersIdToRemove[] = $affectation->getPartner()->getId();
+                $this->affectationManager->removeAffectationsFrom($signalement, [], $partnersIdToRemove);
+            }
+            $this->affectationManager->flush();
+            $this->addFlash('success', 'Le partenaire a été désaffecté.');
 
             return $this->json(['status' => 'success']);
         }

@@ -26,8 +26,8 @@ class BackSignalementControllerTest extends WebTestCase
         $client->request('GET', $route);
         if (Signalement::STATUS_ARCHIVED !== $signalement->getStatut()) {
             $this->assertResponseIsSuccessful($signalement->getId());
-            $this->assertSelectorTextContains('h1.fr-h2.fr-mb-2v',
-                'Signalement #'.$signalement->getReference(),
+            $this->assertSelectorTextContains('h1.fr-h2.fr-text-label--blue-france',
+                '#'.$signalement->getReference().' -',
                 $signalement->getReference()
             );
         } else {

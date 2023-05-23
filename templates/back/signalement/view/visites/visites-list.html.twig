@@ -1,10 +1,6 @@
-<hr id="visites">
+<hr class="fr-mt-3w">
 
-<div class="fr-grid-row">
-    <div class="fr-col-md-6">
-        <strong class="fr-fi-calendar-line fr-icon--sm fr-text-label--blue-france"> Visites</strong>
-    </div>
-</div>
+<h3 class="fr-h5">Visites</h3>
 
 {% if is_granted('SIGN_ADD_VISITE', signalement) %}
     {% include 'back/signalement/view/visites/modals/visites-modal-add.html.twig' %}
@@ -21,7 +17,7 @@
             {% include 'back/signalement/view/visites/modals/visites-modals.html.twig' %}
             {% include 'back/signalement/view/visites/visites-buttons.html.twig' %}
         {% endif %}
-        <div class="fr-col-12 fr-h4 fr-mb-3v">
+        <div class="fr-col-12 fr-h6 fr-mb-3v">
             Visite #{{loop.index}}
         </div>
         {% include 'back/signalement/view/visites/visite-item.html.twig' %}
