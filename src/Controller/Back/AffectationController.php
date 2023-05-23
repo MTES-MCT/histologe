@@ -49,11 +49,12 @@ class AffectationController extends AbstractController
                 $alreadyAffectedPartner = $this->signalementManager->findPartners($signalement);
                 if (empty($alreadyAffectedPartner)) {
                     $suiviManager->createSuivi(
-                        $user,
-                        $signalement,
-                        ['description' => $parameterBag->get('suivi_message')['first_affectation']],
-                        true,
-                        true);
+                        user: $user,
+                        signalement: $signalement,
+                        params: ['description' => $parameterBag->get('suivi_message')['first_affectation']],
+                        isPublic: true,
+                        flush: true
+                    );
                 }
                 $partnersIdToAdd = array_diff($postedPartner, $alreadyAffectedPartner);
                 $partnersIdToRemove = array_diff($alreadyAffectedPartner, $postedPartner);
