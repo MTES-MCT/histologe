@@ -16,6 +16,8 @@ use App\Manager\SuiviManager;
 use App\Manager\TagManager;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
+use App\Service\Signalement\CriticiteCalculator;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
@@ -51,6 +53,8 @@ class SignalementImportLoader
         private EntityManagerInterface $entityManager,
         private ParameterBagInterface $parameterBag,
         private LoggerInterface $logger,
+        private CriticiteCalculator $criticiteCalculator,
+        private SignalementQualificationUpdater $signalementQualificationUpdater,
     ) {
     }
 
@@ -76,6 +80,9 @@ class SignalementImportLoader
                 foreach (self::SITUATIONS as $situation) {
                     $signalement = $this->loadSignalementSituation($signalement, $dataMapped, $situation);
                 }
+
+                $signalement->setScore($this->criticiteCalculator->calculate($signalement));
+                $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
 
                 $affectationCollection = $this->loadAffectation($signalement, $territory, $dataMapped);
                 foreach ($affectationCollection as $affectation) {
@@ -179,7 +186,8 @@ class SignalementImportLoader
                     } else {
                         /** @var CriticiteRepository $criticiteRepository */
                         $criticiteRepository = $this->entityManager->getRepository(Criticite::class);
-                        $criticite = $criticiteRepository->findByLabel(trim($critereLabel));
+                        $criticites = $criticiteRepository->findByLabel(trim($critereLabel));
+                        $criticite = !empty($criticites) ? $criticites[0] : null;
                         $critere = $criticite?->getCritere();
                     }
 

@@ -5,27 +5,22 @@ namespace App\Service\Signalement;
 use App\Entity\Critere;
 use App\Entity\Criticite;
 use App\Entity\Signalement;
-use App\Repository\CritereRepository;
 
 class CriticiteCalculator
 {
-    private Signalement $signalement;
     private float $scoreBatiment;
     private float $scoreLogement;
     private const MAX_SCORE_BATIMENT = 136;
     private const MAX_SCORE_LOGEMENT = 126;
 
-    public function __construct(Signalement $signalement, private CritereRepository $critereRepository)
+    public function __construct()
     {
-        $this->signalement = $signalement;
         $this->scoreBatiment = 0;
         $this->scoreLogement = 0;
     }
 
-    public function calculateNewCriticite(): float|int
+    public function calculate(Signalement $signalement): float|int
     {
-        $signalement = $this->signalement;
-
         $signalement->getCriticites()->map(function (Criticite $criticite) {
             if (Critere::TYPE_BATIMENT === $criticite->getCritere()->getType()) {
                 $this->scoreBatiment += ($criticite->getNewScore() * $criticite->getCritere()->getNewCoef());
