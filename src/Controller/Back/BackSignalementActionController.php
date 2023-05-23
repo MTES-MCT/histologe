@@ -103,7 +103,7 @@ class BackSignalementActionController extends AbstractController
             $content = preg_replace('/<p[^>]*>/', '', $content); // Remove the start <p> or <p attr="">
             $content = str_replace('</p>', '<br />', $content); // Replace the end
             $suivi->setDescription($content);
-            $suivi->setIsPublic($form['isPublic']);
+            $suivi->setIsPublic(!empty($form['notifyUsager']));
             $suivi->setSignalement($signalement);
             $suivi->setCreatedBy($this->getUser());
             $suivi->setType(SUIVI::TYPE_PARTNER);
