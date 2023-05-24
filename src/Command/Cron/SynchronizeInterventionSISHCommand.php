@@ -52,6 +52,8 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $countSuccess = $countFailed = 0;
+
         $io = new SymfonyStyle($input, $output);
         $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora(PartnerType::ARS);
 
@@ -59,6 +61,8 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
             /** @var InterventionSISHHandlerInterface $interventionHandler */
             foreach ($this->interventionHandlers as $key => $interventionHandler) {
                 $interventionHandler->handle($affectation);
+                $countSuccess += $interventionHandler->getCountSuccess();
+                $countFailed += $interventionHandler->getCountFailed();
                 $io->writeln(sprintf('#%s: %s was executed', $key, $interventionHandler->getServiceName()));
             }
         }
@@ -68,6 +72,16 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
                 type: NotificationMailerType::TYPE_CRON,
                 to: $this->parameterBag->get('admin_email'),
                 cronLabel: '[ARS] Synchronisation des interventions depuis Esabora',
+                params: [
+                    'count_success' => $countSuccess,
+                    'count_failed' => $countFailed,
+                    'message_success' => $countSuccess > 1
+                        ? 'synchronisations ont été effectuées'
+                        : 'synchronisation effectuée',
+                    'message_failed' => $countFailed > 1
+                        ? 'synchronisations n\'ont été effectuées'
+                        : 'synchronisation effectuée',
+                ],
             )
         );
 

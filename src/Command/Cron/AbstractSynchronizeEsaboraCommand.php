@@ -10,7 +10,6 @@ use App\Repository\AffectationRepository;
 use App\Service\Esabora\AbstractEsaboraService;
 use App\Service\Esabora\EsaboraManager;
 use App\Service\Esabora\EsaboraServiceInterface;
-use App\Service\Esabora\Response\DossierCollectionResponseInterface;
 use App\Service\Esabora\Response\DossierResponseInterface;
 use App\Service\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\Esabora\Response\DossierStateSISHResponse;
@@ -23,7 +22,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[AsCommand(
@@ -64,7 +62,7 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
         $countSyncFailed = 0;
         foreach ($affectations as $affectation) {
             $dossierResponse = $esaboraService->getStateDossier($affectation);
-            if ($this->hasSuccess($dossierResponse)) {
+            if (AbstractEsaboraService::hasSuccess($dossierResponse)) {
                 $this->esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
                 $io->success($this->printInfo($dossierResponse));
                 ++$countSyncSuccess;
@@ -77,7 +75,7 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
                 action: AbstractEsaboraService::ACTION_SYNC_DOSSIER,
                 message: json_encode($this->getMessage($affectation, $criterionName)),
                 response: $this->serializer->serialize($dossierResponse, 'json'),
-                status: $this->hasSuccess($dossierResponse)
+                status: AbstractEsaboraService::hasSuccess($dossierResponse)
                     ? JobEvent::STATUS_SUCCESS
                     : JobEvent::STATUS_FAILED,
                 codeStatus: $dossierResponse->getStatusCode(),
@@ -87,13 +85,6 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
             );
         }
         $this->notify($partnerType, $countSyncSuccess, $countSyncFailed);
-    }
-
-    protected function hasSuccess(DossierResponseInterface|DossierCollectionResponseInterface $dossierResponse): bool
-    {
-        return Response::HTTP_OK === $dossierResponse->getStatusCode()
-            && null !== $dossierResponse->getSasEtat()
-            && null === $dossierResponse->getErrorReason();
     }
 
     protected function getMessage(Affectation $affectation, string $criterionName): array

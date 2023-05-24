@@ -12,6 +12,9 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class InterventionVisiteServiceHandler implements InterventionSISHHandlerInterface
 {
+    private int $countSuccess = 0;
+    private int $countFailed = 0;
+
     public function __construct(
         private readonly SerializerInterface $serializer,
         private readonly EsaboraSISHService $esaboraSISHService,
@@ -22,9 +25,14 @@ class InterventionVisiteServiceHandler implements InterventionSISHHandlerInterfa
 
     public function handle(Affectation $affectation): void
     {
-        $dossierVisiteCollection = $this->esaboraSISHService->getVisiteDossier($affectation);
-        foreach ($dossierVisiteCollection->getCollection() as $dossierVisite) {
-            $this->esaboraManager->createOrUpdateVisite($affectation, $dossierVisite);
+        $dossierVisiteSISHCollectionResponse = $this->esaboraSISHService->getVisiteDossier($affectation);
+        if ($hasSuccess = AbstractEsaboraService::hasSuccess($dossierVisiteSISHCollectionResponse)) {
+            foreach ($dossierVisiteSISHCollectionResponse->getCollection() as $dossierVisite) {
+                $this->esaboraManager->createOrUpdateVisite($affectation, $dossierVisite);
+            }
+            ++$this->countSuccess;
+        } else {
+            ++$this->countFailed;
         }
 
         $this->jobEventManager->createJobEvent(
@@ -37,13 +45,23 @@ class InterventionVisiteServiceHandler implements InterventionSISHHandlerInterfa
                 ),
                 'json'
             ),
-            response: $this->serializer->serialize($dossierVisiteCollection, 'json'),
-            status: 200 === $dossierVisiteCollection->getStatusCode() ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,
-            codeStatus: $dossierVisiteCollection->getStatusCode(),
+            response: $this->serializer->serialize($dossierVisiteSISHCollectionResponse, 'json'),
+            status: $hasSuccess ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,
+            codeStatus: $dossierVisiteSISHCollectionResponse->getStatusCode(),
             signalementId: $affectation->getId(),
             partnerId: $affectation->getPartner()->getId(),
             partnerType: $affectation->getPartner()->getType(),
         );
+    }
+
+    public function getCountSuccess(): int
+    {
+        return $this->countSuccess;
+    }
+
+    public function getCountFailed(): int
+    {
+        return $this->countFailed;
     }
 
     public function getServiceName(): string

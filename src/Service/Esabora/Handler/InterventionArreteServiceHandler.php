@@ -12,6 +12,9 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class InterventionArreteServiceHandler implements InterventionSISHHandlerInterface
 {
+    private int $countSuccess = 0;
+    private int $countFailed = 0;
+
     public function __construct(
         private readonly SerializerInterface $serializer,
         private readonly EsaboraSISHService $esaboraSISHService,
@@ -22,9 +25,14 @@ class InterventionArreteServiceHandler implements InterventionSISHHandlerInterfa
 
     public function handle(Affectation $affectation): void
     {
-        $dossierArreteCollection = $this->esaboraSISHService->getArreteDossier($affectation);
-        foreach ($dossierArreteCollection->getCollection() as $dossierArrete) {
-            $this->esaboraManager->createOrUpdateArrete($affectation, $dossierArrete);
+        $dossierArreteSISHCollectionResponse = $this->esaboraSISHService->getArreteDossier($affectation);
+        if ($hasSuccess = AbstractEsaboraService::hasSuccess($dossierArreteSISHCollectionResponse)) {
+            foreach ($dossierArreteSISHCollectionResponse->getCollection() as $dossierArrete) {
+                $this->esaboraManager->createOrUpdateArrete($affectation, $dossierArrete);
+            }
+            ++$this->countSuccess;
+        } else {
+            ++$this->countFailed;
         }
 
         $this->jobEventManager->createJobEvent(
@@ -37,13 +45,25 @@ class InterventionArreteServiceHandler implements InterventionSISHHandlerInterfa
                 ),
                 'json'
             ),
-            response: $this->serializer->serialize($dossierArreteCollection, 'json'),
-            status: 200 === $dossierArreteCollection->getStatusCode() ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,
-            codeStatus: $dossierArreteCollection->getStatusCode(),
+            response: $this->serializer->serialize($dossierArreteSISHCollectionResponse, 'json'),
+            status: $hasSuccess
+                ? JobEvent::STATUS_SUCCESS
+                : JobEvent::STATUS_FAILED,
+            codeStatus: $dossierArreteSISHCollectionResponse->getStatusCode(),
             signalementId: $affectation->getId(),
             partnerId: $affectation->getPartner()->getId(),
             partnerType: $affectation->getPartner()->getType(),
         );
+    }
+
+    public function getCountSuccess(): int
+    {
+        return $this->countSuccess;
+    }
+
+    public function getCountFailed(): int
+    {
+        return $this->countFailed;
     }
 
     public function getServiceName(): string

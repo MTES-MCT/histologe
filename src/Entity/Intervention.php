@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProcedureType;
 use App\Repository\InterventionRepository;
@@ -9,8 +10,11 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: InterventionRepository::class)]
+#[ORM\HasLifecycleCallbacks()]
 class Intervention
 {
+    use TimestampableTrait;
+
     public const STATUS_PLANNED = 'PLANNED';
     public const STATUS_DONE = 'DONE';
     public const STATUS_CANCELED = 'CANCELED';
