@@ -115,3 +115,9 @@ suivis:
   is_public: 1
   signalement: "2023-10"
   type: 1
+-
+  created_by: admin-01@histologe.fr
+  description: "Signalement validé"
+  is_public: 1
+  signalement: "2023-12"
+  type: 1

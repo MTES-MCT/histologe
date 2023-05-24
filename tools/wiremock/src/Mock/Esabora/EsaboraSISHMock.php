@@ -57,6 +57,19 @@ class EsaboraSISHMock extends AbstractEsaboraMock
         self::createSearchDossierMock(
             $wiremock,
             'doSearch',
+            self::SISH_ETAT_DOSSIER_SAS,
+            WireMock::matchingJsonPath(
+                '$.criterionList[0].criterionValueList[0]',
+                WireMock::equalTo('00000000-0000-0000-2023-000000000012')
+            ),
+            'ws_etat_dossier_sas/etat_termine.json',
+            self::BASE_PATH,
+            self::RESOURCES_DIR,
+        );
+
+        self::createSearchDossierMock(
+            $wiremock,
+            'doSearch',
             self::SISH_VISITES_DOSSIER_SAS,
             WireMock::matchingJsonPath(
                 '$.criterionList[0].criterionValueList[0]',
@@ -76,6 +89,32 @@ class EsaboraSISHMock extends AbstractEsaboraMock
                 WireMock::equalTo('00000000-0000-0000-2023-000000000010')
             ),
             'ws_arretes_dossier_sas.json',
+            self::BASE_PATH,
+            self::RESOURCES_DIR,
+        );
+
+        self::createSearchDossierMock(
+            $wiremock,
+            'doSearch',
+            self::SISH_VISITES_DOSSIER_SAS,
+            WireMock::matchingJsonPath(
+                '$.criterionList[0].criterionValueList[0]',
+                WireMock::equalTo('00000000-0000-0000-2023-000000000012')
+            ),
+            'ws_visites_dossier_sas_en_cours.json',
+            self::BASE_PATH,
+            self::RESOURCES_DIR,
+        );
+
+        self::createSearchDossierMock(
+            $wiremock,
+            'doSearch',
+            self::SISH_ARRETES_DOSSIER_SAS,
+            WireMock::matchingJsonPath(
+                '$.criterionList[0].criterionValueList[0]',
+                WireMock::equalTo('00000000-0000-0000-2023-000000000012')
+            ),
+            'ws_arretes_dossier_sas_termine.json',
             self::BASE_PATH,
             self::RESOURCES_DIR,
         );

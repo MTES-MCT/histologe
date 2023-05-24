@@ -67,7 +67,10 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
     ): void {
         $io = new SymfonyStyle($input, $output);
         $uuidSignalement = $input->getArgument('uuid_signalement') ?? null;
-        $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora($partnerType, $uuidSignalement);
+        $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora(
+            $partnerType,
+            $uuidSignalement
+        );
         $countSyncSuccess = 0;
         $countSyncFailed = 0;
         foreach ($affectations as $affectation) {

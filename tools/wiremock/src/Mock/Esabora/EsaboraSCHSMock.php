@@ -45,11 +45,18 @@ class EsaboraSCHSMock extends AbstractEsaboraMock
             'etat_termine.json'
         );
 
+        self::createCustomStateDossierMock(
+            $wiremock,
+            '00000000-0000-0000-2023-000000000012',
+            'etat_termine.json'
+        );
+
         $uuids = [
             '00000000-0000-0000-2022-000000000001',
             '00000000-0000-0000-2022-000000000002',
-            '00000000-0000-0000-2023-000000000009',
             '00000000-0000-0000-2022-000000000008',
+            '00000000-0000-0000-2023-000000000009',
+            '00000000-0000-0000-2023-000000000012',
         ];
 
         self::createSearchDossierMock(
