@@ -17,8 +17,10 @@ class DossierVisiteSISHCollectionResponse implements DossierCollectionResponseIn
     public function __construct(array $response, int $statusCode)
     {
         if (!empty($response)) {
-            foreach ($response['rowList'] as $item) {
-                $this->collection[] = new DossierVisiteSISH($item);
+            if (isset($response['rowList'])) {
+                foreach ($response['rowList'] as $item) {
+                    $this->collection[] = new DossierVisiteSISH($item);
+                }
             }
         }
         $this->statusCode = $statusCode;

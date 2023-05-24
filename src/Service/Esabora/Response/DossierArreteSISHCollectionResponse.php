@@ -17,8 +17,10 @@ class DossierArreteSISHCollectionResponse implements DossierCollectionResponseIn
     public function __construct(array $response, int $statusCode)
     {
         if (!empty($response)) {
-            foreach ($response['rowList'] as $item) {
-                $this->collection[] = new DossierArreteSISH($item);
+            if (isset($response['rowList'])) {
+                foreach ($response['rowList'] as $item) {
+                    $this->collection[] = new DossierArreteSISH($item);
+                }
             }
         }
         $this->statusCode = $statusCode;
