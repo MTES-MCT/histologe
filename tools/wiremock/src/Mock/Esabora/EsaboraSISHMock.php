@@ -75,7 +75,8 @@ class EsaboraSISHMock extends AbstractEsaboraMock
         );
 
         self::createMockIntervention(
-            $wiremock, self::SISH_ARRETES_DOSSIER_SAS,
+            $wiremock,
+            self::SISH_ARRETES_DOSSIER_SAS,
             'ws_arretes_dossier_sas.json',
             self::SIGNALEMENT_SUBCRIBED_SISH
         );
