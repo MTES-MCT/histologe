@@ -18,6 +18,7 @@ use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -41,6 +42,15 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
         parent::__construct($this->parameterBag);
     }
 
+    protected function configure(): void
+    {
+        $this->addArgument(
+            'uuid_signalement',
+            InputArgument::OPTIONAL,
+            'Which signalement do you want to sync'
+        );
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('Please execute app:sync-esabora-sish or app:sync-esabora-schs');
@@ -56,8 +66,8 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
         string $criterionName,
     ): void {
         $io = new SymfonyStyle($input, $output);
-
-        $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora($partnerType);
+        $uuidSignalement = $input->getArgument('uuid_signalement') ?? null;
+        $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora($partnerType, $uuidSignalement);
         $countSyncSuccess = 0;
         $countSyncFailed = 0;
         foreach ($affectations as $affectation) {
@@ -84,7 +94,7 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
                 partnerType: $affectation->getPartner()->getType(),
             );
         }
-        $this->notify($partnerType, $countSyncSuccess, $countSyncFailed);
+        $this->notify($input, $output, $partnerType, $countSyncSuccess, $countSyncFailed);
     }
 
     protected function getMessage(Affectation $affectation, string $criterionName): array
@@ -142,8 +152,15 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
         );
     }
 
-    protected function notify(PartnerType $partnerType, int $countSyncSuccess, int $countSyncFailed): void
-    {
+    protected function notify(
+        InputInterface $input,
+        OutputInterface $output,
+        PartnerType $partnerType,
+        int $countSyncSuccess,
+        int $countSyncFailed
+    ): void {
+        $io = new SymfonyStyle($input, $output);
+        $io->table(['Count success', 'Count Failed'], [[$countSyncSuccess, $countSyncFailed]]);
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
