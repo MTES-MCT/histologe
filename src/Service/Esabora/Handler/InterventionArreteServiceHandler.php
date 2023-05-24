@@ -50,7 +50,7 @@ class InterventionArreteServiceHandler implements InterventionSISHHandlerInterfa
                 ? JobEvent::STATUS_SUCCESS
                 : JobEvent::STATUS_FAILED,
             codeStatus: $dossierArreteSISHCollectionResponse->getStatusCode(),
-            signalementId: $affectation->getId(),
+            signalementId: $affectation->getSignalement()->getId(),
             partnerId: $affectation->getPartner()->getId(),
             partnerType: $affectation->getPartner()->getType(),
         );
