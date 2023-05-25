@@ -257,25 +257,40 @@
                         déclarant</strong>
                     <span class="fr-hint-text">Ce signalement à été effectué par un tiers, les informations du déclarant sont les suivantes.</span>
                     <ul class="fr-list--icon-img">
-                        <li><strong>Nom: </strong> {{ signalement.nomDeclarant }} -
-                            <strong>Prénom: </strong> {{ signalement.prenomDeclarant }}</li>
-                        <li><strong>Courriel: </strong><a
-                                    href="mailto:{{ signalement.mailDeclarant }}">{{ signalement.mailDeclarant }}</a>
+                        <li>
+                            <strong>Nom :</strong> {{ signalement.nomDeclarant }} -
+                            <strong>Prénom :</strong> {{ signalement.prenomDeclarant }}
                         </li>
-                        <li><strong>Téléphone: </strong>{{ signalement.telDeclarant }}</li>
-                        <li><strong>Structure: </strong> {{ signalement.structureDeclarant }}</li>
+                        {% if signalement.lienDeclarantOccupant %}
+                        <li>
+                            <strong>Lien :</strong>
+                            {{ signalement.lienDeclarantOccupant|signalement_lien_declarant_occupant }}
+                        </li>
+                        {% endif %}
+                        <li>
+                            <strong>Courriel :</strong>
+                            <a href="mailto:{{ signalement.mailDeclarant }}">{{ signalement.mailDeclarant }}</a>
+                        </li>
+                        <li><strong>Téléphone :</strong> {{ signalement.telDeclarant }}</li>
+                        {% if signalement.structureDeclarant %}
+                            <li><strong>Structure :</strong> {{ signalement.structureDeclarant }}</li>
+                        {% endif %}
                     </ul>
                 {% endif %}
                 <strong class="fr-fi-information-fill fr-icon--sm fr-text-label--blue-france"> Informations de
                     l'occupant</strong>
                 <span class="fr-hint-text">Ce signalement a été effectué par l'occupant du logement, les informations fournies sont les suivantes.</span>
                 <ul class="fr-list--icon-img">
-                    <li><strong>Nom: </strong> {{ signalement.nomOccupant }} -
-                        <strong>Prénom: </strong> {{ signalement.prenomOccupant }}</li>
-                    <li><strong>Courriel: </strong><a
-                                href="mailto:{{ signalement.mailOccupant }}">{{ signalement.mailOccupant }}</a></li>
-                    <li><strong>Téléphone: </strong><a
-                                href="tel:{{ signalement.telOccupant }}">{{ signalement.telOccupant }}</a></li>
+                    <li><strong>Nom :</strong> {{ signalement.nomOccupant }} -
+                        <strong>Prénom :</strong> {{ signalement.prenomOccupant }}</li>
+                    <li>
+                        <strong>Courriel :</strong>
+                        <a href="mailto:{{ signalement.mailOccupant }}">{{ signalement.mailOccupant }}</a>
+                    </li>
+                    <li>
+                        <strong>Téléphone :</strong>
+                        <a href="tel:{{ signalement.telOccupant }}">{{ signalement.telOccupant }}</a>
+                    </li>
                     <li>
                         <strong>Adresse: </strong>
                         {{ signalement.adresseOccupant }},
@@ -285,19 +300,19 @@
                         {{ signalement.adresseAutreOccupant ? signalement.adresseAutreOccupant ~ ',' : '' }}
                         {{ signalement.cpOccupant ~' '~ signalement.villeOccupant|upper }}
                     </li>
-                    <li><strong>Occupant(s): </strong> {{ signalement.nbAdultes }}
+                    <li><strong>Occupant(s) :</strong> {{ signalement.nbAdultes }}
                         <strong>Adulte(s)</strong>{% if signalement.nbEnfantsM6 %} - {{ signalement.nbEnfantsM6 }} Enfant(s)
                         <u><strong>moins</strong></u> 6 ans{% endif %}{% if signalement.nbEnfantsP6 %} - {{ signalement.nbEnfantsP6 }} Enfant(s)
                             <u><strong>plus</strong></u> 6 ans{% endif %}</li>
                     <li><strong>Date
-                            d'entrée: </strong> {{ signalement.dateEntree ? signalement.dateEntree|date('d/m/Y') : 'N/R' }}
+                            d'entrée :</strong> {{ signalement.dateEntree ? signalement.dateEntree|date('d/m/Y') : 'N/R' }}
                     </li>
                     <li>
-                        <strong>Logement: </strong> {{ signalement.natureLogement }} de {{ signalement.superficie }}m² -
-                        <strong>Loyer: </strong> {{ signalement.loyer }} €/mois
+                        <strong>Logement :</strong> {{ signalement.natureLogement }} de {{ signalement.superficie }}m² -
+                        <strong>Loyer :</strong> {{ signalement.loyer }} €/mois
                     </li>
                     <li>
-                        <strong>Allocataire: </strong>
+                        <strong>Allocataire :</strong>
                         {% if signalement.isAllocataire %}
                             <small class="fr-background-alt--green-emeraude fr-rounded fr-p-1v fr-text--bold fr-valid-text fr-display-inline-flex fr-mt-0 fr-px-3v">{{ signalement.isAllocataire }}</small>
                         {% else %}
@@ -306,10 +321,10 @@
                     </li>
                     {% if signalement.isAllocataire %}
                         <li>
-                            <strong>N° allocataire: </strong> {{ signalement.numAllocataire }}
+                            <strong>N° allocataire :</strong> {{ signalement.numAllocataire }}
                         </li>
                         <li>
-                            <strong>Montant allocation: </strong> {{ signalement.montantAllocation ?? 'N/R' }} €/mois
+                            <strong>Montant allocation :</strong> {{ signalement.montantAllocation ?? 'N/R' }} €/mois
                         </li>
                     {% endif %}
                     <li>
