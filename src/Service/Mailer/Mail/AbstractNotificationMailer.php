@@ -34,7 +34,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         if (!$this->parameterBag->get('mail_enable')) {
             $this->logger->info('Email has been disable, please enable MAIL_ENABLE=1');
 
-            return false;
+            return true;
         }
         $territory = $notificationMail->getTerritory();
         $this->mailerParams = $this->getMailerParamsFromNotification($notificationMail);
