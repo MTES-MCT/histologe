@@ -43,33 +43,17 @@ class BackSignalementActionController extends AbstractController
                 $signalement->setCodeSuivi(md5(uniqid()));
                 $toRecipients = $signalement->getMailUsagers();
 
-                $isSignalementNDE = false;
-                if (null !== $signalement->getSignalementQualifications()) {
-                    foreach ($signalement->getSignalementQualifications() as $qualification) {
-                        $isSignalementNDE = $qualificationStatusService->canSeenNDEQualification($qualification);
-                        break;
-                    }
-                }
                 foreach ($toRecipients as $toRecipient) {
-                    if ($isSignalementNDE) {
-                        $notificationMailerRegistry->send(
-                            new NotificationMail(
-                                type: NotificationMailerType::TYPE_SIGNALEMENT_ASK_BAIL_DPE,
-                                to: $toRecipient,
-                                territory: $signalement->getTerritory(),
-                                signalement: $signalement,
-                            )
-                        );
-                    } else {
-                        $notificationMailerRegistry->send(
-                            new NotificationMail(
-                                type: NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION,
-                                to: $toRecipient,
-                                territory: $signalement->getTerritory(),
-                                signalement: $signalement,
-                            )
-                        );
-                    }
+                    $notificationMailerRegistry->send(
+                        new NotificationMail(
+                            type: $signalement->hasNDE() ?
+                                NotificationMailerType::TYPE_SIGNALEMENT_ASK_BAIL_DPE :
+                                NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION,
+                            to: $toRecipient,
+                            territory: $signalement->getTerritory(),
+                            signalement: $signalement,
+                        )
+                    );
                 }
             } else {
                 $statut = Signalement::STATUS_REFUSED;

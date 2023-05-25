@@ -66,7 +66,7 @@ class QualificationStatusService implements RuntimeExtensionInterface
             return false;
         }
 
-        if (Qualification::NON_DECENCE_ENERGETIQUE->name !== $signalementQualification->getQualification()->name) {
+        if (Qualification::NON_DECENCE_ENERGETIQUE !== $signalementQualification->getQualification()) {
             return false;
         }
 

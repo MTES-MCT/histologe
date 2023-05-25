@@ -33,13 +33,9 @@ class SignalementAskBailDpeMailer extends AbstractNotificationMailer
 
         return [
             'signalement' => $signalement,
-            'lien_suivi' => $this->urlGenerator->generate(
+            'lien_suivi' => $this->generateAbsoluteLink(
                 'front_suivi_signalement',
-                [
-                    'code' => $signalement->getCodeSuivi(),
-                    'from' => $toRecipient,
-                ],
-                UrlGeneratorInterface::ABSOLUTE_URL
+                ['code' => $signalement->getCodeSuivi(), 'from' => $toRecipient]
             ),
         ];
     }
