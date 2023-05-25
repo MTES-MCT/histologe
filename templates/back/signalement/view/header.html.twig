@@ -49,7 +49,7 @@
                             value="{{ csrf_token('signalement_validation_response_'~signalement.id) }}">
                 </form>
 
-            {% elseif isClosedForMe or signalement.statut is same as(6) or signalement.statut is same as(8) %}
+            {% elseif isClosedForMe or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
                 <form action="{{ path('back_signalement_reopen',{uuid:signalement.uuid}) }}">
                     {% if is_granted('ROLE_ADMIN_TERRITORY') %}
                         <button class="fr-btn fr-btn--sm fr-btn--success fr-fi-lock-fill fr-btn--icon-left reopen"
@@ -58,7 +58,7 @@
                             Rouvrir pous tous
                         </button>
                     {% endif %}
-                    {% if signalement.statut is not same as(6) or is_granted('ROLE_ADMIN_TERRITORY') %}
+                    {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or is_granted('ROLE_ADMIN_TERRITORY') %}
                         <button class="fr-btn fr-btn--sm fr-btn--success fr-fi-lock-fill fr-btn--icon-left reopen"
                                 name="signalement-action[reopen]" value="1"
                                 onclick="return confirm('Êtes-vous certain de vouloir rouvrir ce signalement ?')">
@@ -69,7 +69,7 @@
                             value="{{ csrf_token('signalement_reopen_'~signalement.id) }}">
                 </form>
             
-            {% elseif (signalement.statut is not same as(1) and not isClosed and not isClosedForMe and isAffected and isAccepted) or is_granted('ROLE_ADMIN_TERRITORY') %}
+            {% elseif (signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') and not isClosed and not isClosedForMe and isAffected and isAccepted) or is_granted('ROLE_ADMIN_TERRITORY') %}
                 <a href="#" aria-controls="cloture-modal" data-fr-opened="false"
                     class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-close-line fr-btn--icon-left">
                     Clôturer
@@ -113,7 +113,7 @@
                 le {{ isRefused.answeredAt|date('d/m/Y') }}
             {% elseif needValidation and not isClosedForMe and is_granted('ROLE_ADMIN_TERRITORY') %}
                 En tant qu'administrateur vous devez <u>valider/refuser</u> ce signalement
-            {% elseif isClosedForMe or signalement.statut is same as(6)  or signalement.statut is same as(8) %}
+            {% elseif isClosedForMe or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED')  or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
                 Vous pouvez <u>rouvrir</u> ce signalement
             {% endif %}
         </div>

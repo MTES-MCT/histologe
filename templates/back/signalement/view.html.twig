@@ -9,14 +9,14 @@
 {% block content %}
     {% include '_partials/_modal_affectation.html.twig' %}
     {% include '_partials/_modal_dpe.html.twig' %}
-    {% if signalement.statut is not same as(1) and not isClosed and not isClosedForMe and ((isAffected and isAccepted)) or is_granted('ROLE_ADMIN_TERRITORY') %}
+    {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') and not isClosed and not isClosedForMe and ((isAffected and isAccepted)) or is_granted('ROLE_ADMIN_TERRITORY') %}
         {% include '_partials/_modal_cloture.html.twig' %}
     {% endif %}
     {% if canEditNDE %}
         {% include '_partials/_modal_edit_nde.html.twig' %}        
     {% endif %}
     <section id="signalement-{{ signalement.id }}-content"
-        class="fr-p-5v fr-background--white {{ isClosedForMe or signalement.statut is same as(6) or signalement.statut is same as(8) ? 'signalement-invalid':'' }}">
+        class="fr-p-5v fr-background--white {{ isClosedForMe or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') ? 'signalement-invalid':'' }}">
         
         {% include 'back/signalement/view/header.html.twig' %}
         
@@ -99,7 +99,7 @@
             arrow: false,
         })
         
-        {% if isClosedForMe or signalement.statut is same as(6) %}
+        {% if isClosedForMe or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') %}
         document?.querySelector('#signalement-{{ signalement.id }}-content').querySelectorAll('button:not(.reopen,.reaffect,.img-box,.fr-accordion__btn),.fr-btn:not(.reopen,.reaffect,.img-box,.fr-fi-file-pdf-fill)').forEach(input => {
             input.remove()
         })

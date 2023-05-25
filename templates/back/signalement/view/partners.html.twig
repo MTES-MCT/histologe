@@ -29,25 +29,24 @@
                                         <br>
                                         {{ affectation.answeredBy ? 'par ' ~ affectation.answeredBy.nomComplet }}
                                     </span>
+                                {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_ACCEPTED') %}
+                                    <span class="fr-hint-text">
+                                        Accepté le {{ affectation.answeredAt|date('d/m/Y') }}
+                                        <br>
+                                        {{ affectation.answeredBy ? 'par ' ~ affectation.answeredBy.nomComplet }}
+                                    </span>
+                                {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_REFUSED') %}
+                                    <span class="fr-hint-text">
+                                        Refusé le {{ affectation.answeredAt|date('d/m/Y') }}
+                                        <br>
+                                        {{ affectation.answeredBy ? 'par ' ~ affectation.answeredBy.nomComplet }}
+                                    </span>
                                 {% else %}
                                     <span class="fr-hint-text">
                                         Affecté le {{ affectation.createdAt|date('d/m/Y') }}
                                         <br>
                                         {{ affectation.affectedBy ? 'par ' ~ affectation.affectedBy.nomComplet }}
                                     </span>
-                                    {% if affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_ACCEPTED') %}
-                                        <span class="fr-hint-text">
-                                            Accepté le {{ affectation.answeredAt|date('d/m/Y') }}
-                                            <br>
-                                            {{ affectation.answeredBy ? 'par ' ~ affectation.answeredBy.nomComplet }}
-                                        </span>
-                                    {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_REFUSED') %}
-                                        <span class="fr-hint-text">
-                                            Refusé le {{ affectation.answeredAt|date('d/m/Y') }}
-                                            <br>
-                                            {{ affectation.answeredBy ? 'par ' ~ affectation.answeredBy.nomComplet }}
-                                        </span>
-                                    {% endif %}
                                 {% endif %}
                             </div>
                             <div class="fr-col-10 fr-col-lg-3">

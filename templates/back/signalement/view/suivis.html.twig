@@ -5,14 +5,19 @@
         <h3 class="fr-h5">Activité PDLHI</h3>
     </div>
     <div class="fr-col-3 fr-col-md-6 fr-text--right">
-        <button class="fr-btn fr-btn--secondary fr-fi-chat-quote-line fr-btn--icon-left" data-fr-opened="false"
+        <button class="fr-btn fr-fi-chat-quote-line fr-btn--icon-left" data-fr-opened="false"
                 aria-controls="fr-modal-add-suivi">
             Ajouter un suivi
         </button>
     </div>
 </div>
 
-{% if (is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted)) and signalement.statut is not same as(1) and signalement.statut is not same as(6) and not isClosedForMe %}
+{% if 
+        (is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted))
+        and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION')
+        and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
+        and not isClosedForMe
+        %}
     {% include '_partials/signalement/add_suivi.html.twig' %}
 {% endif %}
 
