@@ -37,6 +37,7 @@ class SignalementRepository extends ServiceEntityRepository
 {
     public const ARRAY_LIST_PAGE_SIZE = 30;
     public const MARKERS_PAGE_SIZE = 9000; // @todo: is high cause duplicate result, the query findAllWithGeoData should be reviewed
+    public const SEPARATOR_GROUP_CONCAT = '|'; // | used in maps.js
 
     public function __construct(
         ManagerRegistry $registry,
@@ -53,7 +54,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->findSignalementAffectationQuery($user, $options);
 
         $qb->addSelect('s.geoloc, s.details, s.cpOccupant, s.inseeOccupant, GROUP_CONCAT(DISTINCT c.label SEPARATOR :group_concat_separator_1) as desordres');
-        $qb->setParameter('group_concat_separator_1', SignalementExport::SEPARATOR_GROUP_CONCAT);
+        $qb->setParameter('group_concat_separator_1', self::SEPARATOR_GROUP_CONCAT);
 
         if (null === $options['criteres']) {
             $qb->leftJoin('s.criteres', 'c');
