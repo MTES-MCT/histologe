@@ -36,8 +36,6 @@ class AffectationController extends AbstractController
     public function toggleAffectationSignalement(
         Request $request,
         Signalement $signalement,
-        SuiviManager $suiviManager,
-        ParameterBagInterface $parameterBag,
     ): RedirectResponse|JsonResponse {
         $this->denyAccessUnlessGranted('ASSIGN_TOGGLE', $signalement);
         if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), $request->get('_token'))) {
@@ -47,15 +45,6 @@ class AffectationController extends AbstractController
                 $user = $this->getUser();
                 $postedPartner = $data['partners'];
                 $alreadyAffectedPartner = $this->signalementManager->findPartners($signalement);
-                if (empty($alreadyAffectedPartner)) {
-                    $suiviManager->createSuivi(
-                        user: $user,
-                        signalement: $signalement,
-                        params: ['description' => $parameterBag->get('suivi_message')['first_affectation']],
-                        isPublic: true,
-                        flush: true
-                    );
-                }
                 $partnersIdToAdd = array_diff($postedPartner, $alreadyAffectedPartner);
                 $partnersIdToRemove = array_diff($alreadyAffectedPartner, $postedPartner);
 
@@ -86,6 +75,8 @@ class AffectationController extends AbstractController
 
     #[Route('/{signalement}/{affectation}/{user}/response', name: 'back_signalement_affectation_response', methods: 'POST')]
     public function affectationResponseSignalement(
+        SuiviManager $suiviManager,
+        ParameterBagInterface $parameterBag,
         Signalement $signalement,
         Affectation $affectation,
         User $user,
@@ -97,6 +88,22 @@ class AffectationController extends AbstractController
         ) {
             $status = isset($response['accept']) ? Affectation::STATUS_ACCEPTED : Affectation::STATUS_REFUSED;
             $affectation = $this->affectationManager->updateAffectation($affectation, $user, $status);
+            $affectationAccepted = $signalement->getAffectations()->filter(function (Affectation $affectation) {
+                return Affectation::STATUS_ACCEPTED === $affectation->getStatut();
+            });
+
+            if (1 === $affectationAccepted->count()
+                && Affectation::STATUS_ACCEPTED === $affectation->getStatut()
+            ) {
+                $suiviManager->createSuivi(
+                    user: $user,
+                    signalement: $signalement,
+                    params: ['description' => $parameterBag->get('suivi_message')['first_affectation']],
+                    isPublic: true,
+                    flush: true
+                );
+            }
+
             $this->addFlash('success', 'Affectation mise à jour avec succès !');
             if (Affectation::STATUS_REFUSED == $status) {
                 $this->dispatchAffectationAnsweredEvent($affectation, $response);
