@@ -97,7 +97,8 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
                 partnerType: $affectation->getPartner()->getType(),
             );
         }
-        $this->notify($input, $output, $partnerType, $countSyncSuccess, $countSyncFailed);
+        $io->table(['Count success', 'Count Failed'], [[$countSyncSuccess, $countSyncFailed]]);
+        $this->notify($partnerType, $countSyncSuccess, $countSyncFailed);
     }
 
     protected function getMessage(Affectation $affectation, string $criterionName): array
@@ -156,14 +157,10 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
     }
 
     protected function notify(
-        InputInterface $input,
-        OutputInterface $output,
         PartnerType $partnerType,
         int $countSyncSuccess,
         int $countSyncFailed
     ): void {
-        $io = new SymfonyStyle($input, $output);
-        $io->table(['Count success', 'Count Failed'], [[$countSyncSuccess, $countSyncFailed]]);
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
