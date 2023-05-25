@@ -11,6 +11,9 @@ abstract class AbstractEsaboraMock
     protected const REQUEST_CONTENT_TYPE = 'application/json';
     protected const REQUEST_AUTHORIZATION = 'Bearer';
     protected const RESPONSE_CONTENT_TYPE = self::REQUEST_CONTENT_TYPE;
+    protected const MATCH_JSON_PATH = '$.criterionList[0].criterionValueList[0]';
+    protected const SIGNALEMENT_SUBCRIBED_SISH = '00000000-0000-0000-2023-000000000010';
+    protected const SIGNALEMENT_SUBCRIBED_SISH_SCHS = '00000000-0000-0000-2023-000000000012';
 
     protected static function createPushDossierMock(
         WireMock $wiremock,

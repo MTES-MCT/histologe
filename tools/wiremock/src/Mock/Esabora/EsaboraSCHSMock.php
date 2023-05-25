@@ -45,11 +45,18 @@ class EsaboraSCHSMock extends AbstractEsaboraMock
             'etat_termine.json'
         );
 
+        self::createCustomStateDossierMock(
+            $wiremock,
+            self::SIGNALEMENT_SUBCRIBED_SISH_SCHS,
+            'etat_termine.json'
+        );
+
         $uuids = [
             '00000000-0000-0000-2022-000000000001',
             '00000000-0000-0000-2022-000000000002',
-            '00000000-0000-0000-2023-000000000009',
             '00000000-0000-0000-2022-000000000008',
+            '00000000-0000-0000-2023-000000000009',
+            self::SIGNALEMENT_SUBCRIBED_SISH_SCHS,
         ];
 
         self::createSearchDossierMock(
@@ -57,7 +64,7 @@ class EsaboraSCHSMock extends AbstractEsaboraMock
             'doSearch',
             self::WS_ETAT_DOSSIER_SAS,
             WireMock::matchingJsonPath(
-                '$.criterionList[0].criterionValueList[0]',
+                self::MATCH_JSON_PATH,
                 WireMock::notMatching(implode('|', $uuids))
             ),
             'ws_etat_dossier_sas/etat_non_trouve.json',
@@ -73,7 +80,7 @@ class EsaboraSCHSMock extends AbstractEsaboraMock
             'doSearch',
             self::WS_ETAT_DOSSIER_SAS,
             WireMock::matchingJsonPath(
-                '$.criterionList[0].criterionValueList[0]',
+                self::MATCH_JSON_PATH,
                 WireMock::equalTo($uuid)
             ),
             'ws_etat_dossier_sas/'.$jsonFilename,

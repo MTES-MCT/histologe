@@ -55,7 +55,11 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
         $countSuccess = $countFailed = 0;
 
         $io = new SymfonyStyle($input, $output);
-        $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora(PartnerType::ARS);
+        $uuidSignalement = $input->getArgument('uuid_signalement') ?? null;
+        $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora(
+            PartnerType::ARS,
+            $uuidSignalement
+        );
 
         foreach ($affectations as $affectation) {
             /** @var InterventionSISHHandlerInterface $interventionHandler */
@@ -66,7 +70,7 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
                 $io->writeln(sprintf('#%s: %s was executed', $key, $interventionHandler->getServiceName()));
             }
         }
-
+        $io->table(['Count success', 'Count Failed'], [[$countSuccess, $countFailed]]);
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
