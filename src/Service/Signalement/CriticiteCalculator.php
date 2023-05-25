@@ -13,14 +13,10 @@ class CriticiteCalculator
     private const MAX_SCORE_BATIMENT = 136;
     private const MAX_SCORE_LOGEMENT = 126;
 
-    public function __construct()
+    public function calculate(Signalement $signalement): float|int
     {
         $this->scoreBatiment = 0;
         $this->scoreLogement = 0;
-    }
-
-    public function calculate(Signalement $signalement): float|int
-    {
         $signalement->getCriticites()->map(function (Criticite $criticite) {
             if (Critere::TYPE_BATIMENT === $criticite->getCritere()->getType()) {
                 $this->scoreBatiment += ($criticite->getNewScore() * $criticite->getCritere()->getNewCoef());
