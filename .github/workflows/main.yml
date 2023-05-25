@@ -103,6 +103,7 @@ jobs:
           HISTOLOGE_URL: http://localhost:8080
           SERVER_NAME: localhost:8080
           MAILER_DSN: ${{ secrets.MAILER_DSN_CI }}
+          MAIL_ENABLE: 1
 
       - name: Run tests
         run: |
@@ -117,3 +118,4 @@ jobs:
           SERVER_NAME: localhost:8080
           MAILER_DSN: ${{ secrets.MAILER_DSN_CI }}
           CRON_ENABLE: 1
+          MAIL_ENABLE: 1
