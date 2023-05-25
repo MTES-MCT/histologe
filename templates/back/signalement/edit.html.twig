@@ -23,19 +23,5 @@
         </header>
         <hr>
         {% include '_partials/_signalement_steps_tabs.html.twig' %}
-        {# <div class="fr-grid-row">
-           <div class="fr-col-12">
-               {{ form_start(form,{'name':'signalement-edit'}) }}
-               {{ form_widget(form) }}
-
-               <div class="fr-grid-row">
-                   <div class="fr-col-12 fr-text--center">
-                       <a href="{{ path('back_signalement_view',{uuid:signalement.uuid}) }}" class="fr-btn fr-btn--secondary fr-fi-arrow-left-line fr-btn--icon-left">Retour</a>
-                       <button class="fr-btn fr-fi-check-line fr-btn--icon-left" type="submit"> Mettre à jour</button>
-                   </div>
-               </div>
-               {{ form_end(form) }}
-           </div>
-       </div> #}
     </section>
 {% endblock %}

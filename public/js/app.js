@@ -778,23 +778,19 @@ document?.querySelector('#signalement-affectation-form-submit')?.addEventListene
     document?.querySelectorAll('#signalement-affectation-form-row,#signalement-affectation-loader-row').forEach(el => {
         el.classList.toggle('fr-hidden')
     })
-    //POST
+    
     let formData = new FormData(e.target.form);
     fetch(e.target.getAttribute('formaction'), {
         method: 'POST',
         body: formData
     }).then(r => {
         if (r.ok) {
-            /*r.json().then(res => {*/
             window.location.reload(true)
-            /*})*/
         }
     })
 })
 
-console.log("patate")
 document?.querySelector('#btn-display-all-suivis')?.addEventListeners('click touchdown', (e) => {
-    console.log("douce")
     e.preventDefault()
     document.querySelectorAll('.suivi-item').forEach(item => {
         item.classList.remove('fr-hidden')
