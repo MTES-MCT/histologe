@@ -44,7 +44,6 @@ class NotifyVisitsCommand extends Command
         $countPastVisits = 0;
         $countVisitsToPlan = 0;
 
-        // Future visits
         $listFutureVisits = $this->interventionRepository->getFutureVisits();
         foreach ($listFutureVisits as $intervention) {
             $signalement = $intervention->getSignalement();
