@@ -83,6 +83,10 @@ class PostalCodeHomeCheckerTest extends KernelTestCase
             $this->postalCodeHomeChecker->getZipCode('97400')
         );
         $this->assertEquals(
+            PostalCodeHomeChecker::MARTINIQUE_CODE_DEPARTMENT_972,
+            $this->postalCodeHomeChecker->getZipCode('97200')
+        );
+        $this->assertEquals(
             '13',
             $this->postalCodeHomeChecker->getZipCode('13002')
         );
