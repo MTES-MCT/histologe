@@ -1,0 +1,40 @@
+{
+  "searchId": "00000000-0000-0000-2023-000000000010",
+  "nbResults": 1,
+  "columnList": [
+    "Sas_LogicielProvenance",
+    "Reference_Dossier",
+    "SISH_DossNum",
+    "SISH_ArreteDate",
+    "SISH_ArreteDatePresc",
+    "SISH_ArreteCommentaire",
+    "SISH_ArreteNumero",
+    "SISH_ArreteType",
+    "SISH_ArreteEtat",
+    "SISH_ArreteStatut"
+  ],
+  "keyList": [
+    "i1.imdo_id",
+    "a3_t2.arre_id"
+  ],
+  "rowList": [
+    {
+      "columnDataList": [
+        "Histologe",
+        "00000000-0000-0000-2023-000000000010",
+        "2023/DD13/0010",
+        "14/06/2023",
+        "13/06/2023 10:16",
+        "De nombreuses personnes vivent dans des conditions de logement précaires, insalubres et indécentes.",
+        "2023/DD13/00664",
+        "Arrêté L.511-11 - Suroccupation",
+        "En cours",
+        "A rédiger"
+      ],
+      "keyDataList": [
+        29,
+        600
+      ]
+    }
+  ]
+}

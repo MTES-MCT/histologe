@@ -34,7 +34,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
         return $this->request($url, $token, AbstractEsaboraService::TASK_INSERT, $payload);
     }
 
-    public function getStateDossier(Affectation $affectation): ?DossierStateSCHSResponse
+    public function getStateDossier(Affectation $affectation): DossierStateSCHSResponse
     {
         list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
         $payload = [

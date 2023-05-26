@@ -1,0 +1,44 @@
+{
+  "searchId": "00000000-0000-0000-2023-000000000012",
+  "nbResults": 1,
+  "columnList": [
+    "Reference_Dossier",
+    "EsaboraStatusSAS_Etat",
+    "Sas_DateDecision",
+    "Sas_CauseRefus",
+    "SISH_DossId",
+    "SISH_DossNum",
+    "SISH_DossObjet",
+    "SISH_DossDateCloture",
+    "SISH_DossStatutAbr",
+    "SISH_DossStatut",
+    "SISH_DossEtat",
+    "SISH_DossTypeCode",
+    "SISH_DossTypeLib"
+  ],
+  "keyList": [
+    "i1.imdo_id"
+  ],
+  "rowList": [
+    {
+      "columnDataList": [
+        "00000000-0000-0000-2023-000000000012",
+        "Importé",
+        "14/04/2023 10:16",
+        null,
+        "2023",
+        "2023/SISH/0011",
+        "10 Imp. Madeleine  - MARSEILLE",
+        null,
+        "Traité",
+        "Traité",
+        "terminé",
+        "INS",
+        "Insalubrité"
+      ],
+      "keyDataList": [
+        "10"
+      ]
+    }
+  ]
+}

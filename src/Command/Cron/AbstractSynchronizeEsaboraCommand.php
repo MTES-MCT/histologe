@@ -5,10 +5,10 @@ namespace App\Command\Cron;
 use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
 use App\Entity\JobEvent;
-use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
 use App\Service\Esabora\AbstractEsaboraService;
+use App\Service\Esabora\EsaboraManager;
 use App\Service\Esabora\EsaboraServiceInterface;
 use App\Service\Esabora\Response\DossierResponseInterface;
 use App\Service\Esabora\Response\DossierStateSCHSResponse;
@@ -18,11 +18,11 @@ use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[AsCommand(
@@ -32,13 +32,23 @@ use Symfony\Component\Serializer\SerializerInterface;
 class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
 {
     public function __construct(
-        private readonly ParameterBagInterface $parameterBag,
-        private readonly AffectationManager $affectationManager,
+        private readonly EsaboraManager $esaboraManager,
         private readonly JobEventManager $jobEventManager,
+        private readonly AffectationRepository $affectationRepository,
         private readonly SerializerInterface $serializer,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly ParameterBagInterface $parameterBag,
     ) {
         parent::__construct($this->parameterBag);
+    }
+
+    protected function configure(): void
+    {
+        $this->addArgument(
+            'uuid_signalement',
+            InputArgument::OPTIONAL,
+            'Which signalement do you want to sync'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -48,7 +58,7 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
         return Command::FAILURE;
     }
 
-    protected function synchronize(
+    protected function synchronizeStatus(
         InputInterface $input,
         OutputInterface $output,
         EsaboraServiceInterface $esaboraService,
@@ -56,16 +66,17 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
         string $criterionName,
     ): void {
         $io = new SymfonyStyle($input, $output);
-
-        /** @var AffectationRepository $affectationRepository */
-        $affectationRepository = $this->affectationManager->getRepository();
-        $affectations = $affectationRepository->findAffectationSubscribedToEsabora($partnerType);
+        $uuidSignalement = $input->getArgument('uuid_signalement') ?? null;
+        $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora(
+            $partnerType,
+            $uuidSignalement
+        );
         $countSyncSuccess = 0;
         $countSyncFailed = 0;
         foreach ($affectations as $affectation) {
             $dossierResponse = $esaboraService->getStateDossier($affectation);
-            if ($this->hasSuccess($dossierResponse)) {
-                $this->affectationManager->synchronizeAffectationFrom($dossierResponse, $affectation);
+            if (AbstractEsaboraService::hasSuccess($dossierResponse)) {
+                $this->esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
                 $io->success($this->printInfo($dossierResponse));
                 ++$countSyncSuccess;
             } else {
@@ -77,7 +88,7 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
                 action: AbstractEsaboraService::ACTION_SYNC_DOSSIER,
                 message: json_encode($this->getMessage($affectation, $criterionName)),
                 response: $this->serializer->serialize($dossierResponse, 'json'),
-                status: $this->hasSuccess($dossierResponse)
+                status: AbstractEsaboraService::hasSuccess($dossierResponse)
                     ? JobEvent::STATUS_SUCCESS
                     : JobEvent::STATUS_FAILED,
                 codeStatus: $dossierResponse->getStatusCode(),
@@ -86,14 +97,8 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
                 partnerType: $affectation->getPartner()->getType(),
             );
         }
+        $io->table(['Count success', 'Count Failed'], [[$countSyncSuccess, $countSyncFailed]]);
         $this->notify($partnerType, $countSyncSuccess, $countSyncFailed);
-    }
-
-    protected function hasSuccess(DossierResponseInterface $dossierResponse): bool
-    {
-        return Response::HTTP_OK === $dossierResponse->getStatusCode()
-            && null !== $dossierResponse->getSasEtat()
-            && null === $dossierResponse->getErrorReason();
     }
 
     protected function getMessage(Affectation $affectation, string $criterionName): array
@@ -151,8 +156,11 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
         );
     }
 
-    protected function notify(PartnerType $partnerType, int $countSyncSuccess, int $countSyncFailed): void
-    {
+    protected function notify(
+        PartnerType $partnerType,
+        int $countSyncSuccess,
+        int $countSyncFailed
+    ): void {
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,

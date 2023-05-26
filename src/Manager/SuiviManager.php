@@ -11,16 +11,27 @@ use Doctrine\Persistence\ManagerRegistry;
 class SuiviManager extends Manager
 {
     public function __construct(
-        private SuiviFactory $suiviFactory,
+        private readonly SuiviFactory $suiviFactory,
         protected ManagerRegistry $managerRegistry,
         string $entityName = Suivi::class
     ) {
         parent::__construct($managerRegistry, $entityName);
     }
 
-    public function createSuivi(User $user, Signalement $signalement, array $params, bool $isPublic = false): Suivi
-    {
-        return $this->suiviFactory->createInstanceFrom($user, $signalement, $params, $isPublic);
+    public function createSuivi(
+        User $user,
+        Signalement $signalement,
+        array $params,
+        bool $isPublic = false,
+        bool $flush = false
+    ): Suivi {
+        $suivi = $this->suiviFactory->createInstanceFrom($user, $signalement, $params, $isPublic);
+
+        if ($flush) {
+            $this->save($suivi);
+        }
+
+        return $suivi;
     }
 
     public function updateSuiviCreatedByUser(Suivi $suivi, User $user): Suivi

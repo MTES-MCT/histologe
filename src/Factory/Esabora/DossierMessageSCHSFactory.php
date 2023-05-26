@@ -6,13 +6,12 @@ use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Signalement;
 use App\Messenger\Message\DossierMessageSCHS;
-use App\Service\Esabora\AddressParser;
 use App\Service\UploadHandlerService;
+use App\Utils\AddressParser;
 
 class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
 {
     public function __construct(
-        private readonly AddressParser $addressParser,
         private readonly UploadHandlerService $uploadHandlerService
     ) {
         parent::__construct($this->uploadHandlerService);
@@ -27,7 +26,7 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
     {
         $signalement = $affectation->getSignalement();
         $partner = $affectation->getPartner();
-        $address = $this->addressParser->parse($signalement->getAdresseOccupant());
+        $address = AddressParser::parse($signalement->getAdresseOccupant());
 
         return (new DossierMessageSCHS())
             ->setUrl($partner->getEsaboraUrl())
