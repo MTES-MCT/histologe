@@ -106,7 +106,8 @@ function histoCheckVisiteForms(formType) {
 const cancelVisiteForms = document.querySelectorAll('form[name="signalement-cancel-visite"]')
 cancelVisiteForms.forEach(cancelVisiteForm => {
     cancelVisiteForm.addEventListener('submit', evt => {
-        const tinyMCE = tinymce.get('visite-cancel[details]')
+        const idIntervention = cancelVisiteForm.getAttribute('data-intervention-id')
+        const tinyMCE = tinymce.get('visite-cancel[details]-' + idIntervention)
         const textContent = tinyMCE ? tinyMCE.getContent() : ''
         if (textContent == '') {
             const textareaDetailsError = cancelVisiteForm.querySelector('#signalement-cancel-visite-details-error')

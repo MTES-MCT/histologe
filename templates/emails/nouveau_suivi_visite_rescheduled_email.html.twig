@@ -3,7 +3,7 @@
 {% block body %}
     <p>Bonjour,</p>
     <p>
-        La visite du logement initialement prévue le {{ old_date.format('d/m/Y') }} a été décalée au {{ intervention.date.format('d/m/Y')}}.
+        La visite du logement initialement prévue le {{ old_date.format('d/m/Y') }} a été décalée au {{ intervention.scheduledAt.format('d/m/Y')}}.
         <br><br>
         La visite sera effectuée par {{ intervention.partner.nom }}.
         <br><br>

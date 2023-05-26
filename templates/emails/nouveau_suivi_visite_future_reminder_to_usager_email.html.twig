@@ -5,7 +5,7 @@
     <p>
         La visite du logement situé
         <strong>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</strong>
-        aura lieu le {{intervention.date.format('d/m/Y')}}.
+        aura lieu le {{intervention.scheduledAt.format('d/m/Y')}}.
         <br>
         La visite sera effectuée par {{intervention.partner.nom}}.
         <br>

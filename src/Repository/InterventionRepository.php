@@ -52,7 +52,7 @@ class InterventionRepository extends ServiceEntityRepository
             ->setParameter('planned', Intervention::STATUS_PLANNED)
             ->andWhere('i.type = :visite')
             ->setParameter('visite', InterventionType::VISITE->name)
-            ->andWhere('DATEDIFF(CURRENT_DATE(),i.date) = :day_delay')
+            ->andWhere('DATEDIFF(CURRENT_DATE(),i.scheduledAt) = :day_delay')
             ->setParameter('day_delay', $delay)
             ->getQuery()
             ->getResult();

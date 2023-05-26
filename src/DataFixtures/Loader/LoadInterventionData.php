@@ -34,7 +34,7 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
         $intervention = (new Intervention())
             ->setSignalement($this->signalementRepository->findOneBy(['reference' => $row['signalement']]))
             ->setPartner($this->partnerRepository->findOneBy(['email' => $row['partner']]))
-            ->setDate(new \DateTimeImmutable())
+            ->setScheduledAt(new \DateTimeImmutable())
             ->setType(InterventionType::VISITE)
             ->setStatus(Intervention::STATUS_PLANNED);
 

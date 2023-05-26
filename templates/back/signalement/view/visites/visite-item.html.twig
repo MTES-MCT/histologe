@@ -5,10 +5,10 @@
         </div>
         <div class="fr-mb-3v">
             <strong>Date de visite :</strong>
-            {% if signalement.interventions is empty or intervention.date is empty %}
+            {% if signalement.interventions is empty or intervention.scheduledAt is empty %}
                 Non renseignée
             {% else %}
-                {{ intervention.date.format('d/m/Y') }}
+                {{ intervention.scheduledAt.format('d/m/Y') }}
             {% endif %}
         </div>
         <div class="fr-mb-3v">

@@ -43,6 +43,6 @@ class SuiviVisiteFutureReminderToUsagerMailer extends AbstractNotificationMailer
 
     public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
     {
-        $this->mailerSubject = sprintf($this->mailerSubject, $notificationMail->getIntervention()->getDate()->format('d/m/Y'));
+        $this->mailerSubject = sprintf($this->mailerSubject, $notificationMail->getIntervention()->getScheduledAt()->format('d/m/Y'));
     }
 }
