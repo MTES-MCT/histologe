@@ -71,9 +71,6 @@ class Partner
     #[ORM\OneToMany(mappedBy: 'partner', targetEntity: Intervention::class)]
     private Collection $interventions;
 
-    #[ORM\OneToMany(mappedBy: 'partner', targetEntity: Intervention::class)]
-    private Collection $interventions;
-
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -297,7 +294,7 @@ class Partner
 
         return $this;
     }
-    
+
     public function hasCompetence(Qualification $qualification): bool
     {
         return \in_array($qualification, $this->getCompetence());

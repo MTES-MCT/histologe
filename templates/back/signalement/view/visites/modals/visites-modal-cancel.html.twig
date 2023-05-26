@@ -2,14 +2,17 @@
     <div class="fr-container fr-container--fluid fr-container-md">
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
-                <form method="POST" name="signalement-cancel-visite" class="signalement-cancel-visite" enctype="application/json" action="{{ path('back_signalement_visite_cancel',{uuid:signalement.uuid}) }}">
+                <form method="POST"
+                    name="signalement-cancel-visite" class="signalement-cancel-visite"
+                    data-intervention-id="{{intervention.id}}" enctype="application/json"
+                    action="{{ path('back_signalement_visite_cancel',{uuid:signalement.uuid}) }}">
 
                     <div class="fr-modal__body">
                         <div class="fr-modal__header">
                             <button type="button" class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="cancel-visite-modal-{{intervention.id}}">Fermer</button>
                         </div>
                         <div class="fr-modal__content">
-                            <h1 id="fr-modal-cancel-visite-modal-{{intervention.id}}" class="fr-modal__title">Annuler la visite du {{ intervention.date.format('d/m/Y') }}</h1>
+                            <h1 id="fr-modal-cancel-visite-modal-{{intervention.id}}" class="fr-modal__title">Annuler la visite du {{ intervention.scheduledAt.format('d/m/Y') }}</h1>
 
                             <div class="fr-alert fr-alert--warning">
                                 <p>
@@ -23,10 +26,10 @@
                                         <legend class="fr-fieldset__legend fr-text--regular">
                                             Motif de l'annulation*
                                         </legend>
-                                        <p id="signalement-cancel-visite-details-error" class="fr-error-text fr-hidden fr-my-3v">
+                                        <p id="signalement-cancel-visite-details-error-{{intervention.id}}" class="fr-error-text fr-hidden fr-my-3v">
                                             Veuillez préciser le motif de l'annulation.
                                         </p>
-                                        <textarea class="fr-input fr-input--no-resize editor" name="visite-cancel[details]" id="visite-cancel[details]" minlength="10"></textarea>
+                                        <textarea class="fr-input fr-input--no-resize editor" name="visite-cancel[details]" id="visite-cancel[details]-{{intervention.id}}" minlength="10"></textarea>
                                     </fieldset>
                                 </div>
                             </div>

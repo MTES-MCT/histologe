@@ -9,7 +9,7 @@
                             <button type="button" class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="reschedule-visite-modal-{{intervention.id}}">Fermer</button>
                         </div>
                         <div class="fr-modal__content">
-                            <h1 id="fr-modal-reschedule-visite-modal-{{intervention.id}}" class="fr-modal__title">Modifier la date du {{ intervention.date.format('d/m/Y') }}</h1>
+                            <h1 id="fr-modal-reschedule-visite-modal-{{intervention.id}}" class="fr-modal__title">Modifier la date du {{ intervention.scheduledAt.format('d/m/Y') }}</h1>
 
                             <div class="fr-alert fr-alert--info">
                                 <p>
@@ -28,7 +28,7 @@
                                         <p id="signalement-reschedule-visite-date-error" class="fr-error-text fr-hidden fr-my-3v">
                                             Veuillez préciser la date de la visite.
                                         </p>
-                                        <input type="date" class="fr-input add-fields-if-past-date" data-fields="visite-reschedule-{{intervention.id}}-past-date-complementary-fields" name="visite-reschedule[date]" value="{{ intervention.date.format('Y-m-d') }}" required>
+                                        <input type="date" class="fr-input add-fields-if-past-date" data-fields="visite-reschedule-{{intervention.id}}-past-date-complementary-fields" name="visite-reschedule[date]" value="{{ intervention.scheduledAt.format('Y-m-d') }}" required>
                                     </fieldset>
                                     
                                     {% if is_granted('INTERVENTION_EDIT_VISITE_PARTNER', intervention) %}

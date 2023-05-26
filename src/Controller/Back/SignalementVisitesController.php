@@ -103,7 +103,7 @@ class SignalementVisitesController extends AbstractController
 
         if ($intervention = $interventionManager->createVisiteFromRequest($signalement, $visiteRequest)) {
             $todayDate = new \DateTimeImmutable();
-            if ($intervention->getDate() <= $todayDate) {
+            if ($intervention->getScheduledAt() <= $todayDate) {
                 $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
             } else {
                 $this->addFlash('success', self::SUCCESS_MSG_ADD);
@@ -184,7 +184,7 @@ class SignalementVisitesController extends AbstractController
             return $errorRedirect;
         }
 
-        $previousDate = $intervention->getDate();
+        $previousDate = $intervention->getScheduledAt();
         $fileName = $this->getUploadedFile($request, 'visite-reschedule', $uploadHandler, $filenameGenerator);
 
         $visiteRequest = new VisiteRequest(
@@ -199,7 +199,7 @@ class SignalementVisitesController extends AbstractController
         );
 
         if ($intervention = $interventionManager->rescheduleVisiteFromRequest($signalement, $visiteRequest)) {
-            if ($intervention->getDate() <= new \DateTimeImmutable()) {
+            if ($intervention->getScheduledAt() <= new \DateTimeImmutable()) {
                 $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
             } else {
                 $this->addFlash('success', self::SUCCESS_MSG_ADD);

@@ -32,7 +32,7 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
             $description = 'Changement de date de visite : la visite du logement initialement prévue le ';
             $description .= $event->getPreviousDate()->format('d/m/Y');
             $description .= ' a été décalée au ';
-            $description .= $intervention->getDate()->format('d/m/Y').'.';
+            $description .= $intervention->getScheduledAt()->format('d/m/Y').'.';
             $description .= '<br>';
             $description .= 'La visite sera effectuée par '.$intervention->getPartner()->getNom().'.';
             $suivi = $this->suiviManager->createSuivi(

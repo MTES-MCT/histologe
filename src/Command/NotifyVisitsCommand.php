@@ -49,7 +49,7 @@ class NotifyVisitsCommand extends Command
             $signalement = $intervention->getSignalement();
             $description = '<strong>Rappel de visite :</strong> la visite du logement situé';
             $description .= $signalement->getAdresseOccupant().' '.$signalement->getCpOccupant().' '.$signalement->getVilleOccupant();
-            $description .= ' aura lieu le '.$intervention->getDate()->format('d/m/Y');
+            $description .= ' aura lieu le '.$intervention->getScheduledAt()->format('d/m/Y');
             $description .= '<br>La visite sera effectuée par '.$intervention->getPartner()->getNom().'.';
             $suivi = $this->suiviManager->createSuivi(
                 user: null,

@@ -35,7 +35,7 @@ class InterventionCanceledSubscriber implements EventSubscriberInterface
         $currentUser = $this->security->getUser();
         if (InterventionType::VISITE === $intervention->getType()) {
             $description = 'Annulation de visite :';
-            $description .= ' la visite du logement prévue le '.$intervention->getDate()->format('d/m/Y');
+            $description .= ' la visite du logement prévue le '.$intervention->getScheduledAt()->format('d/m/Y');
             $description .= ' a été annulée pour le motif suivant : <br>';
             $description .= $intervention->getDetails();
             $suivi = $this->suiviManager->createSuivi(
