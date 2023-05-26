@@ -18,7 +18,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/bo/signalements')]
 class SignalementVisitesController extends AbstractController
@@ -71,7 +70,6 @@ class SignalementVisitesController extends AbstractController
         Signalement $signalement,
         Request $request,
         InterventionManager $interventionManager,
-        SluggerInterface $slugger,
         UploadHandlerService $uploadHandler,
         EventDispatcherInterface $eventDispatcher,
         FilenameGenerator $filenameGenerator,
@@ -92,6 +90,7 @@ class SignalementVisitesController extends AbstractController
         $requestAddData = $request->get('visite-add');
         $visiteRequest = new VisiteRequest(
             date: $requestAddData['date'],
+            time: $requestAddData['time'],
             idPartner: $requestAddData['partner'],
             idIntervention: $requestAddData['intervention'] ?? null,
             details: $requestAddData['details'] ?? null,
@@ -162,7 +161,6 @@ class SignalementVisitesController extends AbstractController
         Request $request,
         InterventionManager $interventionManager,
         InterventionRepository $interventionRepository,
-        SluggerInterface $slugger,
         UploadHandlerService $uploadHandler,
         EventDispatcherInterface $eventDispatcher,
         FilenameGenerator $filenameGenerator,
@@ -189,6 +187,7 @@ class SignalementVisitesController extends AbstractController
 
         $visiteRequest = new VisiteRequest(
             date: $requestRescheduleData['date'],
+            time: $requestRescheduleData['time'],
             idPartner: $requestRescheduleData['partner'] ?? $intervention->getPartner()->getId(),
             idIntervention: $requestRescheduleData['intervention'],
             details: $requestRescheduleData['details'] ?? null,
@@ -220,7 +219,6 @@ class SignalementVisitesController extends AbstractController
         Request $request,
         InterventionManager $interventionManager,
         InterventionRepository $interventionRepository,
-        SluggerInterface $slugger,
         UploadHandlerService $uploadHandler,
         FilenameGenerator $filenameGenerator,
     ): Response {
@@ -267,7 +265,6 @@ class SignalementVisitesController extends AbstractController
         Request $request,
         InterventionManager $interventionManager,
         InterventionRepository $interventionRepository,
-        SluggerInterface $slugger,
         UploadHandlerService $uploadHandler,
         EventDispatcherInterface $eventDispatcher,
         FilenameGenerator $filenameGenerator,

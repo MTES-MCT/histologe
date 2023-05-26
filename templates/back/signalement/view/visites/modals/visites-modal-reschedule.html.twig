@@ -30,6 +30,16 @@
                                         </p>
                                         <input type="date" class="fr-input add-fields-if-past-date" data-fields="visite-reschedule-{{intervention.id}}-past-date-complementary-fields" name="visite-reschedule[date]" value="{{ intervention.scheduledAt.format('Y-m-d') }}" required>
                                     </fieldset>
+
+                                    <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
+                                        <legend class="fr-fieldset__legend fr-text--regular">
+                                            Heure de la visite
+                                        </legend>
+                                        <p id="signalement-reschedule-visite-date-error" class="fr-error-text fr-hidden fr-my-3v">
+                                            Veuillez préciser l'heure de la visite.
+                                        </p>
+                                        <input type="time" class="fr-input" data-fields="visite-reschedule-past-date-complementary-fields" name="visite-reschedule[time]" value="{{ intervention.scheduledAt.format('H:i') }}">
+                                    </fieldset>
                                     
                                     {% if is_granted('INTERVENTION_EDIT_VISITE_PARTNER', intervention) %}
                                     <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">

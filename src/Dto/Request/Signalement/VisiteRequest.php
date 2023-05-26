@@ -7,6 +7,7 @@ class VisiteRequest
     public function __construct(
         private ?int $idIntervention = null,
         private ?string $date = null,
+        private ?string $time = null,
         private ?int $idPartner = null,
         private ?string $details = null,
         private ?array $concludeProcedure = [],
@@ -25,6 +26,20 @@ class VisiteRequest
     public function getDate(): ?string
     {
         return $this->date;
+    }
+
+    public function getTime(): ?string
+    {
+        return $this->time;
+    }
+
+    public function getDateTime(): ?string
+    {
+        if ($this->getTime()) {
+            return $this->getDate().' '.$this->getTime();
+        }
+
+        return $this->getDate();
     }
 
     public function getPartner(): ?int

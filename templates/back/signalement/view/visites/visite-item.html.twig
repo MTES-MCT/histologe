@@ -8,7 +8,7 @@
             {% if signalement.interventions is empty or intervention.scheduledAt is empty %}
                 Non renseignée
             {% else %}
-                {{ intervention.scheduledAt.format('d/m/Y') }}
+                {{ (intervention.scheduledAt.format('H')) > 0 ? intervention.scheduledAt.format('d/m/Y à H:i') : intervention.scheduledAt.format('d/m/Y') }}
             {% endif %}
         </div>
         <div class="fr-mb-3v">
