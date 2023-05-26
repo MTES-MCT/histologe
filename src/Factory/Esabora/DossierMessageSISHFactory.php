@@ -8,17 +8,16 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Messenger\Message\DossierMessageSISH;
 use App\Service\Esabora\AbstractEsaboraService;
-use App\Service\Esabora\AddressParser;
 use App\Service\Esabora\Enum\PersonneType;
 use App\Service\Esabora\Model\DossierMessageSISHPersonne;
 use App\Service\UploadHandlerService;
+use App\Utils\AddressParser;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class DossierMessageSISHFactory extends AbstractDossierMessageFactory
 {
     public function __construct(
-        private readonly AddressParser $addressParser,
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly ParameterBagInterface $parameterBag,
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -36,7 +35,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         $signalement = $affectation->getSignalement();
         $partner = $affectation->getPartner();
 
-        $address = $this->addressParser->parse($signalement->getAdresseOccupant());
+        $address = AddressParser::parse($signalement->getAdresseOccupant());
         /** @var Suivi $firstSuivi */
         $firstSuivi = $signalement->getSuivis()->first();
         $formatDate = AbstractEsaboraService::FORMAT_DATE;

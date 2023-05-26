@@ -323,6 +323,9 @@ class Signalement
     #[ORM\Column]
     private ?float $score = null;
 
+    #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Intervention::class, orphanRemoval: true)]
+    private Collection $interventions;
+
     public function __construct()
     {
         $this->situations = new ArrayCollection();
@@ -338,6 +341,7 @@ class Signalement
         $this->tags = new ArrayCollection();
         $this->isImported = false;
         $this->signalementQualifications = new ArrayCollection();
+        $this->interventions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -1644,6 +1648,32 @@ class Signalement
     public function setScore(float $score): self
     {
         $this->score = $score;
+
+        return $this;
+    }
+
+    public function getInterventions(): Collection
+    {
+        return $this->interventions;
+    }
+
+    public function addIntervention(Intervention $intervention): self
+    {
+        if (!$this->interventions->contains($intervention)) {
+            $this->interventions->add($intervention);
+            $intervention->setSignalement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIntervention(Intervention $intervention): self
+    {
+        if ($this->interventions->removeElement($intervention)) {
+            if ($intervention->getSignalement() === $this) {
+                $intervention->setSignalement(null);
+            }
+        }
 
         return $this;
     }

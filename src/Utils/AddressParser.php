@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Service\Esabora;
+namespace App\Utils;
 
-use App\Service\Esabora\Enum\ExtensionAdresse;
+use App\Utils\Enum\ExtensionAdresse;
 
 class AddressParser
 {
-    public function parse(string $address): array
+    public static function parse(string $address): array
     {
         $number = null;
         $suffix = null;

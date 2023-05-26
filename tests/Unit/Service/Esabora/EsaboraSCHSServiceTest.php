@@ -2,15 +2,14 @@
 
 namespace App\Tests\Unit\Service\Esabora;
 
-use App\Entity\Affectation;
-use App\Entity\Partner;
-use App\Entity\Signalement;
+use App\Entity\Enum\PartnerType;
 use App\Service\Esabora\EsaboraSCHSService;
 use App\Service\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\UploadHandlerService;
 use App\Tests\FileHelper;
+use App\Tests\FixturesHelper;
 use App\Tests\Unit\Messenger\DossierMessageTrait;
-use Faker\Factory;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpClient\Exception\TransportException;
@@ -22,8 +21,11 @@ class EsaboraSCHSServiceTest extends KernelTestCase
 {
     use DossierMessageTrait;
     use FileHelper;
+    use FixturesHelper;
 
-    private UploadHandlerService $uploadHandlerService;
+    public const PATH_RESOURCE_JSON = '/../../../../tools/wiremock/src/Resources/Esabora/schs/';
+
+    private MockObject|UploadHandlerService $uploadHandlerService;
     private LoggerInterface $logger;
     private ?string $tempFilepath;
 
@@ -36,7 +38,7 @@ class EsaboraSCHSServiceTest extends KernelTestCase
 
     public function testPushDossierToEsaboraSasSuccess(): void
     {
-        $filepath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/schs/ws_import.json';
+        $filepath = __DIR__.self::PATH_RESOURCE_JSON.'ws_import.json';
         $mockResponse = new MockResponse(file_get_contents($filepath));
 
         $mockHttpClient = new MockHttpClient($mockResponse);
@@ -68,12 +70,14 @@ class EsaboraSCHSServiceTest extends KernelTestCase
 
     public function testGetStateDossierFromEsaboraSas(): void
     {
-        $filepath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/schs/ws_etat_dossier_sas/etat_importe.json';
+        $filepath = __DIR__.self::PATH_RESOURCE_JSON.'ws_etat_dossier_sas/etat_importe.json';
         $mockResponse = new MockResponse(file_get_contents($filepath));
 
         $mockHttpClient = new MockHttpClient($mockResponse);
         $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
-        $dossierResponse = $esaboraService->getStateDossier($this->getAffectation());
+        $dossierResponse = $esaboraService->getStateDossier(
+            $this->getAffectation(PartnerType::COMMUNE_SCHS)
+        );
 
         $this->assertInstanceOf(DossierStateSCHSResponse::class, $dossierResponse);
         $this->assertEquals('00000000-0000-0000-2022-000000000001', $dossierResponse->getSasReference());
@@ -89,7 +93,9 @@ class EsaboraSCHSServiceTest extends KernelTestCase
         });
 
         $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
-        $dossierResponse = $esaboraService->getStateDossier($this->getAffectation());
+        $dossierResponse = $esaboraService->getStateDossier(
+            $this->getAffectation(PartnerType::COMMUNE_SCHS)
+        );
         $this->assertEquals(Response::HTTP_SERVICE_UNAVAILABLE, $dossierResponse->getStatusCode());
     }
 
@@ -106,21 +112,6 @@ class EsaboraSCHSServiceTest extends KernelTestCase
         $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
         $response = $esaboraService->pushDossier($this->getDossierMessageSCHS());
         $this->assertEquals(Response::HTTP_SERVICE_UNAVAILABLE, $response->getStatusCode());
-    }
-
-    private function getAffectation(): Affectation
-    {
-        $faker = Factory::create();
-
-        return (new Affectation())
-            ->setPartner(
-                (new Partner())
-                    ->setEsaboraToken($faker->password(20))
-                    ->setEsaboraUrl($faker->url())
-            )->setSignalement(
-                (new Signalement())
-                    ->setUuid($faker->uuid())
-            );
     }
 
     protected function tearDown(): void

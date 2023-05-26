@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Tests\Unit\Service\Esabora;
+namespace App\Tests\Unit\Utils;
 
-use App\Service\Esabora\AddressParser;
-use App\Service\Esabora\Enum\ExtensionAdresse;
+use App\Utils\AddressParser;
+use App\Utils\Enum\ExtensionAdresse;
 use PHPUnit\Framework\TestCase;
 
 class AddressParserTest extends TestCase
@@ -13,7 +13,7 @@ class AddressParserTest extends TestCase
      */
     public function testAdressParser(string $address, ?string $number, ?string $suffix, ?string $street): void
     {
-        $result = (new AddressParser())->parse($address);
+        $result = AddressParser::parse($address);
         $this->assertArrayHasKey('number', $result);
         $this->assertArrayHasKey('suffix', $result);
         $this->assertArrayHasKey('street', $result);
