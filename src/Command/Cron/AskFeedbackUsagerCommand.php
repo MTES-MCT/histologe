@@ -24,6 +24,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 )]
 class AskFeedbackUsagerCommand extends AbstractCronCommand
 {
+    private SymfonyStyle $io;
     private const FLUSH_COUNT = 1000;
 
     public function __construct(
@@ -49,19 +50,104 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $totalRead = 0;
-        $io = new SymfonyStyle($input, $output);
+        $this->io = new SymfonyStyle($input, $output);
 
-        $signalementsIds = $this->suiviRepository->findSignalementsNoSuiviUsagerFrom();
-        $signalements = $this->signalementRepository->findAllByIds($signalementsIds);
-        $nbSignalements = \count($signalements);
+        $nbSignalementsThirdRelance = $this->processSignalementsThirdRelance($input);
+        $nbSignalementsLastSuiviTechnical = $this->processSignalementsLastSuiviTechnical($input);
+        $nbSignalementsLastSuiviPublic = $this->processSignalementsLastSuiviPublic($input);
+
+        $nbSignalements = $nbSignalementsThirdRelance + $nbSignalementsLastSuiviTechnical + $nbSignalementsLastSuiviPublic;
         if ($input->getOption('debug')) {
-            $io->info(sprintf(
-                '%s signalement without suivi from more than '.Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
+            $this->io->info(sprintf(
+                '%s signalement(s) for which a request for feedback will be sent to the user',
                 $nbSignalements
             ));
 
             return Command::SUCCESS;
+        }
+
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_CRON,
+                to: $this->parameterBag->get('admin_email'),
+                message: sprintf(
+                    '%s signalement(s) pour lesquels une demande de feedback a été envoyée à l\'usager répartis comme suit :
+                    %s dont les deux derniers suivis sont des suivis techniques demande de feedback et le dernier a plus de '.Suivi::DEFAULT_PERIOD_INACTIVITY.' jours,
+                    %s dont le dernier suivi est un suivi technique demande de feedback et date de plus de '.Suivi::DEFAULT_PERIOD_INACTIVITY.' jours,
+                    %s dont le dernier suivi public a plus de '.Suivi::DEFAULT_PERIOD_RELANCE.' jours. ',
+                    $nbSignalements,
+                    $nbSignalementsThirdRelance,
+                    $nbSignalementsLastSuiviTechnical,
+                    $nbSignalementsLastSuiviPublic,
+                ),
+                cronLabel: 'demande de feedback à l\'usager',
+            )
+        );
+
+        return Command::SUCCESS;
+    }
+
+    protected function processSignalementsThirdRelance(
+        InputInterface $input,
+    ): int {
+        $signalementsIds = $this->suiviRepository->findSignalementsThirdRelance();
+        $nbSignalements = $this->sendMailToUsagers(
+            $input,
+            $signalementsIds,
+            NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER_THIRD
+        );
+        $this->io->success(sprintf(
+            '%s signalement(s) for which the two last suivis are technicals and the last one is older than '
+            .Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
+            $nbSignalements
+        ));
+
+        return $nbSignalements;
+    }
+
+    protected function processSignalementsLastSuiviTechnical(
+        InputInterface $input,
+    ): int {
+        $signalementsIds = $this->suiviRepository->findSignalementsLastSuiviTechnical();
+        $nbSignalements = $this->sendMailToUsagers(
+            $input,
+            $signalementsIds,
+        );
+        $this->io->success(sprintf(
+            '%s signalement(s) for which the last suivi is technical and is older than '
+            .Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
+            $nbSignalements
+        ));
+
+        return $nbSignalements;
+    }
+
+    protected function processSignalementsLastSuiviPublic(
+        InputInterface $input,
+    ): int {
+        $signalementsIds = $this->suiviRepository->findSignalementsLastSuiviPublic();
+        $nbSignalements = $this->sendMailToUsagers(
+            $input,
+            $signalementsIds,
+        );
+        $this->io->success(sprintf(
+            '%s signalement(s) without suivi public from more than '.Suivi::DEFAULT_PERIOD_RELANCE.' days',
+            $nbSignalements
+        ));
+
+        return $nbSignalements;
+    }
+
+    protected function sendMailToUsagers(
+        InputInterface $input,
+        array $signalementsIds,
+        NotificationMailerType $notificationMailerType = NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER
+    ): int {
+        $totalRead = 0;
+        $signalements = $this->signalementRepository->findAllByIds($signalementsIds);
+        $nbSignalements = \count($signalements);
+        if ($input->getOption('debug')) {
+            return $nbSignalements;
         }
 
         foreach ($signalements as $signalement) {
@@ -74,7 +160,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
                 foreach ($toRecipients as $toRecipient) {
                     $this->notificationMailerRegistry->send(
                         new NotificationMail(
-                            type: NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER,
+                            type: $notificationMailerType,
                             to: $toRecipient,
                             territory: $signalement->getTerritory(),
                             signalement: $signalement,
@@ -103,21 +189,6 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
 
         $this->suiviManager->flush();
 
-        $io->success(sprintf(
-            '%s signalement without suivi from more than '.Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
-            $nbSignalements
-        ));
-
-        $this->notificationMailerRegistry->send(
-            new NotificationMail(
-                type: NotificationMailerType::TYPE_CRON,
-                to: $this->parameterBag->get('admin_email'),
-                message: 'signalement(s) pour lesquels une demande de feedback a été envoyée à l\'usager',
-                cronLabel: 'demande de feedback à l\'usager',
-                cronCount: $nbSignalements,
-            )
-        );
-
-        return Command::SUCCESS;
+        return $nbSignalements;
     }
 }

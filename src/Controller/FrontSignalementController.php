@@ -11,6 +11,7 @@ use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementCreatedEvent;
 use App\Factory\SignalementQualificationFactory;
+use App\Factory\SuiviFactory;
 use App\Form\SignalementType;
 use App\Manager\UserManager;
 use App\Repository\CritereRepository;
@@ -299,26 +300,118 @@ class FrontSignalementController extends AbstractController
         return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
     }
 
-    #[Route('/suivre-mon-signalement/{code}', name: 'front_suivi_signalement', methods: 'GET')]
-    public function suiviSignalement(
+    #[Route('/suivre-ma-procedure/{code}', name: 'front_suivi_procedure', methods: 'GET')]
+    public function suiviProcedure(
         string $code,
         SignalementRepository $signalementRepository,
         Request $request,
-        UserManager $userManager
+        UserManager $userManager,
     ) {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
             $requestEmail = $request->get('from');
             $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
+            $suiviAuto = $request->get('suiviAuto');
 
             /** @var User $userOccupant */
             $userOccupant = $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
             /** @var User $userDeclarant */
             $userDeclarant = $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
             $type = null;
+            $user = null;
             if ($userOccupant && $fromEmail === $userOccupant->getEmail()) {
                 $type = UserManager::OCCUPANT;
+                $user = $userOccupant;
             } elseif ($userDeclarant && $fromEmail === $userDeclarant->getEmail()) {
                 $type = UserManager::DECLARANT;
+                $user = $userDeclarant;
+            }
+            if ($user && $suiviAuto) {
+                if ($signalement->getIsUsagerAbandonProcedure()) {
+                    $this->addFlash('error', 'Les services ont déjà été informés de votre volonté d\'arrêter la procédure.
+                    Si vous le souhaitez, vous pouvez préciser la raison de l\'arrêt de procédure
+                    en envoyant un message via le formulaire ci-dessous.');
+
+                    return $this->redirectToRoute(
+                        'front_suivi_signalement',
+                        ['code' => $signalement->getCodeSuivi(), 'from' => $fromEmail]
+                    );
+                }
+
+                return $this->render('front/suivi_signalement.html.twig', [
+                    'signalement' => $signalement,
+                    'email' => $fromEmail,
+                    'type' => $type,
+                    'suiviAuto' => $suiviAuto,
+                ]);
+            }
+
+            return $this->redirectToRoute('front_suivi_signalement');
+        }
+        $this->addFlash('error', 'Le lien utilisé est expiré ou invalide, verifier votre saisie.');
+
+        return $this->redirectToRoute('front_signalement');
+    }
+
+    #[Route('/suivre-mon-signalement/{code}', name: 'front_suivi_signalement', methods: 'GET')]
+    public function suiviSignalement(
+        string $code,
+        SignalementRepository $signalementRepository,
+        Request $request,
+        UserManager $userManager,
+        EntityManagerInterface $entityManager,
+        SuiviFactory $suiviFactory,
+    ) {
+        if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
+            $requestEmail = $request->get('from');
+            $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
+            $suiviAuto = $request->get('suiviAuto');
+
+            /** @var User $userOccupant */
+            $userOccupant = $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
+            /** @var User $userDeclarant */
+            $userDeclarant = $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
+            $type = null;
+            $user = null;
+            if ($userOccupant && $fromEmail === $userOccupant->getEmail()) {
+                $type = UserManager::OCCUPANT;
+                $user = $userOccupant;
+            } elseif ($userDeclarant && $fromEmail === $userDeclarant->getEmail()) {
+                $type = UserManager::DECLARANT;
+                $user = $userDeclarant;
+            }
+            if ($user && $suiviAuto) {
+                $description = '';
+                if (Suivi::ARRET_PROCEDURE === $suiviAuto) {
+                    $description = $user->getNomComplet().' ('.$type.') a demandé l\'arrêt de la procédure.';
+                    $signalement->setIsUsagerAbandonProcedure(true);
+                    $entityManager->persist($signalement);
+                }
+                if (Suivi::POURSUIVRE_PROCEDURE === $suiviAuto) {
+                    $description = $user->getNomComplet().' ('.$type.') a indiqué vouloir poursuivre la procédure.';
+                }
+
+                $params = [
+                    'type' => SUIVI::TYPE_USAGER,
+                    'description' => $description,
+                ];
+
+                $suivi = $suiviFactory->createInstanceFrom(
+                    $user,
+                    $signalement,
+                    $params,
+                    true
+                );
+                $entityManager->persist($suivi);
+                $entityManager->flush();
+                if (Suivi::ARRET_PROCEDURE === $suiviAuto) {
+                    $this->addFlash('success', "Les services ont été informés de votre volonté d'arrêter la procédure.
+                Si vous le souhaitez, vous pouvez préciser la raison de l'arrêt de procédure
+                en envoyant un message via le formulaire ci-dessous.");
+                }
+                if (Suivi::POURSUIVRE_PROCEDURE === $suiviAuto) {
+                    $this->addFlash('success', "Les services ont été informés de votre volonté de poursuivre la procédure.
+                N'hésitez pas à mettre à jour votre situation en envoyant un message via le formulaire ci-dessous.");
+                }
             }
 
             // TODO: Verif info perso pour plus de sécu

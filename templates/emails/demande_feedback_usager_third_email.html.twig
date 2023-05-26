@@ -1,0 +1,28 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour {{ signalement.nomOccupant|upper ~' '~signalement.prenomOccupant|capitalize }}</p>
+    <p>
+        Vous avez signalé un problème dans le logement au <strong>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</strong>. <br>
+        Les services sont pleinement investis sur votre dossier. <br>
+        Cependant nous vous avons contacté par mail à 2 reprises afin de faire le point sur votre situation mais nos messages sont restés sans réponse de votre part. <br>
+        Votre situation a-t-elle évolué ? Merci d'indiquer si vous souhaitez poursuivre ou arrêter la procédure en cliquant sur les boutons ci-dessous. <br>
+    </p>
+    
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary"
+           style="text-align: center">
+        <tbody>
+        <tr>
+            <td align="center">
+                <a href="{{ lien_suivi_poursuivre|raw }}" target="_blank" rel="noopener">POURSUIVRE LA PROCÉDURE</a>
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+                <a href="{{ lien_suivi_arreter|raw }}" target="_blank" rel="noopener">ARRÊTER LA PROCÉDURE</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p>En cas d’absence de réponse de votre part, votre signalement pourra être clôturé par les services compétents. </p>
+{% endblock %}

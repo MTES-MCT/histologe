@@ -323,6 +323,9 @@ class Signalement
     #[ORM\Column]
     private ?float $score = null;
 
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private ?bool $isUsagerAbandonProcedure;
+
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Intervention::class, orphanRemoval: true)]
     private Collection $interventions;
 
@@ -1648,6 +1651,18 @@ class Signalement
     public function setScore(float $score): self
     {
         $this->score = $score;
+
+        return $this;
+    }
+
+    public function getIsUsagerAbandonProcedure(): ?bool
+    {
+        return $this->isUsagerAbandonProcedure;
+    }
+
+    public function setIsUsagerAbandonProcedure(?bool $isUsagerAbandonProcedure): self
+    {
+        $this->isUsagerAbandonProcedure = $isUsagerAbandonProcedure;
 
         return $this;
     }

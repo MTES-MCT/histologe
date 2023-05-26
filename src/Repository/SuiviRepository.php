@@ -195,8 +195,8 @@ class SuiviRepository extends ServiceEntityRepository
                 ORDER BY last_posted_at';
     }
 
-    public function findSignalementsNoSuiviUsagerFrom(
-        int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
+    public function findSignalementsLastSuiviPublic(
+        int $period = Suivi::DEFAULT_PERIOD_RELANCE,
     ): array {
         $connection = $this->getEntityManager()->getConnection();
 
@@ -215,9 +215,93 @@ class SuiviRepository extends ServiceEntityRepository
         WHERE (su.type = :type_suivi_technical OR su.is_public = 1)
         AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
         AND s.is_imported != 1
+        AND s.is_usager_abandon_procedure != 1
         GROUP BY su.signalement_id
         HAVING DATEDIFF(NOW(),last_posted_at) > :day_period
         ORDER BY last_posted_at';
+
+        $statement = $connection->prepare($sql);
+
+        return $statement->executeQuery($parameters)->fetchFirstColumn();
+    }
+
+    public function findSignalementsLastSuiviTechnical(
+        int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
+    ): array {
+        $connection = $this->getEntityManager()->getConnection();
+
+        $parameters = [
+            'day_period' => $period,
+            'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
+            'status_need_validation' => Signalement::STATUS_NEED_VALIDATION,
+            'status_closed' => Signalement::STATUS_CLOSED,
+            'status_archived' => Signalement::STATUS_ARCHIVED,
+            'status_refused' => Signalement::STATUS_REFUSED,
+        ];
+
+        $sql = 'SELECT s.id
+        FROM signalement s
+        INNER JOIN (
+            SELECT signalement_id, MAX(created_at) AS max_date_suivi_technique
+            FROM suivi
+            WHERE type = :type_suivi_technical
+            GROUP BY signalement_id
+        ) su ON s.id = su.signalement_id
+        LEFT JOIN suivi su_last ON su_last.signalement_id = su.signalement_id AND su_last.created_at > su.max_date_suivi_technique
+        WHERE su_last.id IS NULL AND su.max_date_suivi_technique < DATE_SUB(NOW(), INTERVAL :day_period DAY)
+        AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
+        AND s.is_imported != 1
+        AND s.is_usager_abandon_procedure != 1';
+
+        $statement = $connection->prepare($sql);
+
+        return $statement->executeQuery($parameters)->fetchFirstColumn();
+    }
+
+    public function findSignalementsThirdRelance(
+        int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
+    ): array {
+        $connection = $this->getEntityManager()->getConnection();
+
+        $parameters = [
+            'day_period' => $period,
+            'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
+            'status_need_validation' => Signalement::STATUS_NEED_VALIDATION,
+            'status_closed' => Signalement::STATUS_CLOSED,
+            'status_archived' => Signalement::STATUS_ARCHIVED,
+            'status_refused' => Signalement::STATUS_REFUSED,
+        ];
+
+        $sql = 'SELECT s.id
+        FROM signalement s
+        INNER JOIN (
+            SELECT signalement_id, MAX(created_at) AS max_date_suivi
+            FROM suivi
+            GROUP BY signalement_id
+        ) su ON s.id = su.signalement_id
+        INNER JOIN (
+          SELECT su.signalement_id
+          FROM suivi su
+          WHERE su.type = :type_suivi_technical
+          GROUP BY su.signalement_id
+          HAVING COUNT(*) >= 2
+        ) t1 ON s.id = t1.signalement_id
+        LEFT JOIN (
+          SELECT su.signalement_id
+          FROM suivi su
+          WHERE su.type <> :type_suivi_technical
+            AND su.created_at > (
+              SELECT MIN(su2.created_at)
+              FROM suivi su2
+              WHERE su2.signalement_id = su.signalement_id
+                AND su2.type = :type_suivi_technical
+            )
+        ) t2 ON s.id = t2.signalement_id
+        WHERE t2.signalement_id IS NULL
+        AND su.max_date_suivi < DATE_SUB(NOW(), INTERVAL :day_period DAY)
+        AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
+        AND s.is_imported != 1
+        AND s.is_usager_abandon_procedure != 1';
 
         $statement = $connection->prepare($sql);
 
