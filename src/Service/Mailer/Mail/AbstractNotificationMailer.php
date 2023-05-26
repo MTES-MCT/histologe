@@ -101,8 +101,11 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
 
     public function generateAbsoluteLink(string $route, array $params): string
     {
-        return $this->parameterBag->get('host_url').$this->urlGenerator->generate($route, $params,
-            UrlGeneratorInterface::ABSOLUTE_URL);
+        return $this->urlGenerator->generate(
+            $route,
+            $params,
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
     }
 
     public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
