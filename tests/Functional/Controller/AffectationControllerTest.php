@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Repository\SignalementRepository;
+use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -15,29 +16,33 @@ class AffectationControllerTest extends WebTestCase
 {
     use SessionHelper;
 
+    public const USER_ADMIN_TERRITORY_13 = 'admin-territoire-13-01@histologe.fr';
+    public const SIGNALEMENT_REFERENCE = '2022-1';
+
     private ?KernelBrowser $client = null;
     private UserRepository $userRepository;
     private RouterInterface $router;
     private SignalementRepository $signalementRepository;
+    private SuiviRepository $suiviRepository;
 
     protected function setUp(): void
     {
         $this->client = static::createClient();
         $this->router = self::getContainer()->get(RouterInterface::class);
         $this->signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        $this->suiviRepository = self::getContainer()->get(SuiviRepository::class);
         $this->userRepository = static::getContainer()->get(UserRepository::class);
+
+        $user = $this->userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITORY_13]);
+        $this->client->loginUser($user);
     }
 
     public function testRejectAffectationSignalement(): void
     {
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
-
-        /** @var UserRepository $userRepository */
-        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
-        $this->client->loginUser($user);
+        $user = $this->userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITORY_13]);
 
         /** @var Signalement $signalement */
-        $signalement = $this->signalementRepository->findOneBy(['reference' => '2022-1']);
+        $signalement = $this->signalementRepository->findOneBy(['reference' => self::SIGNALEMENT_REFERENCE]);
 
         $routeAffectationResponse = $this->router->generate('back_signalement_affectation_response', [
             'signalement' => $signalement->getId(),
@@ -58,24 +63,23 @@ class AffectationControllerTest extends WebTestCase
         );
 
         /** @var Suivi $suivi */
-        $suivi = $entityManager->getRepository(Suivi::class)->findOneBy(
-            ['signalement' => $signalement],
-            ['createdAt' => 'DESC']
-        );
+        $suivi = $this->suiviRepository->findOneBy(['signalement' => $signalement], ['createdAt' => 'DESC']);
 
         $this->assertEmailCount(1);
-        $this->assertTrue(str_contains($suivi->getDescription(), 'Cela ne me concerne pas, voir avec un autre organisme'));
+        $this->assertTrue(
+            str_contains($suivi->getDescription(),
+                'Cela ne me concerne pas, voir avec un autre organisme')
+        );
         $this->assertEquals(Suivi::TYPE_AUTO, $suivi->getType());
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
     }
 
     public function testAcceptAffectationSignalement(): void
     {
-        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
-        $this->client->loginUser($user);
+        $user = $this->userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITORY_13]);
 
         /** @var Signalement $signalement */
-        $signalement = $this->signalementRepository->findOneBy(['reference' => '2022-1']);
+        $signalement = $this->signalementRepository->findOneBy(['reference' => self::SIGNALEMENT_REFERENCE]);
 
         $routeAffectationResponse = $this->router->generate('back_signalement_affectation_response', [
             'signalement' => $signalement->getId(),
@@ -101,27 +105,19 @@ class AffectationControllerTest extends WebTestCase
 
     public function testCheckingNoDuplicatedMailSentWhenPartnerAffectationIsMultiple(): void
     {
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
-
-        /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
-        $this->client->loginUser($user);
-
         /** @var Signalement $signalement */
-        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-1']);
+        $signalement = $this->signalementRepository->findOneBy([
+            'reference' => self::SIGNALEMENT_REFERENCE,
+        ]);
 
-        /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
-
-        $routeSignalementView = $router->generate('back_signalement_view', [
+        $routeSignalementView = $this->router->generate('back_signalement_view', [
             'uuid' => $signalement->getUuid(),
         ]);
 
         $crawler = $this->client->request('GET', $routeSignalementView);
         $token = $crawler->filter('#signalement-affectation-form input[name=_token]')->attr('value');
 
-        $routeAffectationResponse = $router->generate('back_signalement_toggle_affectation', [
+        $routeAffectationResponse = $this->router->generate('back_signalement_toggle_affectation', [
             'uuid' => $signalement->getUuid(),
         ]);
 

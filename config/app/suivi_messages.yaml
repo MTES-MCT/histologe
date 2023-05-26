@@ -1,6 +1,6 @@
 parameters:
   suivi_message:
-    first_affectation: "
+    first_accepted_affectation: "
       <p>Suite à votre signalement, le ou les partenaires compétents sur votre dossier ont été informés et ont validé 
       la prise en charge de votre dossier.<br>Vous serez bientôt contacté(e) pour des informations complémentaires 
       ou pour programmer une visite du logement.</p>
