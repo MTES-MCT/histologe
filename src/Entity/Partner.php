@@ -311,7 +311,7 @@ class Partner
 
         return $this;
     }
-    
+
     public function getInterventions(): Collection
     {
         return $this->interventions;
