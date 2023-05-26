@@ -98,6 +98,13 @@ class FrontSignalementControllerTest extends WebTestCase
                 'geoloc' => ['lat' => 55.452091, 'lng' => -20.885586],
                 'inseeOccupant' => '97411',
             ]],
+            'La Martinique' => [[
+                'adresseOccupant' => '4 Avenue Louis Moreau Gottschalk',
+                'villeOccupant' => 'Schoelcher',
+                'cpOccupant' => '97233',
+                'geoloc' => ['lat' => 14.616930, 'lng' => -61.086790],
+                'inseeOccupant' => '97229',
+            ]],
             'Corse du Sud' => [[
                 'adresseOccupant' => '3 Boulevard du Roi Jerome',
                 'villeOccupant' => 'Ajjacio',

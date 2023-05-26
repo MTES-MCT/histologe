@@ -118,7 +118,8 @@ class FrontSignalementController extends AbstractController
         SignalementQualificationFactory $signalementQualificationFactory,
         QualificationStatusService $qualificationStatusService,
         ValidatorInterface $validator,
-        SignalementQualificationUpdater $signalementQualificationUpdater
+        SignalementQualificationUpdater $signalementQualificationUpdater,
+        CriticiteCalculator $criticiteCalculator,
     ): Response {
         if ($this->isCsrfTokenValid('new_signalement', $request->request->get('_token'))
             && $data = $request->get('signalement')) {
@@ -242,8 +243,7 @@ class FrontSignalementController extends AbstractController
             }
             $signalement->setReference($referenceGenerator->generate($signalement->getTerritory()));
 
-            $score = new CriticiteCalculator($signalement, $critereRepository);
-            $signalement->setScore($score->calculateNewCriticite());
+            $signalement->setScore($criticiteCalculator->calculate($signalement));
             $signalementQualificationUpdater->updateQualificationFromScore($signalement);
             $signalement->setCodeSuivi(md5(uniqid()));
 

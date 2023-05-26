@@ -187,6 +187,7 @@ class SignalementController extends AbstractController
         ManagerRegistry $doctrine,
         SituationRepository $situationRepository,
         CritereRepository $critereRepository,
+        CriticiteCalculator $criticiteCalculator,
         SignalementQualificationUpdater $signalementQualificationUpdater
     ): Response {
         $title = 'Administration - Edition signalement #'.$signalement->getReference();
@@ -198,8 +199,7 @@ class SignalementController extends AbstractController
             if ($form->isValid()) {
                 $signalement->setModifiedBy($this->getUser());
                 $signalement->setModifiedAt(new DateTimeImmutable());
-                $score = new CriticiteCalculator($signalement, $critereRepository);
-                $signalement->setScore($score->calculateNewCriticite());
+                $signalement->setScore($criticiteCalculator->calculate($signalement));
                 $data = [];
                 if (\array_key_exists('situation', $form->getExtraData())) {
                     $data['situation'] = $form->getExtraData()['situation'];

@@ -2,7 +2,6 @@
 
 namespace App\Tests\Functional\Service\Signalement;
 
-use App\Entity\Critere;
 use App\Entity\Signalement;
 use App\Service\Signalement\CriticiteCalculator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,11 +23,9 @@ class CriticiteCalculatorTest extends KernelTestCase
     public function testCalculateBothScoreOnSignalement()
     {
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $critereRepository = $this->entityManager->getRepository(Critere::class);
         $signalement = $signalementRepository->find(1);
 
-        $score = new CriticiteCalculator($signalement, $critereRepository);
-        $newScore = $score->calculateNewCriticite();
+        $newScore = (new CriticiteCalculator())->calculate($signalement);
         $this->assertIsFloat($newScore);
         $this->assertLessThan(101, $newScore);
         $this->assertEquals(2.87, round($newScore, 2));
