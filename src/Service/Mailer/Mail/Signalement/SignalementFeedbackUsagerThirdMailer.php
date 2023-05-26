@@ -2,6 +2,7 @@
 
 namespace App\Service\Mailer\Mail\Signalement;
 
+use App\Entity\Suivi;
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
@@ -34,11 +35,11 @@ class SignalementFeedbackUsagerThirdMailer extends AbstractNotificationMailer
             'signalement' => $signalement,
             'lien_suivi_poursuivre' => $this->generateLink(
                 'front_suivi_signalement',
-                ['code' => $signalement->getCodeSuivi(), 'from' => $toRecipient, 'suiviAuto' => 'poursuivre-procedure']
+                ['code' => $signalement->getCodeSuivi(), 'from' => $toRecipient, 'suiviAuto' => Suivi::POURSUIVRE_PROCEDURE]
             ),
             'lien_suivi_arreter' => $this->generateLink(
                 'front_suivi_signalement',
-                ['code' => $signalement->getCodeSuivi(), 'from' => $toRecipient, 'suiviAuto' => 'arret-procedure']
+                ['code' => $signalement->getCodeSuivi(), 'from' => $toRecipient, 'suiviAuto' => Suivi::ARRET_PROCEDURE]
             ),
         ];
     }

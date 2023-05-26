@@ -20,6 +20,9 @@ class Suivi
     public const DESCRIPTION_MOTIF_CLOTURE_PARTNER = 'Le signalement a été cloturé pour';
     public const DESCRIPTION_SIGNALEMENT_VALIDE = 'Signalement validé';
 
+    public const ARRET_PROCEDURE = 'arret-procedure';
+    public const POURSUIVRE_PROCEDURE = 'poursuivre-procedure';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]

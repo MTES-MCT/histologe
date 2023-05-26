@@ -242,13 +242,13 @@ class SuiviRepository extends ServiceEntityRepository
         $sql = 'SELECT s.id
         FROM signalement s
         INNER JOIN (
-            SELECT signalement_id, MAX(created_at) AS date_suivi
+            SELECT signalement_id, MAX(created_at) AS max_date_suivi_technique
             FROM suivi
             WHERE type = :type_suivi_technical
             GROUP BY signalement_id
         ) su ON s.id = su.signalement_id
-        LEFT JOIN suivi su_last ON su_last.signalement_id = su.signalement_id AND su_last.created_at > su.date_suivi
-        WHERE su_last.id IS NULL AND su.date_suivi < DATE_SUB(NOW(), INTERVAL :day_period DAY)
+        LEFT JOIN suivi su_last ON su_last.signalement_id = su.signalement_id AND su_last.created_at > su.max_date_suivi_technique
+        WHERE su_last.id IS NULL AND su.max_date_suivi_technique < DATE_SUB(NOW(), INTERVAL :day_period DAY)
         AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
         AND s.is_imported != 1
         AND s.is_usager_abandon_procedure != 1';
@@ -275,7 +275,7 @@ class SuiviRepository extends ServiceEntityRepository
         $sql = 'SELECT s.id
         FROM signalement s
         INNER JOIN (
-            SELECT signalement_id, MAX(created_at) AS date_suivi
+            SELECT signalement_id, MAX(created_at) AS max_date_suivi
             FROM suivi
             GROUP BY signalement_id
         ) su ON s.id = su.signalement_id
@@ -298,7 +298,7 @@ class SuiviRepository extends ServiceEntityRepository
             )
         ) t2 ON s.id = t2.signalement_id
         WHERE t2.signalement_id IS NULL
-        AND su.date_suivi < DATE_SUB(NOW(), INTERVAL :day_period DAY)
+        AND su.max_date_suivi < DATE_SUB(NOW(), INTERVAL :day_period DAY)
         AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
         AND s.is_imported != 1
         AND s.is_usager_abandon_procedure != 1';

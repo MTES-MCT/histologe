@@ -329,12 +329,12 @@ class FrontSignalementController extends AbstractController
             }
             if ($user && $suiviAuto) {
                 $description = '';
-                if ('arret-procedure' == $suiviAuto) {
+                if (Suivi::ARRET_PROCEDURE === $suiviAuto) {
                     $description = $user->getNomComplet().' ('.$type.') a demandé l\'arrêt de la procédure.';
                     $signalement->setIsUsagerAbandonProcedure(true);
                     $entityManager->persist($signalement);
                 }
-                if ('poursuivre-procedure' == $suiviAuto) {
+                if (Suivi::POURSUIVRE_PROCEDURE === $suiviAuto) {
                     $description = $user->getNomComplet().' ('.$type.') a indiqué vouloir poursuivre la procédure.';
                 }
 
@@ -351,12 +351,12 @@ class FrontSignalementController extends AbstractController
                 );
                 $entityManager->persist($suivi);
                 $entityManager->flush();
-                if ('arret-procedure' === $suiviAuto) {
+                if (Suivi::ARRET_PROCEDURE === $suiviAuto) {
                     $this->addFlash('success', "Les services ont été informés de votre volonté d'arrêter la procédure.
                 Si vous le souhaitez, vous pouvez préciser la raison de l'arrêt de procédure
                 en envoyant un message via le formulaire ci-dessous.");
                 }
-                if ('poursuivre-procedure' === $suiviAuto) {
+                if (Suivi::POURSUIVRE_PROCEDURE === $suiviAuto) {
                     $this->addFlash('success', "Les services ont été informés de votre volonté de poursuivre la procédure.
                 N'hésitez pas à mettre à jour votre situation en envoyant un message via le formulaire ci-dessous.");
                 }
