@@ -35,7 +35,7 @@ class DossierVisiteSISHCollectionResponseTest extends TestCase
             $this->assertNotNull($dossierVisiteSISH->getVisiteNum());
             $this->assertStringContainsString('Visite', $dossierVisiteSISH->getVisiteType());
             $this->assertStringContainsString('Effectuée', $dossierVisiteSISH->getVisiteStatut());
-            $this->assertEquals('Terminé', $dossierVisiteSISH->getVisiteEtat());
+            $this->assertEquals('terminé', $dossierVisiteSISH->getVisiteEtat());
             $this->assertTrue(\in_array($dossierVisiteSISH->getVisitePar(), ['ARS', 'SCHS', 'SH', 'STH']));
         }
 

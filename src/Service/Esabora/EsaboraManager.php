@@ -100,7 +100,7 @@ class EsaboraManager
                 type: InterventionType::fromLabel($dossierVisiteSISH->getVisiteType()),
                 scheduledAt: DateParser::parse($dossierVisiteSISH->getVisiteDate()),
                 registeredAt: DateParser::parse($dossierVisiteSISH->getVisiteDateEnreg()),
-                status: EsaboraStatus::ESABORA_IN_PROGRESS === $dossierVisiteSISH->getVisiteEtat()
+                status: EsaboraStatus::ESABORA_IN_PROGRESS->value === $dossierVisiteSISH->getVisiteEtat()
                     ? Intervention::STATUS_PLANNED
                     : Intervention::STATUS_DONE,
                 providerName: InterfacageType::ESABORA->value,
@@ -124,7 +124,7 @@ class EsaboraManager
                 type: InterventionType::ARRETE_PREFECTORAL,
                 scheduledAt: DateParser::parse($dossierArreteSISH->getArreteDatePresc()),
                 registeredAt: DateParser::parse($dossierArreteSISH->getArreteDate()),
-                status: EsaboraStatus::ESABORA_IN_PROGRESS === $dossierArreteSISH->getArreteEtat()
+                status: EsaboraStatus::ESABORA_IN_PROGRESS->value === $dossierArreteSISH->getArreteEtat()
                     ? Intervention::STATUS_PLANNED
                     : Intervention::STATUS_DONE,
                 providerName: InterfacageType::ESABORA->value,
@@ -141,7 +141,7 @@ class EsaboraManager
         $intervention
             ->setScheduledAt(DateParser::parse($dossierVisiteSISH->getVisiteDate()))
             ->setRegisteredAt(DateParser::parse($dossierVisiteSISH->getVisiteDateEnreg()))
-            ->setStatus(EsaboraStatus::ESABORA_IN_PROGRESS === $dossierVisiteSISH->getVisiteEtat()
+            ->setStatus(EsaboraStatus::ESABORA_IN_PROGRESS->value === $dossierVisiteSISH->getVisiteEtat()
                 ? Intervention::STATUS_PLANNED
                 : Intervention::STATUS_DONE)
             ->setDoneBy($dossierVisiteSISH->getVisitePar())
@@ -156,7 +156,7 @@ class EsaboraManager
             ->setScheduledAt(DateParser::parse($dossierArreteSISH->getArreteDatePresc()))
             ->setDetails($this->buildDetailArrete($dossierArreteSISH))
             ->setRegisteredAt(DateParser::parse($dossierArreteSISH->getArreteDate()))
-            ->setStatus(EsaboraStatus::ESABORA_IN_PROGRESS === $dossierArreteSISH->getArreteEtat()
+            ->setStatus(EsaboraStatus::ESABORA_IN_PROGRESS->value === $dossierArreteSISH->getArreteEtat()
                 ? Intervention::STATUS_PLANNED
                 : Intervention::STATUS_DONE)
             ->setDetails($this->buildDetailArrete($dossierArreteSISH));

@@ -6,8 +6,8 @@ use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Signalement;
 use App\Messenger\Message\DossierMessageSCHS;
-use App\Service\Esabora\AddressParser;
 use App\Service\UploadHandlerService;
+use App\Utils\AddressParser;
 
 class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
 {

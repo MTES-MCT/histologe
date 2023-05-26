@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Service\Esabora;
+namespace App\Utils;
 
-use App\Service\Esabora\Enum\ExtensionAdresse;
+use App\Utils\Enum\ExtensionAdresse;
 
 class AddressParser
 {

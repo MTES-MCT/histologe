@@ -23,7 +23,7 @@ class DossierArreteSISHCollectionResponseTest extends TestCase
         $this->assertStringStartsWith('De nombreuses personnes', $dossiersArreteSISH[0]->getArreteCommentaire());
         $this->assertEquals('2023/DD13/00664', $dossiersArreteSISH[0]->getArreteNumero());
         $this->assertEquals('Arrêté L.511-11 - Suroccupation', $dossiersArreteSISH[0]->getArreteType());
-        $this->assertEquals('En cours', $dossiersArreteSISH[0]->getArreteEtat());
+        $this->assertEquals('en cours', $dossiersArreteSISH[0]->getArreteEtat());
         $this->assertEquals('A rédiger', $dossiersArreteSISH[0]->getArreteStatut());
 
         $this->assertEquals(200, $dossierArreteSISHCollectionResponse->getStatusCode());

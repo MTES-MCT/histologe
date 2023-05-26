@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Tests\Unit\Service\Esabora;
+namespace App\Tests\Unit\Utils;
 
-use App\Service\Esabora\AddressParser;
-use App\Service\Esabora\Enum\ExtensionAdresse;
+use App\Utils\AddressParser;
+use App\Utils\Enum\ExtensionAdresse;
 use PHPUnit\Framework\TestCase;
 
 class AddressParserTest extends TestCase

@@ -6,9 +6,9 @@ use App\Entity\Enum\PartnerType;
 use App\Messenger\Message\DossierMessageSCHS;
 use App\Messenger\Message\DossierMessageSISH;
 use App\Service\Esabora\AbstractEsaboraService;
-use App\Service\Esabora\Enum\ExtensionAdresse;
 use App\Service\Esabora\Enum\PersonneType;
 use App\Service\Esabora\Model\DossierMessageSISHPersonne;
+use App\Utils\Enum\ExtensionAdresse;
 use Faker\Factory;
 
 trait DossierMessageTrait

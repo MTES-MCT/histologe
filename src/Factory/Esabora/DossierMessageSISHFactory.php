@@ -8,10 +8,10 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Messenger\Message\DossierMessageSISH;
 use App\Service\Esabora\AbstractEsaboraService;
-use App\Service\Esabora\AddressParser;
 use App\Service\Esabora\Enum\PersonneType;
 use App\Service\Esabora\Model\DossierMessageSISHPersonne;
 use App\Service\UploadHandlerService;
+use App\Utils\AddressParser;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 

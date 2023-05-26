@@ -4,6 +4,18 @@ namespace App\Service\Esabora\Response\Model;
 
 class DossierVisiteSISH
 {
+    public const SAS_LOGICIEL_PROVENANCE = 0;
+    public const REFERENCE_DOSSIER = 1;
+    public const DOSS_NUM = 2;
+    public const VISITE_DATE_ENREG = 3;
+    public const VISITE_DATE = 4;
+    public const VISITE_OBSERVATIONS = 5;
+    public const VISITE_NUM = 6;
+    public const VISITE_TYPE = 7;
+    public const VISITE_STATUT = 8;
+    public const VISITE_ETAT = 9;
+    public const VISITE_PAR = 10;
+
     private ?int $visiteId = null;
     private ?string $sasLogicielProvenance = null;
     private ?string $referenceDossier = null;
@@ -23,17 +35,17 @@ class DossierVisiteSISH
             $this->visiteId = $item['keyDataList'][1] ?? null;
             $data = $item['columnDataList'] ?? null;
             if (null !== $data) {
-                $this->sasLogicielProvenance = $data[0];
-                $this->referenceDossier = $data[1];
-                $this->dossNum = $data[2];
-                $this->visiteDateEnreg = $data[3];
-                $this->visiteDate = $data[4];
-                $this->visiteObservations = $data[5];
-                $this->visiteNum = $data[6];
-                $this->visiteType = $data[7];
-                $this->visiteStatut = $data[8];
-                $this->visiteEtat = $data[9];
-                $this->visitePar = $data[10];
+                $this->sasLogicielProvenance = $data[self::SAS_LOGICIEL_PROVENANCE];
+                $this->referenceDossier = $data[self::REFERENCE_DOSSIER];
+                $this->dossNum = $data[self::DOSS_NUM];
+                $this->visiteDateEnreg = $data[self::VISITE_DATE_ENREG];
+                $this->visiteDate = $data[self::VISITE_DATE];
+                $this->visiteObservations = $data[self::VISITE_OBSERVATIONS];
+                $this->visiteNum = $data[self::VISITE_NUM];
+                $this->visiteType = $data[self::VISITE_TYPE];
+                $this->visiteStatut = $data[self::VISITE_STATUT];
+                $this->visiteEtat = strtolower($data[self::VISITE_ETAT]);
+                $this->visitePar = $data[self::VISITE_PAR];
             }
         }
     }

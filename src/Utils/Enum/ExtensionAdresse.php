@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Esabora\Enum;
+namespace App\Utils\Enum;
 
 enum ExtensionAdresse
 {
