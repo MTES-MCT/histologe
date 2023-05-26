@@ -316,10 +316,13 @@ class FrontSignalementController extends AbstractController
             $userOccupant = $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
             /** @var User $userDeclarant */
             $userDeclarant = $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
+            $type = null;
             $user = null;
             if ($userOccupant && $fromEmail === $userOccupant->getEmail()) {
+                $type = UserManager::OCCUPANT;
                 $user = $userOccupant;
             } elseif ($userDeclarant && $fromEmail === $userDeclarant->getEmail()) {
+                $type = UserManager::DECLARANT;
                 $user = $userDeclarant;
             }
             if ($user && $suiviAuto) {
@@ -337,6 +340,7 @@ class FrontSignalementController extends AbstractController
                 return $this->render('front/suivi_signalement.html.twig', [
                     'signalement' => $signalement,
                     'email' => $fromEmail,
+                    'type' => $type,
                     'suiviAuto' => $suiviAuto,
                 ]);
             }
