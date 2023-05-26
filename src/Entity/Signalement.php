@@ -320,9 +320,6 @@ class Signalement
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Intervention::class, orphanRemoval: true)]
     private Collection $interventions;
 
-    #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Intervention::class, orphanRemoval: true)]
-    private Collection $interventions;
-
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $isUsagerAbandonProcedure;
 
