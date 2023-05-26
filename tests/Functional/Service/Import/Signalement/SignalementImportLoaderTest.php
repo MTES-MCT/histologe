@@ -10,6 +10,8 @@ use App\Manager\SuiviManager;
 use App\Manager\TagManager;
 use App\Service\Import\Signalement\SignalementImportLoader;
 use App\Service\Import\Signalement\SignalementImportMapper;
+use App\Service\Signalement\CriticiteCalculator;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Faker\Factory;
@@ -28,6 +30,8 @@ class SignalementImportLoaderTest extends KernelTestCase
     private ParameterBagInterface $parameterBag;
     private LoggerInterface $logger;
     private SuiviCreatedSubscriber $suiviCreatedSubscriber;
+    private CriticiteCalculator $criticiteCalculator;
+    private SignalementQualificationUpdater $signalementQualificationUpdater;
 
     protected function setUp(): void
     {
@@ -40,6 +44,8 @@ class SignalementImportLoaderTest extends KernelTestCase
         $this->parameterBag = self::getContainer()->get(ParameterBagInterface::class);
         $this->logger = self::getContainer()->get(LoggerInterface::class);
         $this->suiviCreatedSubscriber = self::getContainer()->get(SuiviCreatedSubscriber::class);
+        $this->criticiteCalculator = self::getContainer()->get(CriticiteCalculator::class);
+        $this->signalementQualificationUpdater = self::getContainer()->get(SignalementQualificationUpdater::class);
 
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
     }
@@ -59,6 +65,8 @@ class SignalementImportLoaderTest extends KernelTestCase
             $this->entityManager,
             $this->parameterBag,
             $this->logger,
+            $this->criticiteCalculator,
+            $this->signalementQualificationUpdater,
         );
 
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '01']);
