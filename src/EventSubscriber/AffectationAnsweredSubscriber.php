@@ -25,7 +25,11 @@ class AffectationAnsweredSubscriber implements EventSubscriberInterface
         $params = $event->getParams();
         $user = $event->getUser();
         $signalement = $affectation->getSignalement();
-        $suivi = $this->suiviManager->createSuivi($user, $signalement, $params);
-        $this->suiviManager->save($suivi);
+        $this->suiviManager->createSuivi(
+            user: $user,
+            signalement: $signalement,
+            params: $params,
+            flush: true
+        );
     }
 }

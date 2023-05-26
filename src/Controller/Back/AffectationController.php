@@ -8,9 +8,11 @@ use App\Entity\User;
 use App\Event\AffectationAnsweredEvent;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
+use App\Manager\SuiviManager;
 use App\Messenger\EsaboraBus;
 use App\Repository\PartnerRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -39,6 +41,8 @@ class AffectationController extends AbstractController
         if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), $request->get('_token'))) {
             $data = $request->get('signalement-affectation');
             if (isset($data['partners'])) {
+                /** @var User $user */
+                $user = $this->getUser();
                 $postedPartner = $data['partners'];
                 $alreadyAffectedPartner = $this->signalementManager->findPartners($signalement);
                 $partnersIdToAdd = array_diff($postedPartner, $alreadyAffectedPartner);
@@ -49,7 +53,7 @@ class AffectationController extends AbstractController
                     $affectation = $this->affectationManager->createAffectationFrom(
                         $signalement,
                         $partner,
-                        $this->getUser()
+                        $user
                     );
                     if ($affectation instanceof Affectation) {
                         $this->affectationManager->persist($affectation);
@@ -71,6 +75,8 @@ class AffectationController extends AbstractController
 
     #[Route('/{signalement}/{affectation}/{user}/response', name: 'back_signalement_affectation_response', methods: 'POST')]
     public function affectationResponseSignalement(
+        SuiviManager $suiviManager,
+        ParameterBagInterface $parameterBag,
         Signalement $signalement,
         Affectation $affectation,
         User $user,
@@ -82,6 +88,22 @@ class AffectationController extends AbstractController
         ) {
             $status = isset($response['accept']) ? Affectation::STATUS_ACCEPTED : Affectation::STATUS_REFUSED;
             $affectation = $this->affectationManager->updateAffectation($affectation, $user, $status);
+            $affectationAccepted = $signalement->getAffectations()->filter(function (Affectation $affectation) {
+                return Affectation::STATUS_ACCEPTED === $affectation->getStatut();
+            });
+
+            if (1 === $affectationAccepted->count()
+                && Affectation::STATUS_ACCEPTED === $affectation->getStatut()
+            ) {
+                $suiviManager->createSuivi(
+                    user: $user,
+                    signalement: $signalement,
+                    params: ['description' => $parameterBag->get('suivi_message')['first_accepted_affectation']],
+                    isPublic: true,
+                    flush: true
+                );
+            }
+
             $this->addFlash('success', 'Affectation mise à jour avec succès !');
             if (Affectation::STATUS_REFUSED == $status) {
                 $this->dispatchAffectationAnsweredEvent($affectation, $response);
