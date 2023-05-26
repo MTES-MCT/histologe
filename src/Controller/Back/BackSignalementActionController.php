@@ -9,6 +9,7 @@ use App\Entity\Tag;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\Signalement\QualificationStatusService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -29,7 +30,8 @@ class BackSignalementActionController extends AbstractController
         Request $request,
         ManagerRegistry $doctrine,
         UrlGeneratorInterface $urlGenerator,
-        NotificationMailerRegistry $notificationMailerRegistry
+        NotificationMailerRegistry $notificationMailerRegistry,
+        QualificationStatusService $qualificationStatusService
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_validation_response_'.$signalement->getId(), $request->get('_token'))
@@ -40,10 +42,13 @@ class BackSignalementActionController extends AbstractController
                 $signalement->setValidatedAt(new DateTimeImmutable());
                 $signalement->setCodeSuivi(md5(uniqid()));
                 $toRecipients = $signalement->getMailUsagers();
+
                 foreach ($toRecipients as $toRecipient) {
                     $notificationMailerRegistry->send(
                         new NotificationMail(
-                            type: NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION,
+                            type: $signalement->hasNDE() ?
+                                NotificationMailerType::TYPE_SIGNALEMENT_ASK_BAIL_DPE :
+                                NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION,
                             to: $toRecipient,
                             territory: $signalement->getTerritory(),
                             signalement: $signalement,
