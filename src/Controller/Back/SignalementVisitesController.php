@@ -97,6 +97,7 @@ class SignalementVisitesController extends AbstractController
             concludeProcedure: $requestAddData['concludeProcedure'] ?? null,
             isVisiteDone: $requestAddData['visiteDone'] ?? null,
             isOccupantPresent: $requestAddData['occupantPresent'] ?? null,
+            isProprietairePresent: $requestAddData['proprietairePresent'] ?? null,
             document: $fileName,
         );
 
@@ -194,6 +195,7 @@ class SignalementVisitesController extends AbstractController
             concludeProcedure: $requestRescheduleData['concludeProcedure'] ?? null,
             isVisiteDone: $requestRescheduleData['visiteDone'] ?? null,
             isOccupantPresent: $requestRescheduleData['occupantPresent'] ?? null,
+            isProprietairePresent: $requestRescheduleData['proprietairePresent'] ?? null,
             document: $fileName,
         );
 
@@ -247,6 +249,7 @@ class SignalementVisitesController extends AbstractController
             concludeProcedure: $requestData['concludeProcedure'],
             isVisiteDone: $requestData['visiteDone'],
             isOccupantPresent: $requestData['occupantPresent'],
+            isProprietairePresent: $requestData['proprietairePresent'],
             document: $fileName,
         );
 

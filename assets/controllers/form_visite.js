@@ -25,10 +25,12 @@ function histoCheckVisiteForms(formType) {
         visiteForm.addEventListener('submit', evt => {
             const listInputVisiteDoneError = visiteForm.querySelector('#signalement-confirm-visite-done-error')
             const listInputOccupantPresentError = visiteForm.querySelector('#signalement-confirm-visite-occupant-present-error')
+            const listInputProprietairePresentError = visiteForm.querySelector('#signalement-confirm-visite-proprietaire-present-error')
             const selectConcludeProcedureError = visiteForm.querySelector('#signalement-confirm-visite-procedure-error')
             const textareaDetailsError = visiteForm.querySelector('#signalement-confirm-visite-details-error')
             listInputVisiteDoneError.classList.add('fr-hidden')
             listInputOccupantPresentError.classList.add('fr-hidden')
+            listInputProprietairePresentError.classList.add('fr-hidden')
             selectConcludeProcedureError.classList.add('fr-hidden')
             textareaDetailsError.classList.add('fr-hidden')
         
@@ -52,9 +54,10 @@ function histoCheckVisiteForms(formType) {
                     listInputVisiteDoneError.classList.remove('fr-hidden')
                     stopSubmit = true
                 }
+
                 let hasCheckedOccupantPresent = false
-                const listInputIOccupantPresent = visiteForm.querySelectorAll('input[name="visite-'+formType+'[occupantPresent]"]')
-                listInputIOccupantPresent.forEach(checkField => {
+                const listInputOccupantPresent = visiteForm.querySelectorAll('input[name="visite-'+formType+'[occupantPresent]"]')
+                listInputOccupantPresent.forEach(checkField => {
                     if (checkField.checked) {
                         hasCheckedOccupantPresent = true
                     }
@@ -63,6 +66,19 @@ function histoCheckVisiteForms(formType) {
                     listInputOccupantPresentError.classList.remove('fr-hidden')
                     stopSubmit = true
                 }
+
+                let hasCheckedProprietairePresent = false
+                const listInputProprietairePresent = visiteForm.querySelectorAll('input[name="visite-'+formType+'[proprietairePresent]"]')
+                listInputProprietairePresent.forEach(checkField => {
+                    if (checkField.checked) {
+                        hasCheckedProprietairePresent = true
+                    }
+                })
+                if (!hasCheckedProprietairePresent) {
+                    listInputProprietairePresentError.classList.remove('fr-hidden')
+                    stopSubmit = true
+                }
+
                 if (isVisiteDone) {
                     const selectConcludeProcedure = visiteForm.querySelector('select[name="visite-'+formType+'[concludeProcedure]"]')
                     if (selectConcludeProcedure.value == '') {

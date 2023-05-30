@@ -31,6 +31,22 @@
             <label for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-occupant-present-0">Non</label>
         </div>
     </fieldset>
+    <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
+        <legend class="fr-fieldset__legend fr-text--regular">
+            Le propriétaire était-il présent ?*
+        </legend>
+        <p id="signalement-confirm-visite-proprietaire-present-error" class="fr-error-text fr-hidden fr-my-3v">
+            Veuillez préciser si le propriétaire était présent.
+        </p>
+        <div class="fr-radio-group">
+            <input type="radio" id="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-proprietaire-present-1" name="visite-{{ formType }}[proprietairePresent]" value="1">
+            <label for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-proprietaire-present-1">Oui</label>
+        </div>
+        <div class="fr-radio-group">
+            <input type="radio" id="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-proprietaire-present-0" name="visite-{{ formType }}[proprietairePresent]" value="0">
+            <label for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-proprietaire-present-0">Non</label>
+        </div>
+    </fieldset>
     <fieldset id="fieldset-conclude-procedure" class="fr-fieldset fr-fieldset--inline fr-mb-5v fr-hidden">
         <legend class="fr-fieldset__legend fr-text--regular">
             Quelle est la conclusion de la visite ?*
