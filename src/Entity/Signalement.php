@@ -323,9 +323,6 @@ class Signalement
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $isUsagerAbandonProcedure;
 
-    #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Intervention::class, orphanRemoval: true)]
-    private Collection $interventions;
-
     public function __construct()
     {
         $this->situations = new ArrayCollection();
