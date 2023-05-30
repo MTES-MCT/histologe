@@ -19,7 +19,7 @@ class SuiviManager extends Manager
     }
 
     public function createSuivi(
-        User $user,
+        ?User $user,
         Signalement $signalement,
         array $params,
         bool $isPublic = false,

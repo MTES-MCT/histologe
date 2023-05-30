@@ -4,6 +4,7 @@ namespace App\Controller\Back;
 
 use App\Entity\Affectation;
 use App\Entity\Signalement;
+use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\AffectationAnsweredEvent;
 use App\Manager\AffectationManager;
@@ -96,9 +97,12 @@ class AffectationController extends AbstractController
                 && Affectation::STATUS_ACCEPTED === $affectation->getStatut()
             ) {
                 $suiviManager->createSuivi(
-                    user: $user,
+                    user: null,
                     signalement: $signalement,
-                    params: ['description' => $parameterBag->get('suivi_message')['first_accepted_affectation']],
+                    params: [
+                        'description' => $parameterBag->get('suivi_message')['first_accepted_affectation'],
+                        'type' => Suivi::TYPE_TECHNICAL,
+                    ],
                     isPublic: true,
                     flush: true
                 );
