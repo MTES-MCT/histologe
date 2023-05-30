@@ -13,6 +13,7 @@ class VisiteRequest
         private ?array $concludeProcedure = [],
         private ?bool $isVisiteDone = null,
         private ?bool $isOccupantPresent = null,
+        private ?bool $isProprietairePresent = null,
         private ?bool $isUsagerNotified = null,
         private ?string $document = null,
     ) {
@@ -65,6 +66,11 @@ class VisiteRequest
     public function isOccupantPresent(): ?bool
     {
         return $this->isOccupantPresent;
+    }
+
+    public function isProprietairePresent(): ?bool
+    {
+        return $this->isProprietairePresent;
     }
 
     public function isUsagerNotified(): ?bool

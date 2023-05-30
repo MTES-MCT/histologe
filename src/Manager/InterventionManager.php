@@ -127,7 +127,8 @@ class InterventionManager extends AbstractManager
 
         $intervention
             ->setDetails($visiteRequest->getDetails())
-            ->setOccupantPresent($visiteRequest->isOccupantPresent());
+            ->setOccupantPresent($visiteRequest->isOccupantPresent())
+            ->setProprietairePresent($visiteRequest->isProprietairePresent());
 
         if ($visiteRequest->isVisiteDone() && $visiteRequest->getConcludeProcedure()) {
             $procedures = [];

@@ -64,6 +64,9 @@ class Intervention
     private ?bool $occupantPresent = null;
 
     #[ORM\Column(nullable: true)]
+    private ?bool $proprietairePresent = null;
+
+    #[ORM\Column(nullable: true)]
     private ?string $doneBy = null;
 
     #[ORM\Column(nullable: true, options: ['comment' => 'Provider name have created the intervention'])]
@@ -225,6 +228,18 @@ class Intervention
     public function setOccupantPresent(?bool $occupantPresent): self
     {
         $this->occupantPresent = $occupantPresent;
+
+        return $this;
+    }
+
+    public function isProprietairePresent(): ?bool
+    {
+        return $this->proprietairePresent;
+    }
+
+    public function setProprietairePresent(?bool $proprietairePresent): self
+    {
+        $this->proprietairePresent = $proprietairePresent;
 
         return $this;
     }
