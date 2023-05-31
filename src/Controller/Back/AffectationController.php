@@ -10,6 +10,7 @@ use App\Event\AffectationAnsweredEvent;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
+use App\Manager\UserManager;
 use App\Messenger\EsaboraBus;
 use App\Repository\PartnerRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -77,6 +78,7 @@ class AffectationController extends AbstractController
     #[Route('/{signalement}/{affectation}/{user}/response', name: 'back_signalement_affectation_response', methods: 'POST')]
     public function affectationResponseSignalement(
         SuiviManager $suiviManager,
+        UserManager $userManager,
         ParameterBagInterface $parameterBag,
         Signalement $signalement,
         Affectation $affectation,
@@ -96,12 +98,14 @@ class AffectationController extends AbstractController
             if (1 === $affectationAccepted->count()
                 && Affectation::STATUS_ACCEPTED === $affectation->getStatut()
             ) {
+                $adminEmail = $parameterBag->get('user_system_email');
+                $adminUser = $userManager->findOneBy(['email' => $adminEmail]);
                 $suiviManager->createSuivi(
-                    user: null,
+                    user: $adminUser,
                     signalement: $signalement,
                     params: [
                         'description' => $parameterBag->get('suivi_message')['first_accepted_affectation'],
-                        'type' => Suivi::TYPE_TECHNICAL,
+                        'type' => Suivi::TYPE_AUTO,
                     ],
                     isPublic: true,
                     flush: true
