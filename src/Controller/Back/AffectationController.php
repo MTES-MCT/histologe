@@ -90,15 +90,14 @@ class AffectationController extends AbstractController
             && $response = $request->get('signalement-affectation-response')
         ) {
             $status = isset($response['accept']) ? Affectation::STATUS_ACCEPTED : Affectation::STATUS_REFUSED;
-            $oldAffectationStatut = $affectation->getStatut();
             $affectation = $this->affectationManager->updateAffectation($affectation, $user, $status);
-            $affectationAccepted = $signalement->getAffectations()->filter(function (Affectation $affectation) {
-                return Affectation::STATUS_ACCEPTED === $affectation->getStatut();
-            });
 
-            if (1 === $affectationAccepted->count()
-                && Affectation::STATUS_ACCEPTED === $affectation->getStatut()
-                && Affectation::STATUS_WAIT === $oldAffectationStatut
+            $suiviAffectationAccepted = $suiviManager->findOneBy([
+                'description' => $parameterBag->get('suivi_message')['first_accepted_affectation'],
+                'signalement' => $signalement,
+            ]);
+            if (Affectation::STATUS_ACCEPTED === $affectation->getStatut()
+                && null === $suiviAffectationAccepted
             ) {
                 $adminEmail = $parameterBag->get('user_system_email');
                 $adminUser = $userManager->findOneBy(['email' => $adminEmail]);
