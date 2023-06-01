@@ -130,7 +130,7 @@ class SignalementImportMapper
         $situations = [];
         foreach ($this->getMapping() as $fileColumn => $fieldColumn) {
             if (\in_array($fileColumn, $columns)) {
-                $fieldValue = 'NSP' !== $data[$fileColumn] ? $data[$fileColumn] : null;
+                $fieldValue = 'NSP' !== $data[$fileColumn] ? $data[$fileColumn] : '';
                 $fieldValue = trim($fieldValue, '"');
                 switch ($fieldColumn) {
                     case 'reference':

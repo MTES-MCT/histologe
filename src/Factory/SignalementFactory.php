@@ -93,7 +93,10 @@ class SignalementFactory
             ->setNbChambresLogement((int) $data['nbChambresLogement'])
             ->setNbNiveauxLogement((int) $data['nbNiveauxLogement'])
             ->setNbOccupantsLogement((int) $data['nbOccupantsLogement'])
-            ->setMotifCloture(MotifCloture::tryFrom($data['motifCloture']))
+            ->setMotifCloture(
+                null !== $data['motifCloture']
+                ? MotifCloture::tryFrom($data['motifCloture'])
+                : null)
             ->setClosedAt($data['closedAt'])
             ->setIsFondSolidariteLogement((bool) $data['isFondSolidariteLogement']);
     }
