@@ -33,6 +33,16 @@ function histoCheckVisiteForms(formType) {
             listInputProprietairePresentError.classList.add('fr-hidden')
             selectConcludeProcedureError.classList.add('fr-hidden')
             textareaDetailsError.classList.add('fr-hidden')
+            const selectVisitePartnerError = visiteForm.querySelector('#signalement-'+formType+'-visite-partner-double-error')
+            selectVisitePartnerError.classList.add('fr-hidden')
+
+            const selectVisitePartner = visiteForm.querySelector('.visite-partner-select')
+            if (selectVisitePartner) {
+                if (selectVisitePartner.selectedOptions[0].classList.contains('alert-partner')) {
+                    selectVisitePartnerError.classList.remove('fr-hidden')
+                    evt.preventDefault()
+                }
+            }
         
             const dateField = visiteForm.querySelector('.add-fields-if-past-date')
             let todayDate = new Date()
