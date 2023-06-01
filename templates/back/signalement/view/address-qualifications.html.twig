@@ -12,6 +12,7 @@
         <br>
         {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
             <a target="_blank" rel="noreferrer"
+                {# latitude and longitude data are inverted for now #}
                 href="http://www.openstreetmap.org/?mlat={{ signalement.geoloc.lng }}&mlon={{ signalement.geoloc.lat }}#map=18/{{ signalement.geoloc.lng }}/{{ signalement.geoloc.lat }}">
                 Voir sur la carte
             </a>
@@ -21,7 +22,7 @@
     <div class="fr-col-12 fr-col-md-6">
         <h3 class="fr-h5">Situation(s) suspectée(s)</h3>
         {% if can_see_nde_qualification(signalementQualificationNDE) and is_granted('USER_SEE_NDE', app.user) %}
-            <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold fr-px-3v">
+            <small class="fr-badge fr-badge--info fr-badge--no-icon fr-mb-1v">
                 Non décence énergétique
             </small>
         {% endif %}

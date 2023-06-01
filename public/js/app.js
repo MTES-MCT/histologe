@@ -790,14 +790,6 @@ document?.querySelector('#signalement-affectation-form-submit')?.addEventListene
     })
 })
 
-document?.querySelector('#btn-display-all-suivis')?.addEventListeners('click touchdown', (e) => {
-    e.preventDefault()
-    document.querySelectorAll('.suivi-item').forEach(item => {
-        item.classList.remove('fr-hidden')
-    })
-    document.querySelector('#btn-display-all-suivis').classList.add('fr-hidden')
-})
-
 document?.querySelectorAll('.fr-input--file-signalement').forEach(inputFile => {
     inputFile.addEventListener('change', evt => {
         const files = evt.target.files;
@@ -891,8 +883,12 @@ document?.querySelectorAll('[data-delete]')?.forEach(actionBtn => {
                 method: 'POST',
                 body: formData,
             }).then(r => {
-                if (r.ok)
+                if (r.ok) {
                     actionBtn.closest(className).remove()
+                    if (event.target.classList.contains('partner-row-delete')) {
+                        window.location.reload(true)
+                    }
+                }
             })
         }
     })

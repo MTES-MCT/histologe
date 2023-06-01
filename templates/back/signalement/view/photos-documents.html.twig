@@ -47,7 +47,7 @@
                         <button title="Supprimer la photo"
                                 data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'photos',filename:photo.file}) }}"
                                 data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
-                                class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line signalement-file-delete"></button>
+                                class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line signalement-file-delete"></button>
                     {% endif %}
                 {% endif %}
             </div>

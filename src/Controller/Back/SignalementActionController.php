@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('/bo/signalements')]
-class BackSignalementActionController extends AbstractController
+class SignalementActionController extends AbstractController
 {
     #[Route('/{uuid}/validation/response', name: 'back_signalement_validation_response', methods: 'GET')]
     public function validationResponseSignalement(
