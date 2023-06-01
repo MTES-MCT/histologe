@@ -13,6 +13,7 @@ use App\Event\SignalementCreatedEvent;
 use App\Factory\SignalementQualificationFactory;
 use App\Factory\SuiviFactory;
 use App\Form\SignalementType;
+use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\CritereRepository;
 use App\Repository\SignalementRepository;
@@ -306,6 +307,7 @@ class FrontSignalementController extends AbstractController
         SignalementRepository $signalementRepository,
         Request $request,
         UserManager $userManager,
+        SuiviManager $suiviManager,
     ) {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
             $requestEmail = $request->get('from');
@@ -335,6 +337,23 @@ class FrontSignalementController extends AbstractController
                         'front_suivi_signalement',
                         ['code' => $signalement->getCodeSuivi(), 'from' => $fromEmail]
                     );
+                }
+
+                if (Suivi::POURSUIVRE_PROCEDURE === $suiviAuto) {
+                    $description = $user->getNomComplet().' ('.$type.') a indiqué vouloir poursuivre la procédure.';
+                    $suiviPoursuivreProcedure = $suiviManager->findOneBy([
+                        'description' => $description,
+                        'signalement' => $signalement,
+                    ]);
+                    if (null !== $suiviPoursuivreProcedure) {
+                        $this->addFlash('error', 'Les services ont déjà été informés de votre volonté de continuer la procédure.
+                        Si vous le souhaitez, vous pouvez envoyer un message via le formulaire ci-dessous.');
+
+                        return $this->redirectToRoute(
+                            'front_suivi_signalement',
+                            ['code' => $signalement->getCodeSuivi(), 'from' => $fromEmail]
+                        );
+                    }
                 }
 
                 return $this->render('front/suivi_signalement.html.twig', [
