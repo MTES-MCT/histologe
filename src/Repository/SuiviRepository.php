@@ -307,4 +307,18 @@ class SuiviRepository extends ServiceEntityRepository
 
         return $statement->executeQuery($parameters)->fetchFirstColumn();
     }
+
+    /**
+     * @return Suivi[]
+     */
+    public function findSuiviByDescription(Signalement $signalement, string $description): array
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->where('s.signalement = :signalement')
+            ->andWhere('s.description LIKE :description')
+            ->setParameter('signalement', $signalement)
+            ->setParameter('description', '%'.$description.'%');
+
+        return $qb->getQuery()->getResult();
+    }
 }
