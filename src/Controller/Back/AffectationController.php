@@ -13,6 +13,7 @@ use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Messenger\EsaboraBus;
 use App\Repository\PartnerRepository;
+use App\Repository\SuiviRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -84,6 +85,7 @@ class AffectationController extends AbstractController
         Affectation $affectation,
         User $user,
         Request $request,
+        SuiviRepository $suiviRepository,
     ): Response {
         $this->denyAccessUnlessGranted('ASSIGN_ANSWER', $affectation);
         if ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), $request->get('_token'))
@@ -91,12 +93,13 @@ class AffectationController extends AbstractController
         ) {
             $status = isset($response['accept']) ? Affectation::STATUS_ACCEPTED : Affectation::STATUS_REFUSED;
             $affectation = $this->affectationManager->updateAffectation($affectation, $user, $status);
-            $affectationAccepted = $signalement->getAffectations()->filter(function (Affectation $affectation) {
-                return Affectation::STATUS_ACCEPTED === $affectation->getStatut();
-            });
 
-            if (1 === $affectationAccepted->count()
-                && Affectation::STATUS_ACCEPTED === $affectation->getStatut()
+            $suiviAffectationAccepted = $suiviRepository->findSuiviByDescription(
+                $signalement,
+                '<p>Suite à votre signalement, le ou les partenaires compétents'
+            );
+            if (Affectation::STATUS_ACCEPTED === $affectation->getStatut()
+                && empty($suiviAffectationAccepted)
             ) {
                 $adminEmail = $parameterBag->get('user_system_email');
                 $adminUser = $userManager->findOneBy(['email' => $adminEmail]);
