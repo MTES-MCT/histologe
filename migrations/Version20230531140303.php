@@ -24,7 +24,7 @@ final class Version20230531140303 extends AbstractMigration implements Container
         $adminEmail = $this->container->getParameter('user_system_email');
         $user = $this->connection->fetchAssociative('SELECT id FROM user WHERE email = \''.$adminEmail.'\'');
         if ($user) {
-            $request = 'UPDATE suivi SET created_by_id = \''.$user['id'].'\' AND type = \''.Suivi::TYPE_AUTO
+            $request = 'UPDATE suivi SET created_by_id = \''.$user['id'].'\' , type = \''.Suivi::TYPE_AUTO
             .'\' WHERE description LIKE \'%<p>Suite à votre signalement, le ou les partenaires compétents%\'';
             $this->addSql($request);
         }
