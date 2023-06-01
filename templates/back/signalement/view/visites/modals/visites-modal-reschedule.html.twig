@@ -51,7 +51,15 @@
                                         </p>
                                         <select name="visite-reschedule[partner]" class="fr-select">
                                             {% for partner in partnersCanVisite %}
-                                                <option value="{{ partner.id }}" {% if partner.id is same as intervention.partner.id %}selected="selected"{% endif %}>{{ partner.nom|upper }}</option>
+                                                {% set addPartner = true %}
+                                                {% for pendingVisite in pendingVisites %}
+                                                    {% if pendingVisite.partner.id is same as partner.id and partner.id is not same as intervention.partner.id %}
+                                                        {% set addPartner = false %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                {% if addPartner %}
+                                                    <option value="{{ partner.id }}" {% if partner.id is same as intervention.partner.id %}selected="selected"{% endif %}>{{ partner.nom|upper }}</option>
+                                                {% endif %}
                                             {% endfor %}
                                         </select>
                                     </fieldset>
