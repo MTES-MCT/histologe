@@ -49,17 +49,25 @@
                                         <p id="signalement-reschedule-visite-partner-error" class="fr-error-text fr-hidden fr-my-3v">
                                             Veuillez sélectionner le partenaire en charge de la visite
                                         </p>
-                                        <select name="visite-reschedule[partner]" class="fr-select">
+                                        <p id="signalement-reschedule-visite-partner-double-error" class="fr-error-text fr-hidden fr-my-3v">
+                                            Ce partenaire a déjà une visite en cours.
+                                            Veuillez terminer ou annuler la visite ou sélectionner un autre partenaire.
+                                        </p>
+                                        <select name="visite-reschedule[partner]" class="fr-select visite-partner-select">
                                             {% for partner in partnersCanVisite %}
-                                                {% set addPartner = true %}
+                                                {% set alertPartner = false %}
                                                 {% for pendingVisite in pendingVisites %}
                                                     {% if pendingVisite.partner.id is same as partner.id and partner.id is not same as intervention.partner.id %}
-                                                        {% set addPartner = false %}
+                                                        {% set alertPartner = true %}
                                                     {% endif %}
                                                 {% endfor %}
-                                                {% if addPartner %}
-                                                    <option value="{{ partner.id }}" {% if partner.id is same as intervention.partner.id %}selected="selected"{% endif %}>{{ partner.nom|upper }}</option>
-                                                {% endif %}
+                                                <option
+                                                    value="{{ partner.id }}"
+                                                    {% if partner.id is same as intervention.partner.id %}selected="selected"{% endif %}
+                                                    class="{{ alertPartner ? 'alert-partner' : '' }}"
+                                                    >
+                                                    {{ partner.nom|upper }}
+                                                </option>
                                             {% endfor %}
                                         </select>
                                     </fieldset>
