@@ -71,8 +71,8 @@ class BackSignalementControllerTest extends WebTestCase
         $client->loginUser($user);
         $client->request('GET', $route);
         $this->assertResponseIsSuccessful($signalement->getId());
-        $this->assertSelectorTextContains('#accordion-nde',
-            'Consommation'
+        $this->assertSelectorTextContains('#title-nde',
+            'Non décence énergétique'
         );
     }
 

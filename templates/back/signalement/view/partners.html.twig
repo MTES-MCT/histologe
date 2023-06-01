@@ -1,4 +1,5 @@
-{% if not needValidation %}
+
+{% if is_granted('ROLE_ADMIN_TERRITORY') and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') and not needValidation %}
     <hr class="fr-mt-3w fr-hr blue-border">
 
     <div class="fr-grid-row">
@@ -61,12 +62,10 @@
                                 {% endif %}
                             </div>
                             <div class="fr-col-2 fr-text--right">
-                                {% if is_granted('ROLE_ADMIN_TERRITORY') and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') and not needValidation %}
                                 <button title="Désaffecter le partenaire"
                                         data-delete="{{ path('back_signalement_remove_partner',{uuid:signalement.uuid,affectation:affectation.id}) }}"
                                         data-token="{{ csrf_token('signalement_remove_partner_'~signalement.id) }}"
                                         class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line partner-row-delete"></button>
-                                {% endif %}
                             </div>
                         </div>
                     </div>
