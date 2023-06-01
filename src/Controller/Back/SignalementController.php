@@ -21,6 +21,7 @@ use App\Manager\SignalementManager;
 use App\Repository\AffectationRepository;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
+use App\Repository\InterventionRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
@@ -51,6 +52,7 @@ class SignalementController extends AbstractController
         SignalementQualificationRepository $signalementQualificationRepository,
         CriticiteRepository $criticiteRepository,
         AffectationRepository $affectationRepository,
+        InterventionRepository $interventionRepository,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -182,6 +184,7 @@ class SignalementController extends AbstractController
             'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
             'listQualificationStatusesLabelsConfirmed' => $listQualificationStatusesLabelsConfirmed,
             'partnersCanVisite' => $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement),
+            'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
         ]);
     }
 

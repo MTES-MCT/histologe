@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Enum\InterventionType;
 use App\Entity\Intervention;
+use App\Entity\Signalement;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -66,5 +67,20 @@ class InterventionRepository extends ServiceEntityRepository
     public function getPastVisits(): array
     {
         return $this->getVisitsToNotify(self::NB_DAYS_DELAY_NOTIFICATION_VISIT_PAST);
+    }
+
+    public function getPendingVisitesForSignalement(Signalement $signalement): array
+    {
+        $queryBuilder = $this->createQueryBuilder('i');
+
+        return $queryBuilder
+            ->where('i.status = :planned')
+            ->setParameter('planned', Intervention::STATUS_PLANNED)
+            ->andWhere('i.type = :visite')
+            ->setParameter('visite', InterventionType::VISITE->name)
+            ->andWhere('i.signalement = :signalement')
+            ->setParameter('signalement', $signalement)
+            ->getQuery()
+            ->getResult();
     }
 }
