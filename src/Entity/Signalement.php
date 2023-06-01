@@ -539,7 +539,7 @@ class Signalement
 
     public function setNatureLogement(?string $natureLogement): self
     {
-        $this->natureLogement = mb_strtolower($natureLogement);
+        $this->natureLogement = null !== $natureLogement ? mb_strtolower($natureLogement) : null;
 
         return $this;
     }
