@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Factory\Esabora;
 
 use App\Entity\Enum\PartnerType;
 use App\Factory\Esabora\DossierMessageSISHFactory;
+use App\Repository\SuiviRepository;
 use App\Service\Esabora\AbstractEsaboraService;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
@@ -18,6 +19,12 @@ class DossierMessageSISHFactoryTest extends TestCase
 
     public function testDossierMessageFactoryIsFullyCreated()
     {
+        $suiviRepositoryMock = $this->createMock(SuiviRepository::class);
+        $suiviRepositoryMock
+            ->expects($this->once())
+            ->method('findFirstSuiviBy')
+            ->willReturn($this->getSuiviPartner());
+
         $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
         $uploadHandlerServiceMock
             ->expects($this->exactly(2))
@@ -38,6 +45,7 @@ class DossierMessageSISHFactoryTest extends TestCase
             ->willReturn('/bo/signalements/00000000-0000-0000-2022-000000000001');
 
         $dossierMessageFactory = new DossierMessageSISHFactory(
+            $suiviRepositoryMock,
             $uploadHandlerServiceMock,
             $parameterBagMock,
             $urlGeneratorMock
