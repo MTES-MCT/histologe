@@ -7,6 +7,7 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
+use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\NotificationRepository;
@@ -316,6 +317,21 @@ class SearchFilterService
 
         if (!empty($filters['closing_suggestion'])) {
             if (\in_array('NO_SUIVI_AFTER_3_RELANCES', $filters['closing_suggestion'])) {
+                $connection = $this->entityManager->getConnection();
+                $parameters = [
+                    'day_period' => 0,
+                    'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
+                    'status_need_validation' => Signalement::STATUS_NEED_VALIDATION,
+                    'status_archived' => Signalement::STATUS_ARCHIVED,
+                    'status_closed' => Signalement::STATUS_CLOSED,
+                    'status_refused' => Signalement::STATUS_REFUSED,
+                    'nb_suivi_technical' => 3,
+                ];
+                $sql = $this->suiviRepository->getSignalements3LastSuivisTechnicalsQuery(null, null, false);
+                $statement = $connection->prepare($sql);
+
+                $qb->andWhere('s.id IN (:subQuery)')
+                    ->setParameter('subQuery', $statement->executeQuery($parameters)->fetchFirstColumn());
             }
 
             if (\in_array('USAGER_ABANDON_PROCEDURE', $filters['closing_suggestion'])) {

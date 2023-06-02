@@ -316,7 +316,7 @@ class SuiviRepository extends ServiceEntityRepository
         return (int) $statement->executeQuery($parameters)->fetchOne();
     }
 
-    private function getSignalements3LastSuivisTechnicalsQuery(
+    public function getSignalements3LastSuivisTechnicalsQuery(
         ?Territory $territory = null,
         ?Partner $partner = null,
         bool $excludeUsagerAbandonProcedure = true,
