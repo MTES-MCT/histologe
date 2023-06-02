@@ -84,6 +84,15 @@ class EsaboraManager
                     $description = 'refusé via Esabora';
                 }
                 break;
+            case EsaboraStatus::ESABORA_REJECTED->value:
+                if (Affectation::STATUS_REFUSED !== $currentStatus) {
+                    $this->affectationManager->updateAffectation($affectation, $user, Affectation::STATUS_REFUSED);
+                    $description = sprintf(
+                        'refusé via Esabora pour motif suivant: %s',
+                        $dossierResponse->getSasCauseRefus()
+                    );
+                }
+                break;
         }
 
         return $description;

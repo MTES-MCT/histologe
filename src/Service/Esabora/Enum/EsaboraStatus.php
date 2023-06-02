@@ -9,4 +9,5 @@ enum EsaboraStatus: string
     case ESABORA_IN_PROGRESS = 'en cours';
     case ESABORA_CLOSED = 'terminé';
     case ESABORA_REFUSED = 'Non importé';
+    case ESABORA_REJECTED = 'Rejeté';
 }
