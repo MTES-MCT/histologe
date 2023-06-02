@@ -35,7 +35,7 @@ class SearchFilterService
         'cities',
         'partners',
         'closed_affectation',
-        'closing_suggestion',
+        'relances_usager',
         'criteres',
         'allocs',
         'housetypes',
@@ -137,9 +137,9 @@ class SearchFilterService
                 $this->filters['closed_affectation'] = [$request->query->get('closed_affectation')];
             }
 
-            if ($request->query->get('closing_suggestion')) {
+            if ($request->query->get('relances_usager')) {
                 ++$this->countActive;
-                $this->filters['closing_suggestion'] = [$request->query->get('closing_suggestion')];
+                $this->filters['relances_usager'] = [$request->query->get('relances_usager')];
             }
 
             if ($request->query->get('nde')) {
@@ -316,8 +316,8 @@ class SearchFilterService
             }
         }
 
-        if (!empty($filters['closing_suggestion'])) {
-            if (\in_array('NO_SUIVI_AFTER_3_RELANCES', $filters['closing_suggestion'])) {
+        if (!empty($filters['relances_usager'])) {
+            if (\in_array('NO_SUIVI_AFTER_3_RELANCES', $filters['relances_usager'])) {
                 $connection = $this->entityManager->getConnection();
                 $parameters = [
                     'day_period' => 0,
@@ -329,23 +329,15 @@ class SearchFilterService
                     'nb_suivi_technical' => 3,
                 ];
 
-                // $request = $this->getRequest();
                 /** @var User $user */
                 $user = $this->security->getUser();
-
-                // TODO : admin partner ?
-                $partner = \in_array(User::ROLE_USER_PARTNER, $user->getRoles()) ? $user->getPartner() : null;
-
-                // if (null !== $territory) {
-                //     $parameters['territory_id'] = $territory->getId();
-                // }
+                $partner = ($user->isPartnerAdmin() || $user->isUserPartner()) ? $user->getPartner() : null;
                 if (null !== $partner) {
                     $parameters['partner_id'] = $partner->getId();
-                    // $parameters['status_wait'] = AffectationStatus::STATUS_WAIT->value;
                     $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
                 }
 
-                $sql = $this->suiviRepository->getSignalements3LastSuivisTechnicalsQuery(null, $partner, false);
+                $sql = $this->suiviRepository->getSignalementsLastSuivisTechnicalsQuery(null, $partner, false);
                 $statement = $connection->prepare($sql);
 
                 $qb->andWhere('s.id IN (:subQuery)')

@@ -54,7 +54,7 @@ export const store = {
       count: 0,
       link: undefined
     },
-    noAnswersAfterRelances: {
+    noSuiviAfter3Relances: {
       count: 0,
       link: undefined
     },

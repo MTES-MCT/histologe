@@ -48,12 +48,12 @@ parameters:
         link: 'back_index'
         params:
           statut: 1
-      cardSansSuiviApres3Relances:
+      cardNoSuiviAfter3Relances:
         label: "Suggestion de clôture"
         roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_ADMIN_PARTNER, ROLE_USER_PARTNER]
         link: 'back_index'
         params:
-          closing_suggestion: 'NO_SUIVI_AFTER_3_RELANCES'
+          relances_usager: 'NO_SUIVI_AFTER_3_RELANCES'
           sort: 'lastSuiviAt'
       cardTousLesSignalements:
         label: "Tous les signalements"

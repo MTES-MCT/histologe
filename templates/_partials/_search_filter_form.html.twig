@@ -176,17 +176,17 @@
                                     </div>
                                 {% endif %}
                                 <div class="fr-col-12 fr-col-md-6">
-                                    <label class="fr-label" for="bo-filters-closing_suggestion"><strong>Filtrer par
+                                    <label class="fr-label" for="bo-filters-relances_usager"><strong>Filtrer par
                                             relance  usager</strong></label>
-                                    <select id="bo-filters-closing_suggestion" class="fr-select" onchange="setBadge(this)">
+                                    <select id="bo-filters-relances_usager" class="fr-select" onchange="setBadge(this)">
                                         <option value="">TOUS</option>
                                         <option value="NO_SUIVI_AFTER_3_RELANCES">3 relances sans réponse usager</option>
                                     </select>
                                     <div class="selected__value">
                                         <div class="fr-pb-1v fr-border--bottom--orange"></div>
                                         {% set visible = 'fr-hidden' %}
-                                        {% for suggestion in filters.closing_suggestion %}
-                                            <input type="hidden" name="bo-filters-closing_suggestion[]" value="{{ suggestion }}">
+                                        {% for suggestion in filters.relances_usager %}
+                                            <input type="hidden" name="bo-filters-relances_usager[]" value="{{ suggestion }}">
                                             <span class="fr-badge fr-badge--success fr-m-1v" data-value="{{ suggestion }}"
                                                     data-removable="true">{{ suggestion == 'NO_SUIVI_AFTER_3_RELANCES' ? '3 relances sans réponse usager' }}</span>
                                         {% else %}

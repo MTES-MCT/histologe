@@ -258,13 +258,12 @@ class SuiviRepository extends ServiceEntityRepository
         return $statement->executeQuery($parameters)->fetchFirstColumn();
     }
 
-    public function findSignalementsThirdRelance(
+    public function findSignalementsForThirdRelance(
         int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
     ): array {
         $connection = $this->getEntityManager()->getConnection();
 
         $parameters = [
-            // 'day_period' => $period,
             'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
             'status_need_validation' => Signalement::STATUS_NEED_VALIDATION,
             'status_closed' => Signalement::STATUS_CLOSED,
@@ -273,7 +272,7 @@ class SuiviRepository extends ServiceEntityRepository
             'nb_suivi_technical' => 2,
         ];
 
-        $sql = $this->getSignalements3LastSuivisTechnicalsQuery(null, null, true, $period);
+        $sql = $this->getSignalementsLastSuivisTechnicalsQuery(null, null, true, $period);
 
         $statement = $connection->prepare($sql);
 
@@ -283,13 +282,12 @@ class SuiviRepository extends ServiceEntityRepository
     /**
      * @throws Exception
      */
-    public function countSignalement3LastSuivisTechnicals(
+    public function countSignalementNoSuiviAfter3Relances(
         ?Territory $territory = null,
         ?Partner $partner = null,
     ): int {
         $connection = $this->getEntityManager()->getConnection();
         $parameters = [
-            // 'day_period' => 0,
             'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
             'status_need_validation' => Signalement::STATUS_NEED_VALIDATION,
             'status_archived' => Signalement::STATUS_ARCHIVED,
@@ -303,20 +301,19 @@ class SuiviRepository extends ServiceEntityRepository
         }
         if (null !== $partner) {
             $parameters['partner_id'] = $partner->getId();
-            // $parameters['status_wait'] = AffectationStatus::STATUS_WAIT->value;
             $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
         }
 
         $sql = 'SELECT COUNT(*) as count_signalement
                 FROM ('.
-                        $this->getSignalements3LastSuivisTechnicalsQuery($territory, $partner, false)
+                        $this->getSignalementsLastSuivisTechnicalsQuery($territory, $partner, false)
                 .') as countSignalementSuivi';
         $statement = $connection->prepare($sql);
 
         return (int) $statement->executeQuery($parameters)->fetchOne();
     }
 
-    public function getSignalements3LastSuivisTechnicalsQuery(
+    public function getSignalementsLastSuivisTechnicalsQuery(
         ?Territory $territory = null,
         ?Partner $partner = null,
         bool $excludeUsagerAbandonProcedure = true,
@@ -326,19 +323,20 @@ class SuiviRepository extends ServiceEntityRepository
         = $whereLastSuiviDelay = '';
 
         if (null !== $territory) {
-            $whereTerritory = 'AND s.territory_id = :territory_id';
+            $whereTerritory = 'AND s.territory_id = :territory_id ';
         }
 
         if (null != $partner) {
-            $wherePartner = 'AND a.partner_id = :partner_id';
-            $innerPartnerJoin = 'INNER JOIN affectation a ON a.signalement_id = su.signalement_id AND a.statut = :status_accepted';
+            $wherePartner = 'AND a.partner_id = :partner_id ';
+            $innerPartnerJoin = 'INNER JOIN affectation a
+            ON a.signalement_id = su.signalement_id AND a.statut = :status_accepted ';
         }
 
         if ($excludeUsagerAbandonProcedure) {
-            $whereExcludeUsagerAbandonProcedure = 'AND s.is_usager_abandon_procedure != 1';
+            $whereExcludeUsagerAbandonProcedure = 'AND s.is_usager_abandon_procedure != 1 ';
         }
         if ($dayPeriod > 0) {
-            $whereLastSuiviDelay = 'AND su.max_date_suivi < DATE_SUB(NOW(), INTERVAL '.$dayPeriod.' DAY)';
+            $whereLastSuiviDelay = 'AND su.max_date_suivi < DATE_SUB(NOW(), INTERVAL '.$dayPeriod.' DAY) ';
         }
 
         return 'SELECT s.id
@@ -369,11 +367,11 @@ class SuiviRepository extends ServiceEntityRepository
                         '.$innerPartnerJoin.'
                 WHERE t2.signalement_id IS NULL
                 AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
-                AND s.is_imported != 1
-                '.$whereLastSuiviDelay.'
-                '.$whereExcludeUsagerAbandonProcedure.'
-                '.$whereTerritory.'
-                '.$wherePartner;
+                AND s.is_imported != 1 '
+                .$whereLastSuiviDelay
+                .$whereExcludeUsagerAbandonProcedure
+                .$whereTerritory
+                .$wherePartner;
     }
 
     /**

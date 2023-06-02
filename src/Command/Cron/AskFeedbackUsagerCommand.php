@@ -90,7 +90,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
     protected function processSignalementsThirdRelance(
         InputInterface $input,
     ): int {
-        $signalementsIds = $this->suiviRepository->findSignalementsThirdRelance();
+        $signalementsIds = $this->suiviRepository->findSignalementsForThirdRelance();
         $nbSignalements = $this->sendMailToUsagers(
             $input,
             $signalementsIds,

@@ -86,12 +86,12 @@
         <div class="fr-card__body">
           <ul class="fr-badges-group">
             <li>
-                <p class="fr-badge fr-badge--no-icon fr-badge--info">{{ getBadgeText(sharedState.noAnswersAfterRelances.count, 'aucun', 'signalement', 'signalements') }}</p>
+                <p class="fr-badge fr-badge--no-icon fr-badge--info">{{ getBadgeText(sharedState.noSuiviAfter3Relances.count, 'aucun', 'signalement', 'signalements') }}</p>
             </li>
           </ul>
           <div class="fr-card__content">
             <h3 class="fr-card__title">
-              <a :href=getSanitizedUrl(sharedState.noAnswersAfterRelances.link)>Suggestion de clôture</a>
+              <a :href=getSanitizedUrl(sharedState.noSuiviAfter3Relances.link)>Suggestion de clôture</a>
             </h3>
             <p class="fr-card__desc">
               Retrouvez et clôturez les signalements pouvant correspondre à un abandon de procédure par l'usager.

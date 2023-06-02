@@ -174,8 +174,8 @@ export default defineComponent({
       this.sharedState.nonDecenceSignalements.linkNew = dataWidget.cardSignalementsNouveauxNonDecence?.link
       this.sharedState.nonDecenceSignalements.countActive = dataWidget.cardSignalementsEnCoursNonDecence && dataWidget.cardSignalementsEnCoursNonDecence.count != null ? dataWidget.cardSignalementsEnCoursNonDecence?.count : 0
       this.sharedState.nonDecenceSignalements.linkActive = dataWidget.cardSignalementsEnCoursNonDecence?.link
-      this.sharedState.noAnswersAfterRelances.count = dataWidget.cardSansSuiviApres3Relances && dataWidget.cardSansSuiviApres3Relances.count != null ? dataWidget.cardSansSuiviApres3Relances?.count : 0
-      this.sharedState.noAnswersAfterRelances.link = dataWidget.cardSansSuiviApres3Relances?.link
+      this.sharedState.noSuiviAfter3Relances.count = dataWidget.cardNoSuiviAfter3Relances?.count ?? 0
+      this.sharedState.noSuiviAfter3Relances.link = dataWidget.cardNoSuiviAfter3Relances?.link
     },
     handleAffectationPartner (requestResponse: any) {
       this.countTablesLoaded++
