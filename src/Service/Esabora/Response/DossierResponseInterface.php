@@ -9,4 +9,6 @@ interface DossierResponseInterface
     public function getErrorReason(): ?string;
 
     public function getSasEtat(): ?string;
+
+    public function getSasCauseRefus(): ?string;
 }

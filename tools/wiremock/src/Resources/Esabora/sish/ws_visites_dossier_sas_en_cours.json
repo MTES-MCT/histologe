@@ -5,13 +5,9 @@
     "Sas_LogicielProvenance",
     "Reference_Dossier",
     "SISH_DossNum",
-    "SISH_VisiteDateEnreg",
     "SISH_VisiteDate",
-    "SISH_VisiteObservations",
     "SISH_VisiteNum",
     "SISH_VisiteType",
-    "SISH_VisiteStatut",
-    "SISH_VisiteEtat",
     "SISH_VisitePar"
   ],
   "keyList": [
@@ -25,12 +21,8 @@
         "00000000-0000-0000-2023-000000000012",
         "2023/DD13/0011",
         "05/05/2023",
-        "04/05/2023 10:16",
-        "Tout est OK",
         "2023/DD13/00664-03/05/2023 10:16",
         "Visite de contrôle",
-        "",
-        "En cours",
         "SH"
       ],
       "keyDataList": [
@@ -44,12 +36,8 @@
         "00000000-0000-0000-2023-000000000012",
         "2023/DD13/0011",
         "14/05/2023",
-        "13/05/2023 10:16",
-        null,
         "2023/DD13/00665-13/05/2023 10:16",
         "Visite",
-        "Effectuée",
-        "En cours",
         "ARS"
       ],
       "keyDataList": [

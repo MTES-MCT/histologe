@@ -40,4 +40,9 @@ class DossierPushSISHResponse implements DossierResponseInterface
     {
         return null;
     }
+
+    public function getSasCauseRefus(): ?string
+    {
+        return null;
+    }
 }

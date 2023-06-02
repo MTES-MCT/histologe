@@ -22,20 +22,10 @@ class DossierVisiteSISHCollectionResponseTest extends TestCase
             $this->assertEquals('2023/DD13/0010', $dossierVisiteSISH->getDossNum());
             $this->assertInstanceOf(
                 \DateTimeImmutable::class,
-                \DateTimeImmutable::createFromFormat('d/m/Y', $dossierVisiteSISH->getVisiteDateEnreg())
-            );
-            $this->assertInstanceOf(
-                \DateTimeImmutable::class,
                 \DateTimeImmutable::createFromFormat('d/m/Y H:i', $dossierVisiteSISH->getVisiteDate())
-            );
-            $this->assertTrue(
-                'Tout est OK' === $dossierVisiteSISH->getVisiteObservations()
-                || null === $dossierVisiteSISH->getVisiteObservations()
             );
             $this->assertNotNull($dossierVisiteSISH->getVisiteNum());
             $this->assertStringContainsString('Visite', $dossierVisiteSISH->getVisiteType());
-            $this->assertStringContainsString('Effectuée', $dossierVisiteSISH->getVisiteStatut());
-            $this->assertEquals('terminé', $dossierVisiteSISH->getVisiteEtat());
             $this->assertTrue(\in_array($dossierVisiteSISH->getVisitePar(), ['ARS', 'SCHS', 'SH', 'STH']));
         }
 
