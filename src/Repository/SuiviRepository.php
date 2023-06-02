@@ -264,7 +264,7 @@ class SuiviRepository extends ServiceEntityRepository
         $connection = $this->getEntityManager()->getConnection();
 
         $parameters = [
-            'day_period' => $period,
+            // 'day_period' => $period,
             'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
             'status_need_validation' => Signalement::STATUS_NEED_VALIDATION,
             'status_closed' => Signalement::STATUS_CLOSED,
@@ -273,7 +273,7 @@ class SuiviRepository extends ServiceEntityRepository
             'nb_suivi_technical' => 2,
         ];
 
-        $sql = $this->getSignalements3LastSuivisTechnicalsQuery(null, null, true);
+        $sql = $this->getSignalements3LastSuivisTechnicalsQuery(null, null, true, $period);
 
         $statement = $connection->prepare($sql);
 
@@ -289,7 +289,7 @@ class SuiviRepository extends ServiceEntityRepository
     ): int {
         $connection = $this->getEntityManager()->getConnection();
         $parameters = [
-            'day_period' => 0,
+            // 'day_period' => 0,
             'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
             'status_need_validation' => Signalement::STATUS_NEED_VALIDATION,
             'status_archived' => Signalement::STATUS_ARCHIVED,
@@ -303,7 +303,7 @@ class SuiviRepository extends ServiceEntityRepository
         }
         if (null !== $partner) {
             $parameters['partner_id'] = $partner->getId();
-            $parameters['status_wait'] = AffectationStatus::STATUS_WAIT->value;
+            // $parameters['status_wait'] = AffectationStatus::STATUS_WAIT->value;
             $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
         }
 
@@ -320,8 +320,10 @@ class SuiviRepository extends ServiceEntityRepository
         ?Territory $territory = null,
         ?Partner $partner = null,
         bool $excludeUsagerAbandonProcedure = true,
+        int $dayPeriod = 0
     ): string {
-        $whereTerritory = $wherePartner = $innerPartnerJoin = $whereExcludeUsagerAbandonProcedure = '';
+        $whereTerritory = $wherePartner = $innerPartnerJoin = $whereExcludeUsagerAbandonProcedure
+        = $whereLastSuiviDelay = '';
 
         if (null !== $territory) {
             $whereTerritory = 'AND s.territory_id = :territory_id';
@@ -329,11 +331,14 @@ class SuiviRepository extends ServiceEntityRepository
 
         if (null != $partner) {
             $wherePartner = 'AND a.partner_id = :partner_id';
-            $innerPartnerJoin = 'INNER JOIN affectation a ON a.signalement_id = su.signalement_id AND a.statut IN (:status_wait, :status_accepted)';
+            $innerPartnerJoin = 'INNER JOIN affectation a ON a.signalement_id = su.signalement_id AND a.statut = :status_accepted';
         }
 
         if ($excludeUsagerAbandonProcedure) {
             $whereExcludeUsagerAbandonProcedure = 'AND s.is_usager_abandon_procedure != 1';
+        }
+        if ($dayPeriod > 0) {
+            $whereLastSuiviDelay = 'AND su.max_date_suivi < DATE_SUB(NOW(), INTERVAL '.$dayPeriod.' DAY)';
         }
 
         return 'SELECT s.id
@@ -363,9 +368,9 @@ class SuiviRepository extends ServiceEntityRepository
                 ) t2 ON s.id = t2.signalement_id
                         '.$innerPartnerJoin.'
                 WHERE t2.signalement_id IS NULL
-                AND su.max_date_suivi < DATE_SUB(NOW(), INTERVAL :day_period DAY)
                 AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
                 AND s.is_imported != 1
+                '.$whereLastSuiviDelay.'
                 '.$whereExcludeUsagerAbandonProcedure.'
                 '.$whereTerritory.'
                 '.$wherePartner;

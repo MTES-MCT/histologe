@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
@@ -327,14 +328,28 @@ class SearchFilterService
                     'status_refused' => Signalement::STATUS_REFUSED,
                     'nb_suivi_technical' => 3,
                 ];
-                $sql = $this->suiviRepository->getSignalements3LastSuivisTechnicalsQuery(null, null, false);
+
+                // $request = $this->getRequest();
+                /** @var User $user */
+                $user = $this->security->getUser();
+
+                // TODO : admin partner ?
+                $partner = \in_array(User::ROLE_USER_PARTNER, $user->getRoles()) ? $user->getPartner() : null;
+
+                // if (null !== $territory) {
+                //     $parameters['territory_id'] = $territory->getId();
+                // }
+                if (null !== $partner) {
+                    $parameters['partner_id'] = $partner->getId();
+                    // $parameters['status_wait'] = AffectationStatus::STATUS_WAIT->value;
+                    $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
+                }
+
+                $sql = $this->suiviRepository->getSignalements3LastSuivisTechnicalsQuery(null, $partner, false);
                 $statement = $connection->prepare($sql);
 
                 $qb->andWhere('s.id IN (:subQuery)')
                     ->setParameter('subQuery', $statement->executeQuery($parameters)->fetchFirstColumn());
-            }
-
-            if (\in_array('USAGER_ABANDON_PROCEDURE', $filters['closing_suggestion'])) {
             }
         }
         if (!empty($filters['tags'])) {
