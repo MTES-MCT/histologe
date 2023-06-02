@@ -10,6 +10,7 @@ class CountSuivi
         private ?int $usager = null,
         private ?int $signalementNewSuivi = null,
         private ?int $signalementNoSuivi = null,
+        private ?int $noSuiviAfterRelances = null,
     ) {
     }
 
@@ -36,5 +37,10 @@ class CountSuivi
     public function getSignalementNoSuivi(): ?int
     {
         return $this->signalementNoSuivi;
+    }
+
+    public function getNoSuiviAfterRelances(): ?int
+    {
+        return $this->noSuiviAfterRelances;
     }
 }

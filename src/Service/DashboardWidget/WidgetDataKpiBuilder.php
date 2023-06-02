@@ -129,13 +129,18 @@ class WidgetDataKpiBuilder
             $this->territory,
             $this->getPartnerFromUser($user)
         );
+        $countSignalementNoSuiviAfterRelance = $this->suiviRepository->countSignalement3LastSuivisTechnicals(
+            $this->territory,
+            $this->getPartnerFromUser($user)
+        );
 
         $this->countSuivi = new CountSuivi(
             $averageSuivi,
             $countSuiviPartner,
             $countSuiviUsager,
             $countSignalementNewSuivi,
-            $countSignalementNoSuivi
+            $countSignalementNoSuivi,
+            $countSignalementNoSuiviAfterRelance
         );
 
         return $this;
@@ -200,7 +205,8 @@ class WidgetDataKpiBuilder
             ->addWidgetCard('cardSignalementsNouveauxNonDecence', $this->countSignalement->getNewNDE())
             ->addWidgetCard('cardSignalementsEnCoursNonDecence', $this->countSignalement->getCurrentNDE())
             ->addWidgetCard('cardNouveauxSuivis', $this->countSuivi->getSignalementNewSuivi())
-            ->addWidgetCard('cardSansSuivi', $this->countSuivi->getSignalementNoSuivi());
+            ->addWidgetCard('cardSansSuivi', $this->countSuivi->getSignalementNoSuivi())
+            ->addWidgetCard('cardSansSuiviApres3Relances', $this->countSuivi->getNoSuiviAfterRelances());
 
         return new WidgetDataKpi(
             $this->widgetCards,

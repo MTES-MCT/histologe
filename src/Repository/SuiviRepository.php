@@ -270,41 +270,104 @@ class SuiviRepository extends ServiceEntityRepository
             'status_closed' => Signalement::STATUS_CLOSED,
             'status_archived' => Signalement::STATUS_ARCHIVED,
             'status_refused' => Signalement::STATUS_REFUSED,
+            'nb_suivi_technical' => 2,
         ];
 
-        $sql = 'SELECT s.id
-        FROM signalement s
-        INNER JOIN (
-            SELECT signalement_id, MAX(created_at) AS max_date_suivi
-            FROM suivi
-            GROUP BY signalement_id
-        ) su ON s.id = su.signalement_id
-        INNER JOIN (
-          SELECT su.signalement_id
-          FROM suivi su
-          WHERE su.type = :type_suivi_technical
-          GROUP BY su.signalement_id
-          HAVING COUNT(*) >= 2
-        ) t1 ON s.id = t1.signalement_id
-        LEFT JOIN (
-          SELECT su.signalement_id
-          FROM suivi su
-          WHERE su.type <> :type_suivi_technical
-            AND su.created_at > (
-              SELECT MIN(su2.created_at)
-              FROM suivi su2
-              WHERE su2.signalement_id = su.signalement_id
-                AND su2.type = :type_suivi_technical
-            )
-        ) t2 ON s.id = t2.signalement_id
-        WHERE t2.signalement_id IS NULL
-        AND su.max_date_suivi < DATE_SUB(NOW(), INTERVAL :day_period DAY)
-        AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
-        AND s.is_imported != 1
-        AND s.is_usager_abandon_procedure != 1';
+        $sql = $this->getSignalements3LastSuivisTechnicalsQuery(null, null, true);
 
         $statement = $connection->prepare($sql);
 
         return $statement->executeQuery($parameters)->fetchFirstColumn();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function countSignalement3LastSuivisTechnicals(
+        ?Territory $territory = null,
+        ?Partner $partner = null,
+    ): int {
+        $connection = $this->getEntityManager()->getConnection();
+        $parameters = [
+            'day_period' => 0,
+            'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
+            'status_need_validation' => Signalement::STATUS_NEED_VALIDATION,
+            'status_archived' => Signalement::STATUS_ARCHIVED,
+            'status_closed' => Signalement::STATUS_CLOSED,
+            'status_refused' => Signalement::STATUS_REFUSED,
+            'nb_suivi_technical' => 3,
+        ];
+
+        if (null !== $territory) {
+            $parameters['territory_id'] = $territory->getId();
+        }
+        if (null !== $partner) {
+            $parameters['partner_id'] = $partner->getId();
+            $parameters['status_wait'] = AffectationStatus::STATUS_WAIT->value;
+            $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
+        }
+
+        $sql = 'SELECT COUNT(*) as count_signalement
+                FROM ('.
+                        $this->getSignalements3LastSuivisTechnicalsQuery($territory, $partner, false)
+                .') as countSignalementSuivi';
+        $statement = $connection->prepare($sql);
+
+        return (int) $statement->executeQuery($parameters)->fetchOne();
+    }
+
+    private function getSignalements3LastSuivisTechnicalsQuery(
+        ?Territory $territory = null,
+        ?Partner $partner = null,
+        bool $excludeUsagerAbandonProcedure = true,
+    ): string {
+        $whereTerritory = $wherePartner = $innerPartnerJoin = $whereExcludeUsagerAbandonProcedure = '';
+
+        if (null !== $territory) {
+            $whereTerritory = 'AND s.territory_id = :territory_id';
+        }
+
+        if (null != $partner) {
+            $wherePartner = 'AND a.partner_id = :partner_id';
+            $innerPartnerJoin = 'INNER JOIN affectation a ON a.signalement_id = su.signalement_id AND a.statut IN (:status_wait, :status_accepted)';
+        }
+
+        if ($excludeUsagerAbandonProcedure) {
+            $whereExcludeUsagerAbandonProcedure = 'AND s.is_usager_abandon_procedure != 1';
+        }
+
+        return 'SELECT s.id
+                FROM signalement s
+                INNER JOIN (
+                    SELECT signalement_id, MAX(created_at) AS max_date_suivi
+                    FROM suivi
+                    GROUP BY signalement_id
+                ) su ON s.id = su.signalement_id
+                INNER JOIN (
+                SELECT su.signalement_id
+                FROM suivi su
+                WHERE su.type = :type_suivi_technical
+                GROUP BY su.signalement_id
+                HAVING COUNT(*) >= :nb_suivi_technical
+                ) t1 ON s.id = t1.signalement_id
+                LEFT JOIN (
+                SELECT su.signalement_id
+                FROM suivi su
+                WHERE su.type <> :type_suivi_technical
+                    AND su.created_at > (
+                    SELECT MIN(su2.created_at)
+                    FROM suivi su2
+                    WHERE su2.signalement_id = su.signalement_id
+                        AND su2.type = :type_suivi_technical
+                    )
+                ) t2 ON s.id = t2.signalement_id
+                        '.$innerPartnerJoin.'
+                WHERE t2.signalement_id IS NULL
+                AND su.max_date_suivi < DATE_SUB(NOW(), INTERVAL :day_period DAY)
+                AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
+                AND s.is_imported != 1
+                '.$whereExcludeUsagerAbandonProcedure.'
+                '.$whereTerritory.'
+                '.$wherePartner;
     }
 }

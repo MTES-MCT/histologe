@@ -81,6 +81,26 @@
       </div>
     </div>
 
+    <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+      <div class="fr-card fr-enlarge-link">
+        <div class="fr-card__body">
+          <ul class="fr-badges-group">
+            <li>
+                <p class="fr-badge fr-badge--no-icon fr-badge--info">{{ getBadgeText(sharedState.noAnswersAfterRelances.count, 'aucun', 'signalement', 'signalements') }}</p>
+            </li>
+          </ul>
+          <div class="fr-card__content">
+            <h3 class="fr-card__title">
+              <a :href=getSanitizedUrl(sharedState.noAnswersAfterRelances.link)>Suggestion de clôture</a>
+            </h3>
+            <p class="fr-card__desc">
+              Retrouvez et clôturez les signalements pouvant correspondre à un abandon de procédure par l'usager.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div v-if="!sharedState.user.isAdmin && !sharedState.user.isResponsableTerritoire" class="fr-col-12 fr-col-md-6 fr-col-lg-4">
       <div class="fr-card fr-enlarge-link">
         <div class="fr-card__body">
