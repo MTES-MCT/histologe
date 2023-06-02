@@ -99,14 +99,11 @@ class EsaboraManager
                 affectation: $affectation,
                 type: InterventionType::fromLabel($dossierVisiteSISH->getVisiteType()),
                 scheduledAt: DateParser::parse($dossierVisiteSISH->getVisiteDate()),
-                registeredAt: DateParser::parse($dossierVisiteSISH->getVisiteDateEnreg()),
-                status: EsaboraStatus::ESABORA_IN_PROGRESS->value === $dossierVisiteSISH->getVisiteEtat()
-                    ? Intervention::STATUS_PLANNED
-                    : Intervention::STATUS_DONE,
+                registeredAt: new \DateTimeImmutable(),
+                status: Intervention::STATUS_DONE,
                 providerName: InterfacageType::ESABORA->value,
                 providerId: $dossierVisiteSISH->getVisiteId(),
                 doneBy: $dossierVisiteSISH->getVisitePar(),
-                details: $dossierVisiteSISH->getVisiteObservations()
             );
 
             $this->interventionRepository->save($newIntervention, true);
@@ -122,11 +119,9 @@ class EsaboraManager
             $intervention = $this->interventionFactory->createInstanceFrom(
                 affectation: $affectation,
                 type: InterventionType::ARRETE_PREFECTORAL,
-                scheduledAt: DateParser::parse($dossierArreteSISH->getArreteDatePresc()),
-                registeredAt: DateParser::parse($dossierArreteSISH->getArreteDate()),
-                status: EsaboraStatus::ESABORA_IN_PROGRESS->value === $dossierArreteSISH->getArreteEtat()
-                    ? Intervention::STATUS_PLANNED
-                    : Intervention::STATUS_DONE,
+                scheduledAt: DateParser::parse($dossierArreteSISH->getArreteDate()),
+                registeredAt: new \DateTimeImmutable(),
+                status: Intervention::STATUS_DONE,
                 providerName: InterfacageType::ESABORA->value,
                 providerId: $dossierArreteSISH->getArreteId(),
                 details: $this->buildDetailArrete($dossierArreteSISH)
@@ -140,12 +135,7 @@ class EsaboraManager
     {
         $intervention
             ->setScheduledAt(DateParser::parse($dossierVisiteSISH->getVisiteDate()))
-            ->setRegisteredAt(DateParser::parse($dossierVisiteSISH->getVisiteDateEnreg()))
-            ->setStatus(EsaboraStatus::ESABORA_IN_PROGRESS->value === $dossierVisiteSISH->getVisiteEtat()
-                ? Intervention::STATUS_PLANNED
-                : Intervention::STATUS_DONE)
-            ->setDoneBy($dossierVisiteSISH->getVisitePar())
-            ->setDetails($dossierVisiteSISH->getVisiteObservations());
+            ->setDoneBy($dossierVisiteSISH->getVisitePar());
 
         $this->interventionRepository->save($intervention, true);
     }
@@ -153,12 +143,9 @@ class EsaboraManager
     private function updateFromDossierArrete(Intervention $intervention, DossierArreteSISH $dossierArreteSISH): void
     {
         $intervention
-            ->setScheduledAt(DateParser::parse($dossierArreteSISH->getArreteDatePresc()))
+            ->setScheduledAt(DateParser::parse($dossierArreteSISH->getArreteDate()))
             ->setDetails($this->buildDetailArrete($dossierArreteSISH))
-            ->setRegisteredAt(DateParser::parse($dossierArreteSISH->getArreteDate()))
-            ->setStatus(EsaboraStatus::ESABORA_IN_PROGRESS->value === $dossierArreteSISH->getArreteEtat()
-                ? Intervention::STATUS_PLANNED
-                : Intervention::STATUS_DONE)
+            ->setStatus(Intervention::STATUS_DONE)
             ->setDetails($this->buildDetailArrete($dossierArreteSISH));
 
         $this->interventionRepository->save($intervention, true);
@@ -166,11 +153,7 @@ class EsaboraManager
 
     private function buildDetailArrete(DossierArreteSISH $dossierArreteSISH): string
     {
-        return sprintf('Commentaire: %s<br>Type arrêté: %s<br>Statut arrêté: %s',
-            $dossierArreteSISH->getArreteCommentaire(),
-            $dossierArreteSISH->getArreteType(),
-            $dossierArreteSISH->getArreteStatut()
-        );
+        return sprintf('Type arrêté: %s', $dossierArreteSISH->getArreteType());
     }
 
     private function shouldBeAcceptedViaEsabora(string $esaboraDossierStatus, int $currentStatus): bool
