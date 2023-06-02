@@ -53,7 +53,8 @@ parameters:
         roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_ADMIN_PARTNER, ROLE_USER_PARTNER]
         link: 'back_index'
         params:
-          statut: 1
+          closing_suggestion: 'NO_SUIVI_AFTER_3_RELANCES'
+          sort: 'lastSuiviAt'
       cardTousLesSignalements:
         label: "Tous les signalements"
         roles: [ROLE_USER_PARTNER, ROLE_ADMIN_PARTNER]

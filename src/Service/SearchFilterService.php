@@ -33,6 +33,7 @@ class SearchFilterService
         'cities',
         'partners',
         'closed_affectation',
+        'closing_suggestion',
         'criteres',
         'allocs',
         'housetypes',
@@ -132,6 +133,11 @@ class SearchFilterService
             if ($request->query->get('closed_affectation')) {
                 ++$this->countActive;
                 $this->filters['closed_affectation'] = [$request->query->get('closed_affectation')];
+            }
+
+            if ($request->query->get('closing_suggestion')) {
+                ++$this->countActive;
+                $this->filters['closing_suggestion'] = [$request->query->get('closing_suggestion')];
             }
 
             if ($request->query->get('nde')) {
@@ -288,6 +294,7 @@ class SearchFilterService
                     ->setParameter('subqueryClosedAffectation', $subqueryClosedAffectation->getQuery()->getSingleColumnResult())
                     ->setParameter('subqueryUnclosedAffectation', $subqueryUnclosedAffectation->getQuery()->getSingleColumnResult());
             }
+
             if (\in_array('ALL_CLOSED', $filters['closed_affectation'])) {
                 // les id de tous les signalements ayant au moins une affectation non fermée :
                 $subquery = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
@@ -304,6 +311,14 @@ class SearchFilterService
                 )
                 ->setParameter('idUnclosedAffectation', $subquery->getQuery()->getSingleColumnResult())
                 ->setParameter('statut', Signalement::STATUS_ARCHIVED);
+            }
+        }
+
+        if (!empty($filters['closing_suggestion'])) {
+            if (\in_array('NO_SUIVI_AFTER_3_RELANCES', $filters['closing_suggestion'])) {
+            }
+
+            if (\in_array('USAGER_ABANDON_PROCEDURE', $filters['closing_suggestion'])) {
             }
         }
         if (!empty($filters['tags'])) {

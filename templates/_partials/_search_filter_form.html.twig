@@ -176,6 +176,27 @@
                                     </div>
                                 {% endif %}
                                 <div class="fr-col-12 fr-col-md-6">
+                                    <label class="fr-label" for="bo-filters-closing_suggestion"><strong>Filtrer par
+                                            suggestion de cloture</strong></label>
+                                    <select id="bo-filters-closing_suggestion" class="fr-select" onchange="setBadge(this)">
+                                        <option value="">TOUS</option>
+                                        <option value="NO_SUIVI_AFTER_3_RELANCES">3 relances sans réponse usager</option>
+                                        <option value="USAGER_ABANDON_PROCEDURE">L'usager a indiqué vouloir abandonner la procédure</option>
+                                    </select>
+                                    <div class="selected__value">
+                                        <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                        {% set visible = 'fr-hidden' %}
+                                        {% for suggestion in filters.closing_suggestion %}
+                                            <input type="hidden" name="bo-filters-closing_suggestion[]" value="{{ suggestion }}">
+                                            <span class="fr-badge fr-badge--success fr-m-1v" data-value="{{ suggestion }}"
+                                                    data-removable="true">{{ suggestion == 'NO_SUIVI_AFTER_3_RELANCES' ? '3 relances sans réponse usager' : 'L\'usager a indiqué vouloir abandonner la procédure' }}</span>
+                                        {% else %}
+                                            {% set visible = 0 %}
+                                        {% endfor %}
+                                        <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
+                                    </div>
+                                </div>
+                                <div class="fr-col-12 fr-col-md-6">
                                     <label class="fr-label" for="bo-filters-criteres"><strong>Critères</strong></label>
                                     <select id="bo-filters-criteres" class="fr-select" onchange="setBadge(this)">
                                         <option value="">TOUS</option>
