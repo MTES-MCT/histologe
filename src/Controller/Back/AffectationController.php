@@ -98,7 +98,12 @@ class AffectationController extends AbstractController
                 $signalement,
                 '<p>Suite à votre signalement, le ou les partenaires compétents'
             );
-            if (Affectation::STATUS_ACCEPTED === $affectation->getStatut()
+            $affectationAccepted = $signalement->getAffectations()->filter(function (Affectation $affectation) {
+                return Affectation::STATUS_ACCEPTED === $affectation->getStatut();
+            });
+
+            if (1 === $affectationAccepted->count()
+                && Affectation::STATUS_ACCEPTED === $affectation->getStatut()
                 && empty($suiviAffectationAccepted)
             ) {
                 $adminEmail = $parameterBag->get('user_system_email');
