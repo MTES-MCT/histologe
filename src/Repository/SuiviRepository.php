@@ -321,4 +321,20 @@ class SuiviRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findFirstSuiviBy(Signalement $signalement, string $typeSuivi): ?Suivi
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->where('s.signalement = :signalement')
+            ->andWhere('s.type = :type')
+            ->orderBy('s.createdAt', 'ASC')
+            ->setMaxResults(1)
+            ->setParameter('signalement', $signalement)
+            ->setParameter('type', $typeSuivi);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 }

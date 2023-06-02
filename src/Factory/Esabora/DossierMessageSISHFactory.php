@@ -7,17 +7,20 @@ use App\Entity\Enum\PartnerType;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Messenger\Message\DossierMessageSISH;
+use App\Repository\SuiviRepository;
 use App\Service\Esabora\AbstractEsaboraService;
 use App\Service\Esabora\Enum\PersonneType;
 use App\Service\Esabora\Model\DossierMessageSISHPersonne;
 use App\Service\UploadHandlerService;
 use App\Utils\AddressParser;
+use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class DossierMessageSISHFactory extends AbstractDossierMessageFactory
 {
     public function __construct(
+        private readonly SuiviRepository $suiviRepository,
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly ParameterBagInterface $parameterBag,
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -30,14 +33,16 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         return PartnerType::ARS === $affectation->getPartner()->getType();
     }
 
+    /**
+     * @throws NonUniqueResultException
+     */
     public function createInstance(Affectation $affectation): DossierMessageSISH
     {
         $signalement = $affectation->getSignalement();
         $partner = $affectation->getPartner();
 
         $address = AddressParser::parse($signalement->getAdresseOccupant());
-        /** @var Suivi $firstSuivi */
-        $firstSuivi = $signalement->getSuivis()->first();
+        $firstSuivi = $this->suiviRepository->findFirstSuiviBy($signalement, Suivi::TYPE_PARTNER);
         $formatDate = AbstractEsaboraService::FORMAT_DATE;
         $formatDateTime = AbstractEsaboraService::FORMAT_DATE_TIME;
         $routeSignalement = $this->urlGenerator->generate(
@@ -97,7 +102,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setSignalementScore($signalement->getScore())
             ->setSignalementOrigine(AbstractEsaboraService::SIGNALEMENT_ORIGINE)
             ->setSignalementNumero($signalement->getReference())
-            ->setSignalementCommentaire($firstSuivi->getDescription())
+            ->setSignalementCommentaire($firstSuivi?->getDescription())
             ->setSignalementDate($signalement->getCreatedAt()?->format($formatDate))
             ->setSignalementDetails($signalement->getDetails())
             ->setSignalementProblemes($this->buildProblemes($signalement))
