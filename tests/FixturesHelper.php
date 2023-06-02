@@ -77,11 +77,7 @@ trait FixturesHelper
                     'date' => '02.12.2022',
                 ],
             ])
-            ->addSuivi((new Suivi())
-                ->setType(Suivi::TYPE_AUTO)
-                ->setDescription('Signalement validé')
-                ->setCreatedBy(new User())
-            );
+            ->addSuivi($this->getSuiviPartner());
 
         $partner = (new Partner())
             ->setNom($faker->company())
@@ -90,5 +86,14 @@ trait FixturesHelper
             ->setType($partnerType);
 
         return (new Affectation())->setSignalement($signalement)->setPartner($partner);
+    }
+
+    public function getSuiviPartner(): Suivi
+    {
+        return (new Suivi())
+            ->setType(Suivi::TYPE_PARTNER)
+            ->setDescription('Problèmes de condensation et de moisissures')
+            ->setCreatedAt(new \DateTimeImmutable())
+            ->setCreatedBy(new User());
     }
 }

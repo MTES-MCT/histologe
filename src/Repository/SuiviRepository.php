@@ -370,4 +370,34 @@ class SuiviRepository extends ServiceEntityRepository
                 '.$whereTerritory.'
                 '.$wherePartner;
     }
+
+    /**
+     * @return Suivi[]
+     */
+    public function findSuiviByDescription(Signalement $signalement, string $description): array
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->where('s.signalement = :signalement')
+            ->andWhere('s.description LIKE :description')
+            ->setParameter('signalement', $signalement)
+            ->setParameter('description', '%'.$description.'%');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findFirstSuiviBy(Signalement $signalement, string $typeSuivi): ?Suivi
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->where('s.signalement = :signalement')
+            ->andWhere('s.type = :type')
+            ->orderBy('s.createdAt', 'ASC')
+            ->setMaxResults(1)
+            ->setParameter('signalement', $signalement)
+            ->setParameter('type', $typeSuivi);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 }
