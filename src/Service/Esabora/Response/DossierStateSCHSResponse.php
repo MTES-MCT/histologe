@@ -87,6 +87,6 @@ class DossierStateSCHSResponse implements DossierResponseInterface
 
     public function getSasCauseRefus(): ?string
     {
-        return $this->errorReason;
+        return null;
     }
 }
