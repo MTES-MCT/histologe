@@ -320,7 +320,7 @@ class SignalementType extends AbstractType
                     'class' => 'fr-label',
                 ],
                 'label' => 'Adresse du logement',
-                'help' => "Commencez à entrer votre adresse et cliquez sur l'une des suggestion. Si vous ne trouvez pas votre adresse entrez-la manuellement",
+                'help' => "Commencez à entrer votre adresse et cliquez sur l'une des suggestions. Si vous ne trouvez pas votre adresse, entrez-la manuellement.",
                 'help_attr' => [
                     'class' => 'fr-hint-text',
                 ],
@@ -424,16 +424,21 @@ class SignalementType extends AbstractType
                 'attr' => [
                     'class' => 'fr-input',
                     'maxlength' => '200',
+                    'data-fr-adresse-autocomplete' => 'true',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
                 ],
                 'label' => 'Adresse du propriétaire',
+                'help' => "Commencez à entrer votre adresse et cliquez sur l'une des suggestions. Si vous ne trouvez pas votre adresse, entrez-la manuellement.",
+                'help_attr' => [
+                    'class' => 'fr-hint-text',
+                ],
                 'required' => false,
             ])
             ->add('telProprio', TelType::class, [
                 'row_attr' => [
-                    'class' => 'fr-input-group',
+                    'class' => 'fr-input-group fr-mt-2w',
                 ],
                 'attr' => [
                     'class' => 'fr-input',
