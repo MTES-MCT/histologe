@@ -12,6 +12,29 @@
     </div>
 </div>
 
+{% if
+        not is_granted('ROLE_ADMIN_PARTNER')
+        and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
+        and not needValidation %}
+    <div class="fr-my-3w">
+        <h4 class="fr-h6 fr-mb-3v">Partenaires impliqués</h4>
+        {% for affectation in signalement.affectations %}
+            {% if affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_WAIT') %}
+                <span class="fr-badge fr-badge--info fr-badge--sm">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
+            {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_ACCEPTED') %}
+                <span class="fr-badge fr-badge--success fr-badge--sm">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
+            {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_REFUSED') %}
+                <span class="fr-badge fr-badge--sm">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
+            {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_CLOSED') %}
+                <span class="fr-badge fr-badge--sm">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <h4 class="fr-h6 fr-mb-3v">Suivis</h4>
+{% endif %}
+
+
 {% if 
         (is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted))
         and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION')
