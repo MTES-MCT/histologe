@@ -314,7 +314,12 @@
                                 Merci de renseigner le nom ou la raison sociale du propriétaire du logement.
                             </p>
                         </div>
-                        {{ form_row(form.adresseProprio) }}
+                        {{ form_label(form.adresseProprio) }}
+                        {{ form_help(form.adresseProprio) }}
+                        {{ form_widget(form.adresseProprio) }}
+                        <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france"
+                             id="signalement-adresse-pro-suggestion">
+                        </div>
                         {{ form_row(form.telProprio) }}
                         {{ form_row(form.mailProprio) }}
                     </div>
