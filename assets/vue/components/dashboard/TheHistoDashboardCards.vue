@@ -91,7 +91,7 @@
           </ul>
           <div class="fr-card__content">
             <h3 class="fr-card__title">
-              <a :href=getSanitizedUrl(sharedState.noSuiviAfter3Relances.link)>Suggestion de clôture</a>
+              <a :href=getSanitizedUrl(sharedState.noSuiviAfter3Relances.link)>Suggestions de clôture</a>
             </h3>
             <p class="fr-card__desc">
               Retrouvez et clôturez les signalements pouvant correspondre à un abandon de procédure par l'usager.

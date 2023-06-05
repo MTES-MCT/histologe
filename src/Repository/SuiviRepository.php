@@ -240,18 +240,18 @@ class SuiviRepository extends ServiceEntityRepository
         ];
 
         $sql = 'SELECT s.id
-        FROM signalement s
-        INNER JOIN (
-            SELECT signalement_id, MAX(created_at) AS max_date_suivi_technique
-            FROM suivi
-            WHERE type = :type_suivi_technical
-            GROUP BY signalement_id
-        ) su ON s.id = su.signalement_id
-        LEFT JOIN suivi su_last ON su_last.signalement_id = su.signalement_id AND su_last.created_at > su.max_date_suivi_technique
-        WHERE su_last.id IS NULL AND su.max_date_suivi_technique < DATE_SUB(NOW(), INTERVAL :day_period DAY)
-        AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
-        AND s.is_imported != 1
-        AND s.is_usager_abandon_procedure != 1';
+                FROM signalement s
+                INNER JOIN (
+                    SELECT signalement_id, MAX(created_at) AS max_date_suivi_technique
+                    FROM suivi
+                    WHERE type = :type_suivi_technical
+                    GROUP BY signalement_id
+                ) su ON s.id = su.signalement_id
+                LEFT JOIN suivi su_last ON su_last.signalement_id = su.signalement_id AND su_last.created_at > su.max_date_suivi_technique
+                WHERE su_last.id IS NULL AND su.max_date_suivi_technique < DATE_SUB(NOW(), INTERVAL :day_period DAY)
+                AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
+                AND s.is_imported != 1
+                AND s.is_usager_abandon_procedure != 1';
 
         $statement = $connection->prepare($sql);
 
@@ -347,20 +347,20 @@ class SuiviRepository extends ServiceEntityRepository
                     GROUP BY signalement_id
                 ) su ON s.id = su.signalement_id
                 INNER JOIN (
-                SELECT su.signalement_id
-                FROM suivi su
-                WHERE su.type = :type_suivi_technical
-                GROUP BY su.signalement_id
-                HAVING COUNT(*) >= :nb_suivi_technical
+                    SELECT su.signalement_id
+                    FROM suivi su
+                    WHERE su.type = :type_suivi_technical
+                    GROUP BY su.signalement_id
+                    HAVING COUNT(*) >= :nb_suivi_technical
                 ) t1 ON s.id = t1.signalement_id
                 LEFT JOIN (
-                SELECT su.signalement_id
-                FROM suivi su
-                WHERE su.type <> :type_suivi_technical
+                    SELECT su.signalement_id
+                    FROM suivi su
+                    WHERE su.type <> :type_suivi_technical
                     AND su.created_at > (
-                    SELECT MIN(su2.created_at)
-                    FROM suivi su2
-                    WHERE su2.signalement_id = su.signalement_id
+                        SELECT MIN(su2.created_at)
+                        FROM suivi su2
+                        WHERE su2.signalement_id = su.signalement_id
                         AND su2.type = :type_suivi_technical
                     )
                 ) t2 ON s.id = t2.signalement_id
