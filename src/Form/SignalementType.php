@@ -320,7 +320,7 @@ class SignalementType extends AbstractType
                     'class' => 'fr-label',
                 ],
                 'label' => 'Adresse du logement',
-                'help' => "Commencez à entrer votre adresse et cliquez sur l'une des suggestion. Si vous ne trouvez pas votre adresse entrez-la manuellement",
+                'help' => "Commencez à entrer votre adresse et cliquez sur l'une des suggestions. Si vous ne trouvez pas votre adresse, entrez-la manuellement.",
                 'help_attr' => [
                     'class' => 'fr-hint-text',
                 ],
@@ -430,7 +430,7 @@ class SignalementType extends AbstractType
                     'class' => 'fr-label',
                 ],
                 'label' => 'Adresse du propriétaire',
-                'help' => "Commencez à entrer votre adresse et cliquez sur l'une des suggestion. Si vous ne trouvez pas votre adresse entrez-la manuellement",
+                'help' => "Commencez à entrer votre adresse et cliquez sur l'une des suggestions. Si vous ne trouvez pas votre adresse, entrez-la manuellement.",
                 'help_attr' => [
                     'class' => 'fr-hint-text',
                 ],
