@@ -24,9 +24,9 @@
             {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_ACCEPTED') %}
                 <span class="fr-badge fr-badge--success fr-badge--sm">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
             {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_REFUSED') %}
-                <span class="fr-badge fr-badge--sm">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
+                <span class="fr-badge fr-badge--sm fr-text-label--red-marianne fr-background-contrast--red-marianne fr-fi-close-line">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
             {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_CLOSED') %}
-                <span class="fr-badge fr-badge--sm">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
+                <span class="fr-badge fr-badge--sm fr-fi-close-circle-fill">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
             {% endif %}
         {% endfor %}
     </div>
