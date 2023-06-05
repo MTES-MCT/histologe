@@ -54,11 +54,11 @@
                                 {% if affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_WAIT') %}
                                     <span class="fr-badge fr-badge--info fr-badge--sm">En attente</span>
                                 {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_ACCEPTED') %}
-                                    <span class="fr-badge fr-badge--info fr-badge--sm">Acceptée</span>
+                                    <span class="fr-badge fr-badge--success fr-badge--sm">Acceptée</span>
                                 {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_REFUSED') %}
-                                    <span class="fr-badge fr-badge--info fr-badge--sm">Refusée</span>
+                                    <span class="fr-badge fr-badge--sm fr-text-label--red-marianne fr-background-contrast--red-marianne fr-fi-close-line">Refusée</span>
                                 {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_CLOSED') %}
-                                    <span class="fr-badge fr-badge--info fr-badge--sm">Clôturée</span>
+                                    <span class="fr-badge fr-badge--sm fr-fi-close-circle-fill">Clôturée</span>
                                 {% endif %}
                             </div>
                             <div class="fr-col-2 fr-text--right">
