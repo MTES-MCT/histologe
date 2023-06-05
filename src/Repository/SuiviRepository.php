@@ -272,7 +272,7 @@ class SuiviRepository extends ServiceEntityRepository
             'nb_suivi_technical' => 2,
         ];
 
-        $sql = $this->getSignalementsLastSuivisTechnicalsQuery(null, null, true, $period);
+        $sql = $this->getSignalementsLastSuivisTechnicalsQuery(excludeUsagerAbandonProcedure: true, dayPeriod: $period);
 
         $statement = $connection->prepare($sql);
 
@@ -306,7 +306,12 @@ class SuiviRepository extends ServiceEntityRepository
 
         $sql = 'SELECT COUNT(*) as count_signalement
                 FROM ('.
-                        $this->getSignalementsLastSuivisTechnicalsQuery($territory, $partner, false)
+                        $this->getSignalementsLastSuivisTechnicalsQuery(
+                            excludeUsagerAbandonProcedure: false,
+                            dayPeriod: 0,
+                            partner: $partner,
+                            territory: $territory,
+                        )
                 .') as countSignalementSuivi';
         $statement = $connection->prepare($sql);
 
@@ -314,10 +319,10 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     public function getSignalementsLastSuivisTechnicalsQuery(
-        ?Territory $territory = null,
-        ?Partner $partner = null,
         bool $excludeUsagerAbandonProcedure = true,
-        int $dayPeriod = 0
+        int $dayPeriod = 0,
+        ?Partner $partner = null,
+        ?Territory $territory = null,
     ): string {
         $whereTerritory = $wherePartner = $innerPartnerJoin = $whereExcludeUsagerAbandonProcedure
         = $whereLastSuiviDelay = '';

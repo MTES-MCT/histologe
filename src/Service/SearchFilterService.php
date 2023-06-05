@@ -336,8 +336,12 @@ class SearchFilterService
                     $parameters['partner_id'] = $partner->getId();
                     $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
                 }
+                $sql = $this->suiviRepository->getSignalementsLastSuivisTechnicalsQuery(
+                    excludeUsagerAbandonProcedure: false,
+                    dayPeriod: 0,
+                    partner: $partner
+                );
 
-                $sql = $this->suiviRepository->getSignalementsLastSuivisTechnicalsQuery(null, $partner, false);
                 $statement = $connection->prepare($sql);
 
                 $qb->andWhere('s.id IN (:subQuery)')
