@@ -76,7 +76,8 @@ class PartnerRepository extends ServiceEntityRepository
     public function findAllList(Territory|null $territory = null)
     {
         $qb = $this->createQueryBuilder('p')
-            ->where('p.isArchive != 1');
+            ->where('p.isArchive != 1')
+            ->orderBy('p.nom', 'ASC');
         if ($territory) {
             $qb->andWhere('p.territory = :territory')->setParameter('territory', $territory);
         }

@@ -117,8 +117,9 @@
                                 </div>
                                 {% if is_granted('ROLE_ADMIN_TERRITORY') %}
                                     <div class="fr-col-12 fr-col-md-6">
-                                        <label class="fr-label" for="bo-filters-partners"><strong>Filtrer par
-                                                partenaire</strong></label>
+                                        <label class="fr-label" for="bo-filters-partners">
+                                            <strong>Filtrer par partenaire</strong>
+                                        </label>
                                         <select id="bo-filters-partners" class="fr-select" onchange="setBadge(this)">
                                             <option value="">TOUS</option>
                                             <option value="AUCUN">AUCUN</option>
@@ -128,7 +129,7 @@
                                                             class="{% if partner.id in filters.partners %}fr-hidden{% endif %}">{{ partner.nom|upper }}</option>
                                                 {% endfor %}
                                             </optgroup>
-                                            <optgroup label="PARTNERS">
+                                            <optgroup label="PARTENAIRES">
                                                 {% for partner in partners|filter(v=> v.isCommune == 0) %}
                                                     <option value="{{ partner.id }}"
                                                             class="{% if partner.id in filters.partners %}fr-hidden{% endif %}">{{ partner.nom|upper }}</option>
