@@ -23,7 +23,7 @@ class AskFeedbackUsagerCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('4 signalement(s) for which a request for feedback will be sent to the user', $output);
+        $this->assertStringContainsString('4 signalement(s) for which a request for feedback will be sent', $output);
         $this->assertEmailCount(0);
     }
 
