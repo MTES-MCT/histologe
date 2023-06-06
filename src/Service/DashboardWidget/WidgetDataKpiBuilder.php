@@ -47,6 +47,7 @@ class WidgetDataKpiBuilder
         private NotificationRepository $notificationRepository,
         private ParameterBagInterface $parameterBag,
         private Security $security,
+        private bool $featureWidgetRelanceEnable,
     ) {
     }
 
@@ -129,11 +130,14 @@ class WidgetDataKpiBuilder
             $this->territory,
             $this->getPartnerFromUser($user)
         );
-        $countSignalementNoSuiviAfter3Relances = $this->suiviRepository->countSignalementNoSuiviAfter3Relances(
-            $this->territory,
-            $this->getPartnerFromUser($user)
-        );
-
+        if ($this->featureWidgetRelanceEnable) {
+            $countSignalementNoSuiviAfter3Relances = $this->suiviRepository->countSignalementNoSuiviAfter3Relances(
+                $this->territory,
+                $this->getPartnerFromUser($user)
+            );
+        } else {
+            $countSignalementNoSuiviAfter3Relances = null;
+        }
         $this->countSuivi = new CountSuivi(
             $averageSuivi,
             $countSuiviPartner,

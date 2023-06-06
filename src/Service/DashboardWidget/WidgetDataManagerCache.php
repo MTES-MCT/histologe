@@ -101,14 +101,6 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
      */
     public function countDataKpi(?Territory $territory = null, ?array $params = null): WidgetDataKpi
     {
-        // return $this->widgetDataManager->countDataKpi($territory);
-        return $this->dashboardCache->get(
-            __FUNCTION__.'-'.$this->key.'-zip-'.$territory?->getZip(),
-            function (ItemInterface $item) use ($territory, $params) {
-                $item->expiresAfter($params['expired_after'] ?? null);
-
-                return $this->widgetDataManager->countDataKpi($territory);
-            }
-        );
+        return $this->widgetDataManager->countDataKpi($territory);
     }
 }
