@@ -1,27 +1,179 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="robots" content="index, follow">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>Histologe - Un service public pour les locataires et propriétaires</title>
-        <meta name="description" content="Signaler vos problèmes de logement.">
-        <link rel="stylesheet" href=/dsfr/dsfr.min.css>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="index, follow">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Histologe - Service indisponible</title>
+    <meta name="description" content="Signaler vos problèmes de logement.">
+    <link rel="icon" href=/favicon.ico>
+     <style>
+        /*!
+ * DSFR v1.8.0 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ */
+        @charset "UTF-8";
 
-    <body>
-        <div class="fr-header__brand-top"> 
-            <div class="fr-header__operator">
-                <a href="/" title="Accueil - HISTOLOGE">
-                    <img src=/img/logo_145.png class="fr-responsive-img" width="100%"
-                            alt="HISTOLOGE">
-                </a>
+        /* ¯¯¯¯¯¯¯¯¯ *\
+  CONNECT
+\* ˍˍˍˍˍˍˍˍˍ */
+        html {
+            height: 100%;
+        }
+
+        body {
+            min-height: 100%;
+            font-family: "Marianne", arial, sans-serif;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-text-size-adjust: 100%;
+            margin: 0;
+            padding: 0;
+            font-size: 1rem;
+            line-height: 1.5rem;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background-color: #f6f6f6;
+        }
+
+        body::before,
+        body::after {
+            box-sizing: inherit;
+        }
+
+        body *,
+        body *::before,
+        body *::after {
+            box-sizing: inherit;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex: 1;
+        }
+
+        a {
+            text-decoration: none;
+            outline-offset: 2px;
+            outline-width: 2px;
+            outline-color: #0a76f6;
+        }
+
+        *:focus-visible {
+            z-index: 500;
+            outline-style: solid;
+        }
+
+        .fr-container {
+            width: 100%;
+            max-width: 78rem;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            flex: 1;
+        }
+
+        .fr-grid-row {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            margin: 0;
+            padding: 0;
+        }
+
+        .fr-grid-row--center {
+            justify-content: center;
+            align-items: center;
+        }
+        .fr-col-12 {
+            flex: 0 0 100%;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .fr-btn {
+            border-radius: 0;
+            padding: 0.25rem 0.75rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            background-color: transparent;
+            overflow: initial;
+            max-width: 100%;
+            max-height: none;
+            font-weight: 500;
+            display: inline-flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .fr-h1 {
+            font-size: 2rem;
+            line-height: 2.5rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .fr-text-label--blue-france{
+            color:#21213f
+        }
+
+        .fr-btn--orange {
+            background: #ff9940;
+        }
+
+        @media (min-width: 48em) {
+            .fr-container {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+            }
+
+            .fr-h1 {
+                font-size: 2.5rem;
+                line-height: 3rem;
+            }
+            
+            .fr-text--bold{
+                font-weight:700!important
+            }
+        }
+    </style>
+</head>
+
+<body> 
+    <main>
+        <section class="fr-container">
+            <div class="fr-grid-row">
+                <div class="fr-col-12">
+                    <figure>
+                        <img src="/img/Logohistologe.png" alt="Logo HISTOLOGE" width="200">
+                    </figure>
+                    <figure>
+                        <figcaption>
+                            <h1>Service indisponible</h1>
+                        </figcaption>
+                        <img src="/img/icon-search-lg.svg" alt="Erreur 404">
+                        <figcaption>
+                            Le service Histologe n'est pas disponible pour le moment. <br>
+                Veuillez réessayer dans quelques minutes.
+                        </figcaption>
+                    </figure>
+                    <a href="/"
+                       class="fr-btn fr-btn--orange fr-text-label--blue-france fr-text--bold">Aller
+                        à l'accueil</a>
+                </div>
             </div>
-        </div>            
-        <section class="fr-background-contrast--blue-france fr-pt-3w">
-            <h1>Service indisponible</h1>
-            <h3>Le service Histologe n'est pas disponible pour le moment. <br>
-                Veuillez réessayer dans quelques minutes.</h3>
         </section>
-    </body>
+    </main>
+</body>
 </html>
