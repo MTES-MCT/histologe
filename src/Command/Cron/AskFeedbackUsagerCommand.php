@@ -58,9 +58,12 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
 
         $nbSignalements = $nbSignalementsThirdRelance + $nbSignalementsLastSuiviTechnical + $nbSignalementsLastSuiviPublic;
         if ($input->getOption('debug')) {
+            $nbSignalementsForDebug = ($nbSignalementsLastSuiviPublic - $nbSignalementsLastSuiviTechnical)
+            + ($nbSignalementsLastSuiviTechnical - $nbSignalementsThirdRelance)
+            + $nbSignalementsThirdRelance;
             $this->io->info(sprintf(
                 '%s signalement(s) for which a request for feedback will be sent to the user',
-                $nbSignalements
+                $nbSignalementsForDebug
             ));
 
             return Command::SUCCESS;
@@ -90,17 +93,19 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
     protected function processSignalementsThirdRelance(
         InputInterface $input,
     ): int {
-        $signalementsIds = $this->suiviRepository->findSignalementsThirdRelance();
+        $signalementsIds = $this->suiviRepository->findSignalementsForThirdRelance();
         $nbSignalements = $this->sendMailToUsagers(
             $input,
             $signalementsIds,
             NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER_THIRD
         );
-        $this->io->success(sprintf(
-            '%s signalement(s) for which the two last suivis are technicals and the last one is older than '
-            .Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
-            $nbSignalements
-        ));
+        if (!$input->getOption('debug')) {
+            $this->io->success(sprintf(
+                '%s signalement(s) for which the two last suivis are technicals and the last one is older than '
+                .Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
+                $nbSignalements
+            ));
+        }
 
         return $nbSignalements;
     }
@@ -113,11 +118,13 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
             $input,
             $signalementsIds,
         );
-        $this->io->success(sprintf(
-            '%s signalement(s) for which the last suivi is technical and is older than '
-            .Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
-            $nbSignalements
-        ));
+        if (!$input->getOption('debug')) {
+            $this->io->success(sprintf(
+                '%s signalement(s) for which the last suivi is technical and is older than '
+                .Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
+                $nbSignalements
+            ));
+        }
 
         return $nbSignalements;
     }
@@ -130,10 +137,12 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
             $input,
             $signalementsIds,
         );
-        $this->io->success(sprintf(
-            '%s signalement(s) without suivi public from more than '.Suivi::DEFAULT_PERIOD_RELANCE.' days',
-            $nbSignalements
-        ));
+        if (!$input->getOption('debug')) {
+            $this->io->success(sprintf(
+                '%s signalement(s) without suivi public from more than '.Suivi::DEFAULT_PERIOD_RELANCE.' days',
+                $nbSignalements
+            ));
+        }
 
         return $nbSignalements;
     }

@@ -3,10 +3,12 @@
 namespace App\Service;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
+use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\NotificationRepository;
@@ -33,6 +35,7 @@ class SearchFilterService
         'cities',
         'partners',
         'closed_affectation',
+        'relances_usager',
         'criteres',
         'allocs',
         'housetypes',
@@ -132,6 +135,11 @@ class SearchFilterService
             if ($request->query->get('closed_affectation')) {
                 ++$this->countActive;
                 $this->filters['closed_affectation'] = [$request->query->get('closed_affectation')];
+            }
+
+            if ($request->query->get('relances_usager')) {
+                ++$this->countActive;
+                $this->filters['relances_usager'] = [$request->query->get('relances_usager')];
             }
 
             if ($request->query->get('nde')) {
@@ -288,6 +296,7 @@ class SearchFilterService
                     ->setParameter('subqueryClosedAffectation', $subqueryClosedAffectation->getQuery()->getSingleColumnResult())
                     ->setParameter('subqueryUnclosedAffectation', $subqueryUnclosedAffectation->getQuery()->getSingleColumnResult());
             }
+
             if (\in_array('ALL_CLOSED', $filters['closed_affectation'])) {
                 // les id de tous les signalements ayant au moins une affectation non fermée :
                 $subquery = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
@@ -304,6 +313,39 @@ class SearchFilterService
                 )
                 ->setParameter('idUnclosedAffectation', $subquery->getQuery()->getSingleColumnResult())
                 ->setParameter('statut', Signalement::STATUS_ARCHIVED);
+            }
+        }
+
+        if (!empty($filters['relances_usager'])) {
+            if (\in_array('NO_SUIVI_AFTER_3_RELANCES', $filters['relances_usager'])) {
+                $connection = $this->entityManager->getConnection();
+                $parameters = [
+                    'day_period' => 0,
+                    'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
+                    'status_need_validation' => Signalement::STATUS_NEED_VALIDATION,
+                    'status_archived' => Signalement::STATUS_ARCHIVED,
+                    'status_closed' => Signalement::STATUS_CLOSED,
+                    'status_refused' => Signalement::STATUS_REFUSED,
+                    'nb_suivi_technical' => 3,
+                ];
+
+                /** @var User $user */
+                $user = $this->security->getUser();
+                $partner = ($user->isPartnerAdmin() || $user->isUserPartner()) ? $user->getPartner() : null;
+                if (null !== $partner) {
+                    $parameters['partner_id'] = $partner->getId();
+                    $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
+                }
+                $sql = $this->suiviRepository->getSignalementsLastSuivisTechnicalsQuery(
+                    excludeUsagerAbandonProcedure: false,
+                    dayPeriod: 0,
+                    partner: $partner
+                );
+
+                $statement = $connection->prepare($sql);
+
+                $qb->andWhere('s.id IN (:subQuery)')
+                    ->setParameter('subQuery', $statement->executeQuery($parameters)->fetchFirstColumn());
             }
         }
         if (!empty($filters['tags'])) {
