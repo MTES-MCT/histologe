@@ -3,7 +3,9 @@
 {% block body %}
     <p>Bonjour,</p>
     <p>
-        La visite du logement prévue le {{ intervention.scheduledAt.format('d/m/Y')}} n'a pas pu avoir lieu.
+        La visite du logement prévue le
+        {{ (intervention.scheduledAt.format('H')) > 0 ? intervention.scheduledAt.format('d/m/Y à H:i') : intervention.scheduledAt.format('d/m/Y') }}
+        n'a pas pu avoir lieu.
         <br><br>
         Cliquez sur le bouton ci-dessous pour accéder au signalement.
     </p>

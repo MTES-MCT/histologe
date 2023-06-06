@@ -9,7 +9,10 @@
                             <button type="button" class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="edit-visite-modal-{{intervention.id}}">Fermer</button>
                         </div>
                         <div class="fr-modal__content">
-                            <h1 id="fr-modal-edit-visite-modal-{{intervention.id}}" class="fr-modal__title">Edition de la visite du {{ intervention.scheduledAt.format('d/m/Y') }}</h1>
+                            <h1 id="fr-modal-edit-visite-modal-{{intervention.id}}" class="fr-modal__title">
+                                Edition de la visite du
+                                {{ (intervention.scheduledAt.format('H')) > 0 ? intervention.scheduledAt.format('d/m/Y à H:i') : intervention.scheduledAt.format('d/m/Y') }}
+                            </h1>
 
                             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-my-3w">
                                 <div class="fr-col-12 fr-mb-3v">

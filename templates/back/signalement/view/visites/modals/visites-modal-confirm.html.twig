@@ -9,7 +9,9 @@
                             <button type="button" class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="confirm-visite-modal-{{intervention.id}}">Fermer</button>
                         </div>
                         <div class="fr-modal__content">
-                            <h1 id="fr-modal-confirm-visite-modal-{{intervention.id}}" class="fr-modal__title">Conclusion de la visite du {{ intervention.scheduledAt.format('d/m/Y') }}</h1>
+                            <h1 id="fr-modal-confirm-visite-modal-{{intervention.id}}" class="fr-modal__title">
+                                Conclusion de la visite du {{ (intervention.scheduledAt.format('H')) > 0 ? intervention.scheduledAt.format('d/m/Y à H:i') : intervention.scheduledAt.format('d/m/Y') }}
+                            </h1>
 
                             <div class="fr-alert fr-alert--info">
                                 <p>
