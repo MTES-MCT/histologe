@@ -19,6 +19,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class DossierMessageSISHFactory extends AbstractDossierMessageFactory
 {
+    public const DEFAULT_TIMEZONE = 'Europe/Paris';
+
     public function __construct(
         private readonly SuiviRepository $suiviRepository,
         private readonly UploadHandlerService $uploadHandlerService,
@@ -67,7 +69,12 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setLocalisationLocalisationInsee($signalement->getInseeOccupant())
             ->setSasLogicielProvenance('H')
             ->setReferenceDossier($signalement->getUuid())
-            ->setSasDateAffectation($affectation->getCreatedAt()?->format($formatDateTime))
+            ->setSasDateAffectation(
+                $affectation
+                    ->getCreatedAt()
+                    ?->setTimezone(new \DateTimeZone(self::DEFAULT_TIMEZONE))
+                    ->format($formatDateTime)
+            )
             ->setLocalisationEtage($signalement->getEtageOccupant())
             ->setLocalisationEscalier($signalement->getEscalierOccupant())
             ->setLocalisationNumPorte($signalement->getNumAppartOccupant())
