@@ -12,7 +12,7 @@ final class Version20230606161945 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Add filed in order to select which signalement need to be sync';
+        return 'Add field in order to select which signalement need to be sync and init schs affectation';
     }
 
     public function up(Schema $schema): void
