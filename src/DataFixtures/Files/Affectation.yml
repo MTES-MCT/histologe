@@ -126,6 +126,7 @@ affectations:
     affected_by: "admin-territoire-13-01@histologe.fr"
     motif_cloture: ""
     territory: "Bouches-du-Rhône"
+    is_synchronized: true
   -
     signalement: 2023-12
     partner: "partenaire-13-05@histologe.fr"
@@ -134,3 +135,4 @@ affectations:
     affected_by: "admin-territoire-13-01@histologe.fr"
     motif_cloture: ""
     territory: "Bouches-du-Rhône"
+    is_synchronized: true

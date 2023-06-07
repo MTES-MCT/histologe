@@ -43,6 +43,7 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
             ->setAffectedBy($this->userRepository->findOneBy(['email' => $row['affected_by']]))
             ->setAnsweredBy($this->userRepository->findOneBy(['email' => $row['affected_by']]))
             ->setAnsweredAt(new \DateTimeImmutable())
+            ->setIsSynchronized($row['is_synchronized'] ?? false)
         ;
 
         if (Affectation::STATUS_CLOSED === $row['statut'] && '' !== $row['motif_cloture']) {

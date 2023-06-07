@@ -38,6 +38,9 @@ class Affectation
     #[ORM\Column(type: 'integer')]
     private int $statut;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isSynchronized = false;
+
     #[ORM\ManyToOne(targetEntity: User::class)]
     private ?User $answeredBy;
 
@@ -200,6 +203,18 @@ class Affectation
     public function setTerritory(?Territory $territory): self
     {
         $this->territory = $territory;
+
+        return $this;
+    }
+
+    public function isSynchronized(): bool
+    {
+        return $this->isSynchronized;
+    }
+
+    public function setIsSynchronized(bool $isSynchronized): self
+    {
+        $this->isSynchronized = $isSynchronized;
 
         return $this;
     }
