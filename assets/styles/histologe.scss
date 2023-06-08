@@ -481,3 +481,7 @@ hr.blue-border {
 .fr-modal a[aria-label="Powered by Tiny"] {
     display: none;
 }
+
+.fr-modal .fr-modal__footer {
+    z-index: 1;
+}
