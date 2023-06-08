@@ -71,6 +71,9 @@ class Intervention
     #[ORM\Column(nullable: true, options: ['comment' => 'Unique id used by the provider'])]
     private ?int $providerId = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $additionalInformation = [];
+
     public function getId(): ?int
     {
         return $this->id;
@@ -252,6 +255,18 @@ class Intervention
     public function setProviderId(?int $providerId): self
     {
         $this->providerId = $providerId;
+
+        return $this;
+    }
+
+    public function getAdditionalInformation(): array
+    {
+        return $this->additionalInformation;
+    }
+
+    public function setAdditionalInformation(?array $additionalInformation): self
+    {
+        $this->additionalInformation = $additionalInformation;
 
         return $this;
     }

@@ -7,7 +7,9 @@
     "SISH_DossNum",
     "SISH_ArreteDate",
     "SISH_ArreteNumero",
-    "SISH_ArreteType"
+    "SISH_ArreteType",
+    "SISH_ArreteMLDate",
+    "SISH_ArreteMLNumero"
   ],
   "keyList": [
     "i1.imdo_id",
@@ -19,9 +21,11 @@
         "Histologe",
         "00000000-0000-0000-2023-000000000012",
         "2023/DD13/0011",
-        "5/06/2023",
+        "05/06/2023",
         "2023/DD13/00664",
-        "Arrêté L.511-11 - Suroccupation"
+        "Arrêté L.511-11 - Suroccupation",
+        "01/08/2023",
+        "2023-DD13-00173"
       ],
       "keyDataList": [
         30,

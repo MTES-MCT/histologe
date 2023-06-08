@@ -10,6 +10,8 @@ class DossierArreteSISH
     public const ARRETE_DATE = 3;
     public const ARRETE_NUMERO = 4;
     public const ARRETE_TYPE = 5;
+    public const ARRETE_MAINLEVEE_DATE = 6;
+    public const ARRETE_MAINLEVEE_NUMERO = 7;
 
     private ?int $arreteId = null;
     private ?string $logicielProvenance = null;
@@ -18,6 +20,8 @@ class DossierArreteSISH
     private ?string $arreteDate = null;
     private ?string $arreteNumero = null;
     private ?string $arreteType = null;
+    private ?string $arreteMLDate = null;
+    private ?string $arreteMLNumero = null;
 
     public function __construct(array $item)
     {
@@ -31,6 +35,8 @@ class DossierArreteSISH
                 $this->arreteDate = $data[self::ARRETE_DATE];
                 $this->arreteNumero = $data[self::ARRETE_NUMERO];
                 $this->arreteType = $data[self::ARRETE_TYPE];
+                $this->arreteMLDate = $data[self::ARRETE_MAINLEVEE_DATE];
+                $this->arreteMLNumero = $data[self::ARRETE_MAINLEVEE_NUMERO];
             }
         }
     }
@@ -68,5 +74,15 @@ class DossierArreteSISH
     public function getArreteType(): ?string
     {
         return $this->arreteType;
+    }
+
+    public function getArreteMLDate(): ?string
+    {
+        return $this->arreteMLDate;
+    }
+
+    public function getArreteMLNumero(): ?string
+    {
+        return $this->arreteMLNumero;
     }
 }
