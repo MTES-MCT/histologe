@@ -135,8 +135,8 @@ cancelVisiteForms.forEach(cancelVisiteForm => {
         const idIntervention = cancelVisiteForm.getAttribute('data-intervention-id')
         const tinyMCE = tinymce.get('visite-cancel[details]-' + idIntervention)
         const textContent = tinyMCE ? tinyMCE.getContent() : ''
+        const textareaDetailsError = cancelVisiteForm.querySelector('#signalement-cancel-visite-details-error-' + idIntervention)
         if (textContent == '') {
-            const textareaDetailsError = cancelVisiteForm.querySelector('#signalement-cancel-visite-details-error')
             textareaDetailsError.classList.remove('fr-hidden')
             evt.preventDefault()
         } else {
