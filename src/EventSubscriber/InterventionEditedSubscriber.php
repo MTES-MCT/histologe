@@ -30,7 +30,7 @@ class InterventionEditedSubscriber implements EventSubscriberInterface
     public function onInterventionEdited(InterventionEditedEvent $event): void
     {
         $intervention = $event->getIntervention();
-        if ($event->isUsagerNotified() && InterventionType::VISITE === $intervention->getType()) {
+        if (InterventionType::VISITE === $intervention->getType()) {
             $currentUser = $event->getUser();
             $description = 'Edition de la conclusion de la visite par '.$intervention->getPartner()->getNom().'.<br>';
             $description .= 'Commentaire opérateur :<br>';
@@ -38,7 +38,7 @@ class InterventionEditedSubscriber implements EventSubscriberInterface
             $suivi = $this->suiviManager->createSuivi(
                 user: $currentUser,
                 signalement: $intervention->getSignalement(),
-                isPublic: true,
+                isPublic: $event->isUsagerNotified(),
                 context: Suivi::CONTEXT_INTERVENTION,
                 params: [
                     'description' => $description,
@@ -47,7 +47,9 @@ class InterventionEditedSubscriber implements EventSubscriberInterface
             );
             $this->suiviManager->save($suivi);
 
-            $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_EDITED_TO_USAGER);
+            if ($event->isUsagerNotified()) {
+                $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_EDITED_TO_USAGER);
+            }
 
             $this->visiteNotifier->notifyAgents(
                 intervention: $intervention,
