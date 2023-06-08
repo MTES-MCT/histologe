@@ -4,7 +4,7 @@
             <h1 class="fr-h2 fr-text-label--blue-france">#{{ signalement.reference }} - {{ signalement.prenomOccupant }} {{ signalement.nomOccupant }}</h1>
         </div>
         <div class="fr-col-3 fr-col-md-6 fr-text--right">
-            {% if isAffected and not isAccepted and not isRefused and not needValidation and  not isClosed and not isClosedForMe %}
+            {% if isAffected and not isAccepted and not isRefused and not needValidation and not isClosed and not isClosedForMe %}
                 <form action="{{ path('back_signalement_affectation_response',{signalement:signalement.id,user:app.user.id,affectation:isAffected.id}) }}"
                         class="tinyCheck fr-mb-3v" id="signalement-affectation-response-form"
                         name="signalement-affectation-response-form" method="POST">
@@ -34,20 +34,20 @@
             {% elseif needValidation and not isClosedForMe and is_granted('ROLE_ADMIN_TERRITORY') %}
                 <form id="signalement-validation-response-form"
                         action="{{ path('back_signalement_validation_response',{uuid:signalement.uuid}) }}"
-                        class="tinyCheck fr-mb-3v">
+                        class="tinyCheck inline-form">
                     <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-checkbox-circle-fill fr-btn--success"
                             name="signalement-validation-response[accept]" value="1"
                             onclick="return confirm('Êtes-vous certain de vouloir valider ce signalement ?')">
                         Valider ce signalement
                     </button>
-                    <a href="#" class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-close-fill fr-btn--danger"
-                        aria-controls="refus-signalement-modal" data-fr-opened="false">
-                        Refuser ce signalement
-                    </a>
                     {% include '_partials/_modal_refus_signalement.html.twig' %}
                     <input type="hidden" name="_token"
                             value="{{ csrf_token('signalement_validation_response_'~signalement.id) }}">
                 </form>
+                <a href="#" class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-close-line fr-btn--danger"
+                    aria-controls="refus-signalement-modal" data-fr-opened="false">
+                    Refuser ce signalement
+                </a>
 
             {% elseif isClosedForMe or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
                 <form action="{{ path('back_signalement_reopen',{uuid:signalement.uuid}) }}" class="fr-mb-3v">
