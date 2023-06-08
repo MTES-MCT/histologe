@@ -37,7 +37,10 @@ class GlobalAnalyticsProvider
         $countSignalementsResolus = 0;
         foreach ($countPerMotifsCloture as $countPerMotifCloture) {
             if ((MotifCloture::TRAVAUX_FAITS_OU_EN_COURS->value == $countPerMotifCloture['motifCloture']->value
-                || MotifCloture::RELOGEMENT_OCCUPANT->value == $countPerMotifCloture['motifCloture']->value)
+                || MotifCloture::RELOGEMENT_OCCUPANT->value == $countPerMotifCloture['motifCloture']->value
+                || MotifCloture::INSALUBRITE->value == $countPerMotifCloture['motifCloture']->value
+                || MotifCloture::RSD->value == $countPerMotifCloture['motifCloture']->value
+                || MotifCloture::PERIL->value == $countPerMotifCloture['motifCloture']->value)
                 && !empty($countPerMotifCloture['count'])
             ) {
                 $countSignalementsResolus += $countPerMotifCloture['count'];
