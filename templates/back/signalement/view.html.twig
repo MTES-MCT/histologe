@@ -16,7 +16,14 @@
         {% include '_partials/_modal_edit_nde.html.twig' %}        
     {% endif %}
     <section id="signalement-{{ signalement.id }}-content"
-        class="fr-p-5v fr-background--white {{ isClosedForMe or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') ? 'signalement-invalid':'' }}">
+        class="fr-p-5v fr-background--white
+            {{ isClosedForMe
+                or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION')
+                or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
+                or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED')
+            ? 'signalement-invalid'
+            : ''
+            }}">
         
         {% include 'back/signalement/view/header.html.twig' %}
         

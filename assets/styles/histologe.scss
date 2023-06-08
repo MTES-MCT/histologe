@@ -5,7 +5,7 @@ html, body {
 .signalement-invalid {
     position: relative;
 
-    #signalement-toggle-situations, .reopen, .reaffect, .fr-btn--success.fr-fi-file-pdf-fill {
+    #signalement-toggle-situations, .reopen, .reaffect, .fr-btn--success.fr-fi-file-pdf-fill, .admin-territory-validation, .signalement-file-item a {
         position: relative;
         z-index: 1001;
     }

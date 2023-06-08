@@ -32,22 +32,24 @@
                 </form>
 
             {% elseif needValidation and not isClosedForMe and is_granted('ROLE_ADMIN_TERRITORY') %}
-                <form id="signalement-validation-response-form"
-                        action="{{ path('back_signalement_validation_response',{uuid:signalement.uuid}) }}"
-                        class="tinyCheck inline-form">
-                    <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-checkbox-circle-fill fr-btn--success"
-                            name="signalement-validation-response[accept]" value="1"
-                            onclick="return confirm('Êtes-vous certain de vouloir valider ce signalement ?')">
-                        Valider ce signalement
-                    </button>
-                    {% include '_partials/_modal_refus_signalement.html.twig' %}
-                    <input type="hidden" name="_token"
-                            value="{{ csrf_token('signalement_validation_response_'~signalement.id) }}">
-                </form>
-                <a href="#" class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-close-line fr-btn--danger"
-                    aria-controls="refus-signalement-modal" data-fr-opened="false">
-                    Refuser ce signalement
-                </a>
+                <div class="admin-territory-validation">
+                    <form id="signalement-validation-response-form"
+                            action="{{ path('back_signalement_validation_response',{uuid:signalement.uuid}) }}"
+                            class="tinyCheck inline-form">
+                        <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-checkbox-circle-fill fr-btn--success"
+                                name="signalement-validation-response[accept]" value="1"
+                                onclick="return confirm('Êtes-vous certain de vouloir valider ce signalement ?')">
+                            Valider ce signalement
+                        </button>
+                        {% include '_partials/_modal_refus_signalement.html.twig' %}
+                        <input type="hidden" name="_token"
+                                value="{{ csrf_token('signalement_validation_response_'~signalement.id) }}">
+                    </form>
+                    <a href="#" class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-close-line fr-btn--danger"
+                        aria-controls="refus-signalement-modal" data-fr-opened="false">
+                        Refuser ce signalement
+                    </a>
+                </div>
 
             {% elseif isClosedForMe or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
                 <form action="{{ path('back_signalement_reopen',{uuid:signalement.uuid}) }}" class="fr-mb-3v">
