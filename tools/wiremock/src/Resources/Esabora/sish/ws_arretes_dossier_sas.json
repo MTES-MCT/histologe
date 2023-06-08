@@ -7,7 +7,9 @@
     "SISH_DossNum",
     "SISH_ArreteDate",
     "SISH_ArreteNumero",
-    "SISH_ArreteType"
+    "SISH_ArreteType",
+    "SISH_ArreteMLDate",
+    "SISH_ArreteMLNumero"
   ],
   "keyList": [
     "i1.imdo_id",
@@ -21,7 +23,9 @@
         "2023/DD13/0010",
         "14/06/2023",
         "2023/DD13/00664",
-        "Arrêté L.511-11 - Suroccupation"
+        "Arrêté L.511-11 - Suroccupation",
+        "01/07/2023",
+        "2023-DD13-00172"
       ],
       "keyDataList": [
         29,

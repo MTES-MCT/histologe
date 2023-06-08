@@ -18,6 +18,7 @@ class InterventionFactory
         ?int $providerId = null,
         ?string $doneBy = null,
         ?string $details = null,
+        ?array $additionalInformation = null,
     ): Intervention {
         return (new Intervention())
             ->setPartner($affectation->getPartner())
@@ -29,6 +30,8 @@ class InterventionFactory
             ->setProviderName($providerName)
             ->setProviderId($providerId)
             ->setDoneBy($doneBy)
-            ->setDetails($details);
+            ->setDetails($details)
+            ->setAdditionalInformation($additionalInformation)
+        ;
     }
 }

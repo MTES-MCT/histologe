@@ -58,7 +58,7 @@ class EsaboraManager
         $currentStatus = $affectation->getStatut();
 
         $esaboraStatus = $dossierResponse->getSasEtat();
-        $esaboraDossierStatus = $dossierResponse->getEtat();
+        $esaboraDossierStatus = strtolower($dossierResponse->getEtat());
 
         switch ($esaboraStatus) {
             case EsaboraStatus::ESABORA_WAIT->value:
@@ -122,7 +122,15 @@ class EsaboraManager
     public function createOrUpdateArrete(Affectation $affectation, DossierArreteSISH $dossierArreteSISH): void
     {
         $intervention = $this->interventionRepository->findOneBy(['providerId' => $dossierArreteSISH->getArreteId()]);
+        $additionalInformation = [
+            'arrete_numero' => $dossierArreteSISH->getArreteNumero(),
+            'arrete_type' => $dossierArreteSISH->getArreteType(),
+            'arrete_mainlevee_date' => $dossierArreteSISH->getArreteMLDate(),
+            'arrete_mainlevee_numero' => $dossierArreteSISH->getArreteMLNumero(),
+        ];
+
         if (null !== $intervention) {
+            $intervention->setAdditionalInformation($additionalInformation);
             $this->updateFromDossierArrete($intervention, $dossierArreteSISH);
         } else {
             $intervention = $this->interventionFactory->createInstanceFrom(
@@ -133,7 +141,8 @@ class EsaboraManager
                 status: Intervention::STATUS_DONE,
                 providerName: InterfacageType::ESABORA->value,
                 providerId: $dossierArreteSISH->getArreteId(),
-                details: $this->buildDetailArrete($dossierArreteSISH)
+                details: $this->buildDetailArrete($dossierArreteSISH),
+                additionalInformation: $additionalInformation
             );
 
             $this->interventionRepository->save($intervention, true);
@@ -162,7 +171,23 @@ class EsaboraManager
 
     private function buildDetailArrete(DossierArreteSISH $dossierArreteSISH): string
     {
-        return sprintf('Type arrêté: %s', $dossierArreteSISH->getArreteType());
+        $description = sprintf(
+            'Il existe 1 arrêté de type %s de n°%s daté du %s dans le dossier de n°%s.'.\PHP_EOL,
+            $dossierArreteSISH->getArreteType(),
+            $dossierArreteSISH->getArreteNumero(),
+            $dossierArreteSISH->getArreteDate(),
+            $dossierArreteSISH->getDossNum()
+        );
+
+        if ($dossierArreteSISH->getArreteMLNumero()) {
+            $description .= sprintf(
+                'Pour cet arrêté, il a également été pris un arrêté de mainlevée n°%s en date du %s.',
+                $dossierArreteSISH->getArreteMLNumero(),
+                $dossierArreteSISH->getArreteMLDate()
+            );
+        }
+
+        return $description;
     }
 
     private function shouldBeAcceptedViaEsabora(string $esaboraDossierStatus, int $currentStatus): bool
