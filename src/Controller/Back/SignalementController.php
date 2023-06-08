@@ -11,12 +11,10 @@ use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Entity\Situation;
 use App\Entity\Suivi;
-use App\Entity\User;
 use App\Event\SignalementClosedEvent;
 use App\Event\SignalementViewedEvent;
 use App\Form\ClotureType;
 use App\Form\SignalementType;
-use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
@@ -44,14 +42,11 @@ class SignalementController extends AbstractController
         Request $request,
         TagRepository $tagsRepository,
         SignalementManager $signalementManager,
-        AffectationManager $affectationManager,
         EventDispatcherInterface $eventDispatcher,
         ParameterBagInterface $parameterBag,
         SignalementQualificationRepository $signalementQualificationRepository,
         CriticiteRepository $criticiteRepository
     ): Response {
-        /** @var User $user */
-        $user = $this->getUser();
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
         if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
             $this->addFlash('error', "Ce signalement à été archivé et n'est pas consultable.");
@@ -60,13 +55,13 @@ class SignalementController extends AbstractController
         }
 
         $eventDispatcher->dispatch(
-            new SignalementViewedEvent($signalement, $user),
+            new SignalementViewedEvent($signalement, $this->getUser()),
             SignalementViewedEvent::NAME
         );
 
         $isRefused = $isAccepted = $isClosedForMe = null;
-        if ($isAffected = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
-            return $affectation->getPartner() === $user->getPartner();
+        if ($isAffected = $signalement->getAffectations()->filter(function (Affectation $affectation) {
+            return $affectation->getPartner() === $this->getUser()->getPartner();
         })->first()) {
             switch ($isAffected->getStatut()) {
                 case Affectation::STATUS_ACCEPTED:
@@ -87,7 +82,7 @@ class SignalementController extends AbstractController
         if ($clotureForm->isSubmitted() && $clotureForm->isValid()) {
             $params['motif_cloture'] = $clotureForm->get('motif')->getData();
             $params['motif_suivi'] = $clotureForm->getExtraData()['suivi'];
-            $params['subject'] = $user?->getPartner()?->getNom();
+            $params['subject'] = $this->getUser()?->getPartner()?->getNom();
             $params['closed_for'] = $clotureForm->get('type')->getData();
 
             if ('all' === $params['closed_for']) {
@@ -100,7 +95,7 @@ class SignalementController extends AbstractController
 
             /** @var Affectation $isAffected */
             if ($isAffected) {
-                $entity = $affectationManager->closeAffectation($isAffected, $user, $params['motif_cloture'], true);
+                $entity = $signalementManager->closeAffectation($isAffected, $params['motif_cloture']);
             }
 
             $eventDispatcher->dispatch(new SignalementClosedEvent($entity, $params), SignalementClosedEvent::NAME);
