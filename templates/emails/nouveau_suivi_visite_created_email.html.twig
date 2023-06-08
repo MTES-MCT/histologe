@@ -7,7 +7,8 @@
         <br>
         <strong>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</strong>,
         <br>
-        une visite est prévue à cette adresse le {{ intervention.date.format('d/m/Y')}}.
+        une visite est prévue à cette adresse le 
+        {{ (intervention.scheduledAt.format('H')) > 0 ? intervention.scheduledAt.format('d/m/Y à H:i') : intervention.scheduledAt.format('d/m/Y') }}.
         <br><br>
         La visite sera effectuée par {{ intervention.partner.nom }}.
         <br><br>
