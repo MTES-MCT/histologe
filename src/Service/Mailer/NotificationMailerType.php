@@ -26,6 +26,5 @@ enum NotificationMailerType
     case TYPE_NEW_COMMENT_BACK;
     case TYPE_CONTACT_FORM;
     case TYPE_ERROR_SIGNALEMENT;
-    case TYPE_ERROR_SIGNALEMENT_NO_USER;
     case TYPE_CRON;
 }
