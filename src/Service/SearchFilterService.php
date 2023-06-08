@@ -7,6 +7,7 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
@@ -41,7 +42,6 @@ class SearchFilterService
         'housetypes',
         'declarants',
         'proprios',
-        'interventions',
         'avant1949',
         'enfantsM6',
         'affectations',
@@ -372,13 +372,32 @@ class SearchFilterService
             $qb->andWhere('s.villeOccupant IN (:cities)')
                 ->setParameter('cities', $filters['cities']);
         }
-        /*
-        TODO : dateVisite
         if (!empty($filters['visites'])) {
-            $qb->andWhere('IF(s.dateVisite IS NOT NULL,1,0) IN (:visites)')
-                ->setParameter('visites', $filters['visites']);
+            $qb->leftJoin('s.interventions', 'i');
+            $queryVisites = '';
+
+            foreach ($filters['visites'] as $visiteFilter) {
+                $queryVisites .= ('' != $queryVisites) ? ' OR ' : '';
+                switch ($visiteFilter) {
+                    case 'Non planifiée':
+                        $queryVisites .= '(i.id IS NULL)';
+                        break;
+                    case 'Planifiée':
+                        $todayDatetime = new \DateTime();
+                        $queryVisites .= '(i.status = \''.Intervention::STATUS_PLANNED.'\' AND i.scheduledAt > '.$todayDatetime->format('Y-m-d').')';
+                        break;
+                    case 'Conclusion à renseigner':
+                        $todayDatetime = new \DateTime();
+                        $queryVisites .= '(i.status = \''.Intervention::STATUS_PLANNED.'\' AND i.scheduledAt <= '.$todayDatetime->format('Y-m-d').')';
+                        break;
+                    case 'Terminée':
+                        $queryVisites .= '(i.status = \''.Intervention::STATUS_DONE.'\')';
+                        break;
+                }
+            }
+
+            $qb->andWhere($queryVisites);
         }
-        */
         if (!empty($filters['enfantsM6'])) {
             $qb->andWhere('IF(s.nbEnfantsM6 IS NOT NULL AND s.nbEnfantsM6 != 0,1,0) IN (:enfantsM6)')
                 ->setParameter('enfantsM6', $filters['enfantsM6']);
@@ -389,12 +408,6 @@ class SearchFilterService
         }
         if (!empty($filters['dates'])) {
             $field = 's.createdAt';
-            /*
-            TODO : dateVisite
-            if (!empty($filters['visites'])) {
-                $field = 's.dateVisite';
-            }
-            */
             if (!empty($filters['dates']['on'])) {
                 $qb->andWhere($field.' >= :date_in')
                     ->setParameter('date_in', $filters['dates']['on']);
@@ -427,10 +440,6 @@ class SearchFilterService
         if (!empty($filters['proprios'])) {
             $qb->andWhere('s.isProprioAverti IN (:proprios)')
                 ->setParameter('proprios', $filters['proprios']);
-        }
-        if (!empty($filters['interventions'])) {
-            $qb->andWhere('s.isRefusIntervention IN (:interventions)')
-                ->setParameter('interventions', $filters['interventions']);
         }
         if (!empty($filters['delays'])) {
             $signalementIds = $this->suiviRepository->findSignalementNoSuiviSince(

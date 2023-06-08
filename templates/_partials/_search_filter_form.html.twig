@@ -339,52 +339,26 @@
                                     </div>
                                 </div>
                                 <div class="fr-col-12 fr-col-md-6">
-                                    <div class="fr-grid-row fr-grid-row--gutters">
-                                        <div class="fr-col-6">
-                                            <label class="fr-label" for="bo-filters-interventions"><strong>Accepte
-                                                    visite</strong></label>
-                                            <select id="bo-filters-interventions" class="fr-select" onchange="setBadge(this)">
-                                                <option value="">TOUS</option>
-                                                <option value="0" class="{% if 0 in filters.interventions %}fr-hidden{% endif %}">OUI
-                                                </option>
-                                                <option value="1" class="{% if 1 in filters.interventions %}fr-hidden{% endif %}">NON
-                                                </option>
-                                            </select>
-                                            <div class="selected__value">
-                                                <div class="fr-pb-1v fr-border--bottom--orange"></div>
-                                                {% set visible = 'fr-hidden' %}
-                                                {% for intervention in filters.interventions %}
-                                                    <input type="hidden" name="bo-filters-interventions[]" value="{{ intervention }}">
-                                                    <span class="fr-badge fr-badge--success fr-m-1v" data-value="{{ intervention }}"
-                                                          data-removable="true">{{ intervention ? 'NON' : 'OUI' }}</span>
-                                                {% else %}
-                                                    {% set visible = 0 %}
-                                                {% endfor %}
-                                                <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
-                                            </div>
-
-                                        </div>
-                                        <div class="fr-col-6">
-                                            <label class="fr-label" for="bo-filters-visites"><strong>Visite effectuée</strong></label>
-                                            <select id="bo-filters-visites" class="fr-select" onchange="setBadge(this)">
-                                                <option value="">TOUS</option>
-                                                <option value="0" class="{% if 0 in filters.visites %}fr-hidden{% endif %}">NON</option>
-                                                <option value="1" class="{% if 1 in filters.visites %}fr-hidden{% endif %}">OUI</option>
-                                            </select>
-                                            <div class="selected__value">
-                                                <div class="fr-pb-1v fr-border--bottom--orange"></div>
-                                                {% set visible = 'fr-hidden' %}
-                                                {% for visite in filters.visites %}
-                                                    <input type="hidden" name="bo-filters-visites[]" value="{{ visite }}">
-                                                    <span class="fr-badge fr-badge--success fr-m-1v"
-                                                          data-value="{{ visite }}" data-removable="true"
-                                                          data-value="{{ visite }}">{{ visite ? 'OUI':'NON' }}</span>
-                                                {% else %}
-                                                    {% set visible = 0 %}
-                                                {% endfor %}
-                                                <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
-                                            </div>
-                                        </div>
+                                    <label class="fr-label" for="bo-filters-visites"><strong>Statut de la visite</strong></label>
+                                    <select id="bo-filters-visites" class="fr-select" onchange="setBadge(this)">
+                                        <option value="">TOUS</option>
+                                        <option value="Non planifiée">Non planifiée</option>
+                                        <option value="Planifiée">Planifiée</option>
+                                        <option value="Conclusion à renseigner">Conclusion à renseigner</option>
+                                        <option value="Terminée">Terminée</option>
+                                    </select>
+                                    <div class="selected__value">
+                                        <div class="fr-pb-1v fr-border--bottom--orange"></div>
+                                        {% set visible = 'fr-hidden' %}
+                                        {% for visite in filters.visites %}
+                                            <input type="hidden" name="bo-filters-visites[]" value="{{ visite }}">
+                                            <span class="fr-badge fr-badge--success fr-m-1v"
+                                                    data-removable="true"
+                                                    data-value="{{ visite }}">{{ visite }}</span>
+                                        {% else %}
+                                            {% set visible = 0 %}
+                                        {% endfor %}
+                                        <span class="fr-badge fr-badge--info fr-m-1v {{ visible ?? '' }}">TOUS</span>
                                     </div>
                                 </div>
                                 <div class="fr-col-12 fr-col-md-6">
