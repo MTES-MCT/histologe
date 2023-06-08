@@ -70,7 +70,7 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getArrayResult();
     }
 
-    public function countAll(Territory|null $territory, bool $removeImported = false, bool $removeArchived = false): int
+    public function countAll(Territory|null $territory, Partner|null $partner, bool $removeImported = false, bool $removeArchived = false): int
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id)');
@@ -85,6 +85,12 @@ class SignalementRepository extends ServiceEntityRepository
         }
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+        if ($partner) {
+            $qb->leftJoin('s.affectations', 'affectations')
+                ->leftJoin('affectations.partner', 'partner')
+                ->andWhere('partner = :partner')
+                ->setParameter('partner', $partner);
         }
 
         return $qb->getQuery()
@@ -103,7 +109,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function countByStatus(Territory|null $territory, int|null $year = null, bool $removeImported = false, Qualification $qualification = null, array $qualificationStatuses = null): array
+    public function countByStatus(Territory|null $territory, Partner|null $partner, int|null $year = null, bool $removeImported = false, Qualification $qualification = null, array $qualificationStatuses = null): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
@@ -117,6 +123,12 @@ class SignalementRepository extends ServiceEntityRepository
 
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+        if ($partner) {
+            $qb->leftJoin('s.affectations', 'affectations')
+                ->leftJoin('affectations.partner', 'partner')
+                ->andWhere('partner = :partner')
+                ->setParameter('partner', $partner);
         }
         if ($year) {
             $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);
@@ -550,7 +562,7 @@ class SignalementRepository extends ServiceEntityRepository
         return $partnersEmail;
     }
 
-    public function getAverageCriticite(Territory|null $territory, bool $removeImported = false): ?float
+    public function getAverageCriticite(Territory|null $territory, Partner|null $partner, bool $removeImported = false): ?float
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('AVG(s.score)');
@@ -561,22 +573,28 @@ class SignalementRepository extends ServiceEntityRepository
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
         }
+        if ($partner) {
+            $qb->leftJoin('s.affectations', 'affectations')
+                ->leftJoin('affectations.partner', 'partner')
+                ->andWhere('partner = :partner')
+                ->setParameter('partner', $partner);
+        }
 
         return $qb->getQuery()
             ->getSingleScalarResult();
     }
 
-    public function getAverageDaysValidation(Territory|null $territory, bool $removeImported = false): ?float
+    public function getAverageDaysValidation(Territory|null $territory, Partner|null $partner, bool $removeImported = false): ?float
     {
-        return $this->getAverageDayResult('validatedAt', $territory, $removeImported);
+        return $this->getAverageDayResult('validatedAt', $territory, $partner, $removeImported);
     }
 
-    public function getAverageDaysClosure(Territory|null $territory, bool $removeImported = false): ?float
+    public function getAverageDaysClosure(Territory|null $territory, Partner|null $partner, bool $removeImported = false): ?float
     {
-        return $this->getAverageDayResult('closedAt', $territory, $removeImported);
+        return $this->getAverageDayResult('closedAt', $territory, $partner, $removeImported);
     }
 
-    private function getAverageDayResult(string $field, Territory|null $territory, bool $removeImported = false): ?float
+    private function getAverageDayResult(string $field, Territory|null $territory, Partner|null $partner, bool $removeImported = false): ?float
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('AVG(datediff(s.'.$field.', s.createdAt))');
@@ -588,6 +606,12 @@ class SignalementRepository extends ServiceEntityRepository
         }
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+        if ($partner) {
+            $qb->leftJoin('s.affectations', 'affectations')
+                ->leftJoin('affectations.partner', 'partner')
+                ->andWhere('partner = :partner')
+                ->setParameter('partner', $partner);
         }
 
         return $qb->getQuery()
@@ -818,6 +842,13 @@ class SignalementRepository extends ServiceEntityRepository
         if ($filters->getCommunes()) {
             $qb->andWhere('s.villeOccupant IN (:communes)')
                 ->setParameter('communes', $filters->getCommunes());
+        }
+
+        if ($filters->getPartner()) {
+            $qb->leftJoin('s.affectations', 'affectations')
+            ->leftJoin('affectations.partner', 'partner')
+            ->andWhere('partner = :partner')
+            ->setParameter('partner', $filters->getPartner());
         }
 
         return $qb;

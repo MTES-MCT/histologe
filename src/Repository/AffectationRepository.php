@@ -63,8 +63,10 @@ class AffectationRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('a');
         $qb->select('a.id, a.statut, partner.id, partner.nom')
-            ->leftJoin('a.signalement', 's')
-            ->leftJoin('a.partner', 'partner');
+            ->leftJoin('a.signalement', 's');
+        if (null === $statisticsFilters->getPartner()) {
+            $qb->leftJoin('a.partner', 'partner');
+        }
 
         $qb = SignalementRepository::addFiltersToQuery($qb, $statisticsFilters);
 
@@ -130,12 +132,15 @@ class AffectationRepository extends ServiceEntityRepository
     public function countSignalementByPartner(Partner $partner): CountSignalement
     {
         $qb = $this->createQueryBuilder('a');
-        $qb->select(sprintf('NEW %s(COUNT(a.id),
+        $qb->select(
+            sprintf(
+                'NEW %s(COUNT(a.id),
                     SUM(CASE WHEN a.statut = :statut_wait THEN 1 ELSE 0 END),
                     SUM(CASE WHEN a.statut = :statut_accepted THEN 1 ELSE 0 END),
                     SUM(CASE WHEN a.statut = :statut_closed THEN 1 ELSE 0 END),
                     SUM(CASE WHEN a.statut = :statut_refused THEN 1 ELSE 0 END))',
-            CountSignalement::class)
+                CountSignalement::class
+            )
         )
             ->setParameter('statut_wait', Affectation::STATUS_WAIT)
             ->setParameter('statut_accepted', Affectation::STATUS_ACCEPTED)

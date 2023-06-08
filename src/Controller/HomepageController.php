@@ -25,6 +25,7 @@ class HomepageController extends AbstractController
         $stats = [];
         $stats['total'] = $signalementRepository->countAll(
             territory: null,
+            partner: null,
             removeImported: true,
             removeArchived: true
         );

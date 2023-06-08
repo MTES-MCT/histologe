@@ -87,6 +87,7 @@ class WidgetDataKpiBuilder
             $countSignalementByStatus = $this->signalementRepository->countByStatus(
                 $this->territory,
                 null,
+                null,
                 false,
                 Qualification::NON_DECENCE_ENERGETIQUE,
                 [QualificationStatus::NDE_AVEREE, QualificationStatus::NDE_CHECK]

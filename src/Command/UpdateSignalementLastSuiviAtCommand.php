@@ -34,7 +34,13 @@ class UpdateSignalementLastSuiviAtCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $queryBuilder = $this->signalementRepository->createQueryBuilderActiveSignalement(removeArchived: true);
         $progressBar = new ProgressBar($output);
-        $progressBar->start($this->signalementRepository->countAll(null, false, true));
+        $progressBar->start($this->signalementRepository->countAll(
+            territory: null,
+            partner: null,
+            removeImported: false,
+            removeArchived: true
+        ));
+
         $count = 0;
         /** @var Signalement $signalement */
         foreach ($queryBuilder->getQuery()->toIterable() as $signalement) {

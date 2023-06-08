@@ -2,6 +2,7 @@
 
 namespace App\Dto;
 
+use App\Entity\Partner;
 use App\Entity\Territory;
 use DateTime;
 
@@ -16,6 +17,7 @@ class StatisticsFilters
     private bool $countRefused;
     private bool $countArchived;
     private ?Territory $territory;
+    private ?Partner $partner;
 
     public function __construct(
         ?array $communes,
@@ -27,7 +29,8 @@ class StatisticsFilters
         bool $countRefused,
         bool $countArchived,
         ?Territory $territory,
-        ) {
+        ?Partner $partner,
+    ) {
         $this->communes = $communes;
         $this->statut = $statut;
         $this->etiquettes = $etiquettes;
@@ -37,6 +40,7 @@ class StatisticsFilters
         $this->countRefused = $countRefused;
         $this->countArchived = $countArchived;
         $this->territory = $territory;
+        $this->partner = $partner;
     }
 
     public function getCommunes(): ?array
@@ -143,6 +147,18 @@ class StatisticsFilters
     public function setTerritory(?Territory $territory): self
     {
         $this->territory = $territory;
+
+        return $this;
+    }
+
+    public function getPartner(): ?Partner
+    {
+        return $this->partner;
+    }
+
+    public function setPartner(?Partner $partner): self
+    {
+        $this->partner = $partner;
 
         return $this;
     }

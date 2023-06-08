@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Dto\StatisticsFilters;
+use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\TerritoryRepository;
@@ -51,10 +52,11 @@ class BackStatistiquesController extends AbstractController
             $this->ajaxResult = [];
 
             $territory = $this->getSelectedTerritory($request, $territoryRepository);
+            $partner = $this->getSelectedPartner();
 
             $this->buildFilterLists($territory);
 
-            $globalStatistics = $this->globalBackAnalyticsProvider->getData($territory);
+            $globalStatistics = $this->globalBackAnalyticsProvider->getData($territory, $partner);
             $this->ajaxResult['count_signalement'] = $globalStatistics['count_signalement'];
             $this->ajaxResult['average_criticite'] = $globalStatistics['average_criticite'];
             $this->ajaxResult['average_days_validation'] = $globalStatistics['average_days_validation'];
@@ -62,7 +64,7 @@ class BackStatistiquesController extends AbstractController
             $this->ajaxResult['count_signalement_refuses'] = $globalStatistics['count_signalement_refuses'];
             $this->ajaxResult['count_signalement_archives'] = $globalStatistics['count_signalement_archives'];
 
-            $statisticsFilters = $this->createFilters($request, $territory);
+            $statisticsFilters = $this->createFilters($request, $territory, $partner);
             $filteredStatistics = $this->filteredBackAnalyticsProvider->getData($statisticsFilters);
             $this->ajaxResult['count_signalement_filtered'] = $filteredStatistics['count_signalement_filtered'];
             $this->ajaxResult['average_criticite_filtered'] = $filteredStatistics['average_criticite_filtered'];
@@ -83,7 +85,7 @@ class BackStatistiquesController extends AbstractController
         return $this->json(['response' => 'error'], 400);
     }
 
-    private function createFilters(Request $request, ?Territory $territory): StatisticsFilters
+    private function createFilters(Request $request, ?Territory $territory, ?Partner $partner): StatisticsFilters
     {
         $communes = json_decode($request->get('communes'));
         $statut = $request->get('statut');
@@ -106,8 +108,21 @@ class BackStatistiquesController extends AbstractController
             $dateEnd,
             $hasCountRefused,
             $hasCountArchived,
-            $territory
+            $territory,
+            $partner
         );
+    }
+
+    private function getSelectedPartner(): ?Partner
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $partner = null;
+        if ($user->isUserPartner()) {
+            $partner = $user->getPartner();
+        }
+
+        return $partner;
     }
 
     private function getSelectedTerritory(Request $request, TerritoryRepository $territoryRepository): ?Territory
