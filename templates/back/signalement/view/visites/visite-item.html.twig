@@ -39,7 +39,7 @@
                 <span class="fr-badge fr-badge--no-icon" title="Non disponible">Non disponible</span>
             {% else %}
                 {% for procedure in intervention.concludeProcedure %}
-                    <span class="fr-badge fr-badge--no-icon fr-badge--warning" title="{{ procedure.label }}">{{ procedure.label }}</span>
+                    {% include '_partials/signalement/conclude-procedure.html.twig' %}
                 {% endfor %}
             {% endif %}
         </div>

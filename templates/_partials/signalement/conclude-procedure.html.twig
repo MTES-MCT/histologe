@@ -1,0 +1,15 @@
+{% set typeBadge = '' %}
+{% if procedure.label is same as 'Mise en sécurité / Péril' %}
+    {% set typeBadge = 'error' %}
+{% elseif procedure.label is same as 'Insalubrité' %}
+    {% set typeBadge = 'warning' %}
+{% elseif procedure.label is same as 'Logement décent / Pas d\'infraction' %}
+    {% set typeBadge = 'success' %}
+{% elseif procedure.label is same as 'Responsabilité occupant / Assurantiel' %}
+    {% set typeBadge = 'blue-ecume' %}
+{% elseif procedure.label is same as 'Non décence'
+    or procedure.label is same as 'Infraction RSD' %}
+    {% set typeBadge = 'info' %}
+{% endif %}
+
+<span class="fr-badge fr-badge--no-icon fr-badge--{{ typeBadge }}" title="{{ procedure.label }}">{{ procedure.label }}</span>
