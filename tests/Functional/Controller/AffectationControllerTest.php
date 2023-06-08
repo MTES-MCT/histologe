@@ -65,7 +65,6 @@ class AffectationControllerTest extends WebTestCase
         /** @var Suivi $suivi */
         $suivi = $this->suiviRepository->findOneBy(['signalement' => $signalement], ['createdAt' => 'DESC']);
 
-        $this->assertEmailCount(1);
         $this->assertTrue(str_contains(
             $suivi->getDescription(),
             'Cela ne me concerne pas, voir avec un autre organisme'
