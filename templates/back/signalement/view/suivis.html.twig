@@ -45,7 +45,7 @@
 {% endif %}
 
 {% for suivi in signalement.suivis|reverse %}
-    <div class="fr-grid-row fr-grid-row--middle fr-background-alt--grey fr-p-3v fr-mb-3v suivi-item {% if loop.index > 3 %}fr-hidden{% endif %}">
+    <div class="fr-grid-row fr-grid-row--middle fr-background-alt--blue-france fr-p-3v fr-mb-3v suivi-item {% if loop.index > 3 %}fr-hidden{% endif %}">
         <div class="fr-col-3">   
             <strong>{{ suivi.createdAt|date('d/m/Y') }}</strong>
             <br>
