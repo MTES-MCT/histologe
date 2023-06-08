@@ -147,6 +147,8 @@ class AffectationController extends AbstractController
     {
         $partner = $affectation->getPartner();
         if ($partner->getEsaboraToken() && $partner->getEsaboraUrl() && $partner->isEsaboraActive()) {
+            $affectation->setIsSynchronized(true);
+            $this->affectationManager->save($affectation);
             $this->esaboraBus->dispatch($affectation);
         }
     }

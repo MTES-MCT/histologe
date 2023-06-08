@@ -81,7 +81,9 @@ class AffectationRepository extends ServiceEntityRepository
         $qb = $qb->innerJoin('a.partner', 'p')
             ->where('p.esaboraUrl IS NOT NULL AND p.esaboraToken IS NOT NULL AND p.isEsaboraActive = 1')
             ->andWhere('p.type = :partner_type')
-            ->setParameter('partner_type', $partnerType);
+            ->andWhere('a.isSynchronized = :is_synchronized')
+            ->setParameter('partner_type', $partnerType)
+            ->setParameter('is_synchronized', true);
 
         if (null !== $uuidSignalement) {
             $qb->innerJoin('a.signalement', 's')
