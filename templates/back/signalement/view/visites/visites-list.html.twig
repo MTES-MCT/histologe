@@ -6,6 +6,10 @@
     {% include 'back/signalement/view/visites/modals/visites-modal-add.html.twig' %}
 {% endif %}
 
+<p class="fr-pb-5v">
+    Les visites sont gérées par les partenaires ayant la compétence "Visites" et les responsables de territoires.
+</p>
+
 {% if signalement.interventions is empty %}
     {% if is_granted('SIGN_ADD_VISITE', signalement) %}
         {% include 'back/signalement/view/visites/visites-buttons.html.twig' %}
