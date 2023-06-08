@@ -32,6 +32,12 @@
     </div>
 </div>
 
+{% if signalement.photos|length == 0 and signalement.documents|length == 0 %}
+    <p>
+        Aucun document ou photo disponible
+    </p>
+{% endif %}
+
 <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v"
         style="position: relative;z-index: 1001">
     {% for index,photo in signalement.photos %}
