@@ -70,6 +70,7 @@ class NotifyVisitsCommand extends Command
                 suivi: $suivi,
                 currentUser: null,
                 notificationMailerType: NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_PARTNER,
+                notifyAdminTerritory: false,
             );
 
             $intervention->setReminderBeforeSentAt(new \DateTimeImmutable());

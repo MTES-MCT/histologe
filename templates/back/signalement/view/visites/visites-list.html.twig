@@ -1,12 +1,12 @@
 <hr class="fr-mt-3w">
 
-<h3 class="fr-h5">Visites</h3>
+<h3 class="fr-h5 fr-mb-3v">Visites</h3>
 
 {% if is_granted('SIGN_ADD_VISITE', signalement) %}
     {% include 'back/signalement/view/visites/modals/visites-modal-add.html.twig' %}
 {% endif %}
 
-<p class="fr-pb-5v">
+<p class="fr-text--sm fr-pb-5v">
     Les visites sont gérées par les partenaires ayant la compétence "Visites" et les responsables de territoires.
 </p>
 
