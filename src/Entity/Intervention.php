@@ -259,7 +259,7 @@ class Intervention
         return $this;
     }
 
-    public function getAdditionalInformation(): array
+    public function getAdditionalInformation(): ?array
     {
         return $this->additionalInformation;
     }
