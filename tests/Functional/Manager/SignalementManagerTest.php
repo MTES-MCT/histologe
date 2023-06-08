@@ -117,20 +117,6 @@ class SignalementManagerTest extends KernelTestCase
         $this->assertTrue($signalementHasAllAffectationsClosed);
     }
 
-    public function testCloseAffectation()
-    {
-        $affectationRepository = $this->entityManager->getRepository(Affectation::class);
-        $affectationAccepted = $affectationRepository->findOneBy(['statut' => Affectation::STATUS_ACCEPTED]);
-        $affectationClosed = $this->signalementManager->closeAffectation(
-            $affectationAccepted,
-            MotifCloture::tryFrom('NON_DECENCE')
-        );
-
-        $this->assertEquals(Affectation::STATUS_CLOSED, $affectationClosed->getStatut());
-        $this->assertInstanceOf(\DateTimeInterface::class, $affectationClosed->getAnsweredAt());
-        $this->assertTrue(str_contains($affectationClosed->getMotifCloture()->label(), 'Non décence'));
-    }
-
     public function testFindEmailsAffectedToSignalement()
     {
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);

@@ -205,19 +205,6 @@ class SignalementManager extends AbstractManager
         return $signalement;
     }
 
-    public function closeAffectation(Affectation $affectation, MotifCloture $motif): Affectation
-    {
-        $affectation
-            ->setStatut(Affectation::STATUS_CLOSED)
-            ->setAnsweredAt(new \DateTimeImmutable())
-            ->setMotifCloture($motif);
-
-        $this->managerRegistry->getManager()->persist($affectation);
-        $this->managerRegistry->getManager()->flush();
-
-        return $affectation;
-    }
-
     public function findEmailsAffectedToSignalement(Signalement $signalement): array
     {
         $sendTo = [];
