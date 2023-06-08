@@ -165,7 +165,6 @@ class ActivityListener implements EventSubscriberInterface
     {
         $options = [];
         $options['entity'] = $entity;
-        $sendErrorMail = false;
         if ($entity instanceof Signalement) {
             $signalement = $entity;
         } else {
@@ -178,9 +177,7 @@ class ActivityListener implements EventSubscriberInterface
                 return '' !== trim($element) && null !== $element;
             });
 
-            if ($this->tos->isEmpty()) {
-                $sendErrorMail = true;
-            } else {
+            if (!$this->tos->isEmpty()) {
                 $this->notificationMailerRegistry->send(
                     new NotificationMail(
                         type: $mailType,
@@ -192,18 +189,6 @@ class ActivityListener implements EventSubscriberInterface
                 );
                 $this->tos->clear();
             }
-        } else {
-            $sendErrorMail = true;
-        }
-        if ($sendErrorMail) {
-            $this->notificationMailerRegistry->send(
-                new NotificationMail(
-                    type: NotificationMailerType::TYPE_ERROR_SIGNALEMENT_NO_USER,
-                    to: $this->parameterBag->get('notifications_email'),
-                    territory: $signalement->getTerritory(),
-                    signalement: $signalement
-                )
-            );
         }
     }
 
