@@ -14,6 +14,94 @@ class BackStatistiquesControllerTest extends WebTestCase
     private const USER_ADMIN_TERRITOIRE = 'admin-territoire-13-01@histologe.fr';
     private const USER_PARTNER = 'user-13-01@histologe.fr';
 
+    public function provideRoutesHomepage(): \Generator
+    {
+        yield 'Super Admin' => ['back_statistiques', self::USER_SUPER_ADMIN];
+        yield 'Responsable Territoire' => ['back_statistiques', self::USER_ADMIN_TERRITOIRE];
+        yield 'Partner' => ['back_statistiques', self::USER_PARTNER];
+    }
+
+    /**
+     * @dataProvider provideRoutesHomepage
+     */
+    public function testStatistiquesHomepage(string $route, string $email): void
+    {
+        $client = static::createClient();
+        /** @var UserRepository $userRepository */
+        $userRepository = self::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => $email]);
+        $client->loginUser($user);
+
+        /** @var Router $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $client->request(
+            'GET',
+            $router->generate(
+                $route,
+            )
+        );
+
+        json_decode($client->getResponse()->getContent(), true);
+        $this->assertResponseIsSuccessful();
+    }
+
+    public function provideRoutesStatistiquesDatas(): \Generator
+    {
+        yield 'Super Admin' => ['back_statistiques_filter', [], self::USER_SUPER_ADMIN, [
+            ['result' => 27, 'label' => 'count_signalement'],
+            ['result' => 66.3, 'label' => 'average_criticite'],
+            ['result' => 48.3, 'label' => 'average_days_validation'],
+            ['result' => 15, 'label' => 'average_days_closure'],
+        ]];
+        yield 'Responsable Territoire' => ['back_statistiques_filter', [], self::USER_ADMIN_TERRITOIRE, [
+            ['result' => 17, 'label' => 'count_signalement'],
+            ['result' => 97.6, 'label' => 'average_criticite'],
+            ['result' => 60.8, 'label' => 'average_days_validation'],
+            ['result' => 15, 'label' => 'average_days_closure'],
+        ]];
+        yield 'Partner' => ['back_statistiques_filter', [], self::USER_PARTNER, [
+            ['result' => 3, 'label' => 'count_signalement'],
+            ['result' => 100, 'label' => 'average_criticite'],
+            ['result' => 162.7, 'label' => 'average_days_validation'],
+            ['result' => 0, 'label' => 'average_days_closure'],
+        ]];
+        yield 'RT - filtered with commune Arles' => ['back_statistiques_filter', ['communes' => '["Arles"]'], self::USER_ADMIN_TERRITOIRE, [
+            ['result' => 17, 'label' => 'count_signalement'],
+            ['result' => 97.6, 'label' => 'average_criticite'],
+            ['result' => 0, 'label' => 'count_signalement_filtered'],
+            ['result' => 0, 'label' => 'average_criticite_filtered'],
+        ]];
+    }
+
+    /**
+     * @dataProvider provideRoutesStatistiquesDatas
+     */
+    public function testStatistiquesDatas(string $route, array $params, string $email, array $expectedResponses): void
+    {
+        $client = static::createClient();
+        /** @var UserRepository $userRepository */
+        $userRepository = self::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => $email]);
+        $client->loginUser($user);
+
+        /** @var Router $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $client->request(
+            'GET',
+            $router->generate(
+                $route,
+                $params
+            )
+        );
+
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertResponseIsSuccessful();
+
+        foreach ($expectedResponses as $expectedResponse) {
+            $this->assertEquals($expectedResponse['result'], $response[$expectedResponse['label']]);
+        }
+    }
+
     public function testStatistiquesFilterRouteNotLogged(): void
     {
         $client = static::createClient();
@@ -28,175 +116,5 @@ class BackStatistiquesControllerTest extends WebTestCase
         );
 
         $this->assertResponseRedirects('/connexion');
-    }
-
-    public function testStatistiquesRouteAdmin(): void
-    {
-        $client = static::createClient();
-        /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => self::USER_SUPER_ADMIN]);
-        $client->loginUser($user);
-
-        /** @var Router $router */
-        $router = self::getContainer()->get(RouterInterface::class);
-        $client->request(
-            'GET',
-            $router->generate(
-                'back_statistiques',
-            )
-        );
-
-        $response = json_decode($client->getResponse()->getContent(), true);
-        $this->assertResponseIsSuccessful();
-    }
-
-    public function testStatistiquesFilterRouteAdmin(): void
-    {
-        $client = static::createClient();
-        /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => self::USER_SUPER_ADMIN]);
-        $client->loginUser($user);
-
-        /** @var Router $router */
-        $router = self::getContainer()->get(RouterInterface::class);
-        $client->request(
-            'GET',
-            $router->generate(
-                'back_statistiques_filter',
-            )
-        );
-
-        $response = json_decode($client->getResponse()->getContent(), true);
-        $this->assertResponseIsSuccessful();
-
-        $this->assertEquals(27, $response['count_signalement']);
-        $this->assertEquals(66.3, $response['average_criticite']);
-        $this->assertEquals(48.1, $response['average_days_validation']);
-        $this->assertEquals(15, $response['average_days_closure']);
-    }
-
-    public function testStatistiquesRouteRT(): void
-    {
-        $client = static::createClient();
-        /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITOIRE]);
-        $client->loginUser($user);
-
-        /** @var Router $router */
-        $router = self::getContainer()->get(RouterInterface::class);
-        $client->request(
-            'GET',
-            $router->generate(
-                'back_statistiques',
-            )
-        );
-
-        $response = json_decode($client->getResponse()->getContent(), true);
-        $this->assertResponseIsSuccessful();
-    }
-
-    public function testStatistiquesFilterRouteRT(): void
-    {
-        $client = static::createClient();
-        /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITOIRE]);
-        $client->loginUser($user);
-
-        /** @var Router $router */
-        $router = self::getContainer()->get(RouterInterface::class);
-        $client->request(
-            'GET',
-            $router->generate(
-                'back_statistiques_filter',
-            )
-        );
-
-        $response = json_decode($client->getResponse()->getContent(), true);
-        $this->assertResponseIsSuccessful();
-
-        $this->assertEquals(17, $response['count_signalement']);
-        $this->assertEquals(97.6, $response['average_criticite']);
-        $this->assertEquals(60.6, $response['average_days_validation']);
-        $this->assertEquals(15, $response['average_days_closure']);
-    }
-
-    public function testStatistiquesFilterRouteRTArles(): void
-    {
-        $client = static::createClient();
-        /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITOIRE]);
-        $client->loginUser($user);
-
-        /** @var Router $router */
-        $router = self::getContainer()->get(RouterInterface::class);
-        $client->request(
-            'GET',
-            $router->generate(
-                'back_statistiques_filter',
-                [
-                    'communes' => '["Arles"]',
-                ]
-            )
-        );
-
-        $response = json_decode($client->getResponse()->getContent(), true);
-        $this->assertResponseIsSuccessful();
-
-        $this->assertEquals(17, $response['count_signalement']);
-        $this->assertEquals(0, $response['count_signalement_filtered']);
-        $this->assertEquals(97.6, $response['average_criticite']);
-        $this->assertEquals(0, $response['average_criticite_filtered']);
-    }
-
-    public function testStatistiquesRoutePartner(): void
-    {
-        $client = static::createClient();
-        /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => self::USER_PARTNER]);
-        $client->loginUser($user);
-
-        /** @var Router $router */
-        $router = self::getContainer()->get(RouterInterface::class);
-        $client->request(
-            'GET',
-            $router->generate(
-                'back_statistiques',
-            )
-        );
-
-        $response = json_decode($client->getResponse()->getContent(), true);
-        $this->assertResponseIsSuccessful();
-    }
-
-    public function testStatistiquesFilterRoutePartner(): void
-    {
-        $client = static::createClient();
-        /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => self::USER_PARTNER]);
-        $client->loginUser($user);
-
-        /** @var Router $router */
-        $router = self::getContainer()->get(RouterInterface::class);
-        $client->request(
-            'GET',
-            $router->generate(
-                'back_statistiques_filter',
-            )
-        );
-
-        $response = json_decode($client->getResponse()->getContent(), true);
-        $this->assertResponseIsSuccessful();
-
-        $this->assertEquals(3, $response['count_signalement']);
-        $this->assertEquals(100, $response['average_criticite']);
-        $this->assertEquals(162.3, $response['average_days_validation']);
-        $this->assertEquals(0, $response['average_days_closure']);
     }
 }

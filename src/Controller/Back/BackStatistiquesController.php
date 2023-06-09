@@ -21,7 +21,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/bo/statistiques')]
 class BackStatistiquesController extends AbstractController
 {
-    private array $ajaxResult;
+    private array $result;
 
     public function __construct(
         private ListTerritoryStatisticProvider $listTerritoryStatisticProvider,
@@ -49,7 +49,7 @@ class BackStatistiquesController extends AbstractController
     public function filter(Request $request, TerritoryRepository $territoryRepository): Response
     {
         if ($this->getUser()) {
-            $this->ajaxResult = [];
+            $this->result = [];
 
             $territory = $this->getSelectedTerritory($request, $territoryRepository);
             $partner = $this->getSelectedPartner();
@@ -57,29 +57,29 @@ class BackStatistiquesController extends AbstractController
             $this->buildFilterLists($territory);
 
             $globalStatistics = $this->globalBackAnalyticsProvider->getData($territory, $partner);
-            $this->ajaxResult['count_signalement'] = $globalStatistics['count_signalement'];
-            $this->ajaxResult['average_criticite'] = $globalStatistics['average_criticite'];
-            $this->ajaxResult['average_days_validation'] = $globalStatistics['average_days_validation'];
-            $this->ajaxResult['average_days_closure'] = $globalStatistics['average_days_closure'];
-            $this->ajaxResult['count_signalement_refuses'] = $globalStatistics['count_signalement_refuses'];
-            $this->ajaxResult['count_signalement_archives'] = $globalStatistics['count_signalement_archives'];
+            $this->result['count_signalement'] = $globalStatistics['count_signalement'];
+            $this->result['average_criticite'] = $globalStatistics['average_criticite'];
+            $this->result['average_days_validation'] = $globalStatistics['average_days_validation'];
+            $this->result['average_days_closure'] = $globalStatistics['average_days_closure'];
+            $this->result['count_signalement_refuses'] = $globalStatistics['count_signalement_refuses'];
+            $this->result['count_signalement_archives'] = $globalStatistics['count_signalement_archives'];
 
             $statisticsFilters = $this->createFilters($request, $territory, $partner);
             $filteredStatistics = $this->filteredBackAnalyticsProvider->getData($statisticsFilters);
-            $this->ajaxResult['count_signalement_filtered'] = $filteredStatistics['count_signalement_filtered'];
-            $this->ajaxResult['average_criticite_filtered'] = $filteredStatistics['average_criticite_filtered'];
-            $this->ajaxResult['countSignalementPerMonth'] = $filteredStatistics['count_signalement_per_month'];
-            $this->ajaxResult['countSignalementPerPartenaire'] = $filteredStatistics['count_signalement_per_partenaire'];
-            $this->ajaxResult['countSignalementPerSituation'] = $filteredStatistics['count_signalement_per_situation'];
-            $this->ajaxResult['countSignalementPerCriticite'] = $filteredStatistics['count_signalement_per_criticite'];
-            $this->ajaxResult['countSignalementPerStatut'] = $filteredStatistics['count_signalement_per_statut'];
-            $this->ajaxResult['countSignalementPerCriticitePercent'] = $filteredStatistics['count_signalement_per_criticite_percent'];
-            $this->ajaxResult['countSignalementPerVisite'] = $filteredStatistics['count_signalement_per_visite'];
-            $this->ajaxResult['countSignalementPerMotifCloture'] = $filteredStatistics['count_signalement_per_motif_cloture'];
+            $this->result['count_signalement_filtered'] = $filteredStatistics['count_signalement_filtered'];
+            $this->result['average_criticite_filtered'] = $filteredStatistics['average_criticite_filtered'];
+            $this->result['countSignalementPerMonth'] = $filteredStatistics['count_signalement_per_month'];
+            $this->result['countSignalementPerPartenaire'] = $filteredStatistics['count_signalement_per_partenaire'];
+            $this->result['countSignalementPerSituation'] = $filteredStatistics['count_signalement_per_situation'];
+            $this->result['countSignalementPerCriticite'] = $filteredStatistics['count_signalement_per_criticite'];
+            $this->result['countSignalementPerStatut'] = $filteredStatistics['count_signalement_per_statut'];
+            $this->result['countSignalementPerCriticitePercent'] = $filteredStatistics['count_signalement_per_criticite_percent'];
+            $this->result['countSignalementPerVisite'] = $filteredStatistics['count_signalement_per_visite'];
+            $this->result['countSignalementPerMotifCloture'] = $filteredStatistics['count_signalement_per_motif_cloture'];
 
-            $this->ajaxResult['response'] = 'success';
+            $this->result['response'] = 'success';
 
-            return $this->json($this->ajaxResult);
+            return $this->json($this->result);
         }
 
         return $this->json(['response' => 'error'], 400);
@@ -149,14 +149,14 @@ class BackStatistiquesController extends AbstractController
     private function buildFilterLists(?Territory $territory)
     {
         // Tells Vue component if a user can filter through Territoire
-        $this->ajaxResult['can_filter_territoires'] = $this->isGranted('ROLE_ADMIN') ? '1' : '0';
-        $this->ajaxResult['can_filter_archived'] = $this->isGranted('ROLE_ADMIN') ? '1' : '0';
-        $this->ajaxResult['can_see_per_partenaire'] = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY') ? '1' : '0';
+        $this->result['can_filter_territoires'] = $this->isGranted('ROLE_ADMIN') ? '1' : '0';
+        $this->result['can_filter_archived'] = $this->isGranted('ROLE_ADMIN') ? '1' : '0';
+        $this->result['can_see_per_partenaire'] = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY') ? '1' : '0';
 
         if ($this->isGranted('ROLE_ADMIN')) {
-            $this->ajaxResult['list_territoires'] = $this->listTerritoryStatisticProvider->getData();
+            $this->result['list_territoires'] = $this->listTerritoryStatisticProvider->getData();
         }
-        $this->ajaxResult['list_communes'] = $this->listCommunesStatisticProvider->getData($territory);
-        $this->ajaxResult['list_etiquettes'] = $this->listTagStatisticProvider->getData($territory);
+        $this->result['list_communes'] = $this->listCommunesStatisticProvider->getData($territory);
+        $this->result['list_etiquettes'] = $this->listTagStatisticProvider->getData($territory);
     }
 }
