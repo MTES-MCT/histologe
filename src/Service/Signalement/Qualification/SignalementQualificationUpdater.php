@@ -127,53 +127,37 @@ class SignalementQualificationUpdater
 
     public function updateQualificationFromVisiteProcedureList(Signalement $signalement, ?array $procedureTypes)
     {
-        $existingQualificationNonDecence = null;
-        $existingQualificationRSD = null;
-        $existingQualificationInsalubrite = null;
-        $existingQualificationPeril = null;
-        $listQualifications = $signalement->getSignalementQualifications();
-        foreach ($listQualifications as $qualification) {
-            if (Qualification::NON_DECENCE == $qualification->getQualification()) {
-                $existingQualificationNonDecence = $qualification;
-            }
-            if (Qualification::RSD == $qualification->getQualification()) {
-                $existingQualificationRSD = $qualification;
-            }
-            if (Qualification::INSALUBRITE == $qualification->getQualification()) {
-                $existingQualificationInsalubrite = $qualification;
-            }
-            if (Qualification::MISE_EN_SECURITE_PERIL == $qualification->getQualification()) {
-                $existingQualificationPeril = $qualification;
-            }
-        }
-
         if ($procedureTypes) {
             foreach ($procedureTypes as $procedureType) {
                 $signalementQualification = null;
                 switch ($procedureType->name) {
                     case ProcedureType::NON_DECENCE->name:
-                        if ($existingQualificationNonDecence) {
-                            $signalement->removeSignalementQualification($existingQualificationNonDecence);
-                        }
-                        $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::NON_DECENCE, QualificationStatus::NON_DECENCE_AVEREE);
+                        $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
+                            qualification: Qualification::NON_DECENCE,
+                            qualificationStatus: QualificationStatus::NON_DECENCE_AVEREE,
+                            isPostVisite: true
+                        );
                         break;
                     case ProcedureType::RSD->name:
-                        if ($existingQualificationRSD) {
-                            $signalement->removeSignalementQualification($existingQualificationRSD);
-                        }
-                        $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::RSD, QualificationStatus::RSD_AVEREE);
+                        $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
+                            qualification: Qualification::RSD,
+                            qualificationStatus: QualificationStatus::RSD_AVEREE,
+                            isPostVisite: true
+                        );
                         break;
                     case ProcedureType::INSALUBRITE->name:
-                        if ($existingQualificationInsalubrite) {
-                            $signalement->removeSignalementQualification($existingQualificationInsalubrite);
-                        }
-                        $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::INSALUBRITE, QualificationStatus::INSALUBRITE_AVEREE);
+                        $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
+                            qualification: Qualification::INSALUBRITE,
+                            qualificationStatus: QualificationStatus::INSALUBRITE_AVEREE,
+                            isPostVisite: true
+                        );
                         break;
                     case ProcedureType::MISE_EN_SECURITE_PERIL->name:
-                        if ($existingQualificationPeril) {
-                            $signalement->removeSignalementQualification($existingQualificationPeril);
-                        }
-                        $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::MISE_EN_SECURITE_PERIL, QualificationStatus::MISE_EN_SECURITE_PERIL_AVEREE);
+                        $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
+                            qualification: Qualification::MISE_EN_SECURITE_PERIL,
+                            qualificationStatus: QualificationStatus::MISE_EN_SECURITE_PERIL_AVEREE,
+                            isPostVisite: true
+                        );
                         break;
                     default:
                         break;

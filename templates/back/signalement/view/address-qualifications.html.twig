@@ -20,7 +20,7 @@
     </div>
     
     <div class="fr-col-12 fr-col-md-6">
-        <h3 class="fr-h5">Situation(s) suspectée(s)</h3>
+        <h3 class="fr-h5">Situation(s) suspectée(s) à la déclaration usager</h3>
         {% if can_see_nde_qualification(signalementQualificationNDE) and is_granted('USER_SEE_NDE', app.user) %}
             <small class="fr-badge fr-badge--info fr-badge--no-icon fr-mb-1v">
                 Non décence énergétique
@@ -31,7 +31,7 @@
         {% endfor %}
         {% if listQualificationStatusesLabelsConfirmed %}
         <div class="fr-mt-3v">
-            <strong>Situation(s) avérée(s) :</strong>
+            <h3 class="fr-h5">Situation(s) observée(s) après visite</h3>
             {% for qualificationStatusLabel in listQualificationStatusesLabelsConfirmed %}
                 {% include '_partials/signalement/qualification.html.twig' with { 'inlist': false } %}
             {% endfor %}

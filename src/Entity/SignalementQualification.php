@@ -36,6 +36,9 @@ class SignalementQualification
     #[ORM\Column(type: 'string', enumType: QualificationStatus::class, nullable: true)]
     private ?QualificationStatus $status = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $isPostVisite = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -115,6 +118,18 @@ class SignalementQualification
     public function setStatus(QualificationStatus $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function isPostVisite(): ?bool
+    {
+        return $this->isPostVisite;
+    }
+
+    public function setIsPostVisite(?bool $isPostVisite): self
+    {
+        $this->isPostVisite = $isPostVisite;
 
         return $this;
     }

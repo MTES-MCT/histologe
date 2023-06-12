@@ -45,7 +45,7 @@ class SearchFilterOptionDataProvider
                     'tags' => $this->tagsRepository->findAllActive($territory),
                     'cities' => $this->signalementRepository->findCities($user, $territory),
                     'listQualificationStatus' => $this->qualificationStatusService->getList(),
-                    'listVisiteStatus' => VisiteStatus::getLabelList()
+                    'listVisiteStatus' => VisiteStatus::getLabelList(),
                 ];
             }
         );
