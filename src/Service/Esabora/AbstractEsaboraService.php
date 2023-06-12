@@ -22,7 +22,8 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
     public const ACTION_SYNC_DOSSIER = 'sync_dossier';
     public const ACTION_SYNC_DOSSIER_VISITE = 'sync_dossier_visite';
     public const ACTION_SYNC_DOSSIER_ARRETE = 'sync_dossier_arrete';
-    public const TASK_INSERT = 'doTreatment';
+    public const TASK_INSERT_PATH = '/modbdd/?task=doTreatment';
+    public const TASK_SEARCH_PATH = '/mult/?task=doSearch';
     public const SIGNALEMENT_ORIGINE = 'interfaçage';
     public const FORMAT_DATE = 'd/m/Y';
     public const FORMAT_DATE_TIME = 'd/m/Y H:i';
@@ -33,19 +34,27 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
     ) {
     }
 
-    protected function request(string $url, string $token, string $task, array $payload): ResponseInterface|JsonResponse
-    {
+    protected function request(
+        string $url,
+        string $token,
+        array $payload,
+        array $requestOptions = []
+    ): ResponseInterface|JsonResponse {
         try {
             $this->logger->info(json_encode($payload));
+            $taskPath = $this->getTaskPath($payload);
 
-            return $this->client->request('POST', $url.'/modbdd/?task='.$task, [
-                    'headers' => [
-                        'Authorization: Bearer '.$token,
-                        'Content-Type: application/json',
-                    ],
-                    'body' => json_encode($payload),
-                ]
-            );
+            $options = [
+                'headers' => [
+                    'Authorization: Bearer '.$token,
+                    'Content-Type: application/json',
+                ],
+                'body' => json_encode($payload),
+            ];
+
+            $options = [...$options, ...$requestOptions];
+
+            return $this->client->request('POST', $url.$taskPath, $options);
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
         }
@@ -84,5 +93,14 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
         return Response::HTTP_OK === $dossierResponse->getStatusCode()
             && null !== $dossierResponse->getSasEtat()
             && null === $dossierResponse->getErrorReason();
+    }
+
+    protected function getTaskPath(array $payload): string
+    {
+        if (\array_key_exists('searchName', $payload)) {
+            return self::TASK_SEARCH_PATH;
+        }
+
+        return self::TASK_INSERT_PATH;
     }
 }

@@ -82,15 +82,7 @@ class EsaboraSISHService extends AbstractEsaboraService
 
         $statusCode = Response::HTTP_SERVICE_UNAVAILABLE;
         try {
-            $response = $this->client->request('POST', $url.'/mult/?task=doSearch', [
-                    'headers' => [
-                        'Authorization: Bearer '.$token,
-                        'Content-Type: application/json',
-                    ],
-                    'body' => json_encode($payload, \JSON_THROW_ON_ERROR),
-                ]
-            );
-
+            $response = $this->request($url, $token, $payload);
             $statusCode = $response->getStatusCode();
 
             return new DossierStateSISHResponse(
@@ -115,16 +107,10 @@ class EsaboraSISHService extends AbstractEsaboraService
         $statusCode = Response::HTTP_SERVICE_UNAVAILABLE;
 
         try {
-            $response = $this->client->request('POST', $url.'/mult/?task=doSearch', [
-                    'headers' => [
-                        'Authorization: Bearer '.$token,
-                        'Content-Type: application/json',
-                    ],
-                    'body' => json_encode(
-                        $this->prepareInterventionPayload($affectation, self::SISH_VISITES_DOSSIER_SAS),
-                        \JSON_THROW_ON_ERROR
-                    ),
-                ]
+            $response = $this->request(
+                $url,
+                $token,
+                $this->prepareInterventionPayload($affectation, self::SISH_VISITES_DOSSIER_SAS)
             );
 
             $statusCode = $response->getStatusCode();
@@ -151,16 +137,10 @@ class EsaboraSISHService extends AbstractEsaboraService
         $statusCode = Response::HTTP_SERVICE_UNAVAILABLE;
 
         try {
-            $response = $this->client->request('POST', $url.'/mult/?task=doSearch', [
-                    'headers' => [
-                        'Authorization: Bearer '.$token,
-                        'Content-Type: application/json',
-                    ],
-                    'body' => json_encode(
-                        $this->prepareInterventionPayload($affectation, self::SISH_ARRETES_DOSSIER_SAS),
-                        \JSON_THROW_ON_ERROR
-                    ),
-                ]
+            $response = $this->request(
+                $url,
+                $token,
+                $this->prepareInterventionPayload($affectation, self::SISH_ARRETES_DOSSIER_SAS)
             );
 
             $statusCode = $response->getStatusCode();
@@ -185,7 +165,7 @@ class EsaboraSISHService extends AbstractEsaboraService
     {
         $statusCode = Response::HTTP_SERVICE_UNAVAILABLE;
         try {
-            $response = $this->request($url, $token, AbstractEsaboraService::TASK_INSERT, $payload);
+            $response = $this->request($url, $token, $payload);
             $statusCode = $response->getStatusCode();
 
             return new DossierPushSISHResponse(

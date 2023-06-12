@@ -31,7 +31,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
             'fieldList' => $this->preparePayloadPushDossier($dossierMessage),
         ];
 
-        return $this->request($url, $token, AbstractEsaboraService::TASK_INSERT, $payload);
+        return $this->request($url, $token, $payload);
     }
 
     public function getStateDossier(Affectation $affectation): DossierStateSCHSResponse
@@ -51,14 +51,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
 
         $statusCode = Response::HTTP_SERVICE_UNAVAILABLE;
         try {
-            $response = $this->client->request('POST', $url.'/mult/?task=doSearch', [
-                    'headers' => [
-                        'Authorization: Bearer '.$token,
-                        'Content-Type: application/json',
-                    ],
-                    'body' => json_encode($payload, \JSON_THROW_ON_ERROR),
-                ]
-            );
+            $response = $this->request($url, $token, $payload);
             $statusCode = $response->getStatusCode();
 
             return new DossierStateSCHSResponse(
