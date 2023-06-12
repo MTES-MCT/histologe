@@ -12,11 +12,15 @@ use App\Repository\InterventionRepository;
 use App\Service\Esabora\Enum\EsaboraStatus;
 use App\Service\Esabora\EsaboraManager;
 use App\Service\Esabora\Response\DossierStateSCHSResponse;
+use App\Service\Esabora\Response\DossierStateSISHResponse;
+use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class EsaboraManagerTest extends KernelTestCase
 {
+    use FixturesHelper;
+
     private EntityManagerInterface $entityManager;
     private AffectationManager $affectationManager;
     private SuiviManager $suiviManager;
@@ -51,14 +55,17 @@ class EsaboraManagerTest extends KernelTestCase
 
         $basePath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/schs/ws_etat_dossier_sas/';
         $responseEsabora = file_get_contents($basePath.$filename);
+        $dossierResponse = str_contains($filename, 'etat_rejete')
+                ? new DossierStateSISHResponse(json_decode($responseEsabora, true), 200)
+                : new DossierStateSCHSResponse(json_decode($responseEsabora, true), 200);
 
-        $dossierResponse = new DossierStateSCHSResponse(json_decode($responseEsabora, true), 200);
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
             $this->suiviManager,
             $this->interventionRepository,
             new InterventionFactory()
         );
+
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
 
         /** @var Signalement $signalement */
@@ -104,6 +111,13 @@ class EsaboraManagerTest extends KernelTestCase
             '2022-2',
             'etat_non_importe.json',
             'refusé via Esabora',
+            Affectation::STATUS_REFUSED,
+        ];
+
+        yield EsaboraStatus::ESABORA_REJECTED->value => [
+            '2022-2',
+            '../../sish/ws_etat_dossier_sas/etat_rejete.json',
+            'refusé via Esabora pour motif suivant:',
             Affectation::STATUS_REFUSED,
         ];
     }

@@ -9,7 +9,7 @@ use App\Manager\JobEventManager;
 use App\Messenger\Message\DossierMessageSCHS;
 use App\Repository\PartnerRepository;
 use App\Service\Esabora\AbstractEsaboraService;
-use App\Tests\Unit\Messenger\DossierMessageTrait;
+use App\Tests\FixturesHelper;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +21,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class WorkerMessageEventSubscriberTest extends TestCase
 {
-    use DossierMessageTrait;
+    use FixturesHelper;
 
     public function testEventSubscription(): void
     {

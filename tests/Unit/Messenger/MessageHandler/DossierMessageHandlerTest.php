@@ -7,7 +7,7 @@ use App\Manager\JobEventManager;
 use App\Messenger\MessageHandler\DossierMessageSCHSHandler;
 use App\Repository\PartnerRepository;
 use App\Service\Esabora\EsaboraSCHSService;
-use App\Tests\Unit\Messenger\DossierMessageTrait;
+use App\Tests\FixturesHelper;
 use Faker\Factory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -17,7 +17,7 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class DossierMessageHandlerTest extends TestCase
 {
-    use DossierMessageTrait;
+    use FixturesHelper;
 
     /**
      * @throws TransportExceptionInterface
