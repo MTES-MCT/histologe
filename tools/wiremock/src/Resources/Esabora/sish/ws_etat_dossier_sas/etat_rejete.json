@@ -1,0 +1,47 @@
+{
+  "searchId": "00000000-0000-0000-2022-000000000002",
+  "nbResults": 1,
+  "columnList": [
+    "Reference_Dossier",
+    "EsaboraStatusSAS_Etat",
+    "Sas_DateDecision",
+    "Sas_CauseRefus",
+    "SISH_DossId",
+    "SISH_DossNum",
+    "SISH_DossObjet",
+    "SISH_DossDateCloture",
+    "SISH_DossStatutAbr",
+    "SISH_DossStatut",
+    "SISH_DossEtat",
+    "SISH_DossTypeCode",
+    "SISH_DossTypeLib"
+  ],
+  "keyList": [
+    "i1.iaff_id"
+  ],
+  "rowList": [
+    {
+      "columnDataList": [
+        "00000000-0000-0000-2022-000000000002",
+        "Rejeté",
+        "11/06/2023 18:2+",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "keyDataList": [
+        "22"
+      ]
+    }
+  ]
+}
