@@ -22,16 +22,16 @@ const blueIcon = new L.Icon({
     popupAnchor: [1, -34],
     shadowSize: [41, 41]
 });
-const sudOuest = L.latLng(58, -5);
-const nordEst = L.latLng(41, 10);
+const sudOuest = L.latLng(8, -80);
+const nordEst = L.latLng(70, 20);
 const bounds = L.latLngBounds(sudOuest, nordEst);
 const markers = L.markerClusterGroup();
 let map = L.map('map-signalements-view', {
     center: [47.11, -0.01],
     maxBounds: bounds,
-    minZoom: 6,
+    minZoom: 5,
     maxZoom: 18,
-    zoom: 7
+    zoom: 5
 });
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
 let offset = 0;
