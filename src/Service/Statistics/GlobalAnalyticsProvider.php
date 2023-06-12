@@ -54,6 +54,7 @@ class GlobalAnalyticsProvider
     {
         return $this->signalementRepository->countAll(
             territory: null,
+            partner: null,
             removeImported: true,
             removeArchived: true
         );

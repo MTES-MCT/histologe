@@ -20,9 +20,14 @@ class StatusStatisticProvider
         return $this->createFullArray($countPerSituations);
     }
 
-    public function getData(Territory|null $territory, int|null $year): array
+    public function getData(?Territory $territory, ?int $year): array
     {
-        $countPerStatuses = $this->signalementRepository->countByStatus($territory, $year, true);
+        $countPerStatuses = $this->signalementRepository->countByStatus(
+            territory: $territory,
+            partner: null,
+            year: $year,
+            removeImported: true
+        );
 
         return $this->createFullArray($countPerStatuses);
     }

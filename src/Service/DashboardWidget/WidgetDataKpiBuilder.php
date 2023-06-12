@@ -85,11 +85,12 @@ class WidgetDataKpiBuilder
 
         if ($this->user->isSuperAdmin() || $this->user->isTerritoryAdmin()) {
             $countSignalementByStatus = $this->signalementRepository->countByStatus(
-                $this->territory,
-                null,
-                false,
-                Qualification::NON_DECENCE_ENERGETIQUE,
-                [QualificationStatus::NDE_AVEREE, QualificationStatus::NDE_CHECK]
+                territory: $this->territory,
+                partner: null,
+                year: null,
+                removeImported: false,
+                qualification: Qualification::NON_DECENCE_ENERGETIQUE,
+                qualificationStatuses: [QualificationStatus::NDE_AVEREE, QualificationStatus::NDE_CHECK]
             );
             $newNDE = isset($countSignalementByStatus[Signalement::STATUS_NEED_VALIDATION]) ? $countSignalementByStatus[Signalement::STATUS_NEED_VALIDATION]['count'] : 0;
             $currentNDE = isset($countSignalementByStatus[Signalement::STATUS_ACTIVE]) ? $countSignalementByStatus[Signalement::STATUS_ACTIVE]['count'] : 0;
