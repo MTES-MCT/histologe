@@ -611,8 +611,9 @@
                 </div>
             {% endif %}
         </div>
+        {% set zIndexDocument = 1100 %}
         <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-my-3v"
-             style="position: relative;z-index: 1001">
+             style="position: relative;z-index: {{zIndexDocument}}">
             {% for index,photo in signalement.photos %}
                 <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
                     <div class="fr-px-5w fr-py-10w fr-rounded fr-border fr-text--center part-infos-hover"
@@ -634,7 +635,9 @@
             {% endfor %}
         </div>
         {% for doc in signalement.documents %}
-            <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-3v signalement-file-item">
+            {% set zIndexDocument = zIndexDocument - 1 %}
+            <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-3v signalement-file-item"
+            style="position: relative;z-index: {{zIndexDocument}}">
                 <div class="fr-col-10">
                     <a href="{{ asset('_up/'~doc.file) }}" target="_blank" class="fr-link part-infos-hover"
                        data-user="{{ doc.username ?? 'N/R' }}" data-mail="{{ doc.date ?? 'N/R' }}">{{ doc.titre }}</a>
