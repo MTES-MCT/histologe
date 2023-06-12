@@ -2,6 +2,7 @@
 
 namespace App\Service\Signalement;
 
+use App\Entity\Enum\VisiteStatus;
 use App\Entity\User;
 use App\Repository\CritereRepository;
 use App\Repository\PartnerRepository;
@@ -44,6 +45,7 @@ class SearchFilterOptionDataProvider
                     'tags' => $this->tagsRepository->findAllActive($territory),
                     'cities' => $this->signalementRepository->findCities($user, $territory),
                     'listQualificationStatus' => $this->qualificationStatusService->getList(),
+                    'listVisiteStatus' => VisiteStatus::getLabelList()
                 ];
             }
         );

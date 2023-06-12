@@ -4,6 +4,7 @@
 {% set tags = filtersOptionData['tags'] %}
 {% set cities = filtersOptionData['cities'] %}
 {% set listQualificationStatus = filtersOptionData['listQualificationStatus'] %}
+{% set listVisiteStatus = filtersOptionData['listVisiteStatus'] %}
 
 <form action="#" name="bo-filters-form" id="bo_filters_form" method="POST" class="fr-accordion fr-background--white"
       style="overflow: hidden">
@@ -342,10 +343,9 @@
                                     <label class="fr-label" for="bo-filters-visites"><strong>Statut de la visite</strong></label>
                                     <select id="bo-filters-visites" class="fr-select" onchange="setBadge(this)">
                                         <option value="">TOUS</option>
-                                        <option value="Non planifiée">Non planifiée</option>
-                                        <option value="Planifiée">Planifiée</option>
-                                        <option value="Conclusion à renseigner">Conclusion à renseigner</option>
-                                        <option value="Terminée">Terminée</option>
+                                        {% for visiteStatus in listVisiteStatus %}
+                                            <option value="{{ visiteStatus }}">{{ visiteStatus }}</option>
+                                        {% endfor %}
                                     </select>
                                     <div class="selected__value">
                                         <div class="fr-pb-1v fr-border--bottom--orange"></div>

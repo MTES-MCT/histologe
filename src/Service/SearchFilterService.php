@@ -7,6 +7,7 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\VisiteStatus;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -379,18 +380,18 @@ class SearchFilterService
             foreach ($filters['visites'] as $visiteFilter) {
                 $queryVisites .= ('' !== $queryVisites) ? ' OR ' : '';
                 switch ($visiteFilter) {
-                    case 'Non planifiée':
+                    case VisiteStatus::NON_PLANIFIEE->value:
                         $queryVisites .= '(i.id IS NULL)';
                         break;
-                    case 'Planifiée':
+                    case VisiteStatus::PLANIFIEE->value:
                         $todayDatetime = new \DateTime();
                         $queryVisites .= '(i.status = \''.Intervention::STATUS_PLANNED.'\' AND i.scheduledAt > '.$todayDatetime->format('Y-m-d').')';
                         break;
-                    case 'Conclusion à renseigner':
+                    case VisiteStatus::CONCLUSION_A_RENSEIGNER->value:
                         $todayDatetime = new \DateTime();
                         $queryVisites .= '(i.status = \''.Intervention::STATUS_PLANNED.'\' AND i.scheduledAt <= '.$todayDatetime->format('Y-m-d').')';
                         break;
-                    case 'Terminée':
+                    case VisiteStatus::TERMINEE->value:
                         $queryVisites .= '(i.status = \''.Intervention::STATUS_DONE.'\')';
                         break;
                 }
