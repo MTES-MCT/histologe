@@ -63,12 +63,16 @@ class AffectationManager extends Manager
             ->setTerritory($partner->getTerritory());
     }
 
-    public function closeAffectation(Affectation $affectation, User $user, MotifCloture $motif): Affectation
+    public function closeAffectation(Affectation $affectation, User $user, MotifCloture $motif, bool $flush = false): Affectation
     {
         $affectation
             ->setStatut(Affectation::STATUS_CLOSED)
+            ->setAnsweredAt(new \DateTimeImmutable())
             ->setMotifCloture($motif)
             ->setAnsweredBy($user);
+        if ($flush) {
+            $this->save($affectation);
+        }
 
         return $affectation;
     }
