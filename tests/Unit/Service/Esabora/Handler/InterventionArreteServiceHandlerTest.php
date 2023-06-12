@@ -75,6 +75,8 @@ class InterventionArreteServiceHandlerTest extends TestCase
         );
 
         $this->handler->handle($this->affectation);
+        $this->assertEquals(1, $this->handler->getCountSuccess());
+        $this->assertEquals(0, $this->handler->getCountFailed());
     }
 
     public function testGetPriority(): void
