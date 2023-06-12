@@ -1,12 +1,8 @@
-{% if is_granted('ROLE_ADMIN_TERRITORY') and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') and not needValidation %}
-    <hr class="fr-mt-3w">
-{% else %}
-    <hr class="fr-mt-3w fr-hr blue-border">    
-{% endif %}
+<hr class="fr-mt-3w">
 
 <div id="suivis" class="fr-grid-row">
     <div class="fr-col-9 fr-col-md-6">
-        <h3 class="fr-h5">Activité PDLHI</h3>
+        <h3 class="fr-h5">Suivis</h3>
     </div>
     <div class="fr-col-3 fr-col-md-6 fr-text--right">
         <button class="fr-btn fr-fi-chat-quote-line fr-btn--icon-left" data-fr-opened="false"
@@ -15,28 +11,6 @@
         </button>
     </div>
 </div>
-
-{% if
-        not is_granted('ROLE_ADMIN_PARTNER')
-        and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
-        and not needValidation %}
-    <div class="fr-my-3w">
-        <h4 class="fr-h6 fr-mb-3v">Partenaires impliqués</h4>
-        {% for affectation in signalement.affectations %}
-            {% if affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_WAIT') %}
-                <span class="fr-badge fr-badge--info fr-badge--sm">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
-            {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_ACCEPTED') %}
-                <span class="fr-badge fr-badge--success fr-badge--sm">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
-            {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_REFUSED') %}
-                <span class="fr-badge fr-badge--sm fr-text-label--red-marianne fr-background-contrast--red-marianne fr-fi-close-line">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
-            {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_CLOSED') %}
-                <span class="fr-badge fr-badge--sm fr-fi-close-circle-fill">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
-            {% endif %}
-        {% endfor %}
-    </div>
-
-    <h4 class="fr-h6 fr-mb-3v">Suivis</h4>
-{% endif %}
 
 
 {% if 

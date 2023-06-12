@@ -1,7 +1,9 @@
+<hr class="fr-mt-3w fr-hr blue-border">
+
+<h3 class="fr-h4 fr-text--center fr-text-title--blue-france">Activité PDLHI</h3>
+
 
 {% if is_granted('ROLE_ADMIN_TERRITORY') and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') and not needValidation %}
-    <hr class="fr-mt-3w fr-hr blue-border">
-
     <div class="fr-grid-row">
         <div class="fr-col-9 fr-col-md-6">
             <h3 class="fr-h5">Prise en charge partenaire</h3>
@@ -71,4 +73,24 @@
             {% endfor %}
         </div>
     </div>
+
+{% elseif
+        not is_granted('ROLE_ADMIN_PARTNER')
+        and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
+        and not needValidation %}
+    <div class="fr-my-3w">
+        <h3 class="fr-h5">Partenaires impliqués</h3>
+        {% for affectation in signalement.affectations %}
+            {% if affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_WAIT') %}
+                <span class="fr-badge fr-badge--info fr-badge--sm">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
+            {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_ACCEPTED') %}
+                <span class="fr-badge fr-badge--success fr-badge--sm">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
+            {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_REFUSED') %}
+                <span class="fr-badge fr-badge--sm fr-text-label--red-marianne fr-background-contrast--red-marianne fr-fi-close-line">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
+            {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_CLOSED') %}
+                <span class="fr-badge fr-badge--sm fr-fi-close-circle-fill">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
+            {% endif %}
+        {% endfor %}
+    </div>
+
 {% endif %}
