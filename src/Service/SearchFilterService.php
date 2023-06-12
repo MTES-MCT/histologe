@@ -377,7 +377,7 @@ class SearchFilterService
             $queryVisites = '';
 
             foreach ($filters['visites'] as $visiteFilter) {
-                $queryVisites .= ('' != $queryVisites) ? ' OR ' : '';
+                $queryVisites .= ('' !== $queryVisites) ? ' OR ' : '';
                 switch ($visiteFilter) {
                     case 'Non planifiée':
                         $queryVisites .= '(i.id IS NULL)';

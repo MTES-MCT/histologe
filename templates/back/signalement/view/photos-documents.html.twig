@@ -82,7 +82,7 @@
         </div>
         <div class="fr-col-3 fr-text--right">
             <a href="{{ asset('_up/'~doc.file) }}"
-                class="fr-btn fr-btn--sm fr-fi-eye-fill" title="Afficher le document"
+                class="fr-btn fr-btn--sm fr-fi-eye-fill img-box" title="Afficher le document"
                 target="_blank" rel="noopener"></a>
             {% if (is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted))
                 and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION')
