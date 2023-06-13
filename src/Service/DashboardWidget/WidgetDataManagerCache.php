@@ -4,6 +4,7 @@ namespace App\Service\DashboardWidget;
 
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Service\CacheCommonKeyGenerator;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -15,22 +16,20 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class WidgetDataManagerCache implements WidgetDataManagerInterface
 {
-    private ?string $key = null;
+    private ?string $commonKey = null;
 
     public function __construct(
         private WidgetDataManager $widgetDataManager,
         private CacheInterface $dashboardCache,
         private Security $security,
+        private CacheCommonKeyGenerator $cacheCommonKeyGenerator
     ) {
         $this->initKeyCache();
     }
 
     private function initKeyCache(): void
     {
-        /** @var User $user */
-        $user = $this->security->getUser();
-        $role = $user->getRoles();
-        $this->key = array_shift($role).'-partnerId-'.$user->getPartner()->getId();
+        $this->commonKey = $this->cacheCommonKeyGenerator->generate();
     }
 
     /**
@@ -39,7 +38,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     public function countSignalementAcceptedNoSuivi(Territory $territory, ?array $params = null): array
     {
         return $this->dashboardCache->get(
-            __FUNCTION__.$this->key.'-zip-'.$territory?->getZip(),
+            __FUNCTION__.$this->commonKey.'-zip-'.$territory?->getZip(),
             function (ItemInterface $item) use ($territory, $params) {
                 $item->expiresAfter($params['expired_after'] ?? null);
 
@@ -54,7 +53,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     public function countSignalementsByTerritory(?array $params = null): array
     {
         return $this->dashboardCache->get(
-            __FUNCTION__.'-'.$this->key,
+            __FUNCTION__.'-'.$this->commonKey,
             function (ItemInterface $item) use ($params) {
                 $item->expiresAfter($params['expired_after'] ?? null);
 
@@ -69,7 +68,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     public function countAffectationPartner(?Territory $territory = null, ?array $params = null): array
     {
         return $this->dashboardCache->get(
-            __FUNCTION__.'-'.$this->key.'-zip-'.$territory?->getZip(),
+            __FUNCTION__.'-'.$this->commonKey.'-zip-'.$territory?->getZip(),
             function (ItemInterface $item) use ($territory, $params) {
                 $item->expiresAfter($params['expired_after'] ?? null);
 
@@ -84,7 +83,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     public function findLastJobEventByInterfacageType(string $type, array $params, ?Territory $territory = null): array
     {
         return $this->dashboardCache->get(
-            __FUNCTION__.'-'.$this->key.'-zip-'.$territory?->getZip(),
+            __FUNCTION__.'-'.$this->commonKey.'-zip-'.$territory?->getZip(),
             function (ItemInterface $item) use ($type, $params, $territory) {
                 $item->expiresAfter($params['expired_after'] ?? null);
 
@@ -101,6 +100,16 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
      */
     public function countDataKpi(?Territory $territory = null, ?array $params = null): WidgetDataKpi
     {
-        return $this->widgetDataManager->countDataKpi($territory);
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $key = __FUNCTION__.'-'.$this->commonKey.'-zip-'.$territory?->getZip().'-id-'.$user->getId();
+
+        return $this->dashboardCache->get(
+            $key,
+            function (ItemInterface $item) use ($params, $territory) {
+                $item->expiresAfter(3600);
+
+                return $this->widgetDataManager->countDataKpi($territory, $params);
+            });
     }
 }
