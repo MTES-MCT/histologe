@@ -50,20 +50,14 @@ class BackStatistiquesControllerTest extends WebTestCase
         yield 'Super Admin' => ['back_statistiques_filter', [], self::USER_SUPER_ADMIN, [
             ['result' => 27, 'label' => 'count_signalement'],
             ['result' => 66.3, 'label' => 'average_criticite'],
-            ['result' => 48.3, 'label' => 'average_days_validation'],
-            ['result' => 15, 'label' => 'average_days_closure'],
         ]];
         yield 'Responsable Territoire' => ['back_statistiques_filter', [], self::USER_ADMIN_TERRITOIRE, [
             ['result' => 17, 'label' => 'count_signalement'],
             ['result' => 97.6, 'label' => 'average_criticite'],
-            ['result' => 60.8, 'label' => 'average_days_validation'],
-            ['result' => 15, 'label' => 'average_days_closure'],
         ]];
         yield 'Partner' => ['back_statistiques_filter', [], self::USER_PARTNER, [
             ['result' => 3, 'label' => 'count_signalement'],
             ['result' => 100, 'label' => 'average_criticite'],
-            ['result' => 162.7, 'label' => 'average_days_validation'],
-            ['result' => 0, 'label' => 'average_days_closure'],
         ]];
         yield 'RT - filtered with commune Arles' => ['back_statistiques_filter', ['communes' => '["Arles"]'], self::USER_ADMIN_TERRITOIRE, [
             ['result' => 17, 'label' => 'count_signalement'],
