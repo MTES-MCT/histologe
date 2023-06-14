@@ -25,7 +25,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
 
     private function initKeyCache(): void
     {
-        $this->commonKey = $this->cacheCommonKeyGenerator->generate();
+        $this->commonKey = $this->cacheCommonKeyGenerator->generate().'-zip-';
     }
 
     /**
@@ -34,7 +34,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     public function countSignalementAcceptedNoSuivi(Territory $territory, ?array $params = null): array
     {
         return $this->dashboardCache->get(
-            __FUNCTION__.$this->commonKey.'-zip-'.$territory?->getZip(),
+            __FUNCTION__.'-'.$this->commonKey.$territory?->getZip(),
             function (ItemInterface $item) use ($territory, $params) {
                 $item->expiresAfter($params['expired_after'] ?? null);
 
@@ -64,7 +64,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     public function countAffectationPartner(?Territory $territory = null, ?array $params = null): array
     {
         return $this->dashboardCache->get(
-            __FUNCTION__.'-'.$this->commonKey.'-zip-'.$territory?->getZip(),
+            __FUNCTION__.'-'.$this->commonKey.$territory?->getZip(),
             function (ItemInterface $item) use ($territory, $params) {
                 $item->expiresAfter($params['expired_after'] ?? null);
 
@@ -79,7 +79,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     public function findLastJobEventByInterfacageType(string $type, array $params, ?Territory $territory = null): array
     {
         return $this->dashboardCache->get(
-            __FUNCTION__.'-'.$this->commonKey.'-zip-'.$territory?->getZip(),
+            __FUNCTION__.'-'.$this->commonKey.$territory?->getZip(),
             function (ItemInterface $item) use ($type, $params, $territory) {
                 $item->expiresAfter($params['expired_after'] ?? null);
 
@@ -95,7 +95,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     {
         /** @var User $user */
         $user = $this->security->getUser();
-        $key = __FUNCTION__.'-'.$this->commonKey.'-zip-'.$territory?->getZip().'-id-'.$user->getId();
+        $key = __FUNCTION__.'-'.$this->commonKey.$territory?->getZip().'-id-'.$user->getId();
 
         return $this->dashboardCache->get(
             $key,
