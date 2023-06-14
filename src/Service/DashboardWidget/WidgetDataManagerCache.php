@@ -5,10 +5,6 @@ namespace App\Service\DashboardWidget;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\CacheCommonKeyGenerator;
-use Doctrine\DBAL\Exception;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\Query\QueryException;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -19,10 +15,10 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     private ?string $commonKey = null;
 
     public function __construct(
-        private WidgetDataManager $widgetDataManager,
-        private CacheInterface $dashboardCache,
-        private Security $security,
-        private CacheCommonKeyGenerator $cacheCommonKeyGenerator
+        private readonly WidgetDataManager $widgetDataManager,
+        private readonly CacheInterface $dashboardCache,
+        private readonly Security $security,
+        private readonly CacheCommonKeyGenerator $cacheCommonKeyGenerator
     ) {
         $this->initKeyCache();
     }
@@ -93,10 +89,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     }
 
     /**
-     * @throws QueryException
-     * @throws NonUniqueResultException
-     * @throws Exception
-     * @throws NoResultException
+     * @throws InvalidArgumentException
      */
     public function countDataKpi(?Territory $territory = null, ?array $params = null): WidgetDataKpi
     {
@@ -107,7 +100,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
         return $this->dashboardCache->get(
             $key,
             function (ItemInterface $item) use ($params, $territory) {
-                $item->expiresAfter(3600);
+                $item->expiresAfter($params['expired_after'] ?? null);
 
                 return $this->widgetDataManager->countDataKpi($territory, $params);
             });
