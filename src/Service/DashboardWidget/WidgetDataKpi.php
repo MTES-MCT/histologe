@@ -9,10 +9,10 @@ use App\Dto\CountUser;
 class WidgetDataKpi
 {
     public function __construct(
-        private array $widgetCards,
-        private CountSignalement $countSignalement,
-        private CountSuivi $countSuivi,
-        private CountUser $countUser
+        private readonly array $widgetCards,
+        private readonly CountSignalement $countSignalement,
+        private readonly CountSuivi $countSuivi,
+        private readonly CountUser $countUser
     ) {
     }
 
