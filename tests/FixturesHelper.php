@@ -10,6 +10,7 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Situation;
 use App\Entity\Suivi;
+use App\Entity\Territory;
 use App\Entity\User;
 use Faker\Factory;
 use Faker\Provider\Address;
@@ -105,5 +106,36 @@ trait FixturesHelper
             'arrete_mainlevee_date' => '01/08/2023',
             'arrete_mainlevee_numero' => '2023-DD13-00173',
         ];
+    }
+
+    public function getUser(array $roles): User
+    {
+        return (new User())
+            ->setNom('Doe')
+            ->setPrenom('John')
+            ->setRoles($roles)
+            ->setPartner($this->getPartner())
+            ->setTerritory($this->getTerritory())
+            ->setStatut(User::STATUS_ACTIVE);
+    }
+
+    public function getPartner(): Partner
+    {
+        $faker = Factory::create();
+
+        return (new Partner())
+            ->setId(1)
+            ->setNom($faker->company())
+            ->setType(PartnerType::ARS)
+            ->setEmail($faker->email())
+            ->setTerritory($this->getTerritory());
+    }
+
+    public function getTerritory(): Territory
+    {
+        return (new Territory())
+            ->setName('Ain')
+            ->setZip('01')
+            ->setIsActive(1);
     }
 }

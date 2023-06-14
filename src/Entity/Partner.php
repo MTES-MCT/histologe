@@ -84,9 +84,11 @@ class Partner
         return $this->id;
     }
 
-    public function setId($id): ?int
+    public function setId($id): self
     {
-        return $this->id = $id;
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getNom(): ?string
