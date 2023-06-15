@@ -72,7 +72,8 @@ class ImportSignalementCommand extends Command
         $this->signalementImportLoader->load(
             $territory,
             $this->csvParser->parseAsDict($toFile),
-            $this->csvParser->getHeaders($toFile)
+            $this->csvParser->getHeaders($toFile),
+            $output
         );
 
         $metadata = $this->signalementImportLoader->getMetadata();
