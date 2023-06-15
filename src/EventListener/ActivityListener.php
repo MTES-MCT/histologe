@@ -68,17 +68,21 @@ class ActivityListener implements EventSubscriberInterface
                     continue;
                 }
 
-                $this->notifyAdmins($entity, Notification::TYPE_SUIVI, $entity->getSignalement()->getTerritory());
-                $entity->getSignalement()->getAffectations()->filter(function (Affectation $affectation) use ($entity) {
-                    $partner = $affectation->getPartner();
-                    if (AffectationStatus::STATUS_WAIT->value === $affectation->getStatut()
-                        || AffectationStatus::STATUS_ACCEPTED->value === $affectation->getStatut()) {
-                        $this->notifyPartner($partner, $entity, Notification::TYPE_SUIVI);
-                    }
-                });
+                $notifyAdminsAndPartners = $entity->getDescription() != $this->parameterBag->get('suivi_message')['first_accepted_affectation'];
 
-                if (Signalement::STATUS_CLOSED !== $entity->getSignalement()->getStatut()) {
-                    $this->sendMail($entity, NotificationMailerType::TYPE_NEW_COMMENT_BACK);
+                if ($notifyAdminsAndPartners) {
+                    $this->notifyAdmins($entity, Notification::TYPE_SUIVI, $entity->getSignalement()->getTerritory());
+                    $entity->getSignalement()->getAffectations()->filter(function (Affectation $affectation) use ($entity) {
+                        $partner = $affectation->getPartner();
+                        if (AffectationStatus::STATUS_WAIT->value === $affectation->getStatut()
+                            || AffectationStatus::STATUS_ACCEPTED->value === $affectation->getStatut()) {
+                            $this->notifyPartner($partner, $entity, Notification::TYPE_SUIVI);
+                        }
+                    });
+
+                    if (Signalement::STATUS_CLOSED !== $entity->getSignalement()->getStatut()) {
+                        $this->sendMail($entity, NotificationMailerType::TYPE_NEW_COMMENT_BACK);
+                    }
                 }
 
                 if ($entity->getIsPublic() && Signalement::STATUS_REFUSED !== $entity->getSignalement()->getStatut()) {
