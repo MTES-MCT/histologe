@@ -326,6 +326,9 @@ class Signalement
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $dateNaissanceOccupant = null;
 
+    #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: File::class)]
+    private Collection $files;
+
     public function __construct()
     {
         $this->situations = new ArrayCollection();
@@ -341,6 +344,7 @@ class Signalement
         $this->isImported = false;
         $this->signalementQualifications = new ArrayCollection();
         $this->interventions = new ArrayCollection();
+        $this->files = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -1673,6 +1677,36 @@ class Signalement
     public function setDateNaissanceOccupant(?DateTimeImmutable $dateNaissanceOccupant): self
     {
         $this->dateNaissanceOccupant = $dateNaissanceOccupant;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, File>
+     */
+    public function getFiles(): Collection
+    {
+        return $this->files;
+    }
+
+    public function addFile(File $file): self
+    {
+        if (!$this->files->contains($file)) {
+            $this->files->add($file);
+            $file->setSignalement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFile(File $file): self
+    {
+        if ($this->files->removeElement($file)) {
+            // set the owning side to null (unless already changed)
+            if ($file->getSignalement() === $this) {
+                $file->setSignalement(null);
+            }
+        }
 
         return $this;
     }
