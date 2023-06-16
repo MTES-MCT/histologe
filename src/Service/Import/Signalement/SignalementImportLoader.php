@@ -239,9 +239,10 @@ class SignalementImportLoader
 
                 if (null === $suivi) {
                     $suivi = $this->suiviManager->createSuivi($this->userSystem, $signalement, [], false);
-                    $suivi
-                        ->setDescription($description)
-                        ->setCreatedAt(new \DateTimeImmutable($createdAt));
+                    $suivi->setDescription($description);
+                    if (null !== $createdAt) {
+                        $suivi->setCreatedAt(new \DateTimeImmutable($createdAt));
+                    }
 
                     $suiviCollection->add($suivi);
                 }
