@@ -15,7 +15,7 @@ class Tag
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\ManyToMany(targetEntity: Signalement::class, inversedBy: 'tags')]
+    #[ORM\ManyToMany(targetEntity: Signalement::class, inversedBy: 'tags', cascade: ['persist'])]
     private $signalement;
 
     #[ORM\Column(type: 'string', length: 255)]

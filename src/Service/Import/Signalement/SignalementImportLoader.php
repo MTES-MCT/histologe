@@ -22,11 +22,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class SignalementImportLoader
 {
-    private const FLUSH_COUNT = 250;
+    private const FLUSH_COUNT = 200;
     private const REGEX_DATE_FORMAT_CSV = '/\d{4}\/\d{2}\/\d{2}/';
 
     private const SITUATIONS = [
@@ -62,9 +64,13 @@ class SignalementImportLoader
      * @throws NonUniqueResultException
      * @throws \Exception
      */
-    public function load(Territory $territory, array $data, array $headers): void
+    public function load(Territory $territory, array $data, array $headers, ?OutputInterface $output = null): void
     {
         $countSignalement = 0;
+        if ($output) {
+            $progressBar = new ProgressBar($output);
+            $progressBar->start(\count($data));
+        }
 
         $this->userSystem = $this->entityManager->getRepository(User::class)->findOneBy(
             [
@@ -75,6 +81,9 @@ class SignalementImportLoader
             $dataMapped = $this->signalementImportMapper->map($headers, $item);
             if (!empty($dataMapped)) {
                 ++$countSignalement;
+                if ($output) {
+                    $progressBar->advance();
+                }
                 $signalement = $this->signalementManager->createOrUpdate($territory, $dataMapped, true);
                 $signalement = $this->loadTags($signalement, $territory, $dataMapped);
                 foreach (self::SITUATIONS as $situation) {
@@ -104,7 +113,11 @@ class SignalementImportLoader
                 }
             }
         }
+
         $this->signalementManager->flush();
+        if ($output) {
+            $progressBar->finish();
+        }
     }
 
     public function getMetadata(): array
@@ -226,9 +239,10 @@ class SignalementImportLoader
 
                 if (null === $suivi) {
                     $suivi = $this->suiviManager->createSuivi($this->userSystem, $signalement, [], false);
-                    $suivi
-                        ->setDescription($description)
-                        ->setCreatedAt(new \DateTimeImmutable($createdAt));
+                    $suivi->setDescription($description);
+                    if (null !== $createdAt) {
+                        $suivi->setCreatedAt(new \DateTimeImmutable($createdAt));
+                    }
 
                     $suiviCollection->add($suivi);
                 }
