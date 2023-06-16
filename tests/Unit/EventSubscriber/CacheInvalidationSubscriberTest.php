@@ -10,11 +10,11 @@ use Doctrine\ORM\Events;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class CacheInvalidationSubscriberTest extends TestCase
 {
-    private CacheInterface $dashboardCache;
+    private TagAwareCacheInterface $dashboardCache;
     private CacheCommonKeyGenerator $cacheCommonKeyGenerator;
     private LoggerInterface $logger;
     private Security $security;
@@ -22,7 +22,7 @@ class CacheInvalidationSubscriberTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->dashboardCache = $this->createMock(CacheInterface::class);
+        $this->dashboardCache = $this->createMock(TagAwareCacheInterface::class);
         $this->cacheCommonKeyGenerator = $this->createMock(CacheCommonKeyGenerator::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->security = $this->createMock(Security::class);
