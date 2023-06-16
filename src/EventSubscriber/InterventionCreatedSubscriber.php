@@ -51,7 +51,7 @@ class InterventionCreatedSubscriber implements EventSubscriberInterface
                 intervention: $intervention,
                 suivi: $suivi,
                 currentUser: $event->getUser(),
-                notificationMailerType: NotificationMailerType::TYPE_VISITE_CREATED_TO_PARTNER,
+                notificationMailerType: null,
             );
         }
     }
