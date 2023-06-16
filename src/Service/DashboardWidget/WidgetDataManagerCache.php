@@ -7,8 +7,8 @@ use App\Entity\User;
 use App\Service\CacheCommonKeyGenerator;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class WidgetDataManagerCache implements WidgetDataManagerInterface
 {
@@ -16,7 +16,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
 
     public function __construct(
         private readonly WidgetDataManager $widgetDataManager,
-        private readonly CacheInterface $dashboardCache,
+        private readonly TagAwareCacheInterface $dashboardCache,
         private readonly Security $security,
         private readonly CacheCommonKeyGenerator $cacheCommonKeyGenerator
     ) {
@@ -100,6 +100,8 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
         return $this->dashboardCache->get(
             $key,
             function (ItemInterface $item) use ($params, $territory) {
+                $item->tag('data-kpi-'.$territory?->getZip());
+
                 $item->expiresAfter($params['expired_after'] ?? null);
 
                 return $this->widgetDataManager->countDataKpi($territory, $params);
