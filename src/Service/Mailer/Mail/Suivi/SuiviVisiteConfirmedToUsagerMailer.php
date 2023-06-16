@@ -15,7 +15,7 @@ class SuiviVisiteConfirmedToUsagerMailer extends AbstractNotificationMailer
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_VISITE_CONFIRMED_TO_USAGER;
     protected ?string $mailerSubject = 'Suite à la visite de votre logement';
     protected ?string $mailerButtonText = 'Accéder à mon signalement';
-    protected ?string $mailerTemplate = 'nouveau_suivi_visite_confirmed_email';
+    protected ?string $mailerTemplate = 'nouveau_suivi_visite_confirmed_to_user_email';
 
     public function __construct(
         protected MailerInterface $mailer,
