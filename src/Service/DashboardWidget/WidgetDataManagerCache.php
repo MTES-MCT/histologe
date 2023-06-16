@@ -101,7 +101,6 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
             $key,
             function (ItemInterface $item) use ($params, $territory) {
                 $item->tag('data-kpi-'.$territory?->getZip());
-
                 $item->expiresAfter($params['expired_after'] ?? null);
 
                 return $this->widgetDataManager->countDataKpi($territory, $params);
