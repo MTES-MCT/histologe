@@ -4,7 +4,10 @@
 {% set tags = filtersOptionData['tags'] %}
 {% set cities = filtersOptionData['cities'] %}
 {% set listQualificationStatus = filtersOptionData['listQualificationStatus'] %}
-{% set listVisiteStatus = filtersOptionData['listVisiteStatus'] %}
+{% set listVisiteStatus = [] %}
+{% if filtersOptionData.listVisiteStatus is defined %}
+    {% set listVisiteStatus = filtersOptionData['listVisiteStatus'] %}
+{% endif %}
 
 <form action="#" name="bo-filters-form" id="bo_filters_form" method="POST" class="fr-accordion fr-background--white"
       style="overflow: hidden">
