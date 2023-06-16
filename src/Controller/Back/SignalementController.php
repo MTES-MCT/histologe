@@ -7,6 +7,7 @@ use App\Entity\Critere;
 use App\Entity\Criticite;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
+use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Entity\Situation;
@@ -147,18 +148,27 @@ class SignalementController extends AbstractController
         && $canEditSignalement;
 
         $listQualificationStatusesLabelsCheck = [];
-        $listQualificationStatusesLabelsConfirmed = [];
         if (null !== $signalement->getSignalementQualifications()) {
             foreach ($signalement->getSignalementQualifications() as $qualification) {
                 if (Qualification::NON_DECENCE_ENERGETIQUE->name !== $qualification->getQualification()->name) {
-                    if ($qualification->isPostVisite()) {
-                        $listQualificationStatusesLabelsConfirmed[] = $qualification->getStatus()->label();
-                    } else {
+                    if (!$qualification->isPostVisite()) {
                         $listQualificationStatusesLabelsCheck[] = $qualification->getStatus()->label();
                     }
                 }
             }
         }
+
+        $listConcludeProcedures = [];
+        if (null !== $signalement->getInterventions()) {
+            foreach ($signalement->getInterventions() as $intervention) {
+                if (Intervention::STATUS_DONE == $intervention->getStatus()) {
+                    $listConcludeProcedures = array_merge($listConcludeProcedures, $intervention->getConcludeProcedure());
+                }
+            }
+        }
+        $listConcludeProcedures = array_unique(array_map(function ($concludeProcedure) {
+            return $concludeProcedure->label();
+        }, $listConcludeProcedures));
 
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
@@ -182,7 +192,7 @@ class SignalementController extends AbstractController
             'files' => $files,
             'canEditNDE' => $canEditNDE,
             'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
-            'listQualificationStatusesLabelsConfirmed' => $listQualificationStatusesLabelsConfirmed,
+            'listConcludeProcedures' => $listConcludeProcedures,
             'partnersCanVisite' => $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement),
             'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
         ]);

@@ -29,11 +29,17 @@
         {% for qualificationStatusLabel in listQualificationStatusesLabelsCheck %}
             {% include '_partials/signalement/qualification.html.twig' with { 'inlist': false } %}
         {% endfor %}
-        {% if listQualificationStatusesLabelsConfirmed %}
+        {% if listConcludeProcedures %}
         <div class="fr-mt-3v">
             <h3 class="fr-h5">Situation(s) observée(s) après visite</h3>
-            {% for qualificationStatusLabel in listQualificationStatusesLabelsConfirmed %}
-                {% include '_partials/signalement/qualification.html.twig' with { 'inlist': false } %}
+            {% for concludeProcedure in listConcludeProcedures %}
+                {% set typeBadge = 'info' %}
+                {% if concludeProcedure is same as 'Mise en sécurité / Péril' %}
+                    {% set typeBadge = 'error' %}
+                {% elseif concludeProcedure is same as 'Insalubrité' %}
+                    {% set typeBadge = 'warning' %}
+                {% endif %}
+                <small class="fr-badge fr-badge--{{typeBadge}} fr-badge--no-icon fr-mb-1v">{{ concludeProcedure }}</small>
             {% endfor %}
         </div>
         {% endif %}
