@@ -144,7 +144,8 @@ class InterventionManager extends AbstractManager
         }
 
         if ($visiteRequest->isVisiteDone()) {
-            $this->interventionPlanningStateMachine->apply($intervention, 'confirm');
+            $context = ['isUsagerNotified' => $visiteRequest->isUsagerNotified()];
+            $this->interventionPlanningStateMachine->apply($intervention, 'confirm', $context);
         } else {
             $this->interventionPlanningStateMachine->apply($intervention, 'abort');
         }

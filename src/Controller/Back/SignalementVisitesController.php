@@ -99,6 +99,7 @@ class SignalementVisitesController extends AbstractController
             isOccupantPresent: $requestAddData['occupantPresent'] ?? null,
             isProprietairePresent: $requestAddData['proprietairePresent'] ?? null,
             document: $fileName,
+            isUsagerNotified: !empty($requestAddData['notifyUsager']),
         );
 
         if ($intervention = $interventionManager->createVisiteFromRequest($signalement, $visiteRequest)) {
@@ -197,6 +198,7 @@ class SignalementVisitesController extends AbstractController
             isOccupantPresent: $requestRescheduleData['occupantPresent'] ?? null,
             isProprietairePresent: $requestRescheduleData['proprietairePresent'] ?? null,
             document: $fileName,
+            isUsagerNotified: !empty($requestRescheduleData['notifyUsager']),
         );
 
         if ($intervention = $interventionManager->rescheduleVisiteFromRequest($signalement, $visiteRequest)) {

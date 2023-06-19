@@ -41,10 +41,11 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
             }
             $description .= '<br>Commentaire opérateur :<br>';
             $description .= $intervention->getDetails();
+            $isUsagerNotified = $event->getContext()['isUsagerNotified'] ?? true;
             $suivi = $this->suiviManager->createSuivi(
                 user: $currentUser,
                 signalement: $intervention->getSignalement(),
-                isPublic: true,
+                isPublic: $isUsagerNotified,
                 context: Suivi::CONTEXT_INTERVENTION,
                 params: [
                     'description' => $description,
@@ -53,7 +54,9 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
             );
             $this->suiviManager->save($suivi);
 
-            $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_CONFIRMED_TO_USAGER);
+            if ($isUsagerNotified) {
+                $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_CONFIRMED_TO_USAGER);
+            }
 
             $this->visiteNotifier->notifyAgents(
                 intervention: $intervention,

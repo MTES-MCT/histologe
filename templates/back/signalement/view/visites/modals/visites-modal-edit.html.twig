@@ -18,19 +18,6 @@
                                 <div class="fr-col-12 fr-mb-3v">
                                     {% set formType = 'edit' %}
                                     {% include 'back/signalement/view/visites/visites-form-confirm-fields.html.twig' %}
-
-                                    <div class="fr-form-group">
-                                        <div class="fr-toggle">
-                                            <input type="checkbox" class="fr-toggle__input"
-                                                id="visite-{{ formType }}-{{ intervention.id }}-notify-usager"
-                                                name="visite-{{ formType }}[notifyUsager]"
-                                                value="1">
-                                            <label class="fr-toggle__label"
-                                                for="visite-{{ formType }}-{{ intervention.id }}-notify-usager">
-                                                En cochant cette case, l'usager sera notifié des modifications
-                                            </label>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                             <input type="hidden" name="visite-edit[intervention]" value="{{intervention.id}}">

@@ -84,3 +84,18 @@
     <input type="file" accept="application/*" name="visite-{{ formType }}[rapport]">
 </fieldset>
 {% endif %}
+
+{% if formType is not same as 'confirm' %}
+<div class="fr-form-group">
+    <div class="fr-toggle">
+        <input type="checkbox" class="fr-toggle__input"
+            id="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-notify-usager"
+            name="visite-{{ formType }}[notifyUsager]"
+            value="1">
+        <label class="fr-toggle__label"
+            for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-notify-usager">
+            En cochant cette case, l'usager sera notifié des modifications
+        </label>
+    </div>
+</div>
+{% endif %}
