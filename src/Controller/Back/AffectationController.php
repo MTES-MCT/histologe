@@ -102,7 +102,8 @@ class AffectationController extends AbstractController
                 return Affectation::STATUS_ACCEPTED === $affectation->getStatut();
             });
 
-            if (1 === $affectationAccepted->count()
+            if (!$signalement->getIsImported()
+                && 1 === $affectationAccepted->count()
                 && Affectation::STATUS_ACCEPTED === $affectation->getStatut()
                 && empty($suiviAffectationAccepted)
             ) {
