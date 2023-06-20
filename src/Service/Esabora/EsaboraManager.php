@@ -58,7 +58,7 @@ class EsaboraManager
         $currentStatus = $affectation->getStatut();
 
         $esaboraStatus = $dossierResponse->getSasEtat();
-        $esaboraDossierStatus = null !== $dossierResponse->getSasEtat()
+        $esaboraDossierStatus = null !== $dossierResponse->getEtat()
             ? strtolower($dossierResponse->getEtat())
             : null;
 
