@@ -242,7 +242,7 @@ trait FixturesHelper
             ->setNom('Occupant')
             ->setPrenom('Occupant')
             ->setEmail('occupant@sish.com')
-            ->setTelephone('0600000000');
+            ->setTelephone('0600000001');
     }
 
     protected function getDossierMessageSISHPersonneDeclarant(): DossierMessageSISHPersonne
@@ -252,7 +252,7 @@ trait FixturesHelper
             ->setNom('Declarant')
             ->setPrenom('Declarant')
             ->setEmail('declarant@sish.com')
-            ->setTelephone('0600000000');
+            ->setTelephone('0600000002');
     }
 
     protected function getDossierMessageSISHPersonneProprietaire(): DossierMessageSISHPersonne
@@ -262,7 +262,7 @@ trait FixturesHelper
             ->setNom('Proprietaire')
             ->setPrenom('Proprietaire')
             ->setEmail('proprietaire@sish.com')
-            ->setTelephone('0600000000');
+            ->setTelephone('0600000003');
     }
 
     protected function getDossierSISHResponse(string $filename): DossierPushSISHResponse

@@ -64,11 +64,20 @@ class InterventionVisiteServiceHandlerTest extends TestCase
             ->expects($matcher = $this->exactly(2))
             ->method('createOrUpdateVisite')
             ->willReturnCallback(
-                function (Affectation $affectation, DossierVisiteSISH $dossierVisiteSISH) use ($dossierVisiteSISHCollectionResponse, $matcher) {
+                function (
+                    Affectation $affectation,
+                    DossierVisiteSISH $dossierVisiteSISH
+                ) use ($dossierVisiteSISHCollectionResponse, $matcher) {
                     $this->assertEquals($this->affectation, $affectation);
                     match ($matcher->getInvocationCount()) {
-                        1 => $this->assertEquals($dossierVisiteSISHCollectionResponse->getCollection()[0], $dossierVisiteSISH),
-                        2 => $this->assertEquals($dossierVisiteSISHCollectionResponse->getCollection()[1], $dossierVisiteSISH),
+                        1 => $this->assertEquals(
+                            $dossierVisiteSISHCollectionResponse->getCollection()[0],
+                            $dossierVisiteSISH
+                        ),
+                        2 => $this->assertEquals(
+                            $dossierVisiteSISHCollectionResponse->getCollection()[1],
+                            $dossierVisiteSISH
+                        ),
                     };
                 });
 
@@ -96,6 +105,9 @@ class InterventionVisiteServiceHandlerTest extends TestCase
 
     public function testGetServiceName(): void
     {
-        $this->assertEquals(AbstractEsaboraService::ACTION_SYNC_DOSSIER_VISITE, $this->handler->getServiceName());
+        $this->assertEquals(
+            AbstractEsaboraService::ACTION_SYNC_DOSSIER_VISITE,
+            $this->handler->getServiceName()
+        );
     }
 }

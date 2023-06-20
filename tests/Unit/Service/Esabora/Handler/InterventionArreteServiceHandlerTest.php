@@ -27,9 +27,6 @@ class InterventionArreteServiceHandlerTest extends TestCase
 
     protected function setUp(): void
     {
-        $filepath = __DIR__.'/../../../../../tools/wiremock/src/Resources/Esabora/sish/ws_arretes_dossier_sas.json';
-        $responseEsabora = json_decode(file_get_contents($filepath), true);
-
         $this->serializer = $this->createMock(SerializerInterface::class);
         $this->esaboraSISHService = $this->createMock(EsaboraSISHService::class);
         $this->esaboraManager = $this->createMock(EsaboraManager::class);
@@ -54,7 +51,9 @@ class InterventionArreteServiceHandlerTest extends TestCase
             ->expects($this->once())
             ->method('getArreteDossier')
             ->with($this->affectation = $this->getAffectation(PartnerType::ARS))
-            ->willReturn($dossierArreteCollection = new DossierArreteSISHCollectionResponse($responseEsabora, 200));
+            ->willReturn(
+                $dossierArreteCollection = new DossierArreteSISHCollectionResponse($responseEsabora, 200)
+            );
 
         $this->esaboraManager = $this->createMock(EsaboraManager::class);
         $this->esaboraManager
@@ -86,6 +85,9 @@ class InterventionArreteServiceHandlerTest extends TestCase
 
     public function testGetServiceName(): void
     {
-        $this->assertEquals(AbstractEsaboraService::ACTION_SYNC_DOSSIER_ARRETE, $this->handler->getServiceName());
+        $this->assertEquals(
+            AbstractEsaboraService::ACTION_SYNC_DOSSIER_ARRETE,
+            $this->handler->getServiceName()
+        );
     }
 }
