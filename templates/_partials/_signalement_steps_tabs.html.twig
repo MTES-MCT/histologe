@@ -494,7 +494,7 @@
                     (*) sont obligatoires.</em>
             </header>
         {% endif %}
-        <form action="#" name="signalement" class="needs-validation" novalidate>
+        <form action="#" name="signalement" class="needs-validation" id="signalement-step-4" novalidate>
             <div class="fr-form-group">
                 <fieldset class="fr-fieldset fr-fieldset--inline">
                     <legend class="fr-fieldset__legend fr-text--regular" id='signalement-proprio-averti'>
@@ -586,6 +586,18 @@
                         </p>
                     </div>
                 </div>
+            </div>
+            <div class="fr-form-group fr-hidden" id="signalement-date-naissance-bloc">
+                <fieldset class="fr-fieldset fr-fieldset--inline">
+                    <legend class="fr-fieldset__legend fr-text--regular">
+                        Date de naissance
+                    </legend>
+                    {{ form_help(form.dateNaissanceOccupant) }}
+                    <input type="date" class="fr-input" name="signalement[dateNaissanceOccupant]">
+                    <p class="fr-error-text fr-hidden">
+                        Veuillez préciser votre date de naissance.
+                    </p>
+                </fieldset>
             </div>
             <div class="fr-form-group">
                 <fieldset class="fr-fieldset fr-fieldset--inline">

@@ -67,6 +67,15 @@ forms.forEach((form) => {
             })
         })
     })
+    form?.querySelectorAll('input[name="signalement[isAllocataire]"]')?.forEach((input) => {
+        input.addEventListener('change', (event) => {
+            if (event.target.value === 'CAF' || event.target.value === 'MSA') {
+                form.querySelector('#signalement-date-naissance-bloc')?.classList.remove('fr-hidden')
+            } else {
+                form.querySelector('#signalement-date-naissance-bloc')?.classList.add('fr-hidden')
+            }
+        })
+    })
     form?.querySelectorAll('#signalement_cpOccupant')?.forEach((element) => {
         element.addEventListener('change', (event) => {
             let cpOccupant = form.querySelector('#signalement_cpOccupant').value;
@@ -577,6 +586,29 @@ forms.forEach((form) => {
                     if (form.id === "signalement-step-3b") {
                         if (superficieNDE > -1) {
                             document.querySelector('#signalement_superficie').value = superficieNDE;
+                        }
+                    }
+                    
+                    if (form.id === "signalement-step-4") {
+                        document.querySelector('#signalement-date-naissance-bloc .fr-error-text').classList.add('fr-hidden')
+                        let isOccupant = false
+                        let isAllocataire = false
+                        document.querySelectorAll('input[name="signalement[isNotOccupant]"]').forEach((element) => {
+                            if (element.value == '0' && element.checked) {
+                                isOccupant = true
+                            }
+                        })
+                        document.querySelectorAll('input[name="signalement[isAllocataire]"]').forEach((element) => {
+                            if ((element.value == 'CAF' || element.value == 'MSA') && element.checked) {
+                                isAllocataire = true
+                            }
+                        })
+                        if (isOccupant && isAllocataire) {
+                            if (document.querySelector('input[name="signalement[dateNaissanceOccupant]"]').value == '') {
+                                document.querySelector('#signalement-date-naissance-bloc .fr-error-text').classList.remove('fr-hidden')
+                                event.stopPropagation();
+                                return
+                            }
                         }
                     }
 

@@ -205,6 +205,23 @@ class SignalementType extends AbstractType
                 ],
                 'required' => false,
             ])
+            ->add('dateNaissanceOccupant', TextType::class, [
+                'attr' => [
+                    'class' => 'fr-input',
+                ],
+                'label_attr' => [
+                    'class' => 'fr-label',
+                ],
+                'row_attr' => [
+                    'class' => 'fr-form-group fr-col-2',
+                ],
+                'label' => 'Date de naissance',
+                'help' => 'Merci de préciser la date de naissance de l\'occupant.',
+                'help_attr' => [
+                    'class' => 'fr-hint-text',
+                ],
+                'required' => false,
+            ])
             ->add('isLogementSocial', ChoiceType::class, [
                 'choices' => [
                     'Oui' => 1,

@@ -174,8 +174,11 @@ class FrontSignalementController extends AbstractController
                         break;
 
                     case 'dateEntree':
-                        $value = new DateTimeImmutable($value);
-                        $signalement->$method($value);
+                    case 'dateNaissanceOccupant':
+                        if (!empty($value)) {
+                            $value = new DateTimeImmutable($value);
+                            $signalement->$method($value);
+                        }
                         break;
 
                     case 'geoloc':

@@ -72,6 +72,14 @@
                         <strong>Tél. sec. :</strong>
                         <a href="tel:{{ signalement.telOccupantBis }}">{{ signalement.telOccupantBis }}</a>
                     </div>
+                    <div class="fr-col-12">
+                        <strong>Date de naissance :</strong>
+                        {% if (signalement.dateNaissanceOccupant) %}
+                            {{ signalement.dateNaissanceOccupant.format('d/m/Y') }}
+                        {% else %}
+                            {{ signalement.naissanceOccupants ?? '-' }}
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             

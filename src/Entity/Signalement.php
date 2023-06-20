@@ -323,6 +323,9 @@ class Signalement
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $isUsagerAbandonProcedure;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $dateNaissanceOccupant = null;
+
     public function __construct()
     {
         $this->situations = new ArrayCollection();
@@ -1658,6 +1661,18 @@ class Signalement
                 $intervention->setSignalement(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDateNaissanceOccupant(): ?DateTimeInterface
+    {
+        return $this->dateNaissanceOccupant;
+    }
+
+    public function setDateNaissanceOccupant(?DateTimeInterface $dateNaissanceOccupant): self
+    {
+        $this->dateNaissanceOccupant = $dateNaissanceOccupant;
 
         return $this;
     }
