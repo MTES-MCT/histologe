@@ -26,8 +26,12 @@ class File
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    #[ORM\Column(length: 32)]
-    private ?string $type = null;
+    #[ORM\Column(length: 32, options: ['comment' => 'Value possible photo or document'])]
+    private ?string $fileType = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $filesize = null;
+
 
     public function getId(): ?int
     {
@@ -82,14 +86,26 @@ class File
         return $this;
     }
 
-    public function getType(): ?string
+    public function getFileType(): ?string
     {
-        return $this->type;
+        return $this->fileType;
     }
 
-    public function setType(string $type): self
+    public function setFileType(string $fileType): self
     {
-        $this->type = $type;
+        $this->fileType = $fileType;
+
+        return $this;
+    }
+
+    public function getFilesize(): ?string
+    {
+        return $this->filesize;
+    }
+
+    public function setFilesize(?string $filesize): self
+    {
+        $this->filesize = $filesize;
 
         return $this;
     }
