@@ -67,7 +67,7 @@ class HomepageController extends AbstractController
         Request $request,
         ContactFormHandler $contactFormHandler,
     ): Response {
-        $title = "Conditions Générales d'Utilisation";
+        $title = 'Contact';
         $form = $this->createForm(ContactType::class, []);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

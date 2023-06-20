@@ -1665,12 +1665,12 @@ class Signalement
         return $this;
     }
 
-    public function getDateNaissanceOccupant(): ?DateTimeInterface
+    public function getDateNaissanceOccupant(): ?DateTimeImmutable
     {
         return $this->dateNaissanceOccupant;
     }
 
-    public function setDateNaissanceOccupant(?DateTimeInterface $dateNaissanceOccupant): self
+    public function setDateNaissanceOccupant(?DateTimeImmutable $dateNaissanceOccupant): self
     {
         $this->dateNaissanceOccupant = $dateNaissanceOccupant;
 
