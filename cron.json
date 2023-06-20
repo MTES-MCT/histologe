@@ -11,6 +11,9 @@
     },
     {
       "command": "0 6 * * * php bin/console app:ask-feedback-usager"
+    },
+    {
+      "command": "0 0 * * * bash scripts/sync-esabora-sish.sh"
     }
   ]
 }
