@@ -6,11 +6,14 @@ use App\Manager\JobEventManager;
 use App\Repository\PartnerRepository;
 use App\Service\Esabora\EsaboraSISHService;
 use App\Service\Esabora\Handler\DossierAdresseServiceHandler;
+use App\Tests\FixturesHelper;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class DossierAdresseServiceHandlerTest extends TestCase
 {
+    use FixturesHelper;
+
     protected EsaboraSISHService $esaboraSISHService;
     protected SerializerInterface $serializer;
     protected JobEventManager $jobEventManager;
@@ -22,6 +25,28 @@ class DossierAdresseServiceHandlerTest extends TestCase
         $this->serializer = $this->createMock(SerializerInterface::class);
         $this->jobEventManager = $this->createMock(JobEventManager::class);
         $this->partnerRepository = $this->createMock(PartnerRepository::class);
+    }
+
+    public function testHandle()
+    {
+        $this->esaboraSISHService
+            ->expects($this->atLeast(1))
+            ->method('pushAdresse')
+            ->willReturn($this->getDossierSISHResponse('ws_dossier_adresse.json'));
+
+        $this->jobEventManager
+            ->expects($this->atLeast(1))
+            ->method('createJobEvent');
+
+        $handler = new DossierAdresseServiceHandler(
+            $this->esaboraSISHService,
+            $this->serializer,
+            $this->jobEventManager,
+            $this->partnerRepository
+        );
+
+        $dossierMessageSISH = $this->getDossierMessageSISH();
+        $handler->handle($dossierMessageSISH);
     }
 
     public function testGetPriority(): void

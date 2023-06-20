@@ -156,6 +156,9 @@ npm-build: ## Build the dependencies in the local node_modules folder
 upload: ## Push objects to S3 Bucket
 	./scripts/upload-s3.sh $(action) $(zip) $(debug)
 
+sync-sish: ## Synchronize sish status and intervention
+	@$(DOCKER_COMP) exec histologe_phpfpm sh ./scripts/sync-esabora-sish.sh
+
 .env:
 	@bash -l -c 'cp .env.sample .env'
 

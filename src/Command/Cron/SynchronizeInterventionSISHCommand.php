@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[AsCommand(
-    name: 'app:sync-intervention-esabora-sish',
+    name: 'app:sync-esabora-sish-intervention',
     description: '[SISH] Commande qui permet de mettre à jour les interventions depuis Esabora',
 )]
 class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraCommand

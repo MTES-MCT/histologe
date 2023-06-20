@@ -7,7 +7,6 @@ use App\Service\Esabora\EsaboraSISHService;
 use App\Service\UploadHandlerService;
 use App\Tests\FileHelper;
 use App\Tests\FixturesHelper;
-use App\Tests\Unit\Messenger\DossierMessageTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -17,7 +16,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EsaboraSISHServiceTest extends KernelTestCase
 {
-    use DossierMessageTrait;
     use FileHelper;
     use FixturesHelper;
 
@@ -58,7 +56,7 @@ class EsaboraSISHServiceTest extends KernelTestCase
         $esaboraService = $this->getEsaboraSISHService($filepath);
         $response = $esaboraService->pushPersonne(
             $this->getDossierMessageSISH(),
-            $this->getDossierMessageSISHPersonne()
+            $this->getDossierMessageSISHPersonneOccupant()
         );
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $this->assertEquals(1, $response->getSasId());

@@ -61,7 +61,7 @@ class WidgetDataManager implements WidgetDataManagerInterface
         $jobEvents = $this->jobEventRepository->findLastJobEventByInterfacageType($type, $params['period'], $territory);
 
         return array_map(function ($jobEvent) {
-            $jobEvent['last_event'] = (new \DateTimeImmutable())
+            $jobEvent['last_event'] = (new \DateTimeImmutable($jobEvent['last_event']))
                 ->setTimezone(new \DateTimeZone(self::DEFAULT_TIMEZONE))
                 ->format(self::FORMAT_DATE_TIME);
 
