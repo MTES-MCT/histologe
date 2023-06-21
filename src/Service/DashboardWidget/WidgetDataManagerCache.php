@@ -4,33 +4,28 @@ namespace App\Service\DashboardWidget;
 
 use App\Entity\Territory;
 use App\Entity\User;
-use Doctrine\DBAL\Exception;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\Query\QueryException;
+use App\Service\CacheCommonKeyGenerator;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class WidgetDataManagerCache implements WidgetDataManagerInterface
 {
-    private ?string $key = null;
+    private ?string $commonKey = null;
 
     public function __construct(
-        private WidgetDataManager $widgetDataManager,
-        private CacheInterface $dashboardCache,
-        private Security $security,
+        private readonly WidgetDataManager $widgetDataManager,
+        private readonly TagAwareCacheInterface $dashboardCache,
+        private readonly Security $security,
+        private readonly CacheCommonKeyGenerator $cacheCommonKeyGenerator
     ) {
         $this->initKeyCache();
     }
 
     private function initKeyCache(): void
     {
-        /** @var User $user */
-        $user = $this->security->getUser();
-        $role = $user->getRoles();
-        $this->key = array_shift($role).'-partnerId-'.$user->getPartner()->getId();
+        $this->commonKey = $this->cacheCommonKeyGenerator->generate().'-zip-';
     }
 
     /**
@@ -39,7 +34,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     public function countSignalementAcceptedNoSuivi(Territory $territory, ?array $params = null): array
     {
         return $this->dashboardCache->get(
-            __FUNCTION__.$this->key.'-zip-'.$territory?->getZip(),
+            __FUNCTION__.'-'.$this->commonKey.$territory?->getZip(),
             function (ItemInterface $item) use ($territory, $params) {
                 $item->expiresAfter($params['expired_after'] ?? null);
 
@@ -54,7 +49,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     public function countSignalementsByTerritory(?array $params = null): array
     {
         return $this->dashboardCache->get(
-            __FUNCTION__.'-'.$this->key,
+            __FUNCTION__.'-'.$this->commonKey,
             function (ItemInterface $item) use ($params) {
                 $item->expiresAfter($params['expired_after'] ?? null);
 
@@ -69,7 +64,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     public function countAffectationPartner(?Territory $territory = null, ?array $params = null): array
     {
         return $this->dashboardCache->get(
-            __FUNCTION__.'-'.$this->key.'-zip-'.$territory?->getZip(),
+            __FUNCTION__.'-'.$this->commonKey.$territory?->getZip(),
             function (ItemInterface $item) use ($territory, $params) {
                 $item->expiresAfter($params['expired_after'] ?? null);
 
@@ -84,7 +79,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     public function findLastJobEventByInterfacageType(string $type, array $params, ?Territory $territory = null): array
     {
         return $this->dashboardCache->get(
-            __FUNCTION__.'-'.$this->key.'-zip-'.$territory?->getZip(),
+            __FUNCTION__.'-'.$this->commonKey.$territory?->getZip(),
             function (ItemInterface $item) use ($type, $params, $territory) {
                 $item->expiresAfter($params['expired_after'] ?? null);
 
@@ -94,13 +89,21 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     }
 
     /**
-     * @throws QueryException
-     * @throws NonUniqueResultException
-     * @throws Exception
-     * @throws NoResultException
+     * @throws InvalidArgumentException
      */
     public function countDataKpi(?Territory $territory = null, ?array $params = null): WidgetDataKpi
     {
-        return $this->widgetDataManager->countDataKpi($territory);
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $key = __FUNCTION__.'-'.$this->commonKey.$territory?->getZip().'-id-'.$user->getId();
+
+        return $this->dashboardCache->get(
+            $key,
+            function (ItemInterface $item) use ($params, $territory) {
+                $item->tag('data-kpi-'.$territory?->getZip());
+                $item->expiresAfter($params['expired_after'] ?? null);
+
+                return $this->widgetDataManager->countDataKpi($territory, $params);
+            });
     }
 }

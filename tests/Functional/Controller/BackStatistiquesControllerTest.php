@@ -48,20 +48,20 @@ class BackStatistiquesControllerTest extends WebTestCase
     public function provideRoutesStatistiquesDatas(): \Generator
     {
         yield 'Super Admin' => ['back_statistiques_filter', [], self::USER_SUPER_ADMIN, [
-            ['result' => 27, 'label' => 'count_signalement'],
-            ['result' => 66.3, 'label' => 'average_criticite'],
+            ['result' => 31, 'label' => 'count_signalement'],
+            ['result' => 70.6, 'label' => 'average_criticite'],
         ]];
         yield 'Responsable Territoire' => ['back_statistiques_filter', [], self::USER_ADMIN_TERRITOIRE, [
-            ['result' => 17, 'label' => 'count_signalement'],
-            ['result' => 97.6, 'label' => 'average_criticite'],
+            ['result' => 21, 'label' => 'count_signalement'],
+            ['result' => 98.1, 'label' => 'average_criticite'],
         ]];
         yield 'Partner' => ['back_statistiques_filter', [], self::USER_PARTNER, [
             ['result' => 3, 'label' => 'count_signalement'],
             ['result' => 100, 'label' => 'average_criticite'],
         ]];
         yield 'RT - filtered with commune Arles' => ['back_statistiques_filter', ['communes' => '["Arles"]'], self::USER_ADMIN_TERRITOIRE, [
-            ['result' => 17, 'label' => 'count_signalement'],
-            ['result' => 97.6, 'label' => 'average_criticite'],
+            ['result' => 21, 'label' => 'count_signalement'],
+            ['result' => 98.1, 'label' => 'average_criticite'],
             ['result' => 0, 'label' => 'count_signalement_filtered'],
             ['result' => 0, 'label' => 'average_criticite_filtered'],
         ]];

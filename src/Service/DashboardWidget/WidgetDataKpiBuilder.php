@@ -39,15 +39,14 @@ class WidgetDataKpiBuilder
     private array $widgetCards = [];
 
     public function __construct(
-        private WidgetCardFactory $widgetCardFactory,
-        private SuiviRepository $suiviRepository,
-        private AffectationRepository $affectationRepository,
-        private SignalementRepository $signalementRepository,
-        private UserRepository $userRepository,
-        private NotificationRepository $notificationRepository,
-        private ParameterBagInterface $parameterBag,
-        private Security $security,
-        private bool $featureWidgetRelanceEnable,
+        private readonly WidgetCardFactory $widgetCardFactory,
+        private readonly SuiviRepository $suiviRepository,
+        private readonly AffectationRepository $affectationRepository,
+        private readonly SignalementRepository $signalementRepository,
+        private readonly UserRepository $userRepository,
+        private readonly NotificationRepository $notificationRepository,
+        private readonly ParameterBagInterface $parameterBag,
+        private readonly Security $security,
     ) {
     }
 
@@ -70,7 +69,6 @@ class WidgetDataKpiBuilder
      * @throws QueryException
      * @throws NonUniqueResultException
      * @throws NoResultException
-     * @throws Exception
      */
     public function withCountSignalement(): self
     {
@@ -87,8 +85,6 @@ class WidgetDataKpiBuilder
             $countSignalementByStatus = $this->signalementRepository->countByStatus(
                 territory: $this->territory,
                 partner: null,
-                year: null,
-                removeImported: false,
                 qualification: Qualification::NON_DECENCE_ENERGETIQUE,
                 qualificationStatuses: [QualificationStatus::NDE_AVEREE, QualificationStatus::NDE_CHECK]
             );
@@ -131,14 +127,11 @@ class WidgetDataKpiBuilder
             $this->territory,
             $this->getPartnerFromUser($user)
         );
-        if ($this->featureWidgetRelanceEnable) {
-            $countSignalementNoSuiviAfter3Relances = $this->suiviRepository->countSignalementNoSuiviAfter3Relances(
-                $this->territory,
-                $this->getPartnerFromUser($user)
-            );
-        } else {
-            $countSignalementNoSuiviAfter3Relances = null;
-        }
+        $countSignalementNoSuiviAfter3Relances = $this->suiviRepository->countSignalementNoSuiviAfter3Relances(
+            $this->territory,
+            $this->getPartnerFromUser($user)
+        );
+
         $this->countSuivi = new CountSuivi(
             $averageSuivi,
             $countSuiviPartner,
