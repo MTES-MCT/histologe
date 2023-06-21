@@ -8,6 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: FileRepository::class)]
 class File
 {
+    public const FILE_TYPE_DOCUMENT = 'document';
+    public const FILE_TYPE_PHOTO = 'photo';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -29,9 +32,13 @@ class File
     #[ORM\Column(length: 32, options: ['comment' => 'Value possible photo or document'])]
     private ?string $fileType = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $filesize = null;
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $createdAt = null;
 
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
@@ -98,14 +105,14 @@ class File
         return $this;
     }
 
-    public function getFilesize(): ?string
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->filesize;
+        return $this->createdAt;
     }
 
-    public function setFilesize(?string $filesize): self
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): self
     {
-        $this->filesize = $filesize;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
