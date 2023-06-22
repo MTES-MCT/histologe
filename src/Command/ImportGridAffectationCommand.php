@@ -15,6 +15,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -25,6 +26,9 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 )]
 class ImportGridAffectationCommand extends Command
 {
+    private const PARAM_TERRITORY_ZIP = 'territory_zip';
+    private const PARAM_IGNORE_NOTIFICATION_PARTNER = 'ignore-notification-partners';
+
     public function __construct(
         private FilesystemOperator $fileStorage,
         private ParameterBagInterface $parameterBag,
@@ -39,32 +43,42 @@ class ImportGridAffectationCommand extends Command
 
     protected function configure(): void
     {
-        $this->addArgument('territory_zip', InputArgument::REQUIRED, 'Territory zip to target');
+        $this->addArgument(
+            self::PARAM_TERRITORY_ZIP,
+            InputArgument::REQUIRED,
+            'Territory zip to target'
+        )
+            ->addOption(
+                self::PARAM_IGNORE_NOTIFICATION_PARTNER,
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Add partners types separated with comma'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $territoryZip = $input->getArgument('territory_zip');
+        $territoryZip = $input->getArgument(self::PARAM_TERRITORY_ZIP);
         $fromFile = 'csv/grille_affectation_'.$territoryZip.'.csv';
         $toFile = $this->parameterBag->get('uploads_tmp_dir').'grille.csv';
 
         /** @var Territory $territory */
         $territory = $this->territoryManager->findOneBy(['zip' => $territoryZip]);
         if (null === $territory) {
-            $io->error('Territory does not exists');
+            $io->error('Territory does not exist');
 
             return Command::FAILURE;
         }
 
         if ($territory->isIsActive()) {
-            $io->warning('Partner(s) and user(s) from this repository has already been added');
+            $io->warning('Partner(s) and user(s) from this repository have already been added');
 
             return Command::FAILURE;
         }
 
         if (!$this->fileStorage->fileExists($fromFile)) {
-            $io->error('CSV File does not exists');
+            $io->error('CSV File does not exist');
 
             return Command::FAILURE;
         }
@@ -83,9 +97,16 @@ class ImportGridAffectationCommand extends Command
         }
         $io->success('No error detected in file');
 
+        $ignoreNotifPartnerTypes = [];
+        $ignoreNotifPartnerTypesParam = $input->getOption(self::PARAM_IGNORE_NOTIFICATION_PARTNER);
+        if (null !== $ignoreNotifPartnerTypesParam) {
+            $ignoreNotifPartnerTypes = explode(',', $ignoreNotifPartnerTypesParam);
+        }
+
         $this->gridAffectationLoader->load(
             $territory,
-            $csvData
+            $csvData,
+            $ignoreNotifPartnerTypes
         );
 
         $metadata = $this->gridAffectationLoader->getMetadata();
