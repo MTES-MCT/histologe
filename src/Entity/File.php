@@ -74,7 +74,7 @@ class File
         return $this->filename;
     }
 
-    public function setFilename(string $filename): self
+    public function setFilename(?string $filename): self
     {
         $this->filename = $filename;
 
@@ -86,7 +86,7 @@ class File
         return $this->title;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
 
@@ -98,7 +98,7 @@ class File
         return $this->fileType;
     }
 
-    public function setFileType(string $fileType): self
+    public function setFileType(?string $fileType): self
     {
         $this->fileType = $fileType;
 

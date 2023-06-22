@@ -326,7 +326,7 @@ class Signalement
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $dateNaissanceOccupant = null;
 
-    #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: File::class)]
+    #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: File::class, cascade: ['persist'])]
     private Collection $files;
 
     public function __construct()

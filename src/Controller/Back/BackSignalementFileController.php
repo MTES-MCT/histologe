@@ -2,14 +2,16 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Exception\File\MaxUploadSizeExceededException;
+use App\Factory\FileFactory;
 use App\Service\Files\FilenameGenerator;
 use App\Service\Files\HeicToJpegConverter;
 use App\Service\UploadHandlerService;
-use DateTimeImmutable;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Snappy\Pdf;
 use League\Flysystem\FilesystemOperator;
@@ -25,6 +27,9 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/bo/signalements')]
 class BackSignalementFileController extends AbstractController
 {
+    public const INPUT_NAME_PHOTOS = 'photos';
+    public const INPUT_NAME_DOCUMENTS = 'documents';
+
     #[Route('/{uuid}/pdf', name: 'back_signalement_gen_pdf')]
     public function generatePdfSignalement(
         Signalement $signalement,
@@ -63,30 +68,21 @@ class BackSignalementFileController extends AbstractController
     public function addFileSignalement(
         Signalement $signalement,
         Request $request,
+        EntityManagerInterface $entityManager,
         ManagerRegistry $doctrine,
         LoggerInterface $logger,
         UploadHandlerService $uploadHandler,
+        FileFactory $fileFactory,
         FilenameGenerator $filenameGenerator,
     ): RedirectResponse {
         $this->denyAccessUnlessGranted('FILE_CREATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token'))
             && $files = $request->files->get('signalement-add-file')) {
-            $type = '';
-            if (isset($files['documents'])) {
-                $type = 'documents';
-            }
-            if (isset($files['photos'])) {
-                $type = 'photos';
-            }
-            $setMethod = 'set'.ucfirst($type);
-            $getMethod = 'get'.ucfirst($type);
-            $list = [];
-            $type_list = $signalement->$getMethod();
-            /** @var User $user */
-            $user = $this->getUser();
+            $key = isset($files[self::INPUT_NAME_DOCUMENTS]) ? self::INPUT_NAME_DOCUMENTS : self::INPUT_NAME_PHOTOS;
+            $fileList = $list = [];
 
             /** @var UploadedFile $file */
-            foreach ($files[$type] as $file) {
+            foreach ($files[$key] as $file) {
                 if (\in_array($file->getMimeType(), HeicToJpegConverter::HEIC_FORMAT)) {
                     $message = <<<ERROR
                     Les fichiers de format HEIC/HEIF ne sont pas pris en charge,
@@ -99,7 +95,7 @@ class BackSignalementFileController extends AbstractController
                     $titre = $originalFilename.'.'.$file->guessExtension();
                     $newFilename = $filenameGenerator->generateSafeName($file);
                     try {
-                        $newFilename = $uploadHandler->uploadFromFile($file, $newFilename);
+                        $newFilename = $uploadHandler->uploadFromFile($file, $filenameGenerator->generate($file));
                     } catch (MaxUploadSizeExceededException $exception) {
                         $newFilename = '';
                         $logger->error($exception->getMessage());
@@ -109,16 +105,13 @@ class BackSignalementFileController extends AbstractController
                         $list[] = '<li><a class="fr-link" target="_blank" href="'.$this->generateUrl(
                             'show_uploaded_file',
                             ['folder' => '_up', 'filename' => $newFilename]
-                        ).'">'.$titre.'</a></li>';
-                        if (null === $type_list) {
-                            $type_list = [];
-                        }
-                        $type_list[] = [
+                        ).'">'.$title = $filenameGenerator->getTitle().'</a></li>';
+                        $fileList[] = [
                             'file' => $newFilename,
-                            'titre' => $titre,
-                            'user' => $user->getId(),
-                            'username' => $user->getNomComplet(),
-                            'date' => (new DateTimeImmutable())->format('d.m.Y'),
+                            'title' => $title,
+                            'user' => $this->getUser(),
+                            'date' => new \DateTimeImmutable(),
+                            'type' => 'documents' === $key ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO,
                         ];
                     }
                 }
@@ -126,15 +119,24 @@ class BackSignalementFileController extends AbstractController
 
             if (!empty($list)) {
                 $suivi = new Suivi();
-                $suivi->setCreatedBy($user);
-                $suivi->setDescription('Ajout de '.$type.' au signalement<ul>'.implode('', $list).'</ul>');
+                $suivi->setCreatedBy($this->getUser());
+                $suivi->setDescription('Ajout de '.$key.' au signalement<ul>'.implode('', $list).'</ul>');
                 $suivi->setSignalement($signalement);
                 $suivi->setType(SUIVI::TYPE_AUTO);
-                $signalement->$setMethod($type_list);
-                $doctrine->getManager()->persist($suivi);
-                $doctrine->getManager()->persist($signalement);
-                $doctrine->getManager()->flush();
-                $this->addFlash('success', 'Envoi de '.ucfirst($type).' effectué avec succès !');
+
+                foreach ($fileList as $fileItem) {
+                    $file = $fileFactory->createInstanceFrom(
+                        filename: $fileItem['file'],
+                        title: $fileItem['title'],
+                        type: $fileItem['type'],
+                    );
+                    $signalement->addFile($file);
+                }
+
+                $entityManager->persist($suivi);
+                $entityManager->persist($signalement);
+                $entityManager->flush();
+                $this->addFlash('success', 'Envoi de '.ucfirst($key).' effectué avec succès !');
             }
         } else {
             $this->addFlash('error', 'Une erreur est survenu lors du téléchargement');

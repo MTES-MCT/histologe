@@ -68,7 +68,7 @@ class MigrateDocumentDataCommand extends Command
                 ->setCreatedAt(
                     isset($fileItem['date'])
                         ? \DateTimeImmutable::createFromFormat('d.m.Y', $fileItem['date'])
-                        : new \DateTimeImmutable()
+                        : $signalement->getCreatedAt()
                 )
                 ->setSignalement($signalement);
 
