@@ -36,18 +36,19 @@ function histoCheckVisiteForms(formType) {
             const selectVisitePartnerError = visiteForm.querySelector('#signalement-'+formType+'-visite-partner-double-error')
             selectVisitePartnerError.classList.add('fr-hidden')
 
+            let stopSubmit = false
+
             const selectVisitePartner = visiteForm.querySelector('.visite-partner-select')
             if (selectVisitePartner) {
                 if (selectVisitePartner.selectedOptions[0].classList.contains('alert-partner')) {
                     selectVisitePartnerError.classList.remove('fr-hidden')
-                    evt.preventDefault()
+                    stopSubmit = true
                 }
             }
         
             const dateField = visiteForm.querySelector('.add-fields-if-past-date')
             let todayDate = new Date()
             if (!dateField || dateField.value <= todayDate.toISOString().split('T')[0]) {
-                let stopSubmit = false
         
                 let isVisiteDone = false
                 let hasCheckedVisiteDone = false
@@ -103,10 +104,14 @@ function histoCheckVisiteForms(formType) {
                     textareaDetailsError.classList.remove('fr-hidden')
                     stopSubmit = true
                 }
+            }
         
-                if (stopSubmit) {
-                    evt.preventDefault()
-                }
+            if (stopSubmit) {
+                evt.preventDefault()
+            } else {
+                const submitButton = visiteForm.querySelector('button[type=submit]')
+                submitButton.disabled = true
+                submitButton.textContent = 'En cours'
             }
         })
 
