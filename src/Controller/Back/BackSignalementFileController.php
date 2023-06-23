@@ -10,16 +10,12 @@ use App\Exception\File\MaxUploadSizeExceededException;
 use App\Factory\FileFactory;
 use App\Factory\SuiviFactory;
 use App\Repository\FileRepository;
-use App\Service\Files\FilenameGenerator;
-use App\Service\Files\HeicToJpegConverter;
-use App\Service\UploadHandlerService;
+use App\Service\Signalement\SignalementFileProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Snappy\Pdf;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -68,20 +64,22 @@ class BackSignalementFileController extends AbstractController
 
     #[Route('/{uuid}/file/add', name: 'back_signalement_add_file')]
     public function addFileSignalement(
-        Signalement            $signalement,
-        Request                $request,
+        Signalement $signalement,
+        Request $request,
         EntityManagerInterface $entityManager,
         LoggerInterface $logger,
         UploadHandlerService $uploadHandler,
         FileFactory $fileFactory,
         FilenameGenerator $filenameGenerator,
         SuiviFactory $suiviFactory,
+        SignalementFileProcessor $signalementFileProcessor,
     ): RedirectResponse {
         $this->denyAccessUnlessGranted('FILE_CREATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token'))
             && $files = $request->files->get('signalement-add-file')) {
-            $inputName = isset($files[self::INPUT_NAME_DOCUMENTS]) ? self::INPUT_NAME_DOCUMENTS : self::INPUT_NAME_PHOTOS;
-            $fileList = $descriptionList = [];
+            $inputName = isset($files[self::INPUT_NAME_DOCUMENTS])
+                ? self::INPUT_NAME_DOCUMENTS
+                : self::INPUT_NAME_PHOTOS;
 
             /** @var UploadedFile $file */
             foreach ($files[$inputName] as $file) {
@@ -111,6 +109,7 @@ class BackSignalementFileController extends AbstractController
                 }
             }
 
+            list($fileList, $descriptionList) = $signalementFileProcessor->process($files, $inputName);
             if (!empty($descriptionList)) {
                 $suivi = $suiviFactory->createInstanceFrom($this->getUser(), $signalement);
                 $suivi->setDescription('Ajout de '.$inputName.' au signalement<ul>'
@@ -165,33 +164,6 @@ class BackSignalementFileController extends AbstractController
         }
 
         return $this->json(['response' => 'error'], 400);
-    }
-
-    private function generateListItemDescription(
-        string $filename,
-        string $title,
-    ): string {
-        $fileUrl = $this->generateUrl(
-            'show_uploaded_file',
-            ['folder' => '_up', 'filename' => $filename]
-        );
-
-        return '<li><a class="fr-link" target="_blank" href="'
-            .$fileUrl
-            .'">'
-            .$title
-            .'</a></li>';
-    }
-
-    private function createFileItem(string $filename, string $title, string $inputName): array
-    {
-        return [
-            'file' => $filename,
-            'title' => $title,
-            'user' => $this->getUser(),
-            'date' => new \DateTimeImmutable(),
-            'type' => 'documents' === $inputName ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO,
-        ];
     }
 
     private function addFilesToSignalement(

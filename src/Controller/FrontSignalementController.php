@@ -11,7 +11,6 @@ use App\Entity\Situation;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementCreatedEvent;
-use App\Exception\File\MaxUploadSizeExceededException;
 use App\Factory\FileFactory;
 use App\Factory\SignalementQualificationFactory;
 use App\Factory\SuiviFactory;
@@ -30,11 +29,11 @@ use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\QualificationStatusService;
 use App\Service\Signalement\ReferenceGenerator;
+use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use http\Params;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -475,6 +474,7 @@ class FrontSignalementController extends AbstractController
         LoggerInterface $logger,
         SuiviFactory $suiviFactory,
         FileFactory $fileFactory,
+        SignalementFileProcessor $signalementFileProcessor,
     ) {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
             if ($this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {
@@ -498,20 +498,7 @@ class FrontSignalementController extends AbstractController
                     if (isset($data['files'])) {
                         $dataFiles = $data['files'];
                         foreach ($dataFiles as $inputName => $files) {
-                            foreach ($files as $title => $file) {
-                                try {
-                                    $filename = $uploadHandlerService->uploadFromFilename($file);
-                                } catch (\Exception $exception) {
-                                    $logger->error($exception->getMessage());
-                                    $this->addFlash('error', $exception->getMessage());
-                                    continue;
-                                }
-
-                                if (!empty($filename)) {
-                                    $descriptionList[] = $this->generateListItemDescription($filename, $title);
-                                    $fileList[] = $this->createFileItem($filename, $title, $inputName,);
-                                }
-                            }
+                            list($fileList, $descriptionList) = $signalementFileProcessor->process($dataFiles, $inputName);
                         }
                         unset($data['files']);
                     }
@@ -522,7 +509,6 @@ class FrontSignalementController extends AbstractController
                 }
 
                 $suivi->setDescription($description);
-
                 $entityManager->persist($suivi);
                 $entityManager->flush();
                 $this->addFlash('success', "Votre message a bien été envoyé ; vous recevrez un email lorsque votre dossier sera mis à jour. N'hésitez pas à consulter votre page de suivi !");
