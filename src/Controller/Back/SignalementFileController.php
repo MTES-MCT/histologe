@@ -5,9 +5,6 @@ namespace App\Controller\Back;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
-use App\Entity\User;
-use App\Exception\File\MaxUploadSizeExceededException;
-use App\Factory\FileFactory;
 use App\Factory\SuiviFactory;
 use App\Repository\FileRepository;
 use App\Service\Signalement\SignalementFileProcessor;
@@ -23,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/bo/signalements')]
-class BackSignalementFileController extends AbstractController
+class SignalementFileController extends AbstractController
 {
     public const INPUT_NAME_PHOTOS = 'photos';
     public const INPUT_NAME_DOCUMENTS = 'documents';
@@ -32,10 +29,12 @@ class BackSignalementFileController extends AbstractController
     public function generatePdfSignalement(
         Signalement $signalement,
         Pdf $knpSnappyPdf,
-    ) {
+    ): Response {
         $criticitesArranged = [];
         foreach ($signalement->getCriticites() as $criticite) {
-            $criticitesArranged[$criticite->getCritere()->getSituation()->getLabel()][$criticite->getCritere()->getLabel()] = $criticite;
+            $situationLabel = $criticite->getCritere()->getSituation()->getLabel();
+            $critereLabel = $criticite->getCritere()->getLabel();
+            $criticitesArranged[$situationLabel][$critereLabel] = $criticite;
         }
 
         $html = $this->renderView('pdf/signalement.html.twig', [
@@ -67,10 +66,6 @@ class BackSignalementFileController extends AbstractController
         Signalement $signalement,
         Request $request,
         EntityManagerInterface $entityManager,
-        LoggerInterface $logger,
-        UploadHandlerService $uploadHandler,
-        FileFactory $fileFactory,
-        FilenameGenerator $filenameGenerator,
         SuiviFactory $suiviFactory,
         SignalementFileProcessor $signalementFileProcessor,
     ): RedirectResponse {
@@ -81,39 +76,14 @@ class BackSignalementFileController extends AbstractController
                 ? self::INPUT_NAME_DOCUMENTS
                 : self::INPUT_NAME_PHOTOS;
 
-            /** @var UploadedFile $file */
-            foreach ($files[$inputName] as $file) {
-                if (\in_array($file->getMimeType(), HeicToJpegConverter::HEIC_FORMAT)) {
-                    $message = <<<ERROR
-                    Les fichiers de format HEIC/HEIF ne sont pas pris en charge,
-                    merci de convertir votre image en JPEG ou en PNG avant de l'envoyer.
-                    ERROR;
-                    $logger->error($message);
-                    $this->addFlash('error', $message);
-                } else {
-                    $originalFilename = pathinfo($file->getClientOriginalName(), \PATHINFO_FILENAME);
-                    $titre = $originalFilename.'.'.$file->guessExtension();
-                    $newFilename = $filenameGenerator->generateSafeName($file);
-                    try {
-                        $filename = $uploadHandlerService->uploadFromFile($file, $filenameGenerator->generate($file));
-                    } catch (MaxUploadSizeExceededException $exception) {
-                        $logger->error($exception->getMessage());
-                        $this->addFlash('error', $exception->getMessage());
-                        continue;
-                    }
-                    if (!empty($filename)) {
-                        $title = $filenameGenerator->getTitle();
-                        $descriptionList[] = $this->generateListItemDescription($filename, $title);
-                        $fileList[] = $this->createFileItem($filename, $title, $inputName);
-                    }
-                }
-            }
-
             list($fileList, $descriptionList) = $signalementFileProcessor->process($files, $inputName);
             if (!empty($descriptionList)) {
                 $suivi = $suiviFactory->createInstanceFrom($this->getUser(), $signalement);
-                $suivi->setDescription('Ajout de '.$inputName.' au signalement<ul>'
-                    .implode('', $descriptionList).'</ul>'
+                $suivi->setDescription('Ajout de '
+                    .$inputName
+                    .' au signalement<ul>'
+                    .implode('', $descriptionList)
+                    .'</ul>'
                 );
                 $suivi->setType(SUIVI::TYPE_AUTO);
                 $signalementFileProcessor->addFilesToSignalement($fileList, $signalement, $this->getUser());
