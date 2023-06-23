@@ -479,3 +479,7 @@ hr.blue-border {
 .fr-modal .fr-modal__footer {
     z-index: 1;
 }
+
+#signalement_dateNaissanceOccupant_day, #signalement_dateNaissanceOccupant_month {
+    border-right: 1px solid black;
+}

@@ -615,7 +615,9 @@ forms.forEach((form) => {
                             }
                         })
                         if (isOccupant && isAllocataire) {
-                            if (document.querySelector('input[name="signalement[dateNaissanceOccupant]"]').value == '') {
+                            if (document.querySelector('#signalement_dateNaissanceOccupant_day').value == ''
+                                    || document.querySelector('#signalement_dateNaissanceOccupant_month').value == ''
+                                    || document.querySelector('#signalement_dateNaissanceOccupant_year').value == '') {
                                 document.querySelector('#signalement-date-naissance-bloc .fr-error-text').classList.remove('fr-hidden')
                                 event.stopPropagation();
                                 return

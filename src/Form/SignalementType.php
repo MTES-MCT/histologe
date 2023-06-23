@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Signalement;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
@@ -205,7 +206,8 @@ class SignalementType extends AbstractType
                 ],
                 'required' => false,
             ])
-            ->add('dateNaissanceOccupant', TextType::class, [
+            ->add('dateNaissanceOccupant', BirthdayType::class, [
+                'input' => 'datetime_immutable',
                 'attr' => [
                     'class' => 'fr-input',
                 ],
