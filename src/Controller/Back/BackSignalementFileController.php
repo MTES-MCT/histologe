@@ -68,10 +68,9 @@ class BackSignalementFileController extends AbstractController
 
     #[Route('/{uuid}/file/add', name: 'back_signalement_add_file')]
     public function addFileSignalement(
-        Signalement $signalement,
-        Request $request,
+        Signalement            $signalement,
+        Request                $request,
         EntityManagerInterface $entityManager,
-        ManagerRegistry $doctrine,
         LoggerInterface $logger,
         UploadHandlerService $uploadHandler,
         FileFactory $fileFactory,
@@ -98,7 +97,7 @@ class BackSignalementFileController extends AbstractController
                     $titre = $originalFilename.'.'.$file->guessExtension();
                     $newFilename = $filenameGenerator->generateSafeName($file);
                     try {
-                        $filename = $uploadHandler->uploadFromFile($file, $filenameGenerator->generate($file));
+                        $filename = $uploadHandlerService->uploadFromFile($file, $filenameGenerator->generate($file));
                     } catch (MaxUploadSizeExceededException $exception) {
                         $logger->error($exception->getMessage());
                         $this->addFlash('error', $exception->getMessage());
@@ -106,7 +105,7 @@ class BackSignalementFileController extends AbstractController
                     }
                     if (!empty($filename)) {
                         $title = $filenameGenerator->getTitle();
-                        $descriptionList[] = $this->generateListItemDescription($filename, $title, $inputName);
+                        $descriptionList[] = $this->generateListItemDescription($filename, $title);
                         $fileList[] = $this->createFileItem($filename, $title, $inputName);
                     }
                 }
@@ -171,14 +170,17 @@ class BackSignalementFileController extends AbstractController
     private function generateListItemDescription(
         string $filename,
         string $title,
-        string $inputName,
     ): string {
         $fileUrl = $this->generateUrl(
             'show_uploaded_file',
             ['folder' => '_up', 'filename' => $filename]
         );
 
-        return '<li><a class="fr-link" target="_blank" href="'.$fileUrl.'">'.$title.'</a></li>';
+        return '<li><a class="fr-link" target="_blank" href="'
+            .$fileUrl
+            .'">'
+            .$title
+            .'</a></li>';
     }
 
     private function createFileItem(string $filename, string $title, string $inputName): array

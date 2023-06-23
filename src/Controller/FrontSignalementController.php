@@ -11,6 +11,7 @@ use App\Entity\Situation;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementCreatedEvent;
+use App\Exception\File\MaxUploadSizeExceededException;
 use App\Factory\FileFactory;
 use App\Factory\SignalementQualificationFactory;
 use App\Factory\SuiviFactory;
@@ -33,6 +34,7 @@ use App\Service\UploadHandlerService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use http\Params;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -451,6 +453,17 @@ class FrontSignalementController extends AbstractController
         return $this->redirectToRoute('front_signalement');
     }
 
+    private function createFileItem(string $filename, string $title, string $inputName): array
+    {
+        return [
+            'file' => $filename,
+            'title' => $title,
+            'user' => $this->getUser(),
+            'date' => new \DateTimeImmutable(),
+            'type' => 'documents' === $inputName ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO,
+        ];
+    }
+
     #[Route('/suivre-mon-signalement/{code}/response', name: 'front_suivi_signalement_user_response', methods: 'POST')]
     public function postUserResponse(
         string $code,
@@ -458,16 +471,21 @@ class FrontSignalementController extends AbstractController
         UserRepository $userRepository,
         UploadHandlerService $uploadHandlerService,
         Request $request,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        LoggerInterface $logger,
+        SuiviFactory $suiviFactory,
+        FileFactory $fileFactory,
     ) {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
             if ($this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {
-                $suivi = new Suivi();
-                $suivi->setIsPublic(true);
                 $email = $request->get('signalement_front_response')['email'];
                 $user = $userRepository->findOneBy(['email' => $email]);
-                $suivi->setCreatedBy($user);
-                $suivi->setType(Suivi::TYPE_USAGER);
+                $suivi = $suiviFactory->createInstanceFrom(
+                    user: $user,
+                    signalement: $signalement,
+                    params: ['type' => Suivi::TYPE_USAGER],
+                    isPublic: true,
+                );
 
                 $description = htmlspecialchars(
                     nl2br($request->get('signalement_front_response')['content']),
@@ -475,31 +493,36 @@ class FrontSignalementController extends AbstractController
                     'UTF-8'
                 );
 
-                $files_array = [
-                    'documents' => $signalement->getDocuments(),
-                    'photos' => $signalement->getPhotos(),
-                ];
-                $list = [];
+                $fileList = $descriptionList = [];
                 if ($data = $request->get('signalement')) {
                     if (isset($data['files'])) {
                         $dataFiles = $data['files'];
-                        foreach ($dataFiles as $key => $files) {
-                            foreach ($files as $titre => $file) {
-                                $files_array[$key][] = ['file' => $uploadHandlerService->uploadFromFilename($file), 'titre' => $titre, 'date' => (new DateTimeImmutable())->format('d.m.Y')];
-                                $list[] = '<li><a class="fr-link" target="_blank" href="'.$this->generateUrl('show_uploaded_file', ['folder' => '_up', 'filename' => $file]).'&t=___TOKEN___">'.$titre.'</a></li>';
+                        foreach ($dataFiles as $inputName => $files) {
+                            foreach ($files as $title => $file) {
+                                try {
+                                    $filename = $uploadHandlerService->uploadFromFilename($file);
+                                } catch (\Exception $exception) {
+                                    $logger->error($exception->getMessage());
+                                    $this->addFlash('error', $exception->getMessage());
+                                    continue;
+                                }
+
+                                if (!empty($filename)) {
+                                    $descriptionList[] = $this->generateListItemDescription($filename, $title);
+                                    $fileList[] = $this->createFileItem($filename, $title, $inputName,);
+                                }
                             }
                         }
                         unset($data['files']);
                     }
-                    if (!empty($list)) {
-                        $description .= '<br>Ajout de pièces au signalement<ul>'.implode('', $list).'</ul>';
+                    if (!empty($descriptionList)) {
+                        $description .= '<br>Ajout de pièces au signalement<ul>'.implode('', $descriptionList).'</ul>';
+                        $this->addFilesToSignalement($fileList, $signalement, $fileFactory);
                     }
                 }
 
-                $signalement->setDocuments($files_array['documents']);
-                $signalement->setPhotos($files_array['photos']);
                 $suivi->setDescription($description);
-                $suivi->setSignalement($signalement);
+
                 $entityManager->persist($suivi);
                 $entityManager->flush();
                 $this->addFlash('success', "Votre message a bien été envoyé ; vous recevrez un email lorsque votre dossier sera mis à jour. N'hésitez pas à consulter votre page de suivi !");
@@ -513,5 +536,37 @@ class FrontSignalementController extends AbstractController
         }
 
         return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+    }
+
+    private function generateListItemDescription(
+        string $filename,
+        string $title,
+    ): string {
+        $fileUrl = $this->generateUrl(
+            'show_uploaded_file',
+            ['folder' => '_up', 'filename' => $filename]
+        );
+
+        return '<li><a class="fr-link" target="_blank" href="'
+            .$fileUrl
+            .'&t=___TOKEN___">'
+            .$title.
+            '</a></li>';
+    }
+
+    private function addFilesToSignalement(
+        array $fileList,
+        Signalement $signalement,
+        FileFactory $fileFactory
+    ): void {
+        foreach ($fileList as $fileItem) {
+            $file = $fileFactory->createInstanceFrom(
+                filename: $fileItem['file'],
+                title: $fileItem['title'],
+                type: $fileItem['type'],
+                user: $this->getUser(),
+            );
+            $signalement->addFile($file);
+        }
     }
 }

@@ -12,6 +12,8 @@ class UserTest extends TestCase
     public function testCreateUserWithFullname(): void
     {
         $user = $this->getUser();
+        $this->assertEquals('John', $user->getPrenom());
+        $this->assertEquals('Doe', $user->getNom());
         $this->assertEquals('John Doe', $user->getFullname());
     }
 }
