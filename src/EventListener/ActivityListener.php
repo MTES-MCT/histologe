@@ -207,7 +207,12 @@ class ActivityListener implements EventSubscriberInterface
             $this->tos->add($partner->getEmail());
         }
         $partner->getUsers()->filter(function (User $user) use ($inAppType, $entity) {
-            if (User::STATUS_ACTIVE === $user->getStatut() && !$user->isSuperAdmin() && !$user->isTerritoryAdmin()) {
+            if (
+                User::STATUS_ACTIVE === $user->getStatut()
+                    && !$user->isSuperAdmin()
+                    && !$user->isTerritoryAdmin()
+                    && $user !== $entity->getCreatedBy()
+            ) {
                 $this->createInAppNotification($user, $entity, $inAppType);
                 if ($user->getIsMailingActive()) {
                     $this->tos->add($user->getEmail());
