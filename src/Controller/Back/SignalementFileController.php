@@ -77,7 +77,8 @@ class SignalementFileController extends AbstractController
                 : self::INPUT_NAME_PHOTOS;
 
             list($fileList, $descriptionList) = $signalementFileProcessor->process($files, $inputName);
-            if (!empty($descriptionList)) {
+
+            if ($signalementFileProcessor->isValid()) {
                 $suivi = $suiviFactory->createInstanceFrom($this->getUser(), $signalement);
                 $suivi->setDescription('Ajout de '
                     .$inputName
@@ -92,6 +93,10 @@ class SignalementFileController extends AbstractController
                 $entityManager->persist($signalement);
                 $entityManager->flush();
                 $this->addFlash('success', 'Envoi de '.ucfirst($inputName).' effectué avec succès !');
+            } else {
+                foreach ($signalementFileProcessor->getErrors() as $errorMessage) {
+                    $this->addFlash('error', $errorMessage);
+                }
             }
         } else {
             $this->addFlash('error', 'Une erreur est survenu lors du téléchargement');

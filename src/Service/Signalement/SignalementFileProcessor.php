@@ -99,6 +99,11 @@ class SignalementFileProcessor
             .'</a></li>';
     }
 
+    public function isValid(): bool
+    {
+        return empty($this->errors);
+    }
+
     public function getErrors(): array
     {
         return $this->errors;

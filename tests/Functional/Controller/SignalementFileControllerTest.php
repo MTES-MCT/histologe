@@ -10,7 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\RouterInterface;
 
-class BackSignalementFileControllerTest extends WebTestCase
+class SignalementFileControllerTest extends WebTestCase
 {
     use SessionHelper;
 
