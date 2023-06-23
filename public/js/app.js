@@ -71,6 +71,17 @@ forms.forEach((form) => {
         input.addEventListener('change', (event) => {
             if (event.target.value === 'CAF' || event.target.value === 'MSA') {
                 form.querySelector('#signalement-date-naissance-bloc')?.classList.remove('fr-hidden')
+                let isOccupant = false
+                document.querySelectorAll('input[name="signalement[isNotOccupant]"]').forEach((element) => {
+                    if (element.value == '0' && element.checked) {
+                        isOccupant = true
+                    }
+                })
+                if (isOccupant) {
+                    form.querySelector('#signalement-date-naissance-bloc-necessary')?.classList.remove('fr-hidden')
+                } else {
+                    form.querySelector('#signalement-date-naissance-bloc-necessary')?.classList.add('fr-hidden')
+                }
             } else {
                 form.querySelector('#signalement-date-naissance-bloc')?.classList.add('fr-hidden')
             }

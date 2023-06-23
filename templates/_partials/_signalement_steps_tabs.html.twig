@@ -576,7 +576,7 @@
                     </p>
                 </fieldset>
                 <div class="fr-form-group fr-mt-5v {% if 'back_' not in app.request.get('_route') or not signalement.isAllocataire %}fr-hidden{% endif %}"
-                     id="signalement-num-alloc-bloc">
+                        id="signalement-num-alloc-bloc">
                     <div class="fr-input-group">
                         {{ form_label(form.numAllocataire) }}
                         {{ form_help(form.numAllocataire) }}
@@ -586,18 +586,20 @@
                         </p>
                     </div>
                 </div>
-            </div>
-            <div class="fr-form-group fr-hidden" id="signalement-date-naissance-bloc">
-                <fieldset class="fr-fieldset fr-fieldset--inline">
-                    <legend class="fr-fieldset__legend fr-text--regular">
-                        Date de naissance
-                    </legend>
-                    {{ form_help(form.dateNaissanceOccupant) }}
-                    <input type="date" class="fr-input" name="signalement[dateNaissanceOccupant]">
-                    <p class="fr-error-text fr-hidden">
-                        Veuillez préciser votre date de naissance.
-                    </p>
-                </fieldset>
+                <div class="fr-form-group fr-mt-5v {% if 'back_' not in app.request.get('_route') or not signalement.isAllocataire %}fr-hidden{% endif %}"
+                        id="signalement-date-naissance-bloc">
+                    <fieldset class="fr-fieldset fr-fieldset--inline">
+                        <legend class="fr-fieldset__legend fr-text--regular">
+                            Date de naissance
+                            <sup class="fr-text-default--error fr-hidden" id="signalement-date-naissance-bloc-necessary">*</sup>
+                        </legend>
+                        {{ form_help(form.dateNaissanceOccupant) }}
+                        <input type="date" class="fr-input" name="signalement[dateNaissanceOccupant]">
+                        <p class="fr-error-text fr-hidden">
+                            Veuillez préciser votre date de naissance.
+                        </p>
+                    </fieldset>
+                </div>
             </div>
             <div class="fr-form-group">
                 <fieldset class="fr-fieldset fr-fieldset--inline">
