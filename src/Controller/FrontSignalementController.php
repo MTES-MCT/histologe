@@ -37,6 +37,7 @@ use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -468,14 +469,12 @@ class FrontSignalementController extends AbstractController
         string $code,
         SignalementRepository $signalementRepository,
         UserRepository $userRepository,
-        UploadHandlerService $uploadHandlerService,
         Request $request,
         EntityManagerInterface $entityManager,
-        LoggerInterface $logger,
         SuiviFactory $suiviFactory,
         FileFactory $fileFactory,
         SignalementFileProcessor $signalementFileProcessor,
-    ) {
+    ): RedirectResponse {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
             if ($this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {
                 $email = $request->get('signalement_front_response')['email'];
@@ -498,13 +497,15 @@ class FrontSignalementController extends AbstractController
                     if (isset($data['files'])) {
                         $dataFiles = $data['files'];
                         foreach ($dataFiles as $inputName => $files) {
-                            list($fileList, $descriptionList) = $signalementFileProcessor->process($dataFiles, $inputName);
+                            list($files, $descriptions) = $signalementFileProcessor->process($dataFiles, $inputName);
+                            $fileList = [...$fileList, ...$files];
+                            $descriptionList = [...$descriptionList, ...$descriptions];
                         }
                         unset($data['files']);
                     }
                     if (!empty($descriptionList)) {
                         $description .= '<br>Ajout de pièces au signalement<ul>'.implode('', $descriptionList).'</ul>';
-                        $this->addFilesToSignalement($fileList, $signalement, $fileFactory);
+                        $signalementFileProcessor->addFilesToSignalement($fileList, $signalement);
                     }
                 }
 
@@ -522,37 +523,5 @@ class FrontSignalementController extends AbstractController
         }
 
         return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
-    }
-
-    private function generateListItemDescription(
-        string $filename,
-        string $title,
-    ): string {
-        $fileUrl = $this->generateUrl(
-            'show_uploaded_file',
-            ['folder' => '_up', 'filename' => $filename]
-        );
-
-        return '<li><a class="fr-link" target="_blank" href="'
-            .$fileUrl
-            .'&t=___TOKEN___">'
-            .$title.
-            '</a></li>';
-    }
-
-    private function addFilesToSignalement(
-        array $fileList,
-        Signalement $signalement,
-        FileFactory $fileFactory
-    ): void {
-        foreach ($fileList as $fileItem) {
-            $file = $fileFactory->createInstanceFrom(
-                filename: $fileItem['file'],
-                title: $fileItem['title'],
-                type: $fileItem['type'],
-                user: $this->getUser(),
-            );
-            $signalement->addFile($file);
-        }
     }
 }

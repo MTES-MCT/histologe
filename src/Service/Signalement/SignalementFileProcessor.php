@@ -3,13 +3,16 @@
 namespace App\Service\Signalement;
 
 use App\Entity\File;
+use App\Entity\Signalement;
 use App\Exception\File\MaxUploadSizeExceededException;
+use App\Factory\FileFactory;
 use App\Service\Files\FilenameGenerator;
 use App\Service\Files\HeicToJpegConverter;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class SignalementFileProcessor
 {
@@ -20,14 +23,15 @@ class SignalementFileProcessor
         private readonly LoggerInterface $logger,
         private readonly FilenameGenerator $filenameGenerator,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly FileFactory $fileFactory,
     ) {
     }
 
     public function process(array $files, string $inputName): array
     {
         $fileList = $descriptionList = [];
-
-        foreach ($files[$inputName] as $file) {
+        $withTokenGenerated = false;
+        foreach ($files[$inputName] as $key => $file) {
             if ($file instanceof UploadedFile && \in_array($file->getMimeType(), HeicToJpegConverter::HEIC_FORMAT)) {
                 $message = <<<ERROR
                     Les fichiers de format HEIC/HEIF ne sont pas pris en charge,
@@ -39,8 +43,11 @@ class SignalementFileProcessor
                 try {
                     if ($file instanceof UploadedFile) {
                         $filename = $this->uploadHandlerService->uploadFromFile($file, $this->filenameGenerator->generate($file));
+                        $title = $this->filenameGenerator->getTitle();
                     } else {
                         $filename = $this->uploadHandlerService->uploadFromFilename($file);
+                        $title = $key;
+                        $withTokenGenerated = true;
                     }
                 } catch (MaxUploadSizeExceededException|\Exception $exception) {
                     $this->logger->error($exception->getMessage());
@@ -48,8 +55,7 @@ class SignalementFileProcessor
                     continue;
                 }
                 if (!empty($filename)) {
-                    $title = $this->filenameGenerator->getTitle();
-                    $descriptionList[] = $this->generateListItemDescription($filename, $title);
+                    $descriptionList[] = $this->generateListItemDescription($filename, $title, $withTokenGenerated);
                     $fileList[] = $this->createFileItem($filename, $title, $inputName);
                 }
             }
@@ -58,25 +64,44 @@ class SignalementFileProcessor
         return [$fileList, $descriptionList];
     }
 
-    public function getErrors(): array
-    {
-        return $this->errors;
+    public function addFilesToSignalement(
+        array $fileList,
+        Signalement $signalement,
+        ?UserInterface $user = null,
+    ): void {
+        foreach ($fileList as $fileItem) {
+            $file = $this->fileFactory->createInstanceFrom(
+                filename: $fileItem['file'],
+                title: $fileItem['title'],
+                type: $fileItem['type'],
+                user: $user,
+            );
+            $signalement->addFile($file);
+        }
     }
 
     private function generateListItemDescription(
         string $filename,
         string $title,
+        bool $withTokenGenerated = false,
     ): string {
+        $queryTokenUrl = $withTokenGenerated ? '&t=___TOKEN___' : '';
+
         $fileUrl = $this->urlGenerator->generate(
             'show_uploaded_file',
-            ['folder' => '_up', 'filename' => $filename]
-        );
+            ['folder' => '_up', 'filename' => $filename])
+            .$queryTokenUrl;
 
         return '<li><a class="fr-link" target="_blank" href="'
             .$fileUrl
             .'">'
             .$title
             .'</a></li>';
+    }
+
+    public function getErrors(): array
+    {
+        return $this->errors;
     }
 
     private function createFileItem(string $filename, string $title, string $inputName): array

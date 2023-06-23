@@ -116,7 +116,7 @@ class BackSignalementFileController extends AbstractController
                     .implode('', $descriptionList).'</ul>'
                 );
                 $suivi->setType(SUIVI::TYPE_AUTO);
-                $this->addFilesToSignalement($fileList, $signalement, $fileFactory);
+                $signalementFileProcessor->addFilesToSignalement($fileList, $signalement, $this->getUser());
 
                 $entityManager->persist($suivi);
                 $entityManager->persist($signalement);
@@ -164,21 +164,5 @@ class BackSignalementFileController extends AbstractController
         }
 
         return $this->json(['response' => 'error'], 400);
-    }
-
-    private function addFilesToSignalement(
-        array $fileList,
-        Signalement $signalement,
-        FileFactory $fileFactory
-    ): void {
-        foreach ($fileList as $fileItem) {
-            $file = $fileFactory->createInstanceFrom(
-                filename: $fileItem['file'],
-                title: $fileItem['title'],
-                type: $fileItem['type'],
-                user: $this->getUser(),
-            );
-            $signalement->addFile($file);
-        }
     }
 }
