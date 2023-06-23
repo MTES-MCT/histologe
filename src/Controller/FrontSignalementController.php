@@ -453,17 +453,6 @@ class FrontSignalementController extends AbstractController
         return $this->redirectToRoute('front_signalement');
     }
 
-    private function createFileItem(string $filename, string $title, string $inputName): array
-    {
-        return [
-            'file' => $filename,
-            'title' => $title,
-            'user' => $this->getUser(),
-            'date' => new \DateTimeImmutable(),
-            'type' => 'documents' === $inputName ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO,
-        ];
-    }
-
     #[Route('/suivre-mon-signalement/{code}/response', name: 'front_suivi_signalement_user_response', methods: 'POST')]
     public function postUserResponse(
         string $code,
@@ -472,7 +461,6 @@ class FrontSignalementController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         SuiviFactory $suiviFactory,
-        FileFactory $fileFactory,
         SignalementFileProcessor $signalementFileProcessor,
     ): RedirectResponse {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
@@ -504,7 +492,8 @@ class FrontSignalementController extends AbstractController
                         unset($data['files']);
                     }
                     if (!empty($descriptionList)) {
-                        $description .= '<br>Ajout de pièces au signalement<ul>'.implode('', $descriptionList).'</ul>';
+                        $description .= '<br>Ajout de pièces au signalement<ul>'
+                            .implode('', $descriptionList).'</ul>';
                         $signalementFileProcessor->addFilesToSignalement($fileList, $signalement);
                     }
                 }
@@ -512,7 +501,10 @@ class FrontSignalementController extends AbstractController
                 $suivi->setDescription($description);
                 $entityManager->persist($suivi);
                 $entityManager->flush();
-                $this->addFlash('success', "Votre message a bien été envoyé ; vous recevrez un email lorsque votre dossier sera mis à jour. N'hésitez pas à consulter votre page de suivi !");
+                $this->addFlash('success', <<<SUCCESS
+                Votre message a bien été envoyé, vous recevrez un email lorsque votre dossier sera mis à jour.
+                N'hésitez pas à consulter votre page de suivi !
+                SUCCESS);
             }
         } else {
             $this->addFlash('error', 'Une erreur est survenue...');
