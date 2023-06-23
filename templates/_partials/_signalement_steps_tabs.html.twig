@@ -594,7 +594,7 @@
                             <sup class="fr-text-default--error fr-hidden" id="signalement-date-naissance-bloc-necessary">*</sup>
                         </legend>
                         {{ form_help(form.dateNaissanceOccupant) }}
-                        <input type="date" class="fr-input" name="signalement[dateNaissanceOccupant]" {% if 'back_' in app.request.get('_route') %}value="{{ signalement.dateNaissanceOccupant.format('Y-d-m') }}"{% endif %}>
+                        <input type="date" class="fr-input" name="signalement[dateNaissanceOccupant]" {% if 'back_' in app.request.get('_route') and signalement.dateNaissanceOccupant is not null %}value="{{ signalement.dateNaissanceOccupant.format('Y-d-m') }}"{% endif %}>
                         <p class="fr-error-text fr-hidden">
                             Veuillez préciser votre date de naissance.
                         </p>
