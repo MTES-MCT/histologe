@@ -8,12 +8,14 @@ use App\Entity\Suivi;
 use App\Entity\User;
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Factory\FileFactory;
+use App\Factory\SuiviFactory;
+use App\Repository\FileRepository;
 use App\Service\Files\FilenameGenerator;
 use App\Service\Files\HeicToJpegConverter;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Knp\Snappy\Pdf;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -74,15 +76,16 @@ class BackSignalementFileController extends AbstractController
         UploadHandlerService $uploadHandler,
         FileFactory $fileFactory,
         FilenameGenerator $filenameGenerator,
+        SuiviFactory $suiviFactory,
     ): RedirectResponse {
         $this->denyAccessUnlessGranted('FILE_CREATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token'))
             && $files = $request->files->get('signalement-add-file')) {
-            $key = isset($files[self::INPUT_NAME_DOCUMENTS]) ? self::INPUT_NAME_DOCUMENTS : self::INPUT_NAME_PHOTOS;
-            $fileList = $list = [];
+            $inputName = isset($files[self::INPUT_NAME_DOCUMENTS]) ? self::INPUT_NAME_DOCUMENTS : self::INPUT_NAME_PHOTOS;
+            $fileList = $descriptionList = [];
 
             /** @var UploadedFile $file */
-            foreach ($files[$key] as $file) {
+            foreach ($files[$inputName] as $file) {
                 if (\in_array($file->getMimeType(), HeicToJpegConverter::HEIC_FORMAT)) {
                     $message = <<<ERROR
                     Les fichiers de format HEIC/HEIF ne sont pas pris en charge,
@@ -95,48 +98,32 @@ class BackSignalementFileController extends AbstractController
                     $titre = $originalFilename.'.'.$file->guessExtension();
                     $newFilename = $filenameGenerator->generateSafeName($file);
                     try {
-                        $newFilename = $uploadHandler->uploadFromFile($file, $filenameGenerator->generate($file));
+                        $filename = $uploadHandler->uploadFromFile($file, $filenameGenerator->generate($file));
                     } catch (MaxUploadSizeExceededException $exception) {
-                        $newFilename = '';
                         $logger->error($exception->getMessage());
                         $this->addFlash('error', $exception->getMessage());
+                        continue;
                     }
-                    if (!empty($newFilename)) {
-                        $list[] = '<li><a class="fr-link" target="_blank" href="'.$this->generateUrl(
-                            'show_uploaded_file',
-                            ['folder' => '_up', 'filename' => $newFilename]
-                        ).'">'.$title = $filenameGenerator->getTitle().'</a></li>';
-                        $fileList[] = [
-                            'file' => $newFilename,
-                            'title' => $title,
-                            'user' => $this->getUser(),
-                            'date' => new \DateTimeImmutable(),
-                            'type' => 'documents' === $key ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO,
-                        ];
+                    if (!empty($filename)) {
+                        $title = $filenameGenerator->getTitle();
+                        $descriptionList[] = $this->generateListItemDescription($filename, $title, $inputName);
+                        $fileList[] = $this->createFileItem($filename, $title, $inputName);
                     }
                 }
             }
 
-            if (!empty($list)) {
-                $suivi = new Suivi();
-                $suivi->setCreatedBy($this->getUser());
-                $suivi->setDescription('Ajout de '.$key.' au signalement<ul>'.implode('', $list).'</ul>');
-                $suivi->setSignalement($signalement);
+            if (!empty($descriptionList)) {
+                $suivi = $suiviFactory->createInstanceFrom($this->getUser(), $signalement);
+                $suivi->setDescription('Ajout de '.$inputName.' au signalement<ul>'
+                    .implode('', $descriptionList).'</ul>'
+                );
                 $suivi->setType(SUIVI::TYPE_AUTO);
-
-                foreach ($fileList as $fileItem) {
-                    $file = $fileFactory->createInstanceFrom(
-                        filename: $fileItem['file'],
-                        title: $fileItem['title'],
-                        type: $fileItem['type'],
-                    );
-                    $signalement->addFile($file);
-                }
+                $this->addFilesToSignalement($fileList, $signalement, $fileFactory);
 
                 $entityManager->persist($suivi);
                 $entityManager->persist($signalement);
                 $entityManager->flush();
-                $this->addFlash('success', 'Envoi de '.ucfirst($key).' effectué avec succès !');
+                $this->addFlash('success', 'Envoi de '.ucfirst($inputName).' effectué avec succès !');
             }
         } else {
             $this->addFlash('error', 'Une erreur est survenu lors du téléchargement');
@@ -145,35 +132,79 @@ class BackSignalementFileController extends AbstractController
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
     }
 
+    /**
+     * @throws FilesystemException
+     */
     #[Route('/{uuid}/file/{type}/{filename}/delete', name: 'back_signalement_delete_file')]
     public function deleteFileSignalement(
         Signalement $signalement,
         string $type,
         string $filename,
         Request $request,
-        ManagerRegistry $doctrine,
+        FileRepository $fileRepository,
         FilesystemOperator $fileStorage
     ): JsonResponse {
         $this->denyAccessUnlessGranted('FILE_DELETE', $signalement);
         if ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))) {
-            $setMethod = 'set'.ucfirst($type);
-            $getMethod = 'get'.ucfirst($type);
-            $type_list = $signalement->$getMethod();
-            foreach ($type_list as $k => $v) {
-                if ($filename === $v['file']) {
-                    if ($fileStorage->fileExists($filename)) {
-                        $fileStorage->delete($filename);
-                    }
-                    unset($type_list[$k]);
-                }
-            }
-            $signalement->$setMethod($type_list);
-            $doctrine->getManager()->persist($signalement);
-            $doctrine->getManager()->flush();
+            $fileType = 'documents' === $type ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO;
 
-            return $this->json(['response' => 'success']);
+            $fileCollection = $signalement->getFiles()->filter(
+                function (File $file) use ($fileStorage, $fileType, $filename) {
+                    return $fileType === $file->getFileType()
+                        && $filename === $file->getFilename()
+                        && $fileStorage->fileExists($filename);
+                }
+            );
+
+            if (!$fileCollection->isEmpty()) {
+                $file = $fileCollection->current();
+                $fileStorage->delete($file->getFilename());
+                $fileRepository->remove($file, true);
+
+                return $this->json(['response' => 'success']);
+            }
         }
 
         return $this->json(['response' => 'error'], 400);
+    }
+
+    private function generateListItemDescription(
+        string $filename,
+        string $title,
+        string $inputName,
+    ): string {
+        $fileUrl = $this->generateUrl(
+            'show_uploaded_file',
+            ['folder' => '_up', 'filename' => $filename]
+        );
+
+        return '<li><a class="fr-link" target="_blank" href="'.$fileUrl.'">'.$title.'</a></li>';
+    }
+
+    private function createFileItem(string $filename, string $title, string $inputName): array
+    {
+        return [
+            'file' => $filename,
+            'title' => $title,
+            'user' => $this->getUser(),
+            'date' => new \DateTimeImmutable(),
+            'type' => 'documents' === $inputName ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO,
+        ];
+    }
+
+    private function addFilesToSignalement(
+        array $fileList,
+        Signalement $signalement,
+        FileFactory $fileFactory
+    ): void {
+        foreach ($fileList as $fileItem) {
+            $file = $fileFactory->createInstanceFrom(
+                filename: $fileItem['file'],
+                title: $fileItem['title'],
+                type: $fileItem['type'],
+                user: $this->getUser(),
+            );
+            $signalement->addFile($file);
+        }
     }
 }

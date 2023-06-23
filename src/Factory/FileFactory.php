@@ -4,6 +4,7 @@ namespace App\Factory;
 
 use App\Entity\File;
 use App\Entity\Signalement;
+use App\Entity\User;
 
 class FileFactory
 {
@@ -11,15 +12,20 @@ class FileFactory
         string $filename = null,
         string $title = null,
         string $type = null,
-        ?Signalement $signalement = null
+        ?Signalement $signalement = null,
+        ?User $user = null,
     ): ?File {
         $file = (new File())
             ->setFilename($filename)
             ->setTitle($title)
             ->setFileType($type);
 
-        if (null != $signalement) {
+        if (null !== $signalement) {
             $file->setSignalement($signalement);
+        }
+
+        if (null !== $user) {
+            $file->setUser($user);
         }
 
         return $file;

@@ -26,6 +26,15 @@ use Faker\Provider\Address;
 
 trait FixturesHelper
 {
+    public function getUser(): User
+    {
+        return (new User())
+            ->setNom('Doe')
+            ->setPrenom('John')
+            ->setEmail('john.doe@histologe.fr')
+            ->setStatut(User::STATUS_ACTIVE);
+    }
+
     public function getAffectation(PartnerType $partnerType): Affectation
     {
         $faker = Factory::create();
