@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Manager\SignalementManager;
@@ -79,8 +80,7 @@ class UpdateSignalementDocumentFieldsCommand extends Command
 
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->signalementManager->getRepository();
-        $photos = [];
-        $documents = [];
+        $files = [];
         $currentReference = $rows[0][SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT];
         $countSignalement = 0;
         foreach ($rows as $key => $row) {
@@ -91,11 +91,11 @@ class UpdateSignalementDocumentFieldsCommand extends Command
                     continue;
                 }
                 if ($row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT] === $currentReference) {
-                    if (self::TYPE_IMAGE === $this->checkFileType($filename)) {
-                        $photos[] = $this->getFileModel($filename);
-                    } else {
-                        $documents[] = $this->getFileModel($filename);
-                    }
+                    $fileType = self::TYPE_IMAGE === $this->checkFileType($filename)
+                        ? File::FILE_TYPE_PHOTO
+                        : File::FILE_TYPE_DOCUMENT;
+
+                    $files[] = $this->createFile($filename, $fileType);
                 } else {
                     $signalement = $signalementRepository->findByReferenceChunk($territory, $currentReference);
                     if ($signalement instanceof Signalement) {
@@ -103,20 +103,17 @@ class UpdateSignalementDocumentFieldsCommand extends Command
                             $this->signalementManager->flush();
                             $io->success(sprintf('%s flushed', self::BATCH_SIZE));
                         } else {
-                            $signalement = $this->updateSignalement($signalement, $photos, $documents);
+                            $signalement = $this->updateSignalement($signalement, $files);
                             $this->signalementManager->persist($signalement);
                             $io->success($signalement->getReference().' updated');
                             unset($signalement);
                             ++$countSignalement;
                         }
                     }
-                    $photos = [];
-                    $documents = [];
-                    if (self::TYPE_IMAGE === $this->checkFileType($filename)) {
-                        $photos[] = $this->getFileModel($filename);
-                    } else {
-                        $documents[] = $this->getFileModel($filename);
-                    }
+                    $fileType = self::TYPE_IMAGE === $this->checkFileType($filename)
+                        ? File::FILE_TYPE_PHOTO
+                        : File::FILE_TYPE_DOCUMENT;
+                    $files[] = $this->createFile($filename, $fileType);
                     $currentReference = $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT];
                 }
             } catch (NonUniqueResultException $exception) {
@@ -126,11 +123,11 @@ class UpdateSignalementDocumentFieldsCommand extends Command
                 $currentReference = $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT];
             }
         }
-        if (!empty($photos) || !empty($documents)) { // persist the last one
+        if (!empty($files)) { // persist the last one
             try {
                 $signalement = $signalementRepository->findByReferenceChunk($territory, $currentReference);
                 if ($signalement instanceof Signalement) {
-                    $signalement = $this->updateSignalement($signalement, $photos, $documents);
+                    $signalement = $this->updateSignalement($signalement, $files);
                     $io->success($signalement->getReference().' updated');
                     ++$countSignalement;
                     $this->signalementManager->persist($signalement);
@@ -157,17 +154,23 @@ class UpdateSignalementDocumentFieldsCommand extends Command
         return self::TYPE_DOCUMENT;
     }
 
-    private function updateSignalement(Signalement $signalement, array $photos, array $documents): Signalement
+    /**
+     * @param File[] $files
+     */
+    private function updateSignalement(Signalement $signalement, array $files): Signalement
     {
-        return $signalement->setPhotos($photos)->setDocuments($documents);
+        foreach ($files as $file) {
+            $signalement->addFile($file);
+        }
+
+        return $signalement;
     }
 
-    private function getFileModel(string $filename): array
+    private function createFile(string $filename, string $fileType): File
     {
-        return [
-            'file' => $filename,
-            'titre' => $filename,
-            'date' => date('d-m-Y'),
-        ];
+        return (new File())
+            ->setFilename($filename)
+            ->setTitle($filename)
+            ->setFileType($fileType);
     }
 }
