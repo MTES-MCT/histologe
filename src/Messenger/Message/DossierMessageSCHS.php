@@ -2,6 +2,8 @@
 
 namespace App\Messenger\Message;
 
+use App\Entity\File;
+
 final class DossierMessageSCHS implements DossierMessageInterface
 {
     private ?string $url = null;
@@ -250,6 +252,9 @@ final class DossierMessageSCHS implements DossierMessageInterface
         return $this;
     }
 
+    /**
+     * @return File[]
+     */
     public function getPiecesJointes(): array
     {
         return $this->piecesJointes;

@@ -80,6 +80,16 @@ class SignalementFileProcessor
         }
     }
 
+    public function isValid(): bool
+    {
+        return empty($this->errors);
+    }
+
+    public function getErrors(): array
+    {
+        return $this->errors;
+    }
+
     private function generateListItemDescription(
         string $filename,
         string $title,
@@ -97,16 +107,6 @@ class SignalementFileProcessor
             .'">'
             .$title
             .'</a></li>';
-    }
-
-    public function isValid(): bool
-    {
-        return empty($this->errors);
-    }
-
-    public function getErrors(): array
-    {
-        return $this->errors;
     }
 
     private function createFileItem(string $filename, string $title, string $inputName): array

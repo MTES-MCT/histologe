@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Entity;
 
+use App\Entity\User;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\TestCase;
 
@@ -11,7 +12,7 @@ class UserTest extends TestCase
 
     public function testCreateUserWithFullname(): void
     {
-        $user = $this->getUser();
+        $user = $this->getUser([User::ROLE_ADMIN_TERRITORY]);
         $this->assertEquals('John', $user->getPrenom());
         $this->assertEquals('Doe', $user->getNom());
         $this->assertEquals('John Doe', $user->getFullname());

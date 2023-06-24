@@ -9,8 +9,6 @@ class FilenameGenerator
 {
     private ?string $title = null;
 
-    private ?string $filename = null;
-
     public function __construct(private readonly SluggerInterface $slugger)
     {
     }
@@ -21,19 +19,12 @@ class FilenameGenerator
         $this->title = $originalFilename.'.'.$file->guessExtension();
         $safeFilename = $this->slugger->slug($originalFilename);
 
-        $this->filename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
-
-        return $this->filename;
+        return $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
     }
 
     public function getTitle(): string
     {
         return $this->title;
-    }
-
-    public function getFilename(): string
-    {
-        return $this->filename;
     }
 
     public function generateSafeName(UploadedFile $file): string
