@@ -2,12 +2,18 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\Entity\Signalement;
+use App\Manager\UserManager;
+use App\Tests\SessionHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
 class FrontSignalementControllerTest extends WebTestCase
 {
+    use SessionHelper;
+
     /**
      * @dataProvider provideAdressSignalementWithTerritoryActive
      */
@@ -86,6 +92,63 @@ class FrontSignalementControllerTest extends WebTestCase
             'Le formulaire comporte des erreurs',
             json_decode($bodyContent, true)['response']
         );
+    }
+
+    public function testDisplaySuiviSignalement(): void
+    {
+        $client = static::createClient();
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine');
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
+            'codeSuivi' => '0123456789',
+        ]);
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $urlSuiviSignalementUser = $router->generate('front_suivi_signalement', [
+            'code' => $signalement->getCodeSuivi(),
+        ]).'?from[]='.$signalement->getMailOccupant();
+
+        $crawler = $client->request('GET', $urlSuiviSignalementUser);
+        $this->assertResponseIsSuccessful();
+        $this->assertEquals('Signalement #2023-18', $crawler->filter('h1')->text());
+    }
+
+    public function testPostUsagerResponse(): void
+    {
+        $client = static::createClient();
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine');
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
+            'codeSuivi' => '0123456789',
+        ]);
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_user_response', [
+            'code' => $codeSuivi = $signalement->getCodeSuivi(),
+        ]);
+
+        $client->request('POST', $urlSuiviSignalementUserResponse, [
+            '_token' => $this->generateCsrfToken($client, 'signalement_front_response_'.$signalement->getUuid()),
+            'signalement_front_response' => [
+                'email' => $emailOccupant = $signalement->getMailOccupant(),
+                'type' => UserManager::OCCUPANT,
+                'content' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+            ],
+            'signalement' => [
+                'files' => [
+                    'photos' => [
+                        'blank.jpg' => 'blank-64969c273a28a.jpg',
+                    ],
+                    'documents' => [
+                        'blank.pdf' => 'blank-64969be831063.pdf',
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi.'?from='.$emailOccupant);
     }
 
     public function provideAdressSignalementWithTerritoryActive(): array

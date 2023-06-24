@@ -101,7 +101,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setPhotos([])
             ->setGeoloc(json_decode($row['geoloc'], true))
             ->setIsRsa(false)
-            ->setCodeSuivi($faker->uuid())
+            ->setCodeSuivi($row['code_suivi'] ?? $faker->uuid())
             ->setUuid($row['uuid'])
             ->setSituationOccupant($row['situation_occupant'])
             ->setValidatedAt(Signalement::STATUS_ACTIVE === $row['statut'] ? new \DateTimeImmutable() : null)
