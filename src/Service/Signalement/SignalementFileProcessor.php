@@ -4,7 +4,6 @@ namespace App\Service\Signalement;
 
 use App\Entity\File;
 use App\Entity\Signalement;
-use App\Exception\File\MaxUploadSizeExceededException;
 use App\Factory\FileFactory;
 use App\Service\Files\FilenameGenerator;
 use App\Service\Files\HeicToJpegConverter;
@@ -32,7 +31,9 @@ class SignalementFileProcessor
         $fileList = $descriptionList = [];
         $withTokenGenerated = false;
         foreach ($files[$inputName] as $key => $file) {
-            if ($file instanceof UploadedFile && \in_array($file->getMimeType(), HeicToJpegConverter::HEIC_FORMAT)) {
+            if ($file instanceof UploadedFile
+                && \in_array($file->getMimeType(), HeicToJpegConverter::HEIC_FORMAT)
+            ) {
                 $message = <<<ERROR
                     Les fichiers de format HEIC/HEIF ne sont pas pris en charge,
                     merci de convertir votre image en JPEG ou en PNG avant de l'envoyer.
@@ -42,14 +43,17 @@ class SignalementFileProcessor
             } else {
                 try {
                     if ($file instanceof UploadedFile) {
-                        $filename = $this->uploadHandlerService->uploadFromFile($file, $this->filenameGenerator->generate($file));
+                        $filename = $this->uploadHandlerService->uploadFromFile(
+                            $file,
+                            $this->filenameGenerator->generate($file)
+                        );
                         $title = $this->filenameGenerator->getTitle();
                     } else {
                         $filename = $this->uploadHandlerService->uploadFromFilename($file);
                         $title = $key;
                         $withTokenGenerated = true;
                     }
-                } catch (MaxUploadSizeExceededException|\Exception $exception) {
+                } catch (\Exception $exception) {
                     $this->logger->error($exception->getMessage());
                     $this->errors[] = $exception->getMessage();
                     continue;

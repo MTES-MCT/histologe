@@ -158,7 +158,9 @@ class FrontSignalementController extends AbstractController
                                 foreach ($critere as $idCritere => $criticites) {
                                     $critere = $entityManager->getRepository(Critere::class)->find($idCritere);
                                     $signalement->addCritere($critere);
-                                    $criticite = $entityManager->getRepository(Criticite::class)->find($data[$key][$idSituation]['critere'][$idCritere]['criticite']);
+                                    $criticite = $entityManager->getRepository(Criticite::class)->find(
+                                        $data[$key][$idSituation]['critere'][$idCritere]['criticite']
+                                    );
                                     $signalement->addCriticite($criticite);
                                     // TODO : replace getQualification with an array of enum
                                     if (null !== $criticite->getQualification() && \in_array(Qualification::NON_DECENCE_ENERGETIQUE->value, $criticite->getQualification())) {
