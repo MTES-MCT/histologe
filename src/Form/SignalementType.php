@@ -217,6 +217,11 @@ class SignalementType extends AbstractType
                 'row_attr' => [
                     'class' => 'fr-form-group fr-col-2',
                 ],
+                'placeholder' => [
+                    'year' => 'Année',
+                    'month' => 'Mois',
+                    'day' => 'Jour',
+                ],
                 'label' => 'Date de naissance',
                 'help' => 'Merci de préciser la date de naissance de l\'occupant.',
                 'help_attr' => [
