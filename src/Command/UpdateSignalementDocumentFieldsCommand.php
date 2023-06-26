@@ -3,8 +3,8 @@
 namespace App\Command;
 
 use App\Entity\File;
-use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Manager\FileManager;
 use App\Manager\SignalementManager;
 use App\Manager\TerritoryManager;
 use App\Repository\SignalementRepository;
@@ -35,13 +35,14 @@ class UpdateSignalementDocumentFieldsCommand extends Command
     private const REGEX_IMAGE = '/(jpe?g|png)/mi';
 
     public function __construct(
-        private TerritoryManager $territoryManager,
-        private SignalementManager $signalementManager,
-        private CsvParser $csvParser,
-        private ParameterBagInterface $parameterBag,
-        private FilesystemOperator $fileStorage,
-        private UploadHandlerService $uploadHandlerService,
-        private LoggerInterface $logger,
+        private readonly TerritoryManager $territoryManager,
+        private readonly SignalementManager $signalementManager,
+        private readonly CsvParser $csvParser,
+        private readonly ParameterBagInterface $parameterBag,
+        private readonly FilesystemOperator $fileStorage,
+        private readonly UploadHandlerService $uploadHandlerService,
+        private readonly FileManager $fileManager,
+        private readonly LoggerInterface $logger,
     ) {
         parent::__construct();
     }
@@ -80,66 +81,49 @@ class UpdateSignalementDocumentFieldsCommand extends Command
 
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->signalementManager->getRepository();
-        $files = [];
         $currentReference = $rows[0][SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT];
-        $countSignalement = 0;
+        $countFile = 0;
         foreach ($rows as $key => $row) {
             try {
-                $filename = $row[SignalementImportImageHeader::COLUMN_FILENAME];
+                $filename = $row[SignalementImportImageHeader::COLUMN_FILENAME] ?? null;
                 $fileInfo = pathinfo($filename);
                 if (4 !== \count($fileInfo)) {
                     continue;
                 }
-                if ($row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT] === $currentReference) {
-                    $fileType = self::TYPE_IMAGE === $this->checkFileType($filename)
-                        ? File::FILE_TYPE_PHOTO
-                        : File::FILE_TYPE_DOCUMENT;
-
-                    $files[] = $this->createFile($filename, $fileType);
-                } else {
-                    $signalement = $signalementRepository->findByReferenceChunk($territory, $currentReference);
-                    if ($signalement instanceof Signalement) {
-                        if (0 === $key % self::BATCH_SIZE) {
-                            $this->signalementManager->flush();
-                            $io->success(sprintf('%s flushed', self::BATCH_SIZE));
-                        } else {
-                            $signalement = $this->updateSignalement($signalement, $files);
-                            $this->signalementManager->persist($signalement);
-                            $io->success($signalement->getReference().' updated');
-                            unset($signalement);
-                            ++$countSignalement;
-                        }
-                    }
-                    $fileType = self::TYPE_IMAGE === $this->checkFileType($filename)
-                        ? File::FILE_TYPE_PHOTO
-                        : File::FILE_TYPE_DOCUMENT;
-                    $files[] = $this->createFile($filename, $fileType);
+                if (null !== $filename) {
                     $currentReference = $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT];
+                    $fileType = self::TYPE_IMAGE === $this->checkFileType($filename)
+                        ? File::FILE_TYPE_PHOTO
+                        : File::FILE_TYPE_DOCUMENT;
+
+                    $signalement = $signalementRepository->findByReferenceChunk($territory, $currentReference);
+                    if (null !== $signalement) {
+                        $file = $this->fileManager->createOrUpdate(
+                            filename: $filename,
+                            title: $filename,
+                            type: $fileType,
+                            signalement: $signalement,
+                        );
+                        unset($file);
+                        unset($signalement);
+                        if (0 === $key % self::BATCH_SIZE) {
+                            $this->fileManager->flush();
+                        }
+                        ++$countFile;
+                    }
                 }
             } catch (NonUniqueResultException $exception) {
                 $this->logger->warning(
-                    $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT].':(Reference:'.$currentReference.') '.$exception->getMessage());
-
-                $currentReference = $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT];
-            }
-        }
-        if (!empty($files)) { // persist the last one
-            try {
-                $signalement = $signalementRepository->findByReferenceChunk($territory, $currentReference);
-                if ($signalement instanceof Signalement) {
-                    $signalement = $this->updateSignalement($signalement, $files);
-                    $io->success($signalement->getReference().' updated');
-                    ++$countSignalement;
-                    $this->signalementManager->persist($signalement);
-                }
-            } catch (NonUniqueResultException $exception) {
-                $this->logger->warning(
-                    $currentReference.':'.$exception->getMessage());
+                    $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT]
+                    .':(Reference:'
+                    .$currentReference
+                    .') '
+                    .$exception->getMessage());
             }
         }
 
-        $this->signalementManager->flush();
-        $io->success(sprintf('%s Signalement(s) updated', $countSignalement));
+        $this->fileManager->flush();
+        $io->success(sprintf('%s files signalement(s) updated', $countFile));
 
         return Command::SUCCESS;
     }
@@ -152,25 +136,5 @@ class UpdateSignalementDocumentFieldsCommand extends Command
         }
 
         return self::TYPE_DOCUMENT;
-    }
-
-    /**
-     * @param File[] $files
-     */
-    private function updateSignalement(Signalement $signalement, array $files): Signalement
-    {
-        foreach ($files as $file) {
-            $signalement->addFile($file);
-        }
-
-        return $signalement;
-    }
-
-    private function createFile(string $filename, string $fileType): File
-    {
-        return (new File())
-            ->setFilename($filename)
-            ->setTitle($filename)
-            ->setFileType($fileType);
     }
 }
