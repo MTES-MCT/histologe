@@ -211,7 +211,7 @@ class ActivityListener implements EventSubscriberInterface
                 User::STATUS_ACTIVE === $user->getStatut()
                     && !$user->isSuperAdmin()
                     && !$user->isTerritoryAdmin()
-                    && $user !== $entity->getCreatedBy()
+                    && (!$entity instanceof Suivi || $user->getPartner() !== $entity->getCreatedBy()->getPartner())
             ) {
                 $this->createInAppNotification($user, $entity, $inAppType);
                 if ($user->getIsMailingActive()) {
