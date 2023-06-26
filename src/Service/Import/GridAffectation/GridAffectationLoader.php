@@ -14,7 +14,6 @@ use App\Manager\PartnerManager;
 use App\Manager\UserManager;
 use App\Service\Import\CsvParser;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Events;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -161,11 +160,6 @@ class GridAffectationLoader
                     $newPartnerNames[] = $partnerName;
                 }
 
-                if (\in_array($partnerType->name, $ignoreNotifPartnerTypes)) {
-                    $this->manager->flush();
-                    $this->entityManager->getEventManager()->removeEventSubscriber($this->userAddedSubscriber);
-                }
-
                 $roleLabel = $item[GridAffectationHeader::USER_ROLE];
                 $email = trim($item[GridAffectationHeader::USER_EMAIL]);
                 if (!empty($roleLabel) && !empty($email)) {
@@ -191,7 +185,8 @@ class GridAffectationLoader
                             partner: $partner,
                             firstname: trim($item[GridAffectationHeader::USER_FIRSTNAME]),
                             lastname: trim($item[GridAffectationHeader::USER_LASTNAME]),
-                            email: $email
+                            email: $email,
+                            isActivateAccountNotificationEnabled: !\in_array($partnerType->name, $ignoreNotifPartnerTypes)
                         );
 
                         $this->throwException($user);
@@ -203,11 +198,6 @@ class GridAffectationLoader
                         $this->logger->info(sprintf('in progress - %s users created or updated', $countUsers));
                         $this->manager->flush();
                     }
-                }
-
-                if (\in_array($partnerType, $ignoreNotifPartnerTypes)) {
-                    $this->manager->flush();
-                    $this->entityManager->getEventManager()->addEventListener(Events::onFlush, $this->userAddedSubscriber);
                 }
             }
         }
