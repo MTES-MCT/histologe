@@ -1,0 +1,50 @@
+<dialog aria-labelledby="fr-modal-confirm-visite-modal-{{intervention.id}}" role="dialog" id="confirm-visite-modal-{{intervention.id}}" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <form method="POST" name="signalement-confirm-visite" class="signalement-confirm-visite" enctype="multipart/form-data" action="{{ path('back_signalement_visite_confirm',{uuid:signalement.uuid}) }}">
+                        
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button type="button" class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="confirm-visite-modal-{{intervention.id}}">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="fr-modal-confirm-visite-modal-{{intervention.id}}" class="fr-modal__title">
+                                Conclusion de la visite du {{ (intervention.scheduledAt.format('H')) > 0 ? intervention.scheduledAt.format('d/m/Y à H:i') : intervention.scheduledAt.format('d/m/Y') }}
+                            </h1>
+
+                            <div class="fr-alert fr-alert--info">
+                                <p>
+                                    La conclusion et le commentaire seront partagés à l'usager.
+                                </p>
+                            </div>
+
+                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-my-3w">
+                                <div class="fr-col-12 fr-mb-3v">
+                                    {% set formType = 'confirm' %}
+                                    {% include 'back/signalement/view/visites/visites-form-confirm-fields.html.twig' %}
+                                </div>
+                            </div>
+                            <input type="hidden" name="visite-confirm[intervention]" value="{{intervention.id}}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('signalement_confirm_visit_'~intervention.id) }}">
+                        </div>
+                        <div class="fr-modal__footer">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <li>
+                                    <button type="button" class="fr-btn fr-fi-checkbox-line fr-btn--secondary" aria-controls="confirm-visite-modal-{{intervention.id}}">
+                                        Annuler
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="submit" class="fr-btn fr-fi-checkbox-line">
+                                        Valider
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</dialog>

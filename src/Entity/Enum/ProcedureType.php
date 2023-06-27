@@ -8,6 +8,8 @@ enum ProcedureType: string
     case RSD = 'RSD';
     case INSALUBRITE = 'INSALUBRITE';
     case MISE_EN_SECURITE_PERIL = 'MISE_EN_SECURITE_PERIL';
+    case LOGEMENT_DECENT = 'LOGEMENT_DECENT';
+    case RESPONSABILITE_OCCUPANT_ASSURANTIEL = 'RESPONSABILITE_OCCUPANT_ASSURANTIEL';
     case AUTRE = 'AUTRE';
 
     public function label(): string
@@ -22,6 +24,8 @@ enum ProcedureType: string
             'RSD' => 'Infraction RSD',
             'INSALUBRITE' => 'Insalubrité',
             'MISE_EN_SECURITE_PERIL' => 'Mise en sécurité / Péril',
+            'LOGEMENT_DECENT' => 'Logement décent / Pas d\'infraction',
+            'RESPONSABILITE_OCCUPANT_ASSURANTIEL' => 'Responsabilité occupant / Assurantiel',
             'AUTRE' => 'Autre',
         ];
     }

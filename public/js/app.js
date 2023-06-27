@@ -67,6 +67,26 @@ forms.forEach((form) => {
             })
         })
     })
+    form?.querySelectorAll('input[name="signalement[isAllocataire]"]')?.forEach((input) => {
+        input.addEventListener('change', (event) => {
+            if (event.target.value === 'CAF' || event.target.value === 'MSA') {
+                form.querySelector('#signalement-date-naissance-bloc')?.classList.remove('fr-hidden')
+                let isOccupant = false
+                document.querySelectorAll('input[name="signalement[isNotOccupant]"]').forEach((element) => {
+                    if (element.value == '0' && element.checked) {
+                        isOccupant = true
+                    }
+                })
+                if (isOccupant) {
+                    form.querySelector('#signalement-date-naissance-bloc-necessary')?.classList.remove('fr-hidden')
+                } else {
+                    form.querySelector('#signalement-date-naissance-bloc-necessary')?.classList.add('fr-hidden')
+                }
+            } else {
+                form.querySelector('#signalement-date-naissance-bloc')?.classList.add('fr-hidden')
+            }
+        })
+    })
     form?.querySelectorAll('#signalement_cpOccupant')?.forEach((element) => {
         element.addEventListener('change', (event) => {
             let cpOccupant = form.querySelector('#signalement_cpOccupant').value;
@@ -579,6 +599,31 @@ forms.forEach((form) => {
                             document.querySelector('#signalement_superficie').value = superficieNDE;
                         }
                     }
+                    
+                    if (form.id === "signalement-step-4") {
+                        document.querySelector('#signalement-date-naissance-bloc .fr-error-text').classList.add('fr-hidden')
+                        let isOccupant = false
+                        let isAllocataire = false
+                        document.querySelectorAll('input[name="signalement[isNotOccupant]"]').forEach((element) => {
+                            if (element.value == '0' && element.checked) {
+                                isOccupant = true
+                            }
+                        })
+                        document.querySelectorAll('input[name="signalement[isAllocataire]"]').forEach((element) => {
+                            if ((element.value == 'CAF' || element.value == 'MSA') && element.checked) {
+                                isAllocataire = true
+                            }
+                        })
+                        if (isOccupant && isAllocataire) {
+                            if (document.querySelector('#signalement_dateNaissanceOccupant_day').value == ''
+                                    || document.querySelector('#signalement_dateNaissanceOccupant_month').value == ''
+                                    || document.querySelector('#signalement_dateNaissanceOccupant_year').value == '') {
+                                document.querySelector('#signalement-date-naissance-bloc .fr-error-text').classList.remove('fr-hidden')
+                                event.stopPropagation();
+                                return
+                            }
+                        }
+                    }
 
                     if (nextTabBtn) {
                         if (nextTabBtn.hasAttribute('data-fr-last-step')) {
@@ -778,16 +823,14 @@ document?.querySelector('#signalement-affectation-form-submit')?.addEventListene
     document?.querySelectorAll('#signalement-affectation-form-row,#signalement-affectation-loader-row').forEach(el => {
         el.classList.toggle('fr-hidden')
     })
-    //POST
+    
     let formData = new FormData(e.target.form);
     fetch(e.target.getAttribute('formaction'), {
         method: 'POST',
         body: formData
     }).then(r => {
         if (r.ok) {
-            /*r.json().then(res => {*/
             window.location.reload(true)
-            /*})*/
         }
     })
 })
@@ -885,8 +928,12 @@ document?.querySelectorAll('[data-delete]')?.forEach(actionBtn => {
                 method: 'POST',
                 body: formData,
             }).then(r => {
-                if (r.ok)
+                if (r.ok) {
                     actionBtn.closest(className).remove()
+                    if (event.target.classList.contains('partner-row-delete')) {
+                        window.location.reload(true)
+                    }
+                }
             })
         }
     })

@@ -1,0 +1,47 @@
+<div class="fr-grid-row fr-mt-3w">
+    <div class="fr-col-12 fr-col-md-6">
+        <h3 class="fr-h5">Adresse du logement</h3>
+        {{ signalement.adresseOccupant }},
+        <br>
+        {{ signalement.etageOccupant ? 'étage ' ~ signalement.etageOccupant ~ ',' : '' }}
+        {{ signalement.escalierOccupant ? 'escalier ' ~ signalement.escalierOccupant ~ ',' : '' }}
+        {{ signalement.numAppartOccupant ? 'appartement ' ~ signalement.numAppartOccupant ~ ',' : '' }}
+        {{ signalement.adresseAutreOccupant ? signalement.adresseAutreOccupant ~ ',' : '' }}
+        <br>
+        {{ signalement.cpOccupant ~' '~ signalement.villeOccupant|upper }}
+        <br>
+        {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
+            <a target="_blank" rel="noreferrer"
+                {# latitude and longitude data are inverted for now #}
+                href="http://www.openstreetmap.org/?mlat={{ signalement.geoloc.lng }}&mlon={{ signalement.geoloc.lat }}#map=18/{{ signalement.geoloc.lng }}/{{ signalement.geoloc.lat }}">
+                Voir sur la carte
+            </a>
+        {% endif %}
+    </div>
+    
+    <div class="fr-col-12 fr-col-md-6">
+        <h3 class="fr-h5">Situation(s) suspectée(s) à la déclaration usager</h3>
+        {% if can_see_nde_qualification(signalementQualificationNDE) and is_granted('USER_SEE_NDE', app.user) %}
+            <small class="fr-badge fr-badge--info fr-badge--no-icon fr-mb-1v">
+                Non décence énergétique
+            </small>
+        {% endif %}
+        {% for qualificationStatusLabel in listQualificationStatusesLabelsCheck %}
+            {% include '_partials/signalement/qualification.html.twig' with { 'inlist': false } %}
+        {% endfor %}
+        {% if listConcludeProcedures %}
+        <div class="fr-mt-3v">
+            <h3 class="fr-h5">Situation(s) observée(s) après visite</h3>
+            {% for concludeProcedure in listConcludeProcedures %}
+                {% set typeBadge = 'info' %}
+                {% if concludeProcedure is same as 'Mise en sécurité / Péril' %}
+                    {% set typeBadge = 'error' %}
+                {% elseif concludeProcedure is same as 'Insalubrité' %}
+                    {% set typeBadge = 'warning' %}
+                {% endif %}
+                <small class="fr-badge fr-badge--{{typeBadge}} fr-badge--no-icon fr-mb-1v">{{ concludeProcedure }}</small>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>

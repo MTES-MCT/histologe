@@ -450,8 +450,6 @@ class SignalementRepository extends ServiceEntityRepository
             s.nomDeclarant,
             s.structureDeclarant,
             s.lienDeclarantOccupant,
-            s.dateVisite,
-            s.isOccupantPresentVisite,
             s.modifiedAt,
             s.closedAt,
             s.motifCloture,
@@ -463,7 +461,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->leftJoin('s.criteres', 'criteres')
             ->leftJoin('s.tags', 'tags')
             ->setParameter('group_concat_separator_1', SignalementExport::SEPARATOR_GROUP_CONCAT);
-
+        // TODO : dateVisite, isOccupantPresentVisite ?
         return $qb->getQuery()->toIterable();
     }
 
@@ -727,9 +725,11 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
             ->addSelect('case
-            when s.dateVisite IS NULL then \'Non\'
-            else \'Oui\'
-            end as visite');
+                when i.id IS NULL then \'Non\'
+                else \'Oui\'
+                end as visite'
+            )
+            ->leftJoin('s.interventions', 'i');
 
         $qb = self::addFiltersToQuery($qb, $statisticsFilters);
 

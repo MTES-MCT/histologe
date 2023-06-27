@@ -119,28 +119,17 @@ class SignalementAffectationListView
         return false;
     }
 
-    public function getQualificationsLabels(): array
-    {
-        $listLabels = [];
-
-        if (null !== $this->qualifications) {
-            foreach ($this->qualifications as $qualification) {
-                if (Qualification::NON_DECENCE_ENERGETIQUE->name !== $qualification) {
-                    $listLabels[] = Qualification::tryFrom($qualification)?->label();
-                }
-            }
-        }
-
-        return $listLabels;
-    }
-
     public function getQualificationsStatusesLabels(): array
     {
         $listLabels = [];
 
         if (null !== $this->qualificationsStatuses) {
             foreach ($this->qualificationsStatuses as $qualificationStatus) {
-                if (false === strpos(Qualification::NON_DECENCE_ENERGETIQUE->name, 'NDE')) {
+                $qualificationStatusName = QualificationStatus::tryFrom($qualificationStatus)?->name;
+                if ($qualificationStatusName
+                        && false === strpos($qualificationStatusName, 'NDE')
+                        && false !== strpos($qualificationStatusName, 'CHECK')
+                ) {
                     $listLabels[] = QualificationStatus::tryFrom($qualificationStatus)?->label();
                 }
             }

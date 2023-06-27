@@ -1,0 +1,96 @@
+<hr class="fr-mt-3w fr-hr blue-border">
+
+<h3 class="fr-h4 fr-text--center fr-text-title--blue-france">Activité PDLHI</h3>
+
+
+{% if is_granted('ROLE_ADMIN_TERRITORY') and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') and not needValidation %}
+    <div class="fr-grid-row">
+        <div class="fr-col-9 fr-col-md-6">
+            <h3 class="fr-h5">Prise en charge partenaire</h3>
+        </div>
+        <div class="fr-col-3 fr-col-md-6 fr-text--right">
+            <button class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-add-line fr-btn--icon-left" data-fr-opened="false" aria-controls="fr-modal-affectation">
+                Affecter des partenaires
+            </button>
+        </div>
+    </div>
+
+    <div class="fr-container--fluid">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            {% for affectation in signalement.affectations %}
+                <div class="fr-col-12 fr-col-md-6 partner-row">
+                    <div class="fr-mb-3v fr-p-3v fr-background-alt--grey">
+                        <div class="fr-grid-row fr-grid-row--middle">
+                            <div class="fr-col-12 fr-col-lg-7">
+                                {{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}
+                                <br>
+                                {% if affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_CLOSED') %}
+                                    <span class="fr-hint-text">
+                                        Cloturé le {{ affectation.answeredAt|date('d/m/Y') }}
+                                        <br>
+                                        {{ affectation.answeredBy ? 'par ' ~ affectation.answeredBy.nomComplet }}
+                                    </span>
+                                {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_ACCEPTED') %}
+                                    <span class="fr-hint-text">
+                                        Accepté le {{ affectation.answeredAt|date('d/m/Y') }}
+                                        <br>
+                                        {{ affectation.answeredBy ? 'par ' ~ affectation.answeredBy.nomComplet }}
+                                    </span>
+                                {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_REFUSED') %}
+                                    <span class="fr-hint-text">
+                                        Refusé le {{ affectation.answeredAt|date('d/m/Y') }}
+                                        <br>
+                                        {{ affectation.answeredBy ? 'par ' ~ affectation.answeredBy.nomComplet }}
+                                    </span>
+                                {% else %}
+                                    <span class="fr-hint-text">
+                                        Affecté le {{ affectation.createdAt|date('d/m/Y') }}
+                                        <br>
+                                        {{ affectation.affectedBy ? 'par ' ~ affectation.affectedBy.nomComplet }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="fr-col-10 fr-col-lg-3">
+                                {% if affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_WAIT') %}
+                                    <span class="fr-badge fr-badge--info fr-badge--sm">En attente</span>
+                                {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_ACCEPTED') %}
+                                    <span class="fr-badge fr-badge--success fr-badge--sm">Acceptée</span>
+                                {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_REFUSED') %}
+                                    <span class="fr-badge fr-badge--sm fr-text-label--red-marianne fr-background-contrast--red-marianne fr-fi-close-line">Refusée</span>
+                                {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_CLOSED') %}
+                                    <span class="fr-badge fr-badge--sm fr-fi-close-circle-fill">Clôturée</span>
+                                {% endif %}
+                            </div>
+                            <div class="fr-col-2 fr-text--right">
+                                <button title="Désaffecter le partenaire"
+                                        data-delete="{{ path('back_signalement_remove_partner',{uuid:signalement.uuid,affectation:affectation.id}) }}"
+                                        data-token="{{ csrf_token('signalement_remove_partner_'~signalement.id) }}"
+                                        class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line partner-row-delete"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% elseif
+        not is_granted('ROLE_ADMIN_PARTNER')
+        and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
+        and not needValidation %}
+    <div class="fr-my-3w">
+        <h3 class="fr-h5">Partenaires impliqués</h3>
+        {% for affectation in signalement.affectations %}
+            {% if affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_WAIT') %}
+                <span class="fr-badge fr-badge--info fr-badge--sm">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
+            {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_ACCEPTED') %}
+                <span class="fr-badge fr-badge--success fr-badge--sm">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
+            {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_REFUSED') %}
+                <span class="fr-badge fr-badge--sm fr-text-label--red-marianne fr-background-contrast--red-marianne fr-fi-close-line">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
+            {% elseif affectation.statut is same as constant('App\\Entity\\Affectation::STATUS_CLOSED') %}
+                <span class="fr-badge fr-badge--sm fr-fi-close-circle-fill">{{ affectation.partner ? affectation.partner.nom : 'AUCUN' }}</span>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+{% endif %}

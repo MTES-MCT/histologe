@@ -3,10 +3,14 @@
 namespace App\Controller\Back;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\PartnerType as EnumPartnerType;
+use App\Entity\Enum\Qualification;
+use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Entity\User;
 use App\Form\PartnerType;
+use App\Manager\InterventionManager;
 use App\Manager\PartnerManager;
 use App\Manager\UserManager;
 use App\Repository\JobEventRepository;
@@ -16,6 +20,7 @@ use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\Signalement\VisiteNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
@@ -26,6 +31,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 #[Route('/bo/partenaires')]
 class PartnerController extends AbstractController
@@ -152,6 +158,9 @@ class PartnerController extends AbstractController
         EntityManagerInterface $entityManager,
         PartnerRepository $partnerRepository,
         NotificationMailerRegistry $notificationMailerRegistry,
+        VisiteNotifier $visiteNotifier,
+        WorkflowInterface $interventionPlanningStateMachine,
+        InterventionManager $interventionManager,
     ): Response {
         $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
         if ($partner->getIsArchive()) {
@@ -193,6 +202,13 @@ class PartnerController extends AbstractController
                         $partner->removeAffectation($affectation);
                     }
                 }
+
+                $this->cancelOrReplanVisites(
+                    partner: $partner,
+                    visiteNotifier: $visiteNotifier,
+                    interventionPlanningStateMachine: $interventionPlanningStateMachine,
+                    interventionManager: $interventionManager,
+                );
             }
 
             $entityManager->flush();
@@ -218,7 +234,10 @@ class PartnerController extends AbstractController
         Request $request,
         PartnerManager $partnerManager,
         EntityManagerInterface $entityManager,
-        NotificationMailerRegistry $notificationMailerRegistry
+        NotificationMailerRegistry $notificationMailerRegistry,
+        VisiteNotifier $visiteNotifier,
+        WorkflowInterface $interventionPlanningStateMachine,
+        InterventionManager $interventionManager,
     ): Response {
         $partnerId = $request->request->get('partner_id');
         /** @var Partner $partner */
@@ -239,6 +258,7 @@ class PartnerController extends AbstractController
                     )
                 );
             }
+
             // delete affectations "en attente" et "acceptées"
             $affectations = $partner->getAffectations();
             foreach ($affectations as $affectation) {
@@ -247,6 +267,14 @@ class PartnerController extends AbstractController
                     $partner->removeAffectation($affectation);
                 }
             }
+
+            $this->cancelOrReplanVisites(
+                partner: $partner,
+                visiteNotifier: $visiteNotifier,
+                interventionPlanningStateMachine: $interventionPlanningStateMachine,
+                interventionManager: $interventionManager,
+            );
+
             $entityManager->persist($partner);
             $entityManager->flush();
             $this->addFlash('success', 'Le partenaire a bien été supprimé.');
@@ -256,6 +284,35 @@ class PartnerController extends AbstractController
         $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
 
         return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    private function cancelOrReplanVisites(
+        Partner $partner,
+        VisiteNotifier $visiteNotifier,
+        WorkflowInterface $interventionPlanningStateMachine,
+        InterventionManager $interventionManager,
+    ) {
+        if (\in_array(Qualification::VISITES, $partner->getCompetence())) {
+            /** @var Intervention $intervention */
+            foreach ($partner->getInterventions() as $intervention) {
+                if (
+                    InterventionType::VISITE == $intervention->getType()
+                    && Intervention::STATUS_PLANNED == $intervention->getStatus()
+                ) {
+                    if ($this->shouldCancelFutureVisite($intervention)) {
+                        $interventionPlanningStateMachine->apply($intervention, 'cancel');
+                        $interventionManager->save($intervention);
+
+                    // planned visites in the past are un-assigned
+                    } else {
+                        $intervention->setPartner(null);
+                        $interventionManager->save($intervention);
+
+                        $visiteNotifier->notifyVisiteToConclude($intervention);
+                    }
+                }
+            }
+        }
     }
 
     #[Route('/{id}/ajoututilisateur', name: 'back_partner_user_add', methods: ['POST'])]
@@ -403,5 +460,10 @@ class PartnerController extends AbstractController
         foreach ($form->getErrors(true) as $error) {
             $this->addFlash('error', $error->getMessage());
         }
+    }
+
+    private function shouldCancelFutureVisite(Intervention $intervention): bool
+    {
+        return $intervention->getScheduledAt() > new \DateTimeImmutable();
     }
 }

@@ -1,0 +1,77 @@
+<hr class="fr-mt-3w">
+
+<h3 class="fr-h5">Déclaration usager</h3>
+
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Désordres signalés</strong>
+        <br>
+        Récapitulatif des situations rencontrées par l'occupant du logement.
+        <ul class="fr-list--icon-img fr-mr-3v fr-pl-0" id="signalement-toggle-situations">
+            {% for situation,criteres in situations %}
+                <li role="button"
+                    class="fr-background-alt--grey fr-mb-5v fr-pl-5v fr-pt-5v fr-fi-arrow-down-line fr-input-wrap"
+                    aria-controls="situation-collapse-{{ loop.index }}" aria-expanded="false">
+                    <strong>{{ situation|capitalize }}</strong>
+                    <ul class="fr-list--icon-img fr-collapse" id="situation-collapse-{{ loop.index }}">
+                        {% for critere,criticite in criteres %}
+                            {# TODO à revoir avec le nouvel algo de criticité (les scores ne sont plus forcément 1, 2, 3, et le isDanger est au niveau de la criticité) #}
+                            {% if criticite.score is same as(1) %}
+                                {% set icon = 'moyen' %}
+                            {% elseif criticite.score is same as(2) %}
+                                {% set icon = 'grave' %}
+                            {% else %}
+                                {% set icon = 'tres-grave' %}
+                            {% endif %}
+                            <li>
+                                {% if criticite.critere.isDanger %}
+                                    <p class="fr-badge fr-badge--warning">danger</p>
+                                    &nbsp;&nbsp;
+                                {% endif %}
+                                <strong>{{ critere }}</strong>
+                                <ul class="fr-list fr-skiplinks__list fr-list--icon-img">
+                                    <li class="fr-grid-row fr-grid-row--middle fr-w-100">
+                                        <div class="fr-col-md-2 fr-col-lg-1 fr-col--middle">
+                                            <img src="{{ asset('img/'~icon~'-actif.svg') }}" alt=""
+                                                    width="50"
+                                                    class=" fr-text--center">
+                                        </div>
+                                        <div class="fr-col-md-10 fr-col-lg-11 fr-pl-5v fr-rounded">
+                                            {{ criticite.label|capitalize }}
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Criticité du signalement</strong>
+        <br>
+        La criticité est calculée automatiquement en fonction des situations signalées.
+        
+        <div class="fr-p-3v fr-background-alt--grey">
+            {% if isDanger %}
+                <p class="fr-badge fr-badge--warning">danger pour l'occupant détecté</p>
+            {% endif %}
+            <br>
+            <text class="fr-display-xs">{{ signalement.score|round(2) }} %</text>
+        </div>
+    </div>
+</div>
+
+<div class="fr-grid-row fr-mt-3v">
+    <div class="fr-col-12">
+        <strong>Description par l'usager</strong>
+        <br>
+        <ul class="fr-background-alt--blue-france fr-list--icon-img">
+            <li class="fr-p-5v">
+                {{ signalement.details|raw }}
+            </li>
+        </ul>
+    </div>
+</div>

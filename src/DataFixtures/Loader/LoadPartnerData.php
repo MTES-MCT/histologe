@@ -3,6 +3,7 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\Enum\PartnerType;
+use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Repository\TerritoryRepository;
 use App\Service\Token\TokenGeneratorInterface;
@@ -49,6 +50,11 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
         if (isset($row['type'])) {
             $partner->setType(PartnerType::from($row['type']));
         }
+
+        if (isset($row['competence'])) {
+            $partner->setCompetence([Qualification::tryFrom($row['competence'])]);
+        }
+
         $manager->persist($partner);
     }
 

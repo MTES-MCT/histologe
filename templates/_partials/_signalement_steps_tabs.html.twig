@@ -1,5 +1,6 @@
 <div class="fr-tabs" id="signalement-tabs">
     <ul class="fr-tabs__list" role="tablist" aria-label="Etapes signalement">
+        {% if 'back_' not in app.request.get('_route') %}
         <li role="presentation">
             <button id="signalement-step-0-btn"
                     class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left" tabindex="0"
@@ -7,13 +8,15 @@
                 0. Avant-propos
             </button>
         </li>
+        {% endif %}
         <li role="presentation">
             <button id="signalement-step-1-btn"
                     class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left" tabindex="-1"
-                    role="tab" aria-selected="false" aria-controls="signalement-step-1-panel">1.
+                    role="tab" aria-selected="{% if 'back_' in app.request.get('_route') %}true{% else %}false{% endif %}" aria-controls="signalement-step-1-panel">1.
                 Identité
             </button>
         </li>
+        {% if 'back_' not in app.request.get('_route') %}
         <li role="presentation">
             <button id="signalement-step-2-btn"
                     class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left" tabindex="-1"
@@ -37,6 +40,7 @@
                 Consommation énergétique
             </button>
         </li>
+        {% endif %}
         <li role="presentation">
             <button id="signalement-step-4-btn"
                     class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left" tabindex="-1"
@@ -56,11 +60,14 @@
             </li>
         {% endif %}
     </ul>
+
+    {% if 'back_' not in app.request.get('_route') %}
     <section id="signalement-step-0-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel"
              aria-labelledby="signalement-step-0-btn" tabindex="0">
         {% include '_partials/_signalement_step_avantpropos.html.twig' %}
     </section>
-    <section id="signalement-step-1-panel" class="fr-tabs__panel" role="tabpanel"
+    {% endif %}
+    <section id="signalement-step-1-panel" class="fr-tabs__panel {% if 'back_' in app.request.get('_route') %}fr-tabs__panel--selected{% endif %}" role="tabpanel"
              aria-labelledby="signalement-step-1-btn" tabindex="-1">
         {% if 'back_' not in app.request.get('_route') %}
             <header class="fr-callout bg-light fr-mb-5v">
@@ -487,7 +494,7 @@
                     (*) sont obligatoires.</em>
             </header>
         {% endif %}
-        <form action="#" name="signalement" class="needs-validation" novalidate>
+        <form action="#" name="signalement" class="needs-validation" id="signalement-step-4" novalidate>
             <div class="fr-form-group">
                 <fieldset class="fr-fieldset fr-fieldset--inline">
                     <legend class="fr-fieldset__legend fr-text--regular" id='signalement-proprio-averti'>
@@ -569,7 +576,7 @@
                     </p>
                 </fieldset>
                 <div class="fr-form-group fr-mt-5v {% if 'back_' not in app.request.get('_route') or not signalement.isAllocataire %}fr-hidden{% endif %}"
-                     id="signalement-num-alloc-bloc">
+                        id="signalement-num-alloc-bloc">
                     <div class="fr-input-group">
                         {{ form_label(form.numAllocataire) }}
                         {{ form_help(form.numAllocataire) }}
@@ -578,6 +585,20 @@
                             Veuillez préciser votre numéro d'allocataire
                         </p>
                     </div>
+                </div>
+                <div class="fr-form-group fr-mt-5v {% if 'back_' not in app.request.get('_route') or not signalement.isAllocataire %}fr-hidden{% endif %}"
+                        id="signalement-date-naissance-bloc">
+                    <fieldset class="fr-fieldset fr-fieldset--inline">
+                        <legend class="fr-fieldset__legend fr-text--regular">
+                            Date de naissance
+                            <sup class="fr-text-default--error fr-hidden" id="signalement-date-naissance-bloc-necessary">*</sup>
+                        </legend>
+                        {{ form_help(form.dateNaissanceOccupant) }}
+                        {{ form_widget(form.dateNaissanceOccupant) }}
+                        <p class="fr-error-text fr-hidden">
+                            Veuillez préciser votre date de naissance.
+                        </p>
+                    </fieldset>
                 </div>
             </div>
             <div class="fr-form-group">

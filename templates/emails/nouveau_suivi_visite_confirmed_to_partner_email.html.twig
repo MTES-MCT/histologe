@@ -1,0 +1,32 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour,</p>
+    <p>
+        La conclusion de la visite du logement situé
+        <br>
+        <strong>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</strong>
+        <br>
+        effectuée par {{ intervention.partner.nom }} est disponible.
+        <br><br>
+        Cliquez sur le bouton ci-dessous pour y accéder.
+    </p>
+
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="text-align: center">
+        <tbody>
+        <tr>
+            <td align="left">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                    <tbody>
+                    <tr style="text-align: center;width: 100%">
+                        <td>
+                            <a href="{{ lien_suivi|raw }}" target="_blank" rel="noopener">{{ btntext|capitalize }}</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p>Si le bouton ne fonctionne pas <a href="{{ lien_suivi|raw }}">cliquez ici</a></p>
+{% endblock %}

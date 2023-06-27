@@ -1,0 +1,109 @@
+<dialog aria-labelledby="fr-modal-reschedule-visite-modal-{{intervention.id}}" role="dialog" id="reschedule-visite-modal-{{intervention.id}}" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <form method="POST" name="signalement-reschedule-visite" class="signalement-reschedule-visite" enctype="multipart/form-data" action="{{ path('back_signalement_visite_reschedule',{uuid:signalement.uuid}) }}">
+
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button type="button" class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="reschedule-visite-modal-{{intervention.id}}">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="fr-modal-reschedule-visite-modal-{{intervention.id}}" class="fr-modal__title">
+                                Modifier la date du
+                                {{ (intervention.scheduledAt.format('H')) > 0 ? intervention.scheduledAt.format('d/m/Y à H:i') : intervention.scheduledAt.format('d/m/Y') }}
+                            </h1>
+
+                            <div class="fr-alert fr-alert--info">
+                                <p>
+                                    Si vous choisissez une date future, un suivi de modification de date sera envoyé à l'usager.
+                                    <br>
+                                    Si vous choisissez une date passée, vous pourrez saisir les conclusions de la visite.
+                                </p>
+                            </div>
+
+                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-my-3w">
+                                <div class="fr-col-12 fr-mb-3v">
+                                    <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
+                                        <legend class="fr-fieldset__legend fr-text--regular">
+                                            Date de la visite*
+                                        </legend>
+                                        <p id="signalement-reschedule-visite-date-error" class="fr-error-text fr-hidden fr-my-3v">
+                                            Veuillez préciser la date de la visite.
+                                        </p>
+                                        <input type="date" class="fr-input add-fields-if-past-date" data-fields="visite-reschedule-{{intervention.id}}-past-date-complementary-fields" name="visite-reschedule[date]" value="{{ intervention.scheduledAt.format('Y-m-d') }}" required>
+                                    </fieldset>
+
+                                    <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
+                                        <legend class="fr-fieldset__legend fr-text--regular">
+                                            Heure de la visite
+                                        </legend>
+                                        <p id="signalement-reschedule-visite-date-error" class="fr-error-text fr-hidden fr-my-3v">
+                                            Veuillez préciser l'heure de la visite.
+                                        </p>
+                                        <input type="time" class="fr-input" data-fields="visite-reschedule-past-date-complementary-fields" name="visite-reschedule[time]" value="{{ intervention.scheduledAt.format('H:i') }}">
+                                    </fieldset>
+                                    
+                                    {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+                                        <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
+                                            <legend class="fr-fieldset__legend fr-text--regular">
+                                                Opérateur de visite*
+                                            </legend>
+                                            <p id="signalement-reschedule-visite-partner-error" class="fr-error-text fr-hidden fr-my-3v">
+                                                Veuillez sélectionner le partenaire en charge de la visite
+                                            </p>
+                                            <p id="signalement-reschedule-visite-partner-double-error" class="fr-error-text fr-hidden fr-my-3v">
+                                                Ce partenaire a déjà une visite en cours.
+                                                Veuillez terminer ou annuler la visite ou sélectionner un autre partenaire.
+                                            </p>
+                                            <select name="visite-reschedule[partner]" class="fr-select visite-partner-select">
+                                                {% for partner in partnersCanVisite %}
+                                                    {% set alertPartner = false %}
+                                                    {% for pendingVisite in pendingVisites %}
+                                                        {% if pendingVisite.partner.id is same as partner.id and partner.id is not same as intervention.partner.id %}
+                                                            {% set alertPartner = true %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    <option
+                                                        value="{{ partner.id }}"
+                                                        {% if partner.id is same as intervention.partner.id %}selected="selected"{% endif %}
+                                                        class="{{ alertPartner ? 'alert-partner' : '' }}"
+                                                        >
+                                                        {{ partner.nom|upper }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </fieldset>
+                                    {% else %}
+                                        <input type="hidden" name="visite-add[partner]" value="{{ app.user.partner.id }}">
+                                    {% endif %}
+
+                                    <div id="visite-reschedule-{{intervention.id}}-past-date-complementary-fields" class="fr-hidden">
+                                        {% set formType = 'reschedule' %}
+                                        {% include 'back/signalement/view/visites/visites-form-confirm-fields.html.twig' %}
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" name="visite-reschedule[intervention]" value="{{intervention.id}}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('signalement_reschedule_visit_'~intervention.id) }}">
+                        </div>
+                        <div class="fr-modal__footer">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <li>
+                                    <button type="button" class="fr-btn fr-fi-checkbox-line fr-btn--secondary" aria-controls="reschedule-visite-modal-{{intervention.id}}">
+                                        Annuler
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="submit" class="fr-btn fr-fi-checkbox-line">
+                                        Valider
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</dialog>

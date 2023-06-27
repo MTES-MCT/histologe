@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('/bo/signalements')]
-class BackSignalementActionController extends AbstractController
+class SignalementActionController extends AbstractController
 {
     #[Route('/{uuid}/validation/response', name: 'back_signalement_validation_response', methods: 'GET')]
     public function validationResponseSignalement(
@@ -103,7 +103,7 @@ class BackSignalementActionController extends AbstractController
             $content = preg_replace('/<p[^>]*>/', '', $content); // Remove the start <p> or <p attr="">
             $content = str_replace('</p>', '<br />', $content); // Replace the end
             $suivi->setDescription($content);
-            $suivi->setIsPublic($form['isPublic']);
+            $suivi->setIsPublic(!empty($form['notifyUsager']));
             $suivi->setSignalement($signalement);
             $suivi->setCreatedBy($this->getUser());
             $suivi->setType(SUIVI::TYPE_PARTNER);
@@ -175,10 +175,6 @@ class BackSignalementActionController extends AbstractController
                     $signalement->addTag($tag);
                 }
             } else {
-                if ('DateVisite' === $item) {
-                    $value = new DateTimeImmutable($value);
-                    $item = 'La date de visite';
-                }
                 if (!$value) {
                     $value = !(int) $signalement->$getMethod() ?? 1;
                     $return = 1;

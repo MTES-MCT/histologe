@@ -6,6 +6,7 @@ use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProcedureType;
 use App\Repository\InterventionRepository;
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -63,6 +64,9 @@ class Intervention
     private ?bool $occupantPresent = null;
 
     #[ORM\Column(nullable: true)]
+    private ?bool $proprietairePresent = null;
+
+    #[ORM\Column(nullable: true)]
     private ?string $doneBy = null;
 
     #[ORM\Column(nullable: true, options: ['comment' => 'Provider name have created the intervention'])]
@@ -79,28 +83,33 @@ class Intervention
         return $this->id;
     }
 
-    public function getScheduledAt(): ?\DateTimeImmutable
+    public function getScheduledAt(): ?DateTimeImmutable
     {
         return $this->scheduledAt;
     }
 
-    public function setScheduledAt(?\DateTimeImmutable $scheduledAt): self
+    public function setScheduledAt(?DateTimeImmutable $scheduledAt): self
     {
         $this->scheduledAt = $scheduledAt;
 
         return $this;
     }
 
-    public function getRegisteredAt(): ?\DateTimeImmutable
+    public function getRegisteredAt(): ?DateTimeImmutable
     {
         return $this->registeredAt;
     }
 
-    public function setRegisteredAt(?\DateTimeImmutable $registeredAt): self
+    public function setRegisteredAt(?DateTimeImmutable $registeredAt): self
     {
         $this->registeredAt = $registeredAt;
 
         return $this;
+    }
+
+    public function hasScheduledDatePassed(): bool
+    {
+        return $this->getScheduledAt() <= new DateTimeImmutable();
     }
 
     public function getSignalement(): ?Signalement
@@ -187,24 +196,24 @@ class Intervention
         return $this;
     }
 
-    public function getReminderBeforeSentAt(): ?\DateTimeImmutable
+    public function getReminderBeforeSentAt(): ?DateTimeImmutable
     {
         return $this->reminderBeforeSentAt;
     }
 
-    public function setReminderBeforeSentAt(?\DateTimeImmutable $reminderBeforeSentAt): self
+    public function setReminderBeforeSentAt(?DateTimeImmutable $reminderBeforeSentAt): self
     {
         $this->reminderBeforeSentAt = $reminderBeforeSentAt;
 
         return $this;
     }
 
-    public function getReminderConclusionSentAt(): ?\DateTimeImmutable
+    public function getReminderConclusionSentAt(): ?DateTimeImmutable
     {
         return $this->reminderConclusionSentAt;
     }
 
-    public function setReminderConclusionSentAt(?\DateTimeImmutable $reminderConclusionSentAt): self
+    public function setReminderConclusionSentAt(?DateTimeImmutable $reminderConclusionSentAt): self
     {
         $this->reminderConclusionSentAt = $reminderConclusionSentAt;
 
@@ -219,6 +228,18 @@ class Intervention
     public function setOccupantPresent(?bool $occupantPresent): self
     {
         $this->occupantPresent = $occupantPresent;
+
+        return $this;
+    }
+
+    public function isProprietairePresent(): ?bool
+    {
+        return $this->proprietairePresent;
+    }
+
+    public function setProprietairePresent(?bool $proprietairePresent): self
+    {
+        $this->proprietairePresent = $proprietairePresent;
 
         return $this;
     }

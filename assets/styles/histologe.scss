@@ -5,7 +5,7 @@ html, body {
 .signalement-invalid {
     position: relative;
 
-    #signalement-toggle-situations, .reopen, .reaffect, .fr-btn--success.fr-fi-file-pdf-fill {
+    #signalement-toggle-situations, .reopen, .reaffect, .fr-btn--success.fr-fi-file-pdf-fill, .admin-territory-validation, .signalement-file-item a {
         position: relative;
         z-index: 1001;
     }
@@ -459,4 +459,27 @@ table tr.partner-row table {
 
 #notification-selected-buttons form {
     display: inline-block;
+}
+
+form.inline-form {
+    display: inline;
+}
+
+hr.blue-border {
+    background-color: var(--background-action-high-blue-france);
+    padding-bottom: 2px;
+    background-image: none;
+    margin-bottom: 1.5rem;
+}
+
+.fr-modal a[aria-label="Powered by Tiny"] {
+    display: none;
+}
+
+.fr-modal .fr-modal__footer {
+    z-index: 1;
+}
+
+#signalement_dateNaissanceOccupant_day, #signalement_dateNaissanceOccupant_month {
+    border-right: 1px solid black;
 }

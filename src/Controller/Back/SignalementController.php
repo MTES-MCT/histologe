@@ -7,6 +7,7 @@ use App\Entity\Critere;
 use App\Entity\Criticite;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
+use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Entity\Situation;
@@ -18,8 +19,10 @@ use App\Form\ClotureType;
 use App\Form\SignalementType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
+use App\Repository\AffectationRepository;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
+use App\Repository\InterventionRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
@@ -48,13 +51,15 @@ class SignalementController extends AbstractController
         EventDispatcherInterface $eventDispatcher,
         ParameterBagInterface $parameterBag,
         SignalementQualificationRepository $signalementQualificationRepository,
-        CriticiteRepository $criticiteRepository
+        CriticiteRepository $criticiteRepository,
+        AffectationRepository $affectationRepository,
+        InterventionRepository $interventionRepository,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
         if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
-            $this->addFlash('error', "Ce signalement à été archivé et n'est pas consultable.");
+            $this->addFlash('error', "Ce signalement a été archivé et n'est pas consultable.");
 
             return $this->redirectToRoute('back_index');
         }
@@ -142,14 +147,28 @@ class SignalementController extends AbstractController
         $canEditNDE = $isSignalementNDEActif && $this->isGranted(UserVoter::SEE_NDE, $this->getUser())
         && $canEditSignalement;
 
-        $listQualificationStatusesLabels = [];
+        $listQualificationStatusesLabelsCheck = [];
         if (null !== $signalement->getSignalementQualifications()) {
             foreach ($signalement->getSignalementQualifications() as $qualification) {
                 if (Qualification::NON_DECENCE_ENERGETIQUE->name !== $qualification->getQualification()->name) {
-                    $listQualificationStatusesLabels[] = $qualification->getStatus()->label();
+                    if (!$qualification->isPostVisite()) {
+                        $listQualificationStatusesLabelsCheck[] = $qualification->getStatus()->label();
+                    }
                 }
             }
         }
+
+        $listConcludeProcedures = [];
+        if (null !== $signalement->getInterventions()) {
+            foreach ($signalement->getInterventions() as $intervention) {
+                if (Intervention::STATUS_DONE == $intervention->getStatus()) {
+                    $listConcludeProcedures = array_merge($listConcludeProcedures, $intervention->getConcludeProcedure());
+                }
+            }
+        }
+        $listConcludeProcedures = array_unique(array_map(function ($concludeProcedure) {
+            return $concludeProcedure->label();
+        }, $listConcludeProcedures));
 
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
@@ -172,7 +191,10 @@ class SignalementController extends AbstractController
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
             'files' => $files,
             'canEditNDE' => $canEditNDE,
-            'listQualificationStatusesLabels' => $listQualificationStatusesLabels,
+            'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
+            'listConcludeProcedures' => $listConcludeProcedures,
+            'partnersCanVisite' => $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement),
+            'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
         ]);
     }
 

@@ -61,8 +61,6 @@ class SignalementExportFactoryTest extends TestCase
             'nomDeclarant' => null,
             'structureDeclarant' => null,
             'lienDeclarantOccupant' => null,
-            'dateVisite' => new \DateTimeImmutable(),
-            'isOccupantPresentVisite' => false,
             'modifiedAt' => new \DateTimeImmutable(),
             'closedAt' => new \DateTimeImmutable(),
             'motifCloture' => MotifCloture::INSALUBRITE,
@@ -83,7 +81,7 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals($dateFormatted, $signalementExportFactory->createdAt);
         $this->assertEquals($dateFormatted, $signalementExportFactory->modifiedAt);
         $this->assertEquals($dateFormatted, $signalementExportFactory->closedAt);
-        $this->assertEquals($dateFormatted, $signalementExportFactory->dateVisite);
+        // $this->assertEquals($dateFormatted, $signalementExportFactory->dateVisite); TODO : dateVisite
 
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->telephoneOccupantBis);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->etageOccupant);
@@ -105,6 +103,6 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals(SignalementExportFactory::NON, $signalementExportFactory->isPreavisDepart);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->isRelogement);
         $this->assertEquals(SignalementExportFactory::NON, $signalementExportFactory->isNotOccupant);
-        $this->assertEquals(SignalementExportFactory::NON, $signalementExportFactory->isOccupantPresentVisite);
+        $this->assertEquals('-', $signalementExportFactory->isOccupantPresentVisite);
     }
 }

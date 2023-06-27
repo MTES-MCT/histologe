@@ -23,9 +23,10 @@ class SuiviManager extends Manager
         Signalement $signalement,
         array $params,
         bool $isPublic = false,
-        bool $flush = false
+        bool $flush = false,
+        string $context = ''
     ): Suivi {
-        $suivi = $this->suiviFactory->createInstanceFrom($user, $signalement, $params, $isPublic);
+        $suivi = $this->suiviFactory->createInstanceFrom($user, $signalement, $params, $isPublic, $context);
 
         if ($flush) {
             $this->save($suivi);

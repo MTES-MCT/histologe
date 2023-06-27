@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Exception\File\UnsupportedFileFormatException;
+use App\Service\Files\FilenameGenerator;
 use App\Service\Files\HeicToJpegConverter;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -11,7 +12,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 class UploadHandlerService
 {
@@ -22,9 +22,9 @@ class UploadHandlerService
     public function __construct(
         private FilesystemOperator $fileStorage,
         private ParameterBagInterface $parameterBag,
-        private SluggerInterface $slugger,
         private LoggerInterface $logger,
-        private HeicToJpegConverter $heicToJpegConverter
+        private HeicToJpegConverter $heicToJpegConverter,
+        private FilenameGenerator $filenameGenerator,
     ) {
         $this->file = null;
     }
@@ -36,9 +36,7 @@ class UploadHandlerService
             return ['error' => 'Erreur lors du téléversement.', 'message' => 'Fichier vide', 'status' => 500];
         }
         $titre = $originalFilename.'.'.$file->guessExtension();
-        // this is needed to safely include the file name as part of the URL
-        $safeFilename = $this->slugger->slug($originalFilename);
-        $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+        $newFilename = $this->filenameGenerator->generateSafeName($file);
         if ($file->getSize() > self::MAX_FILESIZE) {
             throw new MaxUploadSizeExceededException(self::MAX_FILESIZE);
         }

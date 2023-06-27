@@ -1,0 +1,79 @@
+<div class="fr-grid-row fr-mt-3v fr-mb-3w">
+    <div class="fr-col-12 fr-col-md-6">
+        <div class="fr-mb-3v">
+            {% include 'back/signalement/view/visites/visite-status.html.twig' %}
+        </div>
+        <div class="fr-mb-3v">
+            <strong>Date de visite :</strong>
+            {% if signalement.interventions is empty or intervention.scheduledAt is empty %}
+                Non renseignée
+            {% else %}
+                {{ (intervention.scheduledAt.format('H')) > 0 ? intervention.scheduledAt.format('d/m/Y à H:i') : intervention.scheduledAt.format('d/m/Y') }}
+            {% endif %}
+        </div>
+        <div class="fr-mb-3v">
+            <strong>Occupant présent :</strong>
+            {% if signalement.interventions is empty or intervention.occupantPresent is null %}
+                Non renseigné
+            {% elseif intervention.occupantPresent %}
+                Oui
+            {% else %}
+                Non
+            {% endif %}
+        </div>
+        <div class="fr-mb-3v">
+            <strong>Propriétaire présent :</strong>
+            {% if signalement.interventions is empty or intervention.proprietairePresent is null %}
+                Non renseigné
+            {% elseif intervention.proprietairePresent %}
+                Oui
+            {% else %}
+                Non
+            {% endif %}
+        </div>
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <div class="fr-mb-3v">
+            <strong>Analyse :</strong>
+            {% if signalement.interventions is empty or intervention.concludeProcedure is empty %}
+                <span class="fr-badge fr-badge--no-icon" title="Non disponible">Non disponible</span>
+            {% else %}
+                {% for procedure in intervention.concludeProcedure %}
+                    {% include '_partials/signalement/conclude-procedure.html.twig' %}
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="fr-mb-3v">
+            <strong>Partenaire :</strong>
+            {% if signalement.interventions is empty or intervention.partner is empty %}
+                Non renseigné
+            {% else %}
+                {{ intervention.partner.nom }}
+                {% if intervention.partner.territory is not same as signalement.territory or intervention.partner.isArchive %}
+                    (partenaire supprimé)
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="fr-mb-3v">
+            <strong>Rapport :</strong>
+            {% if signalement.interventions is empty or intervention.documents is empty %}
+                <span class="fr-badge fr-badge--no-icon" title="Non disponible">Non disponible</span>
+            {% else %}
+                <a href="{{ asset('_up/'~intervention.documents[0]) }}"
+                    class="fr-btn fr-btn--sm fr-fi-file-line fr-btn--icon-left" title="Afficher le document" rel="noopener" target="_blank">Voir le rapport de visite</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="fr-col-12">
+        <strong>Commentaire du partenaire :</strong>
+        <div class="fr-highlight fr-background-alt--blue-france fr-py-3v fr-my-3v">
+            <p>
+            {% if signalement.interventions is empty or intervention.details is empty %}
+                Non renseigné
+            {% else %}
+                {{ intervention.details|raw }}
+            {% endif %}
+            </p>
+        </div>
+    </div>
+</div>

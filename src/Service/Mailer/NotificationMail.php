@@ -2,6 +2,7 @@
 
 namespace App\Service\Mailer;
 
+use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -17,6 +18,8 @@ class NotificationMail
         private readonly ?Territory $territory = null,
         private readonly ?User $user = null,
         private readonly ?Signalement $signalement = null,
+        private readonly ?Intervention $intervention = null,
+        private readonly ?\DateTimeImmutable $previousVisiteDate = null,
         private readonly mixed $event = null,
         private readonly mixed $attachment = null,
         private readonly ?string $motif = null,
@@ -59,6 +62,16 @@ class NotificationMail
     public function getSignalement(): ?Signalement
     {
         return $this->signalement;
+    }
+
+    public function getIntervention(): ?Intervention
+    {
+        return $this->intervention;
+    }
+
+    public function getPreviousVisiteDate(): ?\DateTimeImmutable
+    {
+        return $this->previousVisiteDate;
     }
 
     public function getEvent(): mixed

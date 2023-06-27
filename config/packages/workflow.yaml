@@ -1,0 +1,28 @@
+framework:
+    workflows:
+        intervention_planning:
+            type: 'state_machine'
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Entity\Intervention
+            initial_marking: !php/const App\Entity\Intervention::STATUS_PLANNED
+            places:
+                - !php/const App\Entity\Intervention::STATUS_PLANNED
+                - !php/const App\Entity\Intervention::STATUS_DONE
+                - !php/const App\Entity\Intervention::STATUS_CANCELED
+                - !php/const App\Entity\Intervention::STATUS_NOT_DONE
+            transitions:
+                confirm:
+                    guard: "subject.hasScheduledDatePassed()"
+                    from: !php/const App\Entity\Intervention::STATUS_PLANNED
+                    to: !php/const App\Entity\Intervention::STATUS_DONE
+                cancel:
+                    guard: "!subject.hasScheduledDatePassed()"
+                    from: !php/const App\Entity\Intervention::STATUS_PLANNED
+                    to: !php/const App\Entity\Intervention::STATUS_CANCELED
+                abort:
+                    guard: "subject.hasScheduledDatePassed()"
+                    from: !php/const App\Entity\Intervention::STATUS_PLANNED
+                    to: !php/const App\Entity\Intervention::STATUS_NOT_DONE

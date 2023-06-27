@@ -53,8 +53,6 @@ class SignalementFactoryTest extends KernelTestCase
             'cpOccupant' => $faker->postcode(),
             'villeOccupant' => $faker->city(),
             'inseeOccupant' => $faker->postcode(),
-            'dateVisite' => new \DateTimeImmutable(),
-            'isOccupantPresentVisite' => true,
             'etageOccupant' => $faker->randomDigit(),
             'escalierOccupant' => $faker->randomDigit(),
             'numAppartOccupant' => $faker->randomDigit(),
@@ -159,7 +157,6 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEquals($data['isLogementCollectif'], $signalement->getIsLogementCollectif());
         $this->assertEquals($data['isPreavisDepart'], $signalement->getIsPreavisDepart());
         $this->assertEquals($data['isNotOccupant'], $signalement->getIsNotOccupant());
-        $this->assertEquals($data['isOccupantPresentVisite'], $signalement->getIsOccupantPresentVisite());
         $this->assertEquals($data['isRsa'], $signalement->getIsRsa());
         $this->assertEquals($data['isConstructionAvant1949'], $signalement->getIsConstructionAvant1949());
         $this->assertEquals($data['isFondSolidariteLogement'], $signalement->getIsFondSolidariteLogement());
@@ -179,7 +176,7 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEquals($data['closedAt'], $signalement->getClosedAt());
         $this->assertEquals($data['numeroInvariant'], $signalement->getNumeroInvariant());
         $this->assertEquals($data['dateEntree'], $signalement->getDateEntree());
-        $this->assertEquals($data['dateVisite'], $signalement->getDateVisite());
+        // $this->assertEquals($data['dateVisite'], $signalement->getDateVisite()); TODO : dateVisite
         $this->assertEquals($data['origineSignalement'], $signalement->getOrigineSignalement());
         $this->assertEquals($data['typeEnergieLogement'], $signalement->getTypeEnergieLogement());
         $this->assertEquals($data['anneeConstruction'], $signalement->getAnneeConstruction());
@@ -199,6 +196,6 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEmpty($signalement->getModifiedBy());
         $this->assertEmpty($signalement->getAffectationStatusByPartner());
 
-        $this->assertCount(76, $data, 'Array $data should have 76 keys');
+        $this->assertCount(74, $data, 'Array $data should have 76 keys');
     }
 }

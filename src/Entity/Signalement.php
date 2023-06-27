@@ -178,12 +178,6 @@ class Signalement
     #[ORM\Column(type: 'json')]
     private $geoloc = [];
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private $dateVisite;
-
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private $isOccupantPresentVisite;
-
     #[ORM\Column(type: 'float', nullable: true)]
     private $montantAllocation;
 
@@ -323,11 +317,14 @@ class Signalement
     #[ORM\Column]
     private ?float $score = null;
 
+    #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Intervention::class, orphanRemoval: true)]
+    private Collection $interventions;
+
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $isUsagerAbandonProcedure;
 
-    #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Intervention::class, orphanRemoval: true)]
-    private Collection $interventions;
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $dateNaissanceOccupant = null;
 
     public function __construct()
     {
@@ -337,7 +334,6 @@ class Signalement
         $this->createdAt = new DateTimeImmutable();
         $this->statut = self::STATUS_NEED_VALIDATION;
         $this->uuid = Uuid::v4();
-        $this->isOccupantPresentVisite = false;
         $this->suivis = new ArrayCollection();
         $this->score = 0;
         $this->affectations = new ArrayCollection();
@@ -986,30 +982,6 @@ class Signalement
     public function setUuid(string $uuid): self
     {
         $this->uuid = $uuid;
-
-        return $this;
-    }
-
-    public function getDateVisite(): ?DateTimeImmutable
-    {
-        return $this->dateVisite;
-    }
-
-    public function setDateVisite(?DateTimeImmutable $dateVisite): self
-    {
-        $this->dateVisite = $dateVisite;
-
-        return $this;
-    }
-
-    public function getIsOccupantPresentVisite(): ?bool
-    {
-        return $this->isOccupantPresentVisite;
-    }
-
-    public function setIsOccupantPresentVisite(?bool $isOccupantPresentVisite): self
-    {
-        $this->isOccupantPresentVisite = $isOccupantPresentVisite;
 
         return $this;
     }
@@ -1689,6 +1661,18 @@ class Signalement
                 $intervention->setSignalement(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDateNaissanceOccupant(): ?DateTimeImmutable
+    {
+        return $this->dateNaissanceOccupant;
+    }
+
+    public function setDateNaissanceOccupant(?DateTimeImmutable $dateNaissanceOccupant): self
+    {
+        $this->dateNaissanceOccupant = $dateNaissanceOccupant;
 
         return $this;
     }

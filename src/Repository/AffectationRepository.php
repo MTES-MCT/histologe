@@ -23,6 +23,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class AffectationRepository extends ServiceEntityRepository
 {
+    private const DELAY_VISITE_AFTER_AFFECTATION = 15;
+
     public function __construct(ManagerRegistry $registry, private SearchFilterService $searchFilterService)
     {
         parent::__construct($registry, Affectation::class);
@@ -156,5 +158,36 @@ class AffectationRepository extends ServiceEntityRepository
             ->setParameter('partner', $partner);
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function findAffectationWithQualification(Qualification $qualification, Signalement $signalement)
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb->select('p.id, p.nom')
+            ->where('a.signalement = :signalement')
+            ->setParameter('signalement', $signalement)
+            ->innerJoin('a.partner', 'p')
+            ->andWhere('REGEXP(p.competence, :regexp) = true')
+            ->setParameter('regexp', '(^'.$qualification->name.',)|(,'.$qualification->name.',)|(,'.$qualification->name.'$)|(^'.$qualification->name.'$)');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findAcceptedAffectationsFromVisitesPartner(): array
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb
+            ->innerJoin('a.partner', 'p')
+            ->innerJoin('a.signalement', 's')
+            ->where('a.statut = :statusAffectation')
+            ->setParameter('statusAffectation', Affectation::STATUS_ACCEPTED)
+            ->andWhere('s.statut IN (:statusSignalement)')
+            ->setParameter('statusSignalement', [Signalement::STATUS_ACTIVE, Signalement::STATUS_NEED_PARTNER_RESPONSE])
+            ->andWhere('p.competence LIKE :qualification')
+            ->setParameter('qualification', Qualification::VISITES->name)
+            ->andWhere('DATEDIFF(CURRENT_DATE(),a.answeredAt) = :day_delay')
+            ->setParameter('day_delay', self::DELAY_VISITE_AFTER_AFFECTATION);
+
+        return $qb->getQuery()->getResult();
     }
 }

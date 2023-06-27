@@ -1,0 +1,72 @@
+<hr class="fr-mt-3w">
+
+<div id="suivis" class="fr-grid-row">
+    <div class="fr-col-9 fr-col-md-6">
+        <h3 class="fr-h5">Suivis</h3>
+    </div>
+    <div class="fr-col-3 fr-col-md-6 fr-text--right">
+        <button class="fr-btn fr-fi-chat-quote-line fr-btn--icon-left" data-fr-opened="false"
+                aria-controls="fr-modal-add-suivi">
+            Ajouter un suivi
+        </button>
+    </div>
+</div>
+
+
+{% if 
+        (is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted))
+        and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION')
+        and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
+        and not isClosedForMe
+        %}
+    {% include '_partials/signalement/add_suivi.html.twig' %}
+{% endif %}
+
+{% for suivi in signalement.suivis|reverse %}
+    <div class="fr-grid-row fr-grid-row--middle fr-background-alt--blue-france fr-p-3v fr-mb-3v suivi-item {% if loop.index > 3 %}fr-hidden{% endif %}">
+        <div class="fr-col-3">   
+            <strong>{{ suivi.createdAt|date('d/m/Y') }}</strong>
+            <br>
+            {% if suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}
+                Suivi automatique
+
+            {% elseif suivi.createdBy is not null %}
+                {{
+                    'ROLE_USAGER' in suivi.createdBy.roles
+                        ? (suivi.createdBy.email is same as signalement.mailDeclarant
+                            ? 'DECLARANT'
+                            : 'OCCUPANT'
+                        )
+                        : (suivi.createdBy.partner
+                            ? (suivi.createdBy.partner.isArchive or ('ROLE_ADMIN' not in suivi.createdBy.roles and suivi.createdBy.partner.territory is not same as(signalement.territory))
+                                ? 'Partenaire supprimé'
+                                : suivi.createdBy.partner.nom ~ '\n' ~ suivi.createdBy.prenom ~ ' ' ~ suivi.createdBy.nom
+                            )
+                            : 'Aucun')|nl2br
+                }}
+
+            {% else %}
+                <strong>{{ signalement.isNotOccupant ? signalement.nomDeclarant|upper~' '~signalement.prenomDeclarant|capitalize : signalement.nomOccupant|upper~' '~signalement.prenomOccupant|capitalize }}</strong>
+                <br>
+                {{ signalement.isNotOccupant ? 'DECLARANT':'OCCUPANT'}}
+            {% endif %}
+        </div>
+
+        <div class="fr-col-7 bloc-suivi-content-row fr-pl-3v">
+            {{ suivi.description|replace({'&t=___TOKEN___':''})|replace({'?t=___TOKEN___':''})|raw }}
+        </div>
+        <div class="fr-col-2">
+            {% if suivi.isPublic %}
+                <span class="fr-badge fr-badge--no-icon" title="Visible par l'usager">Visible par l'usager</span>
+            {% else %}
+                <span class="fr-badge fr-badge--no-icon" title="Suivi interne">Suivi interne</span>
+            {% endif %}
+        </div>
+    </div>
+{% endfor %}
+
+{% if signalement.suivis|length > 3 %}
+    <p class="fr-text--center">
+        <a href="#" id="btn-display-all-suivis">Afficher tous les suivis</a>
+    </p>
+{% endif %}

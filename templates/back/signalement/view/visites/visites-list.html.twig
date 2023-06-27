@@ -1,0 +1,54 @@
+<hr class="fr-mt-3w">
+
+<h3 class="fr-h5 fr-mb-3v">Visites</h3>
+
+{% if is_granted('SIGN_ADD_VISITE', signalement) %}
+    {% include 'back/signalement/view/visites/modals/visites-modal-add.html.twig' %}
+{% endif %}
+
+<p class="fr-text--sm fr-pb-5v">
+    Les visites sont gérées par les partenaires ayant la compétence "Visites" et les responsables de territoires.
+</p>
+
+{% if signalement.interventions is empty %}
+    {% if is_granted('SIGN_ADD_VISITE', signalement) %}
+        {% include 'back/signalement/view/visites/visites-buttons.html.twig' %}
+    {% endif %}
+    {% include 'back/signalement/view/visites/visite-item.html.twig' %}
+{% else %}
+    {% for intervention in signalement.interventions %}
+        <div class="fr-grid-row">
+            <div class="fr-col-12 fr-col-md-6 fr-h6 fr-mb-3v">
+                Visite #{{loop.index}}
+            </div>
+            <div class="fr-col-12 fr-col-md-6">
+                {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
+                    {% include 'back/signalement/view/visites/modals/visites-modals.html.twig' %}
+                    {% include 'back/signalement/view/visites/visites-buttons.html.twig' %}
+                {% endif %}
+            </div>
+        </div>
+        {% include 'back/signalement/view/visites/visite-item.html.twig' %}
+        {% if not loop.last %}
+            <hr class="fr-hr--sm">
+        {% endif %}
+    {% endfor %}
+
+    {% if is_granted('SIGN_ADD_VISITE', signalement) %}
+        {% set displayAddVisiteButton = true %}
+        {% for pendingVisite in pendingVisites %}
+            {% if pendingVisite.partner.id is same as app.user.partner.id %}
+                {% set displayAddVisiteButton = false %}
+            {% endif %}
+        {% endfor %}
+
+        {% if displayAddVisiteButton %}
+        <div class="fr-my-5v fr-text--center">
+            <button class="fr-btn fr-btn--sm fr-fi-calendar-line fr-btn--icon-left" aria-controls="add-visite-modal" data-fr-opened="false">
+                Ajouter une visite
+            </button>
+        </div>
+        {% endif %}
+    {% endif %}
+{% endif %}
+

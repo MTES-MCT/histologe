@@ -1,0 +1,13 @@
+{% if signalement.interventions is not empty %}
+    {% if intervention.status is same as constant('App\\Entity\\Intervention::STATUS_PLANNED') %}
+        {% if workflow_can(intervention, 'cancel') %}
+            {% include 'back/signalement/view/visites/modals/visites-modal-cancel.html.twig' %}
+        {% endif %}
+        {% if workflow_can(intervention, 'confirm') %}
+            {% include 'back/signalement/view/visites/modals/visites-modal-confirm.html.twig' %}
+        {% endif %}
+        {% include 'back/signalement/view/visites/modals/visites-modal-reschedule.html.twig' %}
+    {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_DONE') %}
+        {% include 'back/signalement/view/visites/modals/visites-modal-edit.html.twig' %}
+    {% endif %}
+{% endif %}

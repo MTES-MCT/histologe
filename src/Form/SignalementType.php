@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Signalement;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
@@ -200,6 +201,29 @@ class SignalementType extends AbstractType
                 ],
                 'label' => "Numéro d'allocataire",
                 'help' => "Merci de renseigner votre numéro d'allocataire tel qu'il apparait sur vos documents.",
+                'help_attr' => [
+                    'class' => 'fr-hint-text',
+                ],
+                'required' => false,
+            ])
+            ->add('dateNaissanceOccupant', BirthdayType::class, [
+                'input' => 'datetime_immutable',
+                'attr' => [
+                    'class' => 'fr-input',
+                ],
+                'label_attr' => [
+                    'class' => 'fr-label',
+                ],
+                'row_attr' => [
+                    'class' => 'fr-form-group fr-col-2',
+                ],
+                'placeholder' => [
+                    'year' => 'Année',
+                    'month' => 'Mois',
+                    'day' => 'Jour',
+                ],
+                'label' => 'Date de naissance',
+                'help' => 'Merci de préciser la date de naissance de l\'occupant.',
                 'help_attr' => [
                     'class' => 'fr-hint-text',
                 ],

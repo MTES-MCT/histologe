@@ -29,9 +29,8 @@ class SignalementExportFactory
             ? $data['closedAt']->format(self::DATE_FORMAT)
             : null;
 
-        $dateVisite = $data['dateVisite'] instanceof \DateTimeImmutable
-            ? $data['dateVisite']->format(self::DATE_FORMAT)
-            : null;
+        $dateVisite = '-'; // TODO
+        $isOccupantPresentVisite = '-'; // TODO
 
         $motifCloture = $data['motifCloture'] instanceof MotifCloture ? $data['motifCloture']->label() : null;
         $status = SignalementAffectationHelper::getStatusLabelFrom($user, $data);
@@ -77,7 +76,7 @@ class SignalementExportFactory
             structureDeclarant: $data['structureDeclarant'] ?? '-',
             lienDeclarantOccupant: $data['lienDeclarantOccupant'],
             dateVisite: $dateVisite,
-            isOccupantPresentVisite: 1 == $data['isOccupantPresentVisite'] ? self::OUI : self::NON,
+            isOccupantPresentVisite: $isOccupantPresentVisite,
             modifiedAt: $modifiedAt,
             closedAt: $closedAt,
             motifCloture: $motifCloture

@@ -5,6 +5,7 @@ namespace App\Controller\Back;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Exception\File\MaxUploadSizeExceededException;
+use App\Service\Files\FilenameGenerator;
 use App\Service\Files\HeicToJpegConverter;
 use App\Service\UploadHandlerService;
 use DateTimeImmutable;
@@ -19,7 +20,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/bo/signalements')]
 class BackSignalementFileController extends AbstractController
@@ -63,9 +63,9 @@ class BackSignalementFileController extends AbstractController
         Signalement $signalement,
         Request $request,
         ManagerRegistry $doctrine,
-        SluggerInterface $slugger,
         LoggerInterface $logger,
-        UploadHandlerService $uploadHandler
+        UploadHandlerService $uploadHandler,
+        FilenameGenerator $filenameGenerator,
     ): RedirectResponse {
         $this->denyAccessUnlessGranted('FILE_CREATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token'))
@@ -94,8 +94,7 @@ class BackSignalementFileController extends AbstractController
                 } else {
                     $originalFilename = pathinfo($file->getClientOriginalName(), \PATHINFO_FILENAME);
                     $titre = $originalFilename.'.'.$file->guessExtension();
-                    $safeFilename = $slugger->slug($originalFilename);
-                    $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+                    $newFilename = $filenameGenerator->generateSafeName($file);
                     try {
                         $newFilename = $uploadHandler->uploadFromFile($file, $newFilename);
                     } catch (MaxUploadSizeExceededException $exception) {

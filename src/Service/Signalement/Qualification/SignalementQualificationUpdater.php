@@ -2,16 +2,19 @@
 
 namespace App\Service\Signalement\Qualification;
 
+use App\Entity\Enum\ProcedureType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Factory\SignalementQualificationFactory;
+use App\Manager\SignalementManager;
 
 class SignalementQualificationUpdater
 {
     public function __construct(
-        private SignalementQualificationFactory $signalementQualificationFactory
+        private SignalementQualificationFactory $signalementQualificationFactory,
+        private SignalementManager $signalementManager,
     ) {
     }
 
@@ -119,6 +122,51 @@ class SignalementQualificationUpdater
         } elseif (!empty($listCriticiteDanger)) {
             $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::DANGER, QualificationStatus::DANGER_CHECK, $listCriticiteDanger);
             $signalement->addSignalementQualification($signalementQualification);
+        }
+    }
+
+    public function updateQualificationFromVisiteProcedureList(Signalement $signalement, ?array $procedureTypes)
+    {
+        if ($procedureTypes) {
+            foreach ($procedureTypes as $procedureType) {
+                $signalementQualification = null;
+                switch ($procedureType->name) {
+                    case ProcedureType::NON_DECENCE->name:
+                        $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
+                            qualification: Qualification::NON_DECENCE,
+                            qualificationStatus: QualificationStatus::NON_DECENCE_AVEREE,
+                            isPostVisite: true
+                        );
+                        break;
+                    case ProcedureType::RSD->name:
+                        $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
+                            qualification: Qualification::RSD,
+                            qualificationStatus: QualificationStatus::RSD_AVEREE,
+                            isPostVisite: true
+                        );
+                        break;
+                    case ProcedureType::INSALUBRITE->name:
+                        $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
+                            qualification: Qualification::INSALUBRITE,
+                            qualificationStatus: QualificationStatus::INSALUBRITE_AVEREE,
+                            isPostVisite: true
+                        );
+                        break;
+                    case ProcedureType::MISE_EN_SECURITE_PERIL->name:
+                        $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
+                            qualification: Qualification::MISE_EN_SECURITE_PERIL,
+                            qualificationStatus: QualificationStatus::MISE_EN_SECURITE_PERIL_AVEREE,
+                            isPostVisite: true
+                        );
+                        break;
+                    default:
+                        break;
+                }
+                if ($signalementQualification) {
+                    $signalement->addSignalementQualification($signalementQualification);
+                }
+            }
+            $this->signalementManager->save($signalement);
         }
     }
 }
