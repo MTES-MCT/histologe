@@ -207,18 +207,24 @@ class ActivityListener implements EventSubscriberInterface
             $this->tos->add($partner->getEmail());
         }
         $partner->getUsers()->filter(function (User $user) use ($inAppType, $entity) {
-            if (
-                User::STATUS_ACTIVE === $user->getStatut()
-                    && !$user->isSuperAdmin()
-                    && !$user->isTerritoryAdmin()
-                    && (!$entity instanceof Suivi || $user->getPartner() !== $entity->getCreatedBy()->getPartner())
-            ) {
+            if ($this->isUserNotified($user, $entity)) {
                 $this->createInAppNotification($user, $entity, $inAppType);
                 if ($user->getIsMailingActive()) {
                     $this->tos->add($user->getEmail());
                 }
             }
         });
+    }
+
+    private function isUserNotified($user, $entity): bool
+    {
+        // To be notified
+        // - the user must be active and not an admin
+        // - if entity is Affectation
+        // - if entity is Suivi: we check that the partner of the user is different from the partner of the user who created the suivi
+        return User::STATUS_ACTIVE === $user->getStatut()
+            && !$user->isSuperAdmin() && !$user->isTerritoryAdmin()
+            && ($entity instanceof Affectation || $user->getPartner() !== $entity->getCreatedBy()->getPartner());
     }
 
     public function preRemove(LifecycleEventArgs $args)
