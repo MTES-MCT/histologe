@@ -81,7 +81,10 @@ class MigrateDocumentDataCommand extends Command
         }
 
         $this->entityManager->flush();
-        $io->success('Les données de signalement '.$isImported.'ont bien été déplacés vers la table File.');
+        $io->success(sprintf(
+            'Les données de signalement %s ont bien été déplacées vers la table File.',
+            $isImported ? 'importés' : 'non importés'
+        ));
         $progressBar->finish();
 
         return Command::SUCCESS;
