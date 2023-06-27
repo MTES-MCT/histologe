@@ -6,12 +6,14 @@ use App\Entity\Enum\PartnerType;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\EventSubscriber\UserCreatedSubscriber;
 use App\Factory\PartnerFactory;
 use App\Factory\UserFactory;
 use App\Manager\ManagerInterface;
 use App\Manager\PartnerManager;
 use App\Manager\UserManager;
 use App\Service\Import\CsvParser;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -36,6 +38,8 @@ class GridAffectationLoader
         private ManagerInterface $manager,
         private ValidatorInterface $validator,
         private LoggerInterface $logger,
+        private EntityManagerInterface $entityManager,
+        private UserCreatedSubscriber $userAddedSubscriber,
     ) {
     }
 
@@ -132,27 +136,28 @@ class GridAffectationLoader
         return $errors;
     }
 
-    public function load(Territory $territory, array $data): void
+    public function load(Territory $territory, array $data, array $ignoreNotifPartnerTypes): void
     {
         // TODO LATER : command should be usable several times (update partners and users)
         $countUsers = 0;
         $partner = null;
-        $newPartnerName = [];
+        $newPartnerNames = [];
         foreach ($data as $item) {
             if (\count($item) > 1) {
                 $partnerName = trim($item[GridAffectationHeader::PARTNER_NAME_INSTITUTION]);
+                $partnerType = PartnerType::tryFromLabel($item[GridAffectationHeader::PARTNER_TYPE]);
 
-                if (!\in_array($partnerName, $newPartnerName)) {
+                if (!\in_array($partnerName, $newPartnerNames)) {
                     $partner = $this->partnerFactory->createInstanceFrom(
                         territory: $territory,
                         name: $partnerName,
                         email: !empty($item[GridAffectationHeader::PARTNER_EMAIL]) ? trim($item[GridAffectationHeader::PARTNER_EMAIL]) : null,
-                        type: PartnerType::tryFromLabel($item[GridAffectationHeader::PARTNER_TYPE]),
+                        type: $partnerType,
                         insee: $item[GridAffectationHeader::PARTNER_CODE_INSEE]
                     );
                     $this->partnerManager->save($partner, false);
                     ++$this->metadata['nb_partners'];
-                    $newPartnerName[] = $partnerName;
+                    $newPartnerNames[] = $partnerName;
                 }
 
                 $roleLabel = $item[GridAffectationHeader::USER_ROLE];
@@ -180,7 +185,8 @@ class GridAffectationLoader
                             partner: $partner,
                             firstname: trim($item[GridAffectationHeader::USER_FIRSTNAME]),
                             lastname: trim($item[GridAffectationHeader::USER_LASTNAME]),
-                            email: $email
+                            email: $email,
+                            isActivateAccountNotificationEnabled: !\in_array($partnerType->name, $ignoreNotifPartnerTypes)
                         );
 
                         $this->throwException($user);

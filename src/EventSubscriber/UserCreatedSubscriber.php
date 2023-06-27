@@ -29,7 +29,7 @@ class UserCreatedSubscriber implements EventSubscriberInterface
         $unitOfWork = $args->getObjectManager()->getUnitOfWork();
 
         foreach ($unitOfWork->getScheduledEntityInsertions() as $entity) {
-            if ($entity instanceof User) {
+            if ($entity instanceof User && $entity->isActivateAccountNotificationEnabled()) {
                 $this->sendNotification($entity);
             }
         }

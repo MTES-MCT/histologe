@@ -54,17 +54,19 @@ class RemindInactiveUserCommand extends AbstractCronCommand
             $user = $this->userManager->loadUserToken($userItem['email']);
             $this->userManager->save($user);
 
-            $this->notificationMailerRegistry->send(
-                new NotificationMail(
-                    type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_REMINDER,
-                    to: $user->getEmail(),
-                    territory: $user->getTerritory(),
-                    user: $user,
-                    params: [
-                        'nb_signalements' => $userItem['nb_signalements'],
-                    ],
-                )
-            );
+            if ($user->isActivateAccountNotificationEnabled()) {
+                $this->notificationMailerRegistry->send(
+                    new NotificationMail(
+                        type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_REMINDER,
+                        to: $user->getEmail(),
+                        territory: $user->getTerritory(),
+                        user: $user,
+                        params: [
+                            'nb_signalements' => $userItem['nb_signalements'],
+                        ],
+                    )
+                );
+            }
         }
 
         $nbUsers = \count($userList);

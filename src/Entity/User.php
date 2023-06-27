@@ -109,6 +109,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(nullable: true)]
     private $territory;
 
+    #[ORM\Column]
+    private bool $isActivateAccountNotificationEnabled = true;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -440,6 +443,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUuid(string $uuid): self
     {
         $this->uuid = $uuid;
+
+        return $this;
+    }
+
+    public function isActivateAccountNotificationEnabled(): bool
+    {
+        return $this->isActivateAccountNotificationEnabled;
+    }
+
+    public function setIsActivateAccountNotificationEnabled(bool $isActivateAccountNotificationEnabled): self
+    {
+        $this->isActivateAccountNotificationEnabled = $isActivateAccountNotificationEnabled;
 
         return $this;
     }

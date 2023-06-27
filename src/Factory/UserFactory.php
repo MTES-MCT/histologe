@@ -23,7 +23,8 @@ class UserFactory
         ?string $firstname,
         ?string $lastname,
         ?string $email,
-        ?bool $isMailActive = true
+        ?bool $isMailActive = true,
+        ?bool $isActivateAccountNotificationEnabled = true
     ): User {
         return (new User())
             ->setRoles(\in_array($roleLabel, User::ROLES) ? [$roleLabel] : [User::ROLES[$roleLabel]])
@@ -38,7 +39,8 @@ class UserFactory
             ->setToken($this->tokenGenerator->generateToken())
             ->setTokenExpiredAt(
                 (new \DateTimeImmutable())->modify($this->parameterBag->get('token_lifetime'))
-            );
+            )
+            ->setIsActivateAccountNotificationEnabled($isActivateAccountNotificationEnabled);
     }
 
     public function createInstanceFromArray(Partner $partner, array $data): User
