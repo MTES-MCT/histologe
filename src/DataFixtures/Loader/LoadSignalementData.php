@@ -97,6 +97,12 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                     'username' => 'Padberg Boyd',
                     'date' => '06.05.2023',
                 ],
+                [
+                    'file' => 'blank-'.$row['reference'].'.pdf',
+                    'titre' => 'Blank.pdf',
+                    'date' => '06.05.2023',
+                    'user' => 1,
+                ],
             ])
             ->setPhotos([])
             ->setGeoloc(json_decode($row['geoloc'], true))
@@ -117,6 +123,12 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                     'titre' => 'IMG_20230220_141432735_HDR.jpg',
                     'user' => 23,
                     'username' => 'Kautzer Laverne',
+                ],
+                [
+                    'file' => 'blank-'.$row['reference'].'.jpg',
+                    'titre' => 'Blank.pdf',
+                    'date' => '06.05.2023',
+                    'user' => 1,
                 ],
             ])
             ->setCreatedAt(
