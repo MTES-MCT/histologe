@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class AccountActivationReminderMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_REMINDER;
-    protected ?string $mailerSubject = 'Activez votre compte sur Histologe';
+    protected ?string $mailerSubject = 'Activez votre compte sur %param.platform_name%';
     protected ?string $mailerButtonText = 'Activer mon compte';
     protected ?string $mailerTemplate = 'login_link_email';
 

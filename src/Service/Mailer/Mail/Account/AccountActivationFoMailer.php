@@ -14,7 +14,7 @@ use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 class AccountActivationFoMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_FROM_FO;
-    protected ?string $mailerSubject = 'Activez votre compte sur Histologe';
+    protected ?string $mailerSubject = 'Activez votre compte sur %param.platform_name%';
     protected ?string $mailerButtonText = 'Activer mon compte';
     protected ?string $mailerTemplate = 'login_link_email';
 

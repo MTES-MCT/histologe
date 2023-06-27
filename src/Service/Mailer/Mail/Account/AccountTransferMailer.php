@@ -15,7 +15,7 @@ use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 class AccountTransferMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_ACCOUNT_TRANSFER;
-    protected ?string $mailerSubject = 'Transfert de votre compte Histologe';
+    protected ?string $mailerSubject = 'Transfert de votre compte %param.platform_name%';
     protected ?string $mailerTemplate = 'transfer_account_email';
 
     public function __construct(

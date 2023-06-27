@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class AccountDeleteMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_ACCOUNT_DELETE;
-    protected ?string $mailerSubject = 'Suppression de votre compte Histologe';
+    protected ?string $mailerSubject = 'Suppression de votre compte %param.platform_name%';
     protected ?string $mailerTemplate = 'delete_account_email';
 
     public function __construct(

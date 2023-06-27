@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class SignalementFeedbackUsagerMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER;
-    protected ?string $mailerSubject = 'Histologe : faites le point sur votre problème de logement !';
+    protected ?string $mailerSubject = '%param.platform_name% : faites le point sur votre problème de logement !';
     protected ?string $mailerButtonText = 'Mettre à jour ma situation';
     protected ?string $mailerTemplate = 'demande_feedback_usager_email';
 
