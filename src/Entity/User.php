@@ -463,7 +463,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->files->contains($file)) {
             $this->files->add($file);
-            $file->setUser($this);
+            $file->setUploadedBy($this);
         }
 
         return $this;
@@ -473,8 +473,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->files->removeElement($file)) {
             // set the owning side to null (unless already changed)
-            if ($file->getUser() === $this) {
-                $file->setUser(null);
+            if ($file->getUploadedBy() === $this) {
+                $file->setUploadedBy(null);
             }
         }
 

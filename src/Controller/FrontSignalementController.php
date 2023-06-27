@@ -285,10 +285,6 @@ class FrontSignalementController extends AbstractController
 
             $entityManager->persist($signalement);
             $entityManager->flush();
-            !$signalement->getIsProprioAverti()
-            && $attachment = file_exists($this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf')
-                ? $this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf'
-                : null;
 
             $toRecipients = $signalement->getMailUsagers();
             foreach ($toRecipients as $toRecipient) {
@@ -298,7 +294,7 @@ class FrontSignalementController extends AbstractController
                         to: $toRecipient,
                         territory: $signalement->getTerritory(),
                         signalement: $signalement,
-                        attachment: $attachment ?? null,
+                        attachment: $this->getModeleCourrierPourProprietaire($signalement),
                     )
                 );
             }
@@ -517,5 +513,15 @@ class FrontSignalementController extends AbstractController
         }
 
         return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+    }
+
+    private function getModeleCourrierPourProprietaire(Signalement $signalement): ?string
+    {
+        if (!$signalement->getIsProprioAverti()
+            && file_exists($this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf')) {
+            return $this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf';
+        }
+
+        return null;
     }
 }

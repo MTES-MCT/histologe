@@ -109,7 +109,7 @@ class MigrateDocumentDataCommand extends Command
                     ->setFileType($type)
                     ->setFilename($fileItem['file'])
                     ->setTitle($fileItem['titre'] ?? $fileItem['file'])
-                    ->setUser(isset($fileItem['user']) ? $this->userRepository->find($fileItem['user']) : null)
+                    ->setUploadedBy(isset($fileItem['user']) ? $this->userRepository->find($fileItem['user']) : null)
                     ->setCreatedAt($createdAt)
                     ->setSignalement($signalement);
 

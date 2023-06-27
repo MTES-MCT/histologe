@@ -25,7 +25,7 @@ class FileFactory
         }
 
         if (null !== $user) {
-            $file->setUser($user);
+            $file->setUploadedBy($user);
         }
 
         return $file;

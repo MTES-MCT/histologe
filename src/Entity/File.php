@@ -17,7 +17,7 @@ class File
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'files')]
-    private ?User $user = null;
+    private ?User $uploadedBy = null;
 
     #[ORM\ManyToOne(inversedBy: 'files')]
     #[ORM\JoinColumn(nullable: false)]
@@ -45,14 +45,14 @@ class File
         return $this->id;
     }
 
-    public function getUser(): ?User
+    public function getUploadedBy(): ?User
     {
-        return $this->user;
+        return $this->uploadedBy;
     }
 
-    public function setUser(?User $user): self
+    public function setUploadedBy(?User $uploadedBy): self
     {
-        $this->user = $user;
+        $this->uploadedBy = $uploadedBy;
 
         return $this;
     }
