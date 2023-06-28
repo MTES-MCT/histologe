@@ -2,6 +2,7 @@
 
 namespace App\Service\Statistics;
 
+use App\Entity\Commune;
 use App\Entity\Territory;
 use Collator;
 

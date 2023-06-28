@@ -13,6 +13,8 @@ use App\Manager\SuiviManager;
 use App\Repository\InterventionRepository;
 use App\Service\Esabora\Enum\EsaboraStatus;
 use App\Service\Esabora\Response\DossierResponseInterface;
+use App\Service\Esabora\Response\DossierStateSCHSResponse;
+use App\Service\Esabora\Response\DossierStateSISHResponse;
 use App\Service\Esabora\Response\Model\DossierArreteSISH;
 use App\Service\Esabora\Response\Model\DossierVisiteSISH;
 
@@ -58,9 +60,11 @@ class EsaboraManager
         $currentStatus = $affectation->getStatut();
 
         $esaboraStatus = $dossierResponse->getSasEtat();
-        $esaboraDossierStatus = null !== $dossierResponse->getEtat()
-            ? strtolower($dossierResponse->getEtat())
-            : null;
+        if ($dossierResponse instanceof DossierStateSCHSResponse || $dossierResponse instanceof DossierStateSISHResponse) {
+            $esaboraDossierStatus = strtolower($dossierResponse->getEtat());
+        } else {
+            $esaboraDossierStatus = null;
+        }
 
         switch ($esaboraStatus) {
             case EsaboraStatus::ESABORA_WAIT->value:

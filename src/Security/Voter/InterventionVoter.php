@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
+use App\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -23,6 +24,7 @@ class InterventionVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
+        /** @var User $user */
         $user = $token->getUser();
         if (!$user instanceof UserInterface) {
             return false;
@@ -34,7 +36,7 @@ class InterventionVoter extends Voter
         };
     }
 
-    public function canEditVisite(Intervention $intervention, UserInterface $user): bool
+    public function canEditVisite(Intervention $intervention, User $user): bool
     {
         $signalement = $intervention->getSignalement();
         if (Signalement::STATUS_ACTIVE !== $signalement->getStatut() && Signalement::STATUS_NEED_PARTNER_RESPONSE !== $signalement->getStatut()) {

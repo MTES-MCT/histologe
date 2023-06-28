@@ -22,6 +22,7 @@ class RequestListener
     {
         if ($token = $this->tokenStorage->getToken()) {
             if ('login_creation_pass' !== $event->getRequest()->get('_route')) {
+                /** @var User $user */
                 $user = $token->getUser();
                 if (!$user->getPassword() || User::STATUS_INACTIVE === $user->getStatut()) {
                     $event->setResponse(new RedirectResponse($this->urlGenerator->generate('login_creation_pass')));

@@ -16,6 +16,7 @@ use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementFactory;
 use App\Repository\PartnerRepository;
+use App\Repository\SignalementRepository;
 use App\Service\Signalement\QualificationStatusService;
 use DateTimeImmutable;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -206,13 +207,15 @@ class SignalementManager extends AbstractManager
     public function findEmailsAffectedToSignalement(Signalement $signalement): array
     {
         $sendTo = [];
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->getRepository();
 
-        $usersPartnerEmail = $this->getRepository()->findUsersPartnerEmailAffectedToSignalement(
+        $usersPartnerEmail = $signalementRepository->findUsersPartnerEmailAffectedToSignalement(
             $signalement->getId(),
         );
         $sendTo = array_merge($sendTo, $usersPartnerEmail);
 
-        $partnersEmail = $this->getRepository()->findPartnersEmailAffectedToSignalement(
+        $partnersEmail = $signalementRepository->findPartnersEmailAffectedToSignalement(
             $signalement->getId()
         );
 
@@ -270,8 +273,11 @@ class SignalementManager extends AbstractManager
         $options['authorized_codes_insee'] = $this->parameterBag->get('authorized_codes_insee');
         $signalementAffectationList = [];
 
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->getRepository();
+
         /** @var Paginator $paginator */
-        $paginator = $this->getRepository()->findSignalementAffectationListPaginator($user, $options);
+        $paginator = $signalementRepository->findSignalementAffectationListPaginator($user, $options);
         $total = $paginator->count();
         $dataResultList = $paginator->getQuery()->getResult();
 
@@ -295,7 +301,9 @@ class SignalementManager extends AbstractManager
     {
         $options['authorized_codes_insee'] = $this->parameterBag->get('authorized_codes_insee');
 
-        foreach ($this->getRepository()->findSignalementAffectationIterable($user, $options) as $row) {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->getRepository();
+        foreach ($signalementRepository->findSignalementAffectationIterable($user, $options) as $row) {
             yield $this->signalementExportFactory->createInstanceFrom(
                 $user,
                 $row

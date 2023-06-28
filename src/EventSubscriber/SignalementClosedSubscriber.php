@@ -5,9 +5,11 @@ namespace App\EventSubscriber;
 use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Entity\User;
 use App\Event\SignalementClosedEvent;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
+use App\Repository\SignalementRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -38,6 +40,7 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
         $signalement = $event->getSignalement();
         $affectation = $event->getAffectation();
         $params = $event->getParams();
+        /** @var User $user */
         $user = $this->security->getUser();
 
         if ($signalement instanceof Signalement) {
@@ -66,7 +69,7 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
             $signalement->addSuivi($suivi);
             $this->sendMailToPartner(
                 signalement: $signalement,
-                partnerToExclude: $this->security->getUser()->getPartner()
+                partnerToExclude: $user->getPartner()
             );
         }
 
@@ -103,12 +106,15 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
                 to: $sendTo,
                 territory: $signalement->getTerritory(),
                 signalement: $signalement
-            ));
+            )
+        );
     }
 
     private function sendMailToPartner(Signalement $signalement, ?Partner $partnerToExclude = null)
     {
-        $sendTo = $this->signalementManager->getRepository()->findUsersPartnerEmailAffectedToSignalement(
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->signalementManager->getRepository();
+        $sendTo = $signalementRepository->findUsersPartnerEmailAffectedToSignalement(
             $signalement->getId(),
             $partnerToExclude
         );

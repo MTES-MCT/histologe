@@ -13,6 +13,7 @@ use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -107,7 +108,8 @@ class SlugifyDocumentSignalementCommand extends Command
                     $this->directoryPath.$filenameSlugged,
                     true
                 );
-                $csvWriter->writeRow([
+                $csvWriter->writeRow(
+                    [
                         $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT_ATTACHMENT],
                         $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT],
                         $filenameSlugged,
@@ -128,7 +130,8 @@ class SlugifyDocumentSignalementCommand extends Command
             $this->uploadHandlerService->uploadFromFilename($filename, self::BASE_DIRECTORY_CSV);
             $io->success(sprintf('%s files has been slugify', $countFileSlugged));
             $io->success(
-                sprintf('%s has been pushed to S3 bucket storage, please send your images to S3 Bucket `%s`',
+                sprintf(
+                    '%s has been pushed to S3 bucket storage, please send your images to S3 Bucket `%s`',
                     $filename,
                     $command
                 )
@@ -150,6 +153,7 @@ class SlugifyDocumentSignalementCommand extends Command
     private function validate(InputInterface $input, OutputInterface $output): bool
     {
         $zip = $input->getArgument('zip');
+        /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion(
             'Did you send CSV mapping file to S3 Bucket ?',

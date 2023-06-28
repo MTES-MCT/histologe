@@ -4,6 +4,7 @@ namespace App\Security\Voter;
 
 use App\Entity\Affectation;
 use App\Entity\Signalement;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -23,6 +24,7 @@ class AssignmentVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
+        /** @var User $user */
         $user = $token->getUser();
         if (!$user instanceof UserInterface || !$user->isSuperAdmin() && $subject->getTerritory() !== $user->getTerritory()) {
             return false;
@@ -37,22 +39,22 @@ class AssignmentVoter extends Voter
         };
     }
 
-    private function canToggle(Signalement $signalement, UserInterface $user)
+    private function canToggle(Signalement $signalement, User $user)
     {
         return ($user->isSuperAdmin() || $user->isTerritoryAdmin()) && Signalement::STATUS_ACTIVE === $signalement->getStatut();
     }
 
-    private function canAnswer(Affectation $assignment, UserInterface $user): bool
+    private function canAnswer(Affectation $assignment, User $user): bool
     {
         return $assignment->getPartner() === $user->getPartner() && Signalement::STATUS_ACTIVE === $assignment->getSignalement()->getStatut();
     }
 
-    private function canClose(Affectation $assignment, UserInterface $user): bool
+    private function canClose(Affectation $assignment, User $user): bool
     {
         return $this->canAnswer($assignment, $user) && Affectation::STATUS_ACCEPTED === $assignment->getStatut();
     }
 
-    private function canReopen(Affectation $assignment, UserInterface $user): bool
+    private function canReopen(Affectation $assignment, User $user): bool
     {
         return $this->canAnswer($assignment, $user) && Affectation::STATUS_CLOSED === $assignment->getStatut();
     }

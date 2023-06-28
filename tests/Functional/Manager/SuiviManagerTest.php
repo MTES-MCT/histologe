@@ -8,6 +8,8 @@ use App\Entity\Suivi;
 use App\Entity\User;
 use App\Factory\SuiviFactory;
 use App\Manager\SuiviManager;
+use App\Repository\SuiviRepository;
+use App\Repository\UserRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
