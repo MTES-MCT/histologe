@@ -37,7 +37,7 @@
     {% if is_granted('SIGN_ADD_VISITE', signalement) %}
         {% set displayAddVisiteButton = true %}
         {% for pendingVisite in pendingVisites %}
-            {% if pendingVisite.partner.id is same as app.user.partner.id %}
+            {% if pendingVisite.partner and pendingVisite.partner.id is same as app.user.partner.id %}
                 {% set displayAddVisiteButton = false %}
             {% endif %}
         {% endfor %}

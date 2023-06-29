@@ -60,10 +60,10 @@ class VisiteNotifier
         if ($intervention) {
             if ($notifyAdminTerritory) {
                 $listUsersTerritoryAdmin = $this->userRepository->findActiveTerritoryAdmins($intervention->getSignalement()->getTerritory());
-                $listUsersPartner = $intervention->getPartner()->getUsers();
-                $listUsersToNotify = array_unique(array_merge($listUsersTerritoryAdmin, $listUsersPartner->toArray()), \SORT_REGULAR);
+                $listUsersPartner = $intervention->getPartner() ? $intervention->getPartner()->getUsers()->toArray() : [];
+                $listUsersToNotify = array_unique(array_merge($listUsersTerritoryAdmin, $listUsersPartner), \SORT_REGULAR);
             } else {
-                $listUsersToNotify = $intervention->getPartner()->getUsers();
+                $listUsersToNotify = $intervention->getPartner() ? $intervention->getPartner()->getUsers() : [];
             }
         } else {
             $listUsersToNotify = $affectation->getPartner()->getUsers();
