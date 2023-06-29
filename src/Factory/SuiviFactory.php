@@ -27,7 +27,7 @@ class SuiviFactory
         return $suivi;
     }
 
-    private function buildType(?User $user, array $params): string
+    private function buildType(?User $user, array $params): int
     {
         if (isset($params['type'])) {
             return $params['type'];

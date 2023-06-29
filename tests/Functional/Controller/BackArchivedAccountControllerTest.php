@@ -130,9 +130,9 @@ class BackArchivedAccountControllerTest extends WebTestCase
 
         $form['user[prenom]'] = $faker->name();
         $form['user[nom]'] = $faker->lastName();
-        $form['user[email]'] = $account->getEmail();
-        $form['user[territory]'] = $territory->getId();
-        $form['user[partner]'] = $partner->getId();
+        $form['user[email]'] = (string) $account->getEmail();
+        $form['user[territory]'] = (string) $territory->getId();
+        $form['user[partner]'] = (string) $partner->getId();
         $client->submit($form);
 
         /** @var User $account */
@@ -169,7 +169,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
 
         $form['user[prenom]'] = $faker->name();
         $form['user[nom]'] = $faker->lastName();
-        $form['user[email]'] = $account->getEmail();
+        $form['user[email]'] = (string) $account->getEmail();
         $form['user[territory]'] = '';
         $form['user[partner]'] = '';
         $client->submit($form);
