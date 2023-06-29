@@ -7,6 +7,7 @@ use App\Repository\PartnerRepository;
 use App\Service\Esabora\EsaboraSISHService;
 use App\Service\Esabora\Handler\DossierPersonneServiceHandler;
 use App\Tests\FixturesHelper;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -14,10 +15,10 @@ class DossierPersonneServiceHandlerTest extends TestCase
 {
     use FixturesHelper;
 
-    protected EsaboraSISHService $esaboraSISHService;
-    protected SerializerInterface $serializer;
-    protected JobEventManager $jobEventManager;
-    protected PartnerRepository $partnerRepository;
+    protected MockObject|EsaboraSISHService $esaboraSISHService;
+    protected MockObject|SerializerInterface $serializer;
+    protected MockObject|JobEventManager $jobEventManager;
+    protected MockObject|PartnerRepository $partnerRepository;
 
     protected function setUp(): void
     {

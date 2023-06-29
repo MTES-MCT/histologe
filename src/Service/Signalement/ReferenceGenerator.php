@@ -18,7 +18,10 @@ class ReferenceGenerator
         if (!empty($result)) {
             list($year, $id) = explode('-', $result['reference']);
 
-            return $year.'-'.(int) $id + 1;
+            $id = (int) $id;
+            ++$id;
+
+            return $year.'-'.$id;
         }
         $year = (new \DateTime())->format('Y');
 

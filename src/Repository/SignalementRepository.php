@@ -25,7 +25,6 @@ use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method Signalement|null find($id, $lockMode = null, $lockVersion = null)
@@ -47,7 +46,7 @@ class SignalementRepository extends ServiceEntityRepository
         parent::__construct($registry, Signalement::class);
     }
 
-    public function findAllWithGeoData($user, $options, int $offset): array
+    public function findAllWithGeoData(?User $user, array $options, int $offset): array
     {
         $firstResult = $offset;
 
@@ -318,7 +317,7 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     public function findSignalementAffectationListPaginator(
-        User|UserInterface|null $user,
+        User|null $user,
         array $options,
     ): Paginator {
         $maxResult = SignalementAffectationListView::MAX_LIST_PAGINATION;
@@ -334,7 +333,7 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     public function findSignalementAffectationQuery(
-        User|UserInterface|null $user,
+        User|null $user,
         array $options
     ): QueryBuilder {
         $qb = $this->createQueryBuilder('s');
@@ -418,7 +417,7 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb;
     }
 
-    public function findSignalementAffectationIterable(User|UserInterface|null $user, array $options): \Generator
+    public function findSignalementAffectationIterable(User|null $user, array $options): \Generator
     {
         $qb = $this->findSignalementAffectationQuery($user, $options);
 
@@ -465,7 +464,7 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->toIterable();
     }
 
-    public function findCities(User|UserInterface|null $user = null, Territory|null $territory = null): array|int|string
+    public function findCities(User|null $user = null, Territory|null $territory = null): array|int|string
     {
         $user = $user?->isUserPartner() || $user?->isPartnerAdmin() ? $user : null;
 
