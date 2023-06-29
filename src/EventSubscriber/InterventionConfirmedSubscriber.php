@@ -34,8 +34,11 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
         $intervention = $event->getSubject();
         $currentUser = $this->security->getUser();
         if (InterventionType::VISITE === $intervention->getType()) {
-            $description = 'Après visite du logement par '.$intervention->getPartner()->getNom().',';
-            $description .= ' la situation observée du logement est :<br>';
+            $description = 'Après visite du logement';
+            if ($intervention->getPartner()) {
+                $description .= ' par '.$intervention->getPartner()->getNom();
+            }
+            $description .= ', la situation observée du logement est :<br>';
             foreach ($intervention->getConcludeProcedure() as $concludeProcedure) {
                 $description .= '- '.$concludeProcedure->label().'<br>';
             }

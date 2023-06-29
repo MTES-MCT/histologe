@@ -34,7 +34,7 @@ final class Version20230530084228 extends AbstractMigration
                     'intervention',
                     [
                         'signalement_id' => $idSignalement,
-                        'date' => $dateVisite,
+                        'scheduled_at' => $dateVisite,
                         'occupant_present' => $isOccupantPresentVisite,
                         'type' => InterventionType::VISITE->name,
                         'status' => Intervention::STATUS_PLANNED,
