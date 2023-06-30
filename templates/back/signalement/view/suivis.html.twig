@@ -31,6 +31,9 @@
                 Suivi automatique
 
             {% elseif suivi.createdBy is not null %}
+                <div class="part-infos-hover"
+                     data-user="{{ suivi.createdBy.nomComplet }}"
+                     data-mail="{{ suivi.createdBy.email }}">
                 {{
                     'ROLE_USAGER' in suivi.createdBy.roles
                         ? (suivi.createdBy.email is same as signalement.mailDeclarant
@@ -44,7 +47,7 @@
                             )
                             : 'Aucun')|nl2br
                 }}
-
+                </div>
             {% else %}
                 <strong>{{ signalement.isNotOccupant ? signalement.nomDeclarant|upper~' '~signalement.prenomDeclarant|capitalize : signalement.nomOccupant|upper~' '~signalement.prenomOccupant|capitalize }}</strong>
                 <br>
