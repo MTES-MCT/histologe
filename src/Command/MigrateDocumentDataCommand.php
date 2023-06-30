@@ -54,7 +54,7 @@ class MigrateDocumentDataCommand extends Command
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion(
             sprintf(
-                'Voulez vous charger %s signalements %s ?',
+                'Voulez vous charger %s signalements %s (y pour oui, n pour non) ? ',
                 $countSignalement,
                 $isImported ? 'importés' : 'non importés'
             ),

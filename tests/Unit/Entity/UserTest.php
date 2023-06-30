@@ -10,11 +10,11 @@ class UserTest extends TestCase
 {
     use FixturesHelper;
 
-    public function testCreateUserWithFullname(): void
+    public function testCreateUserWithNomComplet(): void
     {
         $user = $this->getUser([User::ROLE_ADMIN_TERRITORY]);
         $this->assertEquals('John', $user->getPrenom());
         $this->assertEquals('Doe', $user->getNom());
-        $this->assertEquals('John Doe', $user->getFullname());
+        $this->assertEquals('DOE John', $user->getNomComplet());
     }
 }
