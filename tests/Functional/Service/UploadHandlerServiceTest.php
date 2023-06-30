@@ -11,15 +11,14 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 class UploadHandlerServiceTest extends KernelTestCase
 {
     private FilesystemOperator $filesystemOperator;
     private ParameterBagInterface $parameterBag;
-    private SluggerInterface $slugger;
     private LoggerInterface $logger;
     private HeicToJpegConverter $heicToJpegConverter;
+    private FilenameGenerator $filenameGenerator;
 
     private string $projectDir = '';
     private string $fixturesPath = '/src/DataFixtures/Images/';
@@ -40,25 +39,13 @@ class UploadHandlerServiceTest extends KernelTestCase
 
         $this->filesystemOperator = $this->createMock(FilesystemOperator::class);
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-        $this->slugger = $this->createMock(SluggerInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->heicToJpegConverter = $this->createMock(HeicToJpegConverter::class);
+        $this->filenameGenerator = $this->createMock(FilenameGenerator::class);
     }
 
     public function testTemporaryFileUploaded(): void
     {
-        $this->slugger
-            ->method('slug')
-            ->willReturn((new AsciiSlugger())->slug($this->targetFilename));
-
-        $uploadHandlerService = new UploadHandlerService(
-            $this->filesystemOperator,
-            $this->parameterBag,
-            $this->slugger,
-            $this->logger,
-            $this->heicToJpegConverter,
-        );
-
         $uploadFile = new UploadedFile(
             $this->projectDir.$this->fixturesPath.$this->targetFilename.$this->extension,
             $this->targetFilename,
@@ -67,12 +54,33 @@ class UploadHandlerServiceTest extends KernelTestCase
             true
         );
 
+        $this->filenameGenerator
+            ->expects($this->once())
+            ->method('generate')
+            ->with($uploadFile)
+            ->willReturn('sample-target-649eb0a54a822.png');
+
+        $this->filenameGenerator
+            ->expects($this->once())
+            ->method('getTitle')
+            ->willReturn('sample-target.png');
+
+        $uploadHandlerService = new UploadHandlerService(
+            $this->filesystemOperator,
+            $this->parameterBag,
+            $this->logger,
+            $this->heicToJpegConverter,
+            $this->filenameGenerator,
+        );
+
         $uploadHandler = $uploadHandlerService->toTempFolder($uploadFile);
         $this->assertInstanceOf(UploadHandlerService::class, $uploadHandler);
         $fileResult = $uploadHandler->getFile();
         $this->assertIsArray($fileResult);
         $this->assertArrayHasKey('file', $fileResult);
         $this->assertArrayHasKey('titre', $fileResult);
+        $this->assertNotEmpty($fileResult['file']);
+        $this->assertNotEmpty($fileResult['titre']);
     }
 
     public function testUploadBigFileShouldThrowsException(): void
@@ -109,46 +117,12 @@ class UploadHandlerServiceTest extends KernelTestCase
         $uploadHandlerService = new UploadHandlerService(
             $this->filesystemOperator,
             $this->parameterBag,
-            $this->slugger,
             $this->logger,
             $this->heicToJpegConverter,
+            $this->filenameGenerator,
         );
 
         $filename = $uploadHandlerService->uploadFromFilename('sample.txt');
         $this->assertEquals('sample.txt', $filename);
-    }
-
-    public function testTemporaryFileUploaded(): void
-    {
-        /** @var ParameterBagInterface $parameterBag */
-        $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-
-        $filenameMock = $this->createMock(FilenameGenerator::class);
-        $filenameMock
-            ->method('generateSafeName')
-            ->willReturn('test.jpg');
-
-        $uploadHandlerService = new UploadHandlerService(
-            $this->createMock(FilesystemOperator::class),
-            $parameterBag,
-            $this->createMock(LoggerInterface::class),
-            $this->createMock(HeicToJpegConverter::class),
-            $filenameMock,
-        );
-
-        $uploadFile = new UploadedFile(
-            $this->projectDir.$this->fixturesPath.$this->targetFilename.$this->extension,
-            $this->targetFilename,
-            'image/png',
-            null,
-            true
-        );
-
-        $uploadHandler = $uploadHandlerService->toTempFolder($uploadFile);
-        $this->assertInstanceOf(UploadHandlerService::class, $uploadHandler);
-        $fileResult = $uploadHandler->getFile();
-        $this->assertIsArray($fileResult);
-        $this->assertArrayHasKey('file', $fileResult);
-        $this->assertArrayHasKey('titre', $fileResult);
     }
 }

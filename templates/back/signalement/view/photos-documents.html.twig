@@ -45,18 +45,19 @@
 {% endif %}
 
 <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
-    {% for index,photo in signalement.photos %}
+    {% for index, photo in signalement.files|filter(photo => photo.fileType == 'photo') %}
         <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
             <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover"
-                    data-user="{{ photo.username ?? 'N/R' }}" data-mail="{{ photo.date ?? 'N/R' }}"
-                    style="background: url('{{ asset('_up/'~photo.file) }}')no-repeat center center/cover">
-                <a href="{{ asset('_up/'~photo.file) }}"
+                 data-user="{{ photo.user.nomComplet ?? 'N/R' }}" data-mail="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}
+"
+                 style="background: url('{{ asset('_up/'~photo.filename) }}')no-repeat center center/cover">
+                <a href="{{ asset('_up/'~photo.filename) }}"
                     class="fr-btn fr-btn--sm fr-fi-eye-line img-box" title="Voir la photo"
                     target="_blank" rel="noopener"></a>
                 {% if is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted) %}
-                    {% if photo.user is not defined or photo.user is same as(app.user.id) %}
+                    {% if photo.user is not defined or (photo.user is not null and photo.user.id is same as(app.user.id)) %}
                         <button title="Supprimer la photo"
-                                data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'photos',filename:photo.file}) }}"
+                                data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'photos',filename:photo.filename}) }}"
                                 data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
                                 class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line signalement-file-delete"></button>
                     {% endif %}
@@ -65,30 +66,30 @@
         </div>
     {% endfor %}
 </div>
-{% for doc in signalement.documents %}
+{% for index, doc in signalement.files|filter(doc => doc.fileType == 'document') %}
     <div class="fr-grid-row fr-grid-row--middle fr-background-alt--grey fr-rounded fr-p-3v signalement-file-item">
         <div class="fr-col-9">
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-col-lg-2">
-                    {{ doc.date ?? 'N/R' }}
+                    {{ doc.createdAt is defined ? doc.createdAt|date('d.m.Y') : 'N/R' }}
                 </div>
                 <div class="fr-col-12 fr-col-lg-5">
-                    {{ doc.titre }}
+                    {{ doc.title }}
                 </div>
                 <div class="fr-col-12 fr-col-lg-5">
-                    {{ doc.username ?? 'N/R' }}
+                    {{ doc.nomComplet ?? 'N/R' }}
                 </div>
             </div>
         </div>
         <div class="fr-col-3 fr-text--right">
-            <a href="{{ asset('_up/'~doc.file) }}"
+            <a href="{{ asset('_up/'~doc.filename) }}"
                 class="fr-btn fr-btn--sm fr-fi-eye-fill img-box" title="Afficher le document"
                 target="_blank" rel="noopener"></a>
             {% if (is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted))
                 and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION')
                 %}
             <button title="Supprimer le document"
-                    data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'documents',filename:doc.file}) }}"
+                    data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'documents',filename:doc.filename}) }}"
                     data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
                     class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line signalement-file-delete"></button>
             {% endif %}

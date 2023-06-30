@@ -17,26 +17,30 @@ class UploadHandlerService
 {
     public const MAX_FILESIZE = 10 * 1024 * 1024;
 
-    private $file;
+    private array $file = [];
 
     public function __construct(
-        private FilesystemOperator $fileStorage,
-        private ParameterBagInterface $parameterBag,
-        private LoggerInterface $logger,
-        private HeicToJpegConverter $heicToJpegConverter,
-        private FilenameGenerator $filenameGenerator,
+        private readonly FilesystemOperator $fileStorage,
+        private readonly ParameterBagInterface $parameterBag,
+        private readonly LoggerInterface $logger,
+        private readonly HeicToJpegConverter $heicToJpegConverter,
+        private readonly FilenameGenerator $filenameGenerator,
     ) {
-        $this->file = null;
     }
 
+    /**
+     * @throws MaxUploadSizeExceededException
+     * @throws FilesystemException
+     * @throws UnsupportedFileFormatException
+     */
     public function toTempFolder(UploadedFile $file): self|array
     {
         $originalFilename = pathinfo($file->getClientOriginalName(), \PATHINFO_FILENAME);
         if (empty($originalFilename) || !$file->isValid()) {
             return ['error' => 'Erreur lors du téléversement.', 'message' => 'Fichier vide', 'status' => 500];
         }
-        $titre = $originalFilename.'.'.$file->guessExtension();
-        $newFilename = $this->filenameGenerator->generateSafeName($file);
+        $newFilename = $this->filenameGenerator->generate($file);
+        $titre = $this->filenameGenerator->getTitle();
         if ($file->getSize() > self::MAX_FILESIZE) {
             throw new MaxUploadSizeExceededException(self::MAX_FILESIZE);
         }
@@ -53,9 +57,14 @@ class UploadHandlerService
         } catch (FileException $e) {
             $this->logger->error($e->getMessage());
 
-            return ['error' => 'Erreur lors du téléversement.', 'message' => $e->getMessage(), 'status' => 500];
+            return [
+                'error' => 'Erreur lors du téléversement.',
+                'message' => $e->getMessage(),
+                'status' => 500,
+            ];
         }
-        if ($newFilename && '' !== $newFilename && $titre && '' !== $titre) {
+
+        if (!empty($newFilename) && !empty($titre)) {
             $this->file = ['file' => $newFilename, 'titre' => $titre];
         }
 
@@ -131,9 +140,9 @@ class UploadHandlerService
     public function createTmpFileFromBucket($from, $to): void
     {
         $resourceBucket = $this->fileStorage->read($from);
-        $resourceFileSytem = fopen($to, 'w');
-        fwrite($resourceFileSytem, $resourceBucket);
-        fclose($resourceFileSytem);
+        $resourceFileSyStem = fopen($to, 'w');
+        fwrite($resourceFileSyStem, $resourceBucket);
+        fclose($resourceFileSyStem);
     }
 
     public function setKey(string $key): ?array
