@@ -7,7 +7,7 @@
         <br>
         <strong>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</strong>
         <br>
-        effectuée par {{ intervention.partner.nom }} a été mise à jour.
+        effectuée par {{ intervention.partner is not null  ? intervention.partner.nom : 'Non renseigné' }} a été mise à jour.
         <br><br>
         Cliquez sur le bouton ci-dessous pour y accéder.
     </p>
