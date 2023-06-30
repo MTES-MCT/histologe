@@ -13,8 +13,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class InterventionRescheduledSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private VisiteNotifier $visiteNotifier,
-        private SuiviManager $suiviManager,
+        private readonly VisiteNotifier $visiteNotifier,
+        private readonly SuiviManager $suiviManager,
     ) {
     }
 
@@ -29,21 +29,22 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
     {
         $intervention = $event->getIntervention();
         if (InterventionType::VISITE === $intervention->getType()) {
+            $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
             $description = 'Changement de date de visite : la visite du logement initialement prévue le ';
             $description .= $event->getPreviousDate()->format('d/m/Y');
             $description .= ' a été décalée au ';
             $description .= $intervention->getScheduledAt()->format('d/m/Y').'.';
             $description .= '<br>';
-            $description .= 'La visite sera effectuée par '.$intervention->getPartner()->getNom().'.';
+            $description .= 'La visite sera effectuée par '.$partnerName.'.';
             $suivi = $this->suiviManager->createSuivi(
                 user: $event->getUser(),
                 signalement: $intervention->getSignalement(),
-                isPublic: true,
-                context: Suivi::CONTEXT_INTERVENTION,
                 params: [
                     'description' => $description,
                     'type' => Suivi::TYPE_AUTO,
                 ],
+                isPublic: true,
+                context: Suivi::CONTEXT_INTERVENTION,
             );
             $this->suiviManager->save($suivi);
 

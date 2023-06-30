@@ -34,9 +34,10 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
         $intervention = $event->getSubject();
         $currentUser = $this->security->getUser();
         if (InterventionType::VISITE === $intervention->getType()) {
+            $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
             $description = 'Après visite du logement';
             if ($intervention->getPartner()) {
-                $description .= ' par '.$intervention->getPartner()->getNom();
+                $description .= ' par '.$partnerName;
             }
             $description .= ', la situation observée du logement est :<br>';
             foreach ($intervention->getConcludeProcedure() as $concludeProcedure) {
@@ -48,12 +49,12 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
             $suivi = $this->suiviManager->createSuivi(
                 user: $currentUser,
                 signalement: $intervention->getSignalement(),
-                isPublic: $isUsagerNotified,
-                context: Suivi::CONTEXT_INTERVENTION,
                 params: [
                     'description' => $description,
                     'type' => Suivi::TYPE_AUTO,
                 ],
+                isPublic: $isUsagerNotified,
+                context: Suivi::CONTEXT_INTERVENTION,
             );
             $this->suiviManager->save($suivi);
 
