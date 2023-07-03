@@ -30,7 +30,7 @@ class SuiviFactory
     private function buildType(?User $user, array $params): int
     {
         if (isset($params['type'])) {
-            return $params['type'];
+            return (int) $params['type'];
         }
 
         if ($user && \in_array('ROLE_USAGER', $user->getRoles())) {

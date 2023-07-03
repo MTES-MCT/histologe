@@ -11,4 +11,6 @@ interface DossierResponseInterface
     public function getSasEtat(): ?string;
 
     public function getSasCauseRefus(): ?string;
+
+    public function getEtat(): ?string;
 }
