@@ -46,20 +46,21 @@ class NotifyVisitsCommand extends Command
 
         $listFutureVisits = $this->interventionRepository->getFutureVisits();
         foreach ($listFutureVisits as $intervention) {
+            $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
             $signalement = $intervention->getSignalement();
             $description = '<strong>Rappel de visite :</strong> la visite du logement situé';
             $description .= $signalement->getAdresseOccupant().' '.$signalement->getCpOccupant().' '.$signalement->getVilleOccupant();
             $description .= ' aura lieu le '.$intervention->getScheduledAt()->format('d/m/Y');
-            $description .= '<br>La visite sera effectuée par '.$intervention->getPartner()->getNom().'.';
+            $description .= '<br>La visite sera effectuée par '.$partnerName.'.';
             $suivi = $this->suiviManager->createSuivi(
                 user: null,
                 signalement: $intervention->getSignalement(),
-                isPublic: true,
-                context: Suivi::CONTEXT_INTERVENTION,
                 params: [
                     'description' => $description,
                     'type' => Suivi::TYPE_TECHNICAL,
                 ],
+                isPublic: true,
+                context: Suivi::CONTEXT_INTERVENTION,
             );
             $this->suiviManager->save($suivi);
 

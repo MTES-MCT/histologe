@@ -89,17 +89,17 @@ class SignalementVisitesController extends AbstractController
 
         $requestAddData = $request->get('visite-add');
         $visiteRequest = new VisiteRequest(
+            idIntervention: $requestAddData['intervention'] ?? null,
             date: $requestAddData['date'],
             time: $requestAddData['time'],
             idPartner: $requestAddData['partner'],
-            idIntervention: $requestAddData['intervention'] ?? null,
             details: $requestAddData['details'] ?? null,
             concludeProcedure: $requestAddData['concludeProcedure'] ?? null,
             isVisiteDone: $requestAddData['visiteDone'] ?? null,
             isOccupantPresent: $requestAddData['occupantPresent'] ?? null,
             isProprietairePresent: $requestAddData['proprietairePresent'] ?? null,
-            document: $fileName,
             isUsagerNotified: !empty($requestAddData['notifyUsager']),
+            document: $fileName,
         );
 
         if ($intervention = $interventionManager->createVisiteFromRequest($signalement, $visiteRequest)) {
@@ -188,17 +188,17 @@ class SignalementVisitesController extends AbstractController
         $fileName = $this->getUploadedFile($request, 'visite-reschedule', $uploadHandler, $filenameGenerator);
 
         $visiteRequest = new VisiteRequest(
+            idIntervention: $requestRescheduleData['intervention'],
             date: $requestRescheduleData['date'],
             time: $requestRescheduleData['time'],
-            idPartner: $requestRescheduleData['partner'] ?? $intervention->getPartner()->getId(),
-            idIntervention: $requestRescheduleData['intervention'],
+            idPartner: $requestRescheduleData['partner'] ?? $intervention->getPartner()?->getId(),
             details: $requestRescheduleData['details'] ?? null,
             concludeProcedure: $requestRescheduleData['concludeProcedure'] ?? null,
             isVisiteDone: $requestRescheduleData['visiteDone'] ?? null,
             isOccupantPresent: $requestRescheduleData['occupantPresent'] ?? null,
             isProprietairePresent: $requestRescheduleData['proprietairePresent'] ?? null,
-            document: $fileName,
             isUsagerNotified: !empty($requestRescheduleData['notifyUsager']),
+            document: $fileName,
         );
 
         if ($intervention = $interventionManager->rescheduleVisiteFromRequest($signalement, $visiteRequest)) {

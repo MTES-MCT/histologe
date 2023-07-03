@@ -41,16 +41,19 @@ class InterventionCanceledSubscriber implements EventSubscriberInterface
             $suivi = $this->suiviManager->createSuivi(
                 user: $currentUser,
                 signalement: $intervention->getSignalement(),
-                isPublic: true,
-                context: Suivi::CONTEXT_INTERVENTION,
                 params: [
                     'description' => $description,
                     'type' => Suivi::TYPE_AUTO,
                 ],
+                isPublic: true,
+                context: Suivi::CONTEXT_INTERVENTION,
             );
             $this->suiviManager->save($suivi);
 
-            $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_CANCELED_TO_USAGER);
+            $this->visiteNotifier->notifyUsagers(
+                $intervention,
+                NotificationMailerType::TYPE_VISITE_CANCELED_TO_USAGER
+            );
 
             $this->visiteNotifier->notifyAgents(
                 intervention: $intervention,

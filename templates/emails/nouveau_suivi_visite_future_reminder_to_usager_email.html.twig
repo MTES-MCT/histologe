@@ -7,7 +7,7 @@
         <strong>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</strong>
         aura lieu le {{intervention.scheduledAt.format('d/m/Y')}}.
         <br>
-        La visite sera effectuée par {{intervention.partner.nom}}.
+        La visite sera effectuée par {{intervention.partner ? intervention.partner.nom : 'Non renseigné'}}.
         <br>
         <strong>Attention :</strong> si vous ne vous présentez pas à cette visite, nous ne pouvons pas garantir
         qu'une nouvelle date de visite vous sera proposée rapidement.

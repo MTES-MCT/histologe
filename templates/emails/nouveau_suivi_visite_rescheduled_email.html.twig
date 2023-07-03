@@ -6,7 +6,7 @@
         La visite du logement initialement prévue le {{ old_date.format('d/m/Y') }} a été décalée au 
         {{ (intervention.scheduledAt.format('H')) > 0 ? intervention.scheduledAt.format('d/m/Y à H:i') : intervention.scheduledAt.format('d/m/Y') }}.
         <br><br>
-        La visite sera effectuée par {{ intervention.partner.nom }}.
+        La visite sera effectuée par {{ intervention.partner ? intervention.partner.nom : 'Non renseigné' }}.
         <br><br>
         Si vous n'êtes pas disponible à cette date, veuillez nous le signaler au plus vite en cliquant sur le bouton ci-dessous.
     </p>

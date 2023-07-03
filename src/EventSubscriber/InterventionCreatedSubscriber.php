@@ -29,19 +29,20 @@ class InterventionCreatedSubscriber implements EventSubscriberInterface
     {
         $intervention = $event->getIntervention();
         if (InterventionType::VISITE === $intervention->getType()) {
+            $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
             $description = 'Visite programmée : une visite du logement situé '.$intervention->getSignalement()->getAdresseOccupant();
             $description .= ' est prévue le '.$intervention->getScheduledAt()->format('d/m/Y').'.';
             $description .= '<br>';
-            $description .= 'La visite sera effectuée par '.$intervention->getPartner()->getNom().'.';
+            $description .= 'La visite sera effectuée par '.$partnerName.'.';
             $suivi = $this->suiviManager->createSuivi(
                 user: $event->getUser(),
                 signalement: $intervention->getSignalement(),
-                isPublic: true,
-                context: Suivi::CONTEXT_INTERVENTION,
                 params: [
                     'description' => $description,
                     'type' => Suivi::TYPE_AUTO,
                 ],
+                isPublic: true,
+                context: Suivi::CONTEXT_INTERVENTION,
             );
             $this->suiviManager->save($suivi);
 
