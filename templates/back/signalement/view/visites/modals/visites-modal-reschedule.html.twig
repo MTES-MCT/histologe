@@ -79,7 +79,7 @@
                                             </select>
                                         </fieldset>
                                     {% else %}
-                                        <input type="hidden" name="visite-add[partner]" value="{{ app.user.partner.id }}">
+                                        <input type="hidden" name="visite-reschedule[partner]" value="{{ app.user.partner.id }}">
                                     {% endif %}
 
                                     <div id="visite-reschedule-{{intervention.id}}-past-date-complementary-fields" class="fr-hidden">
