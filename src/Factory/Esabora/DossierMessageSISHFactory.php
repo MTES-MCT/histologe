@@ -52,6 +52,10 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ['uuid' => $signalement->getUuid()]
         );
 
+        $modeContactProprio = \is_array($signalement->getModeContactProprio())
+            ? implode(',', $signalement->getModeContactProprio())
+            : null;
+
         return (new DossierMessageSISH())
             ->setUrl($partner->getEsaboraUrl())
             ->setToken($partner->getEsaboraToken())
@@ -105,7 +109,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setLogementNbNiveaux($signalement->getNbNiveauxLogement())
             ->setProprietaireAverti((int) $signalement->getIsProprioAverti())
             ->setProprietaireAvertiDate($signalement->getProprioAvertiAt()?->format($formatDate))
-            ->setProprietaireAvertiMoyen(implode(',', $signalement->getModeContactProprio()))
+            ->setProprietaireAvertiMoyen($modeContactProprio)
             ->setSignalementScore($signalement->getScore())
             ->setSignalementOrigine(AbstractEsaboraService::SIGNALEMENT_ORIGINE)
             ->setSignalementNumero($signalement->getReference())
