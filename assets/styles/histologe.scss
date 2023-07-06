@@ -483,3 +483,8 @@ hr.blue-border {
 #signalement_dateNaissanceOccupant_day, #signalement_dateNaissanceOccupant_month {
     border-right: 1px solid black;
 }
+
+#btn-display-all-suivis {
+    position: relative;
+    z-index: 1001;
+}
