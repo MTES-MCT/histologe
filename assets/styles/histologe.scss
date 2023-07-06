@@ -7,6 +7,10 @@ html, body {
 
     #signalement-toggle-situations, .reopen, .reaffect, .fr-btn--success.fr-fi-file-pdf-fill, .admin-territory-validation, .signalement-file-item a {
         position: relative;
+        z-index: 1002;
+    }
+
+    #signalement-toggle-situations {
         z-index: 1001;
     }
 }
