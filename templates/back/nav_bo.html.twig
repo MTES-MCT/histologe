@@ -6,7 +6,7 @@
         </button>
         <div class="fr-collapse" id="fr-sidemenu-wrapper">
             <div class="fr-pb-5v">
-                <img src="{{ asset('img/logo_145.png') }}" alt="{{ platform.name }}" width="145px">
+                <img src="{{ asset('img/' ~ platform.logo145) }}" alt="{{ platform.name }}" width="145px">
             </div>
             <div class="fr-sidemenu__title">
                 {% if is_granted('ROLE_ADMIN') %}
