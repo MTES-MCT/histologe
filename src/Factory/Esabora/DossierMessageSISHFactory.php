@@ -52,9 +52,9 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ['uuid' => $signalement->getUuid()]
         );
 
-        if (is_array($signalement->getModeContactProprio())) {
-            $modeContactProprio = implode(',', $signalement->getModeContactProprio());
-        }
+        $modeContactProprio = \is_array($signalement->getModeContactProprio())
+            ? implode(',', $signalement->getModeContactProprio())
+            : null;
 
         return (new DossierMessageSISH())
             ->setUrl($partner->getEsaboraUrl())
