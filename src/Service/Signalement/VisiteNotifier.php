@@ -83,15 +83,17 @@ class VisiteNotifier
         ?Affectation $affectation = null,
     ) {
         if ($notificationMailerType) {
-            $this->notificationMailerRegistry->send(
-                new NotificationMail(
-                    type: $notificationMailerType,
-                    to: $user->getEmail(),
-                    territory: $intervention ? $intervention->getSignalement()->getTerritory() : $affectation->getSignalement()->getTerritory(),
-                    signalement: $intervention ? $intervention->getSignalement() : $affectation->getSignalement(),
-                    intervention: $intervention,
-                )
-            );
+            if ($user->getIsMailingActive()) {
+                $this->notificationMailerRegistry->send(
+                    new NotificationMail(
+                        type: $notificationMailerType,
+                        to: $user->getEmail(),
+                        territory: $intervention ? $intervention->getSignalement()->getTerritory() : $affectation->getSignalement()->getTerritory(),
+                        signalement: $intervention ? $intervention->getSignalement() : $affectation->getSignalement(),
+                        intervention: $intervention,
+                    )
+                );
+            }
         }
 
         $notification = $this->notificationFactory->createInstanceFrom($user, $suivi);
@@ -112,15 +114,17 @@ class VisiteNotifier
         }
 
         foreach ($listUsersToNotify as $user) {
-            $this->notificationMailerRegistry->send(
-                new NotificationMail(
-                    type: NotificationMailerType::TYPE_VISITE_PAST_REMINDER_TO_PARTNER,
-                    to: $user->getEmail(),
-                    territory: $signalement->getTerritory(),
-                    signalement: $signalement,
-                    intervention: $intervention,
-                )
-            );
+            if ($user->getIsMailingActive()) {
+                $this->notificationMailerRegistry->send(
+                    new NotificationMail(
+                        type: NotificationMailerType::TYPE_VISITE_PAST_REMINDER_TO_PARTNER,
+                        to: $user->getEmail(),
+                        territory: $signalement->getTerritory(),
+                        signalement: $signalement,
+                        intervention: $intervention,
+                    )
+                );
+            }
         }
 
         return \count($listUsersToNotify);
