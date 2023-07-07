@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Cron;
 
 use App\Entity\Suivi;
 use App\Manager\InterventionManager;
@@ -22,7 +22,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
     name: 'app:notify-visits',
     description: 'Sends notifications concerning visits'
 )]
-class NotifyVisitsCommand extends Command
+class NotifyVisitsCommand extends AbstractCronCommand
 {
     public function __construct(
         private InterventionRepository $interventionRepository,
@@ -33,7 +33,7 @@ class NotifyVisitsCommand extends Command
         private NotificationMailerRegistry $notificationMailerRegistry,
         private ParameterBagInterface $parameterBag,
     ) {
-        parent::__construct();
+        parent::__construct($this->parameterBag);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
