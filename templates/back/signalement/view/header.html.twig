@@ -57,7 +57,7 @@
                         <button class="fr-btn fr-btn--sm fr-btn--success fr-fi-lock-fill fr-btn--icon-left reopen"
                                 name="signalement-action[reopenAll]" value="1"
                                 onclick="return confirm('Êtes-vous certain de vouloir rouvrir ce signalement pour TOUS les partenaires ?')">
-                            Rouvrir pous tous
+                            Rouvrir pour tous
                         </button>
                     {% endif %}
                     {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or is_granted('ROLE_ADMIN_TERRITORY') %}
