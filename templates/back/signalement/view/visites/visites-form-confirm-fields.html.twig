@@ -1,7 +1,7 @@
 {% if formType is not same as 'edit' %}
     <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
-        <legend class="fr-fieldset__legend fr-text--regular">
-            La visite a-t-elle eu lieu ?*
+        <legend class="fr-fieldset__legend fr-text--regular required">
+            La visite a-t-elle eu lieu ?
         </legend>
         <p id="signalement-confirm-visite-done-error" class="fr-error-text fr-hidden fr-my-3v">
             Veuillez préciser si la visite a eu lieu.
@@ -16,8 +16,8 @@
         </div>
     </fieldset>
     <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
-        <legend class="fr-fieldset__legend fr-text--regular">
-            L'occupant était-il présent ?*
+        <legend class="fr-fieldset__legend fr-text--regular required">
+            L'occupant était-il présent ?
         </legend>
         <p id="signalement-confirm-visite-occupant-present-error" class="fr-error-text fr-hidden fr-my-3v">
             Veuillez préciser si l'occupant était présent.
@@ -32,8 +32,8 @@
         </div>
     </fieldset>
     <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
-        <legend class="fr-fieldset__legend fr-text--regular">
-            Le propriétaire était-il présent ?*
+        <legend class="fr-fieldset__legend fr-text--regular required">
+            Le propriétaire était-il présent ?
         </legend>
         <p id="signalement-confirm-visite-proprietaire-present-error" class="fr-error-text fr-hidden fr-my-3v">
             Veuillez préciser si le propriétaire était présent.
@@ -48,8 +48,8 @@
         </div>
     </fieldset>
     <fieldset id="fieldset-conclude-procedure" class="fr-fieldset fr-fieldset--inline fr-mb-5v fr-hidden">
-        <legend class="fr-fieldset__legend fr-text--regular">
-            Quelle est la conclusion de la visite ?*
+        <legend class="fr-fieldset__legend fr-text--regular required">
+            Quelle est la conclusion de la visite ?
         </legend>
         <p id="signalement-confirm-visite-procedure-error" class="fr-error-text fr-hidden fr-my-3v">
             Veuillez préciser la conclusion de la visite.
@@ -86,8 +86,8 @@
 {% endif %}
 
 <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
-    <legend class="fr-fieldset__legend fr-text--regular">
-        Commentaire de visite*
+    <legend class="fr-fieldset__legend fr-text--regular required">
+        Commentaire de visite
     </legend>
     <p id="signalement-confirm-visite-details-error" class="fr-error-text fr-hidden fr-my-3v">
         Veuillez saisir un commentaire pour la visite.

@@ -21,8 +21,8 @@
                             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-my-3w">
                                 <div class="fr-col-12 fr-mb-3v">
                                     <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
-                                        <legend class="fr-fieldset__legend fr-text--regular">
-                                            Date de la visite*
+                                        <legend class="fr-fieldset__legend fr-text--regular required">
+                                            Date de la visite
                                         </legend>
                                         <p id="signalement-add-visite-date-error" class="fr-error-text fr-hidden fr-my-3v">
                                             Veuillez préciser la date de la visite.
@@ -42,8 +42,8 @@
                                     
                                     {% if is_granted('ROLE_ADMIN_TERRITORY') %}
                                         <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
-                                            <legend class="fr-fieldset__legend fr-text--regular">
-                                                Opérateur de visite*
+                                            <legend class="fr-fieldset__legend fr-text--regular required">
+                                                Opérateur de visite
                                             </legend>
                                             <p id="signalement-add-visite-partner-error" class="fr-error-text fr-hidden fr-my-3v">
                                                 Veuillez sélectionner le partenaire en charge de la visite
