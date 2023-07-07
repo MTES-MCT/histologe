@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Entity\Notification;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -20,6 +21,7 @@ class NotificationVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
+        /** @var User $user */
         $user = $token->getUser();
         if (!$user instanceof UserInterface) {
             return false;
@@ -35,12 +37,12 @@ class NotificationVoter extends Voter
         };
     }
 
-    private function canDelete(Notification $notification, UserInterface $user): bool
+    private function canDelete(Notification $notification, User $user): bool
     {
         return $user->getId() === $notification->getUser()->getId();
     }
 
-    private function canMarkAsRead(Notification $notification, UserInterface $user): bool
+    private function canMarkAsRead(Notification $notification, User $user): bool
     {
         return $user->getId() === $notification->getUser()->getId();
     }

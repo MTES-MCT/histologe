@@ -21,7 +21,7 @@ class WidgetSettings
         $this->firstname = $user->getPrenom();
         $this->lastname = $user->getNom();
         $this->roleLabel = $user->getRoleLabel();
-        $this->canSeeNDE = $canSeeNDE;
+        $this->canSeeNDE = (string) $canSeeNDE;
         $this->partnerName = $user->getPartner()->getNom();
         $this->territoryName = $user->getTerritory()?->getZip().'-'.$user->getTerritory()?->getName();
         $this->territories = $territories;

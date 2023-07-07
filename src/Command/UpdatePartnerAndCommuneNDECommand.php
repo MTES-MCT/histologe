@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Entity\Commune;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Territory;
@@ -121,6 +122,7 @@ class UpdatePartnerAndCommuneNDECommand extends Command
     private function updateCommunes(array $inseeCommunes)
     {
         foreach ($inseeCommunes as $codeInsee) {
+            /** @var Commune $commune */
             $commune = $this->communeRepository->findOneBy(['codeInsee' => $codeInsee]);
             if ($commune) {
                 $this->io->text('<info>Update commune setIsZonePermisLouer </info> : '.$commune->getNom());

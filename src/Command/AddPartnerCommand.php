@@ -10,6 +10,7 @@ use App\Manager\TerritoryManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -108,6 +109,7 @@ class AddPartnerCommand extends Command
         if (null !== $type) {
             $this->io->text(' > <info>'.ucfirst(self::FIELDS['TYPE']).'</info>: '.$type);
         } else {
+            /** @var QuestionHelper $helper */
             $helper = $this->getHelper('question');
             $question = new ChoiceQuestion(
                 'Which type is the partner',
@@ -144,6 +146,7 @@ class AddPartnerCommand extends Command
             if (!empty($insee)) {
                 $this->io->table([self::FIELDS['INSEE']], $insee);
             } else {
+                /** @var QuestionHelper $helper */
                 $helper = $this->getHelper('question');
                 $question = new Question('Enter code'.self::FIELDS['INSEE'].' separated by comma ? ');
                 $insee = $helper->ask($input, $output, $question);
@@ -178,7 +181,8 @@ class AddPartnerCommand extends Command
 
         $this->partnerManager->save($partner);
 
-        $this->io->success(sprintf('%s was successfully created: %s',
+        $this->io->success(sprintf(
+            '%s was successfully created: %s',
             $partner->getNom(),
             $partner->getTerritory()?->getName()
         ));

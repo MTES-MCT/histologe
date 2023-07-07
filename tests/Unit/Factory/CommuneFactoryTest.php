@@ -6,6 +6,7 @@ use App\Entity\Commune;
 use App\Entity\Territory;
 use App\Factory\CommuneFactory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CommuneFactoryTest extends KernelTestCase
@@ -28,7 +29,7 @@ class CommuneFactoryTest extends KernelTestCase
             codePostal: $itemCodePostal,
             codeInsee: $itemCodeCommune
         );
-
+        /** @var ConstraintViolationList $errors */
         $errors = $validator->validate($commune);
         $this->assertEmpty($errors, (string) $errors);
 
@@ -58,6 +59,7 @@ class CommuneFactoryTest extends KernelTestCase
             isZonePermisLouer: true
         );
 
+        /** @var ConstraintViolationList $errors */
         $errors = $validator->validate($commune);
         $this->assertEmpty($errors, (string) $errors);
 

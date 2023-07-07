@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Entity\Tag;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -20,6 +21,7 @@ class TagVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
+        /** @var User $user */
         $user = $token->getUser();
         if (!$user instanceof UserInterface) {
             return false;
@@ -35,12 +37,12 @@ class TagVoter extends Voter
         };
     }
 
-    private function canCreate($subject, UserInterface $user): bool
+    private function canCreate($subject, User $user): bool
     {
         return $user->isTerritoryAdmin();
     }
 
-    private function canDelete(Tag $tag, UserInterface $user): bool
+    private function canDelete(Tag $tag, User $user): bool
     {
         return $this->canCreate($tag, $user) && $tag->getTerritory() === $user->getTerritory();
     }

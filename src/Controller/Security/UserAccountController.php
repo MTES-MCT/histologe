@@ -110,8 +110,9 @@ class UserAccountController extends AbstractController
         EntityManagerInterface $entityManager
     ): RedirectResponse|Response {
         $title = 'Création de votre mot de passe';
-        if ($request->isMethod('POST') && $this->isCsrfTokenValid('create_password_'.$this->getUser()->getId(), $request->get('_csrf_token'))) {
-            $user = $this->getUser();
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($request->isMethod('POST') && $this->isCsrfTokenValid('create_password_'.$user->getId(), $request->get('_csrf_token'))) {
             $password = $hasherFactory->getPasswordHasher($user)->hash($request->get('password'));
             $user->setPassword($password);
             $user->setStatut(User::STATUS_ACTIVE);
@@ -134,9 +135,8 @@ class UserAccountController extends AbstractController
         ActivationTokenGenerator $activationTokenGenerator,
         UserAuthenticatorInterface $userAuthenticator,
         BackOfficeAuthenticator $authenticator,
-        string $token): RedirectResponse|Response
-    {
-        /** @var User $user */
+        string $token
+    ): RedirectResponse|Response {
         if (false === ($user = $activationTokenGenerator->validateToken($token))) {
             $this->addFlash('error', 'Votre lien est invalide ou expiré');
 

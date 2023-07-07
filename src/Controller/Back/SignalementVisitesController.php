@@ -130,7 +130,9 @@ class SignalementVisitesController extends AbstractController
 
         $intervention = $interventionRepository->findOneBy(['id' => $requestData['intervention']]);
         if (!$intervention) {
-            return null;
+            $this->addFlash('error', "Cette visite n'existe pas.");
+
+            return $this->redirectToRoute('back_index');
         }
         $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
 
@@ -171,7 +173,9 @@ class SignalementVisitesController extends AbstractController
 
         $intervention = $interventionRepository->findOneBy(['id' => $requestRescheduleData['intervention']]);
         if (!$intervention) {
-            return null;
+            $this->addFlash('error', "Cette visite n'existe pas.");
+
+            return $this->redirectToRoute('back_index');
         }
         $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
 
@@ -230,7 +234,9 @@ class SignalementVisitesController extends AbstractController
 
         $intervention = $interventionRepository->findOneBy(['id' => $requestData['intervention']]);
         if (!$intervention) {
-            return null;
+            $this->addFlash('error', "Cette visite n'existe pas.");
+
+            return $this->redirectToRoute('back_index');
         }
         $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
 
@@ -278,7 +284,9 @@ class SignalementVisitesController extends AbstractController
 
         $intervention = $interventionRepository->findOneBy(['id' => $requestData['intervention']]);
         if (!$intervention) {
-            return null;
+            $this->addFlash('error', "Cette visite n'existe pas.");
+
+            return $this->redirectToRoute('back_index');
         }
         $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
 

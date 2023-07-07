@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
 use App\Entity\Signalement;
+use App\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -29,6 +30,7 @@ class SignalementVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
+        /** @var User $user */
         $user = $token->getUser();
         if (!$user instanceof UserInterface) {
             return false;
@@ -54,34 +56,34 @@ class SignalementVoter extends Voter
         };
     }
 
-    private function canValidate(Signalement $signalement, UserInterface $user): bool
+    private function canValidate(Signalement $signalement, User $user): bool
     {
         return Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut() && $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
     }
 
-    private function canClose(Signalement $signalement, UserInterface $user): bool
+    private function canClose(Signalement $signalement, User $user): bool
     {
         return $signalement->getStatut() >= Signalement::STATUS_ACTIVE && $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
     }
 
-    private function canDelete(Signalement $signalement, UserInterface $user): bool
+    private function canDelete(Signalement $signalement, User $user): bool
     {
         return $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
     }
 
-    private function canReopen(Signalement $signalement, UserInterface $user): bool
+    private function canReopen(Signalement $signalement, User $user): bool
     {
         return Signalement::STATUS_CLOSED === $signalement->getStatut() && $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
     }
 
-    private function canEdit(Signalement $signalement, UserInterface $user): bool
+    private function canEdit(Signalement $signalement, User $user): bool
     {
         return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
             return $affectation->getPartner()->getId() === $user->getPartner()->getId();
         })->count() > 0 || $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
     }
 
-    private function canView(Signalement $signalement, UserInterface $user): bool
+    private function canView(Signalement $signalement, User $user): bool
     {
         if ($this->canEdit($signalement, $user)) {
             return true;
@@ -90,14 +92,14 @@ class SignalementVoter extends Voter
         return false;
     }
 
-    public function canExport(ArrayCollection $signalements, UserInterface $user): bool
+    public function canExport(ArrayCollection $signalements, User $user): bool
     {
         return $user->isTerritoryAdmin() && 0 == $signalements->filter(function (Signalement $signalement) use ($user) {
             return $signalement->getTerritory() !== $user->getTerritory();
         })->count();
     }
 
-    public function canAddVisite(Signalement $signalement, UserInterface $user): bool
+    public function canAddVisite(Signalement $signalement, User $user): bool
     {
         if (Signalement::STATUS_ACTIVE !== $signalement->getStatut() && Signalement::STATUS_NEED_PARTNER_RESPONSE !== $signalement->getStatut()) {
             return false;

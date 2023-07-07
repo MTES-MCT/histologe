@@ -8,6 +8,7 @@ use App\Manager\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -66,6 +67,7 @@ class CreateSignalementUsagerCommand extends Command
         ]);
 
         if (\count($unaffectedSuivis) > 0) {
+            /** @var QuestionHelper $helper */
             $helper = $this->getHelper('question');
             $question = new ChoiceQuestion(
                 'Do you want to affect unaffected suivis ?',

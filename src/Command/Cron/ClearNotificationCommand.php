@@ -3,6 +3,7 @@
 namespace App\Command\Cron;
 
 use App\Entity\Notification;
+use App\Repository\NotificationRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -31,8 +32,9 @@ class ClearNotificationCommand extends AbstractCronCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-
-        $notifications = $this->entityManager->getRepository(Notification::class)->findOlderThan(30);
+        /** @var NotificationRepository $notificationRepository */
+        $notificationRepository = $this->entityManager->getRepository(Notification::class);
+        $notifications = $notificationRepository->findOlderThan(30);
         foreach ($notifications as $notification) {
             $this->entityManager->remove($notification);
         }

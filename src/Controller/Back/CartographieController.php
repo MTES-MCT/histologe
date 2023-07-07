@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\User;
 use App\Repository\CritereRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;

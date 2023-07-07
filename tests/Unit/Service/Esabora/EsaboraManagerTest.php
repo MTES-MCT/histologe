@@ -10,16 +10,17 @@ use App\Manager\SuiviManager;
 use App\Repository\InterventionRepository;
 use App\Service\Esabora\EsaboraManager;
 use App\Tests\FixturesHelper;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class EsaboraManagerTest extends TestCase
 {
     use FixturesHelper;
 
-    protected AffectationManager $affectationManager;
-    protected SuiviManager $suiviManager;
-    protected InterventionRepository $interventionRepository;
-    protected InterventionFactory $interventionFactory;
+    protected MockObject|AffectationManager $affectationManager;
+    protected MockObject|SuiviManager $suiviManager;
+    protected MockObject|InterventionRepository $interventionRepository;
+    protected MockObject|InterventionFactory $interventionFactory;
 
     protected function setUp(): void
     {

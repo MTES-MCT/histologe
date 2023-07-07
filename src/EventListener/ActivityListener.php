@@ -17,9 +17,9 @@ use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -198,7 +198,9 @@ class ActivityListener implements EventSubscriberInterface
 
     private function removeCurrentUserEmailForNotification(): void
     {
-        $this->tos->removeElement($this->security?->getUser()?->getEmail());
+        /** @var User $user */
+        $user = $this->security?->getUser();
+        $this->tos->removeElement($user?->getEmail());
     }
 
     private function notifyPartner($partner, $entity, $inAppType)

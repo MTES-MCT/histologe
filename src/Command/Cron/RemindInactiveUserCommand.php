@@ -3,6 +3,7 @@
 namespace App\Command\Cron;
 
 use App\Manager\UserManager;
+use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -42,7 +43,9 @@ class RemindInactiveUserCommand extends AbstractCronCommand
     {
         $io = new SymfonyStyle($input, $output);
 
-        $userList = $this->userManager->getRepository()->findInactiveWithNbAffectationPending();
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->userManager->getRepository();
+        $userList = $userRepository->findInactiveWithNbAffectationPending();
         $nbUsers = \count($userList);
         if ($input->getOption('debug')) {
             $io->info(sprintf('%s users will be notified', $nbUsers));

@@ -8,6 +8,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
+use Symfony\Bridge\Twig\Mime\NotificationEmail;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -65,10 +66,11 @@ class AffectationControllerTest extends WebTestCase
         /** @var Suivi $suivi */
         $suivi = $this->suiviRepository->findOneBy(['signalement' => $signalement], ['createdAt' => 'DESC']);
 
-        $this->assertTrue(str_contains(
-            $suivi->getDescription(),
-            'Cela ne me concerne pas, voir avec un autre organisme'
-        )
+        $this->assertTrue(
+            str_contains(
+                $suivi->getDescription(),
+                'Cela ne me concerne pas, voir avec un autre organisme'
+            )
         );
         $this->assertEquals(Suivi::TYPE_AUTO, $suivi->getType());
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
@@ -130,6 +132,7 @@ class AffectationControllerTest extends WebTestCase
 
         $this->assertEmailCount(3);
         $tos = [];
+        /** @var NotificationEmail $message */
         foreach ($this->getMailerMessages() as $message) {
             foreach ($message->getTo() as $to) {
                 $tos[] = $to->getAddress();

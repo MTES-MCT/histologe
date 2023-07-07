@@ -8,6 +8,7 @@ use App\Entity\Territory;
 use App\Factory\PartnerFactory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PartnerFactoryTest extends KernelTestCase
@@ -33,6 +34,7 @@ class PartnerFactoryTest extends KernelTestCase
             type: PartnerType::ADIL,
         );
 
+        /** @var ConstraintViolationList $errors */
         $errors = $this->validator->validate($partner);
         $this->assertEmpty($errors, (string) $errors);
 
@@ -53,6 +55,7 @@ class PartnerFactoryTest extends KernelTestCase
             insee: '99000, 99001'
         );
 
+        /** @var ConstraintViolationList $errors */
         $errors = $this->validator->validate($partner);
         $this->assertEmpty($errors, (string) $errors);
 

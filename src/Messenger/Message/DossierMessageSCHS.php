@@ -51,7 +51,7 @@ final class DossierMessageSCHS implements DossierMessageInterface
         return $this->partnerId;
     }
 
-    public function setPartnerId(?string $partnerId): self
+    public function setPartnerId(?int $partnerId): self
     {
         $this->partnerId = $partnerId;
 

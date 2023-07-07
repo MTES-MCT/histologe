@@ -31,6 +31,7 @@ class UserVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
+        /** @var User $user */
         $user = $token->getUser();
         if (!$user instanceof UserInterface) {
             return false;
@@ -51,7 +52,7 @@ class UserVoter extends Voter
         };
     }
 
-    private function canCreate(User $subject, UserInterface $user): bool
+    private function canCreate(User $subject, User $user): bool
     {
         if ($this->canDelete($subject, $user)) {
             return true;
@@ -60,12 +61,12 @@ class UserVoter extends Voter
         return false;
     }
 
-    private function canDelete(User $subject, UserInterface $user): bool
+    private function canDelete(User $subject, User $user): bool
     {
         return ($user->isTerritoryAdmin() || $user->isPartnerAdmin()) && $user->getTerritory() === $subject->getPartner()->getTerritory();
     }
 
-    private function canEdit(User $subject, UserInterface $user): bool
+    private function canEdit(User $subject, User $user): bool
     {
         if ($this->canDelete($subject, $user)) {
             return true;
@@ -74,22 +75,22 @@ class UserVoter extends Voter
         return $subject->getId() === $user->getId();
     }
 
-    private function canTransfer(User $subject, UserInterface $user): bool
+    private function canTransfer(User $subject, User $user): bool
     {
         return $user->isTerritoryAdmin() && $user->getTerritory() === $subject->getTerritory();
     }
 
-    private function canCheckMail(mixed $subject, UserInterface $user)
+    private function canCheckMail(mixed $subject, User $user)
     {
         return $user->isTerritoryAdmin() || $user->isPartnerAdmin();
     }
 
-    private function canReactive(UserInterface $user)
+    private function canReactive(User $user)
     {
         return $user->isSuperAdmin();
     }
 
-    public function canSeeNde(UserInterface $user): bool
+    public function canSeeNde(User $user): bool
     {
         $experimentationTerritories = $this->parameterBag->get('experimentation_territory');
         $isExperimentationTerritory = \array_key_exists($user->getPartner()->getTerritory()->getZip(), $experimentationTerritories);

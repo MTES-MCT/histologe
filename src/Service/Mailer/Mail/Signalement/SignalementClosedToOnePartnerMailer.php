@@ -2,6 +2,7 @@
 
 namespace App\Service\Mailer\Mail\Signalement;
 
+use App\Entity\User;
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
@@ -31,19 +32,23 @@ class SignalementClosedToOnePartnerMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $signalement = $notificationMail->getSignalement();
+        /** @var User $user */
+        $user = $this->security->getUser();
 
         return [
             'ref_signalement' => $signalement->getReference(),
-            'partner_name' => $this->security->getUser()?->getPartner()->getNom(),
+            'partner_name' => $user?->getPartner()->getNom(),
             'link' => $this->generateLinkSignalementView($signalement->getUuid()),
         ];
     }
 
     public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
     {
+        /** @var User $user */
+        $user = $this->security->getUser();
         $this->mailerSubject = sprintf(
             $this->mailerSubject,
-            $this->security->getUser()?->getPartner()->getNom(),
+            $user?->getPartner()->getNom(),
             $notificationMail?->getSignalement()->getReference()
         );
     }

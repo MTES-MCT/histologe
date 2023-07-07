@@ -10,6 +10,7 @@ use App\Manager\PartnerManager;
 use App\Service\Token\TokenGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserFactoryTest extends KernelTestCase
@@ -46,6 +47,7 @@ class UserFactoryTest extends KernelTestCase
             email: 'john.doe@example.com'
         );
 
+        /** @var ConstraintViolationList $errors */
         $errors = $this->validator->validate($user);
         $this->assertEmpty($errors, (string) $errors);
 
@@ -69,6 +71,7 @@ class UserFactoryTest extends KernelTestCase
             email: 'john.doe@example.com'
         );
 
+        /** @var ConstraintViolationList $errors */
         $errors = $this->validator->validate($user);
         $this->assertEmpty($errors, (string) $errors);
 
@@ -94,6 +97,7 @@ class UserFactoryTest extends KernelTestCase
 
         $user = (new UserFactory($this->tokenGenerator, $this->parameterBag))->createInstanceFromArray($partner, $data);
 
+        /** @var ConstraintViolationList $errors */
         $errors = $this->validator->validate($user);
         $this->assertEmpty($errors, (string) $errors);
 

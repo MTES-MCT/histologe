@@ -32,7 +32,7 @@ class BackStatistiquesControllerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => $email]);
         $client->loginUser($user);
 
-        /** @var Router $router */
+        /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
         $client->request(
             'GET',
@@ -78,7 +78,7 @@ class BackStatistiquesControllerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => $email]);
         $client->loginUser($user);
 
-        /** @var Router $router */
+        /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
         $client->request(
             'GET',
@@ -100,7 +100,7 @@ class BackStatistiquesControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        /** @var Router $router */
+        /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
         $client->request(
             'GET',

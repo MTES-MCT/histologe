@@ -14,12 +14,14 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[AsCommand(
@@ -101,6 +103,7 @@ class AddUserCommand extends Command
         if (null !== $role) {
             $this->io->text(' > <info>'.ucfirst(self::FIELDS['ROLE']).'</info>: '.$role);
         } else {
+            /** @var QuestionHelper $helper */
             $helper = $this->getHelper('question');
             $question = new ChoiceQuestion(
                 'Please select a role (default: ROLE_USER_PARTNER)',
@@ -193,6 +196,7 @@ class AddUserCommand extends Command
 
         $user->setPassword($password)->setStatut(User::STATUS_ACTIVE);
 
+        /** @var ConstraintViolationList $errors */
         $errors = $this->validator->validate($user);
 
         if (\count($errors) > 0) {

@@ -9,6 +9,8 @@ use App\Event\SignalementClosedEvent;
 use App\EventSubscriber\SignalementClosedSubscriber;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
+use App\Repository\SignalementRepository;
+use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -21,11 +23,15 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 class SignalementClosedSubscriberTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
+    private SignalementRepository $signalementRepository;
+    private UserRepository $userRepository;
 
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        $this->signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        $this->userRepository = $this->entityManager->getRepository(User::class);
     }
 
     public function testEventSubscription(): void
@@ -36,20 +42,16 @@ class SignalementClosedSubscriberTest extends KernelTestCase
     public function testOnSignalementClosedForAllPartnerCallNotificationMethods()
     {
         /** @var Signalement $signalementClosed */
-        $signalementClosed = $this->entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-2']);
-        $mailsPartner = $this
-            ->entityManager
-            ->getRepository(Signalement::class)
+        $signalementClosed = $this->signalementRepository->findOneBy(['reference' => '2022-2']);
+        $mailsPartner = $this->signalementRepository
             ->findUsersPartnerEmailAffectedToSignalement($signalementClosed->getId());
 
-        $genericMailsPartner = $this
-            ->entityManager
-            ->getRepository(Signalement::class)
+        $genericMailsPartner = $this->signalementRepository
             ->findPartnersEmailAffectedToSignalement($signalementClosed->getId());
 
         $sendToPartners = array_merge($mailsPartner, $genericMailsPartner);
 
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['statut' => User::STATUS_ACTIVE]);
+        $user = $this->userRepository->findOneBy(['statut' => User::STATUS_ACTIVE]);
 
         $notificationMailerRegistryMock = $this->createMock(NotificationMailerRegistry::class);
         $notificationMailerRegistryMock

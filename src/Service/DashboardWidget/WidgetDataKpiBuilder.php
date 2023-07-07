@@ -53,7 +53,9 @@ class WidgetDataKpiBuilder
     public function createWidgetDataKpiBuilder(): self
     {
         $this->parameters = $this->parameterBag->get('data-kpi')['widgetCards'];
-        $this->user = $this->security->getUser();
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $this->user = $user;
 
         return $this;
     }

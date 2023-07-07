@@ -7,7 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Territory>
+ * @extends ServiceEntityRepository<Commune>
  */
 class CommuneRepository extends ServiceEntityRepository
 {

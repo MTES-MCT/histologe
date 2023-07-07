@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Entity\Notification;
+use App\Entity\User;
 use App\Repository\NotificationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,13 +36,15 @@ class NotificationController extends AbstractController
         EntityManagerInterface $entityManager,
         NotificationRepository $notificationRepository,
     ) {
+        /** @var User $user */
+        $user = $this->getUser();
         if ($request->get('selected_notifications')) {
-            if ($this->isCsrfTokenValid('mark_as_read_'.$this->getUser()->getId(), $request->get('csrf_token'))) {
+            if ($this->isCsrfTokenValid('mark_as_read_'.$user->getId(), $request->get('csrf_token'))) {
                 $this->markSelectedAsRead($entityManager, $notificationRepository, explode(',', $request->get('selected_notifications')));
                 $this->addFlash('success', 'Les notifications sélectionnées ont été marquées comme lues.');
             }
         } else {
-            if ($this->isCsrfTokenValid('mark_as_read_'.$this->getUser()->getId(), $request->get('mark_as_read'))) {
+            if ($this->isCsrfTokenValid('mark_as_read_'.$user->getId(), $request->get('mark_as_read'))) {
                 $this->markAllAsRead($entityManager);
                 $this->addFlash('success', 'Toutes les notifications ont été marquées comme lues.');
             }
@@ -56,14 +59,18 @@ class NotificationController extends AbstractController
         EntityManagerInterface $entityManager,
         NotificationRepository $notificationRepository,
     ) {
+        /** @var User $user */
+        $user = $this->getUser();
         if ($request->get('selected_notifications')) {
-            if ($this->isCsrfTokenValid('delete_notifications_'.$this->getUser()->getId(), $request->get('csrf_token'))) {
+            if ($this->isCsrfTokenValid('delete_notifications_'.$user->getId(), $request->get('csrf_token'))) {
                 $this->deleteSelected($entityManager, $notificationRepository, explode(',', $request->get('selected_notifications')));
                 $this->addFlash('success', 'Les notifications sélectionnées ont été supprimées.');
             }
         } else {
-            if ($this->isCsrfTokenValid('delete_all_notifications_'.$this->getUser()->getId(),
-                $request->get('delete_all_notifications'))) {
+            if ($this->isCsrfTokenValid(
+                'delete_all_notifications_'.$user->getId(),
+                $request->get('delete_all_notifications')
+            )) {
                 $this->deleteAllNotifications($entityManager);
                 $this->addFlash('success', 'Toutes les notifications ont été supprimées.');
             }
@@ -88,7 +95,9 @@ class NotificationController extends AbstractController
 
     private function markAllAsRead($em)
     {
-        $notifications = $this->getUser()->getNotifications();
+        /** @var User $user */
+        $user = $this->getUser();
+        $notifications = $user->getNotifications();
         $notifications->filter(function (Notification $notification) use ($em) {
             $this->denyAccessUnlessGranted('NOTIF_MARK_AS_READ', $notification);
             $notification->setIsSeen(true);
@@ -112,7 +121,9 @@ class NotificationController extends AbstractController
 
     private function deleteAllNotifications($em)
     {
-        $notifications = $this->getUser()->getNotifications();
+        /** @var User $user */
+        $user = $this->getUser();
+        $notifications = $user->getNotifications();
         $notifications->filter(function (Notification $notification) use ($em) {
             $this->denyAccessUnlessGranted('NOTIF_DELETE', $notification);
             $em->remove($notification);

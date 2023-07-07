@@ -4,6 +4,7 @@ namespace App\Controller\Back;
 
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Entity\User;
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Service\Files\FilenameGenerator;
 use App\Service\Files\HeicToJpegConverter;
@@ -81,6 +82,8 @@ class BackSignalementFileController extends AbstractController
             $getMethod = 'get'.ucfirst($type);
             $list = [];
             $type_list = $signalement->$getMethod();
+            /** @var User $user */
+            $user = $this->getUser();
 
             /** @var UploadedFile $file */
             foreach ($files[$type] as $file) {
@@ -113,8 +116,8 @@ class BackSignalementFileController extends AbstractController
                         $type_list[] = [
                             'file' => $newFilename,
                             'titre' => $titre,
-                            'user' => $this->getUser()->getId(),
-                            'username' => $this->getUser()->getNomComplet(),
+                            'user' => $user->getId(),
+                            'username' => $user->getNomComplet(),
                             'date' => (new DateTimeImmutable())->format('d.m.Y'),
                         ];
                     }
@@ -123,7 +126,7 @@ class BackSignalementFileController extends AbstractController
 
             if (!empty($list)) {
                 $suivi = new Suivi();
-                $suivi->setCreatedBy($this->getUser());
+                $suivi->setCreatedBy($user);
                 $suivi->setDescription('Ajout de '.$type.' au signalement<ul>'.implode('', $list).'</ul>');
                 $suivi->setSignalement($signalement);
                 $suivi->setType(SUIVI::TYPE_AUTO);

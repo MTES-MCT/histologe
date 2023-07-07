@@ -19,7 +19,7 @@ class VisiteRequest
     ) {
     }
 
-    public function getIntervention(): ?string
+    public function getIntervention(): ?int
     {
         return $this->idIntervention;
     }

@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Entity\Partner;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -23,6 +24,7 @@ class PartnerVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
+        /** @var User $user */
         $user = $token->getUser();
         if (!$user instanceof UserInterface) {
             return false;
@@ -41,7 +43,7 @@ class PartnerVoter extends Voter
         };
     }
 
-    private function canEdit(Partner $partner, UserInterface $user): bool
+    private function canEdit(Partner $partner, User $user): bool
     {
         if ($this->canList($user)) {
             return true;
@@ -50,12 +52,12 @@ class PartnerVoter extends Voter
         return $user->getPartner()->getId() === $partner->getId() && $user->isPartnerAdmin();
     }
 
-    private function canList(UserInterface $user): bool
+    private function canList(User $user): bool
     {
         return $user->isTerritoryAdmin();
     }
 
-    private function canView(Partner $partner, UserInterface $user): bool
+    private function canView(Partner $partner, User $user): bool
     {
         if ($this->canList($user)) {
             return true;
@@ -64,7 +66,7 @@ class PartnerVoter extends Voter
         return $user->getPartner()->getId() === $partner->getId();
     }
 
-    private function canDelete(Partner $partner, UserInterface $user): bool
+    private function canDelete(Partner $partner, User $user): bool
     {
         if ($this->canList($user)) {
             return true;
@@ -73,7 +75,7 @@ class PartnerVoter extends Voter
         return $user->getPartner()->getId() === $partner->getId() && $user->isPartnerAdmin();
     }
 
-    private function canCreate(mixed $subject, UserInterface $user)
+    private function canCreate(mixed $subject, User $user)
     {
         return $this->canList($user);
     }
