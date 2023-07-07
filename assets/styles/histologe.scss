@@ -103,7 +103,7 @@ pre {
     border-radius: .25rem;
 }
 
-label.required::after {
+legend.required::after, label.required::after {
     color: #F60700;
     content: '*';
 }
