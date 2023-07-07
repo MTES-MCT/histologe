@@ -492,3 +492,7 @@ hr.blue-border {
     position: relative;
     z-index: 1001;
 }
+
+.tox-tinymce-aux {
+    z-index: 6000 !important;
+}
