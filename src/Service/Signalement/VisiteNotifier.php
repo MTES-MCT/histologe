@@ -58,12 +58,13 @@ class VisiteNotifier
         ?Affectation $affectation = null,
     ): void {
         if ($intervention) {
+            $listUsersPartner = $intervention->getPartner() && $intervention->getPartner() != $currentUser->getPartner() ?
+                $intervention->getPartner()->getUsers()->toArray() : [];
             if ($notifyAdminTerritory) {
                 $listUsersTerritoryAdmin = $this->userRepository->findActiveTerritoryAdmins($intervention->getSignalement()->getTerritory());
-                $listUsersPartner = $intervention->getPartner() ? $intervention->getPartner()->getUsers()->toArray() : [];
                 $listUsersToNotify = array_unique(array_merge($listUsersTerritoryAdmin, $listUsersPartner), \SORT_REGULAR);
             } else {
-                $listUsersToNotify = $intervention->getPartner() ? $intervention->getPartner()->getUsers() : [];
+                $listUsersToNotify = $listUsersPartner;
             }
         } else {
             $listUsersToNotify = $affectation->getPartner()->getUsers();
