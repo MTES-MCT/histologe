@@ -263,7 +263,12 @@
                         <h2>Photo : {{photo.titre}}</h2>
                         <small>Ajouté par {{ photo.username ?? 'N/R' }}</small><br>
                         <small>le {{ photo.date ?? 'N/R' }}</small><br>
-                        <img src="{{ photo.file | image64 }}" style="width:100%" id="{{photo.file}}" alt="{{photo.titre}}"/>
+                        {% set encodedImage = photo.file | image64 %}
+                        {% if encodedImage is not null %}
+                           <img src="{{ photo.file | image64 }}" style="width:100%" id="{{photo.file}}" alt="{{photo.titre}}"/>
+                        {% else %}
+                            La photo n'existe plus
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}
