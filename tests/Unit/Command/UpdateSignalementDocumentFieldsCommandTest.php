@@ -13,6 +13,7 @@ use App\Repository\SignalementRepository;
 use App\Service\Import\CsvParser;
 use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemOperator;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -20,14 +21,14 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class UpdateSignalementDocumentFieldsCommandTest extends TestCase
 {
-    private TerritoryManager $territoryManager;
-    private SignalementManager $signalementManager;
-    private CsvParser $csvParser;
-    private ParameterBagInterface $parameterBag;
-    private FilesystemOperator $fileStorage;
-    private UploadHandlerService $uploadHandlerService;
-    private FileManager $fileManager;
-    private LoggerInterface $logger;
+    private MockObject|TerritoryManager $territoryManager;
+    private MockObject|SignalementManager $signalementManager;
+    private MockObject|CsvParser $csvParser;
+    private MockObject|ParameterBagInterface $parameterBag;
+    private MockObject|FilesystemOperator $fileStorage;
+    private MockObject|UploadHandlerService $uploadHandlerService;
+    private MockObject|FileManager $fileManager;
+    private MockObject|LoggerInterface $logger;
     private Territory $territory;
 
     protected function setUp(): void

@@ -6,6 +6,7 @@ use App\Service\Files\FilenameGenerator;
 use App\Service\Files\HeicToJpegConverter;
 use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemOperator;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -14,11 +15,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UploadHandlerServiceTest extends KernelTestCase
 {
-    private FilesystemOperator $filesystemOperator;
-    private ParameterBagInterface $parameterBag;
-    private LoggerInterface $logger;
-    private HeicToJpegConverter $heicToJpegConverter;
-    private FilenameGenerator $filenameGenerator;
+    private MockObject|FilesystemOperator $filesystemOperator;
+    private MockObject|ParameterBagInterface $parameterBag;
+    private MockObject|LoggerInterface $logger;
+    private MockObject|HeicToJpegConverter $heicToJpegConverter;
+    private MockObject|FilenameGenerator $filenameGenerator;
 
     private string $projectDir = '';
     private string $fixturesPath = '/src/DataFixtures/Images/';

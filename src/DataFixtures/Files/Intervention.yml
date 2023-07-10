@@ -2,3 +2,24 @@ interventions:
   -
     signalement: "2022-1"
     partner: "partenaire-13-01@histologe.fr"
+
+  -
+    signalement: "2023-10"
+    partner: "partenaire-13-06@histologe.fr"
+    scheduled_at: '2023-06-20 10:00:00'
+    status: 'DONE'
+    documents: ['blank-visite.pdf']
+    details: "<p>dossier envoyé à ARS pour une suspicion d'insalubrité</p>"
+    conclude_procedure: ['INSALUBRITE']
+    occupant_present: 1
+    proprietaire_present: 0
+  -
+    signalement: "2023-12"
+    partner: "partenaire-13-05@histologe.fr"
+    scheduled_at: '2023-07-01 10:00:00'
+    status: 'DONE'
+    documents: [ 'blank-64969c273a28a.jpg' ]
+    details: "<p>dossier envoyé au SCHS pour une suspicion d'insalubrité</p>"
+    conclude_procedure: [ 'INSALUBRITE', 'MISE_EN_SECURITE_PERIL' ]
+    occupant_present: 1
+    proprietaire_present: 1

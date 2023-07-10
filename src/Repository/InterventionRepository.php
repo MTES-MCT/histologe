@@ -83,4 +83,14 @@ class InterventionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function getInterventionWithDocuments(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('i');
+
+        return $queryBuilder->where('i.documents NOT LIKE :documents')
+            ->setParameter('documents', '[]')
+            ->getQuery()
+            ->getResult();
+    }
 }

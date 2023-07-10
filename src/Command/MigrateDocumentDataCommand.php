@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -51,6 +52,7 @@ class MigrateDocumentDataCommand extends Command
         $countSignalement = $this->signalementRepository->count(['isImported' => $isImported]);
         $signalements = $this->signalementRepository->findBy(['isImported' => $isImported]);
 
+        /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion(
             sprintf(
@@ -74,6 +76,8 @@ class MigrateDocumentDataCommand extends Command
             $documents = $signalement->getDocuments();
             $this->loadFileByType($signalement, $documents, File::FILE_TYPE_DOCUMENT);
             $progressBar->advance();
+
+            $this->loadFileIntervention($signalement);
 
             if (0 === $index % self::FLUSH_COUNT) {
                 $this->entityManager->flush();
@@ -109,8 +113,40 @@ class MigrateDocumentDataCommand extends Command
                     ->setFileType($type)
                     ->setFilename($fileItem['file'])
                     ->setTitle($fileItem['titre'] ?? $fileItem['file'])
-                    ->setUploadedBy(isset($fileItem['user']) ? $this->userRepository->find($fileItem['user']) : null)
+                    ->setUploadedBy(isset($fileItem['user'])
+                        ? $this->userRepository->find($fileItem['user'])
+                        : null)
                     ->setCreatedAt($createdAt)
+                    ->setSignalement($signalement);
+
+                $this->entityManager->persist($file);
+                unset($file);
+            }
+        }
+    }
+
+    private function loadFileIntervention(Signalement $signalement): void
+    {
+        foreach ($signalement->getInterventions() as $intervention) {
+            foreach ($intervention->getDocuments() as $document) {
+                $file = $this->fileRepository->findOneBy(['filename' => $document]);
+                if (null === $file) {
+                    $file = new File();
+                }
+
+                $fileInfo = pathinfo($document);
+                if (isset($fileInfo['extension'])) {
+                    $type = 'pdf' === $fileInfo['extension']
+                        ? File::FILE_TYPE_DOCUMENT
+                        : File::FILE_TYPE_PHOTO;
+                    $file->setFileType($type);
+                }
+
+                $file
+                    ->setIntervention($intervention)
+                    ->setFilename($document)
+                    ->setTitle($document)
+                    ->setCreatedAt($intervention->getCreatedAt())
                     ->setSignalement($signalement);
 
                 $this->entityManager->persist($file);

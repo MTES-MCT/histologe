@@ -45,7 +45,7 @@
 {% endif %}
 
 <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
-    {% for index, photo in signalement.files|filter(photo => photo.fileType == 'photo') %}
+    {% for index, photo in signalement.files|filter(photo => photo.fileType == 'photo' and photo.intervention is null) %}
         <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
             <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover"
                  data-user="{{ photo.user.nomComplet ?? 'N/R' }}" data-mail="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}
@@ -66,7 +66,7 @@
         </div>
     {% endfor %}
 </div>
-{% for index, doc in signalement.files|filter(doc => doc.fileType == 'document') %}
+{% for index, doc in signalement.files|filter(doc => doc.fileType == 'document' and doc.intervention is null) %}
     <div class="fr-grid-row fr-grid-row--middle fr-background-alt--grey fr-rounded fr-p-3v signalement-file-item">
         <div class="fr-col-9">
             <div class="fr-grid-row">

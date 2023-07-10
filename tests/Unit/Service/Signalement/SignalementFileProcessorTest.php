@@ -8,6 +8,7 @@ use App\Service\Files\FilenameGenerator;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -27,11 +28,11 @@ class SignalementFileProcessorTest extends TestCase
         ],
     ];
 
-    private UploadHandlerService $uploadHandlerService;
-    private LoggerInterface $logger;
-    private FilenameGenerator $filenameGenerator;
-    private UrlGeneratorInterface $urlGenerator;
-    private FileFactory $fileFactory;
+    private MockObject|UploadHandlerService $uploadHandlerService;
+    private MockObject|LoggerInterface $logger;
+    private MockObject|FilenameGenerator $filenameGenerator;
+    private MockObject|UrlGeneratorInterface $urlGenerator;
+    private MockObject|FileFactory $fileFactory;
 
     protected function setUp(): void
     {

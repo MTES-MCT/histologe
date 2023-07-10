@@ -1643,6 +1643,9 @@ class Signalement
         return $this;
     }
 
+    /**
+     * @return Collection|Intervention[]
+     */
     public function getInterventions(): Collection
     {
         return $this->interventions;

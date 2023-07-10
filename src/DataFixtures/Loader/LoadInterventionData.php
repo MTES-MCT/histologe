@@ -3,6 +3,7 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\Enum\InterventionType;
+use App\Entity\Enum\ProcedureType;
 use App\Entity\Intervention;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
@@ -14,11 +15,14 @@ use Symfony\Component\Yaml\Yaml;
 class LoadInterventionData extends Fixture implements OrderedFixtureInterface
 {
     public function __construct(
-        private SignalementRepository $signalementRepository,
-        private PartnerRepository $partnerRepository,
+        private readonly SignalementRepository $signalementRepository,
+        private readonly PartnerRepository $partnerRepository,
     ) {
     }
 
+    /**
+     * @throws \Exception
+     */
     public function load(ObjectManager $manager): void
     {
         $interventionRows = Yaml::parseFile(__DIR__.'/../Files/Intervention.yml');
@@ -29,14 +33,31 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
-    private function loadInterventions(ObjectManager $manager, array $row)
+    /**
+     * @throws \Exception
+     */
+    private function loadInterventions(ObjectManager $manager, array $row): void
     {
         $intervention = (new Intervention())
             ->setSignalement($this->signalementRepository->findOneBy(['reference' => $row['signalement']]))
             ->setPartner($this->partnerRepository->findOneBy(['email' => $row['partner']]))
-            ->setScheduledAt(new \DateTimeImmutable())
+            ->setScheduledAt(isset($row['scheduled_at'])
+                ? new \DateTimeImmutable($row['scheduled_at'])
+                : new \DateTimeImmutable())
             ->setType(InterventionType::VISITE)
-            ->setStatus(Intervention::STATUS_PLANNED);
+            ->setDocuments($row['documents'] ?? [])
+            ->setDetails($row['details'] ?? null)
+            ->setOccupantPresent($row['occupant_present'] ?? null)
+            ->setProprietairePresent($row['proprietaire_present'] ?? null)
+            ->setStatus($row['status'] ?? Intervention::STATUS_PLANNED);
+
+        if (isset($row['conclude_procedure'])) {
+            $concludeProcedures = [];
+            foreach ($row['conclude_procedure'] as $concludeProcedure) {
+                $concludeProcedures[] = ProcedureType::tryFrom($concludeProcedure);
+            }
+            $intervention->setConcludeProcedure($concludeProcedures);
+        }
 
         $manager->persist($intervention);
     }
