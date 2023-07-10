@@ -75,8 +75,7 @@
     </div>
 
 {% elseif
-        not is_granted('ROLE_ADMIN_PARTNER')
-        and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
+        signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
         and not needValidation %}
     <div class="fr-my-3w">
         <h3 class="fr-h5">Partenaires impliqués</h3>
