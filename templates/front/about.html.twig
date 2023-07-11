@@ -9,12 +9,12 @@
                 <div class="fr-col-12 fr-col-md-8">
                     <h1>Qui sommes-nous ?</h1>
                     <h2 class="fr-h6 fr-text--xx-light">
-                        Histologe est un service public permettant de faciliter la détection, le signalement,
+                        {{ platform.name }} est un service public permettant de faciliter la détection, le signalement,
                         l’évaluation, l’envoi d’alertes et le suivi des logements pour accélérer la prise en charge du
                         “mal logement”.
                         <br>
                         <br>
-                        Histologe est une start-up d’Etat portée par le 
+                        {{ platform.name }} est une start-up d’Etat portée par le 
                         <a href="https://www.ecologie.gouv.fr/" target="_blank" rel="noopener">
                         Ministère de la Transition Ecologique et de la Cohésion des territoires
                         </a>
@@ -27,7 +27,7 @@
                 </div>
                 <div class="fr-hidden fr-displayed-md fr-col-md-4 fr-text--center">
                     <figure>
-                        <img src="{{ asset('img/logo-histologe.svg') }}" alt="Logo Histologe" width="240">
+                        <img src="{{ asset('img/' ~ platform.logosvg) }}" alt="Logo {{ platform.name }}" width="240">
                     </figure>
                 </div>
             </div>
@@ -90,7 +90,7 @@
                         <p>
                             <strong>Prix de la grande enquête Initiatives Locales 2020</strong>
                             <br>
-                            Histologe a été primé dans la catégorie "Cadre de vie"
+                            {{ platform.name }} a été primé dans la catégorie "Cadre de vie"
                             parmi plus de 400 candidatures.
                         </p>
                     </div>

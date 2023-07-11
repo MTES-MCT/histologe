@@ -8,26 +8,26 @@
         <meta name="robots" content="index, follow">
     {% endif %}
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Histologe - {% block title %}{% endblock %}</title>
+    <title>{{ platform.name }} - {% block title %}{% endblock %}</title>
     <meta name="description" content="Signaler vos problèmes de logement.">
     <!-- Facebook Meta Tags -->
-    <meta property="og:url" content="https://histologe.beta.gouv.fr/">
+    <meta property="og:url" content="{{ platform.url }}">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Histologe">
+    <meta property="og:title" content="{{ platform.name }}">
     <meta property="og:description" content="Signaler vos problèmes de logement.">
-    <meta property="og:image" content={{ asset('img/Logohistologe.png') }}>
-    <meta property="og:site_name" content="Histologe">
+    <meta property="og:image" content={{ asset('img/' ~ platform.logo) }}>
+    <meta property="og:site_name" content="{{ platform.name }}">
 
     <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta property="twitter:domain" content="https://histologe.beta.gouv.fr/">
-    <meta property="twitter:url" content="https://histologe.beta.gouv.fr/">
-    <meta name="twitter:title" content="Histologe">
+    <meta property="twitter:domain" content="{{ platform.url }}">
+    <meta property="twitter:url" content="{{ platform.url }}">
+    <meta name="twitter:title" content="{{ platform.name }}">
     <meta name="twitter:description" content="Signalez vos problèmes de logement.">
-    <meta name="twitter:image" content={{ asset('img/Logohistologe.png') }}>
-    <meta name="twitter:title" content="Histologe">
+    <meta name="twitter:image" content={{ asset('img/' ~ platform.logo) }}>
+    <meta name="twitter:title" content="{{ platform.name }}">
     <meta name="twitter:description" content="Signalez vos problèmes de logement.">
-    <meta name="apple-mobile-web-app-title" content="Histologe">
+    <meta name="apple-mobile-web-app-title" content="{{ platform.name }}">
     <link rel="icon" href={{ asset('favicon.ico') }}>
     <link rel="stylesheet" href={{ asset('dsfr/dsfr.min.css') }}>
     <link rel="stylesheet" href={{ asset('build/app.css') }}>

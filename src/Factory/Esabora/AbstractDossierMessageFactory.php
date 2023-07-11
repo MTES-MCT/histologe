@@ -14,20 +14,12 @@ abstract class AbstractDossierMessageFactory implements DossierMessageFactoryInt
     protected function buildPiecesJointes(Signalement $signalement): array
     {
         $piecesJointes = [];
-        foreach ($signalement->getDocuments() as $document) {
-            $filepath = $this->uploadHandlerService->getTmpFilepath($document['file']);
+        foreach ($signalement->getFiles() as $file) {
+            $filepath = $this->uploadHandlerService->getTmpFilepath($file->getFilename());
             $piecesJointes[] = [
-                'documentName' => $document['titre'],
+                'documentName' => $file->getTitle(),
                 'documentSize' => filesize($filepath),
-                'documentContent' => $document['file'],
-            ];
-        }
-        foreach ($signalement->getPhotos() as $photo) {
-            $filepath = $this->uploadHandlerService->getTmpFilepath($photo['file']);
-            $piecesJointes[] = [
-                'documentName' => $photo['titre'],
-                'documentSize' => filesize($filepath),
-                'documentContent' => $photo['file'],
+                'documentContent' => $file->getFilename(),
             ];
         }
 

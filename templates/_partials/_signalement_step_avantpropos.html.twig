@@ -42,7 +42,7 @@
             </button>
         </h3>
         <div class="fr-collapse" id="accordion-quel-cas">
-            Histologe permet de signaler les <strong>logements non décents</strong>.
+            {{ platform.name }} permet de signaler les <strong>logements non décents</strong>.
             <br>
             Un logement est décent s’il remplit toutes les conditions suivantes :
             <ul>
@@ -55,7 +55,7 @@
             </ul>
             <em>
                 Si votre logement ne respecte pas un ou plusieurs critères ou si vous avez un doute,
-                déposez votre signalement sur Histologe !
+                déposez votre signalement sur {{ platform.name }} !
             </em>
             <br>
             <div class="fr-alert fr-alert--warning fr-mt-3v">
@@ -103,7 +103,7 @@
             <div class="fr-alert fr-alert--success fr-mt-3v">
                 <p>
                     Pour vous aider, vous pouvez 
-                    <a href="https://faq.histologe.beta.gouv.fr/usager/probleme-logement/avertir-proprietaire" target="_blank" rel="noopener">
+                    <a href="{{ gitbook.faq }}/usager/probleme-logement/avertir-proprietaire" target="_blank" rel="noopener">
                         consulter un modèle de lettre en cliquant ici
                     </a>.
                 </p>
@@ -143,7 +143,7 @@
         <div class="fr-collapse" id="accordion-voir-signalement">
             Les services publics en charge de votre dossier.
             <br>
-            En déposant un signalement sur Histologe, les acteurs publics compétents pouvant
+            En déposant un signalement sur {{ platform.name }}, les acteurs publics compétents pouvant
             vous aider à trouver une solution auront accès à votre signalement. Les services sont variés :
             l’ADIL, la mairie de votre commune, la CAF, l’agence régionale de santé…
             <br>
@@ -166,13 +166,13 @@
     <section class="fr-accordion">
         <h3 class="fr-accordion__title">
             <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-nouveau-logement">
-                Est-ce que Histologe va me permettre d'avoir un nouveau logement ?
+                Est-ce que {{ platform.name }} va me permettre d'avoir un nouveau logement ?
             </button>
         </h3>
         <div class="fr-collapse" id="accordion-nouveau-logement">
             Non.
             <br>
-            L’objectif du service Histologe et de (re)mettre votre logement aux normes.
+            L’objectif du service {{ platform.name }} et de (re)mettre votre logement aux normes.
             Ce n’est pas un service de relogement ou de demande de logement social.
         </div>
     </section>

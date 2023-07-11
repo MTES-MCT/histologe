@@ -58,7 +58,7 @@ class VisiteNotifier
         ?Affectation $affectation = null,
     ): void {
         if ($intervention) {
-            $listUsersPartner = $intervention->getPartner() && $intervention->getPartner() != $currentUser->getPartner() ?
+            $listUsersPartner = $intervention->getPartner() && $intervention->getPartner() != $currentUser?->getPartner() ?
                 $intervention->getPartner()->getUsers()->toArray() : [];
             if ($notifyAdminTerritory) {
                 $listUsersTerritoryAdmin = $this->userRepository->findActiveTerritoryAdmins($intervention->getSignalement()->getTerritory());

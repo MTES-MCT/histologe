@@ -3,7 +3,7 @@
 {% block body %}
     <p>Bonjour, <br>un nouveau suivi est disponible pour le signalement
         <strong>#{{ entity.signalement.reference }}</strong> sur votre plateforme
-        Histologe par
+        {{ platform.name }} par
         <strong>{{
             entity.createdBy
             ? entity.createdBy.nomComplet

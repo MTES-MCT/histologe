@@ -44,6 +44,9 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
+    /**
+     * @throws \Exception
+     */
     private function loadSignalements(ObjectManager $manager, array $row)
     {
         $faker = Factory::create('fr_FR');
@@ -84,15 +87,53 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setIsLogementSocial($row['is_logement_social'])
             ->setIsPreavisDepart(false)
             ->setIsRefusIntervention(false)
-            ->setDocuments([])
+            ->setDocuments([
+                [
+                    'file' => 'test1.23.pdf',
+                    'titre' => 'Fiche reperage.pdf',
+                    'date' => '06.09.2022',
+                ],
+                [
+                    'file' => 'test1.pdf',
+                    'titre' => 'Compte rendu de visite.pdf',
+                    'user' => 22,
+                    'username' => 'Padberg Boyd',
+                    'date' => '06.05.2023',
+                ],
+                [
+                    'file' => 'blank-'.$row['reference'].'.pdf',
+                    'titre' => 'Blank.pdf',
+                    'date' => '06.05.2023',
+                    'user' => 1,
+                ],
+            ])
             ->setPhotos([])
             ->setGeoloc(json_decode($row['geoloc'], true))
             ->setIsRsa(false)
-            ->setCodeSuivi($faker->uuid())
+            ->setCodeSuivi($row['code_suivi'] ?? $faker->uuid())
             ->setUuid($row['uuid'])
             ->setSituationOccupant($row['situation_occupant'])
             ->setValidatedAt(Signalement::STATUS_ACTIVE === $row['statut'] ? new \DateTimeImmutable() : null)
             ->setOrigineSignalement($row['origine_signalement'])
+            ->setPhotos([
+                [
+                    'file' => 'Capture-d-ecran-du-2023-06-13-12-58-43-648b2a6b9730f.png',
+                    'titre' => '20220520_112424.jpg',
+                    'date' => '02.06.2022',
+                ],
+                [
+                    'file' => 'Capture-d-ecran-du-2023-04-07-15-27-36-64302a1b57a20.png',
+                    'titre' => 'IMG_20230220_141432735_HDR.jpg',
+                    'user' => 23,
+                    'username' => 'Kautzer Laverne',
+                ],
+                [
+                    'file' => 'blank-'.$row['reference'].'.jpg',
+                    'titre' => 'Blank.pdf',
+                    'date' => '06.05.2023',
+                    'user' => 1,
+                ],
+            ])
             ->setCreatedAt(
                 isset($row['created_at'])
                     ? new \DateTimeImmutable($row['created_at'])

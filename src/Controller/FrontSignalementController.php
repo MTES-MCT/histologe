@@ -5,17 +5,18 @@ namespace App\Controller;
 use App\Entity\Critere;
 use App\Entity\Criticite;
 use App\Entity\Enum\Qualification;
+use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Situation;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementCreatedEvent;
+use App\Factory\FileFactory;
 use App\Factory\SignalementQualificationFactory;
 use App\Factory\SuiviFactory;
 use App\Form\SignalementType;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
-use App\Repository\CritereRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TerritoryRepository;
@@ -28,14 +29,15 @@ use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\QualificationStatusService;
 use App\Service\Signalement\ReferenceGenerator;
+use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -108,61 +110,57 @@ class FrontSignalementController extends AbstractController
     #[Route('/signalement/envoi', name: 'envoi_signalement', methods: 'POST')]
     public function envoi(
         Request $request,
-        ManagerRegistry $doctrine,
+        EntityManagerInterface $entityManager,
         TerritoryRepository $territoryRepository,
         NotificationMailerRegistry $notificationMailerRegistry,
         UploadHandlerService $uploadHandlerService,
         ReferenceGenerator $referenceGenerator,
         PostalCodeHomeChecker $postalCodeHomeChecker,
         EventDispatcherInterface $eventDispatcher,
-        CritereRepository $critereRepository,
         SignalementQualificationFactory $signalementQualificationFactory,
         QualificationStatusService $qualificationStatusService,
         ValidatorInterface $validator,
         SignalementQualificationUpdater $signalementQualificationUpdater,
         CriticiteCalculator $criticiteCalculator,
+        FileFactory $fileFactory,
     ): Response {
         if ($this->isCsrfTokenValid('new_signalement', $request->request->get('_token'))
             && $data = $request->get('signalement')) {
-            $em = $doctrine->getManager();
             $signalement = new Signalement();
-            $files_array = [];
-
-            $dataDateBail = null;
-            $dataHasDPE = null;
-            $dataDateDPE = null;
-            $dataConsoSizeYear = null;
-            $dataConsoSize = null;
-            $dataConsoYear = null;
+            $dataDateBail = $dataHasDPE = $dataDateDPE = $dataConsoSizeYear = $dataConsoSize = $dataConsoYear = null;
             $listNDECriticites = [];
 
             if (isset($data['files'])) {
                 $dataFiles = $data['files'];
                 foreach ($dataFiles as $key => $files) {
                     foreach ($files as $titre => $file) {
-                        $files_array[$key][] = ['file' => $uploadHandlerService->uploadFromFilename($file), 'titre' => $titre, 'date' => (new DateTimeImmutable())->format('d.m.Y')];
+                        $file = $fileFactory->createInstanceFrom(
+                            filename: $uploadHandlerService->uploadFromFilename($file),
+                            title: $titre,
+                            type: 'documents' === $key ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO
+                        );
+                        if (null !== $file) {
+                            $signalement->addFile($file);
+                        }
                     }
                 }
                 unset($data['files']);
             }
-            if (isset($files_array['documents'])) {
-                $signalement->setDocuments($files_array['documents']);
-            }
-            if (isset($files_array['photos'])) {
-                $signalement->setPhotos($files_array['photos']);
-            }
+
             foreach ($data as $key => $value) {
                 $method = 'set'.ucfirst($key);
                 switch ($key) {
                     case 'situation':
                         foreach ($data[$key] as $idSituation => $criteres) {
-                            $situation = $em->getRepository(Situation::class)->find($idSituation);
+                            $situation = $entityManager->getRepository(Situation::class)->find($idSituation);
                             $signalement->addSituation($situation);
                             foreach ($criteres as $critere) {
                                 foreach ($critere as $idCritere => $criticites) {
-                                    $critere = $em->getRepository(Critere::class)->find($idCritere);
+                                    $critere = $entityManager->getRepository(Critere::class)->find($idCritere);
                                     $signalement->addCritere($critere);
-                                    $criticite = $em->getRepository(Criticite::class)->find($data[$key][$idSituation]['critere'][$idCritere]['criticite']);
+                                    $criticite = $entityManager->getRepository(Criticite::class)->find(
+                                        $data[$key][$idSituation]['critere'][$idCritere]['criticite']
+                                    );
                                     $signalement->addCriticite($criticite);
                                     // TODO : replace getQualification with an array of enum
                                     if (null !== $criticite->getQualification() && \in_array(Qualification::NON_DECENCE_ENERGETIQUE->value, $criticite->getQualification())) {
@@ -281,13 +279,12 @@ class FrontSignalementController extends AbstractController
                     $signalement->addSignalementQualification($signalementQualification);
                     // redéfinit le statut de la qualification après sa création
                     $signalementQualification->setStatus($qualificationStatusService->getNDEStatus($signalementQualification));
-                    $em->persist($signalementQualification);
+                    $entityManager->persist($signalementQualification);
                 }
             }
 
-            $em->persist($signalement);
-            $em->flush();
-            !$signalement->getIsProprioAverti() && $attachment = file_exists($this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf') ? $this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf' : null;
+            $entityManager->persist($signalement);
+            $entityManager->flush();
 
             $toRecipients = $signalement->getMailUsagers();
             foreach ($toRecipients as $toRecipient) {
@@ -297,7 +294,7 @@ class FrontSignalementController extends AbstractController
                         to: $toRecipient,
                         territory: $signalement->getTerritory(),
                         signalement: $signalement,
-                        attachment: $attachment ?? null,
+                        attachment: $this->getModeleCourrierPourProprietaire($signalement),
                     )
                 );
             }
@@ -459,18 +456,21 @@ class FrontSignalementController extends AbstractController
         string $code,
         SignalementRepository $signalementRepository,
         UserRepository $userRepository,
-        UploadHandlerService $uploadHandlerService,
         Request $request,
-        EntityManagerInterface $entityManager
-    ) {
+        EntityManagerInterface $entityManager,
+        SuiviFactory $suiviFactory,
+        SignalementFileProcessor $signalementFileProcessor,
+    ): RedirectResponse {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
             if ($this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {
-                $suivi = new Suivi();
-                $suivi->setIsPublic(true);
                 $email = $request->get('signalement_front_response')['email'];
                 $user = $userRepository->findOneBy(['email' => $email]);
-                $suivi->setCreatedBy($user);
-                $suivi->setType(Suivi::TYPE_USAGER);
+                $suivi = $suiviFactory->createInstanceFrom(
+                    user: $user,
+                    signalement: $signalement,
+                    params: ['type' => Suivi::TYPE_USAGER],
+                    isPublic: true,
+                );
 
                 $description = htmlspecialchars(
                     nl2br($request->get('signalement_front_response')['content']),
@@ -478,34 +478,31 @@ class FrontSignalementController extends AbstractController
                     'UTF-8'
                 );
 
-                $files_array = [
-                    'documents' => $signalement->getDocuments(),
-                    'photos' => $signalement->getPhotos(),
-                ];
-                $list = [];
+                $fileList = $descriptionList = [];
                 if ($data = $request->get('signalement')) {
                     if (isset($data['files'])) {
                         $dataFiles = $data['files'];
-                        foreach ($dataFiles as $key => $files) {
-                            foreach ($files as $titre => $file) {
-                                $files_array[$key][] = ['file' => $uploadHandlerService->uploadFromFilename($file), 'titre' => $titre, 'date' => (new DateTimeImmutable())->format('d.m.Y')];
-                                $list[] = '<li><a class="fr-link" target="_blank" href="'.$this->generateUrl('show_uploaded_file', ['folder' => '_up', 'filename' => $file]).'&t=___TOKEN___">'.$titre.'</a></li>';
-                            }
+                        foreach ($dataFiles as $inputName => $files) {
+                            list($files, $descriptions) = $signalementFileProcessor->process($dataFiles, $inputName);
+                            $fileList = [...$fileList, ...$files];
+                            $descriptionList = [...$descriptionList, ...$descriptions];
                         }
                         unset($data['files']);
                     }
-                    if (!empty($list)) {
-                        $description .= '<br>Ajout de pièces au signalement<ul>'.implode('', $list).'</ul>';
+                    if (!empty($descriptionList)) {
+                        $description .= '<br>Ajout de pièces au signalement<ul>'
+                            .implode('', $descriptionList).'</ul>';
+                        $signalementFileProcessor->addFilesToSignalement($fileList, $signalement);
                     }
                 }
 
-                $signalement->setDocuments($files_array['documents']);
-                $signalement->setPhotos($files_array['photos']);
                 $suivi->setDescription($description);
-                $suivi->setSignalement($signalement);
                 $entityManager->persist($suivi);
                 $entityManager->flush();
-                $this->addFlash('success', "Votre message a bien été envoyé ; vous recevrez un email lorsque votre dossier sera mis à jour. N'hésitez pas à consulter votre page de suivi !");
+                $this->addFlash('success', <<<SUCCESS
+                Votre message a bien été envoyé, vous recevrez un email lorsque votre dossier sera mis à jour.
+                N'hésitez pas à consulter votre page de suivi !
+                SUCCESS);
             }
         } else {
             $this->addFlash('error', 'Une erreur est survenue...');
@@ -516,5 +513,15 @@ class FrontSignalementController extends AbstractController
         }
 
         return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+    }
+
+    private function getModeleCourrierPourProprietaire(Signalement $signalement): ?string
+    {
+        if (!$signalement->getIsProprioAverti()
+            && file_exists($this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf')) {
+            return $this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf';
+        }
+
+        return null;
     }
 }

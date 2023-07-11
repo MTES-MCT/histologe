@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class ContactFormMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_CONTACT_FORM;
-    protected ?string $mailerSubject = 'Vous avez reçu un message depuis la page Histologe';
+    protected ?string $mailerSubject = 'Vous avez reçu un message depuis la page %param.platform_name%';
     protected ?string $mailerTemplate = 'nouveau_mail_front';
 
     public function __construct(
