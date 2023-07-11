@@ -236,10 +236,11 @@
                     {% for suivi in signalement.suivis|reverse %}
                         <tr>
                             <td style="padding:.5rem;width: 15%">
-                                {% if suivi.createdBy is defined and suivi.createdBy is not null %}                                    
+                                {% if suivi.createdBy is defined and suivi.createdBy is not null %}
                                     <b> {{ suivi.createdBy.nom|upper~'. '~ suivi.createdBy.prenom|capitalize }}</b>
                                     <br>
-                                    <small>[{{ suivi.createdBy.partner ? suivi.createdBy.partner.nom : 'Aucun' }}]</small>
+                                    <small>[{{ suivi.createdBy.partner ? suivi.createdBy.partner.nom : 'Aucun' }}
+                                        ]</small>
                                     <br>
                                 {% else %}
                                     <b> Aucun</b>
@@ -255,19 +256,18 @@
         </div>
     {% endif %}
 
-    {% if signalement.photos|length %}
-        <section>
-            {% for index,photo in signalement.photos %}
-                <div class="page" style="padding-top: 25px!important;">
-                    <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
-                        <h2>Photo : {{photo.titre}}</h2>
-                        <small>Ajouté par {{ photo.username ?? 'N/R' }}</small><br>
-                        <small>le {{ photo.date ?? 'N/R' }}</small><br>
-                        <img src="{{ photo.file | image64 }}" style="width:100%" id="{{photo.file}}" alt="{{photo.titre}}"/>
-                    </div>
+    <section>
+        {% for index, photo in signalement.files|filter(photo => photo.fileType == 'photo') %}
+            <div class="page" style="padding-top: 25px!important;">
+                <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
+                    <h2>Photo : {{ photo.title }}</h2>
+                    <small>Ajouté par {{ photo.username ?? 'N/R' }}</small><br>
+                    <small>le {{ photo.date ?? 'N/R' }}</small><br>
+                    <img src="{{ photo.filename | image64 }}" style="width:100%" id="{{ photo.filename }}"
+                         alt="{{ photo.title }}"/>
                 </div>
-            {% endfor %}
-        </section>
-    {% endif %}
+            </div>
+        {% endfor %}
+    </section>
 
 {% endblock %}

@@ -40,6 +40,7 @@ partners:
     esabora_url: "http://histologe_wiremock:8080/ws/rest"
     is_esabora_active: 1
     type: "COMMUNE_SCHS"
+    competence: "VISITES"
   -
     nom: "Partenaire 13-06 ESABORA ARS"
     email: "partenaire-13-06@histologe.fr"
@@ -48,6 +49,7 @@ partners:
     esabora_url: "http://histologe_wiremock:8080/ARS/ws/rest"
     is_esabora_active: 1
     type: "ARS"
+    competence: "VISITES"
   -
     nom: "Partenaire 01-01"
     email: "partenaire-01-01@histologe.fr"

@@ -5,17 +5,17 @@ namespace App\Dto\Request\Signalement;
 class VisiteRequest
 {
     public function __construct(
-        private ?int $idIntervention = null,
-        private ?string $date = null,
-        private ?string $time = null,
-        private ?int $idPartner = null,
-        private ?string $details = null,
-        private ?array $concludeProcedure = [],
-        private ?bool $isVisiteDone = null,
-        private ?bool $isOccupantPresent = null,
-        private ?bool $isProprietairePresent = null,
-        private ?bool $isUsagerNotified = null,
-        private ?string $document = null,
+        private readonly ?int $idIntervention = null,
+        private readonly ?string $date = null,
+        private readonly ?string $time = null,
+        private readonly ?int $idPartner = null,
+        private readonly ?string $details = null,
+        private readonly ?array $concludeProcedure = [],
+        private readonly ?bool $isVisiteDone = null,
+        private readonly ?bool $isOccupantPresent = null,
+        private readonly ?bool $isProprietairePresent = null,
+        private readonly ?bool $isUsagerNotified = null,
+        private readonly ?string $document = null,
     ) {
     }
 

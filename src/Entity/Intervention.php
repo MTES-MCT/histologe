@@ -7,6 +7,8 @@ use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProcedureType;
 use App\Repository\InterventionRepository;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -77,6 +79,14 @@ class Intervention
 
     #[ORM\Column(nullable: true)]
     private ?array $additionalInformation = [];
+
+    #[ORM\OneToMany(mappedBy: 'intervention', targetEntity: File::class, cascade: ['persist'])]
+    private Collection $files;
+
+    public function __construct()
+    {
+        $this->files = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -288,6 +298,36 @@ class Intervention
     public function setAdditionalInformation(?array $additionalInformation): self
     {
         $this->additionalInformation = $additionalInformation;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, File>
+     */
+    public function getFiles(): Collection
+    {
+        return $this->files;
+    }
+
+    public function addFile(File $file): self
+    {
+        if (!$this->files->contains($file)) {
+            $this->files->add($file);
+            $file->setIntervention($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFile(File $file): self
+    {
+        if ($this->files->removeElement($file)) {
+            // set the owning side to null (unless already changed)
+            if ($file->getIntervention() === $this) {
+                $file->setIntervention(null);
+            }
+        }
 
         return $this;
     }
