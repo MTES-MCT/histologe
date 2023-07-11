@@ -2,13 +2,15 @@
 
 namespace App\Service\Files;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class ImageBase64Encoder implements RuntimeExtensionInterface
 {
     public function __construct(
-        private ParameterBagInterface $parameterBag
+        private ParameterBagInterface $parameterBag,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -19,11 +21,13 @@ class ImageBase64Encoder implements RuntimeExtensionInterface
 
             $type = pathinfo($bucketFilepath, \PATHINFO_EXTENSION);
 
-            $data = @file_get_contents($bucketFilepath);
-            if (false !== $data) {
+            try {
+                $data = file_get_contents($bucketFilepath);
                 $data64 = base64_encode($data);
 
                 return "data:image/$type;base64,$data64";
+            } catch (\Throwable $exception) {
+                $this->logger->error($exception->getMessage());
             }
         }
 
