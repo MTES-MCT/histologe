@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class AccountReactivationMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_ACCOUNT_REACTIVATION;
-    protected ?string $mailerSubject = 'Votre compte Histologe est activé !';
+    protected ?string $mailerSubject = 'Votre compte %param.platform_name% est activé !';
     protected ?string $mailerButtonText = 'Accéder à mon compte';
     protected ?string $mailerTemplate = 'reactive_account_email';
 

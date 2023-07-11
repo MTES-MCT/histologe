@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class SignalementFeedbackUsagerThirdMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER_THIRD;
-    protected ?string $mailerSubject = 'Histologe : faites le point sur votre problème de logement !';
+    protected ?string $mailerSubject = '%param.platform_name% : faites le point sur votre problème de logement !';
     protected ?string $mailerTemplate = 'demande_feedback_usager_third_email';
 
     public function __construct(

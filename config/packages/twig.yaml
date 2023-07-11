@@ -1,6 +1,13 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
     globals:
+        platform:
+            name: 'Histologe'
+            logo: 'Logohistologe.png'
+            logo145: 'logo_145.png'
+            logosvg: 'logo-histologe.svg'
+            url: 'https://histologe.beta.gouv.fr'
+            demo: 'https://app.livestorm.co/incubateur-des-territoires/demonstration-histologe?type=detailed'
         gitbook:
             documentation: https://documentation.histologe.beta.gouv.fr
             faq: https://faq.histologe.beta.gouv.fr

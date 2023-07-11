@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class SignalementClosedToUsagerMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_USAGER;
-    protected ?string $mailerSubject = 'Votre signalement sur Histologe est terminé.';
+    protected ?string $mailerSubject = 'Votre signalement sur %param.platform_name% est terminé.';
     protected ?string $mailerButtonText = 'Accéder à mon signalement';
     protected ?string $mailerTemplate = 'closed_to_usager_signalement_email';
 
