@@ -17,6 +17,6 @@ class CacheCommonKeyGenerator
         $user = $this->security->getUser();
         $role = $user?->getRoles();
 
-        return \is_array($role) ? array_shift($role).'-partnerId-'.$user->getPartner()->getId() : null;
+        return \is_array($role) ? array_shift($role).'-partnerId-'.$user?->getPartner()?->getId() : null;
     }
 }
