@@ -56,11 +56,14 @@
         </div>
         <div class="fr-mb-3v">
             <strong>Rapport :</strong>
-            {% if signalement.interventions is empty or intervention.documents is empty %}
+            {% if signalement.interventions is empty or intervention.files is empty %}
                 <span class="fr-badge fr-badge--no-icon" title="Non disponible">Non disponible</span>
             {% else %}
-                <a href="{{ asset('_up/'~intervention.documents[0]) }}"
-                    class="fr-btn fr-btn--sm fr-fi-file-line fr-btn--icon-left" title="Afficher le document" rel="noopener" target="_blank">Voir le rapport de visite</a>
+                <a href="{{ asset('_up/'~intervention.files[0].filename) }}"
+                    class="fr-btn fr-btn--sm fr-fi-file-line fr-btn--icon-left"
+                   title="Afficher le document"
+                   rel="noopener"
+                   target="_blank">Voir le rapport de visite</a>
             {% endif %}
         </div>
     </div>
