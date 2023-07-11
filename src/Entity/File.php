@@ -16,7 +16,7 @@ class File
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'files')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'files')]
     private ?User $uploadedBy = null;
 
     #[ORM\ManyToOne(inversedBy: 'files')]

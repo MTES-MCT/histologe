@@ -80,7 +80,7 @@ class Intervention
     #[ORM\Column(nullable: true)]
     private ?array $additionalInformation = [];
 
-    #[ORM\OneToMany(mappedBy: 'intervention', targetEntity: File::class)]
+    #[ORM\OneToMany(mappedBy: 'intervention', targetEntity: File::class, cascade: ['persist'])]
     private Collection $files;
 
     public function __construct()

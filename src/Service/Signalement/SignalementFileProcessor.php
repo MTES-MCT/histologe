@@ -3,6 +3,7 @@
 namespace App\Service\Signalement;
 
 use App\Entity\File;
+use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Factory\FileFactory;
 use App\Service\Files\FilenameGenerator;
@@ -72,6 +73,7 @@ class SignalementFileProcessor
         array $fileList,
         Signalement $signalement,
         ?UserInterface $user = null,
+        ?Intervention $intervention = null,
     ): void {
         foreach ($fileList as $fileItem) {
             $file = $this->fileFactory->createInstanceFrom(
@@ -79,6 +81,7 @@ class SignalementFileProcessor
                 title: $fileItem['title'],
                 type: $fileItem['type'],
                 user: $user,
+                intervention: $intervention,
             );
             $signalement->addFile($file);
         }

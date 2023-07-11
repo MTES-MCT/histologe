@@ -44,6 +44,9 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
+    /**
+     * @throws \Exception
+     */
     private function loadSignalements(ObjectManager $manager, array $row)
     {
         $faker = Factory::create('fr_FR');

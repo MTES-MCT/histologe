@@ -134,20 +134,16 @@ class MigrateDocumentDataCommand extends Command
                     $file = new File();
                 }
 
-                $fileInfo = pathinfo($document);
-                if (isset($fileInfo['extension'])) {
-                    $type = 'pdf' === $fileInfo['extension']
-                        ? File::FILE_TYPE_DOCUMENT
-                        : File::FILE_TYPE_PHOTO;
-                    $file->setFileType($type);
-                }
-
                 $file
                     ->setIntervention($intervention)
                     ->setFilename($document)
                     ->setTitle($document)
                     ->setCreatedAt($intervention->getCreatedAt())
-                    ->setSignalement($signalement);
+                    ->setSignalement($signalement)
+                    ->setFileType('pdf' === pathinfo($document, \PATHINFO_EXTENSION)
+                        ? File::FILE_TYPE_DOCUMENT
+                        : File::FILE_TYPE_PHOTO
+                    );
 
                 $this->entityManager->persist($file);
                 unset($file);

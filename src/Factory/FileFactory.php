@@ -3,6 +3,7 @@
 namespace App\Factory;
 
 use App\Entity\File;
+use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\User;
 
@@ -14,6 +15,7 @@ class FileFactory
         string $type = null,
         ?Signalement $signalement = null,
         ?User $user = null,
+        ?Intervention $intervention = null,
     ): ?File {
         $file = (new File())
             ->setFilename($filename)
@@ -26,6 +28,10 @@ class FileFactory
 
         if (null !== $user) {
             $file->setUploadedBy($user);
+        }
+
+        if (null !== $intervention) {
+            $file->setIntervention($intervention);
         }
 
         return $file;

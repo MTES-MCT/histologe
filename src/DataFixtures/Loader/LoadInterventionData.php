@@ -43,7 +43,7 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
             ->setPartner($this->partnerRepository->findOneBy(['email' => $row['partner']]))
             ->setScheduledAt(isset($row['scheduled_at'])
                 ? new \DateTimeImmutable($row['scheduled_at'])
-                : new \DateTimeImmutable())
+                : (new \DateTimeImmutable())->modify('+1 month'))
             ->setType(InterventionType::VISITE)
             ->setDocuments($row['documents'] ?? [])
             ->setDetails($row['details'] ?? null)

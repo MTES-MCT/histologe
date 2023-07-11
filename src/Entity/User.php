@@ -109,7 +109,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(nullable: true)]
     private $territory;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: File::class)]
+    #[ORM\OneToMany(mappedBy: 'uploadedBy', targetEntity: File::class)]
     private Collection $files;
 
     #[ORM\Column]

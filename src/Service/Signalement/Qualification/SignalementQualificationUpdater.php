@@ -13,8 +13,8 @@ use App\Manager\SignalementManager;
 class SignalementQualificationUpdater
 {
     public function __construct(
-        private SignalementQualificationFactory $signalementQualificationFactory,
-        private SignalementManager $signalementManager,
+        private readonly SignalementQualificationFactory $signalementQualificationFactory,
+        private readonly SignalementManager $signalementManager,
     ) {
     }
 
@@ -49,14 +49,20 @@ class SignalementQualificationUpdater
     /**
      * IF NOT ADDED YET: In all cases, we add NON_DECENCE and RSD.
      */
-    private function addNonDecenceAndRSDQualification(Signalement $signalement, bool $addNonDecence, bool $addRSD)
+    private function addNonDecenceAndRSDQualification(Signalement $signalement, bool $addNonDecence, bool $addRSD): void
     {
         if ($addNonDecence) {
-            $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::NON_DECENCE, QualificationStatus::NON_DECENCE_CHECK);
+            $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
+                Qualification::NON_DECENCE,
+                QualificationStatus::NON_DECENCE_CHECK
+            );
             $signalement->addSignalementQualification($signalementQualification);
         }
         if ($addRSD) {
-            $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::RSD, QualificationStatus::RSD_CHECK);
+            $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
+                Qualification::RSD,
+                QualificationStatus::RSD_CHECK
+            );
             $signalement->addSignalementQualification($signalementQualification);
         }
     }
@@ -65,17 +71,23 @@ class SignalementQualificationUpdater
      * If score is higher than 10, we add INSALUBRITE_CHECK or INSALUBRITE_MANQUEMENT_CHECK depending on score
      * If criticité with qualification INSALUBRITE, we add INSALUBRITE_CHECK.
      */
-    private function updateInsalubriteQualification(Signalement $signalement, ?SignalementQualification $existingQualificationInsalubrite)
-    {
+    private function updateInsalubriteQualification(
+        Signalement $signalement,
+        ?SignalementQualification $existingQualificationInsalubrite
+    ): void {
         $score = $signalement->getScore();
 
         $statusInsalubrite = null;
         if ($score >= 10) {
-            $statusInsalubrite = $score >= 30 ? QualificationStatus::INSALUBRITE_CHECK : QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK;
+            $statusInsalubrite = $score >= 30
+                ? QualificationStatus::INSALUBRITE_CHECK
+                : QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK;
         }
         $listCriticiteInsalubrite = [];
         foreach ($signalement->getCriticites() as $criticite) {
-            if ($criticite->getQualification() && \in_array(Qualification::INSALUBRITE->value, $criticite->getQualification())) {
+            if ($criticite->getQualification()
+                && \in_array(Qualification::INSALUBRITE->value, $criticite->getQualification())
+            ) {
                 $statusInsalubrite = QualificationStatus::INSALUBRITE_CHECK;
                 $listCriticiteInsalubrite[] = $criticite->getId();
             }
@@ -90,13 +102,21 @@ class SignalementQualificationUpdater
             // But should be changed of status
             } elseif ($statusInsalubrite !== $existingQualificationInsalubrite->getStatus()) {
                 $signalement->removeSignalementQualification($existingQualificationInsalubrite);
-                $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::INSALUBRITE, $statusInsalubrite, $listCriticiteInsalubrite);
+                $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
+                    Qualification::INSALUBRITE,
+                    $statusInsalubrite,
+                    $listCriticiteInsalubrite
+                );
                 $signalement->addSignalementQualification($signalementQualification);
             }
 
         // If not added yet, but should be added
         } elseif (!empty($statusInsalubrite)) {
-            $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::INSALUBRITE, $statusInsalubrite, $listCriticiteInsalubrite);
+            $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
+                Qualification::INSALUBRITE,
+                $statusInsalubrite,
+                $listCriticiteInsalubrite
+            );
             $signalement->addSignalementQualification($signalementQualification);
         }
     }
@@ -104,8 +124,10 @@ class SignalementQualificationUpdater
     /**
      * If one criticité is DANGER, we add DANGER.
      */
-    private function updateDangerQualification(Signalement $signalement, ?SignalementQualification $existingQualificationDanger)
-    {
+    private function updateDangerQualification(
+        Signalement $signalement,
+        ?SignalementQualification $existingQualificationDanger
+    ): void {
         $listCriticiteDanger = [];
         foreach ($signalement->getCriticites() as $criticite) {
             if ($criticite->getIsDanger()) {
@@ -120,12 +142,15 @@ class SignalementQualificationUpdater
             }
         // If not added yet, but should be added
         } elseif (!empty($listCriticiteDanger)) {
-            $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(Qualification::DANGER, QualificationStatus::DANGER_CHECK, $listCriticiteDanger);
+            $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
+                Qualification::DANGER,
+                QualificationStatus::DANGER_CHECK, $listCriticiteDanger
+            );
             $signalement->addSignalementQualification($signalementQualification);
         }
     }
 
-    public function updateQualificationFromVisiteProcedureList(Signalement $signalement, ?array $procedureTypes)
+    public function updateQualificationFromVisiteProcedureList(Signalement $signalement, ?array $procedureTypes): void
     {
         if ($procedureTypes) {
             foreach ($procedureTypes as $procedureType) {
