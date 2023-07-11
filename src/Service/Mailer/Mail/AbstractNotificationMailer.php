@@ -63,7 +63,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         $message->from(
             new Address(
                 $this->parameterBag->get('notifications_email'),
-                'HISTOLOGE - '.mb_strtoupper($territoryName)
+                mb_strtoupper($this->parameterBag->get('platform_name').' - '.$territoryName)
             )
         );
 
@@ -125,9 +125,11 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         return $notification->htmlTemplate('emails/'.$this->mailerTemplate.'.html.twig')
             ->context(array_merge($params, $config))
             ->subject(
-                'HISTOLOGE '.mb_strtoupper((!empty($territory) && null !== $territory->getName())
-                    ? $territory->getName()
-                    : 'ALERTE').' - '.$this->mailerSubject
+                mb_strtoupper($this->parameterBag->get('platform_name'))
+                .' '
+                .mb_strtoupper((!empty($territory) && null !== $territory->getName()) ? $territory->getName() : 'ALERTE')
+                .' - '.
+                str_replace('%param.platform_name%', $this->parameterBag->get('platform_name'), $this->mailerSubject)
             );
     }
 }

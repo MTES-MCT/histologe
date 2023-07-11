@@ -55,7 +55,7 @@ class SignalementVisitesController extends AbstractController
         }
 
         $file = $files['rapport'];
-        $newFilename = $filenameGenerator->generateSafeName($file);
+        $newFilename = $filenameGenerator->generate($file);
         try {
             return $uploadHandler->uploadFromFile($file, $newFilename);
         } catch (MaxUploadSizeExceededException $exception) {
@@ -254,7 +254,7 @@ class SignalementVisitesController extends AbstractController
         $visiteRequest = new VisiteRequest(
             idIntervention: $requestData['intervention'],
             details: $requestData['details'],
-            concludeProcedure: $requestData['concludeProcedure'],
+            concludeProcedure: $requestData['concludeProcedure'] ?? null,
             isVisiteDone: $requestData['visiteDone'],
             isOccupantPresent: $requestData['occupantPresent'],
             isProprietairePresent: $requestData['proprietairePresent'],

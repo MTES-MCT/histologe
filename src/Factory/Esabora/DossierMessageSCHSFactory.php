@@ -74,8 +74,8 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
     private function buildPiecesJointesObservation(Signalement $signalement): string
     {
         $piecesJointesObservation = '';
-        foreach ($signalement->getDocuments() as $document) {
-            $piecesJointesObservation .= $document['titre'].', ';
+        foreach ($signalement->getFiles() as $file) {
+            $piecesJointesObservation .= $file->getTitle().', ';
         }
 
         return $piecesJointesObservation;

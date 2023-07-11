@@ -6,6 +6,7 @@ use App\Command\SlugifyDocumentSignalementCommand;
 use App\Command\UpdateSignalementDocumentFieldsCommand;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Manager\FileManager;
 use App\Manager\SignalementManager;
 use App\Manager\TerritoryManager;
 use App\Repository\SignalementRepository;
@@ -20,13 +21,14 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class UpdateSignalementDocumentFieldsCommandTest extends TestCase
 {
-    private TerritoryManager|MockObject $territoryManager;
-    private SignalementManager|MockObject $signalementManager;
-    private CsvParser|MockObject $csvParser;
-    private ParameterBagInterface|MockObject $parameterBag;
-    private FilesystemOperator|MockObject $fileStorage;
-    private UploadHandlerService|MockObject $uploadHandlerService;
-    private LoggerInterface|MockObject $logger;
+    private MockObject|TerritoryManager $territoryManager;
+    private MockObject|SignalementManager $signalementManager;
+    private MockObject|CsvParser $csvParser;
+    private MockObject|ParameterBagInterface $parameterBag;
+    private MockObject|FilesystemOperator $fileStorage;
+    private MockObject|UploadHandlerService $uploadHandlerService;
+    private MockObject|FileManager $fileManager;
+    private MockObject|LoggerInterface $logger;
     private Territory $territory;
 
     protected function setUp(): void
@@ -37,6 +39,7 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
         $this->parameterBag = $this->createMock(ParameterBagInterface::class);
         $this->fileStorage = $this->createMock(FilesystemOperator::class);
         $this->uploadHandlerService = $this->createMock(UploadHandlerService::class);
+        $this->fileManager = $this->createMock(FileManager::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->territory = (new Territory())->setZip('01')->setName('Ain');
     }
@@ -55,10 +58,16 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
             ->method('findByReferenceChunk')
             ->withConsecutive(
                 [$this->territory, '1000'],
+                [$this->territory, '1000'],
+                [$this->territory, '1001'],
+                [$this->territory, '1001'],
                 [$this->territory, '1001'],
             )
             ->willReturn(
                 (new Signalement())->setTerritory($this->territory)->setReference('2023-1000'),
+                (new Signalement())->setTerritory($this->territory)->setReference('2023-1000'),
+                (new Signalement())->setTerritory($this->territory)->setReference('2023-1001'),
+                (new Signalement())->setTerritory($this->territory)->setReference('2023-1001'),
                 (new Signalement())->setTerritory($this->territory)->setReference('2023-1001'),
             );
 
@@ -117,6 +126,7 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
             $this->parameterBag,
             $this->fileStorage,
             $this->uploadHandlerService,
+            $this->fileManager,
             $this->logger
         );
 
@@ -126,7 +136,7 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
             'zip' => '01',
         ]);
 
-        $this->assertStringContainsString('2 Signalement(s) updated', $commandTester->getDisplay());
+        $this->assertStringContainsString('5 files signalement(s) updated', $commandTester->getDisplay());
     }
 
     public function testDisplayFailedMessageTerritoryDoesNotExist(): void
@@ -144,6 +154,7 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
             $this->parameterBag,
             $this->fileStorage,
             $this->uploadHandlerService,
+            $this->fileManager,
             $this->logger
         );
         $commandTester = new CommandTester($command);
@@ -177,6 +188,7 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
             $this->parameterBag,
             $this->fileStorage,
             $this->uploadHandlerService,
+            $this->fileManager,
             $this->logger
         );
         $commandTester = new CommandTester($command);

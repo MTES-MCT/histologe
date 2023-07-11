@@ -16,15 +16,13 @@ class SuiviFactory
         bool $isPublic = false,
         string $context = ''
     ): Suivi {
-        $suivi = (new Suivi())
+        return (new Suivi())
             ->setCreatedBy($user)
             ->setSignalement($signalement)
             ->setDescription($this->buildDescription($params))
             ->setType($this->buildType($user, $params))
             ->setIsPublic($isPublic)
             ->setContext($context);
-
-        return $suivi;
     }
 
     private function buildType(?User $user, array $params): int

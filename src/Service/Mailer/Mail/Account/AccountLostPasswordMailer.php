@@ -14,7 +14,7 @@ use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 class AccountLostPasswordMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_LOST_PASSWORD;
-    protected ?string $mailerSubject = 'Nouveau mot de passe sur Histologe';
+    protected ?string $mailerSubject = 'Nouveau mot de passe sur %param.platform_name%';
     protected ?string $mailerButtonText = 'Définir mon mot de passe';
     protected ?string $mailerTemplate = 'lost_pass_email';
 

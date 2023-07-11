@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Critere;
 use App\Entity\Criticite;
 use App\Entity\Enum\PartnerType;
+use App\Entity\File;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Situation;
@@ -42,6 +43,26 @@ trait FixturesHelper
             );
     }
 
+    public function getSignalement(): Signalement
+    {
+        $faker = Factory::create('fr_FR');
+
+        return (new Signalement())
+            ->setIsProprioAverti(false)
+            ->setNbAdultes(2)
+            ->setNbEnfantsP6(1)
+            ->setNbEnfantsM6(1)
+            ->setTelOccupant($faker->phoneNumber())
+            ->setAdresseOccupant('25 rue du test')
+            ->setEtageOccupant(2)
+            ->setVilleOccupant($faker->city())
+            ->setCpOccupant(Address::postcode())
+            ->setNumAppartOccupant(2)
+            ->setNomOccupant($faker->lastName())
+            ->setPrenomOccupant($faker->firstName())
+            ->addSuivi($this->getSuiviPartner());
+    }
+
     public function getSignalementAffectation(PartnerType $partnerType): Affectation
     {
         $faker = Factory::create('fr_FR');
@@ -60,34 +81,10 @@ trait FixturesHelper
             ->setLabel('criticite')
             ->setScore(2);
 
-        $signalement = (new Signalement())
+        $signalement = $this->getSignalement();
+        $signalement
             ->addCriticite($criticite)
-            ->setIsProprioAverti(false)
-            ->setNbAdultes(2)
-            ->setNbEnfantsP6(1)
-            ->setNbEnfantsM6(1)
-            ->setTelOccupant($faker->phoneNumber())
-            ->setAdresseOccupant('25 rue du test')
-            ->setEtageOccupant(2)
-            ->setVilleOccupant($faker->city())
-            ->setCpOccupant(Address::postcode())
-            ->setNumAppartOccupant(2)
-            ->setNomOccupant($faker->lastName())
-            ->setPrenomOccupant($faker->firstName())
-            ->setDocuments([
-                [
-                    'file' => $file,
-                    'titre' => 'Doc',
-                    'date' => '02.12.2022', ],
-            ])
-            ->setPhotos([
-                [
-                    'file' => $file,
-                    'titre' => 'Photo',
-                    'date' => '02.12.2022',
-                ],
-            ])
-            ->addSuivi($this->getSuiviPartner());
+            ->addFile($this->getDocumentFile())->addFile($this->getPhotoFile());
 
         $partner = (new Partner())
             ->setNom($faker->company())
@@ -323,5 +320,23 @@ trait FixturesHelper
             ->setName('Ain')
             ->setZip('01')
             ->setIsActive(1);
+    }
+
+    public function getDocumentFile(): File
+    {
+        return (new File())
+            ->setFilename('document.pdf')
+            ->setTitle('Doc')
+            ->setFileType(File::FILE_TYPE_DOCUMENT)
+            ->setCreatedAt(new \DateTimeImmutable('2022-12-02'));
+    }
+
+    public function getPhotoFile(): File
+    {
+        return (new File())
+            ->setFilename('photo.jpg')
+            ->setTitle('Photo')
+            ->setFileType(File::FILE_TYPE_PHOTO)
+            ->setCreatedAt(new \DateTimeImmutable('2022-12-02'));
     }
 }
