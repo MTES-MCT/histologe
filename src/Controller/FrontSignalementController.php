@@ -308,7 +308,10 @@ class FrontSignalementController extends AbstractController
             return $this->json(['response' => 'success']);
         }
 
-        $logger->error('Erreur lors de l\'enregistrement du signalement : '.implode('|', $request->request->all()), $request->request->all());
+        $logger->error(
+            'Erreur lors de l\'enregistrement du signalement : {payload}',
+            ['payload' => $request->request->all()]
+        );
 
         return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
     }
