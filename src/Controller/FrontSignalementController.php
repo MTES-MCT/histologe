@@ -121,6 +121,7 @@ class FrontSignalementController extends AbstractController
         ValidatorInterface $validator,
         SignalementQualificationUpdater $signalementQualificationUpdater,
         CriticiteCalculator $criticiteCalculator,
+        LoggerInterface $logger,
     ): Response {
         if ($this->isCsrfTokenValid('new_signalement', $request->request->get('_token'))
             && $data = $request->get('signalement')) {
@@ -306,6 +307,11 @@ class FrontSignalementController extends AbstractController
 
             return $this->json(['response' => 'success']);
         }
+
+        $logger->error(
+            'Erreur lors de l\'enregistrement du signalement : {payload}',
+            ['payload' => $request->request->all()]
+        );
 
         return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
     }
