@@ -36,7 +36,7 @@ class PostalCodeHomeChecker
 
     public function getZipCode(string $postalCode): string
     {
-        $zipChunk = substr($postalCode, 0, 3);
+        $zipChunk = substr(trim($postalCode), 0, 3);
 
         return match ($zipChunk) {
             '200', '201' => self::CORSE_DU_SUD_CODE_DEPARTMENT_2A,
