@@ -7,6 +7,43 @@
 	},
 	"item": [
 		{
+			"name": "signalement/csrf-token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = JSON.parse(responseBody);",
+							"",
+							"if (null !== data.data) {",
+							"    postman.setEnvironmentVariable(\"csrf_token\", data.csrf_token.value);",
+							"}",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/signalement/csrf-token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"signalement",
+						"csrf-token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "signalement/envoi",
 			"request": {
 				"method": "POST",
@@ -21,22 +58,27 @@
 						},
 						{
 							"key": "signalement[nomDeclarant]",
-							"value": "",
+							"value": " ",
 							"type": "text"
 						},
 						{
 							"key": "signalement[prenomDeclarant]",
-							"value": "",
+							"value": " ",
 							"type": "text"
 						},
 						{
 							"key": "signalement[telDeclarant]",
-							"value": "",
+							"value": " ",
 							"type": "text"
 						},
 						{
 							"key": "signalement[mailDeclarant]",
-							"value": "",
+							"value": " ",
+							"type": "text"
+						},
+						{
+							"key": "signalement[structureDeclarant]",
+							"value": " ",
 							"type": "text"
 						},
 						{
@@ -51,27 +93,22 @@
 						},
 						{
 							"key": "signalement[telOccupant]",
-							"value": "0611451245",
+							"value": "0611000000",
 							"type": "text"
 						},
 						{
 							"key": "signalement[telOccupantBis]",
-							"value": "0116457845",
+							"value": " ",
 							"type": "text"
 						},
 						{
 							"key": "signalement[mailOccupant]",
-							"value": "john.doe@yopmail.com",
+							"value": "john.doe@gmail.com",
 							"type": "text"
 						},
 						{
 							"key": "signalement[adresseOccupant]",
-							"value": "17 Boulevard saade - quai joliette",
-							"type": "text"
-						},
-						{
-							"key": "signalement[villeOccupant]",
-							"value": "Marseille",
+							"value": "25 Rue desiree clary",
 							"type": "text"
 						},
 						{
@@ -80,13 +117,18 @@
 							"type": "text"
 						},
 						{
+							"key": "signalement[villeOccupant]",
+							"value": "Marseille",
+							"type": "text"
+						},
+						{
 							"key": "signalement[geoloc][lat]",
-							"value": "5.364626",
+							"value": "5.364699",
 							"type": "text"
 						},
 						{
 							"key": "signalement[geoloc][lng]",
-							"value": "43.301787",
+							"value": "43.302034",
 							"type": "text"
 						},
 						{
@@ -96,22 +138,22 @@
 						},
 						{
 							"key": "signalement[etageOccupant]",
-							"value": "5",
+							"value": " ",
 							"type": "text"
 						},
 						{
 							"key": "signalement[escalierOccupant]",
-							"value": "Droite",
+							"value": " ",
 							"type": "text"
 						},
 						{
 							"key": "signalement[numAppartOccupant]",
-							"value": "114",
+							"value": " ",
 							"type": "text"
 						},
 						{
 							"key": "signalement[adresseAutreOccupant]",
-							"value": "Les essentielles",
+							"value": "",
 							"type": "text"
 						},
 						{
@@ -121,27 +163,162 @@
 						},
 						{
 							"key": "signalement[adresseProprio]",
-							"value": "80 Rue albe 13004 Marseille",
+							"value": "",
 							"type": "text"
 						},
 						{
 							"key": "signalement[telProprio]",
-							"value": "0809404042",
+							"value": "",
 							"type": "text"
 						},
 						{
 							"key": "signalement[mailProprio]",
-							"value": "cs-stjust@orange.fr",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][8][critere][7][criticite]",
+							"value": "6",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][8][critere][10][criticite]",
+							"value": "12",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][8][critere][13][criticite]",
+							"value": "21",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][8][critere][14][criticite]",
+							"value": "134",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][8][critere][15][criticite]",
+							"value": "24",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][8][critere][56][criticite]",
+							"value": "48",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][8][critere][73][criticite]",
+							"value": "54",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][9][critere][54][criticite]",
+							"value": "42",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][9][critere][58][criticite]",
+							"value": "69",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][9][critere][61][criticite]",
+							"value": "135",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][9][critere][67][criticite]",
+							"value": "122",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][10][critere][64][criticite]",
+							"value": "3",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][10][critere][66][criticite]",
+							"value": "60",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][10][critere][72][criticite]",
+							"value": "63",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][10][critere][76][criticite]",
+							"value": "131",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][11][critere][9][criticite]",
+							"value": "109",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][11][critere][11][criticite]",
+							"value": "15",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][11][critere][77][criticite]",
+							"value": "138",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][11][critere][78][criticite]",
+							"value": "141",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][12][critere][47][criticite]",
+							"value": "86",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][12][critere][51][criticite]",
+							"value": "98",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][13][critere][18][criticite]",
+							"value": "33",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][13][critere][68][criticite]",
+							"value": "101",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][13][critere][69][criticite]",
+							"value": "104",
 							"type": "text"
 						},
 						{
 							"key": "signalement[details]",
-							"value": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+							"value": "Logement indigne, insalubre, et présentant des risques pour la sécurité des personnes. En dépit de plusieurs démarches auprès du propriétaire, nulle réaction. Un huissier a été mandaté par mes soins et j'attends son constat. Multiplication depuis les alertes d'intimidations de toutes sortes.",
+							"type": "text"
+						},
+						{
+							"key": "signalement[consoSizeYear]",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "signalement[consoSize]",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "signalement[consoYear]",
+							"value": "",
 							"type": "text"
 						},
 						{
 							"key": "signalement[isProprioAverti]",
-							"value": "0",
+							"value": "1",
 							"type": "text"
 						},
 						{
@@ -151,17 +328,17 @@
 						},
 						{
 							"key": "signalement[nbEnfantsM6]",
-							"value": "1",
+							"value": "0",
 							"type": "text"
 						},
 						{
 							"key": "signalement[nbEnfantsP6]",
-							"value": "2",
+							"value": "1",
 							"type": "text"
 						},
 						{
 							"key": "signalement[natureLogement]",
-							"value": "appartement",
+							"value": "maison",
 							"type": "text"
 						},
 						{
@@ -176,6 +353,21 @@
 						},
 						{
 							"key": "signalement[numAllocataire]",
+							"value": " ",
+							"type": "text"
+						},
+						{
+							"key": "signalement[dateNaissanceOccupant][day]",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "signalement[dateNaissanceOccupant][month]",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "signalement[dateNaissanceOccupant][year]",
 							"value": "",
 							"type": "text"
 						},
@@ -195,53 +387,18 @@
 							"type": "text"
 						},
 						{
-							"key": "signalement[consoSizeYear]",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "signalement[consoSize]",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "signalement[consoYear]",
-							"value": "",
-							"type": "text"
-						},
-						{
 							"key": "signalement[isCguAccepted]",
 							"value": "on",
 							"type": "text"
 						},
 						{
-							"key": "signalement[files][documents][blank.pdf]",
-							"value": "blank-64ae6632ec4fe.pdf",
+							"key": "is-visite-accepted",
+							"value": "on",
 							"type": "text"
 						},
 						{
-							"key": "signalement[files][photos][blank.jpg]",
-							"value": "blank-64ae65f53b1cd.jpg",
-							"type": "text"
-						},
-						{
-							"key": "signalement[situation][8][critere][74][criticite]",
-							"value": "107",
-							"type": "text"
-						},
-						{
-							"key": "signalement[dateNaissanceOccupant][day]",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "signalement[dateNaissanceOccupant][month]",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "signalement[dateNaissanceOccupant][year]",
-							"value": "",
+							"key": "_token",
+							"value": "{{csrf_token}}",
 							"type": "text"
 						}
 					]

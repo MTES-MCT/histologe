@@ -15,7 +15,6 @@ use App\Factory\SuiviFactory;
 use App\Form\SignalementType;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
-use App\Repository\CritereRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TerritoryRepository;
@@ -115,7 +114,6 @@ class FrontSignalementController extends AbstractController
         ReferenceGenerator $referenceGenerator,
         PostalCodeHomeChecker $postalCodeHomeChecker,
         EventDispatcherInterface $eventDispatcher,
-        CritereRepository $critereRepository,
         SignalementQualificationFactory $signalementQualificationFactory,
         QualificationStatusService $qualificationStatusService,
         ValidatorInterface $validator,
@@ -182,8 +180,11 @@ class FrontSignalementController extends AbstractController
                         break;
 
                     case 'dateNaissanceOccupant':
-                        if ('' !== $value['year'] && '' !== $value['month'] && '' !== $value['day']) {
-                            $value = new DateTimeImmutable($value['year'].'-'.$value['month'].'-'.$value['day']);
+                        $year = trim($value['year']);
+                        $month = trim($value['month']);
+                        $day = trim($value['day']);
+                        if ('' !== $year && '' !== $month && '' !== $day) {
+                            $value = new DateTimeImmutable($year.'-'.$month.'-'.$day);
                             $signalement->$method($value);
                         }
                         break;

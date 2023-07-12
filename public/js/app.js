@@ -627,6 +627,16 @@ forms.forEach((form) => {
 
                     if (nextTabBtn) {
                         if (nextTabBtn.hasAttribute('data-fr-last-step')) {
+                            let inputHiddenElement = document.querySelector(
+                                '#signalement-step-last-panel input[type=hidden]'
+                            );
+
+                            fetch('/signalement/csrf-token')
+                                .then(response => response.json())
+                                .then(obj => {
+                                    inputHiddenElement.value = obj.csrf_token.value;
+                                });
+
                             var nbDocs = 0;
                             var nbPhotos = 0;
                             document.querySelector('#recap-signalement-situation').innerHTML = '';
