@@ -123,12 +123,12 @@
 						},
 						{
 							"key": "signalement[geoloc][lat]",
-							"value": "",
+							"value": "5.364699",
 							"type": "text"
 						},
 						{
 							"key": "signalement[geoloc][lng]",
-							"value": "",
+							"value": "43.302034",
 							"type": "text"
 						},
 						{
