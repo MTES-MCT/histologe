@@ -632,7 +632,7 @@ forms.forEach((form) => {
                             );
 
                             fetch('/signalement/csrf-token')
-                                .then(response => response.json() )
+                                .then(response => response.json())
                                 .then(obj => {
                                     inputHiddenElement.value = obj.csrf_token.value;
                                 });
