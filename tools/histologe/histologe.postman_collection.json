@@ -7,6 +7,43 @@
 	},
 	"item": [
 		{
+			"name": "signalement/csrf-token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = JSON.parse(responseBody);",
+							"",
+							"if (null !== data.data) {",
+							"    postman.setEnvironmentVariable(\"csrf_token\", data.csrf_token.value);",
+							"}",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/signalement/csrf-token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"signalement",
+						"csrf-token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "signalement/envoi",
 			"request": {
 				"method": "POST",
@@ -16,7 +53,7 @@
 					"urlencoded": [
 						{
 							"key": "signalement[isNotOccupant]",
-							"value": " 0",
+							"value": "0",
 							"type": "text"
 						},
 						{
@@ -66,37 +103,37 @@
 						},
 						{
 							"key": "signalement[mailOccupant]",
-							"value": " vesperini.avocat@gmail.com",
+							"value": "john.doe@gmail.com",
 							"type": "text"
 						},
 						{
 							"key": "signalement[adresseOccupant]",
-							"value": " Strada Di È Ciocce",
+							"value": "25 Rue desiree clary",
 							"type": "text"
 						},
 						{
 							"key": "signalement[cpOccupant]",
-							"value": "20228",
+							"value": "13002",
 							"type": "text"
 						},
 						{
 							"key": "signalement[villeOccupant]",
-							"value": " Pino",
+							"value": "Marseille",
 							"type": "text"
 						},
 						{
 							"key": "signalement[geoloc][lat]",
-							"value": " 9.350238",
+							"value": "",
 							"type": "text"
 						},
 						{
 							"key": "signalement[geoloc][lng]",
-							"value": " 42.908518",
+							"value": "",
 							"type": "text"
 						},
 						{
 							"key": "signalement[inseeOccupant]",
-							"value": " 2B233",
+							"value": "13202",
 							"type": "text"
 						},
 						{
@@ -116,22 +153,22 @@
 						},
 						{
 							"key": "signalement[adresseAutreOccupant]",
-							"value": " lieu dit Ciocce",
+							"value": "",
 							"type": "text"
 						},
 						{
 							"key": "signalement[nomProprio]",
-							"value": " Jean-François SANTINI",
+							"value": "13 Habitat",
 							"type": "text"
 						},
 						{
 							"key": "signalement[adresseProprio]",
-							"value": " Strada Di Taverna 20228 Pino",
+							"value": "",
 							"type": "text"
 						},
 						{
 							"key": "signalement[telProprio]",
-							"value": " 0611661651",
+							"value": "",
 							"type": "text"
 						},
 						{
@@ -141,192 +178,192 @@
 						},
 						{
 							"key": "signalement[situation][9][critere][7][criticite]",
-							"value": " 6",
+							"value": "6",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][9][critere][10][criticite]",
-							"value": " 12",
+							"value": "12",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][9][critere][14][criticite]",
-							"value": " 21",
+							"value": "21",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][9][critere][15][criticite]",
-							"value": " 147",
+							"value": "147",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][9][critere][16][criticite]",
-							"value": " 24",
+							"value": "24",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][9][critere][17][criticite]",
-							"value": " 31",
+							"value": "31",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][9][critere][58][criticite]",
-							"value": " 52",
+							"value": "52",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][9][critere][59][criticite]",
-							"value": " 53",
+							"value": "53",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][9][critere][77][criticite]",
-							"value": " 61",
+							"value": "61",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][9][critere][78][criticite]",
-							"value": " 121",
+							"value": "121",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][10][critere][57][criticite]",
-							"value": " 49",
+							"value": "49",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][10][critere][60][criticite]",
-							"value": " 76",
+							"value": "76",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][10][critere][61][criticite]",
-							"value": " 79",
+							"value": "79",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][10][critere][62][criticite]",
-							"value": " 82",
+							"value": "82",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][11][critere][56][criticite]",
-							"value": " 42",
+							"value": "42",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][11][critere][65][criticite]",
-							"value": " 129",
+							"value": "129",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][11][critere][68][criticite]",
-							"value": " 1",
+							"value": "1",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][11][critere][69][criticite]",
-							"value": " 67",
+							"value": "67",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][11][critere][70][criticite]",
-							"value": " 69",
+							"value": "69",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][11][critere][76][criticite]",
-							"value": " 73",
+							"value": "73",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][11][critere][79][criticite]",
-							"value": " 142",
+							"value": "142",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][11][critere][80][criticite]",
-							"value": " 144",
+							"value": "144",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][12][critere][8][criticite]",
-							"value": " 8",
+							"value": "8",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][12][critere][9][criticite]",
-							"value": " 124",
+							"value": "124",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][12][critere][11][criticite]",
-							"value": " 16",
+							"value": "16",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][12][critere][81][criticite]",
-							"value": " 152",
+							"value": "152",
 							"type": "text"
 						},
 						{
 							"key": "signalement[situation][12][critere][82][criticite]",
-							"value": " 154",
+							"value": "154",
 							"type": "text"
 						},
 						{
 							"key": "signalement[details]",
-							"value": " logement indigne, insalubre, et présentant des risques pour la sécurité des personnes. En dépit de plusieurs démarches auprès du propriétaire, nulle réaction. Un huissier a été mandaté par mes soins et j'attends son constat. Multiplication depuis les alertes d'intimidations de toutes sortes.",
+							"value": "Logement indigne, insalubre, et présentant des risques pour la sécurité des personnes. En dépit de plusieurs démarches auprès du propriétaire, nulle réaction. Un huissier a été mandaté par mes soins et j'attends son constat. Multiplication depuis les alertes d'intimidations de toutes sortes.",
 							"type": "text"
 						},
 						{
 							"key": "signalement[consoSizeYear]",
-							"value": " ",
+							"value": "",
 							"type": "text"
 						},
 						{
 							"key": "signalement[consoSize]",
-							"value": " ",
+							"value": "",
 							"type": "text"
 						},
 						{
 							"key": "signalement[consoYear]",
-							"value": " ",
+							"value": "",
 							"type": "text"
 						},
 						{
 							"key": "signalement[isProprioAverti]",
-							"value": " 1",
+							"value": "1",
 							"type": "text"
 						},
 						{
 							"key": "signalement[nbAdultes]",
-							"value": " 2",
+							"value": "2",
 							"type": "text"
 						},
 						{
 							"key": "signalement[nbEnfantsM6]",
-							"value": " 0",
+							"value": "0",
 							"type": "text"
 						},
 						{
 							"key": "signalement[nbEnfantsP6]",
-							"value": " 1",
+							"value": "1",
 							"type": "text"
 						},
 						{
 							"key": "signalement[natureLogement]",
-							"value": " maison",
+							"value": "maison",
 							"type": "text"
 						},
 						{
 							"key": "signalement[superficie]",
-							"value": " 160",
+							"value": "100",
 							"type": "text"
 						},
 						{
 							"key": "signalement[isAllocataire]",
-							"value": " 0",
+							"value": "0",
 							"type": "text"
 						},
 						{
@@ -351,32 +388,32 @@
 						},
 						{
 							"key": "signalement[isLogementSocial]",
-							"value": " 0",
+							"value": "0",
 							"type": "text"
 						},
 						{
 							"key": "signalement[isPreavisDepart]",
-							"value": " ",
+							"value": "0",
 							"type": "text"
 						},
 						{
 							"key": "signalement[isRelogement]",
-							"value": " 0",
+							"value": "0",
 							"type": "text"
 						},
 						{
 							"key": "signalement[isCguAccepted]",
-							"value": " on",
+							"value": "on",
 							"type": "text"
 						},
 						{
 							"key": "is-visite-accepted",
-							"value": " on",
+							"value": "on",
 							"type": "text"
 						},
 						{
 							"key": "_token",
-							"value": "14133e.pS-_Tw_6Fq5WELMOioX54Mml6KMycXD-d1gurGp-nys.kGv1elC2RZwvftE96bKPk5HP0MB2OTyxPGp231wc5WqUVfoZOatO3RxJgw",
+							"value": "{{csrf_token}}",
 							"type": "text"
 						}
 					]
@@ -391,26 +428,6 @@
 					"path": [
 						"signalement",
 						"envoi"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "signalement/csrf-token",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/signalement/csrf-token",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"signalement",
-						"csrf-token"
 					]
 				}
 			},
