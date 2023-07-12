@@ -1,0 +1,265 @@
+{
+	"info": {
+		"_postman_id": "85419c3f-74e9-43d5-b40b-45da0fab2ebc",
+		"name": "histologe",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1569180"
+	},
+	"item": [
+		{
+			"name": "signalement/envoi",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "signalement[isNotOccupant]",
+							"value": "0",
+							"type": "text"
+						},
+						{
+							"key": "signalement[nomDeclarant]",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "signalement[prenomDeclarant]",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "signalement[telDeclarant]",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "signalement[mailDeclarant]",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "signalement[nomOccupant]",
+							"value": "Doe",
+							"type": "text"
+						},
+						{
+							"key": "signalement[prenomOccupant]",
+							"value": "John",
+							"type": "text"
+						},
+						{
+							"key": "signalement[telOccupant]",
+							"value": "0611451245",
+							"type": "text"
+						},
+						{
+							"key": "signalement[telOccupantBis]",
+							"value": "0116457845",
+							"type": "text"
+						},
+						{
+							"key": "signalement[mailOccupant]",
+							"value": "john.doe@yopmail.com",
+							"type": "text"
+						},
+						{
+							"key": "signalement[adresseOccupant]",
+							"value": "17 Boulevard saade - quai joliette",
+							"type": "text"
+						},
+						{
+							"key": "signalement[villeOccupant]",
+							"value": "Marseille",
+							"type": "text"
+						},
+						{
+							"key": "signalement[cpOccupant]",
+							"value": "13002",
+							"type": "text"
+						},
+						{
+							"key": "signalement[geoloc][lat]",
+							"value": "5.364626",
+							"type": "text"
+						},
+						{
+							"key": "signalement[geoloc][lng]",
+							"value": "43.301787",
+							"type": "text"
+						},
+						{
+							"key": "signalement[inseeOccupant]",
+							"value": "13202",
+							"type": "text"
+						},
+						{
+							"key": "signalement[etageOccupant]",
+							"value": "5",
+							"type": "text"
+						},
+						{
+							"key": "signalement[escalierOccupant]",
+							"value": "Droite",
+							"type": "text"
+						},
+						{
+							"key": "signalement[numAppartOccupant]",
+							"value": "114",
+							"type": "text"
+						},
+						{
+							"key": "signalement[adresseAutreOccupant]",
+							"value": "Les essentielles",
+							"type": "text"
+						},
+						{
+							"key": "signalement[nomProprio]",
+							"value": "13 Habitat",
+							"type": "text"
+						},
+						{
+							"key": "signalement[adresseProprio]",
+							"value": "80 Rue albe 13004 Marseille",
+							"type": "text"
+						},
+						{
+							"key": "signalement[telProprio]",
+							"value": "0809404042",
+							"type": "text"
+						},
+						{
+							"key": "signalement[mailProprio]",
+							"value": "cs-stjust@orange.fr",
+							"type": "text"
+						},
+						{
+							"key": "signalement[details]",
+							"value": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+							"type": "text"
+						},
+						{
+							"key": "signalement[isProprioAverti]",
+							"value": "0",
+							"type": "text"
+						},
+						{
+							"key": "signalement[nbAdultes]",
+							"value": "2",
+							"type": "text"
+						},
+						{
+							"key": "signalement[nbEnfantsM6]",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "signalement[nbEnfantsP6]",
+							"value": "2",
+							"type": "text"
+						},
+						{
+							"key": "signalement[natureLogement]",
+							"value": "appartement",
+							"type": "text"
+						},
+						{
+							"key": "signalement[superficie]",
+							"value": "100",
+							"type": "text"
+						},
+						{
+							"key": "signalement[isAllocataire]",
+							"value": "0",
+							"type": "text"
+						},
+						{
+							"key": "signalement[numAllocataire]",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "signalement[isLogementSocial]",
+							"value": "0",
+							"type": "text"
+						},
+						{
+							"key": "signalement[isPreavisDepart]",
+							"value": "0",
+							"type": "text"
+						},
+						{
+							"key": "signalement[isRelogement]",
+							"value": "0",
+							"type": "text"
+						},
+						{
+							"key": "signalement[consoSizeYear]",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "signalement[consoSize]",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "signalement[consoYear]",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "signalement[isCguAccepted]",
+							"value": "on",
+							"type": "text"
+						},
+						{
+							"key": "signalement[files][documents][blank.pdf]",
+							"value": "blank-64ae6632ec4fe.pdf",
+							"type": "text"
+						},
+						{
+							"key": "signalement[files][photos][blank.jpg]",
+							"value": "blank-64ae65f53b1cd.jpg",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][8][critere][74][criticite]",
+							"value": "107",
+							"type": "text"
+						},
+						{
+							"key": "signalement[dateNaissanceOccupant][day]",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "signalement[dateNaissanceOccupant][month]",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "signalement[dateNaissanceOccupant][year]",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/signalement/envoi",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"signalement",
+						"envoi"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
