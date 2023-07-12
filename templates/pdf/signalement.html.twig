@@ -262,9 +262,14 @@
                 <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
                     <h2>Photo : {{ photo.title }}</h2>
                     <small>Ajouté par {{ photo.username ?? 'N/R' }}</small><br>
-                    <small>le {{ photo.date ?? 'N/R' }}</small><br>
-                    <img src="{{ photo.filename | image64 }}" style="width:100%" id="{{ photo.filename }}"
-                         alt="{{ photo.title }}"/>
+                    <small>le {{ photo.date ?? 'N/R' }}</small><br>                    
+                    {% set encodedImage = photo.filename | image64 %}
+                    {% if encodedImage is not null %}                    
+                        <img src="{{ photo.filename | image64 }}" style="width:100%" id="{{ photo.filename }}"
+                                alt="{{ photo.title }}"/>
+                    {% else %}
+                        La photo n'existe plus
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}
