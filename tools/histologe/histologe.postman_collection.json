@@ -173,142 +173,127 @@
 						},
 						{
 							"key": "signalement[mailProprio]",
-							"value": " ",
+							"value": "",
 							"type": "text"
 						},
 						{
-							"key": "signalement[situation][9][critere][7][criticite]",
+							"key": "signalement[situation][8][critere][7][criticite]",
 							"value": "6",
 							"type": "text"
 						},
 						{
-							"key": "signalement[situation][9][critere][10][criticite]",
+							"key": "signalement[situation][8][critere][10][criticite]",
 							"value": "12",
 							"type": "text"
 						},
 						{
-							"key": "signalement[situation][9][critere][14][criticite]",
+							"key": "signalement[situation][8][critere][13][criticite]",
 							"value": "21",
 							"type": "text"
 						},
 						{
-							"key": "signalement[situation][9][critere][15][criticite]",
-							"value": "147",
+							"key": "signalement[situation][8][critere][14][criticite]",
+							"value": "134",
 							"type": "text"
 						},
 						{
-							"key": "signalement[situation][9][critere][16][criticite]",
+							"key": "signalement[situation][8][critere][15][criticite]",
 							"value": "24",
 							"type": "text"
 						},
 						{
-							"key": "signalement[situation][9][critere][17][criticite]",
-							"value": "31",
+							"key": "signalement[situation][8][critere][56][criticite]",
+							"value": "48",
 							"type": "text"
 						},
 						{
-							"key": "signalement[situation][9][critere][58][criticite]",
-							"value": "52",
+							"key": "signalement[situation][8][critere][73][criticite]",
+							"value": "54",
 							"type": "text"
 						},
 						{
-							"key": "signalement[situation][9][critere][59][criticite]",
-							"value": "53",
-							"type": "text"
-						},
-						{
-							"key": "signalement[situation][9][critere][77][criticite]",
-							"value": "61",
-							"type": "text"
-						},
-						{
-							"key": "signalement[situation][9][critere][78][criticite]",
-							"value": "121",
-							"type": "text"
-						},
-						{
-							"key": "signalement[situation][10][critere][57][criticite]",
-							"value": "49",
-							"type": "text"
-						},
-						{
-							"key": "signalement[situation][10][critere][60][criticite]",
-							"value": "76",
-							"type": "text"
-						},
-						{
-							"key": "signalement[situation][10][critere][61][criticite]",
-							"value": "79",
-							"type": "text"
-						},
-						{
-							"key": "signalement[situation][10][critere][62][criticite]",
-							"value": "82",
-							"type": "text"
-						},
-						{
-							"key": "signalement[situation][11][critere][56][criticite]",
+							"key": "signalement[situation][9][critere][54][criticite]",
 							"value": "42",
 							"type": "text"
 						},
 						{
-							"key": "signalement[situation][11][critere][65][criticite]",
-							"value": "129",
-							"type": "text"
-						},
-						{
-							"key": "signalement[situation][11][critere][68][criticite]",
-							"value": "1",
-							"type": "text"
-						},
-						{
-							"key": "signalement[situation][11][critere][69][criticite]",
-							"value": "67",
-							"type": "text"
-						},
-						{
-							"key": "signalement[situation][11][critere][70][criticite]",
+							"key": "signalement[situation][9][critere][58][criticite]",
 							"value": "69",
 							"type": "text"
 						},
 						{
-							"key": "signalement[situation][11][critere][76][criticite]",
-							"value": "73",
+							"key": "signalement[situation][9][critere][61][criticite]",
+							"value": "135",
 							"type": "text"
 						},
 						{
-							"key": "signalement[situation][11][critere][79][criticite]",
-							"value": "142",
+							"key": "signalement[situation][9][critere][67][criticite]",
+							"value": "122",
 							"type": "text"
 						},
 						{
-							"key": "signalement[situation][11][critere][80][criticite]",
-							"value": "144",
+							"key": "signalement[situation][10][critere][64][criticite]",
+							"value": "3",
 							"type": "text"
 						},
 						{
-							"key": "signalement[situation][12][critere][8][criticite]",
-							"value": "8",
+							"key": "signalement[situation][10][critere][66][criticite]",
+							"value": "60",
 							"type": "text"
 						},
 						{
-							"key": "signalement[situation][12][critere][9][criticite]",
-							"value": "124",
+							"key": "signalement[situation][10][critere][72][criticite]",
+							"value": "63",
 							"type": "text"
 						},
 						{
-							"key": "signalement[situation][12][critere][11][criticite]",
-							"value": "16",
+							"key": "signalement[situation][10][critere][76][criticite]",
+							"value": "131",
 							"type": "text"
 						},
 						{
-							"key": "signalement[situation][12][critere][81][criticite]",
-							"value": "152",
+							"key": "signalement[situation][11][critere][9][criticite]",
+							"value": "109",
 							"type": "text"
 						},
 						{
-							"key": "signalement[situation][12][critere][82][criticite]",
-							"value": "154",
+							"key": "signalement[situation][11][critere][11][criticite]",
+							"value": "15",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][11][critere][77][criticite]",
+							"value": "138",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][11][critere][78][criticite]",
+							"value": "141",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][12][critere][47][criticite]",
+							"value": "86",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][12][critere][51][criticite]",
+							"value": "98",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][13][critere][18][criticite]",
+							"value": "33",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][13][critere][68][criticite]",
+							"value": "101",
+							"type": "text"
+						},
+						{
+							"key": "signalement[situation][13][critere][69][criticite]",
+							"value": "104",
 							"type": "text"
 						},
 						{
