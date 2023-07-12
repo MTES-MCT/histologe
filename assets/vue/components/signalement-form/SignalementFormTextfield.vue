@@ -21,7 +21,7 @@ export default defineComponent({
   props: {
     id: { type: String, default: null },
     label: { type: String, default: null },
-    conditional: { type: Object, default: {} },
+    conditional: { type: Object },
     css: { type: String, default: '' },
     onChange: { type: Function }
   },
