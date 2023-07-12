@@ -15,6 +15,7 @@ import './styles/tooltip.scss';
 import './vue/index';
 import './vue/front-stats';
 import './vue/dashboard';
+import './vue/signalement-form';
 
 import './controllers/form_account';
 import './controllers/form_helper';

@@ -29,6 +29,7 @@ parameters:
     cron_enable: '%env(bool:CRON_ENABLE)%'
     mail_enable: '%env(bool:MAIL_ENABLE)%'
     feature_ask_visite: '%env(FEATURE_ASK_VISITE_ENABLE)%'
+    feature_new_form: '%env(FEATURE_NEW_FORM_ENABLE)%'
     platform_name: 'Histologe'
 
 services:
