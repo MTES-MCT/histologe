@@ -22,7 +22,7 @@ enum InterventionType: string
         ];
     }
 
-    public static function fromLabel(string $label): ?self
+    public static function tryFromLabel(string $label): ?self
     {
         $key = array_search($label, self::getLabelList());
 

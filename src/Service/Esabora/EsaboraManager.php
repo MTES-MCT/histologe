@@ -108,7 +108,7 @@ class EsaboraManager
         if (null !== $intervention) {
             $this->updateFromDossierVisite($intervention, $dossierVisiteSISH);
         } else {
-            if (null === InterventionType::fromLabel($dossierVisiteSISH->getVisiteType())) {
+            if (null === InterventionType::tryFromLabel($dossierVisiteSISH->getVisiteType())) {
                 $this->logger->error(
                     sprintf('#%s - Le dossier SISH %s a un type de visite invalide `%s`. Types valides : (%s)',
                         $dossierVisiteSISH->getReferenceDossier(),
@@ -119,7 +119,7 @@ class EsaboraManager
             } else {
                 $newIntervention = $this->interventionFactory->createInstanceFrom(
                     affectation: $affectation,
-                    type: InterventionType::fromLabel($dossierVisiteSISH->getVisiteType()),
+                    type: InterventionType::tryFromLabel($dossierVisiteSISH->getVisiteType()),
                     scheduledAt: DateParser::parse($dossierVisiteSISH->getVisiteDate()),
                     registeredAt: new \DateTimeImmutable(),
                     status: Intervention::STATUS_DONE,
