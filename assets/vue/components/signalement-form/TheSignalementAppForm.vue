@@ -1,56 +1,60 @@
 <template>
     <div
       id="app-signalement-form"
-      class="histo-app-front-stats fr-pt-5w"
+      class="signalement-form fr-pt-5w"
       :data-ajaxurl="sharedProps.ajaxurl"
       >
-      <h1>Nouveau formulaire de signalement</h1>
+      <SignalementFormScreen
+        :label="currentScreen.label"
+        :description="currentScreen.description"
+        :components="currentScreen.components"
+        :changeEvent="changeScreenBySlug"
+      />
     </div>
 </template>
 
 <script lang="ts">
+import screenData from './exemple_socle.json'
 import { defineComponent } from 'vue'
 import { store } from './store'
 // import { requests } from './requests'
+import SignalementFormScreen from './SignalementFormScreen.vue'
 const initElements:any = document.querySelector('#app-front-stats')
 
 export default defineComponent({
   name: 'TheSignalementAppForm',
   components: {
+    SignalementFormScreen
   },
   data () {
+    const currentScreen = screenData[0]
     return {
+      screens: screenData,
       sharedState: store.state,
-      sharedProps: store.props
+      sharedProps: store.props,
+      currentScreen
     }
   },
   created () {
     if (initElements !== null) {
       this.sharedProps.ajaxurl = initElements.dataset.ajaxurl
-      // requests.filter(this.handleRefresh)
-    // } else {
-    //   alert('Error while loading front statistics')
     }
   },
   methods: {
+    changeScreenBySlug (slug:string) {
+      for (const screen of this.screens) {
+        if (screen.slug === slug) {
+          this.currentScreen = screen
+          break
+        }
+      }
+    }
   }
 })
 </script>
 
 <style>
-  .histo-app-front-stats {
+  .signalement-form {
     background-color: '#FFF';
-  }
-  .histo-app-front-stats h1 {
-    text-align: center;
-    color: var(--blue-france-sun-113-625);
-  }
-
-  .histo-app-stats a {
-    color: var(--blue-france-sun-113-625);
-  }
-
-  .loading {
-    font-size: 2rem;
   }
 </style>

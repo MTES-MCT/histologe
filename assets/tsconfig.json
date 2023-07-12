@@ -10,12 +10,13 @@
     "allowJs": true,
     "importHelpers": true,
     "noImplicitAny": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true
   },
   "files": [
     "vue/index.ts",
     "shims-vue.d.ts",
     "shims-tsx.d.ts"
   ],
-  "include": ["vue/**/*.ts", "vue/**/*.vue"]
+  "include": ["vue/**/*.ts", "vue/**/*.vue","vue/**/*.json"]
 }
