@@ -16,7 +16,7 @@
 <script lang="ts">
 import screenData from './exemple_socle.json'
 import { defineComponent } from 'vue'
-import { store } from './store'
+import formStore from './store'
 // import { requests } from './requests'
 import SignalementFormScreen from './SignalementFormScreen.vue'
 const initElements:any = document.querySelector('#app-front-stats')
@@ -30,8 +30,8 @@ export default defineComponent({
     const currentScreen = screenData[0]
     return {
       screens: screenData,
-      sharedState: store.state,
-      sharedProps: store.props,
+      // sharedState: formStore.data,
+      sharedProps: formStore.props,
       currentScreen
     }
   },

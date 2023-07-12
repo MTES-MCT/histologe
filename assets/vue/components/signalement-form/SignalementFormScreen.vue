@@ -9,8 +9,9 @@
       :id="component.slug"
       :label="component.label"
       :action="component.action"
-      :conditional="component.conditional"
       :css="component.css"
+      v-model="formStore.data[component.slug]"
+      :class="{ 'fr-hidden': component.conditional && !formStore.shouldShowField(component.conditional.show) }"
       :clickEvent="handleClickComponent"
     />
   </div>
@@ -18,6 +19,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import formStore from './store'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
 
@@ -33,7 +35,15 @@ export default defineComponent({
     components: Array,
     changeEvent: Function
   },
+  data () {
+    return {
+      formStore
+    }
+  },
   methods: {
+    updateFormData (slug: string, value: any) {
+      this.formStore.data[slug] = value
+    },
     handleClickComponent (type:string, param:string) {
       if (type === 'link') {
         window.location.href = param

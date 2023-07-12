@@ -40,9 +40,9 @@
 		  "label": "Escalier",
 		  "slug": "adresse_logement_escalier",
 			"conditional": {
-			  "show": "data.adresse_logement_etage !== ''"
+			  "show": "formStore.data.adresse_logement_etage !== ''"
 			},
-      "css": "fr-hidden"
+      "css": ""
 		},
       {
         "type": "SignalementFormButton",

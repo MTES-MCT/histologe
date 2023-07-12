@@ -8,16 +8,6 @@
         >
             {{ label}}
         </button>
-        <!-- <button
-        :type="type"
-        :id="id"
-        :disabled="disabled || loading"
-        :class="[ this.color, this.loading ? 'loading' : '', 'fr-btn', iconClass ]"
-        @click="onClickLocalEvent"
-        >
-            <slot name="label-loading" v-if="loading"></slot>
-            <slot name="label" v-else></slot>
-        </button> -->
     </div>
 </template>
 
@@ -32,11 +22,6 @@ export default defineComponent({
     action: { type: String, default: '' },
     type: { type: String, default: 'button' },
     css: { type: String, default: '' },
-    // color: { type: String, default: '' },
-    // link: { type: String, default: '' },
-    // iconClass: { type: String, default: '' },
-    // disabled: { type: Boolean, default: false },
-    // loading: { type: Boolean, default: false },
     clickEvent: Function
   },
   data () {

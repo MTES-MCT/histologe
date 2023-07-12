@@ -1,37 +1,41 @@
 <template>
 <div>
-    <input
+  <label :class="[ css, 'fr-label' ]" :for="id">{{ label }}</label>
+  <input
         type="text"
         :id="id"
         :name="id"
+        :value="internalValue"
         :class="[ css, 'fr-input' ]"
-        v-model="dataComponent"
-        @change="$emit('update:modelValue', $event.target.value)"
+        @input="updateValue($event.target.value)"
         >
-      <label :class="[ css, 'fr-label' ]" :for="id">{{ label }}</label>
 </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { store } from './store'
 
 export default defineComponent({
   name: 'SignalementFormTextfield',
   props: {
     id: { type: String, default: null },
     label: { type: String, default: null },
-    conditional: { type: Object },
-    css: { type: String, default: '' },
-    onChange: { type: Function }
+    modelValue: { type: String, default: null },
+    css: { type: String, default: '' }
   },
-  data () {
-    type ObjectKey = keyof typeof store.state
-    console.log(this.id)
-    console.log(store.state[this.id as ObjectKey])
-    return {
-      data: store.state,
-      dataComponent: store.state[this.id as ObjectKey]
+  computed: {
+    internalValue: {
+      get () {
+        return this.modelValue
+      },
+      set (newValue: string) {
+        this.$emit('update:modelValue', newValue)
+      }
+    }
+  },
+  methods: {
+    updateValue (value: any) {
+      this.$emit('update:modelValue', value)
     }
   },
   emits: ['update:modelValue']
