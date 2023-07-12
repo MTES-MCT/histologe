@@ -284,6 +284,17 @@ trait FixturesHelper
         );
     }
 
+    /** Cette payload contient un dossier avec un type intervention Visite de contrôle au lieu de Visite contrôle */
+    public function getDossierVisiteSISHCollectionWithDossierResponse(): DossierVisiteSISHCollectionResponse
+    {
+        $filepath = __DIR__.'/../tools/wiremock/src/Resources/Esabora/sish/ws_visites_dossier_sas_en_cours.json';
+
+        return new DossierVisiteSISHCollectionResponse(
+            json_decode(file_get_contents($filepath), true),
+            200
+        );
+    }
+
     public function getDossierArreteSISHCollectionResponse(): DossierArreteSISHCollectionResponse
     {
         $filepath = __DIR__.'/../tools/wiremock/src/Resources/Esabora/sish/ws_arretes_dossier_sas.json';

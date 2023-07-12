@@ -17,18 +17,15 @@ enum InterventionType: string
     {
         return [
             'VISITE' => 'Visite',
-            'VISITE_CONTROLE' => 'Visite de contrôle',
-            'ARRETE' => 'Arrêté préfectoral',
+            'VISITE_CONTROLE' => 'Visite contrôle',
+            'ARRETE_PREFECTORAL' => 'Arrêté préfectoral',
         ];
     }
 
-    public static function fromLabel(string $label): self
+    public static function fromLabel(string $label): ?self
     {
-        $interventionTypeLabel = array_keys(
-            array_filter(self::getLabelList(), function (string $labelItem) use ($label) {
-                return $label === $labelItem;
-            }));
+        $key = array_search($label, self::getLabelList());
 
-        return self::tryFrom(array_shift($interventionTypeLabel));
+        return self::tryFrom($key);
     }
 }

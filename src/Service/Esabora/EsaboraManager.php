@@ -15,6 +15,7 @@ use App\Service\Esabora\Enum\EsaboraStatus;
 use App\Service\Esabora\Response\DossierResponseInterface;
 use App\Service\Esabora\Response\Model\DossierArreteSISH;
 use App\Service\Esabora\Response\Model\DossierVisiteSISH;
+use Psr\Log\LoggerInterface;
 
 class EsaboraManager
 {
@@ -23,6 +24,7 @@ class EsaboraManager
         private readonly SuiviManager $suiviManager,
         private readonly InterventionRepository $interventionRepository,
         private readonly InterventionFactory $interventionFactory,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -106,18 +108,27 @@ class EsaboraManager
         if (null !== $intervention) {
             $this->updateFromDossierVisite($intervention, $dossierVisiteSISH);
         } else {
-            $newIntervention = $this->interventionFactory->createInstanceFrom(
-                affectation: $affectation,
-                type: InterventionType::fromLabel($dossierVisiteSISH->getVisiteType()),
-                scheduledAt: DateParser::parse($dossierVisiteSISH->getVisiteDate()),
-                registeredAt: new \DateTimeImmutable(),
-                status: Intervention::STATUS_DONE,
-                providerName: InterfacageType::ESABORA->value,
-                providerId: $dossierVisiteSISH->getVisiteId(),
-                doneBy: $dossierVisiteSISH->getVisitePar(),
-            );
-
-            $this->interventionRepository->save($newIntervention, true);
+            if (null === InterventionType::fromLabel($dossierVisiteSISH->getVisiteType())) {
+                $this->logger->error(
+                    sprintf('#%s - Le dossier SISH %s a un type de visite invalide `%s`. Types valides : (%s)',
+                        $dossierVisiteSISH->getReferenceDossier(),
+                        $dossierVisiteSISH->getDossNum(),
+                        $dossierVisiteSISH->getVisiteType(),
+                        implode(',', InterventionType::getLabelList())
+                    ));
+            } else {
+                $newIntervention = $this->interventionFactory->createInstanceFrom(
+                    affectation: $affectation,
+                    type: InterventionType::fromLabel($dossierVisiteSISH->getVisiteType()),
+                    scheduledAt: DateParser::parse($dossierVisiteSISH->getVisiteDate()),
+                    registeredAt: new \DateTimeImmutable(),
+                    status: Intervention::STATUS_DONE,
+                    providerName: InterfacageType::ESABORA->value,
+                    providerId: $dossierVisiteSISH->getVisiteId(),
+                    doneBy: $dossierVisiteSISH->getVisitePar(),
+                );
+                $this->interventionRepository->save($newIntervention, true);
+            }
         }
     }
 

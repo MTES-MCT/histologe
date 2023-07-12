@@ -12,6 +12,7 @@ use App\Service\Esabora\EsaboraManager;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class EsaboraManagerTest extends TestCase
 {
@@ -21,6 +22,7 @@ class EsaboraManagerTest extends TestCase
     protected MockObject|SuiviManager $suiviManager;
     protected MockObject|InterventionRepository $interventionRepository;
     protected MockObject|InterventionFactory $interventionFactory;
+    private MockObject|LoggerInterface $logger;
 
     protected function setUp(): void
     {
@@ -28,6 +30,7 @@ class EsaboraManagerTest extends TestCase
         $this->suiviManager = $this->createMock(SuiviManager::class);
         $this->interventionRepository = $this->createMock(InterventionRepository::class);
         $this->interventionFactory = $this->createMock(InterventionFactory::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
     }
 
     public function testCreateVisite(): void
@@ -52,7 +55,39 @@ class EsaboraManagerTest extends TestCase
             $this->affectationManager,
             $this->suiviManager,
             $this->interventionRepository,
-            $this->interventionFactory
+            $this->interventionFactory,
+            $this->logger,
+        );
+        $esaboraManager->createOrUpdateVisite($this->getAffectation(PartnerType::ARS), $dossierVisite);
+    }
+
+    public function testFailureCreateVisite(): void
+    {
+        $dossierVisiteCollection = $this->getDossierVisiteSISHCollectionWithDossierResponse()->getCollection();
+        $dossierVisite = $dossierVisiteCollection[0];
+        $this->interventionRepository
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn(null);
+
+        $this->interventionFactory
+            ->expects($this->never())
+            ->method('createInstanceFrom');
+
+        $this->interventionRepository
+            ->expects($this->never())
+            ->method('save');
+
+        $this->logger
+            ->expects($this->once())
+            ->method('error');
+
+        $esaboraManager = new EsaboraManager(
+            $this->affectationManager,
+            $this->suiviManager,
+            $this->interventionRepository,
+            $this->interventionFactory,
+            $this->logger,
         );
         $esaboraManager->createOrUpdateVisite($this->getAffectation(PartnerType::ARS), $dossierVisite);
     }
@@ -75,7 +110,8 @@ class EsaboraManagerTest extends TestCase
             $this->affectationManager,
             $this->suiviManager,
             $this->interventionRepository,
-            $this->interventionFactory
+            $this->interventionFactory,
+            $this->logger,
         );
         $esaboraManager->createOrUpdateVisite($this->getAffectation(PartnerType::ARS), $dossierVisite);
     }
@@ -102,7 +138,8 @@ class EsaboraManagerTest extends TestCase
             $this->affectationManager,
             $this->suiviManager,
             $this->interventionRepository,
-            $this->interventionFactory
+            $this->interventionFactory,
+            $this->logger
         );
         $esaboraManager->createOrUpdateArrete($this->getAffectation(PartnerType::ARS), $dossierArrete);
     }
@@ -125,7 +162,8 @@ class EsaboraManagerTest extends TestCase
             $this->affectationManager,
             $this->suiviManager,
             $this->interventionRepository,
-            $this->interventionFactory
+            $this->interventionFactory,
+            $this->logger
         );
         $esaboraManager->createOrUpdateArrete($this->getAffectation(PartnerType::ARS), $dossierArrete);
     }

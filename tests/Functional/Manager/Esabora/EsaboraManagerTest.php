@@ -15,6 +15,7 @@ use App\Service\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\Esabora\Response\DossierStateSISHResponse;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class EsaboraManagerTest extends KernelTestCase
@@ -25,6 +26,7 @@ class EsaboraManagerTest extends KernelTestCase
     private AffectationManager $affectationManager;
     private SuiviManager $suiviManager;
     private InterventionRepository $interventionRepository;
+    private LoggerInterface $logger;
 
     protected function setUp(): void
     {
@@ -33,20 +35,21 @@ class EsaboraManagerTest extends KernelTestCase
         $this->affectationManager = self::getContainer()->get(AffectationManager::class);
         $this->suiviManager = self::getContainer()->get(SuiviManager::class);
         $this->interventionRepository = self::getContainer()->get(InterventionRepository::class);
+        $this->logger = self::getContainer()->get(LoggerInterface::class);
     }
 
     /**
      * @dataProvider provideDataForSynchronization
      */
     public function testAffectationSynchronizedWith(
-        string $referenceSignalemeent,
+        string $referenceSignalement,
         string $filename,
         string $suiviDescription,
         int $expectedAffectationStatus
     ): void {
         /** @var Signalement $signalement */
         $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
-            'reference' => $referenceSignalemeent,
+            'reference' => $referenceSignalement,
         ]);
 
         /** @var Affectation $affectation */
@@ -63,14 +66,15 @@ class EsaboraManagerTest extends KernelTestCase
             $this->affectationManager,
             $this->suiviManager,
             $this->interventionRepository,
-            new InterventionFactory()
+            new InterventionFactory(),
+            $this->logger,
         );
 
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
 
         /** @var Signalement $signalement */
         $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
-            'reference' => $referenceSignalemeent,
+            'reference' => $referenceSignalement,
         ]);
 
         /** @var Suivi $suivi */
