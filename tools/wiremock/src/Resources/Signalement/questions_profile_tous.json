@@ -31,7 +31,7 @@
         "slug": "adresse_logement",
         "description": "Tapez puis sélectionnez l'adresse dans la liste",
         "customCss": "question-xl",
-        "action": "show:complement-adresse"
+        "action": "show:complement_adresse"
       },
       {
         "type": "SignalementFormButton",
@@ -236,7 +236,7 @@
         "type": "SignalementFormButton",
         "label": "Suivant",
         "slug": "signalement_concerne_next",
-        "action": "goto:vos-coordonnees"
+        "action": "goto:vos_coordonnees"
       }
     ]
   }
