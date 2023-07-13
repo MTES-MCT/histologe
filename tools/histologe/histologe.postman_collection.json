@@ -7,6 +7,42 @@
 	},
 	"item": [
 		{
+			"name": "nouveau-formulaire",
+			"item": [
+				{
+					"name": "mock",
+					"item": [
+						{
+							"name": "questions?profil=tous",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/api/questions?profil=tous",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"api",
+										"questions"
+									],
+									"query": [
+										{
+											"key": "profil",
+											"value": "tous"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
 			"name": "signalement/csrf-token",
 			"event": [
 				{
