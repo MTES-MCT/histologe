@@ -131,39 +131,7 @@ $ php bin/console app:add-user ROLE_USER_PARTNER joe.doe.3@histologe.fr John Doe
 
 Une activation de compte sera nécéssaire
 
-## Bases de données scalingo
-
-### Pré-requis
-
-Des pre-requis sont nécéssaires pour communiquer avec SCALINGO depuis la CLI
-
-[Configuration Scalingo CLI](https://doc.scalingo.com/platform/cli/introduction)
-
-### Accès aux bases de données [scalingo](https://doc.scalingo.com/platform/databases/access)
-
-En exécutant la commande suivante, un tunnel SSH chiffré sera construit entre vous et votre base de données.
-
-```
-$ scalingo --app <nom_application> db-tunnel DSN_MYSQL
-
-Building tunnel to xxxxx
-You can access your database on:
-127.0.0.1:10000
-```
-
-Une fois le tunnel construit, à partir d'un autre terminal que celui du tunnel vous pouvez vous connecter à l'hôte 
-`127.0.0.1:10000` et faire votre export de données.
-
-```
-$ mysqldump --column-statistics=0 --no-tablespaces -u <database_user>  -h 127.0.0.1 -p <database_name> -P 10000 > data/dump.sql
-```
-Vous pouvez ensuite executer la commande.
-
-```
-$ make load-data  
-```
-
-### Accès à Metabase
+## Accès à Metabase
 
 - Copier le fichier de base de données dans le dossier ```metabase-data/metabase.db/```
 - Login : ```admin@histologe.fr```
