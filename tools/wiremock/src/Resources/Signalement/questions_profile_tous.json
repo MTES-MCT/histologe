@@ -37,12 +37,6 @@
           "action": "show:complement_adresse"
         },
         {
-          "type": "SignalementFormButton",
-          "label": "Afficher tous les champs",
-          "slug": "adresse_logement_afficher_champs",
-          "customCss": "btn-link"
-        },
-        {
           "type": "SignalementFormSubscreen",
           "label": "Complément d'adresse (facultatif)",
           "slug": "adresse_logement_complement_adresse",
