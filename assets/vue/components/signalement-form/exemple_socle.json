@@ -3,7 +3,7 @@
     "type": "screen",
     "label": "Introduction",
     "slug": "introduction",
-    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eu erat vel urna viverra pellentesque. Sed ac odio libero. Aliquam tristique neque vestibulum, ultrices sapien id, bibendum nisl.",
+    "description": "Lorem ipsum dolor <b>sit amet</b>, consectetur adipiscing elit. Pellentesque eu erat vel urna viverra pellentesque. Sed ac odio libero. Aliquam tristique neque vestibulum, ultrices sapien id, bibendum nisl.",
     "components": {
       "body": [
         {

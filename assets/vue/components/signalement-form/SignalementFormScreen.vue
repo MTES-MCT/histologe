@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>{{ label }}</h1>
-    <p>{{ description }}</p>
+    <p v-html="description"></p>
     <component
       v-for="component in components.body"
       :is="component.type"
@@ -58,6 +58,14 @@ export default defineComponent({
     }
   },
   methods: {
+    isRequired (field: any): boolean {
+      if ((field.validate === undefined && formStore.inputComponents.includes(field.type)) || // si c'est un composant de saisie sans objet de validation c'est qu'il est obligatoire
+          (field.validate && field.validate.required)) { // ou il y a des règles de validation explicites
+        return true
+      } else {
+        return false
+      }
+    },
     updateFormData (slug: string, value: any) {
       this.formStore.data[slug] = value
     },
@@ -77,11 +85,10 @@ export default defineComponent({
 
       if (this.components) {
         for (const field of this.components.body) {
-          if ((field.validate === undefined && formStore.inputComponents.includes(field.type)) || // si c'est un composant de saisie sans objet de validation c'est qu'il est obligatoire
-          (field.validate && field.validate.required)) { // ou il y a des règles de validation explicites
+          if (this.isRequired(field)) {
             const value = formStore.data[field.slug]
             if (!value) {
-              formStore.validationErrors[field.slug] = 'Ce champ est requis'
+              formStore.validationErrors[field.slug] = 'Ce champ est requis' // field.errorText ?
             }
           }
           // Effectuer d'autres validations nécessaires pour les autres règles (minLength, maxLength, pattern, etc.)
