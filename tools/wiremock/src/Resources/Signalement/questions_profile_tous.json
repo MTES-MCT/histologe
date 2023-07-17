@@ -40,7 +40,6 @@
           "type": "SignalementFormSubscreen",
           "label": "Complément d'adresse (facultatif)",
           "slug": "adresse_logement_complement_adresse",
-          "conditionnal": "",
           "components": {
             "body": [
               {
@@ -85,7 +84,7 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "adresse_logement_previous",
-          "action": "goto:signalement_concerne"
+          "action": "goto:introduction"
         },
         {
           "type": "SignalementFormButton",
