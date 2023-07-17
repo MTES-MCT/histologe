@@ -1,0 +1,260 @@
+[
+  {
+    "type": "SignalementFormScreen",
+    "label": "Votre signalement va démarrer",
+    "slug": "introduction",
+    "description": "<p>Nous allons poser des questions sur le logement, les problèmes rencontrés et la situation du foyer.</p><p>Les informations demandées sont nécéssaires au bon traitement du signalement.</p><p>Attention: lisez bien les questions !</p>",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormButton",
+          "label": "C'est parti",
+          "slug": "introduction_go",
+          "action": "goto:adresse_logement"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Annuler",
+          "slug": "introduction_cancel",
+          "action": "cancel",
+          "customCss": "btn-link"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Adresse du logement",
+    "slug": "adresse_logement",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormAddress",
+          "label": "Commençons par l'adresse du logement",
+          "slug": "adresse_logement_adresse",
+          "description": "Tapez puis sélectionnez l'adresse dans la liste",
+          "customCss": "question-xl",
+          "action": "show:complement_adresse"
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "Complément d'adresse (facultatif)",
+          "slug": "adresse_logement_complement_adresse",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormTextfield",
+                "label": "Etage",
+                "slug": "adresse_logement_complement_adresse_etage",
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormTextfield",
+                "label": "Escalier",
+                "slug": "adresse_logement_complement_adresse_escalier",
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormTextfield",
+                "label": "Numéro d'appartement",
+                "slug": "adresse_logement_complement_adresse_numero_appartement",
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormTextfield",
+                "label": "Autre",
+                "placeholder": "résidence, lieu-dit...",
+                "slug": "adresse_logement_complement_adresse_autre",
+                "validate": {
+                  "required": false
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "adresse_logement_previous",
+          "action": "goto:introduction"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "adresse_logement_next",
+          "action": "goto:signalement_concerne"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "slug": "signalement_concerne",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "customCss": "question-xl",
+          "label": "Votre signalement concerne...",
+          "slug": "signalement_concerne_profil",
+          "values": [
+            {
+              "value": "Le logement que vous occupez",
+              "slug": "logement_occupez"
+            },
+            {
+              "value": "Un autre logement",
+              "slug": "autre_logement"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Vous êtes...",
+          "customCss": "question-xl",
+          "slug": "signalement_concerne_profil_detail",
+          "values": [
+            {
+              "label": "Locataire du logement",
+              "value": "locataire"
+            },
+            {
+              "label": "Propriétaire du logement",
+              "value": "proprietaire"
+            }
+          ],
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil === 'logement_occupez'"
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Vous êtes...",
+          "customCss": "question-xl",
+          "slug": "signalement_concerne_profil_detail",
+          "values": [
+            {
+              "label": "Un particulier",
+              "value": "particulier"
+            },
+            {
+              "label": "Un ou une professionnelle",
+              "value": "professionnelle"
+            },
+            {
+              "label": "Le bailleur du logement",
+              "value": "bailleur"
+            },
+            {
+              "label": "Un service de secours",
+              "value": "service_secours"
+            }
+          ],
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil === 'autre_logement'"
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Plus précisément...",
+          "slug": "signalement_concerne_profil_detail_bailleur",
+          "values": [
+            {
+              "label": "Un particulier",
+              "value": "particulier"
+            },
+            {
+              "label": "Un organisme ou société",
+              "value": "organisme_societe"
+            }
+          ],
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil_detail === 'proprietaire'"
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Plus précisément...",
+          "slug": "signalement_concerne_profil_detail_bailleur",
+          "values": [
+            {
+              "label": "Un particulier",
+              "value": "particulier"
+            },
+            {
+              "label": "Un organisme ou société",
+              "value": "organisme_societe"
+            }
+          ],
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil_detail === 'bailleur'"
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "S'agit-il d'un logement social ?",
+          "slug": "signalement_concerne_logement_social",
+          "customCss": "question-xl",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "ne-sais-pas"
+            }
+          ],
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil_detail === 'service-secours'"
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "S'agit-il d'un logement social ?",
+          "slug": "signalement_concerne_logement_social",
+          "customCss": "question-xl",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ],
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil_detail !== 'service-secours'"
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "signalement_concerne_previous",
+          "action": "goto:adresse_logement"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "signalement_concerne_next",
+          "action": "goto:vos_coordonnees"
+        }
+      ]
+    }
+  }
+]
