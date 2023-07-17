@@ -68,7 +68,7 @@
               {
                 "type": "SignalementFormTextfield",
                 "label": "Numéro d'appartement",
-                "slug": "adresse_logement_complement_adresse_num_appartement",
+                "slug": "adresse_logement_complement_adresse_numero_appartement",
                 "validate": {
                   "required": false
                 }
