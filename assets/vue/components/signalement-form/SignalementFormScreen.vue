@@ -9,7 +9,7 @@
       :id="component.slug"
       :label="component.label"
       :action="component.action"
-      :css="component.css"
+      :customCss="component.customCss"
       v-model="formStore.data[component.slug]"
       :class="{ 'fr-hidden': component.conditional && !formStore.shouldShowField(component.conditional.show) }"
       :clickEvent="handleClickComponent"

@@ -15,7 +15,7 @@ class FrontNewSignalementController extends AbstractController
     {
         $title = 'Test';
 
-        if ('1' !== $parameterBag->get('feature_new_form')) {
+        if (!$parameterBag->get('feature_new_form')) {
             return $this->redirectToRoute('front_signalement');
         }
 

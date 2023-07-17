@@ -3,7 +3,7 @@
         <button
         :type="type"
         :id="id"
-        :class="[ 'fr-btn', css ]"
+        :class="[ 'fr-btn', customCss ]"
         @click="onClickLocalEvent"
         >
             {{ label}}
@@ -19,18 +19,34 @@ export default defineComponent({
   props: {
     id: { type: String, default: null },
     label: { type: String, default: '' },
-    action: { type: String, default: '' },
+    action: {
+      type: String,
+      default: '',
+      validator: (value: string) => {
+        if (value && value.includes(':')) {
+          // const [actionType, actionParam] = value.split(':')
+          // Utilisez actionType et actionParam pour des vérifications supplémentaires si nécessaire
+          return true
+        }
+        return false
+      }
+    },
     type: { type: String, default: 'button' },
-    css: { type: String, default: '' },
+    customCss: { type: String, default: '' },
     clickEvent: Function
   },
-  data () {
-    const actions = this.action.split(':')
-    const actionType = actions[0]
-    const actionParam = actions[1]
-    return {
-      actionType,
-      actionParam
+  computed: {
+    actionType (): string {
+      if (this.action.includes(':')) {
+        return this.action.split(':')[0]
+      }
+      return ''
+    },
+    actionParam (): string {
+      if (this.action.includes(':')) {
+        return this.action.split(':')[1]
+      }
+      return ''
     }
   },
   methods: {

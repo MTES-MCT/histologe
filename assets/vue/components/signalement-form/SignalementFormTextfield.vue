@@ -1,12 +1,12 @@
 <template>
 <div>
-  <label :class="[ css, 'fr-label' ]" :for="id">{{ label }}</label>
+  <label :class="[ customCss, 'fr-label' ]" :for="id">{{ label }}</label>
   <input
         type="text"
         :id="id"
         :name="id"
         :value="internalValue"
-        :class="[ css, 'fr-input' ]"
+        :class="[ customCss, 'fr-input' ]"
         @input="updateValue($event.target.value)"
         >
 </div>
@@ -21,7 +21,7 @@ export default defineComponent({
     id: { type: String, default: null },
     label: { type: String, default: null },
     modelValue: { type: String, default: null },
-    css: { type: String, default: '' }
+    customCss: { type: String, default: '' }
   },
   computed: {
     internalValue: {

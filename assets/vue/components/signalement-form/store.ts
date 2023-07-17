@@ -11,7 +11,7 @@ interface FormData {
 //   conditional?: {
 //     show: string
 //   }
-//   css?: string
+//   customCss?: string
 //   action?: string
 // }
 

@@ -21,7 +21,7 @@
         "label": "Annuler",
         "slug": "introduction_cancel",
         "action": "cancel",
-        "css": "fr-btn--secondary"
+        "customCss": "fr-btn--secondary"
       }
     ]
   },
@@ -42,7 +42,7 @@
 			"conditional": {
 			  "show": "formStore.data.adresse_logement_etage !== ''"
 			},
-      "css": ""
+      "customCss": ""
 		},
       {
         "type": "SignalementFormButton",
