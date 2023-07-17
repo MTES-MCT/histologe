@@ -75,22 +75,22 @@ export default defineComponent({
     showScreenBySlug (slug:string) {
       formStore.validationErrors = {}
 
-      for (const field of this.components?.body) {
-        if ((field.validate === undefined && formStore.inputComponents.includes(field.type)) || // si c'est un composant de saisie sans objet de validation c'est qu'il est obligatoire
-        (field.validate && field.validate.required)) { // ou il y a des règles de validation explicites
-          const value = formStore.data[field.slug]
-          if (!value) {
-            formStore.validationErrors[field.slug] = 'Ce champ est requis'
+      if (this.components) {
+        for (const field of this.components.body) {
+          if ((field.validate === undefined && formStore.inputComponents.includes(field.type)) || // si c'est un composant de saisie sans objet de validation c'est qu'il est obligatoire
+          (field.validate && field.validate.required)) { // ou il y a des règles de validation explicites
+            const value = formStore.data[field.slug]
+            if (!value) {
+              formStore.validationErrors[field.slug] = 'Ce champ est requis'
+            }
           }
+          // Effectuer d'autres validations nécessaires pour les autres règles (minLength, maxLength, pattern, etc.)
         }
-        // Effectuer d'autres validations nécessaires pour les autres règles (minLength, maxLength, pattern, etc.)
+        if (Object.keys(formStore.validationErrors).length > 0) {
+          window.scrollTo(0, 0)
+          return
+        }
       }
-
-      if (Object.keys(formStore.validationErrors).length > 0) {
-        window.scrollTo(0, 0)
-        return
-      }
-
       // si pas d'erreur de validation, on change d'écran
       if (this.changeEvent !== undefined) {
         this.changeEvent(slug)
