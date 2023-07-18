@@ -29,6 +29,7 @@ module.exports = {
   rules: {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     'no-array-constructor': 'off',
+    'no-eval': 'off',
     'vue/no-mutating-props': 'off',
     'vue/no-reserved-component-names': 'off'
   }

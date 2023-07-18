@@ -1,0 +1,72 @@
+[
+  {
+    "type": "screen",
+    "label": "Introduction",
+    "slug": "introduction",
+    "description": "Lorem ipsum dolor <b>sit amet</b>, consectetur adipiscing elit. Pellentesque eu erat vel urna viverra pellentesque. Sed ac odio libero. Aliquam tristique neque vestibulum, ultrices sapien id, bibendum nisl.",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormTextfield",
+          "label": "composant de test",
+          "slug": "introduction_test"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "introduction_go",
+          "action": "goto:adresse_logement"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Annuler",
+          "slug": "introduction_cancel",
+          "action": "cancel",
+          "customCss": "fr-btn--secondary"
+        }
+      ]
+    }
+  },
+  {
+    "type": "screen",
+    "label": "Adresse du logement",
+    "slug": "adresse_logement",
+    "components": {
+      "body": [
+      {
+        "type": "SignalementFormTextfield",
+        "label": "Etage",
+        "slug": "adresse_logement_etage"
+      },
+      {
+        "type": "SignalementFormTextfield",
+        "label": "Escalier",
+        "slug": "adresse_logement_escalier",
+        "conditional": {
+          "show": "formStore.data.adresse_logement_etage !== ''"
+        },
+        "customCss": "",
+        "validate": {
+          "required": false
+        }
+      }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "adresse_logement_previous",
+          "action": "goto:introduction",
+          "customCss": "fr-btn--secondary"
+        },
+          {
+            "type": "SignalementFormButton",
+            "label": "Suivant",
+            "slug": "adresse_logement_next",
+              "action": "goto:signalement_concerne"
+            }
+      ]
+    }
+  }
+]
+

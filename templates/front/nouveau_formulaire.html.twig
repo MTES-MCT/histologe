@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Déposez votre signalement{% endblock %}
+
+{% block customscripts %}
+    {{ encore_entry_script_tags('app') }}
+    {{ encore_entry_link_tags('app') }}
+{% endblock %}
+
+{% block body %}
+    <div id="app-signalement-form" data-ajaxurl="{{ path('front_nouveau_formulaire') }}"></div>
+{% endblock %}
