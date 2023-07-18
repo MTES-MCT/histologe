@@ -1,7 +1,7 @@
 <template>
     <div
       id="app-signalement-form"
-      class="signalement-form fr-pt-5w"
+      class="signalement-form fr-p-5w"
       :data-ajaxurl="sharedProps.ajaxurl"
       :data-ajaxurl-questions="sharedProps.ajaxurlQuestions"
       >
