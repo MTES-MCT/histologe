@@ -1,7 +1,7 @@
 <template>
-  <div class="fr-container">
-    <h1>{{ label }}</h1>
-    <div v-html="description"></div>
+  <div>
+    <h2>{{ label }}</h2>
+    <p v-html="description"></p>
     <div
       v-if="components != undefined"
       >
@@ -11,8 +11,6 @@
         v-bind:key="component.slug"
         :id="component.slug"
         :label="component.label"
-        :description="component.description"
-        :components="component.components"
         :action="component.action"
         :values="component.values"
         :customCss="component.customCss"
@@ -25,24 +23,6 @@
       />
     </div>
   </div>
-  <div class="fr-mt-5w"
-    v-if="components != undefined"
-    >
-    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-      <component
-        v-for="component in components.footer"
-        :is="component.type"
-        v-bind:key="component.slug"
-        :id="component.slug"
-        :label="component.label"
-        :action="component.action"
-        :customCss="component.customCss"
-        v-model="formStore.data[component.slug]"
-        :class="[ 'fr-col-4', { 'fr-hidden': component.conditional && !formStore.shouldShowField(component.conditional.show) } ]"
-        :clickEvent="handleClickComponent"
-      />
-    </div>
-  </div>
 </template>
 
 <script lang="ts">
@@ -51,15 +31,13 @@ import formStore from './store'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
 import SignalementFormOnlyChoice from './SignalementFormOnlyChoice.vue'
-import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
 
 export default defineComponent({
-  name: 'SignalementFormScreen',
+  name: 'SignalementFormSubscreen',
   components: {
     SignalementFormTextfield,
     SignalementFormButton,
-    SignalementFormOnlyChoice,
-    SignalementFormSubscreen
+    SignalementFormOnlyChoice
   },
   props: {
     label: String,
@@ -73,14 +51,6 @@ export default defineComponent({
     }
   },
   methods: {
-    isRequired (field: any): boolean {
-      if ((field.validate === undefined && formStore.inputComponents.includes(field.type)) || // si c'est un composant de saisie sans objet de validation c'est qu'il est obligatoire
-          (field.validate && field.validate.required)) { // ou il y a des règles de validation explicites
-        return true
-      } else {
-        return false
-      }
-    },
     updateFormData (slug: string, value: any) {
       this.formStore.data[slug] = value
     },
@@ -100,10 +70,11 @@ export default defineComponent({
 
       if (this.components) {
         for (const field of this.components.body) {
-          if (this.isRequired(field)) {
+          if ((field.validate === undefined && formStore.inputComponents.includes(field.type)) || // si c'est un composant de saisie sans objet de validation c'est qu'il est obligatoire
+          (field.validate && field.validate.required)) { // ou il y a des règles de validation explicites
             const value = formStore.data[field.slug]
             if (!value) {
-              formStore.validationErrors[field.slug] = 'Ce champ est requis' // field.errorText ?
+              formStore.validationErrors[field.slug] = 'Ce champ est requis'
             }
           }
           // Effectuer d'autres validations nécessaires pour les autres règles (minLength, maxLength, pattern, etc.)

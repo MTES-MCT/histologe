@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 
 export default defineComponent({
   name: 'SignalementFormButton',
@@ -23,7 +23,7 @@ export default defineComponent({
       type: String,
       default: '',
       validator: (value: string) => {
-        if (value && value.includes(':')) {
+        if ((value && value.includes(':')) || value === 'cancel') {
           // const [actionType, actionParam] = value.split(':')
           // Utilisez actionType et actionParam pour des vérifications supplémentaires si nécessaire
           return true
@@ -31,7 +31,7 @@ export default defineComponent({
         return false
       }
     },
-    type: { type: String, default: 'button' },
+    type: { type: String as PropType<'button' | 'submit' | 'reset' | undefined>, default: 'button' },
     customCss: { type: String, default: '' },
     clickEvent: Function
   },

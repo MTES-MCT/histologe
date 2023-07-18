@@ -7,7 +7,7 @@
         :name="id"
         :value="internalValue"
         :class="[ customCss, 'fr-input' ]"
-        @input="updateValue($event.target.value)"
+        @input="updateValue($event)"
         aria-describedby="text-input-error-desc-error"
         >
     <div
@@ -45,7 +45,8 @@ export default defineComponent({
     }
   },
   methods: {
-    updateValue (value: any) {
+    updateValue (event: Event) {
+      const value = (event.target as HTMLInputElement).value
       this.$emit('update:modelValue', value)
     }
   },
