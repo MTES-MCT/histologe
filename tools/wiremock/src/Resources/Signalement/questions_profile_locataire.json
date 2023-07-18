@@ -1,5 +1,289 @@
 [
   {
-    "//": "Locataire"
+    "type": "SignalementFormScreen",
+    "label": "Vos coordonées",
+    "slug": "vos_coordonnees_occupant",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Civilité",
+          "slug": "vos_coordonnees_occupant_civilite",
+          "values": [
+            {
+              "value": "Madame",
+              "slug": "mme"
+            },
+            {
+              "value": "Monsieur",
+              "slug": "mr"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Nom de famille",
+          "slug": "vos_coordonnees_occupant_nom"
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Prénom",
+          "slug": "vos_coordonnees_occupant_prenom"
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Civilité",
+          "slug": "vos_coordonnees_occupant_email"
+        },
+        {
+          "type": "SignalementFormPhonefield",
+          "label": "Civilité",
+          "slug": "vos_coordonnees_occupant_tel"
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "vos_coordonnees_occupant_previous",
+          "action": "goto:signalement_concerne"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "vos_coordonnees_occupant_next",
+          "action": "goto:coordonnees_bailleur"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Les coordonnées du bailleur (propriétaire)",
+    "slug": "coordonnees_bailleur",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormInfo",
+          "label": "Dans le cadre de la procédure, le bailleur ou gestionnaire du logement pourrait être contacté",
+          "slug": "coordonnees_bailleur_warning"
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Nom de famille ou de l'organisme",
+          "slug": "coordonnees_bailleur_nom"
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Prénom",
+          "slug": "coordonnees_bailleur_prenom"
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Adresse email",
+          "slug": "coordonnees_bailleur_email"
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Téléphone",
+          "slug": "coordonnees_bailleur_tel"
+        },
+        {
+          "type": "SignalementFormAddress",
+          "label": "Adresse postale",
+          "slug": "coordonnees_bailleur_adresse"
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "coordonnees_bailleur_previous",
+          "action": "goto:vos_coordonnees_occupant"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "coordonnees_bailleur_next",
+          "action": "goto:zone_concernee"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Vous souhaitez signaler des problèmes sur",
+    "slug": "zone_concernee",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "customCss": "question-xl",
+          "label": "Vous souhaitez signaler des problèmes sur",
+          "slug": "zone_concernee_zone",
+          "values": [
+            {
+              "value": "Le batiment",
+              "slug": "batiment"
+            },
+            {
+              "value": "Votre logement",
+              "slug": "logement"
+            },
+            {
+              "value": "Les deux",
+              "slug": "batiment_logement"
+            }
+          ]
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "zone_concernee_zone_previous",
+          "action": "goto:coordonnees_bailleur"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "zone_concernee_zone_next",
+          "action": "goto:ecran_intermediaire_type_composition"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Type et composition du logement",
+    "description": "<p>Nous allons vous poser des questions sur la composition du logement.<p><p>Les documents utiles sont:</p><ul><li>Le bail</li><li>L'état des lieux d'entrée</li><li>Le diagnostic performance énergie (DPE)</li></ul><p>Toutes les questions sont obligatoires, sauf mention contraire.<p>",
+    "slug": "ecran_intermediaire_type_composition",
+    "components": {
+      "body": [
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "ecran_intermediaire_type_composition_previous",
+          "action": "goto:coordonnees_bailleur"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "zone_concernee_zone_next",
+          "action": "goto:ecran_intermediaire_type_composition"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "slug": "type_logement",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "customCss": "question-xl",
+          "label": "Votre signalement concerne...",
+          "slug": "type_logement_nature",
+          "values": [
+            {
+              "value": "Un appartement",
+              "slug": "appartement"
+            },
+            {
+              "value": "Une maison seule",
+              "slug": "maison"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "customCss": "question-xl",
+          "label": "Votre logement est-il situé au RDC (rez-de-chaussée)",
+          "slug": "type_logement_rdc",
+          "values": [
+            {
+              "value": "Oui",
+              "slug": "oui"
+            },
+            {
+              "value": "Non",
+              "slug": "non"
+            }
+          ]
+        }
+      ],
+      "footer": [
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Votre logement est composé d'une pièce unique ou plusieurs pièces ?",
+    "slug": "composition_logement_nombre_pieces",
+    "components": {
+      "body": [
+      ],
+      "footer": [
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "slug": "bail_dpe",
+    "components": {
+      "body": [
+      ],
+      "footer": [
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "<p>Nous allons vous poser des questions sur votre situation.<br>Si vous êtes allocataire CAF ou MSA, préparez votre numéro allocataire !</p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
+    "slug": "ecran_intermediaire_situation_occupant",
+    "components": {
+      "body": [
+      ],
+      "footer": [
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "slug": "logement_social",
+    "components": {
+      "body": [
+      ],
+      "footer": [
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "slug": "travailleur_social",
+    "components": {
+      "body": [
+      ],
+      "footer": [
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "slug": "info_procedure",
+    "components": {
+      "body": [
+      ],
+      "footer": [
+      ]
+    }
   }
 ]
