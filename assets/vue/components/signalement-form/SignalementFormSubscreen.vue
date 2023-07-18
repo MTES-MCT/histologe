@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="[ customCss ]">
     <h2>{{ label }}</h2>
     <p v-html="description"></p>
     <div
@@ -43,6 +43,7 @@ export default defineComponent({
     label: String,
     description: String,
     components: Object,
+    customCss: { type: String, default: '' },
     handleClickComponent: Function
   },
   data () {

@@ -18,5 +18,10 @@ export const requests = {
   initQuestions (functionReturn: Function) {
     const url = formStore.props.ajaxurlQuestions
     requests.doRequest(url, functionReturn)
+  },
+
+  validateAddress (valueAdress: string, functionReturn: Function) {
+    const url = (formStore.props.urlApiAdress as string) + valueAdress
+    requests.doRequest(url, functionReturn)
   }
 }

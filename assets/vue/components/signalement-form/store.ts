@@ -29,19 +29,16 @@ interface FormStore {
 
 const formStore: FormStore = reactive({
   data: {
-    introduction_test: '',
-    introduction_subscreen_test: '',
-    adresse_logement_etage: '',
-    adresse_logement_escalier: '',
-    signalement_concerne: ''
   },
   props: {
     ajaxurl: '',
-    ajaxurlQuestions: ''
+    ajaxurlQuestions: '',
+    urlApiAdress: 'https://api-adresse.data.gouv.fr/search/?q='
   },
   inputComponents: [
     'SignalementFormTextfield',
-    'SignalementFormOnlyChoice'
+    'SignalementFormOnlyChoice',
+    'SignalementFormAddress'
   ],
   validationErrors: {}, // Les erreurs de validation
   updateData (key: string, value: any) {

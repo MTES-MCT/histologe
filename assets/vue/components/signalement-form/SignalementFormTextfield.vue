@@ -28,6 +28,7 @@ export default defineComponent({
   props: {
     id: { type: String, default: null },
     label: { type: String, default: null },
+    description: { type: String, default: null },
     modelValue: { type: String, default: null },
     customCss: { type: String, default: '' },
     validate: { type: Object, default: null },
