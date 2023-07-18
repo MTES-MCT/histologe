@@ -34,7 +34,8 @@ const formStore: FormStore = reactive({
     adresse_logement_escalier: ''
   },
   props: {
-    ajaxurl: ''
+    ajaxurl: '',
+    ajaxurlQuestions: ''
   },
   inputComponents: [
     'SignalementFormTextfield'
