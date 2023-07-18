@@ -13,14 +13,10 @@ class FrontNewSignalementController extends AbstractController
     #[Route('/signalement', name: 'front_nouveau_formulaire')]
     public function index(ParameterBagInterface $parameterBag): Response
     {
-        $title = 'Test';
-
         if (!$parameterBag->get('feature_new_form')) {
             return $this->redirectToRoute('front_signalement');
         }
 
-        return $this->render('front/nouveau_formulaire.html.twig', [
-            'title' => $title,
-        ]);
+        return $this->render('front/nouveau_formulaire.html.twig');
     }
 }

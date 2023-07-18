@@ -19,7 +19,7 @@ import { defineComponent } from 'vue'
 import formStore from './store'
 // import { requests } from './requests'
 import SignalementFormScreen from './SignalementFormScreen.vue'
-const initElements:any = document.querySelector('#app-front-stats')
+const initElements:any = document.querySelector('#app-signalement-form')
 
 export default defineComponent({
   name: 'TheSignalementAppForm',

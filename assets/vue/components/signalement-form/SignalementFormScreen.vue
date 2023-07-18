@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>{{ label }}</h1>
-    <p v-html="description"></p>
+    <div v-html="description"></div>
     <component
       v-for="component in components.body"
       :is="component.type"
