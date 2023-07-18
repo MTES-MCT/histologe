@@ -24,7 +24,6 @@ class QuestionMock
 
     public static function createApiStub(WireMock $wireMock, string $queryParameter, string $jsonFileResponse): void
     {
-
         $wireMock->stubFor(
             WireMock::get(WireMock::urlMatching(self::BASE_PATH.'/questions\\?'.$queryParameter))
                 ->willReturn(
