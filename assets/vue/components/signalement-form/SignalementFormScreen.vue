@@ -22,6 +22,7 @@
         :error="formStore.validationErrors[component.slug]"
         :class="{ 'fr-hidden': component.conditional && !formStore.shouldShowField(component.conditional.show) }"
         :clickEvent="handleClickComponent"
+        :handleClickComponent="handleClickComponent"
       />
     </div>
   </div>
