@@ -19,7 +19,7 @@ class AppMock
             $wireMock = WireMock::create(getenv('WIREMOCK_HOSTNAME'), getenv('WIREMOCK_PORT'));
             EsaboraSCHSMock::prepareMockForEsabora($wireMock);
             EsaboraSISHMock::prepareMockForEsabora($wireMock);
-            QuestionMock::prepareMockForQuestion($wireMock);
+            QuestionMock::prepareMockForQuestionAllProfiles($wireMock);
         } catch (\Throwable $exception) {
             printf('Error message: %s', $exception->getMessage());
         }
