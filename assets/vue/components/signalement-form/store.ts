@@ -30,14 +30,17 @@ interface FormStore {
 const formStore: FormStore = reactive({
   data: {
     introduction_test: '',
+    introduction_subscreen_test: '',
     adresse_logement_etage: '',
-    adresse_logement_escalier: ''
+    adresse_logement_escalier: '',
+    signalement_concerne: ''
   },
   props: {
     ajaxurl: ''
   },
   inputComponents: [
-    'SignalementFormTextfield'
+    'SignalementFormTextfield',
+    'SignalementFormOnlyChoice'
   ],
   validationErrors: {}, // Les erreurs de validation
   updateData (key: string, value: any) {

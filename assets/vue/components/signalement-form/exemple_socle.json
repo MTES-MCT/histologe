@@ -12,6 +12,20 @@
           "slug": "introduction_test"
         },
         {
+          "type": "SignalementFormSubscreen",
+          "label": "test subscreen",
+          "slug": "introduction_subscreen",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormTextfield",
+                "label": "composant de test dans le subscreen",
+                "slug": "introduction_subscreen_test"
+              }
+            ]
+          }
+        },
+        {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "introduction_go",
@@ -49,6 +63,22 @@
         "validate": {
           "required": false
         }
+      },
+      {
+        "type": "SignalementFormOnlyChoice",
+        "customCss": "question-xl",        
+        "label": "Votre signalement concerne...",
+        "slug": "signalement_concerne",
+        "values": [          
+          {
+            "value": "Le logement que vous occupez",
+            "slug": "logement_occupez"
+          },
+          {
+            "value": "Un autre logement",
+            "slug": "autre_logement"
+          }
+        ]
       }
       ],
       "footer": [
