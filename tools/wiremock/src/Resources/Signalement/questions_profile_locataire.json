@@ -694,7 +694,6 @@
               "slug": "nsp"
             }
           ]
-
         },
         {
           "type": "SignalementFormSubscreen",
@@ -703,12 +702,12 @@
           "components": {
             "body": [
               {
-                "type":"SignalementFormCheckbox",
+                "type": "SignalementFormCheckbox",
                 "slug": "info_procedure_ok_prevenir_bailleur",
                 "label": "Je comprends que {{service}} va prévenir le bailleur (propriétaire) de mon logement."
               },
               {
-                "type":"SignalementFormCheckbox",
+                "type": "SignalementFormCheckbox",
                 "slug": "info_procedure_ok_visite",
                 "label": "Je comprends qu'une visite du logement pourra être faite pour évaluer l'état du logement."
               }
