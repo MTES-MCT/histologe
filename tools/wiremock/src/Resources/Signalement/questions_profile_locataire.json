@@ -11,12 +11,12 @@
           "slug": "vos_coordonnees_occupant_civilite",
           "values": [
             {
-              "value": "Madame",
-              "slug": "mme"
+              "label": "Madame",
+              "value": "mme"
             },
             {
-              "value": "Monsieur",
-              "slug": "mr"
+              "label": "Monsieur",
+              "value": "mr"
             }
           ]
         },
@@ -123,16 +123,16 @@
           "slug": "zone_concernee_zone",
           "values": [
             {
-              "value": "Le batiment",
-              "slug": "batiment"
+              "label": "Le batiment",
+              "value": "batiment"
             },
             {
-              "value": "Votre logement",
-              "slug": "logement"
+              "label": "Votre logement",
+              "value": "logement"
             },
             {
-              "value": "Les deux",
-              "slug": "batiment_logement"
+              "label": "Les deux",
+              "value": "batiment_logement"
             }
           ]
         }
@@ -190,12 +190,12 @@
           "slug": "type_logement_nature",
           "values": [
             {
-              "value": "Un appartement",
-              "slug": "appartement"
+              "label": "Un appartement",
+              "value": "appartement"
             },
             {
-              "value": "Une maison seule",
-              "slug": "maison"
+              "label": "Une maison seule",
+              "value": "maison"
             }
           ]
         },
@@ -209,12 +209,12 @@
           },
           "values": [
             {
-              "value": "Oui",
-              "slug": "oui"
+              "label": "Oui",
+              "value": "oui"
             },
             {
-              "value": "Non",
-              "slug": "non"
+              "label": "Non",
+              "value": "non"
             }
           ]
         },
@@ -228,12 +228,12 @@
           },
           "values": [
             {
-              "value": "Oui",
-              "slug": "oui"
+              "label": "Oui",
+              "value": "oui"
             },
             {
-              "value": "Non",
-              "slug": "non"
+              "label": "Non",
+              "value": "non"
             }
           ]
         }
@@ -267,12 +267,12 @@
           "slug": "composition_logement_nombre_pieces",
           "values": [
             {
-              "value": "Une pièce unique",
-              "slug": "piece_unique"
+              "label": "Une pièce unique",
+              "value": "piece_unique"
             },
             {
-              "value": "Plusieurs pièces",
-              "slug": "plusieurs pièces"
+              "label": "Plusieurs pièces",
+              "value": "plusieurs pièces"
             }
           ]
         },
@@ -301,12 +301,12 @@
           "slug": "composition_logement_enfants",
           "values": [
             {
-              "value": "Oui",
-              "slug": "oui"
+              "label": "Oui",
+              "value": "oui"
             },
             {
-              "value": "Non",
-              "slug": "non"
+              "label": "Non",
+              "value": "non"
             }
           ]
         }
@@ -346,16 +346,16 @@
           "slug": "bail_dpe_bail",
           "values": [
             {
-              "value": "Oui",
-              "slug": "oui"
+              "label": "Oui",
+              "value": "oui"
             },
             {
-              "value": "Non",
-              "slug": "non"
+              "label": "Non",
+              "value": "non"
             },
             {
-              "value": "Je ne sais pas",
-              "slug": "nsp"
+              "label": "Je ne sais pas",
+              "value": "nsp"
             }
           ]
         },
@@ -382,16 +382,16 @@
           "label": "Avez-vous fait un état des lieux quand vous avez emménagé ?",
           "values": [
             {
-              "value": "Oui",
-              "slug": "oui"
+              "label": "Oui",
+              "value": "oui"
             },
             {
-              "value": "Non",
-              "slug": "non"
+              "label": "Non",
+              "value": "non"
             },
             {
-              "value": "Je ne sais pas",
-              "slug": "nsp"
+              "label": "Je ne sais pas",
+              "value": "nsp"
             }
           ]
         },
@@ -410,16 +410,16 @@
           "label": "Avez-vous reçu le DPE du logement ? (diagnostic performance énergie)",
           "values": [
             {
-              "value": "Oui",
-              "slug": "oui"
+              "label": "Oui",
+              "value": "oui"
             },
             {
-              "value": "Non",
-              "slug": "non"
+              "label": "Non",
+              "value": "non"
             },
             {
-              "value": "Je ne sais pas",
-              "slug": "nsp"
+              "label": "Je ne sais pas",
+              "value": "nsp"
             }
           ]
         },
@@ -483,12 +483,12 @@
           "slug": "logement_social_demande_relogement",
           "values": [
             {
-              "value": "Oui",
-              "slug": "oui"
+              "label": "Oui",
+              "value": "oui"
             },
             {
-              "value": "Non",
-              "slug": "non"
+              "label": "Non",
+              "value": "non"
             }
           ]
         },
@@ -499,12 +499,12 @@
           "slug": "logement_social_allocation",
           "values": [
             {
-              "value": "Oui",
-              "slug": "oui"
+              "label": "Oui",
+              "value": "oui"
             },
             {
-              "value": "Non",
-              "slug": "non"
+              "label": "Non",
+              "value": "non"
             }
           ]
         },
@@ -518,12 +518,12 @@
           },
           "values": [
             {
-              "value": "CAF",
-              "slug": "caf"
+              "label": "CAF",
+              "value": "caf"
             },
             {
-              "value": "MSA",
-              "slug": "msa"
+              "label": "MSA",
+              "value": "msa"
             }
           ]
         },
@@ -590,12 +590,12 @@
           "customCss": "question-xl",
           "values": [
             {
-              "value": "Oui",
-              "slug": "oui"
+              "label": "Oui",
+              "value": "oui"
             },
             {
-              "value": "Non",
-              "slug": "non"
+              "label": "Non",
+              "value": "non"
             }
           ]
         },
@@ -606,12 +606,12 @@
           "customCss": "question-xl",
           "values": [
             {
-              "value": "Oui",
-              "slug": "oui"
+              "label": "Oui",
+              "value": "oui"
             },
             {
-              "value": "Non",
-              "slug": "non"
+              "label": "Non",
+              "value": "non"
             }
           ]
         }
@@ -645,12 +645,12 @@
           "customCss": "question-xl",
           "values": [
             {
-              "value": "Oui",
-              "slug": "oui"
+              "label": "Oui",
+              "value": "oui"
             },
             {
-              "value": "Non",
-              "slug": "non"
+              "label": "Non",
+              "value": "non"
             }
           ]
         },
@@ -662,16 +662,16 @@
           "warning": "D'après la loi, vous devez avoir une assurance habitation pour votre logement. Pour plus d'info, rendez-vous sur le site du service public.",
           "values": [
             {
-              "value": "Oui",
-              "slug": "oui"
+              "label": "Oui",
+              "value": "oui"
             },
             {
-              "value": "Non",
-              "slug": "non"
+              "label": "Non",
+              "value": "non"
             },
             {
-              "value": "Je n'ai pas d'assurance logement",
-              "slug": "pas_assurance_logement"
+              "label": "Je n'ai pas d'assurance logement",
+              "value": "pas_assurance_logement"
             }
           ]
         },
@@ -682,16 +682,16 @@
           "slug": "info_procedure_depart_apres_travaux",
           "values": [
             {
-              "value": "Oui, je veux rester dans mon logement",
-              "slug": "oui"
+              "label": "Oui, je veux rester dans mon logement",
+              "value": "oui"
             },
             {
-              "value": "Non,je veux déménager",
-              "slug": "non"
+              "label": "Non,je veux déménager",
+              "value": "non"
             },
             {
-              "value": "Je ne sais pas",
-              "slug": "nsp"
+              "label": "Je ne sais pas",
+              "value": "nsp"
             }
           ]
         },
@@ -703,12 +703,12 @@
             "body": [
               {
                 "type": "SignalementFormCheckbox",
-                "slug": "info_procedure_ok_prevenir_bailleur",
+                "value": "info_procedure_ok_prevenir_bailleur",
                 "label": "Je comprends que {{service}} va prévenir le bailleur (propriétaire) de mon logement."
               },
               {
                 "type": "SignalementFormCheckbox",
-                "slug": "info_procedure_ok_visite",
+                "value": "info_procedure_ok_visite",
                 "label": "Je comprends qu'une visite du logement pourra être faite pour évaluer l'état du logement."
               }
             ]
