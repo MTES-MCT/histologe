@@ -32,12 +32,12 @@
         },
         {
           "type": "SignalementFormTextfield",
-          "label": "Civilité",
+          "label": "Adresse email",
           "slug": "vos_coordonnees_occupant_email"
         },
         {
           "type": "SignalementFormPhonefield",
-          "label": "Civilité",
+          "label": "Téléphone",
           "slug": "vos_coordonnees_occupant_tel"
         }
       ],
@@ -171,8 +171,8 @@
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "zone_concernee_zone_next",
-          "action": "goto:ecran_intermediaire_type_composition"
+          "slug": "ecran_intermediaire_type_composition_next",
+          "action": "goto:type_logement"
         }
       ]
     }
@@ -186,7 +186,7 @@
         {
           "type": "SignalementFormOnlyChoice",
           "customCss": "question-xl",
-          "label": "Votre signalement concerne...",
+          "label": "Votre logement est...",
           "slug": "type_logement_nature",
           "values": [
             {
@@ -204,6 +204,28 @@
           "customCss": "question-xl",
           "label": "Votre logement est-il situé au RDC (rez-de-chaussée)",
           "slug": "type_logement_rdc",
+          "conditional": {
+            "show": "formStore.data.type_logement_nature === 'appartement'"
+          },
+          "values": [
+            {
+              "value": "Oui",
+              "slug": "oui"
+            },
+            {
+              "value": "Non",
+              "slug": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "customCss": "question-xl",
+          "label": "Votre logement est-il situé au dernier étage",
+          "slug": "type_logement_dernier_etage",
+          "conditional": {
+            "show": "formStore.data.type_logement_rdc === 'non'"
+          },
           "values": [
             {
               "value": "Oui",
@@ -217,17 +239,91 @@
         }
       ],
       "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "type_logement_previous",
+          "action": "goto:coordonnees_bailleur"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "type_logement_next",
+          "action": "goto:composition_logement"
+        }
       ]
     }
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Votre logement est composé d'une pièce unique ou plusieurs pièces ?",
-    "slug": "composition_logement_nombre_pieces",
+    "label": "",
+    "slug": "composition_logement",
     "components": {
       "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "customCss": "question-xl",
+          "label": "Votre logement est composé d'une pièce unique ou de plusieurs pièces ?",
+          "slug": "composition_logement_nombre_pieces",
+          "values": [
+            {
+              "value": "Une pièce unique",
+              "slug": "piece_unique"
+            },
+            {
+              "value": "Plusieurs pièces",
+              "slug": "plusieurs pièces"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormCounter",
+          "customCss": "question-xl",
+          "label": "Quelle est la superficie de votre logement (taille en m²)",
+          "slug": "composition_logement_superficie",
+          "validate": {
+            "required": false
+          }
+        },
+        {
+          "type": "SignalementFormCounter",
+          "customCss": "question-xl",
+          "label": "Combien de personnes vivent dans votre logement ?",
+          "slug": "composition_logement_nombre_perso",
+          "validate": {
+            "required": false
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "customCss": "question-xl",
+          "label": "Il y a-t-il des enfants de moins de 6 ans ?",
+          "slug": "composition_logement_enfants",
+          "values": [
+            {
+              "value": "Oui",
+              "slug": "oui"
+            },
+            {
+              "value": "Non",
+              "slug": "non"
+            }
+          ]
+        }
       ],
       "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "type_logement_previous",
+          "action": "goto:type_logement"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "type_logement_next",
+          "action": "goto:bail_dpe"
+        }
       ]
     }
   },
@@ -237,8 +333,118 @@
     "slug": "bail_dpe",
     "components": {
       "body": [
+        {
+          "type": "SignalementFormDate",
+          "customCss": "question-xl",
+          "label": "A quelle date avez-vous emménagé dans le logement ?",
+          "slug": "bail_dpe_date_emmenagement"
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "customCss": "question-xl",
+          "label": "Avez-vous reçu un bail ?",
+          "slug": "bail_dpe_bail",
+          "values": [
+            {
+              "value": "Oui",
+              "slug": "oui"
+            },
+            {
+              "value": "Non",
+              "slug": "non"
+            },
+            {
+              "value": "Je ne sais pas",
+              "slug": "nsp"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormInfo",
+          "slug": "bail_dpe_bail_info",
+          "label": "Avoir un bail écrit et signé pour son logement est fortement recommandé pour faire valoir vos droits ! Plus d'info sur le site du service public."
+        },
+        {
+          "type": "SignalementFormUpload",
+          "slug": "bail_dpe_bail_upload",
+          "label": "Ajoutez votre bail en cliquant sur le bouton ci-dessous",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_bail === 'oui'"
+          },
+          "validate": {
+            "required": false
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "slug": "bail_dpe_etat_des_lieux",
+          "customCss": "question-xl",
+          "label": "Avez-vous fait un état des lieux quand vous avez emménagé ?",
+          "values": [
+            {
+              "value": "Oui",
+              "slug": "oui"
+            },
+            {
+              "value": "Non",
+              "slug": "non"
+            },
+            {
+              "value": "Je ne sais pas",
+              "slug": "nsp"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormWarning",
+          "slug": "bail_dpe_bail_warning",
+          "label": "D'après la loi, un état des lieux du logement doit être réalisé le jour de la remise des clés. C'est important pour faire valoir vos droits ! Plus d'info sur le site du service public.",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_etat_des_lieux === 'non' || formStore.data.bail_dpe_etat_des_lieux === 'nsp'"
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "slug": "bail_dpe_dpe",
+          "customCss": "question-xl",
+          "label": "Avez-vous reçu le DPE du logement ? (diagnostic performance énergie)",
+          "values": [
+            {
+              "value": "Oui",
+              "slug": "oui"
+            },
+            {
+              "value": "Non",
+              "slug": "non"
+            },
+            {
+              "value": "Je ne sais pas",
+              "slug": "nsp"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormWarning",
+          "slug": "bail_dpe_dpe_warning",
+          "label": "Le DPE fait partie des documents que le bailleur (propriétaire) doit obligatoirement vous fournir. Plus d'info sur le site du service public.",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_dpe === 'non' || formStore.data.bail_dpe_dpe === 'nsp'"
+          }
+        }
       ],
       "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "bail_dpe_previous",
+          "action": "goto:composition_logement"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "bail_dpe_next",
+          "action": "goto:ecran_intermediaire_situation_occupant"
+        }
       ]
     }
   },
@@ -247,9 +453,19 @@
     "label": "<p>Nous allons vous poser des questions sur votre situation.<br>Si vous êtes allocataire CAF ou MSA, préparez votre numéro allocataire !</p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
     "slug": "ecran_intermediaire_situation_occupant",
     "components": {
-      "body": [
-      ],
       "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "ecran_intermediaire_situation_occupant_previous",
+          "action": "goto:bail_dpe"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "ecran_intermediaire_situation_occupant_next",
+          "action": "goto:logement_social"
+        }
       ]
     }
   },
@@ -259,8 +475,105 @@
     "slug": "logement_social",
     "components": {
       "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Avez-vous fait une demande de logement social ou de relogement ?",
+          "customCss": "question-xl",
+          "warning": "{{platform.name}} ne permet pas de faire une demande de logement social ou de relogement.",
+          "slug": "logement_social_demande_relogement",
+          "values": [
+            {
+              "value": "Oui",
+              "slug": "oui"
+            },
+            {
+              "value": "Non",
+              "slug": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Recevez-vous une aide ou allocation logement ?",
+          "customCss": "question-xl",
+          "slug": "logement_social_allocation",
+          "values": [
+            {
+              "value": "Oui",
+              "slug": "oui"
+            },
+            {
+              "value": "Non",
+              "slug": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "De quelle caisse ?",
+          "customCss": "question-xl",
+          "slug": "logement_social_allocation_caisse",
+          "conditional": {
+            "show": "formStore.data.logement_social_allocation === 'oui'"
+          },
+          "values": [
+            {
+              "value": "CAF",
+              "slug": "caf"
+            },
+            {
+              "value": "MSA",
+              "slug": "msa"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormDate",
+          "label": "Quelle est votre date de naissance ?",
+          "customCss": "question-xl",
+          "slug": "logement_social_date_naissance",
+          "conditional": {
+            "show": "formStore.data.logement_social_allocation === 'oui'"
+          }
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Quel est votre numéro d'allocataire ?",
+          "customCss": "question-xl",
+          "slug": "logement_social_numero_allocataire",
+          "conditional": {
+            "show": "formStore.data.logement_social_allocation === 'oui'"
+          },
+          "validate": {
+            "required": false
+          }
+        },
+        {
+          "type": "SignalementFormCounter",
+          "label": "Quel est le montant de votre allocation ?",
+          "customCss": "question-xl",
+          "slug": "logement_social_montant_allocation",
+          "conditional": {
+            "show": "formStore.data.logement_social_allocation === 'oui'"
+          },
+          "validate": {
+            "required": false
+          }
+        }
       ],
       "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "logement_social_previous",
+          "action": "goto:ecran_intermediaire_situation_occupant"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "logement_social_next",
+          "action": "goto:travailleur_social"
+        }
       ]
     }
   },
@@ -270,8 +583,52 @@
     "slug": "travailleur_social",
     "components": {
       "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "slug": "travailleur_social_quitte_logement",
+          "label": "Souhaitez-vous ou avez-vous prévu de quitter votre logement ?",
+          "customCss": "question-xl",
+          "values": [
+            {
+              "value": "Oui",
+              "slug": "oui"
+            },
+            {
+              "value": "Non",
+              "slug": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "slug": "travailleur_social_accompagnement",
+          "label": "Est-ce qu'un travailleur ou une travailleuse sociale vous accompagne ?",
+          "customCss": "question-xl",
+          "values": [
+            {
+              "value": "Oui",
+              "slug": "oui"
+            },
+            {
+              "value": "Non",
+              "slug": "non"
+            }
+          ]
+        }
       ],
       "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "travailleur_social_previous",
+          "action": "goto:logement_social"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "travailleur_social_next",
+          "action": "goto:ecran_intermediaire_les_desordres"
+        }
       ]
     }
   },
@@ -281,8 +638,97 @@
     "slug": "info_procedure",
     "components": {
       "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Avez-vous prévenu le bailleur (propriétaire) du logement ?",
+          "slug": "info_procedure_bailleur_prevenu",
+          "customCss": "question-xl",
+          "values": [
+            {
+              "value": "Oui",
+              "slug": "oui"
+            },
+            {
+              "value": "Non",
+              "slug": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Avez-vous contacté votre assurance logement ?",
+          "slug": "info_procedure_assurance_contactee",
+          "customCss": "question-xl",
+          "warning": "D'après la loi, vous devez avoir une assurance habitation pour votre logement. Pour plus d'info, rendez-vous sur le site du service public.",
+          "values": [
+            {
+              "value": "Oui",
+              "slug": "oui"
+            },
+            {
+              "value": "Non",
+              "slug": "non"
+            },
+            {
+              "value": "Je n'ai pas d'assurance logement",
+              "slug": "pas_assurance_logement"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Si des travaux sont faits, voulez-vous rester dans le logement ?",
+          "customCss": "question-xl",
+          "slug": "info_procedure_depart_apres_travaux",
+          "values": [
+            {
+              "value": "Oui, je veux rester dans mon logement",
+              "slug": "oui"
+            },
+            {
+              "value": "Non,je veux déménager",
+              "slug": "non"
+            },
+            {
+              "value": "Je ne sais pas",
+              "slug": "nsp"
+            }
+          ]
+
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "Utilisation du service",
+          "slug": "info_procedure_utilisation_service",
+          "components": {
+            "body": [
+              {
+                "type":"SignalementFormCheckbox",
+                "slug": "info_procedure_ok_prevenir_bailleur",
+                "label": "Je comprends que {{service}} va prévenir le bailleur (propriétaire) de mon logement."
+              },
+              {
+                "type":"SignalementFormCheckbox",
+                "slug": "info_procedure_ok_visite",
+                "label": "Je comprends qu'une visite du logement pourra être faite pour évaluer l'état du logement."
+              }
+            ]
+          }
+        }
       ],
       "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "info_procedure_previous",
+          "action": "goto:logement_social"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "info_procedure_next",
+          "action": "goto:validation-signalement"
+        }
       ]
     }
   }
