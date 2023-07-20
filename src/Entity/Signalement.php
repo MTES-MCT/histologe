@@ -329,6 +329,9 @@ class Signalement
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: File::class, cascade: ['persist'])]
     private Collection $files;
 
+    #[ORM\ManyToOne(inversedBy: 'signalements')]
+    private ?SignalementDraft $createdFrom = null;
+
     public function __construct()
     {
         $this->situations = new ArrayCollection();
@@ -1710,6 +1713,18 @@ class Signalement
                 $file->setSignalement(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreatedFrom(): ?SignalementDraft
+    {
+        return $this->createdFrom;
+    }
+
+    public function setCreatedFrom(?SignalementDraft $createdFrom): self
+    {
+        $this->createdFrom = $createdFrom;
 
         return $this;
     }
