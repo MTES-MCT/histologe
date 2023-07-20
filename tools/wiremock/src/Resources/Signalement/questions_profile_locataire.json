@@ -66,7 +66,7 @@
         {
           "type": "SignalementFormInfo",
           "label": "Dans le cadre de la procédure, le bailleur ou gestionnaire du logement pourrait être contacté",
-          "slug": "coordonnees_bailleur_warning"
+          "slug": "coordonnees_bailleur_info"
         },
         {
           "type": "SignalementFormTextfield",
@@ -166,7 +166,7 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "ecran_intermediaire_type_composition_previous",
-          "action": "goto:coordonnees_bailleur"
+          "action": "goto:zone_concernee"
         },
         {
           "type": "SignalementFormButton",
@@ -302,7 +302,7 @@
           "type": "SignalementFormOnlyChoice",
           "customCss": "question-xl",
           "label": "Votre logement est composé d'une pièce unique ou de plusieurs pièces ?",
-          "slug": "composition_logement_nombre_pieces",
+          "slug": "composition_logement_piece_unique",
           "values": [
             {
               "label": "Une pièce unique",
@@ -327,7 +327,7 @@
           "type": "SignalementFormCounter",
           "customCss": "question-xl",
           "label": "Combien de personnes vivent dans votre logement ?",
-          "slug": "composition_logement_nombre_perso",
+          "slug": "composition_logement_nombre_personnes",
           "validate": {
             "required": false
           }
@@ -353,7 +353,7 @@
           "label": "Quel est le nombre de pièces à vivre (salon, chambre) dans votre logement ?",
           "slug": "composition_logement_nb_pieces",
           "conditional": {
-            "show": "formStore.data.composition_logement_nombre_pieces === 'plusieurs_pieces'"
+            "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
           }
         }
       ],
@@ -368,7 +368,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "composition_logement_next",
-          "action": "goto:type_logement_next_1"
+          "action": "goto:type_logement_pieces_a_vivre"
         }
       ]
     }
@@ -376,13 +376,13 @@
   {
     "type": "SignalementFormScreen",
     "label": "",
-    "slug": "type_logement_suite_1",
+    "slug": "type_logement_pieces_a_vivre",
     "components": {
       "body": [
         {
           "type": "SignalementFormCounter",
           "label": "Quelle est la superficie de la pièce {{number}} (taille en m²) ?",
-          "slug": "type_logement_suite_1_superficie_piece",
+          "slug": "type_logement_pieces_a_vivre_superficie_piece",
           "repeat": {
             "count": "{{formStore.data.nombre_pieces}}"
           },
@@ -396,7 +396,7 @@
         {
           "type": "SignalementFormOnlyChoice",
           "label": "La hauteur jusqu'au plafond est de 2,20m (220cm) ou plus ?",
-          "slug": "type_logement_suite_1_hauteur_piece",
+          "slug": "type_logement_pieces_a_vivre_hauteur_piece",
           "repeat": {
             "count": "{{formStore.data.nombre_pieces}}"
           },
@@ -412,13 +412,13 @@
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "type_logement_suite_1_previous",
+          "slug": "type_logement_pieces_a_vivre_previous",
           "action": "goto:type_logement"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "type_logement_suite_1_next",
+          "slug": "type_logement_pieces_a_vivre_next",
           "action": "goto:composition_logement"
         }
       ]
@@ -427,13 +427,13 @@
   {
     "type": "SignalementFormScreen",
     "label": "",
-    "slug": "type_logement_suite_2",
+    "slug": "type_logement_commodites",
     "components": {
       "body": [
         {
           "type": "SignalementFormOnlyChoice",
           "label": "Avez vous une cuisine ou un coin cuisine ?",
-          "slug": "type_logement_suite_2_coin_cuisine",
+          "slug": "type_logement_commodites_cuisine",
           "values": [
             {
               "label": "Oui",
@@ -448,7 +448,7 @@
         {
           "type": "SignalementFormOnlyChoice",
           "label": "Avez-vous accès à une cuisine collective ?",
-          "slug": "type_logement_suite_2_cuisine_collective",
+          "slug": "type_logement_commodites_cuisine_collective",
           "values": [
             {
               "label": "Oui",
@@ -460,13 +460,13 @@
             }
           ],
           "conditional": {
-            "show": "formStore.data.type_logement_suite_2_coin_cuisine === 'non'"
+            "show": "formStore.data.type_logement_commodites_cuisine === 'non'"
           }
         },
         {
           "type": "SignalementFormOnlyChoice",
           "label": "La hauteur jusqu'au plafond est de 2m (200cm) ou plus ?",
-          "slug": "type_logement_suite_2_cuisine_hauteur_plafond",
+          "slug": "type_logement_commodites_cuisine_hauteur_plafond",
           "values": [
             {
               "label": "Oui",
@@ -481,7 +481,7 @@
         {
           "type": "SignalementFormOnlyChoice",
           "label": "Avez-vous une salle de bain, salle d'eau avec douche ou baignoire ?",
-          "slug": "type_logement_suite_2_salle_de_bain",
+          "slug": "type_logement_commodites_salle_de_bain",
           "values": [
             {
               "label": "Oui",
@@ -496,7 +496,7 @@
         {
           "type": "SignalementFormOnlyChoice",
           "label": "Avez-vous accès à une salle de bain ou des douches collectives ?",
-          "slug": "type_logement_suite_2_cuisine_collective",
+          "slug": "type_logement_commodites_salle_de_bain_collective",
           "values": [
             {
               "label": "Oui",
@@ -508,13 +508,13 @@
             }
           ],
           "conditional": {
-            "show": "formStore.data.type_logement_suite_2_salle_de_bain === 'non'"
+            "show": "formStore.data.type_logement_commodites_salle_de_bain === 'non'"
           }
         },
         {
           "type": "SignalementFormOnlyChoice",
           "label": "La hauteur jusqu'au plafond est de 2m (200cm) ou plus ?",
-          "slug": "type_logement_suite_2_salle_de_bain_hauteur_plafond",
+          "slug": "type_logement_commodites_salle_de_bain_hauteur_plafond",
           "values": [
             {
               "label": "Oui",
@@ -529,7 +529,7 @@
         {
           "type": "SignalementFormOnlyChoice",
           "label": "Avez-vous des toilettes (WC) ?",
-          "slug": "type_logement_suite_2_wc",
+          "slug": "type_logement_commodites_wc",
           "values": [
             {
               "label": "Oui",
@@ -544,7 +544,7 @@
         {
           "type": "SignalementFormOnlyChoice",
           "label": "Avez-vous accès des toilettes (WC) collectives ?",
-          "slug": "type_logement_suite_2_wc_collective",
+          "slug": "type_logement_commodites_wc_collective",
           "values": [
             {
               "label": "Oui",
@@ -556,13 +556,13 @@
             }
           ],
           "conditional": {
-            "show": "formStore.data.type_logement_suite_2_wc_collective === 'non'"
+            "show": "formStore.data.type_logement_commodites_wc_collective === 'non'"
           }
         },
         {
           "type": "SignalementFormOnlyChoice",
           "label": "La hauteur jusqu'au plafond est de 2m (200cm) ou plus ?",
-          "slug": "type_logement_suite_2_salle_de_bain__hauteur_plafond",
+          "slug": "type_logement_commodites_wc_hauteur_plafond",
           "values": [
             {
               "label": "Oui",
@@ -577,7 +577,7 @@
         {
           "type": "SignalementFormOnlyChoice",
           "label": "Est-ce que les toilettes (WC) et salle de bain sont dans la même pièce ?",
-          "slug": "type_logement_suite_2_salle_de_bain_wc",
+          "slug": "type_logement_commodites_salle_de_bain_wc",
           "values": [
             {
               "label": "Oui",
@@ -594,13 +594,13 @@
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "type_logement_suite_2_previous",
+          "slug": "type_logement_commodites_previous",
           "action": "goto:type_logement_suite_1"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "type_logement_suite_2_next",
+          "slug": "type_logement_commodites_next",
           "action": "goto:bail_dpe"
         }
       ]
@@ -716,7 +716,7 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "bail_dpe_previous",
-          "action": "goto:composition_logement"
+          "action": "goto:type_logement_commodites"
         },
         {
           "type": "SignalementFormButton",
@@ -999,7 +999,7 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "info_procedure_previous",
-          "action": "goto:logement_social"
+          "action": "goto:travailleur_social"
         },
         {
           "type": "SignalementFormButton",
