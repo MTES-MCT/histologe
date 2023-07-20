@@ -377,34 +377,35 @@
     "type": "SignalementFormScreen",
     "label": "",
     "slug": "type_logement_pieces_a_vivre",
+    "repeat": {
+      "count": "{{formStore.data.nombre_pieces}}"
+    },
+    "conditional": {
+      "show": "formStore.data.composition_logement_nombre_pieces === 'plusieurs_pieces'"
+    },
     "components": {
       "body": [
         {
-          "type": "SignalementFormCounter",
-          "label": "Quelle est la superficie de la pièce {{number}} (taille en m²) ?",
-          "slug": "type_logement_pieces_a_vivre_superficie_piece",
-          "repeat": {
-            "count": "{{formStore.data.nombre_pieces}}"
-          },
-          "validate": {
-            "required": false
-          },
-          "conditional": {
-            "show": "formStore.data.composition_logement_nombre_pieces === 'plusieurs_pieces'"
-          }
-        },
-        {
-          "type": "SignalementFormOnlyChoice",
-          "label": "La hauteur jusqu'au plafond est de 2,20m (220cm) ou plus ?",
-          "slug": "type_logement_pieces_a_vivre_hauteur_piece",
-          "repeat": {
-            "count": "{{formStore.data.nombre_pieces}}"
-          },
-          "validate": {
-            "required": false
-          },
-          "conditional": {
-            "show": "formStore.data.composition_logement_nombre_pieces === 'plusieurs_pieces'"
+          "type": "SignalementFormSubscreen",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormCounter",
+                "label": "Quelle est la superficie de la pièce {{number}} (taille en m²) ?",
+                "slug": "type_logement_pieces_a_vivre_superficie_piece_{{number}}",
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "La hauteur jusqu'au plafond est de 2,20m (220cm) ou plus ?",
+                "slug": "type_logement_pieces_a_vivre_hauteur_piece_{{number}}",
+                "validate": {
+                  "required": false
+                }
+              }
+            ]
           }
         }
       ],
@@ -576,8 +577,8 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Est-ce que les toilettes (WC) et salle de bain sont dans la même pièce ?",
-          "slug": "type_logement_commodites_salle_de_bain_wc",
+          "label": "Est-ce que les toilettes (WC) et cuisine sont dans la même pièce ?",
+          "slug": "type_logement_commodites_wc_cuisine",
           "values": [
             {
               "label": "Oui",
