@@ -983,7 +983,7 @@
               {
                 "type": "SignalementFormCheckbox",
                 "value": "info_procedure_ok_prevenir_bailleur",
-                "label": "Je comprends que {{service}} va prévenir le bailleur (propriétaire) de mon logement."
+                "label": "Je comprends que {{platform.name}} va prévenir le bailleur (propriétaire) de mon logement."
               },
               {
                 "type": "SignalementFormCheckbox",
