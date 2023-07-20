@@ -13,7 +13,7 @@ class SignalementDraftTest extends TestCase
     {
         $signalementDraft = (new SignalementDraft())
             ->setAddress('17 quai de la joliette 13002 Marseille')
-            ->setPayload(json_encode(['adresse_logement_etage' => 2]))
+            ->setPayload(['adresse_logement_etage' => 2])
             ->setProfile(Profile::LOCATAIRE)
             ->setEmailDeclarant('john.doe@yopmail.com')
             ->setCurrentStep('3:zone_concernee');

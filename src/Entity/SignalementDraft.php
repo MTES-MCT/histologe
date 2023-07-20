@@ -8,7 +8,6 @@ use App\Entity\Enum\SignalementDraftStatus;
 use App\Repository\SignalementDraftRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
@@ -34,8 +33,8 @@ class SignalementDraft
     #[ORM\Column(length: 255)]
     private ?string $address = null;
 
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $payload = null;
+    #[ORM\Column(type: 'json')]
+    private ?array $payload = [];
 
     #[ORM\Column(length: 128)]
     private ?string $currentStep = null;
@@ -105,12 +104,12 @@ class SignalementDraft
         return $this;
     }
 
-    public function getPayload(): ?string
+    public function getPayload(): ?array
     {
         return $this->payload;
     }
 
-    public function setPayload(string $payload): self
+    public function setPayload(array $payload): self
     {
         $this->payload = $payload;
 
