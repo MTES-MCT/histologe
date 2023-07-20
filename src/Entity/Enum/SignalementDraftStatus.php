@@ -4,7 +4,7 @@ namespace App\Entity\Enum;
 
 enum SignalementDraftStatus: string
 {
-    case EN_COURS = 'EN COURS';
+    case EN_COURS = 'EN_COURS';
     case EN_CUL_DE_SAC = 'EN_CUL_DE_SAC';
     case EN_SIGNALEMENT = 'EN_SIGNALEMENT';
 
@@ -17,7 +17,7 @@ enum SignalementDraftStatus: string
     {
         return [
             'EN_COURS' => 'En cours',
-            'EN_CUL_DE_SAC' => 'EN cul de sac',
+            'EN_CUL_DE_SAC' => 'En cul de sac',
             'EN_SIGNALEMENT' => 'En signalement',
         ];
     }
