@@ -107,12 +107,12 @@
           "slug": "signalement_concerne_profil",
           "values": [
             {
-              "value": "Le logement que vous occupez",
-              "slug": "logement_occupez"
+              "label": "Le logement que vous occupez",
+              "value": "logement_occupez"
             },
             {
-              "value": "Un autre logement",
-              "slug": "autre_logement"
+              "label": "Un autre logement",
+              "value": "autre_logement"
             }
           ]
         },

@@ -21,6 +21,7 @@ class QuestionMock
                 WireMock::aResponse()
                 ->withStatus(200)
                 ->withHeader('Content-Type', self::RESPONSE_CONTENT_TYPE)
+                ->withHeader('Access-Control-Allow-Origin', '*')
                 ->withBody(AppMock::getMockContent(self::RESOURCES_DIR.'/questions_profile_tous.json'))
             )
         );
