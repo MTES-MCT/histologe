@@ -1,39 +1,40 @@
 <template>
   <div class="fr-input-group">
     <SignalementFormTextfield
-      :key="id"
-      :id="id"
+      :key="idAdress"
+      :id="idAdress"
       label="Commençons par l'adresse du logement"
       description="Tapez puis sélectionnez l'adresse dans la liste"
       :customCss="customCss"
       :validate="validate"
-      v-model="formStore.data[id]"
-      :hasError="formStore.validationErrors[id]  !== undefined"
-      :error="formStore.validationErrors[id]"
+      v-model="formStore.data[idAdress]"
+      :hasError="formStore.validationErrors[idAdress]  !== undefined"
+      :error="formStore.validationErrors[idAdress]"
     />
-
+    <div id="sous_menu"></div>
     <SignalementFormButton
-      :key="id"
-      :id="id"
+      :key="idShow"
+      :id="idShow"
       label="Afficher tous les champs"
       customCss="btn-link"
       :validate="validate"
-      v-model="formStore.data[id]"
-      :hasError="formStore.validationErrors[id]  !== undefined"
-      :error="formStore.validationErrors[id]"
+      v-model="formStore.data[idShow]"
+      :hasError="formStore.validationErrors[idShow]  !== undefined"
+      :error="formStore.validationErrors[idShow]"
       action="show:adresse-logement-tous-les-champs"
     />
 
     <SignalementFormSubscreen
-      key="adresse-logement-tous-les-champs"
-      id="adresse-logement-tous-les-champs"
-      label="Afficher tous les champs"
+      :key="idSubscreen"
+      :id="idSubscreen"
+      label=""
       customCss="fr-hidden"
       :components="screens"
       :validate="validate"
-      v-model="formStore.data[id]"
-      :hasError="formStore.validationErrors[id]  !== undefined"
-      :error="formStore.validationErrors[id]"
+      v-model="formStore.data[idSubscreen]"
+      :hasError="formStore.validationErrors[idSubscreen]  !== undefined"
+      :error="formStore.validationErrors[idSubscreen]"
+      @update:modelValue="handleSubscreenModelUpdate"
     />
   </div>
 </template>
@@ -65,7 +66,11 @@ export default defineComponent({
   },
   data () {
     return {
-      screens: subscreenData,
+      idFetchTimeout: 0 as unknown as ReturnType<typeof setTimeout>,
+      idAdress: this.id + '_suggestion',
+      idShow: this.id + '_afficher_les_champs',
+      idSubscreen: this.id + '_tous_les_champs',
+      screens: subscreenData, // TODO : générer les bons id dans le subscreen
       formStore
     }
   },
@@ -81,12 +86,14 @@ export default defineComponent({
   },
   created () {
     watch(
-      () => this.formStore.data[this.id],
+      () => this.formStore.data[this.idAdress],
       (newValue: any) => {
-        // Faites ce que vous devez faire avec la nouvelle valeur
-        console.log('Nouvelle valeur :', newValue)
-        // TODO  : appeler à intervalles réguliers, pas à chaque changement
-        requests.validateAddress(newValue, this.onAddressFound)
+        clearTimeout(this.idFetchTimeout)
+        this.idFetchTimeout = setTimeout(() => {
+          if (newValue.length > 10) {
+            requests.validateAddress(newValue, this.onAddressFound)
+          }
+        })
       }
     )
   },
@@ -94,8 +101,50 @@ export default defineComponent({
     updateValue (value: any) {
       this.$emit('update:modelValue', value)
     },
+    handleSubscreenModelUpdate (newValue: string) {
+      // Mettre à jour la valeur dans formStore.data lorsque la valeur du sous-écran change
+      this.formStore.data[this.idSubscreen] = newValue
+    },
     onAddressFound (requestResponse: any) {
-      console.log(requestResponse)
+      const container = document.querySelector('#sous_menu')
+      const subscreen = document.querySelector('#' + this.idSubscreen)
+      const buttonShow = document.querySelector('#' + this.idShow)
+
+      // TODO : que faire si code postal dans département non ouvert ?
+      // TODO : répertorier les exclusions de code postal du 69 ?
+      // TODO : vérifier si dans territoire expé NDE pour comportement différent ?
+      if (container) {
+        container.innerHTML = ''
+
+        for (const feature of requestResponse.features) {
+          const suggestion = document.createElement('div')
+          suggestion.classList.add(
+            'fr-col-12',
+            'fr-p-3v',
+            'fr-text-label--blue-france',
+            'fr-adresse-suggestion'
+          )
+          suggestion.innerHTML = feature.properties.label
+          suggestion.addEventListener('click', () => {
+            console.log(feature.properties.name)
+            this.formStore.data[this.id + '_tous_les_champs_numero'] = feature.properties.name
+            this.formStore.data[this.id + '_tous_les_champs_code_postal'] = feature.properties.postcode
+            this.formStore.data[this.id + '_tous_les_champs_commune'] = feature.properties.city
+            this.formStore.data[this.id + '_tous_les_champs_insee'] = feature.properties.citycode
+            this.formStore.data[this.id + '_tous_les_champs_geoloc_lat'] = feature.geometry.coordinates[0]
+            this.formStore.data[this.id + '_tous_les_champs_geoloc_lng'] = feature.geometry.coordinates[1]
+
+            container.innerHTML = ''
+            if (subscreen) {
+              subscreen.classList.remove('fr-hidden')
+            }
+            if (buttonShow) {
+              buttonShow.classList.add('fr-hidden')
+            }
+          })
+          container.appendChild(suggestion)
+        }
+      }
     }
   },
   emits: ['update:modelValue']
@@ -103,4 +152,8 @@ export default defineComponent({
 </script>
 
 <style>
+.fr-adresse-suggestion:hover {
+    background-color: var(--artwork-minor-blue-cumulus);
+    color: white !important;
+}
 </style>
