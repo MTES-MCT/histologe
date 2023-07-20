@@ -236,6 +236,44 @@
               "value": "non"
             }
           ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "customCss": "question-xl",
+          "label": "Votre logement est-il sous les combles, sans fenêtre ?",
+          "slug": "type_logement_sous_comble_sans_fenetre",
+          "conditional": {
+            "show": "formStore.data.type_logement_dernier_etage === 'oui'"
+          },
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "customCss": "question-xl",
+          "label": "Votre logement est-il en sous-sol, sans fenêtre ?",
+          "slug": "type_logement_sous_sol_sans_fenetre",
+          "conditional": {
+            "show": "formStore.data.type_logement_dernier_etage === 'non' && formStore.data.type_logement_rdc === 'non'"
+          },
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
         }
       ],
       "footer": [
@@ -243,7 +281,7 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "type_logement_previous",
-          "action": "goto:coordonnees_bailleur"
+          "action": "goto:ecran_intermediaire_type_composition"
         },
         {
           "type": "SignalementFormButton",
@@ -272,7 +310,7 @@
             },
             {
               "label": "Plusieurs pièces",
-              "value": "plusieurs pièces"
+              "value": "plusieurs_pieces"
             }
           ]
         },
@@ -309,19 +347,260 @@
               "value": "non"
             }
           ]
+        },
+        {
+          "type": "SignalementFormCounter",
+          "label": "Quel est le nombre de pièces à vivre (salon, chambre) dans votre logement ?",
+          "slug": "composition_logement_nb_pieces",
+          "conditional": {
+            "show": "formStore.data.composition_logement_nombre_pieces === 'plusieurs_pieces'"
+          }
         }
       ],
       "footer": [
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "type_logement_previous",
+          "slug": "composition_logement_previous",
           "action": "goto:type_logement"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "type_logement_next",
+          "slug": "composition_logement_next",
+          "action": "goto:type_logement_next_1"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "slug": "type_logement_suite_1",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCounter",
+          "label": "Quelle est la superficie de la pièce {{number}} (taille en m²) ?",
+          "slug": "type_logement_suite_1_superficie_piece",
+          "repeat": {
+            "count": "{{formStore.data.nombre_pieces}}"
+          },
+          "validate": {
+            "required": false
+          },
+          "conditional": {
+            "show": "formStore.data.composition_logement_nombre_pieces === 'plusieurs_pieces'"
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "La hauteur jusqu'au plafond est de 2,20m (220cm) ou plus ?",
+          "slug": "type_logement_suite_1_hauteur_piece",
+          "repeat": {
+            "count": "{{formStore.data.nombre_pieces}}"
+          },
+          "validate": {
+            "required": false
+          },
+          "conditional": {
+            "show": "formStore.data.composition_logement_nombre_pieces === 'plusieurs_pieces'"
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "type_logement_suite_1_previous",
+          "action": "goto:type_logement"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "type_logement_suite_1_next",
+          "action": "goto:composition_logement"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "slug": "type_logement_suite_2",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Avez vous une cuisine ou un coin cuisine ?",
+          "slug": "type_logement_suite_2_coin_cuisine",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Avez-vous accès à une cuisine collective ?",
+          "slug": "type_logement_suite_2_cuisine_collective",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ],
+          "conditional": {
+            "show": "formStore.data.type_logement_suite_2_coin_cuisine === 'non'"
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "La hauteur jusqu'au plafond est de 2m (200cm) ou plus ?",
+          "slug": "type_logement_suite_2_cuisine_hauteur_plafond",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Avez-vous une salle de bain, salle d'eau avec douche ou baignoire ?",
+          "slug": "type_logement_suite_2_salle_de_bain",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Avez-vous accès à une salle de bain ou des douches collectives ?",
+          "slug": "type_logement_suite_2_cuisine_collective",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ],
+          "conditional": {
+            "show": "formStore.data.type_logement_suite_2_salle_de_bain === 'non'"
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "La hauteur jusqu'au plafond est de 2m (200cm) ou plus ?",
+          "slug": "type_logement_suite_2_salle_de_bain_hauteur_plafond",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Avez-vous des toilettes (WC) ?",
+          "slug": "type_logement_suite_2_wc",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Avez-vous accès des toilettes (WC) collectives ?",
+          "slug": "type_logement_suite_2_wc_collective",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ],
+          "conditional": {
+            "show": "formStore.data.type_logement_suite_2_wc_collective === 'non'"
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "La hauteur jusqu'au plafond est de 2m (200cm) ou plus ?",
+          "slug": "type_logement_suite_2_salle_de_bain__hauteur_plafond",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Est-ce que les toilettes (WC) et salle de bain sont dans la même pièce ?",
+          "slug": "type_logement_suite_2_salle_de_bain_wc",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "type_logement_suite_2_previous",
+          "action": "goto:type_logement_suite_1"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "type_logement_suite_2_next",
           "action": "goto:bail_dpe"
         }
       ]
