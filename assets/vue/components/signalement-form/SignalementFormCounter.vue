@@ -27,7 +27,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'SignalementFormTextfield',
+  name: 'SignalementFormCounter',
   props: {
     id: { type: String, default: null },
     label: { type: String, default: null },
