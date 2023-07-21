@@ -377,9 +377,6 @@
     "type": "SignalementFormScreen",
     "label": "",
     "slug": "type_logement_pieces_a_vivre",
-    "repeat": {
-      "count": "{{formStore.data.nombre_pieces}}"
-    },
     "conditional": {
       "show": "formStore.data.composition_logement_nombre_pieces === 'plusieurs_pieces'"
     },
@@ -387,6 +384,9 @@
       "body": [
         {
           "type": "SignalementFormSubscreen",
+          "repeat": {
+            "count": "{{formStore.data.nombre_pieces}}"
+          },
           "components": {
             "body": [
               {
@@ -420,7 +420,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "type_logement_pieces_a_vivre_next",
-          "action": "goto:composition_logement"
+          "action": "goto:type_logement_commodites"
         }
       ]
     }
