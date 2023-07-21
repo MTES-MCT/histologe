@@ -65,12 +65,14 @@ export default defineComponent({
     error: { type: String, default: '' }
   },
   data () {
+    const updatedSubscreenData = this.generateSubscreenData(this.id, subscreenData.body)
+
     return {
       idFetchTimeout: 0 as unknown as ReturnType<typeof setTimeout>,
       idAdress: this.id + '_suggestion',
       idShow: this.id + '_afficher_les_champs',
       idSubscreen: this.id + '_tous_les_champs',
-      screens: subscreenData, // TODO : générer les bons id dans le subscreen
+      screens: { body: updatedSubscreenData },
       formStore
     }
   },
@@ -105,6 +107,14 @@ export default defineComponent({
       // Mettre à jour la valeur dans formStore.data lorsque la valeur du sous-écran change
       this.formStore.data[this.idSubscreen] = newValue
     },
+    generateSubscreenData (id: string, data: any[]) {
+      return data.map((component) => {
+        return {
+          ...component,
+          slug: id + '_' + component.slug
+        }
+      })
+    },
     onAddressFound (requestResponse: any) {
       const container = document.querySelector('#sous_menu')
       const subscreen = document.querySelector('#' + this.idSubscreen)
@@ -126,7 +136,6 @@ export default defineComponent({
           )
           suggestion.innerHTML = feature.properties.label
           suggestion.addEventListener('click', () => {
-            console.log(feature.properties.name)
             this.formStore.data[this.id + '_tous_les_champs_numero'] = feature.properties.name
             this.formStore.data[this.id + '_tous_les_champs_code_postal'] = feature.properties.postcode
             this.formStore.data[this.id + '_tous_les_champs_commune'] = feature.properties.city
