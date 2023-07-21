@@ -1,5 +1,11 @@
 <div class="fr-grid-row fr-mt-3v fr-mb-3w">
     <div class="fr-col-12 fr-col-md-6">
+        {% if intervention.type == enum('App\\Entity\\Enum\\InterventionType').VISITE_CONTROLE %}
+            <div class="fr-mb-3v">
+                <strong>Type de visite :</strong>
+                {{ intervention.type.label() }}
+            </div>
+        {% endif %}
         <div class="fr-mb-3v">
             {% include 'back/signalement/view/visites/visite-status.html.twig' %}
         </div>
