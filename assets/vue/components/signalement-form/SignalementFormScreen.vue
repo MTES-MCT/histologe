@@ -53,6 +53,7 @@ import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
 import SignalementFormOnlyChoice from './SignalementFormOnlyChoice.vue'
 import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
+import SignalementFormDate from './SignalementFormDate.vue'
 
 export default defineComponent({
   name: 'SignalementFormScreen',
@@ -60,7 +61,8 @@ export default defineComponent({
     SignalementFormTextfield,
     SignalementFormButton,
     SignalementFormOnlyChoice,
-    SignalementFormSubscreen
+    SignalementFormSubscreen,
+    SignalementFormDate
   },
   props: {
     label: String,
