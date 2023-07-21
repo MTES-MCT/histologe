@@ -41,16 +41,6 @@ export default defineComponent({
     hasError: { type: Boolean, default: false },
     error: { type: String, default: '' }
   },
-  // computed: {
-  //   internalValue: {
-  //     get () {
-  //       return this.modelValue
-  //     },
-  //     set (newValue: string) {
-  //       this.$emit('update:modelValue', newValue)
-  //     }
-  //   }
-  // },
   methods: {
     updateValue (event: Event) {
       const value = (event.target as HTMLInputElement).getAttribute('value')
