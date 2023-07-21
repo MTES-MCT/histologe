@@ -4,7 +4,7 @@
       class="signalement-form"
       :data-ajaxurl="sharedProps.ajaxurl"
       >
-      <SignalementFormAriane
+      <SignalementFormBreadCrumbs
         :currentStep="currentScreen.label"
       />
       <SignalementFormScreen
@@ -22,14 +22,14 @@ import screenData from './exemple_socle.json'
 import { defineComponent } from 'vue'
 import formStore from './store'
 import SignalementFormScreen from './SignalementFormScreen.vue'
-import SignalementFormAriane from './SignalementFormAriane.vue'
+import SignalementFormBreadCrumbs from './SignalementFormBreadCrumbs.vue'
 const initElements:any = document.querySelector('#app-signalement-form')
 
 export default defineComponent({
   name: 'TheSignalementAppForm',
   components: {
     SignalementFormScreen,
-    SignalementFormAriane
+    SignalementFormBreadCrumbs
   },
   data () {
     const currentScreen = screenData[formStore.currentScreenIndex]

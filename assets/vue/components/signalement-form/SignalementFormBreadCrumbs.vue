@@ -38,7 +38,7 @@ import { defineComponent } from 'vue'
 import formStore from './store'
 
 export default defineComponent({
-  name: 'SignalementFormAriane',
+  name: 'SignalementFormBreadCrumbs',
   data () {
     return {
       formStore
