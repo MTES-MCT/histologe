@@ -24,6 +24,15 @@
               }
             ]
           }
+        },        
+        {
+          "type": "SignalementFormCounter",
+          "customCss": "question-xl",
+          "label": "Combien de personnes vivent dans votre logement ?",
+          "slug": "composition_logement_nombre_personnes",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormButton",
