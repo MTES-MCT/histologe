@@ -3,17 +3,17 @@
         {
         "type": "SignalementFormTextfield",
         "label": "Numéro et voie",
-        "slug": "adresse_logement_tous_les_champs_numero"
+        "slug": "adresse_logement_adresse_tous_les_champs_numero"
         },
         {
         "type": "SignalementFormTextfield",
         "label": "Code postal",
-        "slug": "adresse_logement_tous_les_champs_code_postal"
+        "slug": "adresse_logement_adresse_tous_les_champs_code_postal"
         },
         {
         "type": "SignalementFormTextfield",
         "label": "Commune",
-        "slug": "adresse_logement_tous_les_champs_commune"
+        "slug": "adresse_logement_adresse_tous_les_champs_commune"
         }
     ]
 }
