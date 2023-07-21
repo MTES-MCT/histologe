@@ -130,7 +130,10 @@ export default defineComponent({
       }
     },
     showComponentBySlug (slug:string) {
-      console.log(slug)
+      const componentToShow = document.querySelector('#' + slug)
+      if (componentToShow) {
+        componentToShow.classList.remove('fr-hidden')
+      }
     }
   }
 })

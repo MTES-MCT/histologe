@@ -81,6 +81,11 @@ export default defineComponent({
 
 <style>
   .signalement-form {
-    background-color: '#FFF';
+    background-color: white;
+  }
+  .btn-link {
+    background-color: white;
+    color: var(--artwork-minor-blue-cumulus);
+    text-decoration: underline;
   }
 </style>

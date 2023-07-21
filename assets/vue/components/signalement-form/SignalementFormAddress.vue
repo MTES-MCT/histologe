@@ -21,7 +21,8 @@
       v-model="formStore.data[idShow]"
       :hasError="formStore.validationErrors[idShow]  !== undefined"
       :error="formStore.validationErrors[idShow]"
-      action="show:adresse-logement-tous-les-champs"
+      :action="actionShow"
+      :clickEvent="handleClickButton"
     />
 
     <SignalementFormSubscreen
@@ -62,7 +63,8 @@ export default defineComponent({
     customCss: { type: String, default: '' },
     validate: { type: Object, default: null },
     hasError: { type: Boolean, default: false },
-    error: { type: String, default: '' }
+    error: { type: String, default: '' },
+    clickEvent: Function
   },
   data () {
     const updatedSubscreenData = this.generateSubscreenData(this.id, subscreenData.body)
@@ -72,6 +74,7 @@ export default defineComponent({
       idAdress: this.id + '_suggestion',
       idShow: this.id + '_afficher_les_champs',
       idSubscreen: this.id + '_tous_les_champs',
+      actionShow: 'show:' + this.id + '_tous_les_champs',
       screens: { body: updatedSubscreenData },
       formStore
     }
@@ -102,6 +105,11 @@ export default defineComponent({
   methods: {
     updateValue (value: any) {
       this.$emit('update:modelValue', value)
+    },
+    handleClickButton (type:string, param:string) {
+      if (this.clickEvent !== undefined) {
+        this.clickEvent(type, param)
+      }
     },
     handleSubscreenModelUpdate (newValue: string) {
       // Mettre à jour la valeur dans formStore.data lorsque la valeur du sous-écran change
