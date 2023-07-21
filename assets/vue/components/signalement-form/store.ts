@@ -37,8 +37,7 @@ const formStore: FormStore = reactive({
   },
   inputComponents: [
     'SignalementFormTextfield',
-    'SignalementFormOnlyChoice',
-    'SignalementFormAddress'
+    'SignalementFormOnlyChoice'
   ],
   validationErrors: {}, // Les erreurs de validation
   updateData (key: string, value: any) {
