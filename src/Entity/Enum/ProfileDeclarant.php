@@ -2,7 +2,7 @@
 
 namespace App\Entity\Enum;
 
-enum Profile: string
+enum ProfileDeclarant: string
 {
     case LOCATAIRE = 'LOCATAIRE';
     case BAILLEUR_OCCUPANT = 'BAILLEUR_OCCUPANT';
@@ -22,7 +22,7 @@ enum Profile: string
             'LOCATAIRE' => 'Locataire',
             'BAILLEUR_OCCUPANT' => 'Bailleur occupant',
             'TIERS_PARTICULIER' => 'Tiers particulier',
-            'TIERS_PRO' => 'Tiers pro',
+            'TIERS_PRO' => 'Tiers professionnel',
             'SERVICE_SECOURS' => 'Service de secours',
             'BAILLEUR' => 'Bailleur',
         ];

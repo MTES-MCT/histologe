@@ -5,7 +5,7 @@ namespace App\Entity\Enum;
 enum SignalementDraftStatus: string
 {
     case EN_COURS = 'EN_COURS';
-    case EN_CUL_DE_SAC = 'EN_CUL_DE_SAC';
+    case HORS_PDLHI = 'HORS_PDLHI';
     case EN_SIGNALEMENT = 'EN_SIGNALEMENT';
 
     public function label(): string
@@ -17,7 +17,7 @@ enum SignalementDraftStatus: string
     {
         return [
             'EN_COURS' => 'En cours',
-            'EN_CUL_DE_SAC' => 'En cul de sac',
+            'HORS_PDLHI' => 'Hors PDLHI',
             'EN_SIGNALEMENT' => 'En signalement',
         ];
     }

@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Behaviour\TimestampableTrait;
-use App\Entity\Enum\Profile;
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Repository\SignalementDraftRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -24,14 +24,14 @@ class SignalementDraft
     #[ORM\Column(type: 'uuid')]
     private ?Uuid $uuid = null;
 
-    #[ORM\Column(type: 'string', nullable: true, enumType: Profile::class)]
-    private ?Profile $profile = null;
+    #[ORM\Column(type: 'string', nullable: true, enumType: ProfileDeclarant::class)]
+    private ?ProfileDeclarant $profileDeclarant = null;
 
     #[ORM\Column(length: 255)]
     private ?string $emailDeclarant = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $address = null;
+    private ?string $addressComplete = null;
 
     #[ORM\Column(type: 'json')]
     private ?array $payload = [];
@@ -68,14 +68,14 @@ class SignalementDraft
         return $this;
     }
 
-    public function getProfile(): ?Profile
+    public function getProfileDeclarant(): ?ProfileDeclarant
     {
-        return $this->profile;
+        return $this->profileDeclarant;
     }
 
-    public function setProfile(Profile $profile): self
+    public function setProfileDeclarant(ProfileDeclarant $profileDeclarant): self
     {
-        $this->profile = $profile;
+        $this->profileDeclarant = $profileDeclarant;
 
         return $this;
     }
@@ -92,14 +92,14 @@ class SignalementDraft
         return $this;
     }
 
-    public function getAddress(): ?string
+    public function getAddressComplete(): ?string
     {
-        return $this->address;
+        return $this->addressComplete;
     }
 
-    public function setAddress(?string $address): self
+    public function setAddressComplete(?string $addressComplete): self
     {
-        $this->address = $address;
+        $this->addressComplete = $addressComplete;
 
         return $this;
     }
