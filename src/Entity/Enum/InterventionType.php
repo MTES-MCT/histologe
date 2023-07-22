@@ -10,7 +10,7 @@ enum InterventionType: string
 
     public const INTERVENTION_TYPE_LABEL = [
         'VISITE' => 'Visite',
-        'VISITE_CONTROLE' => 'Visite contrôle',
+        'VISITE_CONTROLE' => 'Visite de contrôle',
         'ARRETE_PREFECTORAL' => 'Arrêté préfectoral',
     ];
 

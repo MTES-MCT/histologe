@@ -7,15 +7,18 @@ use App\Entity\Enum\InterfacageType;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Intervention;
 use App\Entity\User;
+use App\Event\InterventionCreatedEvent;
 use App\Factory\InterventionFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
+use App\Manager\UserManager;
 use App\Repository\InterventionRepository;
 use App\Service\Esabora\Enum\EsaboraStatus;
 use App\Service\Esabora\Response\DossierResponseInterface;
 use App\Service\Esabora\Response\Model\DossierArreteSISH;
 use App\Service\Esabora\Response\Model\DossierVisiteSISH;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class EsaboraManager
 {
@@ -24,6 +27,8 @@ class EsaboraManager
         private readonly SuiviManager $suiviManager,
         private readonly InterventionRepository $interventionRepository,
         private readonly InterventionFactory $interventionFactory,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly UserManager $userManager,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -128,6 +133,10 @@ class EsaboraManager
                     doneBy: $dossierVisiteSISH->getVisitePar(),
                 );
                 $this->interventionRepository->save($newIntervention, true);
+                $this->eventDispatcher->dispatch(
+                    new InterventionCreatedEvent($newIntervention, $this->userManager->getSystemUser()),
+                    InterventionCreatedEvent::NAME
+                );
             }
         }
     }
@@ -159,6 +168,10 @@ class EsaboraManager
             );
 
             $this->interventionRepository->save($intervention, true);
+            $this->eventDispatcher->dispatch(
+                new InterventionCreatedEvent($intervention, $this->userManager->getSystemUser()),
+                InterventionCreatedEvent::NAME
+            );
         }
     }
 

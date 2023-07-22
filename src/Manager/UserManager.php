@@ -134,8 +134,8 @@ class UserManager extends AbstractManager
             if (null === $user) {
                 $user = $this->userFactory->createInstanceFrom(
                     roleLabel: User::ROLES['Usager'],
-                    territory: null,
                     partner: null,
+                    territory: null,
                     firstname: $prenom,
                     lastname: $nom,
                     email: $mail
@@ -156,5 +156,10 @@ class UserManager extends AbstractManager
         }
 
         return null;
+    }
+
+    public function getSystemUser(): ?User
+    {
+        return $this->getRepository()->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
     }
 }
