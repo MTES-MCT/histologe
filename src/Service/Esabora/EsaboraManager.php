@@ -17,6 +17,7 @@ use App\Service\Esabora\Enum\EsaboraStatus;
 use App\Service\Esabora\Response\DossierResponseInterface;
 use App\Service\Esabora\Response\Model\DossierArreteSISH;
 use App\Service\Esabora\Response\Model\DossierVisiteSISH;
+use App\Service\Intervention\InterventionDescriptionGenerator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -163,7 +164,7 @@ class EsaboraManager
                 status: Intervention::STATUS_DONE,
                 providerName: InterfacageType::ESABORA->value,
                 providerId: $dossierArreteSISH->getArreteId(),
-                details: $this->buildDetailArrete($dossierArreteSISH),
+                details: InterventionDescriptionGenerator::buildDescriptionArreteCreated($dossierArreteSISH),
                 additionalInformation: $additionalInformation
             );
 
@@ -188,32 +189,10 @@ class EsaboraManager
     {
         $intervention
             ->setScheduledAt(DateParser::parse($dossierArreteSISH->getArreteDate()))
-            ->setDetails($this->buildDetailArrete($dossierArreteSISH))
-            ->setStatus(Intervention::STATUS_DONE)
-            ->setDetails($this->buildDetailArrete($dossierArreteSISH));
+            ->setDetails(InterventionDescriptionGenerator::buildDescriptionArreteCreated($dossierArreteSISH))
+            ->setStatus(Intervention::STATUS_DONE);
 
         $this->interventionRepository->save($intervention, true);
-    }
-
-    private function buildDetailArrete(DossierArreteSISH $dossierArreteSISH): string
-    {
-        $description = sprintf(
-            'Il existe 1 arrêté de type %s de n°%s daté du %s dans le dossier de n°%s.'.\PHP_EOL,
-            $dossierArreteSISH->getArreteType(),
-            $dossierArreteSISH->getArreteNumero(),
-            $dossierArreteSISH->getArreteDate(),
-            $dossierArreteSISH->getDossNum()
-        );
-
-        if ($dossierArreteSISH->getArreteMLNumero()) {
-            $description .= sprintf(
-                'Pour cet arrêté, il a également été pris un arrêté de mainlevée n°%s en date du %s.',
-                $dossierArreteSISH->getArreteMLNumero(),
-                $dossierArreteSISH->getArreteMLDate()
-            );
-        }
-
-        return $description;
     }
 
     private function shouldBeAcceptedViaEsabora(string $esaboraDossierStatus, int $currentStatus): bool

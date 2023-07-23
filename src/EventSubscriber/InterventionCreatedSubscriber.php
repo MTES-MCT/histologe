@@ -2,11 +2,11 @@
 
 namespace App\EventSubscriber;
 
-use App\Entity\Enum\InterventionType;
 use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Event\InterventionCreatedEvent;
 use App\Manager\SuiviManager;
+use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -32,16 +32,16 @@ class InterventionCreatedSubscriber implements EventSubscriberInterface
         $suivi = $this->suiviManager->createSuivi(
             user: $event->getUser(),
             signalement: $intervention->getSignalement(),
-            params: [
-                'description' => $this->buildDescription($intervention),
-                'type' => Suivi::TYPE_AUTO,
-            ],
+            params: $this->getParams($intervention),
             isPublic: true,
             context: Suivi::CONTEXT_INTERVENTION,
         );
         $this->suiviManager->save($suivi);
 
-        $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER);
+        $this->visiteNotifier->notifyUsagers(
+            $intervention,
+            NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER
+        );
 
         $this->visiteNotifier->notifyAgents(
             intervention: $intervention,
@@ -51,22 +51,14 @@ class InterventionCreatedSubscriber implements EventSubscriberInterface
         );
     }
 
-    private function buildDescription(Intervention $intervention): string
+    private function getParams(Intervention $intervention): array
     {
-        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) {
-            return $intervention->getDetails();
-        }
-        $labelVisite = strtolower($intervention->getType()->label());
-        $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
-
-        return sprintf(
-            '%s programmée : une %s du logement situé %s est prévue le %s.<br>La %s sera effectuée par %s.',
-            ucfirst($labelVisite),
-            $labelVisite,
-            $intervention->getSignalement()->getAdresseOccupant(),
-            $intervention->getScheduledAt()->format('d/m/Y'),
-            $labelVisite,
-            $partnerName
-        );
+        return [
+            'type' => Suivi::TYPE_AUTO,
+            'description' => InterventionDescriptionGenerator::generate(
+                $intervention,
+                InterventionCreatedEvent::NAME
+            ),
+        ];
     }
 }

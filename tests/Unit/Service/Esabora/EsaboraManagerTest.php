@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Service\Esabora;
 
 use App\Entity\Enum\PartnerType;
 use App\Entity\Intervention;
+use App\Entity\User;
 use App\Factory\InterventionFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
@@ -15,6 +16,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class EsaboraManagerTest extends TestCase
 {
@@ -35,7 +37,7 @@ class EsaboraManagerTest extends TestCase
         $this->interventionRepository = $this->createMock(InterventionRepository::class);
         $this->interventionFactory = $this->createMock(InterventionFactory::class);
         $this->userManager = $this->createMock(UserManager::class);
-        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->eventDispatcher = new EventDispatcher();
         $this->logger = $this->createMock(LoggerInterface::class);
     }
 
@@ -56,6 +58,11 @@ class EsaboraManagerTest extends TestCase
         $this->interventionRepository
             ->expects($this->once())
             ->method('save');
+
+        $this->userManager
+            ->expects($this->once())
+            ->method('getSystemUser')
+            ->willReturn($this->getUser([User::ROLE_ADMIN]));
 
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
@@ -145,6 +152,11 @@ class EsaboraManagerTest extends TestCase
         $this->interventionRepository
             ->expects($this->once())
             ->method('save');
+
+        $this->userManager
+            ->expects($this->once())
+            ->method('getSystemUser')
+            ->willReturn($this->getUser([User::ROLE_ADMIN]));
 
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
