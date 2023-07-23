@@ -24,7 +24,10 @@ class InterventionDescriptionGeneratorTest extends TestCase
         string $scheduledAt,
         string $partnerName
     ): void {
-        $description = InterventionDescriptionGenerator::generate($intervention, InterventionCreatedEvent::NAME);
+        $description = InterventionDescriptionGenerator::generate(
+            $intervention,
+            InterventionCreatedEvent::NAME
+        );
 
         $this->assertStringStartsWith($label, $description);
         $this->assertStringContainsString($address, $description);
@@ -70,12 +73,24 @@ class InterventionDescriptionGeneratorTest extends TestCase
             $this->getIntervention(
                 InterventionType::VISITE_CONTROLE,
                 new \DateTimeImmutable('2023-09-01'),
-                Intervention::STATUS_PLANNED), 'Visite de contrôle programmée :', '25 rue du test', '01/09/2023', 'ARS', ];
+                Intervention::STATUS_PLANNED
+            ),
+            'Visite de contrôle programmée :',
+            '25 rue du test',
+            '01/09/2023',
+            'ARS',
+        ];
 
         yield 'Visite' => [
             $this->getIntervention(
                 InterventionType::VISITE,
                 new \DateTimeImmutable('2023-10-01'),
-                Intervention::STATUS_PLANNED), 'Visite programmée', '25 rue du test', '01/10/2023', 'ARS', ];
+                Intervention::STATUS_PLANNED
+            ),
+            'Visite programmée',
+            '25 rue du test',
+            '01/10/2023',
+            'ARS',
+        ];
     }
 }

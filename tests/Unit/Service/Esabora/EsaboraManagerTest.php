@@ -113,20 +113,22 @@ class EsaboraManagerTest extends TestCase
         $this->interventionRepository
             ->expects($this->once())
             ->method('findOneBy')
-            ->willReturn(self::CREATE_ACTION ? null : new Intervention());
-
-        $this->interventionFactory
-            ->expects($this->once())
-            ->method('createInstanceFrom');
+            ->willReturn(self::CREATE_ACTION === $action ? null : new Intervention());
 
         $this->interventionRepository
             ->expects($this->once())
             ->method('save');
 
-        $this->userManager
-            ->expects($this->once())
-            ->method('getSystemUser')
-            ->willReturn($this->getUser([User::ROLE_ADMIN]));
+        if (self::CREATE_ACTION === $action) {
+            $this->interventionFactory
+                ->expects($this->once())
+                ->method('createInstanceFrom');
+
+            $this->userManager
+                ->expects($this->once())
+                ->method('getSystemUser')
+                ->willReturn($this->getUser([User::ROLE_ADMIN]));
+        }
 
         return new EsaboraManager(
             $this->affectationManager,
