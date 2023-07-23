@@ -21,6 +21,8 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 class EsaboraManagerTest extends TestCase
 {
     use FixturesHelper;
+    protected const CREATE_ACTION = 'create';
+    protected const UPDATE_ACTION = 'update';
 
     protected MockObject|AffectationManager $affectationManager;
     protected MockObject|SuiviManager $suiviManager;
@@ -45,34 +47,7 @@ class EsaboraManagerTest extends TestCase
     {
         $dossierVisiteCollection = $this->getDossierVisiteSISHCollectionResponse()->getCollection();
         $dossierVisite = $dossierVisiteCollection[0];
-
-        $this->interventionRepository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->willReturn(null);
-
-        $this->interventionFactory
-            ->expects($this->once())
-            ->method('createInstanceFrom');
-
-        $this->interventionRepository
-            ->expects($this->once())
-            ->method('save');
-
-        $this->userManager
-            ->expects($this->once())
-            ->method('getSystemUser')
-            ->willReturn($this->getUser([User::ROLE_ADMIN]));
-
-        $esaboraManager = new EsaboraManager(
-            $this->affectationManager,
-            $this->suiviManager,
-            $this->interventionRepository,
-            $this->interventionFactory,
-            $this->eventDispatcher,
-            $this->userManager,
-            $this->logger,
-        );
+        $esaboraManager = $this->provideEsaboraManagerForIntervention(self::CREATE_ACTION);
         $esaboraManager->createOrUpdateVisite($this->getAffectation(PartnerType::ARS), $dossierVisite);
     }
 
@@ -113,25 +88,7 @@ class EsaboraManagerTest extends TestCase
     {
         $dossierVisiteCollection = $this->getDossierVisiteSISHCollectionResponse()->getCollection();
         $dossierVisite = $dossierVisiteCollection[0];
-
-        $this->interventionRepository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->willReturn(new Intervention());
-
-        $this->interventionFactory
-            ->expects($this->any())
-            ->method('createInstanceFrom');
-
-        $esaboraManager = new EsaboraManager(
-            $this->affectationManager,
-            $this->suiviManager,
-            $this->interventionRepository,
-            $this->interventionFactory,
-            $this->eventDispatcher,
-            $this->userManager,
-            $this->logger,
-        );
+        $esaboraManager = $this->provideEsaboraManagerForIntervention(self::UPDATE_ACTION);
         $esaboraManager->createOrUpdateVisite($this->getAffectation(PartnerType::ARS), $dossierVisite);
     }
 
@@ -139,11 +96,24 @@ class EsaboraManagerTest extends TestCase
     {
         $dossierArreteCollection = $this->getDossierArreteSISHCollectionResponse()->getCollection();
         $dossierArrete = $dossierArreteCollection[0];
+        $esaboraManager = $this->provideEsaboraManagerForIntervention(self::CREATE_ACTION);
+        $esaboraManager->createOrUpdateArrete($this->getAffectation(PartnerType::ARS), $dossierArrete);
+    }
 
+    public function testUpdateArrete(): void
+    {
+        $dossierArreteCollection = $this->getDossierArreteSISHCollectionResponse()->getCollection();
+        $dossierArrete = $dossierArreteCollection[0];
+        $esaboraManager = $this->provideEsaboraManagerForIntervention(self::UPDATE_ACTION);
+        $esaboraManager->createOrUpdateArrete($this->getAffectation(PartnerType::ARS), $dossierArrete);
+    }
+
+    private function provideEsaboraManagerForIntervention(string $action): EsaboraManager
+    {
         $this->interventionRepository
             ->expects($this->once())
             ->method('findOneBy')
-            ->willReturn(null);
+            ->willReturn(self::CREATE_ACTION ? null : new Intervention());
 
         $this->interventionFactory
             ->expects($this->once())
@@ -158,41 +128,14 @@ class EsaboraManagerTest extends TestCase
             ->method('getSystemUser')
             ->willReturn($this->getUser([User::ROLE_ADMIN]));
 
-        $esaboraManager = new EsaboraManager(
+        return new EsaboraManager(
             $this->affectationManager,
             $this->suiviManager,
             $this->interventionRepository,
             $this->interventionFactory,
             $this->eventDispatcher,
             $this->userManager,
-            $this->logger
+            $this->logger,
         );
-        $esaboraManager->createOrUpdateArrete($this->getAffectation(PartnerType::ARS), $dossierArrete);
-    }
-
-    public function testUpdateArrete(): void
-    {
-        $dossierArreteCollection = $this->getDossierArreteSISHCollectionResponse()->getCollection();
-        $dossierArrete = $dossierArreteCollection[0];
-
-        $this->interventionRepository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->willReturn(new Intervention());
-
-        $this->interventionFactory
-            ->expects($this->any())
-            ->method('createInstanceFrom');
-
-        $esaboraManager = new EsaboraManager(
-            $this->affectationManager,
-            $this->suiviManager,
-            $this->interventionRepository,
-            $this->interventionFactory,
-            $this->eventDispatcher,
-            $this->userManager,
-            $this->logger
-        );
-        $esaboraManager->createOrUpdateArrete($this->getAffectation(PartnerType::ARS), $dossierArrete);
     }
 }
