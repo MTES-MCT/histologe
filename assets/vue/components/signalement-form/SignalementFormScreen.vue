@@ -54,6 +54,7 @@ import SignalementFormButton from './SignalementFormButton.vue'
 import SignalementFormOnlyChoice from './SignalementFormOnlyChoice.vue'
 import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
 import SignalementFormDate from './SignalementFormDate.vue'
+import SignalementFormCounter from './SignalementFormCounter.vue'
 import SignalementFormWarning from './SignalementFormWarning.vue'
 import SignalementFormInfo from './SignalementFormInfo.vue'
 
@@ -65,6 +66,7 @@ export default defineComponent({
     SignalementFormOnlyChoice,
     SignalementFormSubscreen,
     SignalementFormDate,
+    SignalementFormCounter,
     SignalementFormWarning,
     SignalementFormInfo
   },

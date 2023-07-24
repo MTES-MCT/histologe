@@ -30,6 +30,15 @@
           "customCss": "question-xl",
           "label": "A quelle date avez-vous emménagé dans le logement ?",
           "slug": "bail_dpe_date_emmenagement"
+        },        
+        {
+          "type": "SignalementFormCounter",
+          "customCss": "question-xl",
+          "label": "Combien de personnes vivent dans votre logement ?",
+          "slug": "composition_logement_nombre_personnes",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormWarning",
