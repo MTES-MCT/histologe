@@ -108,13 +108,13 @@
             <h2 class="fr-mb-0">Photo(s) liée(s) à votre signalement</h2>
             <p class="fr-hint-text">Ci-dessous, les photos ajoutées lors du dépôt de votre signalement ainsi que celles
                 ajoutées par le(s) partenaire(s) en charge de votre dossier.</p>
-            {% for photo in signalement.photos %}
+            {% for photo in signalement.files %}
                 <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-5v">
                     <div class="fr-col-10">
                         Photos N°{{ loop.index }}
                     </div>
                     <div class="fr-col-2 fr-text--right">
-                        <a href="{{ asset('_up/'~photo.file) }}?t={{ csrf_token('suivi_signalement_ext_file_view') }}"
+                        <a href="{{ asset('_up/'~photo.filename) }}?t={{ csrf_token('suivi_signalement_ext_file_view') }}"
                            class="fr-btn fr-fi-eye-fill fr-btn--icon-left" title="Afficher la photos">Afficher</a>
                     </div>
                 </div>
