@@ -1,10 +1,14 @@
 <template>
     <div
       id="app-signalement-form"
-      class="signalement-form fr-p-5w"
+      class="signalement-form"
       :data-ajaxurl="sharedProps.ajaxurl"
       >
+      <SignalementFormBreadCrumbs
+        :currentStep="currentScreen.label"
+      />
       <SignalementFormScreen
+        class="fr-p-5w"
         :label="currentScreen.label"
         :description="currentScreen.description"
         :components="currentScreen.components"
@@ -17,35 +21,36 @@
 import screenData from './exemple_socle.json'
 import { defineComponent } from 'vue'
 import formStore from './store'
-// import { requests } from './requests'
 import SignalementFormScreen from './SignalementFormScreen.vue'
+import SignalementFormBreadCrumbs from './SignalementFormBreadCrumbs.vue'
 const initElements:any = document.querySelector('#app-signalement-form')
 
 export default defineComponent({
   name: 'TheSignalementAppForm',
   components: {
-    SignalementFormScreen
+    SignalementFormScreen,
+    SignalementFormBreadCrumbs
   },
   data () {
-    const currentScreen = screenData[0]
+    const currentScreen = screenData[formStore.currentScreenIndex]
     return {
-      screens: screenData,
-      // sharedState: formStore.data,
       sharedProps: formStore.props,
       currentScreen
     }
   },
   created () {
+    formStore.screenData = screenData
     if (initElements !== null) {
       this.sharedProps.ajaxurl = initElements.dataset.ajaxurl
     }
   },
   methods: {
     changeScreenBySlug (slug:string) {
-      for (const screen of this.screens) {
-        if (screen.slug === slug) {
-          this.currentScreen = screen
-          break
+      if (formStore.screenData) {
+        const screenIndex = formStore.screenData.findIndex((screen) => screen.slug === slug)
+        if (screenIndex !== -1) {
+          formStore.currentScreenIndex = screenIndex
+          this.currentScreen = formStore.screenData[screenIndex]
         }
       }
     }
