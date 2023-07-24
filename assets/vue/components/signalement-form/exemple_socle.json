@@ -35,6 +35,11 @@
           }
         },
         {
+          "type": "SignalementFormWarning",
+          "slug": "bail_dpe_dpe_warning",
+          "label": "Le DPE fait partie des documents que le bailleur (propriétaire) doit obligatoirement vous fournir. Plus d'info sur le site du service public."
+        },
+        {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "introduction_go",
@@ -60,6 +65,11 @@
         "type": "SignalementFormTextfield",
         "label": "Etage",
         "slug": "adresse_logement_etage"
+      },        
+      {
+        "type": "SignalementFormInfo",
+        "slug": "bail_dpe_bail_info",
+        "label": "Avoir un bail écrit et signé pour son logement est fortement recommandé pour faire valoir vos droits ! Plus d'info sur le site du service public."
       },
       {
         "type": "SignalementFormTextfield",
