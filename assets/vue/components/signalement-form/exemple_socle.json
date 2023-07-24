@@ -26,6 +26,11 @@
           }
         },
         {
+          "type": "SignalementFormWarning",
+          "slug": "bail_dpe_dpe_warning",
+          "label": "Le DPE fait partie des documents que le bailleur (propriétaire) doit obligatoirement vous fournir. Plus d'info sur le site du service public."
+        },
+        {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "introduction_go",
