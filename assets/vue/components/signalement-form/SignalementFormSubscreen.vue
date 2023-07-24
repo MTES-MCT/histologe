@@ -15,6 +15,7 @@
         :values="component.values"
         :customCss="component.customCss"
         :validate="component.validate"
+        :disabled="component.disabled"
         v-model="formStore.data[component.slug]"
         :hasError="formStore.validationErrors[component.slug]  !== undefined"
         :error="formStore.validationErrors[component.slug]"

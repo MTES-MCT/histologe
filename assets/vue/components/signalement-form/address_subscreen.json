@@ -3,17 +3,20 @@
         {
         "type": "SignalementFormTextfield",
         "label": "Numéro et voie",
-        "slug": "tous_les_champs_numero"
+        "slug": "tous_les_champs_numero",
+        "disabled": true
         },
         {
         "type": "SignalementFormTextfield",
         "label": "Code postal",
-        "slug": "tous_les_champs_code_postal"
+        "slug": "tous_les_champs_code_postal",
+        "disabled": true
         },
         {
         "type": "SignalementFormTextfield",
         "label": "Commune",
-        "slug": "tous_les_champs_commune"
+        "slug": "tous_les_champs_commune",
+        "disabled": true
         }
     ]
 }

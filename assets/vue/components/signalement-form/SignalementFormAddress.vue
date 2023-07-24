@@ -11,7 +11,7 @@
       :hasError="formStore.validationErrors[idAdress]  !== undefined"
       :error="formStore.validationErrors[idAdress]"
     />
-    <div id="sous_menu"></div>
+    <div id="sous_menu" class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france"></div>
     <SignalementFormButton
       :key="idShow"
       :id="idShow"
@@ -96,9 +96,9 @@ export default defineComponent({
     updateValue (value: any) {
       this.$emit('update:modelValue', value)
     },
-    handleClickButton (type:string, param:string) {
+    handleClickButton (type:string, param:string, slugButton:string) {
       if (this.clickEvent !== undefined) {
-        this.clickEvent(type, param)
+        this.clickEvent(type, param, slugButton)
       }
     },
     handleSubscreenModelUpdate (newValue: string) {
@@ -160,7 +160,7 @@ export default defineComponent({
 
 <style>
 .fr-adresse-suggestion:hover {
-    background-color: var(--artwork-minor-blue-cumulus);
+    background-color: #417dc4;
     color: white !important;
 }
 </style>

@@ -17,6 +17,7 @@
         :values="component.values"
         :customCss="component.customCss"
         :validate="component.validate"
+        :disabled="component.disabled"
         v-model="formStore.data[component.slug]"
         :hasError="formStore.validationErrors[component.slug]  !== undefined"
         :error="formStore.validationErrors[component.slug]"
@@ -96,7 +97,7 @@ export default defineComponent({
     updateFormData (slug: string, value: any) {
       this.formStore.data[slug] = value
     },
-    handleClickComponent (type:string, param:string) {
+    handleClickComponent (type:string, param:string, slugButton:string) {
       if (type === 'link') {
         window.location.href = param
       } else if (type === 'cancel') {
@@ -104,7 +105,7 @@ export default defineComponent({
       } else if (type === 'goto') {
         this.showScreenBySlug(param)
       } else if (type === 'show') {
-        this.showComponentBySlug(param)
+        this.showComponentBySlug(param, slugButton)
       }
     },
     showScreenBySlug (slug: string) {
@@ -145,10 +146,14 @@ export default defineComponent({
         this.changeEvent(slug)
       }
     },
-    showComponentBySlug (slug:string) {
+    showComponentBySlug (slug:string, slugButton:string) {
       const componentToShow = document.querySelector('#' + slug)
       if (componentToShow) {
         componentToShow.classList.remove('fr-hidden')
+      }
+      const buttonToHide = document.querySelector('#' + slugButton)
+      if (buttonToHide) {
+        buttonToHide.classList.add('fr-hidden')
       }
     },
     generateSubscreenData (id: string, data: any[]) {

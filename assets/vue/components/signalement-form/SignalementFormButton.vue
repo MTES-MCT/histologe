@@ -52,7 +52,7 @@ export default defineComponent({
   methods: {
     onClickLocalEvent () {
       if (this.clickEvent !== undefined) {
-        this.clickEvent(this.actionType, this.actionParam)
+        this.clickEvent(this.actionType, this.actionParam, this.id)
       }
     }
   }
