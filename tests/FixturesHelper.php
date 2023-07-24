@@ -5,8 +5,10 @@ namespace App\Tests;
 use App\Entity\Affectation;
 use App\Entity\Critere;
 use App\Entity\Criticite;
+use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\PartnerType;
 use App\Entity\File;
+use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Situation;
@@ -319,7 +321,7 @@ trait FixturesHelper
 
         return (new Partner())
             ->setId(1)
-            ->setNom($faker->company())
+            ->setNom('ARS')
             ->setType(PartnerType::ARS)
             ->setEmail($faker->email())
             ->setTerritory($this->getTerritory());
@@ -349,5 +351,18 @@ trait FixturesHelper
             ->setTitle('Photo')
             ->setFileType(File::FILE_TYPE_PHOTO)
             ->setCreatedAt(new \DateTimeImmutable('2022-12-02'));
+    }
+
+    public function getIntervention(
+        InterventionType $interventionType,
+        \DateTimeImmutable $scheduledAt,
+        string $status
+    ): Intervention {
+        return (new Intervention())
+            ->setSignalement($this->getSignalement())
+            ->setPartner($this->getPartner())
+            ->setType($interventionType)
+            ->setScheduledAt($scheduledAt)
+            ->setStatus($status);
     }
 }
