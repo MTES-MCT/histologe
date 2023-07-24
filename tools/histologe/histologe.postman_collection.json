@@ -37,6 +37,162 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "questions?profil=locataire",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/api/questions?profil=locataire",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"api",
+										"questions"
+									],
+									"query": [
+										{
+											"key": "profil",
+											"value": "locataire"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "questions?profil=bailleur-occupant",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/api/questions?profil=bailleur-occupant",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"api",
+										"questions"
+									],
+									"query": [
+										{
+											"key": "profil",
+											"value": "bailleur-occupant"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "questions?profil=tiers-particulier",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/api/questions?profil=tiers-particulier",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"api",
+										"questions"
+									],
+									"query": [
+										{
+											"key": "profil",
+											"value": "tiers-particulier"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "questions?profil=tiers-pro",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/api/questions?profil=tiers-pro",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"api",
+										"questions"
+									],
+									"query": [
+										{
+											"key": "profil",
+											"value": "tiers-pro"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "questions?profil=service-de-secours",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/api/questions?profil=service-de-secours",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"api",
+										"questions"
+									],
+									"query": [
+										{
+											"key": "profil",
+											"value": "service-de-secours"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "questions?profil=bailleur",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/api/questions?profil=bailleur",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"api",
+										"questions"
+									],
+									"query": [
+										{
+											"key": "profil",
+											"value": "bailleur"
+										}
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				}

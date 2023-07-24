@@ -6,8 +6,9 @@ interface FormData {
 
 // interface FormField {
 //   type: string
-//   label: string
 //   slug: string
+//   label?: string
+//   description?: string
 //   conditional?: {
 //     show: string
 //   }
@@ -16,11 +17,24 @@ interface FormData {
 //   validate?: {
 //     required: boolean
 //   }
+//   components: {
+//     body: ({
+//       type: string
+//       label: string
+//       slug: string
+//       components?: undefined
+//       action?: undefined
+//       customCss?: undefined
+//     })
+//     footer?: undefined
+//   }
 // }
 
 interface FormStore {
   data: FormData
   props: FormData
+  screenData: any[]
+  currentScreenIndex: number
   validationErrors: FormData
   inputComponents: string[]
   updateData: (key: string, value: any) => void
@@ -35,6 +49,8 @@ const formStore: FormStore = reactive({
     ajaxurlQuestions: '',
     urlApiAdress: 'https://api-adresse.data.gouv.fr/search/?q='
   },
+  screenData: [],
+  currentScreenIndex: 0,
   inputComponents: [
     'SignalementFormTextfield',
     'SignalementFormOnlyChoice'

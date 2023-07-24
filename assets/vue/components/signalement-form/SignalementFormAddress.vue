@@ -79,16 +79,6 @@ export default defineComponent({
       formStore
     }
   },
-  computed: {
-    internalValue: {
-      get () {
-        return this.modelValue
-      },
-      set (newValue: string) {
-        this.$emit('update:modelValue', newValue)
-      }
-    }
-  },
   created () {
     watch(
       () => this.formStore.data[this.idAdress],

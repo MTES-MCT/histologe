@@ -1,7 +1,7 @@
 <template>
     <div
       id="app-signalement-form"
-      class="signalement-form fr-p-5w"
+      class="signalement-form"
       :data-ajaxurl="sharedProps.ajaxurl"
       :data-ajaxurl-questions="sharedProps.ajaxurlQuestions"
       >
@@ -15,7 +15,11 @@
     </div>
 
     <div v-else-if="currentScreen">
+      <SignalementFormBreadCrumbs
+        :currentStep="currentScreen.label"
+      />
       <SignalementFormScreen
+        class="fr-p-5w"
         :label="currentScreen.label"
         :description="currentScreen.description"
         :components="currentScreen.components"
@@ -31,24 +35,28 @@ import { defineComponent } from 'vue'
 import formStore from './store'
 import { requests } from './requests'
 import SignalementFormScreen from './SignalementFormScreen.vue'
+import SignalementFormBreadCrumbs from './SignalementFormBreadCrumbs.vue'
 const initElements:any = document.querySelector('#app-signalement-form')
 
 export default defineComponent({
   name: 'TheSignalementAppForm',
   components: {
-    SignalementFormScreen
+    SignalementFormScreen,
+    SignalementFormBreadCrumbs
   },
   data () {
+    // const currentScreen = screenData[formStore.currentScreenIndex]
     return {
       isErrorInit: false,
       isLoadingInit: true,
       sharedProps: formStore.props,
       // sharedState: formStore.data,
-      screens: [] as Array<{ slug: string; label: string; description: string; components: object }>,
+      // screens: [] as Array<{ slug: string; label: string; description: string; components: object }>,
       currentScreen: null as { slug: string; label: string; description: string ; components: object } | null
     }
   },
   created () {
+    // formStore.screenData = screenData
     if (initElements !== null) {
       this.sharedProps.ajaxurl = initElements.dataset.ajaxurl
       this.sharedProps.ajaxurlQuestions = initElements.dataset.ajaxurlQuestions
@@ -63,15 +71,16 @@ export default defineComponent({
         this.isErrorInit = true
       } else {
         this.isLoadingInit = false
-        this.screens = requestResponse
+        formStore.screenData = requestResponse
         this.currentScreen = requestResponse[0]
       }
     },
     changeScreenBySlug (slug:string) {
-      for (const screen of this.screens) {
-        if (screen.slug === slug) {
-          this.currentScreen = screen
-          break
+      if (formStore.screenData) {
+        const screenIndex = formStore.screenData.findIndex((screen) => screen.slug === slug)
+        if (screenIndex !== -1) {
+          formStore.currentScreenIndex = screenIndex
+          this.currentScreen = formStore.screenData[screenIndex]
         }
       }
     }

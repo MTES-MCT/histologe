@@ -2,6 +2,7 @@ import axios from 'axios'
 import formStore from './store'
 
 export const requests = {
+  // TODO : voir avec Emilien pour ne plus gérer via des callbacks mais faire de l'async pour rendre le code plus lisible
   doRequest (ajaxUrl: string, functionReturn: Function) {
     axios
       .get(ajaxUrl, { timeout: 15000 })
