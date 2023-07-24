@@ -16,7 +16,7 @@
     {% endif %}
     {% include 'back/signalement/view/visites/visite-item.html.twig' %}
 {% else %}
-    {% for intervention in signalement.interventions %}
+    {% for intervention in signalement.interventions | filter(intervention => intervention.type != enum('App\\Entity\\Enum\\InterventionType').ARRETE_PREFECTORAL) %}
         <div class="fr-grid-row">
             <div class="fr-col-12 fr-col-md-6 fr-h6 fr-mb-3v">
                 Visite #{{loop.index}}
@@ -29,7 +29,7 @@
             </div>
         </div>
         {% include 'back/signalement/view/visites/visite-item.html.twig' %}
-        {% if not loop.last %}
+        {% if loop.last is defined and not loop.last %}
             <hr class="fr-hr--sm">
         {% endif %}
     {% endfor %}

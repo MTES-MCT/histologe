@@ -8,6 +8,7 @@ use App\Entity\Suivi;
 use App\Factory\InterventionFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
+use App\Manager\UserManager;
 use App\Repository\InterventionRepository;
 use App\Service\Esabora\Enum\EsaboraStatus;
 use App\Service\Esabora\EsaboraManager;
@@ -15,6 +16,7 @@ use App\Service\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\Esabora\Response\DossierStateSISHResponse;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -26,6 +28,8 @@ class EsaboraManagerTest extends KernelTestCase
     private AffectationManager $affectationManager;
     private SuiviManager $suiviManager;
     private InterventionRepository $interventionRepository;
+    private EventDispatcherInterface $eventDispatcher;
+    private UserManager $userManager;
     private LoggerInterface $logger;
 
     protected function setUp(): void
@@ -35,6 +39,8 @@ class EsaboraManagerTest extends KernelTestCase
         $this->affectationManager = self::getContainer()->get(AffectationManager::class);
         $this->suiviManager = self::getContainer()->get(SuiviManager::class);
         $this->interventionRepository = self::getContainer()->get(InterventionRepository::class);
+        $this->eventDispatcher = self::getContainer()->get(EventDispatcherInterface::class);
+        $this->userManager = self::getContainer()->get(UserManager::class);
         $this->logger = self::getContainer()->get(LoggerInterface::class);
     }
 
@@ -67,6 +73,8 @@ class EsaboraManagerTest extends KernelTestCase
             $this->suiviManager,
             $this->interventionRepository,
             new InterventionFactory(),
+            $this->eventDispatcher,
+            $this->userManager,
             $this->logger,
         );
 
