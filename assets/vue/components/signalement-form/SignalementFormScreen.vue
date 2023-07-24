@@ -57,6 +57,7 @@ import SignalementFormDate from './SignalementFormDate.vue'
 import SignalementFormCounter from './SignalementFormCounter.vue'
 import SignalementFormWarning from './SignalementFormWarning.vue'
 import SignalementFormInfo from './SignalementFormInfo.vue'
+import SignalementFormCheckbox from './SignalementFormCheckbox.vue'
 
 export default defineComponent({
   name: 'SignalementFormScreen',
@@ -68,7 +69,8 @@ export default defineComponent({
     SignalementFormDate,
     SignalementFormCounter,
     SignalementFormWarning,
-    SignalementFormInfo
+    SignalementFormInfo,
+    SignalementFormCheckbox
   },
   props: {
     label: String,

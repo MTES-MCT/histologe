@@ -41,6 +41,11 @@
           }
         },
         {
+          "type": "SignalementFormCheckbox",
+          "slug": "info_procedure_ok_visite",
+          "label": "Je comprends qu'une visite du logement pourra être faite pour évaluer l'état du logement."
+        },
+        {
           "type": "SignalementFormWarning",
           "slug": "bail_dpe_dpe_warning",
           "label": "Le DPE fait partie des documents que le bailleur (propriétaire) doit obligatoirement vous fournir. Plus d'info sur le site du service public."

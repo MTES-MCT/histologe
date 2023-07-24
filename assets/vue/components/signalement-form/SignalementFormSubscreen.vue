@@ -31,13 +31,23 @@ import formStore from './store'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
 import SignalementFormOnlyChoice from './SignalementFormOnlyChoice.vue'
+import SignalementFormDate from './SignalementFormDate.vue'
+import SignalementFormCounter from './SignalementFormCounter.vue'
+import SignalementFormWarning from './SignalementFormWarning.vue'
+import SignalementFormInfo from './SignalementFormInfo.vue'
+import SignalementFormCheckbox from './SignalementFormCheckbox.vue'
 
 export default defineComponent({
   name: 'SignalementFormSubscreen',
   components: {
     SignalementFormTextfield,
     SignalementFormButton,
-    SignalementFormOnlyChoice
+    SignalementFormOnlyChoice,
+    SignalementFormDate,
+    SignalementFormCounter,
+    SignalementFormWarning,
+    SignalementFormInfo,
+    SignalementFormCheckbox
   },
   props: {
     label: String,
