@@ -1,19 +1,20 @@
 <template>
-<div :class="['fr-input-group', { 'fr-input-group--disabled': disabled }]">
-  <label :class="[ customCss, 'fr-label' ]" :for="id">
+<div :class="['fr-input-group', { 'fr-input-group--disabled': disabled }]" :id="id">
+  <label class='fr-label' :for="id">
     {{ label }}
     <span class="fr-hint-text">{{ description }}</span>
   </label>
-  <input
-        type="text"
-        :id="id"
-        :name="id"
-        :value="internalValue"
-        :class="[ customCss, 'fr-input' ]"
-        @input="updateValue($event)"
-        aria-describedby="text-input-error-desc-error"
-        :disabled="disabled"
-        >
+    <div :class="[ customCss, 'fr-input-wrap' ]">
+      <input
+            type="text"
+            :name="id"
+            :value="internalValue"
+            :class="[ customCss, 'fr-input' ]"
+            @input="updateValue($event)"
+            aria-describedby="text-input-error-desc-error"
+            :disabled="disabled"
+            >
+    </div>
     <div
       id="text-input-error-desc-error"
       class="fr-error-text"

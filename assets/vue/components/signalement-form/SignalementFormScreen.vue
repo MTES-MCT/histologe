@@ -61,6 +61,7 @@ import SignalementFormCounter from './SignalementFormCounter.vue'
 import SignalementFormWarning from './SignalementFormWarning.vue'
 import SignalementFormInfo from './SignalementFormInfo.vue'
 import SignalementFormCheckbox from './SignalementFormCheckbox.vue'
+import SignalementFormPhonefield from './SignalementFormPhonefield.vue'
 
 export default defineComponent({
   name: 'SignalementFormScreen',
@@ -74,7 +75,8 @@ export default defineComponent({
     SignalementFormCounter,
     SignalementFormWarning,
     SignalementFormInfo,
-    SignalementFormCheckbox
+    SignalementFormCheckbox,
+    SignalementFormPhonefield
   },
   props: {
     label: String,
@@ -150,7 +152,9 @@ export default defineComponent({
     },
     showComponentBySlug (slug:string, slugButton:string) {
       const componentToShow = document.querySelector('#' + slug)
+      console.log(componentToShow)
       if (componentToShow) {
+        console.log(componentToShow.classList)
         componentToShow.classList.remove('fr-hidden')
       }
       const buttonToHide = document.querySelector('#' + slugButton)
