@@ -56,7 +56,10 @@ const formStore: FormStore = reactive({
   currentScreenIndex: 0,
   inputComponents: [
     'SignalementFormTextfield',
-    'SignalementFormOnlyChoice'
+    'SignalementFormOnlyChoice',
+    'SignalementFormCheckbox',
+    'SignalementFormCounter',
+    'SignalementFormDate'
   ],
   validationErrors: {}, // Les erreurs de validation
   updateData (key: string, value: any) {
