@@ -1,5 +1,5 @@
 <template>
-  <div class="fr-input-group">
+  <div>
     <SignalementFormTextfield
       :key="idAdress"
       :id="idAdress"
@@ -11,11 +11,11 @@
       :hasError="formStore.validationErrors[idAdress]  !== undefined"
       :error="formStore.validationErrors[idAdress]"
     />
-    <div id="sous_menu" class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france">
+    <div id="sous_menu" class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group">
       <div
         v-for="(suggestion, index) in suggestions"
         :key="index"
-        class="fr-col-12 fr-p-3v fr-text-label--blue-france fr-adresse-suggestion"
+        class="fr-col-12 fr-p-3v fr-text-label--blue-france fr-address-suggestion"
         @click="handleClickSuggestion(index)"
         >
         {{ suggestion.properties.label }}
@@ -154,8 +154,11 @@ export default defineComponent({
 </script>
 
 <style>
-.fr-adresse-suggestion:hover {
+.fr-address-suggestion:hover {
     background-color: #417dc4;
     color: white !important;
+}
+.fr-address-group {
+  margin-top: -1.5rem;
 }
 </style>
