@@ -152,9 +152,7 @@ export default defineComponent({
     },
     showComponentBySlug (slug:string, slugButton:string) {
       const componentToShow = document.querySelector('#' + slug)
-      console.log(componentToShow)
       if (componentToShow) {
-        console.log(componentToShow.classList)
         componentToShow.classList.remove('fr-hidden')
       }
       const buttonToHide = document.querySelector('#' + slugButton)
