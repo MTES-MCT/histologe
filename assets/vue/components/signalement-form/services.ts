@@ -9,12 +9,12 @@ export const services = {
       }
     })
   },
-  addSubscreenData (id: string, data: any[]) {
-    const componentIndex = formStore.screenData[formStore.currentScreenIndex].components.body.findIndex((component: any) => component.slug === id)
-    console.log(componentIndex)
+  addSubscreenData (slug: string, data: any[]) {
+    // on récupère l'index du composant dans son screen
+    const componentIndex = formStore.screenData[formStore.currentScreenIndex].components.body.findIndex((component: any) => component.slug === slug)
+    // pour ce composant on ajoute un objet "components" qu'on alimente avec les data reçues
     formStore.screenData[formStore.currentScreenIndex].components.body[componentIndex].components = {}
     formStore.screenData[formStore.currentScreenIndex].components.body[componentIndex].components.body = data
-    console.log(formStore.screenData[formStore.currentScreenIndex].components.body[componentIndex])
   },
   updateProfil () {
     if (formStore.data.signalement_concerne_profil === 'logement_occupez') {
