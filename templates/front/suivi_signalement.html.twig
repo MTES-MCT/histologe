@@ -115,7 +115,10 @@
                     </div>
                     <div class="fr-col-2 fr-text--right">
                         <a href="{{ asset('_up/'~photo.filename) }}?t={{ csrf_token('suivi_signalement_ext_file_view') }}"
-                           class="fr-btn fr-fi-eye-fill fr-btn--icon-left" title="Afficher la photos">Afficher</a>
+                           class="fr-btn fr-fi-eye-fill fr-btn--icon-left"
+                           title="Afficher la photos"
+                           target="_blank"
+                           rel="noopener">Afficher</a>
                     </div>
                 </div>
             {% else %}
