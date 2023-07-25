@@ -102,8 +102,8 @@
       "body": [
         {
           "type": "SignalementFormOnlyChoice",
-          "customCss": "question-xl",
           "label": "Votre signalement concerne...",
+          "customCss": "question-xl",
           "slug": "signalement_concerne_profil",
           "values": [
             {
@@ -120,7 +120,7 @@
           "type": "SignalementFormOnlyChoice",
           "label": "Vous êtes...",
           "customCss": "question-xl",
-          "slug": "signalement_concerne_profil_detail",
+          "slug": "signalement_concerne_profil_detail_occupant",
           "values": [
             {
               "label": "Locataire du logement",
@@ -139,7 +139,7 @@
           "type": "SignalementFormOnlyChoice",
           "label": "Vous êtes...",
           "customCss": "question-xl",
-          "slug": "signalement_concerne_profil_detail",
+          "slug": "signalement_concerne_profil_detail_tiers",
           "values": [
             {
               "label": "Un particulier",
@@ -165,7 +165,7 @@
         {
           "type": "SignalementFormOnlyChoice",
           "label": "Plus précisément...",
-          "slug": "signalement_concerne_profil_detail_bailleur",
+          "slug": "signalement_concerne_profil_detail_bailleur_proprietaire",
           "values": [
             {
               "label": "Un particulier",
@@ -177,13 +177,13 @@
             }
           ],
           "conditional": {
-            "show": "formStore.data.signalement_concerne_profil_detail === 'proprietaire'"
+            "show": "formStore.data.signalement_concerne_profil_detail_occupant === 'proprietaire'"
           }
         },
         {
           "type": "SignalementFormOnlyChoice",
           "label": "Plus précisément...",
-          "slug": "signalement_concerne_profil_detail_bailleur",
+          "slug": "signalement_concerne_profil_detail_bailleur_bailleur",
           "values": [
             {
               "label": "Un particulier",
@@ -195,13 +195,13 @@
             }
           ],
           "conditional": {
-            "show": "formStore.data.signalement_concerne_profil_detail === 'bailleur'"
+            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'bailleur'"
           }
         },
         {
           "type": "SignalementFormOnlyChoice",
           "label": "S'agit-il d'un logement social ?",
-          "slug": "signalement_concerne_logement_social",
+          "slug": "signalement_concerne_logement_social_service_secours",
           "customCss": "question-xl",
           "values": [
             {
@@ -218,13 +218,13 @@
             }
           ],
           "conditional": {
-            "show": "formStore.data.signalement_concerne_profil_detail === 'service-secours'"
+            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'service-secours'"
           }
         },
         {
           "type": "SignalementFormOnlyChoice",
           "label": "S'agit-il d'un logement social ?",
-          "slug": "signalement_concerne_logement_social",
+          "slug": "signalement_concerne_logement_social_autre_tiers",
           "customCss": "question-xl",
           "values": [
             {
@@ -237,7 +237,7 @@
             }
           ],
           "conditional": {
-            "show": "formStore.data.signalement_concerne_profil_detail !== 'service-secours'"
+            "show": "formStore.data.signalement_concerne_profil === 'autre_logement' && formStore.data.signalement_concerne_profil_detail_tiers !== 'service-secours'"
           }
         }
       ],

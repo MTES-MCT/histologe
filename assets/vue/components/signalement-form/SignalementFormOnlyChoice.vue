@@ -1,22 +1,22 @@
 <template>
-  <fieldset class="fr-fieldset" id="radio-hint" aria-labelledby="radio-hint-legend radio-hint-messages">
-      <legend :class="[ customCss, 'fr-fieldset__legend--regular', 'fr-fieldset__legend']" :for="id" id="radio-hint-legend">
+  <fieldset :id="id" class="fr-fieldset fr-mt-5w" aria-labelledby="radio-hint-legend radio-hint-messages">
+      <legend :class="[ customCss, 'fr-fieldset__legend--regular', 'fr-fieldset__legend']" id="radio-hint-legend">
         {{ label }}
       </legend>
-      <div v-for="radioValue in values" class="fr-fieldset__element" :key="radioValue.slug">
+      <div v-for="radioValue in values" class="fr-fieldset__element" :key="radioValue.value">
           <div class="fr-radio-group">
             <input
               type="radio"
-              :id="radioValue.slug"
-              v-bind:key="radioValue.slug"
+              :id="id + '_' + radioValue.value"
               :name="id"
-              :value="radioValue.slug"
-              :class="[ customCss, 'fr-input' ]"
+              v-bind:key="radioValue.value"
+              :value="radioValue.value"
+              :class="[ 'fr-input' ]"
               @input="updateValue($event)"
               aria-describedby="radio-error-messages"
               >
-              <label class="fr-label" :for="radioValue.slug">
-                  {{ radioValue.value }}
+              <label class="fr-label" :for="id + '_' + radioValue.value">
+                  {{ radioValue.label }}
               </label>
           </div>
       </div>
@@ -35,21 +35,11 @@ export default defineComponent({
     id: { type: String, default: null },
     label: { type: String, default: null },
     modelValue: { type: String, default: null },
-    values: { type: Array as () => Array<{ slug: string; value: string }>, default: null },
+    values: { type: Array as () => Array<{ label: string; value: string }>, default: null },
     customCss: { type: String, default: '' },
     validate: { type: Object, default: null },
     hasError: { type: Boolean, default: false },
     error: { type: String, default: '' }
-  },
-  computed: {
-    internalValue: {
-      get () {
-        return this.modelValue
-      },
-      set (newValue: string) {
-        this.$emit('update:modelValue', newValue)
-      }
-    }
   },
   methods: {
     updateValue (event: Event) {

@@ -17,6 +17,7 @@
         :values="component.values"
         :customCss="component.customCss"
         :validate="component.validate"
+        :disabled="component.disabled"
         v-model="formStore.data[component.slug]"
         :hasError="formStore.validationErrors[component.slug]  !== undefined"
         :error="formStore.validationErrors[component.slug]"
@@ -49,10 +50,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import formStore from './store'
+import subscreenData from './address_subscreen.json'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
 import SignalementFormOnlyChoice from './SignalementFormOnlyChoice.vue'
 import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
+import SignalementFormAddress from './SignalementFormAddress.vue'
 import SignalementFormDate from './SignalementFormDate.vue'
 import SignalementFormCounter from './SignalementFormCounter.vue'
 import SignalementFormWarning from './SignalementFormWarning.vue'
@@ -66,6 +69,7 @@ export default defineComponent({
     SignalementFormButton,
     SignalementFormOnlyChoice,
     SignalementFormSubscreen,
+    SignalementFormAddress,
     SignalementFormDate,
     SignalementFormCounter,
     SignalementFormWarning,
@@ -95,7 +99,7 @@ export default defineComponent({
     updateFormData (slug: string, value: any) {
       this.formStore.data[slug] = value
     },
-    handleClickComponent (type:string, param:string) {
+    handleClickComponent (type:string, param:string, slugButton:string) {
       if (type === 'link') {
         window.location.href = param
       } else if (type === 'cancel') {
@@ -103,7 +107,7 @@ export default defineComponent({
       } else if (type === 'goto') {
         this.showScreenBySlug(param)
       } else if (type === 'show') {
-        this.showComponentBySlug(param)
+        this.showComponentBySlug(param, slugButton)
       }
     },
     showScreenBySlug (slug: string) {
@@ -115,12 +119,19 @@ export default defineComponent({
             const value = formStore.data[field.slug]
             if (!value) {
               formStore.validationErrors[field.slug] = 'Ce champ est requis' // field.errorText ?
+              // TODO : si le champ requis est caché ou dans un subscreen caché, comment gère t-on ?
             }
           }
           // Effectuer d'autres validations nécessaires pour les autres règles (minLength, maxLength, pattern, etc.)
           // Vérifier si le composant est de type Subscreen et a des composants enfants
           if (field.type === 'SignalementFormSubscreen' && field.components) {
             traverseComponents(field.components.body)
+          }
+          // Traitement spécifique pour SignalementFormAddress on génère les composants enfants
+          // TODO : il y a surement mieux à faire car là on duplique le chargement du json et generateSubscreenData entre SignalementFormAddress et ici
+          if (field.type === 'SignalementFormAddress') {
+            const updatedSubscreenData = this.generateSubscreenData(field.slug, subscreenData.body)
+            traverseComponents(updatedSubscreenData)
           }
         }
       }
@@ -137,8 +148,23 @@ export default defineComponent({
         this.changeEvent(slug)
       }
     },
-    showComponentBySlug (slug:string) {
-      console.log(slug)
+    showComponentBySlug (slug:string, slugButton:string) {
+      const componentToShow = document.querySelector('#' + slug)
+      if (componentToShow) {
+        componentToShow.classList.remove('fr-hidden')
+      }
+      const buttonToHide = document.querySelector('#' + slugButton)
+      if (buttonToHide) {
+        buttonToHide.classList.add('fr-hidden')
+      }
+    },
+    generateSubscreenData (id: string, data: any[]) {
+      return data.map((component) => {
+        return {
+          ...component,
+          slug: id + '_' + component.slug
+        }
+      })
     }
   }
 })

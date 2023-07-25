@@ -1,6 +1,9 @@
 <template>
-<div class="fr-input-group">
-  <label :class="[ customCss, 'fr-label' ]" :for="id">{{ label }}</label>
+<div :class="['fr-input-group', { 'fr-input-group--disabled': disabled }]">
+  <label :class="[ customCss, 'fr-label' ]" :for="id">
+    {{ label }}
+    <span class="fr-hint-text">{{ description }}</span>
+  </label>
   <input
         type="text"
         :id="id"
@@ -9,6 +12,7 @@
         :class="[ customCss, 'fr-input' ]"
         @input="updateValue($event)"
         aria-describedby="text-input-error-desc-error"
+        :disabled="disabled"
         >
     <div
       id="text-input-error-desc-error"
@@ -28,10 +32,12 @@ export default defineComponent({
   props: {
     id: { type: String, default: null },
     label: { type: String, default: null },
+    description: { type: String, default: null },
     modelValue: { type: String, default: null },
     customCss: { type: String, default: '' },
     validate: { type: Object, default: null },
     hasError: { type: Boolean, default: false },
+    disabled: { type: Boolean, default: false },
     error: { type: String, default: '' }
   },
   computed: {

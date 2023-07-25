@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="[ customCss ]">
     <h2>{{ label }}</h2>
     <p v-html="description"></p>
     <div
@@ -15,6 +15,7 @@
         :values="component.values"
         :customCss="component.customCss"
         :validate="component.validate"
+        :disabled="component.disabled"
         v-model="formStore.data[component.slug]"
         :hasError="formStore.validationErrors[component.slug]  !== undefined"
         :error="formStore.validationErrors[component.slug]"
@@ -53,6 +54,7 @@ export default defineComponent({
     label: String,
     description: String,
     components: Object,
+    customCss: { type: String, default: '' },
     handleClickComponent: Function
   },
   data () {

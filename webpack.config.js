@@ -71,6 +71,17 @@ Encore
     .enableVueLoader(() => {}, {
         version: 3
     })
+
+    .configureDevServerOptions(options => {
+        // ... Autres configurations du serveur de développement ...
+    
+        options.proxy = {
+          '/api': {
+            target: 'http://localhost:8082',
+            changeOrigin: true,
+          },
+        };
+      })
 ;
 
 module.exports = Encore.getWebpackConfig();
