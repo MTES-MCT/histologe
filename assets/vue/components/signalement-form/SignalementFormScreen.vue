@@ -50,7 +50,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import formStore from './store'
-import subscreenData from './address_subscreen.json'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
 import SignalementFormOnlyChoice from './SignalementFormOnlyChoice.vue'
@@ -89,8 +88,10 @@ export default defineComponent({
   },
   methods: {
     isRequired (field: any): boolean {
-      if ((field.validate === undefined && formStore.inputComponents.includes(field.type)) || // si c'est un composant de saisie sans objet de validation c'est qu'il est obligatoire
-          (field.validate && field.validate.required)) { // ou il y a des règles de validation explicites
+      const subscreen = document.querySelector('#' + field.slug)
+      if (((field.validate === undefined && formStore.inputComponents.includes(field.type)) || // si c'est un composant de saisie sans objet de validation c'est qu'il est obligatoire
+          (field.validate && field.validate.required)) && // ou il y a des règles de validation explicites
+          subscreen?.classList.contains('fr-hidden') === false) { // et que le composant n'est pas caché par conditionnalité
         return true
       } else {
         return false
@@ -119,19 +120,12 @@ export default defineComponent({
             const value = formStore.data[field.slug]
             if (!value) {
               formStore.validationErrors[field.slug] = 'Ce champ est requis' // field.errorText ?
-              // TODO : si le champ requis est caché ou dans un subscreen caché, comment gère t-on ?
             }
           }
           // Effectuer d'autres validations nécessaires pour les autres règles (minLength, maxLength, pattern, etc.)
           // Vérifier si le composant est de type Subscreen et a des composants enfants
-          if (field.type === 'SignalementFormSubscreen' && field.components) {
+          if ((field.type === 'SignalementFormSubscreen' || field.type === 'SignalementFormAddress') && field.components) {
             traverseComponents(field.components.body)
-          }
-          // Traitement spécifique pour SignalementFormAddress on génère les composants enfants
-          // TODO : il y a surement mieux à faire car là on duplique le chargement du json et generateSubscreenData entre SignalementFormAddress et ici
-          if (field.type === 'SignalementFormAddress') {
-            const updatedSubscreenData = this.generateSubscreenData(field.slug, subscreenData.body)
-            traverseComponents(updatedSubscreenData)
           }
         }
       }
@@ -157,14 +151,6 @@ export default defineComponent({
       if (buttonToHide) {
         buttonToHide.classList.add('fr-hidden')
       }
-    },
-    generateSubscreenData (id: string, data: any[]) {
-      return data.map((component) => {
-        return {
-          ...component,
-          slug: id + '_' + component.slug
-        }
-      })
     }
   }
 })

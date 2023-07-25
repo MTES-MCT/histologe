@@ -1,7 +1,7 @@
 [
   {
     "type": "SignalementFormScreen",
-    "label": "Vos coordonées",
+    "label": "Vos coordonnées",
     "slug": "vos_coordonnees_occupant",
     "components": {
       "body": [

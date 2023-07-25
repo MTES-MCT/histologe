@@ -34,6 +34,7 @@
 import { defineComponent } from 'vue'
 import formStore from './store'
 import { requests } from './requests'
+import { services } from './services'
 import SignalementFormScreen from './SignalementFormScreen.vue'
 import SignalementFormBreadCrumbs from './SignalementFormBreadCrumbs.vue'
 const initElements:any = document.querySelector('#app-signalement-form')
@@ -45,18 +46,14 @@ export default defineComponent({
     SignalementFormBreadCrumbs
   },
   data () {
-    // const currentScreen = screenData[formStore.currentScreenIndex]
     return {
       isErrorInit: false,
       isLoadingInit: true,
       sharedProps: formStore.props,
-      // sharedState: formStore.data,
-      // screens: [] as Array<{ slug: string; label: string; description: string; components: object }>,
       currentScreen: null as { slug: string; label: string; description: string ; components: object } | null
     }
   },
   created () {
-    // formStore.screenData = screenData
     if (initElements !== null) {
       this.sharedProps.ajaxurl = initElements.dataset.ajaxurl
       this.sharedProps.ajaxurlQuestions = initElements.dataset.ajaxurlQuestions
@@ -81,6 +78,13 @@ export default defineComponent({
         if (screenIndex !== -1) {
           formStore.currentScreenIndex = screenIndex
           this.currentScreen = formStore.screenData[screenIndex]
+        } else {
+          if (slug === 'vos_coordonnees') {
+            // on détermine le profil
+            services.updateProfil()
+            // on fait un appel API pour charger la suite des questions avant de changer d'écran
+            requests.initQuestionsProfil(this.handleInitQuestions)
+          }
         }
       }
     }

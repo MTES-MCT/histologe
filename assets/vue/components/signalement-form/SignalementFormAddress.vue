@@ -53,6 +53,7 @@
 import { defineComponent, watch } from 'vue'
 import formStore from './store'
 import { requests } from './requests'
+import { services } from './services'
 import subscreenData from './address_subscreen.json'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
@@ -76,8 +77,9 @@ export default defineComponent({
     clickEvent: Function
   },
   data () {
-    const updatedSubscreenData = this.generateSubscreenData(this.id, subscreenData.body)
-
+    const updatedSubscreenData = services.generateSubscreenData(this.id, subscreenData.body)
+    // on met à jour formStore en ajoutant les sous-composants du composant Address
+    services.addSubscreenData(this.id, updatedSubscreenData)
     return {
       idFetchTimeout: 0 as unknown as ReturnType<typeof setTimeout>,
       idAdress: this.id + '_suggestion',
@@ -114,14 +116,6 @@ export default defineComponent({
     handleSubscreenModelUpdate (newValue: string) {
       // Mettre à jour la valeur dans formStore.data lorsque la valeur du sous-écran change
       this.formStore.data[this.idSubscreen] = newValue
-    },
-    generateSubscreenData (id: string, data: any[]) {
-      return data.map((component) => {
-        return {
-          ...component,
-          slug: id + '_' + component.slug
-        }
-      })
     },
     handleClickSuggestion (index: number) {
       if (this.suggestions) {
