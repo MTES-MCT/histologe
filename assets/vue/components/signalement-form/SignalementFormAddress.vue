@@ -11,7 +11,16 @@
       :hasError="formStore.validationErrors[idAdress]  !== undefined"
       :error="formStore.validationErrors[idAdress]"
     />
-    <div id="sous_menu" class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france"></div>
+    <div id="sous_menu" class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france">
+      <div
+        v-for="(suggestion, index) in suggestions"
+        :key="index"
+        class="fr-col-12 fr-p-3v fr-text-label--blue-france fr-adresse-suggestion"
+        @click="handleClickSuggestion(index)"
+        >
+        {{ suggestion.properties.label }}
+      </div>
+    </div>
     <SignalementFormButton
       :key="idShow"
       :id="idShow"
@@ -76,6 +85,7 @@ export default defineComponent({
       idSubscreen: this.id + '_tous_les_champs',
       actionShow: 'show:' + this.id + '_tous_les_champs',
       screens: { body: updatedSubscreenData },
+      suggestions: [] as any[],
       formStore
     }
   },
@@ -113,45 +123,30 @@ export default defineComponent({
         }
       })
     },
-    onAddressFound (requestResponse: any) {
-      const container = document.querySelector('#sous_menu')
+    handleClickSuggestion (index: number) {
+      if (this.suggestions) {
+        this.formStore.data[this.id + '_tous_les_champs_numero'] = this.suggestions[index].properties.name
+        this.formStore.data[this.id + '_tous_les_champs_code_postal'] = this.suggestions[index].properties.postcode
+        this.formStore.data[this.id + '_tous_les_champs_commune'] = this.suggestions[index].properties.city
+        this.formStore.data[this.id + '_tous_les_champs_insee'] = this.suggestions[index].properties.citycode
+        this.formStore.data[this.id + '_tous_les_champs_geoloc_lat'] = this.suggestions[index].geometry.coordinates[0]
+        this.formStore.data[this.id + '_tous_les_champs_geoloc_lng'] = this.suggestions[index].geometry.coordinates[1]
+        this.suggestions.length = 0
+      }
       const subscreen = document.querySelector('#' + this.idSubscreen)
       const buttonShow = document.querySelector('#' + this.idShow)
-
+      if (subscreen) {
+        subscreen.classList.remove('fr-hidden')
+      }
+      if (buttonShow) {
+        buttonShow.classList.add('fr-hidden')
+      }
+    },
+    onAddressFound (requestResponse: any) {
+      this.suggestions = requestResponse.features
       // TODO : que faire si code postal dans département non ouvert ?
       // TODO : répertorier les exclusions de code postal du 69 ?
       // TODO : vérifier si dans territoire expé NDE pour comportement différent ?
-      if (container) {
-        container.innerHTML = ''
-
-        for (const feature of requestResponse.features) {
-          const suggestion = document.createElement('div')
-          suggestion.classList.add(
-            'fr-col-12',
-            'fr-p-3v',
-            'fr-text-label--blue-france',
-            'fr-adresse-suggestion'
-          )
-          suggestion.innerHTML = feature.properties.label
-          suggestion.addEventListener('click', () => {
-            this.formStore.data[this.id + '_tous_les_champs_numero'] = feature.properties.name
-            this.formStore.data[this.id + '_tous_les_champs_code_postal'] = feature.properties.postcode
-            this.formStore.data[this.id + '_tous_les_champs_commune'] = feature.properties.city
-            this.formStore.data[this.id + '_tous_les_champs_insee'] = feature.properties.citycode
-            this.formStore.data[this.id + '_tous_les_champs_geoloc_lat'] = feature.geometry.coordinates[0]
-            this.formStore.data[this.id + '_tous_les_champs_geoloc_lng'] = feature.geometry.coordinates[1]
-
-            container.innerHTML = ''
-            if (subscreen) {
-              subscreen.classList.remove('fr-hidden')
-            }
-            if (buttonShow) {
-              buttonShow.classList.add('fr-hidden')
-            }
-          })
-          container.appendChild(suggestion)
-        }
-      }
     }
   },
   emits: ['update:modelValue']

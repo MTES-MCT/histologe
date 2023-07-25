@@ -1,6 +1,9 @@
 <template>
 <div :class="['fr-input-group', { 'fr-input-group--disabled': disabled }]">
-  <label :class="[ customCss, 'fr-label' ]" :for="id">{{ label }}</label>
+  <label :class="[ customCss, 'fr-label' ]" :for="id">
+    {{ label }}
+    <span class="fr-hint-text">{{ description }}</span>
+  </label>
   <input
         type="text"
         :id="id"
