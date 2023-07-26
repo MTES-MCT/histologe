@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: SignalementDraftRepository::class)]
+#[ORM\HasLifecycleCallbacks()]
 class SignalementDraft
 {
     use TimestampableTrait;
@@ -49,6 +50,7 @@ class SignalementDraft
     {
         $this->uuid = Uuid::v4();
         $this->signalements = new ArrayCollection();
+        $this->status = SignalementDraftStatus::EN_COURS;
     }
 
     public function getId(): ?int
