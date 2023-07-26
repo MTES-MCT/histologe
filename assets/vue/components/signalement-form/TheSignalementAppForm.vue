@@ -47,6 +47,7 @@ export default defineComponent({
   },
   data () {
     return {
+      slugVosCoordonnees: 'vos_coordonnees',
       isErrorInit: false,
       isLoadingInit: true,
       sharedProps: formStore.props,
@@ -79,7 +80,7 @@ export default defineComponent({
           formStore.currentScreenIndex = screenIndex
           this.currentScreen = formStore.screenData[screenIndex]
         } else {
-          if (slug === 'vos_coordonnees') {
+          if (slug === this.slugVosCoordonnees) {
             // on détermine le profil
             services.updateProfil()
             // on fait un appel API pour charger la suite des questions avant de changer d'écran
