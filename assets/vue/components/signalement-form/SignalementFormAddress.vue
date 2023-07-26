@@ -53,6 +53,7 @@
 import { defineComponent, watch } from 'vue'
 import formStore from './store'
 import { requests } from './requests'
+import { services } from './services'
 import subscreenData from './address_subscreen.json'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
@@ -76,14 +77,15 @@ export default defineComponent({
     clickEvent: Function
   },
   data () {
-    const updatedSubscreenData = this.generateSubscreenData(this.id, subscreenData.body)
-
+    const updatedSubscreenData = services.generateSubscreenData(this.id, subscreenData.body)
+    // on met à jour formStore en ajoutant les sous-composants du composant Address
+    services.addSubscreenData(this.id, updatedSubscreenData)
     return {
       idFetchTimeout: 0 as unknown as ReturnType<typeof setTimeout>,
       idAdress: this.id + '_suggestion',
       idShow: this.id + '_afficher_les_champs',
-      idSubscreen: this.id + '_tous_les_champs',
-      actionShow: 'show:' + this.id + '_tous_les_champs',
+      idSubscreen: this.id + '_detail',
+      actionShow: 'show:' + this.id + '_detail',
       screens: { body: updatedSubscreenData },
       suggestions: [] as any[],
       formStore
@@ -115,22 +117,14 @@ export default defineComponent({
       // Mettre à jour la valeur dans formStore.data lorsque la valeur du sous-écran change
       this.formStore.data[this.idSubscreen] = newValue
     },
-    generateSubscreenData (id: string, data: any[]) {
-      return data.map((component) => {
-        return {
-          ...component,
-          slug: id + '_' + component.slug
-        }
-      })
-    },
     handleClickSuggestion (index: number) {
       if (this.suggestions) {
-        this.formStore.data[this.id + '_tous_les_champs_numero'] = this.suggestions[index].properties.name
-        this.formStore.data[this.id + '_tous_les_champs_code_postal'] = this.suggestions[index].properties.postcode
-        this.formStore.data[this.id + '_tous_les_champs_commune'] = this.suggestions[index].properties.city
-        this.formStore.data[this.id + '_tous_les_champs_insee'] = this.suggestions[index].properties.citycode
-        this.formStore.data[this.id + '_tous_les_champs_geoloc_lat'] = this.suggestions[index].geometry.coordinates[0]
-        this.formStore.data[this.id + '_tous_les_champs_geoloc_lng'] = this.suggestions[index].geometry.coordinates[1]
+        this.formStore.data[this.id + '_detail_numero'] = this.suggestions[index].properties.name
+        this.formStore.data[this.id + '_detail_code_postal'] = this.suggestions[index].properties.postcode
+        this.formStore.data[this.id + '_detail_commune'] = this.suggestions[index].properties.city
+        this.formStore.data[this.id + '_detail_insee'] = this.suggestions[index].properties.citycode
+        this.formStore.data[this.id + '_detail_geoloc_lat'] = this.suggestions[index].geometry.coordinates[0]
+        this.formStore.data[this.id + '_detail_geoloc_lng'] = this.suggestions[index].geometry.coordinates[1]
         this.suggestions.length = 0
       }
       const subscreen = document.querySelector('#' + this.idSubscreen)
