@@ -66,7 +66,7 @@ class SignalementDraftRequest
     private ?string $infoProcedureBailleurPrevenu = null;
     private ?string $infoProcedureAssuranceContactee = null;
     private ?string $infoProcedureDepartApresTravaux = null;
-    private ?string $info_procedure_utilisation_service = null;
+    private ?string $infoProcedureUtilisationService = null;
 
     public function getAdresseLogementAdresse(): ?string
     {
@@ -181,8 +181,9 @@ class SignalementDraftRequest
         return $this->adresseLogementComplementAdresseNumeroAppartement;
     }
 
-    public function setAdresseLogementComplementAdresseNumeroAppartement(?string $adresseLogementComplementAdresseNumeroAppartement): self
-    {
+    public function setAdresseLogementComplementAdresseNumeroAppartement(
+        ?string $adresseLogementComplementAdresseNumeroAppartement
+    ): self {
         $this->adresseLogementComplementAdresseNumeroAppartement = $adresseLogementComplementAdresseNumeroAppartement;
 
         return $this;
@@ -229,9 +230,11 @@ class SignalementDraftRequest
         return $this->signalementConcerneProfilDetailBailleurProprietaire;
     }
 
-    public function setSignalementConcerneProfilDetailBailleurProprietaire(?string $signalementConcerneProfilDetailBailleurProprietaire): self
-    {
-        $this->signalementConcerneProfilDetailBailleurProprietaire = $signalementConcerneProfilDetailBailleurProprietaire;
+    public function setSignalementConcerneProfilDetailBailleurProprietaire(
+        ?string $signalementConcerneProfilDetailBailleurProprietaire
+    ): self {
+        $this->signalementConcerneProfilDetailBailleurProprietaire
+            = $signalementConcerneProfilDetailBailleurProprietaire;
 
         return $this;
     }
@@ -241,8 +244,9 @@ class SignalementDraftRequest
         return $this->signalementConcerneProfilDetailBailleurBailleur;
     }
 
-    public function setSignalementConcerneProfilDetailBailleurBailleur(?string $signalementConcerneProfilDetailBailleurBailleur): self
-    {
+    public function setSignalementConcerneProfilDetailBailleurBailleur(
+        ?string $signalementConcerneProfilDetailBailleurBailleur
+    ): self {
         $this->signalementConcerneProfilDetailBailleurBailleur = $signalementConcerneProfilDetailBailleurBailleur;
 
         return $this;
@@ -253,8 +257,9 @@ class SignalementDraftRequest
         return $this->signalementConcerneLogementSocialServiceSecours;
     }
 
-    public function setSignalementConcerneLogementSocialServiceSecours(?string $signalementConcerneLogementSocialServiceSecours): self
-    {
+    public function setSignalementConcerneLogementSocialServiceSecours(
+        ?string $signalementConcerneLogementSocialServiceSecours
+    ): self {
         $this->signalementConcerneLogementSocialServiceSecours = $signalementConcerneLogementSocialServiceSecours;
 
         return $this;
@@ -265,8 +270,9 @@ class SignalementDraftRequest
         return $this->signalementConcerneLogementSocialAutreTiers;
     }
 
-    public function setSignalementConcerneLogementSocialAutreTiers(?string $signalementConcerneLogementSocialAutreTiers): self
-    {
+    public function setSignalementConcerneLogementSocialAutreTiers(
+        ?string $signalementConcerneLogementSocialAutreTiers
+    ): self {
         $this->signalementConcerneLogementSocialAutreTiers = $signalementConcerneLogementSocialAutreTiers;
 
         return $this;
@@ -409,8 +415,9 @@ class SignalementDraftRequest
         return $this->coordonneesBailleurAdresseDetailCodePostal;
     }
 
-    public function setCoordonneesBailleurAdresseDetailCodePostal(?string $coordonneesBailleurAdresseDetailCodePostal): self
-    {
+    public function setCoordonneesBailleurAdresseDetailCodePostal(
+        ?string $coordonneesBailleurAdresseDetailCodePostal
+    ): self {
         $this->coordonneesBailleurAdresseDetailCodePostal = $coordonneesBailleurAdresseDetailCodePostal;
 
         return $this;
@@ -541,8 +548,9 @@ class SignalementDraftRequest
         return $this->typeLogementCommoditesCuisineHauteurPlafond;
     }
 
-    public function setTypeLogementCommoditesCuisineHauteurPlafond(?string $typeLogementCommoditesCuisineHauteurPlafond): self
-    {
+    public function setTypeLogementCommoditesCuisineHauteurPlafond(
+        ?string $typeLogementCommoditesCuisineHauteurPlafond
+    ): self {
         $this->typeLogementCommoditesCuisineHauteurPlafond = $typeLogementCommoditesCuisineHauteurPlafond;
 
         return $this;
@@ -565,8 +573,9 @@ class SignalementDraftRequest
         return $this->typeLogementCommoditesSalleDeBainCollective;
     }
 
-    public function setTypeLogementCommoditesSalleDeBainCollective(?string $typeLogementCommoditesSalleDeBainCollective): self
-    {
+    public function setTypeLogementCommoditesSalleDeBainCollective(
+        ?string $typeLogementCommoditesSalleDeBainCollective
+    ): self {
         $this->typeLogementCommoditesSalleDeBainCollective = $typeLogementCommoditesSalleDeBainCollective;
 
         return $this;
@@ -577,8 +586,9 @@ class SignalementDraftRequest
         return $this->typeLogementCommoditesSalleDeBainHauteurPlafond;
     }
 
-    public function setTypeLogementCommoditesSalleDeBainHauteurPlafond(?string $typeLogementCommoditesSalleDeBainHauteurPlafond): self
-    {
+    public function setTypeLogementCommoditesSalleDeBainHauteurPlafond(
+        ?string $typeLogementCommoditesSalleDeBainHauteurPlafond
+    ): self {
         $this->typeLogementCommoditesSalleDeBainHauteurPlafond = $typeLogementCommoditesSalleDeBainHauteurPlafond;
 
         return $this;
@@ -814,12 +824,12 @@ class SignalementDraftRequest
 
     public function getInfoProcedureUtilisationService(): ?string
     {
-        return $this->info_procedure_utilisation_service;
+        return $this->infoProcedureUtilisationService;
     }
 
-    public function setInfoProcedureUtilisationService(?string $info_procedure_utilisation_service): self
+    public function setInfoProcedureUtilisationService(?string $infoProcedureUtilisationService): self
     {
-        $this->info_procedure_utilisation_service = $info_procedure_utilisation_service;
+        $this->infoProcedureUtilisationService = $infoProcedureUtilisationService;
 
         return $this;
     }

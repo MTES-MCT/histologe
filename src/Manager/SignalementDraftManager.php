@@ -29,7 +29,6 @@ class SignalementDraftManager extends AbstractManager
 
     public function update(
         SignalementDraft $signalementDraft,
-        SignalementDraftRequest $signalementDraftRequest,
         array $payload
     ): ?string {
         $signalementDraft
