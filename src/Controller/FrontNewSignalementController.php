@@ -72,6 +72,7 @@ class FrontNewSignalementController extends AbstractController
             return $this->json([
                 'uuid' => $signalementDraftManager->update(
                     $signalementDraft,
+                    $signalementDraftRequest,
                     json_decode($payload, true)
                 ),
             ]);

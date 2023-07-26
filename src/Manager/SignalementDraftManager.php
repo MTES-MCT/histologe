@@ -3,6 +3,7 @@
 namespace App\Manager;
 
 use App\Dto\Request\Signalement\SignalementDraftRequest;
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\SignalementDraft;
 use App\Factory\SignalementDraftFactory;
 use Doctrine\Persistence\ManagerRegistry;
@@ -24,19 +25,24 @@ class SignalementDraftManager extends AbstractManager
         $signalementDraft = $this->signalementDraftFactory->createInstanceFrom($signalementDraftRequest, $payload);
         $this->save($signalementDraft);
 
-        return $signalementDraft->getUuid()->jsonSerialize();
+        return $signalementDraft->getUuid();
     }
 
     public function update(
         SignalementDraft $signalementDraft,
+        SignalementDraftRequest $signalementDraftRequest,
         array $payload
     ): ?string {
         $signalementDraft
             ->setPayload($payload)
-            ->setCurrentStep('4:type_logement_commodites');
+            ->setCurrentStep('4:type_logement_commodites')
+            ->setAddressComplete($signalementDraftRequest->getAdresseLogementAdresse())
+            ->setEmailDeclarant($signalementDraftRequest->getVosCoordonneesOccupantEmail())
+            ->setProfileDeclarant(ProfileDeclarant::LOCATAIRE)
+        ;
 
         $this->save($signalementDraft);
 
-        return $signalementDraft->getUuid()->jsonSerialize();
+        return $signalementDraft->getUuid();
     }
 }

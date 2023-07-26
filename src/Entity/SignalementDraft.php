@@ -22,8 +22,8 @@ class SignalementDraft
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'uuid')]
-    private ?Uuid $uuid = null;
+    #[ORM\Column(type: 'string')]
+    private ?string $uuid = null;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: ProfileDeclarant::class)]
     private ?ProfileDeclarant $profileDeclarant = null;
@@ -58,12 +58,12 @@ class SignalementDraft
         return $this->id;
     }
 
-    public function getUuid(): ?Uuid
+    public function getUuid(): ?string
     {
         return $this->uuid;
     }
 
-    public function setUuid(Uuid $uuid): self
+    public function setUuid(string $uuid): self
     {
         $this->uuid = $uuid;
 
