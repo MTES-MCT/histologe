@@ -60,6 +60,7 @@ import SignalementFormCounter from './SignalementFormCounter.vue'
 import SignalementFormWarning from './SignalementFormWarning.vue'
 import SignalementFormInfo from './SignalementFormInfo.vue'
 import SignalementFormCheckbox from './SignalementFormCheckbox.vue'
+import { services } from './services'
 
 export default defineComponent({
   name: 'SignalementFormScreen',
@@ -106,13 +107,16 @@ export default defineComponent({
       } else if (type === 'cancel') {
         alert('on fait quoi quand on annule ?')
       } else if (type === 'goto') {
-        this.showScreenBySlug(param)
+        this.showScreenBySlug(param, slugButton)
       } else if (type === 'show') {
         this.showComponentBySlug(param, slugButton)
       }
     },
-    showScreenBySlug (slug: string) {
+    showScreenBySlug (slug: string, slugButton:string) {
       formStore.validationErrors = {}
+      console.log(slugButton)
+      const isScreenAfterCurrent = services.isScreenAfterCurrent(slug)
+      console.log(isScreenAfterCurrent)
 
       const traverseComponents = (components: any) => {
         for (const field of components) {
@@ -130,14 +134,14 @@ export default defineComponent({
         }
       }
 
-      if (this.components) {
+      if (this.components && isScreenAfterCurrent) {
         traverseComponents(this.components.body)
         if (Object.keys(formStore.validationErrors).length > 0) {
           window.scrollTo(0, 0)
           return
         }
       }
-      // Si pas d'erreur de validation, on change d'écran
+      // Si pas d'erreur de validation, ou screen précédent, on change d'écran
       if (this.changeEvent !== undefined) {
         this.changeEvent(slug)
       }

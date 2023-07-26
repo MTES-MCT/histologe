@@ -22,5 +22,12 @@ export const services = {
     } else {
       formStore.data.profil = formStore.data.signalement_concerne_profil_detail_tiers
     }
+  },
+  isScreenAfterCurrent (slug: string): boolean {
+    const nextScreenIndex = formStore.screenData.findIndex((screen: any) => screen.slug === slug)
+    if (nextScreenIndex <= formStore.currentScreenIndex) {
+      return false
+    }
+    return true
   }
 }
