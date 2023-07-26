@@ -209,15 +209,19 @@ class SuiviRepository extends ServiceEntityRepository
             'status_refused' => Signalement::STATUS_REFUSED,
         ];
 
-        $sql = 'SELECT su.signalement_id, MAX(su.created_at) as last_posted_at
-        FROM suivi su
-        INNER JOIN signalement s on s.id = su.signalement_id
-        WHERE (su.type = :type_suivi_technical OR su.is_public = 1)
-        AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
+        $sql = 'SELECT s.id, s.created_at, MAX(su.max_date_suivi_technique_or_public) AS last_posted_at
+        FROM signalement s
+        LEFT JOIN (
+            SELECT signalement_id, MAX(created_at) AS max_date_suivi_technique_or_public
+            FROM suivi
+            WHERE (type = :type_suivi_technical OR is_public = 1)
+            GROUP BY signalement_id
+        ) su ON s.id = su.signalement_id
+        WHERE s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
         AND s.is_imported != 1
         AND s.is_usager_abandon_procedure != 1
-        GROUP BY su.signalement_id
-        HAVING DATEDIFF(NOW(),last_posted_at) > :day_period
+        GROUP BY s.id
+        HAVING DATEDIFF(NOW(), IFNULL(last_posted_at, s.created_at)) > :day_period
         ORDER BY last_posted_at';
 
         $statement = $connection->prepare($sql);

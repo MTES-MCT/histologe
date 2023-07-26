@@ -13,6 +13,7 @@
               :value="radioValue.value"
               :class="[ 'fr-input' ]"
               @input="updateValue($event)"
+              :checked="radioValue.value === modelValue"
               aria-describedby="radio-error-messages"
               >
               <label class="fr-label" :for="id + '_' + radioValue.value">
@@ -34,7 +35,7 @@ export default defineComponent({
   props: {
     id: { type: String, default: null },
     label: { type: String, default: null },
-    modelValue: { type: String, default: null },
+    modelValue: { type: String as () => null | string, default: null },
     values: { type: Array as () => Array<{ label: string; value: string }>, default: null },
     customCss: { type: String, default: '' },
     validate: { type: Object, default: null },

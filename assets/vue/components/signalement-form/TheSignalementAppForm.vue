@@ -34,6 +34,7 @@
 import { defineComponent } from 'vue'
 import formStore from './store'
 import { requests } from './requests'
+import { services } from './services'
 import SignalementFormScreen from './SignalementFormScreen.vue'
 import SignalementFormBreadCrumbs from './SignalementFormBreadCrumbs.vue'
 const initElements:any = document.querySelector('#app-signalement-form')
@@ -45,18 +46,16 @@ export default defineComponent({
     SignalementFormBreadCrumbs
   },
   data () {
-    // const currentScreen = screenData[formStore.currentScreenIndex]
     return {
+      slugVosCoordonnees: 'vos_coordonnees_occupant',
+      nextSlug: '',
       isErrorInit: false,
       isLoadingInit: true,
       sharedProps: formStore.props,
-      // sharedState: formStore.data,
-      // screens: [] as Array<{ slug: string; label: string; description: string; components: object }>,
       currentScreen: null as { slug: string; label: string; description: string ; components: object } | null
     }
   },
   created () {
-    // formStore.screenData = screenData
     if (initElements !== null) {
       this.sharedProps.ajaxurl = initElements.dataset.ajaxurl
       this.sharedProps.ajaxurlQuestions = initElements.dataset.ajaxurlQuestions
@@ -71,16 +70,28 @@ export default defineComponent({
         this.isErrorInit = true
       } else {
         this.isLoadingInit = false
-        formStore.screenData = requestResponse
-        this.currentScreen = requestResponse[0]
+        formStore.screenData = formStore.screenData.concat(requestResponse)
+        if (this.nextSlug !== '') {
+          this.changeScreenBySlug(this.nextSlug)
+        } else {
+          this.currentScreen = requestResponse[0]
+        }
       }
     },
     changeScreenBySlug (slug:string) {
       if (formStore.screenData) {
-        const screenIndex = formStore.screenData.findIndex((screen) => screen.slug === slug)
+        const screenIndex = formStore.screenData.findIndex((screen: any) => screen.slug === slug)
         if (screenIndex !== -1) {
           formStore.currentScreenIndex = screenIndex
           this.currentScreen = formStore.screenData[screenIndex]
+        } else {
+          if (slug === this.slugVosCoordonnees) { // TODO à mettre à jour suivant le slug des différents profils
+            // on détermine le profil
+            services.updateProfil()
+            this.nextSlug = slug
+            // on fait un appel API pour charger la suite des questions avant de changer d'écran
+            requests.initQuestionsProfil(this.handleInitQuestions)
+          }
         }
       }
     }

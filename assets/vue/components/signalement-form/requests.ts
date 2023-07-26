@@ -17,7 +17,12 @@ export const requests = {
   },
 
   initQuestions (functionReturn: Function) {
-    const url = formStore.props.ajaxurlQuestions
+    const url = (formStore.props.ajaxurlQuestions as string) + 'tous'
+    requests.doRequest(url, functionReturn)
+  },
+
+  initQuestionsProfil (functionReturn: Function) {
+    const url = (formStore.props.ajaxurlQuestions as string) + (formStore.data.profil as string)
     requests.doRequest(url, functionReturn)
   },
 
