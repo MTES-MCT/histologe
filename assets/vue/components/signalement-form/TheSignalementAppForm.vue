@@ -38,6 +38,11 @@ import { services } from './services'
 import SignalementFormScreen from './SignalementFormScreen.vue'
 import SignalementFormBreadCrumbs from './SignalementFormBreadCrumbs.vue'
 const initElements:any = document.querySelector('#app-signalement-form')
+// TODO : centraliser les interfaces et les utiliser partout
+interface Components {
+  body?: any[];
+  footer?: any[];
+}
 
 export default defineComponent({
   name: 'TheSignalementAppForm',
@@ -51,8 +56,9 @@ export default defineComponent({
       nextSlug: '',
       isErrorInit: false,
       isLoadingInit: true,
+      formStore,
       sharedProps: formStore.props,
-      currentScreen: null as { slug: string; label: string; description: string ; components: object } | null
+      currentScreen: null as { slug: string; label: string; description: string ; components: Components } | null
     }
   },
   created () {
@@ -84,6 +90,10 @@ export default defineComponent({
         if (screenIndex !== -1) {
           formStore.currentScreenIndex = screenIndex
           this.currentScreen = formStore.screenData[screenIndex]
+          if (this.currentScreen?.components && this.currentScreen.components.body) {
+            // Prétraitement des composants avec repeat
+            this.currentScreen.components.body = formStore.preprocessScreen(this.currentScreen.components.body)
+          }
         } else {
           if (slug === this.slugVosCoordonnees) { // TODO à mettre à jour suivant le slug des différents profils
             // on détermine le profil
