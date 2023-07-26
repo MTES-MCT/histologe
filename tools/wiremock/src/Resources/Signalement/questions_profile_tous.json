@@ -252,7 +252,19 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "signalement_concerne_next",
-          "action": "goto:vos_coordonnees"
+          "action": "goto:vos_coordonnees_occupant",
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil === 'logement_occupez'"
+          }
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "signalement_concerne_next",
+          "action": "goto:vos_coordonnees",
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil === 'autre_logement'"
+          }
         }
       ]
     }

@@ -47,7 +47,8 @@ export default defineComponent({
   },
   data () {
     return {
-      slugVosCoordonnees: 'vos_coordonnees',
+      slugVosCoordonnees: 'vos_coordonnees_occupant',
+      nextSlug: '',
       isErrorInit: false,
       isLoadingInit: true,
       sharedProps: formStore.props,
@@ -69,20 +70,25 @@ export default defineComponent({
         this.isErrorInit = true
       } else {
         this.isLoadingInit = false
-        formStore.screenData = requestResponse
-        this.currentScreen = requestResponse[0]
+        formStore.screenData = formStore.screenData.concat(requestResponse)
+        if (this.nextSlug !== '') {
+          this.changeScreenBySlug(this.nextSlug)
+        } else {
+          this.currentScreen = requestResponse[0]
+        }
       }
     },
     changeScreenBySlug (slug:string) {
       if (formStore.screenData) {
-        const screenIndex = formStore.screenData.findIndex((screen) => screen.slug === slug)
+        const screenIndex = formStore.screenData.findIndex((screen: any) => screen.slug === slug)
         if (screenIndex !== -1) {
           formStore.currentScreenIndex = screenIndex
           this.currentScreen = formStore.screenData[screenIndex]
         } else {
-          if (slug === this.slugVosCoordonnees) {
+          if (slug === this.slugVosCoordonnees) { // TODO à mettre à jour suivant le slug des différents profils
             // on détermine le profil
             services.updateProfil()
+            this.nextSlug = slug
             // on fait un appel API pour charger la suite des questions avant de changer d'écran
             requests.initQuestionsProfil(this.handleInitQuestions)
           }
