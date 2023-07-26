@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Entity;
 
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\SignalementDraft;
 use App\Utils\AddressParser;
 use PHPUnit\Framework\TestCase;
@@ -29,5 +30,6 @@ class SignalementDraftTest extends TestCase
 
         $this->assertEquals('john.doe@yopmail.com', $signalementDraft->getEmailDeclarant());
         $this->assertEquals('3:zone_concernee', $signalementDraft->getCurrentStep());
+        $this->assertEquals(SignalementDraftStatus::EN_COURS, $signalementDraft->getStatus());
     }
 }

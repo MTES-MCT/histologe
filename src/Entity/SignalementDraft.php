@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: SignalementDraftRepository::class)]
+#[ORM\HasLifecycleCallbacks()]
 class SignalementDraft
 {
     use TimestampableTrait;
@@ -21,8 +22,8 @@ class SignalementDraft
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'uuid')]
-    private ?Uuid $uuid = null;
+    #[ORM\Column(type: 'string')]
+    private ?string $uuid = null;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: ProfileDeclarant::class)]
     private ?ProfileDeclarant $profileDeclarant = null;
@@ -49,6 +50,7 @@ class SignalementDraft
     {
         $this->uuid = Uuid::v4();
         $this->signalements = new ArrayCollection();
+        $this->status = SignalementDraftStatus::EN_COURS;
     }
 
     public function getId(): ?int
@@ -56,12 +58,12 @@ class SignalementDraft
         return $this->id;
     }
 
-    public function getUuid(): ?Uuid
+    public function getUuid(): ?string
     {
         return $this->uuid;
     }
 
-    public function setUuid(Uuid $uuid): self
+    public function setUuid(string $uuid): self
     {
         $this->uuid = $uuid;
 
