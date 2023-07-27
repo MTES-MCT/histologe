@@ -10,7 +10,7 @@
 {% block body %}
     <div id="app-signalement-form" 
         data-ajaxurl="{{ path('front_nouveau_formulaire') }}"            
-        data-ajaxurl-questions="http://localhost:8082/api/questions?profil="
+        data-ajaxurl-questions="{{ path('api_question_profile') }}?profil="
         data-ajaxurl-post-signalement-draft="{{ path('envoi_nouveau_signalement_draft') }}"
-        data-ajaxurl-put-signalement-draft="{{ path('mise_a_jour_nouveau_signalement_draft',{uuid:'uuid'}) }}"></div>
+        data-ajaxurl-put-signalement-draft="{{ path('mise_a_jour_nouveau_signalement_draft', {uuid: 'uuid'}) }}"></div>
 {% endblock %}

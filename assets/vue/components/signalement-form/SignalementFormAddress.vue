@@ -119,6 +119,7 @@ export default defineComponent({
     },
     handleClickSuggestion (index: number) {
       if (this.suggestions) {
+        this.formStore.data[this.id] = this.suggestions[index].properties.label
         this.formStore.data[this.id + '_detail_numero'] = this.suggestions[index].properties.name
         this.formStore.data[this.id + '_detail_code_postal'] = this.suggestions[index].properties.postcode
         this.formStore.data[this.id + '_detail_commune'] = this.suggestions[index].properties.city
