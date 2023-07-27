@@ -43,10 +43,13 @@ interface FormStore {
 
 const formStore: FormStore = reactive({
   data: {
+    uuidSignalementDraft: ''
   },
   props: {
     ajaxurl: '',
     ajaxurlQuestions: '',
+    ajaxurlPostSignalementDraft: '',
+    ajaxurlPutSignalementDraft: '',
     urlApiAdress: 'https://api-adresse.data.gouv.fr/search/?q='
   },
   screenData: [],

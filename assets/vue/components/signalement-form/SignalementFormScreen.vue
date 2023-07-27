@@ -116,9 +116,7 @@ export default defineComponent({
     },
     showScreenBySlug (slug: string, slugButton:string) {
       formStore.validationErrors = {}
-      console.log(slugButton)
       const isScreenAfterCurrent = services.isScreenAfterCurrent(slug)
-      console.log(isScreenAfterCurrent)
 
       const traverseComponents = (components: any) => {
         for (const field of components) {

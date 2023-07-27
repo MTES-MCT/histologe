@@ -4,6 +4,8 @@
       class="signalement-form"
       :data-ajaxurl="sharedProps.ajaxurl"
       :data-ajaxurl-questions="sharedProps.ajaxurlQuestions"
+      :data-ajaxurl-post-signalement-draft="sharedProps.ajaxurlPostSignalementDraft"
+      :data-ajaxurl-put-signalement-draft="sharedProps.ajaxurlPutSignalementDraft"
       >
       <div v-if="isLoadingInit" class="loading fr-m-10w">
       Initialisation du formulaire...
@@ -23,7 +25,7 @@
         :label="currentScreen.label"
         :description="currentScreen.description"
         :components="currentScreen.components"
-        :changeEvent="changeScreenBySlug"
+        :changeEvent="saveAndChangeScreenBySlug"
       />
     </div>
     </div>
@@ -59,6 +61,8 @@ export default defineComponent({
     if (initElements !== null) {
       this.sharedProps.ajaxurl = initElements.dataset.ajaxurl
       this.sharedProps.ajaxurlQuestions = initElements.dataset.ajaxurlQuestions
+      this.sharedProps.ajaxurlPostSignalementDraft = initElements.dataset.ajaxurlPostSignalementDraft
+      this.sharedProps.ajaxurlPutSignalementDraft = initElements.dataset.ajaxurlPutSignalementDraft
       requests.initQuestions(this.handleInitQuestions)
     } else {
       this.isErrorInit = true
@@ -72,23 +76,30 @@ export default defineComponent({
         this.isLoadingInit = false
         formStore.screenData = formStore.screenData.concat(requestResponse)
         if (this.nextSlug !== '') {
-          this.changeScreenBySlug(this.nextSlug)
+          this.changeScreenBySlug('rien') // TODO : que mettre ?
         } else {
           this.currentScreen = requestResponse[0]
         }
       }
     },
-    changeScreenBySlug (slug:string) {
+    saveAndChangeScreenBySlug (slug:string) {
+      this.nextSlug = slug
+      requests.saveSignalementDraft(this.changeScreenBySlug)
+    },
+    changeScreenBySlug (requestResponse: any) {
+      // si on reçoit un uuid on l'enregistre pour les mises à jour
+      if (requestResponse.uuid) {
+        formStore.data.uuidSignalementDraft = requestResponse.uuid
+      }
       if (formStore.screenData) {
-        const screenIndex = formStore.screenData.findIndex((screen: any) => screen.slug === slug)
+        const screenIndex = formStore.screenData.findIndex((screen: any) => screen.slug === this.nextSlug)
         if (screenIndex !== -1) {
           formStore.currentScreenIndex = screenIndex
           this.currentScreen = formStore.screenData[screenIndex]
         } else {
-          if (slug === this.slugVosCoordonnees) { // TODO à mettre à jour suivant le slug des différents profils
+          if (this.nextSlug === this.slugVosCoordonnees) { // TODO à mettre à jour suivant le slug des différents profils
             // on détermine le profil
             services.updateProfil()
-            this.nextSlug = slug
             // on fait un appel API pour charger la suite des questions avant de changer d'écran
             requests.initQuestionsProfil(this.handleInitQuestions)
           }
