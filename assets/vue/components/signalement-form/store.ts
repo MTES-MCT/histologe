@@ -69,7 +69,8 @@ const formStore: FormStore = reactive({
     'SignalementFormCheckbox',
     'SignalementFormCounter',
     'SignalementFormDate',
-    'SignalementFormPhonefield'
+    'SignalementFormPhonefield',
+    'SignalementFormUpload'
   ],
   validationErrors: {}, // Les erreurs de validation
   updateData (key: string, value: any) {

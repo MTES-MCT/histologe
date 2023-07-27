@@ -61,6 +61,7 @@ import SignalementFormWarning from './SignalementFormWarning.vue'
 import SignalementFormInfo from './SignalementFormInfo.vue'
 import SignalementFormCheckbox from './SignalementFormCheckbox.vue'
 import SignalementFormPhonefield from './SignalementFormPhonefield.vue'
+import SignalementFormUpload from './SignalementFormUpload.vue'
 import { services } from './services'
 
 export default defineComponent({
@@ -76,7 +77,8 @@ export default defineComponent({
     SignalementFormWarning,
     SignalementFormInfo,
     SignalementFormCheckbox,
-    SignalementFormPhonefield
+    SignalementFormPhonefield,
+    SignalementFormUpload
   },
   props: {
     label: String,
