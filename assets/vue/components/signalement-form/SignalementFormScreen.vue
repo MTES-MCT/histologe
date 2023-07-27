@@ -134,7 +134,7 @@ export default defineComponent({
         }
       }
 
-      if (this.components && isScreenAfterCurrent) {
+      if (this.components && this.components.body && isScreenAfterCurrent) {
         traverseComponents(this.components.body)
         if (Object.keys(formStore.validationErrors).length > 0) {
           window.scrollTo(0, 0)
