@@ -116,9 +116,7 @@ export default defineComponent({
     },
     showScreenBySlug (slug: string, slugButton:string) {
       formStore.validationErrors = {}
-      console.log(slugButton)
       const isScreenAfterCurrent = services.isScreenAfterCurrent(slug)
-      console.log(isScreenAfterCurrent)
 
       const traverseComponents = (components: any) => {
         for (const field of components) {
@@ -129,7 +127,7 @@ export default defineComponent({
             }
           }
           // Effectuer d'autres validations nécessaires pour les autres règles (minLength, maxLength, pattern, etc.)
-          // Vérifier si le composant est de type Subscreen et a des composants enfants
+          // Vérifier si le composant est de type Subscreen ou Address et a des composants enfants
           if ((field.type === 'SignalementFormSubscreen' || field.type === 'SignalementFormAddress') && field.components) {
             traverseComponents(field.components.body)
           }
@@ -143,7 +141,7 @@ export default defineComponent({
           return
         }
       }
-      // Si pas d'erreur de validation, ou screen précédent, on change d'écran
+      // Si pas d'erreur de validation, ou screen précédent (donc pas de validation), on change d'écran
       if (this.changeEvent !== undefined) {
         this.changeEvent(slug)
       }

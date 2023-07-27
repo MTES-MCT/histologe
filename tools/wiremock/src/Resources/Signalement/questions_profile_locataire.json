@@ -385,8 +385,9 @@
         {
           "type": "SignalementFormSubscreen",
           "repeat": {
-            "count": "{{formStore.data.nombre_pieces}}"
+            "count": "formStore.data.composition_logement_nb_pieces"
           },
+          "slug": "type_logement_pieces_a_vivre_piece_{{number}}",
           "components": {
             "body": [
               {
@@ -401,6 +402,16 @@
                 "type": "SignalementFormOnlyChoice",
                 "label": "La hauteur jusqu'au plafond est de 2,20m (220cm) ou plus ?",
                 "slug": "type_logement_pieces_a_vivre_hauteur_piece_{{number}}",
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  }
+                ],
                 "validate": {
                   "required": false
                 }
@@ -596,7 +607,7 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "type_logement_commodites_previous",
-          "action": "goto:type_logement_suite_1"
+          "action": "goto:type_logement_pieces_a_vivre"
         },
         {
           "type": "SignalementFormButton",

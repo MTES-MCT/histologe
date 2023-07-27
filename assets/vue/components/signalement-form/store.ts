@@ -4,6 +4,7 @@ interface FormData {
   [key: string]: any
 }
 
+// TODO : compléter, centraliser et utiliser les interfaces
 // interface FormField {
 //   type: string
 //   slug: string
@@ -30,6 +31,16 @@ interface FormData {
 //   }
 // }
 
+interface Component {
+  type: string
+  label: string
+  slug: string
+  repeat?: {
+    count: string
+  }
+  // TODO ajouter toutes les propriétés possibles
+}
+
 interface FormStore {
   data: FormData
   props: FormData
@@ -39,6 +50,7 @@ interface FormStore {
   inputComponents: string[]
   updateData: (key: string, value: any) => void
   shouldShowField: (conditional: string) => boolean
+  preprocessScreen: (screenBodyComponents: any) => Component[]
 }
 
 const formStore: FormStore = reactive({
@@ -65,6 +77,43 @@ const formStore: FormStore = reactive({
   },
   shouldShowField (conditional: string) {
     return computed(() => eval(conditional)).value
+  },
+  preprocessScreen (screenBodyComponents: any): Component[] {
+    const repeatedComponents: Component[] = []
+    screenBodyComponents.forEach((component: Component) => {
+      if (component.repeat !== null && component.repeat !== undefined) {
+        for (let i = 1; i <= eval(component.repeat.count); i++) {
+          repeatedComponents.push(this.cloneComponentWithNumber(component, i))
+        }
+      } else {
+        repeatedComponents.push(component)
+      }
+    })
+    return repeatedComponents
+  },
+  replaceNumberInString (value: string, number: number): string {
+    return value.replace('{{number}}', String(number))
+  },
+  cloneComponentWithNumber (component: any, number: number): any {
+    const clonedComponent: any = {}
+
+    for (const prop in component) {
+      if (Object.prototype.hasOwnProperty.call(component, prop)) {
+        if (prop !== 'repeat') {
+          if (typeof component[prop] === 'string') {
+            clonedComponent[prop] = this.replaceNumberInString(component[prop], number)
+          } else if (Array.isArray(component[prop])) {
+            clonedComponent[prop] = component[prop].map((item: any) => this.cloneComponentWithNumber(item, number))
+          } else if (typeof component[prop] === 'object') {
+            clonedComponent[prop] = this.cloneComponentWithNumber(component[prop], number)
+          } else {
+            clonedComponent[prop] = component[prop]
+          }
+        }
+      }
+    }
+
+    return clonedComponent
   }
 })
 
