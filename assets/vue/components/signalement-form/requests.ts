@@ -68,5 +68,10 @@ export const requests = {
   validateAddress (valueAdress: string, functionReturn: Function) {
     const url = (formStore.props.urlApiAdress as string) + valueAdress
     requests.doRequestGet(url, functionReturn)
+  },
+
+  uploadFile (formData: FormData, functionReturn: Function) {
+    const url = formStore.props.ajaxurlHandleUpload
+    requests.doRequestPost(url, formData, functionReturn)
   }
 }

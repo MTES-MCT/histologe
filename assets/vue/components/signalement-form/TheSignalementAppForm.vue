@@ -6,6 +6,7 @@
       :data-ajaxurl-questions="sharedProps.ajaxurlQuestions"
       :data-ajaxurl-post-signalement-draft="sharedProps.ajaxurlPostSignalementDraft"
       :data-ajaxurl-put-signalement-draft="sharedProps.ajaxurlPutSignalementDraft"
+      :data-ajaxurl-handle-upload="sharedProps.ajaxurlHandleUpload"
       >
       <div v-if="isLoadingInit" class="loading fr-m-10w">
       Initialisation du formulaire...
@@ -69,6 +70,7 @@ export default defineComponent({
       this.sharedProps.ajaxurlQuestions = initElements.dataset.ajaxurlQuestions
       this.sharedProps.ajaxurlPostSignalementDraft = initElements.dataset.ajaxurlPostSignalementDraft
       this.sharedProps.ajaxurlPutSignalementDraft = initElements.dataset.ajaxurlPutSignalementDraft
+      this.sharedProps.ajaxurlHandleUpload = initElements.dataset.ajaxurlHandleUpload
       requests.initQuestions(this.handleInitQuestions)
     } else {
       this.isErrorInit = true

@@ -13,8 +13,10 @@
             @input="updateValue($event)"
             aria-describedby="text-upload-error-desc-error"
             :disabled="disabled"
+            @change="uploadFile($event)"
             >
             <!-- TODO : mettre multiple ? -->
+            <!-- TODO : gérer type de fichier accept=".pdf,.doc,.docx" -->
     </div>
     <div
       id="text-upload-error-desc-error"
@@ -28,6 +30,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { requests } from './requests'
 
 export default defineComponent({
   name: 'SignalementFormUpload',
@@ -56,7 +59,23 @@ export default defineComponent({
     updateValue (event: Event) {
       const value = (event.target as HTMLInputElement).value
       this.$emit('update:modelValue', value)
-      // TODO : prise en compte de l'upload, utiliser la route handle_upload ?
+    },
+    onFileUploaded (requestResponse: any) {
+      console.log(requestResponse)
+      // TODO : gérer l'affichage (erreur ou réussite)
+      if (requestResponse) {
+        // TODO : enregistrer l'objet reçu à la place de "C:\\fakepath\\xxx.png" ?
+      }
+    },
+    uploadFile (event: Event) {
+      // TODO : afficher une barre de progression ?
+      const fileInput = event.target as HTMLInputElement
+      if (fileInput.files && fileInput.files.length > 0) {
+        const formData = new FormData()
+        formData.append('signalement[documents]', fileInput.files[0])
+        // TODO : faut-il permettre une sélection multiple   ?
+        requests.uploadFile(formData, this.onFileUploaded)
+      }
     }
   },
   emits: ['update:modelValue']
