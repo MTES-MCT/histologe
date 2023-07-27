@@ -1,6 +1,6 @@
 {
   "searchId": "00000000-0000-0000-2023-000000000012",
-  "nbResults": 1,
+  "nbResults": 2,
   "columnList": [
     "Sas_LogicielProvenance",
     "Reference_Dossier",
@@ -30,6 +30,22 @@
       "keyDataList": [
         30,
         601
+      ]
+    },
+    {
+      "columnDataList": [
+        "Histologe",
+        "00000000-0000-0000-2023-000000000012",
+        "2023/DD13/0011",
+        "05/06/2023",
+        null,
+        "Arrêté L.511-11 - Suroccupation",
+        "01/08/2023",
+        null
+      ],
+      "keyDataList": [
+        31,
+        602
       ]
     }
   ]
