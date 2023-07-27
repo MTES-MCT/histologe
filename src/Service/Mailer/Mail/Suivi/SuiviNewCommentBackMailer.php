@@ -28,13 +28,10 @@ class SuiviNewCommentBackMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $signalement = $notificationMail->getSignalement();
-        $uuid = $signalement->getUuid();
 
         return array_merge($notificationMail->getParams(), [
             'ref_signalement' => $signalement->getReference(),
-            'link' => $this->urlGenerator->generate('back_signalement_view', [
-                'uuid' => $uuid,
-            ], UrlGeneratorInterface::ABSOLUTE_URL),
+            'link' => $this->generateLinkSignalementView($signalement->getUuid()),
         ]);
     }
 
