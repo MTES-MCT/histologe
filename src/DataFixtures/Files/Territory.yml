@@ -149,6 +149,9 @@ territories:
     name: "Finistère"
     is_active: 1
     bbox: "{\"n\":\"48.7535\",\"e\":\"-3.386619\",\"s\":\"47.701242\",\"w\":\"-5.141292\"}"
+    authorized_codes_insee: # Quimper + Brest
+      - "29232"
+      - "29019"
   -
     zip: "30"
     name: "Gard"
