@@ -41,16 +41,17 @@ class InterventionDescriptionGenerator
     public static function buildDescriptionArreteCreated(DossierArreteSISH $dossierArreteSISH): string
     {
         $description = sprintf(
-            'Il existe 1 arrêté de type %s de n°%s daté du %s dans le dossier de n°%s.'.\PHP_EOL,
-            $dossierArreteSISH->getArreteType(),
+            'L\'arrêté %s du %s dans le dossier de n°%s.<br>',
             $dossierArreteSISH->getArreteNumero(),
             $dossierArreteSISH->getArreteDate(),
-            $dossierArreteSISH->getDossNum()
+            $dossierArreteSISH->getDossNum(),
         );
 
-        if ($dossierArreteSISH->getArreteMLNumero()) {
+        $description .= sprintf('Type arrêté: %s<br>', $dossierArreteSISH->getArreteType());
+
+        if ($dossierArreteSISH->getArreteMLDate()) {
             $description .= sprintf(
-                'Pour cet arrêté, il a également été pris un arrêté de mainlevée n°%s en date du %s.',
+                'Pour cet arrêté, il a également été pris un arrêté de mainlevée %s du %s.',
                 $dossierArreteSISH->getArreteMLNumero(),
                 $dossierArreteSISH->getArreteMLDate()
             );
