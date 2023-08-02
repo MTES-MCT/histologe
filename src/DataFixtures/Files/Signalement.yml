@@ -614,7 +614,7 @@ signalements:
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
       - "le sol ou la base des murs est très humide."
   -
-    uuid: "00000000-0000-0000-2023-00000000001"
+    uuid: "00000000-0000-0000-2023-000000000001"
     details: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
     is_proprio_averti: 1
     is_logement_social: 0
@@ -650,7 +650,7 @@ signalements:
     criteres: []
     criticites: []
   -
-    uuid: "00000000-0000-0000-2023-0000000002"
+    uuid: "00000000-0000-0000-2023-000000000002"
     details: "[COR] Signalement dans la commune Affoux (code insee: 69001, code postal: 69170)"
     is_proprio_averti: 0
     is_logement_social: 0
@@ -684,7 +684,7 @@ signalements:
     criteres: []
     criticites: []
   -
-    uuid: "00000000-0000-0000-2023-0000000003"
+    uuid: "00000000-0000-0000-2023-000000000003"
     details: "[MDL] Signalement dans la commune Lyon (code insee: 69381, code postal: 69001)"
     is_proprio_averti: 1
     is_logement_social: 0
@@ -718,7 +718,7 @@ signalements:
     criteres: []
     criticites: []
   -
-    uuid: "00000000-0000-0000-2023-0000000004"
+    uuid: "00000000-0000-0000-2023-000000000004"
     details: "[MDL] Signalement pour la commune St Genis les Ollieres	(code insee: 69205, code postal: 69290)"
     is_proprio_averti: 1
     is_logement_social: 0
@@ -752,7 +752,7 @@ signalements:
     criteres: []
     criticites: []
   -
-    uuid: "00000000-0000-0000-2023-0000000005"
+    uuid: "00000000-0000-0000-2023-000000000005"
     details: "[COR] Signalement pour la commune Chenelette (code insee: 69054, code postal: 69430)"
     is_proprio_averti: 1
     is_logement_social: 0
@@ -829,7 +829,7 @@ signalements:
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
       - "le sol ou la base des murs est très humide."
   -
-    uuid: "00000000-0000-0000-2023-0000000007"
+    uuid: "00000000-0000-0000-2023-000000000007"
     details: "Signalement Non-Décence dans l'Yonne"
     is_proprio_averti: 1
     is_logement_social: 0
@@ -872,7 +872,7 @@ signalements:
       - "NON_DECENCE_ENERGETIQUE"
     date_entree: "2022-06-08 17:06:33"
   -
-    uuid: "00000000-0000-0000-2023-0000000008"
+    uuid: "00000000-0000-0000-2023-000000000008"
     details: "Signalement Non-Décence dans le Puy de dôme"
     is_proprio_averti: 1
     is_logement_social: 0
@@ -1348,6 +1348,7 @@ signalements:
     details: "Signalement ancien sans suivi"
     is_proprio_averti: 1
     is_logement_social: 0
+    is_not_occupant: true
     nb_adultes: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
