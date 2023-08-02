@@ -1,7 +1,11 @@
 {% extends 'emails/base_email.html.twig' %}
 
 {% block body %}
-    <p>Bonjour {{ signalement.nomOccupant|upper ~' '~signalement.prenomOccupant|capitalize }}</p>
+    {% if from == signalement.mailOccupant %}
+        <p>Bonjour {{ signalement.nomOccupant|upper ~' '~signalement.prenomOccupant|capitalize }}</p>
+    {% else %}
+        <p>Bonjour {{ signalement.nomDeclant|upper ~' '~signalement.prenomDeclarant|capitalize }}</p>
+    {% endif %}
     <p>
         Vous avez signalé un problème dans le logement au <strong>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</strong>. <br>
         Les services sont pleinement investis sur votre dossier. <br>
