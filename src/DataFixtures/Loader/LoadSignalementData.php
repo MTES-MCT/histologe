@@ -149,6 +149,8 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 ->setMailDeclarant($faker->email())
                 ->setStructureDeclarant($faker->company())
                 ->setLienDeclarantOccupant(SignalementType::LINK_CHOICES[array_rand(SignalementType::LINK_CHOICES)]);
+        } else {
+            $signalement->setIsNotOccupant(0);
         }
 
         if (isset($row['is_imported'])) {
