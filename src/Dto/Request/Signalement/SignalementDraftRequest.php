@@ -59,7 +59,7 @@ class SignalementDraftRequest
     private ?string $logementSocialDemandeRelogement = null;
     private ?string $logementSocialAllocation = null;
     private ?string $logementSocialAllocationCaisse = null;
-    private ?string $logement_social_date_naissance = null;
+    private ?string $logementSocialDateNaissance = null;
     private ?string $logementSocialMontantAllocation = null;
     private ?string $travailleurSocialQuitteLogement = null;
     private ?string $travailleurSocialAccompagnement = null;
@@ -740,12 +740,12 @@ class SignalementDraftRequest
 
     public function getLogementSocialDateNaissance(): ?string
     {
-        return $this->logement_social_date_naissance;
+        return $this->logementSocialDateNaissance;
     }
 
-    public function setLogementSocialDateNaissance(?string $logement_social_date_naissance): self
+    public function setLogementSocialDateNaissance(?string $logementSocialDateNaissance): self
     {
-        $this->logement_social_date_naissance = $logement_social_date_naissance;
+        $this->logementSocialDateNaissance = $logementSocialDateNaissance;
 
         return $this;
     }
