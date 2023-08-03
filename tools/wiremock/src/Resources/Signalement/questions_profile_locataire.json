@@ -31,7 +31,7 @@
           "slug": "vos_coordonnees_occupant_prenom"
         },
         {
-          "type": "SignalementFormTextfield",
+          "type": "SignalementFormEmailfield",
           "label": "Adresse email",
           "slug": "vos_coordonnees_occupant_email"
         },
@@ -79,7 +79,7 @@
           "slug": "coordonnees_bailleur_prenom"
         },
         {
-          "type": "SignalementFormTextfield",
+          "type": "SignalementFormEmailfield",
           "label": "Adresse email",
           "slug": "coordonnees_bailleur_email"
         },
@@ -741,7 +741,8 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "<p>Nous allons vous poser des questions sur votre situation.<br>Si vous êtes allocataire CAF ou MSA, préparez votre numéro allocataire !</p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
+    "label": "",
+    "description": "<p>Nous allons vous poser des questions sur votre situation.<br>Si vous êtes allocataire CAF ou MSA, préparez votre numéro allocataire !</p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
     "slug": "ecran_intermediaire_situation_occupant",
     "components": {
       "footer": [
