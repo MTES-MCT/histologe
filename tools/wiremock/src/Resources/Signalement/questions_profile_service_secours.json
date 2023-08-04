@@ -1,5 +1,442 @@
 [
   {
     "//": "Service de secours"
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Vos coordonnées",
+    "slug": "vos_coordonnees_tiers",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Nom de l'organisme",
+          "slug": "vos_coordonnees_tiers_nom_organisme",
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'service_secours'"
+          }
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Nom de famille",
+          "slug": "vos_coordonnees_tiers_nom"
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Prénom",
+          "slug": "vos_coordonnees_tiers_prenom"
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Lien avec l'occupant",
+          "slug": "vos_coordonnees_tiers_lien",
+          "validate": {
+            "required": false
+          },
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'particulier'"
+          },
+          "values": [
+            {
+              "label": "Proche",
+              "value": "proche"
+            },
+            {
+              "label": "Voisinage",
+              "value": "voisinage"
+            },
+            {
+              "label": "Autre",
+              "value": "autre"
+            }
+          ],
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Structure",
+          "slug": "vos_coordonnees_tiers_nom_organisme",
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'professionnelle'"
+          }
+        },
+        {
+          "type": "SignalementFormEmailfield",
+          "label": "Adresse email",
+          "slug": "vos_coordonnees_tiers_email"
+        },
+        {
+          "type": "SignalementFormPhonefield",
+          "label": "Téléphone",
+          "slug": "vos_coordonnees_tiers_tel"
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "vos_coordonnees_tiers_previous",
+          "action": "goto:signalement_concerne"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "vos_coordonnees_tiers_next",
+          "action": "goto:coordonnees_occupant"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Les coordonnées des personnes occupant le logement",
+    "slug": "coordonnees_occupant",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Nom de famille",
+          "slug": "coordonnees_occupant_nom"
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Prénom",
+          "slug": "coordonnees_occupant_prenom"
+        },
+        {
+          "type": "SignalementFormEmailfield",
+          "label": "Adresse email",
+          "slug": "coordonnees_occupant_email"
+        },
+        {
+          "type": "SignalementFormPhonefield",
+          "label": "Téléphone",
+          "slug": "coordonnees_occupant_tel"
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "coordonnees_occupant_tel",
+          "action": "goto:coordonnees_tiers"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "coordonnees_occupant_next",
+          "action": "goto:coordonnees_bailleur"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Les coordonnées du bailleur (propriétaire)",
+    "slug": "coordonnees_bailleur",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Nom de famille ou de l'organisme",
+          "slug": "coordonnees_bailleur_nom"
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Prénom",
+          "slug": "coordonnees_bailleur_prenom"
+        },
+        {
+          "type": "SignalementFormEmailfield",
+          "label": "Adresse email",
+          "slug": "coordonnees_bailleur_email"
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Téléphone",
+          "slug": "coordonnees_bailleur_tel"
+        },
+        {
+          "type": "SignalementFormAddress",
+          "label": "Adresse postale",
+          "slug": "coordonnees_bailleur_adresse"
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "coordonnees_bailleur_previous",
+          "action": "goto:coordonnees_occupant"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "coordonnees_bailleur_next",
+          "action": "goto:zone_concernee"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Vous souhaitez signaler des problèmes sur",
+    "slug": "zone_concernee",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "customCss": "question-xl",
+          "label": "Vous souhaitez signaler des problèmes sur",
+          "slug": "zone_concernee_zone",
+          "values": [
+            {
+              "label": "Le batiment",
+              "value": "batiment"
+            },
+            {
+              "label": "Votre logement",
+              "value": "logement"
+            },
+            {
+              "label": "Les deux",
+              "value": "batiment_logement"
+            }
+          ]
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "zone_concernee_zone_previous",
+          "action": "goto:coordonnees_bailleur"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "zone_concernee_zone_next",
+          "action": "goto:ecran_intermediaire_type_composition"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Type et composition du logement",
+    "description": "<p>Nous allons vous poser des questions sur la composition du logement.<p><p>Les documents utiles sont:</p><ul><li>Le bail</li><li>L'état des lieux d'entrée</li><li>Le diagnostic performance énergie (DPE)</li></ul><p>Toutes les questions sont obligatoires, sauf mention contraire.<p>",
+    "slug": "ecran_intermediaire_type_composition",
+    "components": {
+      "body": [
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "ecran_intermediaire_type_composition_previous",
+          "action": "goto:zone_concernee"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "ecran_intermediaire_type_composition_next",
+          "action": "goto:type_logement"
+        }
+      ]
+    },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "slug": "type_logement",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "customCss": "question-xl",
+          "label": "Le logement est...",
+          "slug": "type_logement_nature",
+          "values": [
+            {
+              "label": "Un appartement",
+              "value": "appartement"
+            },
+            {
+              "label": "Une maison seule",
+              "value": "maison"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "customCss": "question-xl",
+          "label": "Le logement est-il situé au RDC (rez-de-chaussée)",
+          "slug": "type_logement_rdc",
+          "conditional": {
+            "show": "formStore.data.type_logement_nature === 'appartement'"
+          },
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "customCss": "question-xl",
+          "label": "Le logement est-il situé au dernier étage",
+          "slug": "type_logement_dernier_etage",
+          "conditional": {
+            "show": "formStore.data.type_logement_rdc === 'non'"
+          },
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "customCss": "question-xl",
+          "label": "Le logement est-il sous les combles, sans fenêtre ?",
+          "slug": "type_logement_sous_comble_sans_fenetre",
+          "conditional": {
+            "show": "formStore.data.type_logement_dernier_etage === 'oui'"
+          },
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "customCss": "question-xl",
+          "label": "Le logement est-il en sous-sol, sans fenêtre ?",
+          "slug": "type_logement_sous_sol_sans_fenetre",
+          "conditional": {
+            "show": "formStore.data.type_logement_dernier_etage === 'non' && formStore.data.type_logement_rdc === 'non'"
+          },
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "type_logement_previous",
+          "action": "goto:ecran_intermediaire_type_composition"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "type_logement_next",
+          "action": "goto:composition_logement"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "slug": "composition_logement",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "customCss": "question-xl",
+          "label": "Votre logement est composé d'une pièce unique ou de plusieurs pièces ?",
+          "slug": "composition_logement_piece_unique",
+          "values": [
+            {
+              "label": "Une pièce unique",
+              "value": "piece_unique"
+            },
+            {
+              "label": "Plusieurs pièces",
+              "value": "plusieurs_pieces"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormCounter",
+          "customCss": "question-xl",
+          "label": "Quelle est la superficie de votre logement (taille en m²)",
+          "slug": "composition_logement_superficie",
+          "validate": {
+            "required": false
+          }
+        },
+        {
+          "type": "SignalementFormCounter",
+          "customCss": "question-xl",
+          "label": "Combien de personnes vivent dans votre logement ?",
+          "slug": "composition_logement_nombre_personnes",
+          "validate": {
+            "required": false
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "customCss": "question-xl",
+          "label": "Il y a-t-il des enfants de moins de 6 ans ?",
+          "slug": "composition_logement_enfants",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormCounter",
+          "label": "Quel est le nombre de pièces à vivre (salon, chambre) dans votre logement ?",
+          "slug": "composition_logement_nb_pieces",
+          "conditional": {
+            "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "composition_logement_previous",
+          "action": "goto:type_logement"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "composition_logement_next",
+          "action": "goto:type_logement_pieces_a_vivre"
+        }
+      ]
+    }
   }
 ]
