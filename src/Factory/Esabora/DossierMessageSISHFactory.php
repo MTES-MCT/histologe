@@ -11,6 +11,7 @@ use App\Repository\SuiviRepository;
 use App\Service\Esabora\AbstractEsaboraService;
 use App\Service\Esabora\Enum\PersonneType;
 use App\Service\Esabora\Model\DossierMessageSISHPersonne;
+use App\Service\HtmlCleaner;
 use App\Service\UploadHandlerService;
 use App\Utils\AddressParser;
 use Doctrine\ORM\NonUniqueResultException;
@@ -45,6 +46,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
 
         $address = AddressParser::parse($signalement->getAdresseOccupant());
         $firstSuivi = $this->suiviRepository->findFirstSuiviBy($signalement, Suivi::TYPE_PARTNER);
+        $cleanedSuiviDescription = HtmlCleaner::clean($firstSuivi?->getDescription());
         $formatDate = AbstractEsaboraService::FORMAT_DATE;
         $formatDateTime = AbstractEsaboraService::FORMAT_DATE_TIME;
         $routeSignalement = $this->urlGenerator->generate(
@@ -113,7 +115,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setSignalementScore($signalement->getScore())
             ->setSignalementOrigine(AbstractEsaboraService::SIGNALEMENT_ORIGINE)
             ->setSignalementNumero($signalement->getReference())
-            ->setSignalementCommentaire($firstSuivi?->getDescription())
+            ->setSignalementCommentaire($cleanedSuiviDescription)
             ->setSignalementDate($signalement->getCreatedAt()?->format($formatDate))
             ->setSignalementDetails($signalement->getDetails())
             ->setSignalementProblemes($this->buildProblemes($signalement))
