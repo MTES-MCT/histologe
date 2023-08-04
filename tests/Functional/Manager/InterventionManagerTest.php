@@ -14,7 +14,6 @@ use App\Repository\InterventionRepository;
 use App\Repository\SignalementRepository;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\Persistence\ManagerRegistry;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -29,7 +28,6 @@ class InterventionManagerTest extends KernelTestCase
     private SignalementQualificationUpdater $signalementQualificationUpdater;
     private FileFactory $fileFactory;
     private Security $security;
-    private LoggerInterface $loggerInterface;
 
     private ?InterventionManager $interventionManager = null;
 
@@ -47,8 +45,6 @@ class InterventionManagerTest extends KernelTestCase
         $this->security = static::getContainer()->get('security.helper');
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
-        $this->fileFactory = static::getContainer()->get(FileFactory::class);
-        $this->loggerInterface = static::getContainer()->get(LoggerInterface::class);
 
         $this->interventionManager = new InterventionManager(
             $this->managerRegistry,
@@ -58,7 +54,6 @@ class InterventionManagerTest extends KernelTestCase
             $this->signalementQualificationUpdater,
             $this->fileFactory,
             $this->security,
-            $this->loggerInterface
         );
     }
 

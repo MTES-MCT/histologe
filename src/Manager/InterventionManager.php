@@ -14,7 +14,6 @@ use App\Factory\FileFactory;
 use App\Repository\InterventionRepository;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\Persistence\ManagerRegistry;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Workflow\WorkflowInterface;
 
@@ -28,7 +27,6 @@ class InterventionManager extends AbstractManager
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
         private readonly FileFactory $fileFactory,
         private readonly Security $security,
-        private readonly LoggerInterface $logger,
         string $entityName = Intervention::class
     ) {
         parent::__construct($managerRegistry, $entityName);
