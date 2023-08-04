@@ -367,7 +367,7 @@
         {
           "type": "SignalementFormOnlyChoice",
           "customCss": "question-xl",
-          "label": "Votre logement est composé d'une pièce unique ou de plusieurs pièces ?",
+          "label": "Le logement est composé d'une pièce unique ou de plusieurs pièces ?",
           "slug": "composition_logement_piece_unique",
           "values": [
             {
@@ -383,7 +383,7 @@
         {
           "type": "SignalementFormCounter",
           "customCss": "question-xl",
-          "label": "Quelle est la superficie de votre logement (taille en m²)",
+          "label": "Quelle est la superficie du logement (taille en m²)",
           "slug": "composition_logement_superficie",
           "validate": {
             "required": false
@@ -392,7 +392,7 @@
         {
           "type": "SignalementFormCounter",
           "customCss": "question-xl",
-          "label": "Combien de personnes vivent dans votre logement ?",
+          "label": "Combien de personnes vivent dans le logement ?",
           "slug": "composition_logement_nombre_personnes",
           "validate": {
             "required": false
@@ -401,7 +401,7 @@
         {
           "type": "SignalementFormOnlyChoice",
           "customCss": "question-xl",
-          "label": "Il y a-t-il des enfants de moins de 6 ans ?",
+          "label": "Des enfants de moins de 6 ans vivent dans le logement ?",
           "slug": "composition_logement_enfants",
           "values": [
             {
@@ -435,6 +435,275 @@
           "label": "Suivant",
           "slug": "composition_logement_next",
           "action": "goto:type_logement_pieces_a_vivre"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Les pièces à vivre",
+    "description": "Vous avez indiqué qu'il y a {{number}} pièces à vivre (salon, chambre) dans votre logement",
+    "slug": "type_logement_pieces_a_vivre",
+    "conditional": {
+      "show": "formStore.data.composition_logement_nombre_pieces === 'plusieurs_pieces'"
+    },
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormSubscreen",
+          "repeat": {
+            "count": "formStore.data.composition_logement_nb_pieces"
+          },
+          "slug": "type_logement_pieces_a_vivre_piece_{{number}}",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormCounter",
+                "label": "Quelle est la superficie de la pièce {{number}} (taille en m²) ?",
+                "slug": "type_logement_pieces_a_vivre_superficie_piece_{{number}}",
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "La hauteur jusqu'au plafond est de 2,20m (220cm) ou plus ?",
+                "slug": "type_logement_pieces_a_vivre_hauteur_piece_{{number}}",
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  }
+                ],
+                "validate": {
+                  "required": false
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "type_logement_pieces_a_vivre_previous",
+          "action": "goto:type_logement"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "type_logement_pieces_a_vivre_next",
+          "action": "goto:type_logement_commodites"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "slug": "type_logement_commodites",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Il y a-t-il une cuisine ou un coin cuisine dans le logement ?",
+          "slug": "type_logement_commodites_cuisine",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Le foyer peut-il accéder à une cuisine collective ?",
+          "slug": "type_logement_commodites_cuisine_collective",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ],
+          "conditional": {
+            "show": "formStore.data.type_logement_commodites_cuisine === 'non'"
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "La hauteur jusqu'au plafond est de 2m (200cm) ou plus ?",
+          "slug": "type_logement_commodites_cuisine_hauteur_plafond",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Il y a-t-il une salle de bain, salle d'eau avec douche ou baignoire dans le logement ?",
+          "slug": "type_logement_commodites_salle_de_bain",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Le foyer peut-il accéder à une salle de bain ou des douches collectives ?",
+          "slug": "type_logement_commodites_salle_de_bain_collective",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ],
+          "conditional": {
+            "show": "formStore.data.type_logement_commodites_salle_de_bain === 'non'"
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "La hauteur jusqu'au plafond est de 2m (200cm) ou plus ?",
+          "slug": "type_logement_commodites_salle_de_bain_hauteur_plafond",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Il y a-t-il des toilettes dans le logement ?",
+          "slug": "type_logement_commodites_wc",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Le foyer peut-il accéder à des toilettes (WC) collectives ?",
+          "slug": "type_logement_commodites_wc_collective",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ],
+          "conditional": {
+            "show": "formStore.data.type_logement_commodites_wc_collective === 'non'"
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "La hauteur jusqu'au plafond est de 2m (200cm) ou plus ?",
+          "slug": "type_logement_commodites_wc_hauteur_plafond",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Est-ce que les toilettes (WC) et cuisine sont dans la même pièce ?",
+          "slug": "type_logement_commodites_wc_cuisine",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "type_logement_commodites_previous",
+          "action": "goto:type_logement_pieces_a_vivre"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "type_logement_commodites_next",
+          "action": "goto:ecran_intermediaire_les_desordres"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "les désordres",
+    "slug": "ecran_intermediaire_les_desordres",
+    "description": "<p>Vous avez indiqué que votre signalement concerne {{formStore.data.zone_concernee_zone}}. </p><p>Sélectionnez le ou les problèmes rencontrés parmi les catégories et répondez aux questions.</p> <p>Vous pourrez aussi ajouter des photos des problèmes.<p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>"
+    "components": {
+      "body": [],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "ecran_intermediaire_les_desordres_previous",
+          "action": "goto:type_logement_commodites"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "ecran_intermediaire_les_desordres_next",
+          "action": "goto:info_procedure"
         }
       ]
     }
