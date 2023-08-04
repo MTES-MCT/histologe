@@ -104,12 +104,8 @@ class SignalementVisitesController extends AbstractController
             document: $fileName,
         );
 
-        $errors = $validator->validate($visiteRequest);
-        if (\count($errors) > 0) {
-            $errorMessage = '';
-            foreach ($errors as $error) {
-                $errorMessage .= $error->getMessage().' ';
-            }
+        $errorMessage = $this->validateRequest($visiteRequest, $validator);
+        if ($errorMessage) {
             $this->addFlash('error', sprintf("Erreurs lors de l'enregistrement de la visite : %s", $errorMessage));
         } elseif ($intervention = $interventionManager->createVisiteFromRequest($signalement, $visiteRequest)) {
             $todayDate = new \DateTimeImmutable();
@@ -215,12 +211,8 @@ class SignalementVisitesController extends AbstractController
             document: $fileName,
         );
 
-        $errors = $validator->validate($visiteRequest);
-        if (\count($errors) > 0) {
-            $errorMessage = '';
-            foreach ($errors as $error) {
-                $errorMessage .= $error->getMessage().' ';
-            }
+        $errorMessage = $this->validateRequest($visiteRequest, $validator);
+        if ($errorMessage) {
             $this->addFlash('error', sprintf('Erreurs lors de la modification de la visite : %s', $errorMessage));
         } elseif ($intervention = $interventionManager->rescheduleVisiteFromRequest($signalement, $visiteRequest)) {
             if ($intervention->getScheduledAt() <= new \DateTimeImmutable()) {
@@ -336,5 +328,20 @@ class SignalementVisitesController extends AbstractController
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+    }
+
+    private function validateRequest(VisiteRequest $visiteRequest, ValidatorInterface $validator): string
+    {
+        $errorMessage = '';
+
+        $errors = $validator->validate($visiteRequest);
+        if (\count($errors) > 0) {
+            $errorMessage = '';
+            foreach ($errors as $error) {
+                $errorMessage .= $error->getMessage().' ';
+            }
+        }
+
+        return $errorMessage;
     }
 }
