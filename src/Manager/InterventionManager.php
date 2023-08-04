@@ -14,6 +14,7 @@ use App\Factory\FileFactory;
 use App\Repository\InterventionRepository;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Workflow\WorkflowInterface;
 
@@ -27,6 +28,7 @@ class InterventionManager extends AbstractManager
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
         private readonly FileFactory $fileFactory,
         private readonly Security $security,
+        private readonly LoggerInterface $logger,
         string $entityName = Intervention::class
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -50,10 +52,18 @@ class InterventionManager extends AbstractManager
             return null;
         }
 
+        try {
+            $scheduledAt = new \DateTimeImmutable($visiteRequest->getDateTime());
+        } catch (\Throwable $exception) {
+            $this->logger->error(sprintf('Visite date error %s', $exception->getMessage()));
+
+            return null;
+        }
+
         $intervention = new Intervention();
         $intervention->setSignalement($signalement)
             ->setPartner($partnerFound)
-            ->setScheduledAt(new \DateTimeImmutable($visiteRequest->getDateTime()))
+            ->setScheduledAt($scheduledAt)
             ->setType(InterventionType::VISITE)
             ->setStatus(Intervention::STATUS_PLANNED);
 
