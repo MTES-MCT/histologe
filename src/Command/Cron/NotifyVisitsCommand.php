@@ -167,7 +167,7 @@ class NotifyVisitsCommand extends AbstractCronCommand
         $agentToNotify = null;
         $suivisLinkedToSignalement = $this->suiviRepository->findSuivisByContext($intervention->getSignalement(), Suivi::CONTEXT_INTERVENTION);
         foreach ($suivisLinkedToSignalement as $suivi) {
-            if ($suivi->getCreatedBy() && $suivi->getCreatedBy()->getPartner() == $intervention->getPartner()) {
+            if ($suivi->getCreatedBy()?->getPartner() == $intervention->getPartner()) {
                 $agentToNotify = $suivi->getCreatedBy();
                 $usersToNotify[] = $agentToNotify;
                 break;
