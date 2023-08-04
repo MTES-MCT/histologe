@@ -13,7 +13,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class SuiviVisiteAbortedToPartnerMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_VISITE_ABORTED_TO_PARTNER;
-    protected ?string $mailerSubject = '#%s Visite non effectuée';
     protected ?string $mailerButtonText = 'Accéder au signalement';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_aborted_email';
 
@@ -40,6 +39,6 @@ class SuiviVisiteAbortedToPartnerMailer extends AbstractNotificationMailer
 
     public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
     {
-        $this->mailerSubject = sprintf($this->mailerSubject, $notificationMail->getSignalement()->getReference());
+        $this->mailerSubject = sprintf('#%s Visite non effectuée', $notificationMail->getSignalement()->getReference());
     }
 }
