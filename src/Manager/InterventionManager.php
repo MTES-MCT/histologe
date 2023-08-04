@@ -52,18 +52,10 @@ class InterventionManager extends AbstractManager
             return null;
         }
 
-        try {
-            $scheduledAt = new \DateTimeImmutable($visiteRequest->getDateTime());
-        } catch (\Throwable $exception) {
-            $this->logger->error(sprintf('Visite date error %s', $exception->getMessage()));
-
-            return null;
-        }
-
         $intervention = new Intervention();
         $intervention->setSignalement($signalement)
             ->setPartner($partnerFound)
-            ->setScheduledAt($scheduledAt)
+            ->setScheduledAt(new \DateTimeImmutable($visiteRequest->getDateTime()))
             ->setType(InterventionType::VISITE)
             ->setStatus(Intervention::STATUS_PLANNED);
 
@@ -117,17 +109,9 @@ class InterventionManager extends AbstractManager
             return null;
         }
 
-        try {
-            $scheduledAt = new \DateTimeImmutable($visiteRequest->getDateTime());
-        } catch (\Throwable $exception) {
-            $this->logger->error(sprintf('Visite date error %s', $exception->getMessage()));
-
-            return null;
-        }
-
         $intervention
             ->setPartner($partnerFound)
-            ->setScheduledAt($scheduledAt);
+            ->setScheduledAt(new \DateTimeImmutable($visiteRequest->getDateTime()));
         $this->save($intervention);
 
         if ($intervention->getScheduledAt() <= new \DateTimeImmutable()) {

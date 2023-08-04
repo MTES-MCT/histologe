@@ -18,6 +18,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/bo/signalements')]
 class SignalementVisitesController extends AbstractController
@@ -73,6 +74,7 @@ class SignalementVisitesController extends AbstractController
         UploadHandlerService $uploadHandler,
         EventDispatcherInterface $eventDispatcher,
         FilenameGenerator $filenameGenerator,
+        ValidatorInterface $validator,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_ADD_VISITE', $signalement);
 
@@ -102,7 +104,14 @@ class SignalementVisitesController extends AbstractController
             document: $fileName,
         );
 
-        if ($intervention = $interventionManager->createVisiteFromRequest($signalement, $visiteRequest)) {
+        $errors = $validator->validate($visiteRequest);
+        if (\count($errors) > 0) {
+            $errorMessage = '';
+            foreach ($errors as $error) {
+                $errorMessage .= $error->getMessage().' ';
+            }
+            $this->addFlash('error', sprintf("Erreurs lors de l'enregistrement de la visite : %s", $errorMessage));
+        } elseif ($intervention = $interventionManager->createVisiteFromRequest($signalement, $visiteRequest)) {
             $todayDate = new \DateTimeImmutable();
             if ($intervention->getScheduledAt() <= $todayDate) {
                 $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
@@ -168,6 +177,7 @@ class SignalementVisitesController extends AbstractController
         UploadHandlerService $uploadHandler,
         EventDispatcherInterface $eventDispatcher,
         FilenameGenerator $filenameGenerator,
+        ValidatorInterface $validator,
     ): Response {
         $requestRescheduleData = $request->get('visite-reschedule');
 
@@ -205,7 +215,14 @@ class SignalementVisitesController extends AbstractController
             document: $fileName,
         );
 
-        if ($intervention = $interventionManager->rescheduleVisiteFromRequest($signalement, $visiteRequest)) {
+        $errors = $validator->validate($visiteRequest);
+        if (\count($errors) > 0) {
+            $errorMessage = '';
+            foreach ($errors as $error) {
+                $errorMessage .= $error->getMessage().' ';
+            }
+            $this->addFlash('error', sprintf('Erreurs lors de la modification de la visite : %s', $errorMessage));
+        } elseif ($intervention = $interventionManager->rescheduleVisiteFromRequest($signalement, $visiteRequest)) {
             if ($intervention->getScheduledAt() <= new \DateTimeImmutable()) {
                 $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
             } else {
