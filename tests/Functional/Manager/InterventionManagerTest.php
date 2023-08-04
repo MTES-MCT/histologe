@@ -53,7 +53,7 @@ class InterventionManagerTest extends KernelTestCase
             $this->workflow,
             $this->signalementQualificationUpdater,
             $this->fileFactory,
-            $this->security
+            $this->security,
         );
     }
 
