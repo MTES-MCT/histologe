@@ -14,6 +14,7 @@
         :description="component.description"
         :components="component.components"
         :action="component.action"
+        :link="component.link"
         :values="component.values"
         :customCss="component.customCss"
         :validate="component.validate"
@@ -38,6 +39,7 @@
         :id="component.slug"
         :label="component.label"
         :action="component.action"
+        :link="component.link"
         :customCss="component.customCss"
         v-model="formStore.data[component.slug]"
         :class="[ 'fr-col-4', { 'fr-hidden': component.conditional && !formStore.shouldShowField(component.conditional.show) } ]"
@@ -52,6 +54,7 @@ import { defineComponent } from 'vue'
 import formStore from './../store'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
+import SignalementFormLink from './SignalementFormLink.vue'
 import SignalementFormOnlyChoice from './SignalementFormOnlyChoice.vue'
 import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
 import SignalementFormAddress from './SignalementFormAddress.vue'
@@ -69,6 +72,7 @@ export default defineComponent({
   components: {
     SignalementFormTextfield,
     SignalementFormButton,
+    SignalementFormLink,
     SignalementFormOnlyChoice,
     SignalementFormSubscreen,
     SignalementFormAddress,
