@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import formStore from './store'
+import formStore from './../store'
 
 export default defineComponent({
   name: 'SignalementFormBreadCrumbs',
