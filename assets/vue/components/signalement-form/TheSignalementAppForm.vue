@@ -37,8 +37,8 @@ import { defineComponent } from 'vue'
 import formStore from './store'
 import { requests } from './requests'
 import { services } from './services'
-import SignalementFormScreen from './SignalementFormScreen.vue'
-import SignalementFormBreadCrumbs from './SignalementFormBreadCrumbs.vue'
+import SignalementFormScreen from './components/SignalementFormScreen.vue'
+import SignalementFormBreadCrumbs from './components/SignalementFormBreadCrumbs.vue'
 const initElements:any = document.querySelector('#app-signalement-form')
 // TODO : centraliser les interfaces et les utiliser partout
 interface Components {

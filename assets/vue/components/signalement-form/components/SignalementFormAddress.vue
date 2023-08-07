@@ -51,10 +51,10 @@
 
 <script lang="ts">
 import { defineComponent, watch } from 'vue'
-import formStore from './store'
-import { requests } from './requests'
-import { services } from './services'
-import subscreenData from './address_subscreen.json'
+import formStore from './../store'
+import { requests } from './../requests'
+import { services } from './../services'
+import subscreenData from './../address_subscreen.json'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
 import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
@@ -100,7 +100,7 @@ export default defineComponent({
           if (newValue.length > 10) {
             requests.validateAddress(newValue, this.onAddressFound)
           }
-        })
+        }, 200)
       }
     )
   },
