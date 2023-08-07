@@ -943,7 +943,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "ecran_intermediaire_les_desordres_next",
-          "action": "goto:info_procedure"
+          "action": "goto:ecran_intermediaire_procedure"
         }
       ]
     }
@@ -1208,6 +1208,29 @@
           "label": "Valider mon signalement",
           "slug": "validation_signalement_next",
           "action": "goto:confirmation_signalement"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Merci pour votre signalement",
+    "slug": "confirmation_signalement",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormConfirmation",
+          "label": "",
+          "slug": "confirmation_signalement_message"
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormLink",
+          "label": "Retour à l'acceuil",
+          "slug": "validation_signalement_homepage",
+          "customCss": "fr-btn",
+          "link": "{{platformUrl}}"
         }
       ]
     }
