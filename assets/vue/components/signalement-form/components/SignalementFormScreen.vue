@@ -63,6 +63,7 @@ import SignalementFormInfo from './SignalementFormInfo.vue'
 import SignalementFormCheckbox from './SignalementFormCheckbox.vue'
 import SignalementFormPhonefield from './SignalementFormPhonefield.vue'
 import SignalementFormEmailfield from './SignalementFormEmailfield.vue'
+import SignalementFormOverview from './SignalementFormOverview.vue'
 import { services } from './../services'
 
 export default defineComponent({
@@ -79,7 +80,8 @@ export default defineComponent({
     SignalementFormInfo,
     SignalementFormCheckbox,
     SignalementFormPhonefield,
-    SignalementFormEmailfield
+    SignalementFormEmailfield,
+    SignalementFormOverview
   },
   props: {
     label: String,
