@@ -335,7 +335,7 @@
         {
           "type": "SignalementFormOnlyChoice",
           "customCss": "question-xl",
-          "label": "Il y a-t-il des enfants de moins de 6 ans ?",
+          "label": "Des enfants de moins de 6 ans vivent dans le logement ?",
           "slug": "composition_logement_enfants",
           "values": [
             {
@@ -375,7 +375,8 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "",
+    "label": "Les pièces à vivre",
+    "description": "Vous avez indiqué qu'il y a {{number}} pièces à vivre (salon, chambre) dans votre logement",
     "slug": "type_logement_pieces_a_vivre",
     "conditional": {
       "show": "formStore.data.composition_logement_nombre_pieces === 'plusieurs_pieces'"
@@ -771,7 +772,7 @@
           "type": "SignalementFormOnlyChoice",
           "label": "Avez-vous fait une demande de logement social ou de relogement ?",
           "customCss": "question-xl",
-          "warning": "{{platform.name}} ne permet pas de faire une demande de logement social ou de relogement.",
+          "warning": "{{platformName}} ne permet pas de faire une demande de logement social ou de relogement.",
           "slug": "logement_social_demande_relogement",
           "values": [
             {
@@ -926,6 +927,53 @@
   },
   {
     "type": "SignalementFormScreen",
+    "label": "Les désordres",
+    "slug": "ecran_intermediaire_les_desordres",
+    "description": "<p>Vous avez indiqué que votre signalement concerne {{formStore.data.zone_concernee_zone}}. </p><p>Sélectionnez le ou les problèmes rencontrés parmi les catégories et répondez aux questions.</p> <p>Vous pourrez aussi ajouter des photos des problèmes.<p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
+    "components": {
+      "body": [],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "ecran_intermediaire_les_desordres_previous",
+          "action": "goto:travailleur_social"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "ecran_intermediaire_les_desordres_next",
+          "action": "goto:info_procedure"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "La prodécure",
+    "description": "<p>Vous avez presque terminé ! <br>Répondez aux dernières questions puis envoyez votre signalement.</p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
+    "slug": "ecran_intermediaire_procedure",
+    "components": {
+      "body": [
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "ecran_intermediaire_procedure_previous",
+          "action": "goto:ecran_intermediaire_les_desordres"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "ecran_intermediaire_procedure_next",
+          "action": "goto:info_procedure"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
     "label": "",
     "slug": "info_procedure",
     "components": {
@@ -968,6 +1016,14 @@
           ]
         },
         {
+          "type": "SignalementFormTextfield",
+          "label": "Quelle a été la réponse de votre assurance ?",
+          "slug": "info_procedure_reponse_assurance",
+          "conditional": {
+            "show": "formStore.data.info_procedure_assurance_contactee === 'oui'"
+          }
+        },
+        {
           "type": "SignalementFormOnlyChoice",
           "label": "Si des travaux sont faits, voulez-vous rester dans le logement ?",
           "customCss": "question-xl",
@@ -986,22 +1042,133 @@
               "value": "nsp"
             }
           ]
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "info_procedure_utilisation_service_previous",
+          "action": "goto:travailleur_social"
         },
         {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "info_procedure_utilisation_service_next",
+          "action": "goto:utilisation_service"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Utilisation du service",
+    "description": "Lisez attentivement les conditions ci-dessous.",
+    "slug": "utilisation_service",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCheckbox",
+          "value": "utilisation_service_ok_prevenir_bailleur",
+          "label": "Je comprends que {{platformName}} va prévenir le bailleur (propriétaire) de mon logement."
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "value": "utilisation_service_ok_visite",
+          "label": "Je comprends qu'une visite du logement pourra être faite pour évaluer l'état du logement."
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "value": "utilisation_service_ok_demande_logement",
+          "label": "Je comprends que {{platformName}} ne permet pas de faire une demande de logement social et relogement."
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "utilisation_service_previous",
+          "action": "goto:info_procedure"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "utilisation_service_next",
+          "action": "goto:informations_complementaires"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Information complémentaires",
+    "description": "Toutes les questions sont facultatives",
+    "slug": "informations_complementaires",
+    "components": {
+      "body": [
+        {
           "type": "SignalementFormSubscreen",
-          "label": "Utilisation du service",
-          "slug": "info_procedure_utilisation_service",
+          "label": "Ma situation personnelle",
+          "slug": "informations_complementaires_situation_occupants",
           "components": {
             "body": [
               {
-                "type": "SignalementFormCheckbox",
-                "value": "info_procedure_ok_prevenir_bailleur",
-                "label": "Je comprends que {{platform.name}} va prévenir le bailleur (propriétaire) de mon logement."
+                "type": "SignalementFormOnlyChoice",
+                "label": "Êtes-vous bénéficiaire du RSA (revenu de solidarité active) ?",
+                "slug": "informations_complementaires_situation_occupants_beneficiaire_rsa",
+                "validate": {
+                  "required": false
+                },
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  }
+                ]
               },
               {
-                "type": "SignalementFormCheckbox",
-                "value": "info_procedure_ok_visite",
-                "label": "Je comprends qu'une visite du logement pourra être faite pour évaluer l'état du logement."
+                "type": "SignalementFormOnlyChoice",
+                "label": "Êtes-vous bénéficiaire FSL (fonds de solidarité pour le logement) ?",
+                "slug": "informations_complementaires_situation_occupants_beneficiaire_fsl",
+                "validate": {
+                  "required": false
+                },
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "Mon logement",
+          "slug": "informations_complementaires_logement",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormCounter",
+                "label": "Votre logement est sur combien d'étages ?",
+                "slug": "informations_complementaires_logement_nombre_etages",
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormDate",
+                "label": "En quelle année votre logement a-t-il été construit ?",
+                "slug": "informations_complementaires_logement_annee_construction"
               }
             ]
           }
@@ -1011,14 +1178,36 @@
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "info_procedure_previous",
-          "action": "goto:travailleur_social"
+          "slug": "informations_complementaires_previous",
+          "action": "goto:utilisation_service"
         },
         {
           "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "info_procedure_next",
-          "action": "goto:validation-signalement"
+          "label": "Enregistrer",
+          "slug": "informations_complementaires_next",
+          "action": "goto:validation_signalement"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Validation du signalement",
+    "slug": "validation_signalement",
+    "components": {
+      "body": [],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "validation_signalement_previous",
+          "action": "goto:informations_complementaires"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Valider mon signalement",
+          "slug": "validation_signalement_next",
+          "action": "goto:confirmation_signalement"
         }
       ]
     }
