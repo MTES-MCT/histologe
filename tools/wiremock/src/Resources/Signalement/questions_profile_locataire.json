@@ -1168,7 +1168,10 @@
               {
                 "type": "SignalementFormDate",
                 "label": "En quelle année votre logement a-t-il été construit ?",
-                "slug": "informations_complementaires_logement_annee_construction"
+                "slug": "informations_complementaires_logement_annee_construction",
+                "validate": {
+                  "required": false
+                }
               }
             ]
           }
