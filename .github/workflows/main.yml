@@ -11,6 +11,10 @@ on:
       - develop
   schedule:
     - cron: '0 7 * * *'
+
+env:
+  HISTOLOGE_URL: http://localhost:8080
+
 jobs:
   code-quality:
     name: Histologe (PHP ${{ matrix.php-versions }})
@@ -74,8 +78,6 @@ jobs:
         run: | 
           composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
           composer install --working-dir=tools/php-cs-fixer --no-progress --no-suggest --prefer-dist --optimize-autoloader
-        env:
-          HISTOLOGE_URL: http://localhost:8080
 
       # https://github.com/symfonycorp/security-checker-action
       - name: Security check installed dependencies
