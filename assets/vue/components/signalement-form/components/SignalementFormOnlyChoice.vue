@@ -16,13 +16,13 @@
               :checked="radioValue.value === modelValue"
               aria-describedby="radio-error-messages"
               >
-              <label class="fr-label" :for="id + '_' + radioValue.value">
-                  {{ radioValue.label }}
-              </label>
+            <label class="fr-label" :for="id + '_' + radioValue.value">
+                {{ radioValue.label }}
+            </label>
           </div>
       </div>
-      <div class="fr-messages-group" id="radio-error-messages" aria-live="assertive">
-          <p class="fr-message fr-message--error fr-error-text" id="radio-error-message-error" v-if="hasError">{{ error }}</p>
+      <div class="fr-messages-group" :id="id + '-messages'" aria-live="assertive">
+          <p class="fr-message fr-message--error fr-error-text" :id="id + '-messages-error'" v-if="hasError">{{ error }}</p>
       </div>
   </fieldset>
 </template>
@@ -53,4 +53,7 @@ export default defineComponent({
 </script>
 
 <style>
+  .fr-radio-group input[type="radio"] {
+    display: none;
+  }
 </style>
