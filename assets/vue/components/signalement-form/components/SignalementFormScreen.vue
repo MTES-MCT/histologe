@@ -15,6 +15,7 @@
         :components="component.components"
         :action="component.action"
         :values="component.values"
+        :defaultValue="component.defaultValue"
         :customCss="component.customCss"
         :validate="component.validate"
         :disabled="component.disabled"

@@ -6,7 +6,7 @@
       :data-ajaxurl-questions="sharedProps.ajaxurlQuestions"
       :data-ajaxurl-post-signalement-draft="sharedProps.ajaxurlPostSignalementDraft"
       :data-ajaxurl-put-signalement-draft="sharedProps.ajaxurlPutSignalementDraft"
-      >
+    >
       <div v-if="isLoadingInit" class="loading fr-m-10w">
       Initialisation du formulaire...
 

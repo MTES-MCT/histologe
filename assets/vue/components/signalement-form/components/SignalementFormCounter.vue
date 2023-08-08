@@ -36,12 +36,13 @@ export default defineComponent({
     customCss: { type: String, default: '' },
     validate: { type: Object, default: null },
     hasError: { type: Boolean, default: false },
-    error: { type: String, default: '' }
+    error: { type: String, default: '' },
+    defaultValue: { type: Number, default: null }
   },
   computed: {
     internalValue: {
       get () {
-        return this.modelValue
+        return this.modelValue || this.defaultValue
       },
       set (newValue: string) {
         this.$emit('update:modelValue', newValue)
@@ -54,6 +55,11 @@ export default defineComponent({
       this.$emit('update:modelValue', value)
     }
   },
-  emits: ['update:modelValue']
+  emits: ['update:modelValue'],
+  mounted () {
+    if (this.modelValue === null) {
+      this.$emit('update:modelValue', this.internalValue)
+    }
+  }
 })
 </script>
