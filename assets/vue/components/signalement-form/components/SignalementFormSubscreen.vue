@@ -36,6 +36,8 @@ import SignalementFormButton from './SignalementFormButton.vue'
 import SignalementFormLink from './SignalementFormLink.vue'
 import SignalementFormOnlyChoice from './SignalementFormOnlyChoice.vue'
 import SignalementFormDate from './SignalementFormDate.vue'
+import SignalementFormYear from './SignalementFormYear.vue'
+import SignalementFormTime from './SignalementFormTime.vue'
 import SignalementFormCounter from './SignalementFormCounter.vue'
 import SignalementFormWarning from './SignalementFormWarning.vue'
 import SignalementFormInfo from './SignalementFormInfo.vue'
@@ -52,6 +54,8 @@ export default defineComponent({
     SignalementFormLink,
     SignalementFormOnlyChoice,
     SignalementFormDate,
+    SignalementFormYear,
+    SignalementFormTime,
     SignalementFormCounter,
     SignalementFormWarning,
     SignalementFormInfo,

@@ -22,7 +22,6 @@
           :currentStep="currentScreen.label"
         />
         <SignalementFormScreen
-          class="fr-p-5w"
           :label="currentScreen.label"
           :description="currentScreen.description"
           :components="currentScreen.components"

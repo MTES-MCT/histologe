@@ -3,8 +3,8 @@
     <SignalementFormTextfield
       :key="idAddress"
       :id="idAddress"
-      label="Commençons par l'adresse du logement"
-      description="Tapez puis sélectionnez l'adresse dans la liste"
+      :label="label"
+      :description="description"
       :customCss="customCss"
       :validate="validate"
       v-model="formStore.data[idAddress]"
@@ -69,6 +69,7 @@ export default defineComponent({
   props: {
     id: { type: String, default: null },
     label: { type: String, default: null },
+    description: { type: String, default: null },
     modelValue: { type: String, default: null },
     customCss: { type: String, default: '' },
     validate: { type: Object, default: null },

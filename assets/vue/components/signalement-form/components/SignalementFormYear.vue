@@ -1,15 +1,18 @@
 <template>
-    <div class="fr-input-group">
+  <div class="fr-input-group">
     <label :class="[ customCss, 'fr-label' ]" :for="id">{{ label }}</label>
     <input
-        type="date"
-        :id="id"
-        :name="id"
-        :value="internalValue"
-        :class="[ customCss, 'fr-input' ]"
-        @input="updateValue($event)"
-        aria-describedby="text-input-error-desc-error"
-        >
+      :id="id"
+      :name="id"
+      :placeholder="placeholder"
+      type="number"
+      min="1800"
+      max="2099"
+      step="1"
+      :value="internalValue"
+      :class="[ customCss, 'fr-input' ]"
+      @input="updateValue($event)"
+      />
     <div
       id="text-input-error-desc-error"
       class="fr-error-text"
@@ -17,17 +20,18 @@
       >
       {{ error }}
     </div>
-    </div>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'SignalementFormDate',
+  name: 'SignalementFormYear',
   props: {
     id: { type: String, default: null },
     label: { type: String, default: null },
+    placeholder: { type: String, default: '1984' },
     modelValue: { type: String, default: null },
     customCss: { type: String, default: '' },
     hasError: { type: Boolean, default: false },
