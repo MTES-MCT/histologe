@@ -24,39 +24,6 @@
           "slug": "vos_coordonnees_tiers_prenom"
         },
         {
-          "type": "SignalementFormOnlyChoice",
-          "label": "Lien avec l'occupant",
-          "slug": "vos_coordonnees_tiers_lien",
-          "validate": {
-            "required": false
-          },
-          "conditional": {
-            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'particulier'"
-          },
-          "values": [
-            {
-              "label": "Proche",
-              "value": "proche"
-            },
-            {
-              "label": "Voisinage",
-              "value": "voisinage"
-            },
-            {
-              "label": "Autre",
-              "value": "autre"
-            }
-          ]
-        },
-        {
-          "type": "SignalementFormTextfield",
-          "label": "Structure",
-          "slug": "vos_coordonnees_tiers_nom_organisme",
-          "conditional": {
-            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'professionnelle'"
-          }
-        },
-        {
           "type": "SignalementFormEmailfield",
           "label": "Adresse email",
           "slug": "vos_coordonnees_tiers_email"
