@@ -1,8 +1,5 @@
 [
   {
-    "//": "Service de secours"
-  },
-  {
     "type": "SignalementFormScreen",
     "label": "Vos coordonnées",
     "slug": "vos_coordonnees_tiers",
@@ -49,7 +46,7 @@
               "label": "Autre",
               "value": "autre"
             }
-          ],
+          ]
         },
         {
           "type": "SignalementFormTextfield",
@@ -242,7 +239,8 @@
           "action": "goto:type_logement"
         }
       ]
-    },
+    }
+  },
   {
     "type": "SignalementFormScreen",
     "label": "",
@@ -671,7 +669,7 @@
     "type": "SignalementFormScreen",
     "label": "les désordres",
     "slug": "ecran_intermediaire_les_desordres",
-    "description": "<p>Vous avez indiqué que votre signalement concerne {{formStore.data.zone_concernee_zone}}. </p><p>Sélectionnez le ou les problèmes rencontrés parmi les catégories et répondez aux questions.</p> <p>Vous pourrez aussi ajouter des photos des problèmes.<p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>"
+    "description": "<p>Vous avez indiqué que votre signalement concerne {{formStore.data.zone_concernee_zone}}. </p><p>Sélectionnez le ou les problèmes rencontrés parmi les catégories et répondez aux questions.</p> <p>Vous pourrez aussi ajouter des photos des problèmes.<p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
     "components": {
       "body": [],
       "footer": [
