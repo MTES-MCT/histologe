@@ -59,22 +59,34 @@
         {
           "type": "SignalementFormTextfield",
           "label": "Nom de famille",
-          "slug": "coordonnees_occupant_nom"
+          "slug": "coordonnees_occupant_nom",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormTextfield",
           "label": "Prénom",
-          "slug": "coordonnees_occupant_prenom"
+          "slug": "coordonnees_occupant_prenom",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormEmailfield",
           "label": "Adresse email",
-          "slug": "coordonnees_occupant_email"
+          "slug": "coordonnees_occupant_email",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormPhonefield",
           "label": "Téléphone",
-          "slug": "coordonnees_occupant_tel"
+          "slug": "coordonnees_occupant_tel",
+          "validate": {
+            "required": false
+          }
         }
       ],
       "footer": [
@@ -107,22 +119,34 @@
         {
           "type": "SignalementFormTextfield",
           "label": "Prénom",
-          "slug": "coordonnees_bailleur_prenom"
+          "slug": "coordonnees_bailleur_prenom",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormEmailfield",
           "label": "Adresse email",
-          "slug": "coordonnees_bailleur_email"
+          "slug": "coordonnees_bailleur_email",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormTextfield",
           "label": "Téléphone",
-          "slug": "coordonnees_bailleur_tel"
+          "slug": "coordonnees_bailleur_tel",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormAddress",
           "label": "Adresse postale",
-          "slug": "coordonnees_bailleur_adresse"
+          "slug": "coordonnees_bailleur_adresse",
+          "validate": {
+            "required": false
+          }
         }
       ],
       "footer": [
