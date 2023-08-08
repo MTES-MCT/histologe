@@ -40,6 +40,11 @@ export const requests = {
       })
   },
 
+  initWithExistingData (functionReturn: Function) {
+    const url = formStore.props.ajaxurlGetSignalementDraft
+    requests.doRequestGet(url, functionReturn)
+  },
+
   initQuestions (functionReturn: Function) {
     const url = (formStore.props.ajaxurlQuestions as string) + 'tous'
     requests.doRequestGet(url, functionReturn)

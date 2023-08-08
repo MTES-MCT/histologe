@@ -6,28 +6,29 @@
       :data-ajaxurl-questions="sharedProps.ajaxurlQuestions"
       :data-ajaxurl-post-signalement-draft="sharedProps.ajaxurlPostSignalementDraft"
       :data-ajaxurl-put-signalement-draft="sharedProps.ajaxurlPutSignalementDraft"
-    >
+      :data-ajaxurl-get-signalement-draft="sharedProps.ajaxurlGetSignalementDraft"
+      >
       <div v-if="isLoadingInit" class="loading fr-m-10w">
-      Initialisation du formulaire...
+        Initialisation du formulaire...
 
-      <div v-if="isErrorInit" class="fr-my-5w">
-        Erreur lors de l'initialisation du formulaire.<br><br>
-        Veuillez recharger la page ou nous prévenir via le formulaire de contact.
+        <div v-if="isErrorInit" class="fr-my-5w">
+          Erreur lors de l'initialisation du formulaire.<br><br>
+          Veuillez recharger la page ou nous prévenir via le formulaire de contact.
+        </div>
       </div>
-    </div>
 
-    <div v-else-if="currentScreen">
-      <SignalementFormBreadCrumbs
-        :currentStep="currentScreen.label"
-      />
-      <SignalementFormScreen
-        class="fr-p-5w"
-        :label="currentScreen.label"
-        :description="currentScreen.description"
-        :components="currentScreen.components"
-        :changeEvent="saveAndChangeScreenBySlug"
-      />
-    </div>
+      <div v-else-if="currentScreen">
+        <SignalementFormBreadCrumbs
+          :currentStep="currentScreen.label"
+        />
+        <SignalementFormScreen
+          class="fr-p-5w"
+          :label="currentScreen.label"
+          :description="currentScreen.description"
+          :components="currentScreen.components"
+          :changeEvent="saveAndChangeScreenBySlug"
+        />
+      </div>
     </div>
 </template>
 
@@ -69,12 +70,25 @@ export default defineComponent({
       this.sharedProps.ajaxurlQuestions = initElements.dataset.ajaxurlQuestions
       this.sharedProps.ajaxurlPostSignalementDraft = initElements.dataset.ajaxurlPostSignalementDraft
       this.sharedProps.ajaxurlPutSignalementDraft = initElements.dataset.ajaxurlPutSignalementDraft
-      requests.initQuestions(this.handleInitQuestions)
+      if (initElements.dataset.ajaxurlGetSignalementDraft !== undefined) {
+        this.sharedProps.ajaxurlGetSignalementDraft = initElements.dataset.ajaxurlGetSignalementDraft
+        requests.initWithExistingData(this.handleInitData)
+      } else {
+        requests.initQuestions(this.handleInitQuestions)
+      }
     } else {
       this.isErrorInit = true
     }
   },
   methods: {
+    handleInitData (requestResponse: any) {
+      if (requestResponse.signalement && requestResponse.signalement.payload) {
+        for (const prop in requestResponse.signalement.payload) {
+          formStore.data[prop] = requestResponse.signalement.payload[prop]
+        }
+      }
+      requests.initQuestions(this.handleInitQuestions)
+    },
     handleInitQuestions (requestResponse: any) {
       if (requestResponse === 'error') {
         this.isErrorInit = true
