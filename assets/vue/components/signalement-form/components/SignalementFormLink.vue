@@ -20,34 +20,8 @@ export default defineComponent({
     id: { type: String, default: null },
     label: { type: String, default: '' },
     link: { type: String, default: '' },
-    action: {
-      type: String,
-      default: '',
-      validator: (value: string) => {
-        if ((value && value.includes(':')) || value === 'cancel') {
-          // const [actionType, actionParam] = value.split(':')
-          // Utilisez actionType et actionParam pour des vérifications supplémentaires si nécessaire
-          return true
-        }
-        return false
-      }
-    },
     customCss: { type: String, default: '' },
     clickEvent: Function
-  },
-  computed: {
-    actionType (): string {
-      if (this.action.includes(':')) {
-        return this.action.split(':')[0]
-      }
-      return ''
-    },
-    actionParam (): string {
-      if (this.action.includes(':')) {
-        return this.action.split(':')[1]
-      }
-      return ''
-    }
   },
   methods: {
     handleClick () {
