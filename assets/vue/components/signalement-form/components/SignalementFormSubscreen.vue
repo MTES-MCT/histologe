@@ -12,6 +12,8 @@
         :id="component.slug"
         :label="component.label"
         :action="component.action"
+        :link="component.link"
+        :linktarget="component.linktarget"
         :values="component.values"
         :customCss="component.customCss"
         :validate="component.validate"
@@ -31,6 +33,7 @@ import { defineComponent } from 'vue'
 import formStore from './../store'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
+import SignalementFormLink from './SignalementFormLink.vue'
 import SignalementFormOnlyChoice from './SignalementFormOnlyChoice.vue'
 import SignalementFormDate from './SignalementFormDate.vue'
 import SignalementFormCounter from './SignalementFormCounter.vue'
@@ -45,6 +48,7 @@ export default defineComponent({
   components: {
     SignalementFormTextfield,
     SignalementFormButton,
+    SignalementFormLink,
     SignalementFormOnlyChoice,
     SignalementFormDate,
     SignalementFormCounter,

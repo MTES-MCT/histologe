@@ -4,7 +4,7 @@
         :type="type"
         :id="id"
         :class="[ 'fr-btn', customCss ]"
-        @click="onClickLocalEvent"
+        @click="handleClick"
         >
             {{ label}}
         </button>
@@ -50,7 +50,7 @@ export default defineComponent({
     }
   },
   methods: {
-    onClickLocalEvent () {
+    handleClick () {
       if (this.clickEvent !== undefined) {
         this.clickEvent(this.actionType, this.actionParam, this.id)
       }
