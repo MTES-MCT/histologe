@@ -44,6 +44,7 @@ interface Component {
 interface FormStore {
   data: FormData
   props: FormData
+  initData: any[]
   screenData: any[]
   currentScreenIndex: number
   validationErrors: FormData
@@ -62,8 +63,10 @@ const formStore: FormStore = reactive({
     ajaxurlQuestions: '',
     ajaxurlPostSignalementDraft: '',
     ajaxurlPutSignalementDraft: '',
+    ajaxurlGetSignalementDraft: '',
     urlApiAdress: 'https://api-adresse.data.gouv.fr/search/?q='
   },
+  initData: [],
   screenData: [],
   currentScreenIndex: 0,
   inputComponents: [

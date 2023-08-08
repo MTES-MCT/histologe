@@ -23,7 +23,25 @@ class FrontNewSignalementController extends AbstractController
             return $this->redirectToRoute('front_signalement');
         }
 
-        return $this->render('front/nouveau_formulaire.html.twig');
+        return $this->render('front/nouveau_formulaire.html.twig', [
+            'uuid_signalement' => null,
+        ]);
+    }
+
+    #[Route('/signalement/{uuid}', name: 'front_nouveau_formulaire_edit')]
+    public function edit(
+        SignalementDraft $signalementDraft,
+        ParameterBagInterface $parameterBag
+    ): Response {
+        // TODO : sécurité ?
+
+        if (!$parameterBag->get('feature_new_form')) {
+            return $this->redirectToRoute('front_signalement');
+        }
+
+        return $this->render('front/nouveau_formulaire.html.twig', [
+            'uuid_signalement' => $signalementDraft->getUuid(),
+        ]);
     }
 
     #[Route('/signalement-draft/envoi', name: 'envoi_nouveau_signalement_draft', methods: 'POST')]
@@ -79,5 +97,14 @@ class FrontNewSignalementController extends AbstractController
         }
 
         return $this->json('@todo error');
+    }
+
+    #[Route('/signalement-draft/{uuid}/informations', name: 'informations_signalement_draft', methods: 'GET')]
+    public function getSignalementDraft(
+        SignalementDraft $signalementDraft,
+    ): Response {
+        return $this->json([
+            'signalement' => $signalementDraft,
+        ]);
     }
 }
