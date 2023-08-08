@@ -1223,7 +1223,6 @@
       "body": [
         {
           "type": "SignalementFormConfirmation",
-          "label": "",
           "slug": "confirmation_signalement_message"
         }
       ],
