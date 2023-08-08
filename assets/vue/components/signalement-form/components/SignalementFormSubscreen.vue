@@ -13,6 +13,7 @@
         :label="component.label"
         :action="component.action"
         :link="component.link"
+        :linktarget="component.linktarget"
         :values="component.values"
         :customCss="component.customCss"
         :validate="component.validate"

@@ -4,6 +4,7 @@
       :id="id"
       :class="[ customCss ]"
       :href="link"
+      :target="linktarget"
       @click="handleClick"
       >
         {{ label}}
@@ -20,6 +21,7 @@ export default defineComponent({
     id: { type: String, default: null },
     label: { type: String, default: '' },
     link: { type: String, default: '' },
+    linktarget: { type: String, default: '' },
     customCss: { type: String, default: '' },
     clickEvent: Function
   },
