@@ -38,6 +38,7 @@ import SignalementFormWarning from './SignalementFormWarning.vue'
 import SignalementFormInfo from './SignalementFormInfo.vue'
 import SignalementFormCheckbox from './SignalementFormCheckbox.vue'
 import SignalementFormPhonefield from './SignalementFormPhonefield.vue'
+import SignalementFormOverview from './SignalementFormOverview.vue'
 
 export default defineComponent({
   name: 'SignalementFormSubscreen',
@@ -50,7 +51,8 @@ export default defineComponent({
     SignalementFormWarning,
     SignalementFormInfo,
     SignalementFormCheckbox,
-    SignalementFormPhonefield
+    SignalementFormPhonefield,
+    SignalementFormOverview
   },
   props: {
     label: String,
