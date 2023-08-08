@@ -4,6 +4,7 @@ namespace App\Dto\Request\Signalement;
 
 class SignalementDraftRequest
 {
+    private ?string $profil = null;
     private ?string $adresseLogementAdresse = null;
     private ?string $adresseLogementAdresseDetailNumero = null;
     private ?string $adresseLogementAdresseDetailCodePostal = null;
@@ -21,6 +22,11 @@ class SignalementDraftRequest
     private ?string $signalementConcerneProfilDetailBailleurBailleur = null;
     private ?string $signalementConcerneLogementSocialServiceSecours = null;
     private ?string $signalementConcerneLogementSocialAutreTiers = null;
+    private ?string $vosCoordonneesTiersNomOrganisme = null;
+    private ?string $vosCoordonneesTiersNom = null;
+    private ?string $vosCoordonneesTiersEmail = null;
+    private ?string $vosCoordonneesTiersTel = null;
+    private ?string $vosCoordonneesTiersPrenom = null;
     private ?string $vosCoordonneesOccupantCivilite = null;
     private ?string $vosCoordonneesOccupantNom = null;
     private ?string $vosCoordonneesOccupantPrenom = null;
@@ -67,6 +73,18 @@ class SignalementDraftRequest
     private ?string $infoProcedureAssuranceContactee = null;
     private ?string $infoProcedureDepartApresTravaux = null;
     private ?string $infoProcedureUtilisationService = null;
+
+    public function getProfil(): ?string
+    {
+        return $this->profil;
+    }
+
+    public function setProfil(?string $profil): self
+    {
+        $this->profil = $profil;
+
+        return $this;
+    }
 
     public function getAdresseLogementAdresse(): ?string
     {
@@ -431,6 +449,66 @@ class SignalementDraftRequest
     public function setCoordonneesBailleurAdresseCommune(?string $coordonneesBailleurAdresseCommune): self
     {
         $this->coordonneesBailleurAdresseCommune = $coordonneesBailleurAdresseCommune;
+
+        return $this;
+    }
+
+    public function getVosCoordonneesTiersNomOrganisme(): ?string
+    {
+        return $this->vosCoordonneesTiersNomOrganisme;
+    }
+
+    public function setVosCoordonneesTiersNomOrganisme(?string $vosCoordonneesTiersNomOrganisme): self
+    {
+        $this->vosCoordonneesTiersNomOrganisme = $vosCoordonneesTiersNomOrganisme;
+
+        return $this;
+    }
+
+    public function getVosCoordonneesTiersNom(): ?string
+    {
+        return $this->vosCoordonneesTiersNom;
+    }
+
+    public function setVosCoordonneesTiersNom(?string $vosCoordonneesTiersNom): self
+    {
+        $this->vosCoordonneesTiersNom = $vosCoordonneesTiersNom;
+
+        return $this;
+    }
+
+    public function getVosCoordonneesTiersEmail(): ?string
+    {
+        return $this->vosCoordonneesTiersEmail;
+    }
+
+    public function setVosCoordonneesTiersEmail(?string $vosCoordonneesTiersEmail): self
+    {
+        $this->vosCoordonneesTiersEmail = $vosCoordonneesTiersEmail;
+
+        return $this;
+    }
+
+    public function getVosCoordonneesTiersTel(): ?string
+    {
+        return $this->vosCoordonneesTiersTel;
+    }
+
+    public function setVosCoordonneesTiersTel(?string $vosCoordonneesTiersTel): self
+    {
+        $this->vosCoordonneesTiersTel = $vosCoordonneesTiersTel;
+
+        return $this;
+    }
+
+    public function getVosCoordonneesTiersPrenom(): ?string
+    {
+        return $this->vosCoordonneesTiersPrenom;
+    }
+
+    public function setVosCoordonneesTiersPrenom(?string $vosCoordonneesTiersPrenom): self
+    {
+        $this->vosCoordonneesTiersPrenom = $vosCoordonneesTiersPrenom;
 
         return $this;
     }

@@ -55,7 +55,7 @@ export default defineComponent({
   },
   data () {
     return {
-      slugVosCoordonnees: 'vos_coordonnees_occupant',
+      slugCoordonnees: ['vos_coordonnees_occupant', 'vos_coordonnees_tiers'],
       nextSlug: '',
       isErrorInit: false,
       isLoadingInit: true,
@@ -121,7 +121,7 @@ export default defineComponent({
             this.currentScreen.components.body = formStore.preprocessScreen(this.currentScreen.components.body)
           }
         } else {
-          if (this.nextSlug === this.slugVosCoordonnees) { // TODO à mettre à jour suivant le slug des différents profils
+          if (this.slugCoordonnees.includes(this.nextSlug)) { // TODO à mettre à jour suivant le slug des différents profils
             // on détermine le profil
             services.updateProfil()
             // on fait un appel API pour charger la suite des questions avant de changer d'écran
