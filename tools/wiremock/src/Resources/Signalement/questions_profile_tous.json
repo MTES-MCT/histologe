@@ -218,7 +218,7 @@
             }
           ],
           "conditional": {
-            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'service-secours'"
+            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'service_secours'"
           }
         },
         {
@@ -237,7 +237,7 @@
             }
           ],
           "conditional": {
-            "show": "formStore.data.signalement_concerne_profil === 'autre_logement' && formStore.data.signalement_concerne_profil_detail_tiers !== 'service-secours'"
+            "show": "formStore.data.signalement_concerne_profil === 'autre_logement' && formStore.data.signalement_concerne_profil_detail_tiers !== 'service_secours'"
           }
         }
       ],
@@ -261,9 +261,9 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "signalement_concerne_next",
-          "action": "goto:vos_coordonnees",
+          "action": "goto:vos_coordonnees_tiers",
           "conditional": {
-            "show": "formStore.data.signalement_concerne_profil === 'autre_logement'"
+            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'service_secours'"
           }
         }
       ]
