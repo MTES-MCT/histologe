@@ -1193,7 +1193,12 @@
     "label": "Validation du signalement",
     "slug": "validation_signalement",
     "components": {
-      "body": [],
+      "body": [
+        {
+          "type": "SignalementFormOverview",
+          "slug": "validation_signalement_overview"
+        }
+      ],
       "footer": [
         {
           "type": "SignalementFormButton",
