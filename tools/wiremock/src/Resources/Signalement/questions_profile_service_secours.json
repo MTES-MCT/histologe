@@ -688,17 +688,17 @@
       "body": [
         {
           "type": "SignalementFormCheckbox",
-          "value": "utilisation_service_ok_prevenir_bailleur",
+          "slug": "utilisation_service_ok_prevenir_bailleur",
           "label": "Je comprends que {{platformName}} va prévenir le bailleur (propriétaire) de mon logement."
         },
         {
           "type": "SignalementFormCheckbox",
-          "value": "utilisation_service_ok_visite",
+          "slug": "utilisation_service_ok_visite",
           "label": "Je comprends qu'une visite du logement pourra être faite pour évaluer l'état du logement."
         },
         {
           "type": "SignalementFormCheckbox",
-          "value": "utilisation_service_ok_signalement_tiers",
+          "slug": "utilisation_service_ok_signalement_tiers",
           "label": "Je comprends que je dépose un signalement pour le compte d'un tiers. Je certifie avoir le droit de déposer un signalement pour le compte d'un tiers."
         }
       ],
