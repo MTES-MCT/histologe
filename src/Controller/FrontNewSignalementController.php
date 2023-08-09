@@ -5,12 +5,12 @@ namespace App\Controller;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\SignalementDraft;
 use App\Manager\SignalementDraftManager;
+use App\Serializer\SignalementDraftRequestSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/nouveau-formulaire')]
@@ -47,7 +47,7 @@ class FrontNewSignalementController extends AbstractController
     #[Route('/signalement-draft/envoi', name: 'envoi_nouveau_signalement_draft', methods: 'POST')]
     public function sendSignalementDraft(
         Request $request,
-        SerializerInterface $serializer,
+        SignalementDraftRequestSerializer $serializer,
         SignalementDraftManager $signalementDraftManager,
         ValidatorInterface $validator,
     ): Response {
@@ -73,7 +73,7 @@ class FrontNewSignalementController extends AbstractController
     #[Route('/signalement-draft/{uuid}/envoi', name: 'mise_a_jour_nouveau_signalement_draft', methods: 'PUT')]
     public function updateSignalementDraft(
         Request $request,
-        SerializerInterface $serializer,
+        SignalementDraftRequestSerializer $serializer,
         SignalementDraftManager $signalementDraftManager,
         ValidatorInterface $validator,
         SignalementDraft $signalementDraft,
