@@ -26,9 +26,10 @@ class SignalementDraftFactory
             case ProfileDeclarant::SERVICE_SECOURS->name:
                 return $signalementDraftRequest->getVosCoordonneesTiersEmail();
             case ProfileDeclarant::LOCATAIRE->name:
+            case ProfileDeclarant::BAILLEUR_OCCUPANT->name:
                 return $signalementDraftRequest->getVosCoordonneesOccupantEmail();
             default:
-                return null; /* @tdodo: refacto or handle other profil case */
+                return null;
         }
     }
 }

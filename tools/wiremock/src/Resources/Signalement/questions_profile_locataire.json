@@ -717,6 +717,17 @@
           "conditional": {
             "show": "formStore.data.bail_dpe_dpe === 'non' || formStore.data.bail_dpe_dpe === 'nsp'"
           }
+        },
+        {
+          "type": "SignalementFormUpload",
+          "slug": "bail_dpe_dpe_upload",
+          "label": "Ajoutez le DPE en cliquant sur le bouton ci-dessous",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_dpe === 'oui'"
+          },
+          "validate": {
+            "required": false
+          }
         }
       ],
       "footer": [
@@ -1029,7 +1040,7 @@
               "value": "oui"
             },
             {
-              "label": "Non,je veux déménager",
+              "label": "Non, je veux déménager",
               "value": "non"
             },
             {
@@ -1037,6 +1048,11 @@
               "value": "nsp"
             }
           ]
+        },
+        {
+          "type": "SignalementFormInfo",
+          "label": "Contactez votre assurance pour savoir si elle prend en charge le ou les problèmes rencontrés.",
+          "slug": "info_procedure_assurance_contactee_info"
         }
       ],
       "footer": [
@@ -1142,6 +1158,17 @@
                     "value": "non"
                   }
                 ]
+              },
+              {
+                "type": "SignalementFormDate",
+                "label": "Quelle est votre date de naissance ?",
+                "slug": "informations_complementaires_situation_occupants_date_naissance",
+                "conditional": {
+                  "show": "formStore.data.logement_social_allocation === 'non'"
+                },
+                "validate": {
+                  "required": false
+                }
               }
             ]
           }
@@ -1152,6 +1179,14 @@
           "slug": "informations_complementaires_logement",
           "components": {
             "body": [
+              {
+                "type": "SignalementFormCounter",
+                "label": "Quel est le montant de votre loyer, sans les charges ?",
+                "slug": "informations_complementaires_logement_montant_loyer",
+                "validate": {
+                  "required": false
+                }
+              },
               {
                 "type": "SignalementFormCounter",
                 "label": "Votre logement est sur combien d'étages ?",
