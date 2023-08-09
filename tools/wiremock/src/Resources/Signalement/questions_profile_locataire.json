@@ -684,7 +684,7 @@
         },
         {
           "type": "SignalementFormWarning",
-          "slug": "bail_dpe_bail_warning",
+          "slug": "bail_dpe_etat_des_lieux_warning",
           "label": "D'après la loi, un état des lieux du logement doit être réalisé le jour de la remise des clés. C'est important pour faire valoir vos droits ! Plus d'info sur le site du service public.",
           "conditional": {
             "show": "formStore.data.bail_dpe_etat_des_lieux === 'non' || formStore.data.bail_dpe_etat_des_lieux === 'nsp'"

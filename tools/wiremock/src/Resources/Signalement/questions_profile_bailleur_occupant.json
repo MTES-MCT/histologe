@@ -579,14 +579,6 @@
           "slug": "bail_dpe_date_emmenagement"
         },
         {
-          "type": "SignalementFormWarning",
-          "slug": "bail_dpe_bail_warning",
-          "label": "Le DPE fait partie des documents à réaliser obligatoirement pour son logement. Plus d'info sur le site du service public.",
-          "conditional": {
-            "show": "formStore.data.bail_dpe_etat_des_lieux === 'non' || formStore.data.bail_dpe_etat_des_lieux === 'nsp'"
-          }
-        },
-        {
           "type": "SignalementFormOnlyChoice",
           "slug": "bail_dpe_dpe",
           "customCss": "question-xl",
