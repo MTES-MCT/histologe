@@ -23,11 +23,6 @@ class SignalementDraftRequestNormalizerTest extends TestCase
             'type_logement_pieces_a_vivre_hauteur_piece_2' => 'non',
         ];
 
-        $expectedPayload = [
-            'type_logement_pieces_a_vivre_superficie_piece' => [30, 15],
-            'type_logement_pieces_a_vivre_hauteur_piece' => ['oui', 'non'],
-        ];
-
         $signalementDraftRequest = (new SignalementDraftRequest())
             ->setProfil('locataire')
             ->setTypeLogementPiecesAVivreSuperficiePiece([30, 15])
