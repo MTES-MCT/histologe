@@ -41,11 +41,7 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
         /** @var SignalementDraft $signalementDraft */
         $signalementDraft = $object;
 
-        if (empty($payload = $signalementDraft->getPayload())) {
-            return $object;
-        }
-
-        foreach ($payload as $key => $value) {
+        foreach ($payload = $signalementDraft->getPayload() as $key => $value) {
             if (\in_array(
                 $key,
                 [self::PIECES_HAUTEUR_KEY, self::PIECES_SUPERFICIE_KEY]
