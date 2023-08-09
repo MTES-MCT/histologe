@@ -25,7 +25,7 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
         foreach ($data as $key => $value) {
             if (preg_match(self::PIECES_SUPERFICIE_KEY_PATTERN, $key, $matches)) {
                 $transformedData[self::PIECES_SUPERFICIE_KEY][] = $value;
-            } else if (preg_match(self::PIECES_HAUTEUR_KEY_PATTERN, $key, $matches)) {
+            } elseif (preg_match(self::PIECES_HAUTEUR_KEY_PATTERN, $key, $matches)) {
                 $transformedData[self::PIECES_HAUTEUR_KEY][] = $value;
             } else {
                 $transformedData[$key] = $value;
