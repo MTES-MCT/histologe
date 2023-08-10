@@ -535,6 +535,7 @@ class SignalementDraftRequest
     public function setVosCoordonneesTiersLien(?string $vosCoordonneesTiersLien): self
     {
         $this->vosCoordonneesTiersLien = $vosCoordonneesTiersLien;
+
         return $this;
     }
 
