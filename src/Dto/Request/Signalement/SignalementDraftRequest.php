@@ -73,6 +73,7 @@ class SignalementDraftRequest
     private ?string $logementSocialMontantAllocation = null;
     private ?string $travailleurSocialQuitteLogement = null;
     private ?string $travailleurSocialAccompagnement = null;
+    private ?string $travailleurSocialAccompagnementDeclarant = null;
     private ?string $infoProcedureBailleurPrevenu = null;
     private ?string $infoProcedureAssuranceContactee = null;
     private ?string $infoProcedureDepartApresTravaux = null;
@@ -920,6 +921,18 @@ class SignalementDraftRequest
     public function setTravailleurSocialAccompagnement(?string $travailleurSocialAccompagnement): self
     {
         $this->travailleurSocialAccompagnement = $travailleurSocialAccompagnement;
+
+        return $this;
+    }
+
+    public function getTravailleurSocialAccompagnementDeclarant(): ?string
+    {
+        return $this->travailleurSocialAccompagnementDeclarant;
+    }
+
+    public function setTravailleurSocialAccompagnementDeclarant(?string $travailleurSocialAccompagnementDeclarant): self
+    {
+        $this->travailleurSocialAccompagnementDeclarant = $travailleurSocialAccompagnementDeclarant;
 
         return $this;
     }

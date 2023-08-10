@@ -755,7 +755,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "",
-    "description": "<p>Nous allons vous poser des questions sur votre situation.<br>Si vous êtes allocataire CAF ou MSA, préparez votre numéro allocataire !</p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
+    "description": "<p>Nous allons vous poser des questions sur la situation du foyer.<br>Si possible, préparez les informations concernant l'allocation logement.</p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
     "slug": "ecran_intermediaire_situation_occupant",
     "components": {
       "footer": [
@@ -793,6 +793,10 @@
             {
               "label": "Non",
               "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
             }
           ]
         },
@@ -884,6 +888,10 @@
             {
               "label": "Non",
               "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
             }
           ]
         },
@@ -960,7 +968,7 @@
         },
         {
           "type": "SignalementFormButton",
-          "label": "Suivant",
+          "label": "J'y suis presque !",
           "slug": "ecran_intermediaire_procedure_next",
           "action": "goto:info_procedure"
         }

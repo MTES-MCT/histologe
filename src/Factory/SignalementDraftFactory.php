@@ -25,6 +25,7 @@ class SignalementDraftFactory
         switch (strtoupper($signalementDraftRequest->getProfil())) {
             case ProfileDeclarant::SERVICE_SECOURS->name:
             case ProfileDeclarant::BAILLEUR->name:
+            case ProfileDeclarant::TIERS_PRO->name:
                 return $signalementDraftRequest->getVosCoordonneesTiersEmail();
             case ProfileDeclarant::LOCATAIRE->name:
             case ProfileDeclarant::BAILLEUR_OCCUPANT->name:

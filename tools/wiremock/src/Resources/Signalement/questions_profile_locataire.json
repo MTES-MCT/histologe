@@ -804,6 +804,10 @@
             {
               "label": "Non",
               "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
             }
           ]
         },
@@ -971,7 +975,7 @@
         },
         {
           "type": "SignalementFormButton",
-          "label": "Suivant",
+          "label": "J'y suis presque !",
           "slug": "ecran_intermediaire_procedure_next",
           "action": "goto:info_procedure"
         }
