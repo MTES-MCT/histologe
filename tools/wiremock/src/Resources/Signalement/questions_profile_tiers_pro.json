@@ -116,22 +116,34 @@
         {
           "type": "SignalementFormTextfield",
           "label": "Prénom",
-          "slug": "coordonnees_bailleur_prenom"
+          "slug": "coordonnees_bailleur_prenom",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormEmailfield",
           "label": "Adresse email",
-          "slug": "coordonnees_bailleur_email"
+          "slug": "coordonnees_bailleur_email",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormTextfield",
           "label": "Téléphone",
-          "slug": "coordonnees_bailleur_tel"
+          "slug": "coordonnees_bailleur_tel",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormAddress",
           "label": "Adresse postale",
-          "slug": "coordonnees_bailleur_adresse"
+          "slug": "coordonnees_bailleur_adresse",
+          "validate": {
+            "required": false
+          }
         }
       ],
       "footer": [
@@ -210,7 +222,7 @@
         },
         {
           "type": "SignalementFormButton",
-          "label": "Suivant",
+          "label": "C'est parti",
           "slug": "ecran_intermediaire_type_composition_next",
           "action": "goto:type_logement"
         }
@@ -652,146 +664,6 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "type_logement_commodites_next",
-          "action": "goto:bail_dpe"
-        }
-      ]
-    }
-  },
-  {
-    "type": "SignalementFormScreen",
-    "label": "",
-    "slug": "bail_dpe",
-    "components": {
-      "body": [
-        {
-          "type": "SignalementFormOnlyChoice",
-          "slug": "bail_dpe_bail",
-          "customCss": "question-xl",
-          "label": "Avez-vous établi un bail pour le logement ?",
-          "values": [
-            {
-              "label": "Oui",
-              "value": "oui"
-            },
-            {
-              "label": "Non",
-              "value": "non"
-            },
-            {
-              "label": "Je ne sais pas",
-              "value": "nsp"
-            }
-          ]
-        },
-        {
-          "type": "SignalementFormInfo",
-          "slug": "bail_dpe_bail_info",
-          "label": "Etablir un bail écrit et signé avec ses locataires est fortement recommandé. Pour savoir comment rédiger un bail, rendez-vous sur le site du service public.",
-          "conditional": {
-            "show": "formStore.data.bail_dpe_bail === 'non' || formStore.data.bail_dpe_bail === 'nsp'"
-          }
-        },
-        {
-          "type": "SignalementFormUpload",
-          "slug": "bail_dpe_bail_upload",
-          "label": "Ajoutez le bail en cliquant sur le bouton ci-dessous",
-          "conditional": {
-            "show": "formStore.data.bail_dpe_bail === 'oui'"
-          },
-          "validate": {
-            "required": false
-          }
-        },
-        {
-          "type": "SignalementFormUpload",
-          "slug": "bail_dpe_dpe_upload",
-          "label": "Ajoutez le DPE en cliquant sur le bouton ci-dessous",
-          "conditional": {
-            "show": "formStore.data.bail_dpe_dpe === 'oui'"
-          },
-          "validate": {
-            "required": false
-          }
-        },
-        {
-          "type": "SignalementFormOnlyChoice",
-          "slug": "bail_dpe_etat_des_lieux",
-          "customCss": "question-xl",
-          "label": "Avez-vous réalisé un état des lieux à l'entrée des locataires ?",
-          "values": [
-            {
-              "label": "Oui",
-              "value": "oui"
-            },
-            {
-              "label": "Non",
-              "value": "non"
-            },
-            {
-              "label": "Je ne sais pas",
-              "value": "nsp"
-            }
-          ]
-        },
-        {
-          "type": "SignalementFormWarning",
-          "slug": "bail_dpe_etat_des_lieux_warning",
-          "label": "D'après la loi, un état des lieux du logement doit être réalisé le jour de la remise des clés. C'est important pour faire valoir vos droits ! Plus d'info sur le site du service public.",
-          "conditional": {
-            "show": "formStore.data.bail_dpe_etat_des_lieux === 'non' || formStore.data.bail_dpe_etat_des_lieux === 'nsp'"
-          }
-        },
-        {
-          "type": "SignalementFormOnlyChoice",
-          "slug": "bail_dpe_dpe",
-          "customCss": "question-xl",
-          "label": "Avez-vous réalisé un DPE pour le logement ? (diagnostic performance énergie)",
-          "values": [
-            {
-              "label": "Oui",
-              "value": "oui"
-            },
-            {
-              "label": "Non",
-              "value": "non"
-            },
-            {
-              "label": "Je ne sais pas",
-              "value": "nsp"
-            }
-          ]
-        },
-        {
-          "type": "SignalementFormWarning",
-          "slug": "bail_dpe_dpe_warning",
-          "label": "Le DPE fait partie des documents à réaliser obligatoirement pour son logement. Plus d'info sur le site du service public.",
-          "conditional": {
-            "show": "formStore.data.bail_dpe_dpe === 'non' || formStore.data.bail_dpe_dpe === 'nsp'"
-          }
-        },
-        {
-          "type": "SignalementFormUpload",
-          "slug": "bail_dpe_dpe_upload",
-          "label": "Ajoutez le DPE en cliquant sur le bouton ci-dessous",
-          "conditional": {
-            "show": "formStore.data.bail_dpe_dpe === 'oui'"
-          },
-          "validate": {
-            "required": false
-          }
-        }
-      ],
-      "footer": [
-        {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "bail_dpe_previous",
-          "action": "goto:type_logement_commodites"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "bail_dpe_next",
           "action": "goto:ecran_intermediaire_situation_occupant"
         }
       ]
@@ -808,7 +680,7 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "ecran_intermediaire_situation_occupant_previous",
-          "action": "goto:bail_dpe"
+          "action": "goto:type_logement_commodites"
         },
         {
           "type": "SignalementFormButton",
@@ -1075,7 +947,12 @@
     "label": "Validation du signalement",
     "slug": "validation_signalement",
     "components": {
-      "body": [],
+      "body": [
+        {
+          "type": "SignalementFormOverview",
+          "slug": "validation_signalement_overview"
+        }
+      ],
       "footer": [
         {
           "type": "SignalementFormButton",
@@ -1100,7 +977,6 @@
       "body": [
         {
           "type": "SignalementFormConfirmation",
-          "label": "",
           "slug": "confirmation_signalement_message"
         }
       ],

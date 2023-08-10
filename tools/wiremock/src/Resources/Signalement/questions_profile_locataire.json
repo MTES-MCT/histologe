@@ -170,7 +170,7 @@
         },
         {
           "type": "SignalementFormButton",
-          "label": "Suivant",
+          "label": "C'est parti",
           "slug": "ecran_intermediaire_type_composition_next",
           "action": "goto:type_logement"
         }

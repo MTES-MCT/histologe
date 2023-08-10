@@ -23,6 +23,7 @@ class SignalementDraftRequest
     private ?string $signalementConcerneLogementSocialServiceSecours = null;
     private ?string $signalementConcerneLogementSocialAutreTiers = null;
     private ?string $vosCoordonneesTiersNomOrganisme = null;
+    private ?string $vosCoordonneesTiersLien = null;
     private ?string $vosCoordonneesTiersNom = null;
     private ?string $vosCoordonneesTiersEmail = null;
     private ?string $vosCoordonneesTiersTel = null;
@@ -523,6 +524,17 @@ class SignalementDraftRequest
     {
         $this->vosCoordonneesTiersNomOrganisme = $vosCoordonneesTiersNomOrganisme;
 
+        return $this;
+    }
+
+    public function getVosCoordonneesTiersLien(): ?string
+    {
+        return $this->vosCoordonneesTiersLien;
+    }
+
+    public function setVosCoordonneesTiersLien(?string $vosCoordonneesTiersLien): self
+    {
+        $this->vosCoordonneesTiersLien = $vosCoordonneesTiersLien;
         return $this;
     }
 

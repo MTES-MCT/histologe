@@ -225,7 +225,7 @@
         },
         {
           "type": "SignalementFormButton",
-          "label": "Suivant",
+          "label": "C'est parti",
           "slug": "ecran_intermediaire_type_composition_next",
           "action": "goto:type_logement"
         }
@@ -723,7 +723,12 @@
     "label": "Validation du signalement",
     "slug": "validation_signalement",
     "components": {
-      "body": [],
+      "body": [
+        {
+          "type": "SignalementFormOverview",
+          "slug": "validation_signalement_overview"
+        }
+      ],
       "footer": [
         {
           "type": "SignalementFormButton",
@@ -748,7 +753,6 @@
       "body": [
         {
           "type": "SignalementFormConfirmation",
-          "label": "",
           "slug": "confirmation_signalement_message"
         }
       ],
