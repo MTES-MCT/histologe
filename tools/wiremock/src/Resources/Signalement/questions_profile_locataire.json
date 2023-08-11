@@ -170,7 +170,7 @@
         },
         {
           "type": "SignalementFormButton",
-          "label": "Suivant",
+          "label": "C'est parti",
           "slug": "ecran_intermediaire_type_composition_next",
           "action": "goto:type_logement"
         }
@@ -684,7 +684,7 @@
         },
         {
           "type": "SignalementFormWarning",
-          "slug": "bail_dpe_bail_warning",
+          "slug": "bail_dpe_etat_des_lieux_warning",
           "label": "D'après la loi, un état des lieux du logement doit être réalisé le jour de la remise des clés. C'est important pour faire valoir vos droits ! Plus d'info sur le site du service public.",
           "conditional": {
             "show": "formStore.data.bail_dpe_etat_des_lieux === 'non' || formStore.data.bail_dpe_etat_des_lieux === 'nsp'"
@@ -716,6 +716,17 @@
           "label": "Le DPE fait partie des documents que le bailleur (propriétaire) doit obligatoirement vous fournir. Plus d'info sur le site du service public.",
           "conditional": {
             "show": "formStore.data.bail_dpe_dpe === 'non' || formStore.data.bail_dpe_dpe === 'nsp'"
+          }
+        },
+        {
+          "type": "SignalementFormUpload",
+          "slug": "bail_dpe_dpe_upload",
+          "label": "Ajoutez le DPE en cliquant sur le bouton ci-dessous",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_dpe === 'oui'"
+          },
+          "validate": {
+            "required": false
           }
         }
       ],
@@ -793,6 +804,10 @@
             {
               "label": "Non",
               "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
             }
           ]
         },
@@ -960,7 +975,7 @@
         },
         {
           "type": "SignalementFormButton",
-          "label": "Suivant",
+          "label": "J'y suis presque !",
           "slug": "ecran_intermediaire_procedure_next",
           "action": "goto:info_procedure"
         }
@@ -1029,7 +1044,7 @@
               "value": "oui"
             },
             {
-              "label": "Non,je veux déménager",
+              "label": "Non, je veux déménager",
               "value": "non"
             },
             {
@@ -1037,6 +1052,11 @@
               "value": "nsp"
             }
           ]
+        },
+        {
+          "type": "SignalementFormInfo",
+          "label": "Contactez votre assurance pour savoir si elle prend en charge le ou les problèmes rencontrés.",
+          "slug": "info_procedure_assurance_contactee_info"
         }
       ],
       "footer": [
@@ -1142,6 +1162,17 @@
                     "value": "non"
                   }
                 ]
+              },
+              {
+                "type": "SignalementFormDate",
+                "label": "Quelle est votre date de naissance ?",
+                "slug": "informations_complementaires_situation_occupants_date_naissance",
+                "conditional": {
+                  "show": "formStore.data.logement_social_allocation === 'non'"
+                },
+                "validate": {
+                  "required": false
+                }
               }
             ]
           }
@@ -1152,6 +1183,14 @@
           "slug": "informations_complementaires_logement",
           "components": {
             "body": [
+              {
+                "type": "SignalementFormCounter",
+                "label": "Quel est le montant de votre loyer, sans les charges ?",
+                "slug": "informations_complementaires_logement_montant_loyer",
+                "validate": {
+                  "required": false
+                }
+              },
               {
                 "type": "SignalementFormCounter",
                 "label": "Votre logement est sur combien d'étages ?",
