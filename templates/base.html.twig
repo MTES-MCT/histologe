@@ -29,7 +29,17 @@
     <meta name="twitter:description" content="Signalez vos problèmes de logement.">
     <meta name="apple-mobile-web-app-title" content="{{ platform.name }}">
     <link rel="icon" href={{ asset('favicon.ico') }}>
-    <link rel="stylesheet" href={{ asset('dsfr/dsfr.min.css') }}>
+    <link rel="stylesheet" href="{{ asset('build/dsfr/dsfr.min.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-business/icons-business.min.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-device/icons-device.min.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-design/icons-design.min.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-document/icons-document.min.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-editor/icons-editor.min.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-map/icons-map.min.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-media/icons-media.min.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-system/icons-system.min.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-user/icons-user.min.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-weather/icons-weather.min.css') }}"/>
     <link rel="stylesheet" href={{ asset('build/app.css') }}>
     {% if 'back_cartographie' in app.request.get('_route') or 'back_signalement_view' in app.request.get('_route') %}
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
@@ -98,8 +108,9 @@
 {% if 'back_' not in app.request.get('_route') and  'nouveau_formulaire' not in app.request.get('_route') %}
     {% include "footer.html.twig" %}
 {% endif %}
-<script type="module" src={{ asset('dsfr/dsfr.module.min.js') }}></script>
-<script type="text/javascript" nomodule src={{ asset('dsfr/dsfr.nomodule.min.js') }}></script>
+
+<script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}"></script>
+<script type="text/javascript" nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}"></script>
 <script type="text/javascript" src={{ asset('js/screencapture.js') }}></script>
 <script src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 <script src="{{ asset('js/const.min.js?v='~''|date('YmdH')) }}"></script>
@@ -109,11 +120,11 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 {% endif %}
-
 {% if 'back_signalement_view' in app.request.get('_route') %}
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
 {% endif %}
+
 <script>
     tinymce.init({
         selector: 'textarea.editor',

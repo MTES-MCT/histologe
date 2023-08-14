@@ -730,7 +730,9 @@ export default defineComponent({
 
 <style>
   .histo-france-map {
+    margin-top: 10px;
     padding: 20px;
+    padding-bottom: 0px;
     text-align: center;
     box-shadow: 0px 3px 12px #16161633;
     border-radius: 4px;

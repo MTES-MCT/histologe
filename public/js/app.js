@@ -1,17 +1,15 @@
 let invalid, tables = document.querySelectorAll("table.sortable"),
     table,
     thead,
-    headers,
-    i,
-    j;
-for (i = 0; i < tables.length; i++) {
-    table = tables[i];
+    headers;
+for (let iTables = 0; iTables < tables.length; iTables++) {
+    table = tables[iTables];
 
     if (thead = table.querySelector("thead")) {
         headers = thead.querySelectorAll("th");
 
-        for (j = 0; j < headers.length; j++) {
-            headers[j].innerHTML = "<a href='#'>" + headers[j].innerText + "</a>";
+        for (let jHeaders = 0; jHeaders < headers.length; jHeaders++) {
+            headers[jHeaders].innerHTML = "<a href='#'>" + headers[jHeaders].innerText + "</a>";
         }
 
         thead.addEventListener("click", sortTableFunction(table));

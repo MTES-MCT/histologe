@@ -290,6 +290,16 @@ export default defineComponent({
 </script>
 
 <style>
+  .histo-dashboard-cards .fr-card .fr-card__body {
+    padding: 1.5rem;
+  }
+  .histo-dashboard-cards .fr-card .fr-card__content {
+    padding: 0px;
+    margin: 0px;
+  }
+  .histo-dashboard-cards .fr-card.fr-enlarge-link:not(.fr-card--no-icon) .fr-card__content {
+    padding-bottom: 1.5rem;
+  }
   .histo-dashboard-cards .fr-card .fr-card__title a {
     box-shadow: none;
   }

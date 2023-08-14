@@ -4,7 +4,7 @@
 
     <div class="fr-container--fluid filter-territories fr-mb-5v" v-if="sharedState.filters.canFilterTerritoires">
       <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-hidden fr-displayed-md fr-col-md-9">
+        <div class="fr-hidden fr-unhidden-md fr-col-md-9">
         </div>
         <div class="fr-col-12 fr-col-md-3">
           <HistoSelect

@@ -72,10 +72,6 @@ pre {
     border: 1px solid #000091;
 }
 
-.fr-background--white {
-    background: white;
-}
-
 .fr-border--bottom--orange {
     border-bottom: 3px solid #FF9940;
 }
@@ -174,24 +170,45 @@ small {
 }
 
 /*COLOR*/
+.fr-background--white {
+    background: white;
+}
+
 .fr-background--blue-france {
     background-color: var(--border-plain-blue-france);
 }
 
-.fr-btn--orange {
+a[href].fr-btn--orange {
     background: #FF9940;
 }
-
-.fr-btn--orange:hover {
+a[href].fr-btn--orange:hover {
     background: rgba(255, 153, 64, 0.65);
 }
 
-.fr-btn--danger {
-    background: #F60700;
+button.fr-btn--danger,a[href].fr-btn--danger {
+    background: var(--warning-425-625);
+}
+button.fr-btn--danger:hover,a[href].fr-btn--danger:hover {
+    background: var(--warning-425-625-hover);
 }
 
-.fr-btn--success {
-    background: #00a95f;
+button.fr-btn--success,a[href].fr-btn--success {
+    background-color: var(--green-emeraude-sun-425-moon-753);
+}
+button.fr-btn--success:hover,a[href].fr-btn--success:hover {
+    background-color: var(--green-emeraude-sun-425-moon-753-hover);
+}
+
+.fr-background-contrast--blue-france {
+    background-color: var(--background-contrast-blue-france);
+}
+
+.fr-background-alt--grey {
+    background-color: var(--background-alt-grey);
+}
+
+.fr-background-alt--blue-france {
+    background-color: var(--background-alt-blue-france);
 }
 
 .fr-puce {
@@ -239,6 +256,14 @@ small {
 
 .fr-text--left {
     text-align: left !important;
+}
+
+.fr-sidemenu__btn {
+    color: var(--text-default-grey);
+}
+
+a.fr-btn.fr-btn--icon-left.fr-fi-file-pdf-fill.ignore-blank-style::before {
+    content: "";
 }
 
 /*INPUTS*/

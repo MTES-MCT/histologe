@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.2",
+    "@gouvfr/dsfr": "^1.10.0",
     "@symfony/webpack-encore": "^3.0.0",
     "@vuepic/vue-datepicker": "^3.4.6",
     "axios": "^0.27.2",
