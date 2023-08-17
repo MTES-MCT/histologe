@@ -2,10 +2,13 @@
 
 namespace App\Dto\Request\Signalement;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 class VisiteRequest
 {
     public function __construct(
         private readonly ?int $idIntervention = null,
+        #[Assert\DateTime('Y-m-d')]
         private readonly ?string $date = null,
         private readonly ?string $time = null,
         private readonly ?int $idPartner = null,

@@ -15,8 +15,24 @@ class SignalementDraftFactory
         return (new SignalementDraft())
             ->setPayload($payload)
             ->setAddressComplete($signalementDraftRequest->getAdresseLogementAdresse())
-            ->setEmailDeclarant($signalementDraftRequest->getVosCoordonneesOccupantEmail())
-            ->setCurrentStep('3:vos_coordonnees_occupant')
-            ->setProfileDeclarant(ProfileDeclarant::LOCATAIRE);
+            ->setEmailDeclarant($this->getEmailDeclarent($signalementDraftRequest))
+            ->setCurrentStep('3:vos_coordonnees_occupant') /* @todo: https://github.com/MTES-MCT/histologe/issues/1597 */
+            ->setProfileDeclarant(ProfileDeclarant::from(strtoupper($signalementDraftRequest->getProfil())));
+    }
+
+    public function getEmailDeclarent(SignalementDraftRequest $signalementDraftRequest): ?string
+    {
+        switch (strtoupper($signalementDraftRequest->getProfil())) {
+            case ProfileDeclarant::SERVICE_SECOURS->name:
+            case ProfileDeclarant::BAILLEUR->name:
+            case ProfileDeclarant::TIERS_PRO->name:
+            case ProfileDeclarant::TIERS_PARTICULIER->name:
+                return $signalementDraftRequest->getVosCoordonneesTiersEmail();
+            case ProfileDeclarant::LOCATAIRE->name:
+            case ProfileDeclarant::BAILLEUR_OCCUPANT->name:
+                return $signalementDraftRequest->getVosCoordonneesOccupantEmail();
+            default:
+                return null;
+        }
     }
 }

@@ -24,6 +24,41 @@ class AddressParserTest extends TestCase
 
     public function provideAdresse(): \Generator
     {
+        yield '123Rue de Canteraine' => [
+            '123Rue de Canteraine',
+            '123',
+            null,
+            'Rue de Canteraine',
+        ];
+
+        yield '61/63 Route de Calais' => [
+            '61/63 Route de Calais',
+            null,
+            null,
+            '61/63 Route de Calais',
+        ];
+
+        yield '33RUE THOMAS HERISSON' => [
+            '33RUE THOMAS HERISSON',
+            '33',
+            null,
+            'RUE THOMAS HERISSON',
+        ];
+
+        yield '53, rue de rû' => [
+            '53, rue de rû',
+            '53',
+            null,
+            'Rue de rû',
+        ];
+
+        yield '40 Allée Gustave Cantelon' => [
+            '40 Allée Gustave Cantelon',
+            '40',
+            null,
+            'Allée Gustave Cantelon',
+        ];
+
         yield '141bis Rue du Pdt J Fitzgerald Kennedy' => [
             '141bis Rue du Pdt J Fitzgerald Kennedy',
             '141',

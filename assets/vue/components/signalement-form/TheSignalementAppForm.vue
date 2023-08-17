@@ -7,28 +7,28 @@
       :data-ajaxurl-post-signalement-draft="sharedProps.ajaxurlPostSignalementDraft"
       :data-ajaxurl-put-signalement-draft="sharedProps.ajaxurlPutSignalementDraft"
       :data-ajaxurl-handle-upload="sharedProps.ajaxurlHandleUpload"
+      :data-ajaxurl-get-signalement-draft="sharedProps.ajaxurlGetSignalementDraft"
       >
       <div v-if="isLoadingInit" class="loading fr-m-10w">
-      Initialisation du formulaire...
+        Initialisation du formulaire...
 
-      <div v-if="isErrorInit" class="fr-my-5w">
-        Erreur lors de l'initialisation du formulaire.<br><br>
-        Veuillez recharger la page ou nous prévenir via le formulaire de contact.
+        <div v-if="isErrorInit" class="fr-my-5w">
+          Erreur lors de l'initialisation du formulaire.<br><br>
+          Veuillez recharger la page ou nous prévenir via le formulaire de contact.
+        </div>
       </div>
-    </div>
 
-    <div v-else-if="currentScreen">
-      <SignalementFormBreadCrumbs
-        :currentStep="currentScreen.label"
-      />
-      <SignalementFormScreen
-        class="fr-p-5w"
-        :label="currentScreen.label"
-        :description="currentScreen.description"
-        :components="currentScreen.components"
-        :changeEvent="saveAndChangeScreenBySlug"
-      />
-    </div>
+      <div v-else-if="currentScreen">
+        <SignalementFormBreadCrumbs
+          :currentStep="currentScreen.label"
+        />
+        <SignalementFormScreen
+          :label="currentScreen.label"
+          :description="currentScreen.description"
+          :components="currentScreen.components"
+          :changeEvent="saveAndChangeScreenBySlug"
+        />
+      </div>
     </div>
 </template>
 
@@ -38,8 +38,8 @@ import { defineComponent } from 'vue'
 import formStore from './store'
 import { requests } from './requests'
 import { services } from './services'
-import SignalementFormScreen from './SignalementFormScreen.vue'
-import SignalementFormBreadCrumbs from './SignalementFormBreadCrumbs.vue'
+import SignalementFormScreen from './components/SignalementFormScreen.vue'
+import SignalementFormBreadCrumbs from './components/SignalementFormBreadCrumbs.vue'
 const initElements:any = document.querySelector('#app-signalement-form')
 // TODO : centraliser les interfaces et les utiliser partout
 interface Components {
@@ -55,7 +55,7 @@ export default defineComponent({
   },
   data () {
     return {
-      slugVosCoordonnees: 'vos_coordonnees_occupant',
+      slugCoordonnees: ['vos_coordonnees_occupant', 'vos_coordonnees_tiers'],
       nextSlug: '',
       isErrorInit: false,
       isLoadingInit: true,
@@ -71,12 +71,25 @@ export default defineComponent({
       this.sharedProps.ajaxurlPostSignalementDraft = initElements.dataset.ajaxurlPostSignalementDraft
       this.sharedProps.ajaxurlPutSignalementDraft = initElements.dataset.ajaxurlPutSignalementDraft
       this.sharedProps.ajaxurlHandleUpload = initElements.dataset.ajaxurlHandleUpload
-      requests.initQuestions(this.handleInitQuestions)
+      if (initElements.dataset.ajaxurlGetSignalementDraft !== undefined) {
+        this.sharedProps.ajaxurlGetSignalementDraft = initElements.dataset.ajaxurlGetSignalementDraft
+        requests.initWithExistingData(this.handleInitData)
+      } else {
+        requests.initQuestions(this.handleInitQuestions)
+      }
     } else {
       this.isErrorInit = true
     }
   },
   methods: {
+    handleInitData (requestResponse: any) {
+      if (requestResponse.signalement && requestResponse.signalement.payload) {
+        for (const prop in requestResponse.signalement.payload) {
+          formStore.data[prop] = requestResponse.signalement.payload[prop]
+        }
+      }
+      requests.initQuestions(this.handleInitQuestions)
+    },
     handleInitQuestions (requestResponse: any) {
       if (requestResponse === 'error') {
         this.isErrorInit = true
@@ -109,7 +122,7 @@ export default defineComponent({
             this.currentScreen.components.body = formStore.preprocessScreen(this.currentScreen.components.body)
           }
         } else {
-          if (this.nextSlug === this.slugVosCoordonnees) { // TODO à mettre à jour suivant le slug des différents profils
+          if (this.slugCoordonnees.includes(this.nextSlug)) { // TODO à mettre à jour suivant le slug des différents profils
             // on détermine le profil
             services.updateProfil()
             // on fait un appel API pour charger la suite des questions avant de changer d'écran

@@ -30,7 +30,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { requests } from './requests'
+import { requests } from './../requests'
 
 export default defineComponent({
   name: 'SignalementFormUpload',

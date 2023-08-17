@@ -1,5 +1,4 @@
 <template>
-    <!-- Champ type date -->
     <div class="fr-input-group">
     <label :class="[ customCss, 'fr-label' ]" :for="id">{{ label }}</label>
     <input
@@ -29,10 +28,8 @@ export default defineComponent({
   props: {
     id: { type: String, default: null },
     label: { type: String, default: null },
-    description: { type: String, default: null },
     modelValue: { type: String, default: null },
     customCss: { type: String, default: '' },
-    validate: { type: Object, default: null },
     hasError: { type: Boolean, default: false },
     error: { type: String, default: '' }
   },

@@ -2,11 +2,13 @@
 
 namespace App\Command\Cron;
 
+use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Manager\InterventionManager;
 use App\Manager\SuiviManager;
 use App\Repository\AffectationRepository;
 use App\Repository\InterventionRepository;
+use App\Repository\SuiviRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -29,6 +31,7 @@ class NotifyVisitsCommand extends AbstractCronCommand
         private InterventionManager $interventionManager,
         private AffectationRepository $affectationRepository,
         private SuiviManager $suiviManager,
+        private SuiviRepository $suiviRepository,
         private VisiteNotifier $visiteNotifier,
         private NotificationMailerRegistry $notificationMailerRegistry,
         private ParameterBagInterface $parameterBag,
@@ -48,7 +51,7 @@ class NotifyVisitsCommand extends AbstractCronCommand
         foreach ($listFutureVisits as $intervention) {
             $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
             $signalement = $intervention->getSignalement();
-            $description = '<strong>Rappel de visite :</strong> la visite du logement situé';
+            $description = '<strong>Rappel de visite :</strong> la visite du logement situé ';
             $description .= $signalement->getAdresseOccupant().' '.$signalement->getCpOccupant().' '.$signalement->getVilleOccupant();
             $description .= ' aura lieu le '.$intervention->getScheduledAt()->format('d/m/Y');
             $description .= '<br>La visite sera effectuée par '.$partnerName.'.';
@@ -82,7 +85,8 @@ class NotifyVisitsCommand extends AbstractCronCommand
 
         $listPastVisits = $this->interventionRepository->getPastVisits();
         foreach ($listPastVisits as $intervention) {
-            foreach ($intervention->getPartner()->getUsers() as $user) {
+            $pastVisiteReminderUsers = $this->getPastVisiteReminderUsers($intervention);
+            foreach ($pastVisiteReminderUsers as $user) {
                 $this->notificationMailerRegistry->send(
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_VISITE_PAST_REMINDER_TO_PARTNER,
@@ -147,5 +151,38 @@ class NotifyVisitsCommand extends AbstractCronCommand
         );
 
         return Command::SUCCESS;
+    }
+
+    private function getPastVisiteReminderUsers(Intervention $intervention): array
+    {
+        $usersToNotify = [];
+
+        $partnerUsers = $intervention->getPartner()->getUsers();
+        foreach ($partnerUsers as $user) {
+            if (\in_array('ROLE_ADMIN_PARTNER', $user->getRoles())) {
+                $usersToNotify[] = $user;
+            }
+        }
+
+        $agentToNotify = null;
+        $suivisLinkedToSignalement = $this->suiviRepository->findSuivisByContext($intervention->getSignalement(), Suivi::CONTEXT_INTERVENTION);
+        foreach ($suivisLinkedToSignalement as $suivi) {
+            if ($suivi->getCreatedBy()?->getPartner() == $intervention->getPartner()) {
+                $agentToNotify = $suivi->getCreatedBy();
+                $usersToNotify[] = $agentToNotify;
+                break;
+            }
+        }
+
+        if (!$agentToNotify) {
+            foreach ($suivisLinkedToSignalement as $suivi) {
+                if ($suivi->getCreatedBy() && \in_array('ROLE_ADMIN_TERRITORY', $suivi->getCreatedBy()->getRoles())) {
+                    $usersToNotify[] = $suivi->getCreatedBy();
+                    break;
+                }
+            }
+        }
+
+        return $usersToNotify;
     }
 }

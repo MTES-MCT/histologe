@@ -1,15 +1,15 @@
 <template>
   <div>
     <SignalementFormTextfield
-      :key="idAdress"
-      :id="idAdress"
-      label="Commençons par l'adresse du logement"
-      description="Tapez puis sélectionnez l'adresse dans la liste"
+      :key="idAddress"
+      :id="idAddress"
+      :label="label"
+      :description="description"
       :customCss="customCss"
       :validate="validate"
-      v-model="formStore.data[idAdress]"
-      :hasError="formStore.validationErrors[idAdress]  !== undefined"
-      :error="formStore.validationErrors[idAdress]"
+      v-model="formStore.data[idAddress]"
+      :hasError="formStore.validationErrors[idAddress] !== undefined"
+      :error="formStore.validationErrors[idAddress]"
     />
     <div id="sous_menu" class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group">
       <div
@@ -51,10 +51,10 @@
 
 <script lang="ts">
 import { defineComponent, watch } from 'vue'
-import formStore from './store'
-import { requests } from './requests'
-import { services } from './services'
-import subscreenData from './address_subscreen.json'
+import formStore from './../store'
+import { requests } from './../requests'
+import { services } from './../services'
+import subscreenData from './../address_subscreen.json'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
 import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
@@ -69,6 +69,7 @@ export default defineComponent({
   props: {
     id: { type: String, default: null },
     label: { type: String, default: null },
+    description: { type: String, default: null },
     modelValue: { type: String, default: null },
     customCss: { type: String, default: '' },
     validate: { type: Object, default: null },
@@ -82,7 +83,7 @@ export default defineComponent({
     services.addSubscreenData(this.id, updatedSubscreenData)
     return {
       idFetchTimeout: 0 as unknown as ReturnType<typeof setTimeout>,
-      idAdress: this.id + '_suggestion',
+      idAddress: this.id + '_suggestion',
       idShow: this.id + '_afficher_les_champs',
       idSubscreen: this.id + '_detail',
       actionShow: 'show:' + this.id + '_detail',
@@ -93,14 +94,14 @@ export default defineComponent({
   },
   created () {
     watch(
-      () => this.formStore.data[this.idAdress],
+      () => this.formStore.data[this.idAddress],
       (newValue: any) => {
         clearTimeout(this.idFetchTimeout)
         this.idFetchTimeout = setTimeout(() => {
           if (newValue.length > 10) {
             requests.validateAddress(newValue, this.onAddressFound)
           }
-        })
+        }, 200)
       }
     )
   },

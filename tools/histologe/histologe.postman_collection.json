@@ -220,7 +220,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"adresse_logement_adresse\": \"17 quai de la joliette 13002 Marseille\",\n    \"adresse_logement_adresse_detail_numero\": \"17 quai de la joliette\",\n    \"adresse_logement_adresse_detail_code_postal\": \"13002\",\n    \"adresse_logement_adresse_detail_commune\": \"Marseille\",\n    \"adresse_logement_adresse_detail_insee\": \"13112\",\n    \"adresse_logement_adresse_detail_geoloc_lat\": 112,\n    \"adresse_logement_adresse_detail_geoloc_lng\": 115,\n    \"adresse_logement_complement_adresse_numero_appartement\": \"114\",\n    \"adresse_logement_complement_adresse_etage\": 2,\n    \"adresse_logement_complement_adresse_escalier\": 5,\n    \"signalement_concerne_profil\": \"logement_occupez\",\n    \"signalement_concerne_profil_detail_occupant\": \"locataire\",\n    \"signalement_concerne_profil_detail_tiers\": null,\n    \"signalement_concerne_profil_detail_bailleur_proprietaire\": null,\n    \"signalement_concerne_profil_detail_bailleur_bailleur\": null,\n    \"signalement_concerne_logement_social_service_secours\": null,\n    \"signalement_concerne_logement_social_autre_tiers\": null,\n    \"vos_coordonnees_occupant_civilite\": \"Mr\",\n    \"vos_coordonnees_occupant_nom\": \"Dupont\",\n    \"vos_coordonnees_occupant_prenom\": \"Jean\",\n    \"vos_coordonnees_occupant_email\": \"jean.dupont@example.com\",\n    \"vos_coordonnees_occupant_tel\": \"+33123456789\",\n    \"coordonnees_bailleur_nom\": \"Durand\",\n    \"coordonnees_bailleur_prenom\": \"Sophie\",\n    \"coordonnees_bailleur_email\": \"sophie.durand@example.com\",\n    \"coordonnees_bailleur_tel\": \"+33198765432\",\n    \"coordonnees_bailleur_adresse\": \"24 Avenue des Roses\",\n    \"coordonnees_bailleur_adresse_detail_numero\": \"Bâtiment B\",\n    \"coordonnees_bailleur_adresse_detail_code_postal\": \"75002\",\n    \"coordonnees_bailleur_adresse_commune\": \"Paris\",\n    \"zone_concernee_zone\": \"Zone A\",\n    \"type_logement_nature\": \"Appartement\",\n    \"composition_logement_piece_unique\": \"Non\",\n    \"composition_logement_superficie\": \"55m²\",\n    \"composition_logement_nb_pieces\": \"3\",\n    \"type_logement_pieces_a_vivre_superficie_piece\": [\n        30,\n        15,\n        10\n    ],\n    \"type_logement_pieces_a_vivre_hauteur_piece\": [\n        2.5,\n        2.6,\n        2.4\n    ],\n    \"type_logement_commodites_cuisine\": \"Oui\",\n    \"type_logement_commodites_cuisine_collective\": \"Non\",\n    \"type_logement_commodites_cuisine_hauteur_plafond\": \"2.3m\",\n    \"type_logement_commodites_salle_de_bain\": \"Oui\",\n    \"type_logement_commodites_salle_de_bain_collective\": \"Non\",\n    \"type_logement_commodites_salle_de_bain_hauteur_plafond\": \"2.2m\",\n    \"type_logement_commodites_wc\": \"Oui\",\n    \"type_logement_commodites_wc_collective\": \"Non\",\n    \"type_logement_commodites_wc_hauteur_plafond\": \"2.1m\",\n    \"type_logement_commodites_wc_cuisine\": \"Oui\",\n    \"bail_dpe_date_emmenagement\": \"2023-07-19\",\n    \"bail_dpe_bail\": \"Bail 1234\",\n    \"bail_dpe_bail_upload\": \"http://example.com/bail.pdf\",\n    \"bail_dpe_etat_des_lieux\": \"http://example.com/etat_des_lieux.pdf\",\n    \"bail_dpe_dpe\": \"C\",\n    \"logement_social_demande_relogement\": \"Oui\",\n    \"logement_social_allocation\": \"Oui\",\n    \"logement_social_allocation_caisse\": \"CAF Paris\",\n    \"logement_social_date_naissance\": \"1990-01-01\",\n    \"logement_social_montant_allocation\": \"500€\",\n    \"travailleur_social_quitte_logement\": \"Oui\",\n    \"travailleur_social_accompagnement\": \"Non\",\n    \"info_procedure_bailleur_prevenu\": \"Oui\",\n    \"info_procedure_assurance_contactee\": \"Non\",\n    \"info_procedure_autre_demarches\": \"Oui\",\n    \"info_procedure_quels_demarches\": \"Contact mairie pour subvention\",\n    \"date_demande\": \"2023-06-30\",\n    \"reponse_demande\": \"En cours d'examen\",\n    \"date_enregistrement\": \"2023-07-01\",\n    \"date_mise_en_relation\": \"2023-07-05\",\n    \"suivi_date_visite\": \"2023-07-10\",\n    \"suivi_interet_logement\": \"Oui\",\n    \"suivi_dossier_complet\": \"Oui\",\n    \"suivi_etude_dossier_delai\": \"2 semaines\",\n    \"suivi_commission_decision\": \"En attente\",\n    \"date_decision\": null,\n    \"decision_commission\": null\n}",
+							"raw": "{\n    \"profil\": \"locataire\",\n    \"adresse_logement_adresse\": \"99 quai de la joliette 13002 Marseille\",\n    \"adresse_logement_adresse_detail_numero\": \"17 quai de la joliette\",\n    \"adresse_logement_adresse_detail_code_postal\": \"13002\",\n    \"adresse_logement_adresse_detail_commune\": \"Marseille\",\n    \"adresse_logement_adresse_detail_insee\": \"13112\",\n    \"adresse_logement_adresse_detail_geoloc_lat\": 112,\n    \"adresse_logement_adresse_detail_geoloc_lng\": 115,\n    \"adresse_logement_complement_adresse_numero_appartement\": \"114\",\n    \"adresse_logement_complement_adresse_etage\": 2,\n    \"adresse_logement_complement_adresse_escalier\": 5,\n    \"signalement_concerne_profil\": \"logement_occupez\",\n    \"signalement_concerne_profil_detail_occupant\": \"locataire\",\n    \"signalement_concerne_profil_detail_tiers\": null,\n    \"signalement_concerne_profil_detail_bailleur_proprietaire\": null,\n    \"signalement_concerne_profil_detail_bailleur_bailleur\": null,\n    \"signalement_concerne_logement_social_service_secours\": null,\n    \"signalement_concerne_logement_social_autre_tiers\": null,\n    \"vos_coordonnees_occupant_civilite\": \"Mr\",\n    \"vos_coordonnees_occupant_nom\": \"Dupont\",\n    \"vos_coordonnees_occupant_prenom\": \"Jean\",\n    \"vos_coordonnees_occupant_email\": \"jean.dupont@example.com\",\n    \"vos_coordonnees_occupant_tel\": \"+33123456789\",\n    \"coordonnees_bailleur_nom\": \"Durand\",\n    \"coordonnees_bailleur_prenom\": \"Sophie\",\n    \"coordonnees_bailleur_email\": \"sophie.durand@example.com\",\n    \"coordonnees_bailleur_tel\": \"+33198765432\",\n    \"coordonnees_bailleur_adresse\": \"24 Avenue des Roses\",\n    \"coordonnees_bailleur_adresse_detail_numero\": \"Bâtiment B\",\n    \"coordonnees_bailleur_adresse_detail_code_postal\": \"75002\",\n    \"coordonnees_bailleur_adresse_commune\": \"Paris\",\n    \"zone_concernee_zone\": \"Zone A\",\n    \"type_logement_nature\": \"Appartement\",\n    \"composition_logement_piece_unique\": \"Non\",\n    \"composition_logement_superficie\": \"55m²\",\n    \"composition_logement_nb_pieces\": \"3\",\n    \"type_logement_pieces_a_vivre_superficie_piece_1\": 30,\n    \"type_logement_pieces_a_vivre_superficie_piece_2\": 15,\n    \"type_logement_pieces_a_vivre_superficie_piece_3\": 10,\n    \"type_logement_pieces_a_vivre_hauteur_piece_1\": \"oui\",\n    \"type_logement_pieces_a_vivre_hauteur_piece_2\": \"oui\",\n    \"type_logement_pieces_a_vivre_hauteur_piece_3\": \"non\",\n    \"type_logement_commodites_cuisine\": \"Oui\",\n    \"type_logement_commodites_cuisine_collective\": \"Non\",\n    \"type_logement_commodites_cuisine_hauteur_plafond\": \"2.3m\",\n    \"type_logement_commodites_salle_de_bain\": \"Oui\",\n    \"type_logement_commodites_salle_de_bain_collective\": \"Non\",\n    \"type_logement_commodites_salle_de_bain_hauteur_plafond\": \"2.2m\",\n    \"type_logement_commodites_wc\": \"Oui\",\n    \"type_logement_commodites_wc_collective\": \"Non\",\n    \"type_logement_commodites_wc_hauteur_plafond\": \"2.1m\",\n    \"type_logement_commodites_wc_cuisine\": \"Oui\",\n    \"bail_dpe_date_emmenagement\": \"2023-07-19\",\n    \"bail_dpe_bail\": \"Bail 1234\",\n    \"bail_dpe_bail_upload\": \"http://example.com/bail.pdf\",\n    \"bail_dpe_etat_des_lieux\": \"http://example.com/etat_des_lieux.pdf\",\n    \"bail_dpe_dpe\": \"C\",\n    \"logement_social_demande_relogement\": \"Oui\",\n    \"logement_social_allocation\": \"Oui\",\n    \"logement_social_allocation_caisse\": \"CAF Paris\",\n    \"logement_social_date_naissance\": \"1990-01-01\",\n    \"logement_social_montant_allocation\": \"500€\",\n    \"travailleur_social_quitte_logement\": \"Oui\",\n    \"travailleur_social_accompagnement\": \"Non\",\n    \"info_procedure_bailleur_prevenu\": \"Oui\",\n    \"info_procedure_assurance_contactee\": \"Non\",\n    \"info_procedure_autre_demarches\": \"Oui\",\n    \"info_procedure_quels_demarches\": \"Contact mairie pour subvention\",\n    \"date_demande\": \"2023-06-30\",\n    \"reponse_demande\": \"En cours d'examen\",\n    \"date_enregistrement\": \"2023-07-01\",\n    \"date_mise_en_relation\": \"2023-07-05\",\n    \"suivi_date_visite\": \"2023-07-10\",\n    \"suivi_interet_logement\": \"Oui\",\n    \"suivi_dossier_complet\": \"Oui\",\n    \"suivi_etude_dossier_delai\": \"2 semaines\",\n    \"suivi_commission_decision\": \"En attente\",\n    \"date_decision\": null,\n    \"decision_commission\": null\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -250,7 +250,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"adresse_logement_adresse\": \"17 quai de la joliette 13002 Marseille\",\n    \"adresse_logement_adresse_detail_numero\": \"17 quai de la joliette\",\n    \"adresse_logement_adresse_detail_code_postal\": \"13002\",\n    \"adresse_logement_adresse_detail_commune\": \"Marseille\",\n    \"adresse_logement_adresse_detail_insee\": \"13112\",\n    \"adresse_logement_adresse_detail_geoloc_lat\": 112,\n    \"adresse_logement_adresse_detail_geoloc_lng\": 115,\n    \"adresse_logement_complement_adresse_numero_appartement\": \"114\",\n    \"adresse_logement_complement_adresse_etage\": 21,\n    \"adresse_logement_complement_adresse_escalier\": 5,\n    \"signalement_concerne_profil\": \"logement_occupez\",\n    \"signalement_concerne_profil_detail_occupant\": \"locataire\",\n    \"signalement_concerne_profil_detail_tiers\": null,\n    \"signalement_concerne_profil_detail_bailleur_proprietaire\": null,\n    \"signalement_concerne_profil_detail_bailleur_bailleur\": null,\n    \"signalement_concerne_logement_social_service_secours\": null,\n    \"signalement_concerne_logement_social_autre_tiers\": null,\n    \"vos_coordonnees_occupant_civilite\": \"Mr\",\n    \"vos_coordonnees_occupant_nom\": \"Dupont\",\n    \"vos_coordonnees_occupant_prenom\": \"Jean\",\n    \"vos_coordonnees_occupant_email\": \"jean.dupont@example.com\",\n    \"vos_coordonnees_occupant_tel\": \"+33123456789\",\n    \"coordonnees_bailleur_nom\": \"Durand\",\n    \"coordonnees_bailleur_prenom\": \"Marc\",\n    \"coordonnees_bailleur_email\": \"sophie.durand@example.com\",\n    \"coordonnees_bailleur_tel\": \"+33198765432\",\n    \"coordonnees_bailleur_adresse\": \"24 Avenue des Roses\",\n    \"coordonnees_bailleur_adresse_detail_numero\": \"Bâtiment B\",\n    \"coordonnees_bailleur_adresse_detail_code_postal\": \"75002\",\n    \"coordonnees_bailleur_adresse_commune\": \"Paris\",\n    \"zone_concernee_zone\": \"Zone A\",\n    \"type_logement_nature\": \"Appartement\",\n    \"composition_logement_piece_unique\": \"Non\",\n    \"composition_logement_superficie\": \"55m²\",\n    \"composition_logement_nb_pieces\": \"3\",\n    \"type_logement_pieces_a_vivre_superficie_piece\": [\n        30,\n        15,\n        10\n    ],\n    \"type_logement_pieces_a_vivre_hauteur_piece\": [\n        2.5,\n        2.6,\n        2.4\n    ],\n    \"type_logement_commodites_cuisine\": \"Oui\",\n    \"type_logement_commodites_cuisine_collective\": \"Non\",\n    \"type_logement_commodites_cuisine_hauteur_plafond\": \"2.3m\",\n    \"type_logement_commodites_salle_de_bain\": \"Oui\",\n    \"type_logement_commodites_salle_de_bain_collective\": \"Non\",\n    \"type_logement_commodites_salle_de_bain_hauteur_plafond\": \"2.2m\",\n    \"type_logement_commodites_wc\": \"Oui\",\n    \"type_logement_commodites_wc_collective\": \"Non\",\n    \"type_logement_commodites_wc_hauteur_plafond\": \"2.1m\",\n    \"type_logement_commodites_wc_cuisine\": \"Oui\",\n    \"bail_dpe_date_emmenagement\": \"2023-07-19\",\n    \"bail_dpe_bail\": \"Bail 1234\",\n    \"bail_dpe_bail_upload\": \"http://example.com/bail.pdf\",\n    \"bail_dpe_etat_des_lieux\": \"http://example.com/etat_des_lieux.pdf\",\n    \"bail_dpe_dpe\": \"C\",\n    \"logement_social_demande_relogement\": \"Oui\",\n    \"logement_social_allocation\": \"Oui\",\n    \"logement_social_allocation_caisse\": \"CAF Paris\",\n    \"logement_social_date_naissance\": \"1990-01-01\",\n    \"logement_social_montant_allocation\": \"500€\",\n    \"travailleur_social_quitte_logement\": \"Oui\",\n    \"travailleur_social_accompagnement\": \"Non\",\n    \"info_procedure_bailleur_prevenu\": \"Oui\",\n    \"info_procedure_assurance_contactee\": \"Non\",\n    \"info_procedure_autre_demarches\": \"Oui\",\n    \"info_procedure_quels_demarches\": \"Contact mairie pour subvention\",\n    \"date_demande\": \"2023-06-30\",\n    \"reponse_demande\": \"En cours d'examen\",\n    \"date_enregistrement\": \"2023-07-01\",\n    \"date_mise_en_relation\": \"2023-07-05\",\n    \"suivi_date_visite\": \"2023-07-10\",\n    \"suivi_interet_logement\": \"Oui\",\n    \"suivi_dossier_complet\": \"Oui\",\n    \"suivi_etude_dossier_delai\": \"2 semaines\",\n    \"suivi_commission_decision\": \"En attente\",\n    \"date_decision\": null,\n    \"decision_commission\": null\n}",
+							"raw": "{\n    \"profil\": \"locataire\",\n    \"adresse_logement_adresse\": \"19 quai de la joliette 13002 Marseille\",\n    \"adresse_logement_adresse_detail_numero\": \"17 quai de la joliette\",\n    \"adresse_logement_adresse_detail_code_postal\": \"13002\",\n    \"adresse_logement_adresse_detail_commune\": \"Marseille\",\n    \"adresse_logement_adresse_detail_insee\": \"13112\",\n    \"adresse_logement_adresse_detail_geoloc_lat\": 112,\n    \"adresse_logement_adresse_detail_geoloc_lng\": 115,\n    \"adresse_logement_complement_adresse_numero_appartement\": \"114\",\n    \"adresse_logement_complement_adresse_etage\": 21,\n    \"adresse_logement_complement_adresse_escalier\": 5,\n    \"signalement_concerne_profil\": \"logement_occupez\",\n    \"signalement_concerne_profil_detail_occupant\": \"locataire\",\n    \"signalement_concerne_profil_detail_tiers\": null,\n    \"signalement_concerne_profil_detail_bailleur_proprietaire\": null,\n    \"signalement_concerne_profil_detail_bailleur_bailleur\": null,\n    \"signalement_concerne_logement_social_service_secours\": null,\n    \"signalement_concerne_logement_social_autre_tiers\": null,\n    \"vos_coordonnees_occupant_civilite\": \"Mr\",\n    \"vos_coordonnees_occupant_nom\": \"Dupont\",\n    \"vos_coordonnees_occupant_prenom\": \"Jean\",\n    \"vos_coordonnees_occupant_email\": \"jean.saidi@example.com\",\n    \"vos_coordonnees_occupant_tel\": \"+33123456789\",\n    \"coordonnees_bailleur_nom\": \"Durand\",\n    \"coordonnees_bailleur_prenom\": \"Marc\",\n    \"coordonnees_bailleur_email\": \"sophie.durand@example.com\",\n    \"coordonnees_bailleur_tel\": \"+33198765432\",\n    \"coordonnees_bailleur_adresse\": \"24 Avenue des Roses\",\n    \"coordonnees_bailleur_adresse_detail_numero\": \"Bâtiment B\",\n    \"coordonnees_bailleur_adresse_detail_code_postal\": \"75002\",\n    \"coordonnees_bailleur_adresse_commune\": \"Paris\",\n    \"zone_concernee_zone\": \"Zone A\",\n    \"type_logement_nature\": \"Appartement\",\n    \"composition_logement_piece_unique\": \"Non\",\n    \"composition_logement_superficie\": \"55m²\",\n    \"composition_logement_nb_pieces\": \"3\",\n    \"type_logement_pieces_a_vivre_superficie_piece_1\": 30,\n    \"type_logement_pieces_a_vivre_superficie_piece_2\": 15,\n    \"type_logement_pieces_a_vivre_superficie_piece_3\": 10,\n    \"type_logement_pieces_a_vivre_hauteur_piece_1\": \"oui\",\n    \"type_logement_pieces_a_vivre_hauteur_piece_2\": \"oui\",\n    \"type_logement_pieces_a_vivre_hauteur_piece_3\": \"non\",\n    \"type_logement_commodites_cuisine\": \"Oui\",\n    \"type_logement_commodites_cuisine_collective\": \"Non\",\n    \"type_logement_commodites_cuisine_hauteur_plafond\": \"2.3m\",\n    \"type_logement_commodites_salle_de_bain\": \"Oui\",\n    \"type_logement_commodites_salle_de_bain_collective\": \"Non\",\n    \"type_logement_commodites_salle_de_bain_hauteur_plafond\": \"2.2m\",\n    \"type_logement_commodites_wc\": \"Oui\",\n    \"type_logement_commodites_wc_collective\": \"Non\",\n    \"type_logement_commodites_wc_hauteur_plafond\": \"2.1m\",\n    \"type_logement_commodites_wc_cuisine\": \"Oui\",\n    \"bail_dpe_date_emmenagement\": \"2023-07-19\",\n    \"bail_dpe_bail\": \"Bail 1234\",\n    \"bail_dpe_bail_upload\": \"http://example.com/bail.pdf\",\n    \"bail_dpe_etat_des_lieux\": \"http://example.com/etat_des_lieux.pdf\",\n    \"bail_dpe_dpe\": \"C\",\n    \"logement_social_demande_relogement\": \"Oui\",\n    \"logement_social_allocation\": \"Oui\",\n    \"logement_social_allocation_caisse\": \"CAF Paris\",\n    \"logement_social_date_naissance\": \"1990-01-01\",\n    \"logement_social_montant_allocation\": \"500€\",\n    \"travailleur_social_quitte_logement\": \"Oui\",\n    \"travailleur_social_accompagnement\": \"Non\",\n    \"info_procedure_bailleur_prevenu\": \"Oui\",\n    \"info_procedure_assurance_contactee\": \"Non\",\n    \"info_procedure_autre_demarches\": \"Oui\",\n    \"info_procedure_quels_demarches\": \"Contact mairie pour subvention\",\n    \"date_demande\": \"2023-06-30\",\n    \"reponse_demande\": \"En cours d'examen\",\n    \"date_enregistrement\": \"2023-07-01\",\n    \"date_mise_en_relation\": \"2023-07-05\",\n    \"suivi_date_visite\": \"2023-07-10\",\n    \"suivi_interet_logement\": \"Oui\",\n    \"suivi_dossier_complet\": \"Oui\",\n    \"suivi_etude_dossier_delai\": \"2 semaines\",\n    \"suivi_commission_decision\": \"En attente\",\n    \"date_decision\": null,\n    \"decision_commission\": null\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -269,6 +269,28 @@
 								"signalement-draft",
 								"{{signalement_draft_uuid}}",
 								"envoi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signalement-draft/{uuid}/informations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/nouveau-formulaire/signalement-draft/f31cb034-221c-4a48-8203-75d683b78dba/informations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"nouveau-formulaire",
+								"signalement-draft",
+								"f31cb034-221c-4a48-8203-75d683b78dba",
+								"informations"
 							]
 						}
 					},
@@ -308,6 +330,86 @@
 					"path": [
 						"signalement",
 						"csrf-token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "questions?profil=tous",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = JSON.parse(responseBody);",
+							"",
+							"if (null !== data.data) {",
+							"    postman.setEnvironmentVariable(\"csrf_token\", data.csrf_token.value);",
+							"}",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/questions?profil=tous",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"questions"
+					],
+					"query": [
+						{
+							"key": "profil",
+							"value": "tous"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "questions?profil=locataire",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/questions?profil=locataire",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"questions"
+					],
+					"query": [
+						{
+							"key": "profil",
+							"value": "locataire"
+						}
 					]
 				}
 			},

@@ -12,6 +12,8 @@
         :id="component.slug"
         :label="component.label"
         :action="component.action"
+        :link="component.link"
+        :linktarget="component.linktarget"
         :values="component.values"
         :customCss="component.customCss"
         :validate="component.validate"
@@ -28,31 +30,41 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import formStore from './store'
+import formStore from './../store'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
+import SignalementFormLink from './SignalementFormLink.vue'
 import SignalementFormOnlyChoice from './SignalementFormOnlyChoice.vue'
 import SignalementFormDate from './SignalementFormDate.vue'
+import SignalementFormYear from './SignalementFormYear.vue'
+import SignalementFormTime from './SignalementFormTime.vue'
 import SignalementFormCounter from './SignalementFormCounter.vue'
 import SignalementFormWarning from './SignalementFormWarning.vue'
 import SignalementFormInfo from './SignalementFormInfo.vue'
 import SignalementFormCheckbox from './SignalementFormCheckbox.vue'
 import SignalementFormPhonefield from './SignalementFormPhonefield.vue'
 import SignalementFormUpload from './SignalementFormUpload.vue'
+import SignalementFormOverview from './SignalementFormOverview.vue'
+import SignalementFormConfirmation from './SignalementFormConfirmation.vue'
 
 export default defineComponent({
   name: 'SignalementFormSubscreen',
   components: {
     SignalementFormTextfield,
     SignalementFormButton,
+    SignalementFormLink,
     SignalementFormOnlyChoice,
     SignalementFormDate,
+    SignalementFormYear,
+    SignalementFormTime,
     SignalementFormCounter,
     SignalementFormWarning,
     SignalementFormInfo,
     SignalementFormCheckbox,
     SignalementFormPhonefield,
-    SignalementFormUpload
+    SignalementFormUpload,
+    SignalementFormOverview,
+    SignalementFormConfirmation
   },
   props: {
     label: String,

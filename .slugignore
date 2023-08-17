@@ -1,7 +1,6 @@
 .docker
 docker-compose.yml
 .github
-tools
 cypress
 cypress.config.js
 scripts/upload-s3.sh

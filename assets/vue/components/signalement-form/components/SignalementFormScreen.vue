@@ -14,7 +14,10 @@
         :description="component.description"
         :components="component.components"
         :action="component.action"
+        :link="component.link"
+        :linktarget="component.linktarget"
         :values="component.values"
+        :defaultValue="component.defaultValue"
         :customCss="component.customCss"
         :validate="component.validate"
         :disabled="component.disabled"
@@ -38,6 +41,8 @@
         :id="component.slug"
         :label="component.label"
         :action="component.action"
+        :link="component.link"
+        :linktarget="component.linktarget"
         :customCss="component.customCss"
         v-model="formStore.data[component.slug]"
         :class="[ 'fr-col-4', { 'fr-hidden': component.conditional && !formStore.shouldShowField(component.conditional.show) } ]"
@@ -49,36 +54,48 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import formStore from './store'
+import formStore from './../store'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
+import SignalementFormLink from './SignalementFormLink.vue'
 import SignalementFormOnlyChoice from './SignalementFormOnlyChoice.vue'
 import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
 import SignalementFormAddress from './SignalementFormAddress.vue'
 import SignalementFormDate from './SignalementFormDate.vue'
+import SignalementFormYear from './SignalementFormYear.vue'
+import SignalementFormTime from './SignalementFormTime.vue'
 import SignalementFormCounter from './SignalementFormCounter.vue'
 import SignalementFormWarning from './SignalementFormWarning.vue'
 import SignalementFormInfo from './SignalementFormInfo.vue'
 import SignalementFormCheckbox from './SignalementFormCheckbox.vue'
 import SignalementFormPhonefield from './SignalementFormPhonefield.vue'
 import SignalementFormUpload from './SignalementFormUpload.vue'
-import { services } from './services'
+import SignalementFormEmailfield from './SignalementFormEmailfield.vue'
+import SignalementFormOverview from './SignalementFormOverview.vue'
+import SignalementFormConfirmation from './SignalementFormConfirmation.vue'
+import { services } from './../services'
 
 export default defineComponent({
   name: 'SignalementFormScreen',
   components: {
     SignalementFormTextfield,
     SignalementFormButton,
+    SignalementFormLink,
     SignalementFormOnlyChoice,
     SignalementFormSubscreen,
     SignalementFormAddress,
     SignalementFormDate,
+    SignalementFormYear,
+    SignalementFormTime,
     SignalementFormCounter,
     SignalementFormWarning,
     SignalementFormInfo,
     SignalementFormCheckbox,
     SignalementFormPhonefield,
-    SignalementFormUpload
+    SignalementFormUpload,
+    SignalementFormEmailfield,
+    SignalementFormOverview,
+    SignalementFormConfirmation
   },
   props: {
     label: String,
@@ -136,7 +153,7 @@ export default defineComponent({
         }
       }
 
-      if (this.components && isScreenAfterCurrent) {
+      if (this.components && this.components.body && isScreenAfterCurrent) {
         traverseComponents(this.components.body)
         if (Object.keys(formStore.validationErrors).length > 0) {
           window.scrollTo(0, 0)

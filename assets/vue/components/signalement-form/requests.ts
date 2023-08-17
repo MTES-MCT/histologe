@@ -40,6 +40,11 @@ export const requests = {
       })
   },
 
+  initWithExistingData (functionReturn: Function) {
+    const url = formStore.props.ajaxurlGetSignalementDraft
+    requests.doRequestGet(url, functionReturn)
+  },
+
   initQuestions (functionReturn: Function) {
     const url = (formStore.props.ajaxurlQuestions as string) + 'tous'
     requests.doRequestGet(url, functionReturn)
@@ -55,8 +60,10 @@ export const requests = {
       // TODO : il y a sûrement plus élégant à faire pour construire l'url (cf controlleur et twig)
       const url = formStore.props.ajaxurlPutSignalementDraft.replace('uuid', formStore.data.uuidSignalementDraft)
       requests.doRequestPut(url, formStore.data, functionReturn)
-    } else if (formStore.data.vos_coordonnees_occupant_email !== undefined && formStore.data.adresse_logement_adresse !== undefined) {
-      // TODO : vérifier la condition (notamment en fonction des profils)
+    } else if (formStore.data.adresse_logement_adresse !== undefined &&
+          (formStore.data.vos_coordonnees_occupant_email !== undefined ||
+            formStore.data.vos_coordonnees_tiers_email !== undefined)
+    ) { // TODO : vérifier la condition (notamment en fonction des profils)
       const url = formStore.props.ajaxurlPostSignalementDraft
       requests.doRequestPost(url, formStore.data, functionReturn)
     } else {

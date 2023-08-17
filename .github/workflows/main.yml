@@ -11,6 +11,10 @@ on:
       - develop
   schedule:
     - cron: '0 7 * * *'
+
+env:
+  HISTOLOGE_URL: http://localhost:8080
+
 jobs:
   code-quality:
     name: Histologe (PHP ${{ matrix.php-versions }})

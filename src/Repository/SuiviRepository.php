@@ -398,6 +398,21 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return Suivi[]
+     */
+    public function findSuivisByContext(Signalement $signalement, string $context): array
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->where('s.signalement = :signalement')
+            ->andWhere('s.context = :context')
+            ->orderBy('s.createdAt', 'DESC')
+            ->setParameter('signalement', $signalement)
+            ->setParameter('context', $context);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @throws NonUniqueResultException
      */
     public function findFirstSuiviBy(Signalement $signalement, string $typeSuivi): ?Suivi
