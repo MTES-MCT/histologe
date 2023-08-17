@@ -364,7 +364,7 @@
                         <section class="fr-accordion fr-accordions-group fr-accordion__situation">
                             <h3 class="fr-accordion__title">
                                 <text role="button"
-                                      class="fr-accordion__btn fr-btn--icon-left fr-fi-question-fill"
+                                      class="fr-accordion__btn"
                                       aria-expanded="{% if situation in signalement.situations %}true{% else %}false{% endif %}"
                                       aria-controls="signalement-accordion-situation-{{ situation.id }}"
                                       id="signalement-accordion-situation-{{ situation.id }}-selector">Votre
@@ -375,7 +375,7 @@
                             <div class="fr-collapse" id="signalement-accordion-situation-{{ situation.id }}">
                                 <ul class="fr-toggle__list">
                                     {% for critere in situation.criteres %}
-                                        <div class="{# fr-checkbox-group #}fr-pb-0 fr-mb-3v"
+                                        <div class="fr-pb-0 fr-mb-3v"
                                              aria-expanded="{% if critere in signalement.criteres %}true{% else %}false{% endif %}"
                                              aria-controls="signalement-accordion-situation-{{ situation.id }}-critere-{{ critere.id }}"
                                              id="signalement-accordion-situation-{{ situation.id }}-critere-{{ critere.id }}-selector">

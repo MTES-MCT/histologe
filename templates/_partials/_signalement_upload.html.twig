@@ -6,7 +6,7 @@
         <div class="fr-fieldset__content fr-grid-row fr-grid-row--gutters fr-mt-3v">
             {% for i in 0..limit ?? 5 %}
                 <div class="fr-col-6 fr-col-md fr-text--center">
-                    <label class="fr-btn fr-btn--secondary fr-btn--lg fr-rounded fr-fi-camera-fill fr-icon-camera-fill">
+                    <label class="fr-btn fr-btn--secondary fr-btn--lg fr-rounded fr-icon-camera-fill">
                         <img class="fr-hidden fr-rounded fr-display-block" width="100">
                         <input type="file" accept="image/*" name="signalement[photos]"
                                class="fr-hidden photo-file" id="signalement_photos_{{ i }}"
@@ -43,7 +43,7 @@
         <div class="fr-fieldset__content fr-grid-row fr-grid-row--gutters fr-mt-3v">
             {% for i in 0..limit ?? 3 %}
                 <div class="fr-col-6 fr-col-md fr-text--center">
-                    <label class="fr-btn fr-btn--secondary fr-btn--lg fr-rounded fr-fi-attachment-fill">
+                    <label class="fr-btn fr-btn--secondary fr-btn--lg fr-rounded fr-icon-attachment-fill">
                         <input type="file" name="signalement[documents]" id="signalement_documents_{{ i }}"
                                class="fr-hidden doc-file"
                                accept=".pdf,.doc,.docx" data-handle-url="{{ path('handle_upload') }}">

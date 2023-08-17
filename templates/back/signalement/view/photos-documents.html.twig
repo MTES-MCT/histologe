@@ -20,7 +20,7 @@
             
             <form method="POST" enctype="multipart/form-data" class="inline-form"
                 action="{{ path('back_signalement_add_file',{uuid:signalement.uuid}) }}">
-                <label class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-fi-camera-fill fr-icon-camera-fill"> Ajouter des
+                <label class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-icon-camera-fill"> Ajouter des
                     photos
                     <input type="file" accept="image/*" name="signalement-add-file[photos][]"
                         class="fr-hidden fr-input--file-signalement" multiple>

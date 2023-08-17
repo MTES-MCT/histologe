@@ -379,10 +379,10 @@ forms.forEach((form) => {
                         resTextEl.classList.remove('fr-hidden')
                     } else {
                         preview.src = URL.createObjectURL(file);
-                        ['fr-fi-camera-fill', 'fr-icon-camera-fill', 'fr-py-7v', 'fr-fi-refresh-line', 'fr-disabled'].map(v => event.target.parentElement.classList.toggle(v));
+                        ['fr-icon-camera-fill', 'fr-py-7v', 'fr-icon-refresh-line', 'fr-disabled'].map(v => event.target.parentElement.classList.toggle(v));
                         fileIsOk = true;
                     }
-                } else if (event.target.parentElement.classList.contains('fr-fi-attachment-fill')) {
+                } else if (event.target.parentElement.classList.contains('fr-icon-attachment-fill')) {
                     if (event.target.files[0].type === 'image/heic' || event.target.files[0].type === 'image/heif') {
                         event.target.value = "";
                         resTextEl.innerHTML = "Les fichiers de format HEIC/HEIF ne sont pas pris en charge, merci de convertir votre image en JPEG ou en PNG avant de l'envoyer.";
@@ -394,7 +394,7 @@ forms.forEach((form) => {
                     } else {
                         resTextEl.classList.add('fr-hidden')
                         fileIsOk = true;
-                        ['fr-fi-attachment-fill', 'fr-fi-refresh-line', 'fr-disabled'].map(v => event.target.parentElement.classList.toggle(v));
+                        ['fr-icon-attachment-fill', 'fr-icon-refresh-line', 'fr-disabled'].map(v => event.target.parentElement.classList.toggle(v));
                     }
                 }
                 if (fileIsOk) {
@@ -403,11 +403,11 @@ forms.forEach((form) => {
                         e.preventDefault();
                         if (preview) {
                             preview.src = '#';
-                            event.target.parentElement.classList.add('fr-fi-camera-fill fr-icon-camera-fill')
+                            event.target.parentElement.classList.add('fr-icon-camera-fill')
                         } else if (event.target.parentElement.classList.contains('fr-icon-checkbox-circle-fill')) {
-                            ['fr-fi-attachment-fill', 'fr-icon-checkbox-circle-fill'].map(v => event.target.parentElement.classList.toggle(v));
+                            ['fr-icon-attachment-fill', 'fr-icon-checkbox-circle-fill'].map(v => event.target.parentElement.classList.toggle(v));
                         } else {
-                            event.target.parentElement.classList.add('fr-fi-attachment-fill');
+                            event.target.parentElement.classList.add('fr-icon-attachment-fill');
                         }
                         event.target.value = '';
                         fileData.delete(event.target.name);
@@ -438,7 +438,7 @@ forms.forEach((form) => {
                     request.addEventListener('load', function (e) {
                         console.log('load');
                         console.log(e);
-                        event.target.parentElement.classList.remove('fr-fi-refresh-line');
+                        event.target.parentElement.classList.remove('fr-icon-refresh-line');
                         [preview, deleter].forEach(el => el?.classList?.remove('fr-hidden'));
                         progress.value = 0;
                         let jsonRes = JSON.parse(request.response)
@@ -678,7 +678,7 @@ forms.forEach((form) => {
                         setTimeout(() => {nextTabBtn.click()}, 50)
                     } else if (!nextTabBtn) {
                         event.target.querySelector('[type="submit"]').disabled = true;
-                        ['fr-icon-checkbox-circle-fill', 'fr-fi-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
+                        ['fr-icon-checkbox-circle-fill', 'fr-icon-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
                         event.target.querySelector('[type="submit"]').innerHTML = "En cours d'envoi..."
                         let formData = new FormData();
                         forms.forEach((form) => {
@@ -716,7 +716,7 @@ forms.forEach((form) => {
                                     } else {
                                         event.target.querySelector('[type="submit"]').disabled = false;
                                         event.target.querySelector('[type="submit"]').innerHTML = "Confirmer";
-                                        ['fr-icon-checkbox-circle-fill', 'fr-fi-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
+                                        ['fr-icon-checkbox-circle-fill', 'fr-icon-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
                                         alert('Erreur lors de l\'enregistrement du signalement !')
 
                                     }
@@ -727,7 +727,7 @@ forms.forEach((form) => {
                                 })
                                 event.target.querySelector('[type="submit"]').disabled = false;
                                 event.target.querySelector('[type="submit"]').innerHTML = "Confirmer";
-                                ['fr-icon-checkbox-circle-fill', 'fr-fi-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
+                                ['fr-icon-checkbox-circle-fill', 'fr-icon-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
                                 alert('Suite à un incident technique, votre signalement n\'a pas pu être enregistré. Nous vous invitons à réessayer dans une heure.')
                             }
                         })
