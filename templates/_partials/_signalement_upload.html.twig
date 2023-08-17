@@ -3,16 +3,16 @@
         <legend class="fr-label fr-pl-0">Joindre des photos du/des problème(s)</legend>
         <span class="fr-hint-text">Les photos <u>ne doivent pas contenir de vues de personnes ou d'objets personnels</u>. <br> Pour les photos des parties communes, <u
                     role="button" aria-controls="modal-photos-restrictions" data-fr-opened="false">certaines restrictions sont à respecter</u>.</span>
-        <div class="fr-fieldset__content fr-grid-row fr-grid-row--gutters">
+        <div class="fr-fieldset__content fr-grid-row fr-grid-row--gutters fr-mt-3v">
             {% for i in 0..limit ?? 5 %}
                 <div class="fr-col-6 fr-col-md fr-text--center">
-                    <label class="fr-btn fr-btn--secondary fr-btn--lg fr-rounded fr-fi-instagram-line">
+                    <label class="fr-btn fr-btn--secondary fr-btn--lg fr-rounded fr-fi-camera-fill fr-icon-camera-fill">
                         <img class="fr-hidden fr-rounded fr-display-block" width="100">
                         <input type="file" accept="image/*" name="signalement[photos]"
                                class="fr-hidden photo-file" id="signalement_photos_{{ i }}"
                                data-handle-url="{{ path('handle_upload') }}">
                     </label>
-                    <small class="fr-text-label--red-marianne fr-icon--sm fr-hidden fr-display-block"
+                    <small class="fr-text-label--red-marianne fr-hidden fr-display-block"
                            id="signalement_photos_error_{{ i }}"></small>
                     <div class="fr-grid-row">
                         <div class="fr-col">
@@ -36,11 +36,11 @@
         </div>
     </fieldset>
 </div>
-<div class="fr-form-group">
+<div class="fr-form-group fr-mt-5v">
     <fieldset class="fr-fieldset fr-fieldset--inline">
         <legend class="fr-label fr-pl-0">Joindre des documents complémentaires</legend>
         <span class="fr-hint-text">Les documents ne doivent pas excéder <u>10Mo par document</u></span>
-        <div class="fr-fieldset__content fr-grid-row fr-grid-row--gutters">
+        <div class="fr-fieldset__content fr-grid-row fr-grid-row--gutters fr-mt-3v">
             {% for i in 0..limit ?? 3 %}
                 <div class="fr-col-6 fr-col-md fr-text--center">
                     <label class="fr-btn fr-btn--secondary fr-btn--lg fr-rounded fr-fi-attachment-fill">
@@ -48,7 +48,7 @@
                                class="fr-hidden doc-file"
                                accept=".pdf,.doc,.docx" data-handle-url="{{ path('handle_upload') }}">
                     </label>
-                    <small class="fr-text-label--red-marianne fr-icon--sm fr-hidden fr-display-block"
+                    <small class="fr-text-label--red-marianne fr-hidden fr-display-block"
                            id="signalement_documents_error_{{ i }}"></small>
                     <div class="fr-grid-row">
                         <div class="fr-col">

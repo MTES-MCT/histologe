@@ -379,7 +379,7 @@ forms.forEach((form) => {
                         resTextEl.classList.remove('fr-hidden')
                     } else {
                         preview.src = URL.createObjectURL(file);
-                        ['fr-fi-instagram-line', 'fr-py-7v', 'fr-fi-refresh-line', 'fr-disabled'].map(v => event.target.parentElement.classList.toggle(v));
+                        ['fr-fi-camera-fill', 'fr-icon-camera-fill', 'fr-py-7v', 'fr-fi-refresh-line', 'fr-disabled'].map(v => event.target.parentElement.classList.toggle(v));
                         fileIsOk = true;
                     }
                 } else if (event.target.parentElement.classList.contains('fr-fi-attachment-fill')) {
@@ -403,9 +403,9 @@ forms.forEach((form) => {
                         e.preventDefault();
                         if (preview) {
                             preview.src = '#';
-                            event.target.parentElement.classList.add('fr-fi-instagram-line')
-                        } else if (event.target.parentElement.classList.contains('fr-fi-checkbox-circle-fill')) {
-                            ['fr-fi-attachment-fill', 'fr-fi-checkbox-circle-fill'].map(v => event.target.parentElement.classList.toggle(v));
+                            event.target.parentElement.classList.add('fr-fi-camera-fill fr-icon-camera-fill')
+                        } else if (event.target.parentElement.classList.contains('fr-icon-checkbox-circle-fill')) {
+                            ['fr-fi-attachment-fill', 'fr-icon-checkbox-circle-fill'].map(v => event.target.parentElement.classList.toggle(v));
                         } else {
                             event.target.parentElement.classList.add('fr-fi-attachment-fill');
                         }
@@ -453,7 +453,7 @@ forms.forEach((form) => {
                             resTextEl.classList.remove('fr-hidden');
                             resTextEl.classList.add('fr-text-label--green-emeraude');
                             if (!preview)
-                                ['fr-fi-checkbox-circle-fill'].map(v => event.target.parentElement.classList.toggle(v));
+                                ['fr-icon-checkbox-circle-fill'].map(v => event.target.parentElement.classList.toggle(v));
                             uploadedFiles[event.target.id] = request.response;
                         }
                         progress.classList.add('fr-hidden');
@@ -570,7 +570,7 @@ forms.forEach((form) => {
                         if(r.success)
                         {
                             nextTabBtn.disabled = false;
-                            nextTabBtn.click();
+                            setTimeout(() => {nextTabBtn.click()}, 50)
                         } else {
                            dsfr(document.querySelector('#fr-modal-closed-territory')).modal.disclose();
                         }
@@ -641,7 +641,7 @@ forms.forEach((form) => {
                             forms.forEach((form) => {
                                 form.querySelectorAll('[type="file"]').forEach(file => {
                                     if (file.classList.contains("doc-file")) {
-                                        if (file.parentElement.classList.contains('fr-fi-checkbox-circle-fill')) {
+                                        if (file.parentElement.classList.contains('fr-icon-checkbox-circle-fill')) {
                                             nbDocs ++;
                                         }
                                     }
@@ -675,10 +675,10 @@ forms.forEach((form) => {
                             updateResultNDE();
                         }
                         nextTabBtn.disabled = false;
-                        nextTabBtn.click();
+                        setTimeout(() => {nextTabBtn.click()}, 50)
                     } else if (!nextTabBtn) {
                         event.target.querySelector('[type="submit"]').disabled = true;
-                        ['fr-fi-checkbox-circle-fill', 'fr-fi-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
+                        ['fr-icon-checkbox-circle-fill', 'fr-fi-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
                         event.target.querySelector('[type="submit"]').innerHTML = "En cours d'envoi..."
                         let formData = new FormData();
                         forms.forEach((form) => {
@@ -716,7 +716,7 @@ forms.forEach((form) => {
                                     } else {
                                         event.target.querySelector('[type="submit"]').disabled = false;
                                         event.target.querySelector('[type="submit"]').innerHTML = "Confirmer";
-                                        ['fr-fi-checkbox-circle-fill', 'fr-fi-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
+                                        ['fr-icon-checkbox-circle-fill', 'fr-fi-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
                                         alert('Erreur lors de l\'enregistrement du signalement !')
 
                                     }
@@ -727,7 +727,7 @@ forms.forEach((form) => {
                                 })
                                 event.target.querySelector('[type="submit"]').disabled = false;
                                 event.target.querySelector('[type="submit"]').innerHTML = "Confirmer";
-                                ['fr-fi-checkbox-circle-fill', 'fr-fi-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
+                                ['fr-icon-checkbox-circle-fill', 'fr-fi-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
                                 alert('Suite à un incident technique, votre signalement n\'a pas pu être enregistré. Nous vous invitons à réessayer dans une heure.')
                             }
                         })

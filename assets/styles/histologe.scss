@@ -102,6 +102,18 @@ pre {
 legend.required::after, label.required::after {
     color: #F60700;
     content: '*';
+    position: relative;
+    left: 3px;
+}
+.fr-fieldset__content .fr-checkbox-group input[type="checkbox"] + label.required::after,
+.fr-fieldset__content .fr-radio-group:not(.fr-radio-rich) input[type="radio"] + label.required::after {
+    position: absolute;
+    left: auto;
+    right: -8px;
+}
+
+.fr-fieldset.fr-fieldset-fullwidth > * {
+    width: 100%;
 }
 
 .fr-display-block {
@@ -209,6 +221,16 @@ button.fr-btn--success:hover,a[href].fr-btn--success:hover {
 
 .fr-background-alt--blue-france {
     background-color: var(--background-alt-blue-france);
+}
+
+.fr-text-label--red-marianne {
+    color: var(--red-marianne-425-625);
+}
+.fr-text-label--green-emeraude {
+    color: var(--text-label-green-emeraude);
+}
+.fr-text-default--error {
+    color: var(--text-default-error);
 }
 
 .fr-puce {
@@ -369,20 +391,8 @@ h2.home {
     background-color: #FFFFFF;
 }
 
-label.fr-toggle__label[for="signalement-accept-cgu"] {
-    display: inline;
-
-    a {
-        font-weight: bold;
-    }
-}
-
-label.fr-toggle__label[for="signalement-accept-visite"] {
-    display: inline;
-
-    a {
-        font-weight: bold;
-    }
+label.fr-toggle__label[for="signalement-accept-cgu"] a {
+    font-weight: bold;
 }
 
 .cgu-bo .title {
