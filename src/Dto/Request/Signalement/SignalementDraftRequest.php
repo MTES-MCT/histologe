@@ -5,6 +5,7 @@ namespace App\Dto\Request\Signalement;
 class SignalementDraftRequest
 {
     private ?string $profil = null;
+    private ?string $currentStep = null;
     private ?string $adresseLogementAdresse = null;
     private ?string $adresseLogementAdresseDetailNumero = null;
     private ?string $adresseLogementAdresseDetailCodePostal = null;
@@ -96,6 +97,18 @@ class SignalementDraftRequest
     public function setProfil(?string $profil): self
     {
         $this->profil = $profil;
+
+        return $this;
+    }
+
+    public function getCurrentStep(): ?string
+    {
+        return $this->currentStep;
+    }
+
+    public function setCurrentStep(?string $currentStep): self
+    {
+        $this->currentStep = $currentStep;
 
         return $this;
     }
