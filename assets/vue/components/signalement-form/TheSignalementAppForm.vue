@@ -118,7 +118,6 @@ export default defineComponent({
         if (screenIndex !== -1) {
           formStore.currentScreenIndex = screenIndex
           this.currentScreen = formStore.screenData[screenIndex]
-          // TODO : sauvegarder dans le store index:slug_ecran
           formStore.data.currentStep = formStore.currentScreenIndex + ':' + this.currentScreen?.slug
           if (this.currentScreen?.components && this.currentScreen.components.body) {
             // Prétraitement des composants avec repeat
