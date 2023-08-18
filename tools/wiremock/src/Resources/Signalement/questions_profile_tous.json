@@ -1,38 +1,64 @@
 [
   {
     "type": "SignalementFormScreen",
-    "label": "Votre signalement va démarrer",
+    "label": "Signaler un problème de logement avec Histologe",
     "slug": "introduction",
-    "description": "<p>Nous allons poser des questions sur le logement, les problèmes rencontrés et la situation du foyer.</p><p>Les informations demandées sont nécéssaires au bon traitement du signalement.</p><p>Attention: lisez bien les questions !</p>",
+    "description": "<h2>Avant de démarrer...</h2><p>Les informations demandées sont nécéssaires au bon traitement du signalement.</p><p>Elles seront uniquement partagées avec les administrations compétentes pour traiter votre dossier.</p>",
+    "desktopIllustration": "/img/form/form-home-illus.png",
     "components": {
-      "body": [
+      "footer": [
         {
           "type": "SignalementFormButton",
-          "label": "C'est parti",
+          "label": "Je démarre",
           "slug": "introduction_go",
-          "action": "goto:adresse_logement"
+          "action": "goto:adresse_logement_intro",
+          "customCss": "fr-btn--icon-left fr-icon-check-line"
         },
         {
-          "type": "SignalementFormButton",
+          "type": "SignalementFormLink",
           "label": "Annuler",
           "slug": "introduction_cancel",
-          "action": "cancel",
-          "customCss": "btn-link"
+          "link": "/",
+          "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
         }
       ]
     }
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Adresse du logement",
+    "label": "Adresse et coordonnées",
+    "slug": "adresse_logement_intro",
+    "description": "<p>Les infos utiles pour cette partie :<br>- L'adresse du logement<br>- Les coordonnées du foyer occupant le logement<br>-Les coordonnées du bailleur (propriétaire) du logement</p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
+    "components": {
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "C'est parti",
+          "slug": "adresse_logement_intro_go",
+          "action": "goto:adresse_logement",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        },
+        {
+          "type": "SignalementFormLink",
+          "label": "Annuler",
+          "slug": "adresse_logement_intro_cancel",
+          "link": "/",
+          "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Commençons par l'adresse du logement",
     "slug": "adresse_logement",
     "components": {
       "body": [
         {
           "type": "SignalementFormAddress",
-          "label": "Commençons par l'adresse du logement",
+          "label": "Adresse du logement",
           "slug": "adresse_logement_adresse",
-          "description": "Tapez puis sélectionnez l'adresse dans la liste",
+          "description": "Tapez l'adresse puis sélectionnez-la dans la liste",
           "customCss": "question-xl",
           "action": "show:complement_adresse"
         },
@@ -40,6 +66,7 @@
           "type": "SignalementFormSubscreen",
           "label": "Complément d'adresse (facultatif)",
           "slug": "adresse_logement_complement_adresse",
+          "customCss": "fr-mt-3v",
           "components": {
             "body": [
               {
@@ -84,13 +111,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "adresse_logement_previous",
-          "action": "goto:introduction"
+          "action": "goto:adresse_logement_intro",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "adresse_logement_next",
-          "action": "goto:signalement_concerne"
+          "action": "goto:signalement_concerne",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="fr-mt-3v signalement-form-button">
         <button
         :type="type"
         :id="id"

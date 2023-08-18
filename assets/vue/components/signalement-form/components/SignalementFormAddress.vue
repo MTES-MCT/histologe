@@ -1,17 +1,18 @@
 <template>
-  <div>
+  <div class="signalement-form-address">
     <SignalementFormTextfield
       :key="idAddress"
       :id="idAddress"
       :label="label"
       :description="description"
+      placeholder="Taper l'adresse ici"
       :customCss="customCss"
       :validate="validate"
       v-model="formStore.data[idAddress]"
       :hasError="formStore.validationErrors[idAddress] !== undefined"
       :error="formStore.validationErrors[idAddress]"
     />
-    <div id="sous_menu" class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group">
+    <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group">
       <div
         v-for="(suggestion, index) in suggestions"
         :key="index"
@@ -21,14 +22,15 @@
         {{ suggestion.properties.label }}
       </div>
     </div>
+
     <SignalementFormButton
       :key="idShow"
       :id="idShow"
       label="Afficher tous les champs"
-      customCss="btn-link"
+      customCss="btn-link fr-btn--icon-left fr-icon-eye-line"
       :validate="validate"
       v-model="formStore.data[idShow]"
-      :hasError="formStore.validationErrors[idShow]  !== undefined"
+      :hasError="formStore.validationErrors[idShow] !== undefined"
       :error="formStore.validationErrors[idShow]"
       :action="actionShow"
       :clickEvent="handleClickButton"
@@ -42,7 +44,7 @@
       :components="screens"
       :validate="validate"
       v-model="formStore.data[idSubscreen]"
-      :hasError="formStore.validationErrors[idSubscreen]  !== undefined"
+      :hasError="formStore.validationErrors[idSubscreen] !== undefined"
       :error="formStore.validationErrors[idSubscreen]"
       @update:modelValue="handleSubscreenModelUpdate"
     />
@@ -156,5 +158,8 @@ export default defineComponent({
 }
 .fr-address-group {
   margin-top: -1.5rem;
+}
+.signalement-form-address .signalement-form-button {
+  text-align: center;
 }
 </style>

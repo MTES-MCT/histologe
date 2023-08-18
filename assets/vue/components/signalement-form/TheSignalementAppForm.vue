@@ -18,16 +18,30 @@
         </div>
       </div>
 
-      <div v-else-if="currentScreen">
-        <SignalementFormBreadCrumbs
-          :currentStep="currentScreen.label"
-        />
-        <SignalementFormScreen
-          :label="currentScreen.label"
-          :description="currentScreen.description"
-          :components="currentScreen.components"
-          :changeEvent="saveAndChangeScreenBySlug"
-        />
+      <div v-else-if="currentScreen" class="fr-container">
+        <div class="fr-grid-row fr-grid-row--gutters">
+          <div
+            v-if="!currentScreen.desktopIllustration"
+            class="fr-col-12 fr-col-md-4"
+            >
+              <SignalementFormBreadCrumbs :currentStep="currentScreen.label" />
+          </div>
+          <div class="fr-col-12 fr-col-md-8">
+            <SignalementFormScreen
+              :label="currentScreen.label"
+              :description="currentScreen.description"
+              :desktopIllustration="currentScreen.desktopIllustration"
+              :components="currentScreen.components"
+              :changeEvent="saveAndChangeScreenBySlug"
+              />
+          </div>
+          <div
+            v-if="currentScreen.desktopIllustration"
+            class="fr-hidden fr-unhidden-md fr-col-12 fr-col-md-4 desktop-illustration"
+            >
+              <img :src="currentScreen.desktopIllustration">
+          </div>
+        </div>
       </div>
     </div>
 </template>
@@ -61,7 +75,7 @@ export default defineComponent({
       isLoadingInit: true,
       formStore,
       sharedProps: formStore.props,
-      currentScreen: null as { slug: string; label: string; description: string ; components: Components } | null
+      currentScreen: null as { slug: string; label: string; description: string; desktopIllustration: string; components: Components } | null
     }
   },
   created () {
@@ -143,6 +157,14 @@ export default defineComponent({
 </script>
 
 <style>
+  .fr-header, .fr-footer {
+    display: none;
+  }
+  @media (min-width: 48em) {
+    .fr-header, .fr-footer {
+      display: inherit;
+    }
+  }
   .signalement-form {
     background-color: white;
   }

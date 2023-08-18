@@ -30,10 +30,10 @@
       />
     </div>
   </div>
-  <div class="fr-mt-5w"
+  <div class="fr-container fr-mt-5w"
     v-if="components != undefined"
     >
-    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
+    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-btns-group--center form-screen-footer">
       <component
         v-for="component in components.footer"
         :is="component.type"
@@ -45,7 +45,7 @@
         :linktarget="component.linktarget"
         :customCss="component.customCss"
         v-model="formStore.data[component.slug]"
-        :class="[ 'fr-col-4', { 'fr-hidden': component.conditional && !formStore.shouldShowField(component.conditional.show) } ]"
+        :class="[ 'fr-col-12', { 'fr-hidden': component.conditional && !formStore.shouldShowField(component.conditional.show) } ]"
         :clickEvent="handleClickComponent"
       />
     </div>
@@ -180,4 +180,8 @@ export default defineComponent({
 </script>
 
 <style>
+  .form-screen-footer button, .form-screen-footer a {
+    width: 100%;
+    justify-content: center;
+  }
 </style>

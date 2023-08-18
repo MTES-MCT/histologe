@@ -6,14 +6,15 @@
   </label>
     <div :class="[ customCss, 'fr-input-wrap' ]">
       <input
-            type="text"
-            :name="id"
-            :value="internalValue"
-            :class="[ customCss, 'fr-input' ]"
-            @input="updateValue($event)"
-            aria-describedby="text-input-error-desc-error"
-            :disabled="disabled"
-            >
+        type="text"
+        :name="id"
+        :value="internalValue"
+        :placeholder="placeholder"
+        :class="[ customCss, 'fr-input' ]"
+        @input="updateValue($event)"
+        aria-describedby="text-input-error-desc-error"
+        :disabled="disabled"
+        >
     </div>
     <div
       id="text-input-error-desc-error"
@@ -34,6 +35,7 @@ export default defineComponent({
     id: { type: String, default: null },
     label: { type: String, default: null },
     description: { type: String, default: null },
+    placeholder: { type: String, default: null },
     modelValue: { type: String, default: null },
     customCss: { type: String, default: '' },
     validate: { type: Object, default: null },
