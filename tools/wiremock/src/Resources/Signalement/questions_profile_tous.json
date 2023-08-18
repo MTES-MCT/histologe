@@ -31,6 +31,7 @@
     "type": "SignalementFormScreen",
     "label": "Adresse et coordonnées",
     "slug": "adresse_logement_intro",
+    "screenCategory": "Adresse et coordonnées",
     "description": "<p>Les infos utiles pour cette partie :<br>- L'adresse du logement<br>- Les coordonnées du foyer occupant le logement<br>-Les coordonnées du bailleur (propriétaire) du logement</p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
     "components": {
       "body": [
@@ -55,6 +56,7 @@
     "type": "SignalementFormScreen",
     "label": "Commençons par l'adresse du logement",
     "slug": "adresse_logement",
+    "screenCategory": "Adresse et coordonnées",
     "components": {
       "body": [
         {
@@ -130,6 +132,7 @@
   {
     "type": "SignalementFormScreen",
     "slug": "signalement_concerne",
+    "screenCategory": "Adresse et coordonnées",
     "components": {
       "body": [
         {

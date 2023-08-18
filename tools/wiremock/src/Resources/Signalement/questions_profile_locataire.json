@@ -3,6 +3,7 @@
     "type": "SignalementFormScreen",
     "label": "Vos coordonnées",
     "slug": "vos_coordonnees_occupant",
+    "screenCategory": "Adresse et coordonnées",
     "components": {
       "body": [
         {
@@ -61,6 +62,7 @@
     "type": "SignalementFormScreen",
     "label": "Les coordonnées du bailleur (propriétaire)",
     "slug": "coordonnees_bailleur",
+    "screenCategory": "Adresse et coordonnées",
     "components": {
       "body": [
         {
@@ -114,6 +116,7 @@
     "type": "SignalementFormScreen",
     "label": "Vous souhaitez signaler des problèmes sur",
     "slug": "zone_concernee",
+    "screenCategory": "Adresse et coordonnées",
     "components": {
       "body": [
         {
@@ -158,6 +161,7 @@
     "label": "Type et composition du logement",
     "description": "<p>Nous allons vous poser des questions sur la composition du logement.<p><p>Les documents utiles sont:</p><ul><li>Le bail</li><li>L'état des lieux d'entrée</li><li>Le diagnostic performance énergie (DPE)</li></ul><p>Toutes les questions sont obligatoires, sauf mention contraire.<p>",
     "slug": "ecran_intermediaire_type_composition",
+    "screenCategory": "Type et composition",
     "components": {
       "body": [
       ],
@@ -181,6 +185,7 @@
     "type": "SignalementFormScreen",
     "label": "",
     "slug": "type_logement",
+    "screenCategory": "Type et composition",
     "components": {
       "body": [
         {
