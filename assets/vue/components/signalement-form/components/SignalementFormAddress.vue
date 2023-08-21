@@ -80,7 +80,7 @@ export default defineComponent({
     clickEvent: Function
   },
   data () {
-    const updatedSubscreenData = services.generateSubscreenData(this.id, subscreenData.body)
+    const updatedSubscreenData = services.generateSubscreenData(this.id, subscreenData.body, this.validate)
     // on met à jour formStore en ajoutant les sous-composants du composant Address
     services.addSubscreenData(this.id, updatedSubscreenData)
     return {
