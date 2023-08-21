@@ -35,7 +35,7 @@ class SignalementDraftManager extends AbstractManager
     ): ?string {
         $signalementDraft
             ->setPayload($payload)
-            ->setCurrentStep('4:type_logement_commodites') /* @todo: https://github.com/MTES-MCT/histologe/issues/1597 */
+            ->setCurrentStep($signalementDraftRequest->getCurrentStep())
             ->setAddressComplete($signalementDraftRequest->getAdresseLogementAdresse())
             ->setEmailDeclarant($this->signalementDraftFactory->getEmailDeclarent($signalementDraftRequest))
             ->setProfileDeclarant(ProfileDeclarant::from(strtoupper($signalementDraftRequest->getProfil())))

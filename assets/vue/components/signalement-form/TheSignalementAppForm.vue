@@ -88,6 +88,9 @@ export default defineComponent({
           formStore.data[prop] = requestResponse.signalement.payload[prop]
         }
       }
+      if (formStore.data.currentStep.split(':')[1] !== undefined) {
+        this.nextSlug = formStore.data.currentStep.split(':')[1]
+      }
       requests.initQuestions(this.handleInitQuestions)
     },
     handleInitQuestions (requestResponse: any) {
@@ -117,6 +120,7 @@ export default defineComponent({
         if (screenIndex !== -1) {
           formStore.currentScreenIndex = screenIndex
           this.currentScreen = formStore.screenData[screenIndex]
+          formStore.data.currentStep = formStore.currentScreenIndex + ':' + this.currentScreen?.slug
           if (this.currentScreen?.components && this.currentScreen.components.body) {
             // Prétraitement des composants avec repeat
             this.currentScreen.components.body = formStore.preprocessScreen(this.currentScreen.components.body)
@@ -125,6 +129,9 @@ export default defineComponent({
           if (this.slugCoordonnees.includes(this.nextSlug)) { // TODO à mettre à jour suivant le slug des différents profils
             // on détermine le profil
             services.updateProfil()
+            // on fait un appel API pour charger la suite des questions avant de changer d'écran
+            requests.initQuestionsProfil(this.handleInitQuestions)
+          } else {
             // on fait un appel API pour charger la suite des questions avant de changer d'écran
             requests.initQuestionsProfil(this.handleInitQuestions)
           }
