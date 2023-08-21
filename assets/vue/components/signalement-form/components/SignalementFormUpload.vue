@@ -30,7 +30,7 @@
               max="100"
               id="progress_signalement_photos"
               :value="uploadPercentage"
-              v-if="uploadPercentage > 0 && uploadPercentage > 100"
+              v-if="uploadPercentage > 0 && uploadPercentage < 100"
               >
             </progress>
         </div>
