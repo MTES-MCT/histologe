@@ -60,4 +60,7 @@ export default defineComponent({
 </script>
 
 <style>
+.signalement-form-button {
+  text-align: center;
+}
 </style>

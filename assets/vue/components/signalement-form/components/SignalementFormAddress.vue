@@ -159,7 +159,4 @@ export default defineComponent({
 .fr-address-group {
   margin-top: -1.5rem;
 }
-.signalement-form-address .signalement-form-button {
-  text-align: center;
-}
 </style>

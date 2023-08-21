@@ -4,7 +4,10 @@
     "label": "Signaler un problème de logement avec Histologe",
     "slug": "introduction",
     "description": "<h2>Avant de démarrer...</h2><p>Les informations demandées sont nécéssaires au bon traitement du signalement.</p><p>Elles seront uniquement partagées avec les administrations compétentes pour traiter votre dossier.</p>",
-    "desktopIllustration": "/img/form/form-home-illus.png",
+    "desktopIllustration": {
+      "src": "/img/form/form-home-illus.png",
+      "alt": "illustration logement"
+    },
     "components": {
       "footer": [
         {
@@ -30,20 +33,20 @@
     "slug": "adresse_logement_intro",
     "description": "<p>Les infos utiles pour cette partie :<br>- L'adresse du logement<br>- Les coordonnées du foyer occupant le logement<br>-Les coordonnées du bailleur (propriétaire) du logement</p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
     "components": {
-      "footer": [
+      "body": [
         {
           "type": "SignalementFormButton",
           "label": "C'est parti",
           "slug": "adresse_logement_intro_go",
           "action": "goto:adresse_logement",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line fr-w-100 fr-grid-row--center fr-mb-3v"
         },
         {
           "type": "SignalementFormLink",
           "label": "Annuler",
           "slug": "adresse_logement_intro_cancel",
           "link": "/",
-          "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
+          "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line fr-w-100 fr-grid-row--center"
         }
       ]
     }
