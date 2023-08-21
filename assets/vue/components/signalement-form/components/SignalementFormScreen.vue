@@ -111,10 +111,15 @@ export default defineComponent({
   },
   methods: {
     isRequired (field: any): boolean {
-      const subscreen = document.querySelector('#' + field.slug)
+      const component = document.querySelector('#' + field.slug)
+      console.log(component)
+      console.log(component?.classList)
+      console.log(field.slug)
+      console.log(field.validate)
+      console.log(field.type)
       if (((field.validate === undefined && formStore.inputComponents.includes(field.type)) || // si c'est un composant de saisie sans objet de validation c'est qu'il est obligatoire
           (field.validate && field.validate.required)) && // ou il y a des règles de validation explicites
-          subscreen?.classList.contains('fr-hidden') === false) { // et que le composant n'est pas caché par conditionnalité
+          component?.classList.contains('fr-hidden') === false) { // et que le composant n'est pas caché par conditionnalité
         return true
       } else {
         return false

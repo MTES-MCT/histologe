@@ -1,8 +1,7 @@
 <template>
-    <div class="fr-mt-3v signalement-form-button">
+    <div class="fr-mt-3v signalement-form-button" :id="id">
         <button
         :type="type"
-        :id="id"
         :class="[ 'fr-btn', customCss ]"
         @click="handleClick"
         >

@@ -1,5 +1,5 @@
 <template>
-  <div class="signalement-form-address">
+  <div class="signalement-form-address" :id="id">
     <SignalementFormTextfield
       :key="idAddress"
       :id="idAddress"
