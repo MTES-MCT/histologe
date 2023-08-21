@@ -56,13 +56,15 @@
             />
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-5">
-          <HistoCheckbox
-            id="count-refused"
-            v-model="sharedState.filters.countRefused"
-            @update:modelValue="onChange(false)"
-            >
-            <template #label>Cocher la case pour comptabiliser les signalements refusés</template>
-          </HistoCheckbox>
+          <div class="fr-mb-3v">
+            <HistoCheckbox
+              id="count-refused"
+              v-model="sharedState.filters.countRefused"
+              @update:modelValue="onChange(false)"
+              >
+              <template #label>Cocher la case pour comptabiliser les signalements refusés</template>
+            </HistoCheckbox>
+          </div>
           <HistoCheckbox
             v-if="sharedState.filters.canFilterArchived"
             id="count-archived"
