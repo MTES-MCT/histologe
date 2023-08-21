@@ -69,6 +69,7 @@ import SignalementFormWarning from './SignalementFormWarning.vue'
 import SignalementFormInfo from './SignalementFormInfo.vue'
 import SignalementFormCheckbox from './SignalementFormCheckbox.vue'
 import SignalementFormPhonefield from './SignalementFormPhonefield.vue'
+import SignalementFormUpload from './SignalementFormUpload.vue'
 import SignalementFormEmailfield from './SignalementFormEmailfield.vue'
 import SignalementFormOverview from './SignalementFormOverview.vue'
 import SignalementFormConfirmation from './SignalementFormConfirmation.vue'
@@ -91,6 +92,7 @@ export default defineComponent({
     SignalementFormInfo,
     SignalementFormCheckbox,
     SignalementFormPhonefield,
+    SignalementFormUpload,
     SignalementFormEmailfield,
     SignalementFormOverview,
     SignalementFormConfirmation

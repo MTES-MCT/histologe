@@ -6,6 +6,7 @@
       :data-ajaxurl-questions="sharedProps.ajaxurlQuestions"
       :data-ajaxurl-post-signalement-draft="sharedProps.ajaxurlPostSignalementDraft"
       :data-ajaxurl-put-signalement-draft="sharedProps.ajaxurlPutSignalementDraft"
+      :data-ajaxurl-handle-upload="sharedProps.ajaxurlHandleUpload"
       :data-ajaxurl-get-signalement-draft="sharedProps.ajaxurlGetSignalementDraft"
       >
       <div v-if="isLoadingInit" class="loading fr-m-10w">
@@ -69,6 +70,7 @@ export default defineComponent({
       this.sharedProps.ajaxurlQuestions = initElements.dataset.ajaxurlQuestions
       this.sharedProps.ajaxurlPostSignalementDraft = initElements.dataset.ajaxurlPostSignalementDraft
       this.sharedProps.ajaxurlPutSignalementDraft = initElements.dataset.ajaxurlPutSignalementDraft
+      this.sharedProps.ajaxurlHandleUpload = initElements.dataset.ajaxurlHandleUpload
       if (initElements.dataset.ajaxurlGetSignalementDraft !== undefined) {
         this.sharedProps.ajaxurlGetSignalementDraft = initElements.dataset.ajaxurlGetSignalementDraft
         requests.initWithExistingData(this.handleInitData)

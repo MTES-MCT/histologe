@@ -65,9 +65,10 @@ class SignalementDraftRequest
     private ?string $typeLogementCommoditesWcCuisine = null;
     private ?string $bailDpeDateEmmenagement = null;
     private ?string $bailDpeBail = null;
-    private ?string $bailDpeBailUpload = null;
+    private ?array $bailDpeBailUpload = null;
     private ?string $bailDpeEtatDesLieux = null;
     private ?string $bailDpeDpe = null;
+    private ?array $bailDpeDpeUpload = null;
     private ?string $logementSocialDemandeRelogement = null;
     private ?string $logementSocialAllocation = null;
     private ?string $logementSocialAllocationCaisse = null;
@@ -831,12 +832,12 @@ class SignalementDraftRequest
         return $this;
     }
 
-    public function getBailDpeBailUpload(): ?string
+    public function getBailDpeBailUpload(): ?array
     {
         return $this->bailDpeBailUpload;
     }
 
-    public function setBailDpeBailUpload(?string $bailDpeBailUpload): self
+    public function setBailDpeBailUpload(?array $bailDpeBailUpload): self
     {
         $this->bailDpeBailUpload = $bailDpeBailUpload;
 
@@ -863,6 +864,18 @@ class SignalementDraftRequest
     public function setBailDpeDpe(?string $bailDpeDpe): self
     {
         $this->bailDpeDpe = $bailDpeDpe;
+
+        return $this;
+    }
+
+    public function getBailDpeDpeUpload(): ?array
+    {
+        return $this->bailDpeDpeUpload;
+    }
+
+    public function setBailDpeDpeUpload(?array $bailDpeDpeUpload): self
+    {
+        $this->bailDpeDpeUpload = $bailDpeDpeUpload;
 
         return $this;
     }

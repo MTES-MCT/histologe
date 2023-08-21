@@ -62,6 +62,7 @@ const formStore: FormStore = reactive({
     ajaxurlQuestions: '',
     ajaxurlPostSignalementDraft: '',
     ajaxurlPutSignalementDraft: '',
+    ajaxurlHandleUpload: '',
     ajaxurlGetSignalementDraft: '',
     urlApiAdress: 'https://api-adresse.data.gouv.fr/search/?q='
   },
@@ -74,6 +75,7 @@ const formStore: FormStore = reactive({
     'SignalementFormCounter',
     'SignalementFormDate',
     'SignalementFormPhonefield',
+    'SignalementFormUpload',
     'SignalementFormEmailfield'
   ],
   validationErrors: {}, // Les erreurs de validation

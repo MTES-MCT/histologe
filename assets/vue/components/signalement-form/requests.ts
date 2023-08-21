@@ -15,16 +15,21 @@ export const requests = {
         functionReturn('error')
       })
   },
-  doRequestPost (ajaxUrl: string, data: any, functionReturn: Function) {
+  doRequestPost (ajaxUrl: string, data: any, functionReturn: Function, config: any) {
+    if (config !== undefined) {
+      config.timeout = 15000
+    } else {
+      config = { timeout: 15000 }
+    }
     axios
-      .post(ajaxUrl, data, { timeout: 15000 })
+      .post(ajaxUrl, data, config)
       .then(response => {
         const responseData = response.data
         functionReturn(responseData)
       })
       .catch(error => {
         console.log(error)
-        functionReturn('error')
+        functionReturn(error)
       })
   },
   doRequestPut (ajaxUrl: string, data: any, functionReturn: Function) {
@@ -65,7 +70,7 @@ export const requests = {
             formStore.data.vos_coordonnees_tiers_email !== undefined)
     ) { // TODO : vérifier la condition (notamment en fonction des profils)
       const url = formStore.props.ajaxurlPostSignalementDraft
-      requests.doRequestPost(url, formStore.data, functionReturn)
+      requests.doRequestPost(url, formStore.data, functionReturn, undefined)
     } else {
       // TODO : que renvoyer ?
       functionReturn('no need to save')
@@ -75,5 +80,17 @@ export const requests = {
   validateAddress (valueAdress: string, functionReturn: Function) {
     const url = (formStore.props.urlApiAdress as string) + valueAdress
     requests.doRequestGet(url, functionReturn)
+  },
+
+  uploadFile (formData: FormData, functionReturn: Function, functionProgress: Function) {
+    const url = formStore.props.ajaxurlHandleUpload
+    const config = {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress: function (progressEvent: any) {
+        const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100)
+        functionProgress(progress)
+      }
+    }
+    requests.doRequestPost(url, formData, functionReturn, config)
   }
 }
