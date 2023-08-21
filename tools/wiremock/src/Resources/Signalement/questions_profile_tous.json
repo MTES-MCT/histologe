@@ -9,20 +9,29 @@
       "alt": "illustration logement"
     },
     "components": {
-      "footer": [
+      "body": [
         {
-          "type": "SignalementFormButton",
-          "label": "Je démarre",
-          "slug": "introduction_go",
-          "action": "goto:adresse_logement_intro",
-          "customCss": "fr-btn--icon-left fr-icon-check-line"
-        },
-        {
-          "type": "SignalementFormLink",
-          "label": "Annuler",
-          "slug": "introduction_cancel",
-          "link": "/",
-          "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "introduction_buttons",
+          "customCss": "button-group-full-size",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Je démarre",
+                "slug": "introduction_go",
+                "action": "goto:adresse_logement_intro",
+                "customCss": "fr-btn--icon-left fr-icon-check-line"
+              },
+              {
+                "type": "SignalementFormLink",
+                "label": "Annuler",
+                "slug": "introduction_cancel",
+                "link": "/",
+                "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -36,18 +45,27 @@
     "components": {
       "body": [
         {
-          "type": "SignalementFormButton",
-          "label": "C'est parti",
-          "slug": "adresse_logement_intro_go",
-          "action": "goto:adresse_logement",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line fr-w-100 fr-grid-row--center fr-mb-3v"
-        },
-        {
-          "type": "SignalementFormLink",
-          "label": "Annuler",
-          "slug": "adresse_logement_intro_cancel",
-          "link": "/",
-          "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line fr-w-100 fr-grid-row--center"
+          "type": "SignalementFormSubscreen",
+          "slug": "adresse_logement_intro_buttons",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "C'est parti",
+                "slug": "adresse_logement_intro_go",
+                "action": "goto:adresse_logement",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormLink",
+                "label": "Annuler",
+                "slug": "adresse_logement_intro_cancel",
+                "link": "/",
+                "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -64,8 +82,7 @@
           "label": "Adresse du logement",
           "slug": "adresse_logement_adresse",
           "description": "Tapez l'adresse puis sélectionnez-la dans la liste",
-          "customCss": "question-xl",
-          "action": "show:complement_adresse"
+          "customCss": "question-xl"
         },
         {
           "type": "SignalementFormSubscreen",
@@ -281,12 +298,14 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "signalement_concerne_previous",
-          "action": "goto:adresse_logement"
+          "action": "goto:adresse_logement",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "signalement_concerne_next",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
           "action": "goto:vos_coordonnees_occupant",
           "conditional": {
             "show": "formStore.data.signalement_concerne_profil === 'logement_occupez'"
@@ -296,6 +315,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "signalement_concerne_next",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
           "action": "goto:vos_coordonnees_tiers",
           "conditional": {
             "show": "formStore.data.signalement_concerne_profil === 'autre_logement'"

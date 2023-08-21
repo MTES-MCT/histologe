@@ -40,13 +40,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "vos_coordonnees_tiers_previous",
-          "action": "goto:signalement_concerne"
+          "action": "goto:signalement_concerne",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "vos_coordonnees_tiers_next",
-          "action": "goto:coordonnees_occupant"
+          "action": "goto:coordonnees_occupant",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -96,13 +98,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "coordonnees_occupant_tel",
-          "action": "goto:coordonnees_tiers"
+          "action": "goto:coordonnees_tiers",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "coordonnees_occupant_next",
-          "action": "goto:coordonnees_bailleur"
+          "action": "goto:coordonnees_bailleur",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -157,13 +161,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "coordonnees_bailleur_previous",
-          "action": "goto:coordonnees_occupant"
+          "action": "goto:coordonnees_occupant",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "coordonnees_bailleur_next",
-          "action": "goto:zone_concernee"
+          "action": "goto:zone_concernee",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -201,13 +207,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "zone_concernee_zone_previous",
-          "action": "goto:coordonnees_bailleur"
+          "action": "goto:coordonnees_bailleur",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "zone_concernee_zone_next",
-          "action": "goto:ecran_intermediaire_type_composition"
+          "action": "goto:ecran_intermediaire_type_composition",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -226,13 +234,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "ecran_intermediaire_type_composition_previous",
-          "action": "goto:zone_concernee"
+          "action": "goto:zone_concernee",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "C'est parti",
           "slug": "ecran_intermediaire_type_composition_next",
-          "action": "goto:type_logement"
+          "action": "goto:type_logement",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -342,13 +352,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "type_logement_previous",
-          "action": "goto:ecran_intermediaire_type_composition"
+          "action": "goto:ecran_intermediaire_type_composition",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "type_logement_next",
-          "action": "goto:composition_logement"
+          "action": "goto:composition_logement",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -406,13 +418,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "composition_logement_previous",
-          "action": "goto:type_logement"
+          "action": "goto:type_logement",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "composition_logement_next",
-          "action": "goto:type_logement_pieces_a_vivre"
+          "action": "goto:type_logement_pieces_a_vivre",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -471,13 +485,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "type_logement_pieces_a_vivre_previous",
-          "action": "goto:type_logement"
+          "action": "goto:type_logement",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "type_logement_pieces_a_vivre_next",
-          "action": "goto:type_logement_commodites"
+          "action": "goto:type_logement_commodites",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -654,13 +670,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "type_logement_commodites_previous",
-          "action": "goto:type_logement_pieces_a_vivre"
+          "action": "goto:type_logement_pieces_a_vivre",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "type_logement_commodites_next",
-          "action": "goto:ecran_intermediaire_les_desordres"
+          "action": "goto:ecran_intermediaire_les_desordres",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -678,13 +696,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "ecran_intermediaire_les_desordres_previous",
-          "action": "goto:type_logement_commodites"
+          "action": "goto:type_logement_commodites",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "ecran_intermediaire_les_desordres_next",
-          "action": "goto:utilisation_service"
+          "action": "goto:utilisation_service",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -718,13 +738,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "utilisation_service_previous",
-          "action": "goto:ecran_intermediaire_les_desordres"
+          "action": "goto:ecran_intermediaire_les_desordres",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "utilisation_service_next",
-          "action": "goto:validation_signalement"
+          "action": "goto:validation_signalement",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -746,13 +768,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "validation_signalement_previous",
-          "action": "goto:utilisation_service"
+          "action": "goto:utilisation_service",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Valider mon signalement",
           "slug": "validation_signalement_next",
-          "action": "goto:confirmation_signalement"
+          "action": "goto:confirmation_signalement",
+          "customCss": "fr-btn--icon-left fr-icon-check-line"
         }
       ]
     }
