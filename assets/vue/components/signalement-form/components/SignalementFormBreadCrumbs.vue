@@ -5,9 +5,9 @@
       <!-- TODO : vérifier les instructions de mathilde sur ce bloc-->
       <div class="progress-indicator">
         <div
-          v-for="(step, index) in formStore.screenData"
+          v-for="(step, index) in desktopMenuItems"
           :key="index"
-          :class="['progress-indicator__step', { 'progress-indicator__step--completed': index <= formStore.currentScreenIndex }]"
+          :class="['progress-indicator__step', { 'progress-indicator__step--completed': index <= currentCategoryIndex }]"
           ></div>
       </div>
 
@@ -102,16 +102,19 @@ export default defineComponent({
   computed: {
     desktopMenuItems () {
       const menuItems:Array<MenuItem> = []
-      let currentIndex:number = 0
+      const currentCategoryIndex:number = this.currentCategoryIndex
       for (let i:number = 0; i < this.desktopMenuLabels.length; i++) {
-        if (this.desktopMenuLabels[i] === formStore.screenData[formStore.currentScreenIndex].screenCategory) {
-          currentIndex = i
-        }
-      }
-      for (let i:number = 0; i < this.desktopMenuLabels.length; i++) {
-        menuItems.push({ label: this.desktopMenuLabels[i], active: (i <= currentIndex), current: (this.desktopMenuLabels[i] === formStore.screenData[formStore.currentScreenIndex].screenCategory) })
+        menuItems.push({ label: this.desktopMenuLabels[i], active: (i <= currentCategoryIndex), current: (this.desktopMenuLabels[i] === formStore.screenData[formStore.currentScreenIndex].screenCategory) })
       }
       return menuItems
+    },
+    currentCategoryIndex ():number {
+      for (let i:number = 0; i < this.desktopMenuLabels.length; i++) {
+        if (this.desktopMenuLabels[i] === formStore.screenData[formStore.currentScreenIndex].screenCategory) {
+          return i
+        }
+      }
+      return 0
     }
   }
 })
