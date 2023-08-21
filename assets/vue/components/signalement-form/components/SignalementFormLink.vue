@@ -3,7 +3,7 @@
     <a
       :id="id"
       :class="[ customCss ]"
-      :href="link"
+      :href="linkVariablesReplaced"
       :target="linktarget"
       @click="handleClick"
       >
@@ -14,6 +14,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { services } from './../services'
 
 export default defineComponent({
   name: 'SignalementFormLink',
@@ -24,6 +25,14 @@ export default defineComponent({
     linktarget: { type: String, default: '' },
     customCss: { type: String, default: '' },
     clickEvent: Function
+  },
+  computed: {
+    linkVariablesReplaced (): string {
+      if (this.link !== undefined) {
+        return services.replaceVariables(this.link)
+      }
+      return ''
+    }
   },
   methods: {
     handleClick () {

@@ -9,7 +9,7 @@
           @input="updateValue($event)"
           aria-describedby="checkbox-error-messages"
           >
-      <label :class="[ customCss, 'fr-label' ]" :for="id">{{ label }}</label>
+      <label :class="[ customCss, 'fr-label' ]" :for="id">{{ labelVariablesReplaced }}</label>
       <div class="fr-messages-group" id="checkbox-error-messages" aria-live="assertive">
         <p
           id="checkbox-error-messages"
@@ -24,6 +24,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { services } from './../services'
 
 export default defineComponent({
   name: 'SignalementFormCheckbox',
@@ -45,6 +46,12 @@ export default defineComponent({
       set (newValue: string) {
         this.$emit('update:modelValue', newValue)
       }
+    },
+    labelVariablesReplaced (): string {
+      if (this.label !== undefined) {
+        return services.replaceVariables(this.label)
+      }
+      return ''
     }
   },
   methods: {

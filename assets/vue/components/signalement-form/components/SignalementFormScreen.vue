@@ -1,7 +1,7 @@
 <template>
   <div class="fr-container">
     <h1>{{ label }}</h1>
-    <div v-html="description"></div>
+    <div v-html="descriptionVariablesReplaced"></div>
     <div
       v-if="components != undefined"
       >
@@ -106,6 +106,14 @@ export default defineComponent({
   data () {
     return {
       formStore
+    }
+  },
+  computed: {
+    descriptionVariablesReplaced (): string {
+      if (this.description !== undefined) {
+        return services.replaceVariables(this.description)
+      }
+      return ''
     }
   },
   methods: {

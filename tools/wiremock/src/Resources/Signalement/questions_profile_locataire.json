@@ -371,7 +371,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Les pièces à vivre",
-    "description": "Vous avez indiqué qu'il y a {{number}} pièces à vivre (salon, chambre) dans votre logement",
+    "description": "Vous avez indiqué qu'il y a {{formStore.data.composition_logement_nb_pieces}} pièces à vivre (salon, chambre) dans votre logement",
     "slug": "type_logement_pieces_a_vivre",
     "conditional": {
       "show": "formStore.data.composition_logement_nombre_pieces === 'plusieurs_pieces'"
@@ -778,7 +778,7 @@
           "type": "SignalementFormOnlyChoice",
           "label": "Avez-vous fait une demande de logement social ou de relogement ?",
           "customCss": "question-xl",
-          "warning": "{{platformName}} ne permet pas de faire une demande de logement social ou de relogement.",
+          "warning": "{{formStore.props.platformName}} ne permet pas de faire une demande de logement social ou de relogement.",
           "slug": "logement_social_demande_relogement",
           "values": [
             {
@@ -1085,7 +1085,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "utilisation_service_ok_prevenir_bailleur",
-          "label": "Je comprends que {{platformName}} va prévenir le bailleur (propriétaire) de mon logement."
+          "label": "Je comprends que {{formStore.props.platformName}} va prévenir le bailleur (propriétaire) de mon logement."
         },
         {
           "type": "SignalementFormCheckbox",
@@ -1095,7 +1095,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "utilisation_service_ok_demande_logement",
-          "label": "Je comprends que {{platformName}} ne permet pas de faire une demande de logement social et relogement."
+          "label": "Je comprends que {{formStore.props.platformName}} ne permet pas de faire une demande de logement social et relogement."
         }
       ],
       "footer": [
@@ -1268,10 +1268,10 @@
       "footer": [
         {
           "type": "SignalementFormLink",
-          "label": "Retour à l'acceuil",
+          "label": "Retour à l'accueil",
           "slug": "validation_signalement_homepage",
           "customCss": "fr-btn",
-          "link": "{{platformUrl}}"
+          "link": "{{formStore.props.platformUrl}}"
         }
       ]
     }
