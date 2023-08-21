@@ -90,9 +90,7 @@
 } %}
 <body>
 {% if 'back_' not in app.request.get('_route') %}
-    {% if 'nouveau_formulaire' not in app.request.get('_route') %}
-        {% include "header.html.twig" %}
-    {% endif %}
+    {% include "header.html.twig" %}
     {% for label, messages in app.flashes %}
         {% for message in messages %}
             <div role="alert" class="fr-alert fr-alert--{{ label }} fr-alert--sm">
@@ -105,7 +103,7 @@
     {% endfor %}
 {% endif %}
 {% block body %}{% endblock %}
-{% if 'back_' not in app.request.get('_route') and  'nouveau_formulaire' not in app.request.get('_route') %}
+{% if 'back_' not in app.request.get('_route') %}
     {% include "footer.html.twig" %}
 {% endif %}
 

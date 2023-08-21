@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="fr-mt-3v signalement-form-button">
         <button
         :type="type"
         :id="id"
@@ -60,4 +60,7 @@ export default defineComponent({
 </script>
 
 <style>
+.signalement-form-button {
+  text-align: center;
+}
 </style>

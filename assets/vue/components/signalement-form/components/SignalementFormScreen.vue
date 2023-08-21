@@ -1,5 +1,5 @@
 <template>
-  <div class="fr-container">
+  <div class="fr-container form-screen-body">
     <h1>{{ label }}</h1>
     <div v-html="description"></div>
     <div
@@ -30,10 +30,11 @@
       />
     </div>
   </div>
-  <div class="fr-mt-5w"
+  <div
     v-if="components != undefined"
+    class="fr-container form-screen-footer"
     >
-    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
+    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-btns-group--center">
       <component
         v-for="component in components.footer"
         :is="component.type"
@@ -45,7 +46,7 @@
         :linktarget="component.linktarget"
         :customCss="component.customCss"
         v-model="formStore.data[component.slug]"
-        :class="[ 'fr-col-4', { 'fr-hidden': component.conditional && !formStore.shouldShowField(component.conditional.show) } ]"
+        :class="[ 'fr-col-12', { 'fr-hidden': component.conditional && !formStore.shouldShowField(component.conditional.show) } ]"
         :clickEvent="handleClickComponent"
       />
     </div>
@@ -180,4 +181,26 @@ export default defineComponent({
 </script>
 
 <style>
+  @media (max-width: 48em) {
+    .form-screen-body {
+      margin-bottom: 7.5rem !important;
+    }
+
+    .form-screen-footer {
+      position: fixed;
+      left: 0px;
+      bottom: 2.5rem;
+      background-color: var(--background-default-grey);
+
+      background-position: 0 0;
+      background-repeat: no-repeat;
+      background-size: 100% 1px;
+      background-image: linear-gradient(0deg, var(--border-default-grey), var(--border-default-grey));
+    }
+  }
+
+  .form-screen-footer button, .form-screen-footer a {
+    width: 100%;
+    justify-content: center;
+  }
 </style>
