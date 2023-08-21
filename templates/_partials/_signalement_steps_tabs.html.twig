@@ -364,7 +364,7 @@
                         <section class="fr-accordion fr-accordions-group fr-accordion__situation">
                             <h3 class="fr-accordion__title">
                                 <text role="button"
-                                      class="fr-accordion__btn fr-btn--icon-left fr-fi-question-fill"
+                                      class="fr-accordion__btn"
                                       aria-expanded="{% if situation in signalement.situations %}true{% else %}false{% endif %}"
                                       aria-controls="signalement-accordion-situation-{{ situation.id }}"
                                       id="signalement-accordion-situation-{{ situation.id }}-selector">Votre
@@ -375,7 +375,7 @@
                             <div class="fr-collapse" id="signalement-accordion-situation-{{ situation.id }}">
                                 <ul class="fr-toggle__list">
                                     {% for critere in situation.criteres %}
-                                        <div class="{# fr-checkbox-group #}fr-pb-0 fr-mb-3v"
+                                        <div class="fr-pb-0 fr-mb-3v"
                                              aria-expanded="{% if critere in signalement.criteres %}true{% else %}false{% endif %}"
                                              aria-controls="signalement-accordion-situation-{{ situation.id }}-critere-{{ critere.id }}"
                                              id="signalement-accordion-situation-{{ situation.id }}-critere-{{ critere.id }}-selector">
@@ -515,7 +515,7 @@
                 </fieldset>
             </div>
             <div class="fr-form-group">
-                <fieldset class="fr-fieldset">
+                <fieldset class="fr-fieldset fr-fieldset-fullwidth">
                     <legend class="fr-fieldset__legend fr-text--regular">
                         Qui habite ce logement ?<sup class="fr-text-default--error">*</sup>
                         <span class="fr-hint-text">Indiquer la composition du logement en précisant le nombre d'enfants.</span>
@@ -532,7 +532,7 @@
                 </fieldset>
             </div>
             <div class="fr-form-group">
-                <fieldset class="fr-fieldset">
+                <fieldset class="fr-fieldset fr-fieldset-fullwidth">
                     <legend class="fr-fieldset__legend fr-text--regular">
                         {{ form_label(form.natureLogement) }}
                     </legend>
@@ -545,7 +545,7 @@
                 </fieldset>
             </div>
             <div class="fr-form-group">
-                <fieldset class="fr-fieldset">
+                <fieldset class="fr-fieldset fr-fieldset-fullwidth">
                     <legend class="fr-fieldset__legend fr-text--regular">
                         {{ form_label(form.superficie) }}
                     </legend>
@@ -808,7 +808,7 @@
         </div>
         <form action="{{ path('envoi_signalement') }}" name="signalement" class="needs-validation" novalidate>
             <div class="fr-form-group fr-mb-0 fr-hidden" id="signalement-consentement-tiers-bloc">
-                <div class="fr-toggle">
+                <div class="fr-toggle fr-toggle--border-bottom">
                     <input type="checkbox" class="fr-toggle__input" id="signalement-consentement-tiers"
                            name="signalement[isConsentementTiers]" required>
                     <label class="fr-toggle__label" for="signalement-consentement-tiers">
@@ -840,11 +840,13 @@
                     <input type="checkbox" class="fr-toggle__input" id="signalement-accept-cgu"
                            name="signalement[isCguAccepted]" required>
                     <label class="fr-toggle__label" for="signalement-accept-cgu">
-                        J'ai pris connaissance et j'accepte sans réserve que mes déclarations
-                        soient partagées entre l’ensemble des partenaires
-                        pour le traitement de ma demande conformément aux finalités indiquées dans les 
-                        <a href="#" aria-controls="cguModal" data-fr-opened="false">Conditions Générales d'Utilisation</a>
-                        &nbsp;de la plateforme « {{ platform.name }} ».
+                        <span>
+                            J'ai pris connaissance et j'accepte sans réserve que mes déclarations
+                            soient partagées entre l’ensemble des partenaires
+                            pour le traitement de ma demande conformément aux finalités indiquées dans les 
+                            <a href="#" aria-controls="cguModal" data-fr-opened="false">Conditions Générales d'Utilisation</a>
+                            &nbsp;de la plateforme « {{ platform.name }} ».
+                        </span>
                     </label>
                     <p class="fr-error-text fr-hidden">
                         Vous devez accepter les Conditions Générales d'Utilisation pour transmettre votre signalement.
@@ -858,7 +860,7 @@
             </div>
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-text--center">
-                    <button class="fr-btn fr-fi-checkbox-circle-fill fr-btn--icon-right" type="submit"
+                    <button class="fr-btn fr-icon-checkbox-circle-fill fr-btn--icon-right" type="submit"
                             id="form_finish_submit">Confirmer
                     </button>
                 </div>

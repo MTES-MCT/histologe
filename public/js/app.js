@@ -1,17 +1,15 @@
 let invalid, tables = document.querySelectorAll("table.sortable"),
     table,
     thead,
-    headers,
-    i,
-    j;
-for (i = 0; i < tables.length; i++) {
-    table = tables[i];
+    headers;
+for (let iTables = 0; iTables < tables.length; iTables++) {
+    table = tables[iTables];
 
     if (thead = table.querySelector("thead")) {
         headers = thead.querySelectorAll("th");
 
-        for (j = 0; j < headers.length; j++) {
-            headers[j].innerHTML = "<a href='#'>" + headers[j].innerText + "</a>";
+        for (let jHeaders = 0; jHeaders < headers.length; jHeaders++) {
+            headers[jHeaders].innerHTML = "<a href='#'>" + headers[jHeaders].innerText + "</a>";
         }
 
         thead.addEventListener("click", sortTableFunction(table));
@@ -381,10 +379,10 @@ forms.forEach((form) => {
                         resTextEl.classList.remove('fr-hidden')
                     } else {
                         preview.src = URL.createObjectURL(file);
-                        ['fr-fi-instagram-line', 'fr-py-7v', 'fr-fi-refresh-line', 'fr-disabled'].map(v => event.target.parentElement.classList.toggle(v));
+                        ['fr-icon-camera-fill', 'fr-py-7v', 'fr-icon-refresh-line', 'fr-disabled'].map(v => event.target.parentElement.classList.toggle(v));
                         fileIsOk = true;
                     }
-                } else if (event.target.parentElement.classList.contains('fr-fi-attachment-fill')) {
+                } else if (event.target.parentElement.classList.contains('fr-icon-attachment-fill')) {
                     if (event.target.files[0].type === 'image/heic' || event.target.files[0].type === 'image/heif') {
                         event.target.value = "";
                         resTextEl.innerHTML = "Les fichiers de format HEIC/HEIF ne sont pas pris en charge, merci de convertir votre image en JPEG ou en PNG avant de l'envoyer.";
@@ -396,7 +394,7 @@ forms.forEach((form) => {
                     } else {
                         resTextEl.classList.add('fr-hidden')
                         fileIsOk = true;
-                        ['fr-fi-attachment-fill', 'fr-fi-refresh-line', 'fr-disabled'].map(v => event.target.parentElement.classList.toggle(v));
+                        ['fr-icon-attachment-fill', 'fr-icon-refresh-line', 'fr-disabled'].map(v => event.target.parentElement.classList.toggle(v));
                     }
                 }
                 if (fileIsOk) {
@@ -405,11 +403,11 @@ forms.forEach((form) => {
                         e.preventDefault();
                         if (preview) {
                             preview.src = '#';
-                            event.target.parentElement.classList.add('fr-fi-instagram-line')
-                        } else if (event.target.parentElement.classList.contains('fr-fi-checkbox-circle-fill')) {
-                            ['fr-fi-attachment-fill', 'fr-fi-checkbox-circle-fill'].map(v => event.target.parentElement.classList.toggle(v));
+                            event.target.parentElement.classList.add('fr-icon-camera-fill')
+                        } else if (event.target.parentElement.classList.contains('fr-icon-checkbox-circle-fill')) {
+                            ['fr-icon-attachment-fill', 'fr-icon-checkbox-circle-fill'].map(v => event.target.parentElement.classList.toggle(v));
                         } else {
-                            event.target.parentElement.classList.add('fr-fi-attachment-fill');
+                            event.target.parentElement.classList.add('fr-icon-attachment-fill');
                         }
                         event.target.value = '';
                         fileData.delete(event.target.name);
@@ -440,7 +438,7 @@ forms.forEach((form) => {
                     request.addEventListener('load', function (e) {
                         console.log('load');
                         console.log(e);
-                        event.target.parentElement.classList.remove('fr-fi-refresh-line');
+                        event.target.parentElement.classList.remove('fr-icon-refresh-line');
                         [preview, deleter].forEach(el => el?.classList?.remove('fr-hidden'));
                         progress.value = 0;
                         let jsonRes = JSON.parse(request.response)
@@ -455,7 +453,7 @@ forms.forEach((form) => {
                             resTextEl.classList.remove('fr-hidden');
                             resTextEl.classList.add('fr-text-label--green-emeraude');
                             if (!preview)
-                                ['fr-fi-checkbox-circle-fill'].map(v => event.target.parentElement.classList.toggle(v));
+                                ['fr-icon-checkbox-circle-fill'].map(v => event.target.parentElement.classList.toggle(v));
                             uploadedFiles[event.target.id] = request.response;
                         }
                         progress.classList.add('fr-hidden');
@@ -572,7 +570,7 @@ forms.forEach((form) => {
                         if(r.success)
                         {
                             nextTabBtn.disabled = false;
-                            nextTabBtn.click();
+                            setTimeout(() => {nextTabBtn.click()}, 50)
                         } else {
                            dsfr(document.querySelector('#fr-modal-closed-territory')).modal.disclose();
                         }
@@ -643,7 +641,7 @@ forms.forEach((form) => {
                             forms.forEach((form) => {
                                 form.querySelectorAll('[type="file"]').forEach(file => {
                                     if (file.classList.contains("doc-file")) {
-                                        if (file.parentElement.classList.contains('fr-fi-checkbox-circle-fill')) {
+                                        if (file.parentElement.classList.contains('fr-icon-checkbox-circle-fill')) {
                                             nbDocs ++;
                                         }
                                     }
@@ -677,10 +675,10 @@ forms.forEach((form) => {
                             updateResultNDE();
                         }
                         nextTabBtn.disabled = false;
-                        nextTabBtn.click();
+                        setTimeout(() => {nextTabBtn.click()}, 50)
                     } else if (!nextTabBtn) {
                         event.target.querySelector('[type="submit"]').disabled = true;
-                        ['fr-fi-checkbox-circle-fill', 'fr-fi-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
+                        ['fr-icon-checkbox-circle-fill', 'fr-icon-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
                         event.target.querySelector('[type="submit"]').innerHTML = "En cours d'envoi..."
                         let formData = new FormData();
                         forms.forEach((form) => {
@@ -718,7 +716,7 @@ forms.forEach((form) => {
                                     } else {
                                         event.target.querySelector('[type="submit"]').disabled = false;
                                         event.target.querySelector('[type="submit"]').innerHTML = "Confirmer";
-                                        ['fr-fi-checkbox-circle-fill', 'fr-fi-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
+                                        ['fr-icon-checkbox-circle-fill', 'fr-icon-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
                                         alert('Erreur lors de l\'enregistrement du signalement !')
 
                                     }
@@ -729,7 +727,7 @@ forms.forEach((form) => {
                                 })
                                 event.target.querySelector('[type="submit"]').disabled = false;
                                 event.target.querySelector('[type="submit"]').innerHTML = "Confirmer";
-                                ['fr-fi-checkbox-circle-fill', 'fr-fi-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
+                                ['fr-icon-checkbox-circle-fill', 'fr-icon-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
                                 alert('Suite à un incident technique, votre signalement n\'a pas pu être enregistré. Nous vous invitons à réessayer dans une heure.')
                             }
                         })

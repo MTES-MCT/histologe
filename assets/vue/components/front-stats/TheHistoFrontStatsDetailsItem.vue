@@ -19,6 +19,9 @@ export default defineComponent({
 </script>
 
 <style>
+  .histo-front-stats-details-item:first-child {
+    margin-top: 10px;
+  }
   .histo-front-stats-details-item div {
     text-align: center;
     font-weight: bold;
