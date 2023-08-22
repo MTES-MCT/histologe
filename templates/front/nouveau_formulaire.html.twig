@@ -18,6 +18,7 @@
          {% if uuid_signalement is not null %}
            data-ajaxurl-get-signalement-draft="{{ path('informations_signalement_draft', {uuid: uuid_signalement}) }}"
          {% endif %}
+         data-platform-name="{{ platform.name }}"
         ></div>
   </div>
 {% endblock %}

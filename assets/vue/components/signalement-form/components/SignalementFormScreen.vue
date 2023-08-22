@@ -1,7 +1,7 @@
 <template>
   <div class="fr-container form-screen-body">
     <h1>{{ label }}</h1>
-    <div v-html="description"></div>
+    <div v-html="descriptionVariablesReplaced"></div>
     <div
       v-if="components != undefined"
       >
@@ -74,7 +74,8 @@ import SignalementFormUpload from './SignalementFormUpload.vue'
 import SignalementFormEmailfield from './SignalementFormEmailfield.vue'
 import SignalementFormOverview from './SignalementFormOverview.vue'
 import SignalementFormConfirmation from './SignalementFormConfirmation.vue'
-import { services } from './../services'
+import { variablesReplacer } from './../services/variableReplacer'
+import { navManager } from './../services/navManager'
 
 export default defineComponent({
   name: 'SignalementFormScreen',
@@ -109,6 +110,14 @@ export default defineComponent({
       formStore
     }
   },
+  computed: {
+    descriptionVariablesReplaced (): string {
+      if (this.description !== undefined) {
+        return variablesReplacer.replace(this.description)
+      }
+      return ''
+    }
+  },
   methods: {
     isRequired (field: any): boolean {
       const component = document.querySelector('#' + field.slug)
@@ -136,7 +145,7 @@ export default defineComponent({
     },
     showScreenBySlug (slug: string, slugButton:string) {
       formStore.validationErrors = {}
-      const isScreenAfterCurrent = services.isScreenAfterCurrent(slug)
+      const isScreenAfterCurrent = navManager.isScreenAfterCurrent(slug)
 
       const traverseComponents = (components: any) => {
         for (const field of components) {

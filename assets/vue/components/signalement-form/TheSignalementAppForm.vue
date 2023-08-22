@@ -8,6 +8,7 @@
       :data-ajaxurl-put-signalement-draft="sharedProps.ajaxurlPutSignalementDraft"
       :data-ajaxurl-handle-upload="sharedProps.ajaxurlHandleUpload"
       :data-ajaxurl-get-signalement-draft="sharedProps.ajaxurlGetSignalementDraft"
+      :data-ajaxurl-platform-name="sharedProps.platformName"
       >
       <div v-if="isLoadingInit" class="loading fr-m-10w">
         Initialisation du formulaire...
@@ -49,11 +50,10 @@
 </template>
 
 <script lang="ts">
-// import screenData from './exemple_socle.json'
 import { defineComponent } from 'vue'
 import formStore from './store'
 import { requests } from './requests'
-import { services } from './services'
+import { profileUpdater } from './services/profileUpdater'
 import { DesktopIllustration } from './interfaces/interfaceDesktopIllustration'
 import SignalementFormScreen from './components/SignalementFormScreen.vue'
 import SignalementFormBreadCrumbs from './components/SignalementFormBreadCrumbs.vue'
@@ -83,6 +83,7 @@ export default defineComponent({
   },
   created () {
     if (initElements !== null) {
+      this.sharedProps.platformName = initElements.dataset.platformName
       this.sharedProps.ajaxurl = initElements.dataset.ajaxurl
       this.sharedProps.ajaxurlQuestions = initElements.dataset.ajaxurlQuestions
       this.sharedProps.ajaxurlPostSignalementDraft = initElements.dataset.ajaxurlPostSignalementDraft
@@ -145,7 +146,7 @@ export default defineComponent({
         } else {
           if (this.slugCoordonnees.includes(this.nextSlug)) { // TODO à mettre à jour suivant le slug des différents profils
             // on détermine le profil
-            services.updateProfil()
+            profileUpdater.update()
             // on fait un appel API pour charger la suite des questions avant de changer d'écran
             requests.initQuestionsProfil(this.handleInitQuestions)
           } else {
