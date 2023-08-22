@@ -9,7 +9,6 @@
       :data-ajaxurl-handle-upload="sharedProps.ajaxurlHandleUpload"
       :data-ajaxurl-get-signalement-draft="sharedProps.ajaxurlGetSignalementDraft"
       :data-ajaxurl-platform-name="sharedProps.platformName"
-      :data-ajaxurl-platform-url="sharedProps.platformUrl"
       >
       <div v-if="isLoadingInit" class="loading fr-m-10w">
         Initialisation du formulaire...
@@ -54,7 +53,7 @@
 import { defineComponent } from 'vue'
 import formStore from './store'
 import { requests } from './requests'
-import { services } from './services'
+import { services } from './services/services'
 import { DesktopIllustration } from './interfaces/interfaceDesktopIllustration'
 import SignalementFormScreen from './components/SignalementFormScreen.vue'
 import SignalementFormBreadCrumbs from './components/SignalementFormBreadCrumbs.vue'
@@ -85,7 +84,6 @@ export default defineComponent({
   created () {
     if (initElements !== null) {
       this.sharedProps.platformName = initElements.dataset.platformName
-      this.sharedProps.platformUrl = initElements.dataset.platformUrl
       this.sharedProps.ajaxurl = initElements.dataset.ajaxurl
       this.sharedProps.ajaxurlQuestions = initElements.dataset.ajaxurlQuestions
       this.sharedProps.ajaxurlPostSignalementDraft = initElements.dataset.ajaxurlPostSignalementDraft

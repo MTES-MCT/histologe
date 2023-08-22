@@ -55,7 +55,7 @@
 import { defineComponent, watch } from 'vue'
 import formStore from './../store'
 import { requests } from './../requests'
-import { services } from './../services'
+import { subscreenServices } from './../services/subscreenData'
 import subscreenData from './../address_subscreen.json'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
@@ -80,9 +80,9 @@ export default defineComponent({
     clickEvent: Function
   },
   data () {
-    const updatedSubscreenData = services.generateSubscreenData(this.id, subscreenData.body)
+    const updatedSubscreenData = subscreenServices.generateSubscreenData(this.id, subscreenData.body)
     // on met à jour formStore en ajoutant les sous-composants du composant Address
-    services.addSubscreenData(this.id, updatedSubscreenData)
+    subscreenServices.addSubscreenData(this.id, updatedSubscreenData)
     return {
       idFetchTimeout: 0 as unknown as ReturnType<typeof setTimeout>,
       idAddress: this.id + '_suggestion',

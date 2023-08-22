@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { services } from './../services'
+import { variablesServices } from './../services/variableReplacer'
 
 export default defineComponent({
   name: 'SignalementFormCheckbox',
@@ -49,7 +49,7 @@ export default defineComponent({
     },
     labelVariablesReplaced (): string {
       if (this.label !== undefined) {
-        return services.replaceVariables(this.label)
+        return variablesServices.replaceVariables(this.label)
       }
       return ''
     }

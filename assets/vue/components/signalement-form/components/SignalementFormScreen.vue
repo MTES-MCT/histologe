@@ -74,7 +74,8 @@ import SignalementFormUpload from './SignalementFormUpload.vue'
 import SignalementFormEmailfield from './SignalementFormEmailfield.vue'
 import SignalementFormOverview from './SignalementFormOverview.vue'
 import SignalementFormConfirmation from './SignalementFormConfirmation.vue'
-import { services } from './../services'
+import { variablesServices } from './../services/variableReplacer'
+import { services } from './../services/services'
 
 export default defineComponent({
   name: 'SignalementFormScreen',
@@ -112,7 +113,7 @@ export default defineComponent({
   computed: {
     descriptionVariablesReplaced (): string {
       if (this.description !== undefined) {
-        return services.replaceVariables(this.description)
+        return variablesServices.replaceVariables(this.description)
       }
       return ''
     }

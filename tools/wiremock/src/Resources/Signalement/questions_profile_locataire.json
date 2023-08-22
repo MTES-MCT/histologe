@@ -809,7 +809,6 @@
           "type": "SignalementFormOnlyChoice",
           "label": "Avez-vous fait une demande de logement social ou de relogement ?",
           "customCss": "question-xl",
-          "warning": "{{formStore.props.platformName}} ne permet pas de faire une demande de logement social ou de relogement.",
           "slug": "logement_social_demande_relogement",
           "values": [
             {
@@ -821,6 +820,11 @@
               "value": "non"
             }
           ]
+        },
+        {
+          "type": "SignalementFormWarning",
+          "label": "{{formStore.props.platformName}} ne permet pas de faire une demande de logement social ou de relogement.",
+          "slug": "logement_social_demande_relogement_warning"
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -1051,7 +1055,6 @@
           "label": "Avez-vous contacté votre assurance logement ?",
           "slug": "info_procedure_assurance_contactee",
           "customCss": "question-xl",
-          "warning": "D'après la loi, vous devez avoir une assurance habitation pour votre logement. Pour plus d'info, rendez-vous sur le site du service public.",
           "values": [
             {
               "label": "Oui",
@@ -1066,6 +1069,14 @@
               "value": "pas_assurance_logement"
             }
           ]
+        },
+        {
+          "type": "SignalementFormWarning",
+          "label": "D'après la loi, vous devez avoir une assurance habitation pour votre logement. Pour plus d'info, rendez-vous sur le site du service public.",
+          "slug": "info_procedure_assurance_contactee_warning",
+          "conditional": {
+            "show": "formStore.data.info_procedure_assurance_contactee ===  'pas_assurance_logement'"
+          }
         },
         {
           "type": "SignalementFormTextfield",
@@ -1325,7 +1336,7 @@
           "label": "Retour à l'accueil",
           "slug": "validation_signalement_homepage",
           "customCss": "fr-btn",
-          "link": "{{formStore.props.platformUrl}}"
+          "link": "/"
         }
       ]
     }

@@ -65,7 +65,6 @@ const formStore: FormStore = reactive({
     ajaxurlHandleUpload: '',
     ajaxurlGetSignalementDraft: '',
     platformName: '',
-    platformUrl: '',
     urlApiAdress: 'https://api-adresse.data.gouv.fr/search/?q='
   },
   screenData: [],

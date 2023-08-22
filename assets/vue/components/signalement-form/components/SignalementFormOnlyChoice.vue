@@ -29,7 +29,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-// import { services } from './../services'
 
 export default defineComponent({
   name: 'SignalementFormOnlyChoice',
@@ -43,14 +42,6 @@ export default defineComponent({
     hasError: { type: Boolean, default: false },
     error: { type: String, default: '' }
   },
-  // computed: {
-  //   warningVariablesReplaced (): string {
-  //     if (this.warning !== undefined) {
-  //       return services.replaceVariables(this.warning)
-  //     }
-  //     return ''
-  //   }
-  // },
   methods: {
     updateValue (event: Event) {
       const value = (event.target as HTMLInputElement).getAttribute('value')

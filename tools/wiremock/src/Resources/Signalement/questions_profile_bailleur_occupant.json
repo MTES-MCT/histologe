@@ -694,7 +694,6 @@
           "type": "SignalementFormOnlyChoice",
           "label": "Avez-vous fait une demande de logement social ou de relogement ?",
           "customCss": "question-xl",
-          "warning": "{{formStore.props.platformName}} ne permet pas de faire une demande de logement social ou de relogement.",
           "slug": "logement_social_demande_relogement",
           "values": [
             {
@@ -706,6 +705,11 @@
               "value": "non"
             }
           ]
+        },
+        {
+          "type": "SignalementFormWarning",
+          "label": "{{formStore.props.platformName}} ne permet pas de faire une demande de logement social ou de relogement.",
+          "slug": "logement_social_demande_relogement_warning"
         },
         {
           "type": "SignalementFormOnlyChoice",

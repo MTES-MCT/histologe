@@ -1034,7 +1034,7 @@
           "label": "Retour à l'accueil",
           "slug": "validation_signalement_homepage",
           "customCss": "fr-btn",
-          "link": "{{formStore.props.platformUrl}}"
+          "link": "/"
         }
       ]
     }
