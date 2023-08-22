@@ -1,7 +1,7 @@
 <template>
   <div :class="[ customCss ]">
-    <h2>{{ label }}</h2>
-    <p v-html="description"></p>
+    <h2 v-if="label">{{ label }}</h2>
+    <p v-if="description" v-html="description"></p>
     <div
       v-if="components != undefined"
       >

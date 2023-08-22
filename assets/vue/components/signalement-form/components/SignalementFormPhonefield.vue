@@ -4,7 +4,7 @@
       :key="id"
       :id="id"
       :label="label"
-      customCss="fr-fi-telegram-line"
+      customCss="fr-icon-phone-line"
       :validate="validate"
       v-model="formStore.data[id]"
       :hasError="formStore.validationErrors[id]  !== undefined"

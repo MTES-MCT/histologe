@@ -34,7 +34,7 @@
     v-if="components != undefined"
     class="fr-container form-screen-footer"
     >
-    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-btns-group--center">
+    <div>
       <component
         v-for="component in components.footer"
         :is="component.type"
@@ -46,7 +46,7 @@
         :linktarget="component.linktarget"
         :customCss="component.customCss"
         v-model="formStore.data[component.slug]"
-        :class="[ 'fr-col-12', { 'fr-hidden': component.conditional && !formStore.shouldShowField(component.conditional.show) } ]"
+        :class="[ { 'fr-hidden': component.conditional && !formStore.shouldShowField(component.conditional.show) } ]"
         :clickEvent="handleClickComponent"
       />
     </div>
@@ -190,17 +190,25 @@ export default defineComponent({
       position: fixed;
       left: 0px;
       bottom: 2.5rem;
-      background-color: var(--background-default-grey);
 
       background-position: 0 0;
       background-repeat: no-repeat;
       background-size: 100% 1px;
       background-image: linear-gradient(0deg, var(--border-default-grey), var(--border-default-grey));
+      background-color: var(--background-default-grey);
     }
   }
 
+  .form-screen-footer > div {
+    display: flex;
+    justify-content: right;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
   .form-screen-footer button, .form-screen-footer a {
-    width: 100%;
-    justify-content: center;
+    display: inline-flex;
+    margin-left: 0.25rem;
   }
 </style>
