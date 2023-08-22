@@ -24,7 +24,7 @@
                 <a class="fr-breadcrumb__link" href="/nouveau-formulaire/signalement/">Signalement</a>
               </li>
               <li>
-                <a class="fr-breadcrumb__link" aria-current="page">{{ formStore.screenData[formStore.currentScreenIndex].label }}</a>
+                <a class="fr-breadcrumb__link" aria-current="page">{{ formStore.screenData[formStore.currentScreenIndex].screenCategory }}</a>
               </li>
             </ol>
           </div>
@@ -74,12 +74,7 @@
 import { defineComponent } from 'vue'
 import formStore from './../store'
 import SignalementFormModalBackHome from './SignalementFormModalBackHome.vue'
-
-interface MenuItem {
-  label: string,
-  active: boolean,
-  current: boolean
-}
+import { MenuItem } from '../interfaces/interfaceMenuItem'
 
 export default defineComponent({
   name: 'SignalementFormBreadCrumbs',
