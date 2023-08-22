@@ -1,11 +1,12 @@
 import formStore from '../store'
 
 export const subscreenServices = {
-  generateSubscreenData (id: string, data: any[]) {
+  generateSubscreenData (id: string, data: any[], validateParent: any) {
     return data.map((component) => {
       return {
         ...component,
-        slug: id + '_' + (component.slug as string)
+        slug: id + '_' + (component.slug as string),
+        validate: validateParent
       }
     })
   },

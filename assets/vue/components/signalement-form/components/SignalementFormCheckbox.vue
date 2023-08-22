@@ -1,8 +1,7 @@
 <template>
-    <div :class="['fr-checkbox-group', { 'fr-checkbox-group--error': hasError }]">
+    <div :class="['fr-checkbox-group', { 'fr-checkbox-group--error': hasError }]" :id="id">
       <input
           type="checkbox"
-          :id="id"
           :name="id"
           :value="internalValue"
           :class="[ customCss ]"
