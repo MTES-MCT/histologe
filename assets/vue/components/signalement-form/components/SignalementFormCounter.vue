@@ -1,12 +1,11 @@
 <template>
     <!-- Champ type number -->
-    <div class="fr-input-group">
+    <div class="fr-input-group" :id="id">
     <label :class="[ customCss, 'fr-label' ]" :for="id">{{ label }}</label>
     <input
         type="number"
         pattern="[0-9]*"
         inputmode="numeric"
-        :id="id"
         :name="id"
         :value="internalValue"
         :class="[ customCss, 'fr-input' ]"

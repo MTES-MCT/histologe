@@ -1,5 +1,5 @@
 <template>
-  <div class="signalement-form-address">
+  <div class="signalement-form-address" :id="id">
     <SignalementFormTextfield
       :key="idAddress"
       :id="idAddress"
@@ -9,8 +9,8 @@
       :customCss="customCss"
       :validate="validate"
       v-model="formStore.data[idAddress]"
-      :hasError="formStore.validationErrors[idAddress] !== undefined"
-      :error="formStore.validationErrors[idAddress]"
+      :hasError="hasErrorOnSubscreen"
+      :error="errorOnSubscreen"
     />
     <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group">
       <div
@@ -80,7 +80,7 @@ export default defineComponent({
     clickEvent: Function
   },
   data () {
-    const updatedSubscreenData = services.generateSubscreenData(this.id, subscreenData.body)
+    const updatedSubscreenData = services.generateSubscreenData(this.id, subscreenData.body, this.validate)
     // on met à jour formStore en ajoutant les sous-composants du composant Address
     services.addSubscreenData(this.id, updatedSubscreenData)
     return {
@@ -92,6 +92,26 @@ export default defineComponent({
       screens: { body: updatedSubscreenData },
       suggestions: [] as any[],
       formStore
+    }
+  },
+  computed: {
+    hasErrorOnSubscreen (): boolean {
+      if (formStore.validationErrors[this.id + '_detail_numero'] !== undefined ||
+      formStore.validationErrors[this.id + '_detail_code_postal'] !== undefined ||
+      formStore.validationErrors[this.id + '_detail_commune'] !== undefined) {
+        return true
+      } else {
+        return false
+      }
+      // TODO, n'afficher l'erreur que si le subscreen est caché ?
+    },
+    errorOnSubscreen (): string {
+      const values = [
+        formStore.validationErrors[this.id + '_detail_numero'],
+        formStore.validationErrors[this.id + '_detail_code_postal'],
+        formStore.validationErrors[this.id + '_detail_commune']
+      ]
+      return values.find(value => value !== undefined)
     }
   },
   created () {
