@@ -173,10 +173,14 @@ export default defineComponent({
 
 <style>
 .fr-address-suggestion:hover {
-    background-color: #417dc4;
-    color: white !important;
+  background-color: #417dc4;
+  color: white !important;
 }
 .fr-address-group {
   margin-top: -1.5rem;
+}
+.signalement-form-address .signalement-form-button {
+  width: 100%;
+  text-align: center;
 }
 </style>

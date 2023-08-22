@@ -1,12 +1,12 @@
 <template>
-    <div class="fr-mt-3v signalement-form-button" :id="id">
-        <button
+    <div class="signalement-form-button" :id="id">
+      <button
         :type="type"
         :class="[ 'fr-btn', customCss ]"
         @click="handleClick"
         >
-            {{ label}}
-        </button>
+        {{ label}}
+      </button>
     </div>
 </template>
 
@@ -59,7 +59,4 @@ export default defineComponent({
 </script>
 
 <style>
-.signalement-form-button {
-  text-align: center;
-}
 </style>
