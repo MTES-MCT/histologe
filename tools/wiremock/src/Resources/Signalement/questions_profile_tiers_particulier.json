@@ -3,6 +3,7 @@
     "type": "SignalementFormScreen",
     "label": "Vos coordonnées",
     "slug": "vos_coordonnees_tiers",
+    "screenCategory": "Adresse et coordonnées",
     "components": {
       "body": [
         {
@@ -53,13 +54,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "vos_coordonnees_tiers_previous",
-          "action": "goto:signalement_concerne"
+          "action": "goto:signalement_concerne",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "vos_coordonnees_tiers_next",
-          "action": "goto:coordonnees_occupant"
+          "action": "goto:coordonnees_occupant",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -68,6 +71,7 @@
     "type": "SignalementFormScreen",
     "label": "Les coordonnées des personnes occupant le logement",
     "slug": "coordonnees_occupant",
+    "screenCategory": "Adresse et coordonnées",
     "components": {
       "body": [
         {
@@ -108,13 +112,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "coordonnees_occupant_tel",
-          "action": "goto:coordonnees_tiers"
+          "action": "goto:coordonnees_tiers",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "coordonnees_occupant_next",
-          "action": "goto:coordonnees_bailleur"
+          "action": "goto:coordonnees_bailleur",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -123,6 +129,7 @@
     "type": "SignalementFormScreen",
     "label": "Les coordonnées du bailleur (propriétaire)",
     "slug": "coordonnees_bailleur",
+    "screenCategory": "Adresse et coordonnées",
     "components": {
       "body": [
         {
@@ -168,13 +175,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "coordonnees_bailleur_previous",
-          "action": "goto:vos_coordonnees_occupant"
+          "action": "goto:vos_coordonnees_occupant",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "coordonnees_bailleur_next",
-          "action": "goto:zone_concernee"
+          "action": "goto:zone_concernee",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -183,6 +192,7 @@
     "type": "SignalementFormScreen",
     "label": "Vous souhaitez signaler des problèmes sur",
     "slug": "zone_concernee",
+    "screenCategory": "Adresse et coordonnées",
     "components": {
       "body": [
         {
@@ -211,13 +221,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "zone_concernee_zone_previous",
-          "action": "goto:coordonnees_bailleur"
+          "action": "goto:coordonnees_bailleur",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "zone_concernee_zone_next",
-          "action": "goto:ecran_intermediaire_type_composition"
+          "action": "goto:ecran_intermediaire_type_composition",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -227,6 +239,7 @@
     "label": "Type et composition du logement",
     "description": "<p>Nous allons vous poser des questions sur la composition du logement.<p><p>Les documents utiles sont:</p><ul><li>Le bail</li><li>L'état des lieux d'entrée</li><li>Le diagnostic performance énergie (DPE)</li></ul><p>Toutes les questions sont obligatoires, sauf mention contraire.<p>",
     "slug": "ecran_intermediaire_type_composition",
+    "screenCategory": "Type et composition",
     "components": {
       "body": [
       ],
@@ -235,13 +248,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "ecran_intermediaire_type_composition_previous",
-          "action": "goto:zone_concernee"
+          "action": "goto:zone_concernee",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "C'est parti",
           "slug": "ecran_intermediaire_type_composition_next",
-          "action": "goto:type_logement"
+          "action": "goto:type_logement",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -250,6 +265,7 @@
     "type": "SignalementFormScreen",
     "label": "",
     "slug": "type_logement",
+    "screenCategory": "Type et composition",
     "components": {
       "body": [
         {
@@ -350,13 +366,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "type_logement_previous",
-          "action": "goto:ecran_intermediaire_type_composition"
+          "action": "goto:ecran_intermediaire_type_composition",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "type_logement_next",
-          "action": "goto:composition_logement"
+          "action": "goto:composition_logement",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -365,6 +383,7 @@
     "type": "SignalementFormScreen",
     "label": "",
     "slug": "composition_logement",
+    "screenCategory": "Type et composition",
     "components": {
       "body": [
         {
@@ -429,13 +448,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "composition_logement_previous",
-          "action": "goto:type_logement"
+          "action": "goto:type_logement",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "composition_logement_next",
-          "action": "goto:type_logement_pieces_a_vivre"
+          "action": "goto:type_logement_pieces_a_vivre",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -445,6 +466,7 @@
     "label": "Les pièces à vivre",
     "description": "Vous avez indiqué qu'il y a {{formStore.data.composition_logement_nb_pieces}} pièces à vivre (salon, chambre) dans votre logement",
     "slug": "type_logement_pieces_a_vivre",
+    "screenCategory": "Type et composition",
     "conditional": {
       "show": "formStore.data.composition_logement_nombre_pieces === 'plusieurs_pieces'"
     },
@@ -493,13 +515,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "type_logement_pieces_a_vivre_previous",
-          "action": "goto:type_logement"
+          "action": "goto:type_logement",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "type_logement_pieces_a_vivre_next",
-          "action": "goto:type_logement_commodites"
+          "action": "goto:type_logement_commodites",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -508,6 +532,7 @@
     "type": "SignalementFormScreen",
     "label": "",
     "slug": "type_logement_commodites",
+    "screenCategory": "Type et composition",
     "components": {
       "body": [
         {
@@ -675,13 +700,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "type_logement_commodites_previous",
-          "action": "goto:type_logement_pieces_a_vivre"
+          "action": "goto:type_logement_pieces_a_vivre",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "type_logement_commodites_next",
-          "action": "goto:ecran_intermediaire_situation_occupant"
+          "action": "goto:ecran_intermediaire_situation_occupant",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -691,19 +718,22 @@
     "label": "",
     "description": "<p>Nous allons vous poser des questions sur la situation du foyer.<br>Si possible, préparez les informations concernant l'allocation logement.</p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
     "slug": "ecran_intermediaire_situation_occupant",
+    "screenCategory": "Situation du foyer",
     "components": {
       "footer": [
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "ecran_intermediaire_situation_occupant_previous",
-          "action": "goto:type_logement_commodites"
+          "action": "goto:type_logement_commodites",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "ecran_intermediaire_situation_occupant_next",
-          "action": "goto:logement_social"
+          "action": "goto:logement_social",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -712,6 +742,7 @@
     "type": "SignalementFormScreen",
     "label": "",
     "slug": "logement_social",
+    "screenCategory": "Situation du foyer",
     "components": {
       "body": [
         {
@@ -792,13 +823,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "logement_social_previous",
-          "action": "goto:ecran_intermediaire_situation_occupant"
+          "action": "goto:ecran_intermediaire_situation_occupant",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "logement_social_next",
-          "action": "goto:travailleur_social"
+          "action": "goto:travailleur_social",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -807,6 +840,7 @@
     "type": "SignalementFormScreen",
     "label": "",
     "slug": "travailleur_social",
+    "screenCategory": "Situation du foyer",
     "components": {
       "body": [
         {
@@ -851,13 +885,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "travailleur_social_previous",
-          "action": "goto:logement_social"
+          "action": "goto:logement_social",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "travailleur_social_next",
-          "action": "goto:ecran_intermediaire_les_desordres"
+          "action": "goto:ecran_intermediaire_les_desordres",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -866,6 +902,7 @@
     "type": "SignalementFormScreen",
     "label": "les désordres",
     "slug": "ecran_intermediaire_les_desordres",
+    "screenCategory": "Désordres",
     "description": "<p>Vous avez indiqué que votre signalement concerne {{formStore.data.zone_concernee_zone}}. </p><p>Sélectionnez le ou les problèmes rencontrés parmi les catégories et répondez aux questions.</p> <p>Vous pourrez aussi ajouter des photos des problèmes.<p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
     "components": {
       "body": [],
@@ -874,13 +911,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "ecran_intermediaire_les_desordres_previous",
-          "action": "goto:type_logement_commodites"
+          "action": "goto:type_logement_commodites",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "ecran_intermediaire_les_desordres_next",
-          "action": "goto:ecran_intermediaire_procedure"
+          "action": "goto:ecran_intermediaire_procedure",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -890,6 +929,7 @@
     "label": "La prodécure",
     "description": "<p>Vous avez presque terminé ! <br>Répondez aux dernières questions puis envoyez votre signalement.</p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
     "slug": "ecran_intermediaire_procedure",
+    "screenCategory": "Procédure",
     "components": {
       "body": [
       ],
@@ -898,7 +938,8 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "ecran_intermediaire_procedure_previous",
-          "action": "goto:ecran_intermediaire_les_desordres"
+          "action": "goto:ecran_intermediaire_les_desordres",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
@@ -914,6 +955,7 @@
     "label": "Utilisation du service",
     "description": "Lisez attentivement les conditions ci-dessous.",
     "slug": "utilisation_service",
+    "screenCategory": "Procédure",
     "components": {
       "body": [
         {
@@ -937,13 +979,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "utilisation_service_previous",
-          "action": "goto:ecran_intermediaire_les_desordres"
+          "action": "goto:ecran_intermediaire_les_desordres",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "utilisation_service_next",
-          "action": "goto:validation_signalement"
+          "action": "goto:validation_signalement",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -952,6 +996,7 @@
     "type": "SignalementFormScreen",
     "label": "Validation du signalement",
     "slug": "validation_signalement",
+    "screenCategory": "Récapitulatif",
     "components": {
       "body": [
         {
@@ -964,13 +1009,15 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "validation_signalement_previous",
-          "action": "goto:utilisation_service"
+          "action": "goto:utilisation_service",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Valider mon signalement",
           "slug": "validation_signalement_next",
-          "action": "goto:confirmation_signalement"
+          "action": "goto:confirmation_signalement",
+          "customCss": "fr-btn--icon-left fr-icon-check-line"
         }
       ]
     }
@@ -979,6 +1026,7 @@
     "type": "SignalementFormScreen",
     "label": "Merci pour votre signalement",
     "slug": "confirmation_signalement",
+    "screenCategory": "Récapitulatif",
     "components": {
       "body": [
         {

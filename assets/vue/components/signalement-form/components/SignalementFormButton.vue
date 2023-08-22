@@ -1,13 +1,13 @@
 <template>
-    <div>
-        <button
+    <div class="signalement-form-button">
+      <button
         :type="type"
         :id="id"
         :class="[ 'fr-btn', customCss ]"
         @click="handleClick"
         >
-            {{ label}}
-        </button>
+        {{ label}}
+      </button>
     </div>
 </template>
 

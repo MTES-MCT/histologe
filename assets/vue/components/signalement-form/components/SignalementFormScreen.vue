@@ -1,5 +1,5 @@
 <template>
-  <div class="fr-container">
+  <div class="fr-container form-screen-body">
     <h1>{{ label }}</h1>
     <div v-html="descriptionVariablesReplaced"></div>
     <div
@@ -30,10 +30,11 @@
       />
     </div>
   </div>
-  <div class="fr-mt-5w"
+  <div
     v-if="components != undefined"
+    class="fr-container form-screen-footer"
     >
-    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
+    <div>
       <component
         v-for="component in components.footer"
         :is="component.type"
@@ -45,7 +46,7 @@
         :linktarget="component.linktarget"
         :customCss="component.customCss"
         v-model="formStore.data[component.slug]"
-        :class="[ 'fr-col-4', { 'fr-hidden': component.conditional && !formStore.shouldShowField(component.conditional.show) } ]"
+        :class="[ { 'fr-hidden': component.conditional && !formStore.shouldShowField(component.conditional.show) } ]"
         :clickEvent="handleClickComponent"
       />
     </div>
@@ -188,4 +189,34 @@ export default defineComponent({
 </script>
 
 <style>
+  @media (max-width: 48em) {
+    .form-screen-body {
+      margin-bottom: 7.5rem !important;
+    }
+
+    .form-screen-footer {
+      position: fixed;
+      left: 0px;
+      bottom: 2.5rem;
+
+      background-position: 0 0;
+      background-repeat: no-repeat;
+      background-size: 100% 1px;
+      background-image: linear-gradient(0deg, var(--border-default-grey), var(--border-default-grey));
+      background-color: var(--background-default-grey);
+    }
+  }
+
+  .form-screen-footer > div {
+    display: flex;
+    justify-content: right;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .form-screen-footer button, .form-screen-footer a {
+    display: inline-flex;
+    margin-left: 0.25rem;
+  }
 </style>

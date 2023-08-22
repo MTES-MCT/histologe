@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="signalement-form-link">
     <a
       :id="id"
       :class="[ customCss ]"
@@ -45,4 +45,8 @@ export default defineComponent({
 </script>
 
 <style>
+.signalement-form-link {
+  display: inline-flex;
+  text-align: center;
+}
 </style>

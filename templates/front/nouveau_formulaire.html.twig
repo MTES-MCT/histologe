@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block body %}
+  <div class="fr-my-5v">
     <div id="app-signalement-form"
          data-ajaxurl="{{ path('front_nouveau_formulaire') }}"
          data-ajaxurl-questions="{{ path('api_question_profile') }}?profil="
@@ -20,4 +21,5 @@
          data-platform-name="{{ platform.name }}"
          data-platform-url="{{ platform.url }}"
         ></div>
+  </div>
 {% endblock %}
