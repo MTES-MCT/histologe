@@ -53,7 +53,7 @@
 import { defineComponent } from 'vue'
 import formStore from './store'
 import { requests } from './requests'
-import { services } from './services/services'
+import { profileUpdater } from './services/profileUpdater'
 import { DesktopIllustration } from './interfaces/interfaceDesktopIllustration'
 import SignalementFormScreen from './components/SignalementFormScreen.vue'
 import SignalementFormBreadCrumbs from './components/SignalementFormBreadCrumbs.vue'
@@ -146,7 +146,7 @@ export default defineComponent({
         } else {
           if (this.slugCoordonnees.includes(this.nextSlug)) { // TODO à mettre à jour suivant le slug des différents profils
             // on détermine le profil
-            services.updateProfil()
+            profileUpdater.update()
             // on fait un appel API pour charger la suite des questions avant de changer d'écran
             requests.initQuestionsProfil(this.handleInitQuestions)
           } else {

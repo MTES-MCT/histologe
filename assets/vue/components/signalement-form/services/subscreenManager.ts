@@ -1,6 +1,6 @@
 import formStore from '../store'
 
-export const subscreenServices = {
+export const subscreenManager = {
   generateSubscreenData (id: string, data: any[], validateParent: any) {
     return data.map((component) => {
       return {

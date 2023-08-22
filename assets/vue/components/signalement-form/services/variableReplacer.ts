@@ -1,7 +1,7 @@
 import formStore from '../store'
 
-export const variablesServices = {
-  replaceVariables (texteToReplace: string): string {
+export const variablesReplacer = {
+  replace (texteToReplace: string): string {
     const descriptionWithValues = texteToReplace.replace(/\{\{([\w.]+)\}\}/g, (match, expression) => {
       const value = this.evaluateExpression(expression)
       return value ?? match

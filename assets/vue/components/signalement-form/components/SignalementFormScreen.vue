@@ -74,8 +74,8 @@ import SignalementFormUpload from './SignalementFormUpload.vue'
 import SignalementFormEmailfield from './SignalementFormEmailfield.vue'
 import SignalementFormOverview from './SignalementFormOverview.vue'
 import SignalementFormConfirmation from './SignalementFormConfirmation.vue'
-import { variablesServices } from './../services/variableReplacer'
-import { services } from './../services/services'
+import { variablesReplacer } from './../services/variableReplacer'
+import { navManager } from './../services/navManager'
 
 export default defineComponent({
   name: 'SignalementFormScreen',
@@ -113,7 +113,7 @@ export default defineComponent({
   computed: {
     descriptionVariablesReplaced (): string {
       if (this.description !== undefined) {
-        return variablesServices.replaceVariables(this.description)
+        return variablesReplacer.replace(this.description)
       }
       return ''
     }
@@ -145,7 +145,7 @@ export default defineComponent({
     },
     showScreenBySlug (slug: string, slugButton:string) {
       formStore.validationErrors = {}
-      const isScreenAfterCurrent = services.isScreenAfterCurrent(slug)
+      const isScreenAfterCurrent = navManager.isScreenAfterCurrent(slug)
 
       const traverseComponents = (components: any) => {
         for (const field of components) {
