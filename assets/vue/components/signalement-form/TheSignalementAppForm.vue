@@ -24,7 +24,7 @@
             v-if="!currentScreen.desktopIllustration"
             class="fr-col-12 fr-col-md-4"
             >
-              <SignalementFormBreadCrumbs :currentStep="currentScreen.label" />
+              <SignalementFormBreadCrumbs />
           </div>
           <div class="fr-col-12 fr-col-md-8">
             <SignalementFormScreen
@@ -78,7 +78,7 @@ export default defineComponent({
       isLoadingInit: true,
       formStore,
       sharedProps: formStore.props,
-      currentScreen: null as { slug: string; label: string; description: string; desktopIllustration: DesktopIllustration; components: Components } | null
+      currentScreen: null as { slug: string; screenCategory: string, label: string; description: string; desktopIllustration: DesktopIllustration; components: Components } | null
     }
   },
   created () {
