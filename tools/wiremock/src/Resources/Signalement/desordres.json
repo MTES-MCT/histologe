@@ -963,7 +963,7 @@
         {
           "type": "SignalementFormButton",
           "label": "Je n'ai rien à signaler",
-          "slug": "desordres_batiment_ras",
+          "slug": "desordres_logement_ras",
           "action": "findNextScreen",
           "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
         }
@@ -972,14 +972,14 @@
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "desordres_batiment_previous",
+          "slug": "desordres_logement_previous",
           "action": "goto:ecran_intermediaire_les_desordres",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Valider ma sélection",
-          "slug": "desordres_batiment_valider",
+          "slug": "desordres_logement_valider",
           "action": "findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
@@ -988,50 +988,66 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "blabla",
+    "label": "Eau et évacuation",
     "description": "Dans",
     "icon": {
-      "src": "/img/form/LOGEMENT/Picto-batiment.svg",
-      "alt": "illustration moississure"
+      "src": "/img/form/LOGEMENT/Picto-eau_evacuation.svg",
+      "alt": "illustration Eau et évacuation"
     },
-    "slug": "desordres_moisissures",
+    "slug": "desordres_logement_eau",
     "screenCategory": "Désordres",
     "components": {
       "body": [
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_moisissures_pieces_a_vivre",
-          "label": "Une"
+          "slug": "desordres_logement_eau_eau_potable",
+          "label": "Je n'ai pas l'eau potable dans mon logement",
+          "conditional": {
+            "show": "formStore.data.profil === 'locataire' || formStore.data.profil === 'bailleur_occupant'"
+          }
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_moisissures_pieces_a_vivre",
-          "label": "Une"
+          "slug": "desordres_logement_eau_eau_potable",
+          "label": "Il n'y a pas d'eau potable dans le logement",
+          "conditional": {
+            "show": "formStore.data.profil !== 'locataire' && formStore.data.profil !== 'bailleur_occupant'"
+          }
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_moisissures_pieces_a_vivre",
-          "label": "Une"
+          "slug": "desordres_logement_eau_eau_chaude",
+          "label": "Je n'ai pas d'eau chaude dans mon logement",
+          "conditional": {
+            "show": "formStore.data.profil === 'locataire' || formStore.data.profil === 'bailleur_occupant'"
+          }
         },
         {
-          "type": "SignalementFormUploadPhotos",
-          "label": "Photos (facultatif)",
-          "slug": "desordres_moisissures_photos",
-          "description": "Si possible, ajoutez des photos des problèmes sélectionnés."
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_eau_eau_chaude",
+          "label": "Il n'y a pas d'eau chaude dans le logement",
+          "conditional": {
+            "show": "formStore.data.profil !== 'locataire' && formStore.data.profil !== 'bailleur_occupant'"
+          }
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_eau_evacuation",
+          "label": "L'évacuation des eaux ne marche pas (mauvaises odeurs, pas d'évacuation, fuites...)"
         }
       ],
       "footer": [
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "desordres_moisissures_previous",
+          "slug": "desordres_logement_eau_previous",
           "action": "findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "desordres_moisissures_next",
+          "slug": "desordres_logement_eau_next",
           "action": "findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
