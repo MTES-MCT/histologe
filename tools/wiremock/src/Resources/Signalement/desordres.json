@@ -161,34 +161,34 @@
       "src": "/img/form/Picto-proprete_entretien.svg",
       "alt": "illustration Propreté et entretien"
     },
-    "slug": "desordres_proprete",
+    "slug": "desordres_batiment_proprete",
     "screenCategory": "Désordres",
     "components": {
       "body": [
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_proprete_interieur",
+          "slug": "desordres_batiment_proprete_interieur",
           "label": "L'intérieur du bâtiment est sale, n'est jamais nettoyé"
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_proprete_facades",
+          "slug": "desordres_batiment_proprete_facades",
           "label": "Les façades extérieures sont très sales ou en mauvais état"
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_proprete_parties_communes",
+          "slug": "desordres_batiment_proprete_parties_communes",
           "label": "Les parties communes sont dégradées (déchets qui traînent, matériel cassé, graffitis)"
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_proprete_local_poubelles",
+          "slug": "desordres_batiment_proprete_local_poubelles",
           "label": "Il n'y a pas de local poubelles ni d'endroit où stocker les déchets"
         },
         {
           "type": "SignalementFormUploadPhotos",
           "label": "Photos (facultatif)",
-          "slug": "desordres_proprete_photos",
+          "slug": "desordres_batiment_proprete_photos",
           "description": "Si possible, ajoutez des photos des problèmes sélectionnés.",
         }
       ],
@@ -196,14 +196,14 @@
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "desordres_proprete_previous",
+          "slug": "desordres_batiment_proprete_previous",
           "action": "findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "desordres_proprete_next",
+          "slug": "desordres_batiment_proprete_next",
           "action": "findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
@@ -218,28 +218,28 @@
       "src": "/img/form/Picto-eau_evacuation.svg",
       "alt": "illustration Eau et évacuation"
     },
-    "slug": "desordres_eau",
+    "slug": "desordres_batiment_eau",
     "screenCategory": "Désordres",
     "components": {
       "body": [
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_eau_pas_eau_potable",
+          "slug": "desordres_batiment_eau_pas_eau_potable",
           "label": "Il n'y a pas d'eau potable dans le bâtiment "
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_eau_pas_eau_chaude",
+          "slug": "desordres_batiment_eau_pas_eau_chaude",
           "label": "Il n'y a pas d'eau chaude dans le bâtiment "
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_eau_evacuation_KO",
+          "slug": "desordres_batiment_eau_evacuation_KO",
           "label": "L'évacuation des eaux ne marche pas (mauvaises odeurs, eau stagnante, fuites...)"
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_eau_pas_evacuation_eaux_pluie",
+          "slug": "desordres_batiment_eau_pas_evacuation_eaux_pluie",
           "label": "Quand il pleut, l'eau n'est pas évacuée (pas de gouttière, pas de système d'évacuation...)"
         }
       ],
@@ -247,14 +247,14 @@
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "desordres_eau_previous",
+          "slug": "desordres_batiment_eau_previous",
           "action": "findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "desordres_eau_next",
+          "slug": "desordres_batiment_eau_next",
           "action": "findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
@@ -269,37 +269,37 @@
       "src": "/img/form/Picto-isolation_batiment.svg",
       "alt": "illustration Isolation du bâtiment"
     },
-    "slug": "desordres_isolation",
+    "slug": "desordres_batiment_isolation",
     "screenCategory": "Désordres",
     "components": {
       "body": [
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_isolation_porte_fenetres",
+          "slug": "desordres_batiment_isolation_porte_fenetres",
           "label": "Il manque des portes ou des fenêtres, ou elles sont mal isolées"
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_isolation_murs",
+          "slug": "desordres_batiment_isolation_murs",
           "label": "Les murs ne sont pas ou peu isolés"
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_isolation_dernier_etage_toit",
+          "slug": "desordres_batiment_isolation_dernier_etage_toit",
           "label": "Le dernier étage n'est pas isolé, le toit n'est pas étanche"
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_isolation_infiltration_eau",
+          "slug": "desordres_batiment_isolation_infiltration_eau",
           "label": "De l'eau s'infiltre par le sol ou les murs"
         },
         {
           "type": "SignalementFormUploadPhotos",
           "label": "Photos (facultatif)",
-          "slug": "desordres_isolation_photos",
+          "slug": "desordres_batiment_isolation_photos",
           "description": "Si possible, ajoutez des photos du problème.",
           "conditional": {
-            "show": "formStore.data.desordres_isolation_infiltration_eau === 1"
+            "show": "formStore.data.desordres_batiment_isolation_infiltration_eau === 1"
           }
         }
       ],
@@ -307,14 +307,14 @@
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "desordres_isolation_previous",
+          "slug": "desordres_batiment_isolation_previous",
           "action": "findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "desordres_isolation_next",
+          "slug": "desordres_batiment_isolation_next",
           "action": "findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
@@ -329,27 +329,27 @@
       "src": "/img/form/Picto-maintenance_equipement.svg",
       "alt": "illustration Maintenance et équipement"
     },
-    "slug": "desordres_maintenance",
+    "slug": "desordres_batiment_maintenance",
     "screenCategory": "Désordres",
     "components": {
       "body": [
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_maintenance_ascenseur",
+          "slug": "desordres_batiment_maintenance_ascenseur",
           "label": "L'ascenseur est dangereux (les portes s'ouvrent ou se ferment toutes seules, on risque de tomber, il s'arrête entre les étages...)"
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_maintenance_petites_reparations",
+          "slug": "desordres_batiment_maintenance_petites_reparations",
           "label": "Les petites réparations ne sont pas faites (changement d'ampoule...)"
         },
         {
           "type": "SignalementFormUploadPhotos",
           "label": "Photos (facultatif)",
-          "slug": "desordres_maintenance_photos",
+          "slug": "desordres_batiment_maintenance_photos",
           "description": "Si possible, ajoutez des photos du problème.",
           "conditional": {
-            "show": "formStore.data.desordres_maintenance_petites_reparations === 1"
+            "show": "formStore.data.desordres_batiment_maintenance_petites_reparations === 1"
           }
         }
       ],
@@ -357,14 +357,14 @@
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "desordres_maintenance_previous",
+          "slug": "desordres_batiment_maintenance_previous",
           "action": "findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "desordres_maintenance_next",
+          "slug": "desordres_batiment_maintenance_next",
           "action": "findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
@@ -379,74 +379,74 @@
       "src": "/img/form/Picto-presence_nuisibles.svg",
       "alt": "illustration Présence de nuisibles"
     },
-    "slug": "desordres_nuisibles",
+    "slug": "desordres_batiment_nuisibles",
     "screenCategory": "Désordres",
     "components": {
       "body": [
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_nuisibles_cafards",
+          "slug": "desordres_batiment_nuisibles_cafards",
           "label": "Il y a des cafards ou blattes dans le bâtiment"
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_nuisibles_rongeurs",
+          "slug": "desordres_batiment_nuisibles_rongeurs",
           "label": "Il y a des rongeurs dans le bâtiment (rats, souris...)"
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_nuisibles_punaises",
+          "slug": "desordres_batiment_nuisibles_punaises",
           "label": "Il y a des punaises de lit dans le bâtiment"
         },
         {
           "type": "SignalementFormSubscreen",
           "label": "",
-          "slug": "desordres_nuisibles_punaises_details",
+          "slug": "desordres_batiment_nuisibles_punaises_details",
           "conditional": {
-            "show": "formStore.data.desordres_nuisibles_punaises === 1 && formStore.data.adresse_logement_adresse_detail_insee === '13000'" // TODO : territoire ouvert sur stop punaises
+            "show": "formStore.data.desordres_batiment_nuisibles_punaises === 1 && formStore.data.adresse_logement_adresse_detail_insee === '13000'" // TODO : territoire ouvert sur stop punaises
           },
           "components": {
             "body": [
               {
                 "type": "SignalementFormInfo",
                 "label": "Le saviez-vous ? Sur votre département, le service Stop Punaises vous permet de trouver une entreprise labellisée pour traiter les punaises de lit. <a href='http://stop-punaises.beta.gouv.fr/' target='_blank'>Cliquez ici pour y accéder.</a>",
-                "slug": "desordres_nuisibles_punaises_details_info"
+                "slug": "desordres_batiment_nuisibles_punaises_details_info"
               }
             ]
           }
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_nuisibles_autres",
+          "slug": "desordres_batiment_nuisibles_autres",
           "label": "Il y a un autre type de nuisible dans le bâtiment"
         },
         {
           "type": "SignalementFormSubscreen",
           "label": "",
-          "slug": "desordres_nuisibles_autres_details",
+          "slug": "desordres_batiment_nuisibles_autres_details",
           "conditional": {
-            "show": "formStore.data.desordres_nuisibles_autres === 1"
+            "show": "formStore.data.desordres_batiment_nuisibles_autres === 1"
           },
           "components": {
             "body": [
                 {
                   "type": "SignalementFormTextfield",
                   "label": "Précisez le type de nuisibles",
-                  "slug": "desordres_nuisibles_autres_details_type_nuisibles"
+                  "slug": "desordres_batiment_nuisibles_autres_details_type_nuisibles"
                 }
             ]
           }
         },
         {
           "type": "SignalementFormInfo",
-          "slug": "desordres_nuisibles_info",
+          "slug": "desordres_batiment_nuisibles_info",
           "label": "Bon à savoir : si la présence de nuisibles est dûe à un manque d'entretien ou de nettoyage du logement, c'est aux locataires de payer la prise en charge.
           Si les nuisibles sont présents dans tout le bâtiment, ou étaient présents dès l'emménagement dans le logement : c'est à la charge du bailleur (propriétaire)."
         },
         {
           "type": "SignalementFormUploadPhotos",
           "label": "Photos (facultatif)",
-          "slug": "desordres_nuisibles_photos",
+          "slug": "desordres_batiment_nuisibles_photos",
           "description": "Si possible, ajoutez des photos du problème.",
         }
       ],
@@ -454,14 +454,14 @@
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "desordres_nuisibles_previous",
+          "slug": "desordres_batiment_nuisibles_previous",
           "action": "findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "desordres_nuisibles_next",
+          "slug": "desordres_batiment_nuisibles_next",
           "action": "findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
@@ -476,28 +476,28 @@
       "src": "/img/form/Picto-securite_risque_chute.svg",
       "alt": "illustration Sécurité, risque de chute"
     },
-    "slug": "desordres_securite",
+    "slug": "desordres_batiment_securite",
     "screenCategory": "Désordres",
     "components": {
       "body": [
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_securite_sol",
+          "slug": "desordres_batiment_securite_sol",
           "label": "Le sol bouge, il est instable"
         },
         {
           "type": "SignalementFormSubscreen",
           "label": "",
-          "slug": "desordres_securite_sol_details",
+          "slug": "desordres_batiment_securite_sol_details",
           "conditional": {
-            "show": "formStore.data.desordres_securite_sol === 1"
+            "show": "formStore.data.desordres_batiment_securite_sol === 1"
           },
           "components": {
             "body": [
                 {
                   "type": "SignalementFormOnlyChoice",
                   "label": "Est-ce que le plancher est abîmé et bouge par endroit ?",
-                  "slug": "desordres_securite_sol_details_plancher_abime",
+                  "slug": "desordres_batiment_securite_sol_details_plancher_abime",
                   "values": [
                     {
                       "label": "Oui",
@@ -512,7 +512,7 @@
                 {
                   "type": "SignalementFormOnlyChoice",
                   "label": "Est-ce que le plancher menace de s'effondrer quand on marche dessus ?",
-                  "slug": "desordres_securite_sol_details_plancher_effondre",
+                  "slug": "desordres_batiment_securite_sol_details_plancher_effondre",
                   "values": [
                     {
                       "label": "Oui",
@@ -529,32 +529,32 @@
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_securite_elements_toit",
+          "slug": "desordres_batiment_securite_elements_toit",
           "label": "Des éléments du toit risquent de tomber (tuyau, tuiles, pierres...)"
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_securite_toit",
+          "slug": "desordres_batiment_securite_toit",
           "label": "Le plafond ou le toit risque de s'effondrer et il a de très grosses fissures"
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_securite_escalier",
+          "slug": "desordres_batiment_securite_escalier",
           "label": "Les escaliers et / ou les rambardes sont dangereuses"
         },
         {
           "type": "SignalementFormSubscreen",
           "label": "",
-          "slug": "desordres_securite_escalier_details",
+          "slug": "desordres_batiment_securite_escalier_details",
           "conditional": {
-            "show": "formStore.data.desordres_securite_escalier === 1 "
+            "show": "formStore.data.desordres_batiment_securite_escalier === 1 "
           },
           "components": {
             "body": [
                 {
                   "type": "SignalementFormOnlyChoice",
                   "label": "L'escalier ou les rambardes bougent mais peuvent encore être utilisées sans danger ?",
-                  "slug": "desordres_securite_escalier_details_utilisable",
+                  "slug": "desordres_batiment_securite_escalier_details_utilisable",
                   "values": [
                     {
                       "label": "Oui",
@@ -569,7 +569,7 @@
                 {
                   "type": "SignalementFormOnlyChoice",
                   "label": "L'escalier menace de s'effondrer, c'est dangeureux de l'utiliser ?",
-                  "slug": "desordres_securite_escalier_details_dangereux",
+                  "slug": "desordres_batiment_securite_escalier_details_dangereux",
                   "values": [
                     {
                       "label": "Oui",
@@ -586,22 +586,22 @@
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_securite_murs_fissures",
+          "slug": "desordres_batiment_securite_murs_fissures",
           "label": "Le bâtiment semble instable. Il y a de grosses fissures dans les murs"
         },
         {
           "type": "SignalementFormSubscreen",
           "label": "",
-          "slug": "desordres_securite_murs_fissures_details",
+          "slug": "desordres_batiment_securite_murs_fissures_details",
           "conditional": {
-            "show": "formStore.data.desordres_securite_murs_fissures === 1"
+            "show": "formStore.data.desordres_batiment_securite_murs_fissures === 1"
           },
           "components": {
             "body": [
                 {
                   "type": "SignalementFormOnlyChoice",
                   "label": "Est-ce que le mur fissuré a l'air d'être un mur porteur (mur qui soutient la structure du bâtiment) ?",
-                  "slug": "desordres_securite_murs_fissures_details_mur_porteur",
+                  "slug": "desordres_batiment_securite_murs_fissures_details_mur_porteur",
                   "values": [
                     {
                       "label": "Oui",
@@ -622,13 +622,13 @@
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_securite_balcons",
+          "slug": "desordres_batiment_securite_balcons",
           "label": "Les balcons et rambardes des fenêtres risquent de tomber"
         },
         {
           "type": "SignalementFormUploadPhotos",
           "label": "Photos",
-          "slug": "desordres_securite_photos",
+          "slug": "desordres_batiment_securite_photos",
           "description": "Ajoutez des photos des problèmes sélectionnés.",
         }
       ],
@@ -636,14 +636,14 @@
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "desordres_securite_previous",
+          "slug": "desordres_batiment_securite_previous",
           "action": "findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "desordres_securite_next",
+          "slug": "desordres_batiment_securite_next",
           "action": "findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
@@ -658,18 +658,18 @@
       "src": "/img/form/Picto-protection_incendie.svg",
       "alt": "illustration Risque d'incendie "
     },
-    "slug": "desordres_incendie",
+    "slug": "desordres_batiment_incendie",
     "screenCategory": "Désordres",
     "components": {
       "body": [
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_incendie_odeur_gaz",
+          "slug": "desordres_batiment_incendie_odeur_gaz",
           "label": "Il y a une forte odeur de gaz dans le bâtiment"
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_incendie_porte_coupe_feu",
+          "slug": "desordres_batiment_incendie_porte_coupe_feu",
           "label": "Il n'y a pas de portes coupe-feu aux caves, ou pour accéder aux caves / sous-sol"
         }
       ],
@@ -677,14 +677,14 @@
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "desordres_incendie_previous",
+          "slug": "desordres_batiment_incendie_previous",
           "action": "findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "desordres_incendie_next",
+          "slug": "desordres_batiment_incendie_next",
           "action": "findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
@@ -699,33 +699,33 @@
       "src": "/img/form/Picto-accessibilite_et_alentours.svg",
       "alt": "illustration Accessibilité et alentours"
     },
-    "slug": "desordres_accessibilite",
+    "slug": "desordres_batiment_accessibilite",
     "screenCategory": "Désordres",
     "components": {
       "body": [
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_accessibilite_eclairage",
+          "slug": "desordres_batiment_accessibilite_eclairage",
           "label": "Il n'y a pas d'éclairage autour du bâtiment, ni à l'entrée ou l'éclairage ne fonctionne pas"
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_accessibilite_friche",
+          "slug": "desordres_batiment_accessibilite_friche",
           "label": "Le bâtiment est dans une friche, un terrain vague ou abandonné"
         },
         {
           "type": "SignalementFormSubscreen",
           "label": "",
-          "slug": "desordres_accessibilite_friche_details",
+          "slug": "desordres_batiment_accessibilite_friche_details",
           "conditional": {
-            "show": "formStore.data.desordres_accessibilite_friche === 1"
+            "show": "formStore.data.desordres_batiment_accessibilite_friche === 1"
           },
           "components": {
             "body": [
                 {
                   "type": "SignalementFormUploadPhotos",
                   "label": "Photos",
-                  "slug": "desordres_accessibilite_friche_details_photos",
+                  "slug": "desordres_batiment_accessibilite_friche_details_photos",
                   "description": "Si possible, ajoutez des photos du problème.",
                 }
             ]
@@ -733,22 +733,22 @@
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_accessibilite_acces_batiment",
+          "slug": "desordres_batiment_accessibilite_acces_batiment",
           "label": "Il est très difficile d'accéder au bâtiment : les passages sont étroits ou encombrés"
         },
         {
           "type": "SignalementFormSubscreen",
           "label": "",
-          "slug": "desordres_accessibilite_acces_batiment_details",
+          "slug": "desordres_batiment_accessibilite_acces_batiment_details",
           "conditional": {
-            "show": "formStore.data.desordres_accessibilite_acces_batiment === 1"
+            "show": "formStore.data.desordres_batiment_accessibilite_acces_batiment === 1"
           },
           "components": {
             "body": [
                 {
                   "type": "SignalementFormUploadPhotos",
                   "label": "Photos",
-                  "slug": "desordres_accessibilite_acces_batiment_details_photos",
+                  "slug": "desordres_batiment_accessibilite_acces_batiment_details_photos",
                   "description": "Si possible, ajoutez des photos du problème.",
                 }
             ]
@@ -759,14 +759,14 @@
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "desordres_accessibilite_previous",
+          "slug": "desordres_batiment_accessibilite_previous",
           "action": "findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "desordres_accessibilite_next",
+          "slug": "desordres_batiment_accessibilite_next",
           "action": "findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
@@ -781,18 +781,18 @@
       "src": "/img/form/Picto-bruit_pollution_sonore.svg",
       "alt": "illustration Bruit, pollution sonore"
     },
-    "slug": "desordres_bruit",
+    "slug": "desordres_batiment_bruit",
     "screenCategory": "Désordres",
     "components": {
       "body": [
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_bruit_exterieur",
+          "slug": "desordres_batiment_bruit_exterieur",
           "label": "Le bâtiment est situé à côté de rails de train, d'un aéroport ou d'une usine"
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_bruit_interieur",
+          "slug": "desordres_batiment_bruit_interieur",
           "label": "Il y a beaucoup de bruit à l'intérieur, on entend tout même en fermant les portes et les fenêtres "
         }
       ],
@@ -800,14 +800,14 @@
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "desordres_bruit_previous",
+          "slug": "desordres_batiment_bruit_previous",
           "action": "findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "desordres_bruit_next",
+          "slug": "desordres_batiment_bruit_next",
           "action": "findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
