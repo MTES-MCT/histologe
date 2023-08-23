@@ -404,7 +404,6 @@
           "slug": "desordres_batiment_nuisibles_punaises_details",
           "conditional": {
             "show": "formStore.data.desordres_batiment_nuisibles_punaises === 1 && formStore.data.adresse_logement_adresse_detail_insee === '13000'" 
-            // TODO : territoire ouvert sur stop punaises
           },
           "components": {
             "body": [
@@ -1056,50 +1055,165 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "blabla",
-    "description": "Dans",
+    "label": "Aération et ventilation",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
-      "src": "/img/form/LOGEMENT/Picto-batiment.svg",
-      "alt": "illustration moississure"
+      "src": "/img/form/LOGEMENT/Picto-aeration_ventilation.svg",
+      "alt": "illustration Aération et ventilation"
     },
-    "slug": "desordres_moisissures",
+    "slug": "desordres_logement_aeration",
     "screenCategory": "Désordres",
     "components": {
       "body": [
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_moisissures_pieces_a_vivre",
-          "label": "Une"
+          "slug": "desordres_logement_aeration_aucune_aeration",
+          "label": "Il n'y a pas de fenêtre ni de système de ventilation (VMC...)"
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "Dans quelle(s) pièce(s) ?",
+          "slug": "desordres_logement_aeration_aucune_aeration_details",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_aeration_aucune_aeration === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormCheckbox",
+                "slug": "desordres_logement_aeration_aucune_aeration_details_piece_a_vivre",
+                "label": "Une ou des pièces à vivre (salon, chambres)"
+              },
+              {
+                "type": "SignalementFormCheckbox",
+                "slug": "desordres_logement_aeration_aucune_aeration_details_cuisine",
+                "label": "La cuisine / le coin cuisine",
+                "conditional": {
+                  "show": "formStore.data.type_logement_commodites_cuisine === 'oui'" 
+                }
+              },
+              {
+                "type": "SignalementFormCheckbox",
+                "slug": "desordres_logement_aeration_aucune_aeration_details_salle_de_bain",
+                "label": "La salle de bain, salle d'eau et / ou les toilettes",
+                "conditional": {
+                  "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'" 
+                }
+              }
+            ]
+          }
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_moisissures_pieces_a_vivre",
-          "label": "Une"
+          "slug": "desordres_logement_aeration_ventilation_defectueuse",
+          "label": "Le système de ventilation ne fonctionne pas"
         },
         {
-          "type": "SignalementFormCheckbox",
-          "slug": "desordres_moisissures_pieces_a_vivre",
-          "label": "Une"
-        },
-        {
-          "type": "SignalementFormUploadPhotos",
-          "label": "Photos (facultatif)",
-          "slug": "desordres_moisissures_photos",
-          "description": "Si possible, ajoutez des photos des problèmes sélectionnés."
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_logement_aeration_aucune_aeration_details",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_aeration_ventilation_defectueuse === 1" 
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Avez-vous nettoyé la ventilation ?",
+                "slug": "desordres_logement_aeration_ventilation_defectueuse_details_nettoyage",
+                "conditional": {
+                  "show": "formStore.data.profil === 'locataire' || formStore.data.profil === 'bailleur_occupant'"
+                },
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "La ventilation a-t-elle été nettoyée ?",
+                "slug": "desordres_logement_aeration_ventilation_defectueuse_details_nettoyage",
+                "conditional": {
+                  "show": "formStore.data.profil !== 'locataire' && formStore.data.profil !== 'bailleur_occupant'"
+                },
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  },
+                  {
+                    "label": "Je ne sais pas",
+                    "value": "nsp"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormInfo",
+                "slug": "desordres_logement_aeration_ventilation_defectueuse_details_info",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_aeration_ventilation_defectueuse_details_nettoyage !== 'oui'"
+                },
+                "label": "Pour fonctionner, la ventilation (VMC) a besoin d'entretien ! Vérifiez qu'elle n'est pas bouchée et nettoyez-la correctement tous les 6 mois."
+              },
+              {
+                "type": "SignalementFormSubscreen",
+                "label": "Dans quelle(s) pièce(s) ?",
+                "slug": "desordres_logement_aeration_ventilation_defectueuse_details_pieces",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_aeration_ventilation_defectueuse_details_nettoyage !== 'non' && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+                },
+                "components": {
+                  "body": [
+                    {
+                      "type": "SignalementFormCheckbox",
+                      "slug": "desordres_logement_aeration_ventilation_defectueuse_details_pieces_piece_a_vivre",
+                      "label": "Une ou des pièces à vivre (salon, chambres)"
+                    },
+                    {
+                      "type": "SignalementFormCheckbox",
+                      "slug": "desordres_logement_aeration_ventilation_defectueuse_details_pieces_cuisine",
+                      "label": "La cuisine / le coin cuisine",
+                      "conditional": {
+                        "show": "formStore.data.type_logement_commodites_cuisine === 'oui'" 
+                      }
+                    },
+                    {
+                      "type": "SignalementFormCheckbox",
+                      "slug": "desordres_logement_aeration_ventilation_defectueuse_details_pieces_salle_de_bain",
+                      "label": "La salle de bain, salle d'eau et / ou les toilettes",
+                      "conditional": {
+                        "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'" 
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
         }
       ],
       "footer": [
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "desordres_moisissures_previous",
+          "slug": "desordres_logement_aeration_previous",
           "action": "findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "desordres_moisissures_next",
+          "slug": "desordres_logement_aeration_next",
           "action": "findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
@@ -1108,50 +1222,340 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "blabla",
-    "description": "Dans",
+    "label": "Chauffage et isolation",
+    "description": "Quel est le type de chauffage du logement ?",
     "icon": {
-      "src": "/img/form/LOGEMENT/Picto-batiment.svg",
-      "alt": "illustration moississure"
+      "src": "/img/form/LOGEMENT/Picto-chauffage_isolation.svg",
+      "alt": "illustration Chauffage et isolation"
     },
-    "slug": "desordres_moisissures",
+    "slug": "desordres_logement_chauffage",
     "screenCategory": "Désordres",
     "components": {
       "body": [
         {
-          "type": "SignalementFormCheckbox",
-          "slug": "desordres_moisissures_pieces_a_vivre",
-          "label": "Une"
+          "type": "SignalementFormOnlyChoice",
+          "label": "",
+          "slug": "desordres_logement_chauffage_type",
+          "conditional": {
+            "show": "formStore.data.profil === 'locataire' || formStore.data.profil === 'bailleur_occupant'"
+          },
+          "values": [
+            {
+              "label": "Electrique",
+              "value": "electrique"
+            },
+            {
+              "label": "Gaz, bois, éthanol ou fioul ",
+              "value": "gaz"
+            },
+            {
+              "label": "Il n'y a pas de radiateur ni d'autre moyen de chauffage fixe dans mon logement",
+              "value": "aucun"
+            },
+            {
+              "label": "Je ne sais pas ",
+              "value": "nsp"
+            }
+          ]
         },
         {
-          "type": "SignalementFormCheckbox",
-          "slug": "desordres_moisissures_pieces_a_vivre",
-          "label": "Une"
+          "type": "SignalementFormOnlyChoice",
+          "label": "",
+          "slug": "desordres_logement_chauffage_type",
+          "conditional": {
+            "show": "formStore.data.profil !== 'locataire' && formStore.data.profil !== 'bailleur_occupant'"
+          },
+          "values": [
+            {
+              "label": "Electrique",
+              "value": "electrique"
+            },
+            {
+              "label": "Gaz, bois, éthanol ou fioul ",
+              "value": "gaz"
+            },
+            {
+              "label": "Il n'y a pas de radiateur ni d'autre moyen de chauffage fixe dans le logement ",
+              "value": "aucun"
+            },
+            {
+              "label": "Je ne sais pas ",
+              "value": "nsp"
+            }
+          ]
         },
         {
-          "type": "SignalementFormCheckbox",
-          "slug": "desordres_moisissures_pieces_a_vivre",
-          "label": "Une"
+          "type": "SignalementFormSubscreen",
+          "label": "Dans quelle(s) pièce(s) ?",
+          "slug": "desordres_logement_chauffage_aucun_pieces",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_chauffage_type === 'aucun' && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormCheckbox",
+                "slug": "desordres_logement_chauffage_aucun_pieces_piece_a_vivre",
+                "label": "Une ou des pièces à vivre (salon, chambres)"
+              },
+              {
+                "type": "SignalementFormCheckbox",
+                "slug": "desordres_logement_chauffage_aucun_pieces_cuisine",
+                "label": "La cuisine / le coin cuisine",
+                "conditional": {
+                  "show": "formStore.data.type_logement_commodites_cuisine === 'oui'" 
+                }
+              },
+              {
+                "type": "SignalementFormCheckbox",
+                "slug": "desordres_logement_chauffage_aucun_pieces_salle_de_bain",
+                "label": "La salle de bain, salle d'eau et / ou les toilettes",
+                "conditional": {
+                  "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'" 
+                }
+              }
+            ]
+          }
         },
         {
-          "type": "SignalementFormUploadPhotos",
-          "label": "Photos (facultatif)",
-          "slug": "desordres_moisissures_photos",
-          "description": "Si possible, ajoutez des photos des problèmes sélectionnés."
+          "type": "SignalementFormSubscreen",
+          "label": "Le type de chauffage est : {{formStore.data.desordres_logement_chauffage_type}}",
+          "slug": "desordres_logement_chauffage_details",
+          "description": "Sélectionnez le ou les problèmes rencontrés",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_chauffage_type !== 'aucun'" 
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormCheckbox",
+                "slug": "desordres_logement_chauffage_details_fenetres_permeables",
+                "label": "Les fenêtres laissent passer beaucoup d'air ou laissent passer l'eau quand il pleut"
+              },
+              {
+                "type": "SignalementFormSubscreen",
+                "label": "Dans quelle(s) pièce(s) ?",
+                "slug": "desordres_logement_chauffage_details_fenetres_permeables_pieces",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_chauffage_details_fenetres_permeables === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+                },
+                "components": {
+                  "body": [
+                    {
+                      "type": "SignalementFormCheckbox",
+                      "slug": "desordres_logement_chauffage_details_fenetres_permeables_pieces_piece_a_vivre",
+                      "label": "Une ou des pièces à vivre (salon, chambres)"
+                    },
+                    {
+                      "type": "SignalementFormCheckbox",
+                      "slug": "desordres_logement_chauffage_details_fenetres_permeables_pieces_cuisine",
+                      "label": "La cuisine / le coin cuisine",
+                      "conditional": {
+                        "show": "formStore.data.type_logement_commodites_cuisine === 'oui'" 
+                      }
+                    },
+                    {
+                      "type": "SignalementFormCheckbox",
+                      "slug": "desordres_logement_chauffage_details_fenetres_permeables_pieces_salle_de_bain",
+                      "label": "La salle de bain, salle d'eau et / ou les toilettes",
+                      "conditional": {
+                        "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'" 
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "SignalementFormCheckbox",
+                "slug": "desordres_logement_chauffage_details_difficultes_chauffage",
+                "label": "J'ai du mal à chauffer mon logement"
+              },
+              {
+                "type": "SignalementFormSubscreen",
+                "label": "Dans quelle(s) pièce(s) ?",
+                "slug": "desordres_logement_chauffage_details_difficultes_chauffage_pieces",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_chauffage_details_difficultes_chauffage === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+                },
+                "components": {
+                  "body": [
+                    {
+                      "type": "SignalementFormCheckbox",
+                      "slug": "desordres_logement_chauffage_details_difficultes_chauffage_pieces_piece_a_vivre",
+                      "label": "Une ou des pièces à vivre (salon, chambres)"
+                    },
+                    {
+                      "type": "SignalementFormCheckbox",
+                      "slug": "desordres_logement_chauffage_details_difficultes_chauffage_pieces_cuisine",
+                      "label": "La cuisine / le coin cuisine",
+                      "conditional": {
+                        "show": "formStore.data.type_logement_commodites_cuisine === 'oui'" 
+                      }
+                    },
+                    {
+                      "type": "SignalementFormCheckbox",
+                      "slug": "desordres_logement_chauffage_details_difficultes_chauffage_pieces_salle_de_bain",
+                      "label": "La salle de bain, salle d'eau et / ou les toilettes",
+                      "conditional": {
+                        "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'" 
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "SignalementFormCheckbox",
+                "slug": "desordres_logement_chauffage_details_chauffage_KO",
+                "label": "Mon chauffage ne fonctionne pas, je dois utiliser un chauffage d'appoint"
+              },
+              {
+                "type": "SignalementFormSubscreen",
+                "label": "Dans quelle(s) pièce(s) ?",
+                "slug": "desordres_logement_chauffage_details_chauffage_KO_pieces",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_chauffage_details_chauffage_KO === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+                },
+                "components": {
+                  "body": [
+                    {
+                      "type": "SignalementFormCheckbox",
+                      "slug": "desordres_logement_chauffage_details_chauffage_KO_pieces_piece_a_vivre",
+                      "label": "Une ou des pièces à vivre (salon, chambres)"
+                    },
+                    {
+                      "type": "SignalementFormCheckbox",
+                      "slug": "desordres_logement_chauffage_details_chauffage_KO_pieces_cuisine",
+                      "label": "La cuisine / le coin cuisine",
+                      "conditional": {
+                        "show": "formStore.data.type_logement_commodites_cuisine === 'oui'" 
+                      }
+                    },
+                    {
+                      "type": "SignalementFormCheckbox",
+                      "slug": "desordres_logement_chauffage_details_chauffage_KO_pieces_salle_de_bain",
+                      "label": "La salle de bain, salle d'eau et / ou les toilettes",
+                      "conditional": {
+                        "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'" 
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "SignalementFormCheckbox",
+                "slug": "desordres_logement_chauffage_details_chauffage_dangereux",
+                "label": "Les dispositifs de chauffages (chauffe eau, poêle, cheminée, radiateur...) sont dangereux (très mauvais état, tuyaux mal fixés, etc.)",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_chauffage_type !== 'electrique'" 
+                }
+              },
+              {
+                "type": "SignalementFormUploadPhotos",
+                "label": "Photos (facultatif)",
+                "slug": "desordres_logement_chauffage_details_chauffage_dangereux_photos",
+                "description": "Si possible, ajoutez des photos du problème",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_chauffage_details_chauffage_dangereux === 1" 
+                }
+              },
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Quand le DPE de votre logement a-t-il été réalisé ?",
+                "slug": "desordres_logement_chauffage_details_dpe_annee",
+                "conditional": {
+                  "show": "(formStore.data.desordres_logement_chauffage_details_fenetres_permeables === 1 || formStore.data.desordres_logement_chauffage_details_difficultes_chauffage === 1 || formStore.data.desordres_logement_chauffage_details_chauffage_KO === 1 ) && formStore.data.bail_dpe_dpe === 'oui' && (formStore.data.profil === 'locataire' || formStore.data.profil === 'bailleur_occupant')"
+                },
+                "values": [
+                  {
+                    "label": "En 2023",
+                    "value": "post2023"
+                  },
+                  {
+                    "label": "Avant 2023",
+                    "value": "before2023"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Quand le DPE du logement a-t-il été réalisé ?",
+                "slug": "desordres_logement_chauffage_details_dpe_annee",
+                "conditional": {
+                  "show": "(formStore.data.desordres_logement_chauffage_details_fenetres_permeables === 1 || formStore.data.desordres_logement_chauffage_details_difficultes_chauffage === 1 || formStore.data.desordres_logement_chauffage_details_chauffage_KO === 1 ) && formStore.data.bail_dpe_dpe === 'oui' && (formStore.data.profil !== 'locataire' && formStore.data.profil !== 'bailleur_occupant')"
+                },
+                "values": [
+                  {
+                    "label": "En 2023",
+                    "value": "post2023"
+                  },
+                  {
+                    "label": "Avant 2023",
+                    "value": "before2023"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormCounter",
+                "label": "Quelle est la consommation en énergie finale indiquée sur le DPE ? (kWh/m²/an) ",
+                "slug": "desordres_logement_chauffage_details_dpe_conso_finale",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_chauffage_details_dpe_annee === 'post2023'"
+                },
+                "validate": {
+                  "required": false
+                },
+                "defaultValue": 1
+              },
+              {
+                "type": "SignalementFormCounter",
+                "label": "Quelle est la superficie de votre logement ? (m²) ",
+                "slug": "composition_logement_superficie",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_chauffage_details_dpe_annee === 'before2023'"
+                },
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormCounter",
+                "label": "Quelle est la consommation en énergie indiquée sur le DPE ? (kWh/an) ",
+                "slug": "desordres_logement_chauffage_details_dpe_conso",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_chauffage_details_dpe_annee === 'before2023'"
+                },
+                "defaultValue": 1,
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormCheckbox",
+                "label": "Mon DPE est vide",
+                "slug": "desordres_logement_chauffage_details_dpe_conso_vide",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_chauffage_details_dpe_annee === 'post2023' || formStore.data.desordres_logement_chauffage_details_dpe_annee === 'before2023'"
+                },
+                "validate": {
+                  "required": false
+                }
+              }
+            ]
+          }
         }
       ],
       "footer": [
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "desordres_moisissures_previous",
+          "slug": "desordres_logement_chauffage_previous",
           "action": "findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "desordres_moisissures_next",
+          "slug": "desordres_logement_chauffage_next",
           "action": "findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
