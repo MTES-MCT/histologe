@@ -2242,50 +2242,78 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "blabla",
-    "description": "Dans",
+    "label": "Bruit, pollution sonore",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
-      "src": "/img/form/LOGEMENT/Picto-batiment.svg",
-      "alt": "illustration moississure"
+      "src": "/img/form/LOGEMENT/Picto-bruit_pollution_sonore.svg",
+      "alt": "illustration Bruit, pollution sonore"
     },
-    "slug": "desordres_moisissures",
+    "slug": "desordres_logement_bruit",
     "screenCategory": "Désordres",
     "components": {
       "body": [
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_moisissures_pieces_a_vivre",
-          "label": "Une"
+          "slug": "desordres_logement_bruit_exterieur",
+          "label": "J'entends le bruit extérieur, même si je ferme les portes et les fenêtres",
+          "conditional": {
+            "show": "formStore.data.profil === 'locataire' || formStore.data.profil === 'bailleur_occupant'"
+          }
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_moisissures_pieces_a_vivre",
-          "label": "Une"
+          "slug": "desordres_logement_bruit_exterieur",
+          "label": "On entend le bruit extérieur, même en fermant les portes et les fenêtres",
+          "conditional": {
+            "show": "formStore.data.profil !== 'locataire' && formStore.data.profil !== 'bailleur_occupant'"
+          }
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_moisissures_pieces_a_vivre",
-          "label": "Une"
+          "slug": "desordres_logement_bruit_voisins",
+          "label": "J'entends mes voisins parler et marcher depuis mon logement, comme s'ils étaient dans la pièce",
+          "conditional": {
+            "show": "formStore.data.profil === 'locataire' || formStore.data.profil === 'bailleur_occupant'"
+          }
         },
         {
-          "type": "SignalementFormUploadPhotos",
-          "label": "Photos (facultatif)",
-          "slug": "desordres_moisissures_photos",
-          "description": "Si possible, ajoutez des photos des problèmes sélectionnés."
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_bruit_voisins",
+          "label": "On entend les voisins parler et marcher depuis le logement, comme s'ils étaient dans la pièce",
+          "conditional": {
+            "show": "formStore.data.profil !== 'locataire' && formStore.data.profil !== 'bailleur_occupant'"
+          }
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_logement_bruit_voisins_details",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_bruit_voisins === 1" 
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormInfo",
+                "label": "Info : {{formStore.props.platformName}} ne permet pas de régler les problèmes de voisinage. Pour savoir s'il s'agit d'un problème de logement ou un troube du voisinage, consultez le site du service public en cliquant ici.",
+                "slug": "desordres_logement_bruit_voisins_details_info"
+              }
+            ]
+          }
         }
       ],
       "footer": [
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "desordres_moisissures_previous",
+          "slug": "desordres_logement_bruit_previous",
           "action": "findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "desordres_moisissures_next",
+          "slug": "desordres_logement_bruit_next",
           "action": "findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
