@@ -1,4 +1,30 @@
-[  
+[
+  {
+    "type": "SignalementFormScreen",
+    "label": "Les désordres",
+    "slug": "ecran_intermediaire_les_desordres",
+    "screenCategory": "Désordres",
+    "description": "<p>Vous avez indiqué que votre signalement concerne {{formStore.data.zone_concernee_zone}}. </p><p>Sélectionnez le ou les problèmes rencontrés parmi les catégories et répondez aux questions.</p> <p>Vous pourrez aussi ajouter des photos des problèmes.<p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
+    "components": {
+      "body": [],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "ecran_intermediaire_les_desordres_previous",
+          "action": "goto:travailleur_social",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "ecran_intermediaire_les_desordres_next",
+          "action": "goto:desordres_batiment",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },  
   {
     "type": "SignalementFormScreen",
     "label": "Le bâtiment",

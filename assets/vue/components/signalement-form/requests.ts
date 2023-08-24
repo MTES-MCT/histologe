@@ -60,6 +60,11 @@ export const requests = {
     requests.doRequestGet(url, functionReturn)
   },
 
+  initDesordresProfil (functionReturn: Function) {
+    const url = (formStore.props.ajaxurlDesordres as string) + (formStore.data.profil as string)
+    requests.doRequestGet(url, functionReturn)
+  },
+
   saveSignalementDraft (functionReturn: Function) {
     if (formStore.data.uuidSignalementDraft !== '') {
       // TODO : il y a sûrement plus élégant à faire pour construire l'url (cf controlleur et twig)

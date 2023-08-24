@@ -4,6 +4,7 @@
       class="signalement-form"
       :data-ajaxurl="sharedProps.ajaxurl"
       :data-ajaxurl-questions="sharedProps.ajaxurlQuestions"
+      :data-ajaxurl-desordres="sharedProps.ajaxurlDesordres"
       :data-ajaxurl-post-signalement-draft="sharedProps.ajaxurlPostSignalementDraft"
       :data-ajaxurl-put-signalement-draft="sharedProps.ajaxurlPutSignalementDraft"
       :data-ajaxurl-handle-upload="sharedProps.ajaxurlHandleUpload"
@@ -86,6 +87,7 @@ export default defineComponent({
       this.sharedProps.platformName = initElements.dataset.platformName
       this.sharedProps.ajaxurl = initElements.dataset.ajaxurl
       this.sharedProps.ajaxurlQuestions = initElements.dataset.ajaxurlQuestions
+      this.sharedProps.ajaxurlDesordres = initElements.dataset.ajaxurlDesordres
       this.sharedProps.ajaxurlPostSignalementDraft = initElements.dataset.ajaxurlPostSignalementDraft
       this.sharedProps.ajaxurlPutSignalementDraft = initElements.dataset.ajaxurlPutSignalementDraft
       this.sharedProps.ajaxurlHandleUpload = initElements.dataset.ajaxurlHandleUpload
@@ -144,11 +146,16 @@ export default defineComponent({
             this.currentScreen.components.body = formStore.preprocessScreen(this.currentScreen.components.body)
           }
         } else {
+          console.log(this.nextSlug)
+          console.log(this.nextSlug.indexOf('desordres'))
           if (this.slugCoordonnees.includes(this.nextSlug)) { // TODO à mettre à jour suivant le slug des différents profils
             // on détermine le profil
             profileUpdater.update()
             // on fait un appel API pour charger la suite des questions avant de changer d'écran
             requests.initQuestionsProfil(this.handleInitQuestions)
+          } else if (this.nextSlug.indexOf('desordres') !== -1) {
+            // TODO : c'est super moche ça
+            requests.initDesordresProfil(this.handleInitQuestions)
           } else {
             // on fait un appel API pour charger la suite des questions avant de changer d'écran
             requests.initQuestionsProfil(this.handleInitQuestions)

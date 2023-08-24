@@ -43,4 +43,25 @@ class QuestionController extends AbstractController
 
         return $this->json(json_decode(file_get_contents(__DIR__.$filepath), true));
     }
+
+    #[Route('/desordres', name: 'api_desordres_profile')]
+    public function getDesordres(Request $request): Response
+    {
+        switch ($request->query->get('profil')) {
+            case 'locataire':
+            case 'bailleur_occupant':
+                $filepath = self::MOCK_BASE_PATH.'desordres_profile_occupant.json';
+                break;
+            case 'tiers_pro':
+            case 'tiers_particulier':
+            case 'service_secours':
+            case 'bailleur':
+                $filepath = self::MOCK_BASE_PATH.'desordres_profile_tiers.json';
+                break;
+            default:
+                $filepath = self::MOCK_BASE_PATH.'empty.json';
+        }
+
+        return $this->json(json_decode(file_get_contents(__DIR__.$filepath), true));
+    }
 }
