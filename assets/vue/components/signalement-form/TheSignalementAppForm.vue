@@ -129,6 +129,8 @@ export default defineComponent({
       requests.saveSignalementDraft(this.changeScreenBySlug)
     },
     changeScreenBySlug (requestResponse: any) {
+      window.scrollTo(0, 0)
+      formStore.lastButtonClicked = ''
       // si on reçoit un uuid on l'enregistre pour les mises à jour
       if (requestResponse.uuid) {
         formStore.data.uuidSignalementDraft = requestResponse.uuid
@@ -147,12 +149,9 @@ export default defineComponent({
           if (this.slugCoordonnees.includes(this.nextSlug)) { // TODO à mettre à jour suivant le slug des différents profils
             // on détermine le profil
             profileUpdater.update()
-            // on fait un appel API pour charger la suite des questions avant de changer d'écran
-            requests.initQuestionsProfil(this.handleInitQuestions)
-          } else {
-            // on fait un appel API pour charger la suite des questions avant de changer d'écran
-            requests.initQuestionsProfil(this.handleInitQuestions)
           }
+          // on fait un appel API pour charger la suite des questions avant de changer d'écran
+          requests.initQuestionsProfil(this.handleInitQuestions)
         }
       }
     }

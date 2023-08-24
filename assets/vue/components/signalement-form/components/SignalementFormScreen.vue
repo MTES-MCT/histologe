@@ -172,6 +172,7 @@ export default defineComponent({
       }
       // Si pas d'erreur de validation, ou screen précédent (donc pas de validation), on change d'écran
       if (this.changeEvent !== undefined) {
+        formStore.lastButtonClicked = slugButton
         this.changeEvent(slug)
       }
     },
