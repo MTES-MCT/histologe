@@ -2,7 +2,8 @@
     <div class="signalement-form-button" :id="id">
       <button
         :type="type"
-        :class="[ 'fr-btn', customCss ]"
+        :class="[ 'fr-btn', customCss, formStore.lastButtonClicked === id ? 'fr-btn--loading fr-btn--icon-right fr-icon-refresh-line' : '' ]"
+        :disabled="formStore.lastButtonClicked !== ''"
         @click="handleClick"
         >
         {{ label}}
@@ -12,6 +13,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
+import formStore from './../store'
 
 export default defineComponent({
   name: 'SignalementFormButton',
@@ -33,6 +35,11 @@ export default defineComponent({
     type: { type: String as PropType<'button' | 'submit' | 'reset' | undefined>, default: 'button' },
     customCss: { type: String, default: '' },
     clickEvent: Function
+  },
+  data () {
+    return {
+      formStore
+    }
   },
   computed: {
     actionType (): string {
@@ -59,4 +66,18 @@ export default defineComponent({
 </script>
 
 <style>
+.fr-btn.fr-btn--loading {
+  opacity: 0.5;
+}
+.fr-btn.fr-btn--loading:disabled {
+  background-color: var(--background-action-high-blue-france);
+  color: var(--text-inverted-blue-france);
+}
+.fr-btn.fr-btn--secondary.fr-btn--loading:disabled {
+  background-color: transparent;
+  --hover: inherit;
+  --active: inherit;
+  color: var(--text-action-high-blue-france);
+  box-shadow: inset 0 0 0 1px var(--border-action-high-blue-france);
+}
 </style>

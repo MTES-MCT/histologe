@@ -46,6 +46,7 @@ interface FormStore {
   props: FormData
   screenData: any[]
   currentScreenIndex: number
+  lastButtonClicked: string
   validationErrors: FormData
   inputComponents: string[]
   updateData: (key: string, value: any) => void
@@ -70,6 +71,7 @@ const formStore: FormStore = reactive({
   },
   screenData: [],
   currentScreenIndex: 0,
+  lastButtonClicked: '',
   inputComponents: [
     'SignalementFormTextfield',
     'SignalementFormOnlyChoice',

@@ -131,6 +131,8 @@ export default defineComponent({
       requests.saveSignalementDraft(this.changeScreenBySlug)
     },
     changeScreenBySlug (requestResponse: any) {
+      window.scrollTo(0, 0)
+      formStore.lastButtonClicked = ''
       // si on reçoit un uuid on l'enregistre pour les mises à jour
       if (requestResponse.uuid) {
         formStore.data.uuidSignalementDraft = requestResponse.uuid

@@ -113,7 +113,7 @@ export default defineComponent({
     color: var(--blue-france-sun-113-625);
   }
 
-  .histo-app-stats a {
+  .histo-app-front-stats a {
     color: var(--blue-france-sun-113-625);
   }
 

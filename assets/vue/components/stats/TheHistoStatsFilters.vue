@@ -162,8 +162,9 @@ export default defineComponent({
     text-align: right;
   }
   .fr-fi-refresh-line::before{
-    padding-right: 5px;
+    margin-right: 5px;
     font-size: 1rem;
     color: var(--blue-france-sun-113-625);
+    --icon-size: 1.1rem;
   }
 </style>
