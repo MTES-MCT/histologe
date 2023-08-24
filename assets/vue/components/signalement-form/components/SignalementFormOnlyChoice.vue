@@ -1,9 +1,9 @@
 <template>
-  <fieldset :id="id" class="fr-fieldset fr-mt-5w" aria-labelledby="radio-hint-legend radio-hint-messages">
-      <legend :class="[ customCss, 'fr-fieldset__legend--regular', 'fr-fieldset__legend']" id="radio-hint-legend">
+  <fieldset :id="id" :class="[customCss, 'fr-fieldset fr-mt-5w']" aria-labelledby="radio-hint-legend radio-hint-messages">
+      <legend :class="['fr-fieldset__legend--regular', 'fr-fieldset__legend', customLegendCss]" id="radio-hint-legend">
         {{ label }}
       </legend>
-      <div v-for="radioValue in values" class="fr-fieldset__element" :key="radioValue.value">
+      <div v-for="radioValue in values" :class="['fr-fieldset__element', (radioValue.value === 'oui' || radioValue.value === 'non') ? 'item-divided' : '']" :key="radioValue.value">
           <div class="fr-radio-group">
             <input
               type="radio"
@@ -11,7 +11,7 @@
               :name="id"
               v-bind:key="radioValue.value"
               :value="radioValue.value"
-              :class="[ 'fr-input' ]"
+              class="fr-input"
               @input="updateValue($event)"
               :checked="radioValue.value === modelValue"
               aria-describedby="radio-error-messages"
@@ -48,12 +48,33 @@ export default defineComponent({
       this.$emit('update:modelValue', value)
     }
   },
+  computed: {
+    customLegendCss () {
+      if (this.customCss.includes('question-h1')) {
+        return 'fr-h1'
+      }
+      return ''
+    }
+  },
   emits: ['update:modelValue']
 })
 </script>
 
 <style>
-  .fr-radio-group input[type="radio"] {
-    display: none;
+  .fr-radio-group {
+    width: 100%;
+    max-width: 500px;
+    padding: 1rem;
+    border: 1px solid var(--border-disabled-grey);
+    background-color: var(--grey-1000-50);
+  }
+  .fr-radio-group:hover {
+    background-color: var(--grey-1000-50-hover);
+  }
+
+  @media (max-width: 48em) {
+    .fr-fieldset__element.item-divided {
+      flex-basis: content;
+    }
   }
 </style>

@@ -1,17 +1,17 @@
 <template>
-  <div class="signalement-form-address" :id="id">
+  <div :class="[customCss, 'signalement-form-address']" :id="id">
     <SignalementFormTextfield
       :key="idAddress"
       :id="idAddress"
       :label="label"
       :description="description"
       placeholder="Taper l'adresse ici"
-      :customCss="customCss"
       :validate="validate"
       v-model="formStore.data[idAddress]"
       :hasError="hasErrorOnSubscreen"
       :error="errorOnSubscreen"
     />
+
     <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group">
       <div
         v-for="(suggestion, index) in suggestions"
@@ -40,7 +40,7 @@
       :key="idSubscreen"
       :id="idSubscreen"
       label=""
-      customCss="fr-hidden"
+      customCss="fr-hidden fr-mt-3v"
       :components="screens"
       :validate="validate"
       v-model="formStore.data[idSubscreen]"
