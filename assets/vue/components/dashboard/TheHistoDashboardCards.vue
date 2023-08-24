@@ -302,6 +302,7 @@ export default defineComponent({
   }
   .histo-dashboard-cards .fr-card .fr-card__title a {
     box-shadow: none;
+    color: var(--text-title-grey);
   }
   .histo-dashboard-cards .fr-card ul {
     list-style: none;

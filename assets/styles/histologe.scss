@@ -244,23 +244,23 @@ small {
 
 a[href].fr-btn--orange {
     background: #FF9940;
-}
-a[href].fr-btn--orange:hover {
-    background: rgba(255, 153, 64, 0.65);
+    &:hover {
+        background: rgba(255, 153, 64, 0.65);
+    }
 }
 
 button.fr-btn--danger,a[href].fr-btn--danger {
     background: var(--warning-425-625);
-}
-button.fr-btn--danger:hover,a[href].fr-btn--danger:hover {
-    background: var(--warning-425-625-hover);
+    &:hover {
+        background: var(--warning-425-625-hover);
+    }
 }
 
 button.fr-btn--success,a[href].fr-btn--success {
-    background-color: var(--green-emeraude-sun-425-moon-753);
-}
-button.fr-btn--success:hover,a[href].fr-btn--success:hover {
-    background-color: var(--green-emeraude-sun-425-moon-753-hover);
+    background-color: var(--success-425-625);
+    &:hover {
+        background-color: var(--success-425-625-hover);
+    }
 }
 
 .fr-background-contrast--blue-france {
@@ -273,6 +273,10 @@ button.fr-btn--success:hover,a[href].fr-btn--success:hover {
 
 .fr-background-alt--blue-france {
     background-color: var(--background-alt-blue-france);
+}
+
+.fr-background-contrast--orange-terre-battue, .fr-table--bordered tbody tr.fr-background-contrast--orange-terre-battue {
+    background-color: var(--background-contrast-orange-terre-battue);
 }
 
 .fr-text-label--red-marianne {
