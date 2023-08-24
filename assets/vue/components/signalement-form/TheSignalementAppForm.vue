@@ -41,7 +41,7 @@
             >
               <img
                 :src="currentScreen.desktopIllustration.src"
-                :alt="currentScreen.desktopIllustration.alt"
+                alt=""
                 >
           </div>
         </div>
