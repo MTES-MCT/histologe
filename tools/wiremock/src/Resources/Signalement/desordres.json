@@ -1071,36 +1071,11 @@
           "label": "Il n'y a pas de fenêtre ni de système de ventilation (VMC...)"
         },
         {
-          "type": "SignalementFormSubscreen",
+          "type": "SignalementFormRoomList",
           "label": "Dans quelle(s) pièce(s) ?",
           "slug": "desordres_logement_aeration_aucune_aeration_details",
           "conditional": {
             "show": "formStore.data.desordres_logement_aeration_aucune_aeration === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
-          },
-          "components": {
-            "body": [
-              {
-                "type": "SignalementFormCheckbox",
-                "slug": "desordres_logement_aeration_aucune_aeration_details_piece_a_vivre",
-                "label": "Une ou des pièces à vivre (salon, chambres)"
-              },
-              {
-                "type": "SignalementFormCheckbox",
-                "slug": "desordres_logement_aeration_aucune_aeration_details_cuisine",
-                "label": "La cuisine / le coin cuisine",
-                "conditional": {
-                  "show": "formStore.data.type_logement_commodites_cuisine === 'oui'" 
-                }
-              },
-              {
-                "type": "SignalementFormCheckbox",
-                "slug": "desordres_logement_aeration_aucune_aeration_details_salle_de_bain",
-                "label": "La salle de bain, salle d'eau et / ou les toilettes",
-                "conditional": {
-                  "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'" 
-                }
-              }
-            ]
           }
         },
         {
@@ -1166,36 +1141,11 @@
                 "label": "Pour fonctionner, la ventilation (VMC) a besoin d'entretien ! Vérifiez qu'elle n'est pas bouchée et nettoyez-la correctement tous les 6 mois."
               },
               {
-                "type": "SignalementFormSubscreen",
+                "type": "SignalementFormRoomList",
                 "label": "Dans quelle(s) pièce(s) ?",
                 "slug": "desordres_logement_aeration_ventilation_defectueuse_details_pieces",
                 "conditional": {
-                  "show": "formStore.data.desordres_logement_aeration_ventilation_defectueuse_details_nettoyage !== 'non' && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
-                },
-                "components": {
-                  "body": [
-                    {
-                      "type": "SignalementFormCheckbox",
-                      "slug": "desordres_logement_aeration_ventilation_defectueuse_details_pieces_piece_a_vivre",
-                      "label": "Une ou des pièces à vivre (salon, chambres)"
-                    },
-                    {
-                      "type": "SignalementFormCheckbox",
-                      "slug": "desordres_logement_aeration_ventilation_defectueuse_details_pieces_cuisine",
-                      "label": "La cuisine / le coin cuisine",
-                      "conditional": {
-                        "show": "formStore.data.type_logement_commodites_cuisine === 'oui'" 
-                      }
-                    },
-                    {
-                      "type": "SignalementFormCheckbox",
-                      "slug": "desordres_logement_aeration_ventilation_defectueuse_details_pieces_salle_de_bain",
-                      "label": "La salle de bain, salle d'eau et / ou les toilettes",
-                      "conditional": {
-                        "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'" 
-                      }
-                    }
-                  ]
+                  "show": "formStore.data.desordres_logement_aeration_ventilation_defectueuse_details_nettoyage === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
                 }
               }
             ]
@@ -1285,36 +1235,11 @@
           ]
         },
         {
-          "type": "SignalementFormSubscreen",
+          "type": "SignalementFormRoomList",
           "label": "Dans quelle(s) pièce(s) ?",
           "slug": "desordres_logement_chauffage_aucun_pieces",
           "conditional": {
-            "show": "formStore.data.desordres_logement_chauffage_type === 'aucun' && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
-          },
-          "components": {
-            "body": [
-              {
-                "type": "SignalementFormCheckbox",
-                "slug": "desordres_logement_chauffage_aucun_pieces_piece_a_vivre",
-                "label": "Une ou des pièces à vivre (salon, chambres)"
-              },
-              {
-                "type": "SignalementFormCheckbox",
-                "slug": "desordres_logement_chauffage_aucun_pieces_cuisine",
-                "label": "La cuisine / le coin cuisine",
-                "conditional": {
-                  "show": "formStore.data.type_logement_commodites_cuisine === 'oui'" 
-                }
-              },
-              {
-                "type": "SignalementFormCheckbox",
-                "slug": "desordres_logement_chauffage_aucun_pieces_salle_de_bain",
-                "label": "La salle de bain, salle d'eau et / ou les toilettes",
-                "conditional": {
-                  "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'" 
-                }
-              }
-            ]
+            "show": "formStore.data.desordres_logement_chauffage_type === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
           }
         },
         {
@@ -1333,36 +1258,11 @@
                 "label": "Les fenêtres laissent passer beaucoup d'air ou laissent passer l'eau quand il pleut"
               },
               {
-                "type": "SignalementFormSubscreen",
+                "type": "SignalementFormRoomList",
                 "label": "Dans quelle(s) pièce(s) ?",
                 "slug": "desordres_logement_chauffage_details_fenetres_permeables_pieces",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_details_fenetres_permeables === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
-                },
-                "components": {
-                  "body": [
-                    {
-                      "type": "SignalementFormCheckbox",
-                      "slug": "desordres_logement_chauffage_details_fenetres_permeables_pieces_piece_a_vivre",
-                      "label": "Une ou des pièces à vivre (salon, chambres)"
-                    },
-                    {
-                      "type": "SignalementFormCheckbox",
-                      "slug": "desordres_logement_chauffage_details_fenetres_permeables_pieces_cuisine",
-                      "label": "La cuisine / le coin cuisine",
-                      "conditional": {
-                        "show": "formStore.data.type_logement_commodites_cuisine === 'oui'" 
-                      }
-                    },
-                    {
-                      "type": "SignalementFormCheckbox",
-                      "slug": "desordres_logement_chauffage_details_fenetres_permeables_pieces_salle_de_bain",
-                      "label": "La salle de bain, salle d'eau et / ou les toilettes",
-                      "conditional": {
-                        "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'" 
-                      }
-                    }
-                  ]
                 }
               },
               {
@@ -1371,36 +1271,11 @@
                 "label": "J'ai du mal à chauffer mon logement"
               },
               {
-                "type": "SignalementFormSubscreen",
+                "type": "SignalementFormRoomList",
                 "label": "Dans quelle(s) pièce(s) ?",
                 "slug": "desordres_logement_chauffage_details_difficultes_chauffage_pieces",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_details_difficultes_chauffage === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
-                },
-                "components": {
-                  "body": [
-                    {
-                      "type": "SignalementFormCheckbox",
-                      "slug": "desordres_logement_chauffage_details_difficultes_chauffage_pieces_piece_a_vivre",
-                      "label": "Une ou des pièces à vivre (salon, chambres)"
-                    },
-                    {
-                      "type": "SignalementFormCheckbox",
-                      "slug": "desordres_logement_chauffage_details_difficultes_chauffage_pieces_cuisine",
-                      "label": "La cuisine / le coin cuisine",
-                      "conditional": {
-                        "show": "formStore.data.type_logement_commodites_cuisine === 'oui'" 
-                      }
-                    },
-                    {
-                      "type": "SignalementFormCheckbox",
-                      "slug": "desordres_logement_chauffage_details_difficultes_chauffage_pieces_salle_de_bain",
-                      "label": "La salle de bain, salle d'eau et / ou les toilettes",
-                      "conditional": {
-                        "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'" 
-                      }
-                    }
-                  ]
                 }
               },
               {
@@ -1409,36 +1284,11 @@
                 "label": "Mon chauffage ne fonctionne pas, je dois utiliser un chauffage d'appoint"
               },
               {
-                "type": "SignalementFormSubscreen",
+                "type": "SignalementFormRoomList",
                 "label": "Dans quelle(s) pièce(s) ?",
                 "slug": "desordres_logement_chauffage_details_chauffage_KO_pieces",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_details_chauffage_KO === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
-                },
-                "components": {
-                  "body": [
-                    {
-                      "type": "SignalementFormCheckbox",
-                      "slug": "desordres_logement_chauffage_details_chauffage_KO_pieces_piece_a_vivre",
-                      "label": "Une ou des pièces à vivre (salon, chambres)"
-                    },
-                    {
-                      "type": "SignalementFormCheckbox",
-                      "slug": "desordres_logement_chauffage_details_chauffage_KO_pieces_cuisine",
-                      "label": "La cuisine / le coin cuisine",
-                      "conditional": {
-                        "show": "formStore.data.type_logement_commodites_cuisine === 'oui'" 
-                      }
-                    },
-                    {
-                      "type": "SignalementFormCheckbox",
-                      "slug": "desordres_logement_chauffage_details_chauffage_KO_pieces_salle_de_bain",
-                      "label": "La salle de bain, salle d'eau et / ou les toilettes",
-                      "conditional": {
-                        "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'" 
-                      }
-                    }
-                  ]
                 }
               },
               {
@@ -1565,7 +1415,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Humidité et moisissure",
-    "description": "Dans quelles pièces blablabl...",
+    "description": "Dans quelle(s) pièce(s) il y a-t-il des traces d'humidité ou de la moisissure ?",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-humidite_moisissure.svg",
       "alt": "illustration Humidité et moisissure "
