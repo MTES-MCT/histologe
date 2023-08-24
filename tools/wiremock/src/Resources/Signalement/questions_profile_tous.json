@@ -6,7 +6,7 @@
     "description": "<h2>Avant de démarrer...</h2><p>Les informations demandées sont nécéssaires au bon traitement du signalement.</p><p>Elles seront uniquement partagées avec les administrations compétentes pour traiter votre dossier.</p>",
     "desktopIllustration": {
       "src": "/img/form/form-home-illus.png",
-      "alt": "illustration logement"
+      "alt": ""
     },
     "components": {
       "body": [
