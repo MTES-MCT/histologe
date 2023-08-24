@@ -256,6 +256,13 @@ button.fr-btn--danger,a[href].fr-btn--danger {
     }
 }
 
+.fr-btn.fr-btn--error {
+    background: var(--background-action-high-error);
+    &:hover {
+        background: var(--background-action-high-error-hover);
+    }
+}
+
 button.fr-btn--success,a[href].fr-btn--success {
     background-color: var(--success-425-625);
     &:hover {

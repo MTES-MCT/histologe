@@ -102,15 +102,15 @@
                     </p>
                 </fieldset>
             </div>
-            <div class="fr-form-group {% if 'back_' not in app.request.get('_route') or not signalement.isNotOccupant %}fr-hidden{% endif %} data-fr-toggle"
+            <div class="fr-form-group {% if 'back_' not in app.request.get('_route') or not signalement.isNotOccupant %}fr-hidden{% endif %} data-fr-toggle fr-mb-10v"
                  id="signalement-pas-occupant">
                 <fieldset class="fr-fieldset fr-fieldset--inline">
                     <legend class="fr-fieldset__legend fr-text--regular">
                         Informations concernant <strong><u>le déclarant</u></strong>
                         <span class="fr-hint-text">Vous déposez pour le compte de quelqu'un d'autre</span>
                     </legend>
-                    <div class="fr-fieldset__content fr-grid-row fr-grid-row--gutters fr-m-0">
-                        <div class="fr-form-group fr-col-12 fr-col-md-6 fr-mb-0 fr-px-0 fr-pl-md-0 fr-pr-md-1v">
+                    <div class="fr-fieldset__content fr-grid-row">
+                        <div class="fr-form-group fr-col-12 fr-col-md-6 fr-py-3v fr-mb-0 fr-px-0 fr-pl-md-0 fr-pr-md-1v">
                             <div class="fr-input-group">
                                 {{ form_label(form.nomDeclarant) }}
                                 {% if 'back_' not in app.request.get('_route') %}
@@ -123,7 +123,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="fr-form-group fr-col-12 fr-col-md-6 fr-mb-0 fr-px-0 fr-pr-md-0 fr-pl-md-1v">
+                        <div class="fr-form-group fr-col-12 fr-col-md-6 fr-py-3v fr-mb-0 fr-px-0 fr-pr-md-0 fr-pl-md-1v">
                             <div class="fr-input-group">
                                 {{ form_label(form.prenomDeclarant) }}
                                 {% if 'back_' not in app.request.get('_route') %}
@@ -136,7 +136,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="fr-form-group fr-col-12 fr-col-md-6 fr-mb-0 fr-px-0 fr-pl-md-0 fr-pr-md-1v">
+                        <div class="fr-form-group fr-col-12 fr-col-md-6 fr-py-3v fr-mb-0 fr-px-0 fr-pl-md-0 fr-pr-md-1v">
                             <div class="fr-input-group">
                                 {{ form_label(form.telDeclarant) }}
                                 {{ form_widget(form.telDeclarant) }}
@@ -145,7 +145,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="fr-form-group fr-col-12 fr-col-md-6 fr-mb-0 fr-px-0 fr-pr-md-0 fr-pl-md-1v">
+                        <div class="fr-form-group fr-col-12 fr-col-md-6 fr-py-3v fr-mb-0 fr-px-0 fr-pr-md-0 fr-pl-md-1v">
                             <div class="fr-input-group">
                                 {{ form_label(form.mailDeclarant) }}
                                 {% if 'back_' not in app.request.get('_route') %}
@@ -194,8 +194,8 @@
                         Informations concernant <strong><u>l'occupant</u></strong>
                         <span class="fr-hint-text">Ces informations sont nécessaires au suivi de votre signalement, merci de bien vérifier votre saisie.</span>
                     </legend>
-                    <div class="fr-fieldset__content fr-grid-row fr-grid-row--gutters fr-m-0">
-                        <div class="fr-form-group fr-col-12 fr-col-md-6 fr-mb-0 fr-px-0 fr-pl-md-0 fr-pr-md-1v">
+                    <div class="fr-fieldset__content fr-grid-row">
+                        <div class="fr-form-group fr-col-12 fr-col-md-6 fr-py-3v fr-mb-0 fr-px-0 fr-pl-md-0 fr-pr-md-1v">
                             <div class="fr-input-group">
                                 {{ form_label(form.nomOccupant) }}
                                 {{ form_widget(form.nomOccupant) }}
@@ -204,7 +204,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="fr-form-group fr-col-12 fr-col-md-6 fr-mb-0 fr-px-0 fr-pr-md-0 fr-pl-md-1v">
+                        <div class="fr-form-group fr-col-12 fr-col-md-6 fr-py-3v fr-mb-0 fr-px-0 fr-pr-md-0 fr-pl-md-1v">
                             <div class="fr-input-group">
                                 {{ form_label(form.prenomOccupant) }}
                                 {{ form_widget(form.prenomOccupant) }}
@@ -213,7 +213,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="fr-form-group fr-col-12 fr-col-md-6 fr-px-0 fr-pl-md-0 fr-pr-md-1v fr-mb-0">
+                        <div class="fr-form-group fr-col-12 fr-col-md-6 fr-py-3v fr-px-0 fr-pl-md-0 fr-pr-md-1v fr-mb-0">
                             <div class="fr-input-group">
                                 {{ form_label(form.telOccupant) }}
                                 {{ form_widget(form.telOccupant) }}
@@ -222,13 +222,13 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="fr-form-group fr-col-12 fr-col-md-6 fr-px-0 fr-pl-md-0 fr-pr-md-1v fr-mb-0">
+                        <div class="fr-form-group fr-col-12 fr-col-md-6 fr-py-3v fr-px-0 fr-pl-md-0 fr-pr-md-1v fr-mb-0">
                             <div class="fr-input-group">
                                 {{ form_label(form.telOccupantBis) }}
                                 {{ form_widget(form.telOccupantBis) }}
                             </div>
                         </div>
-                        <div class="fr-form-group fr-col-12 fr-px-0 fr-pr-md-0 ">
+                        <div class="fr-form-group fr-col-12 fr-px-0 fr-py-3v fr-pr-md-0 ">
                             <div class="fr-input-group">
                                 {{ form_label(form.mailOccupant) }}
                                 {{ form_widget(form.mailOccupant) }}
@@ -290,7 +290,7 @@
                     <input {{ attr }} name="signalement[inseeOccupant]"
                                       id="signalement-insee-occupant" value="{{ signalement.inseeOccupant ?? '' }}">
                 </div>
-                <fieldset class="fr-fieldset fr-col-12 fr-p-0">
+                <fieldset class="fr-fieldset fr-col-12">
                     <legend class="fr-fieldset__legend">
                         Complément d'adresse
                     </legend>
@@ -520,15 +520,17 @@
                         Qui habite ce logement ?<sup class="fr-text-default--error">*</sup>
                         <span class="fr-hint-text">Indiquer la composition du logement en précisant le nombre d'enfants.</span>
                     </legend>
-                    <div class="fr-select-group">
-                        {{ form_label(form.nbAdultes) }}
-                        {{ form_widget(form.nbAdultes) }}
-                        <p class="fr-error-text fr-hidden">
-                            Veuillez renseigner le nombre d'adultes dans le logement.
-                        </p>
+                    <div class="fr-fieldset__content">
+                        <div class="fr-select-group">
+                            {{ form_label(form.nbAdultes) }}
+                            {{ form_widget(form.nbAdultes) }}
+                            <p class="fr-error-text fr-hidden">
+                                Veuillez renseigner le nombre d'adultes dans le logement.
+                            </p>
+                        </div>
+                        {{ form_row(form.nbEnfantsM6) }}
+                        {{ form_row(form.nbEnfantsP6) }}
                     </div>
-                    {{ form_row(form.nbEnfantsM6) }}
-                    {{ form_row(form.nbEnfantsP6) }}
                 </fieldset>
             </div>
             <div class="fr-form-group">
