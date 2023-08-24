@@ -81,8 +81,7 @@
           "type": "SignalementFormAddress",
           "label": "Adresse du logement",
           "slug": "adresse_logement_adresse",
-          "description": "Tapez l'adresse puis sélectionnez-la dans la liste",
-          "customCss": "question-xl"
+          "description": "Tapez l'adresse puis sélectionnez-la dans la liste"
         },
         {
           "type": "SignalementFormSubscreen",
@@ -155,7 +154,7 @@
         {
           "type": "SignalementFormOnlyChoice",
           "label": "Votre signalement concerne...",
-          "customCss": "question-xl",
+          "customCss": "question-h1",
           "slug": "signalement_concerne_profil",
           "values": [
             {
