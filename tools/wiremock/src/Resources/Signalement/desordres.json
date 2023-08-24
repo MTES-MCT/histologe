@@ -1858,65 +1858,77 @@
           }
         },
         {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_logement_securite_plomb_details",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_securite_plomb === 1" 
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Avez-vous fait ou reçu un diagnostic plomb / amiante ?",
+                "slug": "desordres_logement_securite_plomb_details_diagnostique",
+                "conditional": {
+                  "show": "formStore.data.profil === 'locataire' || formStore.data.profil === 'bailleur_occupant'"
+                },
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  },
+                  {
+                    "label": "Je ne sais pas",
+                    "value": "nsp"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Un diagnostic plomb / amiante est disponible pour le logement ?",
+                "slug": "desordres_logement_securite_plomb_details_diagnostique",
+                "conditional": {
+                  "show": "formStore.data.profil !== 'locataire' && formStore.data.profil !== 'bailleur_occupant'"
+                },
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  },
+                  {
+                    "label": "Je ne sais pas",
+                    "value": "nsp"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormUpload",
+                "label": "Ajoutez le diagnostic plomb / amiane en cliquant sur le bouton ci-dessous",
+                "slug": "desordres_logement_securite_plomb_details_diagnostique_fichier",
+                "description": "",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_securite_plomb_details_diagnostique === 'oui'"
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "SignalementFormUploadPhotos",
           "label": "Photos (facultatif)",
           "slug": "desordres_logement_securite_photos",
           "description": "Si possible, ajoutez des photos des problèmes sélectionnés.",
           "conditional": {
             "show": "formStore.data.desordres_logement_securite_sol_glissant === 1 || formStore.data.desordres_logement_securite_balcons === 1 || formStore.data.desordres_logement_securite_plomb === 1"
-          }
-        },
-        {
-          "type": "SignalementFormOnlyChoice",
-          "label": "Avez-vous fait ou reçu un diagnostic plomb / amiante ?",
-          "slug": "desordres_logement_securite_plomb_diagnostique",
-          "conditional": {
-            "show": "formStore.data.desordres_logement_securite_plomb === 1 && (formStore.data.profil === 'locataire' || formStore.data.profil === 'bailleur_occupant')"
-          },
-          "values": [
-            {
-              "label": "Oui",
-              "value": "oui"
-            },
-            {
-              "label": "Non",
-              "value": "non"
-            },
-            {
-              "label": "Je ne sais pas",
-              "value": "nsp"
-            }
-          ]
-        },
-        {
-          "type": "SignalementFormOnlyChoice",
-          "label": "Un diagnostic plomb / amiante est disponible pour le logement ?",
-          "slug": "desordres_logement_securite_plomb_diagnostique",
-          "conditional": {
-            "show": "formStore.data.desordres_logement_securite_plomb === 1 && formStore.data.profil !== 'locataire' && formStore.data.profil !== 'bailleur_occupant'"
-          },
-          "values": [
-            {
-              "label": "Oui",
-              "value": "oui"
-            },
-            {
-              "label": "Non",
-              "value": "non"
-            },
-            {
-              "label": "Je ne sais pas",
-              "value": "nsp"
-            }
-          ]
-        },
-        {
-          "type": "SignalementFormUpload",
-          "label": "Ajoutez le diagnostic plomb / amiane en cliquant sur le bouton ci-dessous",
-          "slug": "desordres_logement_securite_plomb_diagnostique_fichier",
-          "description": "",
-          "conditional": {
-            "show": "formStore.data.desordres_logement_securite_plomb_diagnostique === 'oui'"
           }
         }
       ],
@@ -1988,66 +2000,86 @@
           "label": "L'installation est dangereuse : les fils sont dénudés, les prises ne tiennent pas dans les murs, etc."
         },
         {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_logement_electricite_installation_dangereuse_details",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_electricite_installation_dangereuse === 1" 
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormUploadPhotos",
+                "label": "Photos (facultatif)",
+                "slug": "desordres_logement_electricite_installation_dangereuse_details_photos",
+                "description": "Si possible, ajoutez des photos des problèmes sélectionnés."
+              }
+            ]
+          }
+        },
+        {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_electricite_manque_prises",
           "label": "Il n'y a pas de prises, ou il en manque"
         },
         {
-          "type": "SignalementFormOnlyChoice",
-          "label": "Devez-vous brancher des multi-prises les unes sur les autres ?",
-          "slug": "desordres_logement_electricite_multiprises",
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_logement_electricite_manque_prises_details",
           "conditional": {
-            "show": "formStore.data.desordres_logement_electricite_manque_prises === 1 && (formStore.data.profil === 'locataire' || formStore.data.profil === 'bailleur_occupant')"
+            "show": "formStore.data.desordres_logement_electricite_manque_prises === 1" 
           },
-          "values": [
-            {
-              "label": "Oui",
-              "value": "oui"
-            },
-            {
-              "label": "Non",
-              "value": "non"
-            }
-          ]
-        },
-        {
-          "type": "SignalementFormOnlyChoice",
-          "label": "Le foyer doit brancher des multi-prises les unes sur les autres ?",
-          "slug": "desordres_logement_electricite_multiprises",
-          "conditional": {
-            "show": "formStore.data.desordres_logement_electricite_manque_prises === 1 && formStore.data.profil !== 'locataire' && formStore.data.profil !== 'bailleur_occupant'"
-          },
-          "values": [
-            {
-              "label": "Oui",
-              "value": "oui"
-            },
-            {
-              "label": "Non",
-              "value": "non"
-            },
-            {
-              "label": "Je ne sais pas",
-              "value": "nsp"
-            }
-          ]
-        },
-
-        {
-          "type": "SignalementFormRoomList",
-          "label": "Dans quelle(s) pièce(s) ?",
-          "slug": "desordres_logement_electricite_manque_prises_pieces",
-          "conditional": {
-            "show": "formStore.data.desordres_logement_electricite_manque_prises === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
-          }
-        },
-        {
-          "type": "SignalementFormUploadPhotos",
-          "label": "Photos (facultatif)",
-          "slug": "desordres_logement_electricite_installation_dangereuse_photos",
-          "description": "Si possible, ajoutez des photos des problèmes sélectionnés.",
-          "conditional": {
-            "show": "formStore.data.desordres_logement_electricite_installation_dangereuse === 1" 
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Devez-vous brancher des multi-prises les unes sur les autres ?",
+                "slug": "desordres_logement_electricite_manque_prises_details_multiprises",
+                "conditional": {
+                  "show": "formStore.data.profil === 'locataire' || formStore.data.profil === 'bailleur_occupant'"
+                },
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Le foyer doit brancher des multi-prises les unes sur les autres ?",
+                "slug": "desordres_logement_electricite_manque_prises_details_multiprises",
+                "conditional": {
+                  "show": "formStore.data.profil !== 'locataire' && formStore.data.profil !== 'bailleur_occupant'"
+                },
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  },
+                  {
+                    "label": "Je ne sais pas",
+                    "value": "nsp"
+                  }
+                ]
+              },      
+              {
+                "type": "SignalementFormRoomList",
+                "label": "Dans quelle(s) pièce(s) ?",
+                "slug": "desordres_logement_electricite_manque_prises_details_pieces",
+                "conditional": {
+                  "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+                }
+              }
+            ]
           }
         }
       ],
@@ -2063,6 +2095,145 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_logement_electricite_next",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Présence de nuisibles",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
+    "icon": {
+      "src": "/img/form/LOGEMENT/Picto-presence_nuisibles.svg",
+      "alt": "illustration Présence de nuisibles"
+    },
+    "slug": "desordres_logement_nuisibles",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_nuisibles_cafards",
+          "label": "Il y a des cafards ou blattes"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_nuisibles_rongeurs",
+          "label": "Il y a des rongeurs (rats, souris...)"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_nuisibles_punaises",
+          "label": "Il y a des punaises de lit"
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_logement_nuisibles_punaises_details",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_nuisibles_punaises === 1 && formStore.data.adresse_logement_adresse_detail_insee === '13000'" 
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormInfo",
+                "label": "Le saviez-vous ? Sur votre département, le service Stop Punaises vous permet de trouver une entreprise labellisée pour traiter les punaises de lit. <a href='http://stop-punaises.beta.gouv.fr/' target='_blank'>Cliquez ici pour y accéder.</a>",
+                "slug": "desordres_logement_nuisibles_punaises_details_info"
+              }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_nuisibles_autres",
+          "label": "Il y a un autre type de nuisible"
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_logement_nuisibles_autres_details",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_nuisibles_autres === 1"
+          },
+          "components": {
+            "body": [
+                {
+                  "type": "SignalementFormTextfield",
+                  "label": "Précisez le type de nuisibles",
+                  "slug": "desordres_logement_nuisibles_autres_details_type_nuisibles"
+                }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Depuis quand les {{nuisibles}} sont présents dans le logement ?",
+          "slug": "desordres_logement_nuisibles_date",
+          "conditional": {
+            "show": "formStore.data.profil === 'locataire' || formStore.data.profil === 'bailleur_occupant'"
+          },
+          "values": [
+            {
+              "label": "Avant que j'emménage",
+              "value": "before"
+            },
+            {
+              "label": "Après mon emménagement",
+              "value": "after"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Depuis quand les {{nuisibles}} sont présents dans le logement ?",
+          "slug": "desordres_logement_nuisibles_date",
+          "conditional": {
+            "show": "formStore.data.profil !== 'locataire' && formStore.data.profil !== 'bailleur_occupant'"
+          },
+          "values": [
+            {
+              "label": "Avant l'emménagement du foyer",
+              "value": "before"
+            },
+            {
+              "label": "Après l'emménagement du foyer",
+              "value": "after"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ]
+        },      
+        {
+          "type": "SignalementFormInfo",
+          "slug": "desordres_logement_nuisibles_info",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_nuisibles_date === 'after' || formStore.data.desordres_logement_nuisibles_date === 'nsp'"
+          },
+          "label": "Bon à savoir : si la présence de nuisibles est dûe à un manque d'entretien ou de nettoyage du logement, c'est aux locataires de payer la prise en charge. Si les nuisibles sont présents dans tout le bâtiment, ou étaient présents dès l'emménagement dans le logement : c'est à la charge du bailleur (propriétaire)."
+        },
+        {
+          "type": "SignalementFormUploadPhotos",
+          "label": "Photos (facultatif)",
+          "slug": "desordres_logement_nuisibles_photos",
+          "description": "Si possible, ajoutez des photos du problème."
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_logement_nuisibles_previous",
+          "action": "findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_logement_nuisibles_next",
           "action": "findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
