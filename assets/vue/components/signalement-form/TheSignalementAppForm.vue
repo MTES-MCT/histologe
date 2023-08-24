@@ -148,8 +148,6 @@ export default defineComponent({
             this.currentScreen.components.body = formStore.preprocessScreen(this.currentScreen.components.body)
           }
         } else {
-          console.log(this.nextSlug)
-          console.log(this.nextSlug.indexOf('desordres'))
           if (this.slugCoordonnees.includes(this.nextSlug)) { // TODO à mettre à jour suivant le slug des différents profils
             // on détermine le profil
             profileUpdater.update()
