@@ -2,7 +2,7 @@
     <div class="signalement-form-button" :id="id">
       <button
         :type="type"
-        :class="[ 'fr-btn', customCss, formStore.lastButtonClicked === id ? 'fr-btn--loading' : '' ]"
+        :class="[ 'fr-btn', customCss, formStore.lastButtonClicked === id ? 'fr-btn--loading fr-btn--icon-right fr-icon-refresh-line' : '' ]"
         :disabled="formStore.lastButtonClicked !== ''"
         @click="handleClick"
         >
