@@ -1790,50 +1790,148 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "blabla",
-    "description": "Dans",
+    "label": "Sécurité",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
-      "src": "/img/form/LOGEMENT/Picto-batiment.svg",
-      "alt": "illustration moississure"
+      "src": "/img/form/LOGEMENT/Picto-securite.svg",
+      "alt": "illustration Sécurité"
     },
-    "slug": "desordres_moisissures",
+    "slug": "desordres_logement_securite",
     "screenCategory": "Désordres",
     "components": {
       "body": [
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_moisissures_pieces_a_vivre",
-          "label": "Une"
+          "slug": "desordres_logement_securite_sol_glissant",
+          "label": "Le sol est glissant ou abîmé"
+        },
+        {
+          "type": "SignalementFormRoomList",
+          "label": "Dans quelle(s) pièce(s) ?",
+          "slug": "desordres_logement_securite_sol_glissant_pieces",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_securite_sol_glissant === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          }
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_moisissures_pieces_a_vivre",
-          "label": "Une"
+          "slug": "desordres_logement_securite_sol_dangereux",
+          "label": "Le sol risque de s'effondrer : il bouge et est très abîmé"
+        },
+        {
+          "type": "SignalementFormRoomList",
+          "label": "Dans quelle(s) pièce(s) ?",
+          "slug": "desordres_logement_securite_sol_dangereux_pieces",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_securite_sol_dangereux === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          }
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_moisissures_pieces_a_vivre",
-          "label": "Une"
+          "slug": "desordres_logement_securite_balcons",
+          "label": "Les balcons et rambardes des fenêtres risquent de tomber"
+        },
+        {
+          "type": "SignalementFormRoomList",
+          "label": "Dans quelle(s) pièce(s) ?",
+          "slug": "desordres_logement_securite_balcons_pieces",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_securite_balcons === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          }
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_securite_gaz",
+          "label": "Il y a une odeur de gaz ou des fuites de gaz"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_securite_plomb",
+          "label": "Il y a de la peinture au plomb en mauvais état ou des matériaux amiantés en mauvais état"
+        },
+        {
+          "type": "SignalementFormRoomList",
+          "label": "Dans quelle(s) pièce(s) ?",
+          "slug": "desordres_logement_securite_plomb_pieces",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_securite_plomb === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          }
         },
         {
           "type": "SignalementFormUploadPhotos",
           "label": "Photos (facultatif)",
-          "slug": "desordres_moisissures_photos",
-          "description": "Si possible, ajoutez des photos des problèmes sélectionnés."
+          "slug": "desordres_logement_securite_photos",
+          "description": "Si possible, ajoutez des photos des problèmes sélectionnés.",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_securite_sol_glissant === 1 || formStore.data.desordres_logement_securite_balcons === 1 || formStore.data.desordres_logement_securite_plomb === 1"
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Avez-vous fait ou reçu un diagnostic plomb / amiante ?",
+          "slug": "desordres_logement_securite_plomb_diagnostique",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_securite_plomb === 1 && (formStore.data.profil === 'locataire' || formStore.data.profil === 'bailleur_occupant')"
+          },
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Un diagnostic plomb / amiante est disponible pour le logement ?",
+          "slug": "desordres_logement_securite_plomb_diagnostique",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_securite_plomb === 1 && formStore.data.profil !== 'locataire' && formStore.data.profil !== 'bailleur_occupant'"
+          },
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormUpload",
+          "label": "Ajoutez le diagnostic plomb / amiane en cliquant sur le bouton ci-dessous",
+          "slug": "desordres_logement_securite_plomb_diagnostique_fichier",
+          "description": "",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_securite_plomb_diagnostique === 'oui'"
+          }
         }
       ],
       "footer": [
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "desordres_moisissures_previous",
+          "slug": "desordres_logement_securite_previous",
           "action": "findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "desordres_moisissures_next",
+          "slug": "desordres_logement_securite_next",
           "action": "findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
