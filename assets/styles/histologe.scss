@@ -256,6 +256,13 @@ button.fr-btn--danger:hover,a[href].fr-btn--danger:hover {
     background: var(--warning-425-625-hover);
 }
 
+.fr-btn.fr-btn--error {
+    background: var(--background-action-high-error);
+    &:hover {
+        background: var(--background-action-high-error-hover);
+    }
+}
+
 button.fr-btn--success,a[href].fr-btn--success {
     background-color: var(--green-emeraude-sun-425-moon-753);
 }
