@@ -2322,50 +2322,66 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "blabla",
-    "description": "Dans",
+    "label": "Eclairement, lumière naturelle",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
-      "src": "/img/form/LOGEMENT/Picto-batiment.svg",
-      "alt": "illustration moississure"
+      "src": "/img/form/LOGEMENT/Picto-lumiere_naturelle.svg",
+      "alt": "illustration Eclairement, lumière naturelle"
     },
-    "slug": "desordres_moisissures",
+    "slug": "desordres_logement_lumiere",
     "screenCategory": "Désordres",
     "components": {
       "body": [
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_moisissures_pieces_a_vivre",
-          "label": "Une"
+          "slug": "desordres_logement_lumiere_pas_lumiere",
+          "label": "Mon logement n'est pas éclairé par la lumière du jour. Je dois allumer la lumière en plein jour",
+          "conditional": {
+            "show": "formStore.data.profil === 'locataire' || formStore.data.profil === 'bailleur_occupant'"
+          }
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_moisissures_pieces_a_vivre",
-          "label": "Une"
+          "slug": "desordres_logement_lumiere_pas_lumiere",
+          "label": "Le logement n'est pas éclairé par la lumière du jour. Je dois allumer la lumière en plein jour",
+          "conditional": {
+            "show": "formStore.data.profil !== 'locataire' && formStore.data.profil !== 'bailleur_occupant'"
+          }
+        },   
+        {
+          "type": "SignalementFormRoomList",
+          "label": "Dans quelle(s) pièce(s) ?",
+          "slug": "desordres_logement_lumiere_pas_lumiere_pieces",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_lumiere_pas_lumiere === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          }
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_moisissures_pieces_a_vivre",
-          "label": "Une"
-        },
+          "slug": "desordres_logement_lumiere_pas_volets",
+          "label": "Il n'y a pas de volets, ni de stores aux fenêtres"
+        },   
         {
-          "type": "SignalementFormUploadPhotos",
-          "label": "Photos (facultatif)",
-          "slug": "desordres_moisissures_photos",
-          "description": "Si possible, ajoutez des photos des problèmes sélectionnés."
+          "type": "SignalementFormRoomList",
+          "label": "Dans quelle(s) pièce(s) ?",
+          "slug": "desordres_logement_lumiere_pas_volets_pieces",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_lumiere_pas_volets === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          }
         }
       ],
       "footer": [
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "desordres_moisissures_previous",
+          "slug": "desordres_logement_lumiere_previous",
           "action": "findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "desordres_moisissures_next",
+          "slug": "desordres_logement_lumiere_next",
           "action": "findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
