@@ -14,6 +14,7 @@
         :action="component.action"
         :link="component.link"
         :linktarget="component.linktarget"
+        :components="component.components"
         :values="component.values"
         :customCss="component.customCss"
         :validate="component.validate"
@@ -46,6 +47,8 @@ import SignalementFormPhonefield from './SignalementFormPhonefield.vue'
 import SignalementFormUpload from './SignalementFormUpload.vue'
 import SignalementFormOverview from './SignalementFormOverview.vue'
 import SignalementFormConfirmation from './SignalementFormConfirmation.vue'
+import SignalementFormDisorderCategoryItem from './SignalementFormDisorderCategoryItem.vue'
+import SignalementFormDisorderCategoryList from './SignalementFormDisorderCategoryList.vue'
 
 export default defineComponent({
   name: 'SignalementFormSubscreen',
@@ -64,7 +67,9 @@ export default defineComponent({
     SignalementFormPhonefield,
     SignalementFormUpload,
     SignalementFormOverview,
-    SignalementFormConfirmation
+    SignalementFormConfirmation,
+    SignalementFormDisorderCategoryItem,
+    SignalementFormDisorderCategoryList
   },
   props: {
     label: String,
