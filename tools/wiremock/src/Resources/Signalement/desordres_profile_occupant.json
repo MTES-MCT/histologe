@@ -39,7 +39,8 @@
       "body": [
         {
           "type": "SignalementFormDisorderCategoryList",
-          "slug": "desordres_batiment_liste",         
+          "slug": "desordres_batiment_liste",
+          "action": "toggle:desordres_batiment_valider",
           "components": {
             "body": [
               {
@@ -853,7 +854,8 @@
       "body": [
         {
           "type": "SignalementFormDisorderCategoryList",
-          "slug": "desordres_logement_liste",         
+          "slug": "desordres_logement_liste",
+          "action": "toggle:desordres_logement_valider",
           "components": {
             "body": [
               {

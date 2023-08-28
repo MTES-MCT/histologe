@@ -1,5 +1,5 @@
 <template>
-  <div :id="id" class="signalement-form-disorder-category-list fr-container--fluid">
+  <div :id="id" class="signalement-form-disorder-category-list fr-container--fluid fr-my-3v">
     <div v-if="components != undefined" class="fr-grid-row fr-grid-row--gutters">
       <div
         v-for="component in components.body"
