@@ -11,6 +11,8 @@
         v-bind:key="component.slug"
         :id="component.slug"
         :label="component.label"
+        :labelInfo="component.labelInfo"
+        :labelUpload="component.labelUpload"
         :description="component.description"
         :components="component.components"
         :action="component.action"
@@ -74,6 +76,7 @@ import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormTime from './SignalementFormTime.vue'
 import SignalementFormUpload from './SignalementFormUpload.vue'
+import SignalementFormUploadPhotos from './SignalementFormUploadPhotos.vue'
 import SignalementFormWarning from './SignalementFormWarning.vue'
 import SignalementFormYear from './SignalementFormYear.vue'
 import { variablesReplacer } from './../services/variableReplacer'
@@ -97,6 +100,7 @@ export default defineComponent({
     SignalementFormCheckbox,
     SignalementFormPhonefield,
     SignalementFormUpload,
+    SignalementFormUploadPhotos,
     SignalementFormEmailfield,
     SignalementFormOverview,
     SignalementFormConfirmation,

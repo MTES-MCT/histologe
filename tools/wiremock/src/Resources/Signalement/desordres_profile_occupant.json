@@ -216,7 +216,9 @@
           "type": "SignalementFormUploadPhotos",
           "label": "Photos (facultatif)",
           "slug": "desordres_batiment_proprete_photos",
-          "description": "Si possible, ajoutez des photos des problèmes sélectionnés."
+          "description": "Si possible, ajoutez des photos des problèmes sélectionnés.",
+          "labelInfo": "Les photos ne doivent pas contenir de visages de personnes ou d'objets personnels",
+          "labelUpload": "Ajouter des photos"
         }
       ],
       "footer": [
@@ -325,6 +327,8 @@
           "label": "Photos (facultatif)",
           "slug": "desordres_batiment_isolation_photos",
           "description": "Si possible, ajoutez des photos du problème.",
+          "labelInfo": "Les photos ne doivent pas contenir de visages de personnes ou d'objets personnels",
+          "labelUpload": "Ajouter des photos",
           "conditional": {
             "show": "formStore.data.desordres_batiment_isolation_infiltration_eau === 1"
           }
@@ -375,6 +379,8 @@
           "label": "Photos (facultatif)",
           "slug": "desordres_batiment_maintenance_photos",
           "description": "Si possible, ajoutez des photos du problème.",
+          "labelInfo": "Les photos ne doivent pas contenir de visages de personnes ou d'objets personnels",
+          "labelUpload": "Ajouter des photos",
           "conditional": {
             "show": "formStore.data.desordres_batiment_maintenance_petites_reparations === 1"
           }
@@ -473,7 +479,9 @@
           "type": "SignalementFormUploadPhotos",
           "label": "Photos (facultatif)",
           "slug": "desordres_batiment_nuisibles_photos",
-          "description": "Si possible, ajoutez des photos du problème."
+          "description": "Si possible, ajoutez des photos du problème.",
+          "labelInfo": "Les photos ne doivent pas contenir de visages de personnes ou d'objets personnels",
+          "labelUpload": "Ajouter des photos"
         }
       ],
       "footer": [
@@ -655,7 +663,9 @@
           "type": "SignalementFormUploadPhotos",
           "label": "Photos",
           "slug": "desordres_batiment_securite_photos",
-          "description": "Ajoutez des photos des problèmes sélectionnés."
+          "description": "Ajoutez des photos des problèmes sélectionnés.",
+          "labelInfo": "Les photos ne doivent pas contenir de visages de personnes ou d'objets personnels",
+          "labelUpload": "Ajouter des photos"
         }
       ],
       "footer": [
@@ -752,7 +762,9 @@
                   "type": "SignalementFormUploadPhotos",
                   "label": "Photos",
                   "slug": "desordres_batiment_accessibilite_friche_details_photos",
-                  "description": "Si possible, ajoutez des photos du problème."
+                  "description": "Si possible, ajoutez des photos du problème.",
+                  "labelInfo": "Les photos ne doivent pas contenir de visages de personnes ou d'objets personnels",
+                  "labelUpload": "Ajouter des photos"
                 }
             ]
           }
@@ -775,7 +787,9 @@
                   "type": "SignalementFormUploadPhotos",
                   "label": "Photos",
                   "slug": "desordres_batiment_accessibilite_acces_batiment_details_photos",
-                  "description": "Si possible, ajoutez des photos du problème."
+                  "description": "Si possible, ajoutez des photos du problème.",
+                  "labelInfo": "Les photos ne doivent pas contenir de visages de personnes ou d'objets personnels",
+                  "labelUpload": "Ajouter des photos"
                 }
             ]
           }
@@ -1241,6 +1255,8 @@
                 "label": "Photos (facultatif)",
                 "slug": "desordres_logement_chauffage_details_chauffage_dangereux_photos",
                 "description": "Si possible, ajoutez des photos du problème",
+                "labelInfo": "Les photos ne doivent pas contenir de visages de personnes ou d'objets personnels",
+                "labelUpload": "Ajouter des photos",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_details_chauffage_dangereux === 1" 
                 }
@@ -1602,7 +1618,9 @@
           "type": "SignalementFormUploadPhotos",
           "label": "Photos (facultatif)",
           "slug": "desordres_logement_humidite_photos",
-          "description": "Si possible, ajoutez des photos du problème"
+          "description": "Si possible, ajoutez des photos du problème",
+          "labelInfo": "Les photos ne doivent pas contenir de visages de personnes ou d'objets personnels",
+          "labelUpload": "Ajouter des photos"
         }
       ],
       "footer": [
@@ -1737,6 +1755,8 @@
           "label": "Photos (facultatif)",
           "slug": "desordres_logement_securite_photos",
           "description": "Si possible, ajoutez des photos des problèmes sélectionnés.",
+          "labelInfo": "Les photos ne doivent pas contenir de visages de personnes ou d'objets personnels",
+          "labelUpload": "Ajouter des photos",
           "conditional": {
             "show": "formStore.data.desordres_logement_securite_sol_glissant === 1 || formStore.data.desordres_logement_securite_balcons === 1 || formStore.data.desordres_logement_securite_plomb === 1"
           }
@@ -1800,7 +1820,9 @@
                 "type": "SignalementFormUploadPhotos",
                 "label": "Photos (facultatif)",
                 "slug": "desordres_logement_electricite_installation_dangereuse_details_photos",
-                "description": "Si possible, ajoutez des photos des problèmes sélectionnés."
+                "description": "Si possible, ajoutez des photos des problèmes sélectionnés.",
+                "labelInfo": "Les photos ne doivent pas contenir de visages de personnes ou d'objets personnels",
+                "labelUpload": "Ajouter des photos"
               }
             ]
           }
@@ -1957,7 +1979,9 @@
           "type": "SignalementFormUploadPhotos",
           "label": "Photos (facultatif)",
           "slug": "desordres_logement_nuisibles_photos",
-          "description": "Si possible, ajoutez des photos du problème."
+          "description": "Si possible, ajoutez des photos du problème.",
+          "labelInfo": "Les photos ne doivent pas contenir de visages de personnes ou d'objets personnels",
+          "labelUpload": "Ajouter des photos"
         }
       ],
       "footer": [
