@@ -8,7 +8,15 @@
           <img :src="iconSrc" alt="">
         </div>
         <div class="fr-col-12 fr-col-md-8">
-          <span>{{ label }}</span>
+          <input
+            type="checkbox"
+            :id="id"
+            :name="id"
+            v-model="isSelected"
+            @change="handleChange"
+            @click.stop
+            >
+          <label :for="id" class="fr-label" @click.stop>{{ label }}</label>
         </div>
       </div>
   </div>
@@ -33,9 +41,12 @@ export default defineComponent({
   },
   methods: {
     handleClick () {
+      this.isSelected = !this.isSelected
+      this.handleChange()
+    },
+    handleChange () {
+      this.updateValue()
       if (this.clickEvent !== undefined) {
-        this.isSelected = !this.isSelected
-        this.updateValue()
         this.clickEvent(this.id, this.isSelected)
       }
     },
@@ -49,11 +60,26 @@ export default defineComponent({
 
 <style>
 .signalement-form-disorder-category-item {
-  cursor: pointer;
   border: 1px solid var(--border-default-grey);
 }
 .signalement-form-disorder-category-item.is-selected {
   border: 1px solid var(--border-default-orange-terre-battue);
+}
+.signalement-form-disorder-category-item input[type=checkbox] {
+  position: absolute;
+  width: 1.5rem;
+  height: 1.5rem;
+  opacity: 0;
+}
+.signalement-form-disorder-category-item label::before {
+  position: absolute;
+  content: "";
+  height: 1.5rem;
+  width: 1.5rem;
+  margin-left: -2rem;
+  outline-color: #0a76f6;
+  outline-offset: 2px;
+  outline-width: 2px;
 }
 .signalement-form-disorder-category-item .fr-col-md-8 {
   font-weight: bold;
