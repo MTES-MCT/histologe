@@ -1,0 +1,2130 @@
+[
+  {
+    "type": "SignalementFormScreen",
+    "label": "Les désordres",
+    "slug": "ecran_intermediaire_les_desordres",
+    "screenCategory": "Désordres",
+    "description": "<p>Vous avez indiqué que votre signalement concerne {{formStore.data.zone_concernee_zone}}. </p><p>Sélectionnez le ou les problèmes rencontrés parmi les catégories et répondez aux questions.</p> <p>Vous pourrez aussi ajouter des photos des problèmes.<p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
+    "components": {
+      "body": [],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "ecran_intermediaire_les_desordres_previous",
+          "action": "goto:travailleur_social",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "ecran_intermediaire_les_desordres_next",
+          "action": "goto:desordres_batiment",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },  
+  {
+    "type": "SignalementFormScreen",
+    "label": "Le bâtiment",
+    "description": "Sélectionnez les catégories de désordres qui vous concernent puis validez votre sélection pour détailler les problèmes.",
+    "icon": {
+      "src": "/img/form/BATIMENT/Picto-batiment.svg",
+      "alt": "illustration batiment"
+    },
+    "slug": "desordres_batiment",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormDisorderCategoryList",
+          "slug": "desordres_batiment_liste",         
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormDisorderCategoryItem",
+                "label": "Propreté et entretien",
+                "slug": "desordres_batiment_liste_choix_proprete",
+                "icon": {
+                  "src": "/img/form/BATIMENT/Picto-proprete_entretien.svg",
+                  "alt": "illustration propreté"
+                },
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormDisorderCategoryItem",
+                "label": "Eau et évacuation",
+                "slug": "desordres_batiment_liste_choix_eau",
+                "icon": {
+                  "src": "/img/form/BATIMENT/Picto-eau_evacuation.svg",
+                  "alt": "illustration eau et évacuation"
+                },
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormDisorderCategoryItem",
+                "label": "Isolation du bâtiment",
+                "slug": "desordres_batiment_liste_choix_isolation",
+                "icon": {
+                  "src": "/img/form/BATIMENT/Picto-isolation_batiment.svg",
+                  "alt": "illustration isolation"
+                },
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormDisorderCategoryItem",
+                "label": "Maintenance et équipements",
+                "slug": "desordres_batiment_liste_choix_maintenance",
+                "icon": {
+                  "src": "/img/form/BATIMENT/Picto-maintenance_equipement.svg",
+                  "alt": "illustration Maintenance et équipements"
+                },
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormDisorderCategoryItem",
+                "label": "Présence de nuisibles",
+                "slug": "desordres_batiment_liste_choix_nuisibles",
+                "icon": {
+                  "src": "/img/form/BATIMENT/Picto-presence_nuisibles.svg",
+                  "alt": "illustration Présence de nuisibles"
+                },
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormDisorderCategoryItem",
+                "label": "Sécurité, risque de chute",
+                "slug": "desordres_batiment_liste_choix_securite",
+                "icon": {
+                  "src": "/img/form/BATIMENT/Picto-securite_risque_chute.svg",
+                  "alt": "illustration Sécurité, risque de chute"
+                },
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormDisorderCategoryItem",
+                "label": "Risque d'incendie",
+                "slug": "desordres_batiment_liste_choix_incendie",
+                "icon": {
+                  "src": "/img/form/BATIMENT/Picto-protection_incendie.svg",
+                  "alt": "illustration Risque d'incendie"
+                },
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormDisorderCategoryItem",
+                "label": "Accessibilité et alentours",
+                "slug": "desordres_batiment_liste_choix_accessibilite",
+                "icon": {
+                  "src": "/img/form/BATIMENT/Picto-accessibilite_et_alentours.svg",
+                  "alt": "illustration Accessibilité et alentours"
+                },
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormDisorderCategoryItem",
+                "label": "Bruit, pollution sonore",
+                "slug": "desordres_batiment_liste_choix_bruit",
+                "icon": {
+                  "src": "/img/form/BATIMENT/Picto-bruit_pollution_sonore.svg",
+                  "alt": "illustration Bruit, pollution sonore"
+                },
+                "validate": {
+                  "required": false
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Je n'ai rien à signaler",
+          "slug": "desordres_batiment_ras",
+          "action": "findNextScreen",
+          "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_batiment_previous",
+          "action": "goto:ecran_intermediaire_les_desordres",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Valider ma sélection",
+          "slug": "desordres_batiment_valider",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Propreté et entretien",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
+    "icon": {
+      "src": "/img/form/BATIMENT/Picto-proprete_entretien.svg",
+      "alt": "illustration Propreté et entretien"
+    },
+    "slug": "desordres_batiment_proprete",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_proprete_interieur",
+          "label": "L'intérieur du bâtiment est sale, n'est jamais nettoyé"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_proprete_facades",
+          "label": "Les façades extérieures sont très sales ou en mauvais état"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_proprete_parties_communes",
+          "label": "Les parties communes sont dégradées (déchets qui traînent, matériel cassé, graffitis)"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_proprete_local_poubelles",
+          "label": "Il n'y a pas de local poubelles ni d'endroit où stocker les déchets"
+        },
+        {
+          "type": "SignalementFormUploadPhotos",
+          "label": "Photos (facultatif)",
+          "slug": "desordres_batiment_proprete_photos",
+          "description": "Si possible, ajoutez des photos des problèmes sélectionnés."
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_batiment_proprete_previous",
+          "action": "findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_batiment_proprete_next",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Eau et évacuation",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
+    "icon": {
+      "src": "/img/form/BATIMENT/Picto-eau_evacuation.svg",
+      "alt": "illustration Eau et évacuation"
+    },
+    "slug": "desordres_batiment_eau",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_eau_pas_eau_potable",
+          "label": "Il n'y a pas d'eau potable dans le bâtiment "
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_eau_pas_eau_chaude",
+          "label": "Il n'y a pas d'eau chaude dans le bâtiment "
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_eau_evacuation_KO",
+          "label": "L'évacuation des eaux ne marche pas (mauvaises odeurs, eau stagnante, fuites...)"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_eau_pas_evacuation_eaux_pluie",
+          "label": "Quand il pleut, l'eau n'est pas évacuée (pas de gouttière, pas de système d'évacuation...)"
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_batiment_eau_previous",
+          "action": "findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_batiment_eau_next",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Isolation du bâtiment",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
+    "icon": {
+      "src": "/img/form/BATIMENT/Picto-isolation_batiment.svg",
+      "alt": "illustration Isolation du bâtiment"
+    },
+    "slug": "desordres_batiment_isolation",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_isolation_porte_fenetres",
+          "label": "Il manque des portes ou des fenêtres, ou elles sont mal isolées"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_isolation_murs",
+          "label": "Les murs ne sont pas ou peu isolés"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_isolation_dernier_etage_toit",
+          "label": "Le dernier étage n'est pas isolé, le toit n'est pas étanche"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_isolation_infiltration_eau",
+          "label": "De l'eau s'infiltre par le sol ou les murs"
+        },
+        {
+          "type": "SignalementFormUploadPhotos",
+          "label": "Photos (facultatif)",
+          "slug": "desordres_batiment_isolation_photos",
+          "description": "Si possible, ajoutez des photos du problème.",
+          "conditional": {
+            "show": "formStore.data.desordres_batiment_isolation_infiltration_eau === 1"
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_batiment_isolation_previous",
+          "action": "findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_batiment_isolation_next",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Maintenance et équipement",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
+    "icon": {
+      "src": "/img/form/BATIMENT/Picto-maintenance_equipement.svg",
+      "alt": "illustration Maintenance et équipement"
+    },
+    "slug": "desordres_batiment_maintenance",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_maintenance_ascenseur",
+          "label": "L'ascenseur est dangereux (les portes s'ouvrent ou se ferment toutes seules, on risque de tomber, il s'arrête entre les étages...)"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_maintenance_petites_reparations",
+          "label": "Les petites réparations ne sont pas faites (changement d'ampoule...)"
+        },
+        {
+          "type": "SignalementFormUploadPhotos",
+          "label": "Photos (facultatif)",
+          "slug": "desordres_batiment_maintenance_photos",
+          "description": "Si possible, ajoutez des photos du problème.",
+          "conditional": {
+            "show": "formStore.data.desordres_batiment_maintenance_petites_reparations === 1"
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_batiment_maintenance_previous",
+          "action": "findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_batiment_maintenance_next",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Présence de nuisibles",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
+    "icon": {
+      "src": "/img/form/BATIMENT/Picto-presence_nuisibles.svg",
+      "alt": "illustration Présence de nuisibles"
+    },
+    "slug": "desordres_batiment_nuisibles",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_nuisibles_cafards",
+          "label": "Il y a des cafards ou blattes dans le bâtiment"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_nuisibles_rongeurs",
+          "label": "Il y a des rongeurs dans le bâtiment (rats, souris...)"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_nuisibles_punaises",
+          "label": "Il y a des punaises de lit dans le bâtiment"
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_batiment_nuisibles_punaises_details",
+          "conditional": {
+            "show": "formStore.data.desordres_batiment_nuisibles_punaises === 1 && formStore.data.adresse_logement_adresse_detail_insee === '13000'" 
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormInfo",
+                "label": "Le saviez-vous ? Sur votre département, le service Stop Punaises vous permet de trouver une entreprise labellisée pour traiter les punaises de lit. <a href='http://stop-punaises.beta.gouv.fr/' target='_blank'>Cliquez ici pour y accéder.</a>",
+                "slug": "desordres_batiment_nuisibles_punaises_details_info"
+              }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_nuisibles_autres",
+          "label": "Il y a un autre type de nuisible dans le bâtiment"
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_batiment_nuisibles_autres_details",
+          "conditional": {
+            "show": "formStore.data.desordres_batiment_nuisibles_autres === 1"
+          },
+          "components": {
+            "body": [
+                {
+                  "type": "SignalementFormTextfield",
+                  "label": "Précisez le type de nuisibles",
+                  "slug": "desordres_batiment_nuisibles_autres_details_type_nuisibles"
+                }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormInfo",
+          "slug": "desordres_batiment_nuisibles_info",
+          "label": "Bon à savoir : si la présence de nuisibles est dûe à un manque d'entretien ou de nettoyage du logement, c'est aux locataires de payer la prise en charge. Si les nuisibles sont présents dans tout le bâtiment, ou étaient présents dès l'emménagement dans le logement : c'est à la charge du bailleur (propriétaire)."
+        },
+        {
+          "type": "SignalementFormUploadPhotos",
+          "label": "Photos (facultatif)",
+          "slug": "desordres_batiment_nuisibles_photos",
+          "description": "Si possible, ajoutez des photos du problème."
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_batiment_nuisibles_previous",
+          "action": "findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_batiment_nuisibles_next",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Sécurité, risque de chute",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
+    "icon": {
+      "src": "/img/form/BATIMENT/Picto-securite_risque_chute.svg",
+      "alt": "illustration Sécurité, risque de chute"
+    },
+    "slug": "desordres_batiment_securite",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_securite_sol",
+          "label": "Le sol bouge, il est instable"
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_batiment_securite_sol_details",
+          "conditional": {
+            "show": "formStore.data.desordres_batiment_securite_sol === 1"
+          },
+          "components": {
+            "body": [
+                {
+                  "type": "SignalementFormOnlyChoice",
+                  "label": "Est-ce que le plancher est abîmé et bouge par endroit ?",
+                  "slug": "desordres_batiment_securite_sol_details_plancher_abime",
+                  "values": [
+                    {
+                      "label": "Oui",
+                      "value": "oui"
+                    },
+                    {
+                      "label": "Non",
+                      "value": "non"
+                    }
+                  ]
+                },
+                {
+                  "type": "SignalementFormOnlyChoice",
+                  "label": "Est-ce que le plancher menace de s'effondrer quand on marche dessus ?",
+                  "slug": "desordres_batiment_securite_sol_details_plancher_effondre",
+                  "values": [
+                    {
+                      "label": "Oui",
+                      "value": "oui"
+                    },
+                    {
+                      "label": "Non",
+                      "value": "non"
+                    }
+                  ]
+                }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_securite_elements_toit",
+          "label": "Des éléments du toit risquent de tomber (tuyau, tuiles, pierres...)"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_securite_toit",
+          "label": "Le plafond ou le toit risque de s'effondrer et il a de très grosses fissures"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_securite_escalier",
+          "label": "Les escaliers et / ou les rambardes sont dangereuses"
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_batiment_securite_escalier_details",
+          "conditional": {
+            "show": "formStore.data.desordres_batiment_securite_escalier === 1 "
+          },
+          "components": {
+            "body": [
+                {
+                  "type": "SignalementFormOnlyChoice",
+                  "label": "L'escalier ou les rambardes bougent mais peuvent encore être utilisées sans danger ?",
+                  "slug": "desordres_batiment_securite_escalier_details_utilisable",
+                  "values": [
+                    {
+                      "label": "Oui",
+                      "value": "oui"
+                    },
+                    {
+                      "label": "Non",
+                      "value": "non"
+                    }
+                  ]
+                },
+                {
+                  "type": "SignalementFormOnlyChoice",
+                  "label": "L'escalier menace de s'effondrer, c'est dangeureux de l'utiliser ?",
+                  "slug": "desordres_batiment_securite_escalier_details_dangereux",
+                  "values": [
+                    {
+                      "label": "Oui",
+                      "value": "oui"
+                    },
+                    {
+                      "label": "Non",
+                      "value": "non"
+                    }
+                  ]
+                }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_securite_murs_fissures",
+          "label": "Le bâtiment semble instable. Il y a de grosses fissures dans les murs"
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_batiment_securite_murs_fissures_details",
+          "conditional": {
+            "show": "formStore.data.desordres_batiment_securite_murs_fissures === 1"
+          },
+          "components": {
+            "body": [
+                {
+                  "type": "SignalementFormOnlyChoice",
+                  "label": "Est-ce que le mur fissuré a l'air d'être un mur porteur (mur qui soutient la structure du bâtiment) ?",
+                  "slug": "desordres_batiment_securite_murs_fissures_details_mur_porteur",
+                  "values": [
+                    {
+                      "label": "Oui",
+                      "value": "oui"
+                    },
+                    {
+                      "label": "Non",
+                      "value": "non"
+                    },
+                    {
+                      "label": "Je  ne sais pas",
+                      "value": "nsp"
+                    }
+                  ]
+                }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_securite_balcons",
+          "label": "Les balcons et rambardes des fenêtres risquent de tomber"
+        },
+        {
+          "type": "SignalementFormUploadPhotos",
+          "label": "Photos",
+          "slug": "desordres_batiment_securite_photos",
+          "description": "Ajoutez des photos des problèmes sélectionnés."
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_batiment_securite_previous",
+          "action": "findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_batiment_securite_next",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Risque d'incendie ",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
+    "icon": {
+      "src": "/img/form/BATIMENT/Picto-protection_incendie.svg",
+      "alt": "illustration Risque d'incendie "
+    },
+    "slug": "desordres_batiment_incendie",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_incendie_odeur_gaz",
+          "label": "Il y a une forte odeur de gaz dans le bâtiment"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_incendie_porte_coupe_feu",
+          "label": "Il n'y a pas de portes coupe-feu aux caves, ou pour accéder aux caves / sous-sol"
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_batiment_incendie_previous",
+          "action": "findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_batiment_incendie_next",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Accessibilité et alentours",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
+    "icon": {
+      "src": "/img/form/BATIMENT/Picto-accessibilite_et_alentours.svg",
+      "alt": "illustration Accessibilité et alentours"
+    },
+    "slug": "desordres_batiment_accessibilite",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_accessibilite_eclairage",
+          "label": "Il n'y a pas d'éclairage autour du bâtiment, ni à l'entrée ou l'éclairage ne fonctionne pas"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_accessibilite_friche",
+          "label": "Le bâtiment est dans une friche, un terrain vague ou abandonné"
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_batiment_accessibilite_friche_details",
+          "conditional": {
+            "show": "formStore.data.desordres_batiment_accessibilite_friche === 1"
+          },
+          "components": {
+            "body": [
+                {
+                  "type": "SignalementFormUploadPhotos",
+                  "label": "Photos",
+                  "slug": "desordres_batiment_accessibilite_friche_details_photos",
+                  "description": "Si possible, ajoutez des photos du problème."
+                }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_accessibilite_acces_batiment",
+          "label": "Il est très difficile d'accéder au bâtiment : les passages sont étroits ou encombrés"
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_batiment_accessibilite_acces_batiment_details",
+          "conditional": {
+            "show": "formStore.data.desordres_batiment_accessibilite_acces_batiment === 1"
+          },
+          "components": {
+            "body": [
+                {
+                  "type": "SignalementFormUploadPhotos",
+                  "label": "Photos",
+                  "slug": "desordres_batiment_accessibilite_acces_batiment_details_photos",
+                  "description": "Si possible, ajoutez des photos du problème."
+                }
+            ]
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_batiment_accessibilite_previous",
+          "action": "findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_batiment_accessibilite_next",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Bruit, pollution sonore",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
+    "icon": {
+      "src": "/img/form/BATIMENT/Picto-bruit_pollution_sonore.svg",
+      "alt": "illustration Bruit, pollution sonore"
+    },
+    "slug": "desordres_batiment_bruit",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_bruit_exterieur",
+          "label": "Le bâtiment est situé à côté de rails de train, d'un aéroport ou d'une usine"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_batiment_bruit_interieur",
+          "label": "Il y a beaucoup de bruit à l'intérieur, on entend tout même en fermant les portes et les fenêtres "
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_batiment_bruit_previous",
+          "action": "findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_batiment_bruit_next",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  }, 
+  {
+    "type": "SignalementFormScreen",
+    "label": "Le logement",
+    "description": "Sélectionnez les catégories de désordres qui vous concernent puis validez votre sélection pour détailler les problèmes.",
+    "icon": {
+      "src": "/img/form/LOGEMENT/Picto-logement.svg",
+      "alt": "illustration logement"
+    },
+    "slug": "desordres_logement",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormDisorderCategoryList",
+          "slug": "desordres_logement_liste",         
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormDisorderCategoryItem",
+                "label": "Eau et évacuation",
+                "slug": "desordres_logement_liste_choix_eau",
+                "icon": {
+                  "src": "/img/form/LOGEMENT/Picto-eau_evacuation.svg",
+                  "alt": "illustration eau et évacuation"
+                },
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormDisorderCategoryItem",
+                "label": "Aération et ventilation",
+                "slug": "desordres_logement_liste_choix_aeration",
+                "icon": {
+                  "src": "/img/form/LOGEMENT/Picto-aeration_ventilation.svg",
+                  "alt": "illustration Aération et ventilation"
+                },
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormDisorderCategoryItem",
+                "label": "Chauffage et isolation",
+                "slug": "desordres_logement_liste_choix_chauffage",
+                "icon": {
+                  "src": "/img/form/LOGEMENT/Picto-chauffage_isolation.svg",
+                  "alt": "illustration Chauffage et isolation"
+                },
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormDisorderCategoryItem",
+                "label": "Humidité et moisissure",
+                "slug": "desordres_logement_liste_choix_humidite",
+                "icon": {
+                  "src": "/img/form/LOGEMENT/Picto-humidite_moisissure.svg",
+                  "alt": "illustration Humidité et moisissure"
+                },
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormDisorderCategoryItem",
+                "label": "Sécurité",
+                "slug": "desordres_logement_liste_choix_securite",
+                "icon": {
+                  "src": "/img/form/LOGEMENT/Picto-securite.svg",
+                  "alt": "illustration Sécurité"
+                },
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormDisorderCategoryItem",
+                "label": "Electricité",
+                "slug": "desordres_logement_liste_choix_electricite",
+                "icon": {
+                  "src": "/img/form/LOGEMENT/Picto-electricite.svg",
+                  "alt": "illustration Electricité"
+                },
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormDisorderCategoryItem",
+                "label": "Présence de nuisibles",
+                "slug": "desordres_logement_liste_choix_nuisibles",
+                "icon": {
+                  "src": "/img/form/LOGEMENT/Picto-presence_nuisibles.svg",
+                  "alt": "illustration Présence de nuisibles"
+                },
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormDisorderCategoryItem",
+                "label": "Bruit, pollution sonore",
+                "slug": "desordres_logement_liste_choix_bruit",
+                "icon": {
+                  "src": "/img/form/LOGEMENT/Picto-bruit_pollution_sonore.svg",
+                  "alt": "illustration Bruit, pollution sonore"
+                },
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormDisorderCategoryItem",
+                "label": "Eclairement, lumière naturelle",
+                "slug": "desordres_logement_liste_choix_lumiere",
+                "icon": {
+                  "src": "/img/form/LOGEMENT/Picto-lumiere_naturelle.svg",
+                  "alt": "illustration Eclairement, lumière naturelle"
+                },
+                "validate": {
+                  "required": false
+                },
+                "conditional": {
+                  "show": "formStore.data.type_logement_sous_sol_sans_fenetre !== 'oui' && formStore.data.type_logement_sous_comble_sans_fenetre !== 'oui'"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Je n'ai rien à signaler",
+          "slug": "desordres_logement_ras",
+          "action": "findNextScreen",
+          "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_logement_previous",
+          "action": "goto:ecran_intermediaire_les_desordres",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Valider ma sélection",
+          "slug": "desordres_logement_valider",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Eau et évacuation",
+    "description": "Dans",
+    "icon": {
+      "src": "/img/form/LOGEMENT/Picto-eau_evacuation.svg",
+      "alt": "illustration Eau et évacuation"
+    },
+    "slug": "desordres_logement_eau",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_eau_eau_potable",
+          "label": "Je n'ai pas l'eau potable dans mon logement"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_eau_eau_chaude",
+          "label": "Je n'ai pas d'eau chaude dans mon logement"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_eau_evacuation",
+          "label": "L'évacuation des eaux ne marche pas (mauvaises odeurs, pas d'évacuation, fuites...)"
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_logement_eau_previous",
+          "action": "findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_logement_eau_next",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Aération et ventilation",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
+    "icon": {
+      "src": "/img/form/LOGEMENT/Picto-aeration_ventilation.svg",
+      "alt": "illustration Aération et ventilation"
+    },
+    "slug": "desordres_logement_aeration",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_aeration_aucune_aeration",
+          "label": "Il n'y a pas de fenêtre ni de système de ventilation (VMC...)"
+        },
+        {
+          "type": "SignalementFormRoomList",
+          "label": "Dans quelle(s) pièce(s) ?",
+          "slug": "desordres_logement_aeration_aucune_aeration_details",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_aeration_aucune_aeration === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          }
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_aeration_ventilation_defectueuse",
+          "label": "Le système de ventilation ne fonctionne pas"
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_logement_aeration_aucune_aeration_details",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_aeration_ventilation_defectueuse === 1" 
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Avez-vous nettoyé la ventilation ?",
+                "slug": "desordres_logement_aeration_ventilation_defectueuse_details_nettoyage",
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormInfo",
+                "slug": "desordres_logement_aeration_ventilation_defectueuse_details_info",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_aeration_ventilation_defectueuse_details_nettoyage !== 'oui'"
+                },
+                "label": "Pour fonctionner, la ventilation (VMC) a besoin d'entretien ! Vérifiez qu'elle n'est pas bouchée et nettoyez-la correctement tous les 6 mois."
+              },
+              {
+                "type": "SignalementFormRoomList",
+                "label": "Dans quelle(s) pièce(s) ?",
+                "slug": "desordres_logement_aeration_ventilation_defectueuse_details_pieces",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_aeration_ventilation_defectueuse_details_nettoyage === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_logement_aeration_previous",
+          "action": "findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_logement_aeration_next",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Chauffage et isolation",
+    "description": "Quel est le type de chauffage du logement ?",
+    "icon": {
+      "src": "/img/form/LOGEMENT/Picto-chauffage_isolation.svg",
+      "alt": "illustration Chauffage et isolation"
+    },
+    "slug": "desordres_logement_chauffage",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "",
+          "slug": "desordres_logement_chauffage_type",
+          "values": [
+            {
+              "label": "Electrique",
+              "value": "electrique"
+            },
+            {
+              "label": "Gaz, bois, éthanol ou fioul ",
+              "value": "gaz"
+            },
+            {
+              "label": "Il n'y a pas de radiateur ni d'autre moyen de chauffage fixe dans mon logement",
+              "value": "aucun"
+            },
+            {
+              "label": "Je ne sais pas ",
+              "value": "nsp"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormRoomList",
+          "label": "Dans quelle(s) pièce(s) ?",
+          "slug": "desordres_logement_chauffage_aucun_pieces",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_chauffage_type === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          }
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "Le type de chauffage est : {{formStore.data.desordres_logement_chauffage_type}}",
+          "slug": "desordres_logement_chauffage_details",
+          "description": "Sélectionnez le ou les problèmes rencontrés",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_chauffage_type !== 'aucun'" 
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormCheckbox",
+                "slug": "desordres_logement_chauffage_details_fenetres_permeables",
+                "label": "Les fenêtres laissent passer beaucoup d'air ou laissent passer l'eau quand il pleut"
+              },
+              {
+                "type": "SignalementFormRoomList",
+                "label": "Dans quelle(s) pièce(s) ?",
+                "slug": "desordres_logement_chauffage_details_fenetres_permeables_pieces",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_chauffage_details_fenetres_permeables === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+                }
+              },
+              {
+                "type": "SignalementFormCheckbox",
+                "slug": "desordres_logement_chauffage_details_difficultes_chauffage",
+                "label": "J'ai du mal à chauffer mon logement"
+              },
+              {
+                "type": "SignalementFormRoomList",
+                "label": "Dans quelle(s) pièce(s) ?",
+                "slug": "desordres_logement_chauffage_details_difficultes_chauffage_pieces",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_chauffage_details_difficultes_chauffage === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+                }
+              },
+              {
+                "type": "SignalementFormCheckbox",
+                "slug": "desordres_logement_chauffage_details_chauffage_KO",
+                "label": "Mon chauffage ne fonctionne pas, je dois utiliser un chauffage d'appoint"
+              },
+              {
+                "type": "SignalementFormRoomList",
+                "label": "Dans quelle(s) pièce(s) ?",
+                "slug": "desordres_logement_chauffage_details_chauffage_KO_pieces",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_chauffage_details_chauffage_KO === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+                }
+              },
+              {
+                "type": "SignalementFormCheckbox",
+                "slug": "desordres_logement_chauffage_details_chauffage_dangereux",
+                "label": "Les dispositifs de chauffages (chauffe eau, poêle, cheminée, radiateur...) sont dangereux (très mauvais état, tuyaux mal fixés, etc.)",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_chauffage_type !== 'electrique'" 
+                }
+              },
+              {
+                "type": "SignalementFormUploadPhotos",
+                "label": "Photos (facultatif)",
+                "slug": "desordres_logement_chauffage_details_chauffage_dangereux_photos",
+                "description": "Si possible, ajoutez des photos du problème",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_chauffage_details_chauffage_dangereux === 1" 
+                }
+              },
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Quand le DPE de votre logement a-t-il été réalisé ?",
+                "slug": "desordres_logement_chauffage_details_dpe_annee",
+                "conditional": {
+                  "show": "(formStore.data.desordres_logement_chauffage_details_fenetres_permeables === 1 || formStore.data.desordres_logement_chauffage_details_difficultes_chauffage === 1 || formStore.data.desordres_logement_chauffage_details_chauffage_KO === 1 ) && formStore.data.bail_dpe_dpe === 'oui' "
+                },
+                "values": [
+                  {
+                    "label": "En 2023",
+                    "value": "post2023"
+                  },
+                  {
+                    "label": "Avant 2023",
+                    "value": "before2023"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormCounter",
+                "label": "Quelle est la consommation en énergie finale indiquée sur le DPE ? (kWh/m²/an) ",
+                "slug": "desordres_logement_chauffage_details_dpe_conso_finale",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_chauffage_details_dpe_annee === 'post2023'"
+                },
+                "validate": {
+                  "required": false
+                },
+                "defaultValue": 1
+              },
+              {
+                "type": "SignalementFormCounter",
+                "label": "Quelle est la superficie de votre logement ? (m²) ",
+                "slug": "composition_logement_superficie",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_chauffage_details_dpe_annee === 'before2023'"
+                },
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormCounter",
+                "label": "Quelle est la consommation en énergie indiquée sur le DPE ? (kWh/an) ",
+                "slug": "desordres_logement_chauffage_details_dpe_conso",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_chauffage_details_dpe_annee === 'before2023'"
+                },
+                "defaultValue": 1,
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormCheckbox",
+                "label": "Mon DPE est vide",
+                "slug": "desordres_logement_chauffage_details_dpe_conso_vide",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_chauffage_details_dpe_annee === 'post2023' || formStore.data.desordres_logement_chauffage_details_dpe_annee === 'before2023'"
+                },
+                "validate": {
+                  "required": false
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_logement_chauffage_previous",
+          "action": "findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_logement_chauffage_next",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Humidité et moisissure",
+    "description": "Dans quelle(s) pièce(s) il y a-t-il des traces d'humidité ou de la moisissure ?",
+    "icon": {
+      "src": "/img/form/LOGEMENT/Picto-humidite_moisissure.svg",
+      "alt": "illustration Humidité et moisissure "
+    },
+    "slug": "desordres_logement_humidite",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_humidite_piece_a_vivre",
+          "label": "Une ou des pièces à vivre",
+          "conditional": {
+            "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
+          }
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_logement_humidite_piece_a_vivre_details",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_humidite_piece_a_vivre === 1 || formStore.data.composition_logement_piece_unique === 'piece_unique'"
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Il y a-t-il eu une fuite ou un dégât des eaux dans la pièce ?",
+                "slug": "desordres_logement_humidite_piece_a_vivre_details_fuite",
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Il y a-t-il une machine à laver, un sèche-linge ou un lave vaisselle dans cette pièce ?",
+                "slug": "desordres_logement_humidite_piece_a_vivre_details_machine",
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormInfo",
+                "label": "Ces machines produisent de la vapeur d'eau qui crée de la moisissure si la pièce n'est pas bien aérée ! Il est important d'aérer la pièce et de nettoyer la moisissure dès qu'elle apparaît.",
+                "slug": "desordres_logement_humidite_piece_a_vivre_details_machine_info",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_humidite_piece_a_vivre_details_machine ===  'oui' || formStore.data.desordres_logement_humidite_piece_a_vivre_details_machine ===  'nsp'"
+                }
+              },
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "La moisissure revient-elle après nettoyage ?",
+                "slug": "desordres_logement_humidite_piece_a_vivre_details_moisissure_apres_nettoyage",
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  },
+                  {
+                    "label": "Je ne sais pas, je n'ai pas nettoyé",
+                    "value": "nsp"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormInfo",
+                "label": "Conseils : vous pouvez nettoyer la moisissure avec de l'eau de javel ou du vinaigre blanc. Dans tous les cas : protégez vous avec un masque et des gants ! Pour plus d'info, cliquez sur ce lien.",
+                "slug": "desordres_logement_humidite_piece_a_vivre_details_moisissure_info",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_humidite_piece_a_vivre_details_moisissure_apres_nettoyage ===  'nsp'"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "label": "La cuisine / Le coin cuisine",
+          "slug": "desordres_logement_humidite_cuisine",
+          "conditional": {
+            "show": "formStore.data.type_logement_commodites_cuisine === 'oui'"
+          }
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_logement_humidite_cuisine_details",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_humidite_cuisine === 1"
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Il y a-t-il eu une fuite ou un dégât des eaux dans la pièce ?",
+                "slug": "desordres_logement_humidite_cuisine_details_fuite",
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Il y a-t-il une machine à laver, un sèche-linge ou un lave vaisselle dans cette pièce ?",
+                "slug": "desordres_logement_humidite_cuisine_details_machine",
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormInfo",
+                "label": "Ces machines produisent de la vapeur d'eau qui crée de la moisissure si la pièce n'est pas bien aérée ! Il est important d'aérer la pièce et de nettoyer la moisissure dès qu'elle apparaît.",
+                "slug": "desordres_logement_humidite_cuisine_details_machine_info",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_humidite_cuisine_details_machine ===  'oui' || formStore.data.desordres_logement_humidite_cuisine_details_machine ===  'nsp'"
+                }
+              },
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "La moisissure revient-elle après nettoyage ?",
+                "slug": "desordres_logement_humidite_cuisine_details_moisissure_apres_nettoyage",
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  },
+                  {
+                    "label": "Je ne sais pas, je n'ai pas nettoyé",
+                    "value": "nsp"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormInfo",
+                "label": "Conseils : vous pouvez nettoyer la moisissure avec de l'eau de javel ou du vinaigre blanc. Dans tous les cas : protégez vous avec un masque et des gants ! Pour plus d'info, cliquez sur ce lien.",
+                "slug": "desordres_logement_humidite_cuisine_details_moisissure_info",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_humidite_cuisine_details_moisissure_apres_nettoyage ===  'nsp'"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "label": "La salle de bain / salle d'eau et ou les toilettes",
+          "slug": "desordres_logement_humidite_salle_de_bain",
+          "conditional": {
+            "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'"
+          }
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_logement_humidite_salle_de_bain_details",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_humidite_salle_de_bain === 1"
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Il y a-t-il eu une fuite ou un dégât des eaux dans la pièce ?",
+                "slug": "desordres_logement_humidite_salle_de_bain_details_fuite",
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Il y a-t-il une machine à laver, un sèche-linge ou un lave vaisselle dans cette pièce ?",
+                "slug": "desordres_logement_humidite_salle_de_bain_details_machine",
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormInfo",
+                "label": "Ces machines produisent de la vapeur d'eau qui crée de la moisissure si la pièce n'est pas bien aérée ! Il est important d'aérer la pièce et de nettoyer la moisissure dès qu'elle apparaît.",
+                "slug": "desordres_logement_humidite_salle_de_bain_details_machine_info",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_humidite_salle_de_bain_details_machine ===  'oui' || formStore.data.desordres_logement_humidite_salle_de_bain_details_machine ===  'nsp'"
+                }
+              },
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "La moisissure revient-elle après nettoyage ?",
+                "slug": "desordres_logement_humidite_salle_de_bain_details_moisissure_apres_nettoyage",
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  },
+                  {
+                    "label": "Je ne sais pas, je n'ai pas nettoyé",
+                    "value": "nsp"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormInfo",
+                "label": "Conseils : vous pouvez nettoyer la moisissure avec de l'eau de javel ou du vinaigre blanc. Dans tous les cas : protégez vous avec un masque et des gants ! Pour plus d'info, cliquez sur ce lien.",
+                "slug": "desordres_logement_humidite_salle_de_bain_details_moisissure_info",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_humidite_salle_de_bain_details_moisissure_apres_nettoyage ===  'nsp'"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormUploadPhotos",
+          "label": "Photos (facultatif)",
+          "slug": "desordres_logement_humidite_photos",
+          "description": "Si possible, ajoutez des photos du problème"
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_logement_humidite_previous",
+          "action": "findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_logement_humidite_next",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Sécurité",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
+    "icon": {
+      "src": "/img/form/LOGEMENT/Picto-securite.svg",
+      "alt": "illustration Sécurité"
+    },
+    "slug": "desordres_logement_securite",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_securite_sol_glissant",
+          "label": "Le sol est glissant ou abîmé"
+        },
+        {
+          "type": "SignalementFormRoomList",
+          "label": "Dans quelle(s) pièce(s) ?",
+          "slug": "desordres_logement_securite_sol_glissant_pieces",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_securite_sol_glissant === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          }
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_securite_sol_dangereux",
+          "label": "Le sol risque de s'effondrer : il bouge et est très abîmé"
+        },
+        {
+          "type": "SignalementFormRoomList",
+          "label": "Dans quelle(s) pièce(s) ?",
+          "slug": "desordres_logement_securite_sol_dangereux_pieces",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_securite_sol_dangereux === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          }
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_securite_balcons",
+          "label": "Les balcons et rambardes des fenêtres risquent de tomber"
+        },
+        {
+          "type": "SignalementFormRoomList",
+          "label": "Dans quelle(s) pièce(s) ?",
+          "slug": "desordres_logement_securite_balcons_pieces",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_securite_balcons === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          }
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_securite_gaz",
+          "label": "Il y a une odeur de gaz ou des fuites de gaz"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_securite_plomb",
+          "label": "Il y a de la peinture au plomb en mauvais état ou des matériaux amiantés en mauvais état"
+        },
+        {
+          "type": "SignalementFormRoomList",
+          "label": "Dans quelle(s) pièce(s) ?",
+          "slug": "desordres_logement_securite_plomb_pieces",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_securite_plomb === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          }
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_logement_securite_plomb_details",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_securite_plomb === 1" 
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Avez-vous fait ou reçu un diagnostic plomb / amiante ?",
+                "slug": "desordres_logement_securite_plomb_details_diagnostique",
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  },
+                  {
+                    "label": "Je ne sais pas",
+                    "value": "nsp"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormUpload",
+                "label": "Ajoutez le diagnostic plomb / amiane en cliquant sur le bouton ci-dessous",
+                "slug": "desordres_logement_securite_plomb_details_diagnostique_fichier",
+                "description": "",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_securite_plomb_details_diagnostique === 'oui'"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormUploadPhotos",
+          "label": "Photos (facultatif)",
+          "slug": "desordres_logement_securite_photos",
+          "description": "Si possible, ajoutez des photos des problèmes sélectionnés.",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_securite_sol_glissant === 1 || formStore.data.desordres_logement_securite_balcons === 1 || formStore.data.desordres_logement_securite_plomb === 1"
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_logement_securite_previous",
+          "action": "findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_logement_securite_next",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Electricité",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
+    "icon": {
+      "src": "/img/form/LOGEMENT/Picto-electricite.svg",
+      "alt": "illustration Electricité"
+    },
+    "slug": "desordres_logement_electricite",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_electricite_pas_electricite",
+          "label": "Il n'y a pas d'électricité dans mon logement"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_electricite_pas_compteur",
+          "label": "Je n'ai pas de compteur électrique"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_electricite_installation_dangereuse",
+          "label": "L'installation est dangereuse : les fils sont dénudés, les prises ne tiennent pas dans les murs, etc."
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_logement_electricite_installation_dangereuse_details",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_electricite_installation_dangereuse === 1" 
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormUploadPhotos",
+                "label": "Photos (facultatif)",
+                "slug": "desordres_logement_electricite_installation_dangereuse_details_photos",
+                "description": "Si possible, ajoutez des photos des problèmes sélectionnés."
+              }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_electricite_manque_prises",
+          "label": "Il n'y a pas de prises, ou il en manque"
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_logement_electricite_manque_prises_details",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_electricite_manque_prises === 1" 
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Devez-vous brancher des multi-prises les unes sur les autres ?",
+                "slug": "desordres_logement_electricite_manque_prises_details_multiprises",
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormRoomList",
+                "label": "Dans quelle(s) pièce(s) ?",
+                "slug": "desordres_logement_electricite_manque_prises_details_pieces",
+                "conditional": {
+                  "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_logement_electricite_previous",
+          "action": "findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_logement_electricite_next",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Présence de nuisibles",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
+    "icon": {
+      "src": "/img/form/LOGEMENT/Picto-presence_nuisibles.svg",
+      "alt": "illustration Présence de nuisibles"
+    },
+    "slug": "desordres_logement_nuisibles",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_nuisibles_cafards",
+          "label": "Il y a des cafards ou blattes"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_nuisibles_rongeurs",
+          "label": "Il y a des rongeurs (rats, souris...)"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_nuisibles_punaises",
+          "label": "Il y a des punaises de lit"
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_logement_nuisibles_punaises_details",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_nuisibles_punaises === 1 && formStore.data.adresse_logement_adresse_detail_insee === '13000'" 
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormInfo",
+                "label": "Le saviez-vous ? Sur votre département, le service Stop Punaises vous permet de trouver une entreprise labellisée pour traiter les punaises de lit. <a href='http://stop-punaises.beta.gouv.fr/' target='_blank'>Cliquez ici pour y accéder.</a>",
+                "slug": "desordres_logement_nuisibles_punaises_details_info"
+              }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_nuisibles_autres",
+          "label": "Il y a un autre type de nuisible"
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_logement_nuisibles_autres_details",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_nuisibles_autres === 1"
+          },
+          "components": {
+            "body": [
+                {
+                  "type": "SignalementFormTextfield",
+                  "label": "Précisez le type de nuisibles",
+                  "slug": "desordres_logement_nuisibles_autres_details_type_nuisibles"
+                }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Depuis quand les {{nuisibles}} sont présents dans le logement ?",
+          "slug": "desordres_logement_nuisibles_date",
+          "values": [
+            {
+              "label": "Avant que j'emménage",
+              "value": "before"
+            },
+            {
+              "label": "Après mon emménagement",
+              "value": "after"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormInfo",
+          "slug": "desordres_logement_nuisibles_info",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_nuisibles_date === 'after' || formStore.data.desordres_logement_nuisibles_date === 'nsp'"
+          },
+          "label": "Bon à savoir : si la présence de nuisibles est dûe à un manque d'entretien ou de nettoyage du logement, c'est aux locataires de payer la prise en charge. Si les nuisibles sont présents dans tout le bâtiment, ou étaient présents dès l'emménagement dans le logement : c'est à la charge du bailleur (propriétaire)."
+        },
+        {
+          "type": "SignalementFormUploadPhotos",
+          "label": "Photos (facultatif)",
+          "slug": "desordres_logement_nuisibles_photos",
+          "description": "Si possible, ajoutez des photos du problème."
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_logement_nuisibles_previous",
+          "action": "findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_logement_nuisibles_next",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Bruit, pollution sonore",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
+    "icon": {
+      "src": "/img/form/LOGEMENT/Picto-bruit_pollution_sonore.svg",
+      "alt": "illustration Bruit, pollution sonore"
+    },
+    "slug": "desordres_logement_bruit",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_bruit_exterieur",
+          "label": "J'entends le bruit extérieur, même si je ferme les portes et les fenêtres"
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_bruit_voisins",
+          "label": "J'entends mes voisins parler et marcher depuis mon logement, comme s'ils étaient dans la pièce"
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_logement_bruit_voisins_details",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_bruit_voisins === 1" 
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormInfo",
+                "label": "Info : {{formStore.props.platformName}} ne permet pas de régler les problèmes de voisinage. Pour savoir s'il s'agit d'un problème de logement ou un troube du voisinage, consultez le site du service public en cliquant ici.",
+                "slug": "desordres_logement_bruit_voisins_details_info"
+              }
+            ]
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_logement_bruit_previous",
+          "action": "findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_logement_bruit_next",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Eclairement, lumière naturelle",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
+    "icon": {
+      "src": "/img/form/LOGEMENT/Picto-lumiere_naturelle.svg",
+      "alt": "illustration Eclairement, lumière naturelle"
+    },
+    "slug": "desordres_logement_lumiere",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_lumiere_pas_lumiere",
+          "label": "Mon logement n'est pas éclairé par la lumière du jour. Je dois allumer la lumière en plein jour"
+        },
+        {
+          "type": "SignalementFormRoomList",
+          "label": "Dans quelle(s) pièce(s) ?",
+          "slug": "desordres_logement_lumiere_pas_lumiere_pieces",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_lumiere_pas_lumiere === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          }
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_lumiere_pas_volets",
+          "label": "Il n'y a pas de volets, ni de stores aux fenêtres"
+        },   
+        {
+          "type": "SignalementFormRoomList",
+          "label": "Dans quelle(s) pièce(s) ?",
+          "slug": "desordres_logement_lumiere_pas_volets_pieces",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_lumiere_pas_volets === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_logement_lumiere_previous",
+          "action": "findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_logement_lumiere_next",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Propreté et entretien",
+    "description": "Sélectionnez la ou les pièces qui présentent un problème de propreté (nombreux déchets, excréments d'animaux, etc.)",
+    "icon": {
+      "src": "/img/form/LOGEMENT/Picto-proprete.svg",
+      "alt": "illustration Propreté et entretien"
+    },
+    "slug": "desordres_logement_proprete",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormRoomList",
+          "label": "",
+          "slug": "desordres_logement_proprete_pieces"
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_logement_proprete_previous",
+          "action": "findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_logement_proprete_next",
+          "action": "findNextScreen",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  }
+]

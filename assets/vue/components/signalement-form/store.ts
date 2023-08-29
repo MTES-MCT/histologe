@@ -61,6 +61,7 @@ const formStore: FormStore = reactive({
   props: {
     ajaxurl: '',
     ajaxurlQuestions: '',
+    ajaxurlDesordres: '',
     ajaxurlPostSignalementDraft: '',
     ajaxurlPutSignalementDraft: '',
     ajaxurlHandleUpload: '',
