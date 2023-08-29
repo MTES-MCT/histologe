@@ -1,5 +1,5 @@
 <template>
-  <fieldset :id="id" :class="[customCss, 'fr-fieldset fr-mt-5w']" aria-labelledby="radio-hint-legend radio-hint-messages">
+  <fieldset :id="id" :class="[customCss, 'signalement-form-only-choice fr-fieldset fr-mt-5w']" aria-labelledby="radio-hint-legend radio-hint-messages">
       <legend :class="['fr-fieldset__legend--regular', 'fr-fieldset__legend', customLegendCss]" id="radio-hint-legend">
         {{ label }}
       </legend>
@@ -61,19 +61,19 @@ export default defineComponent({
 </script>
 
 <style>
-  .fr-radio-group {
+  .signalement-form-only-choice .fr-radio-group {
     width: 100%;
     max-width: 500px;
     padding: 1rem;
     border: 1px solid var(--border-disabled-grey);
     background-color: var(--grey-1000-50);
   }
-  .fr-radio-group:hover {
+  .signalement-form-only-choice .fr-radio-group:hover {
     background-color: var(--grey-1000-50-hover);
   }
 
   @media (max-width: 48em) {
-    .fr-fieldset__element.item-divided {
+    .signalement-form-only-choice .fr-fieldset__element.item-divided {
       flex-basis: content;
     }
   }
