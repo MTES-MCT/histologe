@@ -13,9 +13,11 @@
                         <form method="POST" name="signalement-add-suivi" id="signalement-add-suivi-form" class="tinyCheck"
                                 action="{{ path('back_signalement_add_suivi',{uuid:signalement.uuid}) }}">
                             <div class="fr-fieldset fr-fieldset--inline fr-mb-5v">
-                                <div class="fr-toggle">
-                                    <input type="checkbox" class="fr-toggle__input" aria-describedby="toggle-698-hint-text" id="signalement-add-suivi-notify-usager" name="signalement-add-suivi[notifyUsager]" value="1">
-                                    <label class="fr-toggle__label" for="signalement-add-suivi-notify-usager">En cochant cette case, le suivi sera envoyé à l'usager</label>
+                                <div class="fr-fieldset__content">
+                                    <div class="fr-toggle fr-col-12">
+                                        <input type="checkbox" class="fr-toggle__input" aria-describedby="toggle-698-hint-text" id="signalement-add-suivi-notify-usager" name="signalement-add-suivi[notifyUsager]" value="1">
+                                        <label class="fr-toggle__label" for="signalement-add-suivi-notify-usager">En cochant cette case, le suivi sera envoyé à l'usager</label>
+                                    </div>
                                 </div>
                             </div>
 
