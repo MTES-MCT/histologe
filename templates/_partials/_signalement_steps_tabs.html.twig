@@ -538,11 +538,13 @@
                     <legend class="fr-fieldset__legend fr-text--regular">
                         {{ form_label(form.natureLogement) }}
                     </legend>
-                    <div class="fr-select-group">
-                        {{ form_widget(form.natureLogement) }}
-                        <p class="fr-error-text fr-hidden">
-                            Veuillez renseigner la nature du logement.
-                        </p>
+                    <div class="fr-fieldset__content">
+                        <div class="fr-select-group">
+                            {{ form_widget(form.natureLogement) }}
+                            <p class="fr-error-text fr-hidden">
+                                Veuillez renseigner la nature du logement.
+                            </p>
+                        </div>
                     </div>
                 </fieldset>
             </div>
@@ -551,11 +553,13 @@
                     <legend class="fr-fieldset__legend fr-text--regular">
                         {{ form_label(form.superficie) }}
                     </legend>
-                    <div class="fr-input-group">
-                        {{ form_widget(form.superficie) }}
-                        <p class="fr-error-text fr-hidden">
-                            Veuillez saisir la superficie du logement au format numérique.
-                        </p>
+                    <div class="fr-fieldset__content">
+                        <div class="fr-input-group">
+                            {{ form_widget(form.superficie) }}
+                            <p class="fr-error-text fr-hidden">
+                                Veuillez saisir la superficie du logement au format numérique.
+                            </p>
+                        </div>
                     </div>
                 </fieldset>
             </div>
