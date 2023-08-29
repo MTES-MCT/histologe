@@ -1,5 +1,11 @@
 <template>
   <div class="fr-container form-screen-body">
+    <div
+      v-if="icon"
+      class="icon"
+      >
+      <img :src="icon.src" :alt="icon.alt">
+    </div>
     <h1>{{ label }}</h1>
     <div v-html="descriptionVariablesReplaced"></div>
     <div
@@ -106,6 +112,7 @@ export default defineComponent({
   props: {
     label: String,
     description: String,
+    icon: Object,
     components: Object,
     changeEvent: Function
   },
@@ -212,6 +219,10 @@ export default defineComponent({
       margin-bottom: 7.5rem !important;
     }
 
+    .form-screen-body .icon {
+      text-align: center;
+    }
+
     .form-screen-footer {
       position: fixed;
       left: 0px;
@@ -223,6 +234,11 @@ export default defineComponent({
       background-image: linear-gradient(0deg, var(--border-default-grey), var(--border-default-grey));
       background-color: var(--background-default-grey);
     }
+  }
+
+  .form-screen-body .icon img {
+    max-height: 78px;
+    width: auto;
   }
 
   .form-screen-footer > div {

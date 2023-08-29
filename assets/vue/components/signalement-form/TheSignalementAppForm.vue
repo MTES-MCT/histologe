@@ -32,6 +32,7 @@
             <SignalementFormScreen
               :label="currentScreen.label"
               :description="currentScreen.description"
+              :icon="currentScreen.icon"
               :components="currentScreen.components"
               :changeEvent="saveAndChangeScreenBySlug"
               />
@@ -55,7 +56,7 @@ import { defineComponent } from 'vue'
 import formStore from './store'
 import { requests } from './requests'
 import { profileUpdater } from './services/profileUpdater'
-import { DesktopIllustration } from './interfaces/interfaceDesktopIllustration'
+import { PictureDescription } from './interfaces/interfacePictureDescription'
 import SignalementFormScreen from './components/SignalementFormScreen.vue'
 import SignalementFormBreadCrumbs from './components/SignalementFormBreadCrumbs.vue'
 const initElements:any = document.querySelector('#app-signalement-form')
@@ -79,7 +80,7 @@ export default defineComponent({
       isLoadingInit: true,
       formStore,
       sharedProps: formStore.props,
-      currentScreen: null as { slug: string; screenCategory: string, label: string; description: string; desktopIllustration: DesktopIllustration; components: Components } | null
+      currentScreen: null as { slug: string; screenCategory: string, label: string; description: string; icon: PictureDescription, desktopIllustration: PictureDescription; components: Components } | null
     }
   },
   created () {
