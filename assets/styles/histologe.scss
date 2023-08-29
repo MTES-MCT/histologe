@@ -331,8 +331,8 @@ button.fr-btn--success,a[href].fr-btn--success {
     color: var(--text-default-info);
 }
 
-fr-text-label--blue-france {
-    color: var(--blue-france-sun-113-625);
+.fr-text-label--blue-france {
+    color: var(--blue-france-sun-113-625) !important;
 }
 
 .fr-text--xx-light {
