@@ -5,7 +5,7 @@
     "slug": "introduction",
     "description": "<h2>Avant de démarrer...</h2><p>Les informations demandées sont nécéssaires au bon traitement du signalement.</p><p>Elles seront uniquement partagées avec les administrations compétentes pour traiter votre dossier.</p>",
     "desktopIllustration": {
-      "src": "/img/form/form-home-illus.png",
+      "src": "/img/illustration-undraw-home.svg",
       "alt": ""
     },
     "components": {
@@ -42,6 +42,10 @@
     "slug": "adresse_logement_intro",
     "screenCategory": "Adresse et coordonnées",
     "description": "<p>Les infos utiles pour cette partie :<br>- L'adresse du logement<br>- Les coordonnées du foyer occupant le logement<br>-Les coordonnées du bailleur (propriétaire) du logement</p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
+    "icon": {
+      "src": "/img/form/screens/adresse_coordonnees-colors.svg",
+      "alt": ""
+    },
     "components": {
       "body": [
         {

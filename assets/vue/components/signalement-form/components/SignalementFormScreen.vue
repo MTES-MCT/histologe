@@ -1,5 +1,11 @@
 <template>
   <div class="fr-container form-screen-body">
+    <div
+      v-if="icon"
+      class="icon"
+      >
+      <img :src="icon.src" :alt="icon.alt">
+    </div>
     <h1>{{ label }}</h1>
     <div v-html="descriptionVariablesReplaced"></div>
     <div
@@ -56,24 +62,26 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import formStore from './../store'
-import SignalementFormTextfield from './SignalementFormTextfield.vue'
+import SignalementFormAddress from './SignalementFormAddress.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
+import SignalementFormCheckbox from './SignalementFormCheckbox.vue'
+import SignalementFormConfirmation from './SignalementFormConfirmation.vue'
+import SignalementFormCounter from './SignalementFormCounter.vue'
+import SignalementFormDate from './SignalementFormDate.vue'
+import SignalementFormDisorderCategoryItem from './SignalementFormDisorderCategoryItem.vue'
+import SignalementFormDisorderCategoryList from './SignalementFormDisorderCategoryList.vue'
+import SignalementFormEmailfield from './SignalementFormEmailfield.vue'
+import SignalementFormInfo from './SignalementFormInfo.vue'
 import SignalementFormLink from './SignalementFormLink.vue'
 import SignalementFormOnlyChoice from './SignalementFormOnlyChoice.vue'
-import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
-import SignalementFormAddress from './SignalementFormAddress.vue'
-import SignalementFormDate from './SignalementFormDate.vue'
-import SignalementFormYear from './SignalementFormYear.vue'
-import SignalementFormTime from './SignalementFormTime.vue'
-import SignalementFormCounter from './SignalementFormCounter.vue'
-import SignalementFormWarning from './SignalementFormWarning.vue'
-import SignalementFormInfo from './SignalementFormInfo.vue'
-import SignalementFormCheckbox from './SignalementFormCheckbox.vue'
-import SignalementFormPhonefield from './SignalementFormPhonefield.vue'
-import SignalementFormUpload from './SignalementFormUpload.vue'
-import SignalementFormEmailfield from './SignalementFormEmailfield.vue'
 import SignalementFormOverview from './SignalementFormOverview.vue'
-import SignalementFormConfirmation from './SignalementFormConfirmation.vue'
+import SignalementFormPhonefield from './SignalementFormPhonefield.vue'
+import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
+import SignalementFormTextfield from './SignalementFormTextfield.vue'
+import SignalementFormTime from './SignalementFormTime.vue'
+import SignalementFormUpload from './SignalementFormUpload.vue'
+import SignalementFormWarning from './SignalementFormWarning.vue'
+import SignalementFormYear from './SignalementFormYear.vue'
 import { variablesReplacer } from './../services/variableReplacer'
 import { navManager } from './../services/navManager'
 
@@ -97,11 +105,14 @@ export default defineComponent({
     SignalementFormUpload,
     SignalementFormEmailfield,
     SignalementFormOverview,
-    SignalementFormConfirmation
+    SignalementFormConfirmation,
+    SignalementFormDisorderCategoryItem,
+    SignalementFormDisorderCategoryList
   },
   props: {
     label: String,
     description: String,
+    icon: Object,
     components: Object,
     changeEvent: Function
   },
@@ -132,15 +143,17 @@ export default defineComponent({
     updateFormData (slug: string, value: any) {
       this.formStore.data[slug] = value
     },
-    handleClickComponent (type:string, param:string, slugButton:string) {
+    handleClickComponent (type:string, param:string, param2:string) {
       if (type === 'link') {
         window.location.href = param
       } else if (type === 'cancel') {
         alert('on fait quoi quand on annule ?')
       } else if (type === 'goto') {
-        this.showScreenBySlug(param, slugButton)
+        this.showScreenBySlug(param, param2)
       } else if (type === 'show') {
-        this.showComponentBySlug(param, slugButton)
+        this.showComponentBySlug(param, param2)
+      } else if (type === 'toggle') {
+        this.toggleComponentBySlug(param, param2)
       }
     },
     showScreenBySlug (slug: string, slugButton:string) {
@@ -185,6 +198,16 @@ export default defineComponent({
       if (buttonToHide) {
         buttonToHide.classList.add('fr-hidden')
       }
+    },
+    toggleComponentBySlug (slug:string, isVisible:string) {
+      const componentToToggle = document.querySelector('#' + slug)
+      if (componentToToggle) {
+        if (isVisible === '1') {
+          componentToToggle.classList.remove('fr-hidden')
+        } else {
+          componentToToggle.classList.add('fr-hidden')
+        }
+      }
     }
   }
 })
@@ -194,6 +217,10 @@ export default defineComponent({
   @media (max-width: 48em) {
     .form-screen-body {
       margin-bottom: 7.5rem !important;
+    }
+
+    .form-screen-body .icon {
+      text-align: center;
     }
 
     .form-screen-footer {
@@ -207,6 +234,11 @@ export default defineComponent({
       background-image: linear-gradient(0deg, var(--border-default-grey), var(--border-default-grey));
       background-color: var(--background-default-grey);
     }
+  }
+
+  .form-screen-body .icon img {
+    max-height: 78px;
+    width: auto;
   }
 
   .form-screen-footer > div {

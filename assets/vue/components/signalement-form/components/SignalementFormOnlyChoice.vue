@@ -1,5 +1,5 @@
 <template>
-  <fieldset :id="id" :class="[customCss, 'signalement-form-only-choice fr-fieldset fr-mt-5w']" aria-labelledby="radio-hint-legend radio-hint-messages">
+  <fieldset :id="id" :class="[customCss, 'fr-fieldset fr-mt-5w']" aria-labelledby="radio-hint-legend radio-hint-messages">
       <legend :class="['fr-fieldset__legend--regular', 'fr-fieldset__legend', customLegendCss]" id="radio-hint-legend">
         {{ label }}
       </legend>
