@@ -12,7 +12,7 @@ imports:
     - { resource: 'app/competences.yaml'}
     - { resource: 'app/suivi_messages.yaml'}
 parameters:
-    container.dumper.inline_factories: true
+    .container.dumper.inline_factories: true
     uploads_dir: '%kernel.project_dir%/uploaded_files/signalement/'
     uploads_tmp_dir: '%kernel.project_dir%/tmp/'
     bucket_tmp_dir: 'tmp/'
