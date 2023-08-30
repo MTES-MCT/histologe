@@ -17,14 +17,6 @@
           "components": {
             "body": [
               {
-                "type": "SignalementFormUploadPhotos",
-                "slug": "photos_intro_test",
-                "label": "Photos (facultatif)",
-                "description": "Ajoutez des photos des problèmes sélectionnés",
-                "labelInfo": "Les photos ne doivent pas contenir de visage bla bla bla...",
-                "labelUpload": "Ajouter des photos"
-              },
-              {
                 "type": "SignalementFormButton",
                 "label": "Je démarre",
                 "slug": "introduction_go",
