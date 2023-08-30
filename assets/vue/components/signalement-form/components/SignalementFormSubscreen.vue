@@ -11,6 +11,8 @@
         v-bind:key="component.slug"
         :id="component.slug"
         :label="component.label"
+        :labelInfo="component.labelInfo"
+        :labelUpload="component.labelUpload"
         :action="component.action"
         :link="component.link"
         :linktarget="component.linktarget"
@@ -45,6 +47,7 @@ import SignalementFormInfo from './SignalementFormInfo.vue'
 import SignalementFormCheckbox from './SignalementFormCheckbox.vue'
 import SignalementFormPhonefield from './SignalementFormPhonefield.vue'
 import SignalementFormUpload from './SignalementFormUpload.vue'
+import SignalementFormUploadPhotos from './SignalementFormUploadPhotos.vue'
 import SignalementFormOverview from './SignalementFormOverview.vue'
 import SignalementFormConfirmation from './SignalementFormConfirmation.vue'
 import SignalementFormRoomList from './SignalementFormRoomList.vue'
@@ -67,6 +70,7 @@ export default defineComponent({
     SignalementFormCheckbox,
     SignalementFormPhonefield,
     SignalementFormUpload,
+    SignalementFormUploadPhotos,
     SignalementFormOverview,
     SignalementFormConfirmation,
     SignalementFormRoomList,
