@@ -2,13 +2,15 @@
     <div :class="['fr-checkbox-group', { 'fr-checkbox-group--error': hasError }]" :id="id">
       <input
           type="checkbox"
-          :name="id"
-          :value="internalValue"
+          :id="idCheckbox"
+          :name="idCheckbox"
+          :value="modelValue"
           :class="[ customCss ]"
           @input="updateValue($event)"
           aria-describedby="checkbox-error-messages"
+          :checked="Boolean(modelValue)"
           >
-      <label :class="[ customCss, 'fr-label' ]" :for="id">{{ labelVariablesReplaced }}</label>
+      <label :class="[ customCss, 'fr-label' ]" :for="idCheckbox">{{ labelVariablesReplaced }}</label>
       <div class="fr-messages-group" id="checkbox-error-messages" aria-live="assertive">
         <p
           id="checkbox-error-messages"
@@ -31,21 +33,18 @@ export default defineComponent({
     id: { type: String, default: null },
     label: { type: String, default: null },
     description: { type: String, default: null },
-    modelValue: { type: String, default: null },
+    modelValue: { type: Number, default: 0 },
     customCss: { type: String, default: '' },
     validate: { type: Object, default: null },
     hasError: { type: Boolean, default: false },
     error: { type: String, default: '' }
   },
+  data () {
+    return {
+      idCheckbox: this.id + '_check'
+    }
+  },
   computed: {
-    internalValue: {
-      get () {
-        return this.modelValue
-      },
-      set (newValue: string) {
-        this.$emit('update:modelValue', newValue)
-      }
-    },
     labelVariablesReplaced (): string {
       if (this.label !== undefined) {
         return variablesReplacer.replace(this.label)
@@ -55,8 +54,8 @@ export default defineComponent({
   },
   methods: {
     updateValue (event: Event) {
-      const value = (event.target as HTMLInputElement).value
-      this.$emit('update:modelValue', value)
+      const value = (event.target as HTMLInputElement).checked
+      this.$emit('update:modelValue', Number(value))
     }
   },
   emits: ['update:modelValue']

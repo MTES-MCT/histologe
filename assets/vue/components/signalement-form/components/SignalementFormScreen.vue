@@ -76,6 +76,7 @@ import SignalementFormLink from './SignalementFormLink.vue'
 import SignalementFormOnlyChoice from './SignalementFormOnlyChoice.vue'
 import SignalementFormOverview from './SignalementFormOverview.vue'
 import SignalementFormPhonefield from './SignalementFormPhonefield.vue'
+import SignalementFormRoomList from './SignalementFormRoomList.vue'
 import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormTime from './SignalementFormTime.vue'
@@ -107,7 +108,8 @@ export default defineComponent({
     SignalementFormOverview,
     SignalementFormConfirmation,
     SignalementFormDisorderCategoryItem,
-    SignalementFormDisorderCategoryList
+    SignalementFormDisorderCategoryList,
+    SignalementFormRoomList
   },
   props: {
     label: String,

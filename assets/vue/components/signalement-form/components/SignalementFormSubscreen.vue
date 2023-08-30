@@ -1,5 +1,5 @@
 <template>
-  <div :class="[ customCss ]">
+  <div :class="[ customCss ]" :id="id">
     <h2 v-if="label">{{ label }}</h2>
     <p v-if="description" v-html="description"></p>
     <div
@@ -47,6 +47,7 @@ import SignalementFormPhonefield from './SignalementFormPhonefield.vue'
 import SignalementFormUpload from './SignalementFormUpload.vue'
 import SignalementFormOverview from './SignalementFormOverview.vue'
 import SignalementFormConfirmation from './SignalementFormConfirmation.vue'
+import SignalementFormRoomList from './SignalementFormRoomList.vue'
 import SignalementFormDisorderCategoryItem from './SignalementFormDisorderCategoryItem.vue'
 import SignalementFormDisorderCategoryList from './SignalementFormDisorderCategoryList.vue'
 
@@ -68,10 +69,12 @@ export default defineComponent({
     SignalementFormUpload,
     SignalementFormOverview,
     SignalementFormConfirmation,
+    SignalementFormRoomList,
     SignalementFormDisorderCategoryItem,
     SignalementFormDisorderCategoryList
   },
   props: {
+    id: String,
     label: String,
     description: String,
     components: Object,
