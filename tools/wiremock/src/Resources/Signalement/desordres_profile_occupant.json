@@ -23,7 +23,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "ecran_intermediaire_les_desordres_next",
-          "action": "goto:desordres_logement_aeration",
+          "action": "goto:desordres_batiment",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
