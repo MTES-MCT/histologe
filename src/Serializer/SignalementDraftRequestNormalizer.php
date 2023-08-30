@@ -4,6 +4,7 @@ namespace App\Serializer;
 
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\SignalementDraft;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -15,11 +16,14 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
     private const PIECES_SUPERFICIE_KEY = 'type_logement_pieces_a_vivre_superficie_piece';
     private const PIECES_HAUTEUR_KEY = 'type_logement_pieces_a_vivre_hauteur_piece';
 
-    public function __construct(private ObjectNormalizer $objectNormalizer)
-    {
+    public function __construct(
+        /** @var ObjectNormalizer $objectNormalizer */
+        #[Autowire(service: 'serializer.normalizer.object')]
+        private NormalizerInterface $objectNormalizer
+    ) {
     }
 
-    public function denormalize($data, $type, $format = null, array $context = [])
+    public function denormalize($data, $type, $format = null, array $context = []): mixed
     {
         $transformedData = [];
         foreach ($data as $key => $value) {
@@ -35,6 +39,11 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
         return $this->objectNormalizer->denormalize($transformedData, SignalementDraftRequest::class);
     }
 
+    /**
+     * @return array|\ArrayObject|bool|float|int|string|null
+     *
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     */
     public function normalize(mixed $object, string $format = null, array $context = [])
     {
         $normalizedPayload = [];
@@ -59,12 +68,12 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
         return $this->objectNormalizer->normalize($signalementDraft, $format, $context);
     }
 
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization($data, $type, $format = null, array $context = []): bool
     {
         return SignalementDraftRequest::class === $type;
     }
 
-    public function supportsNormalization(mixed $data, string $format = null)
+    public function supportsNormalization(mixed $data, string $format = null, array $context = []): bool
     {
         return $data instanceof SignalementDraft;
     }
