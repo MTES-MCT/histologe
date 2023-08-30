@@ -32,7 +32,9 @@
                 <label for="{{ form.partner.vars.id }}" class="fr-label">Partenaire</label>
                 {{ form_widget(form.partner) }}
                 </br>
-                <span class="fr-hint-text fr-background-contrast--error">Si le partenaire n'apparaît pas dans la liste des partenaires, c'est qu'il n'existe pas. Veillez à bien créer le partenaire avant de vouloir y ajouter un compte.</span>
+                <div class="fr-alert fr-alert--warning">
+                    Si le partenaire n'apparaît pas dans la liste des partenaires, c'est qu'il n'existe pas. Veillez à bien créer le partenaire avant de vouloir y ajouter un compte.
+                </div>
             </div>
         {% endif %}
         <div class="fr-col-lg-6">

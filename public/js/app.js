@@ -1012,25 +1012,6 @@ document.querySelector('#modal-dpe-opener')?.addEventListener('click', (event) =
     })
 })
 
-document.addEventListener("DOMContentLoaded", function() {
-    // Interval to check if dsfr javascript is loaded
-    const intervalValue = setInterval( histologeAutoopenModal, 200 );
-    function histologeAutoopenModal() {
-        const htmlElement = document.documentElement;
-        const attributeJS = htmlElement.getAttribute('data-fr-js');
-        // When loaded, kills the interval and trigger what is needed
-        if (attributeJS === 'true') {
-            clearInterval( intervalValue );
-            // Open modals if they exist
-            const modalElements = document.getElementsByClassName('fr-modal autoopen');
-            if ( modalElements.length > 0 ){
-                dsfr(document.querySelector('.fr-modal.autoopen')).modal.disclose();
-            }
-        }
-
-    }
-});
-
 const refetchAddress = (form) => {
     // If the code postal is manually edited, we reinit the insee/geoloc and fetch the first result
     form.querySelector('#signalement-insee-occupant').value = '';
