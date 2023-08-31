@@ -46,7 +46,11 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
 
         $address = AddressParser::parse($signalement->getAdresseOccupant());
         $firstSuivi = $this->suiviRepository->findFirstSuiviBy($signalement, Suivi::TYPE_PARTNER);
-        $cleanedSuiviDescription = HtmlCleaner::clean($firstSuivi?->getDescription());
+
+        $cleanedSuiviDescription = null !== $firstSuivi && null !== $firstSuivi->getDescription()
+            ? HtmlCleaner::clean($firstSuivi->getDescription())
+            : null;
+
         $formatDate = AbstractEsaboraService::FORMAT_DATE;
         $formatDateTime = AbstractEsaboraService::FORMAT_DATE_TIME;
         $routeSignalement = $this->urlGenerator->generate(
