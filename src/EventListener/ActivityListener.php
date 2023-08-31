@@ -71,6 +71,7 @@ class ActivityListener implements EventSubscriberInterface
                 $notifyAdminsAndPartners = $entity->getDescription() != $this->parameterBag->get('suivi_message')['first_accepted_affectation'];
 
                 if ($notifyAdminsAndPartners) {
+                    $this->tos->clear();
                     $this->notifyAdmins($entity, Notification::TYPE_SUIVI, $entity->getSignalement()->getTerritory());
                     $entity->getSignalement()->getAffectations()->filter(function (Affectation $affectation) use ($entity) {
                         $partner = $affectation->getPartner();
