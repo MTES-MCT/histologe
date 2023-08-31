@@ -30,16 +30,16 @@ class GridAffectationLoader
     ];
 
     public function __construct(
-        private CsvParser              $csvParser,
-        private PartnerFactory         $partnerFactory,
-        private PartnerManager         $partnerManager,
-        private UserFactory            $userFactory,
-        private UserManager            $userManager,
-        private ManagerInterface       $manager,
-        private ValidatorInterface     $validator,
-        private LoggerInterface        $logger,
+        private CsvParser $csvParser,
+        private PartnerFactory $partnerFactory,
+        private PartnerManager $partnerManager,
+        private UserFactory $userFactory,
+        private UserManager $userManager,
+        private ManagerInterface $manager,
+        private ValidatorInterface $validator,
+        private LoggerInterface $logger,
         private EntityManagerInterface $entityManager,
-        private UserCreatedListener    $userAddedSubscriber,
+        private UserCreatedListener $userAddedSubscriber,
     ) {
     }
 

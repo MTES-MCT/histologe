@@ -5,7 +5,7 @@ namespace App\Command;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
-use App\EventSubscriber\UserCreatedListener;
+use App\EventListener\UserCreatedListener;
 use App\Factory\UserFactory;
 use App\Manager\PartnerManager;
 use App\Manager\TerritoryManager;

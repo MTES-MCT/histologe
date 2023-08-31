@@ -3,7 +3,7 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\User;
-use App\EventSubscriber\UserCreatedListener;
+use App\EventListener\UserCreatedListener;
 use App\Factory\UserFactory;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;

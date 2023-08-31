@@ -3,7 +3,7 @@
 namespace App\Tests\Functional\Service\Import\Signalement;
 
 use App\Entity\Territory;
-use App\EventSubscriber\SuiviCreatedListener;
+use App\EventListener\SuiviCreatedListener;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
