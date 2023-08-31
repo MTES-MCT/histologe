@@ -65,7 +65,9 @@ class UserUpdatedListener
     private function shouldChangePassword(array $changes): bool
     {
         if (\array_key_exists('email', $changes) // if email has changed
-            || (\array_key_exists('roles', $changes) && \in_array('ROLE_USAGER', $changes['roles'][0]))// if usager becomes user
+            || (\array_key_exists('roles', $changes)
+                && \in_array('ROLE_USAGER', $changes['roles'][0])
+            ) // if usager becomes user
         ) {
             return true;
         }
