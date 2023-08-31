@@ -3,7 +3,7 @@
 namespace App\Tests\Functional\Service\Import\Signalement;
 
 use App\Entity\Territory;
-use App\EventSubscriber\SuiviCreatedSubscriber;
+use App\EventSubscriber\SuiviCreatedListener;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
@@ -13,6 +13,7 @@ use App\Service\Import\Signalement\SignalementImportMapper;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Events;
 use Doctrine\ORM\NonUniqueResultException;
 use Faker\Factory;
 use Psr\Log\LoggerInterface;
@@ -29,7 +30,6 @@ class SignalementImportLoaderTest extends KernelTestCase
     private EntityManagerInterface $entityManager;
     private ParameterBagInterface $parameterBag;
     private LoggerInterface $logger;
-    private SuiviCreatedSubscriber $suiviCreatedSubscriber;
     private CriticiteCalculator $criticiteCalculator;
     private SignalementQualificationUpdater $signalementQualificationUpdater;
 
@@ -43,7 +43,6 @@ class SignalementImportLoaderTest extends KernelTestCase
         $this->suiviManager = self::getContainer()->get(SuiviManager::class);
         $this->parameterBag = self::getContainer()->get(ParameterBagInterface::class);
         $this->logger = self::getContainer()->get(LoggerInterface::class);
-        $this->suiviCreatedSubscriber = self::getContainer()->get(SuiviCreatedSubscriber::class);
         $this->criticiteCalculator = self::getContainer()->get(CriticiteCalculator::class);
         $this->signalementQualificationUpdater = self::getContainer()->get(SignalementQualificationUpdater::class);
 
@@ -55,7 +54,7 @@ class SignalementImportLoaderTest extends KernelTestCase
      */
     public function testLoadSignalementImport()
     {
-        $this->entityManager->getEventManager()->removeEventSubscriber($this->suiviCreatedSubscriber);
+        $this->entityManager->getEventManager()->removeEventListener([Events::onFlush], SuiviCreatedListener::class);
         $signalementImportLoader = new SignalementImportLoader(
             $this->signalementImportMapper,
             $this->signalementManager,

@@ -8,6 +8,7 @@ use App\Service\Import\CsvParser;
 use App\Service\Import\Signalement\SignalementImportLoader;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Events;
 use Doctrine\ORM\NonUniqueResultException;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -57,7 +58,10 @@ class ImportSignalementCommand extends Command
             return Command::FAILURE;
         }
 
-        $this->entityManager->getEventManager()->removeEventSubscriber($this->activityListener);
+        $this->entityManager->getEventManager()->removeEventListener(
+            [Events::onFlush, Events::preRemove],
+            $this->activityListener
+        );
 
         $fromFile = 'csv/signalement_'.$territoryZip.'.csv';
         $toFile = $this->parameterBag->get('uploads_tmp_dir').'signalement.csv';
@@ -80,7 +84,10 @@ class ImportSignalementCommand extends Command
 
         $io->success(sprintf('%s signalement(s) have been imported', $metadata['count_signalement']));
 
-        $this->entityManager->getEventManager()->addEventSubscriber($this->activityListener);
+        $this->entityManager->getEventManager()->addEventListener(
+            [Events::onFlush, Events::preRemove],
+            $this->activityListener
+        );
 
         return Command::SUCCESS;
     }

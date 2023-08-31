@@ -43,10 +43,10 @@ class ImportSignalementCommandTest extends KernelTestCase
 
         $eventManager = $this->createMock(EventManager::class);
         $eventManager->expects($this->once())
-            ->method('removeEventSubscriber');
+            ->method('removeEventListener');
 
         $eventManager->expects($this->once())
-            ->method('addEventSubscriber');
+            ->method('addEventListener');
 
         $entityManager->expects($this->atLeast(2))
             ->method('getEventManager')
@@ -180,7 +180,7 @@ class ImportSignalementCommandTest extends KernelTestCase
 
         $eventManager = $this->createMock(EventManager::class);
         $eventManager->expects($this->once())
-            ->method('removeEventSubscriber');
+            ->method('removeEventListener');
 
         $entityManager->expects($this->atLeast(1))
             ->method('getEventManager')

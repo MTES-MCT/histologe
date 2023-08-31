@@ -3,13 +3,14 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\User;
-use App\EventSubscriber\UserCreatedSubscriber;
+use App\EventSubscriber\UserCreatedListener;
 use App\Factory\UserFactory;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Events;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -25,7 +26,6 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
         private PartnerRepository $partnerRepository,
         private UserPasswordHasherInterface $hasher,
         private EntityManagerInterface $entityManager,
-        private UserCreatedSubscriber $userAddedSubscriber,
         private ParameterBagInterface $parameterBag,
         private UserFactory $userFactory,
     ) {
@@ -48,7 +48,7 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
     private function loadUsers(ObjectManager $manager, array $row): void
     {
         // do not send activation mail on loading fixtures
-        $this->entityManager->getEventManager()->removeEventSubscriber($this->userAddedSubscriber);
+        $this->entityManager->getEventManager()->removeEventListener([Events::onFlush], UserCreatedListener::class);
 
         $faker = Factory::create();
         $user = (new User())

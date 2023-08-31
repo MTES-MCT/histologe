@@ -15,7 +15,7 @@ use App\Repository\PartnerRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
@@ -24,7 +24,9 @@ use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class ActivityListener implements EventSubscriberInterface
+#[AsDoctrineListener(event: Events::onFlush)]
+#[AsDoctrineListener(event: Events::preRemove)]
+class ActivityListener
 {
     private $em;
     private $uow;
@@ -40,14 +42,6 @@ class ActivityListener implements EventSubscriberInterface
         $this->tos = new ArrayCollection();
         $this->uow = null;
         $this->em = null;
-    }
-
-    public function getSubscribedEvents(): array
-    {
-        return [
-            Events::onFlush,
-            Events::preRemove,
-        ];
     }
 
     public function onFlush(OnFlushEventArgs $args): void
