@@ -160,6 +160,31 @@ export default defineComponent({
         this.showComponentBySlug(param, param2)
       } else if (type === 'toggle') {
         this.toggleComponentBySlug(param, param2)
+      } else if (type === 'resolve') {
+        if (param === 'findNextScreen') {
+          // TODO: en faire un service
+          const screenMapping: any  = {
+            ecran_intermediaire_les_desordres_next: () => {
+              if (['batiment', 'batiment_logement'].includes(formStore.data.zone_concernee_zone)) {
+                return 'desordres_batiment'
+              }
+              return 'desordres_logement'
+            },
+            desordres_batiment_ras: () => {
+              if (formStore.data.zone_concernee_zone === 'batiment_logement') {
+                return 'desordres_logement'
+              } else if (formStore.data.zone_concernee_zone === 'batiment') {
+                return 'ecran_intermediaire_procedure'
+              }
+            },
+            desordres_logement_ras: () => {
+              if (['logement', 'batiment_logement'].includes(formStore.data.zone_concernee_zone)) {
+                return 'ecran_intermediaire_procedure'
+              }
+            }
+          }
+          this.showScreenBySlug(screenMapping[param2](), param2)
+        }
       }
     },
     showScreenBySlug (slug: string, slugButton:string) {

@@ -162,7 +162,7 @@
           "type": "SignalementFormButton",
           "label": "Je n'ai rien à signaler",
           "slug": "desordres_batiment_ras",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
         }
       ],
@@ -1006,7 +1006,7 @@
           "type": "SignalementFormButton",
           "label": "Je n'ai rien à signaler",
           "slug": "desordres_logement_ras",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
         }
       ],

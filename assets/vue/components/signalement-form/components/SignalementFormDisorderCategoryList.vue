@@ -58,6 +58,7 @@ export default defineComponent({
             this.listSelectedDisorders.splice(index, 1)
           }
         }
+        this.formStore.data.categorieDesordres = this.listSelectedDisorders
       }
       if (this.clickEvent !== undefined) {
         this.clickEvent(this.actionType, this.actionParam, this.listSelectedDisorders.length > 0 ? '1' : '0')

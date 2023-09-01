@@ -23,7 +23,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "ecran_intermediaire_les_desordres_next",
-          "action": "goto:desordres_batiment",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -50,7 +50,7 @@
               {
                 "type": "SignalementFormDisorderCategoryItem",
                 "label": "Propreté et entretien",
-                "slug": "desordres_batiment_liste_choix_proprete",
+                "slug": "desordres_batiment_proprete",
                 "icon": {
                   "src": "/img/form/BATIMENT/Picto-proprete_entretien.svg",
                   "alt": "illustration propreté"
@@ -162,7 +162,7 @@
           "type": "SignalementFormButton",
           "label": "Je n'ai rien à signaler",
           "slug": "desordres_batiment_ras",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
         }
       ],
@@ -178,7 +178,7 @@
           "type": "SignalementFormButton",
           "label": "Valider ma sélection",
           "slug": "desordres_batiment_valider",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -994,7 +994,7 @@
           "type": "SignalementFormButton",
           "label": "Je n'ai rien à signaler",
           "slug": "desordres_logement_ras",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
         }
       ],
@@ -1010,7 +1010,7 @@
           "type": "SignalementFormButton",
           "label": "Valider ma sélection",
           "slug": "desordres_logement_valider",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
