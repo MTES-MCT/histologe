@@ -62,7 +62,7 @@
               {
                 "type": "SignalementFormDisorderCategoryItem",
                 "label": "Eau et évacuation",
-                "slug": "desordres_batiment_liste_choix_eau",
+                "slug": "desordres_batiment_eau",
                 "icon": {
                   "src": "/img/form/BATIMENT/Picto-eau_evacuation.svg",
                   "alt": "illustration eau et évacuation"
@@ -74,7 +74,7 @@
               {
                 "type": "SignalementFormDisorderCategoryItem",
                 "label": "Isolation du bâtiment",
-                "slug": "desordres_batiment_liste_choix_isolation",
+                "slug": "desordres_batiment_isolation",
                 "icon": {
                   "src": "/img/form/BATIMENT/Picto-isolation_batiment.svg",
                   "alt": "illustration isolation"
@@ -86,7 +86,7 @@
               {
                 "type": "SignalementFormDisorderCategoryItem",
                 "label": "Maintenance et équipements",
-                "slug": "desordres_batiment_liste_choix_maintenance",
+                "slug": "desordres_batiment_maintenance",
                 "icon": {
                   "src": "/img/form/BATIMENT/Picto-maintenance_equipement.svg",
                   "alt": "illustration Maintenance et équipements"
@@ -98,7 +98,7 @@
               {
                 "type": "SignalementFormDisorderCategoryItem",
                 "label": "Présence de nuisibles",
-                "slug": "desordres_batiment_liste_choix_nuisibles",
+                "slug": "desordres_batiment_nuisibles",
                 "icon": {
                   "src": "/img/form/BATIMENT/Picto-presence_nuisibles.svg",
                   "alt": "illustration Présence de nuisibles"
@@ -110,7 +110,7 @@
               {
                 "type": "SignalementFormDisorderCategoryItem",
                 "label": "Sécurité, risque de chute",
-                "slug": "desordres_batiment_liste_choix_securite",
+                "slug": "desordres_batiment_securite",
                 "icon": {
                   "src": "/img/form/BATIMENT/Picto-securite_risque_chute.svg",
                   "alt": "illustration Sécurité, risque de chute"
@@ -122,7 +122,7 @@
               {
                 "type": "SignalementFormDisorderCategoryItem",
                 "label": "Risque d'incendie",
-                "slug": "desordres_batiment_liste_choix_incendie",
+                "slug": "desordres_batiment_incendie",
                 "icon": {
                   "src": "/img/form/BATIMENT/Picto-protection_incendie.svg",
                   "alt": "illustration Risque d'incendie"
@@ -134,7 +134,7 @@
               {
                 "type": "SignalementFormDisorderCategoryItem",
                 "label": "Accessibilité et alentours",
-                "slug": "desordres_batiment_liste_choix_accessibilite",
+                "slug": "desordres_batiment_accessibilite",
                 "icon": {
                   "src": "/img/form/BATIMENT/Picto-accessibilite_et_alentours.svg",
                   "alt": "illustration Accessibilité et alentours"
@@ -146,7 +146,7 @@
               {
                 "type": "SignalementFormDisorderCategoryItem",
                 "label": "Bruit, pollution sonore",
-                "slug": "desordres_batiment_liste_choix_bruit",
+                "slug": "desordres_batiment_bruit",
                 "icon": {
                   "src": "/img/form/BATIMENT/Picto-bruit_pollution_sonore.svg",
                   "alt": "illustration Bruit, pollution sonore"
@@ -230,14 +230,14 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "desordres_batiment_proprete_previous",
-          "action": "findPreviousScreen",
+          "action": "resolve:findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_batiment_proprete_next",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -281,14 +281,14 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "desordres_batiment_eau_previous",
-          "action": "findPreviousScreen",
+          "action": "resolve:findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_batiment_eau_next",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -343,14 +343,14 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "desordres_batiment_isolation_previous",
-          "action": "findPreviousScreen",
+          "action": "resolve:findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_batiment_isolation_next",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -395,14 +395,14 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "desordres_batiment_maintenance_previous",
-          "action": "findPreviousScreen",
+          "action": "resolve:findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_batiment_maintenance_next",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -493,14 +493,14 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "desordres_batiment_nuisibles_previous",
-          "action": "findPreviousScreen",
+          "action": "resolve:findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_batiment_nuisibles_next",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -677,14 +677,14 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "desordres_batiment_securite_previous",
-          "action": "findPreviousScreen",
+          "action": "resolve:findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_batiment_securite_next",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -718,14 +718,14 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "desordres_batiment_incendie_previous",
-          "action": "findPreviousScreen",
+          "action": "resolve:findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_batiment_incendie_next",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -804,14 +804,14 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "desordres_batiment_accessibilite_previous",
-          "action": "findPreviousScreen",
+          "action": "resolve:findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_batiment_accessibilite_next",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -845,14 +845,14 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "desordres_batiment_bruit_previous",
-          "action": "findPreviousScreen",
+          "action": "resolve:findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_batiment_bruit_next",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -879,7 +879,7 @@
               {
                 "type": "SignalementFormDisorderCategoryItem",
                 "label": "Eau et évacuation",
-                "slug": "desordres_logement_liste_choix_eau",
+                "slug": "desordres_logement_eau",
                 "icon": {
                   "src": "/img/form/LOGEMENT/Picto-eau_evacuation.svg",
                   "alt": "illustration eau et évacuation"
@@ -891,7 +891,7 @@
               {
                 "type": "SignalementFormDisorderCategoryItem",
                 "label": "Aération et ventilation",
-                "slug": "desordres_logement_liste_choix_aeration",
+                "slug": "desordres_logement_aeration",
                 "icon": {
                   "src": "/img/form/LOGEMENT/Picto-aeration_ventilation.svg",
                   "alt": "illustration Aération et ventilation"
@@ -903,7 +903,7 @@
               {
                 "type": "SignalementFormDisorderCategoryItem",
                 "label": "Chauffage et isolation",
-                "slug": "desordres_logement_liste_choix_chauffage",
+                "slug": "desordres_logement_chauffage",
                 "icon": {
                   "src": "/img/form/LOGEMENT/Picto-chauffage_isolation.svg",
                   "alt": "illustration Chauffage et isolation"
@@ -915,7 +915,7 @@
               {
                 "type": "SignalementFormDisorderCategoryItem",
                 "label": "Humidité et moisissure",
-                "slug": "desordres_logement_liste_choix_humidite",
+                "slug": "desordres_logement_humidite",
                 "icon": {
                   "src": "/img/form/LOGEMENT/Picto-humidite_moisissure.svg",
                   "alt": "illustration Humidité et moisissure"
@@ -927,7 +927,7 @@
               {
                 "type": "SignalementFormDisorderCategoryItem",
                 "label": "Sécurité",
-                "slug": "desordres_logement_liste_choix_securite",
+                "slug": "desordres_logement_securite",
                 "icon": {
                   "src": "/img/form/LOGEMENT/Picto-securite.svg",
                   "alt": "illustration Sécurité"
@@ -939,7 +939,7 @@
               {
                 "type": "SignalementFormDisorderCategoryItem",
                 "label": "Electricité",
-                "slug": "desordres_logement_liste_choix_electricite",
+                "slug": "desordres_logement_electricite",
                 "icon": {
                   "src": "/img/form/LOGEMENT/Picto-electricite.svg",
                   "alt": "illustration Electricité"
@@ -951,7 +951,7 @@
               {
                 "type": "SignalementFormDisorderCategoryItem",
                 "label": "Présence de nuisibles",
-                "slug": "desordres_logement_liste_choix_nuisibles",
+                "slug": "desordres_logement_nuisibles",
                 "icon": {
                   "src": "/img/form/LOGEMENT/Picto-presence_nuisibles.svg",
                   "alt": "illustration Présence de nuisibles"
@@ -963,7 +963,7 @@
               {
                 "type": "SignalementFormDisorderCategoryItem",
                 "label": "Bruit, pollution sonore",
-                "slug": "desordres_logement_liste_choix_bruit",
+                "slug": "desordres_logement_bruit",
                 "icon": {
                   "src": "/img/form/LOGEMENT/Picto-bruit_pollution_sonore.svg",
                   "alt": "illustration Bruit, pollution sonore"
@@ -975,7 +975,7 @@
               {
                 "type": "SignalementFormDisorderCategoryItem",
                 "label": "Eclairement, lumière naturelle",
-                "slug": "desordres_logement_liste_choix_lumiere",
+                "slug": "desordres_logement_lumiere",
                 "icon": {
                   "src": "/img/form/LOGEMENT/Picto-lumiere_naturelle.svg",
                   "alt": "illustration Eclairement, lumière naturelle"
@@ -1049,14 +1049,14 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "desordres_logement_eau_previous",
-          "action": "findPreviousScreen",
+          "action": "resolve:findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_logement_eau_next",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -1141,14 +1141,14 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "desordres_logement_aeration_previous",
-          "action": "findPreviousScreen",
+          "action": "resolve:findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_logement_aeration_next",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -1338,14 +1338,14 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "desordres_logement_chauffage_previous",
-          "action": "findPreviousScreen",
+          "action": "resolve:findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_logement_chauffage_next",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -1632,14 +1632,14 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "desordres_logement_humidite_previous",
-          "action": "findPreviousScreen",
+          "action": "resolve:findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_logement_humidite_next",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -1771,14 +1771,14 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "desordres_logement_securite_previous",
-          "action": "findPreviousScreen",
+          "action": "resolve:findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_logement_securite_next",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -1877,14 +1877,14 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "desordres_logement_electricite_previous",
-          "action": "findPreviousScreen",
+          "action": "resolve:findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_logement_electricite_next",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -1993,14 +1993,14 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "desordres_logement_nuisibles_previous",
-          "action": "findPreviousScreen",
+          "action": "resolve:findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_logement_nuisibles_next",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -2051,14 +2051,14 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "desordres_logement_bruit_previous",
-          "action": "findPreviousScreen",
+          "action": "resolve:findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_logement_bruit_next",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -2108,14 +2108,14 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "desordres_logement_lumiere_previous",
-          "action": "findPreviousScreen",
+          "action": "resolve:findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_logement_lumiere_next",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -2144,14 +2144,14 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "desordres_logement_proprete_previous",
-          "action": "findPreviousScreen",
+          "action": "resolve:findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_logement_proprete_next",
-          "action": "findNextScreen",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]

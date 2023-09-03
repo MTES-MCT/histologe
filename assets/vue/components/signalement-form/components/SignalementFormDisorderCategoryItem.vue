@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="['signalement-form-disorder-category-item fr-container--fluid fr-p-3v', isSelected ? 'is-selected' : '']"
+    :class="['signalement-form-disorder-category-item fr-container--fluid fr-p-3v', isSelected || isAlreadySelected ? 'is-selected' : '']"
     @click="handleClick"
     >
       <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
@@ -24,6 +24,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import formStore from "../store";
 
 export default defineComponent({
   name: 'SignalementFormDisorderCategoryItem',
@@ -36,7 +37,16 @@ export default defineComponent({
   },
   data () {
     return {
-      isSelected: this.modelValue
+      isSelected: this.modelValue,
+      formStore
+    }
+  },
+  computed: {
+    isAlreadySelected() {
+      if (formStore && formStore.data.categorieDisorders !== undefined || formStore.data.categorieDisorders !== undefined) {
+        return formStore.data.categorieDisorders.batiment.includes(this.id) || formStore.data.categorieDisorders.logement.includes(this.id)
+      }
+      return false
     }
   },
   methods: {

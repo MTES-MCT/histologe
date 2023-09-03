@@ -124,7 +124,9 @@ export default defineComponent({
   },
   data () {
     return {
-      formStore
+      formStore,
+      currentDisorderBatimentIndex: 0,
+      currentDisorderLogementIndex: 0,
     }
   },
   computed: {
@@ -149,17 +151,17 @@ export default defineComponent({
     updateFormData (slug: string, value: any) {
       this.formStore.data[slug] = value
     },
-    handleClickComponent (type:string, param:string, param2:string) {
+    async handleClickComponent (type:string, param:string, param2:string) {
       if (type === 'link') {
         window.location.href = param
       } else if (type === 'cancel') {
         alert('on fait quoi quand on annule ?')
       } else if (type === 'goto') {
-        this.showScreenBySlug(param, param2)
+        await this.showScreenBySlug(param, param2)
       } else if (type === 'show') {
-        this.showComponentBySlug(param, param2)
+        await this.showComponentBySlug(param, param2)
       } else if (type === 'toggle') {
-        this.toggleComponentBySlug(param, param2)
+        await this.toggleComponentBySlug(param, param2)
       } else if (type === 'resolve') {
         if (param === 'findNextScreen') {
           // TODO: en faire un service
@@ -181,13 +183,49 @@ export default defineComponent({
               if (['logement', 'batiment_logement'].includes(formStore.data.zone_concernee_zone)) {
                 return 'ecran_intermediaire_procedure'
               }
+            },
+            desordres_batiment_valider: () => {
+              return this.formStore.data.categorieDisorders.batiment[this.currentDisorderBatimentIndex]
+            },
+            desordres_logement_valider: () => {
+              return this.formStore.data.categorieDisorders.logement[this.currentDisorderLogementIndex]
             }
           }
-          this.showScreenBySlug(screenMapping[param2](), param2)
+          if (screenMapping[param2]) {
+            await this.showScreenBySlug(screenMapping[param2](), param2)
+          } else {
+            await this.handleNextClick(param2)
+          }
+        }
+
+        if (param === 'findPreviousScreen') {
+          let slug = param2.replace('_previous', '')
+          if (slug.includes('batiment')) {
+            this.currentDisorderBatimentIndex = formStore.data.categorieDisorders.batiment.indexOf(slug)
+            if (this.currentDisorderBatimentIndex <= 0) {
+              this.currentDisorderBatimentIndex = 0
+              await this.showScreenBySlug('desordres_batiment', param2)
+            } else {
+              this.currentDisorderBatimentIndex = this.currentDisorderBatimentIndex - 1
+              await this.showScreenBySlug(formStore.data.categorieDisorders.batiment[this.currentDisorderBatimentIndex], param2)
+            }
+          }
+
+          if (slug.includes('logement')) {
+            this.currentDisorderLogementIndex = formStore.data.categorieDisorders.logement.indexOf(slug)
+            if (this.currentDisorderLogementIndex <= 0) {
+              this.currentDisorderLogementIndex = 0
+              await this.showScreenBySlug('desordres_logement', param2)
+            } else {
+              this.currentDisorderLogementIndex = this.currentDisorderLogementIndex - 1
+              await this.showScreenBySlug(formStore.data.categorieDisorders.logement[this.currentDisorderLogementIndex], param2)
+
+            }
+          }
         }
       }
     },
-    showScreenBySlug (slug: string, slugButton:string) {
+    async showScreenBySlug (slug: string, slugButton:string) {
       formStore.validationErrors = {}
       const isScreenAfterCurrent = navManager.isScreenAfterCurrent(slug)
 
@@ -217,7 +255,7 @@ export default defineComponent({
       // Si pas d'erreur de validation, ou screen précédent (donc pas de validation), on change d'écran
       if (this.changeEvent !== undefined) {
         formStore.lastButtonClicked = slugButton
-        this.changeEvent(slug)
+        await this.changeEvent(slug)
       }
     },
     showComponentBySlug (slug:string, slugButton:string) {
@@ -238,6 +276,39 @@ export default defineComponent({
         } else {
           componentToToggle.classList.add('fr-hidden')
         }
+      }
+    },
+    async handleNextClick(slugButton: string) {
+      if (slugButton.includes('batiment')) {
+        if (this.currentDisorderBatimentIndex < formStore.data.categorieDisorders.batiment.length - 1) {
+          this.currentDisorderBatimentIndex = this.currentDisorderBatimentIndex + 1
+          await this.showScreenBySlug(formStore.data.categorieDisorders.batiment[this.currentDisorderBatimentIndex], slugButton)
+          console.log(formStore.validationErrors)
+          if (Object.keys(formStore.validationErrors).length > 0) {
+            this.currentDisorderBatimentIndex = this.currentDisorderBatimentIndex - 1
+          }
+        } else {
+          this.currentDisorderBatimentIndex = 0
+          this.currentDisorderLogementIndex = 0
+          if (formStore.data.zone_concernee_zone === 'batiment') {
+            await this.showScreenBySlug('ecran_intermediaire_procedure', slugButton)
+          } else {
+            await this.showScreenBySlug('desordres_logement', slugButton)
+          }
+        }
+      }
+
+      if (slugButton.includes('logement') || this.currentDisorderBatimentIndex >= formStore.data.categorieDisorders.batiment.length) {
+          if (this.currentDisorderLogementIndex < formStore.data.categorieDisorders.logement.length - 1) {
+            this.currentDisorderLogementIndex = this.currentDisorderLogementIndex + 1
+            await this.showScreenBySlug(formStore.data.categorieDisorders.logement[this.currentDisorderLogementIndex], slugButton)
+            if (Object.keys(formStore.validationErrors).length > 0) {
+              this.currentDisorderLogementIndex = this.currentDisorderLogementIndex - 1
+            }
+          } else {
+            this.currentDisorderLogementIndex = 0
+            await this.showScreenBySlug('ecran_intermediaire_procedure', slugButton)
+          }
       }
     }
   }
