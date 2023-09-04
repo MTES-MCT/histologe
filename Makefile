@@ -143,6 +143,9 @@ cs-check: ## Check source code with PHP-CS-Fixer
 cs-fix: ## Fix source code with PHP-CS-Fixer
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer cs-fix
 
+es-vue-fix: ## Fix vue source code with es-lint --fix
+	@$(DOCKER_COMP) exec -it histologe_phpfpm npm run es-vue-fix
+
 mock: ## Start Mock server
 	@${DOCKER_COMP} start histologe_wiremock && sleep 5
 	@${DOCKER_COMP} exec -it histologe_phpfpm sh -c "cd tools/wiremock/src/Mock && php AppMock.php"

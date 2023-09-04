@@ -162,16 +162,18 @@ export default defineComponent({
       } else if (type === 'goto') {
         await this.showScreenBySlug(param, param2)
       } else if (type === 'show') {
-        await this.showComponentBySlug(param, param2)
+        this.showComponentBySlug(param, param2)
       } else if (type === 'toggle') {
-        await this.toggleComponentBySlug(param, param2)
+        this.toggleComponentBySlug(param, param2)
       } else if (type === 'resolve') {
         if (param === 'findNextScreen') {
           const index = formStore.data.currentSlug.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
           const { currentCategory, incrementIndex, nextScreenSlug } = findNextScreen(formStore, index, param2)
           await this.showScreenBySlug(nextScreenSlug, param2)
           if (Object.keys(formStore.validationErrors).length > 0) {
-            this.currentDisorderIndex[currentCategory] -= 1
+            if (incrementIndex !== 0) {
+              this.currentDisorderIndex[currentCategory] -= 1
+            }
           } else {
             this.currentDisorderIndex[currentCategory] = incrementIndex
           }

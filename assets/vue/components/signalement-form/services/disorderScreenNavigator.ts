@@ -26,11 +26,16 @@ export function findNextScreen (
   let nextScreenSlug: string = ''
   let incrementIndex: number = index
   let isDynamicScreen: boolean = false
-  let currentCategory: string = ''
+  let currentCategory: string = 'batiment'
 
   switch (currentSlug) {
     case 'ecran_intermediaire_les_desordres':
-      nextScreenSlug = ['batiment', 'batiment_logement'].includes(formStore.data.zone_concernee_zone) ? 'desordres_batiment' : 'desordres_logement'
+      if (['batiment', 'batiment_logement'].includes(formStore.data.zone_concernee_zone)) {
+        nextScreenSlug = 'desordres_batiment'
+      } else {
+        nextScreenSlug = 'desordres_logement'
+        currentCategory = 'logement'
+      }
       break
     case 'desordres_batiment':
       if (slugButton === 'desordres_batiment_ras') {
