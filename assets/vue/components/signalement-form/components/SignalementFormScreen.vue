@@ -88,6 +88,7 @@ import SignalementFormWarning from './SignalementFormWarning.vue'
 import SignalementFormYear from './SignalementFormYear.vue'
 import { variablesReplacer } from './../services/variableReplacer'
 import { navManager } from './../services/navManager'
+import { findPreviousScreen, findNextScreen } from "../services/disorderScreenNavigator";
 
 export default defineComponent({
   name: 'SignalementFormScreen',
@@ -125,8 +126,10 @@ export default defineComponent({
   data () {
     return {
       formStore,
-      currentDisorderBatimentIndex: 0,
-      currentDisorderLogementIndex: 0,
+      currentDisorderIndex: {
+        batiment: 0,
+        logement: 0
+      } as { [key: string]: number }
     }
   },
   computed: {
@@ -164,64 +167,22 @@ export default defineComponent({
         await this.toggleComponentBySlug(param, param2)
       } else if (type === 'resolve') {
         if (param === 'findNextScreen') {
-          // TODO: en faire un service
-          const screenMapping: any  = {
-            ecran_intermediaire_les_desordres_next: () => {
-              if (['batiment', 'batiment_logement'].includes(formStore.data.zone_concernee_zone)) {
-                return 'desordres_batiment'
-              }
-              return 'desordres_logement'
-            },
-            desordres_batiment_ras: () => {
-              if (formStore.data.zone_concernee_zone === 'batiment_logement') {
-                return 'desordres_logement'
-              } else if (formStore.data.zone_concernee_zone === 'batiment') {
-                return 'ecran_intermediaire_procedure'
-              }
-            },
-            desordres_logement_ras: () => {
-              if (['logement', 'batiment_logement'].includes(formStore.data.zone_concernee_zone)) {
-                return 'ecran_intermediaire_procedure'
-              }
-            },
-            desordres_batiment_valider: () => {
-              return this.formStore.data.categorieDisorders.batiment[this.currentDisorderBatimentIndex]
-            },
-            desordres_logement_valider: () => {
-              return this.formStore.data.categorieDisorders.logement[this.currentDisorderLogementIndex]
-            }
-          }
-          if (screenMapping[param2]) {
-            await this.showScreenBySlug(screenMapping[param2](), param2)
+          let index = formStore.data.currentSlug.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
+          const { currentCategory, incrementIndex, nextScreenSlug } = findNextScreen(formStore, index, param2)
+          await this.showScreenBySlug(nextScreenSlug,param2)
+          if (Object.keys(formStore.validationErrors).length > 0) {
+            this.currentDisorderIndex[currentCategory] -=  1
           } else {
-            await this.handleNextClick(param2)
+              this.currentDisorderIndex[currentCategory] = incrementIndex
           }
         }
 
         if (param === 'findPreviousScreen') {
-          let slug = param2.replace('_previous', '')
-          if (slug.includes('batiment')) {
-            this.currentDisorderBatimentIndex = formStore.data.categorieDisorders.batiment.indexOf(slug)
-            if (this.currentDisorderBatimentIndex <= 0) {
-              this.currentDisorderBatimentIndex = 0
-              await this.showScreenBySlug('desordres_batiment', param2)
-            } else {
-              this.currentDisorderBatimentIndex = this.currentDisorderBatimentIndex - 1
-              await this.showScreenBySlug(formStore.data.categorieDisorders.batiment[this.currentDisorderBatimentIndex], param2)
-            }
-          }
+          let index = formStore.data.currentSlug.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
+          const { currrentCategory, decrementIndex, previousScreenSlug } = findPreviousScreen(formStore, index)
+          await this.showScreenBySlug(previousScreenSlug, param2)
 
-          if (slug.includes('logement')) {
-            this.currentDisorderLogementIndex = formStore.data.categorieDisorders.logement.indexOf(slug)
-            if (this.currentDisorderLogementIndex <= 0) {
-              this.currentDisorderLogementIndex = 0
-              await this.showScreenBySlug('desordres_logement', param2)
-            } else {
-              this.currentDisorderLogementIndex = this.currentDisorderLogementIndex - 1
-              await this.showScreenBySlug(formStore.data.categorieDisorders.logement[this.currentDisorderLogementIndex], param2)
-
-            }
-          }
+          this.currentDisorderIndex[currrentCategory] = decrementIndex < 0 ? 0 : decrementIndex
         }
       }
     },
@@ -276,39 +237,6 @@ export default defineComponent({
         } else {
           componentToToggle.classList.add('fr-hidden')
         }
-      }
-    },
-    async handleNextClick(slugButton: string) {
-      if (slugButton.includes('batiment')) {
-        if (this.currentDisorderBatimentIndex < formStore.data.categorieDisorders.batiment.length - 1) {
-          this.currentDisorderBatimentIndex = this.currentDisorderBatimentIndex + 1
-          await this.showScreenBySlug(formStore.data.categorieDisorders.batiment[this.currentDisorderBatimentIndex], slugButton)
-          console.log(formStore.validationErrors)
-          if (Object.keys(formStore.validationErrors).length > 0) {
-            this.currentDisorderBatimentIndex = this.currentDisorderBatimentIndex - 1
-          }
-        } else {
-          this.currentDisorderBatimentIndex = 0
-          this.currentDisorderLogementIndex = 0
-          if (formStore.data.zone_concernee_zone === 'batiment') {
-            await this.showScreenBySlug('ecran_intermediaire_procedure', slugButton)
-          } else {
-            await this.showScreenBySlug('desordres_logement', slugButton)
-          }
-        }
-      }
-
-      if (slugButton.includes('logement') || this.currentDisorderBatimentIndex >= formStore.data.categorieDisorders.batiment.length) {
-          if (this.currentDisorderLogementIndex < formStore.data.categorieDisorders.logement.length - 1) {
-            this.currentDisorderLogementIndex = this.currentDisorderLogementIndex + 1
-            await this.showScreenBySlug(formStore.data.categorieDisorders.logement[this.currentDisorderLogementIndex], slugButton)
-            if (Object.keys(formStore.validationErrors).length > 0) {
-              this.currentDisorderLogementIndex = this.currentDisorderLogementIndex - 1
-            }
-          } else {
-            this.currentDisorderLogementIndex = 0
-            await this.showScreenBySlug('ecran_intermediaire_procedure', slugButton)
-          }
       }
     }
   }
