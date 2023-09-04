@@ -21,6 +21,7 @@
         :labelUpload="component.labelUpload"
         :description="component.description"
         :components="component.components"
+        :icons="component.icons"
         :action="component.action"
         :link="component.link"
         :linktarget="component.linktarget"
@@ -72,6 +73,7 @@ import SignalementFormCounter from './SignalementFormCounter.vue'
 import SignalementFormDate from './SignalementFormDate.vue'
 import SignalementFormDisorderCategoryItem from './SignalementFormDisorderCategoryItem.vue'
 import SignalementFormDisorderCategoryList from './SignalementFormDisorderCategoryList.vue'
+import SignalementFormDisorderOverview from './SignalementFormDisorderOverview.vue'
 import SignalementFormEmailfield from './SignalementFormEmailfield.vue'
 import SignalementFormInfo from './SignalementFormInfo.vue'
 import SignalementFormLink from './SignalementFormLink.vue'
@@ -114,6 +116,7 @@ export default defineComponent({
     SignalementFormConfirmation,
     SignalementFormDisorderCategoryItem,
     SignalementFormDisorderCategoryList,
+    SignalementFormDisorderOverview,
     SignalementFormRoomList
   },
   props: {

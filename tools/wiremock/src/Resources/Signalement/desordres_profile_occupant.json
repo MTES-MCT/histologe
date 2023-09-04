@@ -178,7 +178,7 @@
           "type": "SignalementFormButton",
           "label": "Valider ma sélection",
           "slug": "desordres_batiment_valider",
-          "action": "resolve:findNextScreen",
+          "action": "goto:desordres_renseignes",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -2153,6 +2153,30 @@
           "slug": "desordres_logement_proprete_next",
           "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Les désordres renseignés",
+    "slug": "desordres_renseignes",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormDisorderOverview",
+          "slug": "desordres_resume",
+          "icons": [
+            {
+              "src": "/img/form/BATIMENT/Picto-batiment.svg",
+              "alt": ""
+            },
+            {
+              "src": "/img/form/LOGEMENT/Picto-logement.svg",
+              "alt": ""
+            }
+          ]
         }
       ]
     }
