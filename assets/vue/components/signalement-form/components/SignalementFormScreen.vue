@@ -88,7 +88,7 @@ import SignalementFormWarning from './SignalementFormWarning.vue'
 import SignalementFormYear from './SignalementFormYear.vue'
 import { variablesReplacer } from './../services/variableReplacer'
 import { navManager } from './../services/navManager'
-import { findPreviousScreen, findNextScreen } from "../services/disorderScreenNavigator";
+import { findPreviousScreen, findNextScreen } from '../services/disorderScreenNavigator'
 
 export default defineComponent({
   name: 'SignalementFormScreen',
@@ -167,18 +167,18 @@ export default defineComponent({
         await this.toggleComponentBySlug(param, param2)
       } else if (type === 'resolve') {
         if (param === 'findNextScreen') {
-          let index = formStore.data.currentSlug.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
+          const index = formStore.data.currentSlug.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
           const { currentCategory, incrementIndex, nextScreenSlug } = findNextScreen(formStore, index, param2)
-          await this.showScreenBySlug(nextScreenSlug,param2)
+          await this.showScreenBySlug(nextScreenSlug, param2)
           if (Object.keys(formStore.validationErrors).length > 0) {
-            this.currentDisorderIndex[currentCategory] -=  1
+            this.currentDisorderIndex[currentCategory] -= 1
           } else {
-              this.currentDisorderIndex[currentCategory] = incrementIndex
+            this.currentDisorderIndex[currentCategory] = incrementIndex
           }
         }
 
         if (param === 'findPreviousScreen') {
-          let index = formStore.data.currentSlug.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
+          const index = formStore.data.currentSlug.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
           const { currrentCategory, decrementIndex, previousScreenSlug } = findPreviousScreen(formStore, index)
           await this.showScreenBySlug(previousScreenSlug, param2)
 

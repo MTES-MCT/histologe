@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import formStore from "../store";
+import formStore from '../store'
 
 export default defineComponent({
   name: 'SignalementFormDisorderCategoryItem',
@@ -42,8 +42,8 @@ export default defineComponent({
     }
   },
   computed: {
-    isAlreadySelected() {
-      if (formStore && formStore.data.categorieDisorders !== undefined || formStore.data.categorieDisorders !== undefined) {
+    isAlreadySelected () {
+      if (formStore?.data?.categorieDisorders !== undefined) {
         return formStore.data.categorieDisorders.batiment.includes(this.id) || formStore.data.categorieDisorders.logement.includes(this.id)
       }
       return false

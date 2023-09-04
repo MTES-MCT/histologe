@@ -34,7 +34,6 @@ export default defineComponent({
     clickEvent: Function
   },
   data () {
-    const listSelectedDisorders = new Array<string>()
     return {
       formStore,
       actionType: (this.action.includes(':')) ? this.action.split(':')[0] : '',
@@ -51,24 +50,24 @@ export default defineComponent({
       if (!formStore.data.categorieDisorders) {
         formStore.data.categorieDisorders = {
           batiment: [],
-          logement: [],
-        };
+          logement: []
+        }
       }
       if (idDisorder !== '') {
-        const category = idDisorder.includes('batiment') ? 'batiment' : 'logement';
-        const indexInList = formStore.data.categorieDisorders[category].indexOf(idDisorder);
+        const category = idDisorder.includes('batiment') ? 'batiment' : 'logement'
+        const indexInList = formStore.data.categorieDisorders[category].indexOf(idDisorder)
 
         if (isSelected && indexInList === -1) {
-          formStore.data.categorieDisorders[category].push(idDisorder);
+          formStore.data.categorieDisorders[category].push(idDisorder)
         } else if (!isSelected && indexInList !== -1) {
-          formStore.data.categorieDisorders[category].splice(indexInList, 1);
+          formStore.data.categorieDisorders[category].splice(indexInList, 1)
         }
       }
       if (this.clickEvent !== undefined) {
         this.clickEvent(this.actionType, this.actionParam, this.hasSelectedDisorders() ? '1' : '0')
       }
     },
-    hasSelectedDisorders() {
+    hasSelectedDisorders () {
       return formStore.data.categorieDisorders.batiment.length > 0 || formStore.data.categorieDisorders.logement.length > 0
     }
   }
