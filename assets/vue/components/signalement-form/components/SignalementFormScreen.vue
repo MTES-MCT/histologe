@@ -227,7 +227,7 @@ export default defineComponent({
     },
     async navigateToDisorderScreen (action: string, slugButton:string) {
       if (action === 'findNextScreen') {
-        const index = formStore.data.currentSlug.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
+        const index = formStore.data.currentStep.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
         const { currentCategory, incrementIndex, nextScreenSlug } = findNextScreen(formStore, index, slugButton)
         await this.showScreenBySlug(nextScreenSlug, slugButton)
         if (Object.keys(formStore.validationErrors).length === 0) {
@@ -236,7 +236,7 @@ export default defineComponent({
       }
 
       if (action === 'findPreviousScreen') {
-        const index = formStore.data.currentSlug.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
+        const index = formStore.data.currentStep.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
         const { currentCategory, decrementIndex, previousScreenSlug } = findPreviousScreen(formStore, index)
         await this.showScreenBySlug(previousScreenSlug, slugButton)
 

@@ -2,8 +2,8 @@ export function findPreviousScreen (
   formStore: any,
   index: number
 ): { currentCategory: string, decrementIndex: number, previousScreenSlug: string } {
-  const currentSlug: string = formStore.data.currentSlug
-  const currentCategory: string = currentSlug.includes('batiment') ? 'batiment' : 'logement'
+  const currentStep: string = formStore.data.currentStep
+  const currentCategory: string = currentStep.includes('batiment') ? 'batiment' : 'logement'
 
   const disorderList = formStore.data.categorieDisorders[currentCategory]
   const decrementIndex = index < 0 ? 0 : index - 1
@@ -12,7 +12,7 @@ export function findPreviousScreen (
   if (decrementIndex >= 0) {
     previousScreenSlug = disorderList[decrementIndex]
   } else {
-    switch (currentSlug) {
+    switch (currentStep) {
       case 'desordres_logement':
         previousScreenSlug = (formStore.data.zone_concernee_zone === 'batiment_logement') ? 'desordres_batiment' : 'ecran_intermediaire_les_desordres'
         break
@@ -20,7 +20,7 @@ export function findPreviousScreen (
         previousScreenSlug = (formStore.data.zone_concernee_zone === 'batiment_logement') ? 'ecran_intermediaire_les_desordres' : 'desordres_logement'
         break
       default:
-        previousScreenSlug = (['logement', 'batiment_logement'].includes(formStore.data.zone_concernee_zone) && currentSlug.includes('logement'))
+        previousScreenSlug = (['logement', 'batiment_logement'].includes(formStore.data.zone_concernee_zone) && currentStep.includes('logement'))
           ? 'desordres_logement'
           : 'desordres_batiment'
         break
@@ -35,13 +35,13 @@ export function findNextScreen (
   index: number,
   slugButton: string = ''
 ): { currentCategory: string, incrementIndex: number, nextScreenSlug: string } {
-  const currentSlug: string = formStore.data.currentSlug
+  const currentStep: string = formStore.data.currentStep
   let nextScreenSlug: string = ''
   let incrementIndex: number = index
   let isDynamicScreen: boolean = false
   let currentCategory: string = 'batiment'
 
-  switch (currentSlug) {
+  switch (currentStep) {
     case 'ecran_intermediaire_les_desordres':
       if (['batiment', 'batiment_logement'].includes(formStore.data.zone_concernee_zone)) {
         nextScreenSlug = 'desordres_batiment'
@@ -75,7 +75,7 @@ export function findNextScreen (
   }
 
   if (isDynamicScreen) {
-    if (currentSlug.includes('batiment')) {
+    if (currentStep.includes('batiment')) {
       currentCategory = 'batiment'
     } else {
       currentCategory = 'logement'

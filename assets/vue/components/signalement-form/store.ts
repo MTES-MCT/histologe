@@ -1,4 +1,6 @@
 import { reactive, computed } from 'vue'
+import { ZoneComponents } from './interfaces/interfaceZoneComponents'
+import { PictureDescription } from './interfaces/interfacePictureDescription'
 
 interface FormData {
   [key: string]: any
@@ -45,6 +47,15 @@ interface FormStore {
   data: FormData
   props: FormData
   screenData: any[]
+  currentScreen: {
+    slug: string
+    screenCategory: string
+    label: string
+    description: string
+    icon: PictureDescription
+    desktopIllustration: PictureDescription
+    components: ZoneComponents
+  } | null
   currentScreenIndex: number
   lastButtonClicked: string
   validationErrors: FormData
@@ -71,6 +82,7 @@ const formStore: FormStore = reactive({
     urlApiAdress: 'https://api-adresse.data.gouv.fr/search/?q='
   },
   screenData: [],
+  currentScreen: null,
   currentScreenIndex: 0,
   lastButtonClicked: '',
   inputComponents: [
