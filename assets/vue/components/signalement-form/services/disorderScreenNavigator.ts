@@ -1,20 +1,33 @@
 export function findPreviousScreen (
   formStore: any,
   index: number
-): { currrentCategory: string, decrementIndex: number, previousScreenSlug: string } {
+): { currentCategory: string, decrementIndex: number, previousScreenSlug: string } {
   const currentSlug: string = formStore.data.currentSlug
-  let currrentCategory: string | null = null
-  if (currentSlug.includes('batiment')) {
-    currrentCategory = 'batiment'
+  const currentCategory: string = currentSlug.includes('batiment') ? 'batiment' : 'logement'
+
+  const disorderList = formStore.data.categorieDisorders[currentCategory]
+  const decrementIndex = index < 0 ? 0 : index - 1
+  let previousScreenSlug: string = 'ecran_intermediaire_les_desordres'
+
+  if (decrementIndex >= 0) {
+    previousScreenSlug = disorderList[decrementIndex]
   } else {
-    currrentCategory = 'logement'
+    switch (currentSlug) {
+      case 'desordres_logement':
+        previousScreenSlug = (formStore.data.zone_concernee_zone === 'batiment_logement') ? 'desordres_batiment' : 'ecran_intermediaire_les_desordres'
+        break
+      case 'desordres_batiment':
+        previousScreenSlug = (formStore.data.zone_concernee_zone === 'batiment_logement') ? 'ecran_intermediaire_les_desordres' : 'desordres_logement'
+        break
+      default:
+        previousScreenSlug = (['logement', 'batiment_logement'].includes(formStore.data.zone_concernee_zone) && currentSlug.includes('logement'))
+          ? 'desordres_logement'
+          : 'desordres_batiment'
+        break
+    }
   }
 
-  const disorderList = formStore.data.categorieDisorders[currrentCategory]
-  const decrementIndex = index < 0 ? 0 : index - 1
-  const previousScreenSlug = decrementIndex < 0 ? `desordres_${currrentCategory}` : disorderList[decrementIndex]
-
-  return { currrentCategory, decrementIndex, previousScreenSlug }
+  return { currentCategory, decrementIndex, previousScreenSlug }
 }
 
 export function findNextScreen (

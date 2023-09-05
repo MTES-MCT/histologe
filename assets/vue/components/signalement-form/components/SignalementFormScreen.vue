@@ -166,22 +166,7 @@ export default defineComponent({
       } else if (type === 'toggle') {
         this.toggleComponentBySlug(param, param2)
       } else if (type === 'resolve') {
-        if (param === 'findNextScreen') {
-          const index = formStore.data.currentSlug.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
-          const { currentCategory, incrementIndex, nextScreenSlug } = findNextScreen(formStore, index, param2)
-          await this.showScreenBySlug(nextScreenSlug, param2)
-          if (Object.keys(formStore.validationErrors).length === 0) {
-            this.currentDisorderIndex[currentCategory] = incrementIndex
-          }
-        }
-
-        if (param === 'findPreviousScreen') {
-          const index = formStore.data.currentSlug.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
-          const { currrentCategory, decrementIndex, previousScreenSlug } = findPreviousScreen(formStore, index)
-          await this.showScreenBySlug(previousScreenSlug, param2)
-
-          this.currentDisorderIndex[currrentCategory] = decrementIndex < 0 ? 0 : decrementIndex
-        }
+        this.navigateToDisorderScreen(param, param2)
       }
     },
     async showScreenBySlug (slug: string, slugButton:string) {
@@ -235,6 +220,24 @@ export default defineComponent({
         } else {
           componentToToggle.classList.add('fr-hidden')
         }
+      }
+    },
+    async navigateToDisorderScreen (action: string, slugButton:string) {
+      if (action === 'findNextScreen') {
+        const index = formStore.data.currentSlug.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
+        const { currentCategory, incrementIndex, nextScreenSlug } = findNextScreen(formStore, index, slugButton)
+        await this.showScreenBySlug(nextScreenSlug, slugButton)
+        if (Object.keys(formStore.validationErrors).length === 0) {
+          this.currentDisorderIndex[currentCategory] = incrementIndex
+        }
+      }
+
+      if (action === 'findPreviousScreen') {
+        const index = formStore.data.currentSlug.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
+        const { currentCategory, decrementIndex, previousScreenSlug } = findPreviousScreen(formStore, index)
+        await this.showScreenBySlug(previousScreenSlug, slugButton)
+
+        this.currentDisorderIndex[currentCategory] = decrementIndex < 0 ? 0 : decrementIndex
       }
     }
   }

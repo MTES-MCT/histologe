@@ -1003,7 +1003,7 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "desordres_logement_previous",
-          "action": "goto:ecran_intermediaire_les_desordres",
+          "action": "resolve:findPreviousScreen",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
