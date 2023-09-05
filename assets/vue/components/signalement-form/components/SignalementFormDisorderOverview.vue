@@ -12,7 +12,7 @@
           class="fr-accordion"
           >
           <h3 class="fr-accordion__title">
-            <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-batiment-' + index">{{ disorder }}</button>
+            <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-batiment-' + index">{{ dictionaryStore[disorder] }}</button>
           </h3>
           <div class="fr-collapse" :id="'accordion-disorder-batiment-' + index">
             <h4 class="fr-h4">Contenu</h4>
@@ -32,7 +32,7 @@
           class="fr-accordion"
           >
           <h3 class="fr-accordion__title">
-            <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-logement-' + index">{{ disorder }}</button>
+            <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-logement-' + index">{{ dictionaryStore[disorder] }}</button>
           </h3>
           <div class="fr-collapse" :id="'accordion-disorder-logement-' + index">
             <h4 class="fr-h4">Contenu</h4>
@@ -49,6 +49,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import formStore from './../store'
+import dictionaryStore from './../dictionary-store'
 
 export default defineComponent({
   name: 'SignalementFormDisorderOverview',
@@ -58,7 +59,8 @@ export default defineComponent({
   },
   data () {
     return {
-      formStore
+      formStore,
+      dictionaryStore
     }
   }
 })
