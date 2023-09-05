@@ -7,6 +7,7 @@ export function findPreviousScreen (
 
   const disorderList = formStore.data.categorieDisorders[currentCategory]
   const decrementIndex = index < 0 ? 0 : index - 1
+  let previousScreenSlug: string
 
   if (decrementIndex >= 0) {
     previousScreenSlug = disorderList[decrementIndex]
