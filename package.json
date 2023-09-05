@@ -35,7 +35,9 @@
     "dev-server": "encore dev-server",
     "dev": "encore dev",
     "watch": "encore dev --watch",
-    "build": "encore production --progress"
+    "build": "encore production --progress",
+    "es-vue-fix": "node_modules/.bin/eslint --config=.eslintrc.js assets/vue --fix"
+
   },
   "engines": {
     "node": "18.14.2"

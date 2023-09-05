@@ -88,6 +88,7 @@ import SignalementFormWarning from './SignalementFormWarning.vue'
 import SignalementFormYear from './SignalementFormYear.vue'
 import { variablesReplacer } from './../services/variableReplacer'
 import { navManager } from './../services/navManager'
+import { findPreviousScreen, findNextScreen } from '../services/disorderScreenNavigator'
 
 export default defineComponent({
   name: 'SignalementFormScreen',
@@ -124,7 +125,11 @@ export default defineComponent({
   },
   data () {
     return {
-      formStore
+      formStore,
+      currentDisorderIndex: {
+        batiment: 0,
+        logement: 0
+      } as { [key: string]: number }
     }
   },
   computed: {
@@ -149,20 +154,22 @@ export default defineComponent({
     updateFormData (slug: string, value: any) {
       this.formStore.data[slug] = value
     },
-    handleClickComponent (type:string, param:string, param2:string) {
+    async handleClickComponent (type:string, param:string, param2:string) {
       if (type === 'link') {
         window.location.href = param
       } else if (type === 'cancel') {
         alert('on fait quoi quand on annule ?')
       } else if (type === 'goto') {
-        this.showScreenBySlug(param, param2)
+        await this.showScreenBySlug(param, param2)
       } else if (type === 'show') {
         this.showComponentBySlug(param, param2)
       } else if (type === 'toggle') {
         this.toggleComponentBySlug(param, param2)
+      } else if (type === 'resolve') {
+        this.navigateToDisorderScreen(param, param2)
       }
     },
-    showScreenBySlug (slug: string, slugButton:string) {
+    async showScreenBySlug (slug: string, slugButton:string) {
       formStore.validationErrors = {}
       const isScreenAfterCurrent = navManager.isScreenAfterCurrent(slug)
 
@@ -192,7 +199,7 @@ export default defineComponent({
       // Si pas d'erreur de validation, ou screen précédent (donc pas de validation), on change d'écran
       if (this.changeEvent !== undefined) {
         formStore.lastButtonClicked = slugButton
-        this.changeEvent(slug)
+        await this.changeEvent(slug)
       }
     },
     showComponentBySlug (slug:string, slugButton:string) {
@@ -213,6 +220,24 @@ export default defineComponent({
         } else {
           componentToToggle.classList.add('fr-hidden')
         }
+      }
+    },
+    async navigateToDisorderScreen (action: string, slugButton:string) {
+      if (action === 'findNextScreen') {
+        const index = formStore.data.currentSlug.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
+        const { currentCategory, incrementIndex, nextScreenSlug } = findNextScreen(formStore, index, slugButton)
+        await this.showScreenBySlug(nextScreenSlug, slugButton)
+        if (Object.keys(formStore.validationErrors).length === 0) {
+          this.currentDisorderIndex[currentCategory] = incrementIndex
+        }
+      }
+
+      if (action === 'findPreviousScreen') {
+        const index = formStore.data.currentSlug.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
+        const { currentCategory, decrementIndex, previousScreenSlug } = findPreviousScreen(formStore, index)
+        await this.showScreenBySlug(previousScreenSlug, slugButton)
+
+        this.currentDisorderIndex[currentCategory] = decrementIndex < 0 ? 0 : decrementIndex
       }
     }
   }

@@ -144,6 +144,7 @@ export default defineComponent({
           formStore.currentScreenIndex = screenIndex
           this.currentScreen = formStore.screenData[screenIndex]
           formStore.data.currentStep = formStore.currentScreenIndex + ':' + this.currentScreen?.slug
+          formStore.data.currentSlug = this.currentScreen?.slug
           if (this.currentScreen?.components && this.currentScreen.components.body) {
             // Prétraitement des composants avec repeat
             this.currentScreen.components.body = formStore.preprocessScreen(this.currentScreen.components.body)

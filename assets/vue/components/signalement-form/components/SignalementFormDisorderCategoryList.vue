@@ -34,12 +34,10 @@ export default defineComponent({
     clickEvent: Function
   },
   data () {
-    const listSelectedDisorders = new Array<string>()
     return {
       formStore,
       actionType: (this.action.includes(':')) ? this.action.split(':')[0] : '',
-      actionParam: (this.action.includes(':')) ? this.action.split(':')[1] : '',
-      listSelectedDisorders
+      actionParam: (this.action.includes(':')) ? this.action.split(':')[1] : ''
     }
   },
   created () {
@@ -49,19 +47,28 @@ export default defineComponent({
   },
   methods: {
     handleUpdateSelected (idDisorder: string, isSelected: boolean) {
+      if (!formStore.data.categorieDisorders) {
+        formStore.data.categorieDisorders = {
+          batiment: [],
+          logement: []
+        }
+      }
       if (idDisorder !== '') {
-        if (isSelected) {
-          this.listSelectedDisorders.push(idDisorder)
-        } else {
-          const index = this.listSelectedDisorders.indexOf(idDisorder)
-          if (index > -1) {
-            this.listSelectedDisorders.splice(index, 1)
-          }
+        const category = idDisorder.includes('batiment') ? 'batiment' : 'logement'
+        const indexInList = formStore.data.categorieDisorders[category].indexOf(idDisorder)
+
+        if (isSelected && indexInList === -1) {
+          formStore.data.categorieDisorders[category].push(idDisorder)
+        } else if (!isSelected && indexInList !== -1) {
+          formStore.data.categorieDisorders[category].splice(indexInList, 1)
         }
       }
       if (this.clickEvent !== undefined) {
-        this.clickEvent(this.actionType, this.actionParam, this.listSelectedDisorders.length > 0 ? '1' : '0')
+        this.clickEvent(this.actionType, this.actionParam, this.hasSelectedDisorders() ? '1' : '0')
       }
+    },
+    hasSelectedDisorders () {
+      return formStore.data.categorieDisorders.batiment.length > 0 || formStore.data.categorieDisorders.logement.length > 0
     }
   }
 })
