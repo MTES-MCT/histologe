@@ -178,7 +178,7 @@
           "type": "SignalementFormButton",
           "label": "Valider ma sélection",
           "slug": "desordres_batiment_valider",
-          "action": "goto:desordres_renseignes",
+          "action": "resolve:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
