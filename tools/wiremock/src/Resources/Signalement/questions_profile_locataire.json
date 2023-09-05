@@ -1001,7 +1001,7 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "ecran_intermediaire_procedure_previous",
-          "action": "goto:ecran_intermediaire_les_desordres",
+          "action": "goto:desordres_renseignes",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {

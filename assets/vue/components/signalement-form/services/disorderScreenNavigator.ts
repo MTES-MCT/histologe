@@ -42,7 +42,7 @@ export function findNextScreen (
         if (formStore.data.zone_concernee_zone === 'batiment_logement') {
           nextScreenSlug = 'desordres_logement'
         } else if (formStore.data.zone_concernee_zone === 'batiment') {
-          nextScreenSlug = 'ecran_intermediaire_procedure'
+          nextScreenSlug = 'desordres_renseignes'
         }
       } else {
         nextScreenSlug = formStore.data.categorieDisorders.batiment[0]
@@ -50,7 +50,7 @@ export function findNextScreen (
       break
     case 'desordres_logement':
       if (slugButton === 'desordres_logement_ras') {
-        nextScreenSlug = 'ecran_intermediaire_procedure'
+        nextScreenSlug = 'desordres_renseignes'
       } else {
         nextScreenSlug = formStore.data.categorieDisorders.logement[0]
       }
@@ -73,10 +73,10 @@ export function findNextScreen (
       switch (formStore.data.zone_concernee_zone) {
         case 'batiment':
         case 'logement':
-          nextScreenSlug = 'ecran_intermediaire_procedure'
+          nextScreenSlug = 'desordres_renseignes'
           break
         case 'batiment_logement':
-          nextScreenSlug = slugButton.includes('batiment') ? 'desordres_logement' : 'ecran_intermediaire_procedure'
+          nextScreenSlug = slugButton.includes('batiment') ? 'desordres_logement' : 'desordres_renseignes'
           break
       }
       incrementIndex = 0

@@ -2111,5 +2111,45 @@
         }
       ]
     }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Les désordres renseignés",
+    "slug": "desordres_renseignes",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormDisorderOverview",
+          "slug": "desordres_resume",
+          "icons": [
+            {
+              "src": "/img/form/BATIMENT/Picto-batiment.svg",
+              "alt": ""
+            },
+            {
+              "src": "/img/form/LOGEMENT/Picto-logement.svg",
+              "alt": ""
+            }
+          ]
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "desordres_renseignes_previous",
+          "action": "resolve:findPreviousScreen",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_renseignes_next",
+          "action": "goto:ecran_intermediaire_procedure",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
   }
 ]
