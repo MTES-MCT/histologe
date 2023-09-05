@@ -439,6 +439,7 @@
           "type": "SignalementFormSubscreen",
           "label": "",
           "slug": "desordres_batiment_nuisibles_punaises_details",
+          "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_batiment_nuisibles_punaises === 1 && formStore.data.adresse_logement_adresse_detail_insee === '13000'" 
           },
@@ -527,6 +528,7 @@
           "type": "SignalementFormSubscreen",
           "label": "",
           "slug": "desordres_batiment_securite_sol_details",
+          "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_batiment_securite_sol === 1"
           },
@@ -584,6 +586,7 @@
           "type": "SignalementFormSubscreen",
           "label": "",
           "slug": "desordres_batiment_securite_escalier_details",
+          "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_batiment_securite_escalier === 1 "
           },
@@ -631,6 +634,7 @@
           "type": "SignalementFormSubscreen",
           "label": "",
           "slug": "desordres_batiment_securite_murs_fissures_details",
+          "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_batiment_securite_murs_fissures === 1"
           },
@@ -757,6 +761,7 @@
           "type": "SignalementFormSubscreen",
           "label": "",
           "slug": "desordres_batiment_accessibilite_friche_details",
+          "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_batiment_accessibilite_friche === 1"
           },
@@ -782,6 +787,7 @@
           "type": "SignalementFormSubscreen",
           "label": "",
           "slug": "desordres_batiment_accessibilite_acces_batiment_details",
+          "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_batiment_accessibilite_acces_batiment === 1"
           },
@@ -1083,6 +1089,7 @@
           "type": "SignalementFormRoomList",
           "label": "Dans quelle(s) pièce(s) ?",
           "slug": "desordres_logement_aeration_aucune_aeration_details",
+          "customCss": "signalement-form-roomlist-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_aeration_aucune_aeration === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
           }
@@ -1096,6 +1103,7 @@
           "type": "SignalementFormSubscreen",
           "label": "",
           "slug": "desordres_logement_aeration_aucune_aeration_details",
+          "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_aeration_ventilation_defectueuse === 1" 
           },
@@ -1128,6 +1136,7 @@
                 "type": "SignalementFormRoomList",
                 "label": "Dans quelle(s) pièce(s) ?",
                 "slug": "desordres_logement_aeration_ventilation_defectueuse_details_pieces",
+                "customCss": "signalement-form-roomlist-under-checkbox",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_aeration_ventilation_defectueuse_details_nettoyage === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
                 }
@@ -1193,6 +1202,7 @@
           "type": "SignalementFormRoomList",
           "label": "Dans quelle(s) pièce(s) ?",
           "slug": "desordres_logement_chauffage_aucun_pieces",
+          "customCss": "signalement-form-roomlist-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_chauffage_type === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
           }
@@ -1216,6 +1226,7 @@
                 "type": "SignalementFormRoomList",
                 "label": "Dans quelle(s) pièce(s) ?",
                 "slug": "desordres_logement_chauffage_details_fenetres_permeables_pieces",
+                "customCss": "signalement-form-roomlist-under-checkbox",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_details_fenetres_permeables === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
                 }
@@ -1229,6 +1240,7 @@
                 "type": "SignalementFormRoomList",
                 "label": "Dans quelle(s) pièce(s) ?",
                 "slug": "desordres_logement_chauffage_details_difficultes_chauffage_pieces",
+                "customCss": "signalement-form-roomlist-under-checkbox",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_details_difficultes_chauffage === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
                 }
@@ -1242,6 +1254,7 @@
                 "type": "SignalementFormRoomList",
                 "label": "Dans quelle(s) pièce(s) ?",
                 "slug": "desordres_logement_chauffage_details_chauffage_KO_pieces",
+                "customCss": "signalement-form-roomlist-under-checkbox",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_details_chauffage_KO === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
                 }
@@ -1375,6 +1388,7 @@
           "type": "SignalementFormSubscreen",
           "label": "",
           "slug": "desordres_logement_humidite_piece_a_vivre_details",
+          "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_humidite_piece_a_vivre === 1 || formStore.data.composition_logement_piece_unique === 'piece_unique'"
           },
@@ -1460,6 +1474,7 @@
           "type": "SignalementFormSubscreen",
           "label": "",
           "slug": "desordres_logement_humidite_cuisine_details",
+          "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_humidite_cuisine === 1"
           },
@@ -1545,6 +1560,7 @@
           "type": "SignalementFormSubscreen",
           "label": "",
           "slug": "desordres_logement_humidite_salle_de_bain_details",
+          "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_humidite_salle_de_bain === 1"
           },
@@ -1666,6 +1682,7 @@
           "type": "SignalementFormRoomList",
           "label": "Dans quelle(s) pièce(s) ?",
           "slug": "desordres_logement_securite_sol_glissant_pieces",
+          "customCss": "signalement-form-roomlist-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_securite_sol_glissant === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
           }
@@ -1679,6 +1696,7 @@
           "type": "SignalementFormRoomList",
           "label": "Dans quelle(s) pièce(s) ?",
           "slug": "desordres_logement_securite_sol_dangereux_pieces",
+          "customCss": "signalement-form-roomlist-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_securite_sol_dangereux === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
           }
@@ -1692,6 +1710,7 @@
           "type": "SignalementFormRoomList",
           "label": "Dans quelle(s) pièce(s) ?",
           "slug": "desordres_logement_securite_balcons_pieces",
+          "customCss": "signalement-form-roomlist-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_securite_balcons === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
           }
@@ -1710,6 +1729,7 @@
           "type": "SignalementFormRoomList",
           "label": "Dans quelle(s) pièce(s) ?",
           "slug": "desordres_logement_securite_plomb_pieces",
+          "customCss": "signalement-form-roomlist-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_securite_plomb === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
           }
@@ -1718,6 +1738,7 @@
           "type": "SignalementFormSubscreen",
           "label": "",
           "slug": "desordres_logement_securite_plomb_details",
+          "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_securite_plomb === 1" 
           },
@@ -1815,6 +1836,7 @@
           "type": "SignalementFormSubscreen",
           "label": "",
           "slug": "desordres_logement_electricite_installation_dangereuse_details",
+          "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_electricite_installation_dangereuse === 1" 
           },
@@ -1840,6 +1862,7 @@
           "type": "SignalementFormSubscreen",
           "label": "",
           "slug": "desordres_logement_electricite_manque_prises_details",
+          "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_electricite_manque_prises === 1" 
           },
@@ -1921,6 +1944,7 @@
           "type": "SignalementFormSubscreen",
           "label": "",
           "slug": "desordres_logement_nuisibles_punaises_details",
+          "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_nuisibles_punaises === 1 && formStore.data.adresse_logement_adresse_detail_insee === '13000'" 
           },
@@ -1943,6 +1967,7 @@
           "type": "SignalementFormSubscreen",
           "label": "",
           "slug": "desordres_logement_nuisibles_autres_details",
+          "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_nuisibles_autres === 1"
           },
@@ -2032,6 +2057,7 @@
           "type": "SignalementFormSubscreen",
           "label": "",
           "slug": "desordres_logement_bruit_voisins_details",
+          "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_bruit_voisins === 1" 
           },
@@ -2085,6 +2111,7 @@
           "type": "SignalementFormRoomList",
           "label": "Dans quelle(s) pièce(s) ?",
           "slug": "desordres_logement_lumiere_pas_lumiere_pieces",
+          "customCss": "signalement-form-roomlist-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_lumiere_pas_lumiere === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
           }
@@ -2098,6 +2125,7 @@
           "type": "SignalementFormRoomList",
           "label": "Dans quelle(s) pièce(s) ?",
           "slug": "desordres_logement_lumiere_pas_volets_pieces",
+          "customCss": "signalement-form-roomlist-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_lumiere_pas_volets === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
           }

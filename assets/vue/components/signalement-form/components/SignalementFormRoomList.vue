@@ -1,38 +1,42 @@
 <template>
-  <div class="signalement-form-roomlist" :id="id">
-    <label :class="[ customCss, 'fr-label' ]" :for="id">{{ label }}</label>
-    <SignalementFormCheckbox
-      :key="idPieceAVivre"
-      :id="idPieceAVivre"
-      label="Une ou des pièces à vivre (salon, chambres)"
-      :validate="validate"
-      v-model="formStore.data[idPieceAVivre]"
-      :hasError="formStore.validationErrors[idPieceAVivre]  !== undefined"
-      :error="formStore.validationErrors[idPieceAVivre]"
-    />
-
-    <SignalementFormCheckbox
-      v-if="formStore.data.type_logement_commodites_cuisine === 'oui'"
-      :key="idCuisine"
-      :id="idCuisine"
-      label="La cuisine / le coin cuisine"
-      :validate="validate"
-      v-model="formStore.data[idCuisine]"
-      :hasError="formStore.validationErrors[idCuisine]  !== undefined"
-      :error="formStore.validationErrors[idCuisine]"
-    />
-    <!-- TODO : définir en dur que validate.require=false ? -->
-    <SignalementFormCheckbox
-      v-if="formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'"
-      :key="idSalleDeBain"
-      :id="idSalleDeBain"
-      label="La salle de bain, salle d'eau et / ou les toilettes"
-      :validate="validate"
-      v-model="formStore.data[idSalleDeBain]"
-      :hasError="formStore.validationErrors[idSalleDeBain]  !== undefined"
-      :error="formStore.validationErrors[idSalleDeBain]"
-    />
-    <!-- TODO : définir en dur que validate.require=false ? -->
+  <div :class="[ customCss, 'signalement-form-roomlist' ]" :id="id">
+    <label class="fr-label" :for="id">{{ label }}</label>
+    <br>
+    <div class="signalement-form-roomlist-rooms">
+      <SignalementFormCheckbox
+        :key="idPieceAVivre"
+        :id="idPieceAVivre"
+        label="Une ou des pièces à vivre (salon, chambres)"
+        :validate="validate"
+        v-model="formStore.data[idPieceAVivre]"
+        :hasError="formStore.validationErrors[idPieceAVivre]  !== undefined"
+        :error="formStore.validationErrors[idPieceAVivre]"
+      />
+      <br>
+      <SignalementFormCheckbox
+        v-if="formStore.data.type_logement_commodites_cuisine === 'oui'"
+        :key="idCuisine"
+        :id="idCuisine"
+        label="La cuisine / le coin cuisine"
+        :validate="validate"
+        v-model="formStore.data[idCuisine]"
+        :hasError="formStore.validationErrors[idCuisine]  !== undefined"
+        :error="formStore.validationErrors[idCuisine]"
+      />
+      <br>
+      <!-- TODO : définir en dur que validate.require=false ? -->
+      <SignalementFormCheckbox
+        v-if="formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'"
+        :key="idSalleDeBain"
+        :id="idSalleDeBain"
+        label="La salle de bain, salle d'eau et / ou les toilettes"
+        :validate="validate"
+        v-model="formStore.data[idSalleDeBain]"
+        :hasError="formStore.validationErrors[idSalleDeBain]  !== undefined"
+        :error="formStore.validationErrors[idSalleDeBain]"
+      />
+      <!-- TODO : définir en dur que validate.require=false ? -->
+    </div>
   </div>
 </template>
 
@@ -81,5 +85,15 @@ export default defineComponent({
 <style>
 .signalement-form-roomlist {
   width: 100%;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+.signalement-form-roomlist-under-checkbox {
+  border-left: 3px solid var(--border-action-high-blue-france);
+  margin-left: 10px;
+  padding-left: 18px;
+}
+.signalement-form-roomlist-rooms {
+  margin-left: 20px;
 }
 </style>

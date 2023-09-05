@@ -99,4 +99,9 @@ export default defineComponent({
 </script>
 
 <style>
+.signalement-form-subscreen-under-checkbox {
+  border-left: 3px solid var(--border-action-high-blue-france);
+  margin-left: 10px;
+  padding-left: 18px;
+}
 </style>
