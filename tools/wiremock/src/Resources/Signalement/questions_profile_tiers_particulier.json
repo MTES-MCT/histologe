@@ -719,7 +719,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "",
+    "label": "Situation du foyer",
     "description": "<p>Nous allons vous poser des questions sur la situation du foyer.<br>Si possible, préparez les informations concernant l'allocation logement.</p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
     "slug": "ecran_intermediaire_situation_occupant",
     "screenCategory": "Situation du foyer",

@@ -40,6 +40,9 @@
         </section>
       </div>
     </div>
+    <div v-if="formStore.data.categorieDisorders.batiment.length === 0 && formStore.data.categorieDisorders.logement.length === 0">
+      Aucun désordre sélectionné
+    </div>
   </div>
 </template>
 

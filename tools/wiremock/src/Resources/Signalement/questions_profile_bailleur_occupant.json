@@ -664,7 +664,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "",
+    "label": "Votre situation",
     "description": "<p>Nous allons vous poser des questions sur votre situation.<br>Si vous êtes allocataire CAF ou MSA, préparez votre numéro allocataire !</p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
     "slug": "ecran_intermediaire_situation_occupant",
     "screenCategory": "Situation du foyer",
