@@ -170,11 +170,7 @@ export default defineComponent({
           const index = formStore.data.currentSlug.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
           const { currentCategory, incrementIndex, nextScreenSlug } = findNextScreen(formStore, index, param2)
           await this.showScreenBySlug(nextScreenSlug, param2)
-          if (Object.keys(formStore.validationErrors).length > 0) {
-            if (incrementIndex !== 0) {
-              this.currentDisorderIndex[currentCategory] -= 1
-            }
-          } else {
+          if (Object.keys(formStore.validationErrors).length === 0) {
             this.currentDisorderIndex[currentCategory] = incrementIndex
           }
         }

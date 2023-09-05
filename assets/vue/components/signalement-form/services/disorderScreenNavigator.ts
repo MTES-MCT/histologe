@@ -47,7 +47,6 @@ export function findNextScreen (
       } else {
         nextScreenSlug = formStore.data.categorieDisorders.batiment[0]
       }
-      currentCategory = 'batiment'
       break
     case 'desordres_logement':
       if (slugButton === 'desordres_logement_ras') {
