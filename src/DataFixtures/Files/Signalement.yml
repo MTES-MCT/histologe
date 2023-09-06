@@ -6,6 +6,8 @@ signalements:
     is_logement_social: 1
     is_not_occupant: true
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
     type_logement: "T2"
@@ -47,6 +49,8 @@ signalements:
     details: "Première personne à s’identifier (pour rappel l’A.S. nous a donner le signalement de ce lotissement ou plusieurs désordres mais locataires non volontaires pour procédure)<br><br>Demande à la mairie, par mail, de visiter les logements de ce lotissement (tous concernés)<br><br>Le 11/09/20 Mme FUCHS est dans l’attente d’un nouveau logement (DALO) la commission doit se tenir dans le mois. Aucun travaux n’a été réalisé dans son logement"
     is_proprio_averti: 1
     nb_adultes: "3"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: "CAF"
     is_logement_social: 1
     nature_logement: "Appartement"
@@ -92,6 +96,8 @@ signalements:
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: ""
     is_logement_social: 1
     nature_logement: "Appartement"
@@ -138,6 +144,8 @@ signalements:
     is_not_occupant: true
     is_logement_social: 1
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
     type_logement: "T2"
@@ -180,6 +188,8 @@ signalements:
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_logement_social: 0
     is_allocataire: ""
     nature_logement: "Appartement"
@@ -223,6 +233,8 @@ signalements:
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: ""
     is_logement_social: 0
     nature_logement: "Appartement"
@@ -266,6 +278,8 @@ signalements:
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: ""
     is_logement_social: 0
     nature_logement: "Appartement"
@@ -310,6 +324,8 @@ signalements:
     is_proprio_averti: 1
     is_logement_social: 0
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
     type_logement: "T2"
@@ -354,6 +370,8 @@ signalements:
     is_proprio_averti: 1
     is_logement_social: 0
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
     type_logement: "T2"
@@ -397,6 +415,8 @@ signalements:
     is_proprio_averti: 1
     is_logement_social: 0
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
     type_logement: "T2"
@@ -440,6 +460,8 @@ signalements:
     is_proprio_averti: 1
     is_logement_social: 0
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
     type_logement: "T2"
@@ -483,6 +505,8 @@ signalements:
     is_proprio_averti: 1
     is_logement_social: 0
     nb_adultes: "3"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
     type_logement: "T5"
@@ -528,6 +552,8 @@ signalements:
     is_proprio_averti: 1
     is_logement_social: 0
     nb_adultes: "3"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
     type_logement: "T5"
@@ -574,6 +600,8 @@ signalements:
     is_logement_social: 0
     is_not_occupant: true
     nb_adultes: "3"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
     type_logement: "T5"
@@ -619,6 +647,8 @@ signalements:
     is_proprio_averti: 1
     is_logement_social: 0
     nb_adultes: "3"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
     type_logement: "T5"
@@ -655,6 +685,8 @@ signalements:
     is_proprio_averti: 0
     is_logement_social: 0
     nb_adultes: "3"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
     type_logement: "T5"
@@ -689,6 +721,8 @@ signalements:
     is_proprio_averti: 1
     is_logement_social: 0
     nb_adultes: "3"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
     type_logement: "T5"
@@ -723,6 +757,8 @@ signalements:
     is_proprio_averti: 1
     is_logement_social: 0
     nb_adultes: "3"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
     type_logement: "T5"
@@ -757,6 +793,8 @@ signalements:
     is_proprio_averti: 1
     is_logement_social: 0
     nb_adultes: "3"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
     type_logement: "T5"
@@ -791,6 +829,8 @@ signalements:
     is_proprio_averti: 1
     is_logement_social: 0
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
     type_logement: "T2"
@@ -834,6 +874,8 @@ signalements:
     is_proprio_averti: 1
     is_logement_social: 0
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
     type_logement: "T5"
@@ -877,6 +919,8 @@ signalements:
     is_proprio_averti: 1
     is_logement_social: 0
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
     type_logement: "T5"
@@ -919,6 +963,8 @@ signalements:
     details: "appartement insalubre avec des problèmes d'humidité, moisissures, infiltrations d'eau, électricité défectueuse et absence de chauffage adéquat. La situation est inacceptable et nécessite une intervention urgente des autorités compétentes pour assurer la sécurité et la santé des occupants. Il est important de prendre des mesures immédiates pour remédier à ces problèmes et garantir un logement décent pour tous."
     is_proprio_averti: 1
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: ""
     is_logement_social: 0
     nature_logement: "Appartement"
@@ -959,6 +1005,8 @@ signalements:
     details: "Malgré nos multiples tentatives pour résoudre les problèmes de cet appartement insalubre, les conditions de vie restent précaires pour les occupants. Les moisissures et les odeurs nauséabondes persistent, l'électricité est toujours défectueuse, et le manque de chauffage en hiver est inquiétant. Nous sollicitons votre aide pour trouver une solution rapide et efficace à cette situation difficile. Les locataires méritent un logement sûr et salubre, et nous sommes prêts à travailler avec vous pour y parvenir."
     is_proprio_averti: 1
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: ""
     is_logement_social: 0
     nature_logement: "Appartement"
@@ -999,6 +1047,8 @@ signalements:
     details: "Malgré nos multiples tentatives pour résoudre les problèmes de cet appartement insalubre, les conditions de vie restent précaires pour les occupants. Les moisissures et les odeurs nauséabondes persistent, l'électricité est toujours défectueuse, et le manque de chauffage en hiver est inquiétant. Nous sollicitons votre aide pour trouver une solution rapide et efficace à cette situation difficile. Les locataires méritent un logement sûr et salubre, et nous sommes prêts à travailler avec vous pour y parvenir."
     is_proprio_averti: 1
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: ""
     is_logement_social: 0
     nature_logement: "Appartement"
@@ -1040,6 +1090,8 @@ signalements:
     is_proprio_averti: 1
     is_logement_social: 0
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
     type_logement: "T2"
@@ -1084,6 +1136,8 @@ signalements:
     is_proprio_averti: 1
     is_logement_social: 0
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
     type_logement: "T2"
@@ -1128,6 +1182,8 @@ signalements:
     is_proprio_averti: 1
     is_logement_social: 0
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
     type_logement: "T2"
@@ -1172,6 +1228,8 @@ signalements:
     is_proprio_averti: 1
     is_logement_social: 0
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
     type_logement: "T2"
@@ -1216,6 +1274,8 @@ signalements:
     is_proprio_averti: 1
     is_logement_social: 0
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
     type_logement: "T2"
@@ -1260,6 +1320,8 @@ signalements:
     is_proprio_averti: 1
     is_logement_social: 0
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
     type_logement: "T2"
@@ -1305,6 +1367,8 @@ signalements:
     is_proprio_averti: 1
     is_logement_social: 0
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
     type_logement: "T2"
@@ -1350,6 +1414,8 @@ signalements:
     is_logement_social: 0
     is_not_occupant: true
     nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
     type_logement: "T2"
