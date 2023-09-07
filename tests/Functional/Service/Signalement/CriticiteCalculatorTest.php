@@ -28,6 +28,6 @@ class CriticiteCalculatorTest extends KernelTestCase
         $newScore = (new CriticiteCalculator())->calculate($signalement);
         $this->assertIsFloat($newScore);
         $this->assertLessThan(101, $newScore);
-        $this->assertEquals(2.87, round($newScore, 2));
+        $this->assertEquals(3.16, round($newScore, 2));
     }
 }

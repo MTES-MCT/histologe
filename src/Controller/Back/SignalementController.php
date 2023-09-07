@@ -231,7 +231,7 @@ class SignalementController extends AbstractController
                 if (\array_key_exists('situation', $form->getExtraData())) {
                     $data['situation'] = $form->getExtraData()['situation'];
                 }
-                if ($data['situation']) {
+                if (isset($data['situation'])) {
                     foreach ($data['situation'] as $idSituation => $criteres) {
                         $situation = $doctrine->getManager()->getRepository(Situation::class)->find($idSituation);
                         $signalement->addSituation($situation);
