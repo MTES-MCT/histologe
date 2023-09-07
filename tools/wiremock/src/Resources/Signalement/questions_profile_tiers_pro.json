@@ -702,7 +702,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "",
+    "label": "Situation du foyer",
     "description": "<p>Nous allons vous poser des questions sur la situation du foyer.<br>Si possible, préparez les informations concernant l'allocation logement.</p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
     "slug": "ecran_intermediaire_situation_occupant",
     "screenCategory": "Situation du foyer",
@@ -918,7 +918,7 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "ecran_intermediaire_procedure_previous",
-          "action": "goto:ecran_intermediaire_les_desordres",
+          "action": "goto:desordres_renseignes",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
@@ -959,7 +959,7 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "utilisation_service_previous",
-          "action": "goto:ecran_intermediaire_les_desordres",
+          "action": "goto:desordres_renseignes",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
