@@ -1,86 +1,23 @@
-[
-  {
-    "slug": "desordres_batiment_proprete",
-    "label": "Propreté et entretien"
-  },
-  {
-    "slug": "desordres_batiment_eau",
-    "label": "Eau et évacuation"
-  },
-  {
-    "slug": "desordres_batiment_isolation",
-    "label": "Isolation du bâtiment"
-  },
-  {
-    "slug": "desordres_batiment_maintenance",
-    "label": "Maintenance et équipements"
-  },
-  {
-    "slug": "desordres_batiment_nuisibles",
-    "label": "Présence de nuisibles"
-  },
-  {
-    "slug": "desordres_batiment_securite",
-    "label": "Sécurité, risque de chute"
-  },
-  {
-    "slug": "desordres_batiment_incendie",
-    "label": "Risque d'incendie"
-  },
-  {
-    "slug": "desordres_batiment_accessibilite",
-    "label": "Accessibilité et alentours"
-  },
-  {
-    "slug": "desordres_batiment_bruit",
-    "label": "Bruit, pollution sonore"
-  },
-  {
-    "slug": "desordres_logement_eau",
-    "label": "Eau et évacuation"
-  },
-  {
-    "slug": "desordres_logement_aeration",
-    "label": "Aération et ventilation"
-  },
-  {
-    "slug": "desordres_logement_chauffage",
-    "label": "Chauffage et isolation"
-  },
-  {
-    "slug": "desordres_logement_humidite",
-    "label": "Humidité et moisissure"
-  },
-  {
-    "slug": "desordres_logement_securite",
-    "label": "Sécurité"
-  },
-  {
-    "slug": "desordres_logement_electricite",
-    "label": "Electricité"
-  },
-  {
-    "slug": "desordres_logement_nuisibles",
-    "label": "Présence de nuisibles"
-  },
-  {
-    "slug": "desordres_logement_bruit",
-    "label": "Bruit, pollution sonore"
-  },
-  {
-    "slug": "desordres_logement_lumiere",
-    "label": "Eclairement, lumière naturelle"
-  },
-  {
-    "slug": "batiment",
-    "label": "le bâtiment"
-  },
-  {
-    "slug": "logement",
-    "label": "le logement"
-  },
-  {
-    "slug": "batiment_logement",
-    "label": "le bâtiment et le logement"
-  }
-]
+{
+  "desordres_batiment_proprete": { "label": "Propreté et entretien" },
+  "desordres_batiment_eau": { "label": "Eau et évacuation" },
+  "desordres_batiment_isolation": { "label": "Isolation du bâtiment" },
+  "desordres_batiment_maintenance": { "label": "Maintenance et équipements" },
+  "desordres_batiment_nuisibles": { "label": "Présence de nuisibles" },
+  "desordres_batiment_securite": { "label": "Sécurité, risque de chute" },
+  "desordres_batiment_incendie": { "label": "Risque d'incendie" },
+  "desordres_batiment_accessibilite": { "label": "Accessibilité et alentours" },
+  "desordres_batiment_bruit": { "label": "Bruit, pollution sonore" },
+  "desordres_logement_eau": { "label": "Eau et évacuation" },
+  "desordres_logement_aeration": { "label": "Aération et ventilation" },
+  "desordres_logement_chauffage": { "label": "Chauffage et isolation" },
+  "desordres_logement_humidite": { "label": "Humidité et moisissure" },
+  "desordres_logement_securite": { "label": "Sécurité" },
+  "desordres_logement_electricite": { "label": "Electricité" },
+  "desordres_logement_nuisibles": { "label": "Présence de nuisibles" },
+  "desordres_logement_bruit": { "label": "Bruit, pollution sonore" },
+  "desordres_logement_lumiere": { "label": "Eclairement, lumière naturelle" },
+  "batiment": { "label": "le bâtiment" },
+  "logement": { "label": "le logement" },
+  "batiment_logement": { "label": "le bâtiment et le logement" }
+}

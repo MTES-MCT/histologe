@@ -119,8 +119,8 @@ export default defineComponent({
       requests.initDictionary(this.handleInitDictionary)
     },
     handleInitDictionary (requestResponse: any) {
-      for (const element of requestResponse) {
-        dictionaryStore[element.slug] = element.label
+      for (const slug in requestResponse) {
+        dictionaryStore[slug] = requestResponse[slug].label
       }
       requests.initQuestions(this.handleInitQuestions)
     },

@@ -14,18 +14,21 @@ export const variablesReplacer = {
     const isDictionary = expression.includes('::')
     const keys = isDictionary ? expression.split('::')[1].split('.') : expression.split('.')
 
-    const values: any = formStore
+    let value: any = formStore
     const dictionary: any = dictionaryStore
-    let value
 
     for (const key of keys) {
-      if (key !== 'formStore' && key !== 'data') {
-        if (values.data[key] !== undefined) {
-          value = isDictionary ? dictionary[values.data[key]] : values.data[key]
+      if (key !== 'formStore') {
+        if (value[key] !== undefined) {
+          value = value[key]
         } else {
           return undefined
         }
       }
+    }
+
+    if (isDictionary) {
+      value = dictionary[value]
     }
 
     return value
