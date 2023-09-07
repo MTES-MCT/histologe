@@ -35,7 +35,7 @@ class MigrateDocumentDataCommand extends Command
         parent::__construct();
     }
 
-    public function configure()
+    public function configure(): void
     {
         $this->addArgument(
             'imported',

@@ -1,23 +1,17 @@
 <?php
 
-namespace App\EventSubscriber;
+namespace App\EventListener;
 
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Service\Signalement\SuiviHelper;
-use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 
-class SuiviCreatedSubscriber implements EventSubscriberInterface
+#[AsDoctrineListener(event: Events::onFlush)]
+class SuiviCreatedListener
 {
-    public function getSubscribedEvents(): array
-    {
-        return [
-            Events::onFlush,
-        ];
-    }
-
     public function onFlush(OnFlushEventArgs $eventArgs): void
     {
         $entityManager = $eventArgs->getObjectManager();

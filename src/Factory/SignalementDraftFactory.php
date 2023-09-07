@@ -16,7 +16,7 @@ class SignalementDraftFactory
             ->setPayload($payload)
             ->setAddressComplete($signalementDraftRequest->getAdresseLogementAdresse())
             ->setEmailDeclarant($this->getEmailDeclarent($signalementDraftRequest))
-            ->setCurrentStep('3:vos_coordonnees_occupant') /* @todo: https://github.com/MTES-MCT/histologe/issues/1597 */
+            ->setCurrentStep($signalementDraftRequest->getCurrentStep())
             ->setProfileDeclarant(ProfileDeclarant::from(strtoupper($signalementDraftRequest->getProfil())));
     }
 

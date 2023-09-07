@@ -1,27 +1,21 @@
 <?php
 
-namespace App\EventSubscriber;
+namespace App\EventListener;
 
 use App\Entity\User;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 
-class UserCreatedSubscriber implements EventSubscriberInterface
+#[AsDoctrineListener(event: Events::onFlush)]
+class UserCreatedListener
 {
     public function __construct(
         private NotificationMailerRegistry $notificationMailerRegistry
     ) {
-    }
-
-    public function getSubscribedEvents(): array
-    {
-        return [
-            Events::onFlush,
-        ];
     }
 
     public function onFlush(OnFlushEventArgs $args): void

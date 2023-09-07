@@ -1,18 +1,19 @@
 <?php
 
-namespace App\EventSubscriber;
+namespace App\EventListener;
 
 use App\Entity\User;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Token\TokenGeneratorInterface;
-use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class UserUpdatedSubscriber implements EventSubscriberInterface
+#[AsDoctrineListener(event: Events::onFlush)]
+class UserUpdatedListener
 {
     public function __construct(
         private ParameterBagInterface $parameterBag,
@@ -64,7 +65,9 @@ class UserUpdatedSubscriber implements EventSubscriberInterface
     private function shouldChangePassword(array $changes): bool
     {
         if (\array_key_exists('email', $changes) // if email has changed
-            || (\array_key_exists('roles', $changes) && \in_array('ROLE_USAGER', $changes['roles'][0]))// if usager becomes user
+            || (\array_key_exists('roles', $changes)
+                && \in_array('ROLE_USAGER', $changes['roles'][0])
+            ) // if usager becomes user
         ) {
             return true;
         }

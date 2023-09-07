@@ -6,7 +6,7 @@ use App\Entity\Enum\PartnerType;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
-use App\EventSubscriber\UserCreatedSubscriber;
+use App\EventListener\UserCreatedListener;
 use App\Factory\PartnerFactory;
 use App\Factory\UserFactory;
 use App\Manager\ManagerInterface;
@@ -39,7 +39,7 @@ class GridAffectationLoader
         private ValidatorInterface $validator,
         private LoggerInterface $logger,
         private EntityManagerInterface $entityManager,
-        private UserCreatedSubscriber $userAddedSubscriber,
+        private UserCreatedListener $userAddedSubscriber,
     ) {
     }
 

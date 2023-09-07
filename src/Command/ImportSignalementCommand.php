@@ -8,6 +8,7 @@ use App\Service\Import\CsvParser;
 use App\Service\Import\Signalement\SignalementImportLoader;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Events;
 use Doctrine\ORM\NonUniqueResultException;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -26,7 +27,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class ImportSignalementCommand extends Command
 {
     public function __construct(
-        private ActivityListener $activityListener,
         private CsvParser $csvParser,
         private ParameterBagInterface $parameterBag,
         private EntityManagerInterface $entityManager,
@@ -57,7 +57,7 @@ class ImportSignalementCommand extends Command
             return Command::FAILURE;
         }
 
-        $this->entityManager->getEventManager()->removeEventSubscriber($this->activityListener);
+        $this->removeEventListener();
 
         $fromFile = 'csv/signalement_'.$territoryZip.'.csv';
         $toFile = $this->parameterBag->get('uploads_tmp_dir').'signalement.csv';
@@ -80,8 +80,21 @@ class ImportSignalementCommand extends Command
 
         $io->success(sprintf('%s signalement(s) have been imported', $metadata['count_signalement']));
 
-        $this->entityManager->getEventManager()->addEventSubscriber($this->activityListener);
-
         return Command::SUCCESS;
+    }
+
+    private function removeEventListener(): void
+    {
+        $eventManager = $this->entityManager->getEventManager();
+
+        $eventsToCheck = [Events::onFlush, Events::preRemove];
+
+        foreach ($eventsToCheck as $event) {
+            foreach ($eventManager->getListeners($event) as $listener) {
+                if ($listener instanceof ActivityListener) {
+                    $eventManager->removeEventListener([$event], $listener);
+                }
+            }
+        }
     }
 }

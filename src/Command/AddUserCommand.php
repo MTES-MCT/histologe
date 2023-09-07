@@ -5,13 +5,14 @@ namespace App\Command;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
-use App\EventSubscriber\UserCreatedSubscriber;
+use App\EventListener\UserCreatedListener;
 use App\Factory\UserFactory;
 use App\Manager\PartnerManager;
 use App\Manager\TerritoryManager;
 use App\Manager\UserManager;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Events;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -57,7 +58,6 @@ class AddUserCommand extends Command
         private UserManager $userManager,
         private PartnerManager $partnerManager,
         private TerritoryManager $territoryManager,
-        private UserCreatedSubscriber $userAddedSubscriber,
     ) {
         parent::__construct();
     }
@@ -154,7 +154,7 @@ class AddUserCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->entityManager->getEventManager()->removeEventSubscriber($this->userAddedSubscriber);
+        $this->entityManager->getEventManager()->removeEventListener([Events::onFlush], UserCreatedListener::class);
         $partner = $input->getArgument('partner');
         $territory = $input->getArgument('territory');
 

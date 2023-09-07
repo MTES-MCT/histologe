@@ -1,12 +1,12 @@
 <?php
 
-namespace App\EventSubscriber;
+namespace App\EventListener;
 
 use App\Entity\Notification;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Service\CacheCommonKeyGenerator;
-use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Psr\Cache\InvalidArgumentException;
@@ -14,7 +14,10 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
-class CacheInvalidationSubscriber implements EventSubscriberInterface
+#[AsDoctrineListener(event: Events::postPersist)]
+#[AsDoctrineListener(event: Events::postUpdate)]
+#[AsDoctrineListener(event: Events::postRemove)]
+class CacheInvalidationListener
 {
     public const CONTEXT_WIDGET_DATA_KPI = 'countDataKpi';
 
@@ -24,15 +27,6 @@ class CacheInvalidationSubscriber implements EventSubscriberInterface
         readonly private LoggerInterface $logger,
         private readonly Security $security,
     ) {
-    }
-
-    public function getSubscribedEvents(): array
-    {
-        return [
-            Events::postPersist,
-            Events::postUpdate,
-            Events::postRemove,
-        ];
     }
 
     public function postPersist(LifecycleEventArgs $args): void

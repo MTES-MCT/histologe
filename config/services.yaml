@@ -12,7 +12,7 @@ imports:
     - { resource: 'app/competences.yaml'}
     - { resource: 'app/suivi_messages.yaml'}
 parameters:
-    container.dumper.inline_factories: true
+    .container.dumper.inline_factories: true
     uploads_dir: '%kernel.project_dir%/uploaded_files/signalement/'
     uploads_tmp_dir: '%kernel.project_dir%/tmp/'
     bucket_tmp_dir: 'tmp/'
@@ -48,12 +48,11 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
             - '../src/Tests/'
-    App\EventListener\ActivityListener:
-        tags:
-            - name: 'doctrine.event_subscriber'
+
     App\EventListener\LoginListener:
         tags:
             - { name: 'kernel.event_listener', event: 'security.interactive_login' }
+
     App\EventListener\RequestListener:
         tags:
             - { name: 'kernel.event_listener', event: 'kernel.request' }
@@ -61,6 +60,7 @@ services:
         arguments:
             - '@security.untracked_token_storage'
             - '@Symfony\Component\Routing\Generator\UrlGeneratorInterface'
+
     App\EventListener\ExceptionListener:
         tags:
             - { name: 'kernel.event_listener', event: 'kernel.exception' }
@@ -86,18 +86,6 @@ services:
     App\Manager\ManagerInterface:
         alias: App\Manager\Manager
         public: true
-
-    App\EventSubscriber\UserCreatedSubscriber:
-        tags:
-            - name: 'doctrine.event_subscriber'
-
-    App\EventSubscriber\UserUpdatedSubscriber:
-        tags:
-            - name: 'doctrine.event_subscriber'
-
-    App\EventSubscriber\SuiviCreatedSubscriber:
-        tags:
-            - name: 'doctrine.event_subscriber'
 
     App\Service\Token\TokenGeneratorInterface:
         alias: App\Service\Token\TokenGenerator

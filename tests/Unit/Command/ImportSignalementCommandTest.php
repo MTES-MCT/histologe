@@ -4,7 +4,6 @@ namespace App\Tests\Unit\Command;
 
 use App\Command\ImportSignalementCommand;
 use App\Entity\Territory;
-use App\EventListener\ActivityListener;
 use App\Repository\TerritoryRepository;
 use App\Service\Import\CsvParser;
 use App\Service\Import\Signalement\SignalementImportLoader;
@@ -42,17 +41,9 @@ class ImportSignalementCommandTest extends KernelTestCase
             ->willReturn($territoryRepository);
 
         $eventManager = $this->createMock(EventManager::class);
-        $eventManager->expects($this->once())
-            ->method('removeEventSubscriber');
-
-        $eventManager->expects($this->once())
-            ->method('addEventSubscriber');
-
-        $entityManager->expects($this->atLeast(2))
+        $entityManager->expects($this->atLeast(1))
             ->method('getEventManager')
             ->willReturn($eventManager);
-
-        $activityListener = $this->createMock(ActivityListener::class);
 
         $uploadHandlerService = $this->createMock(UploadHandlerService::class);
         $uploadHandlerService->expects($this->once())
@@ -93,7 +84,6 @@ class ImportSignalementCommandTest extends KernelTestCase
             ->willReturn('/tmp/');
 
         $command = $application->add(new ImportSignalementCommand(
-            $activityListener,
             $csvParser,
             $parameterBag,
             $entityManager,
@@ -129,7 +119,6 @@ class ImportSignalementCommandTest extends KernelTestCase
             ->with(Territory::class)
             ->willReturn($territoryRepository);
 
-        $activityListener = $this->createMock(ActivityListener::class);
         $uploadHandlerService = $this->createMock(UploadHandlerService::class);
         $signalementImportLoader = $this->createMock(SignalementImportLoader::class);
         $csvParser = $this->createMock(CsvParser::class);
@@ -137,7 +126,6 @@ class ImportSignalementCommandTest extends KernelTestCase
         $parameterBag = $this->createMock(ParameterBagInterface::class);
 
         $command = $application->add(new ImportSignalementCommand(
-            $activityListener,
             $csvParser,
             $parameterBag,
             $entityManager,
@@ -179,14 +167,9 @@ class ImportSignalementCommandTest extends KernelTestCase
             ->willReturn($territoryRepository);
 
         $eventManager = $this->createMock(EventManager::class);
-        $eventManager->expects($this->once())
-            ->method('removeEventSubscriber');
-
         $entityManager->expects($this->atLeast(1))
             ->method('getEventManager')
             ->willReturn($eventManager);
-
-        $activityListener = $this->createMock(ActivityListener::class);
 
         $uploadHandlerService = $this->createMock(UploadHandlerService::class);
         $signalementImportLoader = $this->createMock(SignalementImportLoader::class);
@@ -200,7 +183,6 @@ class ImportSignalementCommandTest extends KernelTestCase
             ->willReturn('/tmp/');
 
         $command = $application->add(new ImportSignalementCommand(
-            $activityListener,
             $csvParser,
             $parameterBag,
             $entityManager,
