@@ -857,7 +857,55 @@
         }
       ]
     }
-  }, 
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Les désordres renseignés",
+    "slug": "desordres_renseignes_batiment",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormDisorderOverview",
+          "slug": "desordres_renseignes_batiment_resume",
+          "icons": [
+            {
+              "src": "/img/form/BATIMENT/Picto-batiment.svg",
+              "alt": ""
+            },
+            {
+              "src": "/img/form/LOGEMENT/Picto-logement.svg",
+              "alt": ""
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "Avez-vous terminé avec les désordres sur le bâtiment ?",
+          "slug": "desordres_renseignes_batiment_subscreen",
+          "customCss": "button-group-full-size",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Oui, je passe à la suite",
+                "slug": "desordres_renseignes_batiment_next",
+                "action": "goto:desordres_logement",
+                "customCss": "fr-mb-3v"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Non, j'en ai encore à déclarer",
+                "slug": "desordres_renseignes_batiment_previous",
+                "action": "goto:desordres_batiment",
+                "customCss": "fr-btn--secondary fr-mb-3v"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
   {
     "type": "SignalementFormScreen",
     "label": "Le logement",

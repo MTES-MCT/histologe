@@ -40,7 +40,7 @@ export function findNextScreen (
     case 'desordres_batiment':
       if (slugButton === 'desordres_batiment_ras') {
         if (formStore.data.zone_concernee_zone === 'batiment_logement') {
-          nextScreenSlug = 'desordres_logement'
+          nextScreenSlug = 'desordres_renseignes_batiment'
         } else if (formStore.data.zone_concernee_zone === 'batiment') {
           nextScreenSlug = 'desordres_renseignes'
         }
@@ -76,7 +76,7 @@ export function findNextScreen (
           nextScreenSlug = 'desordres_renseignes'
           break
         case 'batiment_logement':
-          nextScreenSlug = slugButton.includes('batiment') ? 'desordres_logement' : 'desordres_renseignes'
+          nextScreenSlug = slugButton.includes('batiment') ? 'desordres_renseignes_batiment' : 'desordres_renseignes'
           break
       }
       incrementIndex = 0
