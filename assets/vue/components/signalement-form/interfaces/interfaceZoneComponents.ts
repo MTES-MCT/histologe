@@ -1,4 +1,6 @@
+import { Component } from './interfaceComponent'
+
 export interface ZoneComponents {
-  body?: any[]
-  footer?: any[]
+  body?: Component[]
+  footer?: Component[]
 }

@@ -1,5 +1,6 @@
 import { reactive, computed } from 'vue'
 import { ZoneComponents } from './interfaces/interfaceZoneComponents'
+import { Component } from './interfaces/interfaceComponent'
 import { PictureDescription } from './interfaces/interfacePictureDescription'
 
 interface FormData {
@@ -32,16 +33,6 @@ interface FormData {
 //     footer?: undefined
 //   }
 // }
-
-interface Component {
-  type: string
-  label: string
-  slug: string
-  repeat?: {
-    count: string
-  }
-  // TODO ajouter toutes les propriétés possibles
-}
 
 interface FormStore {
   data: FormData
