@@ -9,7 +9,7 @@
     <SignalementFormUpload
       :id="id + '-upload'"
       :label="labelUpload"
-      v-model="formStore.data[id]"
+      v-model="formStore.data[id + '-upload']"
       :multiple="true"
       />
   </div>
