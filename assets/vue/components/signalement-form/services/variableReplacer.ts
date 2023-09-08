@@ -11,11 +11,16 @@ export const variablesReplacer = {
     return descriptionWithValues
   },
   evaluateExpression (expression: string): string | undefined {
+    const dictionary: any = dictionaryStore
+
     const isDictionary = expression.includes('::')
     const keys = isDictionary ? expression.split('::')[1].split('.') : expression.split('.')
 
+    if (isDictionary && !expression.includes('formStore')) {
+      return dictionary[keys[0]]
+    }
+
     let value: any = formStore
-    const dictionary: any = dictionaryStore
 
     for (const key of keys) {
       if (key !== 'formStore') {
