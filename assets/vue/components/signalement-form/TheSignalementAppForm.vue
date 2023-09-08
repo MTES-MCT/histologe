@@ -3,6 +3,7 @@
       id="app-signalement-form"
       class="signalement-form"
       :data-ajaxurl="sharedProps.ajaxurl"
+      :data-ajaxurl-dictionary="sharedProps.ajaxurlDictionary"
       :data-ajaxurl-questions="sharedProps.ajaxurlQuestions"
       :data-ajaxurl-desordres="sharedProps.ajaxurlDesordres"
       :data-ajaxurl-post-signalement-draft="sharedProps.ajaxurlPostSignalementDraft"
@@ -54,6 +55,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import formStore from './store'
+import dictionaryStore from './dictionary-store'
 import { requests } from './requests'
 import { profileUpdater } from './services/profileUpdater'
 import { PictureDescription } from './interfaces/interfacePictureDescription'
@@ -79,6 +81,7 @@ export default defineComponent({
       isErrorInit: false,
       isLoadingInit: true,
       formStore,
+      dictionaryStore,
       sharedProps: formStore.props,
       currentScreen: null as { slug: string; screenCategory: string, label: string; description: string; icon: PictureDescription, desktopIllustration: PictureDescription; components: Components } | null
     }
@@ -87,6 +90,7 @@ export default defineComponent({
     if (initElements !== null) {
       this.sharedProps.platformName = initElements.dataset.platformName
       this.sharedProps.ajaxurl = initElements.dataset.ajaxurl
+      this.sharedProps.ajaxurlDictionary = initElements.dataset.ajaxurlDictionary
       this.sharedProps.ajaxurlQuestions = initElements.dataset.ajaxurlQuestions
       this.sharedProps.ajaxurlDesordres = initElements.dataset.ajaxurlDesordres
       this.sharedProps.ajaxurlPostSignalementDraft = initElements.dataset.ajaxurlPostSignalementDraft
@@ -96,7 +100,7 @@ export default defineComponent({
         this.sharedProps.ajaxurlGetSignalementDraft = initElements.dataset.ajaxurlGetSignalementDraft
         requests.initWithExistingData(this.handleInitData)
       } else {
-        requests.initQuestions(this.handleInitQuestions)
+        requests.initDictionary(this.handleInitDictionary)
       }
     } else {
       this.isErrorInit = true
@@ -111,6 +115,12 @@ export default defineComponent({
       }
       if (formStore.data.currentStep.split(':')[1] !== undefined) {
         this.nextSlug = formStore.data.currentStep.split(':')[1]
+      }
+      requests.initDictionary(this.handleInitDictionary)
+    },
+    handleInitDictionary (requestResponse: any) {
+      for (const slug in requestResponse) {
+        dictionaryStore[slug] = requestResponse[slug].label
       }
       requests.initQuestions(this.handleInitQuestions)
     },

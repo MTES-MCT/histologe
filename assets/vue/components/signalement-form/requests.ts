@@ -50,6 +50,11 @@ export const requests = {
     requests.doRequestGet(url, functionReturn)
   },
 
+  initDictionary (functionReturn: Function) {
+    const url = (formStore.props.ajaxurlDictionary as string)
+    requests.doRequestGet(url, functionReturn)
+  },
+
   initQuestions (functionReturn: Function) {
     const url = (formStore.props.ajaxurlQuestions as string) + 'tous'
     requests.doRequestGet(url, functionReturn)

@@ -12,6 +12,14 @@ class QuestionController extends AbstractController
 {
     public const MOCK_BASE_PATH = '/../../tools/wiremock/src/Resources/Signalement/';
 
+    #[Route('/dictionary', name: 'api_dictionary')]
+    public function getDictionary(): Response
+    {
+        $filepath = self::MOCK_BASE_PATH.'dictionary.json';
+
+        return $this->json(json_decode(file_get_contents(__DIR__.$filepath), true));
+    }
+
     #[Route('/questions', name: 'api_question_profile')]
     public function getQuestion(Request $request): Response
     {
