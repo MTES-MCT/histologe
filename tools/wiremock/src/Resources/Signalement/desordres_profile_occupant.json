@@ -199,22 +199,34 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_proprete_interieur",
-          "label": "L'intérieur du bâtiment est sale, n'est jamais nettoyé"
+          "label": "L'intérieur du bâtiment est sale, n'est jamais nettoyé",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_proprete_facades",
-          "label": "Les façades extérieures sont très sales ou en mauvais état"
+          "label": "Les façades extérieures sont très sales ou en mauvais état",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_proprete_parties_communes",
-          "label": "Les parties communes sont dégradées (déchets qui traînent, matériel cassé, graffitis)"
+          "label": "Les parties communes sont dégradées (déchets qui traînent, matériel cassé, graffitis)",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_proprete_local_poubelles",
-          "label": "Il n'y a pas de local poubelles ni d'endroit où stocker les déchets"
+          "label": "Il n'y a pas de local poubelles ni d'endroit où stocker les déchets",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormUploadPhotos",
@@ -258,22 +270,34 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_eau_pas_eau_potable",
-          "label": "Il n'y a pas d'eau potable dans le bâtiment "
+          "label": "Il n'y a pas d'eau potable dans le bâtiment ",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_eau_pas_eau_chaude",
-          "label": "Il n'y a pas d'eau chaude dans le bâtiment "
+          "label": "Il n'y a pas d'eau chaude dans le bâtiment ",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_eau_evacuation_KO",
-          "label": "L'évacuation des eaux ne marche pas (mauvaises odeurs, eau stagnante, fuites...)"
+          "label": "L'évacuation des eaux ne marche pas (mauvaises odeurs, eau stagnante, fuites...)",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_eau_pas_evacuation_eaux_pluie",
-          "label": "Quand il pleut, l'eau n'est pas évacuée (pas de gouttière, pas de système d'évacuation...)"
+          "label": "Quand il pleut, l'eau n'est pas évacuée (pas de gouttière, pas de système d'évacuation...)",
+          "validate": {
+            "required": false
+          }
         }
       ],
       "footer": [
@@ -309,22 +333,34 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_isolation_porte_fenetres",
-          "label": "Il manque des portes ou des fenêtres, ou elles sont mal isolées"
+          "label": "Il manque des portes ou des fenêtres, ou elles sont mal isolées",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_isolation_murs",
-          "label": "Les murs ne sont pas ou peu isolés"
+          "label": "Les murs ne sont pas ou peu isolés",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_isolation_dernier_etage_toit",
-          "label": "Le dernier étage n'est pas isolé, le toit n'est pas étanche"
+          "label": "Le dernier étage n'est pas isolé, le toit n'est pas étanche",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_isolation_infiltration_eau",
-          "label": "De l'eau s'infiltre par le sol ou les murs"
+          "label": "De l'eau s'infiltre par le sol ou les murs",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormUploadPhotos",
@@ -371,12 +407,18 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_maintenance_ascenseur",
-          "label": "L'ascenseur est dangereux (les portes s'ouvrent ou se ferment toutes seules, on risque de tomber, il s'arrête entre les étages...)"
+          "label": "L'ascenseur est dangereux (les portes s'ouvrent ou se ferment toutes seules, on risque de tomber, il s'arrête entre les étages...)",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_maintenance_petites_reparations",
-          "label": "Les petites réparations ne sont pas faites (changement d'ampoule...)"
+          "label": "Les petites réparations ne sont pas faites (changement d'ampoule...)",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormUploadPhotos",
@@ -423,17 +465,26 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_nuisibles_cafards",
-          "label": "Il y a des cafards ou blattes dans le bâtiment"
+          "label": "Il y a des cafards ou blattes dans le bâtiment",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_nuisibles_rongeurs",
-          "label": "Il y a des rongeurs dans le bâtiment (rats, souris...)"
+          "label": "Il y a des rongeurs dans le bâtiment (rats, souris...)",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_nuisibles_punaises",
-          "label": "Il y a des punaises de lit dans le bâtiment"
+          "label": "Il y a des punaises de lit dans le bâtiment",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormSubscreen",
@@ -441,7 +492,7 @@
           "slug": "desordres_batiment_nuisibles_punaises_details",
           "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
-            "show": "formStore.data.desordres_batiment_nuisibles_punaises === 1 && formStore.data.adresse_logement_adresse_detail_insee === '13000'" 
+            "show": "formStore.data.desordres_batiment_nuisibles_punaises === 1 && formStore.isTerritoryOpenedOnStopPunaises()" 
           },
           "components": {
             "body": [
@@ -456,12 +507,16 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_nuisibles_autres",
-          "label": "Il y a un autre type de nuisible dans le bâtiment"
+          "label": "Il y a un autre type de nuisible dans le bâtiment",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormSubscreen",
           "label": "",
           "slug": "desordres_batiment_nuisibles_autres_details",
+          "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_batiment_nuisibles_autres === 1"
           },
@@ -522,7 +577,10 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_securite_sol",
-          "label": "Le sol bouge, il est instable"
+          "label": "Le sol bouge, il est instable",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormSubscreen",
@@ -570,17 +628,26 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_securite_elements_toit",
-          "label": "Des éléments du toit risquent de tomber (tuyau, tuiles, pierres...)"
+          "label": "Des éléments du toit risquent de tomber (tuyau, tuiles, pierres...)",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_securite_toit",
-          "label": "Le plafond ou le toit risque de s'effondrer et il a de très grosses fissures"
+          "label": "Le plafond ou le toit risque de s'effondrer et il a de très grosses fissures",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_securite_escalier",
-          "label": "Les escaliers et / ou les rambardes sont dangereuses"
+          "label": "Les escaliers et / ou les rambardes sont dangereuses",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormSubscreen",
@@ -628,7 +695,10 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_securite_murs_fissures",
-          "label": "Le bâtiment semble instable. Il y a de grosses fissures dans les murs"
+          "label": "Le bâtiment semble instable. Il y a de grosses fissures dans les murs",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormSubscreen",
@@ -665,7 +735,10 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_securite_balcons",
-          "label": "Les balcons et rambardes des fenêtres risquent de tomber"
+          "label": "Les balcons et rambardes des fenêtres risquent de tomber",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormUploadPhotos",
@@ -709,12 +782,18 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_incendie_odeur_gaz",
-          "label": "Il y a une forte odeur de gaz dans le bâtiment"
+          "label": "Il y a une forte odeur de gaz dans le bâtiment",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_incendie_porte_coupe_feu",
-          "label": "Il n'y a pas de portes coupe-feu aux caves, ou pour accéder aux caves / sous-sol"
+          "label": "Il n'y a pas de portes coupe-feu aux caves, ou pour accéder aux caves / sous-sol",
+          "validate": {
+            "required": false
+          }
         }
       ],
       "footer": [
@@ -750,12 +829,18 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_accessibilite_eclairage",
-          "label": "Il n'y a pas d'éclairage autour du bâtiment, ni à l'entrée ou l'éclairage ne fonctionne pas"
+          "label": "Il n'y a pas d'éclairage autour du bâtiment, ni à l'entrée ou l'éclairage ne fonctionne pas",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_accessibilite_friche",
-          "label": "Le bâtiment est dans une friche, un terrain vague ou abandonné"
+          "label": "Le bâtiment est dans une friche, un terrain vague ou abandonné",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormSubscreen",
@@ -781,7 +866,10 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_accessibilite_acces_batiment",
-          "label": "Il est très difficile d'accéder au bâtiment : les passages sont étroits ou encombrés"
+          "label": "Il est très difficile d'accéder au bâtiment : les passages sont étroits ou encombrés",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormSubscreen",
@@ -838,12 +926,18 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_bruit_exterieur",
-          "label": "Le bâtiment est situé à côté de rails de train, d'un aéroport ou d'une usine"
+          "label": "Le bâtiment est situé à côté de rails de train, d'un aéroport ou d'une usine",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_bruit_interieur",
-          "label": "Il y a beaucoup de bruit à l'intérieur, on entend tout même en fermant les portes et les fenêtres "
+          "label": "Il y a beaucoup de bruit à l'intérieur, on entend tout même en fermant les portes et les fenêtres ",
+          "validate": {
+            "required": false
+          }
         }
       ],
       "footer": [
@@ -1073,7 +1167,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Eau et évacuation",
-    "description": "Dans",
+    "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-eau_evacuation.svg",
       "alt": "illustration Eau et évacuation"
@@ -1085,17 +1179,26 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_eau_eau_potable",
-          "label": "Je n'ai pas l'eau potable dans mon logement"
+          "label": "Je n'ai pas l'eau potable dans mon logement",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_eau_eau_chaude",
-          "label": "Je n'ai pas d'eau chaude dans mon logement"
+          "label": "Je n'ai pas d'eau chaude dans mon logement",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_eau_evacuation",
-          "label": "L'évacuation des eaux ne marche pas (mauvaises odeurs, pas d'évacuation, fuites...)"
+          "label": "L'évacuation des eaux ne marche pas (mauvaises odeurs, pas d'évacuation, fuites...)",
+          "validate": {
+            "required": false
+          }
         }
       ],
       "footer": [
@@ -1131,12 +1234,15 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_aeration_aucune_aeration",
-          "label": "Il n'y a pas de fenêtre ni de système de ventilation (VMC...)"
+          "label": "Il n'y a pas de fenêtre ni de système de ventilation (VMC...)",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormRoomList",
           "label": "Dans quelle(s) pièce(s) ?",
-          "slug": "desordres_logement_aeration_aucune_aeration_details",
+          "slug": "desordres_logement_aeration_aucune_aeration_pieces",
           "customCss": "signalement-form-roomlist-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_aeration_aucune_aeration === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
@@ -1145,12 +1251,15 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_aeration_ventilation_defectueuse",
-          "label": "Le système de ventilation ne fonctionne pas"
+          "label": "Le système de ventilation ne fonctionne pas",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormSubscreen",
           "label": "",
-          "slug": "desordres_logement_aeration_aucune_aeration_details",
+          "slug": "desordres_logement_aeration_ventilation_defectueuse_details",
           "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_aeration_ventilation_defectueuse === 1" 
@@ -1261,14 +1370,17 @@
           "slug": "desordres_logement_chauffage_details",
           "description": "Sélectionnez le ou les problèmes rencontrés",
           "conditional": {
-            "show": "formStore.data.desordres_logement_chauffage_type !== 'aucun'" 
+            "show": "formStore.data.desordres_logement_chauffage_type !== 'aucun' && formStore.data.desordres_logement_chauffage_type !== undefined" 
           },
           "components": {
             "body": [
               {
                 "type": "SignalementFormCheckbox",
                 "slug": "desordres_logement_chauffage_details_fenetres_permeables",
-                "label": "Les fenêtres laissent passer beaucoup d'air ou laissent passer l'eau quand il pleut"
+                "label": "Les fenêtres laissent passer beaucoup d'air ou laissent passer l'eau quand il pleut",
+                "validate": {
+                  "required": false
+                }
               },
               {
                 "type": "SignalementFormRoomList",
@@ -1282,7 +1394,10 @@
               {
                 "type": "SignalementFormCheckbox",
                 "slug": "desordres_logement_chauffage_details_difficultes_chauffage",
-                "label": "J'ai du mal à chauffer mon logement"
+                "label": "J'ai du mal à chauffer mon logement",
+                "validate": {
+                  "required": false
+                }
               },
               {
                 "type": "SignalementFormRoomList",
@@ -1296,7 +1411,10 @@
               {
                 "type": "SignalementFormCheckbox",
                 "slug": "desordres_logement_chauffage_details_chauffage_KO",
-                "label": "Mon chauffage ne fonctionne pas, je dois utiliser un chauffage d'appoint"
+                "label": "Mon chauffage ne fonctionne pas, je dois utiliser un chauffage d'appoint",
+                "validate": {
+                  "required": false
+                }
               },
               {
                 "type": "SignalementFormRoomList",
@@ -1310,9 +1428,12 @@
               {
                 "type": "SignalementFormCheckbox",
                 "slug": "desordres_logement_chauffage_details_chauffage_dangereux",
-                "label": "Les dispositifs de chauffages (chauffe eau, poêle, cheminée, radiateur...) sont dangereux (très mauvais état, tuyaux mal fixés, etc.)",
+                "label": "Les dispositifs de chauffage (chauffe eau, poêle, cheminée, radiateur...) sont dangereux (très mauvais état, tuyaux mal fixés, etc.)",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_type !== 'electrique'" 
+                },
+                "validate": {
+                  "required": false
                 }
               },
               {
@@ -1430,6 +1551,9 @@
           "label": "Une ou des pièces à vivre",
           "conditional": {
             "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
+          },
+          "validate": {
+            "required": false
           }
         },
         {
@@ -1516,6 +1640,9 @@
           "slug": "desordres_logement_humidite_cuisine",
           "conditional": {
             "show": "formStore.data.type_logement_commodites_cuisine === 'oui'"
+          },
+          "validate": {
+            "required": false
           }
         },
         {
@@ -1602,6 +1729,9 @@
           "slug": "desordres_logement_humidite_salle_de_bain",
           "conditional": {
             "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'"
+          },
+          "validate": {
+            "required": false
           }
         },
         {
@@ -1724,7 +1854,10 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_securite_sol_glissant",
-          "label": "Le sol est glissant ou abîmé"
+          "label": "Le sol est glissant ou abîmé",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormRoomList",
@@ -1738,7 +1871,10 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_securite_sol_dangereux",
-          "label": "Le sol risque de s'effondrer : il bouge et est très abîmé"
+          "label": "Le sol risque de s'effondrer : il bouge et est très abîmé",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormRoomList",
@@ -1752,7 +1888,10 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_securite_balcons",
-          "label": "Les balcons et rambardes des fenêtres risquent de tomber"
+          "label": "Les balcons et rambardes des fenêtres risquent de tomber",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormRoomList",
@@ -1766,12 +1905,18 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_securite_gaz",
-          "label": "Il y a une odeur de gaz ou des fuites de gaz"
+          "label": "Il y a une odeur de gaz ou des fuites de gaz",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_securite_plomb",
-          "label": "Il y a de la peinture au plomb en mauvais état ou des matériaux amiantés en mauvais état"
+          "label": "Il y a de la peinture au plomb en mauvais état ou des matériaux amiantés en mauvais état",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormRoomList",
@@ -1816,6 +1961,9 @@
                 "label": "Ajoutez le diagnostic plomb / amiane en cliquant sur le bouton ci-dessous",
                 "slug": "desordres_logement_securite_plomb_details_diagnostique_fichier",
                 "description": "",
+                "validate": {
+                  "required": false
+                },
                 "conditional": {
                   "show": "formStore.data.desordres_logement_securite_plomb_details_diagnostique === 'oui'"
                 }
@@ -1868,17 +2016,26 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_electricite_pas_electricite",
-          "label": "Il n'y a pas d'électricité dans mon logement"
+          "label": "Il n'y a pas d'électricité dans mon logement",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_electricite_pas_compteur",
-          "label": "Je n'ai pas de compteur électrique"
+          "label": "Je n'ai pas de compteur électrique",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_electricite_installation_dangereuse",
-          "label": "L'installation est dangereuse : les fils sont dénudés, les prises ne tiennent pas dans les murs, etc."
+          "label": "L'installation est dangereuse : les fils sont dénudés, les prises ne tiennent pas dans les murs, etc.",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormSubscreen",
@@ -1904,7 +2061,10 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_electricite_manque_prises",
-          "label": "Il n'y a pas de prises, ou il en manque"
+          "label": "Il n'y a pas de prises, ou il en manque",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormSubscreen",
@@ -1976,17 +2136,26 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_nuisibles_cafards",
-          "label": "Il y a des cafards ou blattes"
+          "label": "Il y a des cafards ou blattes",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_nuisibles_rongeurs",
-          "label": "Il y a des rongeurs (rats, souris...)"
+          "label": "Il y a des rongeurs (rats, souris...)",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_nuisibles_punaises",
-          "label": "Il y a des punaises de lit"
+          "label": "Il y a des punaises de lit",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormSubscreen",
@@ -1994,7 +2163,7 @@
           "slug": "desordres_logement_nuisibles_punaises_details",
           "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
-            "show": "formStore.data.desordres_logement_nuisibles_punaises === 1 && formStore.data.adresse_logement_adresse_detail_insee === '13000'" 
+            "show": "formStore.data.desordres_logement_nuisibles_punaises === 1 && formStore.isTerritoryOpenedOnStopPunaises()" 
           },
           "components": {
             "body": [
@@ -2009,7 +2178,10 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_nuisibles_autres",
-          "label": "Il y a un autre type de nuisible"
+          "label": "Il y a un autre type de nuisible",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormSubscreen",
@@ -2031,8 +2203,11 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Depuis quand les {{nuisibles}} sont présents dans le logement ?",
+          "label": "Depuis quand les nuisibles sont présents dans le logement ?",
           "slug": "desordres_logement_nuisibles_date",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_nuisibles_cafards === 1 || formStore.data.desordres_logement_nuisibles_rongeurs === 1 || formStore.data.desordres_logement_nuisibles_punaises === 1 || formStore.data.desordres_logement_nuisibles_autres === 1"
+          },
           "values": [
             {
               "label": "Avant que j'emménage",
@@ -2094,12 +2269,18 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_bruit_exterieur",
-          "label": "J'entends le bruit extérieur, même si je ferme les portes et les fenêtres"
+          "label": "J'entends le bruit extérieur, même si je ferme les portes et les fenêtres",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_bruit_voisins",
-          "label": "J'entends mes voisins parler et marcher depuis mon logement, comme s'ils étaient dans la pièce"
+          "label": "J'entends mes voisins parler et marcher depuis mon logement, comme s'ils étaient dans la pièce",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormSubscreen",
@@ -2153,7 +2334,10 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_lumiere_pas_lumiere",
-          "label": "Mon logement n'est pas éclairé par la lumière du jour. Je dois allumer la lumière en plein jour"
+          "label": "Mon logement n'est pas éclairé par la lumière du jour. Je dois allumer la lumière en plein jour",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormRoomList",
@@ -2167,7 +2351,10 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_lumiere_pas_volets",
-          "label": "Il n'y a pas de volets, ni de stores aux fenêtres"
+          "label": "Il n'y a pas de volets, ni de stores aux fenêtres",
+          "validate": {
+            "required": false
+          }
         },   
         {
           "type": "SignalementFormRoomList",

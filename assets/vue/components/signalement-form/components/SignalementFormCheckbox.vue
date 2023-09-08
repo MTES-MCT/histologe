@@ -1,4 +1,5 @@
 <template>
+  <div class="fr-fieldset__element signalement-form-checkbox">
     <div :class="['fr-checkbox-group', { 'fr-checkbox-group--error': hasError }]" :id="id">
       <input
           type="checkbox"
@@ -21,6 +22,7 @@
         </p>
       </div>
     </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -61,3 +63,9 @@ export default defineComponent({
   emits: ['update:modelValue']
 })
 </script>
+
+<style>
+.signalement-form-checkbox {
+  margin-top: 1rem;
+}
+</style>

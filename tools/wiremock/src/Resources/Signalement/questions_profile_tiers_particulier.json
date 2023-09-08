@@ -505,10 +505,7 @@
                     "label": "Non",
                     "value": "non"
                   }
-                ],
-                "validate": {
-                  "required": false
-                }
+                ]
               }
             ]
           }

@@ -1,7 +1,13 @@
 <template>
   <div :class="[ customCss, 'signalement-form-roomlist' ]" :id="id">
     <label class="fr-label" :for="id">{{ label }}</label>
-    <br>
+    <div
+      id="text-input-error-desc-error"
+      class="fr-error-text"
+      v-if="hasError"
+      >
+      {{ error }}
+    </div>
     <div class="signalement-form-roomlist-rooms">
       <SignalementFormCheckbox
         :key="idPieceAVivre"
@@ -11,8 +17,8 @@
         v-model="formStore.data[idPieceAVivre]"
         :hasError="formStore.validationErrors[idPieceAVivre]  !== undefined"
         :error="formStore.validationErrors[idPieceAVivre]"
+        @update:modelValue="handleCheckBox(idPieceAVivre)"
       />
-      <br>
       <SignalementFormCheckbox
         v-if="formStore.data.type_logement_commodites_cuisine === 'oui'"
         :key="idCuisine"
@@ -22,9 +28,8 @@
         v-model="formStore.data[idCuisine]"
         :hasError="formStore.validationErrors[idCuisine]  !== undefined"
         :error="formStore.validationErrors[idCuisine]"
+        @update:modelValue="handleCheckBox(idCuisine)"
       />
-      <br>
-      <!-- TODO : définir en dur que validate.require=false ? -->
       <SignalementFormCheckbox
         v-if="formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'"
         :key="idSalleDeBain"
@@ -34,8 +39,8 @@
         v-model="formStore.data[idSalleDeBain]"
         :hasError="formStore.validationErrors[idSalleDeBain]  !== undefined"
         :error="formStore.validationErrors[idSalleDeBain]"
+        @update:modelValue="handleCheckBox(idSalleDeBain)"
       />
-      <!-- TODO : définir en dur que validate.require=false ? -->
     </div>
   </div>
 </template>
@@ -69,13 +74,9 @@ export default defineComponent({
     }
   },
   methods: {
-    updateValue (value: any) {
-      this.$emit('update:modelValue', value)
-    },
-    handleClickButton (type:string, param:string, slugButton:string) {
-      if (this.clickEvent !== undefined) {
-        this.clickEvent(type, param, slugButton)
-      }
+    handleCheckBox (newValue: string) {
+      const isAnyCheckboxChecked = this.formStore.data[this.idPieceAVivre] || this.formStore.data[this.idCuisine] || this.formStore.data[this.idSalleDeBain]
+      this.formStore.data[this.id] = isAnyCheckboxChecked
     }
   },
   emits: ['update:modelValue']

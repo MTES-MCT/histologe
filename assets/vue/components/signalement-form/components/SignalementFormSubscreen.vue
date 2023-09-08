@@ -1,6 +1,6 @@
 <template>
   <div :class="[ customCss ]" :id="id">
-    <h2 v-if="label">{{ label }}</h2>
+    <h2 v-if="label">{{ labelVariablesReplaced }}</h2>
     <p v-if="description" v-html="description"></p>
     <div
       v-if="components != undefined"
@@ -34,6 +34,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import formStore from './../store'
+import { variablesReplacer } from './../services/variableReplacer'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
 import SignalementFormLink from './SignalementFormLink.vue'
@@ -88,6 +89,14 @@ export default defineComponent({
   data () {
     return {
       formStore
+    }
+  },
+  computed: {
+    labelVariablesReplaced (): string {
+      if (this.label !== undefined) {
+        return variablesReplacer.replace(this.label)
+      }
+      return ''
     }
   },
   methods: {

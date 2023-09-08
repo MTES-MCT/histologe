@@ -430,10 +430,7 @@
                     "label": "Non",
                     "value": "non"
                   }
-                ],
-                "validate": {
-                  "required": false
-                }
+                ]
               }
             ]
           }
@@ -678,7 +675,10 @@
         {
           "type": "SignalementFormInfo",
           "slug": "bail_dpe_bail_info",
-          "label": "Avoir un bail écrit et signé pour son logement est fortement recommandé pour faire valoir vos droits ! Plus d'info sur le site du service public."
+          "label": "Avoir un bail écrit et signé pour son logement est fortement recommandé pour faire valoir vos droits ! Plus d'info sur le site du service public.",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_bail === 'non' || formStore.data.bail_dpe_bail === 'nsp'"
+          }
         },
         {
           "type": "SignalementFormUpload",
