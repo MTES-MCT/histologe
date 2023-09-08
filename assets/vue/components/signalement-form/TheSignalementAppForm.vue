@@ -130,21 +130,23 @@ export default defineComponent({
         }
       }
     },
-    saveAndChangeScreenBySlug (slug:string) {
+    saveAndChangeScreenBySlug (slug:string, isSaveAndCheck:boolean) {
       this.nextSlug = slug
-      requests.saveSignalementDraft(this.changeScreenBySlug)
+      if (isSaveAndCheck) {
+        requests.saveSignalementDraft(this.changeScreenBySlug)
+      } else {
+        this.changeScreenBySlug(undefined)
+      }
     },
     changeScreenBySlug (requestResponse: any) {
-      window.scrollTo(0, 0)
       formStore.lastButtonClicked = ''
       // si on reçoit un uuid on l'enregistre pour les mises à jour
-      if (requestResponse.uuid) {
+      if (requestResponse && requestResponse.uuid) {
         formStore.data.uuidSignalementDraft = requestResponse.uuid
       }
       if (formStore.screenData) {
         const nextScreen = formStore.screenData.find((screen: any) => screen.slug === this.nextSlug)
         if (nextScreen !== undefined) {
-          formStore.currentScreenIndex = formStore.screenData.findIndex((screen: any) => screen.slug === this.nextSlug)
           formStore.currentScreen = nextScreen
           formStore.data.currentStep = formStore.currentScreen?.slug
           if (formStore.currentScreen?.components && formStore.currentScreen.components.body) {
@@ -166,6 +168,10 @@ export default defineComponent({
           }
         }
       }
+
+      setTimeout(() => {
+        window.scrollTo(0, 0)
+      }, 50)
     }
   }
 })

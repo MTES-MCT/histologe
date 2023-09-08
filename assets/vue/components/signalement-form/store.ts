@@ -47,7 +47,6 @@ interface FormStore {
     desktopIllustration: PictureDescription
     components: ZoneComponents
   } | null
-  currentScreenIndex: number
   lastButtonClicked: string
   validationErrors: FormData
   inputComponents: string[]
@@ -74,7 +73,6 @@ const formStore: FormStore = reactive({
   },
   screenData: [],
   currentScreen: null,
-  currentScreenIndex: 0,
   lastButtonClicked: '',
   inputComponents: [
     'SignalementFormTextfield',
