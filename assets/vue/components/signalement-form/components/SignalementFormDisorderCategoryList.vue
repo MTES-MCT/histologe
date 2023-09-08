@@ -61,6 +61,7 @@ export default defineComponent({
           formStore.data.categorieDisorders[category].push(idDisorder)
         } else if (!isSelected && indexInList !== -1) {
           formStore.data.categorieDisorders[category].splice(indexInList, 1)
+          this.deleteDisorder(idDisorder)
         }
       }
       if (this.clickEvent !== undefined) {
@@ -69,6 +70,13 @@ export default defineComponent({
     },
     hasSelectedDisorders () {
       return formStore.data.categorieDisorders.batiment.length > 0 || formStore.data.categorieDisorders.logement.length > 0
+    },
+    deleteDisorder (idDisorder: string) {
+      for (const dataname in formStore.data) {
+        if (dataname.includes(idDisorder)) {
+          delete formStore.data[dataname]
+        }
+      }
     }
   }
 })
