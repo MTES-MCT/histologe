@@ -10,6 +10,8 @@ Cette application est déployé chez Scalingo, hébergé par Outscale.
 
 - Staging: [histologe-staging.incubateur.net](https://histologe-staging.incubateur.net)
 
+- Demo: [https://histologe-demo.osc-fr1.scalingo.io](https://histologe-demo.osc-fr1.scalingo.io)
+
 ## Pré-requis
 
 Requirements|Release
