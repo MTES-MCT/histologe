@@ -82,5 +82,12 @@
       "default": "Mur porteur fissuré : {{dictionaryStore::formStore.data.desordres_batiment_securite_murs_fissures_details_mur_porteur}}"
     }
   },
-  "desordres_batiment_securite_balcons": { "default": "Les balcons et rambardes des fenêtres risquent de tomber" }
+  "desordres_batiment_securite_balcons": { "default": "Les balcons et rambardes des fenêtres risquent de tomber" },
+  "desordres_batiment_incendie_odeur_gaz": { "default": "Il y a une forte odeur de gaz dans le bâtiment" },
+  "desordres_batiment_incendie_porte_coupe_feu": { "default": "Il n'y a pas de portes coupe-feu aux caves, ou pour accéder aux caves / sous-sol" },
+  "desordres_batiment_accessibilite_eclairage": { "default": "Il n'y a pas d'éclairage autour du bâtiment, ni à l'entrée ou l'éclairage ne fonctionne pas" },
+  "desordres_batiment_accessibilite_friche": { "default": "Le bâtiment est dans une friche, un terrain vague ou abandonné" },
+  "desordres_batiment_accessibilite_acces_batiment": { "default": "Il est très difficile d'accéder au bâtiment : les passages sont étroits ou encombrés" },
+  "desordres_batiment_bruit_exterieur": { "default": "Le bâtiment est situé à côté de rails de train, d'un aéroport ou d'une usine" },
+  "desordres_batiment_bruit_interieur": { "default": "Il y a beaucoup de bruit à l'intérieur, on entend tout même en fermant les portes et les fenêtres" }
 }

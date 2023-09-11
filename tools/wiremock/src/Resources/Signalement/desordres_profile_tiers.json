@@ -782,7 +782,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_incendie_odeur_gaz",
-          "label": "Il y a une forte odeur de gaz dans le bâtiment",
+          "label": "{{dictionaryStore::desordres_batiment_incendie_odeur_gaz}}",
           "validate": {
             "required": false
           }
@@ -790,7 +790,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_incendie_porte_coupe_feu",
-          "label": "Il n'y a pas de portes coupe-feu aux caves, ou pour accéder aux caves / sous-sol",
+          "label": "{{dictionaryStore::desordres_batiment_incendie_porte_coupe_feu}}",
           "validate": {
             "required": false
           }
@@ -829,7 +829,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_accessibilite_eclairage",
-          "label": "Il n'y a pas d'éclairage autour du bâtiment, ni à l'entrée ou l'éclairage ne fonctionne pas",
+          "label": "{{dictionaryStore::desordres_batiment_accessibilite_eclairage}}",
           "validate": {
             "required": false
           }
@@ -837,7 +837,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_accessibilite_friche",
-          "label": "Le bâtiment est dans une friche, un terrain vague ou abandonné",
+          "label": "{{dictionaryStore::desordres_batiment_accessibilite_friche}}",
           "validate": {
             "required": false
           }
@@ -866,7 +866,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_accessibilite_acces_batiment",
-          "label": "Il est très difficile d'accéder au bâtiment : les passages sont étroits ou encombrés",
+          "label": "{{dictionaryStore::desordres_batiment_accessibilite_acces_batiment}}",
           "validate": {
             "required": false
           }
@@ -926,7 +926,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_bruit_exterieur",
-          "label": "Le bâtiment est situé à côté de rails de train, d'un aéroport ou d'une usine",
+          "label": "{{dictionaryStore::desordres_batiment_bruit_exterieur}}",
           "validate": {
             "required": false
           }
@@ -934,7 +934,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_bruit_interieur",
-          "label": "Il y a beaucoup de bruit à l'intérieur, on entend tout même en fermant les portes et les fenêtres",
+          "label": "{{dictionaryStore::desordres_batiment_bruit_interieur}}",
           "validate": {
             "required": false
           }
