@@ -21,29 +21,29 @@
         </div>
       </div>
 
-      <div v-else-if="currentScreen" class="fr-container">
+      <div v-else-if="formStore.currentScreen" class="fr-container">
         <div class="fr-grid-row fr-grid-row--gutters">
           <div
-            v-if="!currentScreen.desktopIllustration"
+            v-if="!formStore.currentScreen.desktopIllustration"
             class="fr-col-12 fr-col-md-4"
             >
               <SignalementFormBreadCrumbs />
           </div>
           <div class="fr-col-12 fr-col-md-8">
             <SignalementFormScreen
-              :label="currentScreen.label"
-              :description="currentScreen.description"
-              :icon="currentScreen.icon"
-              :components="currentScreen.components"
+              :label="formStore.currentScreen.label"
+              :description="formStore.currentScreen.description"
+              :icon="formStore.currentScreen.icon"
+              :components="formStore.currentScreen.components"
               :changeEvent="saveAndChangeScreenBySlug"
               />
           </div>
           <div
-            v-if="currentScreen.desktopIllustration"
+            v-if="formStore.currentScreen.desktopIllustration"
             class="fr-hidden fr-unhidden-md fr-col-12 fr-col-md-4 desktop-illustration"
             >
               <img
-                :src="currentScreen.desktopIllustration.src"
+                :src="formStore.currentScreen.desktopIllustration.src"
                 alt=""
                 >
           </div>
@@ -58,15 +58,9 @@ import formStore from './store'
 import dictionaryStore from './dictionary-store'
 import { requests } from './requests'
 import { profileUpdater } from './services/profileUpdater'
-import { PictureDescription } from './interfaces/interfacePictureDescription'
 import SignalementFormScreen from './components/SignalementFormScreen.vue'
 import SignalementFormBreadCrumbs from './components/SignalementFormBreadCrumbs.vue'
 const initElements:any = document.querySelector('#app-signalement-form')
-// TODO : centraliser les interfaces et les utiliser partout
-interface Components {
-  body?: any[];
-  footer?: any[];
-}
 
 export default defineComponent({
   name: 'TheSignalementAppForm',
@@ -82,8 +76,7 @@ export default defineComponent({
       isLoadingInit: true,
       formStore,
       dictionaryStore,
-      sharedProps: formStore.props,
-      currentScreen: null as { slug: string; screenCategory: string, label: string; description: string; icon: PictureDescription, desktopIllustration: PictureDescription; components: Components } | null
+      sharedProps: formStore.props
     }
   },
   created () {
@@ -113,8 +106,8 @@ export default defineComponent({
           formStore.data[prop] = requestResponse.signalement.payload[prop]
         }
       }
-      if (formStore.data.currentStep.split(':')[1] !== undefined) {
-        this.nextSlug = formStore.data.currentStep.split(':')[1]
+      if (formStore.data.currentStep !== undefined) {
+        this.nextSlug = formStore.data.currentStep
       }
       requests.initDictionary(this.handleInitDictionary)
     },
@@ -133,31 +126,32 @@ export default defineComponent({
         if (this.nextSlug !== '') {
           this.changeScreenBySlug('rien') // TODO : que mettre ?
         } else {
-          this.currentScreen = requestResponse[0]
+          formStore.currentScreen = requestResponse[0]
         }
       }
     },
-    saveAndChangeScreenBySlug (slug:string) {
+    saveAndChangeScreenBySlug (slug:string, isSaveAndCheck:boolean) {
       this.nextSlug = slug
-      requests.saveSignalementDraft(this.changeScreenBySlug)
+      if (isSaveAndCheck) {
+        requests.saveSignalementDraft(this.changeScreenBySlug)
+      } else {
+        this.changeScreenBySlug(undefined)
+      }
     },
     changeScreenBySlug (requestResponse: any) {
-      window.scrollTo(0, 0)
       formStore.lastButtonClicked = ''
       // si on reçoit un uuid on l'enregistre pour les mises à jour
-      if (requestResponse.uuid) {
+      if (requestResponse && requestResponse.uuid) {
         formStore.data.uuidSignalementDraft = requestResponse.uuid
       }
       if (formStore.screenData) {
-        const screenIndex = formStore.screenData.findIndex((screen: any) => screen.slug === this.nextSlug)
-        if (screenIndex !== -1) {
-          formStore.currentScreenIndex = screenIndex
-          this.currentScreen = formStore.screenData[screenIndex]
-          formStore.data.currentStep = formStore.currentScreenIndex + ':' + this.currentScreen?.slug
-          formStore.data.currentSlug = this.currentScreen?.slug
-          if (this.currentScreen?.components && this.currentScreen.components.body) {
+        const nextScreen = formStore.screenData.find((screen: any) => screen.slug === this.nextSlug)
+        if (nextScreen !== undefined) {
+          formStore.currentScreen = nextScreen
+          formStore.data.currentStep = formStore.currentScreen?.slug
+          if (formStore.currentScreen?.components && formStore.currentScreen.components.body) {
             // Prétraitement des composants avec repeat
-            this.currentScreen.components.body = formStore.preprocessScreen(this.currentScreen.components.body)
+            formStore.currentScreen.components.body = formStore.preprocessScreen(formStore.currentScreen.components.body)
           }
         } else {
           if (this.slugCoordonnees.includes(this.nextSlug)) { // TODO à mettre à jour suivant le slug des différents profils
@@ -174,6 +168,10 @@ export default defineComponent({
           }
         }
       }
+
+      setTimeout(() => {
+        window.scrollTo(0, 0)
+      }, 50)
     }
   }
 })

@@ -54,7 +54,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "vos_coordonnees_occupant_next",
-          "action": "goto:coordonnees_bailleur",
+          "action": "goto.save:coordonnees_bailleur",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -110,7 +110,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "coordonnees_bailleur_next",
-          "action": "goto:zone_concernee",
+          "action": "goto.save:zone_concernee",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -156,7 +156,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "zone_concernee_zone_next",
-          "action": "goto:ecran_intermediaire_type_composition",
+          "action": "goto.save:ecran_intermediaire_type_composition",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -305,7 +305,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "type_logement_next",
-          "action": "goto:composition_logement",
+          "action": "goto.save:composition_logement",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -384,7 +384,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "composition_logement_next",
-          "action": "goto:type_logement_pieces_a_vivre",
+          "action": "goto.save:type_logement_pieces_a_vivre",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -448,7 +448,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "type_logement_pieces_a_vivre_next",
-          "action": "goto:type_logement_commodites",
+          "action": "goto.save:type_logement_commodites",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -633,7 +633,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "type_logement_commodites_next",
-          "action": "goto:bail_dpe",
+          "action": "goto.save:bail_dpe",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -771,7 +771,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "bail_dpe_next",
-          "action": "goto:ecran_intermediaire_situation_occupant",
+          "action": "goto.save:ecran_intermediaire_situation_occupant",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -800,7 +800,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "ecran_intermediaire_situation_occupant_next",
-          "action": "goto:logement_social",
+          "action": "goto.save:logement_social",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -919,7 +919,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "logement_social_next",
-          "action": "goto:travailleur_social",
+          "action": "goto.save:travailleur_social",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -977,7 +977,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "travailleur_social_next",
-          "action": "goto:ecran_intermediaire_les_desordres",
+          "action": "goto.save:ecran_intermediaire_les_desordres",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -1110,7 +1110,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "info_procedure_utilisation_service_next",
-          "action": "goto:utilisation_service",
+          "action": "goto.save:utilisation_service",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -1152,7 +1152,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "utilisation_service_next",
-          "action": "goto:informations_complementaires",
+          "action": "goto.save:informations_complementaires",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -1268,7 +1268,7 @@
           "type": "SignalementFormButton",
           "label": "Enregistrer",
           "slug": "informations_complementaires_next",
-          "action": "goto:validation_signalement",
+          "action": "goto.save:validation_signalement",
           "customCss": "fr-btn--icon-left fr-icon-check-line"
         }
       ]

@@ -89,7 +89,6 @@ import SignalementFormUploadPhotos from './SignalementFormUploadPhotos.vue'
 import SignalementFormWarning from './SignalementFormWarning.vue'
 import SignalementFormYear from './SignalementFormYear.vue'
 import { variablesReplacer } from './../services/variableReplacer'
-import { navManager } from './../services/navManager'
 import { findPreviousScreen, findNextScreen } from '../services/disorderScreenNavigator'
 
 export default defineComponent({
@@ -188,31 +187,14 @@ export default defineComponent({
         window.location.href = param
       } else if (type === 'cancel') {
         alert('on fait quoi quand on annule ?')
-      } else if (type === 'goto') {
-        await this.showScreenBySlug(param, param2)
       } else if (type === 'show') {
         this.showComponentBySlug(param, param2)
       } else if (type === 'toggle') {
         this.toggleComponentBySlug(param, param2)
-      } else if (type === 'resolve') {
-        this.navigateToDisorderScreen(param, param2)
-      }
-    },
-    async showScreenBySlug (slug: string, slugButton:string) {
-      formStore.validationErrors = {}
-      const isScreenAfterCurrent = navManager.isScreenAfterCurrent(slug)
-
-      if (this.components && this.components.body && isScreenAfterCurrent) {
-        this.validateComponents(this.components.body)
-        if (Object.keys(formStore.validationErrors).length > 0) {
-          window.scrollTo(0, 0)
-          return
-        }
-      }
-      // Si pas d'erreur de validation, ou screen précédent (donc pas de validation), on change d'écran
-      if (this.changeEvent !== undefined) {
-        formStore.lastButtonClicked = slugButton
-        await this.changeEvent(slug)
+      } else if (type.includes('goto')) {
+        await this.showScreenBySlug(param, param2, type.includes('save'))
+      } else if (type.includes('resolve')) {
+        this.navigateToDisorderScreen(param, param2, type.includes('save'))
       }
     },
     showComponentBySlug (slug:string, slugButton:string) {
@@ -235,20 +217,39 @@ export default defineComponent({
         }
       }
     },
-    async navigateToDisorderScreen (action: string, slugButton:string) {
+    async showScreenBySlug (slug: string, slugButton:string, isSaveAndCheck:boolean) {
+      formStore.validationErrors = {}
+
+      if (isSaveAndCheck) {
+        if (this.components && this.components.body) {
+          this.validateComponents(this.components.body)
+          if (Object.keys(formStore.validationErrors).length > 0) {
+            window.scrollTo(0, 0)
+            return
+          }
+        }
+      }
+
+      // Si pas d'erreur de validation, ou screen précédent (donc pas de validation), on change d'écran
+      if (this.changeEvent !== undefined) {
+        formStore.lastButtonClicked = slugButton
+        await this.changeEvent(slug, isSaveAndCheck)
+      }
+    },
+    async navigateToDisorderScreen (action: string, slugButton:string, isSaveAndCheck:boolean) {
       if (action === 'findNextScreen') {
-        const index = formStore.data.currentSlug.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
+        const index = formStore.data.currentStep.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
         const { currentCategory, incrementIndex, nextScreenSlug } = findNextScreen(formStore, index, slugButton)
-        await this.showScreenBySlug(nextScreenSlug, slugButton)
+        await this.showScreenBySlug(nextScreenSlug, slugButton, isSaveAndCheck)
         if (Object.keys(formStore.validationErrors).length === 0) {
           this.currentDisorderIndex[currentCategory] = incrementIndex
         }
       }
 
       if (action === 'findPreviousScreen') {
-        const index = formStore.data.currentSlug.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
+        const index = formStore.data.currentStep.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
         const { currentCategory, decrementIndex, previousScreenSlug } = findPreviousScreen(formStore, index)
-        await this.showScreenBySlug(previousScreenSlug, slugButton)
+        await this.showScreenBySlug(previousScreenSlug, slugButton, isSaveAndCheck)
 
         this.currentDisorderIndex[currentCategory] = decrementIndex < 0 ? 0 : decrementIndex
       }

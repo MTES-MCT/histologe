@@ -143,7 +143,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "adresse_logement_next",
-          "action": "goto:signalement_concerne",
+          "action": "goto.save:signalement_concerne",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -307,9 +307,9 @@
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "signalement_concerne_next",
+          "slug": "signalement_concerne_next_occupant",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-          "action": "goto:vos_coordonnees_occupant",
+          "action": "goto.save:vos_coordonnees_occupant",
           "conditional": {
             "show": "formStore.data.signalement_concerne_profil === 'logement_occupez'"
           }
@@ -317,9 +317,9 @@
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "signalement_concerne_next",
+          "slug": "signalement_concerne_next_tiers",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-          "action": "goto:vos_coordonnees_tiers",
+          "action": "goto.save:vos_coordonnees_tiers",
           "conditional": {
             "show": "formStore.data.signalement_concerne_profil === 'autre_logement'"
           }
