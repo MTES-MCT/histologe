@@ -22,17 +22,20 @@ class HomepageController extends AbstractController
     ): Response {
         $title = 'Un service public pour les locataires et propriétaires';
 
-        $stats = [];
+        $stats = ['pris_en_compte' => 0, 'clotures' => 0];
         $stats['total'] = $signalementRepository->countAll(
             territory: null,
             partner: null,
             removeImported: true,
             removeArchived: true
         );
-        $stats['pris_en_compte'] = round($signalementRepository->countValidated(true) / $stats['total'] * 100, 1);
-        $stats['clotures'] = round($signalementRepository->countClosed(true) / $stats['total'] * 100, 1);
 
-        $display_modal = '';
+        if ($stats['total'] > 0) {
+            $stats['pris_en_compte'] = round($signalementRepository->countValidated(true) / $stats['total'] * 100, 1);
+            $stats['clotures'] = round($signalementRepository->countClosed(true) / $stats['total'] * 100, 1);
+        }
+
+        $displayModal = '';
 
         $form = $this->createForm(PostalCodeSearchType::class, []);
         $form->handleRequest($request);
@@ -41,14 +44,14 @@ class HomepageController extends AbstractController
             if ($postalCodeHomeChecker->isActive($inputPostalCode)) {
                 return $this->redirectToRoute('front_signalement');
             }
-            $display_modal = $inputPostalCode;
+            $displayModal = $inputPostalCode;
         }
 
         return $this->render('front/index.html.twig', [
             'title' => $title,
             'form_postalcode' => $form->createView(),
             'stats' => $stats,
-            'display_modal' => $display_modal,
+            'display_modal' => $displayModal,
         ]);
     }
 
