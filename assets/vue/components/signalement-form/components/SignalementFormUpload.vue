@@ -1,52 +1,60 @@
 <template>
 <div :class="['fr-upload-group', { 'fr-upload-group--disabled': disabled }]" :id="id">
-  <label class='fr-label' :for="id" >
-    {{ label }}
-    <span class="fr-hint-text">{{ description }}</span>
-  </label>
-    <div :class="[ customCss, 'fr-upload-wrap' ]">
-      <input
-        type="file"
-        :name="id"
-        class="fr-upload"
-        aria-describedby="text-upload-error-desc-error"
-        :disabled="disabled"
-        :multiple="multiple"
-        @change="uploadFile($event)"
-        >
-        <p v-if="formStore.data[id] !== undefined">{{ uploadedFileTitle }}</p>
-        <!-- TODO : gérer type de fichier accept=".pdf,.doc,.docx" -->
-    </div>
-    <div
-      id="text-upload-error-desc-error"
-      class="fr-error-text"
-      v-if="hasError"
+  <div :class="[ customCss, 'fr-upload-wrap', 'fr-py-3v' ]">
+    <input
+      type="file"
+      :name="id"
+      class="custom-file-input"
+      aria-describedby="text-upload-error-desc-error"
+      :disabled="disabled"
+      :multiple="multiple"
+      @change="uploadFile($event)"
       >
-      {{ error }}
+      <!-- TODO : gérer type de fichier accept=".pdf,.doc,.docx" -->
+    <label :for="id" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line">
+      {{ label }}
+    </label>
+    <span class="fr-hint-text">{{ description }}</span>
+  </div>
+
+  <div v-if="formStore.data[id] !== undefined">
+    <div
+      v-for="(file, index) in formStore.data[id]"
+      :key="index"
+      class="fr-grid-row "
+      >
+      <div class="fr-col-8">
+        <i>{{ getFileTitle(file) }}</i>
+      </div>
+      <div class="fr-col-4 fr-signalement-form-upload-delete-button">
+        <button
+          id="signalement_uploadedfile_delete"
+          class="fr-link fr-icon-close-circle-line fr-link--icon-left fr-link--error"
+          @click="deleteFile(file)"
+          >
+          Supprimer
+        </button>
+      </div>
     </div>
-    <div class="fr-grid-row">
-        <div class="fr-col">
-            <progress
-              max="100"
-              id="progress_signalement_photos"
-              :value="uploadPercentage"
-              v-if="uploadPercentage > 0 && uploadPercentage < 100"
-              >
-            </progress>
-        </div>
-    </div>
-    <div class="fr-grid-row">
-        <div class="fr-col fr-text--center">
-          <button
-            id="signalement_uploadedfile_delete"
-            class="fr-mt-2v fr-btn fr-btn--sm fr-btn--danger"
-            v-if="formStore.data[id] !== undefined"
-            @click="deleteFile"
+  </div>
+  <div
+    id="text-upload-error-desc-error"
+    class="fr-error-text"
+    v-if="hasError"
+    >
+    {{ error }}
+  </div>
+  <div class="fr-grid-row">
+      <div class="fr-col">
+          <progress
+            max="100"
+            id="progress_signalement_photos"
+            :value="uploadPercentage"
+            v-if="uploadPercentage > 0 && uploadPercentage < 100"
             >
-            Supprimer
-          </button>
-        </div>
-    </div>
+          </progress>
+      </div>
+  </div>
 </div>
 </template>
 
@@ -80,6 +88,23 @@ export default defineComponent({
     }
   },
   methods: {
+    getFileTitle (file: any) {
+      if (typeof file === 'string') {
+        return file
+      } else if (typeof file === 'object' && file.titre !== undefined) {
+        return file.titre
+      } else if (typeof file === 'object') {
+        try {
+          const parsedValue = JSON.parse(file)
+          if (parsedValue.titre !== undefined) {
+            return parsedValue.titre
+          }
+        } catch (error) {
+          // Handle JSON parsing error if needed
+        }
+      }
+      return 'Titre inconnu'
+    },
     onFileUploaded (requestResponse: any) {
       if (requestResponse) {
         if (requestResponse.name === 'AxiosError') {
@@ -128,35 +153,13 @@ export default defineComponent({
         }
       }
     },
-    deleteFile (event: Event) {
-      // on supprime la donnée enregistrée jusqu'ici
-      this.$emit('update:modelValue', undefined)
-      this.uploadedFiles = []
-      // TODO : la supprimer sur le bucket ?
-    }
-  },
-  computed: {
-    uploadedFileTitle () {
-      if (this.formStore.data[this.id] !== undefined) {
-        let buffer = ''
-        for (const file of this.formStore.data[this.id]) {
-          if (file.titre !== undefined) {
-            if (buffer !== '') {
-              buffer += ', '
-            }
-            buffer += file.titre
-          } else {
-            const parsedValue = JSON.parse(file)
-            if (buffer !== '') {
-              buffer += ', '
-            }
-            buffer += parsedValue.titre
-          }
-        }
-        return buffer
-      } else {
-        return undefined
+    deleteFile (file: any) {
+      const index = this.uploadedFiles.indexOf(file)
+      if (index !== -1) {
+        this.uploadedFiles.splice(index, 1)
+        this.$emit('update:modelValue', this.uploadedFiles)
       }
+      // TODO : la supprimer sur le bucket ?
     }
   },
   emits: ['update:modelValue']
@@ -164,4 +167,17 @@ export default defineComponent({
 </script>
 
 <style>
+.custom-file-input {
+  opacity: 0; /* Make the input transparent */
+  position: absolute; /* Position off-screen or adjust as needed */
+  width: 100%;
+  height: 100%;
+}
+.fr-link--error {
+  color: var(--text-default-error);
+}
+.fr-signalement-form-upload-delete-button {
+  display: flex;
+  justify-content: right;
+}
 </style>
