@@ -17,7 +17,7 @@ export const variablesReplacer = {
     const keys = isDictionary ? expression.split('::')[1].split('.') : expression.split('.')
 
     if (isDictionary && !expression.includes('formStore')) {
-      return dictionary[keys[0]]
+      return dictionary[keys[0]].default
     }
 
     let value: any = formStore
@@ -33,7 +33,7 @@ export const variablesReplacer = {
     }
 
     if (isDictionary) {
-      value = dictionary[value]
+      value = dictionary[value].default
     }
 
     return value

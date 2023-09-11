@@ -199,7 +199,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_proprete_interieur",
-          "label": "L'intérieur du bâtiment est sale, n'est jamais nettoyé",
+          "label": "{{dictionaryStore::desordres_batiment_proprete_interieur}}",
           "validate": {
             "required": false
           }
@@ -207,7 +207,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_proprete_facades",
-          "label": "Les façades extérieures sont très sales ou en mauvais état",
+          "label": "{{dictionaryStore::desordres_batiment_proprete_facades}}",
           "validate": {
             "required": false
           }
@@ -215,7 +215,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_proprete_parties_communes",
-          "label": "Les parties communes sont dégradées (déchets qui traînent, matériel cassé, graffitis)",
+          "label": "{{dictionaryStore::desordres_batiment_proprete_parties_communes}}",
           "validate": {
             "required": false
           }
@@ -223,7 +223,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_proprete_local_poubelles",
-          "label": "Il n'y a pas de local poubelles ni d'endroit où stocker les déchets",
+          "label": "{{dictionaryStore::desordres_batiment_proprete_local_poubelles}}",
           "validate": {
             "required": false
           }
@@ -270,7 +270,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_eau_pas_eau_potable",
-          "label": "Il n'y a pas d'eau potable dans le bâtiment ",
+          "label": "{{dictionaryStore::desordres_batiment_eau_pas_eau_potable}}",
           "validate": {
             "required": false
           }
@@ -278,7 +278,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_eau_pas_eau_chaude",
-          "label": "Il n'y a pas d'eau chaude dans le bâtiment ",
+          "label": "{{dictionaryStore::desordres_batiment_eau_pas_eau_chaude}}",
           "validate": {
             "required": false
           }
@@ -286,7 +286,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_eau_evacuation_KO",
-          "label": "L'évacuation des eaux ne marche pas (mauvaises odeurs, eau stagnante, fuites...)",
+          "label": "{{dictionaryStore::desordres_batiment_eau_evacuation_KO}}",
           "validate": {
             "required": false
           }
@@ -294,7 +294,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_eau_pas_evacuation_eaux_pluie",
-          "label": "Quand il pleut, l'eau n'est pas évacuée (pas de gouttière, pas de système d'évacuation...)",
+          "label": "{{dictionaryStore::desordres_batiment_eau_pas_evacuation_eaux_pluie}}",
           "validate": {
             "required": false
           }
@@ -333,7 +333,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_isolation_porte_fenetres",
-          "label": "Il manque des portes ou des fenêtres, ou elles sont mal isolées",
+          "label": "{{dictionaryStore::desordres_batiment_isolation_porte_fenetres}}",
           "validate": {
             "required": false
           }
@@ -341,7 +341,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_isolation_murs",
-          "label": "Les murs ne sont pas ou peu isolés",
+          "label": "{{dictionaryStore::desordres_batiment_isolation_murs}}",
           "validate": {
             "required": false
           }
@@ -349,7 +349,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_isolation_dernier_etage_toit",
-          "label": "Le dernier étage n'est pas isolé, le toit n'est pas étanche",
+          "label": "{{dictionaryStore::desordres_batiment_isolation_dernier_etage_toit}}",
           "validate": {
             "required": false
           }
@@ -357,7 +357,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_isolation_infiltration_eau",
-          "label": "De l'eau s'infiltre par le sol ou les murs",
+          "label": "{{dictionaryStore::desordres_batiment_isolation_infiltration_eau}}",
           "validate": {
             "required": false
           }
@@ -407,7 +407,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_maintenance_ascenseur",
-          "label": "L'ascenseur est dangereux (les portes s'ouvrent ou se ferment toutes seules, on risque de tomber, il s'arrête entre les étages...)",
+          "label": "{{dictionaryStore::desordres_batiment_maintenance_ascenseur}}",
           "validate": {
             "required": false
           }
@@ -415,7 +415,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_maintenance_petites_reparations",
-          "label": "Les petites réparations ne sont pas faites (changement d'ampoule...)",
+          "label": "{{dictionaryStore::desordres_batiment_maintenance_petites_reparations}}",
           "validate": {
             "required": false
           }
@@ -465,7 +465,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_nuisibles_cafards",
-          "label": "Il y a des cafards ou blattes dans le bâtiment",
+          "label": "{{dictionaryStore::desordres_batiment_nuisibles_cafards}}",
           "validate": {
             "required": false
           }
@@ -473,7 +473,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_nuisibles_rongeurs",
-          "label": "Il y a des rongeurs dans le bâtiment (rats, souris...)",
+          "label": "{{dictionaryStore::desordres_batiment_nuisibles_rongeurs}}",
           "validate": {
             "required": false
           }
@@ -481,7 +481,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_nuisibles_punaises",
-          "label": "Il y a des punaises de lit dans le bâtiment",
+          "label": "{{dictionaryStore::desordres_batiment_nuisibles_punaises}}",
           "validate": {
             "required": false
           }
@@ -507,7 +507,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_nuisibles_autres",
-          "label": "Il y a un autre type de nuisible dans le bâtiment",
+          "label": "{{dictionaryStore::desordres_batiment_nuisibles_autres}}",
           "validate": {
             "required": false
           }
@@ -524,7 +524,7 @@
             "body": [
                 {
                   "type": "SignalementFormTextfield",
-                  "label": "Précisez le type de nuisibles",
+                  "label": "{{dictionaryStore::desordres_batiment_nuisibles_autres_details_type_nuisibles}}",
                   "slug": "desordres_batiment_nuisibles_autres_details_type_nuisibles"
                 }
             ]
@@ -577,7 +577,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_securite_sol",
-          "label": "Le sol bouge, il est instable",
+          "label": "{{dictionaryStore::desordres_batiment_securite_sol}}",
           "validate": {
             "required": false
           }
@@ -594,7 +594,7 @@
             "body": [
                 {
                   "type": "SignalementFormOnlyChoice",
-                  "label": "Est-ce que le plancher est abîmé et bouge par endroit ?",
+                  "label": "{{dictionaryStore::desordres_batiment_securite_sol_details_plancher_abime}}",
                   "slug": "desordres_batiment_securite_sol_details_plancher_abime",
                   "values": [
                     {
@@ -609,7 +609,7 @@
                 },
                 {
                   "type": "SignalementFormOnlyChoice",
-                  "label": "Est-ce que le plancher menace de s'effondrer quand on marche dessus ?",
+                  "label": "{{dictionaryStore::desordres_batiment_securite_sol_details_plancher_effondre}}",
                   "slug": "desordres_batiment_securite_sol_details_plancher_effondre",
                   "values": [
                     {
@@ -628,7 +628,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_securite_elements_toit",
-          "label": "Des éléments du toit risquent de tomber (tuyau, tuiles, pierres...)",
+          "label": "{{dictionaryStore::desordres_batiment_securite_elements_toit}}",
           "validate": {
             "required": false
           }
@@ -636,7 +636,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_securite_toit",
-          "label": "Le plafond ou le toit risque de s'effondrer et il a de très grosses fissures",
+          "label": "{{dictionaryStore::desordres_batiment_securite_toit}}",
           "validate": {
             "required": false
           }
@@ -644,7 +644,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_securite_escalier",
-          "label": "Les escaliers et / ou les rambardes sont dangereuses",
+          "label": "{{dictionaryStore::desordres_batiment_securite_escalier}}",
           "validate": {
             "required": false
           }
@@ -661,7 +661,7 @@
             "body": [
                 {
                   "type": "SignalementFormOnlyChoice",
-                  "label": "L'escalier ou les rambardes bougent mais peuvent encore être utilisées sans danger ?",
+                  "label": "{{dictionaryStore::desordres_batiment_securite_escalier_details_utilisable}}",
                   "slug": "desordres_batiment_securite_escalier_details_utilisable",
                   "values": [
                     {
@@ -676,7 +676,7 @@
                 },
                 {
                   "type": "SignalementFormOnlyChoice",
-                  "label": "L'escalier menace de s'effondrer, c'est dangeureux de l'utiliser ?",
+                  "label": "{{dictionaryStore::desordres_batiment_securite_escalier_details_dangereux}}",
                   "slug": "desordres_batiment_securite_escalier_details_dangereux",
                   "values": [
                     {
@@ -695,7 +695,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_securite_murs_fissures",
-          "label": "Le bâtiment semble instable. Il y a de grosses fissures dans les murs",
+          "label": "{{dictionaryStore::desordres_batiment_securite_murs_fissures}}",
           "validate": {
             "required": false
           }
@@ -712,7 +712,7 @@
             "body": [
                 {
                   "type": "SignalementFormOnlyChoice",
-                  "label": "Est-ce que le mur fissuré a l'air d'être un mur porteur (mur qui soutient la structure du bâtiment) ?",
+                  "label": "{{dictionaryStore::desordres_batiment_securite_murs_fissures_details_mur_porteur}}",
                   "slug": "desordres_batiment_securite_murs_fissures_details_mur_porteur",
                   "values": [
                     {
@@ -735,7 +735,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_securite_balcons",
-          "label": "Les balcons et rambardes des fenêtres risquent de tomber",
+          "label": "{{dictionaryStore::desordres_batiment_securite_balcons}}",
           "validate": {
             "required": false
           }

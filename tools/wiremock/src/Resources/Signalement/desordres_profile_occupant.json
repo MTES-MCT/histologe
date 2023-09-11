@@ -524,7 +524,7 @@
             "body": [
                 {
                   "type": "SignalementFormTextfield",
-                  "label": "Précisez le type de nuisibles",
+                  "label": "{{dictionaryStore::desordres_batiment_nuisibles_autres_details_type_nuisibles}}",
                   "slug": "desordres_batiment_nuisibles_autres_details_type_nuisibles"
                 }
             ]
@@ -594,7 +594,7 @@
             "body": [
                 {
                   "type": "SignalementFormOnlyChoice",
-                  "label": "Est-ce que le plancher est abîmé et bouge par endroit ?",
+                  "label": "{{dictionaryStore::desordres_batiment_securite_sol_details_plancher_abime}}",
                   "slug": "desordres_batiment_securite_sol_details_plancher_abime",
                   "values": [
                     {
@@ -609,7 +609,7 @@
                 },
                 {
                   "type": "SignalementFormOnlyChoice",
-                  "label": "Est-ce que le plancher menace de s'effondrer quand on marche dessus ?",
+                  "label": "{{dictionaryStore::desordres_batiment_securite_sol_details_plancher_effondre}}",
                   "slug": "desordres_batiment_securite_sol_details_plancher_effondre",
                   "values": [
                     {
@@ -628,7 +628,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_securite_elements_toit",
-          "label": "Des éléments du toit risquent de tomber (tuyau, tuiles, pierres...)",
+          "label": "{{dictionaryStore::desordres_batiment_securite_elements_toit}}",
           "validate": {
             "required": false
           }
@@ -636,7 +636,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_securite_toit",
-          "label": "Le plafond ou le toit risque de s'effondrer et il a de très grosses fissures",
+          "label": "{{dictionaryStore::desordres_batiment_securite_toit}}",
           "validate": {
             "required": false
           }
@@ -644,7 +644,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_securite_escalier",
-          "label": "Les escaliers et / ou les rambardes sont dangereuses",
+          "label": "{{dictionaryStore::desordres_batiment_securite_escalier}}",
           "validate": {
             "required": false
           }
@@ -661,7 +661,7 @@
             "body": [
                 {
                   "type": "SignalementFormOnlyChoice",
-                  "label": "L'escalier ou les rambardes bougent mais peuvent encore être utilisées sans danger ?",
+                  "label": "{{dictionaryStore::desordres_batiment_securite_escalier_details_utilisable}}",
                   "slug": "desordres_batiment_securite_escalier_details_utilisable",
                   "values": [
                     {
@@ -676,7 +676,7 @@
                 },
                 {
                   "type": "SignalementFormOnlyChoice",
-                  "label": "L'escalier menace de s'effondrer, c'est dangeureux de l'utiliser ?",
+                  "label": "{{dictionaryStore::desordres_batiment_securite_escalier_details_dangereux}}",
                   "slug": "desordres_batiment_securite_escalier_details_dangereux",
                   "values": [
                     {
@@ -695,7 +695,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_securite_murs_fissures",
-          "label": "Le bâtiment semble instable. Il y a de grosses fissures dans les murs",
+          "label": "{{dictionaryStore::desordres_batiment_securite_murs_fissures}}",
           "validate": {
             "required": false
           }
@@ -712,7 +712,7 @@
             "body": [
                 {
                   "type": "SignalementFormOnlyChoice",
-                  "label": "Est-ce que le mur fissuré a l'air d'être un mur porteur (mur qui soutient la structure du bâtiment) ?",
+                  "label": "{{dictionaryStore::desordres_batiment_securite_murs_fissures_details_mur_porteur}}",
                   "slug": "desordres_batiment_securite_murs_fissures_details_mur_porteur",
                   "values": [
                     {
@@ -735,7 +735,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_batiment_securite_balcons",
-          "label": "Les balcons et rambardes des fenêtres risquent de tomber",
+          "label": "{{dictionaryStore::desordres_batiment_securite_balcons}}",
           "validate": {
             "required": false
           }

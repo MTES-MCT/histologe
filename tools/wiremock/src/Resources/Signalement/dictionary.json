@@ -1,42 +1,86 @@
 {
-  "desordres_batiment_proprete": { "label": "Propreté et entretien" },
-  "desordres_batiment_eau": { "label": "Eau et évacuation" },
-  "desordres_batiment_isolation": { "label": "Isolation du bâtiment" },
-  "desordres_batiment_maintenance": { "label": "Maintenance et équipements" },
-  "desordres_batiment_nuisibles": { "label": "Présence de nuisibles" },
-  "desordres_batiment_securite": { "label": "Sécurité, risque de chute" },
-  "desordres_batiment_incendie": { "label": "Risque d'incendie" },
-  "desordres_batiment_accessibilite": { "label": "Accessibilité et alentours" },
-  "desordres_batiment_bruit": { "label": "Bruit, pollution sonore" },
-  "desordres_logement_eau": { "label": "Eau et évacuation" },
-  "desordres_logement_aeration": { "label": "Aération et ventilation" },
-  "desordres_logement_chauffage": { "label": "Chauffage et isolation" },
-  "desordres_logement_humidite": { "label": "Humidité et moisissure" },
-  "desordres_logement_securite": { "label": "Sécurité" },
-  "desordres_logement_electricite": { "label": "Electricité" },
-  "desordres_logement_nuisibles": { "label": "Présence de nuisibles" },
-  "desordres_logement_bruit": { "label": "Bruit, pollution sonore" },
-  "desordres_logement_lumiere": { "label": "Eclairement, lumière naturelle" },
-  "batiment": { "label": "le bâtiment" },
-  "logement": { "label": "le logement" },
-  "batiment_logement": { "label": "le bâtiment et le logement" },
-  "desordres_batiment_proprete_interieur": { "label": "L'intérieur du bâtiment est sale, n'est jamais nettoyé" },
-  "desordres_batiment_proprete_facades": { "label": "Les façades extérieures sont très sales ou en mauvais état" },
-  "desordres_batiment_proprete_parties_communes": { "label": "Les parties communes sont dégradées (déchets qui traînent, matériel cassé, graffitis)" },
-  "desordres_batiment_proprete_local_poubelles": { "label": "Il n'y a pas de local poubelles ni d'endroit où stocker les déchets" },
-  "desordres_batiment_eau_pas_eau_potable": { "label": "Il n'y a pas d'eau potable dans le bâtiment" },
-  "desordres_batiment_eau_pas_eau_chaude": { "label": "Il n'y a pas d'eau chaude dans le bâtiment" },
-  "desordres_batiment_eau_evacuation_KO": { "label": "L'évacuation des eaux ne marche pas (mauvaises odeurs, eau stagnante, fuites...)" },
-  "desordres_batiment_eau_pas_evacuation_eaux_pluie": { "label": "Quand il pleut, l'eau n'est pas évacuée (pas de gouttière, pas de système d'évacuation...)" },
-  "desordres_batiment_isolation_porte_fenetres": { "label": "Il manque des portes ou des fenêtres, ou elles sont mal isolées" },
-  "desordres_batiment_isolation_murs": { "label": "Les murs ne sont pas ou peu isolés" },
-  "desordres_batiment_isolation_dernier_etage_toit": { "label": "Le dernier étage n'est pas isolé, le toit n'est pas étanche" },
-  "desordres_batiment_isolation_infiltration_eau": { "label": "De l'eau s'infiltre par le sol ou les murs" },
-  "desordres_batiment_maintenance_ascenseur": { "label": "L'ascenseur est dangereux (les portes s'ouvrent ou se ferment toutes seules, on risque de tomber, il s'arrête entre les étages...)" },
-  "desordres_batiment_maintenance_petites_reparations": { "label": "Les petites réparations ne sont pas faites (changement d'ampoule...)" },
-  "desordres_batiment_nuisibles_cafards": { "label": "Il y a des cafards ou blattes dans le bâtiment" },
-  "desordres_batiment_nuisibles_rongeurs": { "label": "Il y a des rongeurs dans le bâtiment (rats, souris...)" },
-  "desordres_batiment_nuisibles_punaises": { "label": "Il y a des punaises de lit dans le bâtiment" },
-  "desordres_batiment_nuisibles_autres": { "label": "Il y a un autre type de nuisible dans le bâtiment" },
-  "desordres_batiment_securite_sol": { "label": "Le sol bouge, il est instable" }
+  "desordres_batiment_proprete": { "default": "Propreté et entretien" },
+  "desordres_batiment_eau": { "default": "Eau et évacuation" },
+  "desordres_batiment_isolation": { "default": "Isolation du bâtiment" },
+  "desordres_batiment_maintenance": { "default": "Maintenance et équipements" },
+  "desordres_batiment_nuisibles": { "default": "Présence de nuisibles" },
+  "desordres_batiment_securite": { "default": "Sécurité, risque de chute" },
+  "desordres_batiment_incendie": { "default": "Risque d'incendie" },
+  "desordres_batiment_accessibilite": { "default": "Accessibilité et alentours" },
+  "desordres_batiment_bruit": { "default": "Bruit, pollution sonore" },
+  "desordres_logement_eau": { "default": "Eau et évacuation" },
+  "desordres_logement_aeration": { "default": "Aération et ventilation" },
+  "desordres_logement_chauffage": { "default": "Chauffage et isolation" },
+  "desordres_logement_humidite": { "default": "Humidité et moisissure" },
+  "desordres_logement_securite": { "default": "Sécurité" },
+  "desordres_logement_electricite": { "default": "Electricité" },
+  "desordres_logement_nuisibles": { "default": "Présence de nuisibles" },
+  "desordres_logement_bruit": { "default": "Bruit, pollution sonore" },
+  "desordres_logement_lumiere": { "default": "Eclairement, lumière naturelle" },
+  "batiment": { "default": "le bâtiment" },
+  "logement": { "default": "le logement" },
+  "batiment_logement": { "default": "le bâtiment et le logement" },
+  "oui": { "default": "OUI" },
+  "non": { "default": "NON" },
+  "nsp": { "default": "Ne sait pas" },
+  "desordres_batiment_proprete_interieur": { "default": "L'intérieur du bâtiment est sale, n'est jamais nettoyé" },
+  "desordres_batiment_proprete_facades": { "default": "Les façades extérieures sont très sales ou en mauvais état" },
+  "desordres_batiment_proprete_parties_communes": { "default": "Les parties communes sont dégradées (déchets qui traînent, matériel cassé, graffitis)" },
+  "desordres_batiment_proprete_local_poubelles": { "default": "Il n'y a pas de local poubelles ni d'endroit où stocker les déchets" },
+  "desordres_batiment_eau_pas_eau_potable": { "default": "Il n'y a pas d'eau potable dans le bâtiment" },
+  "desordres_batiment_eau_pas_eau_chaude": { "default": "Il n'y a pas d'eau chaude dans le bâtiment" },
+  "desordres_batiment_eau_evacuation_KO": { "default": "L'évacuation des eaux ne marche pas (mauvaises odeurs, eau stagnante, fuites...)" },
+  "desordres_batiment_eau_pas_evacuation_eaux_pluie": { "default": "Quand il pleut, l'eau n'est pas évacuée (pas de gouttière, pas de système d'évacuation...)" },
+  "desordres_batiment_isolation_porte_fenetres": { "default": "Il manque des portes ou des fenêtres, ou elles sont mal isolées" },
+  "desordres_batiment_isolation_murs": { "default": "Les murs ne sont pas ou peu isolés" },
+  "desordres_batiment_isolation_dernier_etage_toit": { "default": "Le dernier étage n'est pas isolé, le toit n'est pas étanche" },
+  "desordres_batiment_isolation_infiltration_eau": { "default": "De l'eau s'infiltre par le sol ou les murs" },
+  "desordres_batiment_maintenance_ascenseur": { "default": "L'ascenseur est dangereux (les portes s'ouvrent ou se ferment toutes seules, on risque de tomber, il s'arrête entre les étages...)" },
+  "desordres_batiment_maintenance_petites_reparations": { "default": "Les petites réparations ne sont pas faites (changement d'ampoule...)" },
+  "desordres_batiment_nuisibles_cafards": { "default": "Il y a des cafards ou blattes dans le bâtiment" },
+  "desordres_batiment_nuisibles_rongeurs": { "default": "Il y a des rongeurs dans le bâtiment (rats, souris...)" },
+  "desordres_batiment_nuisibles_punaises": { "default": "Il y a des punaises de lit dans le bâtiment" },
+  "desordres_batiment_nuisibles_autres": { "default": "Il y a un autre type de nuisible dans le bâtiment" },
+  "desordres_batiment_nuisibles_autres_details_type_nuisibles": {
+    "default": "Précisez le type de nuisibles",
+    "disorderOverview": {
+      "default": "Autre type de nuisible : {{formStore.data.desordres_batiment_nuisibles_autres_details_type_nuisibles}}"
+    }
+  },
+  "desordres_batiment_securite_sol": { "default": "Le sol bouge, il est instable" },
+  "desordres_batiment_securite_sol_details_plancher_abime": {
+    "default": "Est-ce que le plancher est abîmé et bouge par endroit ?",
+    "disorderOverview": {
+      "default": "Le plancher est abîmé : {{dictionaryStore::formStore.data.desordres_batiment_securite_sol_details_plancher_abime}}"
+    }
+  },
+  "desordres_batiment_securite_sol_details_plancher_effondre": {
+    "default": "Est-ce que le plancher menace de s'effondrer quand on marche dessus ?",
+    "disorderOverview": {
+      "default": "Le plancher menace de s'effondrer : {{dictionaryStore::formStore.data.desordres_batiment_securite_sol_details_plancher_effondre}}"
+    }
+  },
+  "desordres_batiment_securite_elements_toit": { "default": "Des éléments du toit risquent de tomber (tuyau, tuiles, pierres...)" },
+  "desordres_batiment_securite_toit": { "default": "Le plafond ou le toit risque de s'effondrer et il a de très grosses fissures" },
+  "desordres_batiment_securite_escalier": { "default": "Les escaliers et / ou les rambardes sont dangereuses" },
+  "desordres_batiment_securite_escalier_details_dangereux": {
+    "default": "L'escalier menace de s'effondrer, c'est dangeureux de l'utiliser ?",
+    "disorderOverview": {
+      "default": "L'escalier est dangereux : {{dictionaryStore::formStore.data.desordres_batiment_securite_escalier_details_dangereux}}"
+    }
+  },
+  "desordres_batiment_securite_escalier_details_utilisable": {
+    "default": "L'escalier ou les rambardes bougent mais peuvent encore être utilisées sans danger ?",
+    "disorderOverview": {
+      "default": "L'escalier ou les rambardes bougent : {{dictionaryStore::formStore.data.desordres_batiment_securite_escalier_details_utilisable}}"
+    }
+  },
+  "desordres_batiment_securite_murs_fissures": { "default": "Le bâtiment semble instable. Il y a de grosses fissures dans les murs" },
+  "desordres_batiment_securite_murs_fissures_details_mur_porteur": {
+    "default": "Est-ce que le mur fissuré a l'air d'être un mur porteur (mur qui soutient la structure du bâtiment) ?",
+    "disorderOverview": {
+      "default": "Mur porteur fissuré : {{dictionaryStore::formStore.data.desordres_batiment_securite_murs_fissures_details_mur_porteur}}"
+    }
+  },
+  "desordres_batiment_securite_balcons": { "default": "Les balcons et rambardes des fenêtres risquent de tomber" }
 }

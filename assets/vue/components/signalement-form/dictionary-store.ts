@@ -1,5 +1,5 @@
 interface DictionaryStore {
-  [index: string]: string
+  [index: string]: any
 }
 
 const dictionaryStore: DictionaryStore = {}

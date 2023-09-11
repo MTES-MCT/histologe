@@ -12,10 +12,15 @@
           class="fr-accordion"
           >
           <h3 class="fr-accordion__title">
-            <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-batiment-' + index">{{ dictionaryStore[disorder] }}</button>
+            <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-batiment-' + index">{{ dictionaryStore[disorder].default }}</button>
           </h3>
           <div class="fr-collapse" :id="'accordion-disorder-batiment-' + index">
-            <h4 class="fr-h4">Contenu</h4>
+            <div
+              v-for="field in categoryFields(disorder)"
+              v-bind:key="field.slug"
+              >
+              {{field.label}}
+            </div>
           </div>
         </section>
       </div>
@@ -32,7 +37,7 @@
           class="fr-accordion"
           >
           <h3 class="fr-accordion__title">
-            <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-logement-' + index">{{ dictionaryStore[disorder] }}</button>
+            <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-logement-' + index">{{ dictionaryStore[disorder].default }}</button>
           </h3>
           <div class="fr-collapse" :id="'accordion-disorder-logement-' + index">
             <h4 class="fr-h4">Contenu</h4>
@@ -50,6 +55,7 @@
 import { defineComponent } from 'vue'
 import formStore from './../store'
 import dictionaryStore from './../dictionary-store'
+import { dictionaryManager } from './../services/dictionaryManager'
 
 export default defineComponent({
   name: 'SignalementFormDisorderOverview',
@@ -61,6 +67,24 @@ export default defineComponent({
     return {
       formStore,
       dictionaryStore
+    }
+  },
+  methods: {
+    categoryFields (categorySlug: string) {
+      const answersSlugs = []
+      for (const dataname in formStore.data) {
+        if (dataname.includes(categorySlug)) {
+          answersSlugs.push(dataname)
+        }
+      }
+      answersSlugs.sort()
+
+      const answers = []
+      for (const slug of answersSlugs) {
+        const label = dictionaryManager.translate(slug, 'disorderOverview')
+        answers.push({ slug: slug, label: label })
+      }
+      return answers
     }
   }
 })
