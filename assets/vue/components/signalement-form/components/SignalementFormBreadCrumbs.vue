@@ -24,7 +24,7 @@
                 <a class="fr-breadcrumb__link" href="/nouveau-formulaire/signalement/">Signalement</a>
               </li>
               <li>
-                <a class="fr-breadcrumb__link" aria-current="page">{{ formStore.screenData[formStore.currentScreenIndex].screenCategory }}</a>
+                <a class="fr-breadcrumb__link" aria-current="page">{{ formStore.currentScreen?.screenCategory }}</a>
               </li>
             </ol>
           </div>
@@ -99,13 +99,13 @@ export default defineComponent({
       const menuItems:Array<MenuItem> = []
       const currentCategoryIndex:number = this.currentCategoryIndex
       for (let i:number = 0; i < this.desktopMenuLabels.length; i++) {
-        menuItems.push({ label: this.desktopMenuLabels[i], active: (i <= currentCategoryIndex), current: (this.desktopMenuLabels[i] === formStore.screenData[formStore.currentScreenIndex].screenCategory) })
+        menuItems.push({ label: this.desktopMenuLabels[i], active: (i <= currentCategoryIndex), current: (this.desktopMenuLabels[i] === formStore.currentScreen?.screenCategory) })
       }
       return menuItems
     },
     currentCategoryIndex ():number {
       for (let i:number = 0; i < this.desktopMenuLabels.length; i++) {
-        if (this.desktopMenuLabels[i] === formStore.screenData[formStore.currentScreenIndex].screenCategory) {
+        if (this.desktopMenuLabels[i] === formStore.currentScreen?.screenCategory) {
           return i
         }
       }
