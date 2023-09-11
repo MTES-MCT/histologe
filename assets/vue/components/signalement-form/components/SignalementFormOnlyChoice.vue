@@ -1,7 +1,7 @@
 <template>
   <fieldset :id="id" :class="[customCss, 'fr-fieldset']" aria-labelledby="radio-hint-legend radio-hint-messages">
       <legend :class="['fr-fieldset__legend--regular', 'fr-fieldset__legend', customLegendCss]" id="radio-hint-legend">
-        {{ label }}
+        {{ replaceLabel(label) }}
       </legend>
       <div v-for="radioValue in values" :class="['fr-fieldset__element', (radioValue.value === 'oui' || radioValue.value === 'non') ? 'item-divided' : '']" :key="radioValue.value">
           <div class="fr-radio-group">
@@ -17,7 +17,7 @@
               aria-describedby="radio-error-messages"
               >
             <label class="fr-label" :for="id + '_' + radioValue.value">
-                {{ radioValue.label }}
+                {{ replaceLabel(radioValue.label) }}
             </label>
           </div>
       </div>
@@ -29,6 +29,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { variablesReplacer } from './../services/variableReplacer'
 
 export default defineComponent({
   name: 'SignalementFormOnlyChoice',
@@ -46,6 +47,12 @@ export default defineComponent({
     updateValue (event: Event) {
       const value = (event.target as HTMLInputElement).getAttribute('value')
       this.$emit('update:modelValue', value)
+    },
+    replaceLabel (label: string): string {
+      if (label !== undefined) {
+        return variablesReplacer.replace(label)
+      }
+      return ''
     }
   },
   computed: {
