@@ -86,10 +86,23 @@ export default defineComponent({
 
       const answers = []
       for (const slug of answersSlugs) {
-        const label = dictionaryManager.translate(slug, 'disorderOverview')
+        const translatedSlug = this.getTranslationSlug(slug)
+        const label = dictionaryManager.translate(translatedSlug, 'disorderOverview')
         answers.push({ slug, label })
       }
       return answers
+    },
+    getTranslationSlug (slug: string) {
+      if (slug.endsWith('_pieces')) {
+        slug = 'form_room_pieces'
+      } else if (slug.endsWith('_pieces_cuisine')) {
+        slug = 'form_room_pieces_cuisine'
+      } else if (slug.endsWith('_pieces_piece_a_vivre')) {
+        slug = 'form_room_pieces_piece_a_vivre'
+      } else if (slug.endsWith('_pieces_salle_de_bain')) {
+        slug = 'form_room_pieces_salle_de_bain'
+      }
+      return slug
     }
   }
 })

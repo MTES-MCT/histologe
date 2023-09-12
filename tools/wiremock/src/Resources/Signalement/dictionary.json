@@ -12,6 +12,10 @@
   "before2023": { "default": "Avant 2023" },
   "before_movein": { "default": "Avant emménagement" },
   "after_movein": { "default": "Après emménagement" },
+  "form_room_pieces": { "default": "Pièces concernées :" },
+  "form_room_pieces_cuisine": { "default": "- la cuisine / le coin cuisine" },
+  "form_room_pieces_piece_a_vivre": { "default": "- une ou des pièces à vivre (salon, chambres)" },
+  "form_room_pieces_salle_de_bain": { "default": "- la salle de bain, salle d'eau et / ou les toilettes" },
   "desordres_batiment_proprete": { "default": "Propreté et entretien" },
   "desordres_batiment_eau": { "default": "Eau et évacuation" },
   "desordres_batiment_isolation": { "default": "Isolation du bâtiment" },
@@ -192,7 +196,7 @@
     }
   },
   "desordres_logement_humidite_salle_de_bain": {
-    "default": "LLa salle de bain / salle d'eau et ou les toilettes",
+    "default": "La salle de bain / salle d'eau et ou les toilettes",
     "disorderOverview": {
       "default": "Humidité ou moisissure dans la salle de bain"
     }
@@ -249,6 +253,6 @@
   },
   "desordres_logement_bruit_exterieur": { "default": "On entend le bruit extérieur, même en fermant les portes et les fenêtres" },
   "desordres_logement_bruit_voisins": { "default": "On entend les voisins parler et marcher depuis le logement, comme s'ils étaient dans la pièce" },
-  "desordres_logement_lumiere_pas_lumiere": { "default": "Le logement n'est pas éclairé par la lumière du jour. Je dois allumer la lumière en plein jour" },
+  "desordres_logement_lumiere_pas_lumiere": { "default": "Le logement n'est pas éclairé par la lumière du jour. Il est difficile de voir sans allumer la lumière, même en pleine journée." },
   "desordres_logement_lumiere_pas_volets": { "default": "Il n'y a pas de volets, ni de stores aux fenêtres" }
 }
