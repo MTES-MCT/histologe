@@ -20,8 +20,23 @@
               v-bind:key="field.slug"
               :class="field.css"
               >
-              {{field.label}}
+              <div v-if="field.slug.includes('_upload')">
+                <div v-if="getNbPhotosForSlug(field.slug) > 0">
+                  <span v-if="getNbPhotosForSlug(field.slug) > 1">
+                    {{ getNbPhotosForSlug(field.slug) }} photos ont été ajoutées à ce critère
+                  </span>
+                  <span v-else>
+                    {{ getNbPhotosForSlug(field.slug) }} photo a été ajoutée à ce critère
+                  </span>
+                  <!-- TODO : mettre en forme -->
+                  <!-- TODO : différencier photo (slug photos_upload) et fichier (slug _upload) ? -->
+                </div>
+              </div>
+              <div v-else>
+                {{field.label}}
+              </div>
             </div>
+
           </div>
         </section>
       </div>
@@ -117,6 +132,16 @@ export default defineComponent({
         slug = 'form_room_pieces_salle_de_bain'
       }
       return slug
+    },
+    getNbPhotosForSlug (slug: string): number {
+      if (formStore.data[slug] !== undefined) {
+        if (typeof formStore.data[slug] === 'object' && formStore.data[slug].file !== undefined) {
+          return 1
+        } else if (formStore.data[slug].length !== undefined) {
+          return formStore.data[slug].length
+        }
+      }
+      return 0
     }
   }
 })
