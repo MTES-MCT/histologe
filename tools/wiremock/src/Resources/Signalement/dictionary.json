@@ -1,4 +1,15 @@
 {
+  "batiment": { "default": "le bâtiment" },
+  "logement": { "default": "le logement" },
+  "batiment_logement": { "default": "le bâtiment et le logement" },
+  "electrique": { "default": "électrique" },
+  "gaz": { "default": "gaz, bois, éthanol ou fioul" },
+  "aucun": { "default": "aucun" },
+  "oui": { "default": "OUI" },
+  "non": { "default": "NON" },
+  "nsp": { "default": "Ne sait pas" },
+  "post2023": { "default": "En 2023" },
+  "before2023": { "default": "Avant 2023" },
   "desordres_batiment_proprete": { "default": "Propreté et entretien" },
   "desordres_batiment_eau": { "default": "Eau et évacuation" },
   "desordres_batiment_isolation": { "default": "Isolation du bâtiment" },
@@ -17,12 +28,6 @@
   "desordres_logement_nuisibles": { "default": "Présence de nuisibles" },
   "desordres_logement_bruit": { "default": "Bruit, pollution sonore" },
   "desordres_logement_lumiere": { "default": "Eclairement, lumière naturelle" },
-  "batiment": { "default": "le bâtiment" },
-  "logement": { "default": "le logement" },
-  "batiment_logement": { "default": "le bâtiment et le logement" },
-  "oui": { "default": "OUI" },
-  "non": { "default": "NON" },
-  "nsp": { "default": "Ne sait pas" },
   "desordres_batiment_proprete_interieur": { "default": "L'intérieur du bâtiment est sale, n'est jamais nettoyé" },
   "desordres_batiment_proprete_facades": { "default": "Les façades extérieures sont très sales ou en mauvais état" },
   "desordres_batiment_proprete_parties_communes": { "default": "Les parties communes sont dégradées (déchets qui traînent, matériel cassé, graffitis)" },
@@ -89,5 +94,123 @@
   "desordres_batiment_accessibilite_friche": { "default": "Le bâtiment est dans une friche, un terrain vague ou abandonné" },
   "desordres_batiment_accessibilite_acces_batiment": { "default": "Il est très difficile d'accéder au bâtiment : les passages sont étroits ou encombrés" },
   "desordres_batiment_bruit_exterieur": { "default": "Le bâtiment est situé à côté de rails de train, d'un aéroport ou d'une usine" },
-  "desordres_batiment_bruit_interieur": { "default": "Il y a beaucoup de bruit à l'intérieur, on entend tout même en fermant les portes et les fenêtres" }
+  "desordres_batiment_bruit_interieur": { "default": "Il y a beaucoup de bruit à l'intérieur, on entend tout même en fermant les portes et les fenêtres" },
+  "desordres_logement_eau_eau_potable": { "default": "Il n'y a pas d'eau potable dans le logement" },
+  "desordres_logement_eau_eau_chaude": { "default": "Il n'y a pas d'eau chaude dans le logement" },
+  "desordres_logement_eau_evacuation": { "default": "L'évacuation des eaux ne marche pas (mauvaises odeurs, pas d'évacuation, fuites...)" },
+  "desordres_logement_aeration_aucune_aeration": { "default": "Il n'y a pas de fenêtre ni de système de ventilation (VMC...)" },
+  "desordres_logement_aeration_ventilation_defectueuse": { "default": "Le système de ventilation ne fonctionne pas" },
+  "desordres_logement_aeration_ventilation_defectueuse_details_nettoyage": {
+    "default": "La ventilation a-t-elle été nettoyée ?",
+    "disorderOverview": {
+      "default": "Ventilation nettoyée : {{dictionaryStore::formStore.data.desordres_logement_aeration_ventilation_defectueuse_details_nettoyage}}"
+    }
+  },
+  "desordres_logement_chauffage_type": {
+    "default": "",
+    "disorderOverview": {
+      "default": "Type de chauffage : {{dictionaryStore::formStore.data.desordres_logement_chauffage_type}}"
+    }
+  },
+  "desordres_logement_chauffage_details_fenetres_permeables": { "default": "Les fenêtres laissent passer beaucoup d'air ou laissent passer l'eau quand il pleut" },
+  "desordres_logement_chauffage_details_difficultes_chauffage": { "default": "Il est difficile de chauffer le logement" },
+  "desordres_logement_chauffage_details_chauffage_KO": { "default": "Le chauffage ne fonctionne pas, un chauffage d'appoint est utilisé." },
+  "desordres_logement_chauffage_details_chauffage_dangereux": { "default": "Les dispositifs de chauffages (chauffe eau, poêle, cheminée, radiateur...) sont dangereux (très mauvais état, tuyaux mal fixés, etc.)" },
+  "desordres_logement_chauffage_details_dpe_annee": {
+    "default": "Quand le DPE du logement a-t-il été réalisé ?",
+    "disorderOverview": {
+      "default": "Date du DPE : {{dictionaryStore::formStore.data.desordres_logement_chauffage_details_dpe_annee}}"
+    }
+  },
+  "desordres_logement_chauffage_details_dpe_conso_finale": {
+    "default": "Quelle est la consommation en énergie finale indiquée sur le DPE ? (kWh/m²/an)",
+    "disorderOverview": {
+      "default": "Consommation indiquée sur DPE : {{formStore.data.desordres_logement_chauffage_details_dpe_conso_finale}} kWh/m²/an"
+    }
+  },
+  "composition_logement_superficie": {
+    "default": "Quelle est la superficie du logement ? (m²)",
+    "disorderOverview": {
+      "default": "Superficie du logement : {{formStore.data.composition_logement_superficie}} m²"
+    }
+  },
+  "desordres_logement_chauffage_details_dpe_conso": {
+    "default": "Quelle est la consommation en énergie indiquée sur le DPE ? (kWh/an)",
+    "disorderOverview": {
+      "default": "Consommation indiquée sur DPE : {{formStore.data.desordres_logement_chauffage_details_dpe_conso}} (kWh/an)"
+    }
+  },
+  "desordres_logement_chauffage_details_dpe_conso_vide": { "default": "Le DPE est vide" },
+  "desordres_logement_humidite_piece_a_vivre": {
+    "default": "Une ou des pièces à vivre",
+    "disorderOverview": {
+      "default": "Humidité ou moisissure dans une ou des pièces à vivre"
+    }
+  },
+  "desordres_logement_humidite_piece_a_vivre_details_fuite": {
+    "default": "Est-ce qu'il y a eu une fuite ou un dégât des eaux dans la pièce ?",
+    "disorderOverview": {
+      "default": "Fuite ou dégat des eaux : {{dictionaryStore::formStore.data.desordres_logement_humidite_piece_a_vivre_details_fuite}}"
+    }
+  },
+  "desordres_logement_humidite_piece_a_vivre_details_machine": {
+    "default": "Est-ce qu'il y a une machine à laver, un sèche-linge ou un lave vaisselle dans cette pièce ?",
+    "disorderOverview": {
+      "default": "Machine à laver, sèche-linge ou lave vaisselle : {{dictionaryStore::formStore.data.desordres_logement_humidite_piece_a_vivre_details_machine}}"
+    }
+  },
+  "desordres_logement_humidite_piece_a_vivre_details_moisissure_apres_nettoyage": {
+    "default": "La moisissure revient-elle après nettoyage ?",
+    "disorderOverview": {
+      "default": "Moisissure revient après nettoyage : {{dictionaryStore::formStore.data.desordres_logement_humidite_piece_a_vivre_details_moisissure_apres_nettoyage}}"
+    }
+  },
+  "desordres_logement_humidite_cuisine": {
+    "default": "La cuisine / Le coin cuisine",
+    "disorderOverview": {
+      "default": "Humidité ou moisissure dans la cuisine"
+    }
+  },
+  "desordres_logement_humidite_cuisine_details_fuite": {
+    "default": "Est-ce qu'il y a eu une fuite ou un dégât des eaux dans la pièce ?",
+    "disorderOverview": {
+      "default": "Fuite ou dégat des eaux dans la cuisine : {{dictionaryStore::formStore.data.desordres_logement_humidite_cuisine_details_fuite}}"
+    }
+  },
+  "desordres_logement_humidite_cuisine_details_machine": {
+    "default": "Est-ce qu'il y a une machine à laver, un sèche-linge ou un lave vaisselle dans cette pièce ?",
+    "disorderOverview": {
+      "default": "Machine à laver, sèche-linge ou lave vaisselle dans la cuisine : {{dictionaryStore::formStore.data.desordres_logement_humidite_cuisine_details_machine}}"
+    }
+  },
+  "desordres_logement_humidite_cuisine_details_moisissure_apres_nettoyage": {
+    "default": "La moisissure revient-elle après nettoyage ?",
+    "disorderOverview": {
+      "default": "Moisissure revient après nettoyage dans la cuisine : {{dictionaryStore::formStore.data.desordres_logement_humidite_cuisine_details_moisissure_apres_nettoyage}}"
+    }
+  },
+  "desordres_logement_humidite_salle_de_bain": {
+    "default": "LLa salle de bain / salle d'eau et ou les toilettes",
+    "disorderOverview": {
+      "default": "Humidité ou moisissure dans la salle de bain"
+    }
+  },
+  "desordres_logement_humidite_salle_de_bain_details_fuite": {
+    "default": "Est-ce qu'il y a eu une fuite ou un dégât des eaux dans la pièce ?",
+    "disorderOverview": {
+      "default": "Fuite ou dégat des eaux dans la salle de bain : {{dictionaryStore::formStore.data.desordres_logement_humidite_salle_de_bain_details_fuite}}"
+    }
+  },
+  "desordres_logement_humidite_salle_de_bain_details_machine": {
+    "default": "Est-ce qu'il y a une machine à laver, un sèche-linge ou un lave vaisselle dans cette pièce ?",
+    "disorderOverview": {
+      "default": "Machine à laver, sèche-linge ou lave vaisselle dans la salle de bain : {{dictionaryStore::formStore.data.desordres_logement_humidite_salle_de_bain_details_machine}}"
+    }
+  },
+  "desordres_logement_humidite_salle_de_bain_details_moisissure_apres_nettoyage": {
+    "default": "La moisissure revient-elle après nettoyage ?",
+    "disorderOverview": {
+      "default": "Moisissure revient après nettoyage dans la salle de bain : {{dictionaryStore::formStore.data.desordres_logement_humidite_salle_de_bain_details_moisissure_apres_nettoyage}}"
+    }
+  }
 }

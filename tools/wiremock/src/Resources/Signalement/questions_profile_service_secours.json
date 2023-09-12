@@ -499,7 +499,7 @@
       "body": [
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Il y a-t-il une cuisine ou un coin cuisine dans le logement ?",
+          "label": "Est-ce qu'il y a une cuisine ou un coin cuisine dans le logement ?",
           "slug": "type_logement_commodites_cuisine",
           "values": [
             {
@@ -547,7 +547,7 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Il y a-t-il une salle de bain, salle d'eau avec douche ou baignoire dans le logement ?",
+          "label": "Est-ce qu'il y a une salle de bain, salle d'eau avec douche ou baignoire dans le logement ?",
           "slug": "type_logement_commodites_salle_de_bain",
           "values": [
             {
@@ -595,7 +595,7 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Il y a-t-il des toilettes dans le logement ?",
+          "label": "Est-ce qu'il y a des toilettes dans le logement ?",
           "slug": "type_logement_commodites_wc",
           "values": [
             {
