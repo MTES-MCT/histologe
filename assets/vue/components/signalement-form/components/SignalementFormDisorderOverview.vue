@@ -40,7 +40,12 @@
             <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-logement-' + index">{{ dictionaryStore[disorder].default }}</button>
           </h3>
           <div class="fr-collapse" :id="'accordion-disorder-logement-' + index">
-            <h4 class="fr-h4">Contenu</h4>
+            <div
+              v-for="field in categoryFields(disorder)"
+              v-bind:key="field.slug"
+              >
+              {{field.label}}
+            </div>
           </div>
         </section>
       </div>
@@ -73,7 +78,7 @@ export default defineComponent({
     categoryFields (categorySlug: string) {
       const answersSlugs = []
       for (const dataname in formStore.data) {
-        if (dataname.includes(categorySlug)) {
+        if (dataname.includes(categorySlug) && formStore.data[dataname] !== null) {
           answersSlugs.push(dataname)
         }
       }
@@ -82,7 +87,7 @@ export default defineComponent({
       const answers = []
       for (const slug of answersSlugs) {
         const label = dictionaryManager.translate(slug, 'disorderOverview')
-        answers.push({ slug: slug, label: label })
+        answers.push({ slug, label })
       }
       return answers
     }

@@ -1204,7 +1204,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_eau_eau_potable",
-          "label": "Il n'y a pas d'eau potable dans le logement",
+          "label": "{{dictionaryStore::desordres_logement_eau_eau_potable}}",
           "validate": {
             "required": false
           }
@@ -1212,7 +1212,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_eau_eau_chaude",
-          "label": "Il n'y a pas d'eau chaude dans le logement",
+          "label": "{{dictionaryStore::desordres_logement_eau_eau_chaude}}",
           "validate": {
             "required": false
           }
@@ -1220,7 +1220,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_eau_evacuation",
-          "label": "L'évacuation des eaux ne marche pas (mauvaises odeurs, pas d'évacuation, fuites...)",
+          "label": "{{dictionaryStore::desordres_logement_eau_evacuation}}",
           "validate": {
             "required": false
           }
@@ -1259,7 +1259,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_aeration_aucune_aeration",
-          "label": "Il n'y a pas de fenêtre ni de système de ventilation (VMC...)",
+          "label": "{{dictionaryStore::desordres_logement_aeration_aucune_aeration}}",
           "validate": {
             "required": false
           }
@@ -1276,7 +1276,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_aeration_ventilation_defectueuse",
-          "label": "Le système de ventilation ne fonctionne pas",
+          "label": "{{dictionaryStore::desordres_logement_aeration_ventilation_defectueuse}}",
           "validate": {
             "required": false
           }
@@ -1293,7 +1293,7 @@
             "body": [
               {
                 "type": "SignalementFormOnlyChoice",
-                "label": "La ventilation a-t-elle été nettoyée ?",
+                "label": "{{dictionaryStore::desordres_logement_aeration_ventilation_defectueuse_details_nettoyage}}",
                 "slug": "desordres_logement_aeration_ventilation_defectueuse_details_nettoyage",
                 "values": [
                   {
@@ -1406,7 +1406,7 @@
               {
                 "type": "SignalementFormCheckbox",
                 "slug": "desordres_logement_chauffage_details_fenetres_permeables",
-                "label": "Les fenêtres laissent passer beaucoup d'air ou laissent passer l'eau quand il pleut",
+                "label": "{{dictionaryStore::desordres_logement_chauffage_details_fenetres_permeables}}",
                 "validate": {
                   "required": false
                 }
@@ -1423,7 +1423,7 @@
               {
                 "type": "SignalementFormCheckbox",
                 "slug": "desordres_logement_chauffage_details_difficultes_chauffage",
-                "label": "J'ai du mal à chauffer mon logement",
+                "label": "{{dictionaryStore::desordres_logement_chauffage_details_difficultes_chauffage}}",
                 "validate": {
                   "required": false
                 }
@@ -1440,7 +1440,7 @@
               {
                 "type": "SignalementFormCheckbox",
                 "slug": "desordres_logement_chauffage_details_chauffage_KO",
-                "label": "Mon chauffage ne fonctionne pas, je dois utiliser un chauffage d'appoint",
+                "label": "{{dictionaryStore::desordres_logement_chauffage_details_chauffage_KO}}",
                 "validate": {
                   "required": false
                 }
@@ -1457,7 +1457,7 @@
               {
                 "type": "SignalementFormCheckbox",
                 "slug": "desordres_logement_chauffage_details_chauffage_dangereux",
-                "label": "Les dispositifs de chauffage (chauffe eau, poêle, cheminée, radiateur...) sont dangereux (très mauvais état, tuyaux mal fixés, etc.)",
+                "label": "{{dictionaryStore::desordres_logement_chauffage_details_chauffage_dangereux}}",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_type !== 'electrique'" 
                 },
@@ -1478,25 +1478,25 @@
               },
               {
                 "type": "SignalementFormOnlyChoice",
-                "label": "Quand le DPE du logement a-t-il été réalisé ?",
+                "label": "{{dictionaryStore::desordres_logement_chauffage_details_dpe_annee}}",
                 "slug": "desordres_logement_chauffage_details_dpe_annee",
                 "conditional": {
                   "show": "(formStore.data.desordres_logement_chauffage_details_fenetres_permeables === 1 || formStore.data.desordres_logement_chauffage_details_difficultes_chauffage === 1 || formStore.data.desordres_logement_chauffage_details_chauffage_KO === 1 ) && formStore.data.bail_dpe_dpe === 'oui'"
                 },
                 "values": [
                   {
-                    "label": "En 2023",
+                    "label": "{{dictionaryStore::post2023}}",
                     "value": "post2023"
                   },
                   {
-                    "label": "Avant 2023",
+                    "label": "{{dictionaryStore::before2023}}",
                     "value": "before2023"
                   }
                 ]
               },
               {
                 "type": "SignalementFormCounter",
-                "label": "Quelle est la consommation en énergie finale indiquée sur le DPE ? (kWh/m²/an) ",
+                "label": "{{dictionaryStore::desordres_logement_chauffage_details_dpe_conso_finale}}",
                 "slug": "desordres_logement_chauffage_details_dpe_conso_finale",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_details_dpe_annee === 'post2023'"
@@ -1508,7 +1508,7 @@
               },
               {
                 "type": "SignalementFormCounter",
-                "label": "Quelle est la superficie de votre logement ? (m²) ",
+                "label": "{{dictionaryStore::composition_logement_superficie}}",
                 "slug": "composition_logement_superficie",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_details_dpe_annee === 'before2023'"
@@ -1519,7 +1519,7 @@
               },
               {
                 "type": "SignalementFormCounter",
-                "label": "Quelle est la consommation en énergie indiquée sur le DPE ? (kWh/an) ",
+                "label": "{{dictionaryStore::desordres_logement_chauffage_details_dpe_conso}}",
                 "slug": "desordres_logement_chauffage_details_dpe_conso",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_details_dpe_annee === 'before2023'"
@@ -1531,7 +1531,7 @@
               },
               {
                 "type": "SignalementFormCheckbox",
-                "label": "Mon DPE est vide",
+                "label": "{{dictionaryStore::desordres_logement_chauffage_details_dpe_conso_vide}}",
                 "slug": "desordres_logement_chauffage_details_dpe_conso_vide",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_details_dpe_annee === 'post2023' || formStore.data.desordres_logement_chauffage_details_dpe_annee === 'before2023'"
@@ -1565,7 +1565,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Humidité et moisissure",
-    "description": "Dans quelle(s) pièce(s) il y a-t-il des traces d'humidité ou de la moisissure ?",
+    "description": "Dans quelle(s) pièce(s) y a-t-il des traces d'humidité ou de la moisissure ?",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-humidite_moisissure.svg",
       "alt": ""
@@ -1577,7 +1577,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_humidite_piece_a_vivre",
-          "label": "Une ou des pièces à vivre",
+          "label": "{{dictionaryStore::desordres_logement_humidite_piece_a_vivre}}",
           "conditional": {
             "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
           },
@@ -1597,7 +1597,7 @@
             "body": [
               {
                 "type": "SignalementFormOnlyChoice",
-                "label": "Il y a-t-il eu une fuite ou un dégât des eaux dans la pièce ?",
+                "label": "{{dictionaryStore::desordres_logement_humidite_piece_a_vivre_details_fuite}}",
                 "slug": "desordres_logement_humidite_piece_a_vivre_details_fuite",
                 "values": [
                   {
@@ -1612,7 +1612,7 @@
               },
               {
                 "type": "SignalementFormOnlyChoice",
-                "label": "Il y a-t-il une machine à laver, un sèche-linge ou un lave vaisselle dans cette pièce ?",
+                "label": "{{dictionaryStore::desordres_logement_humidite_piece_a_vivre_details_machine}}",
                 "slug": "desordres_logement_humidite_piece_a_vivre_details_machine",
                 "values": [
                   {
@@ -1642,7 +1642,7 @@
         },
         {
           "type": "SignalementFormCheckbox",
-          "label": "La cuisine / Le coin cuisine",
+          "label": "{{dictionaryStore::desordres_logement_humidite_cuisine}}",
           "slug": "desordres_logement_humidite_cuisine",
           "conditional": {
             "show": "formStore.data.type_logement_commodites_cuisine === 'oui'"
@@ -1663,7 +1663,7 @@
             "body": [
               {
                 "type": "SignalementFormOnlyChoice",
-                "label": "Il y a-t-il eu une fuite ou un dégât des eaux dans la pièce ?",
+                "label": "{{dictionaryStore::desordres_logement_humidite_cuisine_details_fuite}}",
                 "slug": "desordres_logement_humidite_cuisine_details_fuite",
                 "values": [
                   {
@@ -1678,7 +1678,7 @@
               },
               {
                 "type": "SignalementFormOnlyChoice",
-                "label": "Il y a-t-il une machine à laver, un sèche-linge ou un lave vaisselle dans cette pièce ?",
+                "label": "{{dictionaryStore::desordres_logement_humidite_cuisine_details_machine}}",
                 "slug": "desordres_logement_humidite_cuisine_details_machine",
                 "values": [
                   {
@@ -1708,7 +1708,7 @@
         },
         {
           "type": "SignalementFormCheckbox",
-          "label": "La salle de bain / salle d'eau et ou les toilettes",
+          "label": "{{dictionaryStore::desordres_logement_humidite_salle_de_bain}}",
           "slug": "desordres_logement_humidite_salle_de_bain",
           "conditional": {
             "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'"
@@ -1729,7 +1729,7 @@
             "body": [
               {
                 "type": "SignalementFormOnlyChoice",
-                "label": "Il y a-t-il eu une fuite ou un dégât des eaux dans la pièce ?",
+                "label": "{{dictionaryStore::desordres_logement_humidite_salle_de_bain_details_fuite}}",
                 "slug": "desordres_logement_humidite_salle_de_bain_details_fuite",
                 "values": [
                   {
@@ -1744,7 +1744,7 @@
               },
               {
                 "type": "SignalementFormOnlyChoice",
-                "label": "Il y a-t-il une machine à laver, un sèche-linge ou un lave vaisselle dans cette pièce ?",
+                "label": "{{dictionaryStore::desordres_logement_humidite_salle_de_bain_details_machine}}",
                 "slug": "desordres_logement_humidite_salle_de_bain_details_machine",
                 "values": [
                   {

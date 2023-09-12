@@ -32,7 +32,7 @@ export const variablesReplacer = {
       }
     }
 
-    if (isDictionary) {
+    if (isDictionary && dictionary[value] !== null) {
       value = dictionary[value].default
     }
 
