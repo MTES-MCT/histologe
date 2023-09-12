@@ -9,13 +9,15 @@
     <SignalementFormUpload
       :id="id + '-upload'"
       :label="labelUpload"
-      :modelValue="modelValue"
+      v-model="formStore.data[id + '-upload']"
+      :multiple="true"
       />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import formStore from './../store'
 import SignalementFormInfo from './SignalementFormInfo.vue'
 import SignalementFormUpload from './SignalementFormUpload.vue'
 
@@ -29,9 +31,17 @@ export default defineComponent({
     id: { type: String, default: null },
     label: { type: String, default: null },
     description: { type: String, default: null },
-    modelValue: { type: String, default: null },
+    modelValue: {
+      type: Array as () => Array<Object>,
+      default: () => []
+    },
     labelInfo: { type: String, default: null },
     labelUpload: { type: String, default: null }
+  },
+  data () {
+    return {
+      formStore
+    }
   }
 })
 </script>

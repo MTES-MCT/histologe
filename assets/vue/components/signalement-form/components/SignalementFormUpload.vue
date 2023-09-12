@@ -1,52 +1,60 @@
 <template>
 <div :class="['fr-upload-group', { 'fr-upload-group--disabled': disabled }]" :id="id">
-  <label class='fr-label' :for="id" >
-    {{ label }}
+  <div :class="[ customCss, 'fr-upload-wrap', 'fr-py-3v' ]">
+    <label :for="id" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line">
+      {{ label }}
+    </label>
     <span class="fr-hint-text">{{ description }}</span>
-  </label>
-    <div :class="[ customCss, 'fr-upload-wrap' ]">
-      <input
-        type="file"
-        :name="id"
-        class="fr-upload"
-        aria-describedby="text-upload-error-desc-error"
-        :disabled="disabled"
-        @change="uploadFile($event)"
-        >
-        <p v-if="formStore.data[id] !== undefined">{{ uploadedFileTitle }}</p>
-        <!-- TODO : mettre multiple ? -->
-        <!-- TODO : gérer type de fichier accept=".pdf,.doc,.docx" -->
-    </div>
-    <div
-      id="text-upload-error-desc-error"
-      class="fr-error-text"
-      v-if="hasError"
+    <input
+      type="file"
+      :name="id"
+      class="custom-file-input"
+      aria-describedby="text-upload-error-desc-error"
+      :disabled="disabled"
+      :multiple="multiple"
+      @change="uploadFile($event)"
       >
-      {{ error }}
+      <!-- TODO : gérer type de fichier accept=".pdf,.doc,.docx" -->
+  </div>
+
+  <div v-if="formStore.data[id] !== undefined">
+    <div
+      v-for="(file, index) in formStore.data[id]"
+      :key="index"
+      class="fr-grid-row "
+      >
+      <div class="fr-col-8">
+        <i>{{ getFileTitle(file) }}</i>
+      </div>
+      <div class="fr-col-4 fr-signalement-form-upload-delete-button">
+        <button
+          id="signalement_uploadedfile_delete"
+          class="fr-link fr-icon-close-circle-line fr-link--icon-left fr-link--error"
+          @click="deleteFile(file)"
+          >
+          Supprimer
+        </button>
+      </div>
     </div>
-    <div class="fr-grid-row">
-        <div class="fr-col">
-            <progress
-              max="100"
-              id="progress_signalement_photos"
-              :value="uploadPercentage"
-              v-if="uploadPercentage > 0 && uploadPercentage < 100"
-              >
-            </progress>
-        </div>
-    </div>
-    <div class="fr-grid-row">
-        <div class="fr-col fr-text--center">
-          <button
-            id="signalement_uploadedfile_delete"
-            class="fr-mt-2v fr-btn fr-btn--sm fr-btn--danger"
-            v-if="formStore.data[id] !== undefined"
-            @click="deleteFile"
+  </div>
+  <div
+    id="text-upload-error-desc-error"
+    class="fr-error-text"
+    v-if="hasError"
+    >
+    {{ error }}
+  </div>
+  <div class="fr-grid-row">
+      <div class="fr-col">
+          <progress
+            max="100"
+            id="progress_signalement_photos"
+            :value="uploadPercentage"
+            v-if="uploadPercentage > 0 && uploadPercentage < 100"
             >
-            Supprimer
-          </button>
-        </div>
-    </div>
+          </progress>
+      </div>
+  </div>
 </div>
 </template>
 
@@ -61,20 +69,42 @@ export default defineComponent({
     id: { type: String, default: null },
     label: { type: String, default: null },
     description: { type: String, default: null },
-    modelValue: { type: String, default: null },
+    modelValue: {
+      type: Array as () => Array<Object>,
+      default: () => []
+    },
     customCss: { type: String, default: '' },
     validate: { type: Object, default: null },
-    disabled: { type: Boolean, default: false }
+    disabled: { type: Boolean, default: false },
+    multiple: { type: Boolean, default: false }
   },
   data () {
     return {
       hasError: false,
       error: '',
       uploadPercentage: 0,
+      uploadedFiles: <any>[],
       formStore
     }
   },
   methods: {
+    getFileTitle (file: any) {
+      if (typeof file === 'string') {
+        return file
+      } else if (typeof file === 'object' && file.titre !== undefined) {
+        return file.titre
+      } else if (typeof file === 'object') {
+        try {
+          const parsedValue = JSON.parse(file)
+          if (parsedValue.titre !== undefined) {
+            return parsedValue.titre
+          }
+        } catch (error) {
+          // Handle JSON parsing error if needed
+        }
+      }
+      return 'Titre inconnu'
+    },
     onFileUploaded (requestResponse: any) {
       if (requestResponse) {
         if (requestResponse.name === 'AxiosError') {
@@ -82,7 +112,8 @@ export default defineComponent({
           this.error = requestResponse.message
         }
         if (requestResponse.file !== undefined) {
-          this.$emit('update:modelValue', requestResponse)
+          this.uploadedFiles.push(requestResponse)
+          this.$emit('update:modelValue', this.uploadedFiles)
           // TODO : on affiche aussi une preview ?
         }
       }
@@ -95,41 +126,40 @@ export default defineComponent({
       // on supprime la donnée enregistrée jusqu'ici
       this.$emit('update:modelValue', undefined)
       if (fileInput.files && fileInput.files.length > 0) {
-        if (fileInput.files[0].type === 'image/heic' || fileInput.files[0].type === 'image/heif') {
-          fileInput.value = ''
-          this.hasError = true
-          this.error = 'Les fichiers de format HEIC/HEIF ne sont pas pris en charge, merci de convertir votre image en JPEG ou en PNG avant de l\'envoyer.'
-        } else if (fileInput.files[0].size > 10 * 1024 * 1024) {
-          fileInput.value = ''
-          this.hasError = true
-          this.error = 'L\'image dépasse 10MB'
-        } else {
-          this.hasError = false
-          const formData = new FormData()
-          formData.append('signalement[documents]', fileInput.files[0])
-          // TODO : faut-il permettre une sélection multiple ?
-          requests.uploadFile(formData, this.onFileUploaded, this.onFileProgress)
+        for (let i = 0; i < fileInput.files.length; i++) {
+          const file = fileInput.files[i]
+          if (file.type === 'image/heic' || file.type === 'image/heif') {
+            fileInput.value = ''
+            this.hasError = true
+            this.error = 'Les fichiers de format HEIC/HEIF ne sont pas pris en charge, merci de convertir votre image en JPEG ou en PNG avant de l\'envoyer.'
+            break
+          } else if (file.size > 10 * 1024 * 1024) {
+            fileInput.value = ''
+            this.hasError = true
+            this.error = 'L\'image dépasse 10MB'
+            break
+          } else {
+            this.hasError = false
+          }
+        }
+
+        if (!this.hasError) {
+          for (let i = 0; i < fileInput.files.length; i++) {
+            const file = fileInput.files[i]
+            const formData = new FormData()
+            formData.append('signalement[documents]', file)
+            requests.uploadFile(formData, this.onFileUploaded, this.onFileProgress)
+          }
         }
       }
     },
-    deleteFile (event: Event) {
-      // on supprime la donnée enregistrée jusqu'ici
-      this.$emit('update:modelValue', undefined)
-      // TODO : la supprimer sur le bucket ?
-    }
-  },
-  computed: {
-    uploadedFileTitle () {
-      if (this.formStore.data[this.id] !== undefined) {
-        if (this.formStore.data[this.id].titre !== undefined) {
-          return this.formStore.data[this.id].titre
-        } else {
-          const parsedValue = JSON.parse(this.formStore.data[this.id])
-          return parsedValue.titre
-        }
-      } else {
-        return undefined
+    deleteFile (file: any) {
+      const index = this.uploadedFiles.indexOf(file)
+      if (index !== -1) {
+        this.uploadedFiles.splice(index, 1)
+        this.$emit('update:modelValue', this.uploadedFiles)
       }
+      // TODO : la supprimer sur le bucket ?
     }
   },
   emits: ['update:modelValue']
@@ -137,4 +167,18 @@ export default defineComponent({
 </script>
 
 <style>
+.custom-file-input {
+  opacity: 0;
+  position: relative;
+  line-height: 2.5rem;
+  top: -2.5rem;
+  width: 100%;
+}
+.fr-link--error {
+  color: var(--text-default-error);
+}
+.fr-signalement-form-upload-delete-button {
+  display: flex;
+  justify-content: right;
+}
 </style>
