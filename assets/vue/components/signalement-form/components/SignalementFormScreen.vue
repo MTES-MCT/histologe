@@ -153,6 +153,32 @@ export default defineComponent({
         return false
       }
     },
+    needToValidateSubComponents (field: any): boolean {
+      const component = document.querySelector('#' + field.slug)
+      if ((field.type === 'SignalementFormSubscreen' || field.type === 'SignalementFormAddress') && // si le composant est de type Subscreen ou Address
+            field.components && // et il a des composants enfants
+            (component?.classList.contains('fr-hidden') === false || field.type === 'SignalementFormAddress')) { // et que le composant n'est pas caché par conditionnalité si ce n'est pas un SignalementFormAddress
+        return true
+      } else {
+        return false
+      }
+    },
+    validateComponents (components: any) {
+      for (const component of components) {
+        if (this.isRequired(component)) {
+          const value = formStore.data[component.slug]
+          if (!value) {
+            formStore.validationErrors[component.slug] = 'Ce champ est requis' // component.errorText ?
+          }
+        }
+        // TODO : Effectuer d'autres validations nécessaires pour les autres règles (minLength, maxLength, pattern, etc.)
+
+        // Vérifier si ce composant nécessite une validation de ses sous-composants
+        if (this.needToValidateSubComponents(component)) {
+          this.validateComponents(component.components.body)
+        }
+      }
+    },
     updateFormData (slug: string, value: any) {
       this.formStore.data[slug] = value
     },
@@ -195,24 +221,8 @@ export default defineComponent({
       formStore.validationErrors = {}
 
       if (isSaveAndCheck) {
-        const traverseComponents = (components: any) => {
-          for (const field of components) {
-            if (this.isRequired(field)) {
-              const value = formStore.data[field.slug]
-              if (!value) {
-                formStore.validationErrors[field.slug] = 'Ce champ est requis' // field.errorText ?
-              }
-            }
-            // Effectuer d'autres validations nécessaires pour les autres règles (minLength, maxLength, pattern, etc.)
-            // Vérifier si le composant est de type Subscreen ou Address et a des composants enfants
-            if ((field.type === 'SignalementFormSubscreen' || field.type === 'SignalementFormAddress') && field.components) {
-              traverseComponents(field.components.body)
-            }
-          }
-        }
-
         if (this.components && this.components.body) {
-          traverseComponents(this.components.body)
+          this.validateComponents(this.components.body)
           if (Object.keys(formStore.validationErrors).length > 0) {
             window.scrollTo(0, 0)
             return

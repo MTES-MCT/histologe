@@ -2,7 +2,7 @@
   <div class="fr-notice fr-notice--info">
       <div class="fr-container">
           <div class="fr-notice__body">
-              <p class="fr-notice__title" v-html="label">
+              <p class="fr-notice__title" v-html="labelVariablesReplaced">
               </p>
           </div>
       </div>
@@ -11,12 +11,21 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { variablesReplacer } from './../services/variableReplacer'
 
 export default defineComponent({
   name: 'SignalementFormInfo',
   props: {
     id: { type: String, default: null },
     label: { type: String, default: null }
+  },
+  computed: {
+    labelVariablesReplaced (): string {
+      if (this.label !== undefined) {
+        return variablesReplacer.replace(this.label)
+      }
+      return ''
+    }
   }
 })
 </script>

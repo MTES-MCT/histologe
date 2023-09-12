@@ -197,7 +197,6 @@
       "body": [
         {
           "type": "SignalementFormOnlyChoice",
-          "customCss": "question-xl",
           "label": "Vous souhaitez signaler des problèmes sur",
           "slug": "zone_concernee_zone",
           "values": [
@@ -274,7 +273,6 @@
       "body": [
         {
           "type": "SignalementFormOnlyChoice",
-          "customCss": "question-xl",
           "label": "Le logement est...",
           "slug": "type_logement_nature",
           "values": [
@@ -290,7 +288,6 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "customCss": "question-xl",
           "label": "Le logement est-il situé au RDC (rez-de-chaussée)",
           "slug": "type_logement_rdc",
           "conditional": {
@@ -309,7 +306,6 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "customCss": "question-xl",
           "label": "Le logement est-il situé au dernier étage",
           "slug": "type_logement_dernier_etage",
           "conditional": {
@@ -328,7 +324,6 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "customCss": "question-xl",
           "label": "Le logement est-il sous les combles, sans fenêtre ?",
           "slug": "type_logement_sous_comble_sans_fenetre",
           "conditional": {
@@ -347,7 +342,6 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "customCss": "question-xl",
           "label": "Le logement est-il en sous-sol, sans fenêtre ?",
           "slug": "type_logement_sous_sol_sans_fenetre",
           "conditional": {
@@ -392,7 +386,6 @@
       "body": [
         {
           "type": "SignalementFormOnlyChoice",
-          "customCss": "question-xl",
           "label": "Le logement est composé d'une pièce unique ou de plusieurs pièces ?",
           "slug": "composition_logement_piece_unique",
           "values": [
@@ -408,7 +401,6 @@
         },
         {
           "type": "SignalementFormCounter",
-          "customCss": "question-xl",
           "label": "Quelle est la superficie du logement (taille en m²)",
           "slug": "composition_logement_superficie",
           "validate": {
@@ -417,13 +409,11 @@
         },
         {
           "type": "SignalementFormCounter",
-          "customCss": "question-xl",
           "label": "Combien de personnes vivent dans le logement ?",
           "slug": "composition_logement_nombre_personnes"
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "customCss": "question-xl",
           "label": "Des enfants de moins de 6 ans vivent dans le logement ?",
           "slug": "composition_logement_enfants",
           "values": [
@@ -505,10 +495,7 @@
                     "label": "Non",
                     "value": "non"
                   }
-                ],
-                "validate": {
-                  "required": false
-                }
+                ]
               }
             ]
           }
@@ -756,7 +743,6 @@
         {
           "type": "SignalementFormOnlyChoice",
           "label": "Est-ce que les locataires bénéficient d'une aide ou allocation logement ?",
-          "customCss": "question-xl",
           "slug": "logement_social_allocation",
           "values": [
             {
@@ -776,7 +762,6 @@
         {
           "type": "SignalementFormOnlyChoice",
           "label": "De quelle caisse ?",
-          "customCss": "question-xl",
           "slug": "logement_social_allocation_caisse",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
@@ -795,7 +780,6 @@
         {
           "type": "SignalementFormDate",
           "label": "Quelle est la date de naissance de l'allocataire ?",
-          "customCss": "question-xl",
           "slug": "logement_social_date_naissance",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
@@ -804,7 +788,6 @@
         {
           "type": "SignalementFormTextfield",
           "label": "Quel est son numéro d'allocataire ?",
-          "customCss": "question-xl",
           "slug": "logement_social_numero_allocataire",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
@@ -816,7 +799,6 @@
         {
           "type": "SignalementFormCounter",
           "label": "Quel est le montant de l'allocation ?",
-          "customCss": "question-xl",
           "slug": "logement_social_montant_allocation",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
@@ -855,7 +837,6 @@
           "type": "SignalementFormOnlyChoice",
           "slug": "travailleur_social_quitte_logement",
           "label": "Savez-vous si les locataires souhaitent ou ont prévu de quitter votre logement ?",
-          "customCss": "question-xl",
           "values": [
             {
               "label": "Oui",
@@ -875,7 +856,6 @@
           "type": "SignalementFormOnlyChoice",
           "slug": "travailleur_social_accompagnement",
           "label": "Est-ce que les locataires bénéficient d'un accompagnement par un ou une travailleuse sociale ?",
-          "customCss": "question-xl",
           "values": [
             {
               "label": "Oui",

@@ -8,8 +8,8 @@
       placeholder="Taper l'adresse ici"
       :validate="validate"
       v-model="formStore.data[idAddress]"
-      :hasError="hasErrorOnSubscreen"
-      :error="errorOnSubscreen"
+      :hasError="hasError"
+      :error="error"
     />
 
     <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group">
@@ -92,26 +92,6 @@ export default defineComponent({
       screens: { body: updatedSubscreenData },
       suggestions: [] as any[],
       formStore
-    }
-  },
-  computed: {
-    hasErrorOnSubscreen (): boolean {
-      if (formStore.validationErrors[this.id + '_detail_numero'] !== undefined ||
-      formStore.validationErrors[this.id + '_detail_code_postal'] !== undefined ||
-      formStore.validationErrors[this.id + '_detail_commune'] !== undefined) {
-        return true
-      } else {
-        return false
-      }
-      // TODO, n'afficher l'erreur que si le subscreen est caché ?
-    },
-    errorOnSubscreen (): string {
-      const values = [
-        formStore.validationErrors[this.id + '_detail_numero'],
-        formStore.validationErrors[this.id + '_detail_code_postal'],
-        formStore.validationErrors[this.id + '_detail_commune']
-      ]
-      return values.find(value => value !== undefined)
     }
   },
   created () {

@@ -183,7 +183,6 @@
       "body": [
         {
           "type": "SignalementFormOnlyChoice",
-          "customCss": "question-xl",
           "label": "Vous souhaitez signaler des problèmes sur",
           "slug": "zone_concernee_zone",
           "values": [
@@ -260,7 +259,6 @@
       "body": [
         {
           "type": "SignalementFormOnlyChoice",
-          "customCss": "question-xl",
           "label": "Le logement est...",
           "slug": "type_logement_nature",
           "values": [
@@ -276,7 +274,6 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "customCss": "question-xl",
           "label": "Le logement est-il situé au RDC (rez-de-chaussée)",
           "slug": "type_logement_rdc",
           "conditional": {
@@ -295,7 +292,6 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "customCss": "question-xl",
           "label": "Le logement est-il situé au dernier étage",
           "slug": "type_logement_dernier_etage",
           "conditional": {
@@ -314,7 +310,6 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "customCss": "question-xl",
           "label": "Le logement est-il sous les combles, sans fenêtre ?",
           "slug": "type_logement_sous_comble_sans_fenetre",
           "conditional": {
@@ -333,7 +328,6 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "customCss": "question-xl",
           "label": "Le logement est-il en sous-sol, sans fenêtre ?",
           "slug": "type_logement_sous_sol_sans_fenetre",
           "conditional": {
@@ -378,7 +372,6 @@
       "body": [
         {
           "type": "SignalementFormOnlyChoice",
-          "customCss": "question-xl",
           "label": "Le logement est composé d'une pièce unique ou de plusieurs pièces ?",
           "slug": "composition_logement_piece_unique",
           "values": [
@@ -394,7 +387,6 @@
         },
         {
           "type": "SignalementFormCounter",
-          "customCss": "question-xl",
           "label": "Quelle est la superficie du logement (taille en m²)",
           "slug": "composition_logement_superficie",
           "validate": {
@@ -403,7 +395,6 @@
         },
         {
           "type": "SignalementFormCounter",
-          "customCss": "question-xl",
           "label": "Combien de personnes vivent dans le logement ?",
           "slug": "composition_logement_nombre_personnes"
         },
@@ -475,10 +466,7 @@
                     "label": "Non",
                     "value": "non"
                   }
-                ],
-                "validate": {
-                  "required": false
-                }
+                ]
               }
             ]
           }

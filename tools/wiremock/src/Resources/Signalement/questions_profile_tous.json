@@ -174,7 +174,6 @@
         {
           "type": "SignalementFormOnlyChoice",
           "label": "Vous êtes...",
-          "customCss": "question-xl",
           "slug": "signalement_concerne_profil_detail_occupant",
           "values": [
             {
@@ -193,7 +192,6 @@
         {
           "type": "SignalementFormOnlyChoice",
           "label": "Vous êtes...",
-          "customCss": "question-xl",
           "slug": "signalement_concerne_profil_detail_tiers",
           "values": [
             {
@@ -257,7 +255,6 @@
           "type": "SignalementFormOnlyChoice",
           "label": "S'agit-il d'un logement social ?",
           "slug": "signalement_concerne_logement_social_service_secours",
-          "customCss": "question-xl",
           "values": [
             {
               "label": "Oui",
@@ -280,7 +277,6 @@
           "type": "SignalementFormOnlyChoice",
           "label": "S'agit-il d'un logement social ?",
           "slug": "signalement_concerne_logement_social_autre_tiers",
-          "customCss": "question-xl",
           "values": [
             {
               "label": "Oui",
