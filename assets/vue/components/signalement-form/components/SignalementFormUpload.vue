@@ -1,6 +1,10 @@
 <template>
 <div :class="['fr-upload-group', { 'fr-upload-group--disabled': disabled }]" :id="id">
   <div :class="[ customCss, 'fr-upload-wrap', 'fr-py-3v' ]">
+    <label :for="id" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line">
+      {{ label }}
+    </label>
+    <span class="fr-hint-text">{{ description }}</span>
     <input
       type="file"
       :name="id"
@@ -11,10 +15,6 @@
       @change="uploadFile($event)"
       >
       <!-- TODO : gérer type de fichier accept=".pdf,.doc,.docx" -->
-    <label :for="id" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line">
-      {{ label }}
-    </label>
-    <span class="fr-hint-text">{{ description }}</span>
   </div>
 
   <div v-if="formStore.data[id] !== undefined">
@@ -168,10 +168,11 @@ export default defineComponent({
 
 <style>
 .custom-file-input {
-  opacity: 0; /* Make the input transparent */
-  position: absolute; /* Position off-screen or adjust as needed */
+  opacity: 0;
+  position: relative;
+  line-height: 2.5rem;
+  top: -2.5rem;
   width: 100%;
-  height: 100%;
 }
 .fr-link--error {
   color: var(--text-default-error);
