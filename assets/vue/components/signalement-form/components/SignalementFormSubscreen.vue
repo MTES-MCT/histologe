@@ -104,14 +104,6 @@ export default defineComponent({
     updateFormData (slug: string, value: any) {
       this.formStore.data[slug] = value
     }
-  },
-  computed: {
-    labelVariablesReplaced (): string {
-      if (this.label !== undefined) {
-        return variablesReplacer.replace(this.label)
-      }
-      return ''
-    }
   }
 })
 </script>
