@@ -27,7 +27,10 @@
         {
           "type": "SignalementFormEmailfield",
           "label": "Adresse email",
-          "slug": "vos_coordonnees_tiers_email"
+          "slug": "vos_coordonnees_tiers_email",
+          "validate": {
+            "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+          }
         },
         {
           "type": "SignalementFormPhonefield",
@@ -81,7 +84,8 @@
           "label": "Adresse email",
           "slug": "coordonnees_occupant_email",
           "validate": {
-            "required": false
+            "required": false,
+            "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
           }
         },
         {

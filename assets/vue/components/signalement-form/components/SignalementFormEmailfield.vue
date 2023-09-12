@@ -27,7 +27,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import formStore from './../store'
 
 export default defineComponent({
   name: 'SignalementFormEmailfield',
@@ -38,14 +37,9 @@ export default defineComponent({
     modelValue: { type: String, default: null },
     customCss: { type: String, default: '' },
     validate: { type: Object, default: null },
-    disabled: { type: Boolean, default: false }
-  },
-  data () {
-    return {
-      formStore,
-      hasError: false,
-      error: ''
-    }
+    hasError: { type: Boolean, default: false },
+    disabled: { type: Boolean, default: false },
+    error: { type: String, default: '' }
   },
   computed: {
     internalValue: {
@@ -58,23 +52,9 @@ export default defineComponent({
     }
   },
   methods: {
-    isValidEmail (email: string): boolean {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      return emailRegex.test(email)
-    },
     updateValue (event: Event) {
       const value = (event.target as HTMLInputElement).value
-      if (this.isValidEmail(value)) {
-        this.$emit('update:modelValue', value)
-        this.hasError = false
-        this.error = ''
-      } else {
-        this.$emit('update:modelValue', '')
-        console.log('erreur')
-        // this.formStore.validationErrors
-        this.hasError = true
-        this.error = 'Email invalide'
-      }
+      this.$emit('update:modelValue', value)
     }
   },
   emits: ['update:modelValue']
