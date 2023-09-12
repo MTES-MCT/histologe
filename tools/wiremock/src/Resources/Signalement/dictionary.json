@@ -10,6 +10,8 @@
   "nsp": { "default": "Ne sait pas" },
   "post2023": { "default": "En 2023" },
   "before2023": { "default": "Avant 2023" },
+  "before_movein": { "default": "Avant emménagement" },
+  "after_movein": { "default": "Après emménagement" },
   "desordres_batiment_proprete": { "default": "Propreté et entretien" },
   "desordres_batiment_eau": { "default": "Eau et évacuation" },
   "desordres_batiment_isolation": { "default": "Isolation du bâtiment" },
@@ -212,5 +214,41 @@
     "disorderOverview": {
       "default": "Moisissure revient après nettoyage dans la salle de bain : {{dictionaryStore::formStore.data.desordres_logement_humidite_salle_de_bain_details_moisissure_apres_nettoyage}}"
     }
-  }
+  },
+  "desordres_logement_securite_sol_glissant": { "default": "Le sol est glissant ou abîmé" },
+  "desordres_logement_securite_sol_dangereux": { "default": "Le sol risque de s'effondrer : il bouge et est très abîmé" },
+  "desordres_logement_securite_balcons": { "default": "Les balcons et rambardes des fenêtres risquent de tomber" },
+  "desordres_logement_securite_gaz": { "default": "Il y a une odeur de gaz ou des fuites de gaz" },
+  "desordres_logement_securite_plomb": { "default": "Il y a de la peinture au plomb en mauvais état ou des matériaux amiantés en mauvais état" },
+  "desordres_logement_securite_plomb_details_diagnostique": {
+    "default": "Un diagnostic plomb / amiante est disponible pour le logement ?",
+    "disorderOverview": {
+      "default": "Diagnostique plomb / amiante disponible : {{dictionaryStore::formStore.data.desordres_logement_securite_plomb_details_diagnostique}}"
+    }
+  },
+  "desordres_logement_electricite_pas_electricite": { "default": "Il n'y a pas d'électricité dans le logement" },
+  "desordres_logement_electricite_pas_compteur": { "default": "Il n'y a pas de compteur électrique pour le logement" },
+  "desordres_logement_electricite_installation_dangereuse": { "default": "L'installation est dangereuse : les fils sont dénudés, les prises ne tiennent pas dans les murs, etc." },
+  "desordres_logement_electricite_manque_prises": { "default": "Il n'y a pas de prises, ou il en manque" },
+  "desordres_logement_electricite_manque_prises_details_multiprises": { "default": "Des multi-prises sont branchées les unes sur les autres : {{dictionaryStore::formStore.data.desordres_logement_electricite_manque_prises_details_multiprises}}" },
+  "desordres_logement_nuisibles_cafards": { "default": "Il y a des cafards ou blattes" },
+  "desordres_logement_nuisibles_rongeurs": { "default": "Il y a des rongeurs (rats, souris...)" },
+  "desordres_logement_nuisibles_punaises": { "default": "Il y a des punaises de lit" },
+  "desordres_logement_nuisibles_autres": { "default": "Il y a un autre type de nuisible" },
+  "desordres_logement_nuisibles_autres_details_type_nuisibles": {
+    "default": "Précisez le type de nuisibles",
+    "disorderOverview": {
+      "default": "Autre type de nuisible : {{formStore.data.desordres_logement_nuisibles_autres_details_type_nuisibles}}"
+    }
+  },
+  "desordres_logement_nuisibles_date": {
+    "default": "Depuis quand les nuisibles sont présents dans le logement ?",
+    "disorderOverview": {
+      "default": "Nuisibles présents depuis : {{dictionaryStore::formStore.data.desordres_logement_nuisibles_date}}"
+    }
+  },
+  "desordres_logement_bruit_exterieur": { "default": "On entend le bruit extérieur, même en fermant les portes et les fenêtres" },
+  "desordres_logement_bruit_voisins": { "default": "On entend les voisins parler et marcher depuis le logement, comme s'ils étaient dans la pièce" },
+  "desordres_logement_lumiere_pas_lumiere": { "default": "Le logement n'est pas éclairé par la lumière du jour. Je dois allumer la lumière en plein jour" },
+  "desordres_logement_lumiere_pas_volets": { "default": "Il n'y a pas de volets, ni de stores aux fenêtres" }
 }

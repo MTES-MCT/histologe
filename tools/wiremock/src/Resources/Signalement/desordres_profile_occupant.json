@@ -1854,7 +1854,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_securite_sol_glissant",
-          "label": "Le sol est glissant ou abîmé",
+          "label": "{{dictionaryStore::desordres_logement_securite_sol_glissant}}",
           "validate": {
             "required": false
           }
@@ -1871,7 +1871,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_securite_sol_dangereux",
-          "label": "Le sol risque de s'effondrer : il bouge et est très abîmé",
+          "label": "{{dictionaryStore::desordres_logement_securite_sol_dangereux}}",
           "validate": {
             "required": false
           }
@@ -1888,7 +1888,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_securite_balcons",
-          "label": "Les balcons et rambardes des fenêtres risquent de tomber",
+          "label": "{{dictionaryStore::desordres_logement_securite_balcons}}",
           "validate": {
             "required": false
           }
@@ -1905,7 +1905,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_securite_gaz",
-          "label": "Il y a une odeur de gaz ou des fuites de gaz",
+          "label": "{{dictionaryStore::desordres_logement_securite_gaz}}",
           "validate": {
             "required": false
           }
@@ -1913,7 +1913,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_securite_plomb",
-          "label": "Il y a de la peinture au plomb en mauvais état ou des matériaux amiantés en mauvais état",
+          "label": "{{dictionaryStore::desordres_logement_securite_plomb}}",
           "validate": {
             "required": false
           }
@@ -2032,7 +2032,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_electricite_installation_dangereuse",
-          "label": "L'installation est dangereuse : les fils sont dénudés, les prises ne tiennent pas dans les murs, etc.",
+          "label": "{{dictionaryStore::desordres_logement_electricite_installation_dangereuse}}",
           "validate": {
             "required": false
           }
@@ -2061,7 +2061,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_electricite_manque_prises",
-          "label": "Il n'y a pas de prises, ou il en manque",
+          "label": "{{dictionaryStore::desordres_logement_electricite_manque_prises}}",
           "validate": {
             "required": false
           }
@@ -2136,7 +2136,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_nuisibles_cafards",
-          "label": "Il y a des cafards ou blattes",
+          "label": "{{dictionaryStore::desordres_logement_nuisibles_cafards}}",
           "validate": {
             "required": false
           }
@@ -2144,7 +2144,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_nuisibles_rongeurs",
-          "label": "Il y a des rongeurs (rats, souris...)",
+          "label": "{{dictionaryStore::desordres_logement_nuisibles_rongeurs}}",
           "validate": {
             "required": false
           }
@@ -2152,7 +2152,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_nuisibles_punaises",
-          "label": "Il y a des punaises de lit",
+          "label": "{{dictionaryStore::desordres_logement_nuisibles_punaises}}",
           "validate": {
             "required": false
           }
@@ -2178,7 +2178,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_nuisibles_autres",
-          "label": "Il y a un autre type de nuisible",
+          "label": "{{dictionaryStore::desordres_logement_nuisibles_autres}}",
           "validate": {
             "required": false
           }
@@ -2195,7 +2195,7 @@
             "body": [
                 {
                   "type": "SignalementFormTextfield",
-                  "label": "Précisez le type de nuisibles",
+                  "label": "{{dictionaryStore::desordres_logement_nuisibles_autres_details_type_nuisibles}}",
                   "slug": "desordres_logement_nuisibles_autres_details_type_nuisibles"
                 }
             ]
@@ -2203,7 +2203,7 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Depuis quand les nuisibles sont présents dans le logement ?",
+          "label": "{{dictionaryStore::desordres_logement_nuisibles_date}}",
           "slug": "desordres_logement_nuisibles_date",
           "conditional": {
             "show": "formStore.data.desordres_logement_nuisibles_cafards === 1 || formStore.data.desordres_logement_nuisibles_rongeurs === 1 || formStore.data.desordres_logement_nuisibles_punaises === 1 || formStore.data.desordres_logement_nuisibles_autres === 1"
@@ -2211,11 +2211,11 @@
           "values": [
             {
               "label": "Avant que j'emménage",
-              "value": "before"
+              "value": "before_movein"
             },
             {
               "label": "Après mon emménagement",
-              "value": "after"
+              "value": "after_movein"
             }
           ]
         },
@@ -2351,7 +2351,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_lumiere_pas_volets",
-          "label": "Il n'y a pas de volets, ni de stores aux fenêtres",
+          "label": "{{dictionaryStore::desordres_logement_lumiere_pas_volets}}",
           "validate": {
             "required": false
           }
