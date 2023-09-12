@@ -20,23 +20,8 @@
               v-bind:key="field.slug"
               :class="field.css"
               >
-              <div v-if="field.slug.includes('_upload')">
-                <div v-if="getNbPhotosForSlug(field.slug) > 0">
-                  <span v-if="getNbPhotosForSlug(field.slug) > 1">
-                    {{ getNbPhotosForSlug(field.slug) }} photos ont été ajoutées à ce critère
-                  </span>
-                  <span v-else>
-                    {{ getNbPhotosForSlug(field.slug) }} photo a été ajoutée à ce critère
-                  </span>
-                  <!-- TODO : mettre en forme -->
-                  <!-- TODO : différencier photo (slug photos_upload) et fichier (slug _upload) ? -->
-                </div>
-              </div>
-              <div v-else>
-                {{field.label}}
-              </div>
+              {{field.label}}
             </div>
-
           </div>
         </section>
       </div>
@@ -105,23 +90,36 @@ export default defineComponent({
       const answers = []
       for (const slug of answersSlugs) {
         const translatedSlug = this.getTranslationSlug(slug)
-        const label = dictionaryManager.translate(translatedSlug, 'disorderOverview')
 
+        let label
         let css = ''
+        if (slug.includes('_upload')) {
+          const nbUpload = this.getNbPhotosForSlug(translatedSlug)
+          if (nbUpload > 0) {
+            label = this.getUploadLabel(slug, nbUpload)
+            css = 'italic-text fr-pl-3v border-left'
+          }
+
+        } else {
+          label = dictionaryManager.translate(translatedSlug, 'disorderOverview')
+        }
+
         if (headOfGroupSlug === '') {
           headOfGroupSlug = slug
         } else if (slug.includes(headOfGroupSlug)) {
-          css = 'fr-pl-3v border-left'
+          css += ' fr-pl-3v border-left'
         } else {
           headOfGroupSlug = slug
-          css = 'fr-pt-3v'
+          css += ' fr-pt-3v'
         }
 
-        answers.push({ slug, label, css })
+        if (label !== undefined) {
+          answers.push({ slug, label, css })
+        }
       }
       return answers
     },
-    getTranslationSlug (slug: string) {
+    getTranslationSlug (slug: string): string {
       if (slug.endsWith('_pieces')) {
         slug = 'form_room_pieces'
       } else if (slug.endsWith('_pieces_cuisine')) {
@@ -142,6 +140,23 @@ export default defineComponent({
         }
       }
       return 0
+    },
+    getUploadLabel (slug: string, nbUpload: number): string {
+      let label = nbUpload.toString()
+      if (slug.includes('photos_upload')) {
+        if (nbUpload > 1) {
+          label += ' photos jointes'
+        } else {
+          label += ' photo jointe'
+        }
+      } else {
+        if (nbUpload > 1) {
+          label += ' fichiers joints'
+        } else {
+          label += ' fichier joint'
+        }
+      }
+      return label
     }
   }
 })
@@ -150,5 +165,8 @@ export default defineComponent({
 <style>
 .signalement-form-disorder-overview .border-left {
   border-left: 2px solid var(--border-action-high-blue-france);
+}
+.italic-text {
+    font-style: italic;
 }
 </style>
