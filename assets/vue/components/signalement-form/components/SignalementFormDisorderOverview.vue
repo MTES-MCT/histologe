@@ -18,6 +18,7 @@
             <div
               v-for="field in categoryFields(disorder)"
               v-bind:key="field.slug"
+              :class="field.css"
               >
               {{field.label}}
             </div>
@@ -43,6 +44,7 @@
             <div
               v-for="field in categoryFields(disorder)"
               v-bind:key="field.slug"
+              :class="field.css"
               >
               {{field.label}}
             </div>
@@ -84,11 +86,23 @@ export default defineComponent({
       }
       answersSlugs.sort()
 
+      let headOfGroupSlug = ''
       const answers = []
       for (const slug of answersSlugs) {
         const translatedSlug = this.getTranslationSlug(slug)
         const label = dictionaryManager.translate(translatedSlug, 'disorderOverview')
-        answers.push({ slug, label })
+
+        let css = ''
+        if (headOfGroupSlug === '') {
+          headOfGroupSlug = slug
+        } else if (slug.includes(headOfGroupSlug)) {
+          css = 'fr-pl-3v border-left'
+        } else {
+          headOfGroupSlug = slug
+          css = 'fr-pt-3v'
+        }
+
+        answers.push({ slug, label, css })
       }
       return answers
     },
@@ -109,4 +123,7 @@ export default defineComponent({
 </script>
 
 <style>
+.signalement-form-disorder-overview .border-left {
+  border-left: 2px solid var(--border-action-high-blue-france);
+}
 </style>
