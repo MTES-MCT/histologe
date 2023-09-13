@@ -11,7 +11,7 @@
           "label": "Nom de l'organisme",
           "slug": "vos_coordonnees_tiers_nom_organisme",
           "conditional": {
-            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'service_secours'"
+            "show": "formStore.data.signalement_concerne_profil_detail_bailleur_bailleur === 'organisme_societe'"
           }
         },
         {

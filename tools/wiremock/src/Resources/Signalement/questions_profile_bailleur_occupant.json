@@ -10,6 +10,9 @@
           "type": "SignalementFormOnlyChoice",
           "label": "Civilité",
           "slug": "vos_coordonnees_occupant_civilite",
+          "validate": {
+            "required": false
+          },
           "values": [
             {
               "label": "Madame",
