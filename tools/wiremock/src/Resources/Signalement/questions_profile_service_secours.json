@@ -125,7 +125,7 @@
         },
         {
           "type": "SignalementFormTextfield",
-          "label": "Prénom",
+          "label": "Prénom (facultatif)",
           "slug": "coordonnees_bailleur_prenom",
           "validate": {
             "required": false
@@ -133,7 +133,7 @@
         },
         {
           "type": "SignalementFormEmailfield",
-          "label": "Adresse email",
+          "label": "Adresse email (facultatif)",
           "slug": "coordonnees_bailleur_email",
           "validate": {
             "required": false
@@ -141,7 +141,7 @@
         },
         {
           "type": "SignalementFormTextfield",
-          "label": "Téléphone",
+          "label": "Téléphone (facultatif)",
           "slug": "coordonnees_bailleur_tel",
           "validate": {
             "required": false
@@ -149,7 +149,7 @@
         },
         {
           "type": "SignalementFormAddress",
-          "label": "Adresse postale",
+          "label": "Adresse postale (facultatif)",
           "slug": "coordonnees_bailleur_adresse",
           "validate": {
             "required": false

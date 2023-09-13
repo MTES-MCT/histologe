@@ -79,23 +79,35 @@
         },
         {
           "type": "SignalementFormTextfield",
-          "label": "Prénom",
-          "slug": "coordonnees_bailleur_prenom"
+          "label": "Prénom (facultatif)",
+          "slug": "coordonnees_bailleur_prenom",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormEmailfield",
-          "label": "Adresse email",
-          "slug": "coordonnees_bailleur_email"
+          "label": "Adresse email (facultatif)",
+          "slug": "coordonnees_bailleur_email",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormTextfield",
-          "label": "Téléphone",
-          "slug": "coordonnees_bailleur_tel"
+          "label": "Téléphone (facultatif)",
+          "slug": "coordonnees_bailleur_tel",
+          "validate": {
+            "required": false
+          }
         },
         {
           "type": "SignalementFormAddress",
-          "label": "Adresse postale",
-          "slug": "coordonnees_bailleur_adresse"
+          "label": "Adresse postale (facultatif)",
+          "slug": "coordonnees_bailleur_adresse",
+          "validate": {
+            "required": false
+          }
         }
       ],
       "footer": [
