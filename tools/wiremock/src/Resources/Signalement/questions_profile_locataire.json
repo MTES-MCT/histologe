@@ -882,7 +882,7 @@
         },
         {
           "type": "SignalementFormTextfield",
-          "label": "Quel est votre numéro d'allocataire ?",
+          "label": "Quel est votre numéro d'allocataire ? (facultatif)",
           "slug": "logement_social_numero_allocataire",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
@@ -893,7 +893,7 @@
         },
         {
           "type": "SignalementFormCounter",
-          "label": "Quel est le montant de votre allocation ?",
+          "label": "Quel est le montant de votre allocation ? (facultatif)",
           "slug": "logement_social_montant_allocation",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
