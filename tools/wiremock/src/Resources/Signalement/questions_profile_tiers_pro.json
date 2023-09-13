@@ -477,6 +477,10 @@
                   {
                     "label": "Non",
                     "value": "non"
+                  },
+                  {
+                    "label": "Je ne sais pas",
+                    "value": "nsp"
                   }
                 ]
               }
