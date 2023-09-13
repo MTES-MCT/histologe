@@ -27,7 +27,10 @@
         {
           "type": "SignalementFormTextfield",
           "label": "Nom de l'organisme",
-          "slug": "vos_coordonnees_occupant_nom_organisme"
+          "slug": "vos_coordonnees_occupant_nom_organisme",
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil_detail_bailleur_proprietaire === 'organisme_societe'"
+          }
         },
         {
           "type": "SignalementFormTextfield",
