@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\ProfileDeclarant;
 use App\Repository\SignalementRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -31,6 +32,9 @@ class Signalement
 
     #[ORM\Column(type: 'string', length: 255)]
     private $uuid;
+
+    #[ORM\Column(type: 'string', nullable: true, enumType: ProfileDeclarant::class)]
+    private ?ProfileDeclarant $profileDeclarant = null;
 
     #[ORM\ManyToMany(targetEntity: Situation::class, inversedBy: 'signalements')]
     private $situations;
@@ -85,11 +89,24 @@ class Signalement
     private $nomProprio;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $prenomProprio;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $adresseProprio;
+
+    #[ORM\Column(type: 'string', length: 5, nullable: true)]
+    private ?string $codePostalProprio;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $villeProprio;
 
     #[ORM\Column(type: 'string', length: 15, nullable: true)]
     #[Assert\Length(min: 10, max: 15)]
     private $telProprio;
+
+    #[ORM\Column(type: 'string', length: 15, nullable: true)]
+    #[Assert\Length(min: 10, max: 15)]
+    private ?string $telProprioBis;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $mailProprio;
@@ -121,11 +138,17 @@ class Signalement
     #[ORM\Column(type: 'string', length: 15, nullable: true)]
     private $telDeclarant;
 
+    #[ORM\Column(type: 'string', length: 15, nullable: true)]
+    private ?string $telDeclarantBis;
+
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $mailDeclarant;
 
     #[ORM\Column(type: 'string', length: 200, nullable: true)]
     private $structureDeclarant;
+
+    #[ORM\Column(type: 'string', length: 10, nullable: true)]
+    private ?string $civiiliteOccupant;
 
     #[ORM\Column(type: 'string', length: 50)]
     #[Assert\NotBlank]
@@ -325,6 +348,15 @@ class Signalement
 
     #[ORM\ManyToOne(inversedBy: 'signalements')]
     private ?SignalementDraft $createdFrom = null;
+
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $typeComposition = [];
+
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $situationFoyer = [];
+
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $informationProcedure = [];
 
     public function __construct()
     {
@@ -1695,6 +1727,126 @@ class Signalement
     public function setCreatedFrom(?SignalementDraft $createdFrom): self
     {
         $this->createdFrom = $createdFrom;
+
+        return $this;
+    }
+
+    public function getProfileDeclarant(): ?ProfileDeclarant
+    {
+        return $this->profileDeclarant;
+    }
+
+    public function setProfileDeclarant(?ProfileDeclarant $profileDeclarant): self
+    {
+        $this->profileDeclarant = $profileDeclarant;
+
+        return $this;
+    }
+
+    public function getPrenomProprio(): ?string
+    {
+        return $this->prenomProprio;
+    }
+
+    public function setPrenomProprio(?string $prenomProprio): self
+    {
+        $this->prenomProprio = $prenomProprio;
+
+        return $this;
+    }
+
+    public function getCodePostalProprio(): ?string
+    {
+        return $this->codePostalProprio;
+    }
+
+    public function setCodePostalProprio(?string $codePostalProprio): self
+    {
+        $this->codePostalProprio = $codePostalProprio;
+
+        return $this;
+    }
+
+    public function getVilleProprio(): ?string
+    {
+        return $this->villeProprio;
+    }
+
+    public function setVilleProprio(?string $villeProprio): self
+    {
+        $this->villeProprio = $villeProprio;
+
+        return $this;
+    }
+
+    public function getTelProprioBis(): ?string
+    {
+        return $this->telProprioBis;
+    }
+
+    public function setTelProprioBis(?string $telProprioBis): self
+    {
+        $this->telProprioBis = $telProprioBis;
+
+        return $this;
+    }
+
+    public function getTelDeclarantBis(): ?string
+    {
+        return $this->telDeclarantBis;
+    }
+
+    public function setTelDeclarantBis(?string $telDeclarantBis): self
+    {
+        $this->telDeclarantBis = $telDeclarantBis;
+
+        return $this;
+    }
+
+    public function getCiviiliteOccupant(): ?string
+    {
+        return $this->civiiliteOccupant;
+    }
+
+    public function setCiviiliteOccupant(?string $civiiliteOccupant): self
+    {
+        $this->civiiliteOccupant = $civiiliteOccupant;
+
+        return $this;
+    }
+
+    public function getTypeComposition(): ?array
+    {
+        return $this->typeComposition;
+    }
+
+    public function setTypeComposition(?array $typeComposition): self
+    {
+        $this->typeComposition = $typeComposition;
+
+        return $this;
+    }
+
+    public function getSituationFoyer(): ?array
+    {
+        return $this->situationFoyer;
+    }
+
+    public function setSituationFoyer(?array $situationFoyer): self
+    {
+        $this->situationFoyer = $situationFoyer;
+
+        return $this;
+    }
+
+    public function getInformationProcedure(): ?array
+    {
+        return $this->informationProcedure;
+    }
+
+    public function setInformationProcedure(?array $informationProcedure): self
+    {
+        $this->informationProcedure = $informationProcedure;
 
         return $this;
     }

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
@@ -45,6 +46,8 @@ class SignalementDraft
 
     #[ORM\OneToMany(mappedBy: 'createdFrom', targetEntity: Signalement::class)]
     private Collection $signalements;
+
+    private ?SignalementDraftRequest $signalementDraftRequest = null;
 
     public function __construct()
     {
@@ -138,6 +141,18 @@ class SignalementDraft
     public function setStatus(SignalementDraftStatus $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getSignalementDraftRequest(): ?SignalementDraftRequest
+    {
+        return $this->signalementDraftRequest;
+    }
+
+    public function setSignalementDraftRequest(?SignalementDraftRequest $signalementDraftRequest): self
+    {
+        $this->signalementDraftRequest = $signalementDraftRequest;
 
         return $this;
     }

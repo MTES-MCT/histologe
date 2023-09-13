@@ -16,6 +16,7 @@ class SignalementDraftRequest
     private ?string $adresseLogementComplementAdresseEscalier = null;
     private ?string $adresseLogementComplementAdresseEtage = null;
     private ?string $adresseLogementComplementAdresseNumeroAppartement = null;
+    private ?string $adresseLogementComplementAdresseAutre = null;
     private ?string $signalementConcerneProfil = null;
     private ?string $signalementConcerneProfilDetailOccupant = null;
     private ?string $signalementConcerneProfilDetailTiers = null;
@@ -34,6 +35,7 @@ class SignalementDraftRequest
     private ?string $vosCoordonneesOccupantPrenom = null;
     private ?string $vosCoordonneesOccupantEmail = null;
     private ?string $vosCoordonneesOccupantTel = null;
+    private ?string $vosCoordonneesOccupantTelSecondaire = null;
     private ?string $coordonneesOccupantNom = null;
     private ?string $coordonneesOccupantPrenom = null;
     private ?string $coordonneesOccupantEmail = null;
@@ -235,6 +237,18 @@ class SignalementDraftRequest
         return $this;
     }
 
+    public function getAdresseLogementComplementAdresseAutre(): ?string
+    {
+        return $this->adresseLogementComplementAdresseAutre;
+    }
+
+    public function setAdresseLogementComplementAdresseAutre(?string $adresseLogementComplementAdresseAutre): self
+    {
+        $this->adresseLogementComplementAdresseAutre = $adresseLogementComplementAdresseAutre;
+
+        return $this;
+    }
+
     public function getSignalementConcerneProfil(): ?string
     {
         return $this->signalementConcerneProfil;
@@ -380,6 +394,18 @@ class SignalementDraftRequest
     public function setVosCoordonneesOccupantTel(?string $vosCoordonneesOccupantTel): self
     {
         $this->vosCoordonneesOccupantTel = $vosCoordonneesOccupantTel;
+
+        return $this;
+    }
+
+    public function getVosCoordonneesOccupantTelSecondaire(): ?string
+    {
+        return $this->vosCoordonneesOccupantTelSecondaire;
+    }
+
+    public function setVosCoordonneesOccupantTelSecondaire(?string $vosCoordonneesOccupantTelSecondaire): self
+    {
+        $this->vosCoordonneesOccupantTelSecondaire = $vosCoordonneesOccupantTelSecondaire;
 
         return $this;
     }

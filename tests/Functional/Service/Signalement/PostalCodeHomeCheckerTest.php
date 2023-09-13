@@ -59,36 +59,4 @@ class PostalCodeHomeCheckerTest extends KernelTestCase
         $territory->setAuthorizedCodesInsee(['69091']);
         $this->assertFalse($this->postalCodeHomeChecker->isAuthorizedInseeCode($territory, '69092'));
     }
-
-    public function testGetZipCodeTerritory(): void
-    {
-        $this->assertEquals(
-            PostalCodeHomeChecker::CORSE_DU_SUD_CODE_DEPARTMENT_2A,
-            $this->postalCodeHomeChecker->getZipCode('20167'),
-        );
-        $this->assertEquals(
-            PostalCodeHomeChecker::CORSE_DU_SUD_CODE_DEPARTMENT_2A,
-            $this->postalCodeHomeChecker->getZipCode('20000'),
-        );
-        $this->assertEquals(
-            PostalCodeHomeChecker::HAUTE_CORSE_CODE_DEPARTMENT_2B,
-            $this->postalCodeHomeChecker->getZipCode('20200')
-        );
-        $this->assertEquals(
-            PostalCodeHomeChecker::HAUTE_CORSE_CODE_DEPARTMENT_2B,
-            $this->postalCodeHomeChecker->getZipCode('20600')
-        );
-        $this->assertEquals(
-            PostalCodeHomeChecker::LA_REUNION_CODE_DEPARTMENT_974,
-            $this->postalCodeHomeChecker->getZipCode('97400')
-        );
-        $this->assertEquals(
-            PostalCodeHomeChecker::MARTINIQUE_CODE_DEPARTMENT_972,
-            $this->postalCodeHomeChecker->getZipCode('97200')
-        );
-        $this->assertEquals(
-            '13',
-            $this->postalCodeHomeChecker->getZipCode('13002')
-        );
-    }
 }

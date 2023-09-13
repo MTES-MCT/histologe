@@ -30,6 +30,7 @@ use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\QualificationStatusService;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementFileProcessor;
+use App\Service\Signalement\ZipcodeProvider;
 use App\Service\UploadHandlerService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -116,6 +117,7 @@ class FrontSignalementController extends AbstractController
         UploadHandlerService $uploadHandlerService,
         ReferenceGenerator $referenceGenerator,
         PostalCodeHomeChecker $postalCodeHomeChecker,
+        ZipcodeProvider $zipcodeProvider,
         EventDispatcherInterface $eventDispatcher,
         SignalementQualificationFactory $signalementQualificationFactory,
         QualificationStatusService $qualificationStatusService,
@@ -241,7 +243,7 @@ class FrontSignalementController extends AbstractController
             if (!empty($signalement->getCpOccupant())) {
                 $signalement->setTerritory(
                     $territoryRepository->findOneBy([
-                        'zip' => $postalCodeHomeChecker->getZipCode($signalement->getCpOccupant()), 'isActive' => 1, ])
+                        'zip' => $zipcodeProvider->getZipCode($signalement->getCpOccupant()), 'isActive' => 1, ])
                 );
             }
 
