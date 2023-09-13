@@ -927,7 +927,18 @@
         {
           "type": "SignalementFormInfo",
           "label": "Contactez votre assurance pour savoir si elle prend en charge le ou les problèmes rencontrés.",
-          "slug": "info_procedure_assurance_contactee_info"
+          "slug": "info_procedure_assurance_contactee_info",
+          "conditional": {
+            "show": "formStore.data.info_procedure_assurance_contactee ===  'non'"
+          }
+        },
+        {
+          "type": "SignalementFormInfo",
+          "label": "Il est fortement recommandé de prendre une assurance habitation pour votre logement. Pour plus d'info, rendez-vous sur le site du service public.",
+          "slug": "info_procedure_assurance_info",
+          "conditional": {
+            "show": "formStore.data.info_procedure_assurance_contactee === 'pas_assurance_logement'"
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",

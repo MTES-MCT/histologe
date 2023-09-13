@@ -1049,6 +1049,14 @@
           ]
         },
         {
+          "type": "SignalementFormInfo",
+          "label": "Contactez votre assurance pour savoir si elle prend en charge le ou les problèmes rencontrés.",
+          "slug": "info_procedure_assurance_contactee_info",
+          "conditional": {
+            "show": "formStore.data.info_procedure_assurance_contactee ===  'non'"
+          }
+        },
+        {
           "type": "SignalementFormWarning",
           "label": "D'après la loi, vous devez avoir une assurance habitation pour votre logement. Pour plus d'info, rendez-vous sur le site du service public.",
           "slug": "info_procedure_assurance_contactee_warning",
@@ -1082,11 +1090,6 @@
               "value": "nsp"
             }
           ]
-        },
-        {
-          "type": "SignalementFormInfo",
-          "label": "Contactez votre assurance pour savoir si elle prend en charge le ou les problèmes rencontrés.",
-          "slug": "info_procedure_assurance_contactee_info"
         }
       ],
       "footer": [
