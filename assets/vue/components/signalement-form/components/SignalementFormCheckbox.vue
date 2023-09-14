@@ -27,6 +27,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import formStore from './../store'
 import { variablesReplacer } from './../services/variableReplacer'
 
 export default defineComponent({
@@ -43,6 +44,7 @@ export default defineComponent({
   },
   data () {
     return {
+      formStore,
       variablesReplacer,
       idCheckbox: this.id + '_check'
     }
@@ -51,6 +53,13 @@ export default defineComponent({
     updateValue (event: Event) {
       const value = (event.target as HTMLInputElement).checked
       this.$emit('update:modelValue', value ? 1 : null)
+      if (!value) {
+        for (const dataname in formStore.data) {
+          if (dataname.includes(this.id)) {
+            formStore.data[dataname] = null
+          }
+        }
+      }
     }
   },
   emits: ['update:modelValue']
