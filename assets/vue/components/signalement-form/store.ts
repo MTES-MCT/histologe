@@ -76,6 +76,7 @@ const formStore: FormStore = reactive({
   lastButtonClicked: '',
   inputComponents: [
     'SignalementFormTextfield',
+    'SignalementFormTextarea',
     'SignalementFormOnlyChoice',
     'SignalementFormRoomList',
     'SignalementFormAddress',

@@ -1006,7 +1006,7 @@
           ]
         },
         {
-          "type": "SignalementFormTextfield",
+          "type": "SignalementFormTextarea",
           "label": "Quelle a été la réponse de votre assurance ?",
           "slug": "info_procedure_reponse_assurance",
           "conditional": {

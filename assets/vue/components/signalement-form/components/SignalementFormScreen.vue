@@ -84,6 +84,7 @@ import SignalementFormPhonefield from './SignalementFormPhonefield.vue'
 import SignalementFormRoomList from './SignalementFormRoomList.vue'
 import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
+import SignalementFormTextarea from './SignalementFormTextarea.vue'
 import SignalementFormTime from './SignalementFormTime.vue'
 import SignalementFormUpload from './SignalementFormUpload.vue'
 import SignalementFormUploadPhotos from './SignalementFormUploadPhotos.vue'
@@ -96,6 +97,7 @@ export default defineComponent({
   name: 'SignalementFormScreen',
   components: {
     SignalementFormTextfield,
+    SignalementFormTextarea,
     SignalementFormButton,
     SignalementFormLink,
     SignalementFormOnlyChoice,
