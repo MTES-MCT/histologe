@@ -1452,7 +1452,7 @@
                 "label": "Quand le DPE de votre logement a-t-il été réalisé ?",
                 "slug": "desordres_logement_chauffage_details_dpe_annee",
                 "conditional": {
-                  "show": "(formStore.data.desordres_logement_chauffage_details_fenetres_permeables === 1 || formStore.data.desordres_logement_chauffage_details_difficultes_chauffage === 1 || formStore.data.desordres_logement_chauffage_details_chauffage_KO === 1 ) && formStore.data.bail_dpe_dpe === 'oui' "
+                  "show": "(formStore.data.desordres_logement_chauffage_details_fenetres_permeables === 1 || formStore.data.desordres_logement_chauffage_details_difficultes_chauffage === 1 || formStore.data.desordres_logement_chauffage_details_chauffage_KO === 1 ) && formStore.data.bail_dpe_dpe === 'oui'"
                 },
                 "values": [
                   {
