@@ -172,11 +172,15 @@ export default defineComponent({
             formStore.validationErrors[component.slug] = 'Ce champ est requis'
           }
         }
-        // s'il y a une valeur, on vérifie si un pattern est requis
-        if (value && component.validate?.pattern !== undefined) {
-          const regexPattern = new RegExp(component.validate.pattern)
-          const result = regexPattern.test(value)
-          if (result === false) {
+        let regexPattern
+        // s'il y a une valeur, on vérifie si un pattern est requis (ou si c'est un type email)
+        if (value && component.type === 'SignalementFormEmailfield') {
+          regexPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        } else if (value && component.validate?.pattern !== undefined) {
+          regexPattern = new RegExp(component.validate.pattern)
+        }
+        if (regexPattern !== undefined) {
+          if (regexPattern.test(value) === false) {
             formStore.validationErrors[component.slug] = 'Format invalide'
           }
         }

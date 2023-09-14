@@ -24,10 +24,7 @@
         {
           "type": "SignalementFormEmailfield",
           "label": "Adresse email",
-          "slug": "vos_coordonnees_tiers_email",
-          "validate": {
-            "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
-          }
+          "slug": "vos_coordonnees_tiers_email"
         },
         {
           "type": "SignalementFormPhonefield",
@@ -81,8 +78,7 @@
           "label": "Adresse email",
           "slug": "coordonnees_occupant_email",
           "validate": {
-            "required": false,
-            "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+            "required": false
           }
         },
         {
@@ -137,8 +133,7 @@
           "label": "Adresse email",
           "slug": "coordonnees_bailleur_email",
           "validate": {
-            "required": false,
-            "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+            "required": false
           }
         },
         {
