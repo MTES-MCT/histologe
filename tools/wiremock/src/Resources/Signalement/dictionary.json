@@ -17,7 +17,7 @@
   "desordres_logement_nuisibles": { "label": "Présence de nuisibles" },
   "desordres_logement_bruit": { "label": "Bruit, pollution sonore" },
   "desordres_logement_lumiere": { "label": "Eclairement, lumière naturelle" },
-  "batiment": { "label": "le bâtiment" },
-  "logement": { "label": "le logement" },
-  "batiment_logement": { "label": "le bâtiment et le logement" }
+  "batiment": { "label": "le <span class=\"fr-span-highlight-batiment\">bâtiment</span>" },
+  "logement": { "label": "le <span class=\"fr-span-highlight-logement\">logement</span>" },
+  "batiment_logement": { "label": "le <span class=\"fr-span-highlight-batiment\">bâtiment</span> et le <span class=\"fr-span-highlight-logement\">logement</span>" }
 }

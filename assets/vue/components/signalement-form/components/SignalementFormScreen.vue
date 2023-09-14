@@ -312,4 +312,13 @@ export default defineComponent({
     display: inline-flex;
     margin-left: 0.25rem;
   }
+
+  .fr-span-highlight-batiment {
+    /* équivalent de --orange-terre-battue-main-645 en rgb */
+    background-color: rgb(228, 121, 74, 0.25);
+  }
+  .fr-span-highlight-logement {
+    /* équivalent de --blue-france-main-525 en rgb */
+    background-color: rgb(106, 106, 244, 0.25);
+  }
 </style>
