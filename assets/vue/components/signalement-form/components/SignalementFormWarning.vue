@@ -1,5 +1,5 @@
 <template>
-    <div class="fr-alert fr-alert--warning fr-my-5w">
+    <div class="fr-alert fr-alert--warning fr-mb-5v">
         <p class="fr-alert__title" v-html="labelVariablesReplaced"></p>
     </div>
 </template>
