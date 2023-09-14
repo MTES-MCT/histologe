@@ -498,7 +498,10 @@
               "label": "Non",
               "value": "non"
             }
-          ]
+          ],
+          "conditional": {
+            "show": "formStore.data.type_logement_commodites_cuisine === 'oui'"
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -546,7 +549,10 @@
               "label": "Non",
               "value": "non"
             }
-          ]
+          ],
+          "conditional": {
+            "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui'"
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -578,7 +584,7 @@
             }
           ],
           "conditional": {
-            "show": "formStore.data.type_logement_commodites_wc_collective === 'non'"
+            "show": "formStore.data.type_logement_commodites_wc === 'non'"
           }
         },
         {
@@ -594,7 +600,10 @@
               "label": "Non",
               "value": "non"
             }
-          ]
+          ],
+          "conditional": {
+            "show": "formStore.data.type_logement_commodites_wc === 'oui'"
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -609,7 +618,10 @@
               "label": "Non",
               "value": "non"
             }
-          ]
+          ],
+          "conditional": {
+            "show": "formStore.data.type_logement_commodites_cuisine === 'oui' && formStore.data.type_logement_commodites_wc === 'oui'"
+          }
         }
       ],
       "footer": [
