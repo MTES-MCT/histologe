@@ -230,7 +230,7 @@
             }
           ],
           "conditional": {
-            "show": "formStore.data.signalement_concerne_profil_detail_occupant === 'bailleur_occupant'"
+            "show": "formStore.data.signalement_concerne_profil === 'logement_occupez' && formStore.data.signalement_concerne_profil_detail_occupant === 'bailleur_occupant'"
           }
         },
         {
