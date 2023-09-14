@@ -147,7 +147,7 @@ export default defineComponent({
     isRequired (field: any): boolean {
       const component = document.querySelector('#' + field.slug)
       if (((field.validate === undefined && formStore.inputComponents.includes(field.type)) || // si c'est un composant de saisie sans objet de validation c'est qu'il est obligatoire
-          (field.validate && field.validate.required)) && // ou il y a des règles de validation explicites
+          (field.validate && field.validate.required !== false)) && // ou il y a des règles de validation explicites
           component?.classList.contains('fr-hidden') === false) { // et que le composant n'est pas caché par conditionnalité
         return true
       } else {
@@ -166,14 +166,25 @@ export default defineComponent({
     },
     validateComponents (components: any) {
       for (const component of components) {
+        const value = formStore.data[component.slug]
         if (this.isRequired(component)) {
-          const value = formStore.data[component.slug]
           if (!value) {
-            formStore.validationErrors[component.slug] = 'Ce champ est requis' // component.errorText ?
+            formStore.validationErrors[component.slug] = 'Ce champ est requis'
           }
         }
-        // TODO : Effectuer d'autres validations nécessaires pour les autres règles (minLength, maxLength, pattern, etc.)
-
+        let regexPattern
+        // s'il y a une valeur, on vérifie si un pattern est requis (ou si c'est un type email)
+        if (value && component.type === 'SignalementFormEmailfield') {
+          regexPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        } else if (value && component.validate?.pattern !== undefined) {
+          regexPattern = new RegExp(component.validate.pattern)
+        }
+        if (regexPattern !== undefined) {
+          if (regexPattern.test(value) === false) {
+            formStore.validationErrors[component.slug] = 'Format invalide'
+          }
+        }
+        // TODO : Effectuer d'autres validations nécessaires pour les autres règles (minLength, maxLength, etc.)
         // Vérifier si ce composant nécessite une validation de ses sous-composants
         if (this.needToValidateSubComponents(component)) {
           this.validateComponents(component.components.body)
