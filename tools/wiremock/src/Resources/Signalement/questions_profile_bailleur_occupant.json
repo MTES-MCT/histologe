@@ -116,6 +116,10 @@
     "description": "<p>Nous allons vous poser des questions sur la composition du logement.<p><p>Les documents utiles sont:</p><ul><li>Le bail</li><li>L'état des lieux d'entrée</li><li>Le diagnostic performance énergie (DPE)</li></ul><p>Toutes les questions sont obligatoires, sauf mention contraire.<p>",
     "slug": "ecran_intermediaire_type_composition",
     "screenCategory": "Type et composition",
+    "icon": {
+      "src": "/img/form/screens/type_composition_logement-colors.svg",
+      "alt": ""
+    },
     "components": {
       "body": [
       ],
@@ -579,10 +583,6 @@
     "label": "",
     "slug": "bail_dpe",
     "screenCategory": "Type et composition",
-    "icon": {
-      "src": "/img/form/screens/type_composition_logement-colors.svg",
-      "alt": ""
-    },
     "components": {
       "body": [
         {
