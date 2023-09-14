@@ -7,7 +7,7 @@
       <img :src="icon.src" :alt="icon.alt">
     </div>
     <h1>{{ label }}</h1>
-    <div v-html="descriptionVariablesReplaced"></div>
+    <div v-html="variablesReplacer.replace(description)"></div>
     <div
       v-if="components != undefined"
       >
@@ -133,18 +133,11 @@ export default defineComponent({
   data () {
     return {
       formStore,
+      variablesReplacer,
       currentDisorderIndex: {
         batiment: 0,
         logement: 0
       } as { [key: string]: number }
-    }
-  },
-  computed: {
-    descriptionVariablesReplaced (): string {
-      if (this.description !== undefined) {
-        return variablesReplacer.replace(this.description)
-      }
-      return ''
     }
   },
   methods: {

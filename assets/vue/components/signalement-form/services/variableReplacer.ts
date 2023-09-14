@@ -2,8 +2,11 @@ import formStore from '../store'
 import dictionaryStore from '../dictionary-store'
 
 export const variablesReplacer = {
-  replace (texteToReplace: string): string {
-    const descriptionWithValues = texteToReplace.replace(/\{\{([\w.:]+)\}\}/g, (match, expression) => {
+  replace (textToReplace: string | undefined): string {
+    if (textToReplace === undefined) {
+      return ''
+    }
+    const descriptionWithValues = textToReplace.replace(/\{\{([\w.:]+)\}\}/g, (match, expression) => {
       const value = this.evaluateExpression(expression)
       return value ?? match
     })

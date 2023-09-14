@@ -2,7 +2,7 @@
   <div class="fr-notice fr-notice--info fr-notice--info-warning fr-mb-5v">
     <div class="fr-container">
       <div class="fr-notice__body">
-        <p class="fr-notice__title" v-html="labelVariablesReplaced">
+        <p class="fr-notice__title" v-html="variablesReplacer.replace(label)">
         </p>
       </div>
     </div>
@@ -19,12 +19,9 @@ export default defineComponent({
     id: { type: String, default: null },
     label: { type: String, default: null }
   },
-  computed: {
-    labelVariablesReplaced (): string {
-      if (this.label !== undefined) {
-        return variablesReplacer.replace(this.label)
-      }
-      return ''
+  data () {
+    return {
+      variablesReplacer
     }
   }
 })

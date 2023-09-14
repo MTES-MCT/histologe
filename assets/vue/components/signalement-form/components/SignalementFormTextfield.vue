@@ -1,7 +1,7 @@
 <template>
 <div :class="['fr-input-group', { 'fr-input-group--disabled': disabled }]" :id="id">
   <label class='fr-label' :for="id">
-    {{ labelVariablesReplaced }}
+    {{ variablesReplacer.replace(label) }}
     <span class="fr-hint-text">{{ description }}</span>
   </label>
     <div :class="[ customCss, 'fr-input-wrap' ]">
@@ -44,6 +44,11 @@ export default defineComponent({
     disabled: { type: Boolean, default: false },
     error: { type: String, default: '' }
   },
+  data () {
+    return {
+      variablesReplacer
+    }
+  },
   computed: {
     internalValue: {
       get () {
@@ -52,12 +57,6 @@ export default defineComponent({
       set (newValue: string) {
         this.$emit('update:modelValue', newValue)
       }
-    },
-    labelVariablesReplaced (): string {
-      if (this.label !== undefined) {
-        return variablesReplacer.replace(this.label)
-      }
-      return ''
     }
   },
   methods: {

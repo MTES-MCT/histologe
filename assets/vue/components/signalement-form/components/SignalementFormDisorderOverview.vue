@@ -11,16 +11,20 @@
           v-bind:key="disorder"
           class="fr-accordion"
           >
-          <h3 class="fr-accordion__title">
-            <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-batiment-' + index">{{ dictionaryStore[disorder].default }}</button>
-          </h3>
-          <div class="fr-collapse" :id="'accordion-disorder-batiment-' + index">
-            <div
-              v-for="field in categoryFields(disorder)"
-              v-bind:key="field.slug"
-              :class="field.css"
-              >
-              {{field.label}}
+          <div
+            v-if="hasCategoryFields(disorder)"
+            >
+            <h3 class="fr-accordion__title">
+              <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-batiment-' + index">{{ dictionaryStore[disorder].default }}</button>
+            </h3>
+            <div class="fr-collapse" :id="'accordion-disorder-batiment-' + index">
+              <div
+                v-for="field in categoryFields(disorder)"
+                v-bind:key="field.slug"
+                :class="field.css"
+                >
+                {{field.label}}
+              </div>
             </div>
           </div>
         </section>
@@ -37,16 +41,20 @@
           v-bind:key="disorder"
           class="fr-accordion"
           >
-          <h3 class="fr-accordion__title">
-            <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-logement-' + index">{{ dictionaryStore[disorder].default }}</button>
-          </h3>
-          <div class="fr-collapse" :id="'accordion-disorder-logement-' + index">
-            <div
-              v-for="field in categoryFields(disorder)"
-              v-bind:key="field.slug"
-              :class="field.css"
-              >
-              {{field.label}}
+          <div
+            v-if="hasCategoryFields(disorder)"
+            >
+            <h3 class="fr-accordion__title">
+              <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-logement-' + index">{{ dictionaryStore[disorder].default }}</button>
+            </h3>
+            <div class="fr-collapse" :id="'accordion-disorder-logement-' + index">
+              <div
+                v-for="field in categoryFields(disorder)"
+                v-bind:key="field.slug"
+                :class="field.css"
+                >
+                {{field.label}}
+              </div>
             </div>
           </div>
         </section>
@@ -77,7 +85,7 @@ export default defineComponent({
     }
   },
   methods: {
-    categoryFields (categorySlug: string) {
+    getAnswersSlugs (categorySlug: string) {
       const answersSlugs = []
       for (const dataname in formStore.data) {
         if (dataname.includes(categorySlug) && formStore.data[dataname] !== null) {
@@ -85,6 +93,14 @@ export default defineComponent({
         }
       }
       answersSlugs.sort()
+      return answersSlugs
+    },
+    hasCategoryFields (categorySlug: string) {
+      const answersSlugs = this.getAnswersSlugs(categorySlug)
+      return answersSlugs.length > 0
+    },
+    categoryFields (categorySlug: string) {
+      const answersSlugs = this.getAnswersSlugs(categorySlug)
 
       let headOfGroupSlug = ''
       const answers = []
@@ -99,7 +115,6 @@ export default defineComponent({
             label = this.getUploadLabel(slug, nbUpload)
             css = 'italic-text fr-pl-3v border-left'
           }
-
         } else {
           label = dictionaryManager.translate(translatedSlug, 'disorderOverview')
         }

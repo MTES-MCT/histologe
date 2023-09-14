@@ -1,7 +1,7 @@
 <template>
     <!-- Champ type number -->
     <div class="fr-input-group" :id="id">
-    <label :class="[ customCss, 'fr-label' ]" :for="id" v-html="labelVariablesReplaced"></label>
+    <label :class="[ customCss, 'fr-label' ]" :for="id" v-html="variablesReplacer.replace(label)"></label>
     <input
         type="number"
         pattern="[0-9]*"
@@ -39,6 +39,11 @@ export default defineComponent({
     error: { type: String, default: '' },
     defaultValue: { type: Number, default: null }
   },
+  data () {
+    return {
+      variablesReplacer
+    }
+  },
   computed: {
     internalValue: {
       get () {
@@ -47,12 +52,6 @@ export default defineComponent({
       set (newValue: string) {
         this.$emit('update:modelValue', newValue)
       }
-    },
-    labelVariablesReplaced (): string {
-      if (this.label !== undefined) {
-        return variablesReplacer.replace(this.label)
-      }
-      return ''
     }
   },
   methods: {

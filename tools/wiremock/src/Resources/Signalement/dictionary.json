@@ -75,7 +75,7 @@
   "desordres_batiment_securite_toit": { "default": "Le plafond ou le toit risque de s'effondrer et il a de très grosses fissures" },
   "desordres_batiment_securite_escalier": { "default": "Les escaliers et / ou les rambardes sont dangereuses" },
   "desordres_batiment_securite_escalier_details_dangereux": {
-    "default": "L'escalier menace de s'effondrer, c'est dangeureux de l'utiliser ?",
+    "default": "L'escalier menace de s'effondrer, c'est dangereux de l'utiliser ?",
     "disorderOverview": {
       "default": "L'escalier est dangereux : {{dictionaryStore::formStore.data.desordres_batiment_securite_escalier_details_dangereux}}"
     }
