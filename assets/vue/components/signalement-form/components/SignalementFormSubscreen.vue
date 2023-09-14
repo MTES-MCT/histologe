@@ -37,6 +37,7 @@ import { defineComponent } from 'vue'
 import formStore from './../store'
 import { variablesReplacer } from './../services/variableReplacer'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
+import SignalementFormTextarea from './SignalementFormTextarea.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
 import SignalementFormLink from './SignalementFormLink.vue'
 import SignalementFormOnlyChoice from './SignalementFormOnlyChoice.vue'
@@ -60,6 +61,7 @@ export default defineComponent({
   name: 'SignalementFormSubscreen',
   components: {
     SignalementFormTextfield,
+    SignalementFormTextarea,
     SignalementFormButton,
     SignalementFormLink,
     SignalementFormOnlyChoice,
