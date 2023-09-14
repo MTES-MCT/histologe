@@ -1,11 +1,11 @@
 <template>
-  <div class="fr-notice fr-notice--info">
-      <div class="fr-container">
-          <div class="fr-notice__body">
-              <p class="fr-notice__title" v-html="labelVariablesReplaced">
-              </p>
-          </div>
+  <div class="fr-notice fr-notice--info fr-mb-5v">
+    <div class="fr-container">
+      <div class="fr-notice__body">
+        <p class="fr-notice__title" v-html="labelVariablesReplaced">
+        </p>
       </div>
+    </div>
   </div>
 </template>
 

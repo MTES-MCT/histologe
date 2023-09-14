@@ -1,15 +1,13 @@
 <template>
   <div :id="id">
-    <div class="fr-container">
-      <p>
-        Votre signalement est bien enregistré.
-        Vous allez recevoir un email de confirmation avec un lien vers votre page de suivi : <strong>gardez-le précieusement</strong> !
-      </p>
-      <p>
-        Bon à savoir : en fonction du type de problèmes rencontrés, la procédure peut prendre du temps.
-        Nos services font le maximum pour traiter votre demande au plus vite.
-      </p>
-    </div>
+    <p>
+      Votre signalement est bien enregistré.
+      Vous allez recevoir un email de confirmation avec un lien vers votre page de suivi : <strong>gardez-le précieusement</strong> !
+    </p>
+    <p>
+      Bon à savoir : en fonction du type de problèmes rencontrés, la procédure peut prendre du temps.
+      Nos services font le maximum pour traiter votre demande au plus vite.
+    </p>
   </div>
 </template>
 
