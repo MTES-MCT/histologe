@@ -41,7 +41,7 @@
     </div>
   </div>
   <div
-    v-if="components != undefined"
+    v-if="components !== undefined && components.footer !== undefined && components.footer.length > 0"
     class="fr-container form-screen-footer"
     >
     <div>
