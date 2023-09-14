@@ -413,7 +413,7 @@
             "body": [
               {
                 "type": "SignalementFormCounter",
-                "label": "Quelle est la superficie de la pièce {{number}} (taille en m²) ?",
+                "label": "Quelle est la superficie de la pièce {{number}} (taille en m²) ? (facultatif)",
                 "slug": "type_logement_pieces_a_vivre_superficie_piece_{{number}}",
                 "validate": {
                   "required": false
@@ -711,7 +711,7 @@
         {
           "type": "SignalementFormUpload",
           "slug": "bail_dpe_bail_upload",
-          "label": "Ajoutez votre bail en cliquant sur le bouton ci-dessous",
+          "label": "Ajoutez votre bail en cliquant sur le bouton ci-dessous (facultatif)",
           "conditional": {
             "show": "formStore.data.bail_dpe_bail === 'oui'"
           },
@@ -776,7 +776,7 @@
         {
           "type": "SignalementFormUpload",
           "slug": "bail_dpe_dpe_upload",
-          "label": "Ajoutez le DPE en cliquant sur le bouton ci-dessous",
+          "label": "Ajoutez le DPE en cliquant sur le bouton ci-dessous (facultatif)",
           "conditional": {
             "show": "formStore.data.bail_dpe_dpe === 'oui'"
           },

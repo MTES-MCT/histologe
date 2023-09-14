@@ -62,7 +62,7 @@
       "body": [
         {
           "type": "SignalementFormTextfield",
-          "label": "Nom de famille",
+          "label": "Nom de famille (facultatif)",
           "slug": "coordonnees_occupant_nom",
           "validate": {
             "required": false

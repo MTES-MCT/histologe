@@ -8,7 +8,7 @@
       "body": [
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Lien avec l'occupant",
+          "label": "Lien avec l'occupant (facultatif)",
           "slug": "vos_coordonnees_tiers_lien",
           "values": [
             {
@@ -76,7 +76,7 @@
       "body": [
         {
           "type": "SignalementFormTextfield",
-          "label": "Nom de famille",
+          "label": "Nom de famille (facultatif)",
           "slug": "coordonnees_occupant_nom",
           "validate": {
             "required": false
@@ -84,7 +84,7 @@
         },
         {
           "type": "SignalementFormTextfield",
-          "label": "Prénom",
+          "label": "Prénom (facultatif)",
           "slug": "coordonnees_occupant_prenom",
           "validate": {
             "required": false
@@ -92,7 +92,7 @@
         },
         {
           "type": "SignalementFormEmailfield",
-          "label": "Adresse email",
+          "label": "Adresse email (facultatif)",
           "slug": "coordonnees_occupant_email",
           "validate": {
             "required": false
@@ -100,7 +100,7 @@
         },
         {
           "type": "SignalementFormPhonefield",
-          "label": "Téléphone",
+          "label": "Téléphone (facultatif)",
           "slug": "coordonnees_occupant_tel",
           "validate": {
             "required": false
@@ -401,7 +401,7 @@
         },
         {
           "type": "SignalementFormCounter",
-          "label": "Quelle est la superficie du logement (taille en m²)",
+          "label": "Quelle est la superficie du logement (taille en m²) (facultatif)",
           "slug": "composition_logement_superficie",
           "validate": {
             "required": false
@@ -476,7 +476,7 @@
             "body": [
               {
                 "type": "SignalementFormCounter",
-                "label": "Quelle est la superficie de la pièce {{number}} (taille en m²) ?",
+                "label": "Quelle est la superficie de la pièce {{number}} (taille en m²) ? (facultatif)",
                 "slug": "type_logement_pieces_a_vivre_superficie_piece_{{number}}",
                 "validate": {
                   "required": false
