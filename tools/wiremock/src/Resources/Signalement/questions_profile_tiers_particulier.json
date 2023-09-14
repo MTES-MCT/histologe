@@ -961,7 +961,7 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "utilisation_service_previous",
-          "action": "goto:desordres_renseignes",
+          "action": "goto:ecran_intermediaire_procedure",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {

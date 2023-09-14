@@ -1109,7 +1109,7 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "info_procedure_utilisation_service_previous",
-          "action": "goto:travailleur_social",
+          "action": "goto:ecran_intermediaire_procedure",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
