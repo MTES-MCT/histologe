@@ -1,7 +1,7 @@
 {
-  "batiment": { "label": "le <span class=\"fr-span-highlight-batiment\">bâtiment</span>" },
-  "logement": { "label": "le <span class=\"fr-span-highlight-logement\">logement</span>" },
-  "batiment_logement": { "label": "le <span class=\"fr-span-highlight-batiment\">bâtiment</span> et le <span class=\"fr-span-highlight-logement\">logement</span>" },
+  "batiment": { "default": "le <span class=\"fr-span-highlight-batiment\">bâtiment</span>" },
+  "logement": { "default": "le <span class=\"fr-span-highlight-logement\">logement</span>" },
+  "batiment_logement": { "default": "le <span class=\"fr-span-highlight-batiment\">bâtiment</span> et le <span class=\"fr-span-highlight-logement\">logement</span>" },
   "electrique": { "default": "électrique" },
   "gaz": { "default": "gaz, bois, éthanol ou fioul" },
   "aucun": { "default": "aucun" },

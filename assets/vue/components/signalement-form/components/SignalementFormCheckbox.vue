@@ -50,7 +50,7 @@ export default defineComponent({
   methods: {
     updateValue (event: Event) {
       const value = (event.target as HTMLInputElement).checked
-      this.$emit('update:modelValue', Number(value))
+      this.$emit('update:modelValue', value ? 1 : null)
     }
   },
   emits: ['update:modelValue']
