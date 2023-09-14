@@ -39,7 +39,7 @@ export default defineComponent({
   color: var(--text-default-warning);
 }
 .fr-notice.fr-notice--info.fr-notice--info-warning .fr-notice__body::before {
-  -webkit-mask-image: url("../../../../../public/build/dsfr/icons/system/fr--warning-fill.svg");
-  mask-image: url("../../../../../public/build/dsfr/icons/system/fr--warning-fill.svg");
+  -webkit-mask-image: url("../../../img/fr--warning-fill.svg");
+  mask-image: url("../../../img/fr--warning-fill.svg");
 }
 </style>
