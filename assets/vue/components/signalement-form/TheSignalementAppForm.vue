@@ -164,6 +164,7 @@ export default defineComponent({
             requests.initDesordresProfil(this.handleInitQuestions)
           } else {
             // on fait un appel API pour charger la suite des questions avant de changer d'écran
+            // TODO : il faudrait trouver un moyen de repérer si les questions profils ont déjà été chargées, et si c'est juste un slug qui n'existe pas avec ce profil
             requests.initQuestionsProfil(this.handleInitQuestions)
           }
         }
