@@ -32,7 +32,7 @@ class EtageParserTest extends TestCase
             0,
         ];
 
-        yield 'Bâtiment principal' => ['Bâtiment principal', 0];
+        yield 'Bâtiment principal' => ['Bâtiment principal', null];
 
         yield '4e etage gauche' => ['4e etage gauche', 4];
 
