@@ -441,9 +441,13 @@
   {
     "type": "SignalementFormScreen",
     "label": "Les pièces à vivre",
-    "description": "Vous avez indiqué qu'il y a {{formStore.data.composition_logement_nb_pieces}} pièces à vivre (salon, chambre) dans votre logement",
+    "description": "Vous avez indiqué qu'il y a <strong>{{formStore.data.composition_logement_nb_pieces}} pièces à vivre</strong> (salon, chambre) dans votre logement",
     "slug": "type_logement_pieces_a_vivre",
     "screenCategory": "Type et composition",
+    "icon": {
+      "src": "/img/form/PIECES/Picto-salon.svg",
+      "alt": ""
+    },
     "conditional": {
       "show": "formStore.data.composition_logement_nombre_pieces === 'plusieurs_pieces'"
     },
@@ -459,8 +463,9 @@
             "body": [
               {
                 "type": "SignalementFormCounter",
-                "label": "Quelle est la superficie de la pièce {{number}} (taille en m²) ? (facultatif)",
+                "label": "Quelle est la superficie de la <strong>pièce {{number}}</strong> (taille en m²) ? (facultatif)",
                 "slug": "type_logement_pieces_a_vivre_superficie_piece_{{number}}",
+                "customCss": "fr-mt-5v",
                 "validate": {
                   "required": false
                 }
@@ -513,6 +518,16 @@
     "screenCategory": "Type et composition",
     "components": {
       "body": [
+        {
+          "type": "SignalementFormIcon",
+          "slug": "type_logement_commodites_cuisine_icon",
+          "icons": [
+            {
+              "src": "/img/form/PIECES/Picto-cuisine.svg",
+              "alt": ""
+            }
+          ]
+        },
         {
           "type": "SignalementFormOnlyChoice",
           "label": "Il y a-t-il une cuisine ou un coin cuisine dans le logement ?",
@@ -569,6 +584,16 @@
           }
         },
         {
+          "type": "SignalementFormIcon",
+          "slug": "type_logement_commodites_salle_de_bain_icon",
+          "icons": [
+            {
+              "src": "/img/form/PIECES/Picto-SDB.svg",
+              "alt": ""
+            }
+          ]
+        },
+        {
           "type": "SignalementFormOnlyChoice",
           "label": "Il y a-t-il une salle de bain, salle d'eau avec douche ou baignoire dans le logement ?",
           "slug": "type_logement_commodites_salle_de_bain",
@@ -622,6 +647,16 @@
           "conditional": {
             "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui'"
           }
+        },
+        {
+          "type": "SignalementFormIcon",
+          "slug": "type_logement_commodites_wc_icon",
+          "icons": [
+            {
+              "src": "/img/form/PIECES/Picto-WC.svg",
+              "alt": ""
+            }
+          ]
         },
         {
           "type": "SignalementFormOnlyChoice",

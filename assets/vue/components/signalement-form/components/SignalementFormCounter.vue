@@ -1,7 +1,7 @@
 <template>
     <!-- Champ type number -->
     <div class="fr-input-group" :id="id">
-    <label :class="[ customCss, 'fr-label' ]" :for="id">{{ label }}</label>
+    <label :class="[ customCss, 'fr-label' ]" :for="id" v-html="label"></label>
     <input
         type="number"
         pattern="[0-9]*"
