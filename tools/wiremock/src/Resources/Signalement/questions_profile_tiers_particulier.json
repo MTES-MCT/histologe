@@ -111,8 +111,8 @@
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "coordonnees_occupant_tel",
-          "action": "goto:coordonnees_tiers",
+          "slug": "coordonnees_occupant_previous",
+          "action": "goto:vos_coordonnees_tiers",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
@@ -175,7 +175,7 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "coordonnees_bailleur_previous",
-          "action": "goto:vos_coordonnees_occupant",
+          "action": "goto:coordonnees_occupant",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
@@ -506,7 +506,7 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "type_logement_pieces_a_vivre_previous",
-          "action": "goto:type_logement",
+          "action": "goto:composition_logement",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {

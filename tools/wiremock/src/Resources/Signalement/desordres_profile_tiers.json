@@ -15,9 +15,22 @@
         {
           "type": "SignalementFormButton",
           "label": "Précédent",
-          "slug": "ecran_intermediaire_les_desordres_previous",
+          "slug": "ecran_intermediaire_les_desordres_previous_autre",
           "action": "goto:travailleur_social",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line",
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'tiers_particulier' || formStore.data.signalement_concerne_profil_detail_tiers === 'tiers_pro' || formStore.data.signalement_concerne_profil_detail_tiers === 'bailleur'"
+          }
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "ecran_intermediaire_les_desordres_previous_secours",
+          "action": "goto:type_logement_commodites",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line",
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'service_secours'"
+          }
         },
         {
           "type": "SignalementFormButton",
@@ -2408,9 +2421,22 @@
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
-          "slug": "desordres_renseignes_next",
+          "slug": "desordres_renseignes_next_autre",
           "action": "goto:ecran_intermediaire_procedure",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'tiers_particulier' || formStore.data.signalement_concerne_profil_detail_tiers === 'tiers_pro' || formStore.data.signalement_concerne_profil_detail_tiers === 'bailleur'"
+          }
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "desordres_renseignes_next_secours",
+          "action": "goto:utilisation_service",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'service_secours'"
+          }
         }
       ]
     }

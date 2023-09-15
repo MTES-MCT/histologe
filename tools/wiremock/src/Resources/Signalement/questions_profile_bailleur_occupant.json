@@ -97,7 +97,7 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "zone_concernee_zone_previous",
-          "action": "goto:coordonnees_bailleur",
+          "action": "goto:vos_coordonnees_occupant",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
