@@ -14,6 +14,7 @@ use App\Service\Esabora\Model\DossierMessageSISHPersonne;
 use App\Service\HtmlCleaner;
 use App\Service\UploadHandlerService;
 use App\Utils\AddressParser;
+use App\Utils\EtageParser;
 use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -85,7 +86,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
                     ?->setTimezone(new \DateTimeZone(self::DEFAULT_TIMEZONE))
                     ->format($formatDateTime)
             )
-            ->setLocalisationEtage($signalement->getEtageOccupant())
+            ->setLocalisationEtage(EtageParser::parse($signalement->getEtageOccupant()))
             ->setLocalisationEscalier($signalement->getEscalierOccupant())
             ->setLocalisationNumPorte($signalement->getNumAppartOccupant())
             ->setSitOccupantNbAdultes($signalement->getNbAdultes())
