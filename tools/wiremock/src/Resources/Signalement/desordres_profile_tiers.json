@@ -177,22 +177,29 @@
           "slug": "desordres_batiment_ras",
           "action": "resolve:findNextScreen",
           "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
-        }
-      ],
-      "footer": [
-        {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "desordres_batiment_previous",
-          "action": "goto:ecran_intermediaire_les_desordres",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
-          "type": "SignalementFormButton",
-          "label": "Valider ma sélection",
-          "slug": "desordres_batiment_valider",
-          "action": "resolve:findNextScreen",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "desordres_batiment_boutons",
+          "customCss": "button-group-full-size fr-mt-5v",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Valider ma sélection",
+                "slug": "desordres_batiment_valider",
+                "action": "resolve:findNextScreen",
+                "customCss": "fr-btn--icon-left fr-icon-check-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "desordres_batiment_previous",
+                "action": "goto:ecran_intermediaire_les_desordres",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -1169,22 +1176,29 @@
           "slug": "desordres_logement_ras",
           "action": "resolve:findNextScreen",
           "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
-        }
-      ],
-      "footer": [
-        {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "desordres_logement_previous",
-          "action": "resolve:findPreviousScreen",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
-          "type": "SignalementFormButton",
-          "label": "Valider ma sélection",
-          "slug": "desordres_logement_valider",
-          "action": "resolve:findNextScreen",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "desordres_logement_boutons",
+          "customCss": "button-group-full-size fr-mt-5v",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Valider ma sélection",
+                "slug": "desordres_logement_valider",
+                "action": "resolve:findNextScreen",
+                "customCss": "fr-btn--icon-left fr-icon-check-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "desordres_logement_previous",
+                "action": "resolve:findPreviousScreen",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }

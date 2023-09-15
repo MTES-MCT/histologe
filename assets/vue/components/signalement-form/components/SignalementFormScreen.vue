@@ -217,13 +217,9 @@ export default defineComponent({
       }
     },
     toggleComponentBySlug (slug:string, isVisible:string) {
-      const componentToToggle = document.querySelector('#' + slug)
+      const componentToToggle = document.querySelector('#' + slug + ' button')
       if (componentToToggle) {
-        if (isVisible === '1') {
-          componentToToggle.classList.remove('fr-hidden')
-        } else {
-          componentToToggle.classList.add('fr-hidden')
-        }
+        (componentToToggle as HTMLButtonElement).disabled = (isVisible !== '1')
       }
     },
     async showScreenBySlug (slug: string, slugButton:string, isSaveAndCheck:boolean) {

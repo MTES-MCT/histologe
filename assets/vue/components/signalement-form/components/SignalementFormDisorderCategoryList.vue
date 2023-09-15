@@ -69,7 +69,11 @@ export default defineComponent({
       }
     },
     hasSelectedDisorders () {
-      return formStore.data.categorieDisorders.batiment.length > 0 || formStore.data.categorieDisorders.logement.length > 0
+      if (this.id.includes('batiment')) {
+        return formStore.data.categorieDisorders.batiment.length > 0
+      } else {
+        return formStore.data.categorieDisorders.logement.length > 0
+      }
     },
     deleteDisorder (idDisorder: string) {
       for (const dataname in formStore.data) {
