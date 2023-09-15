@@ -248,7 +248,7 @@
             }
           ],
           "conditional": {
-            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'bailleur'"
+            "show": "formStore.data.signalement_concerne_profil === 'autre_logement' && formStore.data.signalement_concerne_profil_detail_tiers === 'bailleur'"
           }
         },
         {
@@ -270,7 +270,7 @@
             }
           ],
           "conditional": {
-            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'service_secours'"
+            "show": "formStore.data.signalement_concerne_profil === 'autre_logement' && formStore.data.signalement_concerne_profil_detail_tiers === 'service_secours'"
           }
         },
         {
