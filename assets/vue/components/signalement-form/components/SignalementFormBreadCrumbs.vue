@@ -55,6 +55,7 @@
                 v-else-if="menuItem.active"
                 class="fr-sidemenu__link"
                 href="#"
+                @click="handleClick(menuItem.slug)"
                 >{{ menuItem.label }}</a
               >
               <a
@@ -81,16 +82,19 @@ export default defineComponent({
   components: {
     SignalementFormModalBackHome
   },
+  props: {
+    clickEvent: Function
+  },
   data () {
     return {
       formStore,
       desktopMenuLabels: [
-        'Adresse et coordonnées',
-        'Type et composition',
-        'Situation du foyer',
-        'Désordres',
-        'Procédure',
-        'Récapitulatif'
+        { slug: 'adresse_logement_intro', label: 'Adresse et coordonnées' },
+        { slug: 'ecran_intermediaire_type_composition', label: 'Type et composition' },
+        { slug: 'ecran_intermediaire_situation_occupant', label: 'Situation du foyer' },
+        { slug: 'ecran_intermediaire_les_desordres', label: 'Désordres' },
+        { slug: 'ecran_intermediaire_procedure', label: 'Procédure' },
+        { slug: 'validation_signalement', label: 'Récapitulatif' }
       ]
     }
   },
@@ -99,17 +103,24 @@ export default defineComponent({
       const menuItems:Array<MenuItem> = []
       const currentCategoryIndex:number = this.currentCategoryIndex
       for (let i:number = 0; i < this.desktopMenuLabels.length; i++) {
-        menuItems.push({ label: this.desktopMenuLabels[i], active: (i <= currentCategoryIndex), current: (this.desktopMenuLabels[i] === formStore.currentScreen?.screenCategory) })
+        menuItems.push({ label: this.desktopMenuLabels[i].label, slug: this.desktopMenuLabels[i].slug, active: (i <= currentCategoryIndex), current: (this.desktopMenuLabels[i].label === formStore.currentScreen?.screenCategory) })
       }
       return menuItems
     },
     currentCategoryIndex ():number {
       for (let i:number = 0; i < this.desktopMenuLabels.length; i++) {
-        if (this.desktopMenuLabels[i] === formStore.currentScreen?.screenCategory) {
+        if (this.desktopMenuLabels[i].label === formStore.currentScreen?.screenCategory) {
           return i
         }
       }
       return 0
+    }
+  },
+  methods: {
+    handleClick (slug: string) {
+      if (this.clickEvent !== undefined) {
+        this.clickEvent(slug, false)
+      }
     }
   }
 })
