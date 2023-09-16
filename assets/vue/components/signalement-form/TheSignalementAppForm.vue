@@ -70,6 +70,7 @@ export default defineComponent({
   },
   data () {
     return {
+      slugCommonProfil: ['introduction', 'adresse_logement_intro', 'adresse_logement', 'signalement_concerne'],
       slugCoordonnees: ['vos_coordonnees_occupant', 'vos_coordonnees_tiers'],
       nextSlug: '',
       isErrorInit: false,
@@ -138,6 +139,17 @@ export default defineComponent({
         this.changeScreenBySlug(undefined)
       }
     },
+    removeNextScreensIfProfileUpdated () {
+      if (formStore.data.currentStep === 'signalement_concerne') {
+        const profil = formStore.data.profil
+        profileUpdater.update()
+        if (profil !== formStore.data.profil) {
+          formStore.screenData = formStore.screenData.filter(
+            (screen: any) => this.slugCommonProfil.includes(screen.slug)
+          )
+        }
+      }
+    },
     changeScreenBySlug (requestResponse: any) {
       formStore.lastButtonClicked = ''
       // si on reçoit un uuid on l'enregistre pour les mises à jour
@@ -145,6 +157,7 @@ export default defineComponent({
         formStore.data.uuidSignalementDraft = requestResponse.uuid
       }
       if (formStore.screenData) {
+        this.removeNextScreensIfProfileUpdated()
         const nextScreen = formStore.screenData.find((screen: any) => screen.slug === this.nextSlug)
         if (nextScreen !== undefined) {
           formStore.currentScreen = nextScreen
@@ -155,8 +168,6 @@ export default defineComponent({
           }
         } else {
           if (this.slugCoordonnees.includes(this.nextSlug)) { // TODO à mettre à jour suivant le slug des différents profils
-            // on détermine le profil
-            profileUpdater.update()
             // on fait un appel API pour charger la suite des questions avant de changer d'écran
             requests.initQuestionsProfil(this.handleInitQuestions)
           } else if (this.nextSlug.indexOf('desordres') !== -1) {
