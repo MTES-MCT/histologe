@@ -375,11 +375,10 @@ class SignalementType extends AbstractType
                 'label' => 'Ville du logement',
             ])
             ->add('etageOccupant', NumberType::class, [
-                'row_attr' => [
-                    'class' => 'fr-input-group',
-                ],
                 'attr' => [
                     'class' => 'fr-input',
+                    'pattern' => '[0-9]',
+                    'maxlength' => '3',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
