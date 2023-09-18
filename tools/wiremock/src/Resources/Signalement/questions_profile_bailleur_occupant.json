@@ -681,7 +681,7 @@
         {
           "type": "SignalementFormWarning",
           "slug": "bail_dpe_dpe_warning",
-          "label": "Le DPE fait partie des documents à réaliser obligatoirement pour son logement. Plus d'info sur le site du service public.",
+          "label": "Le DPE fait partie des documents à réaliser obligatoirement pour son logement. Plus d'info sur <a href='https://www.service-public.fr/particuliers/vosdroits/F16096' target='_blank' rel='noopener'>le site du service public.</a>",
           "conditional": {
             "show": "formStore.data.bail_dpe_dpe === 'non' || formStore.data.bail_dpe_dpe === 'nsp'"
           }
@@ -993,7 +993,7 @@
         },
         {
           "type": "SignalementFormInfo",
-          "label": "Il est fortement recommandé de prendre une assurance habitation pour votre logement. Pour plus d'info, rendez-vous sur le site du service public.",
+          "label": "Il est fortement recommandé de prendre une assurance habitation pour votre logement. Pour plus d'info, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F2023' target='_blank' rel='nopener'>le site du service public.</a>",
           "slug": "info_procedure_assurance_info",
           "conditional": {
             "show": "formStore.data.info_procedure_assurance_contactee === 'pas_assurance_logement'"
