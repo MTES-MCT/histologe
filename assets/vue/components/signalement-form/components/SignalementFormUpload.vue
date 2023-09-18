@@ -1,5 +1,5 @@
 <template>
-<div :class="['fr-upload-group', { 'fr-upload-group--disabled': disabled }]" :id="id">
+<div :class="['fr-mb-5v fr-upload-group', { 'fr-upload-group--disabled': disabled }]" :id="id">
   <div :class="[ customCss, 'fr-upload-wrap', 'fr-py-3v' ]">
     <label :for="id" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line">
       {{ label }}
@@ -23,7 +23,7 @@
       :key="index"
       class="fr-grid-row "
       >
-      <div class="fr-col-8">
+      <div class="fr-col-8 cut-text">
         <i>{{ getFileTitle(file) }}</i>
       </div>
       <div class="fr-col-4 fr-signalement-form-upload-delete-button">
@@ -177,8 +177,16 @@ export default defineComponent({
 .fr-link--error {
   color: var(--text-default-error);
 }
-.fr-signalement-form-upload-delete-button {
+.fr-upload-group .cut-text {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.fr-upload-group .fr-signalement-form-upload-delete-button {
   display: flex;
   justify-content: right;
+}
+.fr-upload-group .fr-signalement-form-upload-delete-button button {
+  display: inline-flex;
 }
 </style>
