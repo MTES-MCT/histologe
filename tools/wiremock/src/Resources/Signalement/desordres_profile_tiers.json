@@ -2124,11 +2124,91 @@
           }
         },
         {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_logement_nuisibles_cafards_details",
+          "customCss": "signalement-form-subscreen-under-checkbox",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_nuisibles_cafards === 1"
+          },
+          "components": {
+            "body": [
+                {
+                  "type": "SignalementFormOnlyChoice",
+                  "label": "{{dictionaryStore::desordres_logement_nuisibles_cafards_details_date}}",
+                  "slug": "desordres_logement_nuisibles_cafards_details_date",
+                  "values": [
+                    {
+                      "label": "Avant l'emménagement du foyer",
+                      "value": "before_movein"
+                    },
+                    {
+                      "label": "Après l'emménagement du foyer",
+                      "value": "after_movein"
+                    },
+                    {
+                      "label": "Je ne sais pas",
+                      "value": "nsp"
+                    }
+                  ]
+                },
+                {
+                  "type": "SignalementFormInfo",
+                  "slug": "desordres_logement_nuisibles_cafards_details_info",
+                  "conditional": {
+                    "show": "formStore.data.desordres_logement_nuisibles_cafards_details_date === 'after_movein' || formStore.data.desordres_logement_nuisibles_cafards_details_date === 'nsp'"
+                  },
+                  "label": "Bon à savoir : si la présence de nuisibles est dûe à un manque d'entretien ou de nettoyage du logement, c'est aux locataires de payer la prise en charge. Si les nuisibles sont présents dans tout le bâtiment, ou étaient présents dès l'emménagement dans le logement : c'est à la charge du bailleur (propriétaire)."
+                }
+            ]
+          }
+        },
+        {
           "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_nuisibles_rongeurs",
           "label": "{{dictionaryStore::desordres_logement_nuisibles_rongeurs}}",
           "validate": {
             "required": false
+          }
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_logement_nuisibles_rongeurs_details",
+          "customCss": "signalement-form-subscreen-under-checkbox",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_nuisibles_rongeurs === 1"
+          },
+          "components": {
+            "body": [
+                {
+                  "type": "SignalementFormOnlyChoice",
+                  "label": "{{dictionaryStore::desordres_logement_nuisibles_rongeurs_details_date}}",
+                  "slug": "desordres_logement_nuisibles_rongeurs_details_date",
+                  "values": [
+                    {
+                      "label": "Avant l'emménagement du foyer",
+                      "value": "before_movein"
+                    },
+                    {
+                      "label": "Après l'emménagement du foyer",
+                      "value": "after_movein"
+                    },
+                    {
+                      "label": "Je ne sais pas",
+                      "value": "nsp"
+                    }
+                  ]
+                },
+                {
+                  "type": "SignalementFormInfo",
+                  "slug": "desordres_logement_nuisibles_rongeurs_details_info",
+                  "conditional": {
+                    "show": "formStore.data.desordres_logement_nuisibles_rongeurs_details_date === 'after_movein' || formStore.data.desordres_logement_nuisibles_rongeurs_details_date === 'nsp'"
+                  },
+                  "label": "Bon à savoir : si la présence de nuisibles est dûe à un manque d'entretien ou de nettoyage du logement, c'est aux locataires de payer la prise en charge. Si les nuisibles sont présents dans tout le bâtiment, ou étaient présents dès l'emménagement dans le logement : c'est à la charge du bailleur (propriétaire)."
+                }
+            ]
           }
         },
         {
@@ -2149,6 +2229,33 @@
           },
           "components": {
             "body": [
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "{{dictionaryStore::desordres_logement_nuisibles_punaises_details_date}}",
+                "slug": "desordres_logement_nuisibles_punaises_details_date",
+                "values": [
+                  {
+                    "label": "Avant l'emménagement du foyer",
+                    "value": "before_movein"
+                  },
+                  {
+                    "label": "Après l'emménagement du foyer",
+                    "value": "after_movein"
+                  },
+                  {
+                    "label": "Je ne sais pas",
+                    "value": "nsp"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormInfo",
+                "slug": "desordres_logement_nuisibles_punaises_details_info",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_nuisibles_punaises_details_date === 'after_movein' || formStore.data.desordres_logement_nuisibles_punaises_details_date === 'nsp'"
+                },
+                "label": "Bon à savoir : si la présence de nuisibles est dûe à un manque d'entretien ou de nettoyage du logement, c'est aux locataires de payer la prise en charge. Si les nuisibles sont présents dans tout le bâtiment, ou étaient présents dès l'emménagement dans le logement : c'est à la charge du bailleur (propriétaire)."
+              },
               {
                 "type": "SignalementFormInfo",
                 "label": "Le saviez-vous ? Sur votre département, le service Stop Punaises vous permet de trouver une entreprise labellisée pour traiter les punaises de lit. <a href='http://stop-punaises.beta.gouv.fr/' target='_blank'>Cliquez ici pour y accéder.</a>",
@@ -2179,39 +2286,36 @@
                   "type": "SignalementFormTextfield",
                   "label": "{{dictionaryStore::desordres_logement_nuisibles_autres_details_type_nuisibles}}",
                   "slug": "desordres_logement_nuisibles_autres_details_type_nuisibles"
+                },
+                {
+                  "type": "SignalementFormOnlyChoice",
+                  "label": "{{dictionaryStore::desordres_logement_nuisibles_autres_details_date}}",
+                  "slug": "desordres_logement_nuisibles_autres_details_date",
+                  "values": [
+                    {
+                      "label": "Avant l'emménagement du foyer",
+                      "value": "before_movein"
+                    },
+                    {
+                      "label": "Après l'emménagement du foyer",
+                      "value": "after_movein"
+                    },
+                    {
+                      "label": "Je ne sais pas",
+                      "value": "nsp"
+                    }
+                  ]
+                },
+                {
+                  "type": "SignalementFormInfo",
+                  "slug": "desordres_logement_nuisibles_autres_details_info",
+                  "conditional": {
+                    "show": "formStore.data.desordres_logement_nuisibles_autres_details_date === 'after_movein' || formStore.data.desordres_logement_nuisibles_autres_details_date === 'nsp'"
+                  },
+                  "label": "Bon à savoir : si la présence de nuisibles est dûe à un manque d'entretien ou de nettoyage du logement, c'est aux locataires de payer la prise en charge. Si les nuisibles sont présents dans tout le bâtiment, ou étaient présents dès l'emménagement dans le logement : c'est à la charge du bailleur (propriétaire)."
                 }
             ]
           }
-        },
-        {
-          "type": "SignalementFormOnlyChoice",
-          "label": "{{dictionaryStore::desordres_logement_nuisibles_date}}",
-          "slug": "desordres_logement_nuisibles_date",
-          "conditional": {
-            "show": "formStore.data.desordres_logement_nuisibles_cafards === 1 || formStore.data.desordres_logement_nuisibles_rongeurs === 1 || formStore.data.desordres_logement_nuisibles_punaises === 1 || formStore.data.desordres_logement_nuisibles_autres === 1"
-          },
-          "values": [
-            {
-              "label": "Avant l'emménagement du foyer",
-              "value": "before_movein"
-            },
-            {
-              "label": "Après l'emménagement du foyer",
-              "value": "after_movein"
-            },
-            {
-              "label": "Je ne sais pas",
-              "value": "nsp"
-            }
-          ]
-        },      
-        {
-          "type": "SignalementFormInfo",
-          "slug": "desordres_logement_nuisibles_info",
-          "conditional": {
-            "show": "formStore.data.desordres_logement_nuisibles_date === 'after' || formStore.data.desordres_logement_nuisibles_date === 'nsp'"
-          },
-          "label": "Bon à savoir : si la présence de nuisibles est dûe à un manque d'entretien ou de nettoyage du logement, c'est aux locataires de payer la prise en charge. Si les nuisibles sont présents dans tout le bâtiment, ou étaient présents dès l'emménagement dans le logement : c'est à la charge du bailleur (propriétaire)."
         },
         {
           "type": "SignalementFormUploadPhotos",
