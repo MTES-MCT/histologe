@@ -375,20 +375,15 @@ class SignalementType extends AbstractType
                 'label' => 'Ville du logement',
             ])
             ->add('etageOccupant', NumberType::class, [
-                'row_attr' => [
-                    'class' => 'fr-input-group',
-                ],
                 'attr' => [
                     'class' => 'fr-input',
+                    'pattern' => '^\d{1,3}$',
+                    'maxlength' => '3',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
                 ],
                 'label' => 'Etage',
-                'help' => 'Saisissez 0 pour le rez-de-chaussée (RDC), 1 pour le premier étage, etc.',
-                'help_attr' => [
-                    'class' => 'fr-hint-text',
-                ],
                 'required' => false,
             ])
             ->add('escalierOccupant', TextType::class, [

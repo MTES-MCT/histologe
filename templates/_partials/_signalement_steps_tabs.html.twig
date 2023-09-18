@@ -295,7 +295,14 @@
                         Complément d'adresse
                     </legend>
                     <div class="fr-fieldset__content">
-                        {{ form_row(form.etageOccupant) }}
+                        <div class="fr-input-group">
+                            {{ form_label(form.etageOccupant) }}
+                            {{ form_widget(form.etageOccupant) }}
+                            <p class="fr-hint-text">Saisissez 0 pour le rez-de-chaussée (RDC), 1 pour le premier étage, etc.</p>
+                            <p class="fr-error-text fr-hidden">
+                                Veuillez saisir 0 pour le rez-de-chaussée (RDC), 1 pour le premier étage, etc.
+                            </p>
+                        </div>
                         {{ form_row(form.escalierOccupant) }}
                         {{ form_row(form.numAppartOccupant) }}
                         {{ form_row(form.adresseAutreOccupant) }}
@@ -794,7 +801,7 @@
 
                         <li class="fr-hidden display-if-nde-no-dpe">Situation : non décence énergétique</li>
                         <li class="fr-hidden display-if-nde-no-dpe">DPE : Non</li>
-                        
+
                         <li class="fr-hidden display-if-not-nde">Situation : décence énergétique OK</li>
                         <li class="fr-hidden display-if-nde">Situation : non décence énergétique</li>
                         <li class="fr-hidden display-if-conso">
