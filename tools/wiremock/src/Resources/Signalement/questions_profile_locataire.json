@@ -738,7 +738,7 @@
         {
           "type": "SignalementFormInfo",
           "slug": "bail_dpe_bail_info",
-          "label": "Avoir un bail écrit et signé pour son logement est fortement recommandé pour faire valoir vos droits ! Plus d'info sur le site du service public.",
+          "label": "Avoir un bail écrit et signé pour son logement est fortement recommandé pour faire valoir vos droits ! Plus d'info sur <a href='https://www.service-public.fr/particuliers/vosdroits/N349' target='_blank' rel='nopener'>le site du service public.</a>",
           "conditional": {
             "show": "formStore.data.bail_dpe_bail === 'non' || formStore.data.bail_dpe_bail === 'nsp'"
           }
@@ -776,7 +776,7 @@
         {
           "type": "SignalementFormWarning",
           "slug": "bail_dpe_etat_des_lieux_warning",
-          "label": "D'après la loi, un état des lieux du logement doit être réalisé le jour de la remise des clés. C'est important pour faire valoir vos droits ! Plus d'info sur le site du service public.",
+          "label": "D'après la loi, un état des lieux du logement doit être réalisé le jour de la remise des clés. C'est important pour faire valoir vos droits ! Plus d'info sur <a href='https://www.service-public.fr/particuliers/vosdroits/F31270' target='_blank' rel='noopener'>le site du service public.</a>",
           "conditional": {
             "show": "formStore.data.bail_dpe_etat_des_lieux === 'non' || formStore.data.bail_dpe_etat_des_lieux === 'nsp'"
           }
@@ -803,7 +803,7 @@
         {
           "type": "SignalementFormWarning",
           "slug": "bail_dpe_dpe_warning",
-          "label": "Le DPE fait partie des documents que le bailleur (propriétaire) doit obligatoirement vous fournir. Plus d'info sur le site du service public.",
+          "label": "Le DPE fait partie des documents que le bailleur (propriétaire) doit obligatoirement vous fournir. Plus d'info sur <a href='https://www.service-public.fr/particuliers/vosdroits/F16096' target='_blank' rel='nopener'>le site du service public.</a>",
           "conditional": {
             "show": "formStore.data.bail_dpe_dpe === 'non' || formStore.data.bail_dpe_dpe === 'nsp'"
           }
@@ -1117,7 +1117,7 @@
         },
         {
           "type": "SignalementFormWarning",
-          "label": "D'après la loi, vous devez avoir une assurance habitation pour votre logement. Pour plus d'info, rendez-vous sur le site du service public.",
+          "label": "D'après la loi, vous devez avoir une assurance habitation pour votre logement. Pour plus d'info, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F31300' target='_blank' rel='nopener'>le site du service public.</a>",
           "slug": "info_procedure_assurance_contactee_warning",
           "conditional": {
             "show": "formStore.data.info_procedure_assurance_contactee ===  'pas_assurance_logement'"
