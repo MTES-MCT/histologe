@@ -76,6 +76,7 @@ import SignalementFormDisorderCategoryItem from './SignalementFormDisorderCatego
 import SignalementFormDisorderCategoryList from './SignalementFormDisorderCategoryList.vue'
 import SignalementFormDisorderOverview from './SignalementFormDisorderOverview.vue'
 import SignalementFormEmailfield from './SignalementFormEmailfield.vue'
+import SignalementFormIcon from './SignalementFormIcon.vue'
 import SignalementFormInfo from './SignalementFormInfo.vue'
 import SignalementFormLink from './SignalementFormLink.vue'
 import SignalementFormOnlyChoice from './SignalementFormOnlyChoice.vue'
@@ -109,6 +110,7 @@ export default defineComponent({
     SignalementFormCounter,
     SignalementFormWarning,
     SignalementFormInfo,
+    SignalementFormIcon,
     SignalementFormCheckbox,
     SignalementFormPhonefield,
     SignalementFormUpload,
