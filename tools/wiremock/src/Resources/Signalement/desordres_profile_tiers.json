@@ -177,7 +177,9 @@
           "slug": "desordres_batiment_ras",
           "action": "resolve:findNextScreen",
           "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
-        },
+        }
+      ],
+      "footer": [
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_batiment_boutons",
@@ -1176,7 +1178,9 @@
           "slug": "desordres_logement_ras",
           "action": "resolve:findNextScreen",
           "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
-        },
+        }
+      ],
+      "footer": [
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_logement_boutons",
