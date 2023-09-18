@@ -51,13 +51,26 @@
         v-bind:key="component.slug"
         :id="component.slug"
         :label="component.label"
+        :labelInfo="component.labelInfo"
+        :labelUpload="component.labelUpload"
+        :description="component.description"
+        :components="component.components"
+        :icons="component.icons"
         :action="component.action"
         :link="component.link"
         :linktarget="component.linktarget"
+        :values="component.values"
+        :defaultValue="component.defaultValue"
         :customCss="component.customCss"
+        :validate="component.validate"
+        :disabled="component.disabled"
+        :multiple="component.multiple"
         v-model="formStore.data[component.slug]"
-        :class="[ { 'fr-hidden': component.conditional && !formStore.shouldShowField(component.conditional.show) } ]"
+        :hasError="formStore.validationErrors[component.slug]  !== undefined"
+        :error="formStore.validationErrors[component.slug]"
+        :class="{ 'fr-hidden': component.conditional && !formStore.shouldShowField(component.conditional.show) }"
         :clickEvent="handleClickComponent"
+        :handleClickComponent="handleClickComponent"
       />
     </div>
   </div>
@@ -217,13 +230,9 @@ export default defineComponent({
       }
     },
     toggleComponentBySlug (slug:string, isVisible:string) {
-      const componentToToggle = document.querySelector('#' + slug)
+      const componentToToggle = document.querySelector('#' + slug + ' button')
       if (componentToToggle) {
-        if (isVisible === '1') {
-          componentToToggle.classList.remove('fr-hidden')
-        } else {
-          componentToToggle.classList.add('fr-hidden')
-        }
+        (componentToToggle as HTMLButtonElement).disabled = (isVisible !== '1')
       }
     },
     async showScreenBySlug (slug: string, slugButton:string, isSaveAndCheck:boolean) {
