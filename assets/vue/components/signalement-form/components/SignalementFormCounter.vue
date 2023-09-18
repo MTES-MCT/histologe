@@ -1,7 +1,7 @@
 <template>
     <!-- Champ type number -->
     <div class="fr-input-group" :id="id">
-    <label :class="[ customCss, 'fr-label' ]" :for="id" v-html="label"></label>
+    <label :class="[ customCss, 'fr-label' ]" :for="id" v-html="variablesReplacer.replace(label)"></label>
     <input
         type="number"
         pattern="[0-9]*"
@@ -24,6 +24,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { variablesReplacer } from './../services/variableReplacer'
 
 export default defineComponent({
   name: 'SignalementFormCounter',
@@ -37,6 +38,11 @@ export default defineComponent({
     hasError: { type: Boolean, default: false },
     error: { type: String, default: '' },
     defaultValue: { type: Number, default: null }
+  },
+  data () {
+    return {
+      variablesReplacer
+    }
   },
   computed: {
     internalValue: {
