@@ -230,7 +230,7 @@
             }
           ],
           "conditional": {
-            "show": "formStore.data.signalement_concerne_profil_detail_occupant === 'bailleur_occupant'"
+            "show": "formStore.data.signalement_concerne_profil === 'logement_occupez' && formStore.data.signalement_concerne_profil_detail_occupant === 'bailleur_occupant'"
           }
         },
         {
@@ -248,7 +248,7 @@
             }
           ],
           "conditional": {
-            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'bailleur'"
+            "show": "formStore.data.signalement_concerne_profil === 'autre_logement' && formStore.data.signalement_concerne_profil_detail_tiers === 'bailleur'"
           }
         },
         {
@@ -270,7 +270,7 @@
             }
           ],
           "conditional": {
-            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'service_secours'"
+            "show": "formStore.data.signalement_concerne_profil === 'autre_logement' && formStore.data.signalement_concerne_profil_detail_tiers === 'service_secours'"
           }
         },
         {
@@ -288,7 +288,7 @@
             }
           ],
           "conditional": {
-            "show": "formStore.data.signalement_concerne_profil === 'autre_logement' && formStore.data.signalement_concerne_profil_detail_tiers !== 'service_secours'"
+            "show": "formStore.data.signalement_concerne_profil?.length > 0  && formStore.data.signalement_concerne_profil_detail_tiers !== 'service_secours'"
           }
         }
       ],

@@ -11,7 +11,7 @@
           "label": "Nom de l'organisme",
           "slug": "vos_coordonnees_tiers_nom_organisme",
           "conditional": {
-            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'service_secours'"
+            "show": "formStore.data.signalement_concerne_profil_detail_bailleur_bailleur === 'organisme_societe'"
           }
         },
         {
@@ -62,7 +62,7 @@
       "body": [
         {
           "type": "SignalementFormTextfield",
-          "label": "Nom de famille",
+          "label": "Nom de famille (facultatif)",
           "slug": "coordonnees_occupant_nom",
           "validate": {
             "required": false
@@ -70,7 +70,7 @@
         },
         {
           "type": "SignalementFormTextfield",
-          "label": "Prénom",
+          "label": "Prénom (facultatif)",
           "slug": "coordonnees_occupant_prenom",
           "validate": {
             "required": false
@@ -78,7 +78,7 @@
         },
         {
           "type": "SignalementFormEmailfield",
-          "label": "Adresse email",
+          "label": "Adresse email (facultatif)",
           "slug": "coordonnees_occupant_email",
           "validate": {
             "required": false
@@ -86,7 +86,7 @@
         },
         {
           "type": "SignalementFormPhonefield",
-          "label": "Téléphone",
+          "label": "Téléphone (facultatif)",
           "slug": "coordonnees_occupant_tel",
           "validate": {
             "required": false
@@ -324,7 +324,7 @@
         },
         {
           "type": "SignalementFormCounter",
-          "label": "Quelle est la superficie du logement (taille en m²)",
+          "label": "Quelle est la superficie du logement (taille en m²) (facultatif)",
           "slug": "composition_logement_superficie",
           "validate": {
             "required": false
@@ -398,7 +398,7 @@
             "body": [
               {
                 "type": "SignalementFormCounter",
-                "label": "Quelle est la superficie de la pièce {{number}} (taille en m²) ?",
+                "label": "Quelle est la superficie de la pièce {{number}} (taille en m²) ? (facultatif)",
                 "slug": "type_logement_pieces_a_vivre_superficie_piece_{{number}}",
                 "validate": {
                   "required": false
@@ -416,6 +416,10 @@
                   {
                     "label": "Non",
                     "value": "non"
+                  },
+                  {
+                    "label": "Je ne sais pas",
+                    "value": "nsp"
                   }
                 ]
               }
@@ -493,8 +497,15 @@
             {
               "label": "Non",
               "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
             }
-          ]
+          ],
+          "conditional": {
+            "show": "formStore.data.type_logement_commodites_cuisine === 'oui'"
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -541,8 +552,15 @@
             {
               "label": "Non",
               "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
             }
-          ]
+          ],
+          "conditional": {
+            "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui'"
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -574,7 +592,7 @@
             }
           ],
           "conditional": {
-            "show": "formStore.data.type_logement_commodites_wc_collective === 'non'"
+            "show": "formStore.data.type_logement_commodites_wc === 'non'"
           }
         },
         {
@@ -589,8 +607,15 @@
             {
               "label": "Non",
               "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
             }
-          ]
+          ],
+          "conditional": {
+            "show": "formStore.data.type_logement_commodites_wc === 'oui'"
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -605,7 +630,10 @@
               "label": "Non",
               "value": "non"
             }
-          ]
+          ],
+          "conditional": {
+            "show": "formStore.data.type_logement_commodites_cuisine === 'oui' && formStore.data.type_logement_commodites_wc === 'oui'"
+          }
         }
       ],
       "footer": [
@@ -663,7 +691,7 @@
         {
           "type": "SignalementFormUpload",
           "slug": "bail_dpe_bail_upload",
-          "label": "Ajoutez le bail en cliquant sur le bouton ci-dessous",
+          "label": "Ajoutez le bail en cliquant sur le bouton ci-dessous (facultatif)",
           "conditional": {
             "show": "formStore.data.bail_dpe_bail === 'oui'"
           },
@@ -674,7 +702,7 @@
         {
           "type": "SignalementFormUpload",
           "slug": "bail_dpe_dpe_upload",
-          "label": "Ajoutez le DPE en cliquant sur le bouton ci-dessous",
+          "label": "Ajoutez le DPE en cliquant sur le bouton ci-dessous (facultatif)",
           "conditional": {
             "show": "formStore.data.bail_dpe_dpe === 'oui'"
           },
@@ -739,7 +767,7 @@
         {
           "type": "SignalementFormUpload",
           "slug": "bail_dpe_dpe_upload",
-          "label": "Ajoutez le DPE en cliquant sur le bouton ci-dessous",
+          "label": "Ajoutez le DPE en cliquant sur le bouton ci-dessous (facultatif)",
           "conditional": {
             "show": "formStore.data.bail_dpe_dpe === 'oui'"
           },
@@ -849,7 +877,7 @@
         },
         {
           "type": "SignalementFormTextfield",
-          "label": "Quel est son numéro d'allocataire ?",
+          "label": "Quel est son numéro d'allocataire ? (facultatif)",
           "slug": "logement_social_numero_allocataire",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
@@ -860,7 +888,7 @@
         },
         {
           "type": "SignalementFormCounter",
-          "label": "Quel est le montant de l'allocation ?",
+          "label": "Quel est le montant de l'allocation ? (facultatif)",
           "slug": "logement_social_montant_allocation",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
@@ -1016,7 +1044,18 @@
         {
           "type": "SignalementFormInfo",
           "label": "Contactez votre assurance pour savoir si elle prend en charge le ou les problèmes rencontrés.",
-          "slug": "info_procedure_assurance_contactee_info"
+          "slug": "info_procedure_assurance_contactee_info",
+          "conditional": {
+            "show": "formStore.data.info_procedure_assurance_contactee === 'non'"
+          }
+        },
+        {
+          "type": "SignalementFormInfo",
+          "label": "Il est fortement recommandé de prendre une assurance habitation pour votre logement. Pour plus d'info, rendez-vous sur le site du service public.",
+          "slug": "info_procedure_assurance_info",
+          "conditional": {
+            "show": "formStore.data.info_procedure_assurance_contactee === 'pas_assurance_logement'"
+          }
         }
       ],
       "footer": [

@@ -62,7 +62,7 @@
       "body": [
         {
           "type": "SignalementFormTextfield",
-          "label": "Nom de famille",
+          "label": "Nom de famille (facultatif)",
           "slug": "coordonnees_occupant_nom",
           "validate": {
             "required": false
@@ -125,7 +125,7 @@
         },
         {
           "type": "SignalementFormTextfield",
-          "label": "Prénom",
+          "label": "Prénom (facultatif)",
           "slug": "coordonnees_bailleur_prenom",
           "validate": {
             "required": false
@@ -133,7 +133,7 @@
         },
         {
           "type": "SignalementFormEmailfield",
-          "label": "Adresse email",
+          "label": "Adresse email (facultatif)",
           "slug": "coordonnees_bailleur_email",
           "validate": {
             "required": false
@@ -141,7 +141,7 @@
         },
         {
           "type": "SignalementFormTextfield",
-          "label": "Téléphone",
+          "label": "Téléphone (facultatif)",
           "slug": "coordonnees_bailleur_tel",
           "validate": {
             "required": false
@@ -149,7 +149,7 @@
         },
         {
           "type": "SignalementFormAddress",
-          "label": "Adresse postale",
+          "label": "Adresse postale (facultatif)",
           "slug": "coordonnees_bailleur_adresse",
           "validate": {
             "required": false
@@ -465,6 +465,10 @@
                   {
                     "label": "Non",
                     "value": "non"
+                  },
+                  {
+                    "label": "Je ne sais pas",
+                    "value": "nsp"
                   }
                 ]
               }
@@ -542,8 +546,15 @@
             {
               "label": "Non",
               "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
             }
-          ]
+          ],
+          "conditional": {
+            "show": "formStore.data.type_logement_commodites_cuisine === 'oui'"
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -590,8 +601,15 @@
             {
               "label": "Non",
               "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
             }
-          ]
+          ],
+          "conditional": {
+            "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui'"
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -623,7 +641,7 @@
             }
           ],
           "conditional": {
-            "show": "formStore.data.type_logement_commodites_wc_collective === 'non'"
+            "show": "formStore.data.type_logement_commodites_wc === 'non'"
           }
         },
         {
@@ -638,8 +656,15 @@
             {
               "label": "Non",
               "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
             }
-          ]
+          ],
+          "conditional": {
+            "show": "formStore.data.type_logement_commodites_wc === 'oui'"
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -654,7 +679,10 @@
               "label": "Non",
               "value": "non"
             }
-          ]
+          ],
+          "conditional": {
+            "show": "formStore.data.type_logement_commodites_cuisine === 'oui' && formStore.data.type_logement_commodites_wc === 'oui'"
+          }
         }
       ],
       "footer": [
