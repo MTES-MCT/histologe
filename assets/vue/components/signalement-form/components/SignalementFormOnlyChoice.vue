@@ -4,7 +4,7 @@
         {{ label }}
       </legend>
       <div v-for="radioValue in values" :class="['fr-fieldset__element', (radioValue.value === 'oui' || radioValue.value === 'non') ? 'item-divided' : '']" :key="radioValue.value">
-          <div class="fr-radio-group">
+          <div :class="['fr-radio-group', modelValue == radioValue.value ? 'is-checked' : '']">
             <input
               type="radio"
               :id="id + '_' + radioValue.value"
@@ -70,6 +70,9 @@ export default defineComponent({
   }
   .signalement-form-only-choice .fr-radio-group:hover {
     background-color: var(--grey-1000-50-hover);
+  }
+  .signalement-form-only-choice .fr-radio-group.is-checked {
+    border: 1px solid rgb(0, 0, 145);
   }
 
   @media (max-width: 48em) {
