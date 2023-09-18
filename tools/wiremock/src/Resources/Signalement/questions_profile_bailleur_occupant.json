@@ -1073,7 +1073,7 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "utilisation_service_next",
-          "action": "goto.save:informations_complementaires",
+          "action": "goto.save:validation_signalement",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -1081,7 +1081,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Information complémentaires",
+    "label": "Informations complémentaires",
     "description": "Toutes les questions sont facultatives",
     "slug": "informations_complementaires",
     "screenCategory": "Procédure",
@@ -1214,7 +1214,7 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "validation_signalement_previous",
-          "action": "goto:informations_complementaires",
+          "action": "goto:utilisation_service",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {

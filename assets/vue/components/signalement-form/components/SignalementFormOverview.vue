@@ -9,9 +9,11 @@
 
       <!-- TODO : changer intitulés ? -->
       <h3>Vos coordonnées</h3>
-      <a href="#" @click="handleEdit('vos_coordonnees_occupant')">Editer</a>
+      <a v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'" href="#" @click="handleEdit('vos_coordonnees_occupant')">Editer</a>
+      <a v-else href="#" @click="handleEdit('vos_coordonnees_tiers')">Editer</a>
       <p v-html="getFormDataCoordonneesOccupant()"></p>
 
+      <!-- TODO : si profil est bailleur ou bailleur_occupant que met-on ? -->
       <h3>Les coordonnées du bailleur</h3>
       <a href="#" @click="handleEdit('coordonnees_bailleur')">Editer</a>
       <p v-html="getFormDataCoordonneesBailleur()"></p>
@@ -44,13 +46,16 @@
       <h3>TODO : La procédure</h3>
       <a href="#" @click="handleEdit('info_procedure')">Editer</a>
 
-      <h2>TODO : Informations complémentaires</h2>
+      <div v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'">
+        <h2>TODO : Informations complémentaires</h2>
 
-      <p>
-        Plus nous avons d'informations sur la situation,
-        mieux nous pouvons vous accompagner.
-        Cliquez sur le bouton pour ajouter des informations.
-      </p>
+        <p>
+          Plus nous avons d'informations sur la situation,
+          mieux nous pouvons vous accompagner.
+          Cliquez sur le bouton pour ajouter des informations.
+        <a href="#" @click="handleEdit('informations_complementaires')">Editer</a>
+        </p>
+      </div>
 
       Ma situation personnelle
       <br>
