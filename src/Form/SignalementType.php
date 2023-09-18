@@ -386,6 +386,9 @@ class SignalementType extends AbstractType
                 ],
                 'label' => 'Etage',
                 'help' => 'Saisissez 0 pour le rez-de-chaussée (RDC), 1 pour le premier étage, etc.',
+                'help_attr' => [
+                    'class' => 'fr-hint-text',
+                ],
                 'required' => false,
             ])
             ->add('escalierOccupant', TextType::class, [
