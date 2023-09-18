@@ -1,47 +1,45 @@
 <div class="fr-tabs" id="signalement-tabs">
     <ul class="fr-tabs__list" role="tablist" aria-label="Etapes signalement">
         {% if 'back_' not in app.request.get('_route') %}
-            <li role="presentation">
-                <button id="signalement-step-0-btn"
-                        class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left" tabindex="0"
-                        role="tab" aria-selected="true" aria-controls="signalement-step-0-panel">
-                    0. Avant-propos
-                </button>
-            </li>
+        <li role="presentation">
+            <button id="signalement-step-0-btn"
+                    class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left" tabindex="0"
+                    role="tab" aria-selected="true" aria-controls="signalement-step-0-panel">
+                0. Avant-propos
+            </button>
+        </li>
         {% endif %}
         <li role="presentation">
             <button id="signalement-step-1-btn"
                     class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left" tabindex="-1"
-                    role="tab"
-                    aria-selected="{% if 'back_' in app.request.get('_route') %}true{% else %}false{% endif %}"
-                    aria-controls="signalement-step-1-panel">1.
+                    role="tab" aria-selected="{% if 'back_' in app.request.get('_route') %}true{% else %}false{% endif %}" aria-controls="signalement-step-1-panel">1.
                 Identité
             </button>
         </li>
         {% if 'back_' not in app.request.get('_route') %}
-            <li role="presentation">
-                <button id="signalement-step-2-btn"
-                        class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left" tabindex="-1"
-                        role="tab" aria-selected="false" aria-controls="signalement-step-2-panel"
-                        {% if 'back_' not in app.request.get('_route') %}disabled{% endif %}>2. Problèmes
-                </button>
-            </li>
-            <li role="presentation">
-                <button id="signalement-step-3-btn"
-                        class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left" tabindex="-1"
-                        role="tab" aria-selected="false" aria-controls="signalement-step-3-panel"
-                        {% if 'back_' not in app.request.get('_route') %}disabled{% endif %}>3.
-                    Détails
-                </button>
-            </li>
-            <li role="presentation">
-                <button id="signalement-step-3b-btn"
-                        class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left fr-hidden" tabindex="-1"
-                        role="tab" aria-selected="false" aria-controls="signalement-step-3b-panel"
-                        {% if 'back_' not in app.request.get('_route') %}disabled{% endif %}>4.
-                    Consommation énergétique
-                </button>
-            </li>
+        <li role="presentation">
+            <button id="signalement-step-2-btn"
+                    class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left" tabindex="-1"
+                    role="tab" aria-selected="false" aria-controls="signalement-step-2-panel"
+                    {% if 'back_' not in app.request.get('_route') %}disabled{% endif %}>2. Problèmes
+            </button>
+        </li>
+        <li role="presentation">
+            <button id="signalement-step-3-btn"
+                    class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left" tabindex="-1"
+                    role="tab" aria-selected="false" aria-controls="signalement-step-3-panel"
+                    {% if 'back_' not in app.request.get('_route') %}disabled{% endif %}>3.
+                Détails
+            </button>
+        </li>
+        <li role="presentation">
+            <button id="signalement-step-3b-btn"
+                    class="fr-tabs__tab fr-fi-checkbox-circle-line fr-tabs__tab--icon-left fr-hidden" tabindex="-1"
+                    role="tab" aria-selected="false" aria-controls="signalement-step-3b-panel"
+                    {% if 'back_' not in app.request.get('_route') %}disabled{% endif %}>4.
+                Consommation énergétique
+            </button>
+        </li>
         {% endif %}
         <li role="presentation">
             <button id="signalement-step-4-btn"
@@ -64,14 +62,12 @@
     </ul>
 
     {% if 'back_' not in app.request.get('_route') %}
-        <section id="signalement-step-0-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel"
-                 aria-labelledby="signalement-step-0-btn" tabindex="0">
-            {% include '_partials/_signalement_step_avantpropos.html.twig' %}
-        </section>
+    <section id="signalement-step-0-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel"
+             aria-labelledby="signalement-step-0-btn" tabindex="0">
+        {% include '_partials/_signalement_step_avantpropos.html.twig' %}
+    </section>
     {% endif %}
-    <section id="signalement-step-1-panel"
-             class="fr-tabs__panel {% if 'back_' in app.request.get('_route') %}fr-tabs__panel--selected{% endif %}"
-             role="tabpanel"
+    <section id="signalement-step-1-panel" class="fr-tabs__panel {% if 'back_' in app.request.get('_route') %}fr-tabs__panel--selected{% endif %}" role="tabpanel"
              aria-labelledby="signalement-step-1-btn" tabindex="-1">
         {% if 'back_' not in app.request.get('_route') %}
             <header class="fr-callout bg-light fr-mb-5v">
@@ -344,9 +340,7 @@
             </div>
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-text--center">
-                    <button class="fr-btn fr-fi-arrow-right-line fr-btn--icon-right {% if 'back_' not in app.request.get('_route') %}checkterr{% endif %}">
-                        Continuer
-                    </button>
+                        <button class="fr-btn fr-fi-arrow-right-line fr-btn--icon-right {% if 'back_' not in app.request.get('_route') %}checkterr{% endif %}">Continuer</button>
                 </div>
             </div>
         </form>
@@ -421,7 +415,7 @@
                                                                value="{{ criticite.id }}"
                                                                class="toggle-criticite-smiley"
                                                                {% if enum('App\\Entity\\Enum\\Qualification').NON_DECENCE_ENERGETIQUE.name in criticite.qualification %}data-nde="1"{% endif %}
-                                                                {% if criticite in signalement.criticites %}checked{% endif %}>
+                                                               {% if criticite in signalement.criticites %}checked{% endif %}>
                                                         <label class="fr-label"
                                                                for="signalement-critere-{{ critere.id }}-criticite-{{ criticite.id }}"><strong>{{ etats[criticite.score-1] }}</strong>
                                                             <span class="fr-hint-text">{{ criticite.label }}</span>
@@ -594,7 +588,7 @@
                     </p>
                 </fieldset>
                 <div class="fr-form-group fr-mt-5v {% if 'back_' not in app.request.get('_route') or not signalement.isAllocataire %}fr-hidden{% endif %}"
-                     id="signalement-num-alloc-bloc">
+                        id="signalement-num-alloc-bloc">
                     <div class="fr-input-group">
                         {{ form_label(form.numAllocataire) }}
                         {{ form_help(form.numAllocataire) }}
@@ -605,12 +599,11 @@
                     </div>
                 </div>
                 <div class="fr-form-group fr-mt-5v {% if 'back_' not in app.request.get('_route') or not signalement.isAllocataire %}fr-hidden{% endif %}"
-                     id="signalement-date-naissance-bloc">
+                        id="signalement-date-naissance-bloc">
                     <fieldset class="fr-fieldset fr-fieldset--inline">
                         <legend class="fr-fieldset__legend fr-text--regular">
                             Date de naissance
-                            <sup class="fr-text-default--error fr-hidden"
-                                 id="signalement-date-naissance-bloc-necessary">*</sup>
+                            <sup class="fr-text-default--error fr-hidden" id="signalement-date-naissance-bloc-necessary">*</sup>
                         </legend>
                         {{ form_help(form.dateNaissanceOccupant) }}
                         {{ form_widget(form.dateNaissanceOccupant) }}
@@ -728,17 +721,12 @@
                         <p>
                             <span id="recap-signalement_adresseOccupant"></span>
                             <br>
-                            <span id="recap-signalement_cpOccupant"></span> <span
-                                    id="recap-signalement_villeOccupant"></span>
+                            <span id="recap-signalement_cpOccupant"></span> <span id="recap-signalement_villeOccupant"></span>
                             <br>
-                            <span id="recap-container-signalement_etageOccupant">Etage <span
-                                        id="recap-signalement_etageOccupant"></span><br></span>
-                            <span id="recap-container-signalement_escalierOccupant">Escalier <span
-                                        id="recap-signalement_escalierOccupant"></span><br></span>
-                            <span id="recap-container-signalement_numAppartOccupant">Appartement <span
-                                        id="recap-signalement_numAppartOccupant"></span><br></span>
-                            <span id="recap-container-signalement_adresseAutreOccupant"><span
-                                        id="recap-signalement_adresseAutreOccupant"></span><br></span>
+                            <span id="recap-container-signalement_etageOccupant">Etage <span id="recap-signalement_etageOccupant"></span><br></span>
+                            <span id="recap-container-signalement_escalierOccupant">Escalier <span id="recap-signalement_escalierOccupant"></span><br></span>
+                            <span id="recap-container-signalement_numAppartOccupant">Appartement <span id="recap-signalement_numAppartOccupant"></span><br></span>
+                            <span id="recap-container-signalement_adresseAutreOccupant"><span id="recap-signalement_adresseAutreOccupant"></span><br></span>
                         </p>
                     </li>
                 </ul>
@@ -805,27 +793,27 @@
                             <button class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-edit-fill"
                                     title="Editer les informations" data-goto-step="3b"></button>
                         </strong>
-                    <li class="fr-hidden display-if-missing-info">Situation : à vérifier</li>
-                    <li class="fr-hidden display-if-missing-info">DPE : à renseigner</li>
-                    <li class="fr-hidden display-if-missing-info">Bail : à renseigner</li>
-                    <li class="fr-hidden display-if-missing-info">Consommation : non calculée</li>
+                        <li class="fr-hidden display-if-missing-info">Situation : à vérifier</li>
+                        <li class="fr-hidden display-if-missing-info">DPE : à renseigner</li>
+                        <li class="fr-hidden display-if-missing-info">Bail : à renseigner</li>
+                        <li class="fr-hidden display-if-missing-info">Consommation : non calculée</li>
 
-                    <li class="fr-hidden display-if-nde-no-dpe">Situation : non décence énergétique</li>
-                    <li class="fr-hidden display-if-nde-no-dpe">DPE : Non</li>
+                        <li class="fr-hidden display-if-nde-no-dpe">Situation : non décence énergétique</li>
+                        <li class="fr-hidden display-if-nde-no-dpe">DPE : Non</li>
 
-                    <li class="fr-hidden display-if-not-nde">Situation : décence énergétique OK</li>
-                    <li class="fr-hidden display-if-nde">Situation : non décence énergétique</li>
-                    <li class="fr-hidden display-if-conso">
-                        DPE :
-                        <span class="fr-hidden display-if-dpe-before-2023">Avant</span>
-                        2023
-                    </li>
-                    <li class="fr-hidden display-if-conso">Bail : 2023</li>
-                    <li class="fr-hidden display-if-conso">
-                        Consommation :
-                        <span class="conso-amount"></span>
-                        kWh/m²/an
-                    </li>
+                        <li class="fr-hidden display-if-not-nde">Situation : décence énergétique OK</li>
+                        <li class="fr-hidden display-if-nde">Situation : non décence énergétique</li>
+                        <li class="fr-hidden display-if-conso">
+                            DPE :
+                            <span class="fr-hidden display-if-dpe-before-2023">Avant</span>
+                            2023
+                        </li>
+                        <li class="fr-hidden display-if-conso">Bail : 2023</li>
+                        <li class="fr-hidden display-if-conso">
+                            Consommation :
+                            <span class="conso-amount"></span>
+                            kWh/m²/an
+                        </li>
                     </li>
                 </ul>
             </div>
@@ -879,8 +867,7 @@
             </div>
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-text--center">
-                    <progress max="100" id="form_global_file_progress" value="0"
-                              class="final-progress fr-hidden"></progress>
+                    <progress max="100" id="form_global_file_progress" value="0" class="final-progress fr-hidden"></progress>
                 </div>
             </div>
             <div class="fr-grid-row">
