@@ -11,7 +11,7 @@
           aria-describedby="checkbox-error-messages"
           :checked="Boolean(modelValue)"
           >
-      <label :class="[ customCss, 'fr-label' ]" :for="idCheckbox">{{ labelVariablesReplaced }}</label>
+      <label :class="[ customCss, 'fr-label' ]" :for="idCheckbox">{{ variablesReplacer.replace(label) }}</label>
       <div class="fr-messages-group" id="checkbox-error-messages" aria-live="assertive">
         <p
           id="checkbox-error-messages"
@@ -27,6 +27,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import formStore from './../store'
 import { variablesReplacer } from './../services/variableReplacer'
 
 export default defineComponent({
@@ -43,21 +44,22 @@ export default defineComponent({
   },
   data () {
     return {
+      formStore,
+      variablesReplacer,
       idCheckbox: this.id + '_check'
-    }
-  },
-  computed: {
-    labelVariablesReplaced (): string {
-      if (this.label !== undefined) {
-        return variablesReplacer.replace(this.label)
-      }
-      return ''
     }
   },
   methods: {
     updateValue (event: Event) {
       const value = (event.target as HTMLInputElement).checked
-      this.$emit('update:modelValue', Number(value))
+      this.$emit('update:modelValue', value ? 1 : null)
+      if (!value) {
+        for (const dataname in formStore.data) {
+          if (dataname.includes(this.id)) {
+            formStore.data[dataname] = null
+          }
+        }
+      }
     }
   },
   emits: ['update:modelValue']

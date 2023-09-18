@@ -3,13 +3,13 @@
     <h2 v-if="label">{{ label }}</h2>
     <p v-if="description" v-html="description"></p>
     <SignalementFormInfo
-      :id="id + '-info'"
+      :id="id + '_info'"
       :label="labelInfo"
       />
     <SignalementFormUpload
-      :id="id + '-upload'"
+      :id="id + '_upload'"
       :label="labelUpload"
-      v-model="formStore.data[id + '-upload']"
+      v-model="formStore.data[id + '_upload']"
       :multiple="true"
       />
   </div>

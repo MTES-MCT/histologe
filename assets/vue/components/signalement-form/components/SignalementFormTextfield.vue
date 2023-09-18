@@ -1,7 +1,7 @@
 <template>
 <div :class="['fr-input-group', { 'fr-input-group--disabled': disabled }]" :id="id">
   <label class='fr-label' :for="id">
-    {{ label }}
+    {{ variablesReplacer.replace(label) }}
     <span class="fr-hint-text">{{ description }}</span>
   </label>
     <div :class="[ customCss, 'fr-input-wrap' ]">
@@ -28,6 +28,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { variablesReplacer } from './../services/variableReplacer'
 
 export default defineComponent({
   name: 'SignalementFormTextfield',
@@ -42,6 +43,11 @@ export default defineComponent({
     hasError: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
     error: { type: String, default: '' }
+  },
+  data () {
+    return {
+      variablesReplacer
+    }
   },
   computed: {
     internalValue: {

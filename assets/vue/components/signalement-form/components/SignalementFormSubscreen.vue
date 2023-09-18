@@ -1,6 +1,6 @@
 <template>
   <div :class="[ customCss ]" :id="id">
-    <h2 v-if="label">{{ labelVariablesReplaced }}</h2>
+    <h2 v-if="label">{{ variablesReplacer.replace(label) }}</h2>
     <p v-if="description" v-html="description"></p>
     <div
       v-if="components != undefined"
@@ -91,15 +91,8 @@ export default defineComponent({
   },
   data () {
     return {
-      formStore
-    }
-  },
-  computed: {
-    labelVariablesReplaced (): string {
-      if (this.label !== undefined) {
-        return variablesReplacer.replace(this.label)
-      }
-      return ''
+      formStore,
+      variablesReplacer
     }
   },
   methods: {

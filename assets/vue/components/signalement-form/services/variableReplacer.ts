@@ -2,8 +2,11 @@ import formStore from '../store'
 import dictionaryStore from '../dictionary-store'
 
 export const variablesReplacer = {
-  replace (texteToReplace: string): string {
-    const descriptionWithValues = texteToReplace.replace(/\{\{([\w.:]+)\}\}/g, (match, expression) => {
+  replace (textToReplace: string | undefined): string {
+    if (textToReplace === undefined) {
+      return ''
+    }
+    const descriptionWithValues = textToReplace.replace(/\{\{([\w.:]+)\}\}/g, (match, expression) => {
       const value = this.evaluateExpression(expression)
       return value ?? match
     })
@@ -11,11 +14,16 @@ export const variablesReplacer = {
     return descriptionWithValues
   },
   evaluateExpression (expression: string): string | undefined {
+    const dictionary: any = dictionaryStore
+
     const isDictionary = expression.includes('::')
     const keys = isDictionary ? expression.split('::')[1].split('.') : expression.split('.')
 
+    if (isDictionary && !expression.includes('formStore')) {
+      return dictionary[keys[0]].default
+    }
+
     let value: any = formStore
-    const dictionary: any = dictionaryStore
 
     for (const key of keys) {
       if (key !== 'formStore') {
@@ -27,8 +35,8 @@ export const variablesReplacer = {
       }
     }
 
-    if (isDictionary) {
-      value = dictionary[value]
+    if (isDictionary && dictionary[value] !== null) {
+      value = dictionary[value].default
     }
 
     return value

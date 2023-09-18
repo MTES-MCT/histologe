@@ -1,23 +1,258 @@
 {
-  "desordres_batiment_proprete": { "label": "Propreté et entretien" },
-  "desordres_batiment_eau": { "label": "Eau et évacuation" },
-  "desordres_batiment_isolation": { "label": "Isolation du bâtiment" },
-  "desordres_batiment_maintenance": { "label": "Maintenance et équipements" },
-  "desordres_batiment_nuisibles": { "label": "Présence de nuisibles" },
-  "desordres_batiment_securite": { "label": "Sécurité, risque de chute" },
-  "desordres_batiment_incendie": { "label": "Risque d'incendie" },
-  "desordres_batiment_accessibilite": { "label": "Accessibilité et alentours" },
-  "desordres_batiment_bruit": { "label": "Bruit, pollution sonore" },
-  "desordres_logement_eau": { "label": "Eau et évacuation" },
-  "desordres_logement_aeration": { "label": "Aération et ventilation" },
-  "desordres_logement_chauffage": { "label": "Chauffage et isolation" },
-  "desordres_logement_humidite": { "label": "Humidité et moisissure" },
-  "desordres_logement_securite": { "label": "Sécurité" },
-  "desordres_logement_electricite": { "label": "Electricité" },
-  "desordres_logement_nuisibles": { "label": "Présence de nuisibles" },
-  "desordres_logement_bruit": { "label": "Bruit, pollution sonore" },
-  "desordres_logement_lumiere": { "label": "Eclairement, lumière naturelle" },
-  "batiment": { "label": "le <span class=\"fr-span-highlight-batiment\">bâtiment</span>" },
-  "logement": { "label": "le <span class=\"fr-span-highlight-logement\">logement</span>" },
-  "batiment_logement": { "label": "le <span class=\"fr-span-highlight-batiment\">bâtiment</span> et le <span class=\"fr-span-highlight-logement\">logement</span>" }
+  "batiment": { "default": "le <span class=\"fr-span-highlight-batiment\">bâtiment</span>" },
+  "logement": { "default": "le <span class=\"fr-span-highlight-logement\">logement</span>" },
+  "batiment_logement": { "default": "le <span class=\"fr-span-highlight-batiment\">bâtiment</span> et le <span class=\"fr-span-highlight-logement\">logement</span>" },
+  "electrique": { "default": "électrique" },
+  "gaz": { "default": "gaz, bois, éthanol ou fioul" },
+  "aucun": { "default": "aucun" },
+  "oui": { "default": "OUI" },
+  "non": { "default": "NON" },
+  "nsp": { "default": "Ne sait pas" },
+  "post2023": { "default": "En 2023" },
+  "before2023": { "default": "Avant 2023" },
+  "before_movein": { "default": "Avant emménagement" },
+  "after_movein": { "default": "Après emménagement" },
+  "form_room_pieces": { "default": "Pièces concernées :" },
+  "form_room_pieces_cuisine": { "default": "- la cuisine / le coin cuisine" },
+  "form_room_pieces_piece_a_vivre": { "default": "- une ou des pièces à vivre (salon, chambres)" },
+  "form_room_pieces_salle_de_bain": { "default": "- la salle de bain, salle d'eau et / ou les toilettes" },
+  "desordres_batiment_proprete": { "default": "Propreté et entretien" },
+  "desordres_batiment_eau": { "default": "Eau et évacuation" },
+  "desordres_batiment_isolation": { "default": "Isolation du bâtiment" },
+  "desordres_batiment_maintenance": { "default": "Maintenance et équipements" },
+  "desordres_batiment_nuisibles": { "default": "Présence de nuisibles" },
+  "desordres_batiment_securite": { "default": "Sécurité, risque de chute" },
+  "desordres_batiment_incendie": { "default": "Risque d'incendie" },
+  "desordres_batiment_accessibilite": { "default": "Accessibilité et alentours" },
+  "desordres_batiment_bruit": { "default": "Bruit, pollution sonore" },
+  "desordres_logement_eau": { "default": "Eau et évacuation" },
+  "desordres_logement_aeration": { "default": "Aération et ventilation" },
+  "desordres_logement_chauffage": { "default": "Chauffage et isolation" },
+  "desordres_logement_humidite": { "default": "Humidité et moisissure" },
+  "desordres_logement_securite": { "default": "Sécurité" },
+  "desordres_logement_electricite": { "default": "Electricité" },
+  "desordres_logement_nuisibles": { "default": "Présence de nuisibles" },
+  "desordres_logement_bruit": { "default": "Bruit, pollution sonore" },
+  "desordres_logement_lumiere": { "default": "Eclairement, lumière naturelle" },
+  "desordres_batiment_proprete_interieur": { "default": "L'intérieur du bâtiment est sale, n'est jamais nettoyé" },
+  "desordres_batiment_proprete_facades": { "default": "Les façades extérieures sont très sales ou en mauvais état" },
+  "desordres_batiment_proprete_parties_communes": { "default": "Les parties communes sont dégradées (déchets qui traînent, matériel cassé, graffitis)" },
+  "desordres_batiment_proprete_local_poubelles": { "default": "Il n'y a pas de local poubelles ni d'endroit où stocker les déchets" },
+  "desordres_batiment_eau_pas_eau_potable": { "default": "Il n'y a pas d'eau potable dans le bâtiment" },
+  "desordres_batiment_eau_pas_eau_chaude": { "default": "Il n'y a pas d'eau chaude dans le bâtiment" },
+  "desordres_batiment_eau_evacuation_KO": { "default": "L'évacuation des eaux ne marche pas (mauvaises odeurs, eau stagnante, fuites...)" },
+  "desordres_batiment_eau_pas_evacuation_eaux_pluie": { "default": "Quand il pleut, l'eau n'est pas évacuée (pas de gouttière, pas de système d'évacuation...)" },
+  "desordres_batiment_isolation_porte_fenetres": { "default": "Il manque des portes ou des fenêtres, ou elles sont mal isolées" },
+  "desordres_batiment_isolation_murs": { "default": "Les murs ne sont pas ou peu isolés" },
+  "desordres_batiment_isolation_dernier_etage_toit": { "default": "Le dernier étage n'est pas isolé, le toit n'est pas étanche" },
+  "desordres_batiment_isolation_infiltration_eau": { "default": "De l'eau s'infiltre par le sol ou les murs" },
+  "desordres_batiment_maintenance_ascenseur": { "default": "L'ascenseur est dangereux (les portes s'ouvrent ou se ferment toutes seules, on risque de tomber, il s'arrête entre les étages...)" },
+  "desordres_batiment_maintenance_petites_reparations": { "default": "Les petites réparations ne sont pas faites (changement d'ampoule...)" },
+  "desordres_batiment_nuisibles_cafards": { "default": "Il y a des cafards ou blattes dans le bâtiment" },
+  "desordres_batiment_nuisibles_rongeurs": { "default": "Il y a des rongeurs dans le bâtiment (rats, souris...)" },
+  "desordres_batiment_nuisibles_punaises": { "default": "Il y a des punaises de lit dans le bâtiment" },
+  "desordres_batiment_nuisibles_autres": { "default": "Il y a un autre type de nuisible dans le bâtiment" },
+  "desordres_batiment_nuisibles_autres_details_type_nuisibles": {
+    "default": "Précisez le type de nuisibles",
+    "disorderOverview": {
+      "default": "Autre type de nuisible : {{formStore.data.desordres_batiment_nuisibles_autres_details_type_nuisibles}}"
+    }
+  },
+  "desordres_batiment_securite_sol": { "default": "Le sol bouge, il est instable" },
+  "desordres_batiment_securite_sol_details_plancher_abime": {
+    "default": "Est-ce que le plancher est abîmé et bouge par endroit ?",
+    "disorderOverview": {
+      "default": "Le plancher est abîmé : {{dictionaryStore::formStore.data.desordres_batiment_securite_sol_details_plancher_abime}}"
+    }
+  },
+  "desordres_batiment_securite_sol_details_plancher_effondre": {
+    "default": "Est-ce que le plancher menace de s'effondrer quand on marche dessus ?",
+    "disorderOverview": {
+      "default": "Le plancher menace de s'effondrer : {{dictionaryStore::formStore.data.desordres_batiment_securite_sol_details_plancher_effondre}}"
+    }
+  },
+  "desordres_batiment_securite_elements_toit": { "default": "Des éléments du toit risquent de tomber (tuyau, tuiles, pierres...)" },
+  "desordres_batiment_securite_toit": { "default": "Le plafond ou le toit risque de s'effondrer et il a de très grosses fissures" },
+  "desordres_batiment_securite_escalier": { "default": "Les escaliers et / ou les rambardes sont dangereuses" },
+  "desordres_batiment_securite_escalier_details_dangereux": {
+    "default": "L'escalier menace de s'effondrer, c'est dangereux de l'utiliser ?",
+    "disorderOverview": {
+      "default": "L'escalier est dangereux : {{dictionaryStore::formStore.data.desordres_batiment_securite_escalier_details_dangereux}}"
+    }
+  },
+  "desordres_batiment_securite_escalier_details_utilisable": {
+    "default": "L'escalier ou les rambardes bougent mais peuvent encore être utilisées sans danger ?",
+    "disorderOverview": {
+      "default": "L'escalier ou les rambardes bougent : {{dictionaryStore::formStore.data.desordres_batiment_securite_escalier_details_utilisable}}"
+    }
+  },
+  "desordres_batiment_securite_murs_fissures": { "default": "Le bâtiment semble instable. Il y a de grosses fissures dans les murs" },
+  "desordres_batiment_securite_murs_fissures_details_mur_porteur": {
+    "default": "Est-ce que le mur fissuré a l'air d'être un mur porteur (mur qui soutient la structure du bâtiment) ?",
+    "disorderOverview": {
+      "default": "Mur porteur fissuré : {{dictionaryStore::formStore.data.desordres_batiment_securite_murs_fissures_details_mur_porteur}}"
+    }
+  },
+  "desordres_batiment_securite_balcons": { "default": "Les balcons et rambardes des fenêtres risquent de tomber" },
+  "desordres_batiment_incendie_odeur_gaz": { "default": "Il y a une forte odeur de gaz dans le bâtiment" },
+  "desordres_batiment_incendie_porte_coupe_feu": { "default": "Il n'y a pas de portes coupe-feu aux caves, ou pour accéder aux caves / sous-sol" },
+  "desordres_batiment_accessibilite_eclairage": { "default": "Il n'y a pas d'éclairage autour du bâtiment, ni à l'entrée ou l'éclairage ne fonctionne pas" },
+  "desordres_batiment_accessibilite_friche": { "default": "Le bâtiment est dans une friche, un terrain vague ou abandonné" },
+  "desordres_batiment_accessibilite_acces_batiment": { "default": "Il est très difficile d'accéder au bâtiment : les passages sont étroits ou encombrés" },
+  "desordres_batiment_bruit_exterieur": { "default": "Le bâtiment est situé à côté de rails de train, d'un aéroport ou d'une usine" },
+  "desordres_batiment_bruit_interieur": { "default": "Il y a beaucoup de bruit à l'intérieur, on entend tout même en fermant les portes et les fenêtres" },
+  "desordres_logement_eau_eau_potable": { "default": "Il n'y a pas d'eau potable dans le logement" },
+  "desordres_logement_eau_eau_chaude": { "default": "Il n'y a pas d'eau chaude dans le logement" },
+  "desordres_logement_eau_evacuation": { "default": "L'évacuation des eaux ne marche pas (mauvaises odeurs, pas d'évacuation, fuites...)" },
+  "desordres_logement_aeration_aucune_aeration": { "default": "Il n'y a pas de fenêtre ni de système de ventilation (VMC...)" },
+  "desordres_logement_aeration_ventilation_defectueuse": { "default": "Le système de ventilation ne fonctionne pas" },
+  "desordres_logement_aeration_ventilation_defectueuse_details_nettoyage": {
+    "default": "La ventilation a-t-elle été nettoyée ?",
+    "disorderOverview": {
+      "default": "Ventilation nettoyée : {{dictionaryStore::formStore.data.desordres_logement_aeration_ventilation_defectueuse_details_nettoyage}}"
+    }
+  },
+  "desordres_logement_chauffage_type": {
+    "default": "",
+    "disorderOverview": {
+      "default": "Type de chauffage : {{dictionaryStore::formStore.data.desordres_logement_chauffage_type}}"
+    }
+  },
+  "desordres_logement_chauffage_details_fenetres_permeables": { "default": "Les fenêtres laissent passer beaucoup d'air ou laissent passer l'eau quand il pleut" },
+  "desordres_logement_chauffage_details_difficultes_chauffage": { "default": "Il est difficile de chauffer le logement" },
+  "desordres_logement_chauffage_details_chauffage_KO": { "default": "Le chauffage ne fonctionne pas, un chauffage d'appoint est utilisé." },
+  "desordres_logement_chauffage_details_chauffage_dangereux": { "default": "Les dispositifs de chauffages (chauffe eau, poêle, cheminée, radiateur...) sont dangereux (très mauvais état, tuyaux mal fixés, etc.)" },
+  "desordres_logement_chauffage_details_dpe_annee": {
+    "default": "Quand le DPE du logement a-t-il été réalisé ?",
+    "disorderOverview": {
+      "default": "Date du DPE : {{dictionaryStore::formStore.data.desordres_logement_chauffage_details_dpe_annee}}"
+    }
+  },
+  "desordres_logement_chauffage_details_dpe_conso_finale": {
+    "default": "Quelle est la consommation en énergie finale indiquée sur le DPE ? (kWh/m²/an)",
+    "disorderOverview": {
+      "default": "Consommation indiquée sur DPE : {{formStore.data.desordres_logement_chauffage_details_dpe_conso_finale}} kWh/m²/an"
+    }
+  },
+  "composition_logement_superficie": {
+    "default": "Quelle est la superficie du logement ? (m²)",
+    "disorderOverview": {
+      "default": "Superficie du logement : {{formStore.data.composition_logement_superficie}} m²"
+    }
+  },
+  "desordres_logement_chauffage_details_dpe_conso": {
+    "default": "Quelle est la consommation en énergie indiquée sur le DPE ? (kWh/an)",
+    "disorderOverview": {
+      "default": "Consommation indiquée sur DPE : {{formStore.data.desordres_logement_chauffage_details_dpe_conso}} (kWh/an)"
+    }
+  },
+  "desordres_logement_chauffage_details_dpe_conso_vide": { "default": "Le DPE est vide" },
+  "desordres_logement_humidite_piece_a_vivre": {
+    "default": "Une ou des pièces à vivre",
+    "disorderOverview": {
+      "default": "Humidité ou moisissure dans une ou des pièces à vivre"
+    }
+  },
+  "desordres_logement_humidite_piece_a_vivre_details_fuite": {
+    "default": "Est-ce qu'il y a eu une fuite ou un dégât des eaux dans la pièce ?",
+    "disorderOverview": {
+      "default": "Fuite ou dégat des eaux : {{dictionaryStore::formStore.data.desordres_logement_humidite_piece_a_vivre_details_fuite}}"
+    }
+  },
+  "desordres_logement_humidite_piece_a_vivre_details_machine": {
+    "default": "Est-ce qu'il y a une machine à laver, un sèche-linge ou un lave vaisselle dans cette pièce ?",
+    "disorderOverview": {
+      "default": "Machine à laver, sèche-linge ou lave vaisselle : {{dictionaryStore::formStore.data.desordres_logement_humidite_piece_a_vivre_details_machine}}"
+    }
+  },
+  "desordres_logement_humidite_piece_a_vivre_details_moisissure_apres_nettoyage": {
+    "default": "La moisissure revient-elle après nettoyage ?",
+    "disorderOverview": {
+      "default": "Moisissure revient après nettoyage : {{dictionaryStore::formStore.data.desordres_logement_humidite_piece_a_vivre_details_moisissure_apres_nettoyage}}"
+    }
+  },
+  "desordres_logement_humidite_cuisine": {
+    "default": "La cuisine / Le coin cuisine",
+    "disorderOverview": {
+      "default": "Humidité ou moisissure dans la cuisine"
+    }
+  },
+  "desordres_logement_humidite_cuisine_details_fuite": {
+    "default": "Est-ce qu'il y a eu une fuite ou un dégât des eaux dans la pièce ?",
+    "disorderOverview": {
+      "default": "Fuite ou dégat des eaux dans la cuisine : {{dictionaryStore::formStore.data.desordres_logement_humidite_cuisine_details_fuite}}"
+    }
+  },
+  "desordres_logement_humidite_cuisine_details_machine": {
+    "default": "Est-ce qu'il y a une machine à laver, un sèche-linge ou un lave vaisselle dans cette pièce ?",
+    "disorderOverview": {
+      "default": "Machine à laver, sèche-linge ou lave vaisselle dans la cuisine : {{dictionaryStore::formStore.data.desordres_logement_humidite_cuisine_details_machine}}"
+    }
+  },
+  "desordres_logement_humidite_cuisine_details_moisissure_apres_nettoyage": {
+    "default": "La moisissure revient-elle après nettoyage ?",
+    "disorderOverview": {
+      "default": "Moisissure revient après nettoyage dans la cuisine : {{dictionaryStore::formStore.data.desordres_logement_humidite_cuisine_details_moisissure_apres_nettoyage}}"
+    }
+  },
+  "desordres_logement_humidite_salle_de_bain": {
+    "default": "La salle de bain / salle d'eau et ou les toilettes",
+    "disorderOverview": {
+      "default": "Humidité ou moisissure dans la salle de bain"
+    }
+  },
+  "desordres_logement_humidite_salle_de_bain_details_fuite": {
+    "default": "Est-ce qu'il y a eu une fuite ou un dégât des eaux dans la pièce ?",
+    "disorderOverview": {
+      "default": "Fuite ou dégat des eaux dans la salle de bain : {{dictionaryStore::formStore.data.desordres_logement_humidite_salle_de_bain_details_fuite}}"
+    }
+  },
+  "desordres_logement_humidite_salle_de_bain_details_machine": {
+    "default": "Est-ce qu'il y a une machine à laver, un sèche-linge ou un lave vaisselle dans cette pièce ?",
+    "disorderOverview": {
+      "default": "Machine à laver, sèche-linge ou lave vaisselle dans la salle de bain : {{dictionaryStore::formStore.data.desordres_logement_humidite_salle_de_bain_details_machine}}"
+    }
+  },
+  "desordres_logement_humidite_salle_de_bain_details_moisissure_apres_nettoyage": {
+    "default": "La moisissure revient-elle après nettoyage ?",
+    "disorderOverview": {
+      "default": "Moisissure revient après nettoyage dans la salle de bain : {{dictionaryStore::formStore.data.desordres_logement_humidite_salle_de_bain_details_moisissure_apres_nettoyage}}"
+    }
+  },
+  "desordres_logement_securite_sol_glissant": { "default": "Le sol est glissant ou abîmé" },
+  "desordres_logement_securite_sol_dangereux": { "default": "Le sol risque de s'effondrer : il bouge et est très abîmé" },
+  "desordres_logement_securite_balcons": { "default": "Les balcons et rambardes des fenêtres risquent de tomber" },
+  "desordres_logement_securite_gaz": { "default": "Il y a une odeur de gaz ou des fuites de gaz" },
+  "desordres_logement_securite_plomb": { "default": "Il y a de la peinture au plomb en mauvais état ou des matériaux amiantés en mauvais état" },
+  "desordres_logement_securite_plomb_details_diagnostique": {
+    "default": "Un diagnostic plomb / amiante est disponible pour le logement ?",
+    "disorderOverview": {
+      "default": "Diagnostique plomb / amiante disponible : {{dictionaryStore::formStore.data.desordres_logement_securite_plomb_details_diagnostique}}"
+    }
+  },
+  "desordres_logement_electricite_pas_electricite": { "default": "Il n'y a pas d'électricité dans le logement" },
+  "desordres_logement_electricite_pas_compteur": { "default": "Il n'y a pas de compteur électrique pour le logement" },
+  "desordres_logement_electricite_installation_dangereuse": { "default": "L'installation est dangereuse : les fils sont dénudés, les prises ne tiennent pas dans les murs, etc." },
+  "desordres_logement_electricite_manque_prises": { "default": "Il n'y a pas de prises, ou il en manque" },
+  "desordres_logement_electricite_manque_prises_details_multiprises": { "default": "Des multi-prises sont branchées les unes sur les autres : {{dictionaryStore::formStore.data.desordres_logement_electricite_manque_prises_details_multiprises}}" },
+  "desordres_logement_nuisibles_cafards": { "default": "Il y a des cafards ou blattes" },
+  "desordres_logement_nuisibles_rongeurs": { "default": "Il y a des rongeurs (rats, souris...)" },
+  "desordres_logement_nuisibles_punaises": { "default": "Il y a des punaises de lit" },
+  "desordres_logement_nuisibles_autres": { "default": "Il y a un autre type de nuisible" },
+  "desordres_logement_nuisibles_autres_details_type_nuisibles": {
+    "default": "Précisez le type de nuisibles",
+    "disorderOverview": {
+      "default": "Autre type de nuisible : {{formStore.data.desordres_logement_nuisibles_autres_details_type_nuisibles}}"
+    }
+  },
+  "desordres_logement_nuisibles_date": {
+    "default": "Depuis quand les nuisibles sont présents dans le logement ?",
+    "disorderOverview": {
+      "default": "Nuisibles présents depuis : {{dictionaryStore::formStore.data.desordres_logement_nuisibles_date}}"
+    }
+  },
+  "desordres_logement_bruit_exterieur": { "default": "On entend le bruit extérieur, même en fermant les portes et les fenêtres" },
+  "desordres_logement_bruit_voisins": { "default": "On entend les voisins parler et marcher depuis le logement, comme s'ils étaient dans la pièce" },
+  "desordres_logement_lumiere_pas_lumiere": { "default": "Le logement n'est pas éclairé par la lumière du jour. Il est difficile de voir sans allumer la lumière, même en pleine journée." },
+  "desordres_logement_lumiere_pas_volets": { "default": "Il n'y a pas de volets, ni de stores aux fenêtres" }
 }

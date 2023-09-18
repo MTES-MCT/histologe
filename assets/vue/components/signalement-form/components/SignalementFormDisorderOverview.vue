@@ -11,11 +11,21 @@
           v-bind:key="disorder"
           class="fr-accordion"
           >
-          <h3 class="fr-accordion__title">
-            <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-batiment-' + index">{{ dictionaryStore[disorder] }}</button>
-          </h3>
-          <div class="fr-collapse" :id="'accordion-disorder-batiment-' + index">
-            <h4 class="fr-h4">Contenu</h4>
+          <div
+            v-if="hasCategoryFields(disorder)"
+            >
+            <h3 class="fr-accordion__title">
+              <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-batiment-' + index">{{ dictionaryStore[disorder].default }}</button>
+            </h3>
+            <div class="fr-collapse" :id="'accordion-disorder-batiment-' + index">
+              <div
+                v-for="field in categoryFields(disorder)"
+                v-bind:key="field.slug"
+                :class="field.css"
+                >
+                {{field.label}}
+              </div>
+            </div>
           </div>
         </section>
       </div>
@@ -31,11 +41,21 @@
           v-bind:key="disorder"
           class="fr-accordion"
           >
-          <h3 class="fr-accordion__title">
-            <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-logement-' + index">{{ dictionaryStore[disorder] }}</button>
-          </h3>
-          <div class="fr-collapse" :id="'accordion-disorder-logement-' + index">
-            <h4 class="fr-h4">Contenu</h4>
+          <div
+            v-if="hasCategoryFields(disorder)"
+            >
+            <h3 class="fr-accordion__title">
+              <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-logement-' + index">{{ dictionaryStore[disorder].default }}</button>
+            </h3>
+            <div class="fr-collapse" :id="'accordion-disorder-logement-' + index">
+              <div
+                v-for="field in categoryFields(disorder)"
+                v-bind:key="field.slug"
+                :class="field.css"
+                >
+                {{field.label}}
+              </div>
+            </div>
           </div>
         </section>
       </div>
@@ -50,6 +70,7 @@
 import { defineComponent } from 'vue'
 import formStore from './../store'
 import dictionaryStore from './../dictionary-store'
+import { dictionaryManager } from './../services/dictionaryManager'
 
 export default defineComponent({
   name: 'SignalementFormDisorderOverview',
@@ -62,9 +83,105 @@ export default defineComponent({
       formStore,
       dictionaryStore
     }
+  },
+  methods: {
+    getAnswersSlugs (categorySlug: string) {
+      const answersSlugs = []
+      for (const dataname in formStore.data) {
+        if (dataname.includes(categorySlug) && formStore.data[dataname] !== null) {
+          answersSlugs.push(dataname)
+        }
+      }
+      answersSlugs.sort()
+      return answersSlugs
+    },
+    hasCategoryFields (categorySlug: string) {
+      const answersSlugs = this.getAnswersSlugs(categorySlug)
+      return answersSlugs.length > 0
+    },
+    categoryFields (categorySlug: string) {
+      const answersSlugs = this.getAnswersSlugs(categorySlug)
+
+      let headOfGroupSlug = ''
+      const answers = []
+      for (const slug of answersSlugs) {
+        const translatedSlug = this.getTranslationSlug(slug)
+
+        let label
+        let css = ''
+        if (slug.includes('_upload')) {
+          const nbUpload = this.getNbPhotosForSlug(translatedSlug)
+          if (nbUpload > 0) {
+            label = this.getUploadLabel(slug, nbUpload)
+            css = 'italic-text fr-pl-3v border-left'
+          }
+        } else {
+          label = dictionaryManager.translate(translatedSlug, 'disorderOverview')
+        }
+
+        if (headOfGroupSlug === '') {
+          headOfGroupSlug = slug
+        } else if (slug.includes(headOfGroupSlug)) {
+          css += ' fr-pl-3v border-left'
+        } else {
+          headOfGroupSlug = slug
+          css += ' fr-pt-3v'
+        }
+
+        if (label !== undefined) {
+          answers.push({ slug, label, css })
+        }
+      }
+      return answers
+    },
+    getTranslationSlug (slug: string): string {
+      if (slug.endsWith('_pieces')) {
+        slug = 'form_room_pieces'
+      } else if (slug.endsWith('_pieces_cuisine')) {
+        slug = 'form_room_pieces_cuisine'
+      } else if (slug.endsWith('_pieces_piece_a_vivre')) {
+        slug = 'form_room_pieces_piece_a_vivre'
+      } else if (slug.endsWith('_pieces_salle_de_bain')) {
+        slug = 'form_room_pieces_salle_de_bain'
+      }
+      return slug
+    },
+    getNbPhotosForSlug (slug: string): number {
+      if (formStore.data[slug] !== undefined) {
+        if (typeof formStore.data[slug] === 'object' && formStore.data[slug].file !== undefined) {
+          return 1
+        } else if (formStore.data[slug].length !== undefined) {
+          return formStore.data[slug].length
+        }
+      }
+      return 0
+    },
+    getUploadLabel (slug: string, nbUpload: number): string {
+      let label = nbUpload.toString()
+      if (slug.includes('photos_upload')) {
+        if (nbUpload > 1) {
+          label += ' photos jointes'
+        } else {
+          label += ' photo jointe'
+        }
+      } else {
+        if (nbUpload > 1) {
+          label += ' fichiers joints'
+        } else {
+          label += ' fichier joint'
+        }
+      }
+      return label
+    }
   }
 })
 </script>
 
 <style>
+.signalement-form-disorder-overview .border-left {
+  border-left: 2px solid var(--border-action-high-blue-france);
+}
+.italic-text {
+    font-style: italic;
+}
 </style>
