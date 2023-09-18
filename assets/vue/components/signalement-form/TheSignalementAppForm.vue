@@ -27,7 +27,9 @@
             v-if="!formStore.currentScreen.desktopIllustration"
             class="fr-col-12 fr-col-md-4"
             >
-              <SignalementFormBreadCrumbs />
+              <SignalementFormBreadCrumbs
+                :clickEvent="saveAndChangeScreenBySlug"
+                />
           </div>
           <div class="fr-col-12 fr-col-md-8">
             <SignalementFormScreen
