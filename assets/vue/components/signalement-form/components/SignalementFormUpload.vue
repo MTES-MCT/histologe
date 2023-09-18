@@ -177,13 +177,16 @@ export default defineComponent({
 .fr-link--error {
   color: var(--text-default-error);
 }
-.fr-signalement-form-upload-delete-button {
-  display: flex;
-  justify-content: right;
-}
 .fr-upload-group .cut-text {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+}
+.fr-upload-group .fr-signalement-form-upload-delete-button {
+  display: flex;
+  justify-content: right;
+}
+.fr-upload-group .fr-signalement-form-upload-delete-button button {
+  display: inline-flex;
 }
 </style>
