@@ -8,6 +8,7 @@ use App\Entity\Signalement;
 use App\Messenger\Message\DossierMessageSCHS;
 use App\Service\UploadHandlerService;
 use App\Utils\AddressParser;
+use App\Utils\EtageParser;
 
 class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
 {
@@ -41,7 +42,7 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
             ->setAdresseSignalement($address['street'])
             ->setCodepostaleSignalement($signalement->getCpOccupant())
             ->setVilleSignalement($signalement->getVilleOccupant())
-            ->setEtageSignalement($signalement->getEtageOccupant())
+            ->setEtageSignalement(EtageParser::parse($signalement->getEtageOccupant()))
             ->setNumeroAppartementSignalement($signalement->getNumAppartOccupant())
             ->setNumeroAdresseSignalement($address['number'])
             ->setLatitudeSignalement($signalement->getGeoloc()['lat'] ?? 0)

@@ -113,7 +113,7 @@ signalements:
     reference: "2022-3"
     geoloc: "{\"lng\":\"43.2928291\",\"lat\":\"5.3695447\"}"
     score: 100
-    etage_occupant: "0"
+    etage_occupant: "rdc"
     escalier_occupant: ""
     mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
@@ -159,7 +159,7 @@ signalements:
     reference: "2022-4"
     geoloc: "{\"lng\":\"43.2928291\",\"lat\":\"5.3695447\"}"
     score: 100
-    etage_occupant: "0"
+    etage_occupant: "Etage 1"
     escalier_occupant: ""
     mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
@@ -1063,7 +1063,7 @@ signalements:
     reference: "2023-12"
     geoloc: "{\"lng\":\"43.3062255\", \"lat\":\"5.3898396\"}"
     score: 80
-    etage_occupant: "0"
+    etage_occupant: "Annexe du bâtiment"
     escalier_occupant: ""
     mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13204"

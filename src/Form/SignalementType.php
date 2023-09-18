@@ -3,10 +3,13 @@
 namespace App\Form;
 
 use App\Entity\Signalement;
+use App\Utils\EtageParser;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -371,18 +374,21 @@ class SignalementType extends AbstractType
                 ],
                 'label' => 'Ville du logement',
             ])
-            ->add('etageOccupant', TextType::class, [
+            ->add('etageOccupant', NumberType::class, [
                 'row_attr' => [
                     'class' => 'fr-input-group',
                 ],
                 'attr' => [
                     'class' => 'fr-input',
-                    'maxlength' => '200',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
                 ],
                 'label' => 'Etage',
+                'help' => 'Saisissez 0 pour le rez-de-chaussée (RDC), 1 pour le premier étage, etc.',
+                'help_attr' => [
+                    'class' => 'fr-hint-text',
+                ],
                 'required' => false,
             ])
             ->add('escalierOccupant', TextType::class, [
@@ -588,6 +594,16 @@ class SignalementType extends AbstractType
                 'label' => 'Structure déclarant',
                 'required' => false,
             ]);
+
+        $builder->get('etageOccupant')
+            ->addModelTransformer(new CallbackTransformer(
+                function ($currentEtage): ?int {
+                    return EtageParser::parse($currentEtage);
+                },
+                function ($updtatedEtage): string {
+                    return $updtatedEtage;
+                }
+            ));
     }
 
     public function configureOptions(OptionsResolver $resolver): void
