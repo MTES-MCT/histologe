@@ -245,10 +245,28 @@
       "default": "Autre type de nuisible : {{formStore.data.desordres_logement_nuisibles_autres_details_type_nuisibles}}"
     }
   },
-  "desordres_logement_nuisibles_date": {
-    "default": "Depuis quand les nuisibles sont présents dans le logement ?",
+  "desordres_logement_nuisibles_cafards_details_date": {
+    "default": "Depuis quand les cafards ou blattes sont présents dans le logement ?",
     "disorderOverview": {
-      "default": "Nuisibles présents depuis : {{dictionaryStore::formStore.data.desordres_logement_nuisibles_date}}"
+      "default": "Cafards ou blattes présents depuis : {{dictionaryStore::formStore.data.desordres_logement_nuisibles_cafards_details_date}}"
+    }
+  },
+  "desordres_logement_nuisibles_rongeurs_details_date": {
+    "default": "Depuis quand les rongeurs sont présents dans le logement ?",
+    "disorderOverview": {
+      "default": "Rongeurs présents depuis : {{dictionaryStore::formStore.data.desordres_logement_nuisibles_rongeurs_details_date}}"
+    }
+  },
+  "desordres_logement_nuisibles_punaises_details_date": {
+    "default": "Depuis quand les punaises de lit sont présentes dans le logement ?",
+    "disorderOverview": {
+      "default": "Punaises de lit présentes depuis : {{dictionaryStore::formStore.data.desordres_logement_nuisibles_punaises_details_date}}"
+    }
+  },
+  "desordres_logement_nuisibles_autres_details_date": {
+    "default": "Depuis quand ces nuisibles sont présents dans le logement ?",
+    "disorderOverview": {
+      "default": "Nuisibles présents depuis : {{dictionaryStore::formStore.data.desordres_logement_nuisibles_autres_details_date}}"
     }
   },
   "desordres_logement_bruit_exterieur": { "default": "On entend le bruit extérieur, même en fermant les portes et les fenêtres" },

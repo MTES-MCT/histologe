@@ -2117,7 +2117,7 @@
             "body": [
                 {
                   "type": "SignalementFormOnlyChoice",
-                  "label": "{{dictionaryStore::desordres_logement_nuisibles_date}}",
+                  "label": "{{dictionaryStore::desordres_logement_nuisibles_cafards_details_date}}",
                   "slug": "desordres_logement_nuisibles_cafards_details_date",
                   "values": [
                     {
@@ -2165,7 +2165,7 @@
             "body": [
                 {
                   "type": "SignalementFormOnlyChoice",
-                  "label": "{{dictionaryStore::desordres_logement_nuisibles_date}}",
+                  "label": "{{dictionaryStore::desordres_logement_nuisibles_rongeurs_details_date}}",
                   "slug": "desordres_logement_nuisibles_rongeurs_details_date",
                   "values": [
                     {
@@ -2213,7 +2213,7 @@
             "body": [
               {
                 "type": "SignalementFormOnlyChoice",
-                "label": "{{dictionaryStore::desordres_logement_nuisibles_date}}",
+                "label": "{{dictionaryStore::desordres_logement_nuisibles_punaises_details_date}}",
                 "slug": "desordres_logement_nuisibles_punaises_details_date",
                 "values": [
                   {
@@ -2271,7 +2271,7 @@
                 },
                 {
                   "type": "SignalementFormOnlyChoice",
-                  "label": "{{dictionaryStore::desordres_logement_nuisibles_date}}",
+                  "label": "{{dictionaryStore::desordres_logement_nuisibles_autres_details_date}}",
                   "slug": "desordres_logement_nuisibles_autres_details_date",
                   "values": [
                     {
