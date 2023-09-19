@@ -48,6 +48,5 @@ class EtageParserTest extends TestCase
 
         yield 'Dernière maison à gauche' => ['Dernière maison à gauche', null];
 
-        yield 'null' => [null, null];
     }
 }

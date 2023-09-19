@@ -28,6 +28,7 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
         $signalement = $affectation->getSignalement();
         $partner = $affectation->getPartner();
         $address = AddressParser::parse($signalement->getAdresseOccupant());
+        $etage = $signalement->getEtageOccupant() ? EtageParser::parse($signalement->getEtageOccupant()) : null;
 
         return (new DossierMessageSCHS())
             ->setUrl($partner->getEsaboraUrl())
@@ -42,7 +43,7 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
             ->setAdresseSignalement($address['street'])
             ->setCodepostaleSignalement($signalement->getCpOccupant())
             ->setVilleSignalement($signalement->getVilleOccupant())
-            ->setEtageSignalement(EtageParser::parse($signalement->getEtageOccupant()))
+            ->setEtageSignalement($etage)
             ->setNumeroAppartementSignalement($signalement->getNumAppartOccupant())
             ->setNumeroAdresseSignalement($address['number'])
             ->setLatitudeSignalement($signalement->getGeoloc()['lat'] ?? 0)
