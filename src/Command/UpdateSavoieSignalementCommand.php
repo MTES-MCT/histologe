@@ -53,9 +53,8 @@ class UpdateSavoieSignalementCommand extends Command
         foreach ($rows as $row) {
             $status = null;
             $signalement = $this->signalementRepository->findOneBy([
-                'reference' => $row[self::COLUMN_REFERENCE],
-                'territory' => $territory, ]
-            );
+                'reference' => $row[self::COLUMN_REFERENCE], 'territory' => $territory,
+            ]);
 
             if ($signalement instanceof Signalement) {
                 $currentCreatedAt = $signalement->getCreatedAt();
@@ -101,7 +100,7 @@ class UpdateSavoieSignalementCommand extends Command
         }
 
         $progressBar->finish();
-        $io->success(sprintf('%d signalements updates', $countSignalement));
+        $io->success(sprintf('%d signalements updated', $countSignalement));
 
         $this->entityManager->flush();
 
