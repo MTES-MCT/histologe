@@ -1,47 +1,56 @@
 <template>
   <div :id="id">
     <div>
-      <h2>Récapitulatif</h2>
+      <br>
+      <h2 class="fr-h4">Récapitulatif</h2>
 
-      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
-        <div class="fr-col-12 fr-col-md-8">
-          <h3>Adresse du logement</h3>
+      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
+        <div class="fr-col-8">
+          <h3 class="fr-h6">Adresse du logement</h3>
         </div>
-        <div class="fr-col-12 fr-col-md-4">
+        <div class="fr-col-4 fr-text--right">
           <a href="#" class="btn-link fr-btn--icon-left fr-icon-edit-line" @click="handleEdit('adresse_logement')">Editer</a>
         </div>
       </div>
       <p v-html="getFormDataAdresse()"></p>
 
-      <!-- TODO : changer intitulés ? -->
-      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
-        <div class="fr-col-12 fr-col-md-8">
-          <h3>Vos coordonnées</h3>
+      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
+        <div class="fr-col-8">
+          <h3 class="fr-h6">Vos coordonnées</h3>
         </div>
-        <div class="fr-col-12 fr-col-md-4">
+        <div class="fr-col-4 fr-text--right">
           <a v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'" href="#" @click="handleEdit('vos_coordonnees_occupant')" class="btn-link fr-btn--icon-left fr-icon-edit-line" >Editer</a>
           <a v-else href="#" @click="handleEdit('vos_coordonnees_tiers')"  class="btn-link fr-btn--icon-left fr-icon-edit-line" >Editer</a>
         </div>
       </div>
-      <p v-html="getFormDataCoordonneesOccupant()"></p>
+      <p v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'" v-html="getFormDataCoordonneesOccupant()"></p>
+      <p v-else v-html="getFormDataCoordonneesDeclarant()"></p>
 
-      <!-- TODO : si profil est bailleur ou bailleur_occupant que met-on ? -->
-      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
-        <div class="fr-col-12 fr-col-md-8">
-          <h3>Les coordonnées du bailleur</h3>
+      <div v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'bailleur'" class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
+        <div class="fr-col-8">
+          <h3 class="fr-h6">Les coordonnées du bailleur</h3>
         </div>
-        <div class="fr-col-12 fr-col-md-4">
-          <a v-if="formStore.data.profil !== 'bailleur_occupant'" href="#" @click="handleEdit('coordonnees_bailleur')" class="btn-link fr-btn--icon-left fr-icon-edit-line" >Editer</a>
-          <a v-else href="#" @click="handleEdit('vos_coordonnees_tiers')"  class="btn-link fr-btn--icon-left fr-icon-edit-line" >Editer</a>
+        <div class="fr-col-4 fr-text--right">
+          <a href="#" @click="handleEdit('coordonnees_bailleur')" class="btn-link fr-btn--icon-left fr-icon-edit-line" >Editer</a>
         </div>
       </div>
-      <p v-html="getFormDataCoordonneesBailleur()"></p>
+      <p v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'bailleur'" v-html="getFormDataCoordonneesBailleur()"></p>
 
-      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
-        <div class="fr-col-12 fr-col-md-8">
-          <h3>Type et composition du logement</h3>
+      <div v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'locataire' && formStore.data.profil !== 'service_secours'" class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
+        <div class="fr-col-8">
+          <h3 class="fr-h6">Les coordonnées du foyer</h3>
         </div>
-        <div class="fr-col-12 fr-col-md-4">
+        <div class="fr-col-4 fr-text--right">
+          <a href="#" @click="handleEdit('coordonnees_occupant')" class="btn-link fr-btn--icon-left fr-icon-edit-line" >Editer</a>
+        </div>
+      </div>
+      <p v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'locataire' && formStore.data.profil !== 'service_secours'" v-html="getFormDataCoordonneesOccupant()"></p>
+
+      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
+        <div class="fr-col-8">
+          <h3 class="fr-h6">Type et composition du logement</h3>
+        </div>
+        <div class="fr-col-4 fr-text--right">
           <a href="#" class="btn-link fr-btn--icon-left fr-icon-edit-line" @click="handleEdit('ecran_intermediaire_type_composition')">Editer</a>
         </div>
       </div>
@@ -54,12 +63,12 @@
         </div>
       </section>
 
-      <!-- TODO quels profils, quel intitulé -->
-      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
-        <div class="fr-col-12 fr-col-md-8">
-          <h3>Votre situation</h3>
+      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
+        <div class="fr-col-8">
+          <h3 class="fr-h6" v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'">Votre situation</h3>
+          <h3 class="fr-h6" v-else>La situation du foyer</h3>
         </div>
-        <div class="fr-col-12 fr-col-md-4">
+        <div class="fr-col-4 fr-text--right">
           <a href="#" class="btn-link fr-btn--icon-left fr-icon-edit-line" @click="handleEdit('ecran_intermediaire_situation_occupant')">Editer</a>
         </div>
       </div>
@@ -72,11 +81,11 @@
         </div>
       </section>
 
-      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
-        <div class="fr-col-12 fr-col-md-8">
-          <h3>Les désordres</h3>
+      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
+        <div class="fr-col-8">
+          <h3 class="fr-h6">Les désordres</h3>
         </div>
-        <div class="fr-col-12 fr-col-md-4">
+        <div class="fr-col-4 fr-text--right">
           <a href="#" class="btn-link fr-btn--icon-left fr-icon-edit-line" @click="handleEdit('ecran_intermediaire_les_desordres')">Editer</a>
         </div>
       </div>
@@ -85,20 +94,20 @@
         :icons="disorderIcons"
         />
 
-      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
-        <div class="fr-col-12 fr-col-md-8">
-          <h3>TODO : La procédure</h3>
+      <div v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire' || formStore.data.profil === 'bailleur'" class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
+        <div class="fr-col-8">
+          <h3 class="fr-h6">La procédure</h3>
         </div>
-        <div class="fr-col-12 fr-col-md-4">
+        <div class="fr-col-4 fr-text--right">
           <a href="#" class="btn-link fr-btn--icon-left fr-icon-edit-line" @click="handleEdit('info_procedure')">Editer</a>
         </div>
       </div>
-        <div class="fr-collapse" id="accordion-procedure">
-          <p v-html="getFormDataProcedure()"></p>
-        </div>
+      <div v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire' || formStore.data.profil === 'bailleur'" class="fr-collapse" id="accordion-procedure">
+        <p v-html="getFormDataProcedure()"></p>
+      </div>
 
       <div v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'">
-        <h2>Informations complémentaires</h2>
+        <h2 class="fr-h4">Informations complémentaires</h2>
 
         <p>
           Plus nous avons d'informations sur la situation,
@@ -114,11 +123,13 @@
         </button>
       </div>
 
-      <h2>Message à l'administration (facultatif)</h2>
+      <br>
+      <h2 class="fr-h4">Message à l'administration (facultatif)</h2>
       <p>Ce message sera joint à votre signalement.</p>
-      <textarea placeholder="Votre message ici"></textarea>
-      <!-- <SignalementFormTextarea></SignalementFormTextarea> -->
-      <!-- TODO utiliser composant SignalementFormTextarea -->
+      <SignalementFormTextarea
+        :id="idMessageAdministration"
+        description="Votre message ici"
+        />
 
     </div>
   </div>
@@ -128,11 +139,13 @@
 import { defineComponent } from 'vue'
 import formStore from './../store'
 import SignalementFormDisorderOverview from './SignalementFormDisorderOverview.vue'
+import SignalementFormTextarea from './SignalementFormTextarea.vue'
 
 export default defineComponent({
   name: 'SignalementFormOverview',
   components: {
-    SignalementFormDisorderOverview
+    SignalementFormDisorderOverview,
+    SignalementFormTextarea
   },
   props: {
     id: { type: String, default: null },
@@ -142,6 +155,7 @@ export default defineComponent({
     return {
       formStore,
       idDisorderOverview: this.id + '_disorder_overview',
+      idMessageAdministration: this.id + '_message_administration',
       disorderIcons: [{ src: '/img/form/BATIMENT/Picto-batiment.svg', alt: '' }, { src: '/img/form/LOGEMENT/Picto-logement.svg', alt: '' }]
     }
   },
@@ -170,6 +184,15 @@ export default defineComponent({
       result += this.formStore.data.vos_coordonnees_occupant_nom + '<br>'
       result += this.formStore.data.vos_coordonnees_occupant_email + '<br>'
       result += this.formStore.data.vos_coordonnees_occupant_tel
+      return result
+    },
+    getFormDataCoordonneesDeclarant (): string {
+      let result = ''
+      result += this.formStore.data.coordonnees_occupant_civilite + ' '
+      result += this.formStore.data.coordonnees_occupant_prenom + ' '
+      result += this.formStore.data.coordonnees_occupant_nom + '<br>'
+      result += this.formStore.data.coordonnees_occupant_email + '<br>'
+      result += this.formStore.data.coordonnees_occupant_tel
       return result
     },
     getFormDataCoordonneesBailleur (): string {
@@ -218,12 +241,16 @@ export default defineComponent({
     },
     getFormDataProcedure (): string {
       let result = ''
-      // TODO : conditionner en fonction des réponses et profils
-      result += 'Bailleur (propriétaire) prévenu ? ' + this.formStore.data.info_procedure_bailleur_prevenu + '<br>'
+      if (this.isFormDataSet('info_procedure_bailleur_prevenu')) {
+        result += 'Bailleur (propriétaire) prévenu ? ' + this.formStore.data.info_procedure_bailleur_prevenu + '<br>'
+      }
       result += 'Assurance contactée ? ' + this.formStore.data.info_procedure_assurance_contactee + '<br>'
-      result += 'Réponse de l\'assurance ' + this.formStore.data.info_procedure_reponse_assurance + '<br>'
-      result += 'Si des travaux sont faits, voulez-vous rester dans le logement  ' + this.formStore.data.info_procedure_depart_apres_travaux + '<br>'
-
+      if (this.formStore.data.info_procedure_assurance_contactee === 'oui') {
+        result += 'Réponse de l\'assurance ' + this.formStore.data.info_procedure_reponse_assurance + '<br>'
+      }
+      if (this.isFormDataSet('info_procedure_depart_apres_travaux')) {
+        result += 'Si des travaux sont faits, voulez-vous rester dans le logement  ' + this.formStore.data.info_procedure_depart_apres_travaux + '<br>'
+      }
       return result
     },
     isFormDataSet (formSlug: string) {
