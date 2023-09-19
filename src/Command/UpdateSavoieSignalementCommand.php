@@ -89,9 +89,6 @@ class UpdateSavoieSignalementCommand extends Command
 
                         $signalement->setClosedAt($newClosedAt);
                     }
-                }
-
-                if (null !== $status) {
                     $signalement->setStatut($status);
                 }
 
