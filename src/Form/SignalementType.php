@@ -593,9 +593,9 @@ class SignalementType extends AbstractType
         $builder->get('etageOccupant')
             ->addModelTransformer(new CallbackTransformer(
                 function ($currentEtage): ?int {
-                    return EtageParser::parse($currentEtage);
+                    return $currentEtage ? EtageParser::parse($currentEtage) : null;
                 },
-                function ($updtatedEtage): string {
+                function ($updtatedEtage): ?string {
                     return $updtatedEtage;
                 }
             ));

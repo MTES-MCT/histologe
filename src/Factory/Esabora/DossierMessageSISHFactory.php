@@ -63,6 +63,8 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ? implode(',', $signalement->getModeContactProprio())
             : null;
 
+        $etage = $signalement->getEtageOccupant() ? EtageParser::parse($signalement->getEtageOccupant()) : null;
+
         return (new DossierMessageSISH())
             ->setUrl($partner->getEsaboraUrl())
             ->setToken($partner->getEsaboraToken())
@@ -86,7 +88,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
                     ?->setTimezone(new \DateTimeZone(self::DEFAULT_TIMEZONE))
                     ->format($formatDateTime)
             )
-            ->setLocalisationEtage(EtageParser::parse($signalement->getEtageOccupant()))
+            ->setLocalisationEtage($etage)
             ->setLocalisationEscalier($signalement->getEscalierOccupant())
             ->setLocalisationNumPorte($signalement->getNumAppartOccupant())
             ->setSitOccupantNbAdultes($signalement->getNbAdultes())
