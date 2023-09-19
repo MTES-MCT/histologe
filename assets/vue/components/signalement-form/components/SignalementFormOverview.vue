@@ -1,25 +1,50 @@
 <template>
   <div :id="id">
-    <div class="fr-container">
+    <div>
       <h2>Récapitulatif</h2>
 
-      <h3>Adresse du logement</h3>
-      <a href="#" @click="handleEdit('adresse_logement')">Editer</a>
+      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
+        <div class="fr-col-12 fr-col-md-8">
+          <h3>Adresse du logement</h3>
+        </div>
+        <div class="fr-col-12 fr-col-md-4">
+          <a href="#" class="btn-link fr-btn--icon-left fr-icon-edit-line" @click="handleEdit('adresse_logement')">Editer</a>
+        </div>
+      </div>
       <p v-html="getFormDataAdresse()"></p>
 
       <!-- TODO : changer intitulés ? -->
-      <h3>Vos coordonnées</h3>
-      <a v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'" href="#" @click="handleEdit('vos_coordonnees_occupant')">Editer</a>
-      <a v-else href="#" @click="handleEdit('vos_coordonnees_tiers')">Editer</a>
+      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
+        <div class="fr-col-12 fr-col-md-8">
+          <h3>Vos coordonnées</h3>
+        </div>
+        <div class="fr-col-12 fr-col-md-4">
+          <a v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'" href="#" @click="handleEdit('vos_coordonnees_occupant')" class="btn-link fr-btn--icon-left fr-icon-edit-line" >Editer</a>
+          <a v-else href="#" @click="handleEdit('vos_coordonnees_tiers')"  class="btn-link fr-btn--icon-left fr-icon-edit-line" >Editer</a>
+        </div>
+      </div>
       <p v-html="getFormDataCoordonneesOccupant()"></p>
 
       <!-- TODO : si profil est bailleur ou bailleur_occupant que met-on ? -->
-      <h3>Les coordonnées du bailleur</h3>
-      <a href="#" @click="handleEdit('coordonnees_bailleur')">Editer</a>
+      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
+        <div class="fr-col-12 fr-col-md-8">
+          <h3>Les coordonnées du bailleur</h3>
+        </div>
+        <div class="fr-col-12 fr-col-md-4">
+          <a v-if="formStore.data.profil !== 'bailleur_occupant'" href="#" @click="handleEdit('coordonnees_bailleur')" class="btn-link fr-btn--icon-left fr-icon-edit-line" >Editer</a>
+          <a v-else href="#" @click="handleEdit('vos_coordonnees_tiers')"  class="btn-link fr-btn--icon-left fr-icon-edit-line" >Editer</a>
+        </div>
+      </div>
       <p v-html="getFormDataCoordonneesBailleur()"></p>
 
-      <h3>Type et composition du logement</h3>
-      <a href="#" @click="handleEdit('ecran_intermediaire_type_composition')">Editer</a>
+      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
+        <div class="fr-col-12 fr-col-md-8">
+          <h3>Type et composition du logement</h3>
+        </div>
+        <div class="fr-col-12 fr-col-md-4">
+          <a href="#" class="btn-link fr-btn--icon-left fr-icon-edit-line" @click="handleEdit('ecran_intermediaire_type_composition')">Editer</a>
+        </div>
+      </div>
       <section class="fr-accordion">
         <h3 class="fr-accordion__title">
           <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-type-composition">Afficher les informations</button>
@@ -29,8 +54,15 @@
         </div>
       </section>
 
-      <h3>Votre situation</h3>
-      <a href="#" @click="handleEdit('ecran_intermediaire_situation_occupant')">Editer</a>
+      <!-- TODO quels profils, quel intitulé -->
+      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
+        <div class="fr-col-12 fr-col-md-8">
+          <h3>Votre situation</h3>
+        </div>
+        <div class="fr-col-12 fr-col-md-4">
+          <a href="#" class="btn-link fr-btn--icon-left fr-icon-edit-line" @click="handleEdit('ecran_intermediaire_situation_occupant')">Editer</a>
+        </div>
+      </div>
       <section class="fr-accordion">
         <h3 class="fr-accordion__title">
           <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-situation-occupant">Afficher les informations</button>
@@ -40,39 +72,53 @@
         </div>
       </section>
 
-      <h3>TODO : Les désordres</h3>
-      <a href="#" @click="handleEdit('ecran_intermediaire_les_desordres')">Editer</a>
+      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
+        <div class="fr-col-12 fr-col-md-8">
+          <h3>Les désordres</h3>
+        </div>
+        <div class="fr-col-12 fr-col-md-4">
+          <a href="#" class="btn-link fr-btn--icon-left fr-icon-edit-line" @click="handleEdit('ecran_intermediaire_les_desordres')">Editer</a>
+        </div>
+      </div>
+      <SignalementFormDisorderOverview
+        :id="idDisorderOverview"
+        :icons="disorderIcons"
+        />
 
-      <h3>TODO : La procédure</h3>
-      <a href="#" @click="handleEdit('info_procedure')">Editer</a>
+      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
+        <div class="fr-col-12 fr-col-md-8">
+          <h3>TODO : La procédure</h3>
+        </div>
+        <div class="fr-col-12 fr-col-md-4">
+          <a href="#" class="btn-link fr-btn--icon-left fr-icon-edit-line" @click="handleEdit('info_procedure')">Editer</a>
+        </div>
+      </div>
+        <div class="fr-collapse" id="accordion-procedure">
+          <p v-html="getFormDataProcedure()"></p>
+        </div>
 
       <div v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'">
-        <h2>TODO : Informations complémentaires</h2>
+        <h2>Informations complémentaires</h2>
 
         <p>
           Plus nous avons d'informations sur la situation,
           mieux nous pouvons vous accompagner.
           Cliquez sur le bouton pour ajouter des informations.
-        <a href="#" @click="handleEdit('informations_complementaires')">Editer</a>
         </p>
-      </div>
-
-      Ma situation personnelle
-      <br>
-      Mon logement
-      <br>
-      <button
-        type="button"
-        class="fr-btn fr-secondary"
-        @click="handleEdit('')"
-        >
+        <button
+          type="button"
+          class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line"
+          @click="handleEdit('informations_complementaires')"
+          >
           Ajouter des informations
-      </button>
-      <br><br>
+        </button>
+      </div>
 
       <h2>Message à l'administration (facultatif)</h2>
       <p>Ce message sera joint à votre signalement.</p>
       <textarea placeholder="Votre message ici"></textarea>
+      <!-- <SignalementFormTextarea></SignalementFormTextarea> -->
+      <!-- TODO utiliser composant SignalementFormTextarea -->
 
     </div>
   </div>
@@ -81,16 +127,22 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import formStore from './../store'
+import SignalementFormDisorderOverview from './SignalementFormDisorderOverview.vue'
 
 export default defineComponent({
   name: 'SignalementFormOverview',
+  components: {
+    SignalementFormDisorderOverview
+  },
   props: {
     id: { type: String, default: null },
     clickEvent: Function
   },
   data () {
     return {
-      formStore
+      formStore,
+      idDisorderOverview: this.id + '_disorder_overview',
+      disorderIcons: [{ src: '/img/form/BATIMENT/Picto-batiment.svg', alt: '' }, { src: '/img/form/LOGEMENT/Picto-logement.svg', alt: '' }]
     }
   },
   methods: {
@@ -162,6 +214,16 @@ export default defineComponent({
         result += 'Numéro allocataire : ' + this.formStore.data.logement_social_numero_allocataire + '<br>'
         result += 'Montant allocation : ' + this.formStore.data.logement_social_allocation + '€<br>'
       }
+      return result
+    },
+    getFormDataProcedure (): string {
+      let result = ''
+      // TODO : conditionner en fonction des réponses et profils
+      result += 'Bailleur (propriétaire) prévenu ? ' + this.formStore.data.info_procedure_bailleur_prevenu + '<br>'
+      result += 'Assurance contactée ? ' + this.formStore.data.info_procedure_assurance_contactee + '<br>'
+      result += 'Réponse de l\'assurance ' + this.formStore.data.info_procedure_reponse_assurance + '<br>'
+      result += 'Si des travaux sont faits, voulez-vous rester dans le logement  ' + this.formStore.data.info_procedure_depart_apres_travaux + '<br>'
+
       return result
     },
     isFormDataSet (formSlug: string) {

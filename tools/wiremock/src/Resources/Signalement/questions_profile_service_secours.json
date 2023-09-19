@@ -787,6 +787,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Validation du signalement",
+    "description": "Vérifiez les informations et cliquez sur le bouton \"Valider\" pour envoyer votre signalement !",
     "slug": "validation_signalement",
     "screenCategory": "Récapitulatif",
     "components": {
