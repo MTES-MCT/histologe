@@ -595,7 +595,7 @@ class SignalementType extends AbstractType
                 function ($currentEtage): ?int {
                     return $currentEtage ? EtageParser::parse($currentEtage) : null;
                 },
-                function ($updtatedEtage): string {
+                function ($updtatedEtage): ?string {
                     return $updtatedEtage;
                 }
             ));
