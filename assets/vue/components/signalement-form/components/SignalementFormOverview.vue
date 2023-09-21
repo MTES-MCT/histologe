@@ -54,7 +54,7 @@
           <a href="#" class="btn-link fr-btn--icon-left fr-icon-edit-line" @click="handleEdit('ecran_intermediaire_type_composition')">Editer</a>
         </div>
       </div>
-      <section class="fr-accordion">
+      <section class="fr-accordion fr-mb-3w">
         <h3 class="fr-accordion__title">
           <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-type-composition">Afficher les informations</button>
         </h3>
@@ -72,7 +72,7 @@
           <a href="#" class="btn-link fr-btn--icon-left fr-icon-edit-line" @click="handleEdit('ecran_intermediaire_situation_occupant')">Editer</a>
         </div>
       </div>
-      <section class="fr-accordion">
+      <section class="fr-accordion fr-mb-3w">
         <h3 class="fr-accordion__title">
           <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-situation-occupant">Afficher les informations</button>
         </h3>
@@ -266,4 +266,12 @@ export default defineComponent({
 </script>
 
 <style>
+#validation_signalement_overview_disorder_overview .fr-disorder-overview-title {
+  font-size: 20px !important;
+  line-height: 28px !important;
+  margin: 0;
+}
+#validation_signalement_overview_disorder_overview .fr-disorder-overview-image {
+  width: 40px;
+}
 </style>

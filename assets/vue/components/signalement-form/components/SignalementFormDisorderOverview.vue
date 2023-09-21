@@ -2,8 +2,8 @@
   <div :id="id" class="signalement-form-disorder-overview fr-container--fluid fr-my-3v">
     <div v-if="formStore.data.categorieDisorders.batiment.length > 0">
       <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
-        <div class="fr-col-2"><img :src="icons ? icons[0].src : ''" :alt="icons ? icons[0].alt : ''"></div>
-        <div class="fr-col-10 fr-h2">Le bâtiment</div>
+        <div class="fr-col-2 fr-col-md-1"><img :src="icons ? icons[0].src : ''" :alt="icons ? icons[0].alt : ''" class="fr-disorder-overview-image"></div>
+        <div class="fr-col-10 fr-col-md-11 fr-h2 fr-disorder-overview-title">Le bâtiment</div>
       </div>
       <div class="fr-accordions-group">
         <section
@@ -32,8 +32,8 @@
     </div>
     <div v-if="formStore.data.categorieDisorders.logement.length > 0">
       <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
-        <div class="fr-col-2"><img :src="icons ? icons[1].src : ''" :alt="icons ? icons[1].alt : ''"></div>
-        <div class="fr-col-10 fr-h2">Le logement</div>
+        <div class="fr-col-2 fr-col-md-1"><img :src="icons ? icons[1].src : ''" :alt="icons ? icons[1].alt : ''" class="fr-disorder-overview-image"></div>
+        <div class="fr-col-10 fr-col-md-11 fr-h2 fr-disorder-overview-title">Le logement</div>
       </div>
       <div class="fr-accordions-group">
         <section
@@ -183,5 +183,11 @@ export default defineComponent({
 }
 .italic-text {
     font-style: italic;
+}
+.fr-disorder-overview-title {
+  margin: 0;
+}
+.fr-disorder-overview-image {
+  width: 60px;
 }
 </style>
