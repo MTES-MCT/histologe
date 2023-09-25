@@ -35,7 +35,7 @@
     </div>
 
     <nav class="fr-sidemenu fr-hidden fr-unhidden-md" aria-labelledby="fr-sidemenu-title">
-      <div class="fr-sidemenu__inner">
+      <div class="fr-sidemenu__inner fr-pb-12w">
         <div class="fr-collapse" id="fr-sidemenu-wrapper">
           <div class="fr-sidemenu__title" id="fr-sidemenu-title">Mon signalement</div>
           <ul class="fr-sidemenu__list">
