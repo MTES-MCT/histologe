@@ -140,7 +140,7 @@
           }
         },
         {
-          "type": "SignalementFormTextfield",
+          "type": "SignalementFormPhonefield",
           "label": "Téléphone (facultatif)",
           "slug": "coordonnees_bailleur_tel",
           "validate": {

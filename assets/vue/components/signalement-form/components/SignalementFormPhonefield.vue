@@ -22,13 +22,13 @@
           </select>
         </div>
         <div class="fr-col-12 fr-col-md-8">
-          <div class="fr-input-wrap">
+          <div class="fr-input-wrap fr-icon-phone-line">
             <input
               type="text"
               :id="id"
               :name="id"
               v-model="formStore.data[id]"
-              class="fr-input fr-icon-phone-line"
+              class="fr-input"
               :aria-describedby="'text-input-error-desc-error-'+id"
               >
           </div>
@@ -76,13 +76,13 @@
           </select>
         </div>
         <div class="fr-col-12 fr-col-md-8">
-          <div class="fr-input-wrap">
+          <div class="fr-input-wrap fr-icon-phone-line">
             <input
               type="text"
               :id="idSecond"
               :name="idSecond"
               v-model="formStore.data[idSecond]"
-              class="fr-input fr-icon-phone-line"
+              class="fr-input"
               :aria-describedby="'text-input-error-desc-error-'+idSecond"
               >
           </div>
