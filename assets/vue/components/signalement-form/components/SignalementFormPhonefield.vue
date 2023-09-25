@@ -123,6 +123,12 @@ export default defineComponent({
     clickEvent: Function
   },
   data () {
+    if (formStore.data[this.id + '_countrycode'] === '' || formStore.data[this.id + '_countrycode'] === undefined) {
+      formStore.data[this.id + '_countrycode'] = '33'
+    }
+    if (formStore.data[this.id + '_secondaire_countrycode'] === '' || formStore.data[this.id + '_secondaire_countrycode'] === undefined) {
+      formStore.data[this.id + '_secondaire_countrycode'] = '33'
+    }
     return {
       variablesReplacer,
       idCountryCode: this.id + '_countrycode',
