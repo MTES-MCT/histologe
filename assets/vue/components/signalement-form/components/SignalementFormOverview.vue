@@ -292,7 +292,7 @@ export default defineComponent({
       }
       for (let i = 1; i <= this.formStore.data.composition_logement_nb_pieces; i++) {
         result += this.addLineIfNeeded('type_logement_pieces_a_vivre_superficie_piece_' + i, 'Superficie de la pièce ' + i + ' : ')
-        result += this.addLineIfNeeded('type_logement_pieces_a_vivre_hauteur_piece_' + i, 'Hauteur de la pièce ' + i + ' : ')
+        result += this.addLineIfNeeded('type_logement_pieces_a_vivre_hauteur_piece_' + i, 'La hauteur jusqu\'au plafond de la pièce ' + i + ' est de 2,20m (220cm) ou plus ? ')
       }
       result += this.addLineIfNeeded('type_logement_commodites_cuisine', 'Cuisine ou coin cuisine ? ')
       if (this.formStore.data.type_logement_commodites_cuisine === 'non') {
