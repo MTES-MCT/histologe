@@ -183,8 +183,9 @@
       <SignalementFormTextarea
         :id="idMessageAdministration"
         description="Votre message ici"
+        @input="updateValue($event)"
+        :modelValue="formStore.data[idMessageAdministration]"
         />
-
     </div>
   </div>
 </template>
@@ -322,13 +323,12 @@ export default defineComponent({
     getFormDataSituationOccupant (): string {
       let result = ''
       result += this.addLineIfNeeded('logement_social_demande_relogement', 'Demande de relogement ? ')
-      result += this.addLineIfNeeded('logement_social_allocation', 'Aide ou allocation ? ', 'overview')// utilisation d'un contexte de traduction
+      result += this.addLineIfNeeded('logement_social_allocation', 'Aide ou allocation logement ? ')
       if (this.formStore.data.logement_social_allocation === 'oui') {
         result += this.addLineIfNeeded('logement_social_allocation_caisse', 'Caisse : ')
         result += this.addLineIfNeeded('logement_social_date_naissance', 'Date de naissance : ')
         result += this.addLineIfNeeded('logement_social_numero_allocataire', 'Numéro allocataire : ')
-        result += this.addLineIfNeeded('logement_social_montant_allocation', 'Montant allocation : ', undefined, ' €') // TOTO monrant en €
-        // result += 'Montant allocation : ' + this.formStore.data.logement_social_montant_allocation + '€<br>'
+        result += this.addLineIfNeeded('logement_social_montant_allocation', 'Montant allocation : ', ' €')
       }
       return result
     },
@@ -346,8 +346,8 @@ export default defineComponent({
       let result = ''
       result += this.addLineIfNeeded('informations_complementaires_situation_occupants_beneficiaire_rsa', 'Bénéficiaire RSA : ')
       result += this.addLineIfNeeded('informations_complementaires_situation_occupants_beneficiaire_fsl', 'Bénéficiaire FSL : ')
-      result += this.addLineIfNeeded('informations_complementaires_situation_occupants_revenu_fiscal', 'Revenu fiscal de référence : ', undefined, ' €')
-      result += this.addLineIfNeeded('informations_complementaires_logement_montant_loyer', 'Montant du loyer sans les charges : ', undefined, ' €')
+      result += this.addLineIfNeeded('informations_complementaires_situation_occupants_revenu_fiscal', 'Revenu fiscal de référence : ', ' €')
+      result += this.addLineIfNeeded('informations_complementaires_logement_montant_loyer', 'Montant du loyer sans les charges : ', ' €')
       result += this.addLineIfNeeded('informations_complementaires_situation_occupants_date_naissance', 'Date de naissance : ')
       result += this.addLineIfNeeded('informations_complementaires_logement_nombre_etages', 'Nombre d\'étages du logement : ')
       result += this.addLineIfNeeded('informations_complementaires_logement_annee_construction', 'Année de construction du logement : ')
@@ -369,12 +369,10 @@ export default defineComponent({
     isFormDataSet (formSlug: string) {
       return (this.formStore.data[formSlug] !== '' && this.formStore.data[formSlug] !== undefined && this.formStore.data[formSlug] !== null)
     },
-    addLineIfNeeded (formSlug: string, questionTitle?: string, dictionaryContext ?: string, suffixe?: string): string {
+    addLineIfNeeded (formSlug: string, questionTitle?: string, suffixe?: string): string {
       let result = ''
       if (this.isFormDataSet(formSlug)) {
-        if (dictionaryContext !== null && dictionaryContext !== undefined) {
-          result += dictionaryManager.translate(formSlug, dictionaryContext)
-        } else if (questionTitle !== null && questionTitle !== undefined) {
+        if (questionTitle !== null && questionTitle !== undefined) {
           result += questionTitle
         }
         result += dictionaryManager.translate(this.formStore.data[formSlug], 'default')
@@ -389,6 +387,10 @@ export default defineComponent({
       if (this.clickEvent !== undefined) {
         this.clickEvent('goto', screenSlug, '')
       }
+    },
+    updateValue (event: Event) {
+      const value = (event.target as HTMLInputElement).value
+      this.formStore.data[this.idMessageAdministration] = value
     }
   }
 })

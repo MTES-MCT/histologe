@@ -276,13 +276,5 @@
   "desordres_logement_bruit_exterieur": { "default": "On entend le bruit extérieur, même en fermant les portes et les fenêtres" },
   "desordres_logement_bruit_voisins": { "default": "On entend les voisins parler et marcher depuis le logement, comme s'ils étaient dans la pièce" },
   "desordres_logement_lumiere_pas_lumiere": { "default": "Le logement n'est pas éclairé par la lumière du jour. Il est difficile de voir sans allumer la lumière, même en pleine journée." },
-  "desordres_logement_lumiere_pas_volets": { "default": "Il n'y a pas de volets, ni de stores aux fenêtres" },
-  "logement_social_allocation": {
-    "default": "Recevez-vous une aide ou allocation logement ?",
-    "occupant": "Recevez-vous une aide ou allocation logement ?",
-    "tiers": "Est-ce que les locataires bénéficient d'une aide ou allocation logement ?",
-    "overview": {
-      "default": "Aide ou allocation logement : "
-    }
-  }
+  "desordres_logement_lumiere_pas_volets": { "default": "Il n'y a pas de volets, ni de stores aux fenêtres" }
 }
