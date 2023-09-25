@@ -128,7 +128,7 @@
               "value": "batiment"
             },
             {
-              "label": "Votre logement",
+              "label": "Le logement",
               "value": "logement"
             },
             {
@@ -989,6 +989,10 @@
             {
               "label": "Non",
               "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
             }
           ]
         }
