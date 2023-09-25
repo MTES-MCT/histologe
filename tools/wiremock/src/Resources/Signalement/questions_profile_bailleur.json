@@ -120,7 +120,7 @@
       "body": [
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Vous souhaitez signaler des problèmes sur",
+          "label": "",
           "slug": "zone_concernee_zone",
           "values": [
             {
@@ -128,7 +128,7 @@
               "value": "batiment"
             },
             {
-              "label": "Votre logement",
+              "label": "Le logement",
               "value": "logement"
             },
             {
@@ -989,6 +989,10 @@
             {
               "label": "Non",
               "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
             }
           ]
         }

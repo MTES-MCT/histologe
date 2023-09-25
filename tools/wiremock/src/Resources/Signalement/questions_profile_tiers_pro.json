@@ -180,7 +180,7 @@
       "body": [
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Vous souhaitez signaler des problèmes sur",
+          "label": "",
           "slug": "zone_concernee_zone",
           "values": [
             {
@@ -188,7 +188,7 @@
               "value": "batiment"
             },
             {
-              "label": "Votre logement",
+              "label": "Le logement",
               "value": "logement"
             },
             {
@@ -910,15 +910,19 @@
             {
               "label": "Non",
               "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
             }
           ]
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "travailleur_social_accompagnement_declarant",
-          "label": "Cochez cette case si vous êtes le ou la travailleuse sociale accompagnant le foyer.",
+          "label": "Cochez cette case si vous êtes la personne accompagnant le foyer.",
           "validate": {
-            "reuired": false
+            "required": false
           },
           "conditional": {
             "show": "formStore.data.travailleur_social_accompagnement === 'oui'"
