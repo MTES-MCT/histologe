@@ -8,7 +8,7 @@
       "src": "/img/illustration-undraw-home.svg",
       "alt": ""
     },
-    "customCss": "fr-my-10w",
+    "customCss": "fr-my-md-10w",
     "components": {
       "body": [
         {
