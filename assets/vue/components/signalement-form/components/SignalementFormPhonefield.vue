@@ -5,7 +5,7 @@
         {{ variablesReplacer.replace(label) }}
       </label>
       <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-col-2">
+        <div class="fr-col-12 fr-col-md-4">
           <select
             class="fr-select"
             :id="idCountryCode"
@@ -21,7 +21,7 @@
             </option>
           </select>
         </div>
-        <div class="fr-col-10">
+        <div class="fr-col-12 fr-col-md-8">
           <div class="fr-input-wrap">
             <input
               type="text"
@@ -59,7 +59,7 @@
         Téléphone secondaire (facultatif)
       </label>
       <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-col-2">
+        <div class="fr-col-12 fr-col-md-4">
           <select
             class="fr-select"
             :id="idCountryCodeSecond"
@@ -75,7 +75,7 @@
             </option>
           </select>
         </div>
-        <div class="fr-col-10">
+        <div class="fr-col-12 fr-col-md-8">
           <div class="fr-input-wrap">
             <input
               type="text"
