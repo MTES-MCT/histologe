@@ -105,6 +105,7 @@ import SignalementFormUploadPhotos from './SignalementFormUploadPhotos.vue'
 import SignalementFormWarning from './SignalementFormWarning.vue'
 import SignalementFormYear from './SignalementFormYear.vue'
 import { variablesReplacer } from './../services/variableReplacer'
+import { componentValidator } from './../services/componentValidator'
 import { findPreviousScreen, findNextScreen } from '../services/disorderScreenNavigator'
 
 export default defineComponent({
@@ -147,6 +148,7 @@ export default defineComponent({
     return {
       formStore,
       variablesReplacer,
+      componentValidator,
       currentDisorderIndex: {
         batiment: 0,
         logement: 0
@@ -182,19 +184,9 @@ export default defineComponent({
             formStore.validationErrors[component.slug] = 'Ce champ est requis'
           }
         }
-        let regexPattern
-        // s'il y a une valeur, on vérifie si un pattern est requis (ou si c'est un type email)
-        if (value && component.type === 'SignalementFormEmailfield') {
-          regexPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        } else if (value && component.validate?.pattern !== undefined) {
-          regexPattern = new RegExp(component.validate.pattern)
-        }
-        if (regexPattern !== undefined) {
-          if (regexPattern.test(value) === false) {
-            formStore.validationErrors[component.slug] = 'Format invalide'
-          }
-        }
-        // TODO : Effectuer d'autres validations nécessaires pour les autres règles (minLength, maxLength, etc.)
+
+        componentValidator.validate(component)
+
         // Vérifier si ce composant nécessite une validation de ses sous-composants
         if (this.needToValidateSubComponents(component)) {
           this.validateComponents(component.components.body)

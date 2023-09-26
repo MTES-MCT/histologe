@@ -124,10 +124,10 @@ export default defineComponent({
   },
   data () {
     if (formStore.data[this.id + '_countrycode'] === '' || formStore.data[this.id + '_countrycode'] === undefined) {
-      formStore.data[this.id + '_countrycode'] = '33'
+      formStore.data[this.id + '_countrycode'] = 'FR:33'
     }
     if (formStore.data[this.id + '_secondaire_countrycode'] === '' || formStore.data[this.id + '_secondaire_countrycode'] === undefined) {
-      formStore.data[this.id + '_secondaire_countrycode'] = '33'
+      formStore.data[this.id + '_secondaire_countrycode'] = 'FR:33'
     }
     return {
       variablesReplacer,
@@ -155,7 +155,7 @@ export default defineComponent({
       const countryList:Array<CountryPhoneItem> = []
       const countryCodes = getCountries()
       for (const countryCode of countryCodes) {
-        countryList.push({ code: getCountryCallingCode(countryCode), label: this.getSelectOptionLabel(countryCode) })
+        countryList.push({ code: countryCode + ':' + getCountryCallingCode(countryCode), label: this.getSelectOptionLabel(countryCode) })
       }
       countryList.sort(
         (a, b) => {
@@ -170,7 +170,7 @@ export default defineComponent({
       )
 
       // Add France at the top of the list (France is in 2 options)
-      countryList.unshift({ code: getCountryCallingCode('FR'), label: this.getSelectOptionLabel('FR') })
+      countryList.unshift({ code: 'FR' + ':' + getCountryCallingCode('FR'), label: this.getSelectOptionLabel('FR') })
 
       return countryList
     }
