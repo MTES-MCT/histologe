@@ -994,7 +994,7 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "utilisation_service_ok_prevenir_bailleur",
-          "label": "Je comprends que {{formStore.props.platformName}} va prévenir le bailleur (propriétaire) de mon logement."
+          "label": "Je comprends que {{formStore.props.platformName}} va prévenir le bailleur (propriétaire) du logement."
         },
         {
           "type": "SignalementFormCheckbox",
