@@ -90,6 +90,7 @@ export default defineComponent({
   color: var(--blue-france-sun-113-625-hover);
 }
 .fr-btn.btn-link:not(:disabled):active {
+  background-color: white;
   color: var(--blue-france-sun-113-625-active);
 }
 </style>
