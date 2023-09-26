@@ -102,12 +102,24 @@ const formStore: FormStore = reactive({
   preprocessScreen (screenBodyComponents: any): Component[] {
     const repeatedComponents: Component[] = []
     screenBodyComponents.forEach((component: Component) => {
-      if (component.repeat !== null && component.repeat !== undefined) {
-        for (let i = 1; i <= eval(component.repeat.count); i++) {
-          repeatedComponents.push(this.cloneComponentWithNumber(component, i))
+      // on ne remet pas les composants clonés dans le tableau puisqu'on refait le clonage pour avoir le bon nombre
+      if (!component.isCloned) {
+        if (component.repeat !== null && component.repeat !== undefined) {
+          for (let i = 1; i <= eval(component.repeat.count); i++) {
+            const clonedComponent = this.cloneComponentWithNumber(component, i)
+            clonedComponent.isCloned = true
+            // on supprime fr-hidden du customCss s'il existe (en cas de retour sur l'écran)
+            if (clonedComponent.customCss !== undefined) {
+              clonedComponent.customCss = clonedComponent.customCss.replace(/\bfr-hidden\b/g, '')
+            }
+            repeatedComponents.push(clonedComponent)
+          }
+          // on garde le composant original et on le cache avec un customCss
+          component.customCss = 'fr-hidden'
+          repeatedComponents.push(component)
+        } else {
+          repeatedComponents.push(component)
         }
-      } else {
-        repeatedComponents.push(component)
       }
     })
     return repeatedComponents

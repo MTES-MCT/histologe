@@ -8,5 +8,7 @@ export interface Component {
     count: string
   }
   components: ZoneComponents
+  customCss: string
+  isCloned: boolean
   // TODO ajouter toutes les propriétés possibles ?
 }
