@@ -46,6 +46,7 @@ interface FormStore {
     icon: PictureDescription
     desktopIllustration: PictureDescription
     components: ZoneComponents
+    customCss: string
   } | null
   lastButtonClicked: string
   validationErrors: FormData

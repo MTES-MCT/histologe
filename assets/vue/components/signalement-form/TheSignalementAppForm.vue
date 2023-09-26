@@ -37,6 +37,7 @@
               :description="formStore.currentScreen.description"
               :icon="formStore.currentScreen.icon"
               :components="formStore.currentScreen.components"
+              :customCss="formStore.currentScreen.customCss"
               :changeEvent="saveAndChangeScreenBySlug"
               />
           </div>

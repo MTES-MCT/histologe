@@ -1,5 +1,5 @@
 <template>
-  <div class="fr-container form-screen-body">
+  <div :class="[ 'fr-container form-screen-body', customCss ]">
     <div
       v-if="icon"
       class="icon"
@@ -141,7 +141,8 @@ export default defineComponent({
     description: String,
     icon: Object,
     components: Object,
-    changeEvent: Function
+    changeEvent: Function,
+    customCss: String
   },
   data () {
     return {

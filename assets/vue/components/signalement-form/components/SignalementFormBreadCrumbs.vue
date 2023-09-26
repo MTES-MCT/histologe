@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="force-height-max">
     <div class="fr-hidden-md">
       <!-- Indicateur de progression -->
       <!-- TODO : vérifier les instructions de mathilde sur ce bloc-->
@@ -34,8 +34,8 @@
       <SignalementFormModalBackHome />
     </div>
 
-    <nav class="fr-sidemenu fr-hidden fr-unhidden-md" aria-labelledby="fr-sidemenu-title">
-      <div class="fr-sidemenu__inner">
+    <nav class="fr-sidemenu fr-hidden fr-unhidden-md force-height-max" aria-labelledby="fr-sidemenu-title">
+      <div class="fr-sidemenu__inner force-height-max">
         <div class="fr-collapse" id="fr-sidemenu-wrapper">
           <div class="fr-sidemenu__title" id="fr-sidemenu-title">Mon signalement</div>
           <ul class="fr-sidemenu__list">
@@ -154,5 +154,12 @@ export default defineComponent({
 
   .fr-sidemenu__item a.fr-sidemenu__link:not([href]) {
     color: var(--text-disabled-grey);
+  }
+
+  @media (min-width: 48em) {
+    .force-height-max {
+      height: 100%;
+      min-height: 580px;
+    }
   }
 </style>
