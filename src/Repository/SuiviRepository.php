@@ -70,6 +70,7 @@ class SuiviRepository extends ServiceEntityRepository
             'type_suivi_auto' => Suivi::TYPE_AUTO,
             'status_archived' => Signalement::STATUS_ARCHIVED,
             'status_closed' => Signalement::STATUS_CLOSED,
+            'status_refused' => Signalement::STATUS_REFUSED,
         ];
 
         if (null !== $territory) {
@@ -106,6 +107,7 @@ class SuiviRepository extends ServiceEntityRepository
             'type_suivi_auto' => Suivi::TYPE_AUTO,
             'status_archived' => Signalement::STATUS_ARCHIVED,
             'status_closed' => Signalement::STATUS_CLOSED,
+            'status_refused' => Signalement::STATUS_REFUSED,
         ];
 
         if (null !== $territory) {
@@ -187,7 +189,7 @@ class SuiviRepository extends ServiceEntityRepository
                 INNER JOIN signalement s on s.id = su.signalement_id
                 '.$innerPartnerJoin.'
                 WHERE type in (:type_suivi_usager,:type_suivi_partner, :type_suivi_auto)
-                AND s.statut NOT IN (:status_closed, :status_archived)
+                AND s.statut NOT IN (:status_closed, :status_archived, :status_refused)
                 '.$whereTerritory.'
                 '.$wherePartner.'
                 GROUP BY su.signalement_id
