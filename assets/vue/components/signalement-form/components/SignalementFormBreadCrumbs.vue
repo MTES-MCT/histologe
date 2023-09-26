@@ -156,8 +156,10 @@ export default defineComponent({
     color: var(--text-disabled-grey);
   }
 
-  .force-height-max {
-    height: 100%;
-    min-height: 580px;
+  @media (min-width: 48em) {
+    .force-height-max {
+      height: 100%;
+      min-height: 580px;
+    }
   }
 </style>
