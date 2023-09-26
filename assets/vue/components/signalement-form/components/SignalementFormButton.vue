@@ -80,4 +80,17 @@ export default defineComponent({
   color: var(--text-action-high-blue-france);
   box-shadow: inset 0 0 0 1px var(--border-action-high-blue-france);
 }
+.fr-btn.btn-link {
+  background-color: white;
+  color: var(--blue-france-sun-113-625);
+  text-decoration: underline;
+}
+.fr-btn.btn-link:not(:disabled):hover {
+  background-color: white;
+  color: var(--blue-france-sun-113-625-hover);
+}
+.fr-btn.btn-link:not(:disabled):active {
+  background-color: white;
+  color: var(--blue-france-sun-113-625-active);
+}
 </style>
