@@ -1,5 +1,4 @@
 <template>
-    <!-- Champ type number -->
     <div class="fr-input-group" :id="id">
     <label :class="[ customCss, 'fr-label' ]" :for="id" v-html="variablesReplacer.replace(label)"></label>
     <input
