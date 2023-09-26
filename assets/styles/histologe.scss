@@ -604,3 +604,7 @@ hr.blue-border {
 .tox-tinymce-aux {
     z-index: 6000 !important;
 }
+
+.fr-btn.fr-btn--sm.fr-icon-eye-line:before, .fr-btn.fr-btn--sm.fr-icon-eye-fill:before {
+    content: "";
+}

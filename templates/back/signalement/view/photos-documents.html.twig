@@ -52,7 +52,7 @@
 "
                  style="background: url('{{ asset('_up/'~photo.filename) }}')no-repeat center center/cover">
                 <a href="{{ asset('_up/'~photo.filename) }}"
-                    class="fr-btn fr-btn--sm fr-fi-eye-line img-box" title="Voir la photo"
+                    class="fr-btn fr-btn--sm fr-icon-eye-line img-box" title="Voir la photo"
                     target="_blank" rel="noopener"></a>
                 {% if is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted) %}
                     {% if photo.user is not defined or (photo.user is not null and photo.user.id is same as(app.user.id)) %}
@@ -83,7 +83,7 @@
         </div>
         <div class="fr-col-3 fr-text--right">
             <a href="{{ asset('_up/'~doc.filename) }}"
-                class="fr-btn fr-btn--sm fr-fi-eye-fill img-box" title="Afficher le document"
+                class="fr-btn fr-btn--sm fr-icon-eye-fill img-box" title="Afficher le document"
                 target="_blank" rel="noopener"></a>
             {% if (is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted))
                 and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION')
