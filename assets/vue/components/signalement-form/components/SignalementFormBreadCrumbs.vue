@@ -35,7 +35,7 @@
     </div>
 
     <nav class="fr-sidemenu fr-hidden fr-unhidden-md force-height-max" aria-labelledby="fr-sidemenu-title">
-      <div class="fr-sidemenu__inner force-height-max fr-pb-12w">
+      <div class="fr-sidemenu__inner force-height-max">
         <div class="fr-collapse" id="fr-sidemenu-wrapper">
           <div class="fr-sidemenu__title" id="fr-sidemenu-title">Mon signalement</div>
           <ul class="fr-sidemenu__list">
@@ -158,5 +158,6 @@ export default defineComponent({
 
   .force-height-max {
     height: 100%;
+    min-height: 580px;
   }
 </style>
