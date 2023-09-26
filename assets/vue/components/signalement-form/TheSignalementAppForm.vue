@@ -108,6 +108,7 @@ export default defineComponent({
         for (const prop in requestResponse.signalement.payload) {
           formStore.data[prop] = requestResponse.signalement.payload[prop]
         }
+        formStore.data.uuidSignalementDraft = requestResponse.signalement.uuid
       }
       if (formStore.data.currentStep !== undefined) {
         this.nextSlug = formStore.data.currentStep
