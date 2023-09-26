@@ -787,6 +787,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Validation du signalement",
+    "description": "Vérifiez les informations et cliquez sur le bouton \"Valider\" pour envoyer votre signalement !",
     "slug": "validation_signalement",
     "screenCategory": "Récapitulatif",
     "components": {
@@ -808,7 +809,7 @@
           "type": "SignalementFormButton",
           "label": "Valider mon signalement",
           "slug": "validation_signalement_next",
-          "action": "goto:confirmation_signalement",
+          "action": "goto.save:confirmation_signalement",
           "customCss": "fr-btn--icon-left fr-icon-check-line"
         }
       ]
