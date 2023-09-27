@@ -29,6 +29,7 @@ class SignalementDraftRequest
     private ?string $vosCoordonneesTiersNom = null;
     private ?string $vosCoordonneesTiersEmail = null;
     private ?string $vosCoordonneesTiersTel = null;
+    private ?string $vosCoordonneesTiersTelSecondaire = null;
     private ?string $vosCoordonneesTiersPrenom = null;
     private ?string $vosCoordonneesOccupantCivilite = null;
     private ?string $vosCoordonneesOccupantNom = null;
@@ -40,19 +41,27 @@ class SignalementDraftRequest
     private ?string $coordonneesOccupantPrenom = null;
     private ?string $coordonneesOccupantEmail = null;
     private ?string $coordonneesOccupantTel = null;
+    private ?string $coordonneesOccupantTelSecondaire = null;
     private ?string $coordonneesBailleurNom = null;
     private ?string $coordonneesBailleurPrenom = null;
     private ?string $coordonneesBailleurEmail = null;
     private ?string $coordonneesBailleurTel = null;
+    private ?string $coordonneesBailleurTelSeconadaire = null;
     private ?string $coordonneesBailleurAdresse = null;
     private ?string $coordonneesBailleurAdresseDetailNumero = null;
     private ?string $coordonneesBailleurAdresseDetailCodePostal = null;
     private ?string $coordonneesBailleurAdresseCommune = null;
     private ?string $zoneConcerneeZone = null;
     private ?string $typeLogementNature = null;
+    private ?string $typeLogementRdc = null;
+    private ?string $typeLogementDernierEtage = null;
+    private ?string $typeLogementSousSolSansFenetre = null;
+    private ?string $typeLogementSousCombleSansFenetre = null;
     private ?string $compositionLogementPieceUnique = null;
     private ?string $compositionLogementSuperficie = null;
     private ?string $compositionLogementNbPieces = null;
+    private ?string $compositionLogementNombrePersonnes = null;
+    private ?string $compositionLogementEnfants = null;
     private ?array $typeLogementPiecesAVivreSuperficiePiece = null;
     private ?array $typeLogementPiecesAVivreHauteurPiece = null;
     private ?string $typeLogementCommoditesCuisine = null;
@@ -81,6 +90,7 @@ class SignalementDraftRequest
     private ?string $travailleurSocialAccompagnementDeclarant = null;
     private ?string $infoProcedureBailleurPrevenu = null;
     private ?string $infoProcedureAssuranceContactee = null;
+    private ?string $infoProcedureReponseAssurance = null;
     private ?string $infoProcedureDepartApresTravaux = null;
     private ?bool $utilisationServiceOkPrevenirBailleur = null;
     private ?bool $utilisationServiceOkVisite = null;
@@ -91,6 +101,7 @@ class SignalementDraftRequest
     private ?string $informationsComplementairesLogementMontantLoyer = null;
     private ?string $informationsComplementairesLogementNombreEtages = null;
     private ?string $informationsComplementairesLogementAnneeConstruction = null;
+    private ?string $validationSignalementOverviewMessageAdministration = null;
 
     public function getProfil(): ?string
     {
@@ -651,6 +662,54 @@ class SignalementDraftRequest
         return $this;
     }
 
+    public function getTypeLogementRdc(): ?string
+    {
+        return $this->typeLogementRdc;
+    }
+
+    public function setTypeLogementRdc(?string $typeLogementRdc): self
+    {
+        $this->typeLogementRdc = $typeLogementRdc;
+
+        return $this;
+    }
+
+    public function getTypeLogementDernierEtage(): ?string
+    {
+        return $this->typeLogementDernierEtage;
+    }
+
+    public function setTypeLogementDernierEtage(?string $typeLogementDernierEtage): self
+    {
+        $this->typeLogementDernierEtage = $typeLogementDernierEtage;
+
+        return $this;
+    }
+
+    public function getTypeLogementSousSolSansFenetre(): ?string
+    {
+        return $this->typeLogementSousSolSansFenetre;
+    }
+
+    public function setTypeLogementSousSolSansFenetre(?string $typeLogementSousSolSansFenetre): self
+    {
+        $this->typeLogementSousSolSansFenetre = $typeLogementSousSolSansFenetre;
+
+        return $this;
+    }
+
+    public function getTypeLogementSousCombleSansFenetre(): ?string
+    {
+        return $this->typeLogementSousCombleSansFenetre;
+    }
+
+    public function setTypeLogementSousCombleSansFenetre(?string $typeLogementSousCombleSansFenetre): self
+    {
+        $this->typeLogementSousCombleSansFenetre = $typeLogementSousCombleSansFenetre;
+
+        return $this;
+    }
+
     public function getCompositionLogementPieceUnique(): ?string
     {
         return $this->compositionLogementPieceUnique;
@@ -683,6 +742,30 @@ class SignalementDraftRequest
     public function setCompositionLogementNbPieces(?string $compositionLogementNbPieces): self
     {
         $this->compositionLogementNbPieces = $compositionLogementNbPieces;
+
+        return $this;
+    }
+
+    public function getCompositionLogementNombrePersonnes(): ?string
+    {
+        return $this->compositionLogementNombrePersonnes;
+    }
+
+    public function setCompositionLogementNombrePersonnes(?string $compositionLogementNombrePersonnes): self
+    {
+        $this->compositionLogementNombrePersonnes = $compositionLogementNombrePersonnes;
+
+        return $this;
+    }
+
+    public function getCompositionLogementEnfants(): ?string
+    {
+        return $this->compositionLogementEnfants;
+    }
+
+    public function setCompositionLogementEnfants(?string $compositionLogementEnfants): self
+    {
+        $this->compositionLogementEnfants = $compositionLogementEnfants;
 
         return $this;
     }
@@ -1026,6 +1109,18 @@ class SignalementDraftRequest
         return $this;
     }
 
+    public function getInfoProcedureReponseAssurance(): ?string
+    {
+        return $this->infoProcedureReponseAssurance;
+    }
+
+    public function setInfoProcedureReponseAssurance(?string $infoProcedureReponseAssurance): self
+    {
+        $this->infoProcedureReponseAssurance = $infoProcedureReponseAssurance;
+
+        return $this;
+    }
+
     public function getInfoProcedureDepartApresTravaux(): ?string
     {
         return $this->infoProcedureDepartApresTravaux;
@@ -1142,6 +1237,54 @@ class SignalementDraftRequest
     public function setInformationsComplementairesLogementAnneeConstruction(?string $informationsComplementairesLogementAnneeConstruction): self
     {
         $this->informationsComplementairesLogementAnneeConstruction = $informationsComplementairesLogementAnneeConstruction;
+
+        return $this;
+    }
+
+    public function getVosCoordonneesTiersTelSecondaire(): ?string
+    {
+        return $this->vosCoordonneesTiersTelSecondaire;
+    }
+
+    public function setVosCoordonneesTiersTelSecondaire(?string $vosCoordonneesTiersTelSecondaire): self
+    {
+        $this->vosCoordonneesTiersTelSecondaire = $vosCoordonneesTiersTelSecondaire;
+
+        return $this;
+    }
+
+    public function getCoordonneesOccupantTelSecondaire(): ?string
+    {
+        return $this->coordonneesOccupantTelSecondaire;
+    }
+
+    public function setCoordonneesOccupantTelSecondaire(?string $coordonneesOccupantTelSecondaire): self
+    {
+        $this->coordonneesOccupantTelSecondaire = $coordonneesOccupantTelSecondaire;
+
+        return $this;
+    }
+
+    public function getCoordonneesBailleurTelSeconadaire(): ?string
+    {
+        return $this->coordonneesBailleurTelSeconadaire;
+    }
+
+    public function setCoordonneesBailleurTelSeconadaire(?string $coordonneesBailleurTelSeconadaire): self
+    {
+        $this->coordonneesBailleurTelSeconadaire = $coordonneesBailleurTelSeconadaire;
+
+        return $this;
+    }
+
+    public function getValidationSignalementOverviewMessageAdministration(): ?string
+    {
+        return $this->validationSignalementOverviewMessageAdministration;
+    }
+
+    public function setValidationSignalementOverviewMessageAdministration(?string $validationSignalementOverviewMessageAdministration): self
+    {
+        $this->validationSignalementOverviewMessageAdministration = $validationSignalementOverviewMessageAdministration;
 
         return $this;
     }

@@ -350,13 +350,16 @@ class Signalement
     private ?SignalementDraft $createdFrom = null;
 
     #[ORM\Column(type: 'json', nullable: true)]
-    private ?array $typeComposition = [];
+    private ?array $typeComposition;
 
     #[ORM\Column(type: 'json', nullable: true)]
-    private ?array $situationFoyer = [];
+    private ?array $situationFoyer;
 
     #[ORM\Column(type: 'json', nullable: true)]
-    private ?array $informationProcedure = [];
+    private ?array $informationProcedure;
+
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $informationComplementaire;
 
     public function __construct()
     {
@@ -477,11 +480,17 @@ class Signalement
         return $this;
     }
 
+    /** @deprecated  Cette méthode est obsolete et ne doit plus êter utilisé dans le cadre du nouveau formulaire
+     * Utilisez la méthode getSituationFoyer() afin de savoir le nombre de personnes qui vivent dans le logement
+     */
     public function getNbAdultes()
     {
         return $this->nbAdultes;
     }
 
+    /** @deprecated  Cette méthode est obsolete et ne doit plus êter utilisé dans le cadre du nouveau formulaire
+     * Utilisez la méthode getSituationFoyer() afin de savoir si des enfants de moins de 6 ans occupe le logement
+     */
     public function setNbAdultes($nbAdultes): self
     {
         $this->nbAdultes = $nbAdultes;
@@ -489,11 +498,17 @@ class Signalement
         return $this;
     }
 
+    /** @deprecated  Cette méthode est obsolete et ne doit plus êter utilisé dans le cadre du nouveau formulaire
+     * Utilisez la méthode getSituationFoyer() afin de savoir si des enfants de moins de 6 ans occupe le logement
+     */
     public function getNbEnfantsM6()
     {
         return $this->nbEnfantsM6;
     }
 
+    /** @deprecated  Cette méthode est obsolete et ne doit plus êter utilisé dans le cadre du nouveau formulaire
+     * Utilisez la méthode getSituationFoyer() afin de savoir si des enfants de moins de 6 ans occupe le logement
+     */
     public function setNbEnfantsM6($nbEnfantsM6): self
     {
         $this->nbEnfantsM6 = $nbEnfantsM6;
@@ -501,11 +516,17 @@ class Signalement
         return $this;
     }
 
+    /** @deprecated  Cette méthode est obsolete et ne doit plus êter utilisé dans le cadre du nouveau formulaire
+     * Utilisez la méthode getSituationFoyer() afin de savoir si des enfants de moins de 6 ans occupe le logement
+     */
     public function getNbEnfantsP6()
     {
         return $this->nbEnfantsP6;
     }
 
+    /** @deprecated  Cette méthode est obsolete et ne doit plus êter utilisé dans le cadre du nouveau formulaire
+     * Utilisez la méthode getSituationFoyer() afin de savoir si des enfants de moins de 6 ans occupe le logement
+     */
     public function setNbEnfantsP6($nbEnfantsP6): self
     {
         $this->nbEnfantsP6 = $nbEnfantsP6;
@@ -705,11 +726,17 @@ class Signalement
         return $this;
     }
 
+    /** @deprecated  Cette méthode est obsolete et ne doit plus êter utilisé dans le cadre du nouveau formulaire
+     * Sera supprimé à la prochaine version
+     */
     public function getRaisonRefusIntervention(): ?string
     {
         return $this->raisonRefusIntervention;
     }
 
+    /** @deprecated  Cette méthode est obsolete et ne doit plus êter utilisé dans le cadre du nouveau formulaire
+     * Sera supprimé à la prochaine version
+     */
     public function setRaisonRefusIntervention(?string $raisonRefusIntervention): self
     {
         $this->raisonRefusIntervention = $raisonRefusIntervention;
@@ -1386,11 +1413,17 @@ class Signalement
         return $this;
     }
 
+    /** @deprecated  Cette méthode est obsolete et ne doit plus êter utilisé dans le cadre du nouveau formulaire
+     * Utilisez la méthode getTypeComposition() afin de savoir le nombre de pièces dans le logement
+     */
     public function getNbChambresLogement(): ?int
     {
         return $this->nbChambresLogement;
     }
 
+    /** @deprecated  Cette méthode est obsolete et ne doit plus êter utilisé dans le cadre du nouveau formulaire
+     * Utilisez la méthode getTypeComposition() afin de savoir le nombre de pièces dans le logement
+     */
     public function setNbChambresLogement(?int $nbChambresLogement): self
     {
         $this->nbChambresLogement = $nbChambresLogement;
@@ -1847,6 +1880,18 @@ class Signalement
     public function setInformationProcedure(?array $informationProcedure): self
     {
         $this->informationProcedure = $informationProcedure;
+
+        return $this;
+    }
+
+    public function getInformationComplementaire(): ?array
+    {
+        return $this->informationComplementaire;
+    }
+
+    public function setInformationComplementaire(?array $informationComplementaire): self
+    {
+        $this->informationComplementaire = $informationComplementaire;
 
         return $this;
     }
