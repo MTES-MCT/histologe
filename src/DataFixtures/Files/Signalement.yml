@@ -1472,7 +1472,7 @@ signalements:
     cp_occupant: "13003"
     ville_occupant: "Marseille"
     statut: 8
-    code_suivi: '0123456789'
+    code_suivi: '0123456784569'
     reference: "2023-21"
     geoloc: "{\"lng\":\"43.3117791\", \"lat\":\"5.3755551\"}"
     created_at: "2023-06-16 16:06:33"
