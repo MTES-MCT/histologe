@@ -12,11 +12,6 @@ use App\Utils\DataPropertyArrayFilter;
 
 class SignalementBuilder
 {
-    public const PREFIX_PROPERTIES_TYPE_COMPOSITION = ['type_logement', 'composition_logement', 'bail_dpe'];
-    public const PREFIX_PROPERTIES_SITUATION_FOYER = ['logement_social', 'travailleur_social'];
-    public const PREFIX_PROPERTIES_INFORMATION_PROCEDURE = ['info_procedure', 'utilisation_service'];
-    public const PREFIX_PROPERTIES_INFORMATION_COMPLEMENTAIRE = ['informations_complementaires'];
-
     private Signalement $signalement;
     private SignalementDraft $signalementDraft;
     private SignalementDraftRequest $signalementDraftRequest;
@@ -45,6 +40,7 @@ class SignalementBuilder
         ]);
 
         $this->signalement = (new Signalement())
+            ->setCreatedFrom($this->signalementDraft)
             ->setTerritory($territory)
             ->setIsCguAccepted(true)
             ->setReference($this->referenceGenerator->generate($territory))
@@ -73,7 +69,7 @@ class SignalementBuilder
             ->setNbPiecesLogement($this->signalementDraftRequest->getCompositionLogementNbPieces())
             ->setTypeComposition(DataPropertyArrayFilter::filterByPrefix(
                 $this->signalementDraft->getPayload(),
-                self::PREFIX_PROPERTIES_TYPE_COMPOSITION
+                SignalementDraftRequest::PREFIX_PROPERTIES_TYPE_COMPOSITION
             ))
             ->setIsBailEnCours($this->evalBoolean($this->signalementDraftRequest->getBailDpeDpe()))
             ->setDateEntree(new \DateTimeImmutable($this->signalementDraftRequest->getBailDpeDateEmmenagement()));
@@ -92,7 +88,7 @@ class SignalementBuilder
             ->setIsPreavisDepart($this->evalBoolean($this->signalementDraftRequest->getTravailleurSocialQuitteLogement()))
             ->setSituationFoyer(DataPropertyArrayFilter::filterByPrefix(
                 $this->signalementDraft->getPayload(),
-                self::PREFIX_PROPERTIES_SITUATION_FOYER
+                SignalementDraftRequest::PREFIX_PROPERTIES_SITUATION_FOYER
             ));
 
         return $this;
@@ -114,7 +110,7 @@ class SignalementBuilder
             ->setNbNiveauxLogement($this->signalementDraftRequest->getInformationsComplementairesLogementNombreEtages())
             ->setInformationProcedure(DataPropertyArrayFilter::filterByPrefix(
                 $this->signalementDraft->getPayload(),
-                self::PREFIX_PROPERTIES_INFORMATION_PROCEDURE
+                SignalementDraftRequest::PREFIX_PROPERTIES_INFORMATION_PROCEDURE
             )
             );
 
@@ -123,11 +119,13 @@ class SignalementBuilder
 
     public function withInformationComplementaire(): self
     {
+        $anneeConstruction = $this->signalementDraftRequest->getInformationsComplementairesLogementAnneeConstruction();
         $this->signalement
-            ->setAnneeConstruction($this->signalementDraftRequest->getInformationsComplementairesLogementAnneeConstruction())
+            ->setAnneeConstruction($anneeConstruction)
+            ->setIsConstructionAvant1949($this->isConstructionAvant1949($anneeConstruction))
             ->setInformationComplementaire(DataPropertyArrayFilter::filterByPrefix(
                 $this->signalementDraft->getPayload(),
-                self::PREFIX_PROPERTIES_INFORMATION_COMPLEMENTAIRE
+                SignalementDraftRequest::PREFIX_PROPERTIES_INFORMATION_COMPLEMENTAIRE
             ));
 
         return $this;
@@ -136,17 +134,6 @@ class SignalementBuilder
     public function build(): Signalement
     {
         return $this->signalement;
-    }
-
-    private function isOccupant(): bool
-    {
-        return ProfileDeclarant::LOCATAIRE === $this->signalement->getProfileDeclarant()
-            || ProfileDeclarant::BAILLEUR_OCCUPANT === $this->signalement->getProfileDeclarant();
-    }
-
-    private function evalBoolean(string $value): bool
-    {
-        return 'oui' === $value;
     }
 
     private function setAddressData(): void
@@ -202,7 +189,7 @@ class SignalementBuilder
         }
     }
 
-    public function setProprietaireData(): void
+    private function setProprietaireData(): void
     {
         $this->signalement
             ->setAdresseProprio($this->signalementDraftRequest->getCoordonneesBailleurAdresse())
@@ -210,5 +197,25 @@ class SignalementBuilder
             ->setNomProprio($this->signalementDraftRequest->getCoordonneesBailleurNom())
             ->setPrenomProprio($this->signalementDraftRequest->getCoordonneesBailleurPrenom())
             ->setTelProprio($this->signalementDraftRequest->getCoordonneesBailleurTel());
+    }
+
+    private function isOccupant(): bool
+    {
+        return ProfileDeclarant::LOCATAIRE === $this->signalement->getProfileDeclarant()
+            || ProfileDeclarant::BAILLEUR_OCCUPANT === $this->signalement->getProfileDeclarant();
+    }
+
+    private function evalBoolean(?string $value): ?bool
+    {
+        if (null === $value) {
+            return null;
+        }
+
+        return 'oui' === $value;
+    }
+
+    private function isConstructionAvant1949(string $dateConstruction)
+    {
+        return new \DateTimeImmutable('01-01-1949') > new \DateTimeImmutable($dateConstruction);
     }
 }

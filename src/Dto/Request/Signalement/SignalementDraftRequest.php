@@ -4,6 +4,11 @@ namespace App\Dto\Request\Signalement;
 
 class SignalementDraftRequest
 {
+    public const PREFIX_PROPERTIES_TYPE_COMPOSITION = ['type_logement', 'composition_logement', 'bail_dpe'];
+    public const PREFIX_PROPERTIES_SITUATION_FOYER = ['logement_social', 'travailleur_social'];
+    public const PREFIX_PROPERTIES_INFORMATION_PROCEDURE = ['info_procedure', 'utilisation_service'];
+    public const PREFIX_PROPERTIES_INFORMATION_COMPLEMENTAIRE = ['informations_complementaires'];
+
     private ?string $profil = null;
     private ?string $currentStep = null;
     private ?string $adresseLogementAdresse = null;

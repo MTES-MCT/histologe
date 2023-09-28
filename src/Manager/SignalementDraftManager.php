@@ -6,6 +6,7 @@ use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\SignalementDraft;
+use App\Event\SignalementCreatedEvent;
 use App\Event\SignalementDraftCompletedEvent;
 use App\Factory\SignalementDraftFactory;
 use Doctrine\Persistence\ManagerRegistry;
@@ -46,16 +47,25 @@ class SignalementDraftManager extends AbstractManager
             ->setEmailDeclarant($this->signalementDraftFactory->getEmailDeclarent($signalementDraftRequest))
             ->setProfileDeclarant(ProfileDeclarant::from(strtoupper($signalementDraftRequest->getProfil())));
 
-        if (self::LAST_STEP === $signalementDraftRequest->getCurrentStep()) {
-            $signalementDraft->setStatus(SignalementDraftStatus::EN_SIGNALEMENT);
-            $res = $this->eventDispatcher->dispatch(
-                new SignalementDraftCompletedEvent($signalementDraft),
-                SignalementDraftCompletedEvent::NAME
-            );
-        }
-
+        $this->dispatchSignalementDraftCompleted($signalementDraft, $signalementDraftRequest);
         $this->save($signalementDraft);
 
         return $signalementDraft->getUuid();
+    }
+
+    private function dispatchSignalementDraftCompleted(
+        SignalementDraft $signalementDraft,
+        SignalementDraftRequest $signalementDraftRequest
+    ): void {
+        if (self::LAST_STEP === $signalementDraftRequest->getCurrentStep()) {
+            $signalementDraft->setStatus(SignalementDraftStatus::EN_SIGNALEMENT);
+            $signalementDraftCompletedEvent = $this->eventDispatcher->dispatch(
+                new SignalementDraftCompletedEvent($signalementDraft),
+                SignalementDraftCompletedEvent::NAME
+            );
+
+            $signalement = $signalementDraftCompletedEvent->getSignalementDraft()->getSignalements()->first();
+            $this->eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME);
+        }
     }
 }
