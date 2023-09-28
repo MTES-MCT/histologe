@@ -1,62 +1,121 @@
 <template>
   <div>
-    <SignalementFormTextfield
-      :key="id"
-      :id="id"
-      :label="label"
-      customCss="fr-icon-phone-line"
-      :validate="validate"
-      v-model="formStore.data[id]"
-      :hasError="formStore.validationErrors[id]  !== undefined"
-      :error="formStore.validationErrors[id]"
-    />
-      <!-- TODO pattern à mettre ? -->
-    <!-- TODO mise à jour du dsfr nécessaire pour "fr-icon-phone-line" -->
+    <div class="fr-input-group">
+      <label class='fr-label' :for="id">
+        {{ variablesReplacer.replace(label) }}
+      </label>
+      <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-4">
+          <select
+            class="fr-select"
+            :id="idCountryCode"
+            :name="idCountryCode"
+            v-model="formStore.data[idCountryCode]"
+            >
+            <option
+              v-for="countryItem in countryList"
+              v-bind:key="countryItem.code"
+              :value="countryItem.code"
+              >
+              {{ countryItem.label }}
+            </option>
+          </select>
+        </div>
+        <div class="fr-col-12 fr-col-md-8">
+          <div class="fr-input-wrap fr-icon-phone-line">
+            <input
+              type="text"
+              :id="id"
+              :name="id"
+              v-model="formStore.data[id]"
+              class="fr-input"
+              :aria-describedby="'text-input-error-desc-error-'+id"
+              >
+          </div>
+        </div>
+      </div>
+      <div
+        :id="'text-input-error-desc-error-'+id"
+        class="fr-error-text"
+        v-if="formStore.validationErrors[id] !== undefined"
+        >
+        {{ formStore.validationErrors[id] }}
+      </div>
+    </div>
+
     <SignalementFormButton
-      :key="idShow"
       :id="idShow"
       label="Ajouter un numéro"
-      customCss="btn-link"
-      :validate="validate"
-      v-model="formStore.data[idShow]"
-      :hasError="formStore.validationErrors[idShow]  !== undefined"
-      :error="formStore.validationErrors[idShow]"
+      :customCss="formStore.data[idSecond] === '' || formStore.data[idSecond] === undefined ? 'btn-link' : 'btn-link fr-hidden'"
       :action="actionShow"
       :clickEvent="handleClickButton"
-    />
+      />
 
-    <SignalementFormTextfield
-      :key="idSecond"
-      :id="idSecond"
-      label="Téléphone secondaire (facultatif)"
-      customCss="fr-icon-phone-line"
-      :validate="validate"
-      v-model="formStore.data[idSecond]"
-      :hasError="formStore.validationErrors[idSecond]  !== undefined"
-      :error="formStore.validationErrors[idSecond]"
-      class="fr-hidden"
-    />
-      <!-- TODO pattern à mettre ? -->
-    <!-- TODO mise à jour du dsfr nécessaire pour "fr-icon-phone-line" -->
+    <div
+      :id="idSecondGroup"
+      :class="[ 'fr-input-group', formStore.data[idSecond] === undefined ? 'fr-hidden' : '' ]"
+      >
+      <label class='fr-label' :for="idSecond">
+        Téléphone secondaire (facultatif)
+      </label>
+      <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-4">
+          <select
+            class="fr-select"
+            :id="idCountryCodeSecond"
+            :name="idCountryCodeSecond"
+            v-model="formStore.data[idCountryCodeSecond]"
+            >
+            <option
+              v-for="countryItem in countryList"
+              v-bind:key="countryItem.code"
+              :value="countryItem.code"
+              >
+              {{ countryItem.label }}
+            </option>
+          </select>
+        </div>
+        <div class="fr-col-12 fr-col-md-8">
+          <div class="fr-input-wrap fr-icon-phone-line">
+            <input
+              type="text"
+              :id="idSecond"
+              :name="idSecond"
+              v-model="formStore.data[idSecond]"
+              class="fr-input"
+              :aria-describedby="'text-input-error-desc-error-'+idSecond"
+              >
+          </div>
+        </div>
+      </div>
+      <div
+        :id="'text-input-error-desc-error-'+idSecond"
+        class="fr-error-text"
+        v-if="formStore.validationErrors[idSecond] !== undefined"
+        >
+        {{ formStore.validationErrors[idSecond] }}
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { CountryCode, getCountries, getCountryCallingCode } from 'libphonenumber-js'
+import { variablesReplacer } from './../services/variableReplacer'
+import { CountryPhoneItem } from './../interfaces/interfaceCountryPhoneItem'
+import { getCountryNameByCode } from './../countries'
 import formStore from './../store'
-import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
 
 export default defineComponent({
   name: 'SignalementFormPhonefield',
   components: {
-    SignalementFormTextfield,
     SignalementFormButton
   },
   props: {
     id: { type: String, default: null },
     label: { type: String, default: null },
-    modelValue: { type: String, default: null },
     customCss: { type: String, default: '' },
     validate: { type: Object, default: null },
     hasError: { type: Boolean, default: false },
@@ -64,24 +123,58 @@ export default defineComponent({
     clickEvent: Function
   },
   data () {
+    if (formStore.data[this.id + '_countrycode'] === '' || formStore.data[this.id + '_countrycode'] === undefined) {
+      formStore.data[this.id + '_countrycode'] = 'FR:33'
+    }
+    if (formStore.data[this.id + '_secondaire_countrycode'] === '' || formStore.data[this.id + '_secondaire_countrycode'] === undefined) {
+      formStore.data[this.id + '_secondaire_countrycode'] = 'FR:33'
+    }
     return {
+      variablesReplacer,
+      idCountryCode: this.id + '_countrycode',
+      idSecondGroup: this.id + '_secondaire_group',
       idSecond: this.id + '_secondaire',
+      idCountryCodeSecond: this.id + '_secondaire_countrycode',
       idShow: this.id + '_ajouter_numero',
-      actionShow: 'show:' + this.id + '_secondaire',
+      actionShow: 'show:' + this.id + '_secondaire_group',
       formStore
     }
   },
   methods: {
-    updateValue (value: any) {
-      this.$emit('update:modelValue', value)
-    },
     handleClickButton (type:string, param:string, slugButton:string) {
       if (this.clickEvent !== undefined) {
         this.clickEvent(type, param, slugButton)
       }
+    },
+    getSelectOptionLabel (countryCode:CountryCode) {
+      return getCountryNameByCode(countryCode) + ' : +' + getCountryCallingCode(countryCode)
     }
   },
-  emits: ['update:modelValue']
+  computed: {
+    countryList () {
+      const countryList:Array<CountryPhoneItem> = []
+      const countryCodes = getCountries()
+      for (const countryCode of countryCodes) {
+        countryList.push({ code: countryCode + ':' + getCountryCallingCode(countryCode), label: this.getSelectOptionLabel(countryCode) })
+      }
+      countryList.sort(
+        (a, b) => {
+          if (a.label < b.label) {
+            return -1
+          }
+          if (a.label > b.label) {
+            return 1
+          }
+          return 0
+        }
+      )
+
+      // Add France at the top of the list (France is in 2 options)
+      countryList.unshift({ code: 'FR' + ':' + getCountryCallingCode('FR'), label: this.getSelectOptionLabel('FR') })
+
+      return countryList
+    }
+  }
 })
 </script>
 
