@@ -480,7 +480,7 @@ class Signalement
         return $this;
     }
 
-    /** @deprecated  Cette méthode est obsolete et ne doit plus êter utilisé dans le cadre du nouveau formulaire
+    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Utilisez la méthode getSituationFoyer() afin de savoir le nombre de personnes qui vivent dans le logement
      */
     public function getNbAdultes()
@@ -488,7 +488,7 @@ class Signalement
         return $this->nbAdultes;
     }
 
-    /** @deprecated  Cette méthode est obsolete et ne doit plus êter utilisé dans le cadre du nouveau formulaire
+    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Utilisez la méthode getSituationFoyer() afin de savoir si des enfants de moins de 6 ans occupe le logement
      */
     public function setNbAdultes($nbAdultes): self
@@ -498,7 +498,7 @@ class Signalement
         return $this;
     }
 
-    /** @deprecated  Cette méthode est obsolete et ne doit plus êter utilisé dans le cadre du nouveau formulaire
+    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Utilisez la méthode getSituationFoyer() afin de savoir si des enfants de moins de 6 ans occupe le logement
      */
     public function getNbEnfantsM6()
@@ -506,7 +506,7 @@ class Signalement
         return $this->nbEnfantsM6;
     }
 
-    /** @deprecated  Cette méthode est obsolete et ne doit plus êter utilisé dans le cadre du nouveau formulaire
+    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Utilisez la méthode getSituationFoyer() afin de savoir si des enfants de moins de 6 ans occupe le logement
      */
     public function setNbEnfantsM6($nbEnfantsM6): self
@@ -516,7 +516,7 @@ class Signalement
         return $this;
     }
 
-    /** @deprecated  Cette méthode est obsolete et ne doit plus êter utilisé dans le cadre du nouveau formulaire
+    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Utilisez la méthode getSituationFoyer() afin de savoir si des enfants de moins de 6 ans occupe le logement
      */
     public function getNbEnfantsP6()
@@ -524,7 +524,7 @@ class Signalement
         return $this->nbEnfantsP6;
     }
 
-    /** @deprecated  Cette méthode est obsolete et ne doit plus êter utilisé dans le cadre du nouveau formulaire
+    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Utilisez la méthode getSituationFoyer() afin de savoir si des enfants de moins de 6 ans occupe le logement
      */
     public function setNbEnfantsP6($nbEnfantsP6): self
@@ -726,7 +726,7 @@ class Signalement
         return $this;
     }
 
-    /** @deprecated  Cette méthode est obsolete et ne doit plus êter utilisé dans le cadre du nouveau formulaire
+    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Sera supprimé à la prochaine version
      */
     public function getRaisonRefusIntervention(): ?string
@@ -734,7 +734,7 @@ class Signalement
         return $this->raisonRefusIntervention;
     }
 
-    /** @deprecated  Cette méthode est obsolete et ne doit plus êter utilisé dans le cadre du nouveau formulaire
+    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Sera supprimé à la prochaine version
      */
     public function setRaisonRefusIntervention(?string $raisonRefusIntervention): self
@@ -1413,7 +1413,7 @@ class Signalement
         return $this;
     }
 
-    /** @deprecated  Cette méthode est obsolete et ne doit plus êter utilisé dans le cadre du nouveau formulaire
+    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Utilisez la méthode getTypeComposition() afin de savoir le nombre de pièces dans le logement
      */
     public function getNbChambresLogement(): ?int
@@ -1421,7 +1421,7 @@ class Signalement
         return $this->nbChambresLogement;
     }
 
-    /** @deprecated  Cette méthode est obsolete et ne doit plus êter utilisé dans le cadre du nouveau formulaire
+    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Utilisez la méthode getTypeComposition() afin de savoir le nombre de pièces dans le logement
      */
     public function setNbChambresLogement(?int $nbChambresLogement): self
