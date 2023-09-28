@@ -103,7 +103,7 @@ const formStore: FormStore = reactive({
     const repeatedComponents: Component[] = []
     screenBodyComponents.forEach((component: Component) => {
       // on ne remet pas les composants clonés dans le tableau puisqu'on refait le clonage pour avoir le bon nombre
-      if (!component.isCloned) {
+      if (component.isCloned !== true) {
         if (component.repeat !== null && component.repeat !== undefined) {
           for (let i = 1; i <= eval(component.repeat.count); i++) {
             const clonedComponent = this.cloneComponentWithNumber(component, i)

@@ -155,24 +155,26 @@ export default defineComponent({
   },
   methods: {
     isRequired (field: any): boolean {
-      const component = document.querySelector('#' + field.slug)
-      if (((field.validate === undefined && formStore.inputComponents.includes(field.type)) || // si c'est un composant de saisie sans objet de validation c'est qu'il est obligatoire
-          (field.validate && field.validate.required !== false)) && // ou il y a des règles de validation explicites
-          component?.classList.contains('fr-hidden') === false) { // et que le composant n'est pas caché par conditionnalité
-        return true
-      } else {
-        return false
+      if (!field.slug.includes('{{number}}')) {
+        const component = document.querySelector('#' + field.slug)
+        if (((field.validate === undefined && formStore.inputComponents.includes(field.type)) || // si c'est un composant de saisie sans objet de validation c'est qu'il est obligatoire
+            (field.validate && field.validate.required !== false)) && // ou il y a des règles de validation explicites
+            component?.classList.contains('fr-hidden') === false) { // et que le composant n'est pas caché par conditionnalité
+          return true
+        }
       }
+      return false
     },
     needToValidateSubComponents (field: any): boolean {
-      const component = document.querySelector('#' + field.slug)
-      if ((field.type === 'SignalementFormSubscreen' || field.type === 'SignalementFormAddress') && // si le composant est de type Subscreen ou Address
-            field.components && // et il a des composants enfants
-            (component?.classList.contains('fr-hidden') === false || field.type === 'SignalementFormAddress')) { // et que le composant n'est pas caché par conditionnalité si ce n'est pas un SignalementFormAddress
-        return true
-      } else {
-        return false
+      if (!field.slug.includes('{{number}}')) {
+        const component = document.querySelector('#' + field.slug)
+        if ((field.type === 'SignalementFormSubscreen' || field.type === 'SignalementFormAddress') && // si le composant est de type Subscreen ou Address
+              field.components && // et il a des composants enfants
+              (component?.classList.contains('fr-hidden') === false || field.type === 'SignalementFormAddress')) { // et que le composant n'est pas caché par conditionnalité si ce n'est pas un SignalementFormAddress
+          return true
+        }
       }
+      return false
     },
     validateComponents (components: any) {
       for (const component of components) {
