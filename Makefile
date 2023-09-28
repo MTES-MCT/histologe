@@ -87,7 +87,7 @@ clear-cache: ## Clear cache prod: make-clear-cache env=[dev|prod|test]
 
 cc: clear-cache
 
-clear-pool: ## Clear cache pool
+clear-pool: ## Clear cache pool: make clear-pool pool=[pool_name]
 	@$(DOCKER_COMP) exec -it histologe_phpfpm $(SYMFONY) cache:pool:clear $(pool)
 
 create-db: ## Create database
