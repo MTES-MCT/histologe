@@ -1228,7 +1228,7 @@ class Signalement
         return $this->isRsa;
     }
 
-    public function setIsRsa(bool $isRsa): self
+    public function setIsRsa(?bool $isRsa): self
     {
         $this->isRsa = $isRsa;
 
