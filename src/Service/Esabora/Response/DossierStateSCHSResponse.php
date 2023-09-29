@@ -89,4 +89,9 @@ class DossierStateSCHSResponse implements DossierResponseInterface
     {
         return null;
     }
+
+    public function getNameSI(): ?string
+    {
+        return 'Esabora';
+    }
 }

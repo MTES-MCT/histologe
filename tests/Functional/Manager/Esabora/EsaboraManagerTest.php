@@ -19,6 +19,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class EsaboraManagerTest extends KernelTestCase
 {
@@ -31,6 +32,7 @@ class EsaboraManagerTest extends KernelTestCase
     private EventDispatcherInterface $eventDispatcher;
     private UserManager $userManager;
     private LoggerInterface $logger;
+    private ParameterBagInterface $parameterBag;
 
     protected function setUp(): void
     {
@@ -42,6 +44,7 @@ class EsaboraManagerTest extends KernelTestCase
         $this->eventDispatcher = self::getContainer()->get(EventDispatcherInterface::class);
         $this->userManager = self::getContainer()->get(UserManager::class);
         $this->logger = self::getContainer()->get(LoggerInterface::class);
+        $this->parameterBag = self::getContainer()->get(ParameterBagInterface::class);
     }
 
     /**
@@ -76,6 +79,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->eventDispatcher,
             $this->userManager,
             $this->logger,
+            $this->parameterBag,
         );
 
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
@@ -129,7 +133,7 @@ class EsaboraManagerTest extends KernelTestCase
         yield EsaboraStatus::ESABORA_REJECTED->value => [
             '2022-2',
             '../../sish/ws_etat_dossier_sas/etat_rejete.json',
-            'refusé via Esabora pour motif suivant:',
+            'refusé via SI-SH pour motif suivant:',
             Affectation::STATUS_REFUSED,
         ];
     }

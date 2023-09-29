@@ -50,4 +50,9 @@ class DossierPushSISHResponse implements DossierResponseInterface
     {
         return null;
     }
+
+    public function getNameSI(): ?string
+    {
+        return 'SI-SH';
+    }
 }

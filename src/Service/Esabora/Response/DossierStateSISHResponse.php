@@ -124,4 +124,9 @@ class DossierStateSISHResponse implements DossierResponseInterface
     {
         return $this->getDossEtat();
     }
+
+    public function getNameSI(): ?string
+    {
+        return 'SI-SH';
+    }
 }
