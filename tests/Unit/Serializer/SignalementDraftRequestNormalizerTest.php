@@ -17,16 +17,16 @@ class SignalementDraftRequestNormalizerTest extends TestCase
 
         $data = [
             'profil' => 'locataire',
-            'type_logement_pieces_a_vivre_superficie_piece_1' => 30,
-            'type_logement_pieces_a_vivre_superficie_piece_2' => 15,
-            'type_logement_pieces_a_vivre_hauteur_piece_1' => 'oui',
-            'type_logement_pieces_a_vivre_hauteur_piece_2' => 'non',
+            'type_logement_pieces_a_vivre_piece_1_superficie' => 30,
+            'type_logement_pieces_a_vivre_piece_2_superficie' => 15,
+            'type_logement_pieces_a_vivre_piece_1_hauteur' => 'oui',
+            'type_logement_pieces_a_vivre_piece_2_hauteur' => 'non',
         ];
 
         $signalementDraftRequest = (new SignalementDraftRequest())
             ->setProfil('locataire')
-            ->setTypeLogementPiecesAVivreSuperficiePiece([30, 15])
-            ->setTypeLogementPiecesAVivreHauteurPiece(['oui', 'non']);
+            ->setTypeLogementPiecesAVivrePieceSuperficie([30, 15])
+            ->setTypeLogementPiecesAVivrePieceHauteur(['oui', 'non']);
 
         $result = $normalizer->denormalize($data, SignalementDraftRequest::class);
 
@@ -44,16 +44,16 @@ class SignalementDraftRequestNormalizerTest extends TestCase
 
         $payload = [
             'profil' => 'locataire',
-            'type_logement_pieces_a_vivre_superficie_piece' => [30, 15],
-            'type_logement_pieces_a_vivre_hauteur_piece' => ['oui', 'non'],
+            'type_logement_pieces_a_vivre_piece_superficie' => [30, 15],
+            'type_logement_pieces_a_vivre_piece_hauteur' => ['oui', 'non'],
         ];
 
         $signalementDraft = (new SignalementDraft())->setPayload($payload);
         $result = $serializer->normalize($signalementDraft);
 
-        $this->assertArrayHasKey('type_logement_pieces_a_vivre_superficie_piece_1', $result['payload']);
-        $this->assertArrayHasKey('type_logement_pieces_a_vivre_superficie_piece_2', $result['payload']);
-        $this->assertArrayHasKey('type_logement_pieces_a_vivre_hauteur_piece_1', $result['payload']);
-        $this->assertArrayHasKey('type_logement_pieces_a_vivre_hauteur_piece_2', $result['payload']);
+        $this->assertEquals(30, $result['payload']['type_logement_pieces_a_vivre_piece_1_superficie']);
+        $this->assertEquals(15, $result['payload']['type_logement_pieces_a_vivre_piece_2_superficie']);
+        $this->assertEquals('oui', $result['payload']['type_logement_pieces_a_vivre_piece_1_hauteur']);
+        $this->assertEquals('non', $result['payload']['type_logement_pieces_a_vivre_piece_2_hauteur']);
     }
 }

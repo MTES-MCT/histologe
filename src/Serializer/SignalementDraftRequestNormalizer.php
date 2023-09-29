@@ -15,6 +15,8 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
     private const PIECES_HAUTEUR_KEY_PATTERN = '/^type_logement_pieces_a_vivre_piece_(\d+)_hauteur$/';
     private const PIECES_SUPERFICIE_KEY = 'type_logement_pieces_a_vivre_piece_superficie';
     private const PIECES_HAUTEUR_KEY = 'type_logement_pieces_a_vivre_piece_hauteur';
+    private const PATTERN_SUPERFICIE_KEY = 'type_logement_pieces_a_vivre_piece_%d_superficie';
+    private const PATTERN_HAUTEUR_KEY = 'type_logement_pieces_a_vivre_piece_%d_hauteur';
 
     public function __construct(
         /** @var ObjectNormalizer $objectNormalizer */
@@ -57,7 +59,11 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
             )) {
                 foreach ($payload[$key] as $index => $valueItem) {
                     $pieceNumber = $index + 1;
-                    $normalizedPayload[$key.'_'.$pieceNumber] = $valueItem;
+                    if (self::PIECES_HAUTEUR_KEY === $key) {
+                        $normalizedPayload[sprintf(self::PATTERN_HAUTEUR_KEY, $pieceNumber)] = $valueItem;
+                    } else {
+                        $normalizedPayload[sprintf(self::PATTERN_SUPERFICIE_KEY, $pieceNumber)] = $valueItem;
+                    }
                 }
             } else {
                 $normalizedPayload[$key] = $value;

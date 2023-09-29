@@ -784,6 +784,7 @@ class SignalementDraftRequest
     public function setTypeLogementPiecesAVivrePieceSuperficie(?array $typeLogementPiecesAVivrePieceSuperficie): self
     {
         $this->typeLogementPiecesAVivrePieceSuperficie = $typeLogementPiecesAVivrePieceSuperficie;
+
         return $this;
     }
 
@@ -795,6 +796,7 @@ class SignalementDraftRequest
     public function setTypeLogementPiecesAVivrePieceHauteur(?array $typeLogementPiecesAVivrePieceHauteur): self
     {
         $this->typeLogementPiecesAVivrePieceHauteur = $typeLogementPiecesAVivrePieceHauteur;
+
         return $this;
     }
 
