@@ -172,6 +172,7 @@ class SignalementController extends AbstractController
 
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
+            'createdFromNewForm' => $signalement->getCreatedFrom(),
             'situations' => $criticitesArranged,
             'needValidation' => Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut(),
             'canEditSignalement' => $canEditSignalement,
