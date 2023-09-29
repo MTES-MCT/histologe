@@ -45,12 +45,6 @@ class Signalement
     #[Assert\NotBlank]
     private $details;
 
-    #[ORM\Column(type: 'json', nullable: true)]
-    private $photos = [];
-
-    #[ORM\Column(type: 'json', nullable: true)]
-    private $documents = [];
-
     #[ORM\Column(type: 'boolean', nullable: true)]
     private $isProprioAverti;
 
@@ -435,30 +429,6 @@ class Signalement
     public function setDetails(?string $details): self
     {
         $this->details = $details;
-
-        return $this;
-    }
-
-    public function getPhotos(): ?array
-    {
-        return $this->photos;
-    }
-
-    public function setPhotos(?array $photos): self
-    {
-        $this->photos = $photos;
-
-        return $this;
-    }
-
-    public function getDocuments(): ?array
-    {
-        return $this->documents;
-    }
-
-    public function setDocuments(?array $documents): self
-    {
-        $this->documents = $documents;
 
         return $this;
     }

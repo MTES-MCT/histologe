@@ -9,6 +9,7 @@ interventions:
   -
     signalement: "2023-10"
     partner: "partenaire-13-06@histologe.fr"
+    user: "user-13-06@histologe.fr"
     scheduled_at: '2023-06-20 10:00:00'
     status: 'DONE'
     documents: ['blank-visite.pdf']
@@ -19,6 +20,7 @@ interventions:
   -
     signalement: "2023-12"
     partner: "partenaire-13-05@histologe.fr"
+    user: "user-13-05@histologe.fr"
     scheduled_at: '2023-07-01 10:00:00'
     status: 'DONE'
     documents: [ 'blank-64969c273a28a.jpg' ]

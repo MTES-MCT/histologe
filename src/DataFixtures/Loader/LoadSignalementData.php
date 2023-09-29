@@ -6,9 +6,11 @@ use App\Entity\Criticite;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
+use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Entity\User;
+use App\Factory\FileFactory;
 use App\Form\SignalementType;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
@@ -31,6 +33,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         private CriticiteRepository $criticiteRepository,
         private TagRepository $tagRepository,
         private UserRepository $userRepository,
+        private readonly FileFactory $fileFactory,
     ) {
     }
 
@@ -90,27 +93,6 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setIsLogementSocial($row['is_logement_social'])
             ->setIsPreavisDepart(false)
             ->setIsRefusIntervention(false)
-            ->setDocuments([
-                [
-                    'file' => 'test1.23.pdf',
-                    'titre' => 'Fiche reperage.pdf',
-                    'date' => '06.09.2022',
-                ],
-                [
-                    'file' => 'test1.pdf',
-                    'titre' => 'Compte rendu de visite.pdf',
-                    'user' => 22,
-                    'username' => 'Padberg Boyd',
-                    'date' => '06.05.2023',
-                ],
-                [
-                    'file' => 'blank-'.$row['reference'].'.pdf',
-                    'titre' => 'Blank.pdf',
-                    'date' => '06.05.2023',
-                    'user' => 1,
-                ],
-            ])
-            ->setPhotos([])
             ->setGeoloc(json_decode($row['geoloc'], true))
             ->setIsRsa(false)
             ->setCodeSuivi($row['code_suivi'] ?? $faker->uuid())
@@ -118,25 +100,6 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setSituationOccupant($row['situation_occupant'])
             ->setValidatedAt(Signalement::STATUS_ACTIVE === $row['statut'] ? new \DateTimeImmutable() : null)
             ->setOrigineSignalement($row['origine_signalement'])
-            ->setPhotos([
-                [
-                    'file' => 'Capture-d-ecran-du-2023-06-13-12-58-43-648b2a6b9730f.png',
-                    'titre' => '20220520_112424.jpg',
-                    'date' => '02.06.2022',
-                ],
-                [
-                    'file' => 'Capture-d-ecran-du-2023-04-07-15-27-36-64302a1b57a20.png',
-                    'titre' => 'IMG_20230220_141432735_HDR.jpg',
-                    'user' => 23,
-                    'username' => 'Kautzer Laverne',
-                ],
-                [
-                    'file' => 'blank-'.$row['reference'].'.jpg',
-                    'titre' => 'Blank.pdf',
-                    'date' => '06.05.2023',
-                    'user' => 1,
-                ],
-            ])
             ->setCreatedAt(
                 isset($row['created_at'])
                     ? new \DateTimeImmutable($row['created_at'])
@@ -219,6 +182,53 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 $signalement->addSignalementQualification($signalementQualification);
                 $manager->persist($signalement);
             }
+        }
+
+        $documentsAndPhotos = [
+            [
+                'file' => 'test1.23.pdf',
+                'titre' => 'Fiche reperage.pdf',
+                'user' => 1,
+            ],
+            [
+                'file' => 'test1.pdf',
+                'titre' => 'Compte rendu de visite.pdf',
+                'user' => 22,
+            ],
+            [
+                'file' => 'blank-'.$row['reference'].'.pdf',
+                'titre' => 'Blank.pdf',
+                'user' => 1,
+            ],
+            [
+                'file' => 'Capture-d-ecran-du-2023-06-13-12-58-43-648b2a6b9730f.png',
+                'titre' => '20220520_112424.jpg',
+                'user' => 1,
+            ],
+            [
+                'file' => 'Capture-d-ecran-du-2023-04-07-15-27-36-64302a1b57a20.png',
+                'titre' => 'IMG_20230220_141432735_HDR.jpg',
+                'user' => 23,
+            ],
+            [
+                'file' => 'blank-'.$row['reference'].'.jpg',
+                'titre' => 'Blank.pdf',
+                'user' => 1,
+            ],
+        ];
+
+        foreach ($documentsAndPhotos as $document) {
+            $user = $this->userRepository->findOneBy(['id' => $document['user']]);
+            $file = $this->fileFactory->createInstanceFrom(
+                filename: $document['file'],
+                title: $document['titre'],
+                type: 'pdf' === pathinfo($document['file'], \PATHINFO_EXTENSION)
+                    ? File::FILE_TYPE_DOCUMENT
+                    : File::FILE_TYPE_PHOTO,
+                signalement: $signalement,
+                user: $user
+            );
+            $manager->persist($file);
         }
     }
 

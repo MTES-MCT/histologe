@@ -188,8 +188,7 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEquals([$data['mailOccupant'], $data['mailDeclarant']], $signalement->getMailUsagers());
         $this->assertTrue($signalement->getIsImported());
 
-        $this->assertEmpty($signalement->getPhotos());
-        $this->assertEmpty($signalement->getDocuments());
+        $this->assertEmpty($signalement->getFiles());
         $this->assertEmpty($signalement->getTelOccupantBis());
         $this->assertEmpty($signalement->getIsDiagSocioTechnique());
         $this->assertEmpty($signalement->getJsonContent());

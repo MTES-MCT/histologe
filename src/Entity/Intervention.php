@@ -47,9 +47,6 @@ class Intervention
     #[ORM\Column(type: 'string')]
     private ?string $status = null;
 
-    #[ORM\Column]
-    private array $documents = [];
-
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $details = null;
 
@@ -166,18 +163,6 @@ class Intervention
     public function setStatus(string $status): self
     {
         $this->status = $status;
-
-        return $this;
-    }
-
-    public function getDocuments(): array
-    {
-        return $this->documents;
-    }
-
-    public function setDocuments(array $documents): self
-    {
-        $this->documents = $documents;
 
         return $this;
     }
