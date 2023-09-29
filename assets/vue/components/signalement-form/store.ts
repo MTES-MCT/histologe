@@ -105,7 +105,10 @@ const formStore: FormStore = reactive({
       // on ne remet pas les composants clonés dans le tableau puisqu'on refait le clonage pour avoir le bon nombre
       if (component.isCloned !== true) {
         if (component.repeat !== null && component.repeat !== undefined) {
-          for (let i = 1; i <= eval(component.repeat.count); i++) {
+          // TODO : virer les éventuelles données existantes ?
+          const nbRepetitions = eval(component.repeat.count)
+          this.deleteSavedClonedData(component.slug, nbRepetitions)
+          for (let i = 1; i <= nbRepetitions; i++) {
             const clonedComponent = this.cloneComponentWithNumber(component, i)
             clonedComponent.isCloned = true
             // on supprime fr-hidden du customCss s'il existe (en cas de retour sur l'écran)
@@ -147,6 +150,18 @@ const formStore: FormStore = reactive({
     }
 
     return clonedComponent
+  },
+  deleteSavedClonedData (slug: string, nbRepetitions: number) {
+    const slugShort = slug.replace('{{number}}', '')
+    for (const dataname in formStore.data) {
+      if (dataname.includes(slugShort)) {
+        const numOccurrence = parseInt(dataname.replace(slugShort, ''))
+        if (numOccurrence > nbRepetitions) {
+          // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+          delete formStore.data[dataname]
+        }
+      }
+    }
   }
 })
 

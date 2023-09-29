@@ -403,7 +403,7 @@
               {
                 "type": "SignalementFormCounter",
                 "label": "Quelle est la superficie de la <strong>pièce {{number}}</strong> (taille en m²) ? (facultatif)",
-                "slug": "type_logement_pieces_a_vivre_superficie_piece_{{number}}",
+                "slug": "type_logement_pieces_a_vivre_piece_{{number}}_superficie",
                 "customCss": "fr-mt-5v",
                 "validate": {
                   "required": false
@@ -412,7 +412,7 @@
               {
                 "type": "SignalementFormOnlyChoice",
                 "label": "La hauteur jusqu'au plafond est de 2,20m (220cm) ou plus ?",
-                "slug": "type_logement_pieces_a_vivre_hauteur_piece_{{number}}",
+                "slug": "type_logement_pieces_a_vivre_piece_{{number}}_hauteur",
                 "values": [
                   {
                     "label": "Oui",
