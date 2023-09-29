@@ -2,7 +2,7 @@
     <div class="fr-col-10 fr-col-md-11" id="tags_active_container">
         {% set visible = 'fr-hidden' %}
         {% for tag in signalement.tags %}
-            <span class="fr-badge fr-badge--blue-ecume fr-fi-close-line fr-mr-1v" data-value="{{ tag.id }}"
+            <span class="fr-badge fr-badge--blue-ecume fr-badge--icon-close-line fr-icon-close-line fr-mr-1v" data-value="{{ tag.id }}"
                 data-tag-delete="{{ path('back_signalement_switch_value',{uuid:signalement.uuid}) }}"
                 data-token="{{ csrf_token('signalement_switch_value_'~signalement.uuid) }}"
                 data-remove-url="{{ path('back_tag_delete',{id:tag.id}) }}?_token={{ csrf_token('signalement_delete_tag') }}">{{ tag.label }}&nbsp;&nbsp;<span
