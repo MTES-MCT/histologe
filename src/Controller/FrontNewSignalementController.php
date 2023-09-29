@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Dto\Request\Signalement\SignalementDraftRequest;
+use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\SignalementDraft;
 use App\Manager\SignalementDraftManager;
 use App\Serializer\SignalementDraftRequestSerializer;
@@ -104,7 +105,9 @@ class FrontNewSignalementController extends AbstractController
         SignalementDraft $signalementDraft,
     ): Response {
         return $this->json([
-            'signalement' => $signalementDraft,
+            'signalement' => SignalementDraftStatus::EN_COURS === $signalementDraft->getStatus()
+                ? $signalementDraft :
+                null,
         ]);
     }
 }

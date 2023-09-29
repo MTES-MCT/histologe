@@ -12,6 +12,7 @@ use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
+use App\Service\Token\TokenGeneratorInterface;
 use App\Utils\DataPropertyArrayFilter;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -25,6 +26,7 @@ class SignalementBuilder
         private TerritoryRepository $territoryRepository,
         private ZipcodeProvider $zipcodeProvider,
         private ReferenceGenerator $referenceGenerator,
+        private TokenGeneratorInterface $tokenGenerator,
         private SignalementDraftRequestSerializer $signalementDraftRequestSerializer,
         private SerializerInterface $serializer,
     ) {
@@ -47,6 +49,7 @@ class SignalementBuilder
 
         $this->signalement = (new Signalement())
             ->setCreatedFrom($this->signalementDraft)
+            ->setCodeSuivi($this->tokenGenerator->generateToken())
             ->setTerritory($territory)
             ->setIsCguAccepted(true)
             ->setReference($this->referenceGenerator->generate($territory))
