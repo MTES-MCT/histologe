@@ -18,18 +18,16 @@ final class Version20230928150011 extends AbstractMigration
     {
         $connection = $this->connection;
         $tableName = 'signalement';
-        $sql = "SELECT id, geoloc FROM $tableName WHERE geoloc IS NOT NULL";
-        $rows = $connection->executeQuery($sql)->fetchAllAssociative();
-
-        foreach ($rows as $row) {
-            $geolocData = json_decode($row['geoloc'], true);
-            if ($geolocData && isset($geolocData['lat'], $geolocData['lng'])) {
-                $geolocData = ['lat' => $geolocData['lng'], 'lng' => $geolocData['lat']];
-                $updatedGeoloc = json_encode($geolocData);
-                $updateSql = "UPDATE $tableName SET geoloc = :geoloc WHERE id = :id";
-                $connection->executeStatement($updateSql, ['geoloc' => $updatedGeoloc, 'id' => $row['id']]);
-            }
-        }
+        $sql = "UPDATE $tableName
+                SET geoloc = JSON_SET(
+                    geoloc,
+                    '$.lat',
+                    JSON_UNQUOTE(JSON_EXTRACT(geoloc, '$.lng')),
+                    '$.lng',
+                    JSON_UNQUOTE(JSON_EXTRACT(geoloc, '$.lat'))
+                )
+                WHERE geoloc IS NOT NULL";
+        $connection->executeQuery($sql);
     }
 
     public function down(Schema $schema): void
