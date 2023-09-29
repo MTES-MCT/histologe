@@ -5,6 +5,10 @@ namespace App\Entity;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Repository\SignalementRepository;
+use App\Service\Signalement\Model\InformationComplementaire;
+use App\Service\Signalement\Model\InformationProcedure;
+use App\Service\Signalement\Model\SituationFoyer;
+use App\Service\Signalement\Model\TypeComposition;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -482,7 +486,7 @@ class Signalement
 
     /**
      * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Utilisez la méthode getSituationFoyer() afin de savoir le nombre de personnes qui vivent dans le logement
+     * Utilisez la méthode @see getTypeComposition() afin de savoir le nombre de personnes qui vivent dans le logement
      */
     public function getNbAdultes()
     {
@@ -491,7 +495,7 @@ class Signalement
 
     /**
      * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Utilisez la méthode setSituationFoyer() afin de mettre à jour le nombre de personnes qui vivent dans le logement
+     * Utilisez la méthode @see setTypeComposition() afin de mettre à jour le nombre de personnes qui vivent dans le logement
      */
     public function setNbAdultes($nbAdultes): self
     {
@@ -502,7 +506,7 @@ class Signalement
 
     /**
      * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Utilisez la méthode getSituationFoyer() afin de savoir si des enfants de moins de 6 ans occupe le logement
+     * Utilisez la méthode @see getTypeComposition() afin de savoir si des enfants de moins de 6 ans occupe le logement
      */
     public function getNbEnfantsM6()
     {
@@ -511,7 +515,7 @@ class Signalement
 
     /**
      * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Utilisez la méthode setSituationFoyer() afin de mettre si des enfants de moins de 6 ans occupe le logement
+     * Utilisez la méthode @see setTypeComposition() afin de mettre si des enfants de moins de 6 ans occupe le logement
      */
     public function setNbEnfantsM6($nbEnfantsM6): self
     {
@@ -523,7 +527,7 @@ class Signalement
     /**
      * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Il n'est plus utile de connaitre le nombre d'enfant de plus de 6 ans
-     * Cette méthode sera supprimé à la prochaine versions
+     * Sera supprimé à la prochaine version
      */
     public function getNbEnfantsP6()
     {
@@ -533,7 +537,7 @@ class Signalement
     /**
      * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Il n'est plus utile de connaitre le nombre d'enfant de plus de 6 ans
-     * Cette méthode sera supprimé à la prochaine versions
+     * Sera supprimé à la prochaine version
      */
     public function setNbEnfantsP6($nbEnfantsP6): self
     {
@@ -1424,7 +1428,7 @@ class Signalement
     }
 
     /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Utilisez la méthode getTypeComposition() afin de savoir le nombre de pièces dans le logement
+     * Utilisez la méthode @see getTypeComposition() afin de savoir le nombre de pièces dans le logement
      */
     public function getNbChambresLogement(): ?int
     {
@@ -1858,11 +1862,17 @@ class Signalement
         return $this;
     }
 
+    /**
+     * @see TypeComposition::toArray()
+     */
     public function getTypeComposition(): ?array
     {
         return $this->typeComposition;
     }
 
+    /**
+     * @see TypeComposition::toArray()
+     */
     public function setTypeComposition(?array $typeComposition): self
     {
         $this->typeComposition = $typeComposition;
@@ -1870,11 +1880,17 @@ class Signalement
         return $this;
     }
 
+    /**
+     * @see SituationFoyer::toArray()
+     */
     public function getSituationFoyer(): ?array
     {
         return $this->situationFoyer;
     }
 
+    /**
+     * @see SituationFoyer::toArray()
+     */
     public function setSituationFoyer(?array $situationFoyer): self
     {
         $this->situationFoyer = $situationFoyer;
@@ -1882,11 +1898,17 @@ class Signalement
         return $this;
     }
 
+    /**
+     * @see InformationProcedure::toArray()
+     */
     public function getInformationProcedure(): ?array
     {
         return $this->informationProcedure;
     }
 
+    /**
+     * @see InformationProcedure::toArray()
+     */
     public function setInformationProcedure(?array $informationProcedure): self
     {
         $this->informationProcedure = $informationProcedure;
@@ -1894,11 +1916,17 @@ class Signalement
         return $this;
     }
 
+    /**
+     * @see InformationComplementaire::toArray()
+     */
     public function getInformationComplementaire(): ?array
     {
         return $this->informationComplementaire;
     }
 
+    /**
+     * @see InformationComplementaire::toArray()
+     */
     public function setInformationComplementaire(?array $informationComplementaire): self
     {
         $this->informationComplementaire = $informationComplementaire;
