@@ -181,3 +181,9 @@ suivis:
   is_public: 0
   signalement: "2023-15"
   type: 4
+-
+  created_by: admin-territoire-13-01@histologe.fr
+  description: "Signalement Refusé"
+  is_public: 1
+  signalement: "2023-21"
+  type: 1

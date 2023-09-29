@@ -61,6 +61,8 @@
                 <strong class="fr-text-label--red-marianne">En attente</strong>
             {% elseif signalement.statut is same as(6) %}
                 Fermé
+            {% elseif signalement.statut is same as(8) %}
+                Refusé
             {% endif %}
         </td>
         <td class="fr-text--right fr-ws-nowrap">
