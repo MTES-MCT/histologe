@@ -609,3 +609,7 @@ hr.blue-border {
 .fr-btn.fr-btn--sm.fr-icon-eye-line:before, .fr-btn.fr-btn--sm.fr-icon-eye-fill:before {
     content: "";
 }
+
+a.force-link-color {
+    color: var(--text-action-high-blue-france);
+}
