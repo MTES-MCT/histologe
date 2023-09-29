@@ -67,8 +67,8 @@ class SignalementDraftRequest
     private ?string $compositionLogementNbPieces = null;
     private ?string $compositionLogementNombrePersonnes = null;
     private ?string $compositionLogementEnfants = null;
-    private ?array $typeLogementPiecesAVivreSuperficiePiece = null;
-    private ?array $typeLogementPiecesAVivreHauteurPiece = null;
+    private ?array $typeLogementPiecesAVivrePieceSuperficie = null;
+    private ?array $typeLogementPiecesAVivrePieceHauteur = null;
     private ?string $typeLogementCommoditesCuisine = null;
     private ?string $typeLogementCommoditesCuisineCollective = null;
     private ?string $typeLogementCommoditesCuisineHauteurPlafond = null;
@@ -776,27 +776,25 @@ class SignalementDraftRequest
         return $this;
     }
 
-    public function getTypeLogementPiecesAVivreSuperficiePiece(): ?array
+    public function getTypeLogementPiecesAVivrePieceSuperficie(): ?array
     {
-        return $this->typeLogementPiecesAVivreSuperficiePiece;
+        return $this->typeLogementPiecesAVivrePieceSuperficie;
     }
 
-    public function setTypeLogementPiecesAVivreSuperficiePiece(?array $typeLogementPiecesAVivreSuperficiePiece): self
+    public function setTypeLogementPiecesAVivrePieceSuperficie(?array $typeLogementPiecesAVivrePieceSuperficie): self
     {
-        $this->typeLogementPiecesAVivreSuperficiePiece = $typeLogementPiecesAVivreSuperficiePiece;
-
+        $this->typeLogementPiecesAVivrePieceSuperficie = $typeLogementPiecesAVivrePieceSuperficie;
         return $this;
     }
 
-    public function getTypeLogementPiecesAVivreHauteurPiece(): ?array
+    public function getTypeLogementPiecesAVivrePieceHauteur(): ?array
     {
-        return $this->typeLogementPiecesAVivreHauteurPiece;
+        return $this->typeLogementPiecesAVivrePieceHauteur;
     }
 
-    public function setTypeLogementPiecesAVivreHauteurPiece(?array $typeLogementPiecesAVivreHauteurPiece): self
+    public function setTypeLogementPiecesAVivrePieceHauteur(?array $typeLogementPiecesAVivrePieceHauteur): self
     {
-        $this->typeLogementPiecesAVivreHauteurPiece = $typeLogementPiecesAVivreHauteurPiece;
-
+        $this->typeLogementPiecesAVivrePieceHauteur = $typeLogementPiecesAVivrePieceHauteur;
         return $this;
     }
 

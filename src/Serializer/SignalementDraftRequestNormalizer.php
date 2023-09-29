@@ -11,10 +11,10 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class SignalementDraftRequestNormalizer implements DenormalizerInterface, NormalizerInterface
 {
-    private const PIECES_SUPERFICIE_KEY_PATTERN = '/^type_logement_pieces_a_vivre_superficie_piece_(\d+)$/';
-    private const PIECES_HAUTEUR_KEY_PATTERN = '/^type_logement_pieces_a_vivre_hauteur_piece_(\d+)$/';
-    private const PIECES_SUPERFICIE_KEY = 'type_logement_pieces_a_vivre_superficie_piece';
-    private const PIECES_HAUTEUR_KEY = 'type_logement_pieces_a_vivre_hauteur_piece';
+    private const PIECES_SUPERFICIE_KEY_PATTERN = '/^type_logement_pieces_a_vivre_piece_(\d+)_superficie$/';
+    private const PIECES_HAUTEUR_KEY_PATTERN = '/^type_logement_pieces_a_vivre_piece_(\d+)_hauteur$/';
+    private const PIECES_SUPERFICIE_KEY = 'type_logement_pieces_a_vivre_piece_superficie';
+    private const PIECES_HAUTEUR_KEY = 'type_logement_pieces_a_vivre_piece_hauteur';
 
     public function __construct(
         /** @var ObjectNormalizer $objectNormalizer */
