@@ -28,7 +28,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
 
         $signalement = $this->signalementBuilder
             ->createSignalementBuilderFrom($signalementDraft)
-            ->withAddressesCoordonees()
+            ->withAdressesCoordonnees()
             ->withTypeCompositionLogement()
             ->withSituationFoyer()
             ->withProcedure()

@@ -57,7 +57,7 @@ class SignalementBuilder
         return $this;
     }
 
-    public function withAddressesCoordonees(): self
+    public function withAdressesCoordonnees(): self
     {
         $this->setAddressData();
         $this->setOccupantDeclarantData();
