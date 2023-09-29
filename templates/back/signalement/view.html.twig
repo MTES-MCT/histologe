@@ -38,9 +38,12 @@
                 'zonetitle': "Photos et documents fournis par l'usager",
                 'importedBy': "user"
             } %}
-        {% endif %}
         
-        {% include 'back/signalement/view/information.html.twig' %}
+            {% include 'back/signalement/view/composition-information.html.twig' %}
+        {% else %}
+        
+            {% include 'back/signalement/view/information.html.twig' %}
+        {% endif %}
         
         {% include 'back/signalement/view/nde.html.twig' %}
 
