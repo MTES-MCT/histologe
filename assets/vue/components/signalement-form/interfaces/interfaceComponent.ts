@@ -7,6 +7,20 @@ export interface Component {
   repeat?: {
     count: string
   }
-  components: ZoneComponents
-  // TODO ajouter toutes les propriétés possibles ?
+  components?: ZoneComponents
+  customCss?: string
+  isCloned?: boolean
+  labelInfo?: string
+  labelUpload?: string
+  description?: string
+  icons?: string
+  action?: string
+  link?: string
+  linktarget?: string
+  values?: any
+  defaultValue?: string
+  validate?: string
+  disabled?: string
+  multiple?: string
+  conditional?: any
 }
