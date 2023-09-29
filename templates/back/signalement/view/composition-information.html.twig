@@ -1,0 +1,124 @@
+<hr class="fr-mt-3w">
+
+<div class="fr-grid-row">
+    <div class="fr-col-9 fr-col-md-6">
+        <h3 class="fr-h5">Composition du logement</h3>
+    </div>
+</div>
+
+<div class="fr-container--fluid">
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
+            <strong>Logement :</strong> {{ signalement.typeComposition.composition_logement_piece_unique is same as 'piece_unique' ? 'Pièce unique' : 'Plusieurs pièces' }}
+        </div>
+        
+        <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
+            <strong>Superficie totale :</strong> {{ signalement.superficie }}m²
+        </div>
+        
+        <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
+            <strong>Nombre de pièces à vivre :</strong> {{ signalement.typeComposition.composition_logement_nb_pieces }}
+        </div>
+        
+        <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
+            <strong>RDC :</strong> {{ signalement.typeComposition.type_logement_rdc ?? 'non' }}
+        </div>
+        
+        <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
+            <strong>Dernier étage :</strong> {{ signalement.typeComposition.type_logement_dernier_etage ?? 'non' }}
+        </div>
+        
+        <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
+            {% if signalement.typeComposition.type_logement_dernier_etage is same as 'oui' %}
+                <strong>Combles sans fenêtres :</strong> {{ signalement.typeComposition.type_logement_sous_comble_sans_fenetre ?? 'non' }}
+                {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_sous_comble_sans_fenetre is same as 'oui' } %}
+        
+            {% elseif signalement.typeComposition.type_logement_rdc is not same as 'oui' and signalement.typeComposition.type_logement_dernier_etage is not same as 'oui' %}
+                <strong>Sous-sol sans fenêtres :</strong> {{ signalement.typeComposition.type_logement_sous_sol_sans_fenetre ?? 'non' }}
+                {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_sous_sol_sans_fenetre is same as 'oui' } %}
+            {% endif %}
+        </div>
+        
+        {% for i in 0..signalement.typeComposition.composition_logement_nb_pieces - 1 %}
+            <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
+                <strong>Pièce à vivre {{ loop.index }} :</strong>
+                <br>
+                TODO
+            </div>
+        {% endfor %}
+
+        <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
+            <strong>Cuisine / coin cuisine :</strong>
+            <br>
+            <ul>
+                <li>
+                    Dans le logement : {{ signalement.typeComposition.type_logement_commodites_cuisine }}
+                    {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_commodites_cuisine is same as 'non' } %}
+                </li>
+                {% if signalement.typeComposition.type_logement_commodites_cuisine is same as 'non' %}
+                    <li>
+                        Collective : {{ signalement.typeComposition.type_logement_commodites_cuisine_collective }}
+                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_commodites_cuisine_collective is same as 'non' } %}
+                    </li>
+                {% else %}
+                    <li>
+                        Hauteur > 2m : {{ signalement.typeComposition.type_logement_commodites_cuisine_hauteur_plafond }}
+                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_commodites_cuisine_hauteur_plafond is same as 'non' } %}
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
+            <strong>SDB (baignoire ou douche) :</strong>
+            <br>
+            <ul>
+                <li>
+                    Dans le logement : {{ signalement.typeComposition.type_logement_commodites_salle_de_bain }}
+                    {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_commodites_salle_de_bain is same as 'non' } %}
+                </li>
+                {% if signalement.typeComposition.type_logement_commodites_salle_de_bain is same as 'non' %}
+                    <li>
+                        Collective : {{ signalement.typeComposition.type_logement_commodites_salle_de_bain_collective }}
+                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_commodites_salle_de_bain_collective is same as 'non' } %}
+                    </li>
+                {% else %}
+                    <li>
+                        Hauteur > 2m : {{ signalement.typeComposition.type_logement_commodites_salle_de_bain_hauteur_plafond }}
+                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_commodites_salle_de_bain_hauteur_plafond is same as 'non' } %}
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
+            <strong>WC :</strong>
+            <br>
+            <ul>
+                <li>
+                    Dans le logement : {{ signalement.typeComposition.type_logement_commodites_wc }}
+                    {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_commodites_wc is same as 'non' } %}
+                </li>
+                {% if signalement.typeComposition.type_logement_commodites_wc is same as 'non' %}
+                    <li>
+                        Collectifs : {{ signalement.typeComposition.type_logement_commodites_wc_collective }}
+                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_commodites_wc_collective is same as 'non' } %}
+                    </li>
+                {% else %}
+                    <li>
+                        Hauteur > 2m : {{ signalement.typeComposition.type_logement_commodites_wc_hauteur_plafond }}
+                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_commodites_wc_hauteur_plafond is same as 'non' } %}
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+
+        {% if signalement.typeComposition.type_logement_commodites_cuisine is same as 'oui' and signalement.typeComposition.type_logement_commodites_wc is same as 'oui' %}
+        <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
+            <strong>WC et cuisine dans la même pièce :</strong>
+            {{ signalement.typeComposition.type_logement_commodites_wc_cuisine }}
+            {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_commodites_wc_cuisine is same as 'oui' } %}
+        </div>
+        {% endif %}
+    </div>
+</div>
