@@ -4,11 +4,11 @@ namespace App\Entity;
 
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Model\InformationComplementaire;
+use App\Entity\Model\InformationProcedure;
+use App\Entity\Model\SituationFoyer;
+use App\Entity\Model\TypeComposition;
 use App\Repository\SignalementRepository;
-use App\Service\Signalement\Model\InformationComplementaire;
-use App\Service\Signalement\Model\InformationProcedure;
-use App\Service\Signalement\Model\SituationFoyer;
-use App\Service\Signalement\Model\TypeComposition;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;

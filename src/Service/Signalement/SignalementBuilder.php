@@ -5,13 +5,13 @@ namespace App\Service\Signalement;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Model\InformationProcedure;
+use App\Entity\Model\SituationFoyer;
+use App\Entity\Model\TypeComposition;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
-use App\Service\Signalement\Model\InformationProcedure;
-use App\Service\Signalement\Model\SituationFoyer;
-use App\Service\Signalement\Model\TypeComposition;
 use App\Utils\DataPropertyArrayFilter;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -244,8 +244,12 @@ class SignalementBuilder
         return 'oui' === $value;
     }
 
-    private function isConstructionAvant1949(string $dateConstruction): bool
+    private function isConstructionAvant1949(?string $dateConstruction): ?bool
     {
+        if (empty($dateConstruction)) {
+            return null;
+        }
+
         return new \DateTimeImmutable('01-01-1949') > new \DateTimeImmutable($dateConstruction);
     }
 

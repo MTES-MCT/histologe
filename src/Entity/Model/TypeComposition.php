@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Signalement\Model;
+namespace App\Entity\Model;
 
 class TypeComposition
 {

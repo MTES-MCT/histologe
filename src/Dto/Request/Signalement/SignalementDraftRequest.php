@@ -2,6 +2,8 @@
 
 namespace App\Dto\Request\Signalement;
 
+use App\Entity\Signalement;
+
 class SignalementDraftRequest
 {
     public const PREFIX_PROPERTIES_TYPE_COMPOSITION = ['type_logement', 'composition_logement', 'bail_dpe'];
@@ -1295,8 +1297,17 @@ class SignalementDraftRequest
         return $this;
     }
 
+    /**
+     * Make Signalement::details not null after MEP.
+     *
+     * @see Signalement::$details
+     */
     public function getValidationSignalementOverviewMessageAdministration(): ?string
     {
+        if (empty($this->validationSignalementOverviewMessageAdministration)) {
+            return 'N/A';
+        }
+
         return $this->validationSignalementOverviewMessageAdministration;
     }
 
