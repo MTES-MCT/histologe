@@ -106,7 +106,7 @@ class Signalement
 
     #[ORM\Column(type: 'string', length: 15, nullable: true)]
     #[Assert\Length(min: 10, max: 15)]
-    private ?string $telProprioBis;
+    private ?string $telProprioSecondaire;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $mailProprio;
@@ -139,7 +139,7 @@ class Signalement
     private $telDeclarant;
 
     #[ORM\Column(type: 'string', length: 15, nullable: true)]
-    private ?string $telDeclarantBis;
+    private ?string $telDeclarantSecondaire;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $mailDeclarant;
@@ -148,7 +148,7 @@ class Signalement
     private $structureDeclarant;
 
     #[ORM\Column(type: 'string', length: 10, nullable: true)]
-    private ?string $civiiliteOccupant;
+    private ?string $civiliteOccupant;
 
     #[ORM\Column(type: 'string', length: 50)]
     #[Assert\NotBlank]
@@ -480,7 +480,8 @@ class Signalement
         return $this;
     }
 
-    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Utilisez la méthode getSituationFoyer() afin de savoir le nombre de personnes qui vivent dans le logement
      */
     public function getNbAdultes()
@@ -488,8 +489,9 @@ class Signalement
         return $this->nbAdultes;
     }
 
-    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Utilisez la méthode getSituationFoyer() afin de savoir si des enfants de moins de 6 ans occupe le logement
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+     * Utilisez la méthode setSituationFoyer() afin de mettre à jour le nombre de personnes qui vivent dans le logement
      */
     public function setNbAdultes($nbAdultes): self
     {
@@ -498,7 +500,8 @@ class Signalement
         return $this;
     }
 
-    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Utilisez la méthode getSituationFoyer() afin de savoir si des enfants de moins de 6 ans occupe le logement
      */
     public function getNbEnfantsM6()
@@ -506,8 +509,9 @@ class Signalement
         return $this->nbEnfantsM6;
     }
 
-    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Utilisez la méthode getSituationFoyer() afin de savoir si des enfants de moins de 6 ans occupe le logement
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+     * Utilisez la méthode setSituationFoyer() afin de mettre si des enfants de moins de 6 ans occupe le logement
      */
     public function setNbEnfantsM6($nbEnfantsM6): self
     {
@@ -516,16 +520,20 @@ class Signalement
         return $this;
     }
 
-    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Utilisez la méthode getSituationFoyer() afin de savoir si des enfants de moins de 6 ans occupe le logement
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+     * Il n'est plus utile de connaitre le nombre d'enfant de plus de 6 ans
+     * Cette méthode sera supprimé à la prochaine versions
      */
     public function getNbEnfantsP6()
     {
         return $this->nbEnfantsP6;
     }
 
-    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Utilisez la méthode getSituationFoyer() afin de savoir si des enfants de moins de 6 ans occupe le logement
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+     * Il n'est plus utile de connaitre le nombre d'enfant de plus de 6 ans
+     * Cette méthode sera supprimé à la prochaine versions
      */
     public function setNbEnfantsP6($nbEnfantsP6): self
     {
@@ -726,7 +734,8 @@ class Signalement
         return $this;
     }
 
-    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Sera supprimé à la prochaine version
      */
     public function getRaisonRefusIntervention(): ?string
@@ -734,7 +743,8 @@ class Signalement
         return $this->raisonRefusIntervention;
     }
 
-    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Sera supprimé à la prochaine version
      */
     public function setRaisonRefusIntervention(?string $raisonRefusIntervention): self
@@ -1812,38 +1822,38 @@ class Signalement
         return $this;
     }
 
-    public function getTelProprioBis(): ?string
+    public function getTelProprioSecondaire(): ?string
     {
-        return $this->telProprioBis;
+        return $this->telProprioSecondaire;
     }
 
-    public function setTelProprioBis(?string $telProprioBis): self
+    public function setTelProprioSecondaire(?string $telProprioSecondaire): self
     {
-        $this->telProprioBis = $telProprioBis;
+        $this->telProprioSecondaire = $telProprioSecondaire;
 
         return $this;
     }
 
-    public function getTelDeclarantBis(): ?string
+    public function getTelDeclarantSecondaire(): ?string
     {
-        return $this->telDeclarantBis;
+        return $this->telDeclarantSecondaire;
     }
 
-    public function setTelDeclarantBis(?string $telDeclarantBis): self
+    public function setTelDeclarantSecondaire(?string $telDeclarantSecondaire): self
     {
-        $this->telDeclarantBis = $telDeclarantBis;
+        $this->telDeclarantSecondaire = $telDeclarantSecondaire;
 
         return $this;
     }
 
-    public function getCiviiliteOccupant(): ?string
+    public function getciviliteOccupant(): ?string
     {
-        return $this->civiiliteOccupant;
+        return $this->civiliteOccupant;
     }
 
-    public function setCiviiliteOccupant(?string $civiiliteOccupant): self
+    public function setciviliteOccupant(?string $civiliteOccupant): self
     {
-        $this->civiiliteOccupant = $civiiliteOccupant;
+        $this->civiliteOccupant = $civiliteOccupant;
 
         return $this;
     }

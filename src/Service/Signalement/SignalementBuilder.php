@@ -3,12 +3,18 @@
 namespace App\Service\Signalement;
 
 use App\Dto\Request\Signalement\SignalementDraftRequest;
+use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
+use App\Form\SignalementType;
 use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
+use App\Service\Signalement\Model\InformationProcedure;
+use App\Service\Signalement\Model\SituationFoyer;
+use App\Service\Signalement\Model\TypeComposition;
 use App\Utils\DataPropertyArrayFilter;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class SignalementBuilder
 {
@@ -20,7 +26,8 @@ class SignalementBuilder
         private TerritoryRepository $territoryRepository,
         private ZipcodeProvider $zipcodeProvider,
         private ReferenceGenerator $referenceGenerator,
-        private SignalementDraftRequestSerializer $serializer,
+        private SignalementDraftRequestSerializer $signalementDraftRequestSerializer,
+        private SerializerInterface $serializer,
     ) {
     }
 
@@ -28,7 +35,7 @@ class SignalementBuilder
     {
         $this->signalementDraft = $signalementDraft;
 
-        $this->signalementDraftRequest = $this->serializer->denormalize(
+        $this->signalementDraftRequest = $this->signalementDraftRequestSerializer->denormalize(
             $signalementDraft->getPayload(),
             SignalementDraftRequest::class
         );
@@ -61,17 +68,23 @@ class SignalementBuilder
 
     public function withTypeCompositionLogement(): self
     {
+        $typeCompositionLogementData = DataPropertyArrayFilter::filterByPrefix(
+            $this->signalementDraft->getPayload(),
+            SignalementDraftRequest::PREFIX_PROPERTIES_TYPE_COMPOSITION
+        );
+
+        /** TODO: Travail préparatoire pour en faire un type doctrine */
+        /** @var TypeComposition $typeCompositionLogement */
+        $typeCompositionLogement = $this->serializer->deserialize(json_encode($typeCompositionLogementData), TypeComposition::class, 'json');
+
         $this->signalement
+            ->setTypeComposition($typeCompositionLogement->toArray())
             ->setNbOccupantsLogement($this->signalementDraftRequest->getCompositionLogementNombrePersonnes())
             ->setNatureLogement($this->signalementDraftRequest->getTypeLogementNature())
             ->setTypeLogement($this->signalementDraftRequest->getTypeLogementNature())
             ->setSuperficie($this->signalementDraftRequest->getCompositionLogementSuperficie())
             ->setNbPiecesLogement($this->signalementDraftRequest->getCompositionLogementNbPieces())
-            ->setTypeComposition(DataPropertyArrayFilter::filterByPrefix(
-                $this->signalementDraft->getPayload(),
-                SignalementDraftRequest::PREFIX_PROPERTIES_TYPE_COMPOSITION
-            ))
-            ->setIsBailEnCours($this->evalBoolean($this->signalementDraftRequest->getBailDpeDpe()))
+            ->setIsBailEnCours($this->evalBoolean($this->signalementDraftRequest->getBailDpeBail()))
             ->setDateEntree(new \DateTimeImmutable($this->signalementDraftRequest->getBailDpeDateEmmenagement()));
 
         return $this;
@@ -79,17 +92,22 @@ class SignalementBuilder
 
     public function withSituationFoyer(): self
     {
+        $situationFoyerData = DataPropertyArrayFilter::filterByPrefix(
+            $this->signalementDraft->getPayload(),
+            SignalementDraftRequest::PREFIX_PROPERTIES_SITUATION_FOYER
+        );
+
+        /** TODO: Travail préparatoire pour en faire un type doctrine */
+        /** @var SituationFoyer $situationFoyer */
+        $situationFoyer = $this->serializer->deserialize(json_encode($situationFoyerData), SituationFoyer::class, 'json');
+
         $this->signalement
             ->setIsRelogement($this->evalBoolean($this->signalementDraftRequest->getLogementSocialDemandeRelogement()))
-            ->setIsAllocataire($this->evalBoolean($this->signalementDraftRequest->getLogementSocialAllocationCaisse()))
-            ->setNumAllocataire($this->signalementDraftRequest->getLogementSocialMontantAllocation())
+            ->setIsAllocataire($this->resolveIsAllocataire())
+            ->setNumAllocataire($this->signalementDraftRequest->getLogementSocialNumeroAllocataire())
             ->setMontantAllocation($this->signalementDraftRequest->getLogementSocialMontantAllocation())
             ->setDateNaissanceOccupant(new \DateTimeImmutable($this->signalementDraftRequest->getLogementSocialDateNaissance()))
-            ->setIsPreavisDepart($this->evalBoolean($this->signalementDraftRequest->getTravailleurSocialQuitteLogement()))
-            ->setSituationFoyer(DataPropertyArrayFilter::filterByPrefix(
-                $this->signalementDraft->getPayload(),
-                SignalementDraftRequest::PREFIX_PROPERTIES_SITUATION_FOYER
-            ));
+            ->setSituationFoyer($situationFoyer->toArray());
 
         return $this;
     }
@@ -102,17 +120,22 @@ class SignalementBuilder
 
     public function withProcedure(): self
     {
+        $informationProcedureData = DataPropertyArrayFilter::filterByPrefix(
+            $this->signalementDraft->getPayload(),
+            SignalementDraftRequest::PREFIX_PROPERTIES_INFORMATION_PROCEDURE
+        );
+
+        /** TODO: Travail préparatoire pour en faire un type doctrine */
+        /** @var InformationProcedure $informationProcedure */
+        $informationProcedure = $this->serializer->deserialize(json_encode($informationProcedureData), InformationProcedure::class, 'json');
+
         $this->signalement
             ->setIsProprioAverti($this->evalBoolean($this->signalementDraftRequest->getInfoProcedureBailleurPrevenu()))
             ->setIsRsa($this->evalBoolean($this->signalementDraftRequest->getInformationsComplementairesSituationOccupantsBeneficiaireRsa()))
             ->setIsFondSolidariteLogement($this->evalBoolean($this->signalementDraftRequest->getInformationsComplementairesSituationOccupantsBeneficiaireFsl()))
             ->setLoyer($this->signalementDraftRequest->getInformationsComplementairesLogementMontantLoyer())
             ->setNbNiveauxLogement($this->signalementDraftRequest->getInformationsComplementairesLogementNombreEtages())
-            ->setInformationProcedure(DataPropertyArrayFilter::filterByPrefix(
-                $this->signalementDraft->getPayload(),
-                SignalementDraftRequest::PREFIX_PROPERTIES_INFORMATION_PROCEDURE
-            )
-            );
+            ->setInformationProcedure($informationProcedure->toArray());
 
         return $this;
     }
@@ -138,15 +161,18 @@ class SignalementBuilder
 
     private function setAddressData(): void
     {
+        $isLogementSocial = $this->isServiceSecours()
+            ? $this->evalBoolean($this->signalementDraftRequest->getSignalementConcerneLogementSocialServiceSecours())
+            : $this->evalBoolean($this->signalementDraftRequest->getSignalementConcerneLogementSocialAutreTiers());
+
         $this->signalement
-            ->setIsLogementSocial(
-                $this->evalBoolean($this->signalementDraftRequest->getSignalementConcerneLogementSocialAutreTiers()))
+            ->setIsLogementSocial($isLogementSocial)
             ->setAdresseOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailNumero())
             ->setCpOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal())
             ->setInseeOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailInsee())
             ->setGeoloc([
-                $this->signalementDraftRequest->getAdresseLogementAdresseDetailGeolocLat(),
-                $this->signalementDraftRequest->getAdresseLogementAdresseDetailGeolocLng(),
+                'lat' => $this->signalementDraftRequest->getAdresseLogementAdresseDetailGeolocLat(),
+                'lng' => $this->signalementDraftRequest->getAdresseLogementAdresseDetailGeolocLng(),
             ])
             ->setVilleOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailCommune())
             ->setEtageOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseEtage())
@@ -160,7 +186,7 @@ class SignalementBuilder
         if ($this->isOccupant()) {
             $this->signalement
                 ->setIsNotOccupant(false)
-                ->setCiviiliteOccupant($this->signalementDraftRequest->getVosCoordonneesOccupantCivilite())
+                ->setCiviliteOccupant($this->signalementDraftRequest->getVosCoordonneesOccupantCivilite())
                 ->setMailOccupant($this->signalementDraftRequest->getVosCoordonneesOccupantEmail())
                 ->setNomOccupant($this->signalementDraftRequest->getVosCoordonneesOccupantNom())
                 ->setPrenomOccupant($this->signalementDraftRequest->getVosCoordonneesOccupantPrenom())
@@ -169,7 +195,7 @@ class SignalementBuilder
                 ->setNomDeclarant($this->signalementDraftRequest->getVosCoordonneesOccupantNom())
                 ->setPrenomDeclarant($this->signalementDraftRequest->getVosCoordonneesOccupantPrenom())
                 ->setTelDeclarant($this->signalementDraftRequest->getVosCoordonneesOccupantTel())
-                ->setTelDeclarantBis($this->signalementDraftRequest->getVosCoordonneesOccupantTelSecondaire())
+                ->setTelDeclarantSecondaire($this->signalementDraftRequest->getVosCoordonneesOccupantTelSecondaire())
                 ->setMailDeclarant($this->signalementDraftRequest->getVosCoordonneesOccupantEmail());
         } else {
             $this->signalement
@@ -180,11 +206,11 @@ class SignalementBuilder
                 ->setTelOccupant($this->signalementDraftRequest->getCoordonneesOccupantTel())
                 ->setTelOccupantBis($this->signalementDraftRequest->getCoordonneesOccupantTelSecondaire())
                 ->setStructureDeclarant($this->signalementDraftRequest->getVosCoordonneesTiersNomOrganisme())
-                ->setLienDeclarantOccupant($this->signalementDraftRequest->getVosCoordonneesTiersLien())
+                ->setLienDeclarantOccupant($this->resolveTiersLien())
                 ->setNomDeclarant($this->signalementDraftRequest->getVosCoordonneesTiersNom())
                 ->setPrenomDeclarant($this->signalementDraftRequest->getVosCoordonneesTiersPrenom())
                 ->setTelDeclarant($this->signalementDraftRequest->getVosCoordonneesTiersTel())
-                ->setTelDeclarantBis($this->signalementDraftRequest->getVosCoordonneesTiersTelSecondaire())
+                ->setTelDeclarantSecondaire($this->signalementDraftRequest->getVosCoordonneesTiersTelSecondaire())
                 ->setMailDeclarant($this->signalementDraftRequest->getVosCoordonneesTiersEmail());
         }
     }
@@ -205,6 +231,11 @@ class SignalementBuilder
             || ProfileDeclarant::BAILLEUR_OCCUPANT === $this->signalement->getProfileDeclarant();
     }
 
+    private function isServiceSecours(): bool
+    {
+        return ProfileDeclarant::SERVICE_SECOURS === $this->signalement->getProfileDeclarant();
+    }
+
     private function evalBoolean(?string $value): ?bool
     {
         if (null === $value) {
@@ -214,8 +245,28 @@ class SignalementBuilder
         return 'oui' === $value;
     }
 
-    private function isConstructionAvant1949(string $dateConstruction)
+    private function isConstructionAvant1949(string $dateConstruction): bool
     {
         return new \DateTimeImmutable('01-01-1949') > new \DateTimeImmutable($dateConstruction);
+    }
+
+    private function resolveIsAllocataire(): ?string
+    {
+        if ($this->evalBoolean($this->signalementDraftRequest->getLogementSocialAllocation())) {
+            return strtolower($this->signalementDraftRequest->getLogementSocialAllocationCaisse());
+        }
+
+        return '0';
+    }
+
+    private function resolveTiersLien(): string
+    {
+        $tiersLien = OccupantLink::from(strtoupper($this->signalementDraftRequest->getVosCoordonneesTiersLien()));
+
+        if ($tiersLien === OccupantLink::VOISINAGE) {
+            return OccupantLink::VOISINAGE->label();
+        }
+
+        return $tiersLien->value;
     }
 }

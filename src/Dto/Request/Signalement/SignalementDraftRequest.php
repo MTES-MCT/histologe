@@ -51,7 +51,7 @@ class SignalementDraftRequest
     private ?string $coordonneesBailleurPrenom = null;
     private ?string $coordonneesBailleurEmail = null;
     private ?string $coordonneesBailleurTel = null;
-    private ?string $coordonneesBailleurTelSeconadaire = null;
+    private ?string $coordonneesBailleurTelSecondaire = null;
     private ?string $coordonneesBailleurAdresse = null;
     private ?string $coordonneesBailleurAdresseDetailNumero = null;
     private ?string $coordonneesBailleurAdresseDetailCodePostal = null;
@@ -90,6 +90,7 @@ class SignalementDraftRequest
     private ?string $logementSocialAllocationCaisse = null;
     private ?string $logementSocialDateNaissance = null;
     private ?string $logementSocialMontantAllocation = null;
+    private ?string $logementSocialNumeroAllocataire = null;
     private ?string $travailleurSocialQuitteLogement = null;
     private ?string $travailleurSocialAccompagnement = null;
     private ?string $travailleurSocialAccompagnementDeclarant = null;
@@ -1054,6 +1055,18 @@ class SignalementDraftRequest
         return $this;
     }
 
+    public function getLogementSocialNumeroAllocataire(): ?string
+    {
+        return $this->logementSocialNumeroAllocataire;
+    }
+
+    public function setLogementSocialNumeroAllocataire(?string $logementSocialNumeroAllocataire): self
+    {
+        $this->logementSocialNumeroAllocataire = $logementSocialNumeroAllocataire;
+
+        return $this;
+    }
+
     public function getTravailleurSocialQuitteLogement(): ?string
     {
         return $this->travailleurSocialQuitteLogement;
@@ -1270,14 +1283,14 @@ class SignalementDraftRequest
         return $this;
     }
 
-    public function getCoordonneesBailleurTelSeconadaire(): ?string
+    public function getCoordonneesBailleurTelSecondaire(): ?string
     {
-        return $this->coordonneesBailleurTelSeconadaire;
+        return $this->coordonneesBailleurTelSecondaire;
     }
 
-    public function setCoordonneesBailleurTelSeconadaire(?string $coordonneesBailleurTelSeconadaire): self
+    public function setCoordonneesBailleurTelSecondaire(?string $coordonneesBailleurTelSecondaire): self
     {
-        $this->coordonneesBailleurTelSeconadaire = $coordonneesBailleurTelSeconadaire;
+        $this->coordonneesBailleurTelSecondaire = $coordonneesBailleurTelSecondaire;
 
         return $this;
     }
