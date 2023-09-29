@@ -7,7 +7,6 @@ use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
-use App\Form\SignalementType;
 use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\Signalement\Model\InformationProcedure;
@@ -263,7 +262,7 @@ class SignalementBuilder
     {
         $tiersLien = OccupantLink::from(strtoupper($this->signalementDraftRequest->getVosCoordonneesTiersLien()));
 
-        if ($tiersLien === OccupantLink::VOISINAGE) {
+        if (OccupantLink::VOISINAGE === $tiersLien) {
             return OccupantLink::VOISINAGE->label();
         }
 

@@ -17,8 +17,8 @@ enum OccupantLink: string
     {
         return [
             'PROCHE' => 'PROCHE',
-            'VOISINAGE' => 'VOISIN', /** legacy label */
-            'AUTRE' => 'AUTRE'
+            'VOISINAGE' => 'VOISIN', /* legacy label */
+            'AUTRE' => 'AUTRE',
         ];
     }
 }
