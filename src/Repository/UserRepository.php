@@ -41,6 +41,19 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
+    public function findActiveAdmins(): ?array
+    {
+        $queryBuilder = $this->createQueryBuilder('u');
+
+        return $queryBuilder
+            ->andWhere('u.roles LIKE :role')
+            ->setParameter('role', '%"ROLE_ADMIN"%')
+            ->andWhere('u.statut LIKE :active')
+            ->setParameter('active', User::STATUS_ACTIVE)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findActiveTerritoryAdmins(?Territory $territory): ?array
     {
         if (empty($territory)) {
