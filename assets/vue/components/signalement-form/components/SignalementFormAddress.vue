@@ -127,8 +127,8 @@ export default defineComponent({
         this.formStore.data[this.id + '_detail_code_postal'] = this.suggestions[index].properties.postcode
         this.formStore.data[this.id + '_detail_commune'] = this.suggestions[index].properties.city
         this.formStore.data[this.id + '_detail_insee'] = this.suggestions[index].properties.citycode
-        this.formStore.data[this.id + '_detail_geoloc_lat'] = this.suggestions[index].geometry.coordinates[0]
-        this.formStore.data[this.id + '_detail_geoloc_lng'] = this.suggestions[index].geometry.coordinates[1]
+        this.formStore.data[this.id + '_detail_geoloc_lng'] = this.suggestions[index].geometry.coordinates[0]
+        this.formStore.data[this.id + '_detail_geoloc_lat'] = this.suggestions[index].geometry.coordinates[1]
         this.suggestions.length = 0
       }
       const subscreen = document.querySelector('#' + this.idSubscreen)

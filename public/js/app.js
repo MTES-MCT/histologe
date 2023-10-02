@@ -1060,8 +1060,8 @@ const refetchAddress = (form) => {
             // Zip codes available for Non Conformité Energétique
             isZipForNDE = (zipOccupant == '63' || zipOccupant == '89');
 
-            form.querySelector('#signalement-geoloc-lat-occupant').value = feature.geometry.coordinates[0];
-            form.querySelector('#signalement-geoloc-lng-occupant').value = feature.geometry.coordinates[1];
+            form.querySelector('#signalement-geoloc-lat-occupant').value = feature.geometry.coordinates[1];
+            form.querySelector('#signalement-geoloc-lng-occupant').value = feature.geometry.coordinates[0];
         })
     })
 }

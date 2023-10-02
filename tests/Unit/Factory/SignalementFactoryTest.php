@@ -71,7 +71,7 @@ class SignalementFactoryTest extends KernelTestCase
             'isCguAccepted' => true,
             'modifiedAt' => null,
             'statut' => Signalement::STATUS_ACTIVE,
-            'geoloc' => ['lat' => 5.386161, 'lng' => 43.312827],
+            'geoloc' => ['lat' => 43.312827, 'lng' => 5.386161],
             'montantAllocation' => null,
             'codeProcedure' => null,
             'adresseAutreOccupant' => null,

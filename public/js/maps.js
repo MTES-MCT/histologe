@@ -75,7 +75,7 @@ async function getMarkers(offset) {
                         crit = signalement.desordres.split('|');
                     }
                     
-                    marker = L.marker([signalement.geoloc.lng, signalement.geoloc.lat], {
+                    marker = L.marker([signalement.geoloc.lat, signalement.geoloc.lng], {
                         id: signalement.id,
                         status: signalement.statut,
                         address: signalement.adresseOccupant,
