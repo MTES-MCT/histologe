@@ -16,6 +16,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class EsaboraManagerTest extends TestCase
@@ -31,6 +32,7 @@ class EsaboraManagerTest extends TestCase
     protected MockObject|EventDispatcherInterface $eventDispatcher;
     protected MockObject|UserManager $userManager;
     private MockObject|LoggerInterface $logger;
+    private MockObject|ParameterBagInterface $parameterBag;
 
     protected function setUp(): void
     {
@@ -41,6 +43,7 @@ class EsaboraManagerTest extends TestCase
         $this->userManager = $this->createMock(UserManager::class);
         $this->eventDispatcher = new EventDispatcher();
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->parameterBag = $this->createMock(ParameterBagInterface::class);
     }
 
     public function testCreateVisite(): void
@@ -80,6 +83,7 @@ class EsaboraManagerTest extends TestCase
             $this->eventDispatcher,
             $this->userManager,
             $this->logger,
+            $this->parameterBag,
         );
         $esaboraManager->createOrUpdateVisite($this->getAffectation(PartnerType::ARS), $dossierVisite);
     }
@@ -138,6 +142,7 @@ class EsaboraManagerTest extends TestCase
             $this->eventDispatcher,
             $this->userManager,
             $this->logger,
+            $this->parameterBag,
         );
     }
 }

@@ -19,6 +19,7 @@ use App\Service\Esabora\Response\Model\DossierArreteSISH;
 use App\Service\Esabora\Response\Model\DossierVisiteSISH;
 use App\Service\Intervention\InterventionDescriptionGenerator;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class EsaboraManager
@@ -31,6 +32,7 @@ class EsaboraManager
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly UserManager $userManager,
         private readonly LoggerInterface $logger,
+        private readonly ParameterBagInterface $parameterBag,
     ) {
     }
 
@@ -43,10 +45,12 @@ class EsaboraManager
 
         $description = $this->updateStatusFor($affectation, $user, $dossierResponse);
         if (!empty($description)) {
+            $adminEmail = $this->parameterBag->get('user_system_email');
+            $adminUser = $this->userManager->findOneBy(['email' => $adminEmail]);
             $suivi = $this->suiviManager->createSuivi(
-                $user,
-                $signalement,
-                [
+                user: $adminUser,
+                signalement: $signalement,
+                params: [
                     'domain' => 'esabora',
                     'action' => 'synchronize',
                     'description' => $description,
@@ -74,31 +78,31 @@ class EsaboraManager
             case EsaboraStatus::ESABORA_WAIT->value:
                 if (Affectation::STATUS_WAIT !== $currentStatus) {
                     $this->affectationManager->updateAffectation($affectation, $user, Affectation::STATUS_WAIT);
-                    $description = 'remis en attente via Esabora';
+                    $description = 'remis en attente via '.$dossierResponse->getNameSI();
                 }
                 break;
             case EsaboraStatus::ESABORA_ACCEPTED->value:
                 if ($this->shouldBeAcceptedViaEsabora($esaboraDossierStatus, $currentStatus)) {
                     $this->affectationManager->updateAffectation($affectation, $user, Affectation::STATUS_ACCEPTED);
-                    $description = 'accepté via Esabora';
+                    $description = 'accepté via '.$dossierResponse->getNameSI();
                 }
 
                 if ($this->shouldBeClosedViaEsabora($esaboraDossierStatus, $currentStatus)) {
                     $this->affectationManager->updateAffectation($affectation, $user, Affectation::STATUS_CLOSED);
-                    $description = 'cloturé via Esabora';
+                    $description = 'cloturé via '.$dossierResponse->getNameSI();
                 }
                 break;
             case EsaboraStatus::ESABORA_REFUSED->value:
                 if (Affectation::STATUS_REFUSED !== $currentStatus) {
                     $this->affectationManager->updateAffectation($affectation, $user, Affectation::STATUS_REFUSED);
-                    $description = 'refusé via Esabora';
+                    $description = 'refusé via '.$dossierResponse->getNameSI();
                 }
                 break;
             case EsaboraStatus::ESABORA_REJECTED->value:
                 if (Affectation::STATUS_REFUSED !== $currentStatus) {
                     $this->affectationManager->updateAffectation($affectation, $user, Affectation::STATUS_REFUSED);
                     $description = sprintf(
-                        'refusé via Esabora pour motif suivant: %s',
+                        'refusé via '.$dossierResponse->getNameSI().' pour motif suivant: %s',
                         $dossierResponse->getSasCauseRefus()
                     );
                 }
@@ -116,12 +120,14 @@ class EsaboraManager
         } else {
             if (null === InterventionType::tryFromLabel($dossierVisiteSISH->getVisiteType())) {
                 $this->logger->error(
-                    sprintf('#%s - Le dossier SISH %s a un type de visite invalide `%s`. Types valides : (%s)',
+                    sprintf(
+                        '#%s - Le dossier SISH %s a un type de visite invalide `%s`. Types valides : (%s)',
                         $dossierVisiteSISH->getReferenceDossier(),
                         $dossierVisiteSISH->getDossNum(),
                         $dossierVisiteSISH->getVisiteType(),
                         implode(',', InterventionType::getLabelList())
-                    ));
+                    )
+                );
             } else {
                 $newIntervention = $this->interventionFactory->createInstanceFrom(
                     affectation: $affectation,
