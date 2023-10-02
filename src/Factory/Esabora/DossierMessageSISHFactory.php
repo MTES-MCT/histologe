@@ -79,7 +79,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setLocalisationAdresse2($signalement->getAdresseAutreOccupant())
             ->setLocalisationCodePostal($signalement->getCpOccupant())
             ->setLocalisationVille($signalement->getVilleOccupant())
-            ->setLocalisationLocalisationInsee($signalement->getInseeOccupant())
+            ->setLocalisationLocalisationInsee($signalement->getInseeOccupant()) // TODO : c'est parfois vide et créé une erreur 400 pour push_dossier_adresse
             ->setSasLogicielProvenance('H')
             ->setReferenceDossier($signalement->getUuid())
             ->setSasDateAffectation(
@@ -89,8 +89,8 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
                     ->format($formatDateTime)
             )
             ->setLocalisationEtage($etage)
-            ->setLocalisationEscalier($signalement->getEscalierOccupant())
-            ->setLocalisationNumPorte($signalement->getNumAppartOccupant())
+            ->setLocalisationEscalier($signalement->getEscalierOccupant()) // TODO : taille maximale autorisée 3 caractères
+            ->setLocalisationNumPorte($signalement->getNumAppartOccupant()) // TODO : taille maximale 30 caractères
             ->setSitOccupantNbAdultes($signalement->getNbAdultes())
             ->setSitOccupantNbEnfantsM6($signalement->getNbEnfantsM6())
             ->setSitOccupantNbEnfantsP6($signalement->getNbEnfantsP6())
