@@ -8,6 +8,7 @@ use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\Token\TokenGeneratorInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -32,7 +33,8 @@ class ReinitAdminPasswordsCommand extends Command
         private ValidatorInterface $validator,
         private UserPasswordHasherInterface $hasher,
         private UserRepository $userRepository,
-        private NotificationMailerRegistry $notificationMailerRegistry
+        private NotificationMailerRegistry $notificationMailerRegistry,
+        private TokenGeneratorInterface $tokenGenerator
     ) {
         parent::__construct();
     }
@@ -47,7 +49,7 @@ class ReinitAdminPasswordsCommand extends Command
         $users = $this->userRepository->findActiveAdmins();
 
         foreach ($users as $user) {
-            $password = $this->hasher->hashPassword($user, md5(rand(1000000, 10000000)));
+            $password = $this->hasher->hashPassword($user, $this->tokenGenerator->generateToken());
 
             $user->setPassword($password)->setStatut(User::STATUS_INACTIVE);
             $this->userManager->loadUserToken($user->getEmail());
@@ -65,12 +67,10 @@ class ReinitAdminPasswordsCommand extends Command
 
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
-                    type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_REMINDER,
+                    type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_FROM_BO,
                     to: $user->getEmail(),
                     user: $user,
-                    params: [
-                        'nb_signalements' => 0,
-                    ],
+                    territory: $user->getTerritory(),
                 )
             );
         }
