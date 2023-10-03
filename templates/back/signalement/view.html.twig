@@ -1,5 +1,4 @@
 {% extends 'back/base_bo.html.twig' %}
-
 {% set picto_yes = '<p class="fr-badge fr-badge--success" data-action="click" data-item="%s" data-url="'~path('back_signalement_switch_value',{uuid:signalement.uuid})~'" data-token="'~csrf_token('signalement_switch_value_'~signalement.uuid)~'">Oui</p>' %}
 {% set picto_no = '<p class="fr-badge fr-badge--error" data-action="click" data-item="%s" data-url="'~path('back_signalement_switch_value',{uuid:signalement.uuid})~'" data-token="'~csrf_token('signalement_switch_value_'~signalement.uuid)~'">Non</p>' %}
 {% set picto_nsp = '<p class="fr-badge fr-badge--warning" data-action="click" data-item="%s" data-url="'~path('back_signalement_switch_value',{uuid:signalement.uuid})~'" data-token="'~csrf_token('signalement_switch_value_'~signalement.uuid)~'">NSP</p>' %}

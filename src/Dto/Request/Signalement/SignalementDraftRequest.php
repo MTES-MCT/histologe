@@ -11,6 +11,13 @@ class SignalementDraftRequest
     public const PREFIX_PROPERTIES_INFORMATION_PROCEDURE = ['info_procedure', 'utilisation_service'];
     public const PREFIX_PROPERTIES_INFORMATION_COMPLEMENTAIRE = ['informations_complementaires'];
 
+    public const PIECES_SUPERFICIE_KEY_PATTERN = '/^type_logement_pieces_a_vivre_piece_(\d+)_superficie$/';
+    public const PIECES_HAUTEUR_KEY_PATTERN = '/^type_logement_pieces_a_vivre_piece_(\d+)_hauteur$/';
+    public const PIECES_SUPERFICIE_KEY = 'type_logement_pieces_a_vivre_piece_superficie';
+    public const PIECES_HAUTEUR_KEY = 'type_logement_pieces_a_vivre_piece_hauteur';
+    public const PATTERN_SUPERFICIE_KEY = 'type_logement_pieces_a_vivre_piece_%d_superficie';
+    public const PATTERN_HAUTEUR_KEY = 'type_logement_pieces_a_vivre_piece_%d_hauteur';
+
     private ?string $profil = null;
     private ?string $currentStep = null;
     private ?string $adresseLogementAdresse = null;

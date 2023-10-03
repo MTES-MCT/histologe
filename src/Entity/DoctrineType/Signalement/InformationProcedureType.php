@@ -4,7 +4,6 @@ namespace App\Entity\DoctrineType\Signalement;
 
 use App\Entity\Model\InformationProcedure;
 use App\Factory\Signalement\InformationProcedureFactory;
-use App\Factory\Signalement\SituationFoyerFactory;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
 

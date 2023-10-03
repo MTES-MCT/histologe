@@ -10,8 +10,8 @@ class TypeCompositionLogement
         private ?string $typeLogementDernierEtage = null,
         private ?string $typeLogementSousSolSansFenetre = null,
         private ?string $typeLogementSousCombleSansFenetre = null,
-        private ?array $typeLogementPiecesAVivreSuperficiePiece = null,
-        private ?array $typeLogementPiecesAVivreHauteurPiece = null,
+        private ?array $typeLogementPiecesAVivrePieceSuperficie = null,
+        private ?array $typeLogementPiecesAVivrePieceHauteur = null,
         private ?string $typeLogementCommoditesCuisine = null,
         private ?string $typeLogementCommoditesCuisineCollective = null,
         private ?string $typeLogementCommoditesCuisineHauteurPlafond = null,
@@ -94,26 +94,26 @@ class TypeCompositionLogement
         return $this;
     }
 
-    public function getTypeLogementPiecesAVivreSuperficiePiece(): ?array
+    public function getTypeLogementPiecesAVivrePieceSuperficie(): ?array
     {
-        return $this->typeLogementPiecesAVivreSuperficiePiece;
+        return $this->typeLogementPiecesAVivrePieceSuperficie;
     }
 
-    public function setTypeLogementPiecesAVivreSuperficiePiece(?array $typeLogementPiecesAVivreSuperficiePiece): self
+    public function setTypeLogementPiecesAVivrePieceSuperficie(?array $typeLogementPiecesAVivrePieceSuperficie): self
     {
-        $this->typeLogementPiecesAVivreSuperficiePiece = $typeLogementPiecesAVivreSuperficiePiece;
+        $this->typeLogementPiecesAVivrePieceSuperficie = $typeLogementPiecesAVivrePieceSuperficie;
 
         return $this;
     }
 
-    public function getTypeLogementPiecesAVivreHauteurPiece(): ?array
+    public function getTypeLogementPiecesAVivrePieceHauteur(): ?array
     {
-        return $this->typeLogementPiecesAVivreHauteurPiece;
+        return $this->typeLogementPiecesAVivrePieceHauteur;
     }
 
-    public function setTypeLogementPiecesAVivreHauteurPiece(?array $typeLogementPiecesAVivreHauteurPiece): self
+    public function setTypeLogementPiecesAVivrePieceHauteur(?array $typeLogementPiecesAVivrePieceHauteur): self
     {
-        $this->typeLogementPiecesAVivreHauteurPiece = $typeLogementPiecesAVivreHauteurPiece;
+        $this->typeLogementPiecesAVivrePieceHauteur = $typeLogementPiecesAVivrePieceHauteur;
 
         return $this;
     }
@@ -354,8 +354,8 @@ class TypeCompositionLogement
             'type_logement_dernier_etage' => $this->typeLogementDernierEtage,
             'type_logement_sous_sol_sans_fenetre' => $this->typeLogementSousSolSansFenetre,
             'type_logement_sous_comble_sans_fenetre' => $this->typeLogementSousCombleSansFenetre,
-            'type_logement_pieces_a_vivre_superficie_piece' => $this->typeLogementPiecesAVivreSuperficiePiece,
-            'type_logement_pieces_a_vivre_hauteur_piece' => $this->typeLogementPiecesAVivreHauteurPiece,
+            'type_logement_pieces_a_vivre_piece_superficie' => $this->typeLogementPiecesAVivrePieceSuperficie,
+            'type_logement_pieces_a_vivre_piece_hauteur' => $this->typeLogementPiecesAVivrePieceHauteur,
             'type_logement_commodites_cuisine' => $this->typeLogementCommoditesCuisine,
             'type_logement_commodites_cuisine_collective' => $this->typeLogementCommoditesCuisineCollective,
             'type_logement_commodites_cuisine_hauteur_plafond' => $this->typeLogementCommoditesCuisineHauteurPlafond,

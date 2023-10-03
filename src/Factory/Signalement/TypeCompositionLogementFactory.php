@@ -4,12 +4,12 @@ namespace App\Factory\Signalement;
 
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Model\TypeCompositionLogement;
+use App\Serializer\SignalementDraftRequestSerializer;
 use App\Utils\DataPropertyArrayFilter;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class TypeCompositionLogementFactory
 {
-    public function __construct(private SerializerInterface $serializer)
+    public function __construct(private SignalementDraftRequestSerializer $serializer)
     {
     }
 
@@ -31,8 +31,8 @@ class TypeCompositionLogementFactory
             typeLogementDernierEtage: $data['type_logement_dernier_etage'] ?? null,
             typeLogementSousSolSansFenetre: $data['type_logement_sous_sol_sans_fenetre'] ?? null,
             typeLogementSousCombleSansFenetre: $data['type_logement_sous_comble_sans_fenetre'] ?? null,
-            typeLogementPiecesAVivreSuperficiePiece: $data['type_logement_pieces_a_vivre_superficie_piece'] ?? null,
-            typeLogementPiecesAVivreHauteurPiece: $data['type_logement_pieces_a_vivre_hauteur_piece'] ?? null,
+            typeLogementPiecesAVivrePieceSuperficie: $data['type_logement_pieces_a_vivre_piece_superficie'] ?? null,
+            typeLogementPiecesAVivrePieceHauteur: $data['type_logement_pieces_a_vivre_piece_hauteur'] ?? null,
             typeLogementCommoditesCuisine: $data['type_logement_commodites_cuisine'] ?? null,
             typeLogementCommoditesCuisineCollective: $data['type_logement_commodites_cuisine_collective'] ?? null,
             typeLogementCommoditesCuisineHauteurPlafond: $data['type_logement_commodites_cuisine_hauteur_plafond'] ?? null,
