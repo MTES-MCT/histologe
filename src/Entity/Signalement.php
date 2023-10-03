@@ -1850,12 +1850,12 @@ class Signalement
         return $this;
     }
 
-    public function getciviliteOccupant(): ?string
+    public function getCiviliteOccupant(): ?string
     {
         return $this->civiliteOccupant;
     }
 
-    public function setciviliteOccupant(?string $civiliteOccupant): self
+    public function setCiviliteOccupant(?string $civiliteOccupant): self
     {
         $this->civiliteOccupant = $civiliteOccupant;
 
