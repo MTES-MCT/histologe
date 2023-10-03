@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="['signalement-form-disorder-category-item fr-container--fluid fr-p-3v', isSelected || isAlreadySelected ? 'is-selected' : '']"
+    :class="['signalement-form-disorder-category-item fr-container--fluid fr-p-3v', isSelected || isAlreadySelected ? categoryZoneCss : '']"
     @click="handleClick"
     >
       <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
@@ -47,6 +47,12 @@ export default defineComponent({
         return formStore.data.categorieDisorders.batiment.includes(this.id) || formStore.data.categorieDisorders.logement.includes(this.id)
       }
       return false
+    },
+    categoryZoneCss () {
+      if (this.id.includes('batiment')) {
+        return 'is-selected-batiment'
+      }
+      return 'is-selected-logement'
     }
   },
   methods: {
@@ -72,8 +78,11 @@ export default defineComponent({
 .signalement-form-disorder-category-item {
   border: 1px solid var(--border-default-grey);
 }
-.signalement-form-disorder-category-item.is-selected {
+.signalement-form-disorder-category-item.is-selected-batiment {
   border: 1px solid var(--border-default-orange-terre-battue);
+}
+.signalement-form-disorder-category-item.is-selected-logement {
+  border: 1px solid var(--border-default-blue-france);
 }
 .signalement-form-disorder-category-item input[type=checkbox] {
   position: absolute;
