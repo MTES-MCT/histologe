@@ -7,7 +7,7 @@ use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
-use App\Entity\Model\TypeComposition;
+use App\Entity\Model\TypeCompositionLogement;
 use App\Repository\SignalementRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -353,17 +353,17 @@ class Signalement
     #[ORM\ManyToOne(inversedBy: 'signalements')]
     private ?SignalementDraft $createdFrom = null;
 
-    #[ORM\Column(type: 'json', nullable: true)]
-    private ?array $typeComposition;
+    #[ORM\Column(type: 'type_composition_logement', nullable: true)]
+    private ?TypeCompositionLogement $typeCompositionLogement;
 
-    #[ORM\Column(type: 'json', nullable: true)]
-    private ?array $situationFoyer;
+    #[ORM\Column(type: 'situation_foyer', nullable: true)]
+    private ?SituationFoyer $situationFoyer;
 
-    #[ORM\Column(type: 'json', nullable: true)]
-    private ?array $informationProcedure;
+    #[ORM\Column(type: 'information_procedure', nullable: true)]
+    private ?InformationProcedure $informationProcedure;
 
-    #[ORM\Column(type: 'json', nullable: true)]
-    private ?array $informationComplementaire;
+    #[ORM\Column(type: 'information_complementaire', nullable: true)]
+    private ?InformationComplementaire $informationComplementaire;
 
     public function __construct()
     {
@@ -486,7 +486,7 @@ class Signalement
 
     /**
      * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Utilisez la méthode @see getTypeComposition() afin de savoir le nombre de personnes qui vivent dans le logement
+     * Utilisez la méthode @see getTypeCompositionLogement() afin de savoir le nombre de personnes qui vivent dans le logement
      */
     public function getNbAdultes()
     {
@@ -495,7 +495,7 @@ class Signalement
 
     /**
      * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Utilisez la méthode @see setTypeComposition() afin de mettre à jour le nombre de personnes qui vivent dans le logement
+     * Utilisez la méthode @see setTypeCompositionLogement() afin de mettre à jour le nombre de personnes qui vivent dans le logement
      */
     public function setNbAdultes($nbAdultes): self
     {
@@ -506,7 +506,7 @@ class Signalement
 
     /**
      * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Utilisez la méthode @see getTypeComposition() afin de savoir si des enfants de moins de 6 ans occupe le logement
+     * Utilisez la méthode @see getTypeCompositionLogement() afin de savoir si des enfants de moins de 6 ans occupe le logement
      */
     public function getNbEnfantsM6()
     {
@@ -515,7 +515,7 @@ class Signalement
 
     /**
      * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Utilisez la méthode @see setTypeComposition() afin de mettre si des enfants de moins de 6 ans occupe le logement
+     * Utilisez la méthode @see setTypeCompositionLogement() afin de mettre si des enfants de moins de 6 ans occupe le logement
      */
     public function setNbEnfantsM6($nbEnfantsM6): self
     {
@@ -1428,7 +1428,7 @@ class Signalement
     }
 
     /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Utilisez la méthode @see getTypeComposition() afin de savoir le nombre de pièces dans le logement
+     * Utilisez la méthode @see getTypeCompositionLogement() afin de savoir le nombre de pièces dans le logement
      */
     public function getNbChambresLogement(): ?int
     {
@@ -1862,72 +1862,48 @@ class Signalement
         return $this;
     }
 
-    /**
-     * @see TypeComposition::toArray()
-     */
-    public function getTypeComposition(): ?array
+    public function getTypeCompositionLogement(): ?TypeCompositionLogement
     {
-        return $this->typeComposition;
+        return $this->typeCompositionLogement;
     }
 
-    /**
-     * @see TypeComposition::toArray()
-     */
-    public function setTypeComposition(?array $typeComposition): self
+    public function setTypeCompositionLogement(?TypeCompositionLogement $typeCompositionLogement): self
     {
-        $this->typeComposition = $typeComposition;
+        $this->typeCompositionLogement = $typeCompositionLogement;
 
         return $this;
     }
 
-    /**
-     * @see SituationFoyer::toArray()
-     */
-    public function getSituationFoyer(): ?array
+    public function getSituationFoyer(): ?SituationFoyer
     {
         return $this->situationFoyer;
     }
 
-    /**
-     * @see SituationFoyer::toArray()
-     */
-    public function setSituationFoyer(?array $situationFoyer): self
+    public function setSituationFoyer(?SituationFoyer $situationFoyer): self
     {
         $this->situationFoyer = $situationFoyer;
 
         return $this;
     }
 
-    /**
-     * @see InformationProcedure::toArray()
-     */
-    public function getInformationProcedure(): ?array
+    public function getInformationProcedure(): ?InformationProcedure
     {
         return $this->informationProcedure;
     }
 
-    /**
-     * @see InformationProcedure::toArray()
-     */
-    public function setInformationProcedure(?array $informationProcedure): self
+    public function setInformationProcedure(?InformationProcedure $informationProcedure): self
     {
         $this->informationProcedure = $informationProcedure;
 
         return $this;
     }
 
-    /**
-     * @see InformationComplementaire::toArray()
-     */
-    public function getInformationComplementaire(): ?array
+    public function getInformationComplementaire(): ?InformationComplementaire
     {
         return $this->informationComplementaire;
     }
 
-    /**
-     * @see InformationComplementaire::toArray()
-     */
-    public function setInformationComplementaire(?array $informationComplementaire): self
+    public function setInformationComplementaire(?InformationComplementaire $informationComplementaire): self
     {
         $this->informationComplementaire = $informationComplementaire;
 

@@ -2,7 +2,7 @@
 
 namespace App\Entity\Model;
 
-class TypeComposition
+class TypeCompositionLogement
 {
     public function __construct(
         private ?string $typeLogementNature = null,
