@@ -46,7 +46,7 @@
     <SignalementFormButton
       :id="idShow"
       label="Ajouter un numéro"
-      :customCss="formStore.data[idSecond] === '' || formStore.data[idSecond] === undefined ? 'btn-link' : 'btn-link fr-hidden'"
+      :customCss="formStore.data[idSecond] === '' || formStore.data[idSecond] === undefined ? 'btn-link fr-btn--icon-left fr-icon-add-line' : 'btn-link fr-btn--icon-left fr-icon-add-line fr-hidden'"
       :action="actionShow"
       :clickEvent="handleClickButton"
       />
