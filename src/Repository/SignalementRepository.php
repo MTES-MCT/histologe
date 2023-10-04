@@ -432,8 +432,6 @@ class SignalementRepository extends ServiceEntityRepository
             s.escalierOccupant,
             s.numAppartOccupant,
             s.adresseAutreOccupant,
-            s.photos,
-            s.documents,
             s.isProprioAverti,
             s.nbAdultes,
             s.nbEnfantsM6,
