@@ -1255,6 +1255,9 @@
           "type": "SignalementFormSubscreen",
           "label": "Ma situation personnelle",
           "slug": "informations_complementaires_situation_bailleur",
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil_detail_bailleur_bailleur === 'particulier'"
+          },
           "customCss": "fr-mt-3v",
           "components": {
             "body": [
