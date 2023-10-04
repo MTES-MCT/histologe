@@ -42,7 +42,7 @@
             <li
               v-for="menuItem in desktopMenuItems"
               v-bind:key="menuItem.label"
-              :class="[ 'fr-sidemenu__item', menuItem.active ? 'fr-sidemenu__item--active' : '' ]"
+              :class="[ 'fr-sidemenu__item', (menuItem.active) ? 'fr-sidemenu__item--active' : '' ]"
               >
               <a
                 v-if="menuItem.current"
@@ -103,7 +103,7 @@ export default defineComponent({
       const menuItems:Array<MenuItem> = []
       const currentCategoryIndex:number = this.currentCategoryIndex
       for (let i:number = 0; i < this.desktopMenuLabels.length; i++) {
-        menuItems.push({ label: this.desktopMenuLabels[i].label, slug: this.desktopMenuLabels[i].slug, active: (i <= currentCategoryIndex), current: (this.desktopMenuLabels[i].label === formStore.currentScreen?.screenCategory) })
+        menuItems.push({ label: this.desktopMenuLabels[i].label, slug: this.desktopMenuLabels[i].slug, active: (i <= currentCategoryIndex && formStore.currentScreen?.slug !== 'confirmation_signalement'), current: (this.desktopMenuLabels[i].label === formStore.currentScreen?.screenCategory) })
       }
       return menuItems
     },
