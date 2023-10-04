@@ -27,6 +27,12 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
                 $transformedData[SignalementDraftRequest::PIECES_SUPERFICIE_KEY][] = $value;
             } elseif (preg_match(SignalementDraftRequest::PIECES_HAUTEUR_KEY_PATTERN, $key, $matches)) {
                 $transformedData[SignalementDraftRequest::PIECES_HAUTEUR_KEY][] = $value;
+            } elseif (preg_match(SignalementDraftRequest::PATTERN_PHONE_KEY, $key, $matches)) {
+                $phone = [
+                    'country_code' => $data[$key.'_countrycode'],
+                    'phone_number' => $value,
+                ];
+                $transformedData[$key] = $phone;
             } else {
                 $transformedData[$key] = $value;
             }

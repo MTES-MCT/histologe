@@ -178,12 +178,12 @@ class SignalementBuilder
                 ->setMailOccupant($this->signalementDraftRequest->getVosCoordonneesOccupantEmail())
                 ->setNomOccupant($this->signalementDraftRequest->getVosCoordonneesOccupantNom())
                 ->setPrenomOccupant($this->signalementDraftRequest->getVosCoordonneesOccupantPrenom())
-                ->setTelOccupant($this->signalementDraftRequest->getVosCoordonneesOccupantTel())
-                ->setTelOccupantBis($this->signalementDraftRequest->getVosCoordonneesOccupantTelSecondaire())
+                ->setTelOccupant(json_encode($this->signalementDraftRequest->getVosCoordonneesOccupantTel()))
+                ->setTelOccupantBis(json_encode($this->signalementDraftRequest->getVosCoordonneesOccupantTelSecondaire()))
                 ->setNomDeclarant($this->signalementDraftRequest->getVosCoordonneesOccupantNom())
                 ->setPrenomDeclarant($this->signalementDraftRequest->getVosCoordonneesOccupantPrenom())
-                ->setTelDeclarant($this->signalementDraftRequest->getVosCoordonneesOccupantTel())
-                ->setTelDeclarantSecondaire($this->signalementDraftRequest->getVosCoordonneesOccupantTelSecondaire())
+                ->setTelDeclarant(json_encode($this->signalementDraftRequest->getVosCoordonneesOccupantTel()))
+                ->setTelDeclarantSecondaire(json_encode($this->signalementDraftRequest->getVosCoordonneesOccupantTelSecondaire()))
                 ->setMailDeclarant($this->signalementDraftRequest->getVosCoordonneesOccupantEmail());
         } else {
             $this->signalement
@@ -191,14 +191,14 @@ class SignalementBuilder
                 ->setMailOccupant($this->signalementDraftRequest->getCoordonneesOccupantEmail())
                 ->setNomOccupant($this->signalementDraftRequest->getCoordonneesOccupantNom())
                 ->setPrenomOccupant($this->signalementDraftRequest->getCoordonneesOccupantPrenom())
-                ->setTelOccupant($this->signalementDraftRequest->getCoordonneesOccupantTel())
-                ->setTelOccupantBis($this->signalementDraftRequest->getCoordonneesOccupantTelSecondaire())
+                ->setTelOccupant(json_encode($this->signalementDraftRequest->getCoordonneesOccupantTel()))
+                ->setTelOccupantBis(json_encode($this->signalementDraftRequest->getCoordonneesOccupantTelSecondaire()))
                 ->setStructureDeclarant($this->signalementDraftRequest->getVosCoordonneesTiersNomOrganisme())
                 ->setLienDeclarantOccupant($this->resolveTiersLien())
                 ->setNomDeclarant($this->signalementDraftRequest->getVosCoordonneesTiersNom())
                 ->setPrenomDeclarant($this->signalementDraftRequest->getVosCoordonneesTiersPrenom())
-                ->setTelDeclarant($this->signalementDraftRequest->getVosCoordonneesTiersTel())
-                ->setTelDeclarantSecondaire($this->signalementDraftRequest->getVosCoordonneesTiersTelSecondaire())
+                ->setTelDeclarant(json_encode($this->signalementDraftRequest->getVosCoordonneesTiersTel()))
+                ->setTelDeclarantSecondaire(json_encode($this->signalementDraftRequest->getVosCoordonneesTiersTelSecondaire()))
                 ->setMailDeclarant($this->signalementDraftRequest->getVosCoordonneesTiersEmail());
         }
     }
@@ -210,7 +210,8 @@ class SignalementBuilder
             ->setMailProprio($this->signalementDraftRequest->getCoordonneesBailleurEmail())
             ->setNomProprio($this->signalementDraftRequest->getCoordonneesBailleurNom())
             ->setPrenomProprio($this->signalementDraftRequest->getCoordonneesBailleurPrenom())
-            ->setTelProprio($this->signalementDraftRequest->getCoordonneesBailleurTel());
+            ->setTelProprio(json_encode($this->signalementDraftRequest->getCoordonneesBailleurTel()))
+            ->setTelProprioSecondaire(json_encode($this->signalementDraftRequest->getCoordonneesBailleurTelSecondaire()));
     }
 
     private function isOccupant(): bool

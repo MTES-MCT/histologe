@@ -21,10 +21,13 @@ class SignalementDraftRequestNormalizerTest extends TestCase
             'type_logement_pieces_a_vivre_piece_2_superficie' => 15,
             'type_logement_pieces_a_vivre_piece_1_hauteur' => 'oui',
             'type_logement_pieces_a_vivre_piece_2_hauteur' => 'non',
+            'vos_coordonnees_occupant_tel' => '0611121314',
+            'vos_coordonnees_occupant_tel_countrycode' => 'FR:33'
         ];
 
         $signalementDraftRequest = (new SignalementDraftRequest())
             ->setProfil('locataire')
+            ->setVosCoordonneesOccupantTel(['country_code' => 'FR:33', 'phone_number' => '0611121314'])
             ->setTypeLogementPiecesAVivrePieceSuperficie([30, 15])
             ->setTypeLogementPiecesAVivrePieceHauteur(['oui', 'non']);
 

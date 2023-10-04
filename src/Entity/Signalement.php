@@ -104,11 +104,11 @@ class Signalement
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $villeProprio;
 
-    #[ORM\Column(type: 'string', length: 15, nullable: true)]
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
     #[Assert\Length(min: 10, max: 15)]
     private $telProprio;
 
-    #[ORM\Column(type: 'string', length: 15, nullable: true)]
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
     #[Assert\Length(min: 10, max: 15)]
     private ?string $telProprioSecondaire;
 
@@ -139,10 +139,10 @@ class Signalement
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private $prenomDeclarant;
 
-    #[ORM\Column(type: 'string', length: 15, nullable: true)]
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
     private $telDeclarant;
 
-    #[ORM\Column(type: 'string', length: 15, nullable: true)]
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
     private ?string $telDeclarantSecondaire;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -162,7 +162,7 @@ class Signalement
     #[Assert\NotBlank]
     private $prenomOccupant;
 
-    #[ORM\Column(type: 'string', length: 15, nullable: true)]
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
     private $telOccupant;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -319,7 +319,7 @@ class Signalement
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'signalementsClosed')]
     private $closedBy;
 
-    #[ORM\Column(type: 'string', length: 15, nullable: true)]
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
     private $telOccupantBis;
 
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'signalement', cascade: ['persist'])]

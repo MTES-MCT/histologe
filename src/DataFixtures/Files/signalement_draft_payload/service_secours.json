@@ -8,6 +8,7 @@
   "coordonnees_occupant_nom": "Occupant",
   "vos_coordonnees_tiers_nom": "Service de secours",
   "vos_coordonnees_tiers_tel": "0611457845",
+  "vos_coordonnees_tiers_tel_countrycode": "FR:33",
   "coordonnees_occupant_prenom": "Occupant",
   "signalement_concerne_profil": "autre_logement",
   "vos_coordonnees_tiers_email": "service_secours-01@histologe.fr",
