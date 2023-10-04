@@ -12,6 +12,7 @@
         "doctrine/doctrine-bundle": "^2.5",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.10",
+        "giggsey/libphonenumber-for-php": "^8.13",
         "knplabs/knp-snappy-bundle": "^1.9",
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/flysystem-bundle": "^2.3",
