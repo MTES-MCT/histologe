@@ -165,6 +165,9 @@ upload: ## Push objects to S3 Bucket
 sync-sish: ## Synchronize sish status and intervention
 	@$(DOCKER_COMP) exec histologe_phpfpm sh ./scripts/sync-esabora-sish.sh
 
+scalingo-update-cli: ## Install/Update Scalingo CLI
+	@bash -l -c 'curl -O https://cli-dl.scalingo.com/install && bash install && scalingo --version'
+
 .env:
 	@bash -l -c 'cp .env.sample .env'
 

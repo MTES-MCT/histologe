@@ -81,7 +81,7 @@ class SignalementBuilder
             ->setSuperficie($this->signalementDraftRequest->getCompositionLogementSuperficie())
             ->setNbPiecesLogement($this->signalementDraftRequest->getCompositionLogementNbPieces())
             ->setIsBailEnCours($this->evalBoolean($this->signalementDraftRequest->getBailDpeBail()))
-            ->setDateEntree(new \DateTimeImmutable($this->signalementDraftRequest->getBailDpeDateEmmenagement()));
+            ->setDateEntree($this->resolveDateEmmenagement());
 
         return $this;
     }
@@ -134,6 +134,9 @@ class SignalementBuilder
         $this->signalement
             ->setInformationComplementaire($this->informationComplementaireFactory->createFromSignalementDraftPayload($this->payload))
             ->setAnneeConstruction($this->signalementDraftRequest->getInformationsComplementairesLogementAnneeConstruction())
+            ->setIsPreavisDepart($this->evalBoolean($this->signalementDraftRequest->getInformationsComplementairesSituationOccupantsPreavisDepart()))
+            ->setIsRelogement($this->isDemandeRelogement())
+            ->setDateEntree($this->resolveDateEmmenagement())
             ->setIsConstructionAvant1949($this->isConstructionAvant1949($anneeConstruction));
 
         return $this;
@@ -237,6 +240,32 @@ class SignalementBuilder
         }
 
         return new \DateTimeImmutable('01-01-1949') > new \DateTimeImmutable($dateConstruction);
+    }
+
+    private function resolveDateEmmenagement(): ?\DateTimeImmutable
+    {
+        $dateEmmenagement = null;
+        if (\in_array(
+            $this->signalementDraft->getProfileDeclarant(),
+            [ProfileDeclarant::LOCATAIRE, ProfileDeclarant::BAILLEUR_OCCUPANT]
+        ) && !empty($dateEmmenagement = $this->signalementDraftRequest->getBailDpeDateEmmenagement())) {
+            return new \DateTimeImmutable($dateEmmenagement);
+        }
+
+        if (!empty($dateEmmenagement = $this->signalementDraftRequest->getInformationsComplementairesSituationOccupantsDateEmmenagement())) {
+            return new \DateTimeImmutable($dateEmmenagement);
+        }
+
+        return $dateEmmenagement;
+    }
+
+    private function isDemandeRelogement(): ?bool
+    {
+        if (ProfileDeclarant::LOCATAIRE === $this->signalementDraft->getProfileDeclarant()) {
+            return $this->evalBoolean($this->signalementDraftRequest->getLogementSocialDemandeRelogement());
+        }
+
+        return $this->evalBoolean($this->signalementDraftRequest->getInformationsComplementairesSituationOccupantsDemandeRelogement());
     }
 
     private function resolveIsAllocataire(): ?string
