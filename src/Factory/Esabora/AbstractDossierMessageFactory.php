@@ -17,9 +17,9 @@ abstract class AbstractDossierMessageFactory implements DossierMessageFactoryInt
         foreach ($signalement->getFiles() as $file) {
             $filepath = $this->uploadHandlerService->getTmpFilepath($file->getFilename());
             $piecesJointes[] = [
-                'documentName' => $file->getTitle(), // TODO : 100 caractères max
+                'documentName' => substr($file->getTitle(), 0, 100),
                 'documentSize' => filesize($filepath),
-                'documentContent' => $file->getFilename(), // TODO : c'est ce qui est attendu ? "Contenu du document encodé en base 64 " dans la doc
+                'documentContent' => $file->getFilename(),
             ];
         }
 

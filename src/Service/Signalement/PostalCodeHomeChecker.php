@@ -4,15 +4,17 @@ namespace App\Service\Signalement;
 
 use App\Entity\Territory;
 use App\Repository\TerritoryRepository;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class PostalCodeHomeChecker
 {
+    private $apiUrl = 'https://api-adresse.data.gouv.fr/search/?q=';
     public const CORSE_DU_SUD_CODE_DEPARTMENT_2A = '2A';
     public const HAUTE_CORSE_CODE_DEPARTMENT_2B = '2B';
     public const MARTINIQUE_CODE_DEPARTMENT_972 = '972';
     public const LA_REUNION_CODE_DEPARTMENT_974 = '974';
 
-    public function __construct(private readonly TerritoryRepository $territoryRepository)
+    public function __construct(private readonly TerritoryRepository $territoryRepository, private readonly HttpClientInterface $httpClient)
     {
     }
 
@@ -59,5 +61,22 @@ class PostalCodeHomeChecker
         }
 
         return false;
+    }
+
+    public function getCodeInsee(string $address): ?string
+    {
+        $response = $this->httpClient->request('GET', $this->apiUrl.urlencode($address));
+
+        if (200 === $response->getStatusCode()) {
+            $data = $response->toArray();
+
+            if (!empty($data['features'])) {
+                $codeInsee = $data['features'][0]['properties']['citycode'];
+
+                return $codeInsee;
+            }
+        }
+
+        return null;
     }
 }
