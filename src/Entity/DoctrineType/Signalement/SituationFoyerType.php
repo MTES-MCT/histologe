@@ -11,12 +11,12 @@ class SituationFoyerType extends Type
 {
     public const NAME = 'situation_foyer';
 
-    public function getSQLDeclaration(array $column, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getJsonTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
     {
         if (null === $value) {
             return null;
@@ -29,7 +29,7 @@ class SituationFoyerType extends Type
         return json_encode($value->toArray());
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?SituationFoyer
     {
         if (null === $value) {
             return null;
@@ -38,12 +38,12 @@ class SituationFoyerType extends Type
         return SituationFoyerFactory::createFromArray(json_decode($value, true));
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }
 
-    public function requiresSQLCommentHint(AbstractPlatform $platform)
+    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
     {
         return true;
     }

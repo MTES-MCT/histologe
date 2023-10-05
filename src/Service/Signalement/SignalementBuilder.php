@@ -277,8 +277,12 @@ class SignalementBuilder
         return '0';
     }
 
-    private function resolveTiersLien(): string
+    private function resolveTiersLien(): ?string
     {
+        if (ProfileDeclarant::TIERS_PARTICULIER !== $this->signalement->getProfileDeclarant()) {
+            return null;
+        }
+
         $tiersLien = OccupantLink::from(strtoupper($this->signalementDraftRequest->getVosCoordonneesTiersLien()));
 
         if (OccupantLink::VOISINAGE === $tiersLien) {

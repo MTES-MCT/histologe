@@ -12,7 +12,6 @@ class InformationComplementaire
         private ?string $informationsComplementairesSituationOccupantsDateEmmenagement = null,
         private ?string $informationsComplementairesSituationOccupantsLoyersPayes = null,
         private ?string $informationsComplementairesSituationOccupantsPreavisDepart = null,
-        private ?string $informationsComplementairesSituationBailleur = null,
         private ?string $informationsComplementairesSituationBailleurBeneficiaireRsa = null,
         private ?string $informationsComplementairesSituationBailleurBeneficiaireFsl = null,
         private ?string $informationsComplementairesSituationBailleurRevenuFiscal = null,
@@ -103,18 +102,6 @@ class InformationComplementaire
     public function setInformationsComplementairesSituationOccupantsPreavisDepart(?string $informationsComplementairesSituationOccupantsPreavisDepart): self
     {
         $this->informationsComplementairesSituationOccupantsPreavisDepart = $informationsComplementairesSituationOccupantsPreavisDepart;
-
-        return $this;
-    }
-
-    public function getInformationsComplementairesSituationBailleur(): ?string
-    {
-        return $this->informationsComplementairesSituationBailleur;
-    }
-
-    public function setInformationsComplementairesSituationBailleur(?string $informationsComplementairesSituationBailleur): self
-    {
-        $this->informationsComplementairesSituationBailleur = $informationsComplementairesSituationBailleur;
 
         return $this;
     }
@@ -213,7 +200,6 @@ class InformationComplementaire
             'informations_complementaires_situation_occupants_date_emmenagement' => $this->informationsComplementairesSituationOccupantsDateEmmenagement,
             'informations_complementaires_situation_occupants_loyers_payes' => $this->informationsComplementairesSituationOccupantsLoyersPayes,
             'informations_complementaires_situation_occupants_preavis_depart' => $this->informationsComplementairesSituationOccupantsPreavisDepart,
-            'informations_complementaires_situation_bailleur' => $this->informationsComplementairesSituationBailleur,
             'informations_complementaires_situation_bailleur_beneficiaire_rsa' => $this->informationsComplementairesSituationBailleurBeneficiaireRsa,
             'informations_complementaires_situation_bailleur_beneficiaire_fsl' => $this->informationsComplementairesSituationBailleurBeneficiaireFsl,
             'informations_complementaires_situation_bailleur_revenu_fiscal' => $this->informationsComplementairesSituationBailleurRevenuFiscal,

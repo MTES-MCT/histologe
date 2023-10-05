@@ -119,7 +119,6 @@ class SignalementDraftRequest
     private ?string $informationsComplementairesSituationOccupantsDateEmmenagement = null;
     private ?string $informationsComplementairesSituationOccupantsLoyersPayes = null;
     private ?string $informationsComplementairesSituationOccupantsPreavisDepart = null;
-    private ?string $informationsComplementairesSituationBailleur = null;
     private ?string $informationsComplementairesSituationBailleurBeneficiaireRsa = null;
     private ?string $informationsComplementairesSituationBailleurBeneficiaireFsl = null;
     private ?string $informationsComplementairesSituationBailleurRevenuFiscal = null;
@@ -1292,18 +1291,6 @@ class SignalementDraftRequest
     public function setInformationsComplementairesSituationOccupantsPreavisDepart(?string $informationsComplementairesSituationOccupantsPreavisDepart): self
     {
         $this->informationsComplementairesSituationOccupantsPreavisDepart = $informationsComplementairesSituationOccupantsPreavisDepart;
-
-        return $this;
-    }
-
-    public function getInformationsComplementairesSituationBailleur(): ?string
-    {
-        return $this->informationsComplementairesSituationBailleur;
-    }
-
-    public function setInformationsComplementairesSituationBailleur(?string $informationsComplementairesSituationBailleur): self
-    {
-        $this->informationsComplementairesSituationBailleur = $informationsComplementairesSituationBailleur;
 
         return $this;
     }
