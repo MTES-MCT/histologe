@@ -2,6 +2,7 @@
 
 namespace App\EventSubscriber;
 
+use App\Entity\Enum\ProfileDeclarant;
 use App\Event\SignalementDraftCompletedEvent;
 use App\Manager\SignalementManager;
 use App\Service\Files\DocumentProvider;
@@ -43,7 +44,12 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
 
         $this->signalementManager->save($signalement);
 
-        $toRecipients = $signalement->getMailUsagers();
+        if (ProfileDeclarant::LOCATAIRE) {
+            $toRecipients = [$signalement->getMailOccupant()];
+        } else {
+            $toRecipients = $signalement->getMailUsagers();
+        }
+
         foreach ($toRecipients as $toRecipient) {
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
