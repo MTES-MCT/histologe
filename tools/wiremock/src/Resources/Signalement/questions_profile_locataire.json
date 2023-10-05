@@ -1291,6 +1291,9 @@
                 "type": "SignalementFormCounter",
                 "label": "Votre logement est sur combien d'étages ?",
                 "slug": "informations_complementaires_logement_nombre_etages",
+                "conditional": {
+                  "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
+                },
                 "validate": {
                   "required": false
                 }

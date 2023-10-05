@@ -147,7 +147,7 @@
       </div>
 
       <!-- INFORMATIONS COMPLEMENTAIRES  -->
-      <div v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'">
+      <div v-if="formStore.data.profil !== 'service_secours'">
         <div v-if="hasInformationsComplementaires()">
           <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
             <div class="fr-col-8">
@@ -347,10 +347,18 @@ export default defineComponent({
       result += this.addLineIfNeeded('informations_complementaires_situation_occupants_beneficiaire_rsa', 'Bénéficiaire RSA : ')
       result += this.addLineIfNeeded('informations_complementaires_situation_occupants_beneficiaire_fsl', 'Bénéficiaire FSL : ')
       result += this.addLineIfNeeded('informations_complementaires_situation_occupants_revenu_fiscal', 'Revenu fiscal de référence : ', ' €')
-      result += this.addLineIfNeeded('informations_complementaires_logement_montant_loyer', 'Montant du loyer sans les charges : ', ' €')
       result += this.addLineIfNeeded('informations_complementaires_situation_occupants_date_naissance', 'Date de naissance : ')
+      result += this.addLineIfNeeded('informations_complementaires_situation_occupants_loyers_payes', 'Paiement des loyers à jour : ')
+      result += this.addLineIfNeeded('informations_complementaires_situation_occupants_preavis_depart', 'Préavis de départ : ')
+      result += this.addLineIfNeeded('informations_complementaires_logement_montant_loyer', 'Montant du loyer sans les charges : ', ' €')
       result += this.addLineIfNeeded('informations_complementaires_logement_nombre_etages', 'Nombre d\'étages du logement : ')
       result += this.addLineIfNeeded('informations_complementaires_logement_annee_construction', 'Année de construction du logement : ')
+      result += this.addLineIfNeeded('informations_complementaires_situation_occupants_demande_relogement', 'Demande de relogement ou de logement social : ')
+      result += this.addLineIfNeeded('informations_complementaires_situation_occupants_date_emmenagement', 'Date d\'emménagement : ')
+      result += this.addLineIfNeeded('informations_complementaires_situation_bailleur_beneficiaire_rsa', 'Bénéficiaire RSA : ')
+      result += this.addLineIfNeeded('informations_complementaires_situation_bailleur_beneficiaire_fsl', 'Bénéficiaire FSL : ')
+      result += this.addLineIfNeeded('informations_complementaires_situation_bailleur_revenu_fiscal', 'Revenu fiscal de référence : ', ' €')
+      result += this.addLineIfNeeded('informations_complementaires_situation_bailleur_date_naissance', 'Date de naissance : ')
       return result
     },
     hasInformationsComplementaires (): boolean {
@@ -358,10 +366,18 @@ export default defineComponent({
       if (this.isFormDataSet('informations_complementaires_situation_occupants_beneficiaire_rsa') ||
           this.isFormDataSet('informations_complementaires_situation_occupants_beneficiaire_fsl') ||
           this.isFormDataSet('informations_complementaires_situation_occupants_revenu_fiscal') ||
-          this.isFormDataSet('informations_complementaires_logement_montant_loyer') ||
           this.isFormDataSet('informations_complementaires_situation_occupants_date_naissance') ||
+          this.isFormDataSet('informations_complementaires_situation_occupants_loyers_payes') ||
+          this.isFormDataSet('informations_complementaires_situation_occupants_preavis_depart') ||
+          this.isFormDataSet('informations_complementaires_logement_montant_loyer') ||
           this.isFormDataSet('informations_complementaires_logement_nombre_etages') ||
-          this.isFormDataSet('informations_complementaires_logement_annee_construction')) {
+          this.isFormDataSet('informations_complementaires_logement_annee_construction') ||
+          this.isFormDataSet('informations_complementaires_situation_occupants_demande_relogement') ||
+          this.isFormDataSet('informations_complementaires_situation_occupants_date_emmenagement') ||
+          this.isFormDataSet('informations_complementaires_situation_bailleur_beneficiaire_rsa') ||
+          this.isFormDataSet('informations_complementaires_situation_bailleur_beneficiaire_fsl') ||
+          this.isFormDataSet('informations_complementaires_situation_bailleur_revenu_fiscal') ||
+          this.isFormDataSet('informations_complementaires_situation_bailleur_date_naissance')) {
         result = true
       }
       return result

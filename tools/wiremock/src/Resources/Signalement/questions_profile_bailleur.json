@@ -1154,6 +1154,189 @@
   },
   {
     "type": "SignalementFormScreen",
+    "label": "Informations complémentaires",
+    "description": "Toutes les questions sont facultatives",
+    "slug": "informations_complementaires",
+    "screenCategory": "Procédure",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "Situation des locataires",
+          "slug": "informations_complementaires_situation_occupants",
+          "customCss": "fr-mt-3v",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormDate",
+                "label": "Quelle est la date d'effet du bail ?",
+                "slug": "informations_complementaires_situation_occupants_date_emmenagement",
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Est-ce que le paiement des loyers est à jour ?",
+                "slug": "informations_complementaires_situation_occupants_loyers_payes",
+                "validate": {
+                  "required": false
+                },
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormCounter",
+                "label": "Quel est le montant du loyer, sans les charges ?",
+                "slug": "informations_complementaires_logement_montant_loyer",
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Est-ce qu'un préavis de départ a été déposé pour le logement ? ",
+                "slug": "informations_complementaires_situation_occupants_preavis_depart",
+                "validate": {
+                  "required": false
+                },
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "Le logement",
+          "slug": "informations_complementaires_logement",
+          "customCss": "fr-mt-6v",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormCounter",
+                "label": "Le logement est sur combien d'étages ?",
+                "slug": "informations_complementaires_logement_nombre_etages",
+                "conditional": {
+                  "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
+                },
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormDate",
+                "label": "En quelle année le logement a-t-il été construit ?",
+                "slug": "informations_complementaires_logement_annee_construction",
+                "validate": {
+                  "required": false
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "Ma situation personnelle",
+          "slug": "informations_complementaires_situation_bailleur",
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil_detail_bailleur_bailleur === 'particulier'"
+          },
+          "customCss": "fr-mt-3v",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Êtes-vous bénéficiaire du RSA (revenu de solidarité active) ?",
+                "slug": "informations_complementaires_situation_bailleur_beneficiaire_rsa",
+                "validate": {
+                  "required": false
+                },
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "Êtes-vous bénéficiaire FSL (fonds de solidarité pour le logement) ?",
+                "slug": "informations_complementaires_situation_bailleur_beneficiaire_fsl",
+                "validate": {
+                  "required": false
+                },
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormCounter",
+                "label": "Quel est votre revenu fiscal de référence ?",
+                "slug": "informations_complementaires_situation_bailleur_revenu_fiscal",
+                "validate": {
+                  "required": false
+                }
+              },
+              {
+                "type": "SignalementFormDate",
+                "label": "Quelle est votre date de naissance ?",
+                "slug": "informations_complementaires_situation_bailleur_date_naissance",
+                "validate": {
+                  "required": false
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "informations_complementaires_previous",
+          "action": "goto:utilisation_service",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Enregistrer",
+          "slug": "informations_complementaires_next",
+          "action": "goto.save:validation_signalement",
+          "customCss": "fr-btn--icon-left fr-icon-check-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
     "label": "Validation du signalement",
     "description": "Vérifiez les informations et cliquez sur le bouton \"Valider\" pour envoyer votre signalement !",
     "slug": "validation_signalement",

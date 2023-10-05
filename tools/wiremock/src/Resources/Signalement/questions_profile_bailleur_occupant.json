@@ -1128,17 +1128,6 @@
                 "validate": {
                   "required": false
                 }
-              },
-              {
-                "type": "SignalementFormDate",
-                "label": "Quelle est votre date de naissance ?",
-                "slug": "informations_complementaires_situation_occupants_date_naissance",
-                "conditional": {
-                  "show": "formStore.data.logement_social_allocation === 'non'"
-                },
-                "validate": {
-                  "required": false
-                }
               }
             ]
           }
@@ -1154,6 +1143,9 @@
                 "type": "SignalementFormCounter",
                 "label": "Votre logement est sur combien d'étages ?",
                 "slug": "informations_complementaires_logement_nombre_etages",
+                "conditional": {
+                  "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
+                },
                 "validate": {
                   "required": false
                 }
