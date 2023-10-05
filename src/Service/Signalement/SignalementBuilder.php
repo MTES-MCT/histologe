@@ -245,7 +245,6 @@ class SignalementBuilder
 
     private function resolveDateEmmenagement(): ?\DateTimeImmutable
     {
-        $dateEmmenagement = null;
         if (\in_array(
             $this->signalementDraft->getProfileDeclarant(),
             [ProfileDeclarant::LOCATAIRE, ProfileDeclarant::BAILLEUR_OCCUPANT]
@@ -257,7 +256,7 @@ class SignalementBuilder
             return new \DateTimeImmutable($dateEmmenagement);
         }
 
-        return $dateEmmenagement;
+        return null;
     }
 
     private function isDemandeRelogement(): ?bool
@@ -272,7 +271,7 @@ class SignalementBuilder
     private function resolveIsAllocataire(): ?string
     {
         if ($this->evalBoolean($this->signalementDraftRequest->getLogementSocialAllocation())) {
-            return strtolower($this->signalementDraftRequest->getLogementSocialAllocationCaisse());
+            return strtoupper($this->signalementDraftRequest->getLogementSocialAllocationCaisse());
         }
 
         return '0';

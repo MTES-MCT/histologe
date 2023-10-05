@@ -22,7 +22,7 @@ class SignalementDraftRequestNormalizerTest extends TestCase
             'type_logement_pieces_a_vivre_piece_1_hauteur' => 'oui',
             'type_logement_pieces_a_vivre_piece_2_hauteur' => 'non',
             'vos_coordonnees_occupant_tel' => '0611121314',
-            'vos_coordonnees_occupant_tel_countrycode' => 'FR:33'
+            'vos_coordonnees_occupant_tel_countrycode' => 'FR:33',
         ];
 
         $signalementDraftRequest = (new SignalementDraftRequest())

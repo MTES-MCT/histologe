@@ -10,6 +10,7 @@ class SituationFoyer
         private ?string $logementSocialAllocationCaisse = null,
         private ?string $logementSocialDateNaissance = null,
         private ?string $logementSocialMontantAllocation = null,
+        private ?string $logementSocialNumeroAllocataire = null,
         private ?string $travailleurSocialQuitteLogement = null,
         private ?string $travailleurSocialAccompagnement = null,
         private ?string $travailleurSocialAccompagnementDeclarant = null
@@ -76,6 +77,18 @@ class SituationFoyer
         return $this;
     }
 
+    public function getLogementSocialNumeroAllocataire(): ?string
+    {
+        return $this->logementSocialNumeroAllocataire;
+    }
+
+    public function setLogementSocialNumeroAllocataire(?string $logementSocialNumeroAllocataire): self
+    {
+        $this->logementSocialNumeroAllocataire = $logementSocialNumeroAllocataire;
+
+        return $this;
+    }
+
     public function getTravailleurSocialQuitteLogement(): ?string
     {
         return $this->travailleurSocialQuitteLogement;
@@ -120,6 +133,7 @@ class SituationFoyer
             'logement_social_allocation_caisse' => $this->logementSocialAllocationCaisse,
             'logement_social_date_naissance' => $this->logementSocialDateNaissance,
             'logement_social_montant_allocation' => $this->logementSocialMontantAllocation,
+            'logement_social_numero_allocataire' => $this->logementSocialNumeroAllocataire,
             'travailleur_social_quitte_logement' => $this->travailleurSocialQuitteLogement,
             'travailleur_social_accompagnement' => $this->travailleurSocialAccompagnement,
             'travailleur_social_accompagnement_declarant' => $this->travailleurSocialAccompagnementDeclarant,
