@@ -130,6 +130,10 @@ class SignalementBuilder
 
     public function withInformationComplementaire(): self
     {
+        if (ProfileDeclarant::SERVICE_SECOURS === $this->signalement->getProfileDeclarant()) {
+            return $this;
+        }
+
         $anneeConstruction = $this->signalementDraftRequest->getInformationsComplementairesLogementAnneeConstruction();
         $this->signalement
             ->setInformationComplementaire($this->informationComplementaireFactory->createFromSignalementDraftPayload($this->payload))
