@@ -128,13 +128,19 @@ class UploadHandlerService
         return null;
     }
 
-    public function getTmpFilepath(string $filename): string
+    public function getTmpFilepath(string $filename): ?string
     {
         $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
         $bucketFilepath = $this->parameterBag->get('url_bucket').'/'.$filename;
-        file_put_contents($tmpFilepath, file_get_contents($bucketFilepath));
+        try {
+            file_put_contents($tmpFilepath, file_get_contents($bucketFilepath));
 
-        return $tmpFilepath;
+            return $tmpFilepath;
+        } catch (\Throwable $exception) {
+            $this->logger->error($exception->getMessage());
+        }
+
+        return null;
     }
 
     public function createTmpFileFromBucket($from, $to): void

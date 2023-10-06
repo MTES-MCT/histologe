@@ -16,11 +16,13 @@ abstract class AbstractDossierMessageFactory implements DossierMessageFactoryInt
         $piecesJointes = [];
         foreach ($signalement->getFiles() as $file) {
             $filepath = $this->uploadHandlerService->getTmpFilepath($file->getFilename());
-            $piecesJointes[] = [
-                'documentName' => substr($file->getTitle(), 0, 100),
-                'documentSize' => filesize($filepath),
-                'documentContent' => $file->getFilename(),
-            ];
+            if ($filepath) {
+                $piecesJointes[] = [
+                    'documentName' => substr($file->getTitle(), 0, 100),
+                    'documentSize' => filesize($filepath),
+                    'documentContent' => $file->getFilename(),
+                ];
+            }
         }
 
         return $piecesJointes;

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Enum\InterfacageType;
+use App\Entity\Enum\PartnerType;
 use App\Entity\JobEvent;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -60,5 +61,37 @@ class JobEventRepository extends ServiceEntityRepository
             ->setParameter('service', '%'.InterfacageType::ESABORA->value.'%')
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    public function findFailedEsaboraDossierByPartnerTypeByAction(
+        PartnerType $partnerType,
+        ?string $action
+    ) {
+        $qb = $this->createQueryBuilder('j');
+
+        $subQuery = $this->createQueryBuilder('sub')
+        ->select('MAX(sub.createdAt)')
+        ->where('sub.signalementId = j.signalementId')
+        ->andWhere('sub.partnerId = j.partnerId')
+        ->andWhere('sub.status = :statusFailed') // Ajoutez cette ligne
+        ->setParameter('statusFailed', JobEvent::STATUS_FAILED)
+        ->getDQL();
+
+        $qb->where('j.status = :statusFailed')
+            ->andWhere('j.service LIKE :service')
+            ->setParameter('statusFailed', JobEvent::STATUS_FAILED)
+            ->setParameter('service', '%'.InterfacageType::ESABORA->value.'%')
+            ->andWhere('j.partnerType LIKE :partnerType')
+            ->setParameter('partnerType', $partnerType->value)
+            ->andWhere($qb->expr()->in(
+                'j.createdAt',
+                $subQuery
+            ));
+
+        if (null !== $action) {
+            $qb->andWhere('j.action = :action')->setParameter('action', $action);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }
