@@ -9,7 +9,7 @@
 <div class="fr-container--fluid">
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
-            <strong>Logement :</strong> {{ signalement.typeComposition.composition_logement_piece_unique is same as 'piece_unique' ? 'Pièce unique' : 'Plusieurs pièces' }}
+            <strong>Logement :</strong> {{ signalement.typeCompositionLogement.compositionLogementPieceUnique is same as 'piece_unique' ? 'Pièce unique' : 'Plusieurs pièces' }}
         </div>
         
         <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
@@ -17,33 +17,35 @@
         </div>
         
         <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
-            <strong>Nombre de pièces à vivre :</strong> {{ signalement.typeComposition.composition_logement_nb_pieces }}
+            <strong>Nombre de pièces à vivre :</strong> {{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
         </div>
         
         <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
-            <strong>RDC :</strong> {{ signalement.typeComposition.type_logement_rdc ?? 'non' }}
+            <strong>RDC :</strong> {{ signalement.typeCompositionLogement.typeLogementRdc ?? 'non' }}
         </div>
         
         <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
-            <strong>Dernier étage :</strong> {{ signalement.typeComposition.type_logement_dernier_etage ?? 'non' }}
+            <strong>Dernier étage :</strong> {{ signalement.typeCompositionLogement.typeLogementDernierEtage ?? 'non' }}
         </div>
         
         <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
-            {% if signalement.typeComposition.type_logement_dernier_etage is same as 'oui' %}
-                <strong>Combles sans fenêtres :</strong> {{ signalement.typeComposition.type_logement_sous_comble_sans_fenetre ?? 'non' }}
-                {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_sous_comble_sans_fenetre is same as 'oui' } %}
+            {% if signalement.typeCompositionLogement.typeLogementDernierEtage is same as 'oui' %}
+                <strong>Combles sans fenêtres :</strong> {{ signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre ?? 'non' }}
+                {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre is same as 'oui' } %}
         
-            {% elseif signalement.typeComposition.type_logement_rdc is not same as 'oui' and signalement.typeComposition.type_logement_dernier_etage is not same as 'oui' %}
-                <strong>Sous-sol sans fenêtres :</strong> {{ signalement.typeComposition.type_logement_sous_sol_sans_fenetre ?? 'non' }}
-                {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_sous_sol_sans_fenetre is same as 'oui' } %}
+            {% elseif signalement.typeCompositionLogement.typeLogementRdc is not same as 'oui' and signalement.typeCompositionLogement.typeLogementDernierEtage is not same as 'oui' %}
+                <strong>Sous-sol sans fenêtres :</strong> {{ signalement.typeCompositionLogement.typeLogementSousSolSansFenetre ?? 'non' }}
+                {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'oui' } %}
             {% endif %}
         </div>
         
-        {% for i in 0..signalement.typeComposition.composition_logement_nb_pieces - 1 %}
+        {% for i in 0..signalement.typeCompositionLogement.compositionLogementNbPieces - 1 %}
             <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
                 <strong>Pièce à vivre {{ loop.index }} :</strong>
                 <br>
-                TODO
+                Superficie : {{ signalement.typeCompositionLogement.typeLogementPiecesAVivrePieceSuperficie[i] }}
+                <br>
+                Hauteur > 2,20m : {{ signalement.typeCompositionLogement.typeLogementPiecesAVivrePieceHauteur[i] }}
             </div>
         {% endfor %}
 
@@ -52,18 +54,18 @@
             <br>
             <ul>
                 <li>
-                    Dans le logement : {{ signalement.typeComposition.type_logement_commodites_cuisine }}
-                    {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_commodites_cuisine is same as 'non' } %}
+                    Dans le logement : {{ signalement.typeCompositionLogement.typeLogementCommoditesCuisine }}
+                    {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesCuisine is same as 'non' } %}
                 </li>
-                {% if signalement.typeComposition.type_logement_commodites_cuisine is same as 'non' %}
+                {% if signalement.typeCompositionLogement.typeLogementCommoditesCuisine is same as 'non' %}
                     <li>
-                        Collective : {{ signalement.typeComposition.type_logement_commodites_cuisine_collective }}
-                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_commodites_cuisine_collective is same as 'non' } %}
+                        Collective : {{ signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective }}
+                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective is same as 'non' } %}
                     </li>
                 {% else %}
                     <li>
-                        Hauteur > 2m : {{ signalement.typeComposition.type_logement_commodites_cuisine_hauteur_plafond }}
-                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_commodites_cuisine_hauteur_plafond is same as 'non' } %}
+                        Hauteur > 2m : {{ signalement.typeCompositionLogement.typeLogementCommoditesCuisineHauteurPlafond }}
+                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesCuisineHauteurPlafond is same as 'non' } %}
                     </li>
                 {% endif %}
             </ul>
@@ -74,18 +76,18 @@
             <br>
             <ul>
                 <li>
-                    Dans le logement : {{ signalement.typeComposition.type_logement_commodites_salle_de_bain }}
-                    {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_commodites_salle_de_bain is same as 'non' } %}
+                    Dans le logement : {{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain }}
+                    {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain is same as 'non' } %}
                 </li>
-                {% if signalement.typeComposition.type_logement_commodites_salle_de_bain is same as 'non' %}
+                {% if signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain is same as 'non' %}
                     <li>
-                        Collective : {{ signalement.typeComposition.type_logement_commodites_salle_de_bain_collective }}
-                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_commodites_salle_de_bain_collective is same as 'non' } %}
+                        Collective : {{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective }}
+                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective is same as 'non' } %}
                     </li>
                 {% else %}
                     <li>
-                        Hauteur > 2m : {{ signalement.typeComposition.type_logement_commodites_salle_de_bain_hauteur_plafond }}
-                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_commodites_salle_de_bain_hauteur_plafond is same as 'non' } %}
+                        Hauteur > 2m : {{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainHauteurPlafond }}
+                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainHauteurPlafond is same as 'non' } %}
                     </li>
                 {% endif %}
             </ul>
@@ -96,28 +98,28 @@
             <br>
             <ul>
                 <li>
-                    Dans le logement : {{ signalement.typeComposition.type_logement_commodites_wc }}
-                    {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_commodites_wc is same as 'non' } %}
+                    Dans le logement : {{ signalement.typeCompositionLogement.typeLogementCommoditesWc }}
+                    {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesWc is same as 'non' } %}
                 </li>
-                {% if signalement.typeComposition.type_logement_commodites_wc is same as 'non' %}
+                {% if signalement.typeCompositionLogement.typeLogementCommoditesWc is same as 'non' %}
                     <li>
-                        Collectifs : {{ signalement.typeComposition.type_logement_commodites_wc_collective }}
-                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_commodites_wc_collective is same as 'non' } %}
+                        Collectifs : {{ signalement.typeCompositionLogement.typeLogementCommoditesWcCollective }}
+                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesWcCollective is same as 'non' } %}
                     </li>
                 {% else %}
                     <li>
-                        Hauteur > 2m : {{ signalement.typeComposition.type_logement_commodites_wc_hauteur_plafond }}
-                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_commodites_wc_hauteur_plafond is same as 'non' } %}
+                        Hauteur > 2m : {{ signalement.typeCompositionLogement.typeLogementCommoditesWcHauteurPlafond }}
+                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesWcHauteurPlafond is same as 'non' } %}
                     </li>
                 {% endif %}
             </ul>
         </div>
 
-        {% if signalement.typeComposition.type_logement_commodites_cuisine is same as 'oui' and signalement.typeComposition.type_logement_commodites_wc is same as 'oui' %}
+        {% if signalement.typeCompositionLogement.typeLogementCommoditesCuisine is same as 'oui' and signalement.typeCompositionLogement.typeLogementCommoditesWc is same as 'oui' %}
         <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
             <strong>WC et cuisine dans la même pièce :</strong>
-            {{ signalement.typeComposition.type_logement_commodites_wc_cuisine }}
-            {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeComposition.type_logement_commodites_wc_cuisine is same as 'oui' } %}
+            {{ signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine }}
+            {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine is same as 'oui' } %}
         </div>
         {% endif %}
     </div>
@@ -160,7 +162,7 @@
                         <a href="mailto:{{ signalement.mailDeclarant }}">{{ signalement.mailDeclarant }}</a>
                     </div>
                     <div class="fr-col-12">
-                        <strong>Tél. :</strong> {{ signalement.telDeclarant }}
+                        <strong>Tél. :</strong> {{ signalement.telDeclarantDecoded }}
                     </div>
                     {% if signalement.lienDeclarantOccupant %}
                     <div class="fr-col-12 fr-col-md-6">
@@ -199,11 +201,11 @@
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Tél. :</strong>
-                        <a href="tel:{{ signalement.telOccupant }}">{{ signalement.telOccupant }}</a>
+                        <a href="tel:{{ signalement.telOccupantDecoded }}">{{ signalement.telOccupantDecoded }}</a>
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Tél. sec. :</strong>
-                        <a href="tel:{{ signalement.telOccupantBis }}">{{ signalement.telOccupantBis }}</a>
+                        <a href="tel:{{ signalement.telOccupantBisDecoded }}">{{ signalement.telOccupantBisDecoded }}</a>
                     </div>
                 </div>
             </div>
@@ -235,7 +237,7 @@
                     <div class="fr-col-12">
                         <strong>Tél. :</strong>
                         {% if signalement.telProprio %}
-                        <a href="mailto:{{ signalement.telProprio }}">{{ signalement.telProprio }}</a>
+                        <a href="mailto:{{ signalement.telProprioDecoded }}">{{ signalement.telProprioDecoded }}</a>
                         {% else %}
                         N/R
                         {% endif %}
@@ -260,26 +262,26 @@
                         <strong>Type :</strong> {{ signalement.natureLogement|capitalize }}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
-                        <strong>Nb. personnes :</strong> {{ signalement.typeComposition.composition_logement_nombre_personnes }}
+                        <strong>Nb. personnes :</strong> {{ signalement.typeCompositionLogement.compositionLogementNombrePersonnes }}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Enfants -6 ans :</strong>
-                        {% if signalement.typeComposition.composition_logement_enfants is null %}
+                        {% if signalement.typeCompositionLogement.compositionLogementEnfants is null %}
                             {{ static_picto_nsp|raw }}
-                        {% elseif signalement.typeComposition.composition_logement_enfants %}
+                        {% elseif signalement.typeCompositionLogement.compositionLogementEnfants %}
                             {{ static_picto_yes|raw }}
                         {% else %}
                             {{ static_picto_no|raw }}
                         {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
-                        <strong>Date arrivée :</strong> {{ signalement.typeComposition.bail_dpe_date_emmenagement }}
+                        <strong>Date arrivée :</strong> {{ signalement.typeCompositionLogement.bailDpeDateEmmenagement }}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Bail :</strong>
-                        {% if signalement.typeComposition.bail_dpe_bail is null %}
+                        {% if signalement.typeCompositionLogement.bailDpeBail is null %}
                             {{ static_picto_nsp|raw }}
-                        {% elseif signalement.typeComposition.bail_dpe_bail %}
+                        {% elseif signalement.typeCompositionLogement.bailDpeBail %}
                             {{ static_picto_yes|raw }}
                         {% else %}
                             {{ static_picto_no|raw }}
@@ -287,9 +289,9 @@
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Etat des lieux :</strong>
-                        {% if signalement.typeComposition.bail_dpe_etat_des_lieux is null %}
+                        {% if signalement.typeCompositionLogement.bailDpeEtatDesLieux is null %}
                             {{ static_picto_nsp|raw }}
-                        {% elseif signalement.typeComposition.bail_dpe_etat_des_lieux %}
+                        {% elseif signalement.typeCompositionLogement.bailDpeEtatDesLieux %}
                             {{ static_picto_yes|raw }}
                         {% else %}
                             {{ static_picto_no|raw }}
@@ -297,9 +299,9 @@
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>DPE :</strong>
-                        {% if signalement.typeComposition.bail_dpe_dpe is null %}
+                        {% if signalement.typeCompositionLogement.bailDpeDpe is null %}
                             {{ static_picto_nsp|raw }}
-                        {% elseif signalement.typeComposition.bail_dpe_dpe %}
+                        {% elseif signalement.typeCompositionLogement.bailDpeDpe %}
                             {{ static_picto_yes|raw }}
                         {% else %}
                             {{ static_picto_no|raw }}
@@ -362,17 +364,17 @@
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Montant allocation :</strong>
-                        {% if signalement.isAllocataire and signalement.situationFoyer.logement_social_montant_allocation %}
-                            {{ signalement.situationFoyer.logement_social_montant_allocation }} €
+                        {% if signalement.isAllocataire and signalement.situationFoyer.logementSocialMontantAllocation %}
+                            {{ signalement.situationFoyer.logementSocialMontantAllocation }} €
                         {% else %}
                             /
                         {% endif %}
                     </div>
                     <div class="fr-col-12">
                         <strong>Souhaite quitter le logement :</strong>
-                        {% if signalement.situationFoyer.travailleur_social_quitte_logement is null %}
+                        {% if signalement.situationFoyer.travailleurSocialQuitteLogement is null %}
                             {{ static_picto_nsp|raw }}
-                        {% elseif signalement.situationFoyer.travailleur_social_quitte_logement is same as 'oui' %}
+                        {% elseif signalement.situationFoyer.travailleurSocialQuitteLogement is same as 'oui' %}
                             {{ static_picto_yes|raw }}
                         {% else %}
                             {{ static_picto_no|raw }}
@@ -380,9 +382,9 @@
                     </div>
                     <div class="fr-col-12">
                         <strong>Accompagnement par un ou une travailleuse sociale :</strong>
-                        {% if signalement.situationFoyer.travailleur_social_accompagnement_declarant is null %}
+                        {% if signalement.situationFoyer.travailleurSocialAccompagnementDeclarant is null %}
                             {{ static_picto_nsp|raw }}
-                        {% elseif signalement.situationFoyer.travailleur_social_accompagnement_declarant is same as 'oui' %}
+                        {% elseif signalement.situationFoyer.travailleurSocialAccompagnementDeclarant is same as 'oui' %}
                             {{ static_picto_yes|raw }}
                         {% else %}
                             {{ static_picto_no|raw }}
@@ -411,9 +413,9 @@
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Contact aussurance :</strong>
-                        {% if signalement.informationProcedure.info_procedure_assurance_contactee is null %}
+                        {% if signalement.informationProcedure.infoProcedureAssuranceContactee is null %}
                             {{ static_picto_nsp|raw }}
-                        {% elseif signalement.informationProcedure.info_procedure_assurance_contactee is same as 'oui' %}
+                        {% elseif signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'oui' %}
                             {{ static_picto_yes|raw }}
                         {% else %}
                             {{ static_picto_no|raw }}
@@ -421,20 +423,19 @@
                     </div>
                     <div class="fr-col-12">
                         <strong>Réponse aussurance :</strong>
-                        {% if signalement.informationProcedure.info_procedure_reponse_assurance is null %}
+                        {% if signalement.informationProcedure.infoProcedureReponseAssurance is null %}
                             /
                         {% else %}
                             <br>
-                            {{ signalement.informationProcedure.info_procedure_reponse_assurance|raw }}
+                            {{ signalement.informationProcedure.infoProcedureReponseAssurance|raw }}
                         {% endif %}
                     </div>
                     <div class="fr-col-12">
                         <strong>Souhaite garder le logement après travaux :</strong>
-                        <br>
-                        {% if signalement.informationProcedure.info_procedure_depart_apres_travaux is null %}
+                        {% if signalement.informationProcedure.infoProcedureDepartApresTravaux is null %}
                             {{ static_picto_nsp|raw }}
                         {# Attention : formulation inversée par rapport au formulaire #}
-                        {% elseif signalement.informationProcedure.info_procedure_depart_apres_travaux is same as 'oui' %}
+                        {% elseif signalement.informationProcedure.infoProcedureDepartApresTravaux is same as 'oui' %}
                             {{ static_picto_no|raw }}
                         {% else %}
                             {{ static_picto_yes|raw }}
