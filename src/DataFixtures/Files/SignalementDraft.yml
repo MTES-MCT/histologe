@@ -5,6 +5,11 @@ signalements_draft:
     email_declarant: 'locataire-01@histologe.fr'
     payload: 'locataire.json'
   -
+    uuid: '00000000-0000-0000-2023-locataire002'
+    profile_declarant: 'LOCATAIRE'
+    email_declarant: 'locataire-02@histologe.fr'
+    payload: 'step/validation_signalement/locataire.json'
+  -
     uuid: '00000000-0000-0000-2023-bailleuroc01'
     profile_declarant: 'BAILLEUR_OCCUPANT'
     email_declarant: 'bailleur_occupant-01@histologe.fr'
@@ -14,6 +19,11 @@ signalements_draft:
     profile_declarant: 'BAILLEUR'
     email_declarant: 'bailleur-01@histologe.fr'
     payload: 'bailleur.json'
+  -
+    uuid: '00000000-0000-0000-2023-bailleur0002'
+    profile_declarant: 'BAILLEUR'
+    email_declarant: 'bailleur-02@histologe.fr'
+    payload: 'step/validation_signalement/bailleur.json'
   -
     uuid: '00000000-0000-0000-2023-tierspart001'
     profile_declarant: 'TIERS_PARTICULIER'
