@@ -1,0 +1,90 @@
+<dialog aria-labelledby="fr-modal-title-modal-edit-address" role="dialog" id="fr-modal-edit-address" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8">
+                <form method="POST" enctype="multipart/form-data" action="{{ path('back_signalement_edit_address',{uuid:signalement.uuid}) }}">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-edit-address">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="fr-modal-title-modal-edit-address" class="fr-modal__title">
+                                Modifier l'adresse du logement
+                            </h1>
+
+                                <div class="fr-grid-row fr-grid-row--gutters">
+                                    <div class="fr-col-12 fr-col-md-6">
+                                        <h2 class="fr-h5">Adresse postale</h2>
+
+                                        <div class="fr-input-group">
+                                            <label class="fr-label" for="edit-address-search">
+                                                Adresse du logement
+                                                <span class="fr-hint-text">Tapez l'adresse et sélectionnez-la dans la liste</span>
+                                            </label>
+                                            <input class="fr-input" type="text" id="edit-address-search"
+                                                data-fr-adresse-autocomplete="true">
+                                        </div>
+
+                                        <div class="fr-input-group">
+                                            <label class="fr-label" for="edit-address-address">Numéro et voie</label>
+                                            <input class="fr-input" type="text" disabled id="edit-address-address" name="edit-address-address" value="{{ signalement.adresseOccupant }}">
+                                        </div>
+
+                                        <div class="fr-input-group">
+                                            <label class="fr-label" for="edit-address-code-postal">Code postal</label>
+                                            <input class="fr-input" type="text" disabled id="edit-address-code-postal" name="edit-address-code-postal" value="{{ signalement.cpOccupant }}">
+                                        </div>
+
+                                        <div class="fr-input-group fr-input-group--disabled">
+                                            <label class="fr-label" for="edit-address-commune">Commune</label>
+                                            <input class="fr-input" type="text" disabled id="edit-address-commune" name="edit-address-commune" value="{{ signalement.villeOccupant }}">
+                                        </div>
+                                    </div>
+                                    <div class="fr-col-12 fr-col-md-6">
+                                        <h2 class="fr-h5">Complément d'adresse</h2>
+
+                                        <div class="fr-input-group">
+                                            <label class="fr-label" for="edit-address-etage">Etage</label>
+                                            <input class="fr-input" type="text" id="edit-address-etage" name="edit-address-etage" value="{{ signalement.etageOccupant }}">
+                                        </div>
+
+                                        <div class="fr-input-group">
+                                            <label class="fr-label" for="edit-address-escalier">Escalier</label>
+                                            <input class="fr-input" type="text" id="edit-address-escalier" name="edit-address-escalier" value="{{ signalement.escalierOccupant }}">
+                                        </div>
+
+                                        <div class="fr-input-group">
+                                            <label class="fr-label" for="edit-address-num-appartement">Numéro d'appartement</label>
+                                            <input class="fr-input" type="text" id="edit-address-num-appartement" name="edit-address-num-appartement" value="{{ signalement.numAppartOccupant }}">
+                                        </div>
+
+                                        <div class="fr-input-group">
+                                            <label class="fr-label" for="edit-address-autre">Autre (résidence, lieu-dit...)</label>
+                                            <input class="fr-input" type="text" id="edit-address-autre" name="edit-address-autre" value="{{ signalement.adresseAutreOccupant }}">
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                        
+                        <div class="fr-modal__footer">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <li>
+                                    <button type="button" class="fr-btn fr-btn--secondary"
+                                            aria-controls="fr-modal-edit-address">
+                                        Annuler
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="fr-btn" type="submit">
+                                        Valider
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_address_'~signalement.id) }}">
+                </form>
+            </div>
+        </div>
+    </div>
+</dialog>
