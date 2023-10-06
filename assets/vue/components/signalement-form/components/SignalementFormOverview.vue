@@ -90,7 +90,7 @@
       </div>
 
       <!-- SITUATION OCCUPANT -->
-      <div>
+      <div v-if="formStore.data.profil !== 'service_secours'">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-8">
             <h3 class="fr-h6" v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'">Votre situation</h3>
