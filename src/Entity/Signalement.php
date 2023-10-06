@@ -1295,11 +1295,26 @@ class Signalement
         return $this;
     }
 
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+     * Il n'est pas utile de connaitre les différentes naissances des occupants
+     * Utilisez @see getDateNaissanceOccupant() afin de savoir la date de naissance de l'occupant (allocataire)
+     * Utilisez @see InformationComplementaire::getInformationsComplementairesSituationOccupantsDateNaissance()
+     * afin de savoir la date de naissance du bailleur
+     */
     public function getNaissanceOccupants(): ?string
     {
         return $this->naissanceOccupants;
     }
 
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+     * Il n'est pas utile de connaitre les différentes naissances des occupants
+     * Utilisez @see setDateNaissanceOccupant()
+     * afin de savoir de mettere à jour la date de naissance de l'occupant (allocataire)
+     * Utilisez @see InformationComplementaire::setInformationsComplementairesSituationOccupantsDateNaissance()
+     * afin de savoir la date de naissance du bailleur
+     */
     public function setNaissanceOccupants(?string $naissanceOccupants): self
     {
         $this->naissanceOccupants = $naissanceOccupants;

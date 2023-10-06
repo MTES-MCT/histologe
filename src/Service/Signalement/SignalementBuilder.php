@@ -94,9 +94,7 @@ class SignalementBuilder
             ->setIsAllocataire($this->resolveIsAllocataire())
             ->setNumAllocataire($this->signalementDraftRequest->getLogementSocialNumeroAllocataire())
             ->setMontantAllocation($this->signalementDraftRequest->getLogementSocialMontantAllocation())
-            ->setDateNaissanceOccupant(
-                new \DateTimeImmutable($this->signalementDraftRequest->getLogementSocialDateNaissance())
-            );
+            ->setDateNaissanceOccupant($this->resolveDateNaissanceOccupant());
 
         return $this;
     }
@@ -294,5 +292,14 @@ class SignalementBuilder
         }
 
         return $tiersLien->value;
+    }
+
+    private function resolveDateNaissanceOccupant(): ?\DateTimeImmutable
+    {
+        if (empty($this->signalementDraftRequest->getLogementSocialDateNaissance())) {
+            return null;
+        }
+
+        return new \DateTimeImmutable($this->signalementDraftRequest->getLogementSocialDateNaissance());
     }
 }
