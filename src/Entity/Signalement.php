@@ -696,6 +696,13 @@ class Signalement
         return $this->telProprio;
     }
 
+    public function getTelProprioDecoded(): ?string
+    {
+        $telDecoded = json_decode($this->getTelProprio());
+
+        return $telDecoded->phone_number;
+    }
+
     public function setTelProprio(?string $telProprio): self
     {
         $this->telProprio = $telProprio;
@@ -824,6 +831,13 @@ class Signalement
         return $this->telDeclarant;
     }
 
+    public function getTelDeclarantDecoded(): ?string
+    {
+        $telDecoded = json_decode($this->getTelDeclarant());
+
+        return $telDecoded->phone_number;
+    }
+
     public function setTelDeclarant(?string $telDeclarant): self
     {
         $this->telDeclarant = $telDeclarant;
@@ -896,6 +910,13 @@ class Signalement
     public function getTelOccupant(): ?string
     {
         return $this->telOccupant;
+    }
+
+    public function getTelOccupantDecoded()
+    {
+        $telDecoded = json_decode($this->getTelOccupant());
+
+        return $telDecoded->phone_number;
     }
 
     public function setTelOccupant($telOccupant): self
@@ -1580,6 +1601,13 @@ class Signalement
         return $this->telOccupantBis;
     }
 
+    public function getTelOccupantBisDecoded()
+    {
+        $telDecoded = json_decode($this->getTelOccupantBis());
+
+        return $telDecoded->phone_number;
+    }
+
     public function setTelOccupantBis(?string $telOccupantBis): self
     {
         $this->telOccupantBis = $telOccupantBis;
@@ -1903,6 +1931,13 @@ class Signalement
         return $this->telProprioSecondaire;
     }
 
+    public function getTelProprioSecondaireDecoded()
+    {
+        $telDecoded = json_decode($this->getTelProprioSecondaire());
+
+        return $telDecoded->phone_number;
+    }
+
     public function setTelProprioSecondaire(?string $telProprioSecondaire): self
     {
         $this->telProprioSecondaire = $telProprioSecondaire;
@@ -1913,6 +1948,13 @@ class Signalement
     public function getTelDeclarantSecondaire(): ?string
     {
         return $this->telDeclarantSecondaire;
+    }
+
+    public function getTelDeclarantSecondaireDecoded()
+    {
+        $telDecoded = json_decode($this->getTelDeclarantSecondaire());
+
+        return $telDecoded->phone_number;
     }
 
     public function setTelDeclarantSecondaire(?string $telDeclarantSecondaire): self
