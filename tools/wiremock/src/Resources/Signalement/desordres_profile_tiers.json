@@ -2384,7 +2384,7 @@
             "body": [
               {
                 "type": "SignalementFormInfo",
-                "label": "Info : {{formStore.props.platformName}} ne permet pas de régler les problèmes de voisinage. Pour savoir s'il s'agit d'un problème de logement ou un troube du voisinage, consultez le site du service public en cliquant ici.",
+                "label": "Info : {{formStore.props.platformName}} ne permet pas de régler les problèmes de voisinage. Pour savoir s'il s'agit d'un problème de logement ou un trouble du voisinage, consultez le site du service public <a href='https://www.service-public.fr/particuliers/vosdroits/F612' target='_blank'>en cliquant ici.</a>",
                 "slug": "desordres_logement_bruit_voisins_details_info"
               }
             ]
