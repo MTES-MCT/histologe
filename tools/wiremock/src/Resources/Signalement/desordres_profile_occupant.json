@@ -2459,42 +2459,6 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Propreté et entretien",
-    "description": "Sélectionnez la ou les pièces qui présentent un problème de propreté (nombreux déchets, excréments d'animaux, etc.)",
-    "icon": {
-      "src": "/img/form/LOGEMENT/Picto-proprete.svg",
-      "alt": ""
-    },
-    "slug": "desordres_logement_proprete",
-    "screenCategory": "Désordres",
-    "components": {
-      "body": [
-        {
-          "type": "SignalementFormRoomList",
-          "label": "",
-          "slug": "desordres_logement_proprete_pieces"
-        }
-      ],
-      "footer": [
-        {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "desordres_logement_proprete_previous",
-          "action": "resolve:findPreviousScreen",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "desordres_logement_proprete_next",
-          "action": "resolve.save:findNextScreen",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
-        }
-      ]
-    }
-  },
-  {
-    "type": "SignalementFormScreen",
     "label": "Les désordres renseignés",
     "slug": "desordres_renseignes",
     "screenCategory": "Désordres",

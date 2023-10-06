@@ -43,6 +43,7 @@
   "desordres_logement_nuisibles": { "default": "Présence de nuisibles" },
   "desordres_logement_bruit": { "default": "Bruit, pollution sonore" },
   "desordres_logement_lumiere": { "default": "Eclairement, lumière naturelle" },
+  "desordres_logement_proprete": { "default": "Propreté et entretien" },
   "desordres_batiment_proprete_interieur": { "default": "L'intérieur du bâtiment est sale, n'est jamais nettoyé" },
   "desordres_batiment_proprete_facades": { "default": "Les façades extérieures sont très sales ou en mauvais état" },
   "desordres_batiment_proprete_parties_communes": { "default": "Les parties communes sont dégradées (déchets qui traînent, matériel cassé, graffitis)" },
