@@ -540,11 +540,6 @@
           }
         },
         {
-          "type": "SignalementFormInfo",
-          "slug": "desordres_batiment_nuisibles_info",
-          "label": "Bon à savoir : si la présence de nuisibles est dûe à un manque d'entretien ou de nettoyage du logement, c'est aux locataires de payer la prise en charge. Si les nuisibles sont présents dans tout le bâtiment, ou étaient présents dès l'emménagement dans le logement : c'est à la charge du bailleur (propriétaire)."
-        },
-        {
           "type": "SignalementFormUploadPhotos",
           "label": "Photos (facultatif)",
           "slug": "desordres_batiment_nuisibles_photos",
@@ -2183,14 +2178,6 @@
                       "value": "after_movein"
                     }
                   ]
-                },
-                {
-                  "type": "SignalementFormInfo",
-                  "slug": "desordres_logement_nuisibles_cafards_details_info",
-                  "conditional": {
-                    "show": "formStore.data.desordres_logement_nuisibles_cafards_details_date === 'after_movein'"
-                  },
-                  "label": "Bon à savoir : si la présence de nuisibles est dûe à un manque d'entretien ou de nettoyage du logement, c'est aux locataires de payer la prise en charge. Si les nuisibles sont présents dans tout le bâtiment, ou étaient présents dès l'emménagement dans le logement : c'est à la charge du bailleur (propriétaire)."
                 }
             ]
           }
@@ -2227,14 +2214,6 @@
                       "value": "after_movein"
                     }
                   ]
-                },
-                {
-                  "type": "SignalementFormInfo",
-                  "slug": "desordres_logement_nuisibles_rongeurs_details_info",
-                  "conditional": {
-                    "show": "formStore.data.desordres_logement_nuisibles_rongeurs_details_date === 'after_movein'"
-                  },
-                  "label": "Bon à savoir : si la présence de nuisibles est dûe à un manque d'entretien ou de nettoyage du logement, c'est aux locataires de payer la prise en charge. Si les nuisibles sont présents dans tout le bâtiment, ou étaient présents dès l'emménagement dans le logement : c'est à la charge du bailleur (propriétaire)."
                 }
             ]
           }
@@ -2271,14 +2250,6 @@
                     "value": "after_movein"
                   }
                 ]
-              },
-              {
-                "type": "SignalementFormInfo",
-                "slug": "desordres_logement_nuisibles_punaises_details_info",
-                "conditional": {
-                  "show": "formStore.data.desordres_logement_nuisibles_punaises_details_date === 'after_movein'"
-                },
-                "label": "Bon à savoir : si la présence de nuisibles est dûe à un manque d'entretien ou de nettoyage du logement, c'est aux locataires de payer la prise en charge. Si les nuisibles sont présents dans tout le bâtiment, ou étaient présents dès l'emménagement dans le logement : c'est à la charge du bailleur (propriétaire)."
               },
               {
                 "type": "SignalementFormInfo",
@@ -2325,14 +2296,6 @@
                       "value": "after_movein"
                     }
                   ]
-                },
-                {
-                  "type": "SignalementFormInfo",
-                  "slug": "desordres_logement_nuisibles_autres_details_info",
-                  "conditional": {
-                    "show": "formStore.data.desordres_logement_nuisibles_autres_details_date === 'after_movein'"
-                  },
-                  "label": "Bon à savoir : si la présence de nuisibles est dûe à un manque d'entretien ou de nettoyage du logement, c'est aux locataires de payer la prise en charge. Si les nuisibles sont présents dans tout le bâtiment, ou étaient présents dès l'emménagement dans le logement : c'est à la charge du bailleur (propriétaire)."
                 }
             ]
           }
