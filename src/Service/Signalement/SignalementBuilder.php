@@ -130,7 +130,7 @@ class SignalementBuilder
 
     public function withInformationComplementaire(): self
     {
-        if (ProfileDeclarant::SERVICE_SECOURS === $this->signalement->getProfileDeclarant()) {
+        if ($this->isServiceSecours()) {
             return $this;
         }
 
