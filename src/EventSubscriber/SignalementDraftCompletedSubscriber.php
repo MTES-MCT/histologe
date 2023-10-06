@@ -44,7 +44,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
 
         $this->signalementManager->save($signalement);
 
-        if (ProfileDeclarant::LOCATAIRE) {
+        if (ProfileDeclarant::LOCATAIRE === $signalement->getProfileDeclarant()) {
             $toRecipients = [$signalement->getMailOccupant()];
         } else {
             $toRecipients = $signalement->getMailUsagers();

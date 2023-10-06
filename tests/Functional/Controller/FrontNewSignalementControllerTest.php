@@ -11,7 +11,7 @@ class FrontNewSignalementControllerTest extends WebTestCase
     /**
      * @dataProvider provideSignalementRequestPayload
      */
-    public function testCompleteSignalementDraft(string $path, string $uuidSignalement)
+    public function testCompleteSignalementDraft(string $path, string $uuidSignalement, int $countEmailSent)
     {
         $client = static::createClient();
 
@@ -34,19 +34,27 @@ class FrontNewSignalementControllerTest extends WebTestCase
             json_decode($client->getResponse()->getContent(), true)
         );
 
-        $this->assertEmailCount(2);
+        $this->assertEmailCount($countEmailSent);
     }
 
     public function provideSignalementRequestPayload(): \Generator
     {
-        yield 'Post signalement as locataire' => [
+        yield 'Post signalement as locataire (Mails sent: Occupant + RT)' => [
             'step/validation_signalement/locataire.json',
             '00000000-0000-0000-2023-locataire002',
+            2,
         ];
 
-        yield 'Post signalement as bailleur' => [
+        yield 'Post signalement as bailleur (Mails sent: Occupant + Déclarant + RT)' => [
             'step/validation_signalement/bailleur.json',
             '00000000-0000-0000-2023-bailleur0002',
+            3,
+        ];
+
+        yield 'Post signalement as service secours (Mails sent: Occupant + RT)' => [
+            'step/validation_signalement/service_secours.json',
+            '00000000-0000-0000-2023-secours00002',
+            2,
         ];
     }
 }

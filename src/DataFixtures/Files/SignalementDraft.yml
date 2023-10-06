@@ -39,3 +39,8 @@ signalements_draft:
     profile_declarant: 'SERVICE_SECOURS'
     email_declarant: 'service_secours-01@histologe.fr'
     payload: 'service_secours.json'
+  -
+    uuid: '00000000-0000-0000-2023-secours00002'
+    profile_declarant: 'SERVICE_SECOURS'
+    email_declarant: 'service_secours-02@histologe.fr'
+    payload: 'step/validation_signalement/service_secours.json'

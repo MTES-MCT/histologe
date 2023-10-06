@@ -154,11 +154,11 @@ class Signalement
     #[ORM\Column(type: 'string', length: 10, nullable: true)]
     private ?string $civiliteOccupant;
 
-    #[ORM\Column(type: 'string', length: 50)]
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
     #[Assert\NotBlank]
     private $nomOccupant;
 
-    #[ORM\Column(type: 'string', length: 50)]
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
     #[Assert\NotBlank]
     private $prenomOccupant;
 
@@ -168,14 +168,14 @@ class Signalement
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $mailOccupant;
 
-    #[ORM\Column(type: 'string', length: 100)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private $adresseOccupant;
 
-    #[ORM\Column(type: 'string', length: 5)]
+    #[ORM\Column(type: 'string', length: 5, nullable: true)]
     #[Assert\NotBlank]
     private $cpOccupant;
 
-    #[ORM\Column(type: 'string', length: 100)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private $villeOccupant;
 
     #[ORM\Column(type: 'boolean')]
