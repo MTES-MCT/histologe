@@ -8,10 +8,27 @@ use Symfony\Component\Routing\RouterInterface;
 
 class FrontNewSignalementControllerTest extends WebTestCase
 {
+    public function testPostSignalementDraft(): void
+    {
+        $client = static::createClient();
+
+        /** @var RouterInterface $router */
+        $router = $client->getContainer()->get(RouterInterface::class);
+        $urlPutSignalement = $router->generate('envoi_nouveau_signalement_draft');
+
+        $payloadLocataireSignalement = file_get_contents(__DIR__.'../../../files/post_signalement_draft_payload.json');
+
+        $client->request('POST', $urlPutSignalement, [], [], [], $payloadLocataireSignalement);
+
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertNotEmpty($response['uuid']);
+    }
+
     /**
      * @dataProvider provideSignalementRequestPayload
      */
-    public function testCompleteSignalementDraft(string $path, string $uuidSignalement, int $countEmailSent)
+    public function testCompleteSignalementDraft(string $path, string $uuidSignalement, int $countEmailSent): void
     {
         $client = static::createClient();
 
@@ -35,6 +52,23 @@ class FrontNewSignalementControllerTest extends WebTestCase
         );
 
         $this->assertEmailCount($countEmailSent);
+    }
+
+    /**
+     * @dataProvider provideSignalementDraftUuid
+     */
+    public function testGetSignalementDraft(string $uuid, string $step): void
+    {
+        $client = static::createClient();
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $urlSignalementDraft = $router->generate('informations_signalement_draft', ['uuid' => $uuid]);
+        $client->request('GET', $urlSignalementDraft);
+
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertEquals($step, $response['signalement']['payload']['currentStep']);
     }
 
     public function provideSignalementRequestPayload(): \Generator
@@ -61,6 +95,39 @@ class FrontNewSignalementControllerTest extends WebTestCase
             'step/validation_signalement/bailleur_occupant.json',
             '00000000-0000-0000-2023-bailleuroc02',
             2,
+        ];
+    }
+
+    public function provideSignalementDraftUuid(): \Generator
+    {
+        yield 'Locataire at informations_complementaires step' => [
+            '00000000-0000-0000-2023-locataire001',
+            'informations_complementaires',
+        ];
+
+        yield 'Bailleur occupant at desordres_batiment_eau step' => [
+            '00000000-0000-0000-2023-bailleuroc01',
+            'desordres_batiment_eau',
+        ];
+
+        yield 'Bailleur at composition_logement step' => [
+            '00000000-0000-0000-2023-bailleur0001',
+            'composition_logement',
+        ];
+
+        yield 'Tiers pro at type_logement step' => [
+            '00000000-0000-0000-2023-tierpro00001',
+            'type_logement',
+        ];
+
+        yield 'Tiers particulier at desordres_logement_aeration step' => [
+            '00000000-0000-0000-2023-tierspart001',
+            'desordres_logement_aeration',
+        ];
+
+        yield 'Service secours at zone_concernee step' => [
+            '00000000-0000-0000-2023-secours00001',
+            'zone_concernee',
         ];
     }
 }
