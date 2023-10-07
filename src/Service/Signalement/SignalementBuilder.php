@@ -208,13 +208,27 @@ class SignalementBuilder
 
     private function setProprietaireData(): void
     {
-        $this->signalement
-            ->setAdresseProprio($this->signalementDraftRequest->getCoordonneesBailleurAdresse())
-            ->setMailProprio($this->signalementDraftRequest->getCoordonneesBailleurEmail())
-            ->setNomProprio($this->signalementDraftRequest->getCoordonneesBailleurNom())
-            ->setPrenomProprio($this->signalementDraftRequest->getCoordonneesBailleurPrenom())
-            ->setTelProprio(Json::encode($this->signalementDraftRequest->getCoordonneesBailleurTel()))
-            ->setTelProprioSecondaire(Json::encode($this->signalementDraftRequest->getCoordonneesBailleurTelSecondaire()));
+        if ($this->isBailleurOccupant()) {
+            $this->signalement
+                ->setAdresseProprio($this->signalementDraftRequest->getAdresseLogementAdresse())
+                ->setVilleProprio($this->signalementDraftRequest->getAdresseLogementAdresseDetailCommune())
+                ->setCodePostalProprio($this->signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal())
+                ->setMailProprio($this->signalementDraftRequest->getVosCoordonneesOccupantEmail())
+                ->setNomProprio($this->resolveNomProprioBailleurOccupant())
+                ->setPrenomProprio($this->signalementDraftRequest->getVosCoordonneesOccupantPrenom())
+                ->setTelProprio(Json::encode($this->signalementDraftRequest->getVosCoordonneesOccupantTel()))
+                ->setTelProprioSecondaire(Json::encode($this->signalementDraftRequest->getVosCoordonneesOccupantTelSecondaire()));
+        } else {
+            $this->signalement
+                ->setAdresseProprio($this->signalementDraftRequest->getCoordonneesBailleurAdresseDetailNumero())
+                ->setVilleProprio($this->signalementDraftRequest->getCoordonneesBailleurAdresseCommune())
+                ->setCodePostalProprio($this->signalementDraftRequest->getCoordonneesBailleurAdresseDetailCodePostal())
+                ->setMailProprio($this->signalementDraftRequest->getCoordonneesBailleurEmail())
+                ->setNomProprio($this->signalementDraftRequest->getCoordonneesBailleurNom())
+                ->setPrenomProprio($this->signalementDraftRequest->getCoordonneesBailleurPrenom())
+                ->setTelProprio(Json::encode($this->signalementDraftRequest->getCoordonneesBailleurTel()))
+                ->setTelProprioSecondaire(Json::encode($this->signalementDraftRequest->getCoordonneesBailleurTelSecondaire()));
+        }
     }
 
     private function isOccupant(): bool
@@ -226,6 +240,11 @@ class SignalementBuilder
     private function isServiceSecours(): bool
     {
         return ProfileDeclarant::SERVICE_SECOURS === $this->signalement->getProfileDeclarant();
+    }
+
+    private function isBailleurOccupant(): bool
+    {
+        return ProfileDeclarant::BAILLEUR_OCCUPANT === $this->signalement->getProfileDeclarant();
     }
 
     private function evalBoolean(?string $value): ?bool
@@ -302,5 +321,11 @@ class SignalementBuilder
         }
 
         return new \DateTimeImmutable($this->signalementDraftRequest->getLogementSocialDateNaissance());
+    }
+
+    private function resolveNomProprioBailleurOccupant(): ?string
+    {
+        return $this->signalementDraftRequest->getVosCoordonneesTiersNomOrganisme()
+        ?? $this->signalementDraftRequest->getVosCoordonneesTiersNom();
     }
 }

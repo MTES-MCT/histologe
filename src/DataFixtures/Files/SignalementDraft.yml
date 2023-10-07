@@ -15,6 +15,11 @@ signalements_draft:
     email_declarant: 'bailleur_occupant-01@histologe.fr'
     payload: 'bailleur_occupant.json'
   -
+    uuid: '00000000-0000-0000-2023-bailleuroc02'
+    profile_declarant: 'BAILLEUR_OCCUPANT'
+    email_declarant: 'bailleur_occupant-02@histologe.fr'
+    payload: 'step/validation_signalement/bailleur_occupant.json'
+  -
     uuid: '00000000-0000-0000-2023-bailleur0001'
     profile_declarant: 'BAILLEUR'
     email_declarant: 'bailleur-01@histologe.fr'

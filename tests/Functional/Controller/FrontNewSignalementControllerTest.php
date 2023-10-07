@@ -56,5 +56,11 @@ class FrontNewSignalementControllerTest extends WebTestCase
             '00000000-0000-0000-2023-secours00002',
             2,
         ];
+
+        yield 'Post signalement as bailleur occupant (Mails sent: Occupant + RT)' => [
+            'step/validation_signalement/bailleur_occupant.json',
+            '00000000-0000-0000-2023-bailleuroc02',
+            2,
+        ];
     }
 }
