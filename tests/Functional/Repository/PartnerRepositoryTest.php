@@ -89,7 +89,7 @@ class PartnerRepositoryTest extends KernelTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-3']);
 
         $partners = $this->partnerRepository->findByLocalization($signalement, false);
-        $this->assertCount(3, $partners);
+        $this->assertCount(2, $partners);
 
         $partnerMDL = array_filter($partners, function ($partner) {
             return 'EMHA - Métropole de Lyon' === $partner['name'];

@@ -28,3 +28,8 @@ interventions:
     conclude_procedure: [ 'INSALUBRITE', 'MISE_EN_SECURITE_PERIL' ]
     occupant_present: 1
     proprietaire_present: 1
+  -
+    signalement: "2023-3"
+    user: "user-69-05@histologe.fr"
+    partner: "partenaire-05-69@histologe.fr"
+    status: 'PLANNED'

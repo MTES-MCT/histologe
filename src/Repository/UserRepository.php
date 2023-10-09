@@ -54,23 +54,34 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
     }
 
-    public function findActiveTerritoryAdmins(?Territory $territory): ?array
+    public function findActiveTerritoryAdmins(?Territory $territory, ?string $inseeOccupant): ?array
     {
         if (empty($territory)) {
             return null;
         }
 
-        $queryBuilder = $this->createQueryBuilder('u');
-
-        return $queryBuilder
+        $queryBuilder = $this->createQueryBuilder('u')
             ->andWhere('u.territory = :territory')
             ->setParameter('territory', $territory)
             ->andWhere('u.roles LIKE :role')
             ->setParameter('role', '%ROLE_ADMIN_TERRITORY%')
             ->andWhere('u.statut LIKE :active')
-            ->setParameter('active', User::STATUS_ACTIVE)
-            ->getQuery()
-            ->getResult();
+            ->setParameter('active', User::STATUS_ACTIVE);
+
+        if ($inseeOccupant) {
+            $queryBuilder->innerJoin('u.partner', 'p', 'WITH', 'p = u.partner')
+            ->andWhere(
+                $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->like('p.insee', "'[\"\"]'"),
+                    $queryBuilder->expr()->like('p.insee', "'[]'"),
+                    $queryBuilder->expr()->like('p.insee', ':insee')
+                )
+            )
+            ->setParameter('insee', '%'.$inseeOccupant.'%');
+        }
+
+        return $queryBuilder->getQuery()
+        ->getResult();
     }
 
     public function findInactiveWithNbAffectationPending(): array

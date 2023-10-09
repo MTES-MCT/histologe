@@ -148,6 +148,7 @@ partners:
     insee: "[\"\"]"
     territory: "Rhône"
     type: "DISPOSITIF_RENOVATION_HABITAT"
+    competence: "VISITES"
   -
     nom: "Partenaire 69-06"
     email: "partenaire-06-69@histologe.fr"

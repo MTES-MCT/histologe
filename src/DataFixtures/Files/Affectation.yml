@@ -136,3 +136,10 @@ affectations:
     motif_cloture: ""
     territory: "Bouches-du-Rhône"
     is_synchronized: true
+  -
+    signalement: 2023-3
+    partner: "partenaire-05-69@histologe.fr"
+    statut: 1
+    answered_by: "admin-03@histologe.fr"
+    affected_by: "admin-03@histologe.fr"
+    territory: "Rhône"
