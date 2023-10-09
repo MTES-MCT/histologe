@@ -218,6 +218,14 @@ class SignalementBuilder
                 ->setPrenomProprio($this->signalementDraftRequest->getVosCoordonneesOccupantPrenom())
                 ->setTelProprio(Json::encode($this->signalementDraftRequest->getVosCoordonneesOccupantTel()))
                 ->setTelProprioSecondaire(Json::encode($this->signalementDraftRequest->getVosCoordonneesOccupantTelSecondaire()));
+        } elseif ($this->isBailleur()) {
+            $this->signalement
+                ->setStructureDeclarant($this->signalementDraftRequest->getVosCoordonneesTiersNomOrganisme())
+                ->setNomProprio($this->signalementDraftRequest->getVosCoordonneesTiersNom())
+                ->setPrenomProprio($this->signalementDraftRequest->getVosCoordonneesTiersPrenom())
+                ->setTelProprio(Json::encode($this->signalementDraftRequest->getVosCoordonneesTiersTel()))
+                ->setMailProprio($this->signalementDraftRequest->getVosCoordonneesTiersEmail())
+                ->setTelProprioSecondaire(Json::encode($this->signalementDraftRequest->getVosCoordonneesTiersTelSecondaire()));
         } else {
             $this->signalement
                 ->setAdresseProprio($this->signalementDraftRequest->getCoordonneesBailleurAdresseDetailNumero())
@@ -245,6 +253,11 @@ class SignalementBuilder
     private function isBailleurOccupant(): bool
     {
         return ProfileDeclarant::BAILLEUR_OCCUPANT === $this->signalement->getProfileDeclarant();
+    }
+
+    private function isBailleur(): bool
+    {
+        return ProfileDeclarant::BAILLEUR === $this->signalement->getProfileDeclarant();
     }
 
     private function evalBoolean(?string $value): ?bool
