@@ -21,24 +21,33 @@
                                                 Adresse du logement
                                                 <span class="fr-hint-text">Tapez l'adresse et sélectionnez-la dans la liste</span>
                                             </label>
-                                            <input class="fr-input" type="text" id="edit-address-search"
-                                                data-fr-adresse-autocomplete="true">
+                                            <input class="fr-input search-address-autocomplete" type="text" id="edit-address-search"
+                                                data-fr-adresse-bo-autocomplete="true">
+                                            <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france search-address-autocomplete-list">
+                                            </div>
                                         </div>
 
                                         <div class="fr-input-group">
                                             <label class="fr-label" for="edit-address-address">Numéro et voie</label>
                                             <input class="fr-input" type="text" disabled id="edit-address-address" name="edit-address-address" value="{{ signalement.adresseOccupant }}">
+                                            <input type="hidden" id="edit-address-address-hidden" name="edit-address-address-hidden" value="{{ signalement.adresseOccupant }}">
                                         </div>
 
                                         <div class="fr-input-group">
                                             <label class="fr-label" for="edit-address-code-postal">Code postal</label>
                                             <input class="fr-input" type="text" disabled id="edit-address-code-postal" name="edit-address-code-postal" value="{{ signalement.cpOccupant }}">
+                                            <input type="hidden" id="edit-address-code-postal-hidden" name="edit-address-code-postal-hidden" value="{{ signalement.cpOccupant }}">
                                         </div>
 
                                         <div class="fr-input-group fr-input-group--disabled">
                                             <label class="fr-label" for="edit-address-commune">Commune</label>
                                             <input class="fr-input" type="text" disabled id="edit-address-commune" name="edit-address-commune" value="{{ signalement.villeOccupant }}">
+                                            <input type="hidden" id="edit-address-commune-hidden" name="edit-address-commune-hidden" value="{{ signalement.villeOccupant }}">
                                         </div>
+
+                                        <input type="hidden" id="edit-address-insee-hidden" name="edit-address-insee-hidden" value="{{ signalement.inseeOccupant }}">
+                                        <input type="hidden" id="edit-address-geoloc-lat-hidden" name="edit-address-geoloc-lat-hidden" value="{{ signalement.geoloc.lat }}">
+                                        <input type="hidden" id="edit-address-geoloc-lng-hidden" name="edit-address-geoloc-lng-hidden" value="{{ signalement.geoloc.lng }}">
                                     </div>
                                     <div class="fr-col-12 fr-col-md-6">
                                         <h2 class="fr-h5">Complément d'adresse</h2>

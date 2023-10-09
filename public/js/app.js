@@ -1123,3 +1123,9 @@ const updateResultNDE = () => {
         
     }
 }
+
+document.querySelectorAll('[data-fr-adresse-bo-autocomplete]').forEach((autocomplete) => {
+    autocomplete.addEventListener('keyup', () => {
+        searchAddress(document, autocomplete)
+    });
+})
