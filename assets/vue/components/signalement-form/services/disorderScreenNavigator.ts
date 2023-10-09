@@ -19,6 +19,9 @@ export function findPreviousScreen (
       case 'desordres_batiment':
         previousScreenSlug = (formStore.data.zone_concernee_zone === 'batiment_logement') ? 'ecran_intermediaire_les_desordres' : 'desordres_logement'
         break
+      case 'desordres_renseignes':
+        previousScreenSlug = (formStore.data.zone_concernee_zone === 'batiment') ? 'desordres_batiment' : 'desordres_logement'
+        break
       default:
         previousScreenSlug = (['logement', 'batiment_logement'].includes(formStore.data.zone_concernee_zone) && currentStep.includes('logement'))
           ? 'desordres_logement'

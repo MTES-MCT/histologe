@@ -540,11 +540,6 @@
           }
         },
         {
-          "type": "SignalementFormInfo",
-          "slug": "desordres_batiment_nuisibles_info",
-          "label": "Bon à savoir : si la présence de nuisibles est dûe à un manque d'entretien ou de nettoyage du logement, c'est aux locataires de payer la prise en charge. Si les nuisibles sont présents dans tout le bâtiment, ou étaient présents dès l'emménagement dans le logement : c'est à la charge du bailleur (propriétaire)."
-        },
-        {
           "type": "SignalementFormUploadPhotos",
           "label": "Photos (facultatif)",
           "slug": "desordres_batiment_nuisibles_photos",
@@ -2183,14 +2178,6 @@
                       "value": "after_movein"
                     }
                   ]
-                },
-                {
-                  "type": "SignalementFormInfo",
-                  "slug": "desordres_logement_nuisibles_cafards_details_info",
-                  "conditional": {
-                    "show": "formStore.data.desordres_logement_nuisibles_cafards_details_date === 'after_movein'"
-                  },
-                  "label": "Bon à savoir : si la présence de nuisibles est dûe à un manque d'entretien ou de nettoyage du logement, c'est aux locataires de payer la prise en charge. Si les nuisibles sont présents dans tout le bâtiment, ou étaient présents dès l'emménagement dans le logement : c'est à la charge du bailleur (propriétaire)."
                 }
             ]
           }
@@ -2227,14 +2214,6 @@
                       "value": "after_movein"
                     }
                   ]
-                },
-                {
-                  "type": "SignalementFormInfo",
-                  "slug": "desordres_logement_nuisibles_rongeurs_details_info",
-                  "conditional": {
-                    "show": "formStore.data.desordres_logement_nuisibles_rongeurs_details_date === 'after_movein'"
-                  },
-                  "label": "Bon à savoir : si la présence de nuisibles est dûe à un manque d'entretien ou de nettoyage du logement, c'est aux locataires de payer la prise en charge. Si les nuisibles sont présents dans tout le bâtiment, ou étaient présents dès l'emménagement dans le logement : c'est à la charge du bailleur (propriétaire)."
                 }
             ]
           }
@@ -2271,14 +2250,6 @@
                     "value": "after_movein"
                   }
                 ]
-              },
-              {
-                "type": "SignalementFormInfo",
-                "slug": "desordres_logement_nuisibles_punaises_details_info",
-                "conditional": {
-                  "show": "formStore.data.desordres_logement_nuisibles_punaises_details_date === 'after_movein'"
-                },
-                "label": "Bon à savoir : si la présence de nuisibles est dûe à un manque d'entretien ou de nettoyage du logement, c'est aux locataires de payer la prise en charge. Si les nuisibles sont présents dans tout le bâtiment, ou étaient présents dès l'emménagement dans le logement : c'est à la charge du bailleur (propriétaire)."
               },
               {
                 "type": "SignalementFormInfo",
@@ -2325,14 +2296,6 @@
                       "value": "after_movein"
                     }
                   ]
-                },
-                {
-                  "type": "SignalementFormInfo",
-                  "slug": "desordres_logement_nuisibles_autres_details_info",
-                  "conditional": {
-                    "show": "formStore.data.desordres_logement_nuisibles_autres_details_date === 'after_movein'"
-                  },
-                  "label": "Bon à savoir : si la présence de nuisibles est dûe à un manque d'entretien ou de nettoyage du logement, c'est aux locataires de payer la prise en charge. Si les nuisibles sont présents dans tout le bâtiment, ou étaient présents dès l'emménagement dans le logement : c'est à la charge du bailleur (propriétaire)."
                 }
             ]
           }
@@ -2404,7 +2367,7 @@
             "body": [
               {
                 "type": "SignalementFormInfo",
-                "label": "Info : {{formStore.props.platformName}} ne permet pas de régler les problèmes de voisinage. Pour savoir s'il s'agit d'un problème de logement ou un troube du voisinage, consultez le site du service public en cliquant ici.",
+                "label": "Info : {{formStore.props.platformName}} ne permet pas de régler les problèmes de voisinage. Pour savoir s'il s'agit d'un problème de logement ou un trouble du voisinage, consultez le site du service public <a href='https://www.service-public.fr/particuliers/vosdroits/F612' target='_blank'>en cliquant ici</a>.",
                 "slug": "desordres_logement_bruit_voisins_details_info"
               }
             ]
@@ -2488,42 +2451,6 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "desordres_logement_lumiere_next",
-          "action": "resolve.save:findNextScreen",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
-        }
-      ]
-    }
-  },
-  {
-    "type": "SignalementFormScreen",
-    "label": "Propreté et entretien",
-    "description": "Sélectionnez la ou les pièces qui présentent un problème de propreté (nombreux déchets, excréments d'animaux, etc.)",
-    "icon": {
-      "src": "/img/form/LOGEMENT/Picto-proprete.svg",
-      "alt": ""
-    },
-    "slug": "desordres_logement_proprete",
-    "screenCategory": "Désordres",
-    "components": {
-      "body": [
-        {
-          "type": "SignalementFormRoomList",
-          "label": "",
-          "slug": "desordres_logement_proprete_pieces"
-        }
-      ],
-      "footer": [
-        {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "desordres_logement_proprete_previous",
-          "action": "resolve:findPreviousScreen",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "desordres_logement_proprete_next",
           "action": "resolve.save:findNextScreen",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
