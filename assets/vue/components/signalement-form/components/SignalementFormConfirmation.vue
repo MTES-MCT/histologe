@@ -9,8 +9,8 @@
       Nos services font le maximum pour traiter votre demande au plus vite.
     </p>
     <p class="fr-text--center">
-      <a href="https://voxusagers.numerique.gouv.fr/Demarches/3104?&amp;view-mode=formulaire-avis&amp;nd_mode=en-ligne-enti%C3%A8rement&amp;nd_source=button&amp;key=8a6945494dbe7dd6e52d3dd28d667c1d">
-        <img src="https://voxusagers.numerique.gouv.fr/static/bouton-bleu.svg" alt="Je donne mon avis">
+      <a href="https://jedonnemonavis.numerique.gouv.fr/Demarches/3742?&view-mode=formulaire-avis&nd_source=button&key=743c44c1973b9adfe59223f5ecb7c4b3">
+        <img src="https://jedonnemonavis.numerique.gouv.fr/static/bouton-bleu.svg" alt="Je donne mon avis" />
       </a>
     </p>
   </div>
