@@ -65,7 +65,7 @@ class JobEventRepository extends ServiceEntityRepository
 
     public function findFailedEsaboraDossierByPartnerTypeByAction(
         PartnerType $partnerType,
-        ?string $action
+        string $action
     ) {
         $qb = $this->createQueryBuilder('j');
 
@@ -73,24 +73,22 @@ class JobEventRepository extends ServiceEntityRepository
         ->select('MAX(sub.createdAt)')
         ->where('sub.signalementId = j.signalementId')
         ->andWhere('sub.partnerId = j.partnerId')
-        ->andWhere('sub.status = :statusFailed') // Ajoutez cette ligne
-        ->setParameter('statusFailed', JobEvent::STATUS_FAILED)
+        ->andWhere('sub.action = :action')
+        ->setParameter('action', $action)
         ->getDQL();
 
         $qb->where('j.status = :statusFailed')
-            ->andWhere('j.service LIKE :service')
             ->setParameter('statusFailed', JobEvent::STATUS_FAILED)
+            ->andWhere('j.service LIKE :service')
             ->setParameter('service', '%'.InterfacageType::ESABORA->value.'%')
             ->andWhere('j.partnerType LIKE :partnerType')
             ->setParameter('partnerType', $partnerType->value)
+            ->andWhere('j.action = :action')
+            ->setParameter('action', $action)
             ->andWhere($qb->expr()->in(
                 'j.createdAt',
                 $subQuery
             ));
-
-        if (null !== $action) {
-            $qb->andWhere('j.action = :action')->setParameter('action', $action);
-        }
 
         return $qb->getQuery()->getResult();
     }
