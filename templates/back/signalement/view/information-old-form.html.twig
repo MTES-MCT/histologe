@@ -9,10 +9,6 @@
                 data-dpe-url="https://koumoul.com/data-fair/api/v1/datasets/dpe-france/values_agg?field=code_insee_commune_actualise&format=json&agg_size=20&q_mode=simple&geo_adresse_in={{ (signalement.adresseOccupant~' '~signalement.cpOccupant~' '~signalement.villeOccupant)|replace({'  ':' '})|url_encode }}&size=100&select=%2A&sampling=neighbors">
             Consulter le(s) DPE
         </button>
-        {% if canEditSignalement %}
-            <a href="{{ path('back_signalement_edit',{uuid:signalement.uuid}) }}"
-                class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-edit-fill" title="Modifier les infos">Modifier les infos</a>
-        {% endif %}
     </div>
 </div>
 
