@@ -2,6 +2,9 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\Entity\Enum\SignalementDraftStatus;
+use App\Entity\SignalementDraft;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
@@ -32,6 +35,9 @@ class FrontNewSignalementControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine')->getManager();
+
         /** @var RouterInterface $router */
         $router = $client->getContainer()->get(RouterInterface::class);
         $urlPutSignalement = $router->generate('mise_a_jour_nouveau_signalement_draft', [
@@ -52,6 +58,12 @@ class FrontNewSignalementControllerTest extends WebTestCase
         );
 
         $this->assertEmailCount($countEmailSent);
+
+        $signalementDraftRepository = $entityManager->getRepository(SignalementDraft::class);
+        $signalementDraft = $signalementDraftRepository->findOneBy(['uuid' => $uuidSignalement]);
+
+        $this->assertEquals(SignalementDraftStatus::EN_SIGNALEMENT, $signalementDraft->getStatus());
+        $this->assertEquals(1, $signalementDraft->getSignalements()->count());
     }
 
     /**
