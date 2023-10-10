@@ -1,16 +1,12 @@
 <div class="fr-grid-row fr-mt-3w">
     <div class="fr-col-12 fr-col-md-6">
-        {% if createdFromDraft %}
-            {% include 'back/signalement/view/edit-modals/edit-address.html.twig' %}
-            <h3 class="fr-h5">
-                Adresse du logement
-                <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-address" class="fr-ml-6v fr-btn--icon-left fr-icon-edit-line">
-                    Modifier
-                </a>
-            </h3>
-        {% else %}
-            <h3 class="fr-h5">Adresse du logement</h3>
-        {% endif %}
+        {% include 'back/signalement/view/edit-modals/edit-address.html.twig' %}
+        <h3 class="fr-h5">
+            Adresse du logement
+            <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-address" class="fr-ml-6v fr-btn--icon-left fr-icon-edit-line">
+                Modifier
+            </a>
+        </h3>
         {{ signalement.adresseOccupant }},
         <br>
         {{ signalement.etageOccupant ? 'étage ' ~ signalement.etageOccupant ~ ',' : '' }}
