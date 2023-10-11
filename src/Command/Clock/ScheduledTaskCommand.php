@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
     name: 'app:scheduled-task',
-    description: 'SISH Task executed in a scalingo clock process in prod cause duration execution is > 15 minutes',
+    description: 'Scalingo clock process to execute long tasks defined in cron_scheduler (if duration execution is > 15 minutes)',
 )]
 class ScheduledTaskCommand extends Command
 {
@@ -52,7 +52,7 @@ class ScheduledTaskCommand extends Command
         $cron->setResolver($resolver);
 
         $table->render();
-        // Based on sleepInveral, run the scheduler which will execute the tasks
+        // Based on sleepInterval, run the scheduler which will execute the tasks
         // which have to be started at the given minute.
         while (true) {
             $this->logger->info('[CRON] Running tasks');
