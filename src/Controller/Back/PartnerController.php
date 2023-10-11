@@ -334,6 +334,10 @@ class PartnerController extends AbstractController
                 $data['partner'] = $partner;
                 $data['statut'] = User::STATUS_INACTIVE;
                 $userManager->updateUserFromData($user, $data);
+            } elseif (null !== $user) {
+                $this->addFlash('error', 'L\'utilisateur existe déjà, veuillez l\'éditer.');
+
+                return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
             } else {
                 $user = $userManager->createUserFromData($partner, $data);
             }
@@ -352,6 +356,7 @@ class PartnerController extends AbstractController
     public function editUser(
         Request $request,
         UserManager $userManager,
+        UserRepository $userRepository
     ): Response {
         $this->denyAccessUnlessGranted('USER_EDIT', $this->getUser());
         if (
@@ -361,6 +366,14 @@ class PartnerController extends AbstractController
             /** @var User $user */
             $user = $userManager->find((int) $userId);
             $data = $request->get('user_edit');
+            if ($data['email'] != $user->getEmail()) {
+                $userExist = $userRepository->findOneBy(['email' => $data['email']]);
+                if ($userExist && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
+                    $this->addFlash('error', 'Une utilisateur existe déjà avec ce mail.');
+
+                    return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+                }
+            }
             $user = $userManager->updateUserFromData($user, $data);
             $partnerId = $user->getPartner()->getId();
 

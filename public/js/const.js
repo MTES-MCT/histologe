@@ -88,11 +88,13 @@ const checkUserMail = (el) => {
             el.parentElement.classList.add('fr-input-group--error');
             el.parentElement.querySelector('p.fr-error-text').classList.remove('fr-hidden');
             document.querySelector('#user_create_form_submit').disabled = true;
+            document.querySelector('#user_edit_form_submit').disabled = true;
         } else {
             el.classList.remove('fr-input--error');
             el.parentElement.classList.remove('fr-input-group--error');
             el.parentElement.querySelector('p.fr-error-text').classList.add('fr-hidden');
             document.querySelector('#user_create_form_submit').disabled = false;
+            document.querySelector('#user_edit_form_submit').disabled = false;            
         }
     })
     .catch(function (err) {
