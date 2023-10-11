@@ -18,7 +18,6 @@ class UserRepositoryTest extends KernelTestCase
         $kernel = self::bootKernel();
 
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
-        // $this->signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
     }
 
