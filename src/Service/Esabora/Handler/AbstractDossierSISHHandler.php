@@ -17,8 +17,6 @@ abstract class AbstractDossierSISHHandler implements DossierSISHHandlerInterface
     protected mixed $response = null;
     protected ?int $sasAdresseId = null;
     protected ?int $sasDossierId = null;
-    private int $countSuccess = 0;
-    private int $countFailed = 0;
 
     public function __construct(
         private readonly SerializerInterface $serializer,
@@ -44,21 +42,5 @@ abstract class AbstractDossierSISHHandler implements DossierSISHHandlerInterface
             partnerId: $this->partner?->getId(),
             partnerType: $this->partner?->getType(),
         );
-
-        if (200 === $this->response->getStatusCode()) {
-            ++$this->countSuccess;
-        } else {
-            ++$this->countFailed;
-        }
-    }
-
-    public function getCountSuccess(): int
-    {
-        return $this->countSuccess;
-    }
-
-    public function getCountFailed(): int
-    {
-        return $this->countFailed;
     }
 }

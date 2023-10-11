@@ -16,6 +16,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -41,13 +42,15 @@ class PushFailedEsaboraDossierCommand extends Command
 
     protected function configure(): void
     {
-        $this->addArgument('action', InputArgument::REQUIRED, 'action to target');
+        $this->addArgument('action', InputArgument::REQUIRED, 'action to target (push_dossier_adresse, push_dossier, push_dossier_personne)');
+        $this->addOption('delay', null, InputOption::VALUE_REQUIRED, 'Delay before checking if there are still some failed dossier', 10);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
         $action = $input->getArgument('action');
+        $delay = $input->getOption('delay');
 
         $this->io->title('<info>Recherches des dossiers de SISH avec l\'action '.$action.' en erreur </info>');
 
@@ -55,26 +58,27 @@ class PushFailedEsaboraDossierCommand extends Command
 
         if (0 === \count($failedDossiers)) {
             $this->io->success('Aucun dossier en erreur');
-        } else {
-            $this->io->text('<info>Nombre de dossier ARS en erreur </info>'.\count($failedDossiers));
-            /** @var JobEvent $failedDossier */
-            foreach ($failedDossiers as $failedDossier) {
-                $signalementId = $failedDossier->getSignalementId();
-                $partnerId = $failedDossier->getPartnerId();
-                $this->io->text('Renvoi du dossier pour le signalement '.$signalementId.' et le partenaire '.$partnerId);
 
-                $signalement = $this->signalementRepository->findOneBy(['id' => $signalementId]);
-
-                $affectation = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partnerId) {
-                    return $affectation->getPartner()->getId() === $partnerId;
-                })->first();
-
-                $this->esaboraBus->dispatch($affectation);
-            }
-            sleep(10);
-            $failedDossiersAfter = $this->jobEventRepository->findFailedEsaboraDossierByPartnerTypeByAction(PartnerType::ARS, $action);
-            $this->io->section('<info>Nombre de dossier ARS en erreur restants après traitement </info>'.\count($failedDossiersAfter));
+            return Command::SUCCESS;
         }
+        $this->io->text('<info>Nombre de dossier ARS en erreur </info>'.\count($failedDossiers));
+        /** @var JobEvent $failedDossier */
+        foreach ($failedDossiers as $failedDossier) {
+            $signalementId = $failedDossier->getSignalementId();
+            $partnerId = $failedDossier->getPartnerId();
+            $this->io->text('Renvoi du dossier pour le signalement '.$signalementId.' et le partenaire '.$partnerId);
+
+            $signalement = $this->signalementRepository->find($signalementId);
+
+            $affectation = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partnerId) {
+                return $affectation->getPartner()->getId() === $partnerId;
+            })->first();
+
+            $this->esaboraBus->dispatch($affectation);
+        }
+        sleep($delay);
+        $failedDossiersAfter = $this->jobEventRepository->findFailedEsaboraDossierByPartnerTypeByAction(PartnerType::ARS, $action);
+        $this->io->section('<info>Nombre de dossier ARS en erreur restants après traitement </info>'.\count($failedDossiersAfter));
 
         return Command::SUCCESS;
     }

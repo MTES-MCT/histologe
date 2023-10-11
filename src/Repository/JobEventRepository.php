@@ -52,7 +52,7 @@ class JobEventRepository extends ServiceEntityRepository
 
     public function findLastEsaboraJobByPartner(
         Partner $partner
-    ): ?array {
+    ): array {
         return $this->createQueryBuilder('j')
             ->select('MAX(j.createdAt) AS last_event')
             ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
@@ -66,7 +66,7 @@ class JobEventRepository extends ServiceEntityRepository
     public function findFailedEsaboraDossierByPartnerTypeByAction(
         PartnerType $partnerType,
         string $action
-    ) {
+    ): ?array {
         $qb = $this->createQueryBuilder('j');
 
         $subQuery = $this->createQueryBuilder('sub')

@@ -6,7 +6,7 @@ use App\Entity\Enum\PartnerType;
 use App\Factory\Esabora\DossierMessageSISHFactory;
 use App\Repository\SuiviRepository;
 use App\Service\Esabora\AbstractEsaboraService;
-use App\Service\Signalement\PostalCodeHomeChecker;
+use App\Service\Signalement\AdresseDataGouvService;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\TestCase;
@@ -48,8 +48,8 @@ class DossierMessageSISHFactoryTest extends TestCase
             ->with('back_signalement_view')
             ->willReturn('/bo/signalements/00000000-0000-0000-2022-000000000001');
 
-        $postalCodeHomeChecker = $this->createMock(PostalCodeHomeChecker::class);
-        $postalCodeHomeChecker
+        $adresseDataGouvService = $this->createMock(AdresseDataGouvService::class);
+        $adresseDataGouvService
             ->expects($this->once())
             ->method('getCodeInsee')
             ->willReturn($signalement->getInseeOccupant());
@@ -59,7 +59,7 @@ class DossierMessageSISHFactoryTest extends TestCase
             $uploadHandlerServiceMock,
             $parameterBagMock,
             $urlGeneratorMock,
-            $postalCodeHomeChecker
+            $adresseDataGouvService
         );
 
         $signalement->setNumAppartOccupant('à gauche de l\'entrée principale, appart 11');

@@ -11,8 +11,4 @@ interface DossierSISHHandlerInterface
     public function handle(DossierMessageSISH $dossierMessageSISH): void;
 
     public static function getPriority(): int;
-
-    public function getCountSuccess(): int;
-
-    public function getCountFailed(): int;
 }
