@@ -262,7 +262,7 @@ class SignalementController extends AbstractController
                 $signalement->setInseeOccupant($form->getExtraData()['inseeOccupant']);
                 $doctrine->getManager()->persist($signalement);
                 $doctrine->getManager()->flush();
-                $this->addFlash('success', 'Signalement modifié avec succés !');
+                $this->addFlash('success', 'Signalement modifié avec succès !');
 
                 return $this->json(['response' => 'success_edited']);
             }

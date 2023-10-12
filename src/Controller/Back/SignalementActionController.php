@@ -82,7 +82,7 @@ class SignalementActionController extends AbstractController
             $doctrine->getManager()->persist($suivi);
             $doctrine->getManager()->flush();
 
-            $this->addFlash('success', 'Statut du signalement mis à jour avec succés !');
+            $this->addFlash('success', 'Statut du signalement mis à jour avec succès !');
         } else {
             $this->addFlash('error', 'Une erreur est survenue...');
         }
@@ -152,7 +152,7 @@ class SignalementActionController extends AbstractController
             $suivi->setType(SUIVI::TYPE_AUTO);
             $doctrine->getManager()->persist($suivi);
             $doctrine->getManager()->flush();
-            $this->addFlash('success', 'Signalement rouvert avec succés !');
+            $this->addFlash('success', 'Signalement rouvert avec succès !');
         } else {
             $this->addFlash('error', 'Erreur lors de la réouverture du signalement! ');
         }

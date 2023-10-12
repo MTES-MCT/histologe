@@ -7,10 +7,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 class AdresseOccupantRequest
 {
     public function __construct(
-        private readonly ?string $adresse = null,
-        private readonly ?string $codePostal = null,
-        private readonly ?string $ville = null,
         #[Assert\NotBlank()]
+        private readonly ?string $adresse = null,
+        #[Assert\NotBlank()]
+        private readonly ?string $codePostal = null,
+        #[Assert\NotBlank()]
+        private readonly ?string $ville = null,
         private readonly ?string $etage = null,
         private readonly ?string $escalier = null,
         private readonly ?string $numAppart = null,
