@@ -3,6 +3,7 @@
 namespace App\Serializer;
 
 use App\Dto\Request\Signalement\SignalementDraftRequest;
+use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\SignalementDraft;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -11,11 +12,6 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class SignalementDraftRequestNormalizer implements DenormalizerInterface, NormalizerInterface
 {
-    private const PIECES_SUPERFICIE_KEY_PATTERN = '/^type_logement_pieces_a_vivre_superficie_piece_(\d+)$/';
-    private const PIECES_HAUTEUR_KEY_PATTERN = '/^type_logement_pieces_a_vivre_hauteur_piece_(\d+)$/';
-    private const PIECES_SUPERFICIE_KEY = 'type_logement_pieces_a_vivre_superficie_piece';
-    private const PIECES_HAUTEUR_KEY = 'type_logement_pieces_a_vivre_hauteur_piece';
-
     public function __construct(
         /** @var ObjectNormalizer $objectNormalizer */
         #[Autowire(service: 'serializer.normalizer.object')]
@@ -27,16 +23,22 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
     {
         $transformedData = [];
         foreach ($data as $key => $value) {
-            if (preg_match(self::PIECES_SUPERFICIE_KEY_PATTERN, $key, $matches)) {
-                $transformedData[self::PIECES_SUPERFICIE_KEY][] = $value;
-            } elseif (preg_match(self::PIECES_HAUTEUR_KEY_PATTERN, $key, $matches)) {
-                $transformedData[self::PIECES_HAUTEUR_KEY][] = $value;
+            if (preg_match(SignalementDraftRequest::PIECES_SUPERFICIE_KEY_PATTERN, $key, $matches)) {
+                $transformedData[SignalementDraftRequest::PIECES_SUPERFICIE_KEY][] = $value;
+            } elseif (preg_match(SignalementDraftRequest::PIECES_HAUTEUR_KEY_PATTERN, $key, $matches)) {
+                $transformedData[SignalementDraftRequest::PIECES_HAUTEUR_KEY][] = $value;
+            } elseif (preg_match(SignalementDraftRequest::PATTERN_PHONE_KEY, $key, $matches)) {
+                $phone = [
+                    'country_code' => $data[$key.'_countrycode'],
+                    'phone_number' => $value,
+                ];
+                $transformedData[$key] = $phone;
             } else {
                 $transformedData[$key] = $value;
             }
         }
 
-        return $this->objectNormalizer->denormalize($transformedData, SignalementDraftRequest::class);
+        return $this->objectNormalizer->denormalize($transformedData, $type);
     }
 
     /**
@@ -44,7 +46,7 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
      *
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
-    public function normalize(mixed $object, string $format = null, array $context = [])
+    public function normalize(mixed $object, string $format = null, array $context = []): mixed
     {
         $normalizedPayload = [];
         /** @var SignalementDraft $signalementDraft */
@@ -53,11 +55,15 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
         foreach ($payload = $signalementDraft->getPayload() as $key => $value) {
             if (\in_array(
                 $key,
-                [self::PIECES_HAUTEUR_KEY, self::PIECES_SUPERFICIE_KEY]
+                [SignalementDraftRequest::PIECES_HAUTEUR_KEY, SignalementDraftRequest::PIECES_SUPERFICIE_KEY]
             )) {
                 foreach ($payload[$key] as $index => $valueItem) {
                     $pieceNumber = $index + 1;
-                    $normalizedPayload[$key.'_'.$pieceNumber] = $valueItem;
+                    if (SignalementDraftRequest::PIECES_HAUTEUR_KEY === $key) {
+                        $normalizedPayload[sprintf(SignalementDraftRequest::PATTERN_HAUTEUR_KEY, $pieceNumber)] = $valueItem;
+                    } else {
+                        $normalizedPayload[sprintf(SignalementDraftRequest::PATTERN_SUPERFICIE_KEY, $pieceNumber)] = $valueItem;
+                    }
                 }
             } else {
                 $normalizedPayload[$key] = $value;
@@ -70,7 +76,7 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
 
     public function supportsDenormalization($data, $type, $format = null, array $context = []): bool
     {
-        return SignalementDraftRequest::class === $type;
+        return SignalementDraftRequest::class === $type || TypeCompositionLogement::class;
     }
 
     public function supportsNormalization(mixed $data, string $format = null, array $context = []): bool

@@ -3,6 +3,11 @@
 namespace App\Entity;
 
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Model\InformationComplementaire;
+use App\Entity\Model\InformationProcedure;
+use App\Entity\Model\SituationFoyer;
+use App\Entity\Model\TypeCompositionLogement;
 use App\Repository\SignalementRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -31,6 +36,9 @@ class Signalement
 
     #[ORM\Column(type: 'string', length: 255)]
     private $uuid;
+
+    #[ORM\Column(type: 'string', nullable: true, enumType: ProfileDeclarant::class)]
+    private ?ProfileDeclarant $profileDeclarant = null;
 
     #[ORM\ManyToMany(targetEntity: Situation::class, inversedBy: 'signalements')]
     private $situations;
@@ -85,11 +93,24 @@ class Signalement
     private $nomProprio;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $prenomProprio;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $adresseProprio;
 
-    #[ORM\Column(type: 'string', length: 15, nullable: true)]
+    #[ORM\Column(type: 'string', length: 5, nullable: true)]
+    private ?string $codePostalProprio;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $villeProprio;
+
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
     #[Assert\Length(min: 10, max: 15)]
     private $telProprio;
+
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
+    #[Assert\Length(min: 10, max: 15)]
+    private ?string $telProprioSecondaire;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $mailProprio;
@@ -118,8 +139,11 @@ class Signalement
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private $prenomDeclarant;
 
-    #[ORM\Column(type: 'string', length: 15, nullable: true)]
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
     private $telDeclarant;
+
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
+    private ?string $telDeclarantSecondaire;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $mailDeclarant;
@@ -127,28 +151,31 @@ class Signalement
     #[ORM\Column(type: 'string', length: 200, nullable: true)]
     private $structureDeclarant;
 
-    #[ORM\Column(type: 'string', length: 50)]
+    #[ORM\Column(type: 'string', length: 10, nullable: true)]
+    private ?string $civiliteOccupant;
+
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
     #[Assert\NotBlank]
     private $nomOccupant;
 
-    #[ORM\Column(type: 'string', length: 50)]
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
     #[Assert\NotBlank]
     private $prenomOccupant;
 
-    #[ORM\Column(type: 'string', length: 15, nullable: true)]
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
     private $telOccupant;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $mailOccupant;
 
-    #[ORM\Column(type: 'string', length: 100)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private $adresseOccupant;
 
-    #[ORM\Column(type: 'string', length: 5)]
+    #[ORM\Column(type: 'string', length: 5, nullable: true)]
     #[Assert\NotBlank]
     private $cpOccupant;
 
-    #[ORM\Column(type: 'string', length: 100)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private $villeOccupant;
 
     #[ORM\Column(type: 'boolean')]
@@ -292,7 +319,7 @@ class Signalement
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'signalementsClosed')]
     private $closedBy;
 
-    #[ORM\Column(type: 'string', length: 15, nullable: true)]
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
     private $telOccupantBis;
 
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'signalement', cascade: ['persist'])]
@@ -325,6 +352,18 @@ class Signalement
 
     #[ORM\ManyToOne(inversedBy: 'signalements')]
     private ?SignalementDraft $createdFrom = null;
+
+    #[ORM\Column(type: 'type_composition_logement', nullable: true)]
+    private ?TypeCompositionLogement $typeCompositionLogement;
+
+    #[ORM\Column(type: 'situation_foyer', nullable: true)]
+    private ?SituationFoyer $situationFoyer;
+
+    #[ORM\Column(type: 'information_procedure', nullable: true)]
+    private ?InformationProcedure $informationProcedure;
+
+    #[ORM\Column(type: 'information_complementaire', nullable: true)]
+    private ?InformationComplementaire $informationComplementaire;
 
     public function __construct()
     {
@@ -445,11 +484,19 @@ class Signalement
         return $this;
     }
 
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+     * Utilisez la méthode @see getTypeCompositionLogement() afin de savoir le nombre de personnes qui vivent dans le logement
+     */
     public function getNbAdultes()
     {
         return $this->nbAdultes;
     }
 
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+     * Utilisez la méthode @see setTypeCompositionLogement() afin de mettre à jour le nombre de personnes qui vivent dans le logement
+     */
     public function setNbAdultes($nbAdultes): self
     {
         $this->nbAdultes = $nbAdultes;
@@ -457,11 +504,19 @@ class Signalement
         return $this;
     }
 
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+     * Utilisez la méthode @see getTypeCompositionLogement() afin de savoir si des enfants de moins de 6 ans occupe le logement
+     */
     public function getNbEnfantsM6()
     {
         return $this->nbEnfantsM6;
     }
 
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+     * Utilisez la méthode @see setTypeCompositionLogement() afin de mettre si des enfants de moins de 6 ans occupe le logement
+     */
     public function setNbEnfantsM6($nbEnfantsM6): self
     {
         $this->nbEnfantsM6 = $nbEnfantsM6;
@@ -469,11 +524,21 @@ class Signalement
         return $this;
     }
 
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+     * Il n'est plus utile de connaitre le nombre d'enfant de plus de 6 ans
+     * Sera supprimé à la prochaine version
+     */
     public function getNbEnfantsP6()
     {
         return $this->nbEnfantsP6;
     }
 
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+     * Il n'est plus utile de connaitre le nombre d'enfant de plus de 6 ans
+     * Sera supprimé à la prochaine version
+     */
     public function setNbEnfantsP6($nbEnfantsP6): self
     {
         $this->nbEnfantsP6 = $nbEnfantsP6;
@@ -673,11 +738,19 @@ class Signalement
         return $this;
     }
 
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+     * Sera supprimé à la prochaine version
+     */
     public function getRaisonRefusIntervention(): ?string
     {
         return $this->raisonRefusIntervention;
     }
 
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+     * Sera supprimé à la prochaine version
+     */
     public function setRaisonRefusIntervention(?string $raisonRefusIntervention): self
     {
         $this->raisonRefusIntervention = $raisonRefusIntervention;
@@ -1155,7 +1228,7 @@ class Signalement
         return $this->isRsa;
     }
 
-    public function setIsRsa(bool $isRsa): self
+    public function setIsRsa(?bool $isRsa): self
     {
         $this->isRsa = $isRsa;
 
@@ -1222,11 +1295,26 @@ class Signalement
         return $this;
     }
 
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+     * Il n'est pas utile de connaitre les différentes naissances des occupants
+     * Utilisez @see getDateNaissanceOccupant() afin de savoir la date de naissance de l'occupant (allocataire)
+     * Utilisez @see InformationComplementaire::getInformationsComplementairesSituationOccupantsDateNaissance()
+     * afin de savoir la date de naissance du bailleur
+     */
     public function getNaissanceOccupants(): ?string
     {
         return $this->naissanceOccupants;
     }
 
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+     * Il n'est pas utile de connaitre les différentes naissances des occupants
+     * Utilisez @see setDateNaissanceOccupant()
+     * afin de savoir de mettere à jour la date de naissance de l'occupant (allocataire)
+     * Utilisez @see InformationComplementaire::setInformationsComplementairesSituationOccupantsDateNaissance()
+     * afin de savoir la date de naissance du bailleur
+     */
     public function setNaissanceOccupants(?string $naissanceOccupants): self
     {
         $this->naissanceOccupants = $naissanceOccupants;
@@ -1354,11 +1442,17 @@ class Signalement
         return $this;
     }
 
+    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+     * Utilisez la méthode @see getTypeCompositionLogement() afin de savoir le nombre de pièces dans le logement
+     */
     public function getNbChambresLogement(): ?int
     {
         return $this->nbChambresLogement;
     }
 
+    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+     * Utilisez la méthode getTypeComposition() afin de savoir le nombre de pièces dans le logement
+     */
     public function setNbChambresLogement(?int $nbChambresLogement): self
     {
         $this->nbChambresLogement = $nbChambresLogement;
@@ -1695,6 +1789,138 @@ class Signalement
     public function setCreatedFrom(?SignalementDraft $createdFrom): self
     {
         $this->createdFrom = $createdFrom;
+
+        return $this;
+    }
+
+    public function getProfileDeclarant(): ?ProfileDeclarant
+    {
+        return $this->profileDeclarant;
+    }
+
+    public function setProfileDeclarant(?ProfileDeclarant $profileDeclarant): self
+    {
+        $this->profileDeclarant = $profileDeclarant;
+
+        return $this;
+    }
+
+    public function getPrenomProprio(): ?string
+    {
+        return $this->prenomProprio;
+    }
+
+    public function setPrenomProprio(?string $prenomProprio): self
+    {
+        $this->prenomProprio = $prenomProprio;
+
+        return $this;
+    }
+
+    public function getCodePostalProprio(): ?string
+    {
+        return $this->codePostalProprio;
+    }
+
+    public function setCodePostalProprio(?string $codePostalProprio): self
+    {
+        $this->codePostalProprio = $codePostalProprio;
+
+        return $this;
+    }
+
+    public function getVilleProprio(): ?string
+    {
+        return $this->villeProprio;
+    }
+
+    public function setVilleProprio(?string $villeProprio): self
+    {
+        $this->villeProprio = $villeProprio;
+
+        return $this;
+    }
+
+    public function getTelProprioSecondaire(): ?string
+    {
+        return $this->telProprioSecondaire;
+    }
+
+    public function setTelProprioSecondaire(?string $telProprioSecondaire): self
+    {
+        $this->telProprioSecondaire = $telProprioSecondaire;
+
+        return $this;
+    }
+
+    public function getTelDeclarantSecondaire(): ?string
+    {
+        return $this->telDeclarantSecondaire;
+    }
+
+    public function setTelDeclarantSecondaire(?string $telDeclarantSecondaire): self
+    {
+        $this->telDeclarantSecondaire = $telDeclarantSecondaire;
+
+        return $this;
+    }
+
+    public function getCiviliteOccupant(): ?string
+    {
+        return $this->civiliteOccupant;
+    }
+
+    public function setCiviliteOccupant(?string $civiliteOccupant): self
+    {
+        $this->civiliteOccupant = $civiliteOccupant;
+
+        return $this;
+    }
+
+    public function getTypeCompositionLogement(): ?TypeCompositionLogement
+    {
+        return $this->typeCompositionLogement;
+    }
+
+    public function setTypeCompositionLogement(?TypeCompositionLogement $typeCompositionLogement): self
+    {
+        $this->typeCompositionLogement = $typeCompositionLogement;
+
+        return $this;
+    }
+
+    public function getSituationFoyer(): ?SituationFoyer
+    {
+        return $this->situationFoyer;
+    }
+
+    public function setSituationFoyer(?SituationFoyer $situationFoyer): self
+    {
+        $this->situationFoyer = $situationFoyer;
+
+        return $this;
+    }
+
+    public function getInformationProcedure(): ?InformationProcedure
+    {
+        return $this->informationProcedure;
+    }
+
+    public function setInformationProcedure(?InformationProcedure $informationProcedure): self
+    {
+        $this->informationProcedure = $informationProcedure;
+
+        return $this;
+    }
+
+    public function getInformationComplementaire(): ?InformationComplementaire
+    {
+        return $this->informationComplementaire;
+    }
+
+    public function setInformationComplementaire(?InformationComplementaire $informationComplementaire): self
+    {
+        $this->informationComplementaire = $informationComplementaire;
 
         return $this;
     }

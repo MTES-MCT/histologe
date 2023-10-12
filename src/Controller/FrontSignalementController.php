@@ -21,6 +21,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Service\Files\DocumentProvider;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -30,6 +31,7 @@ use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\QualificationStatusService;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementFileProcessor;
+use App\Service\Signalement\ZipcodeProvider;
 use App\Service\UploadHandlerService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -116,6 +118,7 @@ class FrontSignalementController extends AbstractController
         UploadHandlerService $uploadHandlerService,
         ReferenceGenerator $referenceGenerator,
         PostalCodeHomeChecker $postalCodeHomeChecker,
+        ZipcodeProvider $zipcodeProvider,
         EventDispatcherInterface $eventDispatcher,
         SignalementQualificationFactory $signalementQualificationFactory,
         QualificationStatusService $qualificationStatusService,
@@ -124,6 +127,7 @@ class FrontSignalementController extends AbstractController
         CriticiteCalculator $criticiteCalculator,
         FileFactory $fileFactory,
         LoggerInterface $logger,
+        DocumentProvider $documentProvider
     ): Response {
         if ($this->isCsrfTokenValid('new_signalement', $request->request->get('_token'))
             && $data = $request->get('signalement')) {
@@ -241,7 +245,7 @@ class FrontSignalementController extends AbstractController
             if (!empty($signalement->getCpOccupant())) {
                 $signalement->setTerritory(
                     $territoryRepository->findOneBy([
-                        'zip' => $postalCodeHomeChecker->getZipCode($signalement->getCpOccupant()), 'isActive' => 1, ])
+                        'zip' => $zipcodeProvider->getZipCode($signalement->getCpOccupant()), 'isActive' => 1, ])
                 );
             }
 
@@ -298,7 +302,7 @@ class FrontSignalementController extends AbstractController
                         to: $toRecipient,
                         territory: $signalement->getTerritory(),
                         signalement: $signalement,
-                        attachment: $this->getModeleCourrierPourProprietaire($signalement),
+                        attachment: $documentProvider->getModeleCourrierPourProprietaire($signalement),
                     )
                 );
             }
@@ -522,15 +526,5 @@ class FrontSignalementController extends AbstractController
         }
 
         return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
-    }
-
-    private function getModeleCourrierPourProprietaire(Signalement $signalement): ?string
-    {
-        if (!$signalement->getIsProprioAverti()
-            && file_exists($this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf')) {
-            return $this->getParameter('mail_attachment_dir').'ModeleCourrier.pdf';
-        }
-
-        return null;
     }
 }

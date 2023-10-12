@@ -365,4 +365,85 @@ trait FixturesHelper
             ->setScheduledAt($scheduledAt)
             ->setStatus($status);
     }
+
+    public function getLocataireTypeComposition(bool $transformPiecesAVivre = false): array
+    {
+        $piecesAVivre = [
+            'type_logement_pieces_a_vivre_piece_1_hauteur' => 'oui',
+            'type_logement_pieces_a_vivre_piece_2_hauteur' => 'oui',
+            'type_logement_pieces_a_vivre_piece_1_superficie' => '20',
+            'type_logement_pieces_a_vivre_piece_2_superficie' => '15',
+        ];
+
+        if ($transformPiecesAVivre) {
+            $piecesAVivre = [
+                'type_logement_pieces_a_vivre_piece_hauteur' => ['oui', 'oui'],
+                'type_logement_pieces_a_vivre_piece_superficie' => ['20', '15'],
+            ];
+        }
+
+        $typeCompostion = [
+            'bail_dpe_dpe' => 'oui',
+            'bail_dpe_bail' => 'oui',
+            'type_logement_rdc' => 'non',
+            'type_logement_nature' => 'appartement',
+            'bail_dpe_etat_des_lieux' => 'oui',
+            'bail_dpe_date_emmenagement' => '2020-10-01',
+            'type_logement_commodites_wc' => 'oui',
+            'type_logement_dernier_etage' => 'non',
+            'composition_logement_enfants' => 'oui',
+            'composition_logement_nb_pieces' => '2',
+            'composition_logement_superficie' => '45',
+            'type_logement_commodites_cuisine' => 'oui',
+            'composition_logement_piece_unique' => 'plusieurs_pieces',
+            'type_logement_commodites_wc_cuisine' => 'non',
+            'type_logement_sous_sol_sans_fenetre' => 'non',
+            'composition_logement_nombre_personnes' => '3',
+            'type_logement_commodites_salle_de_bain' => 'oui',
+            'type_logement_commodites_wc_hauteur_plafond' => 'oui',
+            'type_logement_commodites_cuisine_hauteur_plafond' => 'oui',
+            'type_logement_commodites_salle_de_bain_collective' => 'oui',
+            'type_logement_commodites_salle_de_bain_hauteur_plafond' => 'oui',
+        ];
+
+        return [...$typeCompostion, ...$piecesAVivre];
+    }
+
+    public function getLocataireSituationFoyer(): array
+    {
+        return [
+            'logement_social_allocation' => 'oui',
+            'logement_social_date_naissance' => '1970-10-01',
+            'logement_social_allocation_caisse' => 'caf',
+            'travailleur_social_accompagnement' => 'oui',
+            'logement_social_demande_relogement' => 'oui',
+            'logement_social_montant_allocation' => '300',
+            'logement_social_numero_allocataire' => '12345678',
+            'travailleur_social_quitte_logement' => 'non',
+        ];
+    }
+
+    public function getLocataireInformationProcedure(): array
+    {
+        return [
+            'utilisation_service_ok_visite' => 1,
+            'info_procedure_bailleur_prevenu' => 'oui',
+            'info_procedure_assurance_contactee' => 'oui',
+            'info_procedure_depart_apres_travaux' => 'oui',
+            'utilisation_service_ok_demande_logement' => 1,
+            'utilisation_service_ok_prevenir_bailleur' => 1,
+            'info_procedure_reponse_assurance' => 'Dossier reçu',
+        ];
+    }
+
+    public function getLocataireInformationComplementaire(): array
+    {
+        return [
+            'informations_complementaires_logement_montant_loyer' => '500',
+            'informations_complementaires_logement_nombre_etages' => '5',
+            'informations_complementaires_logement_annee_construction' => '1970-02-10',
+            'informations_complementaires_situation_occupants_beneficiaire_fsl' => 'non',
+            'informations_complementaires_situation_occupants_beneficiaire_rsa' => 'non',
+        ];
+    }
 }

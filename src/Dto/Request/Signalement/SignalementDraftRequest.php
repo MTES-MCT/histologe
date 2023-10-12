@@ -2,8 +2,24 @@
 
 namespace App\Dto\Request\Signalement;
 
+use App\Entity\Signalement;
+
 class SignalementDraftRequest
 {
+    public const PREFIX_PROPERTIES_TYPE_COMPOSITION = ['type_logement', 'composition_logement', 'bail_dpe'];
+    public const PREFIX_PROPERTIES_SITUATION_FOYER = ['logement_social', 'travailleur_social'];
+    public const PREFIX_PROPERTIES_INFORMATION_PROCEDURE = ['info_procedure', 'utilisation_service'];
+    public const PREFIX_PROPERTIES_INFORMATION_COMPLEMENTAIRE = ['informations_complementaires'];
+
+    public const PIECES_SUPERFICIE_KEY_PATTERN = '/^type_logement_pieces_a_vivre_piece_(\d+)_superficie$/';
+    public const PIECES_HAUTEUR_KEY_PATTERN = '/^type_logement_pieces_a_vivre_piece_(\d+)_hauteur$/';
+    public const PIECES_SUPERFICIE_KEY = 'type_logement_pieces_a_vivre_piece_superficie';
+    public const PIECES_HAUTEUR_KEY = 'type_logement_pieces_a_vivre_piece_hauteur';
+    public const PATTERN_SUPERFICIE_KEY = 'type_logement_pieces_a_vivre_piece_%d_superficie';
+    public const PATTERN_HAUTEUR_KEY = 'type_logement_pieces_a_vivre_piece_%d_hauteur';
+
+    public const PATTERN_PHONE_KEY = '/.*(_tel|_tel_secondaire)$/';
+
     private ?string $profil = null;
     private ?string $currentStep = null;
     private ?string $adresseLogementAdresse = null;
@@ -16,6 +32,7 @@ class SignalementDraftRequest
     private ?string $adresseLogementComplementAdresseEscalier = null;
     private ?string $adresseLogementComplementAdresseEtage = null;
     private ?string $adresseLogementComplementAdresseNumeroAppartement = null;
+    private ?string $adresseLogementComplementAdresseAutre = null;
     private ?string $signalementConcerneProfil = null;
     private ?string $signalementConcerneProfilDetailOccupant = null;
     private ?string $signalementConcerneProfilDetailTiers = null;
@@ -27,32 +44,42 @@ class SignalementDraftRequest
     private ?string $vosCoordonneesTiersLien = null;
     private ?string $vosCoordonneesTiersNom = null;
     private ?string $vosCoordonneesTiersEmail = null;
-    private ?string $vosCoordonneesTiersTel = null;
+    private ?array $vosCoordonneesTiersTel = null;
+    private ?array $vosCoordonneesTiersTelSecondaire = null;
     private ?string $vosCoordonneesTiersPrenom = null;
     private ?string $vosCoordonneesOccupantCivilite = null;
     private ?string $vosCoordonneesOccupantNom = null;
     private ?string $vosCoordonneesOccupantPrenom = null;
     private ?string $vosCoordonneesOccupantEmail = null;
-    private ?string $vosCoordonneesOccupantTel = null;
+    private ?array $vosCoordonneesOccupantTel = null;
+    private ?array $vosCoordonneesOccupantTelSecondaire = null;
     private ?string $coordonneesOccupantNom = null;
     private ?string $coordonneesOccupantPrenom = null;
     private ?string $coordonneesOccupantEmail = null;
-    private ?string $coordonneesOccupantTel = null;
+    private ?array $coordonneesOccupantTel = null;
+    private ?array $coordonneesOccupantTelSecondaire = null;
     private ?string $coordonneesBailleurNom = null;
     private ?string $coordonneesBailleurPrenom = null;
     private ?string $coordonneesBailleurEmail = null;
-    private ?string $coordonneesBailleurTel = null;
+    private ?array $coordonneesBailleurTel = null;
+    private ?array $coordonneesBailleurTelSecondaire = null;
     private ?string $coordonneesBailleurAdresse = null;
     private ?string $coordonneesBailleurAdresseDetailNumero = null;
     private ?string $coordonneesBailleurAdresseDetailCodePostal = null;
     private ?string $coordonneesBailleurAdresseCommune = null;
     private ?string $zoneConcerneeZone = null;
     private ?string $typeLogementNature = null;
+    private ?string $typeLogementRdc = null;
+    private ?string $typeLogementDernierEtage = null;
+    private ?string $typeLogementSousSolSansFenetre = null;
+    private ?string $typeLogementSousCombleSansFenetre = null;
     private ?string $compositionLogementPieceUnique = null;
     private ?string $compositionLogementSuperficie = null;
     private ?string $compositionLogementNbPieces = null;
-    private ?array $typeLogementPiecesAVivreSuperficiePiece = null;
-    private ?array $typeLogementPiecesAVivreHauteurPiece = null;
+    private ?string $compositionLogementNombrePersonnes = null;
+    private ?string $compositionLogementEnfants = null;
+    private ?array $typeLogementPiecesAVivrePieceSuperficie = null;
+    private ?array $typeLogementPiecesAVivrePieceHauteur = null;
     private ?string $typeLogementCommoditesCuisine = null;
     private ?string $typeLogementCommoditesCuisineCollective = null;
     private ?string $typeLogementCommoditesCuisineHauteurPlafond = null;
@@ -74,11 +101,13 @@ class SignalementDraftRequest
     private ?string $logementSocialAllocationCaisse = null;
     private ?string $logementSocialDateNaissance = null;
     private ?string $logementSocialMontantAllocation = null;
+    private ?string $logementSocialNumeroAllocataire = null;
     private ?string $travailleurSocialQuitteLogement = null;
     private ?string $travailleurSocialAccompagnement = null;
     private ?string $travailleurSocialAccompagnementDeclarant = null;
     private ?string $infoProcedureBailleurPrevenu = null;
     private ?string $infoProcedureAssuranceContactee = null;
+    private ?string $infoProcedureReponseAssurance = null;
     private ?string $infoProcedureDepartApresTravaux = null;
     private ?bool $utilisationServiceOkPrevenirBailleur = null;
     private ?bool $utilisationServiceOkVisite = null;
@@ -86,9 +115,18 @@ class SignalementDraftRequest
     private ?string $informationsComplementairesSituationOccupantsBeneficiaireRsa = null;
     private ?string $informationsComplementairesSituationOccupantsBeneficiaireFsl = null;
     private ?string $informationsComplementairesSituationOccupantsDateNaissance = null;
+    private ?string $informationsComplementairesSituationOccupantsDemandeRelogement = null;
+    private ?string $informationsComplementairesSituationOccupantsDateEmmenagement = null;
+    private ?string $informationsComplementairesSituationOccupantsLoyersPayes = null;
+    private ?string $informationsComplementairesSituationOccupantsPreavisDepart = null;
+    private ?string $informationsComplementairesSituationBailleurBeneficiaireRsa = null;
+    private ?string $informationsComplementairesSituationBailleurBeneficiaireFsl = null;
+    private ?string $informationsComplementairesSituationBailleurRevenuFiscal = null;
+    private ?string $informationsComplementairesSituationBailleurDateNaissance = null;
     private ?string $informationsComplementairesLogementMontantLoyer = null;
     private ?string $informationsComplementairesLogementNombreEtages = null;
     private ?string $informationsComplementairesLogementAnneeConstruction = null;
+    private ?string $validationSignalementOverviewMessageAdministration = null;
 
     public function getProfil(): ?string
     {
@@ -235,6 +273,18 @@ class SignalementDraftRequest
         return $this;
     }
 
+    public function getAdresseLogementComplementAdresseAutre(): ?string
+    {
+        return $this->adresseLogementComplementAdresseAutre;
+    }
+
+    public function setAdresseLogementComplementAdresseAutre(?string $adresseLogementComplementAdresseAutre): self
+    {
+        $this->adresseLogementComplementAdresseAutre = $adresseLogementComplementAdresseAutre;
+
+        return $this;
+    }
+
     public function getSignalementConcerneProfil(): ?string
     {
         return $this->signalementConcerneProfil;
@@ -372,14 +422,26 @@ class SignalementDraftRequest
         return $this;
     }
 
-    public function getVosCoordonneesOccupantTel(): ?string
+    public function getVosCoordonneesOccupantTel(): ?array
     {
         return $this->vosCoordonneesOccupantTel;
     }
 
-    public function setVosCoordonneesOccupantTel(?string $vosCoordonneesOccupantTel): self
+    public function setVosCoordonneesOccupantTel(?array $vosCoordonneesOccupantTel): self
     {
         $this->vosCoordonneesOccupantTel = $vosCoordonneesOccupantTel;
+
+        return $this;
+    }
+
+    public function getVosCoordonneesOccupantTelSecondaire(): ?array
+    {
+        return $this->vosCoordonneesOccupantTelSecondaire;
+    }
+
+    public function setVosCoordonneesOccupantTelSecondaire(?array $vosCoordonneesOccupantTelSecondaire): self
+    {
+        $this->vosCoordonneesOccupantTelSecondaire = $vosCoordonneesOccupantTelSecondaire;
 
         return $this;
     }
@@ -420,12 +482,12 @@ class SignalementDraftRequest
         return $this;
     }
 
-    public function getCoordonneesOccupantTel(): ?string
+    public function getCoordonneesOccupantTel(): ?array
     {
         return $this->coordonneesOccupantTel;
     }
 
-    public function setCoordonneesOccupantTel(?string $coordonneesOccupantTel): self
+    public function setCoordonneesOccupantTel(?array $coordonneesOccupantTel): self
     {
         $this->coordonneesOccupantTel = $coordonneesOccupantTel;
 
@@ -468,12 +530,12 @@ class SignalementDraftRequest
         return $this;
     }
 
-    public function getCoordonneesBailleurTel(): ?string
+    public function getCoordonneesBailleurTel(): ?array
     {
         return $this->coordonneesBailleurTel;
     }
 
-    public function setCoordonneesBailleurTel(?string $coordonneesBailleurTel): self
+    public function setCoordonneesBailleurTel(?array $coordonneesBailleurTel): self
     {
         $this->coordonneesBailleurTel = $coordonneesBailleurTel;
 
@@ -577,12 +639,12 @@ class SignalementDraftRequest
         return $this;
     }
 
-    public function getVosCoordonneesTiersTel(): ?string
+    public function getVosCoordonneesTiersTel(): ?array
     {
         return $this->vosCoordonneesTiersTel;
     }
 
-    public function setVosCoordonneesTiersTel(?string $vosCoordonneesTiersTel): self
+    public function setVosCoordonneesTiersTel(?array $vosCoordonneesTiersTel): self
     {
         $this->vosCoordonneesTiersTel = $vosCoordonneesTiersTel;
 
@@ -625,6 +687,54 @@ class SignalementDraftRequest
         return $this;
     }
 
+    public function getTypeLogementRdc(): ?string
+    {
+        return $this->typeLogementRdc;
+    }
+
+    public function setTypeLogementRdc(?string $typeLogementRdc): self
+    {
+        $this->typeLogementRdc = $typeLogementRdc;
+
+        return $this;
+    }
+
+    public function getTypeLogementDernierEtage(): ?string
+    {
+        return $this->typeLogementDernierEtage;
+    }
+
+    public function setTypeLogementDernierEtage(?string $typeLogementDernierEtage): self
+    {
+        $this->typeLogementDernierEtage = $typeLogementDernierEtage;
+
+        return $this;
+    }
+
+    public function getTypeLogementSousSolSansFenetre(): ?string
+    {
+        return $this->typeLogementSousSolSansFenetre;
+    }
+
+    public function setTypeLogementSousSolSansFenetre(?string $typeLogementSousSolSansFenetre): self
+    {
+        $this->typeLogementSousSolSansFenetre = $typeLogementSousSolSansFenetre;
+
+        return $this;
+    }
+
+    public function getTypeLogementSousCombleSansFenetre(): ?string
+    {
+        return $this->typeLogementSousCombleSansFenetre;
+    }
+
+    public function setTypeLogementSousCombleSansFenetre(?string $typeLogementSousCombleSansFenetre): self
+    {
+        $this->typeLogementSousCombleSansFenetre = $typeLogementSousCombleSansFenetre;
+
+        return $this;
+    }
+
     public function getCompositionLogementPieceUnique(): ?string
     {
         return $this->compositionLogementPieceUnique;
@@ -661,26 +771,50 @@ class SignalementDraftRequest
         return $this;
     }
 
-    public function getTypeLogementPiecesAVivreSuperficiePiece(): ?array
+    public function getCompositionLogementNombrePersonnes(): ?string
     {
-        return $this->typeLogementPiecesAVivreSuperficiePiece;
+        return $this->compositionLogementNombrePersonnes;
     }
 
-    public function setTypeLogementPiecesAVivreSuperficiePiece(?array $typeLogementPiecesAVivreSuperficiePiece): self
+    public function setCompositionLogementNombrePersonnes(?string $compositionLogementNombrePersonnes): self
     {
-        $this->typeLogementPiecesAVivreSuperficiePiece = $typeLogementPiecesAVivreSuperficiePiece;
+        $this->compositionLogementNombrePersonnes = $compositionLogementNombrePersonnes;
 
         return $this;
     }
 
-    public function getTypeLogementPiecesAVivreHauteurPiece(): ?array
+    public function getCompositionLogementEnfants(): ?string
     {
-        return $this->typeLogementPiecesAVivreHauteurPiece;
+        return $this->compositionLogementEnfants;
     }
 
-    public function setTypeLogementPiecesAVivreHauteurPiece(?array $typeLogementPiecesAVivreHauteurPiece): self
+    public function setCompositionLogementEnfants(?string $compositionLogementEnfants): self
     {
-        $this->typeLogementPiecesAVivreHauteurPiece = $typeLogementPiecesAVivreHauteurPiece;
+        $this->compositionLogementEnfants = $compositionLogementEnfants;
+
+        return $this;
+    }
+
+    public function getTypeLogementPiecesAVivrePieceSuperficie(): ?array
+    {
+        return $this->typeLogementPiecesAVivrePieceSuperficie;
+    }
+
+    public function setTypeLogementPiecesAVivrePieceSuperficie(?array $typeLogementPiecesAVivrePieceSuperficie): self
+    {
+        $this->typeLogementPiecesAVivrePieceSuperficie = $typeLogementPiecesAVivrePieceSuperficie;
+
+        return $this;
+    }
+
+    public function getTypeLogementPiecesAVivrePieceHauteur(): ?array
+    {
+        return $this->typeLogementPiecesAVivrePieceHauteur;
+    }
+
+    public function setTypeLogementPiecesAVivrePieceHauteur(?array $typeLogementPiecesAVivrePieceHauteur): self
+    {
+        $this->typeLogementPiecesAVivrePieceHauteur = $typeLogementPiecesAVivrePieceHauteur;
 
         return $this;
     }
@@ -940,6 +1074,18 @@ class SignalementDraftRequest
         return $this;
     }
 
+    public function getLogementSocialNumeroAllocataire(): ?string
+    {
+        return $this->logementSocialNumeroAllocataire;
+    }
+
+    public function setLogementSocialNumeroAllocataire(?string $logementSocialNumeroAllocataire): self
+    {
+        $this->logementSocialNumeroAllocataire = $logementSocialNumeroAllocataire;
+
+        return $this;
+    }
+
     public function getTravailleurSocialQuitteLogement(): ?string
     {
         return $this->travailleurSocialQuitteLogement;
@@ -996,6 +1142,18 @@ class SignalementDraftRequest
     public function setInfoProcedureAssuranceContactee(?string $infoProcedureAssuranceContactee): self
     {
         $this->infoProcedureAssuranceContactee = $infoProcedureAssuranceContactee;
+
+        return $this;
+    }
+
+    public function getInfoProcedureReponseAssurance(): ?string
+    {
+        return $this->infoProcedureReponseAssurance;
+    }
+
+    public function setInfoProcedureReponseAssurance(?string $infoProcedureReponseAssurance): self
+    {
+        $this->infoProcedureReponseAssurance = $infoProcedureReponseAssurance;
 
         return $this;
     }
@@ -1089,6 +1247,102 @@ class SignalementDraftRequest
         return $this->informationsComplementairesLogementMontantLoyer;
     }
 
+    public function getInformationsComplementairesSituationOccupantsDemandeRelogement(): ?string
+    {
+        return $this->informationsComplementairesSituationOccupantsDemandeRelogement;
+    }
+
+    public function setInformationsComplementairesSituationOccupantsDemandeRelogement(?string $informationsComplementairesSituationOccupantsDemandeRelogement): self
+    {
+        $this->informationsComplementairesSituationOccupantsDemandeRelogement = $informationsComplementairesSituationOccupantsDemandeRelogement;
+
+        return $this;
+    }
+
+    public function getInformationsComplementairesSituationOccupantsDateEmmenagement(): ?string
+    {
+        return $this->informationsComplementairesSituationOccupantsDateEmmenagement;
+    }
+
+    public function setInformationsComplementairesSituationOccupantsDateEmmenagement(?string $informationsComplementairesSituationOccupantsDateEmmenagement): self
+    {
+        $this->informationsComplementairesSituationOccupantsDateEmmenagement = $informationsComplementairesSituationOccupantsDateEmmenagement;
+
+        return $this;
+    }
+
+    public function getInformationsComplementairesSituationOccupantsLoyersPayes(): ?string
+    {
+        return $this->informationsComplementairesSituationOccupantsLoyersPayes;
+    }
+
+    public function setInformationsComplementairesSituationOccupantsLoyersPayes(?string $informationsComplementairesSituationOccupantsLoyersPayes): self
+    {
+        $this->informationsComplementairesSituationOccupantsLoyersPayes = $informationsComplementairesSituationOccupantsLoyersPayes;
+
+        return $this;
+    }
+
+    public function getInformationsComplementairesSituationOccupantsPreavisDepart(): ?string
+    {
+        return $this->informationsComplementairesSituationOccupantsPreavisDepart;
+    }
+
+    public function setInformationsComplementairesSituationOccupantsPreavisDepart(?string $informationsComplementairesSituationOccupantsPreavisDepart): self
+    {
+        $this->informationsComplementairesSituationOccupantsPreavisDepart = $informationsComplementairesSituationOccupantsPreavisDepart;
+
+        return $this;
+    }
+
+    public function getInformationsComplementairesSituationBailleurBeneficiaireRsa(): ?string
+    {
+        return $this->informationsComplementairesSituationBailleurBeneficiaireRsa;
+    }
+
+    public function setInformationsComplementairesSituationBailleurBeneficiaireRsa(?string $informationsComplementairesSituationBailleurBeneficiaireRsa): self
+    {
+        $this->informationsComplementairesSituationBailleurBeneficiaireRsa = $informationsComplementairesSituationBailleurBeneficiaireRsa;
+
+        return $this;
+    }
+
+    public function getInformationsComplementairesSituationBailleurBeneficiaireFsl(): ?string
+    {
+        return $this->informationsComplementairesSituationBailleurBeneficiaireFsl;
+    }
+
+    public function setInformationsComplementairesSituationBailleurBeneficiaireFsl(?string $informationsComplementairesSituationBailleurBeneficiaireFsl): self
+    {
+        $this->informationsComplementairesSituationBailleurBeneficiaireFsl = $informationsComplementairesSituationBailleurBeneficiaireFsl;
+
+        return $this;
+    }
+
+    public function getInformationsComplementairesSituationBailleurRevenuFiscal(): ?string
+    {
+        return $this->informationsComplementairesSituationBailleurRevenuFiscal;
+    }
+
+    public function setInformationsComplementairesSituationBailleurRevenuFiscal(?string $informationsComplementairesSituationBailleurRevenuFiscal): self
+    {
+        $this->informationsComplementairesSituationBailleurRevenuFiscal = $informationsComplementairesSituationBailleurRevenuFiscal;
+
+        return $this;
+    }
+
+    public function getInformationsComplementairesSituationBailleurDateNaissance(): ?string
+    {
+        return $this->informationsComplementairesSituationBailleurDateNaissance;
+    }
+
+    public function setInformationsComplementairesSituationBailleurDateNaissance(?string $informationsComplementairesSituationBailleurDateNaissance): self
+    {
+        $this->informationsComplementairesSituationBailleurDateNaissance = $informationsComplementairesSituationBailleurDateNaissance;
+
+        return $this;
+    }
+
     public function setInformationsComplementairesLogementMontantLoyer(?string $informationsComplementairesLogementMontantLoyer): self
     {
         $this->informationsComplementairesLogementMontantLoyer = $informationsComplementairesLogementMontantLoyer;
@@ -1116,6 +1370,63 @@ class SignalementDraftRequest
     public function setInformationsComplementairesLogementAnneeConstruction(?string $informationsComplementairesLogementAnneeConstruction): self
     {
         $this->informationsComplementairesLogementAnneeConstruction = $informationsComplementairesLogementAnneeConstruction;
+
+        return $this;
+    }
+
+    public function getVosCoordonneesTiersTelSecondaire(): ?array
+    {
+        return $this->vosCoordonneesTiersTelSecondaire;
+    }
+
+    public function setVosCoordonneesTiersTelSecondaire(?array $vosCoordonneesTiersTelSecondaire): self
+    {
+        $this->vosCoordonneesTiersTelSecondaire = $vosCoordonneesTiersTelSecondaire;
+
+        return $this;
+    }
+
+    public function getCoordonneesOccupantTelSecondaire(): ?array
+    {
+        return $this->coordonneesOccupantTelSecondaire;
+    }
+
+    public function setCoordonneesOccupantTelSecondaire(?array $coordonneesOccupantTelSecondaire): self
+    {
+        $this->coordonneesOccupantTelSecondaire = $coordonneesOccupantTelSecondaire;
+
+        return $this;
+    }
+
+    public function getCoordonneesBailleurTelSecondaire(): ?array
+    {
+        return $this->coordonneesBailleurTelSecondaire;
+    }
+
+    public function setCoordonneesBailleurTelSecondaire(?array $coordonneesBailleurTelSecondaire): self
+    {
+        $this->coordonneesBailleurTelSecondaire = $coordonneesBailleurTelSecondaire;
+
+        return $this;
+    }
+
+    /**
+     * Make Signalement::details not null after MEP.
+     *
+     * @see Signalement::$details
+     */
+    public function getValidationSignalementOverviewMessageAdministration(): ?string
+    {
+        if (empty($this->validationSignalementOverviewMessageAdministration)) {
+            return 'N/A';
+        }
+
+        return $this->validationSignalementOverviewMessageAdministration;
+    }
+
+    public function setValidationSignalementOverviewMessageAdministration(?string $validationSignalementOverviewMessageAdministration): self
+    {
+        $this->validationSignalementOverviewMessageAdministration = $validationSignalementOverviewMessageAdministration;
 
         return $this;
     }

@@ -1,0 +1,51 @@
+signalements_draft:
+  -
+    uuid: '00000000-0000-0000-2023-locataire001'
+    profile_declarant: 'LOCATAIRE'
+    email_declarant: 'locataire-01@histologe.fr'
+    payload: 'locataire.json'
+  -
+    uuid: '00000000-0000-0000-2023-locataire002'
+    profile_declarant: 'LOCATAIRE'
+    email_declarant: 'locataire-02@histologe.fr'
+    payload: 'step/validation_signalement/locataire.json'
+  -
+    uuid: '00000000-0000-0000-2023-bailleuroc01'
+    profile_declarant: 'BAILLEUR_OCCUPANT'
+    email_declarant: 'bailleur_occupant-01@histologe.fr'
+    payload: 'bailleur_occupant.json'
+  -
+    uuid: '00000000-0000-0000-2023-bailleuroc02'
+    profile_declarant: 'BAILLEUR_OCCUPANT'
+    email_declarant: 'bailleur_occupant-02@histologe.fr'
+    payload: 'step/validation_signalement/bailleur_occupant.json'
+  -
+    uuid: '00000000-0000-0000-2023-bailleur0001'
+    profile_declarant: 'BAILLEUR'
+    email_declarant: 'bailleur-01@histologe.fr'
+    payload: 'bailleur.json'
+  -
+    uuid: '00000000-0000-0000-2023-bailleur0002'
+    profile_declarant: 'BAILLEUR'
+    email_declarant: 'bailleur-02@histologe.fr'
+    payload: 'step/validation_signalement/bailleur.json'
+  -
+    uuid: '00000000-0000-0000-2023-tierspart001'
+    profile_declarant: 'TIERS_PARTICULIER'
+    email_declarant: 'tiers_particulier-01@histologe.fr'
+    payload: 'tiers_particulier.json'
+  -
+    uuid: '00000000-0000-0000-2023-tierpro00001'
+    profile_declarant: 'TIERS_PRO'
+    email_declarant: 'tiers_pro-01@histologe.fr'
+    payload: 'tiers_pro.json'
+  -
+    uuid: '00000000-0000-0000-2023-secours00001'
+    profile_declarant: 'SERVICE_SECOURS'
+    email_declarant: 'service_secours-01@histologe.fr'
+    payload: 'service_secours.json'
+  -
+    uuid: '00000000-0000-0000-2023-secours00002'
+    profile_declarant: 'SERVICE_SECOURS'
+    email_declarant: 'service_secours-02@histologe.fr'
+    payload: 'step/validation_signalement/service_secours.json'
