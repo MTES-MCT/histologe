@@ -2,7 +2,7 @@
     <div class="fr-container fr-container--fluid fr-container-md">
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-8">
-                <form method="POST" enctype="multipart/form-data" action="{{ path('back_signalement_edit_address',{uuid:signalement.uuid}) }}">
+                <form method="POST" id="form-edit-address" enctype="multipart/form-data" action="{{ path('back_signalement_edit_address',{uuid:signalement.uuid}) }}">
                     <div class="fr-modal__body">
                         <div class="fr-modal__header">
                             <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-edit-address">Fermer</button>
@@ -28,48 +28,48 @@
                                         </div>
 
                                         <div class="fr-input-group">
-                                            <label class="fr-label" for="edit-address-address">Numéro et voie</label>
-                                            <input class="fr-input" type="text" disabled id="edit-address-address" name="edit-address-address" value="{{ signalement.adresseOccupant }}">
-                                            <input type="hidden" id="edit-address-address-hidden" name="edit-address-address-hidden" value="{{ signalement.adresseOccupant }}">
+                                            <label class="fr-label" for="adresse-visible">Numéro et voie</label>
+                                            <input class="fr-input" type="text" disabled name="adresse-visible" value="{{ signalement.adresseOccupant }}">
+                                            <input type="hidden" name="adresse" value="{{ signalement.adresseOccupant }}">
                                         </div>
 
                                         <div class="fr-input-group">
-                                            <label class="fr-label" for="edit-address-code-postal">Code postal</label>
-                                            <input class="fr-input" type="text" disabled id="edit-address-code-postal" name="edit-address-code-postal" value="{{ signalement.cpOccupant }}">
-                                            <input type="hidden" id="edit-address-code-postal-hidden" name="edit-address-code-postal-hidden" value="{{ signalement.cpOccupant }}">
+                                            <label class="fr-label" for="codePostal-visible">Code postal</label>
+                                            <input class="fr-input" type="text" disabled name="codePostal-visible" value="{{ signalement.cpOccupant }}">
+                                            <input type="hidden" name="codePostal" value="{{ signalement.cpOccupant }}">
                                         </div>
 
                                         <div class="fr-input-group fr-input-group--disabled">
-                                            <label class="fr-label" for="edit-address-commune">Commune</label>
-                                            <input class="fr-input" type="text" disabled id="edit-address-commune" name="edit-address-commune" value="{{ signalement.villeOccupant }}">
-                                            <input type="hidden" id="edit-address-commune-hidden" name="edit-address-commune-hidden" value="{{ signalement.villeOccupant }}">
+                                            <label class="fr-label" for="ville-visible">Commune</label>
+                                            <input class="fr-input" type="text" disabled name="ville-visible" value="{{ signalement.villeOccupant }}">
+                                            <input type="hidden" name="ville" value="{{ signalement.villeOccupant }}">
                                         </div>
 
-                                        <input type="hidden" id="edit-address-insee-hidden" name="edit-address-insee-hidden" value="{{ signalement.inseeOccupant }}">
-                                        <input type="hidden" id="edit-address-geoloc-lat-hidden" name="edit-address-geoloc-lat-hidden" value="{{ signalement.geoloc.lat }}">
-                                        <input type="hidden" id="edit-address-geoloc-lng-hidden" name="edit-address-geoloc-lng-hidden" value="{{ signalement.geoloc.lng }}">
+                                        <input type="hidden" name="insee" value="{{ signalement.inseeOccupant }}">
+                                        <input type="hidden" name="geolocLat" value="{{ signalement.geoloc.lat }}">
+                                        <input type="hidden" name="geolocLng" value="{{ signalement.geoloc.lng }}">
                                     </div>
                                     <div class="fr-col-12 fr-col-md-6">
                                         <h2 class="fr-h5">Complément d'adresse</h2>
 
                                         <div class="fr-input-group">
-                                            <label class="fr-label" for="edit-address-etage">Etage</label>
-                                            <input class="fr-input" type="text" id="edit-address-etage" name="edit-address-etage" value="{{ signalement.etageOccupant }}">
+                                            <label class="fr-label" for="etage">Etage</label>
+                                            <input class="fr-input" type="text" name="etage" value="{{ signalement.etageOccupant }}">
                                         </div>
 
                                         <div class="fr-input-group">
-                                            <label class="fr-label" for="edit-address-escalier">Escalier</label>
-                                            <input class="fr-input" type="text" id="edit-address-escalier" name="edit-address-escalier" value="{{ signalement.escalierOccupant }}">
+                                            <label class="fr-label" for="escalier">Escalier</label>
+                                            <input class="fr-input" type="text" name="escalier" value="{{ signalement.escalierOccupant }}">
                                         </div>
 
                                         <div class="fr-input-group">
-                                            <label class="fr-label" for="edit-address-num-appartement">Numéro d'appartement</label>
-                                            <input class="fr-input" type="text" id="edit-address-num-appartement" name="edit-address-num-appartement" value="{{ signalement.numAppartOccupant }}">
+                                            <label class="fr-label" for="numAppart">Numéro d'appartement</label>
+                                            <input class="fr-input" type="text" name="numAppart" value="{{ signalement.numAppartOccupant }}">
                                         </div>
 
                                         <div class="fr-input-group">
-                                            <label class="fr-label" for="edit-address-autre">Autre (résidence, lieu-dit...)</label>
-                                            <input class="fr-input" type="text" id="edit-address-autre" name="edit-address-autre" value="{{ signalement.adresseAutreOccupant }}">
+                                            <label class="fr-label" for="autre">Autre (résidence, lieu-dit...)</label>
+                                            <input class="fr-input" type="text" name="autre" value="{{ signalement.adresseAutreOccupant }}">
                                         </div>
                                     </div>
                                 </div>

@@ -2,6 +2,7 @@
 
 namespace App\Manager;
 
+use App\Dto\Request\Signalement\AdresseOccupantRequest;
 use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Dto\SignalementAffectationListView;
 use App\Entity\Affectation;
@@ -266,6 +267,25 @@ class SignalementManager extends AbstractManager
         $signalementQualification->setStatus($this->qualificationStatusService->getNDEStatus($signalementQualification));
 
         $this->save($signalementQualification);
+    }
+
+    public function updateFromAdresseOccupantRequest(Signalement $signalement, AdresseOccupantRequest $adresseOccupantRequest)
+    {
+        $signalement->setAdresseOccupant($adresseOccupantRequest->getAdresse());
+        $signalement->setCpOccupant($adresseOccupantRequest->getCodePostal());
+        $signalement->setVilleOccupant($adresseOccupantRequest->getVille());
+        $signalement->setInseeOccupant($adresseOccupantRequest->getInsee());
+        $signalement->setGeoloc([
+            'lat' => $adresseOccupantRequest->getGeolocLat(),
+            'lng' => $adresseOccupantRequest->getGeolocLng(),
+        ]);
+
+        $signalement->setEtageOccupant($adresseOccupantRequest->getEtage());
+        $signalement->setEscalierOccupant($adresseOccupantRequest->getEscalier());
+        $signalement->setNumAppartOccupant($adresseOccupantRequest->getNumAppart());
+        $signalement->setAdresseAutreOccupant($adresseOccupantRequest->getAutre());
+
+        $this->save($signalement);
     }
 
     public function findSignalementAffectationList(User|UserInterface|null $user, array $options): array
