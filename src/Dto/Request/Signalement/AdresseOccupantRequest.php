@@ -2,17 +2,21 @@
 
 namespace App\Dto\Request\Signalement;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 class AdresseOccupantRequest
 {
     public function __construct(
         private readonly ?string $adresse = null,
         private readonly ?string $codePostal = null,
         private readonly ?string $ville = null,
+        #[Assert\NotBlank()]
         private readonly ?string $etage = null,
         private readonly ?string $escalier = null,
         private readonly ?string $numAppart = null,
         private readonly ?string $autre = null,
-        private readonly ?string $geoloc = null,
+        private readonly ?string $geolocLng = null,
+        private readonly ?string $geolocLat = null,
         private readonly ?string $insee = null,
     ) {
     }
@@ -52,9 +56,14 @@ class AdresseOccupantRequest
         return $this->autre;
     }
 
-    public function getGeoloc(): ?string
+    public function getGeolocLng(): ?string
     {
-        return $this->geoloc;
+        return $this->geolocLng;
+    }
+
+    public function getGeolocLat(): ?string
+    {
+        return $this->geolocLat;
     }
 
     public function getInsee(): ?string
