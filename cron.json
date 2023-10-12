@@ -14,12 +14,6 @@
     },
     {
       "command": "0 5 * * * php bin/console app:notify-visits"
-    },
-    {
-      "command": "0 0 * * * php bin/console app:sync-esabora-sish"
-    },
-    {
-      "command": "0 1 * * * php bin/console app:sync-esabora-sish-intervention"
     }
   ]
 }

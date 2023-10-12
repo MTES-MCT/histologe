@@ -1,0 +1,10 @@
+parameters:
+  clock_process:
+      sleep_interval: '%env(ESABORA_CRON_CLOCK_SLEEP_INTERVAL)%'
+      tasks:
+        -
+          command: 'php bin/console app:sync-esabora-sish'
+          schedule: '%env(ESABORA_CRON_SCHEDULE_SYNC_SISH)%'
+        -
+          command: 'php bin/console app:sync-esabora-sish-intervention'
+          schedule: '%env(ESABORA_CRON_SCHEDULE_SYNC_SISH_INTERVENTION)%'
