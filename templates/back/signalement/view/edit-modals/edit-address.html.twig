@@ -2,7 +2,7 @@
     <div class="fr-container fr-container--fluid fr-container-md">
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-8">
-                <form method="POST" id="form-edit-address" enctype="multipart/form-data" action="{{ path('back_signalement_edit_address',{uuid:signalement.uuid}) }}">
+                <form method="POST" id="form-edit-address" enctype="application/json" action="{{ path('back_signalement_edit_address',{uuid:signalement.uuid}) }}">
                     <div class="fr-modal__body">
                         <div class="fr-modal__header">
                             <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-edit-address">Fermer</button>
