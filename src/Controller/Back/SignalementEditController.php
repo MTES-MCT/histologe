@@ -8,8 +8,9 @@ use App\Manager\SignalementManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/bo/signalements')]
 class SignalementEditController extends AbstractController
@@ -17,15 +18,42 @@ class SignalementEditController extends AbstractController
     #[Route('/{uuid}/edit-address', name: 'back_signalement_edit_address', methods: 'POST')]
     public function validationResponseSignalement(
         Signalement $signalement,
-        #[MapRequestPayload] AdresseOccupantRequest $adresseOccupantRequest,
         Request $request,
         SignalementManager $signalementManager,
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_edit_address_'.$signalement->getId(), $request->get('_token'))) {
-            $signalementManager->updateFromAdresseOccupantRequest($signalement, $adresseOccupantRequest);
+            /** @var AdresseOccupantRequest $adresseOccupantRequest */
+            $adresseOccupantRequest = new AdresseOccupantRequest(
+                adresse: $request->get('adresse'),
+                codePostal: $request->get('codePostal'),
+                ville: $request->get('ville'),
+                etage: $request->get('etage'),
+                escalier: $request->get('escalier'),
+                numAppart: $request->get('numAppart'),
+                autre: $request->get('autre'),
+                geolocLng: $request->get('geolocLng'),
+                geolocLat: $request->get('geolocLat'),
+                insee: $request->get('insee'),
+            );
 
-            $this->addFlash('success', 'Adresse du logement mise à jour avec succés !');
+            $errorMessage = '';
+            $errors = $validator->validate($adresseOccupantRequest);
+            if (\count($errors) > 0) {
+                $errorMessage = '';
+                foreach ($errors as $error) {
+                    $errorMessage .= $error->getPropertyPath().' : '.$error->getMessage().' ';
+                }
+            }
+
+            if (empty($errorMessage)) {
+                $signalementManager->updateFromAdresseOccupantRequest($signalement, $adresseOccupantRequest);
+                $this->addFlash('success', 'Adresse du logement mise à jour avec succès !');
+            } else {
+                $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
+            }
         } else {
             $this->addFlash('error', 'Une erreur est survenue...');
         }
