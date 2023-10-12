@@ -49,4 +49,14 @@ class VisiteNotifierTest extends KernelTestCase
         $nbNotified = $this->visiteNotifier->notifyVisiteToConclude($intervention);
         $this->assertEquals($nbNotified, 3);
     }
+
+    public function testNotifyVisiteToConclude69()
+    {
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000003']);
+        /** @var Intervention $intervention * */
+        $intervention = $signalement->getInterventions()[0];
+
+        $nbNotified = $this->visiteNotifier->notifyVisiteToConclude($intervention);
+        $this->assertEquals($nbNotified, 2);
+    }
 }
