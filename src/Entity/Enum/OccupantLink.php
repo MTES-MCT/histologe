@@ -2,12 +2,13 @@
 
 namespace App\Entity\Enum;
 
-use App\Form\SignalementType;
-
 enum OccupantLink: string
 {
     case PROCHE = 'PROCHE';
-    case VOISINAGE = 'VOISINAGE';
+    case VOISIN = 'VOISIN';
+    case SECOURS = 'SECOURS';
+    case BAILLEUR = 'BAILLEUR';
+    case PRO = 'PRO';
     case AUTRE = 'AUTRE';
 
     public function label(): string
@@ -19,9 +20,12 @@ enum OccupantLink: string
     public static function getLabelList(): array
     {
         return [
-            'PROCHE' => 'PROCHE',
-            'VOISINAGE' => 'VOISIN',
-            'AUTRE' => 'AUTRE',
+            'PROCHE' => 'Proche',
+            'VOISIN' => 'Voisin',
+            'SECOURS' => 'Services de secours',
+            'BAILLEUR' => 'Bailleur',
+            'PRO' => 'Pro',
+            'AUTRE' => 'Autre',
         ];
     }
 }
