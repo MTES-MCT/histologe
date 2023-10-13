@@ -916,7 +916,7 @@ class Signalement
     {
         $telDecoded = json_decode($this->getTelOccupant());
 
-        return $telDecoded ? $telDecoded->phone_number : '';
+        return $telDecoded ? $telDecoded->phone_number : $this->telOccupant;
     }
 
     public function setTelOccupant($telOccupant): self
