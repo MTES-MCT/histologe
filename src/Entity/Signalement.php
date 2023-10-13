@@ -675,7 +675,7 @@ class Signalement
     {
         $telDecoded = json_decode($this->getTelProprio());
 
-        return $telDecoded ? $telDecoded->phone_number : '';
+        return $telDecoded ? $telDecoded->phone_number : $this->telProprio;
     }
 
     public function setTelProprio(?string $telProprio): self
@@ -810,7 +810,7 @@ class Signalement
     {
         $telDecoded = json_decode($this->getTelDeclarant());
 
-        return $telDecoded ? $telDecoded->phone_number : '';
+        return $telDecoded ? $telDecoded->phone_number : $this->telDeclarant;
     }
 
     public function setTelDeclarant(?string $telDeclarant): self
@@ -1568,7 +1568,7 @@ class Signalement
     {
         $telDecoded = json_decode($this->getTelOccupantBis());
 
-        return $telDecoded ? $telDecoded->phone_number : '';
+        return $telDecoded ? $telDecoded->phone_number : $this->telOccupantBis;
     }
 
     public function setTelOccupantBis(?string $telOccupantBis): self
@@ -1878,7 +1878,7 @@ class Signalement
     {
         $telDecoded = json_decode($this->getTelProprioSecondaire());
 
-        return $telDecoded ? $telDecoded->phone_number : '';
+        return $telDecoded ? $telDecoded->phone_number : $this->telProprioSecondaire;
     }
 
     public function setTelProprioSecondaire(?string $telProprioSecondaire): self
@@ -1897,7 +1897,7 @@ class Signalement
     {
         $telDecoded = json_decode($this->getTelDeclarantSecondaire());
 
-        return $telDecoded ? $telDecoded->phone_number : '';
+        return $telDecoded ? $telDecoded->phone_number : $this->telDeclarantSecondaire;
     }
 
     public function setTelDeclarantSecondaire(?string $telDeclarantSecondaire): self

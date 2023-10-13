@@ -39,7 +39,10 @@ class AppExtension extends AbstractExtension
 
     public function getLabelLienDeclarantOccupant(string $lienDeclarantOccupant): string
     {
-        if ($label = array_search($lienDeclarantOccupant, SignalementType::LINK_CHOICES)) {
+        if ('voisinage' == $lienDeclarantOccupant) {
+            $lienDeclarantOccupant = 'voisin';
+        }
+        if ($label = array_search(strtoupper($lienDeclarantOccupant), SignalementType::LINK_CHOICES)) {
             return $label;
         }
 
