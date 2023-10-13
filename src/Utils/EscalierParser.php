@@ -18,7 +18,7 @@ class EscalierParser
             'ENTREE' => ['ENTRÉE', 'ENTRéE', 'ENTREE'],
             'PORTE' => [],
             'BLOC' => [],
-            'ALLEE' => ['ALLÉE', 'ALLEE', 'ALLéE'],
+            'ALLEE' => ['ALLÉE', 'ALLéE'],
             'ETAGE' => ['ÉTAGE', 'éTAGE'],
             'NUMERO' => ['N°', 'NUM', 'NUMéRO'],
         ];
