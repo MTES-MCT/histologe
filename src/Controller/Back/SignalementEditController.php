@@ -26,17 +26,10 @@ class SignalementEditController extends AbstractController
         $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_edit_address_'.$signalement->getId(), $request->get('_token'))) {
             /** @var AdresseOccupantRequest $adresseOccupantRequest */
-            $adresseOccupantRequest = new AdresseOccupantRequest(
-                adresse: $request->get('adresse'),
-                codePostal: $request->get('codePostal'),
-                ville: $request->get('ville'),
-                etage: $request->get('etage'),
-                escalier: $request->get('escalier'),
-                numAppart: $request->get('numAppart'),
-                autre: $request->get('autre'),
-                geolocLng: $request->get('geolocLng'),
-                geolocLat: $request->get('geolocLat'),
-                insee: $request->get('insee'),
+            $adresseOccupantRequest = $serializer->deserialize(
+                json_encode($request->getPayload()->all()),
+                AdresseOccupantRequest::class,
+                'json'
             );
 
             $errorMessage = '';
@@ -44,7 +37,7 @@ class SignalementEditController extends AbstractController
             if (\count($errors) > 0) {
                 $errorMessage = '';
                 foreach ($errors as $error) {
-                    $errorMessage .= $error->getPropertyPath().' : '.$error->getMessage().' ';
+                    $errorMessage .= $error->getMessage().' ';
                 }
             }
 
