@@ -79,16 +79,19 @@ const checkUserMail = (el) => {
     let formData = new FormData();
     formData.append('email', el.value)
     formData.append('_token', el.getAttribute('data-token'))
-    fetch('/bo/partner/checkmail', {
+    fetch('/bo/partenaires/checkmail', {
         method: 'POST',
         body: formData
     }).then(r => {
         if (!r.ok) {
-            el.classList.add('fr-input--error');
-            el.parentElement.classList.add('fr-input-group--error');
-            el.parentElement.querySelector('p.fr-error-text').classList.remove('fr-hidden');
-            document.querySelector('#user_create_form_submit').disabled = true;
-            document.querySelector('#user_edit_form_submit').disabled = true;
+            r.json().then((r) => {
+                el.classList.add('fr-input--error');
+                el.parentElement.classList.add('fr-input-group--error');
+                el.parentElement.querySelector('p.fr-error-text').innerText = r.error;
+                el.parentElement.querySelector('p.fr-error-text').classList.remove('fr-hidden');
+                document.querySelector('#user_create_form_submit').disabled = true;
+                document.querySelector('#user_edit_form_submit').disabled = true;
+            })
         } else {
             el.classList.remove('fr-input--error');
             el.parentElement.classList.remove('fr-input-group--error');
@@ -100,7 +103,7 @@ const checkUserMail = (el) => {
     .catch(function (err) {
         console.warn('Something went wrong.', err);
     });
-}
+};
 const serializeArray = (form) => {
     return Array.from(new FormData(form)
         .entries())
