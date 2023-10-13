@@ -18,7 +18,7 @@ class DossierPushSISHResponse implements DossierResponseInterface
                 $this->errorReason = json_encode($response);
             }
         }
-        $this->statusCode = $statusCode; // TODO logguer error pour sentry ?
+        $this->statusCode = $statusCode;
     }
 
     public function getSasId(): ?int

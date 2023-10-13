@@ -34,7 +34,7 @@ class EscalierParserTest extends TestCase
         yield '7C' => ['7C', '7C'];
         yield 'A-2' => ['A-2', 'A-2'];
         yield 'allée N2' => ['allée N2', 'N2'];
-        yield 'angelslizaga@gmail.com' => ['angelslizaga@gmail.com', null];
+        yield 'fausseadressemail@yopmail.com' => ['fausseadressemail@yopmail.com', null];
         yield 'B1 escalier 3' => ['B1 escalier 3', '3'];
         yield 'bât 1' => ['bât 1', '1'];
         yield 'Bat 1a' => ['Bat 1a', '1A'];

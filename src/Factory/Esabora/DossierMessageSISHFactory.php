@@ -8,11 +8,11 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Messenger\Message\DossierMessageSISH;
 use App\Repository\SuiviRepository;
+use App\Service\DataGouv\AddressService;
 use App\Service\Esabora\AbstractEsaboraService;
 use App\Service\Esabora\Enum\PersonneType;
 use App\Service\Esabora\Model\DossierMessageSISHPersonne;
 use App\Service\HtmlCleaner;
-use App\Service\Signalement\AdresseDataGouvService;
 use App\Service\UploadHandlerService;
 use App\Utils\AddressParser;
 use App\Utils\EscalierParser;
@@ -30,7 +30,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly ParameterBagInterface $parameterBag,
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly AdresseDataGouvService $adresseDataGouvService,
+        private readonly AddressService $addressService,
     ) {
         parent::__construct($this->uploadHandlerService);
     }
@@ -69,7 +69,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         $etage = $signalement->getEtageOccupant() ? EtageParser::parse($signalement->getEtageOccupant()) : null;
         $escalier = $signalement->getEscalierOccupant() ? EscalierParser::parse($signalement->getEscalierOccupant()) : null;
 
-        $codeInsee = $signalement->getInseeOccupant() ?: $this->adresseDataGouvService->getCodeInsee($signalement->getAdresseOccupant().' '.$signalement->getCpOccupant().' '.$signalement->getVilleOccupant());
+        $codeInsee = $signalement->getInseeOccupant() ?: $this->addressService->getCodeInsee($signalement->getAdresseOccupant().' '.$signalement->getCpOccupant().' '.$signalement->getVilleOccupant());
 
         return (new DossierMessageSISH())
             ->setUrl($partner->getEsaboraUrl())
