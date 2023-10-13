@@ -182,6 +182,7 @@
 <div class="fr-container--fluid">
     <div class="fr-grid-row fr-grid-row--gutters">
         {% if signalement.isNotOccupant %}
+        {% include 'back/signalement/view/edit-modals/edit-coordonnees-tiers.html.twig' %}
         <div class="fr-col-12 fr-col-md-6 fr-mb-1v">
             <div class="fr-p-3v fr-background-alt--grey">
                 <div class="fr-grid-row">
@@ -189,7 +190,7 @@
                         <h4 class="fr-h6">Coordonnées du tiers déclarant</h4>
                     </div>
                     <div class="fr-col-12 fr-col-md-3 fr-text--right">
-                        <a href="#">Modifier</a>
+                        <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-coordonnees-tiers">Modifier</a>
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Nom :</strong> {{ signalement.nomDeclarant }}

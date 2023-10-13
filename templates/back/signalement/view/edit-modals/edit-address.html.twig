@@ -5,74 +5,74 @@
                 <form method="POST" id="form-edit-address" enctype="application/json" action="{{ path('back_signalement_edit_address',{uuid:signalement.uuid}) }}">
                     <div class="fr-modal__body">
                         <div class="fr-modal__header">
-                            <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-edit-address">Fermer</button>
+                            <button type="button" class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-edit-address">Fermer</button>
                         </div>
                         <div class="fr-modal__content">
                             <h1 id="fr-modal-title-modal-edit-address" class="fr-modal__title">
                                 Modifier l'adresse du logement
                             </h1>
 
-                                <div class="fr-grid-row fr-grid-row--gutters">
-                                    <div class="fr-col-12 fr-col-md-6">
-                                        <h2 class="fr-h5">Adresse postale</h2>
+                            <div class="fr-grid-row fr-grid-row--gutters">
+                                <div class="fr-col-12 fr-col-md-6">
+                                    <h2 class="fr-h5">Adresse postale</h2>
 
-                                        <div class="fr-input-group">
-                                            <label class="fr-label" for="edit-address-search">
-                                                Adresse du logement
-                                                <span class="fr-hint-text">Tapez l'adresse et sélectionnez-la dans la liste</span>
-                                            </label>
-                                            <input class="fr-input search-address-autocomplete" type="text" id="edit-address-search"
-                                                data-fr-adresse-bo-autocomplete="true">
-                                            <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france search-address-autocomplete-list">
-                                            </div>
+                                    <div class="fr-input-group">
+                                        <label class="fr-label" for="edit-address-search">
+                                            Adresse du logement
+                                            <span class="fr-hint-text">Tapez l'adresse et sélectionnez-la dans la liste</span>
+                                        </label>
+                                        <input class="fr-input search-address-autocomplete" type="text" id="edit-address-search"
+                                            data-fr-adresse-bo-autocomplete="true">
+                                        <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france search-address-autocomplete-list">
                                         </div>
-
-                                        <div class="fr-input-group">
-                                            <label class="fr-label" for="adresse-visible">Numéro et voie</label>
-                                            <input class="fr-input" type="text" disabled name="adresse-visible" value="{{ signalement.adresseOccupant }}">
-                                            <input type="hidden" name="adresse" value="{{ signalement.adresseOccupant }}">
-                                        </div>
-
-                                        <div class="fr-input-group">
-                                            <label class="fr-label" for="codePostal-visible">Code postal</label>
-                                            <input class="fr-input" type="text" disabled name="codePostal-visible" value="{{ signalement.cpOccupant }}">
-                                            <input type="hidden" name="codePostal" value="{{ signalement.cpOccupant }}">
-                                        </div>
-
-                                        <div class="fr-input-group fr-input-group--disabled">
-                                            <label class="fr-label" for="ville-visible">Commune</label>
-                                            <input class="fr-input" type="text" disabled name="ville-visible" value="{{ signalement.villeOccupant }}">
-                                            <input type="hidden" name="ville" value="{{ signalement.villeOccupant }}">
-                                        </div>
-
-                                        <input type="hidden" name="insee" value="{{ signalement.inseeOccupant }}">
-                                        <input type="hidden" name="geolocLat" value="{{ signalement.geoloc.lat }}">
-                                        <input type="hidden" name="geolocLng" value="{{ signalement.geoloc.lng }}">
                                     </div>
-                                    <div class="fr-col-12 fr-col-md-6">
-                                        <h2 class="fr-h5">Complément d'adresse</h2>
 
-                                        <div class="fr-input-group">
-                                            <label class="fr-label" for="etage">Etage</label>
-                                            <input class="fr-input" type="text" name="etage" value="{{ signalement.etageOccupant }}">
-                                        </div>
+                                    <div class="fr-input-group">
+                                        <label class="fr-label" for="adresse-visible">Numéro et voie</label>
+                                        <input class="fr-input" type="text" disabled name="adresse-visible" value="{{ signalement.adresseOccupant }}">
+                                        <input type="hidden" name="adresse" value="{{ signalement.adresseOccupant }}">
+                                    </div>
 
-                                        <div class="fr-input-group">
-                                            <label class="fr-label" for="escalier">Escalier</label>
-                                            <input class="fr-input" type="text" name="escalier" value="{{ signalement.escalierOccupant }}">
-                                        </div>
+                                    <div class="fr-input-group">
+                                        <label class="fr-label" for="codePostal-visible">Code postal</label>
+                                        <input class="fr-input" type="text" disabled name="codePostal-visible" value="{{ signalement.cpOccupant }}">
+                                        <input type="hidden" name="codePostal" value="{{ signalement.cpOccupant }}">
+                                    </div>
 
-                                        <div class="fr-input-group">
-                                            <label class="fr-label" for="numAppart">Numéro d'appartement</label>
-                                            <input class="fr-input" type="text" name="numAppart" value="{{ signalement.numAppartOccupant }}">
-                                        </div>
+                                    <div class="fr-input-group fr-input-group--disabled">
+                                        <label class="fr-label" for="ville-visible">Commune</label>
+                                        <input class="fr-input" type="text" disabled name="ville-visible" value="{{ signalement.villeOccupant }}">
+                                        <input type="hidden" name="ville" value="{{ signalement.villeOccupant }}">
+                                    </div>
 
-                                        <div class="fr-input-group">
-                                            <label class="fr-label" for="autre">Autre (résidence, lieu-dit...)</label>
-                                            <input class="fr-input" type="text" name="autre" value="{{ signalement.adresseAutreOccupant }}">
-                                        </div>
+                                    <input type="hidden" name="insee" value="{{ signalement.inseeOccupant }}">
+                                    <input type="hidden" name="geolocLat" value="{{ signalement.geoloc.lat }}">
+                                    <input type="hidden" name="geolocLng" value="{{ signalement.geoloc.lng }}">
+                                </div>
+                                <div class="fr-col-12 fr-col-md-6">
+                                    <h2 class="fr-h5">Complément d'adresse</h2>
+
+                                    <div class="fr-input-group">
+                                        <label class="fr-label" for="etage">Etage</label>
+                                        <input class="fr-input" type="text" name="etage" value="{{ signalement.etageOccupant }}">
+                                    </div>
+
+                                    <div class="fr-input-group">
+                                        <label class="fr-label" for="escalier">Escalier</label>
+                                        <input class="fr-input" type="text" name="escalier" value="{{ signalement.escalierOccupant }}">
+                                    </div>
+
+                                    <div class="fr-input-group">
+                                        <label class="fr-label" for="numAppart">Numéro d'appartement</label>
+                                        <input class="fr-input" type="text" name="numAppart" value="{{ signalement.numAppartOccupant }}">
+                                    </div>
+
+                                    <div class="fr-input-group">
+                                        <label class="fr-label" for="autre">Autre (résidence, lieu-dit...)</label>
+                                        <input class="fr-input" type="text" name="autre" value="{{ signalement.adresseAutreOccupant }}">
                                     </div>
                                 </div>
+                            </div>
                         </div>
                         
                         <div class="fr-modal__footer">
