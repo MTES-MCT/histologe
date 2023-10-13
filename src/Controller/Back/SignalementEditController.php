@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Dto\Request\Signalement\AdresseOccupantRequest;
+use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
 use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
 use App\Entity\Signalement;
@@ -124,6 +125,45 @@ class SignalementEditController extends AbstractController
             if (empty($errorMessage)) {
                 $signalementManager->updateFromCoordonneesFoyerRequest($signalement, $coordonneesFoyerRequest);
                 $this->addFlash('success', 'Coordonnées du foyer mises à jour avec succès !');
+            } else {
+                $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
+            }
+        } else {
+            $this->addFlash('error', 'Une erreur est survenue...');
+        }
+
+        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+    }
+
+    #[Route('/{uuid}/edit-coordonnees-bailleur', name: 'back_signalement_edit_coordonnees_bailleur', methods: 'POST')]
+    public function editCoordonneesBailleur(
+        Signalement $signalement,
+        Request $request,
+        SignalementManager $signalementManager,
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+    ): Response {
+        $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
+        if ($this->isCsrfTokenValid('signalement_edit_coordonnees_bailleur_'.$signalement->getId(), $request->get('_token'))) {
+            /** @var CoordonneesBailleurRequest $coordonneesBailleurRequest */
+            $coordonneesBailleurRequest = $serializer->deserialize(
+                json_encode($request->getPayload()->all()),
+                CoordonneesBailleurRequest::class,
+                'json'
+            );
+
+            $errorMessage = '';
+            $errors = $validator->validate($coordonneesBailleurRequest);
+            if (\count($errors) > 0) {
+                $errorMessage = '';
+                foreach ($errors as $error) {
+                    $errorMessage .= $error->getMessage().' ';
+                }
+            }
+
+            if (empty($errorMessage)) {
+                $signalementManager->updateFromCoordonneesBailleurRequest($signalement, $coordonneesBailleurRequest);
+                $this->addFlash('success', 'Coordonnées du bailleur mises à jour avec succès !');
             } else {
                 $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
             }

@@ -3,6 +3,7 @@
 namespace App\Manager;
 
 use App\Dto\Request\Signalement\AdresseOccupantRequest;
+use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
 use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
 use App\Dto\Request\Signalement\QualificationNDERequest;
@@ -309,6 +310,20 @@ class SignalementManager extends AbstractManager
         $signalement->setMailOccupant($coordonneesFoyerRequest->getMail());
         $signalement->setTelOccupant($coordonneesFoyerRequest->getTelephone());
         $signalement->setTelOccupantBis($coordonneesFoyerRequest->getTelephoneBis());
+
+        $this->save($signalement);
+    }
+
+    public function updateFromCoordonneesBailleurRequest(Signalement $signalement, CoordonneesBailleurRequest $coordonneesBailleurRequest)
+    {
+        $signalement->setNomProprio($coordonneesBailleurRequest->getNom());
+        $signalement->setPrenomProprio($coordonneesBailleurRequest->getPrenom());
+        $signalement->setMailProprio($coordonneesBailleurRequest->getMail());
+        $signalement->setTelProprio($coordonneesBailleurRequest->getTelephone());
+        $signalement->setTelProprioSecondaire($coordonneesBailleurRequest->getTelephoneBis());
+        $signalement->setAdresseProprio($coordonneesBailleurRequest->getAdresse());
+        $signalement->setCodePostalProprio($coordonneesBailleurRequest->getCodePostal());
+        $signalement->setVilleProprio($coordonneesBailleurRequest->getVille());
 
         $this->save($signalement);
     }

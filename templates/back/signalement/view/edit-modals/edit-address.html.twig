@@ -22,18 +22,18 @@
                                             <span class="fr-hint-text">Tapez l'adresse et sélectionnez-la dans la liste</span>
                                         </label>
                                         <input class="fr-input search-address-autocomplete" type="text" id="edit-address-search"
-                                            data-fr-adresse-bo-autocomplete="true">
+                                            data-fr-adresse-bo-autocomplete="true" data-form-id="form-edit-address">
                                         <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france search-address-autocomplete-list">
                                         </div>
                                     </div>
 
-                                    <div class="fr-input-group">
+                                    <div class="fr-input-group fr-input-group--disabled">
                                         <label class="fr-label" for="adresse-visible">Numéro et voie</label>
                                         <input class="fr-input" type="text" disabled name="adresse-visible" value="{{ signalement.adresseOccupant }}">
                                         <input type="hidden" name="adresse" value="{{ signalement.adresseOccupant }}">
                                     </div>
 
-                                    <div class="fr-input-group">
+                                    <div class="fr-input-group fr-input-group--disabled">
                                         <label class="fr-label" for="codePostal-visible">Code postal</label>
                                         <input class="fr-input" type="text" disabled name="codePostal-visible" value="{{ signalement.cpOccupant }}">
                                         <input type="hidden" name="codePostal" value="{{ signalement.cpOccupant }}">

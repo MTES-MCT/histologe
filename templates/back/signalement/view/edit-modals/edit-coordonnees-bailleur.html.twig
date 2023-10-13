@@ -1,0 +1,91 @@
+<dialog aria-labelledby="fr-modal-title-modal-edit-coordonnees-bailleur" role="dialog" id="fr-modal-edit-coordonnees-bailleur" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8">
+                <form method="POST" id="form-edit-coordonnees-bailleur" enctype="application/json" action="{{ path('back_signalement_edit_coordonnees_bailleur',{uuid:signalement.uuid}) }}">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button type="button" class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-edit-coordonnees-bailleur">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="fr-modal-title-modal-edit-coordonnees-bailleur" class="fr-modal__title">
+                                Modifier les coordonnées du bailleur
+                            </h1>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="nom">Nom</label>
+                                <input class="fr-input" type="text" name="nom" value="{{ signalement.nomProprio }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="prenom">Prénom</label>
+                                <input class="fr-input" type="text" name="prenom" value="{{ signalement.prenomProprio }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="mail">Courriel</label>
+                                <input class="fr-input" type="text" name="mail" value="{{ signalement.mailProprio }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="telephone">Téléphone</label>
+                                <input class="fr-input" type="text" name="telephone" value="{{ signalement.telProprioDecoded }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="telephoneBis">Téléphone sec.</label>
+                                <input class="fr-input" type="text" name="telephoneBis" value="{{ signalement.telProprioSecondaireDecoded }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="edit-coordonnees-bailleur-search">
+                                    Adresse
+                                    <span class="fr-hint-text">Tapez l'adresse et sélectionnez-la dans la liste</span>
+                                </label>
+                                <input class="fr-input search-address-autocomplete" type="text" id="edit-coordonnees-bailleur-search"
+                                    data-fr-adresse-bo-autocomplete="true" data-form-id="form-edit-coordonnees-bailleur">
+                                <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france search-address-autocomplete-list">
+                                </div>
+                            </div>
+
+                            <div class="fr-input-group fr-input-group--disabled">
+                                <label class="fr-label" for="adresse-visible">Numéro et voie</label>
+                                <input class="fr-input" type="text" disabled name="adresse-visible" value="{{ signalement.adresseProprio }}">
+                                <input type="hidden" name="adresse" value="{{ signalement.adresseProprio }}">
+                            </div>
+
+                            <div class="fr-input-group fr-input-group--disabled">
+                                <label class="fr-label" for="codePostal-visible">Code postal</label>
+                                <input class="fr-input" type="text" disabled name="codePostal-visible" value="{{ signalement.codePostalProprio }}">
+                                <input type="hidden" name="codePostal" value="{{ signalement.codePostalProprio }}">
+                            </div>
+
+                            <div class="fr-input-group fr-input-group--disabled">
+                                <label class="fr-label" for="ville-visible">Commune</label>
+                                <input class="fr-input" type="text" disabled name="ville-visible" value="{{ signalement.villeProprio }}">
+                                <input type="hidden" name="ville" value="{{ signalement.villeProprio }}">
+                            </div>
+                        </div>
+                        
+                        <div class="fr-modal__footer">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <li>
+                                    <button type="button" class="fr-btn fr-btn--secondary"
+                                            aria-controls="fr-modal-edit-coordonnees-bailleur">
+                                        Annuler
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="fr-btn" type="submit">
+                                        Valider
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_coordonnees_bailleur_'~signalement.id) }}">
+                </form>
+            </div>
+        </div>
+    </div>
+</dialog>
