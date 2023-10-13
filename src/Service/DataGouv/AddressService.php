@@ -2,22 +2,29 @@
 
 namespace App\Service\DataGouv;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class AddressService
 {
     private $apiUrl = 'https://api-adresse.data.gouv.fr/search/?q=';
 
-    public function __construct(private readonly HttpClientInterface $httpClient)
-    {
+    public function __construct(
+        private readonly HttpClientInterface $httpClient,
+        private readonly LoggerInterface $logger
+    ) {
     }
 
     public function searchAddress(string $query): ?array
     {
-        $response = $this->httpClient->request('GET', $this->apiUrl.urlencode($query));
+        try {
+            $response = $this->httpClient->request('GET', $this->apiUrl.urlencode($query));
 
-        if (200 === $response->getStatusCode()) {
-            return $response->toArray();
+            if (200 === $response->getStatusCode()) {
+                return $response->toArray();
+            }
+        } catch (\Throwable $exception) {
+            $this->logger->error($exception->getMessage());
         }
 
         return null;
