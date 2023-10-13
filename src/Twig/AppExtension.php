@@ -2,8 +2,8 @@
 
 namespace App\Twig;
 
+use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\QualificationStatus;
-use App\Form\SignalementType;
 use App\Service\Esabora\EsaboraPartnerTypeSubscription;
 use App\Service\Files\ImageBase64Encoder;
 use App\Service\Notification\NotificationCounter;
@@ -42,8 +42,8 @@ class AppExtension extends AbstractExtension
         if ('voisinage' == $lienDeclarantOccupant) {
             $lienDeclarantOccupant = 'voisin';
         }
-        if ($label = array_search(strtoupper($lienDeclarantOccupant), SignalementType::LINK_CHOICES)) {
-            return $label;
+        if (!empty(OccupantLink::getLabelList()[strtoupper($lienDeclarantOccupant)])) {
+            return OccupantLink::getLabelList()[strtoupper($lienDeclarantOccupant)];
         }
 
         return '';
