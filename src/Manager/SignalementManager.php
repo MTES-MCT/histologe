@@ -3,6 +3,7 @@
 namespace App\Manager;
 
 use App\Dto\Request\Signalement\AdresseOccupantRequest;
+use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
 use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Dto\SignalementAffectationListView;
@@ -297,6 +298,17 @@ class SignalementManager extends AbstractManager
         $signalement->setTelDeclarant($coordonneesTiersRequest->getTelephone());
         $signalement->setLienDeclarantOccupant($coordonneesTiersRequest->getLien());
         $signalement->setStructureDeclarant($coordonneesTiersRequest->getStructure());
+
+        $this->save($signalement);
+    }
+
+    public function updateFromCoordonneesFoyerRequest(Signalement $signalement, CoordonneesFoyerRequest $coordonneesFoyerRequest)
+    {
+        $signalement->setNomOccupant($coordonneesFoyerRequest->getNom());
+        $signalement->setPrenomOccupant($coordonneesFoyerRequest->getPrenom());
+        $signalement->setMailOccupant($coordonneesFoyerRequest->getMail());
+        $signalement->setTelOccupant($coordonneesFoyerRequest->getTelephone());
+        $signalement->setTelOccupantBis($coordonneesFoyerRequest->getTelephoneBis());
 
         $this->save($signalement);
     }

@@ -222,13 +222,14 @@
         {% endif %}
 
         <div class="fr-col-12 fr-col-md-6 fr-mb-1v">
+            {% include 'back/signalement/view/edit-modals/edit-coordonnees-foyer.html.twig' %}
             <div class="fr-p-3v fr-background-alt--grey">
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-9">
                         <h4 class="fr-h6">Coordonnées du foyer</h4>
                     </div>
                     <div class="fr-col-12 fr-col-md-3 fr-text--right">
-                        <a href="#">Modifier</a>
+                        <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-coordonnees-foyer">Modifier</a>
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Nom :</strong> {{ signalement.nomOccupant }}
