@@ -254,13 +254,14 @@
         </div>
 
         <div class="fr-col-12 fr-col-md-6 fr-mb-1v">
+            {% include 'back/signalement/view/edit-modals/edit-coordonnees-bailleur.html.twig' %}
             <div class="fr-p-3v fr-background-alt--grey">
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-9">
                         <h4 class="fr-h6">Coordonnées du bailleur</h4>
                     </div>
                     <div class="fr-col-12 fr-col-md-3 fr-text--right">
-                        <a href="#">Modifier</a>
+                        <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-coordonnees-bailleur">Modifier</a>
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Nom :</strong> {{ signalement.nomProprio ?? 'N/R' }}
@@ -276,7 +277,7 @@
                             N/R
                         {% endif %}
                     </div>
-                    <div class="fr-col-12">
+                    <div class="fr-col-12 fr-col-md-6">
                         <strong>Tél. :</strong>
                         {% if signalement.telProprio %}
                             <a href="mailto:{{ signalement.telProprioDecoded }}">{{ signalement.telProprioDecoded }}</a>
@@ -284,8 +285,16 @@
                             N/R
                         {% endif %}
                     </div>
+                    <div class="fr-col-12 fr-col-md-6">
+                        <strong>Tél. sec. :</strong>
+                        {% if signalement.telProprioSecondaire %}
+                            <a href="mailto:{{ signalement.telProprioSecondaireDecoded }}">{{ signalement.telProprioSecondaireDecoded }}</a>
+                        {% else %}
+                            N/R
+                        {% endif %}
+                    </div>
                     <div class="fr-col-12">
-                        <strong>Adresse :</strong> {{ signalement.adresseProprio ?? 'N/R' }}
+                        <strong>Adresse :</strong> {{ signalement.adresseProprio ? signalement.adresseProprio ~ ', ' ~ signalement.codePostalProprio ~ ' ' ~ signalement.villeProprio : 'N/R' }}
                     </div>
                 </div>
             </div>
