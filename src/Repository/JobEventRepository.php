@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Enum\InterfacageType;
+use App\Entity\Enum\PartnerType;
 use App\Entity\JobEvent;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -51,7 +52,7 @@ class JobEventRepository extends ServiceEntityRepository
 
     public function findLastEsaboraJobByPartner(
         Partner $partner
-    ): ?array {
+    ): array {
         return $this->createQueryBuilder('j')
             ->select('MAX(j.createdAt) AS last_event')
             ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
@@ -60,5 +61,35 @@ class JobEventRepository extends ServiceEntityRepository
             ->setParameter('service', '%'.InterfacageType::ESABORA->value.'%')
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    public function findFailedEsaboraDossierByPartnerTypeByAction(
+        PartnerType $partnerType,
+        string $action
+    ): ?array {
+        $qb = $this->createQueryBuilder('j');
+
+        $subQuery = $this->createQueryBuilder('sub')
+        ->select('MAX(sub.createdAt)')
+        ->where('sub.signalementId = j.signalementId')
+        ->andWhere('sub.partnerId = j.partnerId')
+        ->andWhere('sub.action = :action')
+        ->setParameter('action', $action)
+        ->getDQL();
+
+        $qb->where('j.status = :statusFailed')
+            ->setParameter('statusFailed', JobEvent::STATUS_FAILED)
+            ->andWhere('j.service LIKE :service')
+            ->setParameter('service', '%'.InterfacageType::ESABORA->value.'%')
+            ->andWhere('j.partnerType LIKE :partnerType')
+            ->setParameter('partnerType', $partnerType->value)
+            ->andWhere('j.action = :action')
+            ->setParameter('action', $action)
+            ->andWhere($qb->expr()->in(
+                'j.createdAt',
+                $subQuery
+            ));
+
+        return $qb->getQuery()->getResult();
     }
 }

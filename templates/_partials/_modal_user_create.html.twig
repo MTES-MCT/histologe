@@ -59,7 +59,7 @@
                                     <div class="fr-input-group fr-col-12 fr-col-md-6 fr-pl-0 fr-pl-md-0">
                                         <label for="user_create_email" class="fr-label">Courriel</label>
                                         <input type="email" id="user_create_email" name="user_create[email]"
-                                            required="required" class="fr-input" onchange="checkUserMail(this)"
+                                            required="required" class="fr-input" onchange="checkUserMail(this)" oninput="checkUserMail(this)"
                                             data-token="{{ csrf_token('partner_checkmail') }}">
                                         <span class="fr-hint-text">Un email d'activation du compte sera envoyé à cette adresse email.</span>
                                         <p class="fr-error-text fr-hidden">

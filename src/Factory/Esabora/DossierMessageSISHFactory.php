@@ -8,12 +8,14 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Messenger\Message\DossierMessageSISH;
 use App\Repository\SuiviRepository;
+use App\Service\DataGouv\AddressService;
 use App\Service\Esabora\AbstractEsaboraService;
 use App\Service\Esabora\Enum\PersonneType;
 use App\Service\Esabora\Model\DossierMessageSISHPersonne;
 use App\Service\HtmlCleaner;
 use App\Service\UploadHandlerService;
 use App\Utils\AddressParser;
+use App\Utils\EscalierParser;
 use App\Utils\EtageParser;
 use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -28,6 +30,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly ParameterBagInterface $parameterBag,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly AddressService $addressService,
     ) {
         parent::__construct($this->uploadHandlerService);
     }
@@ -64,6 +67,9 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             : null;
 
         $etage = $signalement->getEtageOccupant() ? EtageParser::parse($signalement->getEtageOccupant()) : null;
+        $escalier = $signalement->getEscalierOccupant() ? EscalierParser::parse($signalement->getEscalierOccupant()) : null;
+
+        $codeInsee = $signalement->getInseeOccupant() ?: $this->addressService->getCodeInsee($signalement->getAdresseOccupant().' '.$signalement->getCpOccupant().' '.$signalement->getVilleOccupant());
 
         return (new DossierMessageSISH())
             ->setUrl($partner->getEsaboraUrl())
@@ -79,7 +85,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setLocalisationAdresse2($signalement->getAdresseAutreOccupant())
             ->setLocalisationCodePostal($signalement->getCpOccupant())
             ->setLocalisationVille($signalement->getVilleOccupant())
-            ->setLocalisationLocalisationInsee($signalement->getInseeOccupant())
+            ->setLocalisationLocalisationInsee($codeInsee)
             ->setSasLogicielProvenance('H')
             ->setReferenceDossier($signalement->getUuid())
             ->setSasDateAffectation(
@@ -89,8 +95,8 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
                     ->format($formatDateTime)
             )
             ->setLocalisationEtage($etage)
-            ->setLocalisationEscalier($signalement->getEscalierOccupant())
-            ->setLocalisationNumPorte($signalement->getNumAppartOccupant())
+            ->setLocalisationEscalier($escalier)
+            ->setLocalisationNumPorte(substr($signalement->getNumAppartOccupant(), 0, 30))
             ->setSitOccupantNbAdultes($signalement->getNbAdultes())
             ->setSitOccupantNbEnfantsM6($signalement->getNbEnfantsM6())
             ->setSitOccupantNbEnfantsP6($signalement->getNbEnfantsP6())
