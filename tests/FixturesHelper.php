@@ -79,14 +79,16 @@ trait FixturesHelper
                         (new Situation())
                             ->setLabel('situation')
                             ->setMenuLabel('menu-situation')
-                    ))
+                    )
+            )
             ->setLabel('criticite')
             ->setScore(2);
 
         $signalement = $this->getSignalement();
         $signalement
             ->addCriticite($criticite)
-            ->addFile($this->getDocumentFile())->addFile($this->getPhotoFile());
+            ->addFile($this->getDocumentFile())
+            ->addFile($this->getPhotoFile());
 
         $partner = (new Partner())
             ->setNom($faker->company())

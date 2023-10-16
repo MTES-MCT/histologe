@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Factory\Esabora;
 use App\Entity\Enum\PartnerType;
 use App\Factory\Esabora\DossierMessageSISHFactory;
 use App\Repository\SuiviRepository;
+use App\Service\DataGouv\AddressService;
 use App\Service\Esabora\AbstractEsaboraService;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
@@ -19,6 +20,9 @@ class DossierMessageSISHFactoryTest extends TestCase
 
     public function testDossierMessageFactoryIsFullyCreated()
     {
+        $affectation = $this->getSignalementAffectation(PartnerType::ARS);
+        $signalement = $affectation->getSignalement();
+
         $suiviRepositoryMock = $this->createMock(SuiviRepository::class);
         $suiviRepositoryMock
             ->expects($this->once())
@@ -44,16 +48,25 @@ class DossierMessageSISHFactoryTest extends TestCase
             ->with('back_signalement_view')
             ->willReturn('/bo/signalements/00000000-0000-0000-2022-000000000001');
 
+        $addressService = $this->createMock(AddressService::class);
+        $addressService
+            ->expects($this->once())
+            ->method('getCodeInsee')
+            ->willReturn($signalement->getInseeOccupant());
+
         $dossierMessageFactory = new DossierMessageSISHFactory(
             $suiviRepositoryMock,
             $uploadHandlerServiceMock,
             $parameterBagMock,
-            $urlGeneratorMock
+            $urlGeneratorMock,
+            $addressService
         );
 
-        $dossierMessage = $dossierMessageFactory->createInstance(
-            $this->getSignalementAffectation(PartnerType::ARS)
-        );
+        $signalement->setNumAppartOccupant('à gauche de l\'entrée principale, appart 11');
+        $signalement->getFiles()->first()->setTitle('un titre de fichier très long pour tester le tronquage à 100 caractères ce qui devrait donc être là le reste n\'apparait pas');
+        $signalement->setInseeOccupant(null);
+
+        $dossierMessage = $dossierMessageFactory->createInstance($affectation);
 
         $this->assertCount(2, $dossierMessage->getPiecesJointesDocuments());
         $this->assertEquals(PartnerType::ARS->value, $dossierMessage->getPartnerType());

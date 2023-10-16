@@ -47,5 +47,24 @@ class EtageParserTest extends TestCase
         yield '4ème étage - entrée 1' => ['4ème étage - entrée 1', 4];
 
         yield 'Dernière maison à gauche' => ['Dernière maison à gauche', null];
+
+        yield 'Rez de chaussée' => ['Rez de chaussée', 0];
+
+        yield 'REZ DE CHAUSSEE' => ['REZ DE CHAUSSEE', 0];
+        yield 'rdc gauche' => ['rdc gauche', 0];
+        yield 'RDC gauche' => ['RDC gauche', 0];
+        yield 'RDC' => ['RDC', 0];
+        yield 'rc' => ['rc', 0];
+        yield 'Le Val de Provence 1' => ['Le Val de Provence 1', 1];
+        yield 'étage 1' => ['étage 1', 1];
+        yield '4 ème étage' => ['4 ème étage', 4];
+        yield '3ème étage' => ['3ème étage', 3];
+        yield '3ème' => ['3ème', 3];
+        yield '2ème étage' => ['2ème étage', 2];
+        yield '2 porte droite' => ['2 porte droite', 2];
+        yield '1er étage' => ['1er étage', 1];
+        yield '1er' => ['1er', 1];
+        yield 'Sous sol' => ['Sous sol', -1];
+        yield 'hôtel grac porte 11' => ['hôtel grac porte 11', 11]; // idéalement devrait renvoyer null, mais difficile à mettre en place
     }
 }
