@@ -301,13 +301,14 @@
         </div>
 
         <div class="fr-col-12 fr-col-md-6 fr-mb-1v">
+            {% include 'back/signalement/view/edit-modals/edit-informations-logement.html.twig' %}
             <div class="fr-p-3v fr-background-alt--grey">
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-9">
                         <h4 class="fr-h6">Informations sur le logement</h4>
                     </div>
                     <div class="fr-col-12 fr-col-md-3 fr-text--right">
-                        <a href="#">Modifier</a>
+                        <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-informations-logement">Modifier</a>
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Type :</strong> {{ signalement.natureLogement|capitalize }}
@@ -315,13 +316,17 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Nb. personnes :</strong>
                         {% if signalement.typeCompositionLogement %}
-                            {{ signalement.typeCompositionLogement.compositionLogementNombrePersonnes }}
+                            {{ signalement.nbOccupantsLogement }}
 
                         {% else %}
-                            {{ signalement.nbAdultes + signalement.nbEnfantsP6 + signalement.nbEnfantsM6 }}
-                            ({{ signalement.nbAdultes }} adultes,
-                            {{ signalement.nbEnfantsP6 }} enfants de plus de 6 ans,
-                            {{ signalement.nbEnfantsM6 }} enfants de moins de 6 ans)
+                            {{ signalement.nbAdultes + signalement.nbEnfantsP6 + signalement.nbEnfantsM6 }} :
+                            {{ signalement.nbAdultes }} {{ signalement.nbAdultes > 1 ? 'adultes' : 'adulte' }}
+                            {% if signalement.nbEnfantsP6 %}
+                                - {{ signalement.nbEnfantsP6 ?? '0' }} {{ signalement.nbEnfantsP6 > 1 ? 'enfants' : 'enfant' }} de plus de 6 ans
+                            {% endif %}
+                            {% if signalement.nbEnfantsM6 %}
+                                - {{ signalement.nbEnfantsM6 ?? '0' }} {{ signalement.nbEnfantsM6 > 1 ? 'enfants' : 'enfant' }} de moins de 6 ans
+                            {% endif %}
                         {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
