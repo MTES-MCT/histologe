@@ -68,6 +68,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
 
         $etage = $signalement->getEtageOccupant() ? EtageParser::parse($signalement->getEtageOccupant()) : null;
         $escalier = $signalement->getEscalierOccupant() ? EscalierParser::parse($signalement->getEscalierOccupant()) : null;
+        $numPorte = $signalement->getNumAppartOccupant() ? substr($signalement->getNumAppartOccupant(), 0, 30) : null;
 
         $codeInsee = $signalement->getInseeOccupant() ?: $this->addressService->getCodeInsee($signalement->getAdresseOccupant().' '.$signalement->getCpOccupant().' '.$signalement->getVilleOccupant());
 
@@ -96,7 +97,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             )
             ->setLocalisationEtage($etage)
             ->setLocalisationEscalier($escalier)
-            ->setLocalisationNumPorte(substr($signalement->getNumAppartOccupant(), 0, 30))
+            ->setLocalisationNumPorte($numPorte)
             ->setSitOccupantNbAdultes($signalement->getNbAdultes())
             ->setSitOccupantNbEnfantsM6($signalement->getNbEnfantsM6())
             ->setSitOccupantNbEnfantsP6($signalement->getNbEnfantsP6())
