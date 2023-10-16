@@ -8,6 +8,7 @@ use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
 use App\Dto\Request\Signalement\InformationsLogementRequest;
 use App\Dto\Request\Signalement\QualificationNDERequest;
+use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Dto\SignalementAffectationListView;
 use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
@@ -344,6 +345,11 @@ class SignalementManager extends AbstractManager
             ->setBailDpeDpe($informationsLogementRequest->getBailDpeDpe());
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
 
+        $this->save($signalement);
+    }
+
+    public function updateFromSituationFoyerRequest(Signalement $signalement, SituationFoyerRequest $situationFoyerRequest)
+    {
         $this->save($signalement);
     }
 
