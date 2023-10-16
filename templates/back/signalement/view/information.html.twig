@@ -332,12 +332,12 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Enfants -6 ans :</strong>
                         {% if signalement.typeCompositionLogement %}
-                            {% if signalement.typeCompositionLogement.compositionLogementEnfants is null %}
-                                {{ static_picto_nsp|raw }}
-                            {% elseif signalement.typeCompositionLogement.compositionLogementEnfants %}
+                            {% if signalement.typeCompositionLogement.compositionLogementEnfants is same as 'oui' %}
                                 {{ static_picto_yes|raw }}
-                            {% else %}
+                            {% elseif signalement.typeCompositionLogement.compositionLogementEnfants is same as 'non' %}
                                 {{ static_picto_no|raw }}
+                            {% else %}
+                                {{ static_picto_nsp|raw }}
                             {% endif %}
                         {% else %}
                             {% if signalement.nbEnfantsM6 > 0 %}
@@ -358,12 +358,12 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Bail :</strong>
                         {% if signalement.typeCompositionLogement %}
-                            {% if signalement.typeCompositionLogement.bailDpeBail is null %}
-                                {{ static_picto_nsp|raw }}
-                            {% elseif signalement.typeCompositionLogement.bailDpeBail %}
+                            {% if signalement.typeCompositionLogement.bailDpeBail is same as 'oui' %}
                                 {{ static_picto_yes|raw }}
-                            {% else %}
+                            {% elseif signalement.typeCompositionLogement.bailDpeBail is same as 'non' %}
                                 {{ static_picto_no|raw }}
+                            {% else %}
+                                {{ static_picto_nsp|raw }}
                             {% endif %}
                         {% else %}
                             N/C
@@ -372,12 +372,12 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Etat des lieux :</strong>
                         {% if signalement.typeCompositionLogement %}
-                            {% if signalement.typeCompositionLogement.bailDpeEtatDesLieux is null %}
-                                {{ static_picto_nsp|raw }}
-                            {% elseif signalement.typeCompositionLogement.bailDpeEtatDesLieux %}
+                            {% if signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'oui' %}
                                 {{ static_picto_yes|raw }}
-                            {% else %}
+                            {% elseif signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'non' %}
                                 {{ static_picto_no|raw }}
+                            {% else %}
+                                {{ static_picto_nsp|raw }}
                             {% endif %}
                         {% else %}
                             N/C
@@ -386,12 +386,12 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>DPE :</strong>
                         {% if signalement.typeCompositionLogement %}
-                            {% if signalement.typeCompositionLogement.bailDpeDpe is null %}
-                                {{ static_picto_nsp|raw }}
-                            {% elseif signalement.typeCompositionLogement.bailDpeDpe %}
+                            {% if signalement.typeCompositionLogement.bailDpeDpe is same as 'oui' %}
                                 {{ static_picto_yes|raw }}
-                            {% else %}
+                            {% elseif signalement.typeCompositionLogement.bailDpeDpe is same as 'non' %}
                                 {{ static_picto_no|raw }}
+                            {% else %}
+                                {{ static_picto_nsp|raw }}
                             {% endif %}
                         {% else %}
                             N/C
@@ -402,13 +402,14 @@
         </div>
 
         <div class="fr-col-12 fr-col-md-6 fr-mb-1v">
+            {% include 'back/signalement/view/edit-modals/edit-situation-foyer.html.twig' %}
             <div class="fr-p-3v fr-background-alt--grey">
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-9">
                         <h4 class="fr-h6">Situation du foyer</h4>
                     </div>
                     <div class="fr-col-12 fr-col-md-3 fr-text--right">
-                        <a href="#">Modifier</a>
+                        <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-situation-foyer">Modifier</a>
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Logement social :</strong>
