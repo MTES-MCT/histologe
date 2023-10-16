@@ -6,6 +6,7 @@ use App\Dto\Request\Signalement\AdresseOccupantRequest;
 use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
 use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
+use App\Dto\Request\Signalement\InformationsLogementRequest;
 use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Dto\SignalementAffectationListView;
 use App\Entity\Affectation;
@@ -274,56 +275,74 @@ class SignalementManager extends AbstractManager
 
     public function updateFromAdresseOccupantRequest(Signalement $signalement, AdresseOccupantRequest $adresseOccupantRequest)
     {
-        $signalement->setAdresseOccupant($adresseOccupantRequest->getAdresse());
-        $signalement->setCpOccupant($adresseOccupantRequest->getCodePostal());
-        $signalement->setVilleOccupant($adresseOccupantRequest->getVille());
-        $signalement->setInseeOccupant($adresseOccupantRequest->getInsee());
-        $signalement->setGeoloc([
-            'lat' => $adresseOccupantRequest->getGeolocLat(),
-            'lng' => $adresseOccupantRequest->getGeolocLng(),
-        ]);
+        $signalement->setAdresseOccupant($adresseOccupantRequest->getAdresse())
+            ->setCpOccupant($adresseOccupantRequest->getCodePostal())
+            ->setVilleOccupant($adresseOccupantRequest->getVille())
+            ->setInseeOccupant($adresseOccupantRequest->getInsee())
+            ->setGeoloc([
+                'lat' => $adresseOccupantRequest->getGeolocLat(),
+                'lng' => $adresseOccupantRequest->getGeolocLng(),
+            ])
 
-        $signalement->setEtageOccupant($adresseOccupantRequest->getEtage());
-        $signalement->setEscalierOccupant($adresseOccupantRequest->getEscalier());
-        $signalement->setNumAppartOccupant($adresseOccupantRequest->getNumAppart());
-        $signalement->setAdresseAutreOccupant($adresseOccupantRequest->getAutre());
+            ->setEtageOccupant($adresseOccupantRequest->getEtage())
+            ->setEscalierOccupant($adresseOccupantRequest->getEscalier())
+            ->setNumAppartOccupant($adresseOccupantRequest->getNumAppart())
+            ->setAdresseAutreOccupant($adresseOccupantRequest->getAutre());
 
         $this->save($signalement);
     }
 
     public function updateFromCoordonneesTiersRequest(Signalement $signalement, CoordonneesTiersRequest $coordonneesTiersRequest)
     {
-        $signalement->setNomDeclarant($coordonneesTiersRequest->getNom());
-        $signalement->setPrenomDeclarant($coordonneesTiersRequest->getPrenom());
-        $signalement->setMailDeclarant($coordonneesTiersRequest->getMail());
-        $signalement->setTelDeclarant($coordonneesTiersRequest->getTelephone());
-        $signalement->setLienDeclarantOccupant($coordonneesTiersRequest->getLien());
-        $signalement->setStructureDeclarant($coordonneesTiersRequest->getStructure());
+        $signalement->setNomDeclarant($coordonneesTiersRequest->getNom())
+            ->setPrenomDeclarant($coordonneesTiersRequest->getPrenom())
+            ->setMailDeclarant($coordonneesTiersRequest->getMail())
+            ->setTelDeclarant($coordonneesTiersRequest->getTelephone())
+            ->setLienDeclarantOccupant($coordonneesTiersRequest->getLien())
+            ->setStructureDeclarant($coordonneesTiersRequest->getStructure());
 
         $this->save($signalement);
     }
 
     public function updateFromCoordonneesFoyerRequest(Signalement $signalement, CoordonneesFoyerRequest $coordonneesFoyerRequest)
     {
-        $signalement->setNomOccupant($coordonneesFoyerRequest->getNom());
-        $signalement->setPrenomOccupant($coordonneesFoyerRequest->getPrenom());
-        $signalement->setMailOccupant($coordonneesFoyerRequest->getMail());
-        $signalement->setTelOccupant($coordonneesFoyerRequest->getTelephone());
-        $signalement->setTelOccupantBis($coordonneesFoyerRequest->getTelephoneBis());
+        $signalement->setNomOccupant($coordonneesFoyerRequest->getNom())
+            ->setPrenomOccupant($coordonneesFoyerRequest->getPrenom())
+            ->setMailOccupant($coordonneesFoyerRequest->getMail())
+            ->setTelOccupant($coordonneesFoyerRequest->getTelephone())
+            ->setTelOccupantBis($coordonneesFoyerRequest->getTelephoneBis());
 
         $this->save($signalement);
     }
 
     public function updateFromCoordonneesBailleurRequest(Signalement $signalement, CoordonneesBailleurRequest $coordonneesBailleurRequest)
     {
-        $signalement->setNomProprio($coordonneesBailleurRequest->getNom());
-        $signalement->setPrenomProprio($coordonneesBailleurRequest->getPrenom());
-        $signalement->setMailProprio($coordonneesBailleurRequest->getMail());
-        $signalement->setTelProprio($coordonneesBailleurRequest->getTelephone());
-        $signalement->setTelProprioSecondaire($coordonneesBailleurRequest->getTelephoneBis());
-        $signalement->setAdresseProprio($coordonneesBailleurRequest->getAdresse());
-        $signalement->setCodePostalProprio($coordonneesBailleurRequest->getCodePostal());
-        $signalement->setVilleProprio($coordonneesBailleurRequest->getVille());
+        $signalement->setNomProprio($coordonneesBailleurRequest->getNom())
+            ->setPrenomProprio($coordonneesBailleurRequest->getPrenom())
+            ->setMailProprio($coordonneesBailleurRequest->getMail())
+            ->setTelProprio($coordonneesBailleurRequest->getTelephone())
+            ->setTelProprioSecondaire($coordonneesBailleurRequest->getTelephoneBis())
+            ->setAdresseProprio($coordonneesBailleurRequest->getAdresse())
+            ->setCodePostalProprio($coordonneesBailleurRequest->getCodePostal())
+            ->setVilleProprio($coordonneesBailleurRequest->getVille());
+
+        $this->save($signalement);
+    }
+
+    public function updateFromInformationsLogementRequest(Signalement $signalement, InformationsLogementRequest $informationsLogementRequest)
+    {
+        $signalement->setNatureLogement($informationsLogementRequest->getType())
+            ->setNbOccupantsLogement($informationsLogementRequest->getNombrePersonnes());
+
+        $typeCompositionLogement = $signalement->getTypeCompositionLogement();
+        $typeCompositionLogement
+            ->setCompositionLogementNombrePersonnes($informationsLogementRequest->getNombrePersonnes())
+            ->setCompositionLogementEnfants($informationsLogementRequest->getCompositionLogementEnfants())
+            ->setBailDpeDateEmmenagement($informationsLogementRequest->getBailDpeDateEmmenagement())
+            ->setBailDpeBail($informationsLogementRequest->getBailDpeBail())
+            ->setBailDpeEtatDesLieux($informationsLogementRequest->getBailDpeEtatDesLieux())
+            ->setBailDpeDpe($informationsLogementRequest->getBailDpeDpe());
+        $signalement->setTypeCompositionLogement($typeCompositionLogement);
 
         $this->save($signalement);
     }
