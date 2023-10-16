@@ -34,6 +34,11 @@ export const componentValidator = {
       }
     }
 
-    // TODO : Effectuer d'autres validations nécessaires pour les autres règles (minLength, maxLength, etc.)
+    if (value !== undefined && value !== '' && component.validate?.maxLength !== undefined) {
+      if (value.length > component.validate?.maxLength) {
+        const maxLength: string = component.validate?.maxLength.toString()
+        formStore.validationErrors[componentSlug] = 'La valeur dépasse la longueur autorisée ' + maxLength
+      }
+    }
   }
 }

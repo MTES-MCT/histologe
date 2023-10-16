@@ -14,6 +14,7 @@
         @input="updateValue($event)"
         aria-describedby="text-input-error-desc-error"
         :disabled="disabled"
+        :maxlength="validate?.maxLength"
         >
     </div>
     <div

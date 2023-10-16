@@ -99,24 +99,30 @@
                 "type": "SignalementFormTextfield",
                 "label": "Etage",
                 "slug": "adresse_logement_complement_adresse_etage",
+                "description": "5 caractères maximum",
                 "validate": {
-                  "required": false
+                  "required": false,
+                  "maxLength": 5
                 }
               },
               {
                 "type": "SignalementFormTextfield",
                 "label": "Escalier",
                 "slug": "adresse_logement_complement_adresse_escalier",
+                "description": "3 caractères maximum",
                 "validate": {
-                  "required": false
+                  "required": false,
+                  "maxLength": 3
                 }
               },
               {
                 "type": "SignalementFormTextfield",
                 "label": "Numéro d'appartement",
                 "slug": "adresse_logement_complement_adresse_numero_appartement",
+                "description": "30 caractères maximum",
                 "validate": {
-                  "required": false
+                  "required": false,
+                  "maxLength": 30
                 }
               },
               {
@@ -124,8 +130,10 @@
                 "label": "Autre",
                 "placeholder": "résidence, lieu-dit...",
                 "slug": "adresse_logement_complement_adresse_autre",
+                "description": "255 caractères maximum",
                 "validate": {
-                  "required": false
+                  "required": false,
+                  "maxLength": 255
                 }
               }
             ]

@@ -815,12 +815,14 @@
         },
         {
           "type": "SignalementFormTextfield",
-          "label": "Quel est votre numéro d'allocataire ? (facultatif)",
+          "label": "Quel est votre numéro d'allocataire / de dossier ? (facultatif)",
           "slug": "logement_social_numero_allocataire",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
           },
+          "description": "25 caractères maximum",
           "validate": {
+            "maxLength": 25,
             "required": false
           }
         },
