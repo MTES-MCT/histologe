@@ -320,6 +320,7 @@ class PartnerController extends AbstractController
         Request $request,
         Partner $partner,
         UserManager $userManager,
+        PartnerRepository $partnerRepository,
     ): Response {
         $this->denyAccessUnlessGranted('USER_CREATE', $this->getUser());
         if (
@@ -328,12 +329,21 @@ class PartnerController extends AbstractController
         ) {
             /** @var User $user */
             $user = $userManager->findOneBy(['email' => $data['email']]);
+            $partnerExist = $partnerRepository->findOneBy(['email' => $data['email']]);
 
             if (null !== $user && \in_array('ROLE_USAGER', $user->getRoles())) {
                 $data['territory'] = $partner->getTerritory();
                 $data['partner'] = $partner;
                 $data['statut'] = User::STATUS_INACTIVE;
                 $userManager->updateUserFromData($user, $data);
+            } elseif (null !== $user) {
+                $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail.');
+
+                return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+            } elseif (null !== $partnerExist) {
+                $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
+
+                return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
             } else {
                 $user = $userManager->createUserFromData($partner, $data);
             }
@@ -352,6 +362,8 @@ class PartnerController extends AbstractController
     public function editUser(
         Request $request,
         UserManager $userManager,
+        UserRepository $userRepository,
+        PartnerRepository $partnerRepository,
     ): Response {
         $this->denyAccessUnlessGranted('USER_EDIT', $this->getUser());
         if (
@@ -361,6 +373,20 @@ class PartnerController extends AbstractController
             /** @var User $user */
             $user = $userManager->find((int) $userId);
             $data = $request->get('user_edit');
+            if ($data['email'] != $user->getEmail()) {
+                $userExist = $userRepository->findOneBy(['email' => $data['email']]);
+                if ($userExist && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
+                    $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail.');
+
+                    return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+                }
+                $partnerExist = $partnerRepository->findOneBy(['email' => $data['email']]);
+                if ($partnerExist) {
+                    $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
+
+                    return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+                }
+            }
             $user = $userManager->updateUserFromData($user, $data);
             $partnerId = $user->getPartner()->getId();
 
@@ -438,14 +464,14 @@ class PartnerController extends AbstractController
         if ($this->isCsrfTokenValid('partner_checkmail', $request->request->get('_token'))) {
             $userExist = $userRepository->findOneBy(['email' => $request->get('email')]);
             if ($userExist && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
-                return $this->json(['error' => 'email_exist'], Response::HTTP_BAD_REQUEST);
+                return $this->json(['error' => 'Un utilisateur existe déjà avec cette adresse e-mail.'], Response::HTTP_BAD_REQUEST);
             }
 
             $validator = new EmailValidator();
             $emailValid = $validator->isValid($request->get('email'), new RFCValidation());
 
             if (!$emailValid) {
-                return $this->json(['error' => 'email_unvalid'], Response::HTTP_BAD_REQUEST);
+                return $this->json(['error' => 'L\'adresse e-mail est invalide'], Response::HTTP_BAD_REQUEST);
             }
 
             return $this->json(['success' => 'email_ok']);

@@ -9,7 +9,9 @@ use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Manager\CommuneManager;
+use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
+use App\Repository\UserRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\AbstractType;
@@ -33,6 +35,8 @@ class PartnerType extends AbstractType
     public function __construct(
         private readonly ParameterBagInterface $parameterBag,
         private readonly CommuneManager $communeManager,
+        private readonly UserRepository $userRepository,
+        private readonly PartnerRepository $partnerRepository,
     ) {
     }
 
@@ -212,8 +216,25 @@ class PartnerType extends AbstractType
             'constraints' => [
                 new Assert\Callback([$this, 'validatePartnerCanBeNotified']),
                 new Assert\Callback([$this, 'validateInseeInTerritory']),
+                new Assert\Callback([$this, 'validateEmailIsUnique']),
             ],
         ]);
+    }
+
+    public function validateEmailIsUnique(mixed $value, ExecutionContextInterface $context)
+    {
+        if ($value instanceof Partner) {
+            $partner = $value;
+
+            if (empty($partner->getEmail())) {
+                return;
+            }
+            $user = $this->userRepository->findOneBy(['email' => $partner->getEmail()]);
+
+            if (!empty($user)) {
+                $context->addViolation('Un utilisateur existe déjà avec cette adresse e-mail.');
+            }
+        }
     }
 
     public function validatePartnerCanBeNotified(mixed $value, ExecutionContextInterface $context)
