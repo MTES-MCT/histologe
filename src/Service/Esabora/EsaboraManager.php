@@ -40,13 +40,11 @@ class EsaboraManager
         DossierResponseInterface $dossierResponse,
         Affectation $affectation
     ): void {
-        $user = $affectation->getPartner()->getUsers()->first();
+        $adminUser = $this->userManager->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
         $signalement = $affectation->getSignalement();
 
-        $description = $this->updateStatusFor($affectation, $user, $dossierResponse);
+        $description = $this->updateStatusFor($affectation, $adminUser, $dossierResponse);
         if (!empty($description)) {
-            $adminEmail = $this->parameterBag->get('user_system_email');
-            $adminUser = $this->userManager->findOneBy(['email' => $adminEmail]);
             $suivi = $this->suiviManager->createSuivi(
                 user: $adminUser,
                 signalement: $signalement,
