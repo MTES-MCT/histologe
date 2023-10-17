@@ -350,6 +350,55 @@ class SignalementManager extends AbstractManager
 
     public function updateFromSituationFoyerRequest(Signalement $signalement, SituationFoyerRequest $situationFoyerRequest)
     {
+        switch ($situationFoyerRequest->getIsLogementSocial()) {
+            case 'oui':
+                $signalement->setIsLogementSocial(true);
+                break;
+            case 'non':
+                $signalement->setIsLogementSocial(false);
+                break;
+            case 'nsp':
+                $signalement->setIsLogementSocial(null);
+                break;
+        }
+
+        switch ($situationFoyerRequest->getIsRelogement()) {
+            case 'oui':
+                $signalement->setIsRelogement(true);
+                break;
+            case 'non':
+                $signalement->setIsRelogement(false);
+                break;
+            case 'nsp':
+                $signalement->setIsRelogement(null);
+                break;
+        }
+
+        switch ($situationFoyerRequest->getIsAllocataire()) {
+            case 'caf':
+            case 'msa':
+                $signalement->setIsAllocataire($situationFoyerRequest->getIsAllocataire());
+                break;
+            case 'non':
+                $signalement->setIsAllocataire(false);
+                break;
+            case 'nsp':
+                $signalement->setIsAllocataire(null);
+                break;
+        }
+
+        $dateNaissance = new \DateTimeImmutable($situationFoyerRequest->getDateNaissanceOccupant());
+        $signalement->setDateNaissanceOccupant($dateNaissance);
+
+        $signalement->setNumAllocataire($situationFoyerRequest->getNumAllocataire());
+
+        $situationFoyer = $signalement->getSituationFoyer();
+        $situationFoyer
+            ->setLogementSocialMontantAllocation($situationFoyerRequest->getLogementSocialMontantAllocation())
+            ->setTravailleurSocialQuitteLogement($situationFoyerRequest->getTravailleurSocialQuitteLogement())
+            ->setTravailleurSocialAccompagnementDeclarant($situationFoyerRequest->getTravailleurSocialAccompagnementDeclarant());
+        $signalement->setSituationFoyer($situationFoyer);
+
         $this->save($signalement);
     }
 

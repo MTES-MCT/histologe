@@ -11,6 +11,117 @@
                             <h1 id="fr-modal-title-modal-edit-situation-foyer" class="fr-modal__title">
                                 Modifier la situation du foyer
                             </h1>
+
+                            <div class="fr-select-group">
+                                {% set isLogementSocial = 'nsp' %}
+                                {% if signalement.isLogementSocial is null %}
+                                    {% set isLogementSocial = 'nsp' %}
+                                {% elseif signalement.isLogementSocial %}
+                                    {% set isLogementSocial = 'oui' %}
+                                {% else %}
+                                    {% set isLogementSocial = 'non' %}
+                                {% endif %}
+                                <label class="fr-label" for="isLogementSocial">Logement social</label>
+                                <select class="fr-select" name="isLogementSocial">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ isLogementSocial is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ isLogementSocial is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ isLogementSocial is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set isRelogement = 'nsp' %}
+                                {% if signalement.isRelogement is null %}
+                                    {% set isRelogement = 'nsp' %}
+                                {% elseif signalement.isRelogement %}
+                                    {% set isRelogement = 'oui' %}
+                                {% else %}
+                                    {% set isRelogement = 'non' %}
+                                {% endif %}
+                                <label class="fr-label" for="isRelogement">Demande relogement</label>
+                                <select class="fr-select" name="isRelogement">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ isRelogement is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ isRelogement is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ isRelogement is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set isAllocataire = 'nsp' %}
+                                {% if signalement.isAllocataire is null %}
+                                    {% set isAllocataire = 'nsp' %}
+                                {% elseif signalement.isAllocataire %}
+                                    {% set isAllocataire = signalement.isAllocataire %}
+                                {% else %}
+                                    {% set isAllocataire = 'non' %}
+                                {% endif %}
+                                <label class="fr-label" for="isAllocataire">Allocataire</label>
+                                <select class="fr-select" name="isAllocataire">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="caf" {{ isAllocataire is same as 'caf' ? 'selected' : '' }}>CAF</option>
+                                    <option value="msa" {{ isAllocataire is same as 'msa' ? 'selected' : '' }}>MSA</option>
+                                    <option value="non" {{ isAllocataire is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ isAllocataire is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="dateNaissanceOccupant">Date de naissance</label>
+                                <input class="fr-input" type="date" name="dateNaissanceOccupant" value="{{ signalement.dateNaissanceOccupant.format('Y-m-d') ?? signalement.naissanceOccupants ?? '' }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="numAllocataire">N° allocataire</label>
+                                <input class="fr-input" type="text" name="numAllocataire" value="{{ signalement.numAllocataire }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                {% set logementSocialMontantAllocation = '' %}
+                                {% if signalement.situationFoyer and signalement.situationFoyer.logementSocialMontantAllocation %}
+                                    {% set logementSocialMontantAllocation = signalement.situationFoyer.logementSocialMontantAllocation %}
+                                {% endif %}
+                                <label class="fr-label" for="logementSocialMontantAllocation">Montant allocation (€)</label>
+                                <input class="fr-input" type="text" name="logementSocialMontantAllocation" value="{{ logementSocialMontantAllocation }}">
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set travailleurSocialQuitteLogement = 'nsp' %}
+                                {% if signalement.situationFoyer %}
+                                    {% if signalement.situationFoyer.travailleurSocialQuitteLogement is same as 'oui' %}
+                                        {% set travailleurSocialQuitteLogement = 'oui' %}
+                                    {% elseif signalement.situationFoyer.travailleurSocialQuitteLogement is same as 'non' %}
+                                        {% set travailleurSocialQuitteLogement = 'non' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="travailleurSocialQuitteLogement">Souhaite quitter le logement</label>
+                                <select class="fr-select" name="travailleurSocialQuitteLogement">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ travailleurSocialQuitteLogement is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ travailleurSocialQuitteLogement is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ travailleurSocialQuitteLogement is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set travailleurSocialAccompagnementDeclarant = 'nsp' %}
+                                {% if signalement.situationFoyer %}
+                                    {% if signalement.situationFoyer.travailleurSocialAccompagnementDeclarant is same as 'oui' %}
+                                        {% set travailleurSocialAccompagnementDeclarant = 'oui' %}
+                                    {% elseif signalement.situationFoyer.travailleurSocialAccompagnementDeclarant is same as 'non' %}
+                                        {% set travailleurSocialAccompagnementDeclarant = 'non' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="travailleurSocialAccompagnementDeclarant">Accompagnement par un ou une travailleuse sociale</label>
+                                <select class="fr-select" name="travailleurSocialAccompagnementDeclarant">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ travailleurSocialAccompagnementDeclarant is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ travailleurSocialAccompagnementDeclarant is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ travailleurSocialAccompagnementDeclarant is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+                        </div>
                         
                         <div class="fr-modal__footer">
                             <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
