@@ -70,11 +70,6 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         $escalier = $signalement->getEscalierOccupant() ? EscalierParser::parse($signalement->getEscalierOccupant()) : null;
         $numPorte = $signalement->getNumAppartOccupant() ? substr($signalement->getNumAppartOccupant(), 0, 30) : null;
         $villeOccupant = $signalement->getVilleOccupant() ? substr($signalement->getVilleOccupant(), 0, 60) : null;
-        $villeOccupant = $signalement->getVilleOccupant() ? substr($signalement->getVilleOccupant(), 0, 60) : null;
-        $villeOccupant = $signalement->getVilleOccupant() ? substr($signalement->getVilleOccupant(), 0, 60) : null;
-        $villeOccupant = $signalement->getVilleOccupant() ? substr($signalement->getVilleOccupant(), 0, 60) : null;
-        $villeOccupant = $signalement->getVilleOccupant() ? substr($signalement->getVilleOccupant(), 0, 60) : null;
-        $villeOccupant = $signalement->getVilleOccupant() ? substr($signalement->getVilleOccupant(), 0, 60) : null;
         $numeroInvariant = $signalement->getNumeroInvariant() ? substr($signalement->getNumeroInvariant(), 0, 12) : null;
         $typeEnergieLogement = $signalement->getTypeEnergieLogement() ? substr($signalement->getTypeEnergieLogement(), 0, 30) : null;
         $codeInsee = $signalement->getInseeOccupant() ?: $this->addressService->getCodeInsee($signalement->getAdresseOccupant().' '.$signalement->getCpOccupant().' '.$signalement->getVilleOccupant());
