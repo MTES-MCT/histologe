@@ -496,17 +496,20 @@
         </div>
 
         <div class="fr-col-12 fr-col-md-6 fr-mb-1v">
+            {% include 'back/signalement/view/edit-modals/edit-procedure-demarches.html.twig' %}
             <div class="fr-p-3v fr-background-alt--grey">
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-9">
                         <h4 class="fr-h6">Procédure et démarches</h4>
                     </div>
                     <div class="fr-col-12 fr-col-md-3 fr-text--right">
-                        <a href="#">Modifier</a>
+                        <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-procedure-demarches">Modifier</a>
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Bailleur averti :</strong>
-                        {% if signalement.isProprioAverti %}
+                        {% if signalement.isProprioAverti is null %}
+                            {{ static_picto_nsp|raw }}
+                        {% elseif signalement.isProprioAverti %}
                             {{ static_picto_yes|raw }}
                         {% else %}
                             {{ static_picto_no|raw }}
@@ -515,12 +518,12 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Contact aussurance :</strong>
                         {% if signalement.informationProcedure %}
-                            {% if signalement.informationProcedure.infoProcedureAssuranceContactee is null %}
-                                {{ static_picto_nsp|raw }}
-                            {% elseif signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'oui' %}
+                            {% if signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'oui' %}
                                 {{ static_picto_yes|raw }}
-                            {% else %}
+                            {% elseif signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'non' %}
                                 {{ static_picto_no|raw }}
+                            {% else %}
+                                {{ static_picto_nsp|raw }}
                             {% endif %}
                         {% else %}
                             N/C
@@ -538,13 +541,13 @@
                     <div class="fr-col-12">
                         <strong>Souhaite garder le logement après travaux :</strong>
                         {% if signalement.informationProcedure %}
-                            {% if signalement.informationProcedure.infoProcedureDepartApresTravaux is null %}
-                                {{ static_picto_nsp|raw }}
-                            {# Careful : the way it is displayed is reversed #}
-                            {% elseif signalement.informationProcedure.infoProcedureDepartApresTravaux is same as 'oui' %}
+                            {# Careful : reversed regarding the question in the form #}
+                            {% if signalement.informationProcedure.infoProcedureDepartApresTravaux is same as 'oui' %}
                                 {{ static_picto_no|raw }}
-                            {% else %}
+                            {% elseif signalement.informationProcedure.infoProcedureDepartApresTravaux is same as 'non' %}
                                 {{ static_picto_yes|raw }}
+                            {% else %}
+                                {{ static_picto_nsp|raw }}
                             {% endif %}
                         {% else %}
                             N/C
