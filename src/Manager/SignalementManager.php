@@ -405,7 +405,17 @@ class SignalementManager extends AbstractManager
 
     public function updateFromProcedureDemarchesRequest(Signalement $signalement, ProcedureDemarchesRequest $procedureDemarchesRequest)
     {
-        $signalement->setIsProprioAverti($procedureDemarchesRequest->getIsProprioAverti());
+        switch ($procedureDemarchesRequest->getIsProprioAverti()) {
+            case 'oui':
+                $signalement->setIsProprioAverti(true);
+                break;
+            case 'non':
+                $signalement->setIsProprioAverti(false);
+                break;
+            case 'nsp':
+                $signalement->setIsProprioAverti(null);
+                break;
+        }
 
         $informationProcedure = $signalement->getInformationProcedure();
         $informationProcedure
