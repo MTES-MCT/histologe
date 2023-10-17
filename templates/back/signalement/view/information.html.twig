@@ -433,7 +433,9 @@
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Allocataire :</strong>
-                        {% if signalement.isAllocataire %}
+                        {% if signalement.isAllocataire is null %}
+                            {{ static_picto_nsp|raw }}
+                        {% elseif signalement.isAllocataire %}
                             <p class="fr-badge fr-badge--info fr-badge--no-icon">{{ signalement.isAllocataire }}</p>
                         {% else %}
                             {{ static_picto_no|raw }}
@@ -464,12 +466,12 @@
                     <div class="fr-col-12">
                         <strong>Souhaite quitter le logement :</strong>
                         {% if signalement.situationFoyer %}
-                            {% if signalement.situationFoyer.travailleurSocialQuitteLogement is null %}
-                                {{ static_picto_nsp|raw }}
-                            {% elseif signalement.situationFoyer.travailleurSocialQuitteLogement is same as 'oui' %}
+                            {% if signalement.situationFoyer.travailleurSocialQuitteLogement is same as 'oui' %}
                                 {{ static_picto_yes|raw }}
-                            {% else %}
+                            {% elseif signalement.situationFoyer.travailleurSocialQuitteLogement is same as 'non' %}
                                 {{ static_picto_no|raw }}
+                            {% else %}
+                                {{ static_picto_nsp|raw }}
                             {% endif %}
                         {% else %}
                             N/C
@@ -478,12 +480,12 @@
                     <div class="fr-col-12">
                         <strong>Accompagnement par un ou une travailleuse sociale :</strong>
                         {% if signalement.situationFoyer %}
-                            {% if signalement.situationFoyer.travailleurSocialAccompagnementDeclarant is null %}
-                                {{ static_picto_nsp|raw }}
-                            {% elseif signalement.situationFoyer.travailleurSocialAccompagnementDeclarant is same as 'oui' %}
+                            {% if signalement.situationFoyer.travailleurSocialAccompagnementDeclarant is same as 'oui' %}
                                 {{ static_picto_yes|raw }}
-                            {% else %}
+                            {% elseif signalement.situationFoyer.travailleurSocialAccompagnementDeclarant is same as 'non' %}
                                 {{ static_picto_no|raw }}
+                            {% else %}
+                                {{ static_picto_nsp|raw }}
                             {% endif %}
                         {% else %}
                             N/C
