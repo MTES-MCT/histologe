@@ -13,6 +13,7 @@
         :label="component.label"
         :labelInfo="component.labelInfo"
         :labelUpload="component.labelUpload"
+        :description="component.description"
         :action="component.action"
         :link="component.link"
         :linktarget="component.linktarget"
