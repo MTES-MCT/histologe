@@ -66,7 +66,6 @@ class PushFailedEsaboraDossierCommand extends Command
         foreach ($failedDossiers as $failedDossier) {
             $signalementId = $failedDossier->getSignalementId();
             $partnerId = $failedDossier->getPartnerId();
-            $this->io->text('Renvoi du dossier pour le signalement '.$signalementId.' et le partenaire '.$partnerId);
 
             $signalement = $this->signalementRepository->find($signalementId);
 
@@ -74,7 +73,12 @@ class PushFailedEsaboraDossierCommand extends Command
                 return $affectation->getPartner()->getId() === $partnerId;
             })->first();
 
-            $this->esaboraBus->dispatch($affectation);
+            if ($affectation instanceof Affectation) {
+                $this->io->text('Renvoi du dossier pour le signalement '.$signalementId.' et le partenaire '.$partnerId);
+                $this->esaboraBus->dispatch($affectation);
+            } else {
+                $this->io->text('Pas d\'affectation trouvée pour le signalement '.$signalementId.' par le partenaire '.$partnerId);
+            }
         }
         sleep($delay);
         $failedDossiersAfter = $this->jobEventRepository->findFailedEsaboraDossierByPartnerTypeByAction(PartnerType::ARS, $action);
