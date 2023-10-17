@@ -7,6 +7,7 @@ use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
 use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
 use App\Dto\Request\Signalement\InformationsLogementRequest;
+use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Entity\Signalement;
 use App\Manager\SignalementManager;
@@ -244,6 +245,45 @@ class SignalementEditController extends AbstractController
             if (empty($errorMessage)) {
                 $signalementManager->updateFromSituationFoyerRequest($signalement, $situationFoyerRequest);
                 $this->addFlash('success', 'Situation du foyer mise à jour avec succès !');
+            } else {
+                $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
+            }
+        } else {
+            $this->addFlash('error', 'Une erreur est survenue...');
+        }
+
+        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+    }
+
+    #[Route('/{uuid}/edit-procedure-demarches', name: 'back_signalement_edit_procedure_demarches', methods: 'POST')]
+    public function editProcedureDemarches(
+        Signalement $signalement,
+        Request $request,
+        SignalementManager $signalementManager,
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+    ): Response {
+        $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
+        if ($this->isCsrfTokenValid('signalement_edit_procedure_demarches_'.$signalement->getId(), $request->get('_token'))) {
+            /** @var ProcedureDemarchesRequest $procedureDemarchesRequest */
+            $procedureDemarchesRequest = $serializer->deserialize(
+                json_encode($request->getPayload()->all()),
+                ProcedureDemarchesRequest::class,
+                'json'
+            );
+
+            $errorMessage = '';
+            $errors = $validator->validate($procedureDemarchesRequest);
+            if (\count($errors) > 0) {
+                $errorMessage = '';
+                foreach ($errors as $error) {
+                    $errorMessage .= $error->getMessage().' ';
+                }
+            }
+
+            if (empty($errorMessage)) {
+                $signalementManager->updateFromProcedureDemarchesRequest($signalement, $procedureDemarchesRequest);
+                $this->addFlash('success', 'Procédure et démarches mises à jour avec succès !');
             } else {
                 $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
             }
