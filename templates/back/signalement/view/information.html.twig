@@ -516,7 +516,7 @@
                         {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
-                        <strong>Contact aussurance :</strong>
+                        <strong>Contact assurance :</strong>
                         {% if signalement.informationProcedure %}
                             {% if signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'oui' %}
                                 {{ static_picto_yes|raw }}
@@ -530,7 +530,7 @@
                         {% endif %}
                     </div>
                     <div class="fr-col-12">
-                        <strong>Réponse aussurance :</strong>
+                        <strong>Réponse assurance :</strong>
                         {% if signalement.informationProcedure and signalement.informationProcedure.infoProcedureReponseAssurance %}
                             <br>
                             {{ signalement.informationProcedure.infoProcedureReponseAssurance|raw }}

@@ -18,7 +18,6 @@
         <br>
         {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
             <a target="_blank" rel="noreferrer" class="force-link-color"
-                {# latitude and longitude data are inverted for now #}
                 href="http://www.openstreetmap.org/?mlat={{ signalement.geoloc.lat }}&mlon={{ signalement.geoloc.lng }}#map=18/{{ signalement.geoloc.lat }}/{{ signalement.geoloc.lng }}">
                 Voir sur la carte
             </a>
