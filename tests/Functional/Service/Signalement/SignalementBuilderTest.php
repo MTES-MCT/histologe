@@ -13,6 +13,7 @@ use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementBuilder;
+use App\Service\Signalement\SignalementInputValueMapper;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Service\Token\TokenGeneratorInterface;
 use App\Tests\FixturesHelper;
@@ -39,6 +40,7 @@ class SignalementBuilderTest extends KernelTestCase
         $situationFoyerFactory = static::getContainer()->get(SituationFoyerFactory::class);
         $informationProcedureFactory = static::getContainer()->get(InformationProcedureFactory::class);
         $informationComplementaireFactory = static::getContainer()->get(InformationComplementaireFactory::class);
+        $signalementInputValueMapper = static::getContainer()->get(SignalementInputValueMapper::class);
 
         $this->signalementBuilder = new SignalementBuilder(
             $territoryRepository,
@@ -49,7 +51,8 @@ class SignalementBuilderTest extends KernelTestCase
             $typeCompositionLogementFactory,
             $situationFoyerFactory,
             $informationProcedureFactory,
-            $informationComplementaireFactory
+            $informationComplementaireFactory,
+            $signalementInputValueMapper
         );
     }
 

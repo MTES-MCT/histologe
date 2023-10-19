@@ -32,7 +32,8 @@ class SignalementBuilder
         private TypeCompositionLogementFactory $typeCompositionLogementFactory,
         private SituationFoyerFactory $situationFoyerFactory,
         private InformationProcedureFactory $informationProcedureFactory,
-        private InformationComplementaireFactory $informationComplementaireFactory
+        private InformationComplementaireFactory $informationComplementaireFactory,
+        private SignalementInputValueMapper $signalementInputValueMapper,
     ) {
     }
 
@@ -271,7 +272,7 @@ class SignalementBuilder
             return null;
         }
 
-        return 'oui' === $value;
+        return $this->signalementInputValueMapper->map($value);
     }
 
     private function isConstructionAvant1949(?string $dateConstruction): ?bool
@@ -311,7 +312,9 @@ class SignalementBuilder
     private function resolveIsAllocataire(): ?string
     {
         if ($this->evalBoolean($this->signalementDraftRequest->getLogementSocialAllocation())) {
-            return strtoupper($this->signalementDraftRequest->getLogementSocialAllocationCaisse());
+            return $this->signalementInputValueMapper->map(
+                $this->signalementDraftRequest->getLogementSocialAllocationCaisse()
+            );
         }
 
         return '0';
