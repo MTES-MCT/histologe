@@ -39,7 +39,7 @@
                                         {% set infoProcedureAssuranceContactee = 'non' %}
                                     {% endif %}
                                 {% endif %}
-                                <label class="fr-label" for="infoProcedureAssuranceContactee">Contact aussurance</label>
+                                <label class="fr-label" for="infoProcedureAssuranceContactee">Contact assurance</label>
                                 <select class="fr-select" name="infoProcedureAssuranceContactee">
                                     <option value="" disabled hidden>Sélectionnez un choix</option>
                                     <option value="oui" {{ infoProcedureAssuranceContactee is same as 'oui' ? 'selected' : '' }}>Oui</option>
@@ -49,7 +49,7 @@
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="infoProcedureReponseAssurance">Réponse aussurance</label>
+                                <label class="fr-label" for="infoProcedureReponseAssurance">Réponse assurance</label>
                                 <input class="fr-input" type="text" name="infoProcedureReponseAssurance" value="{{ signalement.informationProcedure and signalement.informationProcedure.infoProcedureReponseAssurance ? signalement.informationProcedure.infoProcedureReponseAssurance|raw : '' }}">
                             </div>
 

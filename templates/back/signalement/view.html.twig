@@ -36,10 +36,12 @@
         
         {% include 'back/signalement/view/user-declaration.html.twig' %}
 
-        {% include 'back/signalement/view/photos-documents.html.twig' with {
-            'zonetitle': "Photos et documents fournis par l'usager",
-            'importedBy': "user"
-        } %}
+        {% if createdFromDraft %}
+            {% include 'back/signalement/view/photos-documents.html.twig' with {
+                'zonetitle': "Photos et documents fournis par l'usager",
+                'importedBy': "user"
+            } %}
+        {% endif %}
     
         {% include 'back/signalement/view/information.html.twig' %}
         

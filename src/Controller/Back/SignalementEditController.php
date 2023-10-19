@@ -38,14 +38,7 @@ class SignalementEditController extends AbstractController
                 'json'
             );
 
-            $errorMessage = '';
-            $errors = $validator->validate($adresseOccupantRequest);
-            if (\count($errors) > 0) {
-                $errorMessage = '';
-                foreach ($errors as $error) {
-                    $errorMessage .= $error->getMessage().' ';
-                }
-            }
+            $errorMessage = $this->getErrorMessage($validator, $adresseOccupantRequest);
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromAdresseOccupantRequest($signalement, $adresseOccupantRequest);
@@ -77,14 +70,7 @@ class SignalementEditController extends AbstractController
                 'json'
             );
 
-            $errorMessage = '';
-            $errors = $validator->validate($coordonneesTiersRequest);
-            if (\count($errors) > 0) {
-                $errorMessage = '';
-                foreach ($errors as $error) {
-                    $errorMessage .= $error->getMessage().' ';
-                }
-            }
+            $errorMessage = $this->getErrorMessage($validator, $coordonneesTiersRequest);
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromCoordonneesTiersRequest($signalement, $coordonneesTiersRequest);
@@ -116,14 +102,7 @@ class SignalementEditController extends AbstractController
                 'json'
             );
 
-            $errorMessage = '';
-            $errors = $validator->validate($coordonneesFoyerRequest);
-            if (\count($errors) > 0) {
-                $errorMessage = '';
-                foreach ($errors as $error) {
-                    $errorMessage .= $error->getMessage().' ';
-                }
-            }
+            $errorMessage = $this->getErrorMessage($validator, $coordonneesFoyerRequest);
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromCoordonneesFoyerRequest($signalement, $coordonneesFoyerRequest);
@@ -155,14 +134,7 @@ class SignalementEditController extends AbstractController
                 'json'
             );
 
-            $errorMessage = '';
-            $errors = $validator->validate($coordonneesBailleurRequest);
-            if (\count($errors) > 0) {
-                $errorMessage = '';
-                foreach ($errors as $error) {
-                    $errorMessage .= $error->getMessage().' ';
-                }
-            }
+            $errorMessage = $this->getErrorMessage($validator, $coordonneesBailleurRequest);
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromCoordonneesBailleurRequest($signalement, $coordonneesBailleurRequest);
@@ -194,14 +166,7 @@ class SignalementEditController extends AbstractController
                 'json'
             );
 
-            $errorMessage = '';
-            $errors = $validator->validate($informationsLogementRequest);
-            if (\count($errors) > 0) {
-                $errorMessage = '';
-                foreach ($errors as $error) {
-                    $errorMessage .= $error->getMessage().' ';
-                }
-            }
+            $errorMessage = $this->getErrorMessage($validator, $informationsLogementRequest);
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromInformationsLogementRequest($signalement, $informationsLogementRequest);
@@ -233,14 +198,7 @@ class SignalementEditController extends AbstractController
                 'json'
             );
 
-            $errorMessage = '';
-            $errors = $validator->validate($situationFoyerRequest);
-            if (\count($errors) > 0) {
-                $errorMessage = '';
-                foreach ($errors as $error) {
-                    $errorMessage .= $error->getMessage().' ';
-                }
-            }
+            $errorMessage = $this->getErrorMessage($validator, $situationFoyerRequest);
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromSituationFoyerRequest($signalement, $situationFoyerRequest);
@@ -272,14 +230,7 @@ class SignalementEditController extends AbstractController
                 'json'
             );
 
-            $errorMessage = '';
-            $errors = $validator->validate($procedureDemarchesRequest);
-            if (\count($errors) > 0) {
-                $errorMessage = '';
-                foreach ($errors as $error) {
-                    $errorMessage .= $error->getMessage().' ';
-                }
-            }
+            $errorMessage = $this->getErrorMessage($validator, $procedureDemarchesRequest);
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromProcedureDemarchesRequest($signalement, $procedureDemarchesRequest);
@@ -292,5 +243,19 @@ class SignalementEditController extends AbstractController
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+    }
+
+    private function getErrorMessage(ValidatorInterface $validator, $dtoRequest): string
+    {
+        $errorMessage = '';
+        $errors = $validator->validate($dtoRequest);
+        if (\count($errors) > 0) {
+            $errorMessage = '';
+            foreach ($errors as $error) {
+                $errorMessage .= $error->getMessage().' ';
+            }
+        }
+
+        return $errorMessage;
     }
 }
