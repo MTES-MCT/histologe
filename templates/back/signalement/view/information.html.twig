@@ -18,7 +18,12 @@
         </div>
         
         <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
-            <strong>Superficie totale :</strong> {{ signalement.superficie }}m²
+            <strong>Superficie totale :</strong>
+            {% if signalement.superficie %}
+                {{ signalement.superficie }}m²
+            {% else %}
+                N/C
+            {% endif %}
         </div>
         
         <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
