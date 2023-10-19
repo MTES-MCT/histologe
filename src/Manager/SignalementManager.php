@@ -13,6 +13,9 @@ use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Dto\SignalementAffectationListView;
 use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Model\InformationProcedure;
+use App\Entity\Model\SituationFoyer;
+use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
@@ -336,7 +339,10 @@ class SignalementManager extends AbstractManager
         $signalement->setNatureLogement($informationsLogementRequest->getType())
             ->setNbOccupantsLogement($informationsLogementRequest->getNombrePersonnes());
 
-        $typeCompositionLogement = $signalement->getTypeCompositionLogement();
+        $typeCompositionLogement = new TypeCompositionLogement();
+        if (!empty($signalement->getTypeCompositionLogement())) {
+            $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
+        }
         $typeCompositionLogement
             ->setCompositionLogementNombrePersonnes($informationsLogementRequest->getNombrePersonnes())
             ->setCompositionLogementEnfants($informationsLogementRequest->getCompositionLogementEnfants())
@@ -393,7 +399,10 @@ class SignalementManager extends AbstractManager
 
         $signalement->setNumAllocataire($situationFoyerRequest->getNumAllocataire());
 
-        $situationFoyer = $signalement->getSituationFoyer();
+        $situationFoyer = new SituationFoyer();
+        if (!empty($signalement->getSituationFoyer())) {
+            $situationFoyer = clone $signalement->getSituationFoyer();
+        }
         $situationFoyer
             ->setLogementSocialMontantAllocation($situationFoyerRequest->getLogementSocialMontantAllocation())
             ->setTravailleurSocialQuitteLogement($situationFoyerRequest->getTravailleurSocialQuitteLogement())
@@ -417,7 +426,10 @@ class SignalementManager extends AbstractManager
                 break;
         }
 
-        $informationProcedure = $signalement->getInformationProcedure();
+        $informationProcedure = new InformationProcedure();
+        if (!empty($signalement->getInformationProcedure())) {
+            $informationProcedure = clone $signalement->getInformationProcedure();
+        }
         $informationProcedure
             ->setInfoProcedureAssuranceContactee($procedureDemarchesRequest->getInfoProcedureAssuranceContactee())
             ->setInfoProcedureReponseAssurance($procedureDemarchesRequest->getInfoProcedureReponseAssurance())
