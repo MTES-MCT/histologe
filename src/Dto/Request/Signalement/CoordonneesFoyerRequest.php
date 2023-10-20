@@ -2,6 +2,7 @@
 
 namespace App\Dto\Request\Signalement;
 
+use App\Validator as AppAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
 
@@ -12,6 +13,7 @@ class CoordonneesFoyerRequest
         private readonly ?string $prenom = null,
         #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
         private readonly ?string $mail = null,
+        #[AppAssert\TelephoneFormat]
         private readonly ?string $telephone = null,
         private readonly ?string $telephoneBis = null,
     ) {
