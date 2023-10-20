@@ -11,6 +11,7 @@ class InformationsLogementRequest
         private readonly ?string $type = null,
         private readonly ?string $nombrePersonnes = null,
         private readonly ?string $compositionLogementEnfants = null,
+        #[Assert\DateTime('Y-m-d')]
         private readonly ?string $bailDpeDateEmmenagement = null,
         private readonly ?string $bailDpeBail = null,
         private readonly ?string $bailDpeEtatDesLieux = null,
