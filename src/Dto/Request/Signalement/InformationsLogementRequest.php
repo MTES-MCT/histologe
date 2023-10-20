@@ -2,9 +2,12 @@
 
 namespace App\Dto\Request\Signalement;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 class InformationsLogementRequest
 {
     public function __construct(
+        #[Assert\NotBlank(message: 'Merci de définir le type de logement.')]
         private readonly ?string $type = null,
         private readonly ?string $nombrePersonnes = null,
         private readonly ?string $compositionLogementEnfants = null,

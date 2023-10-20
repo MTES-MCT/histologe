@@ -28,6 +28,7 @@ use App\Factory\SignalementFactory;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Service\Signalement\QualificationStatusService;
+use App\Service\Signalement\SignalementInputValueMapper;
 use DateTimeImmutable;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -49,6 +50,7 @@ class SignalementManager extends AbstractManager
         private SignalementExportFactory $signalementExportFactory,
         private ParameterBagInterface $parameterBag,
         private CsrfTokenManagerInterface $csrfTokenManager,
+        private SignalementInputValueMapper $signalementInputValueMapper,
         string $entityName = Signalement::class
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -357,42 +359,21 @@ class SignalementManager extends AbstractManager
 
     public function updateFromSituationFoyerRequest(Signalement $signalement, SituationFoyerRequest $situationFoyerRequest)
     {
-        switch ($situationFoyerRequest->getIsLogementSocial()) {
-            case 'oui':
-                $signalement->setIsLogementSocial(true);
-                break;
-            case 'non':
-                $signalement->setIsLogementSocial(false);
-                break;
-            case 'nsp':
-                $signalement->setIsLogementSocial(null);
-                break;
-        }
-
-        switch ($situationFoyerRequest->getIsRelogement()) {
-            case 'oui':
-                $signalement->setIsRelogement(true);
-                break;
-            case 'non':
-                $signalement->setIsRelogement(false);
-                break;
-            case 'nsp':
-                $signalement->setIsRelogement(null);
-                break;
-        }
-
-        switch ($situationFoyerRequest->getIsAllocataire()) {
-            case 'caf':
-            case 'msa':
-                $signalement->setIsAllocataire($situationFoyerRequest->getIsAllocataire());
-                break;
-            case 'non':
-                $signalement->setIsAllocataire(false);
-                break;
-            case 'nsp':
-                $signalement->setIsAllocataire(null);
-                break;
-        }
+        $signalement->setIsLogementSocial(
+            $this->signalementInputValueMapper->map(
+                $situationFoyerRequest->getIsLogementSocial()
+            )
+        );
+        $signalement->setIsRelogement(
+            $this->signalementInputValueMapper->map(
+                $situationFoyerRequest->getIsRelogement()
+            )
+        );
+        $signalement->setIsAllocataire(
+            $this->signalementInputValueMapper->map(
+                $situationFoyerRequest->getIsAllocataire()
+            )
+        );
 
         $dateNaissance = new \DateTimeImmutable($situationFoyerRequest->getDateNaissanceOccupant());
         $signalement->setDateNaissanceOccupant($dateNaissance);
@@ -414,17 +395,11 @@ class SignalementManager extends AbstractManager
 
     public function updateFromProcedureDemarchesRequest(Signalement $signalement, ProcedureDemarchesRequest $procedureDemarchesRequest)
     {
-        switch ($procedureDemarchesRequest->getIsProprioAverti()) {
-            case 'oui':
-                $signalement->setIsProprioAverti(true);
-                break;
-            case 'non':
-                $signalement->setIsProprioAverti(false);
-                break;
-            case 'nsp':
-                $signalement->setIsProprioAverti(null);
-                break;
-        }
+        $signalement->setIsProprioAverti(
+            $this->signalementInputValueMapper->map(
+                $procedureDemarchesRequest->getIsProprioAverti()
+            )
+        );
 
         $informationProcedure = new InformationProcedure();
         if (!empty($signalement->getInformationProcedure())) {

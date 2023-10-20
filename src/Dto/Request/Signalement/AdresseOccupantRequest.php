@@ -13,9 +13,13 @@ class AdresseOccupantRequest
         private readonly ?string $codePostal = null,
         #[Assert\NotBlank(message: 'Merci de saisir une ville.')]
         private readonly ?string $ville = null,
+        #[Assert\Length(max: 5)]
         private readonly ?string $etage = null,
+        #[Assert\Length(max: 3)]
         private readonly ?string $escalier = null,
+        #[Assert\Length(max: 30)]
         private readonly ?string $numAppart = null,
+        #[Assert\Length(max: 255)]
         private readonly ?string $autre = null,
         private readonly ?string $geolocLng = null,
         private readonly ?string $geolocLat = null,
