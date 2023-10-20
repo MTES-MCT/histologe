@@ -3,6 +3,7 @@
 namespace App\Dto\Request\Signalement;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Email;
 
 class CoordonneesTiersRequest
 {
@@ -12,6 +13,7 @@ class CoordonneesTiersRequest
         #[Assert\NotBlank(message: 'Merci de saisir un prénom.')]
         private readonly ?string $prenom = null,
         #[Assert\NotBlank(message: 'Merci de saisir un courriel.')]
+        #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
         private readonly ?string $mail = null,
         private readonly ?string $telephone = null,
         private readonly ?string $lien = null,
