@@ -17,6 +17,7 @@ import './vue/front-stats';
 import './vue/dashboard';
 import './vue/signalement-form';
 
+import './controllers/component_search_address';
 import './controllers/form_account';
 import './controllers/form_helper';
 import './controllers/form_nde';
