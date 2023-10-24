@@ -30,7 +30,7 @@ class SignalementExportLoaderTest extends TestCase
             ->with($user, $filters)
             ->willReturn($this->getSignalementExportGenerator($signalementExports));
 
-        $expectedOutput = $this->getHeaderAsString()."2023-01;31-03-2023;nouveau;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n2023-02;31-03-2023;nouveau;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n";
+        $expectedOutput = $this->getHeaderAsString()."2023-01;31-03-2023;nouveau;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n2023-02;31-03-2023;nouveau;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n";
 
         $loader = new SignalementExportLoader($signalementManager);
         ob_start();

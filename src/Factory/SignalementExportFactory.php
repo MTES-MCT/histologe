@@ -2,8 +2,11 @@
 
 namespace App\Factory;
 
+use App\Dto\SignalementAffectationListView;
 use App\Dto\SignalementExport;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\VisiteStatus;
+use App\Entity\Intervention;
 use App\Entity\User;
 use App\Service\Signalement\SignalementAffectationHelper;
 
@@ -35,6 +38,31 @@ class SignalementExportFactory
         $motifCloture = $data['motifCloture'] instanceof MotifCloture ? $data['motifCloture']->label() : null;
         $status = SignalementAffectationHelper::getStatusLabelFrom($user, $data);
 
+        $geoloc = json_encode($data['geoloc']);
+
+        if (null === $data['interventionsStatus']) {
+            $statusVisite = VisiteStatus::NON_PLANIFIEE->value;
+        } else {
+            $interventions = explode(SignalementAffectationListView::SEPARATOR_CONCAT, $data['interventionsStatus']);
+            foreach ($interventions as $intervention) {
+                $interventionExploded = explode(SignalementExport::SEPARATOR_GROUP_CONCAT, $intervention);
+                if (Intervention::STATUS_PLANNED === $interventionExploded[0]) {
+                    $todayDatetime = new \DateTime();
+                    if ($interventionExploded[1] > $todayDatetime->format('Y-m-d')) {
+                        $statusVisite = VisiteStatus::PLANIFIEE->value;
+                    } else {
+                        $statusVisite = VisiteStatus::CONCLUSION_A_RENSEIGNER->value;
+                    }
+                } elseif (Intervention::STATUS_CANCELED === $interventionExploded[0]) {
+                    $statusVisite = 'Annulée';
+                } elseif (Intervention::STATUS_NOT_DONE === $interventionExploded[0]) {
+                    $statusVisite = 'Non effectuée';
+                } else {
+                    $statusVisite = VisiteStatus::TERMINEE->value;
+                }
+            }
+        }
+
         return new SignalementExport(
             reference: $data['reference'],
             createdAt: $createdAt,
@@ -57,8 +85,8 @@ class SignalementExportFactory
             situations: $data['familleSituation'] ?? null,
             desordres: $data['desordres'] ?? null,
             etiquettes: $data['etiquettes'] ?? null,
-            photos: empty($data['photos']) ? self::NON : self::OUI,
-            documents: empty($data['documents']) ? self::NON : self::OUI,
+            photos: $data['photosName'] ?? self::NON,
+            documents: $data['documentsName'] ?? self::NON,
             isProprioAverti: $this->mapData($data, 'isProprioAverti'),
             nbAdultes: $data['nbAdultes'],
             nbEnfantsM6: $data['nbEnfantsM6'] ?? self::NON_RENSEIGNE,
@@ -74,12 +102,14 @@ class SignalementExportFactory
             isNotOccupant: 1 == $data['isNotOccupant'] ? self::OUI : self::NON,
             nomDeclarant: $data['nomDeclarant'] ?? '-',
             structureDeclarant: $data['structureDeclarant'] ?? '-',
-            lienDeclarantOccupant: $data['lienDeclarantOccupant'],
+            lienDeclarantOccupant: $data['lienDeclarantOccupant'] ?? '-',
             dateVisite: $dateVisite,
             isOccupantPresentVisite: $isOccupantPresentVisite,
             modifiedAt: $modifiedAt,
             closedAt: $closedAt,
-            motifCloture: $motifCloture
+            motifCloture: $motifCloture,
+            geoloc: $geoloc,
+            interventionStatus: $statusVisite,
         );
     }
 
