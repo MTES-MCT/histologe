@@ -217,6 +217,17 @@ class SignalementController extends AbstractController
         CriticiteCalculator $criticiteCalculator,
         SignalementQualificationUpdater $signalementQualificationUpdater
     ): Response {
+        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
+            $this->addFlash('error', "Ce signalement a été archivé et n'est pas éditable.");
+
+            return $this->redirectToRoute('back_index');
+        }
+        if (Signalement::STATUS_CLOSED === $signalement->getStatut()) {
+            $this->addFlash('error', "Ce signalement a été cloturé et n'est pas éditable.");
+
+            return $this->redirectToRoute('back_index');
+        }
         $title = 'Administration - Edition signalement #'.$signalement->getReference();
         $etats = ['Etat moyen', 'Mauvais état', 'Très mauvais état'];
         $etats_classes = ['moyen', 'grave', 'tres-grave'];

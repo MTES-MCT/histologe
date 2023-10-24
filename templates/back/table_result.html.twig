@@ -68,8 +68,10 @@
         <td class="fr-text--right fr-ws-nowrap">
             <a href="{{ path('back_signalement_view',{uuid:signalement.uuid}) }}"
                class="fr-btn fr-btn--sm fr-fi-eye-fill"></a>
-            <a href="{{ path('back_signalement_edit',{uuid:signalement.uuid}) }}"
-               class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-edit-fill"></a>
+            {% if signalement.statut is same as(2) %}
+                <a href="{{ path('back_signalement_edit',{uuid:signalement.uuid}) }}"
+                class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-edit-fill"></a>
+            {% endif %}
             {% if is_granted('ROLE_ADMIN_TERRITORY') %}
                 <button data-delete="{{ path('back_signalement_delete',{uuid:signalement.uuid}) }}"
                         data-token="{{ signalements.csrfTokens[signalement.uuid] }}"
