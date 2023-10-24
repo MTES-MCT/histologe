@@ -788,7 +788,7 @@
       "body": [
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Est-ce que les locataires bénéficient d'une aide ou allocation logement ?",
+          "label": "Est-ce que le foyer bénéficie d'une aide ou allocation logement ?",
           "slug": "logement_social_allocation",
           "values": [
             {
@@ -884,7 +884,7 @@
         {
           "type": "SignalementFormOnlyChoice",
           "slug": "travailleur_social_quitte_logement",
-          "label": "Savez-vous si les locataires souhaitent ou ont prévu de quitter votre logement ?",
+          "label": "Savez-vous si le foyer souhaite ou a prévu de quitter le logement ?",
           "values": [
             {
               "label": "Oui",
@@ -903,7 +903,7 @@
         {
           "type": "SignalementFormOnlyChoice",
           "slug": "travailleur_social_accompagnement",
-          "label": "Est-ce que les locataires bénéficient d'un accompagnement par un ou une travailleuse sociale ?",
+          "label": "Est-ce que le foyer bénéficie d'un accompagnement par un ou une travailleuse sociale ?",
           "values": [
             {
               "label": "Oui",
