@@ -11,6 +11,53 @@ use Symfony\Component\Routing\RouterInterface;
 
 class BackSignalementControllerTest extends WebTestCase
 {
+    protected function setUp(): void
+    {
+        self::ensureKernelShutdown();
+    }
+
+    /**
+     * @dataProvider provideRoutesEdit
+     */
+    public function testSignalementEditionSuccessfullyDisplay(string $route, Signalement $signalement)
+    {
+        $client = static::createClient();
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+
+        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+
+        $client->loginUser($user);
+        $client->request('GET', $route);
+
+        if (Signalement::STATUS_ACTIVE === $signalement->getStatut()) {
+            $this->assertResponseIsSuccessful($signalement->getId());
+            $this->assertSelectorTextContains(
+                'h1.fr-h2',
+                'Edition signalement #'.$signalement->getReference(),
+                $signalement->getReference()
+            );
+        } else {
+            $this->assertResponseRedirects('/bo/signalements/');
+        }
+    }
+
+    public function provideRoutesEdit(): \Generator
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        /** @var UrlGeneratorInterface $generatorUrl */
+        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
+
+        $signalements = $signalementRepository->findAll();
+
+        /** @var Signalement $signalement */
+        foreach ($signalements as $signalement) {
+            $route = $generatorUrl->generate('back_signalement_edit', ['uuid' => $signalement->getUuid()]);
+            yield $route => [$route, $signalement];
+        }
+    }
+
     /**
      * @dataProvider provideRoutes
      */
@@ -26,7 +73,8 @@ class BackSignalementControllerTest extends WebTestCase
         $client->request('GET', $route);
         if (Signalement::STATUS_ARCHIVED !== $signalement->getStatut()) {
             $this->assertResponseIsSuccessful($signalement->getId());
-            $this->assertSelectorTextContains('h1.fr-h2.fr-text-label--blue-france',
+            $this->assertSelectorTextContains(
+                'h1.fr-h2.fr-text-label--blue-france',
                 '#'.$signalement->getReference().' -',
                 $signalement->getReference()
             );
@@ -71,7 +119,8 @@ class BackSignalementControllerTest extends WebTestCase
         $client->loginUser($user);
         $client->request('GET', $route);
         $this->assertResponseIsSuccessful($signalement->getId());
-        $this->assertSelectorTextContains('#title-nde',
+        $this->assertSelectorTextContains(
+            '#title-nde',
             'Non décence énergétique'
         );
     }
@@ -96,7 +145,9 @@ class BackSignalementControllerTest extends WebTestCase
         $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
 
         $crawler = $client->request('GET', $route);
-        $client->submitForm('Cloturer pour tous les partenaires', [
+        $client->submitForm(
+            'Cloturer pour tous les partenaires',
+            [
                 'cloture[motif]' => 'INSALUBRITE',
                 'cloture[suivi]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
                 'cloture[type]' => 'all',
