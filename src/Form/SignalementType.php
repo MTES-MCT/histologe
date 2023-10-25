@@ -377,7 +377,7 @@ class SignalementType extends AbstractType
             ->add('etageOccupant', NumberType::class, [
                 'attr' => [
                     'class' => 'fr-input',
-                    'pattern' => '^\d{1,3}$',
+                    'pattern' => '^(-\d{1,3}|\d{1,3})$',
                     'maxlength' => '3',
                 ],
                 'label_attr' => [
