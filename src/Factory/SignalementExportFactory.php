@@ -40,28 +40,7 @@ class SignalementExportFactory
 
         $geoloc = json_encode($data['geoloc']);
 
-        if (null === $data['interventionsStatus']) {
-            $statusVisite = VisiteStatus::NON_PLANIFIEE->value;
-        } else {
-            $interventions = explode(SignalementAffectationListView::SEPARATOR_CONCAT, $data['interventionsStatus']);
-            foreach ($interventions as $intervention) {
-                $interventionExploded = explode(SignalementExport::SEPARATOR_GROUP_CONCAT, $intervention);
-                if (Intervention::STATUS_PLANNED === $interventionExploded[0]) {
-                    $todayDatetime = new \DateTime();
-                    if ($interventionExploded[1] > $todayDatetime->format('Y-m-d')) {
-                        $statusVisite = VisiteStatus::PLANIFIEE->value;
-                    } else {
-                        $statusVisite = VisiteStatus::CONCLUSION_A_RENSEIGNER->value;
-                    }
-                } elseif (Intervention::STATUS_CANCELED === $interventionExploded[0]) {
-                    $statusVisite = 'Annulée';
-                } elseif (Intervention::STATUS_NOT_DONE === $interventionExploded[0]) {
-                    $statusVisite = 'Non effectuée';
-                } else {
-                    $statusVisite = VisiteStatus::TERMINEE->value;
-                }
-            }
-        }
+        $statusVisite = $this->getVisiteStatut($data['interventionsStatus']);
 
         return new SignalementExport(
             reference: $data['reference'],
@@ -135,5 +114,33 @@ class SignalementExportFactory
         }
 
         return $value;
+    }
+
+    private function getVisiteStatut(?string $interventionStatus): string
+    {
+        if (null === $interventionStatus) {
+            $statusVisite = VisiteStatus::NON_PLANIFIEE->value;
+        } else {
+            $interventions = explode(SignalementAffectationListView::SEPARATOR_CONCAT, $interventionStatus);
+            foreach ($interventions as $intervention) {
+                $interventionExploded = explode(SignalementExport::SEPARATOR_GROUP_CONCAT, $intervention);
+                if (Intervention::STATUS_PLANNED === $interventionExploded[0]) {
+                    $todayDatetime = new \DateTime();
+                    if ($interventionExploded[1] > $todayDatetime->format('Y-m-d')) {
+                        $statusVisite = VisiteStatus::PLANIFIEE->value;
+                    } else {
+                        $statusVisite = VisiteStatus::CONCLUSION_A_RENSEIGNER->value;
+                    }
+                } elseif (Intervention::STATUS_CANCELED === $interventionExploded[0]) {
+                    $statusVisite = 'Annulée';
+                } elseif (Intervention::STATUS_NOT_DONE === $interventionExploded[0]) {
+                    $statusVisite = 'Non effectuée';
+                } else {
+                    $statusVisite = VisiteStatus::TERMINEE->value;
+                }
+            }
+        }
+
+        return $statusVisite;
     }
 }
