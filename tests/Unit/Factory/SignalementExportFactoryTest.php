@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Factory;
 
 use App\Dto\SignalementExport;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\VisiteStatus;
 use App\Entity\User;
 use App\Factory\SignalementExportFactory;
 use App\Tests\UserHelper;
@@ -68,6 +69,8 @@ class SignalementExportFactoryTest extends TestCase
             'desordres' => "Les sols sont humides.|Les installations électriques ne sont pas en bon état.|
                 Les murs ont des fissures.|De l'eau s’infiltre dans mon logement.|Il y a des trace ",
             'etiquettes' => null,
+            'geoloc' => '{"lat": "43.3426152", "lng": "5.3711848"}',
+            'interventionsStatus' => 'PLANNED|2023-07-13 13:41:15',
         ];
 
         $user = $this->getUserFromRole(User::ROLE_ADMIN);
@@ -104,5 +107,6 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->isRelogement);
         $this->assertEquals(SignalementExportFactory::NON, $signalementExportFactory->isNotOccupant);
         $this->assertEquals('-', $signalementExportFactory->isOccupantPresentVisite);
+        $this->assertEquals(VisiteStatus::CONCLUSION_A_RENSEIGNER->value, $signalementExportFactory->interventionStatus);
     }
 }

@@ -51,6 +51,8 @@ class SignalementExport
         public ?string $modifiedAt = null,
         public ?string $closedAt = null,
         public ?string $motifCloture = null,
+        public ?string $geoloc = null,
+        public ?string $interventionStatus = null,
     ) {
     }
 }

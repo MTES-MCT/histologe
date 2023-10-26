@@ -450,13 +450,21 @@ class SignalementRepository extends ServiceEntityRepository
             s.modifiedAt,
             s.closedAt,
             s.motifCloture,
+            s.geoloc,
             GROUP_CONCAT(DISTINCT situations.label SEPARATOR :group_concat_separator_1) as familleSituation,
             GROUP_CONCAT(DISTINCT criteres.label SEPARATOR :group_concat_separator_1) as desordres,
-            GROUP_CONCAT(DISTINCT tags.label SEPARATOR :group_concat_separator_1) as etiquettes
+            GROUP_CONCAT(DISTINCT tags.label SEPARATOR :group_concat_separator_1) as etiquettes,
+            GROUP_CONCAT(DISTINCT CONCAT(i.status, :group_concat_separator_1, i.scheduledAt) SEPARATOR :concat_separator) as interventionsStatus,
+            GROUP_CONCAT(DISTINCT photos.filename SEPARATOR :group_concat_separator_1) as photosName,
+            GROUP_CONCAT(DISTINCT documents.filename SEPARATOR :group_concat_separator_1) as documentsName
             '
         )->leftJoin('s.situations', 'situations')
             ->leftJoin('s.criteres', 'criteres')
             ->leftJoin('s.tags', 'tags')
+            ->leftJoin('s.interventions', 'i', 'WITH', 'i.type LIKE \'VISITE\'')
+            ->leftJoin('s.files', 'photos', 'WITH', 'photos.fileType LIKE \'photo\'')
+            ->leftJoin('s.files', 'documents', 'WITH', 'documents.fileType LIKE \'document\'')
+            ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
             ->setParameter('group_concat_separator_1', SignalementExport::SEPARATOR_GROUP_CONCAT);
         // TODO : dateVisite, isOccupantPresentVisite ?
         return $qb->getQuery()->toIterable();
@@ -721,7 +729,8 @@ class SignalementRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
-            ->addSelect('case
+            ->addSelect(
+                'case
                 when i.id IS NULL then \'Non\'
                 else \'Oui\'
                 end as visite'
