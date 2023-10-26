@@ -717,8 +717,7 @@ forms.forEach((form) => {
                                         event.target.querySelector('[type="submit"]').disabled = false;
                                         event.target.querySelector('[type="submit"]').innerHTML = "Confirmer";
                                         ['fr-icon-checkbox-circle-fill', 'fr-icon-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
-                                        alert('Erreur lors de l\'enregistrement du signalement !')
-
+                                        alert('Oups... Il semblerait que vous ayez passé trop de temps sur cette étape ! Retournez à l\'étape précédente puis continuez le formulaire pour régler le problème. Si cela ne fonctionne pas, veuillez réessayer plus tard.')
                                     }
                                 })
                             } else {
@@ -728,7 +727,7 @@ forms.forEach((form) => {
                                 event.target.querySelector('[type="submit"]').disabled = false;
                                 event.target.querySelector('[type="submit"]').innerHTML = "Confirmer";
                                 ['fr-icon-checkbox-circle-fill', 'fr-icon-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
-                                alert('Suite à un incident technique, votre signalement n\'a pas pu être enregistré. Nous vous invitons à réessayer dans une heure.')
+                                alert('Oups... Il semblerait que vous ayez passé trop de temps sur cette étape ! Retournez à l\'étape précédente puis continuez le formulaire pour régler le problème. Si cela ne fonctionne pas, veuillez réessayer plus tard.')
                             }
                         })
                     }
