@@ -1560,11 +1560,8 @@
       "body": [
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_logement_humidite_piece_a_vivre",
           "label": "{{dictionaryStore::desordres_logement_humidite_piece_a_vivre}}",
-          "conditional": {
-            "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
-          },
+          "slug": "desordres_logement_humidite_piece_a_vivre",
           "validate": {
             "required": false
           }
@@ -1575,7 +1572,7 @@
           "slug": "desordres_logement_humidite_piece_a_vivre_details",
           "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
-            "show": "formStore.data.desordres_logement_humidite_piece_a_vivre === 1 || formStore.data.composition_logement_piece_unique === 'piece_unique'"
+            "show": "formStore.data.desordres_logement_humidite_piece_a_vivre === 1"
           },
           "components": {
             "body": [
@@ -1593,6 +1590,14 @@
                     "value": "non"
                   }
                 ]
+              },
+              {
+                "type": "SignalementFormInfo",
+                "label": "Les dégâts des eaux sont généralement pris en charge par les assurances. Pour savoir comment faire un constat auprès de votre assurance, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F1352' target='_blank'>le site du service public.</a>",
+                "slug": "desordres_logement_humidite_piece_a_vivre_details_fuite_info",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_humidite_piece_a_vivre_details_fuite ===  'oui'"
+                }
               },
               {
                 "type": "SignalementFormOnlyChoice",
@@ -1684,6 +1689,14 @@
                 ]
               },
               {
+                "type": "SignalementFormInfo",
+                "label": "Les dégâts des eaux sont généralement pris en charge par les assurances. Pour savoir comment faire un constat auprès de votre assurance, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F1352' target='_blank'>le site du service public.</a>",
+                "slug": "desordres_logement_humidite_cuisine_details_fuite_info",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_humidite_cuisine_details_fuite ===  'oui'"
+                }
+              },
+              {
                 "type": "SignalementFormOnlyChoice",
                 "label": "{{dictionaryStore::desordres_logement_humidite_cuisine_details_machine}}",
                 "slug": "desordres_logement_humidite_cuisine_details_machine",
@@ -1771,6 +1784,14 @@
                     "value": "non"
                   }
                 ]
+              },
+              {
+                "type": "SignalementFormInfo",
+                "label": "Les dégâts des eaux sont généralement pris en charge par les assurances. Pour savoir comment faire un constat auprès de votre assurance, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F1352' target='_blank'>le site du service public.</a>",
+                "slug": "desordres_logement_humidite_salle_de_bain_details_fuite_info",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_humidite_salle_de_bain_details_fuite ===  'oui'"
+                }
               },
               {
                 "type": "SignalementFormOnlyChoice",
