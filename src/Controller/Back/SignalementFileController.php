@@ -5,7 +5,9 @@ namespace App\Controller\Back;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Entity\User;
 use App\Factory\SuiviFactory;
+use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
 use App\Service\Signalement\SignalementFileProcessor;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,6 +19,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/bo/signalements')]
@@ -24,11 +27,13 @@ class SignalementFileController extends AbstractController
 {
     public const INPUT_NAME_PHOTOS = 'photos';
     public const INPUT_NAME_DOCUMENTS = 'documents';
+    public const MAX_PHOTOS = 10;
 
     #[Route('/{uuid}/pdf', name: 'back_signalement_gen_pdf')]
     public function generatePdfSignalement(
         Signalement $signalement,
         Pdf $knpSnappyPdf,
+        MessageBusInterface $messageBus
     ): Response {
         $criticitesArranged = [];
         foreach ($signalement->getCriticites() as $criticite) {
@@ -50,6 +55,23 @@ class SignalementFileController extends AbstractController
             'margin-left' => 0,
         ];
         $knpSnappyPdf->setTimeout(120);
+
+        $files = $signalement->getPhotos();
+        if (\count($files) > self::MAX_PHOTOS) {
+            /** @var User $user */
+            $user = $this->getUser();
+
+            $message = new PdfExportMessage();
+            $message->setSignalement($signalement);
+            $message->setUser($user);
+            $message->setHtml($html);
+            $message->setOptions($options);
+            $messageBus->dispatch($message);
+
+            $this->addFlash('success', 'L\'export pdf vous sera envoyé par email !');
+
+            return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
+        }
 
         return new Response(
             $knpSnappyPdf->getOutputFromHtml($html, $options),
@@ -80,7 +102,8 @@ class SignalementFileController extends AbstractController
 
             if ($signalementFileProcessor->isValid()) {
                 $suivi = $suiviFactory->createInstanceFrom($this->getUser(), $signalement);
-                $suivi->setDescription('Ajout de '
+                $suivi->setDescription(
+                    'Ajout de '
                     .$inputName
                     .' au signalement<ul>'
                     .implode('', $descriptionList)
