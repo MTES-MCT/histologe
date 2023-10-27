@@ -65,7 +65,7 @@ final class Version20231027135554 extends AbstractMigration implements Container
                 'createdById' => $user['id'],
                 'createdAt' => (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
                 'description' => self::SUIVI_DESCRIPTION,
-                'isPublic' => 0,
+                'isPublic' => 1,
                 'signalementId' => $signalementId,
                 'type' => Suivi::TYPE_TECHNICAL,
             ]);

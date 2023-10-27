@@ -1528,14 +1528,6 @@ signalements:
     situation_occupant: "1"
     territory: "Isère"
     is_imported: true
-    tags:
-      - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-    criteres:
-      - "Les déchets sont mal stockés."
-    criticites:
-      - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
   -
     uuid: "00000000-0000-0000-2023-000000000023"
     details: "[Migration][Version20231027135554] Signalement à cloturer Isère avec création de suivi et de tag"
@@ -1569,11 +1561,3 @@ signalements:
     situation_occupant: "1"
     territory: "Isère"
     is_imported: true
-    tags:
-      - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-    criteres:
-      - "Les déchets sont mal stockés."
-    criticites:
-      - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
