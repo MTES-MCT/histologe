@@ -52,7 +52,7 @@ final class Version20231027135554 extends AbstractMigration implements Container
                 SET motif_cloture = :motifCloture, statut = :closedStatus
                 WHERE id = :signalementId
             SQL, [
-                'motifCloture' => MotifCloture::AUTRE,
+                'motifCloture' => MotifCloture::AUTRE->value,
                 'closedStatus' => Signalement::STATUS_CLOSED,
                 'signalementId' => $signalementId,
             ]);
