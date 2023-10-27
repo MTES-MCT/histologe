@@ -149,6 +149,7 @@ affectations:
     statut: 2
     answered_by: "user-38-01@histologe.fr"
     affected_by: "user-38-01@histologe.fr"
+    motif_cloture: ""
     territory: "Isère"
   -
     signalement: 2023-23
@@ -156,4 +157,5 @@ affectations:
     statut: 3
     answered_by: "user-38-01@histologe.fr"
     affected_by: "user-38-01@histologe.fr"
+    motif_cloture: ""
     territory: "Isère"

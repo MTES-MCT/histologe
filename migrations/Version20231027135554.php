@@ -37,23 +37,24 @@ final class Version20231027135554 extends AbstractMigration implements Container
         $territory = $this->connection->fetchAssociative('SELECT id FROM territory WHERE zip LIKE :zipIsere', [
             'zipIsere' => self::TERRITORY_ZIP_ISERE,
         ]);
-        $this->abortIf(!$territory, 'Datebase is empty');
+        $this->skipIf(!$territory, 'Datebase is empty');
 
         $signalements = $this->getSignalements($territory);
-        $this->abortIf(!$signalements, 'No signalements to update for Isere');
+        $this->skipIf(!$signalements, 'No signalements to update for Isere');
 
         $tagId = $this->createOrGetTag($territory);
-        $this->abortIf(!$tagId, sprintf('No tag %s for %s, please create ', self::TAG_LABEL, self::TERRITORY_ZIP_ISERE));
+        $this->skipIf(!$tagId, sprintf('No tag %s for %s, please create ', self::TAG_LABEL, self::TERRITORY_ZIP_ISERE));
 
         foreach ($signalements as $signalement) {
             $signalementId = $signalement['id'];
             $this->addSql(<<<SQL
                 UPDATE signalement
-                SET motif_cloture = :motifCloture, statut = :closedStatus
+                SET motif_cloture = :motifCloture, statut = :closedStatus, closed_at = :closedAt
                 WHERE id = :signalementId
             SQL, [
                 'motifCloture' => MotifCloture::AUTRE->value,
                 'closedStatus' => Signalement::STATUS_CLOSED,
+                'closedAt' => (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
                 'signalementId' => $signalementId,
             ]);
 
