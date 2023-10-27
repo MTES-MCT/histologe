@@ -429,3 +429,10 @@ partners:
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
+  -
+    nom: "DDT"
+    email: "partenaire-38-01@histologe.fr"
+    is_archive: 0
+    insee: "[\"\"]"
+    territory: "Isère"
+    type: "DDT_M"

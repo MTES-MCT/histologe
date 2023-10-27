@@ -143,3 +143,17 @@ affectations:
     answered_by: "admin-03@histologe.fr"
     affected_by: "admin-03@histologe.fr"
     territory: "Rhône"
+  -
+    signalement: 2023-22
+    partner: "partenaire-38-01@histologe.fr"
+    statut: 2
+    answered_by: "user-38-01@histologe.fr"
+    affected_by: "user-38-01@histologe.fr"
+    territory: "Isère"
+  -
+    signalement: 2023-23
+    partner: "partenaire-38-01@histologe.fr"
+    statut: 3
+    answered_by: "user-38-01@histologe.fr"
+    affected_by: "user-38-01@histologe.fr"
+    territory: "Isère"

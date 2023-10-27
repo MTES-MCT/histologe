@@ -114,6 +114,9 @@ generate-migration: ## Generate empty migration
 load-migrations: ## Play migrations
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:migrations:migrate --no-interaction"
 
+execute-migration: ## Execute migration: make execute-migration name=Version20231027135554 direction=up
+	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:migrations:execute DoctrineMigrations\\\$(name) --$(direction)"
+
 load-fixtures: ## Load database from fixtures
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:fixtures:load --no-interaction"
 
