@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DoctrineMigrations;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\MotifCloture;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use Doctrine\DBAL\Schema\Schema;
@@ -19,7 +20,6 @@ final class Version20231027135554 extends AbstractMigration implements Container
     public const SUIVI_DESCRIPTION = 'Sauvegarde d\'un signalement ancien concernant votre logement. Merci de ne pas répondre à ce message';
     public const TAG_LABEL = 'Sauvegarde';
     public const TERRITORY_ZIP_ISERE = 38;
-    public const SIGNALEMENT_MOTIF_CLOTURE = 'Autre';
 
     public function getDescription(): string
     {
@@ -52,7 +52,7 @@ final class Version20231027135554 extends AbstractMigration implements Container
                 SET motif_cloture = :motifCloture, statut = :closedStatus
                 WHERE id = :signalementId
             SQL, [
-                'motifCloture' => self::SIGNALEMENT_MOTIF_CLOTURE,
+                'motifCloture' => MotifCloture::AUTRE,
                 'closedStatus' => Signalement::STATUS_CLOSED,
                 'signalementId' => $signalementId,
             ]);
