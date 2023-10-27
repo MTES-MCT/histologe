@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         sqlite3 \
         libxslt1-dev \
         supervisor \
+        wkhtmltopdf \
         && curl -fsSL https://deb.nodesource.com/setup_lts.x | bash \
         && apt-get install -y  nodejs \
          # Install intl

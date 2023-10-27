@@ -2,48 +2,33 @@
 
 namespace App\Messenger\Message;
 
-use App\Entity\Signalement;
-use App\Entity\User;
-
 class PdfExportMessage
 {
-    private Signalement $signalement;
-    private User $user;
-    private string $html;
+    private int $signalementId;
+    private string $userEmail;
     private ?array $options;
+    private ?array $criticites;
 
-    public function getSignalement(): Signalement
+    public function getSignalementId(): int
     {
-        return $this->signalement;
+        return $this->signalementId;
     }
 
-    public function setSignalement(Signalement $signalement): self
+    public function setSignalementId(int $signalementId): self
     {
-        $this->signalement = $signalement;
+        $this->signalementId = $signalementId;
 
         return $this;
     }
 
-    public function getUser(): User
+    public function getUserEmail(): string
     {
-        return $this->user;
+        return $this->userEmail;
     }
 
-    public function setUser(User $user): self
+    public function setUserEmail(string $userEmail): self
     {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    public function getHtml(): string
-    {
-        return $this->html;
-    }
-
-    public function setHtml(string $html): self
-    {
-        $this->html = $html;
+        $this->userEmail = $userEmail;
 
         return $this;
     }
@@ -56,6 +41,18 @@ class PdfExportMessage
     public function setOptions(?array $options): self
     {
         $this->options = $options;
+
+        return $this;
+    }
+
+    public function getCriticites(): ?array
+    {
+        return $this->criticites;
+    }
+
+    public function setCriticites(?array $criticites): self
+    {
+        $this->criticites = $criticites;
 
         return $this;
     }
