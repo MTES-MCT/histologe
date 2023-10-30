@@ -1495,3 +1495,69 @@ signalements:
       - "Les déchets sont mal stockés."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
+  -
+    uuid: "00000000-0000-0000-2023-000000000022"
+    details: "[Migration][Version20231027135554] Signalement à cloturer Isère avec création de suivi et de tag"
+    is_proprio_averti: 1
+    is_logement_social: 0
+    nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
+    is_allocataire: ""
+    nature_logement: "Appartement"
+    type_logement: "T2"
+    superficie: 30
+    loyer: 300
+    phone_number: 0621127286
+    adresse_occupant: "2 Rue Auguste Gache"
+    cp_occupant: "38000"
+    ville_occupant: "Grenoble"
+    statut: 2
+    reference: "2023-22"
+    geoloc: "{\"lng\":\"5.731586\", \"lat\":\"45.191496\"}"
+    created_at: "2023-10-27 16:06:33"
+    score: 4
+    etage_occupant: "0"
+    escalier_occupant: ""
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    insee_occupant: "38185"
+    is_rsa: 0
+    type_energie_logement: "Electrique"
+    origine_signalement: ""
+    nb_occupants_logement: 3
+    situation_occupant: "1"
+    territory: "Isère"
+    is_imported: true
+  -
+    uuid: "00000000-0000-0000-2023-000000000023"
+    details: "[Migration][Version20231027135554] Signalement à cloturer Isère avec création de suivi et de tag"
+    is_proprio_averti: 1
+    is_logement_social: 0
+    nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
+    is_allocataire: ""
+    nature_logement: "Appartement"
+    type_logement: "T2"
+    superficie: 30
+    loyer: 300
+    phone_number: 0621127286
+    adresse_occupant: "4 Rue Auguste Gache"
+    cp_occupant: "38000"
+    ville_occupant: "Grenoble"
+    statut: 2
+    reference: "2023-23"
+    geoloc: "{\"lng\":\"5.731586\", \"lat\":\"45.191496\"}"
+    created_at: "2023-10-27 16:06:33"
+    score: 4
+    etage_occupant: "0"
+    escalier_occupant: ""
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    insee_occupant: "38185"
+    is_rsa: 0
+    type_energie_logement: "Electrique"
+    origine_signalement: ""
+    nb_occupants_logement: 3
+    situation_occupant: "1"
+    territory: "Isère"
+    is_imported: true

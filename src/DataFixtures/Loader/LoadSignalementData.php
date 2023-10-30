@@ -136,20 +136,28 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 ->setClosedBy($this->userRepository->findOneBy(['statut' => User::STATUS_ACTIVE]));
         }
 
-        foreach ($row['tags'] as $tag) {
-            $signalement->addTag($this->tagRepository->findOneBy(['label' => $tag]));
+        if (isset($row['tags'])) {
+            foreach ($row['tags'] as $tag) {
+                $signalement->addTag($this->tagRepository->findOneBy(['label' => $tag]));
+            }
         }
 
-        foreach ($row['situations'] as $situation) {
-            $signalement->addSituation($this->situationRepository->findOneBy(['label' => $situation]));
+        if (isset($row['situations'])) {
+            foreach ($row['situations'] as $situation) {
+                $signalement->addSituation($this->situationRepository->findOneBy(['label' => $situation]));
+            }
         }
 
-        foreach ($row['criteres'] as $critere) {
-            $signalement->addCritere($this->critereRepository->findOneBy(['label' => $critere]));
+        if (isset($row['criteres'])) {
+            foreach ($row['criteres'] as $critere) {
+                $signalement->addCritere($this->critereRepository->findOneBy(['label' => $critere]));
+            }
         }
 
-        foreach ($row['criticites'] as $criticite) {
-            $signalement->addCriticite($this->criticiteRepository->findOneBy(['label' => $criticite]));
+        if (isset($row['criticites'])) {
+            foreach ($row['criticites'] as $criticite) {
+                $signalement->addCriticite($this->criticiteRepository->findOneBy(['label' => $criticite]));
+            }
         }
 
         $manager->persist($signalement);
