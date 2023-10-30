@@ -10,7 +10,7 @@ class SignalementExportPdf
     {
     }
 
-    public function generatePdf(string $content, ?array $options = null)
+    public function generate(string $content, ?array $options = null)
     {
         return $this->pdf->getOutputFromHtml($content, $options ?? []);
     }

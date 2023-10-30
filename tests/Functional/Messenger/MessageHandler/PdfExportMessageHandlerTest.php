@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Messenger\MessageHandler;
 
+use App\Entity\Signalement;
 use App\Messenger\Message\PdfExportMessage;
 use App\Messenger\MessageHandler\PdfExportMessageHandler;
 use App\Repository\SignalementRepository;
@@ -21,17 +22,15 @@ class PdfExportMessageHandlerTest extends WebTestCase
         $messageBus = $container->get(MessageBusInterface::class);
 
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-1']);
-        $message = new PdfExportMessage();
-        $message->setSignalementId($signalement->getId());
-        $message->setUserEmail('test@yopmail.com');
-        $message->setCriticites([]);
-        $message->setOptions([]);
+        $message = (new PdfExportMessage())
+            ->setSignalementId($signalement->getId())
+            ->setUserEmail('test@yopmail.com');
 
         $messageBus->dispatch($message);
 
         $transport = $container->get('messenger.transport.async');
-
         $envelopes = $transport->get();
         $this->assertCount(1, $envelopes);
 

@@ -10,7 +10,8 @@ class File
 {
     public const FILE_TYPE_DOCUMENT = 'document';
     public const FILE_TYPE_PHOTO = 'photo';
-
+    public const INPUT_NAME_PHOTOS = 'photos';
+    public const INPUT_NAME_DOCUMENTS = 'documents';
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
