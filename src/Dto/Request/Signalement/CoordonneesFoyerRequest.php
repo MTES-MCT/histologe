@@ -15,6 +15,7 @@ class CoordonneesFoyerRequest
         private readonly ?string $mail = null,
         #[AppAssert\TelephoneFormat]
         private readonly ?string $telephone = null,
+        #[AppAssert\TelephoneFormat]
         private readonly ?string $telephoneBis = null,
     ) {
     }
