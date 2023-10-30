@@ -4,6 +4,7 @@ namespace App\Validator;
 
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -15,6 +16,10 @@ class TelephoneFormatValidator extends ConstraintValidator
 
     public function validate(mixed $value, Constraint $constraint): void
     {
+        if (!$constraint instanceof TelephoneFormat) {
+            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\TelephoneFormat');
+        }
+
         /* @var App\Validator\TelephoneFormat $constraint */
 
         if (null === $value || '' === $value) {
