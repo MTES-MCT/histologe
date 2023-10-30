@@ -375,8 +375,10 @@ class SignalementManager extends AbstractManager
             )
         );
 
-        $dateNaissance = new \DateTimeImmutable($situationFoyerRequest->getDateNaissanceOccupant());
-        $signalement->setDateNaissanceOccupant($dateNaissance);
+        if (!empty($situationFoyerRequest->getDateNaissanceOccupant())) {
+            $dateNaissance = new \DateTimeImmutable($situationFoyerRequest->getDateNaissanceOccupant());
+            $signalement->setDateNaissanceOccupant($dateNaissance);
+        }
 
         $signalement->setNumAllocataire($situationFoyerRequest->getNumAllocataire());
 

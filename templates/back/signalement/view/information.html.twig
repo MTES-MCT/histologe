@@ -74,7 +74,7 @@
                     <br>
                     Superficie : {{ signalement.typeCompositionLogement.typeLogementPiecesAVivrePieceSuperficie[i] }}
                     <br>
-                    Hauteur > 2,20m : {{ signalement.typeCompositionLogement.typeLogementPiecesAVivrePieceHauteur[i] }}
+                    Hauteur > 2,20m : {{ signalement.typeCompositionLogement.typeLogementPiecesAVivrePieceHauteur[i] is same as 'nsp' ? 'Ne sait pas' : signalement.typeCompositionLogement.typeLogementPiecesAVivrePieceHauteur[i] }}
                 </div>
             {% endfor %}
         {% endif %}
@@ -95,7 +95,7 @@
                         </li>
                     {% else %}
                         <li>
-                            Hauteur > 2m : {{ signalement.typeCompositionLogement.typeLogementCommoditesCuisineHauteurPlafond }}
+                            Hauteur > 2m : {{ signalement.typeCompositionLogement.typeLogementCommoditesCuisineHauteurPlafond is same as 'nsp' ? 'Ne sait pas' : signalement.typeLogementCommoditesCuisineHauteurPlafond }} }}
                             {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesCuisineHauteurPlafond is same as 'non' } %}
                         </li>
                     {% endif %}
@@ -122,7 +122,7 @@
                         </li>
                     {% else %}
                         <li>
-                            Hauteur > 2m : {{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainHauteurPlafond }}
+                            Hauteur > 2m : {{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainHauteurPlafond is same as 'nsp' ? 'Ne sait pas' : signalement.typeLogementCommoditesSalleDeBainHauteurPlafond }}
                             {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainHauteurPlafond is same as 'non' } %}
                         </li>
                     {% endif %}
@@ -149,7 +149,7 @@
                         </li>
                     {% else %}
                         <li>
-                            Hauteur > 2m : {{ signalement.typeCompositionLogement.typeLogementCommoditesWcHauteurPlafond }}
+                            Hauteur > 2m : {{ signalement.typeCompositionLogement.typeLogementCommoditesWcHauteurPlafond is same as 'nsp' ? 'Ne sait pas' : signalement.typeLogementCommoditesWcHauteurPlafond }}
                             {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesWcHauteurPlafond is same as 'non' } %}
                         </li>
                     {% endif %}
@@ -342,7 +342,7 @@
                             {% elseif signalement.typeCompositionLogement.compositionLogementEnfants is same as 'non' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
-                                {{ static_picto_nsp|raw }}
+                                Ne sait pas
                             {% endif %}
                         {% else %}
                             {% if signalement.nbEnfantsM6 > 0 %}
@@ -368,7 +368,7 @@
                             {% elseif signalement.typeCompositionLogement.bailDpeBail is same as 'non' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
-                                {{ static_picto_nsp|raw }}
+                                Ne sait pas
                             {% endif %}
                         {% else %}
                             N/C
@@ -382,7 +382,7 @@
                             {% elseif signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'non' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
-                                {{ static_picto_nsp|raw }}
+                                Ne sait pas
                             {% endif %}
                         {% else %}
                             N/C
@@ -396,7 +396,7 @@
                             {% elseif signalement.typeCompositionLogement.bailDpeDpe is same as 'non' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
-                                {{ static_picto_nsp|raw }}
+                                Ne sait pas
                             {% endif %}
                         {% else %}
                             N/C
@@ -419,7 +419,7 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Logement social :</strong>
                         {% if signalement.isLogementSocial is null %}
-                            {{ static_picto_nsp|raw }}
+                            Ne sait pas
                         {% elseif signalement.isLogementSocial %}
                             {{ static_picto_yes|raw }}
                         {% else %}
@@ -429,7 +429,7 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Demande relogement :</strong>
                         {% if signalement.isRelogement is null %}
-                            {{ static_picto_nsp|raw }}
+                            Ne sait pas
                         {% elseif signalement.isRelogement %}
                             {{ static_picto_yes|raw }}
                         {% else %}
@@ -439,7 +439,7 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Allocataire :</strong>
                         {% if signalement.isAllocataire is null %}
-                            {{ static_picto_nsp|raw }}
+                            Ne sait pas
                         {% elseif signalement.isAllocataire %}
                             <p class="fr-badge fr-badge--info fr-badge--no-icon">{{ signalement.isAllocataire }}</p>
                         {% else %}
@@ -476,7 +476,7 @@
                             {% elseif signalement.situationFoyer.travailleurSocialQuitteLogement is same as 'non' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
-                                {{ static_picto_nsp|raw }}
+                                Ne sait pas
                             {% endif %}
                         {% else %}
                             N/C
@@ -490,7 +490,7 @@
                             {% elseif signalement.situationFoyer.travailleurSocialAccompagnementDeclarant is same as 'non' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
-                                {{ static_picto_nsp|raw }}
+                                Ne sait pas
                             {% endif %}
                         {% else %}
                             N/C
@@ -513,7 +513,7 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Bailleur averti :</strong>
                         {% if signalement.isProprioAverti is null %}
-                            {{ static_picto_nsp|raw }}
+                            Ne sait pas
                         {% elseif signalement.isProprioAverti %}
                             {{ static_picto_yes|raw }}
                         {% else %}
@@ -528,7 +528,7 @@
                             {% elseif signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'non' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
-                                {{ static_picto_nsp|raw }}
+                                Ne sait pas
                             {% endif %}
                         {% else %}
                             N/C
@@ -552,7 +552,7 @@
                             {% elseif signalement.informationProcedure.infoProcedureDepartApresTravaux is same as 'non' %}
                                 {{ static_picto_yes|raw }}
                             {% else %}
-                                {{ static_picto_nsp|raw }}
+                                Ne sait pas
                             {% endif %}
                         {% else %}
                             N/C
