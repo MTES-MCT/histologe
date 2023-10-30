@@ -95,21 +95,23 @@ class SignalementController extends AbstractController
             $params['subject'] = $user?->getPartner()?->getNom();
             $params['closed_for'] = $clotureForm->get('type')->getData();
 
+            $entity = null;
             if ('all' === $params['closed_for']) {
                 $params['subject'] = 'tous les partenaires';
                 $entity = $signalement = $signalementManager->closeSignalementForAllPartners(
                     $signalement,
                     $params['motif_cloture']
                 );
-            }
 
-            /** @var Affectation $isAffected */
-            if ($isAffected) {
+                /* @var Affectation $isAffected */
+            } elseif ($isAffected) {
                 $entity = $affectationManager->closeAffectation($isAffected, $user, $params['motif_cloture'], true);
             }
 
-            $eventDispatcher->dispatch(new SignalementClosedEvent($entity, $params), SignalementClosedEvent::NAME);
-            $this->addFlash('success', 'Signalement cloturé avec succès !');
+            if (!empty($entity)) {
+                $eventDispatcher->dispatch(new SignalementClosedEvent($entity, $params), SignalementClosedEvent::NAME);
+                $this->addFlash('success', 'Signalement cloturé avec succès !');
+            }
 
             return $this->redirectToRoute('back_index');
         }
