@@ -111,22 +111,9 @@ class SignalementFileControllerTest extends WebTestCase
     {
         $this->client->loginUser($this->user);
 
-        $route = $this->router->generate('back_signalement_gen_pdf', ['uuid' => $this->signalement->getUuid()]);
-        $this->client->request('GET', $route);
-
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-        $this->assertEquals('%PDF-1.4', substr($this->client->getResponse()->getContent(), 0, 8));
-        $this->assertEquals('application/pdf', $this->client->getResponse()->headers->get('Content-Type'));
-        $this->assertEquals('inline; filename="'.$this->signalement->getReference().'.pdf"', $this->client->getResponse()->headers->get('Content-Disposition'));
-    }
-
-    public function testGeneratePdfSignalementWithMorePhotos()
-    {
-        $this->client->loginUser($this->user);
-
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
-        $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000004']);
+        $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
 
         $route = $this->router->generate('back_signalement_gen_pdf', ['uuid' => $signalement->getUuid()]);
         $this->client->request('GET', $route);

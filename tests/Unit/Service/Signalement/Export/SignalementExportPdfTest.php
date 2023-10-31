@@ -18,21 +18,15 @@ class SignalementExportPdfTest extends KernelTestCase
 
         $twig = static::getContainer()->get(Environment::class);
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-1']);
 
         $html = $twig->render('pdf/signalement.html.twig', [
             'signalement' => $signalement,
             'situations' => [],
         ]);
-        $options = [
-            'images' => true,
-            'enable-local-file-access' => true,
-            'margin-top' => 0,
-            'margin-right' => 0,
-            'margin-bottom' => 0,
-            'margin-left' => 0,
-        ];
-        $pdfContent = $signalementExportPdf->generatePdf($html, $options);
+        $options = static::getContainer()->getParameter('export_options');
+        $pdfContent = $signalementExportPdf->generate($html, $options);
         $this->assertNotEmpty($pdfContent);
         $this->assertStringStartsWith('%PDF-', $pdfContent);
     }
