@@ -1754,6 +1754,26 @@ class Signalement
     /**
      * @return Collection<int, File>
      */
+    public function getPhotos(): Collection
+    {
+        return $this->files->filter(function (File $file) {
+            return 'photo' === $file->getFiletype();
+        });
+    }
+
+    /**
+     * @return Collection<int, File>
+     */
+    public function getDocuments(): Collection
+    {
+        return $this->files->filter(function (File $file) {
+            return 'document' === $file->getFiletype();
+        });
+    }
+
+    /**
+     * @return Collection<int, File>
+     */
     public function getFiles(): Collection
     {
         return $this->files;

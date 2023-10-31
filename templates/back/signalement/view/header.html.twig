@@ -79,8 +79,9 @@
             {% endif %}
 
             {% if canExportSignalement %}
-                <a target="_blank" rel="noopener" href="{{ path('back_signalement_gen_pdf',{uuid:signalement.uuid}) }}"
-                    class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-file-pdf-fill ignore-blank-style" title="Télécharger le PDF">Télécharger le PDF</a>
+                <a href="{{ path('back_signalement_gen_pdf',{uuid:signalement.uuid}) }}"
+                   class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-file-pdf-fill ignore-blank-style"
+                   title="Exporter le PDF">Exporter le PDF</a>
             {% endif %}
         </div>
     </div>

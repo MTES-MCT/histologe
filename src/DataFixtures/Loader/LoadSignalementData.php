@@ -238,6 +238,22 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             );
             $manager->persist($file);
         }
+
+        if ('2022-4' === $row['reference']) {
+            $countMorePhoto = 1;
+            $user = $this->userRepository->findOneBy(['id' => 1]);
+            while ($countMorePhoto < 12) {
+                $file = $this->fileFactory->createInstanceFrom(
+                    filename: 'blank-'.$row['reference'].'-'.$countMorePhoto.'.jpg',
+                    title: 'Blank.pdf',
+                    type: File::FILE_TYPE_PHOTO,
+                    signalement: $signalement,
+                    user: $user
+                );
+                $manager->persist($file);
+                ++$countMorePhoto;
+            }
+        }
     }
 
     public function getOrder(): int

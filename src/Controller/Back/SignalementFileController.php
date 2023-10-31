@@ -5,11 +5,12 @@ namespace App\Controller\Back;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Entity\User;
 use App\Factory\SuiviFactory;
+use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
 use App\Service\Signalement\SignalementFileProcessor;
 use Doctrine\ORM\EntityManagerInterface;
-use Knp\Snappy\Pdf;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,48 +18,29 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/bo/signalements')]
 class SignalementFileController extends AbstractController
 {
-    public const INPUT_NAME_PHOTOS = 'photos';
-    public const INPUT_NAME_DOCUMENTS = 'documents';
-
     #[Route('/{uuid}/pdf', name: 'back_signalement_gen_pdf')]
     public function generatePdfSignalement(
         Signalement $signalement,
-        Pdf $knpSnappyPdf,
+        MessageBusInterface $messageBus
     ): Response {
-        $criticitesArranged = [];
-        foreach ($signalement->getCriticites() as $criticite) {
-            $situationLabel = $criticite->getCritere()->getSituation()->getLabel();
-            $critereLabel = $criticite->getCritere()->getLabel();
-            $criticitesArranged[$situationLabel][$critereLabel] = $criticite;
-        }
+        /** @var User $user */
+        $user = $this->getUser();
 
-        $html = $this->renderView('pdf/signalement.html.twig', [
-            'signalement' => $signalement,
-            'situations' => $criticitesArranged,
-        ]);
-        $options = [
-            'images' => true,
-            'enable-local-file-access' => true,
-            'margin-top' => 0,
-            'margin-right' => 0,
-            'margin-bottom' => 0,
-            'margin-left' => 0,
-        ];
-        $knpSnappyPdf->setTimeout(120);
+        $message = (new PdfExportMessage())
+            ->setSignalementId($signalement->getId())
+            ->setUserEmail($user->getEmail());
 
-        return new Response(
-            $knpSnappyPdf->getOutputFromHtml($html, $options),
-            200,
-            [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="'.$signalement->getReference().'.pdf"',
-            ]
-        );
+        $messageBus->dispatch($message);
+
+        $this->addFlash('success', 'L\'export pdf vous sera envoyé par email !');
+
+        return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
     }
 
     #[Route('/{uuid}/file/add', name: 'back_signalement_add_file')]
@@ -72,15 +54,16 @@ class SignalementFileController extends AbstractController
         $this->denyAccessUnlessGranted('FILE_CREATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token'))
             && $files = $request->files->get('signalement-add-file')) {
-            $inputName = isset($files[self::INPUT_NAME_DOCUMENTS])
-                ? self::INPUT_NAME_DOCUMENTS
-                : self::INPUT_NAME_PHOTOS;
+            $inputName = isset($files[File::INPUT_NAME_DOCUMENTS])
+                ? File::INPUT_NAME_DOCUMENTS
+                : File::INPUT_NAME_PHOTOS;
 
             list($fileList, $descriptionList) = $signalementFileProcessor->process($files, $inputName);
 
             if ($signalementFileProcessor->isValid()) {
                 $suivi = $suiviFactory->createInstanceFrom($this->getUser(), $signalement);
-                $suivi->setDescription('Ajout de '
+                $suivi->setDescription(
+                    'Ajout de '
                     .$inputName
                     .' au signalement<ul>'
                     .implode('', $descriptionList)

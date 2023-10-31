@@ -70,6 +70,9 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         if (!empty($params['attach'])) {
             $message->attachFromPath($params['attach']);
         }
+        if (!empty($params['attachContent'])) {
+            $message->attach($params['attachContent']['content'], $params['attachContent']['filename']);
+        }
         try {
             $this->mailer->send($message);
 

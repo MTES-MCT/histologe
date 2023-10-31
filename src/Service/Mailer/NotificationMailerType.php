@@ -40,4 +40,5 @@ enum NotificationMailerType
     case TYPE_CONTACT_FORM;
     case TYPE_ERROR_SIGNALEMENT;
     case TYPE_CRON;
+    case TYPE_PDF_EXPORT;
 }
