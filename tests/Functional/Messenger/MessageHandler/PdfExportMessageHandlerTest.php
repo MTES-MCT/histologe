@@ -40,7 +40,7 @@ class PdfExportMessageHandlerTest extends WebTestCase
         /** @var NotificationEmail $email */
         $email = $this->getMailerMessage();
         $this->assertEmailAttachmentCount($email, 1);
-        $this->assertEmailHtmlBodyContains($email, 'un export pdf est disponible pour le signalement');
+        $this->assertEmailHtmlBodyContains($email, 'Un export pdf est disponible pour le signalement');
         $this->assertEmailHtmlBodyContains($email, '#2023-1');
         $this->assertEmailAddressContains($email, 'To', 'test@yopmail.com');
         /** @var DataPart $attachment */
