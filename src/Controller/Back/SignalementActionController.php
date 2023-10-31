@@ -145,16 +145,16 @@ class SignalementActionController extends AbstractController
             }
             $doctrine->getManager()->persist($signalement);
             $suivi = new Suivi();
-            $suivi->setSignalement($signalement);
-            $suivi->setDescription('Signalement rouvert pour '.$reopenFor);
-            $suivi->setCreatedBy($user);
-            $suivi->setIsPublic(true);
-            $suivi->setType(SUIVI::TYPE_AUTO);
+            $suivi->setSignalement($signalement)
+                ->setDescription('Signalement rouvert pour '.$reopenFor)
+                ->setCreatedBy($user)
+                ->setIsPublic('1' === $request->get('publicSuivi'))
+                ->setType(SUIVI::TYPE_AUTO);
             $doctrine->getManager()->persist($suivi);
             $doctrine->getManager()->flush();
             $this->addFlash('success', 'Signalement rouvert avec succés !');
         } else {
-            $this->addFlash('error', 'Erreur lors de la réouverture du signalement! ');
+            $this->addFlash('error', 'Erreur lors de la réouverture du signalement !');
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
