@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\MotifRefus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Tag;
@@ -58,6 +59,7 @@ class SignalementActionController extends AbstractController
                 }
             } else {
                 $statut = Signalement::STATUS_REFUSED;
+                $signalement->setMotifRefus(MotifRefus::tryFrom($response['motifRefus']));
                 $description = 'cloturé car non-valide avec le motif suivant :<br>'.$response['suivi'];
 
                 $toRecipients = $signalement->getMailUsagers();
@@ -72,11 +74,11 @@ class SignalementActionController extends AbstractController
                 );
             }
             $suivi = new Suivi();
-            $suivi->setSignalement($signalement);
-            $suivi->setDescription('Signalement '.$description);
-            $suivi->setCreatedBy($this->getUser());
-            $suivi->setIsPublic(true);
-            $suivi->setType(SUIVI::TYPE_AUTO);
+            $suivi->setSignalement($signalement)
+                ->setDescription('Signalement '.$description)
+                ->setCreatedBy($this->getUser())
+                ->setIsPublic(true)
+                ->setType(SUIVI::TYPE_AUTO);
             $signalement->setStatut($statut);
             $doctrine->getManager()->persist($signalement);
             $doctrine->getManager()->persist($suivi);

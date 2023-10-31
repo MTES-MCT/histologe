@@ -10,15 +10,29 @@
                         </h1>
                         <a href="#" class="fr-link--close fr-link" aria-controls="refus-affectation-modal">Fermer</a>
                     </div>
-                    <div class="fr-modal__content">
+                    <div class="fr-modal__content fr-text--left">
+                        <div class="fr-select-group">
+                            <label class="fr-label required" for="signalement-affectation-response[motifRefus]">
+                                Veuillez sélectionner le motif de refus
+                            </label>
+                            <p class="fr-error-text fr-hidden">Vous devez sélectionner le motif de votre refus.</p>
+                            <select class="fr-select" id="signalement-affectation-response[motifRefus]" name="signalement-affectation-response[motifRefus]" required>
+                                <option value="" selected disabled hidden>Selectionnez une option</option>
+                                <option value="{{ enum('App\\Entity\\Enum\\MotifRefus').HORS_ZONE_GEOGRAPHIQUE.name }}">{{ enum('App\\Entity\\Enum\\MotifRefus').HORS_ZONE_GEOGRAPHIQUE.label }}</option>
+                                <option value="{{ enum('App\\Entity\\Enum\\MotifRefus').HORS_COMPETENCE.name }}">{{ enum('App\\Entity\\Enum\\MotifRefus').HORS_COMPETENCE.label }}</option>
+                                <option value="{{ enum('App\\Entity\\Enum\\MotifRefus').DOUBLON.name }}">{{ enum('App\\Entity\\Enum\\MotifRefus').DOUBLON.label }}</option>
+                                <option value="{{ enum('App\\Entity\\Enum\\MotifRefus').AUTRE.name }}">{{ enum('App\\Entity\\Enum\\MotifRefus').AUTRE.label }}</option>
+                            </select>
+                        </div>
                         <div class="fr-input-group fr-mt-2v fr-text--left">
-                            <label for="refus_affectation_suivi" class="fr-label required">Motif du refus</label>
-                            <p class="fr-hint-text">Veuillez préciser le motif de ce refus <em>(10 caractères
-                                    minimum)</em></p>
+                            <label for="refus_affectation_suivi" class="fr-label required">Message aux partenaires</label>
+                            <p class="fr-hint-text">Expliquez aux autres partenaires la raison du refus de ce signalement
+                                <em>(10 caractères minimum)</em>
+                            </p>
                             <textarea class="fr-input fr-input--no-resize editor"
                                       name="signalement-affectation-response[suivi]"
                                       id="refus_affectation_suivi"></textarea>
-                            <p class="fr-error-text fr-hidden">Vous devez indiquer le motif de votre refus.</p>
+                            <p class="fr-error-text fr-hidden">Vous devez saisir un message pour les partenaires.</p>
                         </div>
                     </div>
                     <div class="fr-modal__footer">
@@ -28,10 +42,7 @@
                                         form="signalement-affectation-response-form" type="submit"
                                         name="signalement-affectation-response[deny]" value="1" disabled
                                         onclick="return confirm('Êtes-vous certain de vouloir refuser ce signalement ?')">
-                                    Ce
-                                    n'est pas
-                                    pour
-                                    moi
+                                    Refuser l'affectation
                                 </button>
                             </li>
                         </ul>
