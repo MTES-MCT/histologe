@@ -53,14 +53,14 @@
 
             {% elseif isClosedForMe or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
                 {% if isClosed and is_granted('ROLE_ADMIN_TERRITORY') %}
-                    {% include '_partials/_modal_reopen_all_signalement.html.twig' %}
+                    {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '1' } %}
                     <button class="fr-btn fr-btn--sm fr-btn--success fr-fi-lock-fill fr-btn--icon-left reopen"
                             aria-controls="reopen-all-signalement-modal" data-fr-opened="false">
                         Rouvrir pour tous
                     </button>
                 {% endif %}
                 {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or is_granted('ROLE_ADMIN_TERRITORY') %}
-                    {% include '_partials/_modal_reopen_signalement.html.twig' %}
+                    {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '0' } %}
                     <button class="fr-btn fr-btn--sm fr-btn--success fr-fi-lock-fill fr-btn--icon-left reopen"
                             aria-controls="reopen-signalement-modal" data-fr-opened="false">
                         Rouvrir pour {{ app.user.partner.nom }}
