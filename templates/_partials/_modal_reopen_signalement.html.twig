@@ -13,15 +13,29 @@
                         </div>
 
                         <div class="fr-modal__content fr-text--left">
-                            <div class="fr-select-group">
-                                <label class="fr-label" for="publicSuivi">
-                                    Un suivi de ré-ouverture va être créé. Souhaitez-vous qu'il soit partagé à l'usager ?
-                                </label>
-                                <select class="fr-select" id="publicSuivi" name="publicSuivi">
-                                    <option value="1" selected>Oui</option>
-                                    <option value="0">Non</option>
-                                </select>
-                            </div>
+                            <fieldset class="fr-fieldset" id="radio-hint" aria-labelledby="radio-hint-legend radio-hint-messages">
+                                <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id="radio-hint-legend">
+                                    Un suivi de ré-ouverture va être créé.
+                                    <br>
+                                    Souhaitez-vous qu'il soit partagé à l'usager ?
+                                </legend>
+                                <div class="fr-fieldset__element">
+                                    <div class="fr-radio-group">
+                                        <input type="radio" id="publicSuivi-1" name="publicSuivi" value="1" checked>
+                                        <label class="fr-label" for="publicSuivi-1">
+                                            Oui
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="fr-fieldset__element">
+                                    <div class="fr-radio-group">
+                                        <input type="radio" id="publicSuivi-2" name="publicSuivi" value="0">
+                                        <label class="fr-label" for="publicSuivi-2">
+                                            Non
+                                        </label>
+                                    </div>
+                                </div>
+                            </fieldset>
                         </div>
 
                         <div class="fr-modal__footer">
