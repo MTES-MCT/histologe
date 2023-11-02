@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Service\Import\Signalement;
 use App\Entity\Territory;
 use App\EventListener\SuiviCreatedListener;
 use App\Manager\AffectationManager;
+use App\Manager\FileManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\TagManager;
@@ -32,6 +33,7 @@ class SignalementImportLoaderTest extends KernelTestCase
     private LoggerInterface $logger;
     private CriticiteCalculator $criticiteCalculator;
     private SignalementQualificationUpdater $signalementQualificationUpdater;
+    private FileManager $fileManager;
 
     protected function setUp(): void
     {
@@ -45,6 +47,7 @@ class SignalementImportLoaderTest extends KernelTestCase
         $this->logger = self::getContainer()->get(LoggerInterface::class);
         $this->criticiteCalculator = self::getContainer()->get(CriticiteCalculator::class);
         $this->signalementQualificationUpdater = self::getContainer()->get(SignalementQualificationUpdater::class);
+        $this->fileManager = self::getContainer()->get(FileManager::class);
 
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
     }
@@ -66,6 +69,7 @@ class SignalementImportLoaderTest extends KernelTestCase
             $this->logger,
             $this->criticiteCalculator,
             $this->signalementQualificationUpdater,
+            $this->fileManager,
         );
 
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '01']);
