@@ -44,6 +44,11 @@ else
       aws s3 cp data/signalement/signalement_${zip}.csv s3://${BUCKET_URL}/csv/ ${debug}
       aws s3 ls s3://${BUCKET_URL}/csv/signalement_${zip}.csv
       ;;
+    "slugify-signalement")
+      echo "Upload signalement_$2.csv to cloud..."
+      aws s3 cp data/images/signalement_${zip}.csv s3://${BUCKET_URL}/csv/ ${debug}
+      aws s3 ls s3://${BUCKET_URL}/csv/signalement_${zip}.csv
+      ;;
     "image")
       echo "Upload image_$zip to cloud"
       aws s3 cp --recursive data/images/import_${zip} s3://${BUCKET_URL}/ ${debug}

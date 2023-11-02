@@ -76,7 +76,7 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
             ->method('getRepository')
             ->willReturn($signalementRepositoryMock);
 
-        $fromFile = 'csv/'.SlugifyDocumentSignalementCommand::PREFIX_FILENAME_STORAGE.'01.csv';
+        $fromFile = 'csv/'.SlugifyDocumentSignalementCommand::PREFIX_FILENAME_STORAGE_MAPPING_SLUGGED.'01.csv';
         $toFile = $this->parameterBag->get('uploads_tmp_dir').'mapping_doc_signalement_01.csv';
 
         $this->fileStorage->expects($this->once())
@@ -174,7 +174,7 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
             ->with(['zip' => '99'])
             ->willReturn($this->territory);
 
-        $fromFile = 'csv/'.SlugifyDocumentSignalementCommand::PREFIX_FILENAME_STORAGE.'99.csv';
+        $fromFile = 'csv/'.SlugifyDocumentSignalementCommand::PREFIX_FILENAME_STORAGE_MAPPING_SLUGGED.'99.csv';
 
         $this->fileStorage->expects($this->once())
             ->method('fileExists')
