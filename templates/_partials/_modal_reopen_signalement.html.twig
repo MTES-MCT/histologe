@@ -1,0 +1,62 @@
+<dialog aria-labelledby="reopen{% if all == '1' %}-all{% endif %}-signalement-modal-title" id="reopen{% if all == '1' %}-all{% endif %}-signalement-modal" class="fr-modal" role="dialog">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <form action="{{ path('back_signalement_reopen',{uuid:signalement.uuid}) }}" class="fr-mb-3v fr-w-100">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <h1 id="reopen{% if all == '1' %}-all{% endif %}-signalement-modal-title" class="fr-modal__title">
+                                {% if all == '1' %}
+                                Rouvrir le signalement pour tous
+                                {% else %}
+                                Rouvrir pour {{ app.user.partner.nom }}
+                                {% endif %}
+                            </h1>
+                            <a href="#" class="fr-link--close fr-link" aria-controls="reopen{% if all == '1' %}-all{% endif %}-signalement-modal">Fermer</a>
+                        </div>
+
+                        <div class="fr-modal__content fr-text--left">
+                            <fieldset class="fr-fieldset" id="radio-hint" aria-labelledby="radio-hint-legend radio-hint-messages">
+                                <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id="radio-hint-legend">
+                                    Un suivi de ré-ouverture va être créé.
+                                    <br>
+                                    Souhaitez-vous qu'il soit partagé à l'usager ?
+                                </legend>
+                                <div class="fr-fieldset__element">
+                                    <div class="fr-radio-group">
+                                        <input type="radio" id="publicSuivi-1" name="publicSuivi" value="1" checked>
+                                        <label class="fr-label" for="publicSuivi-1">
+                                            Oui
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="fr-fieldset__element">
+                                    <div class="fr-radio-group">
+                                        <input type="radio" id="publicSuivi-2" name="publicSuivi" value="0">
+                                        <label class="fr-label" for="publicSuivi-2">
+                                            Non
+                                        </label>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                        <div class="fr-modal__footer">
+                            <button type="submit"
+                                class="fr-btn fr-btn--success fr-icon-lock-fill fr-btn--icon-left fr-w-100 reopen"
+                                name="signalement-action[{% if all == '1' %}reopenAll{% else %}reopen{% endif %}]" value="1">
+                                {% if all == '1' %}
+                                Rouvrir le signalement pour tous
+                                {% else %}
+                                Rouvrir le signalement pour {{ app.user.partner.nom }}
+                                {% endif %}
+                            </button>
+                            <input type="hidden" name="_token"
+                                value="{{ csrf_token('signalement_reopen_'~signalement.id) }}">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</dialog>

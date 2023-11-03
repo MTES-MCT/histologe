@@ -12,7 +12,7 @@
                             name="signalement-affectation-response[accept]" value="1">
                         Accepter
                     </button>
-                    <a href="#" class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-close-circle-fill fr-btn--danger"
+                    <a href="#" class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-close-circle-fill fr-btn--danger"
                         data-fr-opened="false" aria-controls="refus-affectation-modal">Refuser
                     </a>
                     {% include '_partials/_modal_refus_affectation.html.twig' %}
@@ -52,28 +52,24 @@
                 </div>
 
             {% elseif isClosedForMe or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
-                <form action="{{ path('back_signalement_reopen',{uuid:signalement.uuid}) }}" class="fr-mb-3v">
-                    {% if isClosed and is_granted('ROLE_ADMIN_TERRITORY') %}
-                        <button class="fr-btn fr-btn--sm fr-btn--success fr-fi-lock-fill fr-btn--icon-left reopen"
-                                name="signalement-action[reopenAll]" value="1"
-                                onclick="return confirm('Êtes-vous certain de vouloir rouvrir ce signalement pour TOUS les partenaires ?')">
-                            Rouvrir pour tous
-                        </button>
-                    {% endif %}
-                    {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or is_granted('ROLE_ADMIN_TERRITORY') %}
-                        <button class="fr-btn fr-btn--sm fr-btn--success fr-fi-lock-fill fr-btn--icon-left reopen"
-                                name="signalement-action[reopen]" value="1"
-                                onclick="return confirm('Êtes-vous certain de vouloir rouvrir ce signalement ?')">
-                            Rouvrir pour {{ app.user.partner.nom }}
-                        </button>
-                    {% endif %}
-                    <input type="hidden" name="_token"
-                            value="{{ csrf_token('signalement_reopen_'~signalement.id) }}">
-                </form>
+                {% if isClosed and is_granted('ROLE_ADMIN_TERRITORY') %}
+                    {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '1' } %}
+                    <button class="fr-btn fr-btn--sm fr-btn--success fr-fi-lock-fill fr-btn--icon-left reopen"
+                            aria-controls="reopen-all-signalement-modal" data-fr-opened="false">
+                        Rouvrir pour tous
+                    </button>
+                {% endif %}
+                {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or is_granted('ROLE_ADMIN_TERRITORY') %}
+                    {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '0' } %}
+                    <button class="fr-btn fr-btn--sm fr-btn--success fr-fi-lock-fill fr-btn--icon-left reopen"
+                            aria-controls="reopen-signalement-modal" data-fr-opened="false">
+                        Rouvrir pour {{ app.user.partner.nom }}
+                    </button>
+                {% endif %}
             
             {% elseif (signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') and not isClosed and not isClosedForMe and isAffected and isAccepted) or is_granted('ROLE_ADMIN_TERRITORY') %}
                 <a href="#" aria-controls="cloture-modal" data-fr-opened="false"
-                    class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-close-line fr-btn--icon-left fr-mb-3v">
+                    class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-close-line fr-btn--icon-left fr-mb-3v">
                     Clôturer
                 </a>
             {% endif %}
