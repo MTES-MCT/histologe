@@ -101,35 +101,8 @@ services:
     image: redis:7.0-alpine
     container_name: histologe_redis
 
-  matomo_db:
-    image: mariadb:10.11
-    command: --max-allowed-packet=64MB
-    restart: always
-    volumes:
-      - dbmatomo:/var/lib/mysql:Z
-    environment:
-      - MYSQL_ROOT_PASSWORD=matomo
-      - MARIADB_AUTO_UPGRADE=1
-      - MARIADB_DISABLE_UPGRADE_BACKUP=1
-    env_file:
-      - ./.docker/matomo/db.env
-
-  matomo_app:
-    image: matomo
-    restart: always
-    volumes:
-      - matomo:/var/www/html:z
-    environment:
-      - MATOMO_DATABASE_HOST=matomo_db
-    env_file:
-      - ./.docker/matomo/db.env
-    ports:
-      - 8083:80
-
   cypress:
     image: cypress/base:latest
 
 volumes:
   dbdata:
-  dbmatomo:
-  matomo:
