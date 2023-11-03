@@ -1,3 +1,5 @@
+export const EXPIRATION_DAYS = 395; // 395 days ~ 13 month
+
 export function setCookie(name, value, days) {
     let expires = "";
     if (days) {

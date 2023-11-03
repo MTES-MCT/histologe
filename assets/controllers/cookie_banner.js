@@ -1,27 +1,24 @@
-import { setCookie, getCookie, deleteCookie } from "./cookie_utils";
-import { disableMatomoTracking, enableMatomoTracking } from "./matomo_tracking";
+import { setCookie, getCookie, EXPIRATION_DAYS } from "./cookie_utils";
+import { disableMatomoTracking, enableMatomoTracking } from "./cookie_matomo_tracking";
 
 const consentAllAcceptRadioButton = document.getElementById('consent-all-accept');
 const consentAllRefuseRadioButton = document.getElementById('consent-all-refuse');
-
 const acceptRadioButtonList = document.querySelectorAll('.accept input[type="radio"]');
 const refuseRadioButtonList = document.querySelectorAll('.refuse input[type="radio"]');
-
 const consentButtons = document.querySelector('.fr-consent-banner__buttons');
-
 const consentConfirmationChoice = document.querySelector('.fr-consent-manager__buttons .fr-btn');
 
-consentAllAcceptRadioButton.addEventListener('click', () => {
+function handleAcceptButtonClick() {
    acceptRadioButtonList.forEach(radioButtonItem => {
       radioButtonItem.checked = true;
    });
 
    refuseRadioButtonList.forEach(radioButtonItem => {
       radioButtonItem.checked = false;
-   })
-});
+   });
+}
 
-consentAllRefuseRadioButton.addEventListener('click', () => {
+function handleRefuseButtonClick() {
    refuseRadioButtonList.forEach(radioButtonItem => {
       if (!radioButtonItem.disabled) {
          radioButtonItem.checked = true;
@@ -30,33 +27,35 @@ consentAllRefuseRadioButton.addEventListener('click', () => {
 
    acceptRadioButtonList.forEach(radioButtonItem => {
       radioButtonItem.checked = false;
-   })
-});
+   });
+}
 
-consentButtons.addEventListener('click', (event) => {
-   const clickedButton = event.target;
+function handleConsentButtonClick(clickedButton) {
    if (clickedButton.classList.contains('btn-all-accept')) {
-      setCookie('cookieConsent', true, 395);
+      setCookie('cookieConsent', true, EXPIRATION_DAYS);
       enableMatomoTracking();
    } else if (clickedButton.classList.contains('btn-all-refuse')) {
-      setCookie('cookieConsent', false, 395);
+      setCookie('cookieConsent', false, EXPIRATION_DAYS);
       disableMatomoTracking();
    }
    displayOrHideConsentBannerCookie();
-});
+}
 
-consentConfirmationChoice.addEventListener('click', () => {
+function handleFinalConsentChoice() {
    const consentAcceptCustomMatomo = document.getElementById("consent-finality-1-accept");
    const consentRefuseCustomMatomo = document.getElementById("consent-finality-1-refuse");
-   console.log(consentRefuseCustomMatomo.checked);
+   const modalConsent = document.getElementById('fr-consent-modal');
+
    if (consentAcceptCustomMatomo.checked) {
-      setCookie('cookieConsent', true, 395);
+      setCookie('cookieConsent', true, EXPIRATION_DAYS);
       enableMatomoTracking();
    } else if (consentRefuseCustomMatomo.checked) {
-      setCookie('cookieConsent', false, 395);
+      setCookie('cookieConsent', false, EXPIRATION_DAYS);
       disableMatomoTracking();
    }
-});
+   modalConsent.classList.remove('fr-modal--opened');
+   displayOrHideConsentBannerCookie();
+}
 
 function displayOrHideConsentBannerCookie() {
    const cookieConsent = getCookie('cookieConsent');
@@ -68,4 +67,8 @@ function displayOrHideConsentBannerCookie() {
    }
 }
 
+consentAllAcceptRadioButton.addEventListener('click', handleAcceptButtonClick);
+consentAllRefuseRadioButton.addEventListener('click', handleRefuseButtonClick);
+consentButtons.addEventListener('click', (event) => handleConsentButtonClick(event.target));
+consentConfirmationChoice.addEventListener('click', handleFinalConsentChoice);
 window.addEventListener('load', displayOrHideConsentBannerCookie);
