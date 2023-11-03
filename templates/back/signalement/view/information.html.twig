@@ -183,6 +183,10 @@
                 data-dpe-url="https://koumoul.com/data-fair/api/v1/datasets/dpe-france/values_agg?field=code_insee_commune_actualise&format=json&agg_size=20&q_mode=simple&geo_adresse_in={{ (signalement.adresseOccupant~' '~signalement.cpOccupant~' '~signalement.villeOccupant)|replace({'  ':' '})|url_encode }}&size=100&select=%2A&sampling=neighbors">
             Consulter le(s) DPE
         </button>
+        {% if not isNewFormEnabled and canEditSignalement %}
+            <a href="{{ path('back_signalement_edit',{uuid:signalement.uuid}) }}"
+                class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-edit-fill" title="Modifier les infos">Modifier les infos</a>
+        {% endif %}
     </div>
 </div>
 
@@ -197,7 +201,9 @@
                         <h4 class="fr-h6">Coordonnées du tiers déclarant</h4>
                     </div>
                     <div class="fr-col-12 fr-col-md-3 fr-text--right">
+                        {% if isNewFormEnabled %}
                         <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-coordonnees-tiers">Modifier</a>
+                        {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Nom :</strong> {{ signalement.nomDeclarant }}
@@ -236,7 +242,9 @@
                         <h4 class="fr-h6">Coordonnées du foyer</h4>
                     </div>
                     <div class="fr-col-12 fr-col-md-3 fr-text--right">
+                        {% if isNewFormEnabled %}
                         <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-coordonnees-foyer">Modifier</a>
+                        {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Nom :</strong> {{ signalement.nomOccupant }}
@@ -268,7 +276,9 @@
                         <h4 class="fr-h6">Coordonnées du bailleur</h4>
                     </div>
                     <div class="fr-col-12 fr-col-md-3 fr-text--right">
+                        {% if isNewFormEnabled %}
                         <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-coordonnees-bailleur">Modifier</a>
+                        {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Nom :</strong> {{ signalement.nomProprio ?? 'N/R' }}
@@ -315,7 +325,9 @@
                         <h4 class="fr-h6">Informations sur le logement</h4>
                     </div>
                     <div class="fr-col-12 fr-col-md-3 fr-text--right">
+                        {% if isNewFormEnabled %}
                         <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-informations-logement">Modifier</a>
+                        {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Type :</strong> {{ signalement.natureLogement|capitalize }}
@@ -416,7 +428,9 @@
                         <h4 class="fr-h6">Situation du foyer</h4>
                     </div>
                     <div class="fr-col-12 fr-col-md-3 fr-text--right">
+                        {% if isNewFormEnabled %}
                         <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-situation-foyer">Modifier</a>
+                        {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Logement social :</strong>
@@ -510,7 +524,9 @@
                         <h4 class="fr-h6">Procédure et démarches</h4>
                     </div>
                     <div class="fr-col-12 fr-col-md-3 fr-text--right">
+                        {% if isNewFormEnabled %}
                         <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-procedure-demarches">Modifier</a>
+                        {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Bailleur averti :</strong>
