@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\Entity\Enum\MotifRefus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Repository\SignalementRepository;
@@ -57,6 +58,7 @@ class AffectationControllerTest extends WebTestCase
             $routeAffectationResponse,
             [
                 'signalement-affectation-response' => [
+                    'motifRefus' => MotifRefus::AUTRE->name,
                     'suivi' => 'Cela ne me concerne pas, voir avec un autre organisme',
                 ],
                 '_token' => $this->generateCsrfToken($this->client, $tokenId),

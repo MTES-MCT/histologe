@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\MotifRefus;
 use App\Repository\AffectationRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -46,6 +47,9 @@ class Affectation
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     private ?User $affectedBy;
+
+    #[ORM\Column(type: 'string', enumType: MotifRefus::class, nullable: true)]
+    private ?MotifRefus $motifRefus;
 
     #[ORM\Column(type: 'string', enumType: MotifCloture::class, nullable: true)]
     private ?MotifCloture $motifCloture;
@@ -149,6 +153,18 @@ class Affectation
     public function setAffectedBy(?User $affectedBy): self
     {
         $this->affectedBy = $affectedBy;
+
+        return $this;
+    }
+
+    public function getMotifRefus(): ?MotifRefus
+    {
+        return $this->motifRefus;
+    }
+
+    public function setMotifRefus(?MotifRefus $motifRefus): self
+    {
+        $this->motifRefus = $motifRefus;
 
         return $this;
     }

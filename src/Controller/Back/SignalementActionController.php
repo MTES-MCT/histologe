@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\MotifRefus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Tag;
@@ -10,7 +11,6 @@ use App\Entity\User;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use App\Service\Signalement\QualificationStatusService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -20,7 +20,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('/bo/signalements')]
 class SignalementActionController extends AbstractController
@@ -30,9 +29,7 @@ class SignalementActionController extends AbstractController
         Signalement $signalement,
         Request $request,
         ManagerRegistry $doctrine,
-        UrlGeneratorInterface $urlGenerator,
         NotificationMailerRegistry $notificationMailerRegistry,
-        QualificationStatusService $qualificationStatusService
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_validation_response_'.$signalement->getId(), $request->get('_token'))
@@ -58,6 +55,7 @@ class SignalementActionController extends AbstractController
                 }
             } else {
                 $statut = Signalement::STATUS_REFUSED;
+                $signalement->setMotifRefus(MotifRefus::tryFrom($response['motifRefus']));
                 $description = 'cloturé car non-valide avec le motif suivant :<br>'.$response['suivi'];
 
                 $toRecipients = $signalement->getMailUsagers();
@@ -72,11 +70,11 @@ class SignalementActionController extends AbstractController
                 );
             }
             $suivi = new Suivi();
-            $suivi->setSignalement($signalement);
-            $suivi->setDescription('Signalement '.$description);
-            $suivi->setCreatedBy($this->getUser());
-            $suivi->setIsPublic(true);
-            $suivi->setType(SUIVI::TYPE_AUTO);
+            $suivi->setSignalement($signalement)
+                ->setDescription('Signalement '.$description)
+                ->setCreatedBy($this->getUser())
+                ->setIsPublic(true)
+                ->setType(SUIVI::TYPE_AUTO);
             $signalement->setStatut($statut);
             $doctrine->getManager()->persist($signalement);
             $doctrine->getManager()->persist($suivi);

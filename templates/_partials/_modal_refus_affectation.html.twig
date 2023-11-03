@@ -3,39 +3,56 @@
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                 <div class="fr-modal__body">
-                    <div class="fr-modal__header">
-                        <h1 id="refus-affectation-modal-title" class="fr-modal__title">
-                            <span class="fr-fi-arrow-right-line fr-fi--sm"></span>
-                            Refus signalement #{{ signalement.reference }}
-                        </h1>
-                        <a href="#" class="fr-link--close fr-link" aria-controls="refus-affectation-modal">Fermer</a>
-                    </div>
-                    <div class="fr-modal__content">
-                        <div class="fr-input-group fr-mt-2v fr-text--left">
-                            <label for="refus_affectation_suivi" class="fr-label required">Motif du refus</label>
-                            <p class="fr-hint-text">Veuillez préciser le motif de ce refus <em>(10 caractères
-                                    minimum)</em></p>
-                            <textarea class="fr-input fr-input--no-resize editor"
-                                      name="signalement-affectation-response[suivi]"
-                                      id="refus_affectation_suivi"></textarea>
-                            <p class="fr-error-text fr-hidden">Vous devez indiquer le motif de votre refus.</p>
+                    <form action="{{ path('back_signalement_affectation_response',{signalement:signalement.id,user:app.user.id,affectation:isAffected.id}) }}"
+                            class="tinyCheck fr-mb-3v" id="signalement-affectation-response-deny-form"
+                            name="signalement-affectation-response-form" method="POST">
+                        <div class="fr-modal__header">
+                            <h1 id="refus-affectation-modal-title" class="fr-modal__title">
+                                <span class="fr-fi-arrow-right-line fr-fi--sm"></span>
+                                Refus signalement #{{ signalement.reference }}
+                            </h1>
+                            <a href="#" class="fr-link--close fr-link" aria-controls="refus-affectation-modal">Fermer</a>
                         </div>
-                    </div>
-                    <div class="fr-modal__footer">
-                        <ul class="fr-btns-group fr-btns-group--right fr-btns-group--icon-left">
-                            <li>
-                                <button class="fr-btn fr-btn--danger fr-w-100"
-                                        form="signalement-affectation-response-form" type="submit"
-                                        name="signalement-affectation-response[deny]" value="1" disabled
-                                        onclick="return confirm('Êtes-vous certain de vouloir refuser ce signalement ?')">
-                                    Ce
-                                    n'est pas
-                                    pour
-                                    moi
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
+                        <div class="fr-modal__content fr-text--left">
+                            <div class="fr-select-group">
+                                <label class="fr-label required" for="signalement-affectation-response[motifRefus]">
+                                    Veuillez sélectionner le motif de refus
+                                </label>
+                                <p class="fr-error-text fr-hidden">Vous devez sélectionner le motif de votre refus.</p>
+                                <select class="fr-select" id="signalement-affectation-response[motifRefus]" name="signalement-affectation-response[motifRefus]" required>
+                                    <option value="" selected disabled hidden>Selectionnez une option</option>
+                                    <option value="{{ enum('App\\Entity\\Enum\\MotifRefus').HORS_ZONE_GEOGRAPHIQUE.name }}">{{ enum('App\\Entity\\Enum\\MotifRefus').HORS_ZONE_GEOGRAPHIQUE.label }}</option>
+                                    <option value="{{ enum('App\\Entity\\Enum\\MotifRefus').HORS_COMPETENCE.name }}">{{ enum('App\\Entity\\Enum\\MotifRefus').HORS_COMPETENCE.label }}</option>
+                                    <option value="{{ enum('App\\Entity\\Enum\\MotifRefus').DOUBLON.name }}">{{ enum('App\\Entity\\Enum\\MotifRefus').DOUBLON.label }}</option>
+                                    <option value="{{ enum('App\\Entity\\Enum\\MotifRefus').AUTRE.name }}">{{ enum('App\\Entity\\Enum\\MotifRefus').AUTRE.label }}</option>
+                                </select>
+                            </div>
+                            <div class="fr-input-group fr-mt-2v fr-text--left">
+                                <label for="refus_affectation_suivi" class="fr-label required">Message aux partenaires</label>
+                                <p class="fr-hint-text">Expliquez aux autres partenaires la raison du refus de ce signalement
+                                    <em>(10 caractères minimum)</em>
+                                </p>
+                                <textarea class="fr-input fr-input--no-resize editor"
+                                        name="signalement-affectation-response[suivi]"
+                                        id="refus_affectation_suivi"></textarea>
+                                <p class="fr-error-text fr-hidden">Vous devez saisir un message pour les partenaires.</p>
+                            </div>
+                        </div>
+                        <div class="fr-modal__footer">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--icon-left">
+                                <li>
+                                    <button class="fr-btn fr-btn--danger fr-w-100"
+                                            form="signalement-affectation-response-deny-form" type="submit"
+                                            name="signalement-affectation-response[deny]" value="1" disabled
+                                            onclick="return confirm('Êtes-vous certain de vouloir refuser ce signalement ?')">
+                                        Refuser l'affectation
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                        <input type="hidden" name="_token"
+                                value="{{ csrf_token('signalement_affectation_response_'~signalement.id) }}">
+                    </form>
                 </div>
             </div>
         </div>

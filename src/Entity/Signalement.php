@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
@@ -312,6 +313,9 @@ class Signalement
 
     #[ORM\Column(type: 'string', enumType: MotifCloture::class, nullable: true)]
     private ?MotifCloture $motifCloture;
+
+    #[ORM\Column(type: 'string', enumType: MotifRefus::class, nullable: true)]
+    private ?MotifRefus $motifRefus;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private $closedAt;
@@ -1522,6 +1526,18 @@ class Signalement
     public function setMotifCloture(?MotifCloture $motifCloture): self
     {
         $this->motifCloture = $motifCloture;
+
+        return $this;
+    }
+
+    public function getMotifRefus(): ?MotifRefus
+    {
+        return $this->motifRefus;
+    }
+
+    public function setMotifRefus(?MotifRefus $motifRefus): self
+    {
+        $this->motifRefus = $motifRefus;
 
         return $this;
     }

@@ -4,6 +4,7 @@ namespace App\Manager;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\MotifRefus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -21,12 +22,16 @@ class AffectationManager extends Manager
         parent::__construct($this->managerRegistry, $entityName);
     }
 
-    public function updateAffectation(Affectation $affectation, User $user, string $status): Affectation
+    public function updateAffectation(Affectation $affectation, User $user, string $status, ?string $motifRefus = null): Affectation
     {
         $affectation
             ->setStatut($status)
             ->setAnsweredBy($user)
             ->setAnsweredAt(new \DateTimeImmutable());
+
+        if (!empty($motifRefus)) {
+            $affectation->setMotifRefus(MotifRefus::tryFrom($motifRefus));
+        }
 
         $this->save($affectation);
 
