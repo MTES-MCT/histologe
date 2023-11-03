@@ -3,50 +3,55 @@
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                 <div class="fr-modal__body">
-                    <div class="fr-modal__header">
-                        <h1 id="refus-signalement-modal-title" class="fr-modal__title">
-                            <span class="fr-fi-arrow-right-line fr-fi--sm"></span>
-                            Refus signalement #{{ signalement.reference }}
-                        </h1>
-                        <a href="#" class="fr-link--close fr-link" aria-controls="refus-signalement-modal">Fermer</a>
-                    </div>
-                    <div class="fr-modal__content fr-text--left">
-                        <div class="fr-select-group">
-                            <label class="fr-label required" for="signalement-validation-response[motifRefus]">
-                                Veuillez sélectionner le motif de refus
-                            </label>
-                            <select class="fr-select" id="signalement-validation-response[motifRefus]" name="signalement-validation-response[motifRefus]" required>
-                                <option value="" selected disabled hidden>Selectionnez une option</option>
-                                <option value="{{ enum('App\\Entity\\Enum\\MotifRefus').HORS_PDLHI.name }}">{{ enum('App\\Entity\\Enum\\MotifRefus').HORS_PDLHI.label }}</option>
-                                <option value="{{ enum('App\\Entity\\Enum\\MotifRefus').DOUBLON.name }}">{{ enum('App\\Entity\\Enum\\MotifRefus').DOUBLON.label }}</option>
-                                <option value="{{ enum('App\\Entity\\Enum\\MotifRefus').AUTRE.name }}">{{ enum('App\\Entity\\Enum\\MotifRefus').AUTRE.label }}</option>
-                            </select>
+                    <form id="signalement-validation-response-deny-form" class="tinyCheck"
+                            action="{{ path('back_signalement_validation_response',{uuid:signalement.uuid}) }}">
+                        <div class="fr-modal__header">
+                            <h1 id="refus-signalement-modal-title" class="fr-modal__title">
+                                <span class="fr-fi-arrow-right-line fr-fi--sm"></span>
+                                Refus signalement #{{ signalement.reference }}
+                            </h1>
+                            <a href="#" class="fr-link--close fr-link" aria-controls="refus-signalement-modal">Fermer</a>
                         </div>
-                        <div class="fr-input-group fr-mt-2v fr-text--left">
-                            <label for="signalement_validation_refus_motif" class="fr-label required">Message à l'usager</label>
-                            <p class="fr-hint-text">Expliquez à l'usager la raison du refus de son signalement
-                                <em>(10 caractères minimum)</em>
-                            </p>
-                            <textarea class="fr-input fr-input--no-resize editor"
-                                      name="signalement-validation-response[suivi]"
-                                      id="signalement_validation_refus_motif"></textarea>
-                            <p class="fr-error-text fr-hidden">Vous devez indiquer le motif de ce refus. (10 caractères
-                                minimum)</p>
+                        <div class="fr-modal__content fr-text--left">
+                            <div class="fr-select-group">
+                                <label class="fr-label required" for="signalement-validation-response[motifRefus]">
+                                    Veuillez sélectionner le motif de refus
+                                </label>
+                                <select class="fr-select" id="signalement-validation-response[motifRefus]" name="signalement-validation-response[motifRefus]" required>
+                                    <option value="" selected disabled hidden>Selectionnez une option</option>
+                                    <option value="{{ enum('App\\Entity\\Enum\\MotifRefus').HORS_PDLHI.name }}">{{ enum('App\\Entity\\Enum\\MotifRefus').HORS_PDLHI.label }}</option>
+                                    <option value="{{ enum('App\\Entity\\Enum\\MotifRefus').DOUBLON.name }}">{{ enum('App\\Entity\\Enum\\MotifRefus').DOUBLON.label }}</option>
+                                    <option value="{{ enum('App\\Entity\\Enum\\MotifRefus').AUTRE.name }}">{{ enum('App\\Entity\\Enum\\MotifRefus').AUTRE.label }}</option>
+                                </select>
+                            </div>
+                            <div class="fr-input-group fr-mt-2v fr-text--left">
+                                <label for="signalement_validation_refus_motif" class="fr-label required">Message à l'usager</label>
+                                <p class="fr-hint-text">Expliquez à l'usager la raison du refus de son signalement
+                                    <em>(10 caractères minimum)</em>
+                                </p>
+                                <textarea class="fr-input fr-input--no-resize editor"
+                                        name="signalement-validation-response[suivi]"
+                                        id="signalement_validation_refus_motif"></textarea>
+                                <p class="fr-error-text fr-hidden">Vous devez indiquer le motif de ce refus. (10 caractères
+                                    minimum)</p>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="fr-modal__footer">
-                        <ul class="fr-btns-group fr-btns-group--right fr-btns-group--icon-left">
-                            <li>
-                                <button class="fr-btn fr-btn--danger fr-w-100"
-                                        form="signalement-validation-response-form" type="submit"
-                                        name="signalement-validation-response[deny]" value="1" disabled
-                                        onclick="return confirm('Êtes-vous certain de vouloir refuser ce signalement ?')">
-                                    Refuser le signalement
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
+                        <div class="fr-modal__footer">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--icon-left">
+                                <li>
+                                    <button class="fr-btn fr-btn--danger fr-w-100"
+                                            form="signalement-validation-response-deny-form" type="submit"
+                                            name="signalement-validation-response[deny]" value="1" disabled
+                                            onclick="return confirm('Êtes-vous certain de vouloir refuser ce signalement ?')">
+                                        Refuser le signalement
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                        <input type="hidden" name="_token"
+                                value="{{ csrf_token('signalement_validation_response_'~signalement.id) }}">
+                    </form>
                 </div>
             </div>
         </div>

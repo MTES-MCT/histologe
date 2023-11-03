@@ -41,10 +41,10 @@
                                 onclick="return confirm('Êtes-vous certain de vouloir valider ce signalement ?')">
                             Valider ce signalement
                         </button>
-                        {% include '_partials/_modal_refus_signalement.html.twig' %}
                         <input type="hidden" name="_token"
                                 value="{{ csrf_token('signalement_validation_response_'~signalement.id) }}">
                     </form>
+                    {% include '_partials/_modal_refus_signalement.html.twig' %}
                     <a href="#" class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-close-line fr-btn--danger"
                         aria-controls="refus-signalement-modal" data-fr-opened="false">
                         Refuser ce signalement

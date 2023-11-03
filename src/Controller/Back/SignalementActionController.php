@@ -11,7 +11,6 @@ use App\Entity\User;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use App\Service\Signalement\QualificationStatusService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -21,7 +20,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('/bo/signalements')]
 class SignalementActionController extends AbstractController
@@ -31,9 +29,7 @@ class SignalementActionController extends AbstractController
         Signalement $signalement,
         Request $request,
         ManagerRegistry $doctrine,
-        UrlGeneratorInterface $urlGenerator,
         NotificationMailerRegistry $notificationMailerRegistry,
-        QualificationStatusService $qualificationStatusService
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_validation_response_'.$signalement->getId(), $request->get('_token'))
