@@ -15,10 +15,10 @@
                     <a href="#" class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-close-circle-fill fr-btn--danger"
                         data-fr-opened="false" aria-controls="refus-affectation-modal">Refuser
                     </a>
-                    {% include '_partials/_modal_refus_affectation.html.twig' %}
                     <input type="hidden" name="_token"
                             value="{{ csrf_token('signalement_affectation_response_'~signalement.id) }}">
                 </form>
+                {% include '_partials/_modal_refus_affectation.html.twig' %}
 
             {% elseif isRefused %}
                 <form method="POST" action="{{ path('back_signalement_affectation_response',{signalement:signalement.id,user:app.user.id,affectation:isRefused.id}) }}">
