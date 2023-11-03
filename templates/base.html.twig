@@ -65,6 +65,7 @@
                 _paq.push(['requireConsent']);
             {% endif %}
             _paq.push(['trackPageView']);
+            _paq.push(['enableLinkTracking']);
             (function() {
                 var u="{{ matomo.url }}";
                 _paq.push(['setTrackerUrl', u+'matomo.php']);

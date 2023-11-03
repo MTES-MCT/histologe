@@ -14,8 +14,6 @@
  */
 export function enableMatomoTracking() {
     _paq.push(['rememberConsentGiven']);
-    _paq.push(['trackPageView']);
-    _paq.push(['enableLinkTracking']);
 }
 
 export function disableMatomoTracking() {
