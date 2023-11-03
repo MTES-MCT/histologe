@@ -3,9 +3,11 @@
         {% include 'back/signalement/view/edit-modals/edit-address.html.twig' %}
         <h3 class="fr-h5">
             Adresse du logement
+            {% if isNewFormEnabled %}
             <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-address" class="fr-ml-6v fr-btn--icon-left fr-icon-edit-line">
                 Modifier
             </a>
+            {% endif %}
         </h3>
         {{ signalement.adresseOccupant }},
         <br>

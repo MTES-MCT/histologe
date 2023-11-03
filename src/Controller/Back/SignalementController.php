@@ -20,7 +20,6 @@ use App\Form\SignalementType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Repository\AffectationRepository;
-use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
 use App\Repository\InterventionRepository;
 use App\Repository\SignalementQualificationRepository;
@@ -203,6 +202,7 @@ class SignalementController extends AbstractController
             'listConcludeProcedures' => $listConcludeProcedures,
             'partnersCanVisite' => $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement),
             'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
+            'isNewFormEnabled' => $parameterBag->get('feature_new_form'),
         ]);
     }
 
@@ -221,15 +221,18 @@ class SignalementController extends AbstractController
         Request $request,
         ManagerRegistry $doctrine,
         SituationRepository $situationRepository,
-        CritereRepository $critereRepository,
         CriticiteCalculator $criticiteCalculator,
-        SignalementQualificationUpdater $signalementQualificationUpdater
+        SignalementQualificationUpdater $signalementQualificationUpdater,
+        ParameterBagInterface $parameterBag,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if (Signalement::STATUS_ACTIVE !== $signalement->getStatut()) {
             $this->addFlash('error', "Ce signalement n'est pas éditable.");
 
             return $this->redirectToRoute('back_index');
+        }
+        if ($parameterBag->get('feature_new_form')) {
+            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
         }
         $title = 'Administration - Edition signalement #'.$signalement->getReference();
         $etats = ['Etat moyen', 'Mauvais état', 'Très mauvais état'];

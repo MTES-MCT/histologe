@@ -8,6 +8,7 @@ use App\Service\SearchFilterService;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,6 +25,7 @@ class SignalementListController extends AbstractController
         SearchFilterService $searchFilterService,
         SearchFilterOptionDataProvider $searchFilterOptionDataProvider,
         SignalementManager $signalementManager,
+        ParameterBagInterface $parameterBag,
     ): Response {
         $filters = $searchFilterService->setRequest($request)->setFilters()->getFilters();
         $request->getSession()->set('filters', $filters);
@@ -44,6 +46,7 @@ class SignalementListController extends AbstractController
             'countActiveFilters' => $searchFilterService->getCountActive(),
             'displayRefreshAll' => true,
             'signalements' => $signalements,
+            'isNewFormEnabled' => $parameterBag->get('feature_new_form'),
         ]);
     }
 }
