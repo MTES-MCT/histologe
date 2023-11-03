@@ -2,6 +2,7 @@
 .PHONY: help
 
 DOCKER_COMP   = docker compose
+DOCKER_COMP_FILE_TOOLS   = docker-compose.tools.yml
 DATABASE_USER = histologe
 DATABASE_NAME = histologe_db
 PATH_DUMP_SQL = data/dump.sql
@@ -16,15 +17,28 @@ help:
 build: ## Install local environement
 	@bash -l -c 'make .check .env .destroy .setup run .sleep composer create-db npm-install npm-build mock'
 
+build-tools: ## Install tools (Matomo, ...) local environement
+	@bash -l -c 'make .check .destroy-tools .setup-tools run-tools'
+
 run: ## Start containers
 	@echo -e '\e[1;32mStart containers\032'
 	@bash -l -c '$(DOCKER_COMP) up -d'
 	@echo -e '\e[1;32mContainers running\032'
 
+run-tools: ## Start tools containers
+	@echo -e '\e[1;32mStart tools containers\032'
+	@bash -l -c '$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) up -d'
+	@echo -e '\e[1;32mContainers tools running\032'
+
 down: ## Shutdown containers
 	@echo -e '\e[1;32mStop containers\032'
 	@bash -l -c '$(DOCKER_COMP) down'
 	@echo -e '\e[1;32mContainers stopped\032'
+
+down-tools: ## Shutdown containers
+	@echo -e '\e[1;32mStop tools containers\032'
+	@bash -l -c '$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) down'
+	@echo -e '\e[1;32mContainers tools stopped\032'
 
 sh: ## Log to phpfpm container
 	@echo -e '\e[1;32mLog to phpfpm container\032'
@@ -95,6 +109,7 @@ create-db: ## Create database
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:database:create --no-interaction"
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:migrations:migrate --no-interaction"
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:fixtures:load --no-interaction"
+	@bash -l -c 'make execute-migration name=Version20231027135554 direction=up'
 
 drop-db: ## Drop database
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:database:drop --force --no-interaction"
@@ -115,7 +130,7 @@ load-migrations: ## Play migrations
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:migrations:migrate --no-interaction"
 
 execute-migration: ## Execute migration: make execute-migration name=Version20231027135554 direction=up
-	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:migrations:execute DoctrineMigrations\\\$(name) --$(direction)"
+	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:migrations:execute DoctrineMigrations\\\$(name) --$(direction) --no-interaction"
 
 load-fixtures: ## Load database from fixtures
 	@$(DOCKER_COMP) exec histologe_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:fixtures:load --no-interaction"
@@ -174,6 +189,9 @@ sync-sish: ## Synchronize sish status and intervention
 scalingo-update-cli: ## Install/Update Scalingo CLI
 	@bash -l -c 'curl -O https://cli-dl.scalingo.com/install && bash install && scalingo --version'
 
+matomo-install-config: ## Config localhost matomo
+	@docker exec -it histologe-matomo_app-1 sh /var/www/html/update-config-ini.sh
+
 .env:
 	@bash -l -c 'cp .env.sample .env'
 
@@ -189,6 +207,16 @@ scalingo-update-cli: ## Install/Update Scalingo CLI
 .setup:
 	@echo "\033[33mBuilding containers ...\033[0m"
 	@$(DOCKER_COMP) build
+	@echo "\033[32mContainers built!\033[0m"
+
+.destroy-tools:
+	@echo "\033[33mRemoving tools containers ...\033[0m"
+	@$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) rm -v --force --stop || true
+	@echo "\033[32mContainers removed!\033[0m"
+
+.setup-tools:
+	@echo "\033[33mBuilding tools containers ...\033[0m"
+	@$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) build
 	@echo "\033[32mContainers built!\033[0m"
 
 .sleep:
