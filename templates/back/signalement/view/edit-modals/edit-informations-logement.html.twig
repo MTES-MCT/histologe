@@ -30,7 +30,7 @@
                                     {% set nombrePersonnes = signalement.nbAdultes + signalement.nbEnfantsP6 + signalement.nbEnfantsM6 %}
                                 {% endif %}
                                 <label class="fr-label" for="nombrePersonnes">Nb. personnes</label>
-                                <input class="fr-input" type="text" name="nombrePersonnes" value="{{ nombrePersonnes }}">
+                                <input class="fr-input" type="number" name="nombrePersonnes" value="{{ nombrePersonnes }}">
                             </div>
 
                             <div class="fr-select-group">

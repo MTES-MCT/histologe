@@ -338,8 +338,10 @@ class SignalementManager extends AbstractManager
 
     public function updateFromInformationsLogementRequest(Signalement $signalement, InformationsLogementRequest $informationsLogementRequest)
     {
-        $signalement->setNatureLogement($informationsLogementRequest->getType())
-            ->setNbOccupantsLogement($informationsLogementRequest->getNombrePersonnes());
+        $signalement->setNatureLogement($informationsLogementRequest->getType());
+        if (is_numeric($informationsLogementRequest->getNombrePersonnes())) {
+            $signalement->setNbOccupantsLogement($informationsLogementRequest->getNombrePersonnes());
+        }
 
         $typeCompositionLogement = new TypeCompositionLogement();
         if (!empty($signalement->getTypeCompositionLogement())) {

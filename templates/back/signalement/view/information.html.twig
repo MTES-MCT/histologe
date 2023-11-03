@@ -72,9 +72,11 @@
                 <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
                     <strong>Pièce à vivre {{ loop.index }} :</strong>
                     <br>
-                    Superficie : {{ signalement.typeCompositionLogement.typeLogementPiecesAVivrePieceSuperficie[i] }}
+                    Superficie : {{ signalement.typeCompositionLogement.typeLogementPiecesAVivrePieceSuperficie[i] ?? '/' }}
+                    {% if signalement.typeCompositionLogement.typeLogementPiecesAVivrePieceHauteur is not same as null %}
                     <br>
                     Hauteur > 2,20m : {{ signalement.typeCompositionLogement.typeLogementPiecesAVivrePieceHauteur[i] is same as 'nsp' ? 'Ne sait pas' : signalement.typeCompositionLogement.typeLogementPiecesAVivrePieceHauteur[i] }}
+                    {% endif %}
                 </div>
             {% endfor %}
         {% endif %}
