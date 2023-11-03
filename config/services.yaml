@@ -33,6 +33,7 @@ parameters:
     feature_ask_visite: '%env(FEATURE_ASK_VISITE_ENABLE)%'
     feature_new_form: '%env(bool:FEATURE_NEW_FORM_ENABLE)%'
     platform_name: 'Histologe'
+    matomo_enable: '%env(bool:MATOMO_ENABLE)%'
 
 services:
     # default configuration for services in *this* file
