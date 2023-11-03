@@ -112,9 +112,7 @@
     {% include "consent_banner/banner.html.twig" %}
 {% endif %}
 {% block body %}{% endblock %}
-{% if 'back_' not in app.request.get('_route') %}
-    {% include "footer.html.twig" %}
-{% endif %}
+{% include "footer.html.twig" %}
 
 <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}"></script>
 <script type="text/javascript" nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}"></script>

@@ -7,6 +7,18 @@ const acceptRadioButtonList = document.querySelectorAll('.accept input[type="rad
 const refuseRadioButtonList = document.querySelectorAll('.refuse input[type="radio"]');
 const consentButtons = document.querySelector('.fr-consent-banner__buttons');
 const consentConfirmationChoice = document.querySelector('.fr-consent-manager__buttons .fr-btn');
+const cookieManagementButton = document.querySelector('button.fr-footer__bottom-link ');
+const modalConsent = document.getElementById('fr-consent-modal');
+
+function initChoiceUserBasedOnConsent() {
+   if ("true" === getCookie('cookieConsent')) {
+      consentAllAcceptRadioButton.checked = true;
+      handleAcceptButtonClick();
+   } else {
+      handleRefuseButtonClick();
+      consentAllRefuseRadioButton.checked = true;
+   }
+}
 
 function handleAcceptButtonClick() {
    acceptRadioButtonList.forEach(radioButtonItem => {
@@ -14,7 +26,9 @@ function handleAcceptButtonClick() {
    });
 
    refuseRadioButtonList.forEach(radioButtonItem => {
-      radioButtonItem.checked = false;
+      if (!radioButtonItem.disabled) {
+         radioButtonItem.checked = false;
+      }
    });
 }
 
@@ -26,7 +40,9 @@ function handleRefuseButtonClick() {
    });
 
    acceptRadioButtonList.forEach(radioButtonItem => {
-      radioButtonItem.checked = false;
+      if (!radioButtonItem.disabled) {
+         radioButtonItem.checked = false;
+      }
    });
 }
 
@@ -44,7 +60,6 @@ function handleConsentButtonClick(clickedButton) {
 function handleFinalConsentChoice() {
    const consentAcceptCustomMatomo = document.getElementById("consent-finality-1-accept");
    const consentRefuseCustomMatomo = document.getElementById("consent-finality-1-refuse");
-   const modalConsent = document.getElementById('fr-consent-modal');
 
    if (consentAcceptCustomMatomo.checked) {
       setCookie('cookieConsent', true, EXPIRATION_DAYS);
@@ -53,7 +68,7 @@ function handleFinalConsentChoice() {
       setCookie('cookieConsent', false, EXPIRATION_DAYS);
       disableMatomoTracking();
    }
-   modalConsent.classList.remove('fr-modal--opened');
+   dsfr(modalConsent).modal.conceal();
    displayOrHideConsentBannerCookie();
 }
 
@@ -71,4 +86,5 @@ consentAllAcceptRadioButton.addEventListener('click', handleAcceptButtonClick);
 consentAllRefuseRadioButton.addEventListener('click', handleRefuseButtonClick);
 consentButtons.addEventListener('click', (event) => handleConsentButtonClick(event.target));
 consentConfirmationChoice.addEventListener('click', handleFinalConsentChoice);
+modalConsent.addEventListener('dsfr.disclose', initChoiceUserBasedOnConsent);
 window.addEventListener('load', displayOrHideConsentBannerCookie);
