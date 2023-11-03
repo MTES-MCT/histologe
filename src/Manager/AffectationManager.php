@@ -22,7 +22,7 @@ class AffectationManager extends Manager
         parent::__construct($this->managerRegistry, $entityName);
     }
 
-    public function updateAffectation(Affectation $affectation, User $user, string $status, string $motifRefus = ''): Affectation
+    public function updateAffectation(Affectation $affectation, User $user, string $status, ?string $motifRefus = null): Affectation
     {
         $affectation
             ->setStatut($status)

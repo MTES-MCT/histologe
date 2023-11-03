@@ -150,6 +150,7 @@ affectations:
     answered_by: "user-38-01@histologe.fr"
     affected_by: "user-38-01@histologe.fr"
     motif_cloture: ""
+    motif_refus: "DOUBLON"
     territory: "Isère"
   -
     signalement: 2023-23

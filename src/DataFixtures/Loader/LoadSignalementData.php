@@ -4,6 +4,7 @@ namespace App\DataFixtures\Loader;
 
 use App\Entity\Criticite;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\File;
@@ -134,6 +135,11 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 ->setMotifCloture(MotifCloture::tryFrom($row['motif_cloture']))
                 ->setClosedAt(new \DateTimeImmutable())
                 ->setClosedBy($this->userRepository->findOneBy(['statut' => User::STATUS_ACTIVE]));
+        }
+
+        if (Signalement::STATUS_REFUSED === $row['statut']) {
+            $signalement
+                ->setMotifRefus(MotifRefus::tryFrom($row['motif_refus']));
         }
 
         if (isset($row['tags'])) {

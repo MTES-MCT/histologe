@@ -4,6 +4,7 @@ namespace App\DataFixtures\Loader;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\MotifRefus;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
@@ -49,6 +50,11 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
         if (Affectation::STATUS_CLOSED === $row['statut'] && '' !== $row['motif_cloture']) {
             $affectation
                 ->setMotifCloture(MotifCloture::tryFrom($row['motif_cloture']));
+        }
+
+        if (Affectation::STATUS_REFUSED === $row['statut'] && '' !== $row['motif_refus']) {
+            $affectation
+                ->setMotifRefus(MotifRefus::tryFrom($row['motif_refus']));
         }
 
         $manager->persist($affectation);

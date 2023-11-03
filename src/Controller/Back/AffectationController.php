@@ -117,7 +117,7 @@ class AffectationController extends AbstractController
             && $response = $request->get('signalement-affectation-response')
         ) {
             $status = isset($response['accept']) ? Affectation::STATUS_ACCEPTED : Affectation::STATUS_REFUSED;
-            $motifRefus = (Affectation::STATUS_REFUSED === $status) ? $response['motifRefus'] : '';
+            $motifRefus = (Affectation::STATUS_REFUSED === $status) ? $response['motifRefus'] : null;
             $affectation = $this->affectationManager->updateAffectation($affectation, $user, $status, $motifRefus);
 
             $suiviAffectationAccepted = $suiviRepository->findSuiviByDescription(

@@ -1472,6 +1472,7 @@ signalements:
     cp_occupant: "13003"
     ville_occupant: "Marseille"
     statut: 8
+    motif_refus: "DOUBLON"
     code_suivi: '0123456784569'
     reference: "2023-21"
     geoloc: "{\"lng\":\"43.3117791\", \"lat\":\"5.3755551\"}"
