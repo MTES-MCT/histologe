@@ -189,7 +189,7 @@ sync-sish: ## Synchronize sish status and intervention
 scalingo-update-cli: ## Install/Update Scalingo CLI
 	@bash -l -c 'curl -O https://cli-dl.scalingo.com/install && bash install && scalingo --version'
 
-matomo-install-config: ## Config localhost matomo
+matomo-disable-ssl: ## Disable ssl use for matomo local instance
 	@docker exec -it histologe-matomo_app-1 sh /var/www/html/update-config-ini.sh
 
 .env:
