@@ -20,6 +20,13 @@ when@test:
     twig:
         strict_variables: true
 
+when@dev:
+    twig:
+        globals:
+            matomo:
+                url: http://localhost:8083/
+                cdn: http://localhost:8083/matomo.js
+                site_id: 1
 when@prod:
     twig:
         globals:
