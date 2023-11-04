@@ -11,12 +11,11 @@ export function setCookie(name, value, days) {
 }
 
 export function getCookie(name) {
-    let nameCookie = name + "=";
+    let nameCookieWithEqual = name + "=";
     let cookies = document.cookie.split(";").map(cookie => cookie.trim());
-    for (let i = 0; i < cookies.length; i++) {
-        let cookie = cookies[i];
-        if (cookie.indexOf(nameCookie) === 0) {
-            return cookie.substring(nameCookie.length, cookie.length);
+    for (let cookie of cookies) {
+        if (cookie.indexOf(nameCookieWithEqual) === 0) {
+            return cookie.substring(nameCookieWithEqual.length, cookie.length);
         }
     }
     return null;
