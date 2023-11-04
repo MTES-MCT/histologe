@@ -26,8 +26,9 @@ Node (optionnel)| [16.*](https://nodejs.org/en/)
 ## Environnement technique
 ### Principaux outils utilisés
 * [Le système de design de l'état français](https://www.systeme-de-design.gouv.fr/)
-* [Le framework Symfony](https://symfony.com/)
-* [Le framework Vue.js](https://vuejs.org/)
+* [PHP](https://www.php.net/)
+* [Symfony](https://symfony.com/)
+* [Vue.js](https://vuejs.org/) / [Typescript](https://vuejs.org/)
 
 ### Versions des dépendances
 
