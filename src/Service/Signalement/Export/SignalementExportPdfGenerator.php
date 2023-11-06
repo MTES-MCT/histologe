@@ -6,7 +6,7 @@ use App\Entity\Signalement;
 use Knp\Snappy\Pdf;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class SignalementExportPdf
+class SignalementExportPdfGenerator
 {
     public function __construct(private readonly Pdf $pdf, private readonly ParameterBagInterface $parameterBag)
     {
@@ -21,7 +21,7 @@ class SignalementExportPdf
         Signalement $signalement,
         string $content,
         ?array $options = null
-    ) {
+    ): string {
         $pdfContent = $this->generate($content, $options);
 
         $filename = 'export-pdf-signalement-'.$signalement->getUuid().'.pdf';

@@ -3,7 +3,7 @@
 namespace App\Tests\Unit\Service\Signalement\Export;
 
 use App\Repository\SignalementRepository;
-use App\Service\Signalement\Export\SignalementExportPdf;
+use App\Service\Signalement\Export\SignalementExportPdfGenerator;
 use Knp\Snappy\Pdf;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -16,7 +16,7 @@ class SignalementExportPdfTest extends KernelTestCase
         self::bootKernel();
         $pdf = static::getContainer()->get(Pdf::class);
         $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-        $signalementExportPdf = new SignalementExportPdf($pdf, $parameterBag);
+        $signalementExportPdfGenerator = new SignalementExportPdfGenerator($pdf, $parameterBag);
 
         $twig = static::getContainer()->get(Environment::class);
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
@@ -28,7 +28,7 @@ class SignalementExportPdfTest extends KernelTestCase
             'situations' => [],
         ]);
         $options = static::getContainer()->getParameter('export_options');
-        $pdfContent = $signalementExportPdf->generate($html, $options);
+        $pdfContent = $signalementExportPdfGenerator->generate($html, $options);
         $this->assertNotEmpty($pdfContent);
         $this->assertStringStartsWith('%PDF-', $pdfContent);
     }

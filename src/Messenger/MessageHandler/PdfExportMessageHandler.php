@@ -7,7 +7,7 @@ use App\Repository\SignalementRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use App\Service\Signalement\Export\SignalementExportPdf;
+use App\Service\Signalement\Export\SignalementExportPdfGenerator;
 use App\Service\UploadHandlerService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -18,7 +18,7 @@ class PdfExportMessageHandler
 {
     public function __construct(
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
-        private readonly SignalementExportPdf $signalementExportPdf,
+        private readonly SignalementExportPdfGenerator $signalementExportPdfGenerator,
         private readonly Environment $twig,
         private readonly SignalementRepository $signalementRepository,
         private readonly ParameterBagInterface $parameterBag,
@@ -42,7 +42,7 @@ class PdfExportMessageHandler
             'situations' => $criticitesFormatted,
         ]);
 
-        $tmpFilename = $this->signalementExportPdf->generateToTempFolder(
+        $tmpFilename = $this->signalementExportPdfGenerator->generateToTempFolder(
             $signalement,
             $htmlContent,
             $this->parameterBag->get('export_options')
