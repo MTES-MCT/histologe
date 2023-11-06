@@ -38,7 +38,13 @@ class SignalementFileController extends AbstractController
 
         $messageBus->dispatch($message);
 
-        $this->addFlash('success', 'L\'export pdf vous sera envoyé par email !');
+        $this->addFlash(
+            'success',
+            sprintf(
+                'L\'export pdf vous sera envoyé par email à l\'adresse suivante : %s. N\'oubliez pas de regarder vos courriers indésirables (spam) !',
+                $user->getEmail()
+            )
+        );
 
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
     }
