@@ -28,7 +28,8 @@ Node (optionnel)| [16.*](https://nodejs.org/en/)
 * [Le système de design de l'état français](https://www.systeme-de-design.gouv.fr/)
 * [PHP](https://www.php.net/)
 * [Symfony](https://symfony.com/)
-* [Vue.js](https://vuejs.org/) / [Typescript](https://vuejs.org/)
+* [Twig](https://twig.symfony.com/)
+* [Vue.js](https://vuejs.org/) / [Typescript](https://www.typescriptlang.org/)
 
 ### Versions des dépendances
 
