@@ -47,7 +47,7 @@ class SignalementFileProcessorTest extends TestCase
     {
         $this->uploadHandlerService
             ->expects($this->atLeast(1))
-            ->method('uploadFromFilename')
+            ->method('moveFromBucketTempFolder')
             ->willReturn('sample-'.uniqid().'.pdf');
 
         $signalementFileProcessor = new SignalementFileProcessor(
@@ -94,7 +94,7 @@ class SignalementFileProcessorTest extends TestCase
     {
         $this->uploadHandlerService
             ->expects($this->atLeast(1))
-            ->method('uploadFromFilename')
+            ->method('moveFromBucketTempFolder')
             ->willReturn('sample-'.uniqid().'.pdf');
 
         $this->fileFactory

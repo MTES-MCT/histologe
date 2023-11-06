@@ -51,8 +51,21 @@ class FileVoter extends Voter
         })->count() > 0;
     }
 
-    private function canView(bool $authorization, User|null $user): bool
+    private function canView(bool|Signalement $subject, ?User $user = null): bool
     {
-        return $authorization || $user instanceof UserInterface;
+        return $subject instanceof Signalement ? $this->checkSignalementPermission($subject, $user) : $subject;
+    }
+
+    private function checkSignalementPermission(Signalement $signalement, ?User $user = null): bool
+    {
+        if (null === $user) {
+            return false;
+        }
+
+        return $signalement->getAffectations()->filter(
+            function (Affectation $affectation) use ($user) {
+                return $affectation->getPartner()->getId() === $user->getPartner()->getId();
+            }
+        )->count() > 0;
     }
 }

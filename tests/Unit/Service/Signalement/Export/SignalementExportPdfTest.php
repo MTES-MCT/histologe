@@ -6,6 +6,7 @@ use App\Repository\SignalementRepository;
 use App\Service\Signalement\Export\SignalementExportPdf;
 use Knp\Snappy\Pdf;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Twig\Environment;
 
 class SignalementExportPdfTest extends KernelTestCase
@@ -14,7 +15,8 @@ class SignalementExportPdfTest extends KernelTestCase
     {
         self::bootKernel();
         $pdf = static::getContainer()->get(Pdf::class);
-        $signalementExportPdf = new SignalementExportPdf($pdf);
+        $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
+        $signalementExportPdf = new SignalementExportPdf($pdf, $parameterBag);
 
         $twig = static::getContainer()->get(Environment::class);
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);

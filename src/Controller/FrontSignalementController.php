@@ -140,7 +140,7 @@ class FrontSignalementController extends AbstractController
                 foreach ($dataFiles as $key => $files) {
                     foreach ($files as $titre => $file) {
                         $file = $fileFactory->createInstanceFrom(
-                            filename: $uploadHandlerService->uploadFromFilename($file),
+                            filename: $uploadHandlerService->moveFromBucketTempFolder($file),
                             title: $titre,
                             type: 'documents' === $key ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO
                         );

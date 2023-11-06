@@ -123,7 +123,7 @@ class UploadHandlerServiceTest extends KernelTestCase
             $this->filenameGenerator,
         );
 
-        $filename = $uploadHandlerService->uploadFromFilename('sample.txt');
+        $filename = $uploadHandlerService->moveFromBucketTempFolder('sample.txt');
         $this->assertEquals('sample.txt', $filename);
     }
 }

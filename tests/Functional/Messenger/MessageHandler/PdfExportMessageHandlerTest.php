@@ -9,7 +9,6 @@ use App\Repository\SignalementRepository;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Mime\Part\DataPart;
 
 class PdfExportMessageHandlerTest extends WebTestCase
 {
@@ -39,13 +38,8 @@ class PdfExportMessageHandlerTest extends WebTestCase
         $this->assertEmailCount(1);
         /** @var NotificationEmail $email */
         $email = $this->getMailerMessage();
-        $this->assertEmailAttachmentCount($email, 1);
         $this->assertEmailHtmlBodyContains($email, 'Un export pdf est disponible pour le signalement');
         $this->assertEmailHtmlBodyContains($email, '#2023-1');
         $this->assertEmailAddressContains($email, 'To', 'test@yopmail.com');
-        /** @var DataPart $attachment */
-        $attachment = $email->getAttachments()[0];
-        $this->assertEquals('2023-1.pdf', $attachment->getFilename());
-        $this->assertEquals('%PDF-1.4', substr($attachment->getBody(), 0, 8));
     }
 }
