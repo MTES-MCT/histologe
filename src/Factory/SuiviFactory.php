@@ -2,6 +2,7 @@
 
 namespace App\Factory;
 
+use App\Entity\Enum\MotifRefus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -88,8 +89,9 @@ class SuiviFactory
         if (isset($params['accept'])) {
             $description = 'Le signalement a été accepté';
         } elseif (isset($params['suivi'])) {
-            $motifRejected = Sanitizer::sanitize($params['suivi']);
-            $description = 'Le signalement a été refusé avec le motif suivant:<br> '.$motifRejected;
+            $motifRejected = !empty($params['motifRefus']) ? MotifRefus::tryFrom($params['motifRefus'])->label() : 'Non précisé';
+            $commentaire = Sanitizer::sanitize($params['suivi']);
+            $description = 'Le signalement a été refusé avec le motif suivant : '.$motifRejected.'.<br>Plus précisément :<br>'.$commentaire;
         }
 
         return $description;

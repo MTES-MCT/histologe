@@ -55,8 +55,9 @@ class SignalementActionController extends AbstractController
                 }
             } else {
                 $statut = Signalement::STATUS_REFUSED;
-                $signalement->setMotifRefus(MotifRefus::tryFrom($response['motifRefus']));
-                $description = 'cloturé car non-valide avec le motif suivant :<br>'.$response['suivi'];
+                $motifRefus = MotifRefus::tryFrom($response['motifRefus']);
+                $signalement->setMotifRefus($motifRefus);
+                $description = 'cloturé car non-valide avec le motif suivant : '.$motifRefus->label().'<br>Plus précisément :<br>'.$response['suivi'];
 
                 $toRecipients = $signalement->getMailUsagers();
                 $notificationMailerRegistry->send(
