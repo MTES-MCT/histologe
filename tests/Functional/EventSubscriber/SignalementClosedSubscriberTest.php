@@ -95,6 +95,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
             [
                 'motif_suivi' => 'Lorem ipsum suivi sit amet, consectetur adipiscing elit.',
                 'motif_cloture' => MotifCloture::tryFrom('NON_DECENCE'),
+                'suivi_public' => '1',
                 'subject' => 'tous les partenaires',
                 'closed_for' => 'all',
             ]
