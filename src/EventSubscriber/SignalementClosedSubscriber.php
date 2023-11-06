@@ -48,16 +48,18 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
                 $user,
                 $signalement,
                 params: $params,
-                isPublic: true
+                isPublic: '1' == $params['suivi_public']
             );
             $this->suiviManager->save($suivi);
 
             $signalement
-                ->setCodeSuivi($this->tokenGenerator->generateToken())
                 ->setClosedBy($user)
                 ->addSuivi($suivi);
 
-            $this->sendMailToUsager($signalement);
+            if ('1' == $params['suivi_public']) {
+                $signalement->setCodeSuivi($this->tokenGenerator->generateToken());
+                $this->sendMailToUsager($signalement);
+            }
             $this->sendMailToPartners($signalement);
         }
 
