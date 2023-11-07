@@ -31,7 +31,7 @@
                 :clickEvent="saveAndChangeScreenBySlug"
                 />
           </div>
-          <div class="['fr-col-12', formStore.currentScreen.slug === 'introduction' ? 'fr-col-md-12' : 'fr-col-md-8']">
+          <div :class="['fr-col-12', formStore.currentScreen.slug === 'introduction' ? 'fr-col-md-12' : 'fr-col-md-8']">
             <SignalementFormScreen
               :label="formStore.currentScreen.label"
               :description="formStore.currentScreen.description"
