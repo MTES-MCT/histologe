@@ -66,7 +66,7 @@
     <!-- MESSAGE A L'ADMINISTRATION -->
     <div v-if="formStore.currentScreen?.slug === 'desordres_renseignes'">
       <br>
-      <h3>Informations complémentaires (facultatif)</h3>
+      <h3>Précisions sur les désordres (facultatif)</h3>
       <p>Vous pouvez apporter des précisions sur votre situation.</p>
       <SignalementFormTextarea
         :id="idMessageAdministration"
@@ -77,7 +77,7 @@
     </div>
     <div v-else-if="formStore.currentScreen?.slug === 'validation_signalement' && formStore.data[idMessageAdministration] !== undefined">
       <br>
-      <h3 class="fr-h6">Informations complémentaires</h3>
+      <h3 class="fr-h6">Précisions sur les désordres</h3>
       <p>{{ formStore.data[idMessageAdministration] }}</p>
     </div>
   </div>
