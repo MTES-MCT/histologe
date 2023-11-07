@@ -219,7 +219,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Type et composition du logement",
-    "description": "<p>Nous allons vous poser des questions sur la composition du logement.<p><p>Les documents utiles sont:</p><ul><li>Le bail</li><li>L'état des lieux d'entrée</li><li>Le diagnostic performance énergie (DPE)</li></ul><p>Toutes les questions sont obligatoires, sauf mention contraire.<p>",
+    "description": "<p>Nous allons vous poser des questions sur la composition du logement.<p><p>Les documents utiles sont:</p><ul><li>Le bail</li><li>L'état des lieux d'entrée</li><li>Le diagnostic performance énergie (DPE)</li></ul><p><b>Toutes les questions sont obligatoires, sauf mention contraire.</b></p>",
     "slug": "ecran_intermediaire_type_composition",
     "screenCategory": "Type et composition",
     "icon": {
@@ -753,7 +753,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Situation du foyer",
-    "description": "<p>Nous allons vous poser des questions sur la situation du foyer.<br>Si possible, préparez les informations concernant l'allocation logement.</p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
+    "description": "<p>Nous allons vous poser des questions sur la situation du foyer.<br>Si possible, préparez les informations concernant l'allocation logement.</p><p><b>Toutes les questions sont obligatoires, sauf mention contraire.</b></p>",
     "slug": "ecran_intermediaire_situation_occupant",
     "screenCategory": "Situation du foyer",
     "icon": {
@@ -952,7 +952,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "La prodécure",
-    "description": "<p>Vous avez presque terminé ! <br>Répondez aux dernières questions puis envoyez votre signalement.</p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
+    "description": "<p>Vous avez presque terminé ! <br>Répondez aux dernières questions puis envoyez votre signalement.</p><p><b>Toutes les questions sont obligatoires, sauf mention contraire.</b></p>",
     "slug": "ecran_intermediaire_procedure",
     "screenCategory": "Procédure",
     "icon": {
