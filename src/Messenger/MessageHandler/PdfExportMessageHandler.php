@@ -56,7 +56,7 @@ class PdfExportMessageHandler
                 to: $pdfExportMessage->getUserEmail(),
                 signalement: $signalement,
                 params: [
-                    'filename' => 'export-pdf-signalement-'.$signalement->getUuid().'.pdf',
+                    'filename' => $filename,
                 ]
             )
         );
