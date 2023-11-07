@@ -28,6 +28,19 @@ services:
     ports:
       - 8083:80
 
+  metabase:
+    image: metabase/metabase
+    restart: always
+    environment:
+      - MB_DB_FILE=/metabase-data/metabase.db
+    volumes:
+      - ./metabase-data:/metabase-data
+    ports:
+      - 3007:3000
+
+  cypress:
+    image: cypress/base:latest
+
 volumes:
   dbmatomo:
   matomo:
