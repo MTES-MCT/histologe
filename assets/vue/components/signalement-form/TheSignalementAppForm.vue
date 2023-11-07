@@ -22,7 +22,6 @@
       </div>
 
       <div v-else-if="formStore.currentScreen" class="fr-container">
-        <!-- <div class="fr-grid-row fr-grid-row--gutters"> -->
         <div :class="['fr-grid-row fr-grid-row--gutters', formStore.currentScreen.slug === 'introduction' ? 'fr-grid-row--center' : '']">
           <div
             v-if="formStore.currentScreen.slug !== 'introduction'"
@@ -32,7 +31,6 @@
                 :clickEvent="saveAndChangeScreenBySlug"
                 />
           </div>
-          <!-- <div :class="['fr-col-12', formStore.currentScreen.slug === 'introduction' ? 'fr-col-md-12' : 'fr-col-md-8']"> -->
           <div class="fr-col-12 fr-col-md-8">
             <SignalementFormScreen
               :label="formStore.currentScreen.label"
