@@ -35,22 +35,6 @@
           }
         }
       ]
-      // "footer": [
-      //   {
-      //     "type": "SignalementFormButton",
-      //     "label": "Je démarre",
-      //     "slug": "introduction_go",
-      //     "action": "goto:adresse_logement_intro",
-      //     "customCss": "fr-btn--icon-left fr-icon-check-line"
-      //   },
-      //   {
-      //     "type": "SignalementFormLink",
-      //     "label": "Annuler",
-      //     "slug": "introduction_cancel",
-      //     "link": "/",
-      //     "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
-      //   }
-      // ]
     }
   },
   {
