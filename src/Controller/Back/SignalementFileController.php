@@ -41,7 +41,7 @@ class SignalementFileController extends AbstractController
 
             $this->addFlash('success', 'L\'export pdf vous sera envoyé par email !');
         } else {
-            $this->addFlash('error', 'La fonctionnalité est temporairement désactivée en raison d\'un trop grand nombre de photos.');
+            $this->addFlash('error', 'La fonctionnalité est temporairement désactivée sur ce signalement en raison d\'un trop grand nombre de photos.');
         }
 
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
