@@ -12,6 +12,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SignalementPdfExportMailer extends AbstractNotificationMailer
 {
+    public const FILE_404 = 'blank.pdf';
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_PDF_EXPORT;
     protected ?string $mailerSubject = 'Voici l\'export pdf du signalement !';
     protected ?string $mailerButtonText = 'Afficher le PDF';
@@ -35,7 +36,7 @@ class SignalementPdfExportMailer extends AbstractNotificationMailer
             'link' => $this->generateLink(
                 'show_uploaded_file', [
                     'folder' => '_up',
-                    'filename' => $notificationMail->getParams()['filename'],
+                    'filename' => $notificationMail->getParams()['filename'] ?? self::FILE_404,
                     'uuid' => $signalement->getUuid(),
                 ]
             ),
