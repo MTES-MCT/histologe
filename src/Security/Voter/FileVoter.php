@@ -26,7 +26,12 @@ class FileVoter extends Voter
         /** @var User $user */
         $user = $token->getUser();
         if ($user instanceof UserInterface) {
-            if ($user->isSuperAdmin() || $subject instanceof Signalement && $subject->getTerritory() === $user->getTerritory()) {
+            if ($user->isSuperAdmin() || (
+                $user->isTerritoryAdmin() &&
+                $subject instanceof Signalement &&
+                $subject->getTerritory() === $user->getTerritory()
+            )
+            ) {
                 return true;
             }
         }
