@@ -24,14 +24,14 @@
       <div v-else-if="formStore.currentScreen" class="fr-container">
         <div class="fr-grid-row fr-grid-row--gutters">
           <div
-            v-if="!formStore.currentScreen.desktopIllustration"
+            v-if="formStore.currentScreen.slug !== 'introduction'"
             class="fr-col-12 fr-col-md-4"
             >
               <SignalementFormBreadCrumbs
                 :clickEvent="saveAndChangeScreenBySlug"
                 />
           </div>
-          <div class="fr-col-12 fr-col-md-8">
+          <div class="['fr-col-12', formStore.currentScreen.slug === 'introduction' ? 'fr-col-md-12' : 'fr-col-md-8']">
             <SignalementFormScreen
               :label="formStore.currentScreen.label"
               :description="formStore.currentScreen.description"
@@ -40,15 +40,6 @@
               :customCss="formStore.currentScreen.customCss"
               :changeEvent="saveAndChangeScreenBySlug"
               />
-          </div>
-          <div
-            v-if="formStore.currentScreen.desktopIllustration"
-            class="fr-hidden fr-unhidden-md fr-col-12 fr-col-md-4 desktop-illustration"
-            >
-              <img
-                :src="formStore.currentScreen.desktopIllustration.src"
-                alt=""
-                >
           </div>
         </div>
       </div>
