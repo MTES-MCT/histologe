@@ -5,12 +5,14 @@ namespace App\Manager;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
+use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Event\SignalementCreatedEvent;
 use App\Event\SignalementDraftCompletedEvent;
 use App\Factory\SignalementDraftFactory;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SignalementDraftManager extends AbstractManager
 {
@@ -20,7 +22,8 @@ class SignalementDraftManager extends AbstractManager
         protected SignalementDraftFactory $signalementDraftFactory,
         protected EventDispatcherInterface $eventDispatcher,
         protected ManagerRegistry $managerRegistry,
-        protected string $entityName = SignalementDraft::class
+        protected UrlGeneratorInterface $urlGenerator,
+        protected string $entityName = SignalementDraft::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
     }
@@ -39,7 +42,7 @@ class SignalementDraftManager extends AbstractManager
         SignalementDraft $signalementDraft,
         SignalementDraftRequest $signalementDraftRequest,
         array $payload
-    ): ?string {
+    ): ?array {
         $signalementDraft
             ->setPayload($payload)
             ->setCurrentStep($signalementDraftRequest->getCurrentStep())
@@ -47,25 +50,51 @@ class SignalementDraftManager extends AbstractManager
             ->setEmailDeclarant($this->signalementDraftFactory->getEmailDeclarent($signalementDraftRequest))
             ->setProfileDeclarant(ProfileDeclarant::from(strtoupper($signalementDraftRequest->getProfil())));
 
-        $this->dispatchSignalementDraftCompleted($signalementDraft, $signalementDraftRequest);
+        if (self::LAST_STEP === $signalementDraftRequest->getCurrentStep()) {
+            $signalement = $this->dispatchSignalementDraftCompleted($signalementDraft);
+        }
         $this->save($signalementDraft);
 
-        return $signalementDraft->getUuid();
+        if (SignalementDraftStatus::EN_SIGNALEMENT === $signalementDraft->getStatus() && isset($signalement)) {
+            if (ProfileDeclarant::LOCATAIRE === $signalement->getProfileDeclarant()
+                || ProfileDeclarant::BAILLEUR_OCCUPANT === $signalementDraft->getProfileDeclarant()
+            ) {
+                $toRecipient = $signalement->getMailDeclarant();
+            } else {
+                $toRecipient = $signalement->getMailOccupant();
+            }
+
+            return [
+                'uuid' => $signalementDraft->getUuid(),
+                'signalementReference' => $signalement->getReference(),
+                'lienSuivi' => $this->urlGenerator->generate(
+                    'front_suivi_signalement',
+                    [
+                    'code' => $signalement->getCodeSuivi(),
+                    'from' => $toRecipient,
+                ],
+                    UrlGeneratorInterface::ABSOLUTE_URL
+                ),
+            ];
+        }
+
+        return [
+            'uuid' => $signalementDraft->getUuid(),
+        ];
     }
 
     private function dispatchSignalementDraftCompleted(
         SignalementDraft $signalementDraft,
-        SignalementDraftRequest $signalementDraftRequest
-    ): void {
-        if (self::LAST_STEP === $signalementDraftRequest->getCurrentStep()) {
-            $signalementDraft->setStatus(SignalementDraftStatus::EN_SIGNALEMENT);
-            $signalementDraftCompletedEvent = $this->eventDispatcher->dispatch(
-                new SignalementDraftCompletedEvent($signalementDraft),
-                SignalementDraftCompletedEvent::NAME
-            );
+    ): Signalement {
+        $signalementDraft->setStatus(SignalementDraftStatus::EN_SIGNALEMENT);
+        $signalementDraftCompletedEvent = $this->eventDispatcher->dispatch(
+            new SignalementDraftCompletedEvent($signalementDraft),
+            SignalementDraftCompletedEvent::NAME
+        );
 
-            $signalement = $signalementDraftCompletedEvent->getSignalementDraft()->getSignalements()->first();
-            $this->eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME);
-        }
+        $signalement = $signalementDraftCompletedEvent->getSignalementDraft()->getSignalements()->first();
+        $this->eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME);
+
+        return $signalement;
     }
 }

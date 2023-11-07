@@ -58,7 +58,9 @@ interface FormStore {
 
 const formStore: FormStore = reactive({
   data: {
-    uuidSignalementDraft: ''
+    uuidSignalementDraft: '',
+    signalementReference: '',
+    lienSuivi: ''
   },
   props: {
     ajaxurl: '',
