@@ -29,11 +29,9 @@ class SignalementPdfExportMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $signalement = $notificationMail->getSignalement();
-        $attachment = $notificationMail->getAttachment();
 
         return [
             'signalement' => $signalement,
-            'attachContent' => $attachment,
             'link' => $this->generateLink(
                 'show_uploaded_file', [
                     'folder' => '_up',
