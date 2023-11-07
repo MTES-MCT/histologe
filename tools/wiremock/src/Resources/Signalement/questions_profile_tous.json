@@ -10,7 +10,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "introduction_buttons",
-          "customCss": "button-group-full-size",
+          "customCss": "button-group-half-size",
           "components": {
             "body": [
               {
