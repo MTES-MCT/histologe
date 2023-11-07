@@ -309,7 +309,7 @@
           "label": "Le logement est-il situé au dernier étage",
           "slug": "type_logement_dernier_etage",
           "conditional": {
-            "show": "formStore.data.type_logement_rdc === 'non'"
+            "show": "formStore.data.type_logement_nature === 'appartement' && formStore.data.type_logement_rdc === 'non'"
           },
           "values": [
             {
@@ -327,7 +327,7 @@
           "label": "Le logement est-il sous les combles, sans fenêtre ?",
           "slug": "type_logement_sous_comble_sans_fenetre",
           "conditional": {
-            "show": "formStore.data.type_logement_dernier_etage === 'oui'"
+            "show": "formStore.data.type_logement_nature === 'appartement' && formStore.data.type_logement_dernier_etage === 'oui'"
           },
           "values": [
             {
@@ -345,7 +345,7 @@
           "label": "Le logement est-il en sous-sol, sans fenêtre ?",
           "slug": "type_logement_sous_sol_sans_fenetre",
           "conditional": {
-            "show": "formStore.data.type_logement_dernier_etage === 'non' && formStore.data.type_logement_rdc === 'non'"
+            "show": "formStore.data.type_logement_nature === 'appartement' && formStore.data.type_logement_dernier_etage === 'non' && formStore.data.type_logement_rdc === 'non'"
           },
           "values": [
             {
