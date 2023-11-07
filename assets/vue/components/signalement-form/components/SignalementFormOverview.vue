@@ -177,7 +177,7 @@
       </div>
 
       <!-- MESSAGE A L'ADMINISTRATION -->
-      <br>
+      <!-- <br>
       <h2 class="fr-h4">Message à l'administration (facultatif)</h2>
       <p>Ce message sera joint à votre signalement.</p>
       <SignalementFormTextarea
@@ -185,7 +185,7 @@
         description="Votre message ici"
         @input="updateValue($event)"
         :modelValue="formStore.data[idMessageAdministration]"
-        />
+        /> -->
     </div>
   </div>
 </template>
@@ -195,14 +195,12 @@ import { defineComponent } from 'vue'
 import formStore from './../store'
 import dictionaryStore from './../dictionary-store'
 import SignalementFormDisorderOverview from './SignalementFormDisorderOverview.vue'
-import SignalementFormTextarea from './SignalementFormTextarea.vue'
 import { dictionaryManager } from './../services/dictionaryManager'
 
 export default defineComponent({
   name: 'SignalementFormOverview',
   components: {
-    SignalementFormDisorderOverview,
-    SignalementFormTextarea
+    SignalementFormDisorderOverview
   },
   props: {
     id: { type: String, default: null },
@@ -213,7 +211,6 @@ export default defineComponent({
       formStore,
       dictionaryStore,
       idDisorderOverview: this.id + '_disorder_overview',
-      idMessageAdministration: this.id + '_message_administration',
       disorderIcons: [{ src: '/img/form/BATIMENT/Picto-batiment.svg', alt: '' }, { src: '/img/form/LOGEMENT/Picto-logement.svg', alt: '' }]
     }
   },
@@ -403,10 +400,6 @@ export default defineComponent({
       if (this.clickEvent !== undefined) {
         this.clickEvent('goto', screenSlug, '')
       }
-    },
-    updateValue (event: Event) {
-      const value = (event.target as HTMLInputElement).value
-      this.formStore.data[this.idMessageAdministration] = value
     }
   }
 })

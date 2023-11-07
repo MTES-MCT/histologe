@@ -57,7 +57,7 @@ class SignalementBuilder
             ->setTerritory($territory)
             ->setIsCguAccepted(true)
             ->setReference($this->referenceGenerator->generate($territory))
-            ->setDetails($this->signalementDraftRequest->getValidationSignalementOverviewMessageAdministration())
+            ->setDetails($this->signalementDraftRequest->getMessageAdministration())
             ->setProfileDeclarant(ProfileDeclarant::from(strtoupper($this->signalementDraftRequest->getProfil())));
 
         return $this;
