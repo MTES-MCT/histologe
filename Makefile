@@ -68,11 +68,11 @@ worker-exec-failed: ## Consume failed queue
 	@echo -e '\e[1;32mConsume failed queue\032'
 	@bash -l -c '$(DOCKER_COMP) exec -it histologe_phpworker php bin/console messenger:consume failed -vvv'
 
-mock: ## Start Mock server
+mock-start: ## Start Mock server
 	@${DOCKER_COMP} start histologe_wiremock && sleep 5
 	@${DOCKER_COMP} exec -it histologe_phpfpm sh -c "cd tools/wiremock/src/Mock && php AppMock.php"
 
-stop-mock: ## Stop Mock server
+mock-stop: ## Stop Mock server
 	@${DOCKER_COMP} stop histologe_wiremock
 
 logs: ## Show container logs
