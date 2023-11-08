@@ -76,15 +76,15 @@ function displayOrHideConsentBannerCookie() {
    const cookieConsent = getCookie('cookieConsent');
    const consentBanner = document.querySelector('.fr-consent-banner');
    if (cookieConsent) {
-      consentBanner.classList.add('fr-hidden');
+      consentBanner?.classList.add('fr-hidden');
    } else {
-      consentBanner.classList.remove('fr-hidden');
+      consentBanner?.classList.remove('fr-hidden');
    }
 }
 
-consentAllAcceptRadioButton.addEventListener('click', handleAcceptButtonClick);
-consentAllRefuseRadioButton.addEventListener('click', handleRefuseButtonClick);
-consentButtons.addEventListener('click', (event) => handleConsentButtonClick(event.target));
-consentConfirmationChoice.addEventListener('click', handleFinalConsentChoice);
-modalConsent.addEventListener('dsfr.disclose', initChoiceUserBasedOnConsent);
+consentAllAcceptRadioButton?.addEventListener('click', handleAcceptButtonClick);
+consentAllRefuseRadioButton?.addEventListener('click', handleRefuseButtonClick);
+consentButtons?.addEventListener('click', (event) => handleConsentButtonClick(event.target));
+consentConfirmationChoice?.addEventListener('click', handleFinalConsentChoice);
+modalConsent?.addEventListener('dsfr.disclose', initChoiceUserBasedOnConsent);
 window.addEventListener('load', displayOrHideConsentBannerCookie);
