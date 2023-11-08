@@ -201,7 +201,7 @@ tools-run: ## [Tools] Start tools containers
 	@bash -l -c '$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) up -d'
 	@echo -e '\e[1;32mContainers tools running\032'
 
-tools-down: ## [Tools] Shutdown containers
+tools-down: ## [Tools] Shutdown tools containers
 	@echo -e '\e[1;32mStop tools containers\032'
 	@bash -l -c '$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) down'
 	@echo -e '\e[1;32mContainers tools stopped\032'

@@ -67,7 +67,7 @@
                 <li class="fr-footer__bottom-item">
                     <a class="fr-footer__bottom-link" href="{{ path('politique_de_confidentialite') }}#gestion-cookies">Gestion
                         des cookies</a>
-                    {% if 'back_' in app.request.get('_route') and app.user is not null %}
+                    {% if 'back_' in app.request.get('_route') and app.user is not null and matomo.enable == 1 %}
                         <button class="fr-footer__bottom-link " data-fr-opened="false" aria-controls="fr-consent-modal"
                                 title="Personnaliser les cookies">Gestion des cookies</button>
                         {% else %}
