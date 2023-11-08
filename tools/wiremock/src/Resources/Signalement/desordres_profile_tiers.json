@@ -4,7 +4,7 @@
     "label": "Les désordres",
     "slug": "ecran_intermediaire_les_desordres",
     "screenCategory": "Désordres",
-    "description": "<p>Vous avez indiqué que votre signalement concerne {{dictionaryStore::formStore.data.zone_concernee_zone}}.</p><p>Sélectionnez le ou les problèmes rencontrés parmi les catégories et répondez aux questions.</p> <p>Vous pourrez aussi ajouter des photos des problèmes.<p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
+    "description": "<p>Vous avez indiqué que votre signalement concerne {{dictionaryStore::formStore.data.zone_concernee_zone}}.</p><p>Sélectionnez le ou les problèmes rencontrés parmi les catégories et répondez aux questions.</p> <p>Vous pourrez aussi ajouter des photos des problèmes.<p><p><b>Toutes les questions sont obligatoires, sauf mention contraire.</b></p>",
     "icon": {
       "src": "/img/form/screens/desordres.svg",
       "alt": ""
@@ -1327,7 +1327,7 @@
                 "type": "SignalementFormInfo",
                 "slug": "desordres_logement_aeration_ventilation_defectueuse_details_info",
                 "conditional": {
-                  "show": "formStore.data.desordres_logement_aeration_ventilation_defectueuse_details_nettoyage !== 'oui'"
+                  "show": "formStore.data.desordres_logement_aeration_ventilation_defectueuse_details_nettoyage === 'non' || formStore.data.desordres_logement_aeration_ventilation_defectueuse_details_nettoyage === 'nsp'"
                 },
                 "label": "Pour fonctionner, la ventilation (VMC) a besoin d'entretien ! Vérifiez qu'elle n'est pas bouchée et nettoyez-la correctement tous les 6 mois."
               },

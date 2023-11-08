@@ -225,7 +225,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Type et composition du logement",
-    "description": "<p>Nous allons vous poser des questions sur la composition du logement.<p>Toutes les questions sont obligatoires, sauf mention contraire.<p>",
+    "description": "<p>Nous allons vous poser des questions sur la composition du logement.<p><b>Toutes les questions sont obligatoires, sauf mention contraire.</b></p>",
     "slug": "ecran_intermediaire_type_composition",
     "screenCategory": "Type et composition",
     "icon": {

@@ -44,7 +44,6 @@ interface FormStore {
     label: string
     description: string
     icon: PictureDescription
-    desktopIllustration: PictureDescription
     components: ZoneComponents
     customCss: string
   } | null

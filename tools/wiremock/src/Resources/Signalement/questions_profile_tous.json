@@ -3,11 +3,7 @@
     "type": "SignalementFormScreen",
     "label": "Signaler un problème de logement avec Histologe",
     "slug": "introduction",
-    "description": "<h2>Avant de démarrer...</h2><p>Les informations demandées sont nécéssaires au bon traitement du signalement.</p><p>Elles seront uniquement partagées avec les administrations compétentes pour traiter votre dossier.</p>",
-    "desktopIllustration": {
-      "src": "/img/illustration-undraw-home.svg",
-      "alt": ""
-    },
+    "description": "<h2>Avant de démarrer...</h2><p>Vous allez pouvoir signaler un problème de logement.<br>Après cette page, cela vous prendra <b>environ 25 minutes.</b><br>Avant de commencer, lisez bien les conseils ci-dessous.</p><h2>Comment déposer un signalement ?</h2><p>Pour déposer votre signalement, il faut remplir toutes les étapes du formulaire et répondre à des questions sur :<ul><li>L'état du logement</li><li>L'adresse du logement</li><li>Le logement en général (taille en m², nombre de personnes vivant dans le logement, etc.)</li></ul>Si possible, préparez les documents suivants :<ul><li>Des photos des dégâts dans le logement</li><li>Les coordonnées du bailleur (propriétaire)</li><li>Si vous les avez : le bail, l'état des lieux et le DPE du logement</li><li>Si concerné : le numéro d’allocataire</li></ul></p><div class=\"fr-notice fr-notice--info\"><div class=\"fr-container\"><div class=\"fr-notice__body\"><p class=\"fr-notice__title\">Un signalement complet permet une meilleure prise en charge du dossier !</p></div></div></div><br><h2>Qui aura accès à mon signalement ?</h2><p>Les informations demandées sont nécessaires au bon traitement du signalement.<br>Elles seront <b>uniquement partagées avec les administrations compétentes</b> pour traiter votre dossier.</p><h2>Est-ce que je peux déposer un signalement pour quelqu'un d'autre ?</h2><p>Oui. Vous pouvez déposer un signalement pour une autre personne. Assurez-vous d'avoir sa permission et préparez les informations sur son logement.</p>",    
     "customCss": "fr-my-md-10w",
     "components": {
       "body": [
@@ -42,7 +38,7 @@
     "label": "Adresse et coordonnées",
     "slug": "adresse_logement_intro",
     "screenCategory": "Adresse et coordonnées",
-    "description": "<p>Les infos utiles pour cette partie :<br>- L'adresse du logement<br>- Les coordonnées du foyer occupant le logement<br>- Les coordonnées du bailleur (propriétaire) du logement</p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
+    "description": "<p>Les infos utiles pour cette partie :<br>- L'adresse du logement<br>- Les coordonnées du foyer occupant le logement<br>- Les coordonnées du bailleur (propriétaire) du logement</p><p><b>Toutes les questions sont obligatoires, sauf mention contraire.</b></p>",
     "icon": {
       "src": "/img/form/screens/adresse_coordonnees-colors.svg",
       "alt": ""
@@ -166,16 +162,16 @@
       "body": [
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Votre signalement concerne...",
+          "label": "Vous déposez un signalement...",
           "customCss": "question-h1",
           "slug": "signalement_concerne_profil",
           "values": [
             {
-              "label": "Le logement que vous occupez",
+              "label": "Pour vous-même",
               "value": "logement_occupez"
             },
             {
-              "label": "Un autre logement",
+              "label": "Pour quelqu'un d'autre",
               "value": "autre_logement"
             }
           ]
