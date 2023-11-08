@@ -97,8 +97,15 @@ class HomepageController extends AbstractController
     }
 
     #[Route('/politique-de-confidentialite', name: 'politique_de_confidentialite')]
-    public function politiqueCconfidentialite()
+    public function politiqueConfidentialite(): Response
     {
         return $this->render('front/politique_de_confidentialite.html.twig');
+    }
+
+
+    #[Route('/mentions-legales', name: 'mentions_legales')]
+    public function mentionsLegales(): Response
+    {
+        return $this->render('front/mentions_legales.html.twig');
     }
 }
