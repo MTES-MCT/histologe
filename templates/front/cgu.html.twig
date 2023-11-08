@@ -1,495 +1,103 @@
 {% extends 'base.html.twig' %}
-{% block title %}Conditions Générales d'Utilisation{% endblock %}
+{% block title %}Conditions Générales d'Utilisation - Usagers{% endblock %}
 
 {% block body %}
     <main class="fr-container fr-py-5w fr-py-md-10w">
         <section class="cgu fr-grid-row">
             <div class="fr-col-12 fr-col-lg-8">
                 <h1>Conditions d’utilisation du site {{ platform.name }}</h1>
-
                 <p>
-                    Les présentes conditions générales d’utilisation (dites « CGU ») fixent le cadre juridique
-                    du site “{{ platform.name }}” et définissent les conditions d’accès et d’utilisation des services par l’Utilisateur.
+                    Les présentes conditions générales d’utilisation (dites « CGU ») fixent le cadre juridique de la
+                    Plateforme « {{ platform.name }} » et définissent les conditions d’accès et d’utilisation des
+                    services par l’Usager.
                 </p>
 
-
-                <h2>1 – Champ d’application</h2>
-
-                <p>
-                    Le site est d’accès et d’utilisation libre, facultatif et gratuit à tout Utilisateur.
-                    La demande d’inscription aux services du site suppose l’acceptation par tout Utilisateur
-                    des présentes conditions générales d’utilisation. Tout refus du déclarant entraîne le non traitement
-                    du signalement réalisé sur la plateforme.
+                <h2>Article 1 – Champ d’application</h2>
+                <p>Le présent document a pour objet d’encadrer l’utilisation de la Plateforme.</p>
+                <p>Toute utilisation de la Plateforme est subordonnée au respect intégral des présentes conditions
+                    générales d’utilisation.</p>
+                <h2>Article 2 – Objet</h2>
+                <p>{{ platform.name }} permet aux habitants de repérer et signaler leurs problèmes de logement et d’accélérer la
+                    mise en place de solutions à ces problèmes de mal logement en mesurant la criticité du signalement
+                    comme une classe d’étiquette énergie.
                 </p>
-
-
-                <h2>2 – Objet</h2>
-
-                <p>
-                    {{ platform.name }} a pour objectif de permettre aux habitants de logements de repérer et de signaler les problèmes
-                    d’habitats, mais également d’accélérer l’apport de solutions à ces problèmes.
+                <h2>Article 3 – Définitions</h2>
+                <p>« L’Usager » est toute personne physique qui signale sur la Plateforme sa situation de mal logement.
                 </p>
-
-                <p>
-                    Il vise notamment à mesurer la criticité d’un signalement concernant son logement. La mesure de cette criticité,
-                    établie comme une classe d’étiquette énergie, permettra d’identifier facilement les actions à mettre en œuvre
-                    ainsi que leur degré de criticité.
+                <p>« L’Administrateur » est toute personne physique habilitée à valider ou refuser un signalement et à
+                    affecter un partenaire à un signalement.
                 </p>
+                <p>« Le Partenaire » est toute personne morale habilitée à prendre en charge un signalement et gérer les
+                    visites.
+                </p>
+                <p>« Le Responsable de territoire » est toute personne physique qui accède aux signalements de son
+                    territoire, les affecte aux agents habilités et gère les visites.
+                </p>
+                <p>Les « Services » sont les fonctionnalités offertes par la Plateforme pour répondre à ses finalités.
+                </p>
+                <h2>Article 4 – Fonctionnalités</h2>
 
+                <h3>4.1 – Formulaire de signalement</h2>
+                    <p>Chaque Usager peut signaler sa situation de mal logement en plusieurs étapes :</p>
 
-                <h2>3 – Définitions</h2>
-
-                <p>
                     <ul>
-                        <li>
-                            « L’Utilisateur » est la personne habitant un logement privé ou public qui signale un problème lié à son habitat.
+                        <li>L’Usager est l’occupant du logement ou l’Usager dépose ce signalement pour le compte de
+                            quelqu’un d’autre ;
                         </li>
-                        <li>
-                            «l’Administrateur« ou « L’agent » est la personne travaillant dans la structure (collectivité territoriale ou
-                            services de l’Etat) habilitée à hiérarchiser les signalements et les transférer aux partenaires pour traitement des désordres.
+                        <li>L’Usager sélectionne un ou plusieurs problèmes rencontrés et la gravité ;</li>
+                        <li>L’Usager décrit précisément les problèmes rencontrés dans le logement en ajoutant des photos
+                            et des documents complémentaires ;
                         </li>
-                        <li>
-                            « Les partenaires » sont les autres services de l’Etat, les collectivités territoriales, les opérateurs
-                            et les entreprises auxquels sont transmis les signalements et qui pourront intervenir dans leurs champs de compétence.
+                        <li>L’Usager fournit des informations sur le logement, le nombre d’occupants, les aides sociales
+                            ;
                         </li>
-                        <li>
-                            « Les services » sont les moyens offerts par {{ platform.name }} pour répondre à son objet et ses finalités.
-                        </li>
-                        <li>
-                            « Le responsable de traitement » est la personne qui, au sens de l’article 4 du règlement UE) n°2016/679
-                            du Parlement européen et du Conseil du 27 avril 2016 relatif à la protection des personnes physiques
-                            à l’égard du traitement des données à caractère personnel et à la libre circulation de ces données
-                            détermine les finalités et les moyens des traitements de données à caractère personnel.
-                        </li>
-                        <li>
-                            « L’éditeur » est la startup d’Etat {{ platform.name }}.
+                        <li>L’Usager valide le signalement en prenant connaissance que des services compétents peuvent
+                            programmer une visite du logement (un rappel par mail est envoyé à l’Usager 48 heures avant
+                            la visite) et que les informations déclarées vont être transmises à des Partenaires.
                         </li>
                     </ul>
-                </p>
+                    <h3>4.2 – Formulaire de contact</h3>
+                    <p>Chaque Usager peut contacter la Plateforme via un formulaire de contact en cas de questions
+                        ou de précisions. Ce formulaire de contact ne permet pas de déposer un signalement de mal
+                        logement.
+                    </p>
+                    <p>L’Usager renseigne son nom, son adresse e-mail et le contenu de son message dans une zone de
+                        champs libres.
+                    </p>
 
+                    <h2>Article 5 – Responsabilités</h2>
 
-                <h2>4 – Fonctionnalités</h2>
-                
-                <h3>4.1 – Signalement des problèmes liés à son habitat</h2>
-                
-                <p>
-                    Chaque utilisateur peut signaler un problème lié à son habitat dégradé.
-                    <br>
-                    Il devra :
-                    <ul>
-                        <li>
-                            Sélectionner un type de problème
-                            <br>
-                            Le site propose une liste de types de problèmes(ex : plomberie, humidité, 
-                            électricité etc.) et chaque utilisateur devra en sélectionner au minimum un ou plusieurs.
-                        </li>
-                        <li>
-                            Décrire avec précision le problème et sa gravité
-                            <br>
-                            Une fois la sélection réalisée, l’utilisateur va décrire avec précision le problème et
-                            préciser la gravité selon des critères (moyennement grave, grave, très grave).
-                        </li>
-                        <li>
-                            Remplir le questionnaire d’information du logement
-                            <br>
-                            L’Utilisateur devra remplir un questionnaire permettant de mesurer la criticité du signalement.
-                            Il devra y adjoindre des photos qui serviront au calcul.
-                        </li>
-                    </ul>
-                </p>
-                
-                <h3>4.2 – Calcul de la criticité et transfert du signalement aux partenaires concernés</h2>
+                    <h3>5.1 – L’Éditeur de la Plateforme « {{ platform.name }} »</h3>
+                    <p>
+                        Les sources des informations diffusées sur {{ platform.name }} sont réputées fiables mais la
+                        Plateforme ne garantit pas qu’il soit exempt de défauts, d’erreurs ou d’omissions.<br>
+                        L’Éditeur s’engage à la sécurisation de la Plateforme, notamment en prenant toutes les
+                        mesures nécessaires permettant de garantir la sécurité et la confidentialité des
+                        informations fournies.<br>
+                        L’Éditeur fournit les moyens nécessaires et raisonnables pour assurer un accès continu à la
+                        Plateforme. Il se réserve la liberté de faire évoluer, de modifier ou de suspendre, sans
+                        préavis, la Plateforme pour des raisons de maintenance ou pour tout autre motif jugé
+                        nécessaire.<br>
+                    </p>
 
-                <p>
-                    L’ Administrateur ou l’agent vérifie la criticité du signalement en fonction des informations 
-                    fournies par l’Utilisateur et notamment :
-                    <ul>
-                        <li>la dangerosité du signalement</li>
-                        <li>le nombre d’occupants</li>
-                        <li>la date de construction de l’immeuble</li>
-                    </ul>
-
-                    Une fois la criticité déterminée, l’ Administrateur ou l’agent détermine le ou les partenaires ou 
-                    services compétents. Il transfère par mail au partenaire ou service compétent :
-                    <ul>
-                        <li>l’ensemble du signalement réalisé par l’Utilisateur,</li>
-                        <li>l’évaluation de la criticité du signalement.</li>
-                    </ul>
-
-                    L’Utilisateur est informé par courriel de cet envoi.
-                    <br>
-                    En renseignant et confirmant votre adresse email et/ou d’un numéro de téléphone mobile :
-                    <ul>
-                        <li>
-                            vous acceptez de recevoir, à votre adresse email et/ou sur votre téléphone mobile,
-                            des informations émanant des partenaires en lien avec le traitement de votre signalement ;
-                        </li>
-                        <li>
-                            vous vous engagez à maintenir votre adresse email et/ou d’un numéro de téléphone mobile
-                            à jour afin de pouvoir être notifié de tout nouveau message.
-                        </li>
-                    </ul>
-
-                    <strong>A - Importer des pièces justificatives relatives au signalement</strong>
-                    <br>
-                    L’Utilisateur peut importer des photos permettant de mettre à jour le signalement lorsqu’une
-                    aggravation de la situation s’est produite. Ces photos doivent concerner la situation décrite par le demandeur.
-                </p>
-
-
-                <h2>5 – Responsabilités</h2>
-                
-                <h3>5.1 – L’éditeur du site « {{ platform.name }} »</h2>
-
-                <p>
-                    Les sources des informations diffusées sur le site sont réputées fiables mais le site ne garantit pas
-                    qu’il soit exempt de défauts, d’erreurs ou d’omissions.
-                    <br>
-                    L’éditeur s’autorise à suspendre ou révoquer un compte et toutes les actions réalisées par ce biais,
-                    s’il estime que l’usage réalisé du service porte préjudice à son image ou ne correspond pas aux 
-                    exigences de sécurité.
-                    <br>
-                    L’éditeur fournit les moyens nécessaires et raisonnables pour assurer un accès continu, sans contrepartie
-                    financière, au site. Il se réserve la liberté de faire évoluer, de modifier ou de suspendre, sans préavis,
-                    la plateforme pour des raisons de maintenance ou pour tout autre motif jugé nécessaire.
-                    <br>
-                    La responsabilité de l’éditeur ne peut être engagée en cas d’usurpation d’identité ou de toute utilisation
-                    frauduleuse des services.
-                    <br>
-                    L’éditeur est responsable des informations traitées dans le cadre des services et, à ce titre, s’engage à
-                    respecter les obligations inhérentes à ce traitement.
-                </p>
-                
-                <h3>5.2 – L’Administrateur ou l’agent</h2>
-
-                <p>
-                    L’ Administrateur ou l’agent s’assure de garder son mot de passe secret. Toute divulgation du mot de passe,
-                    quelle que soit sa forme, est interdite. Il assume les risques liés à l’utilisation de son identifiant
-                    et mot de passe.
-                    <br>
-                    Toute information transmise parL’ Administrateur ou l’agent est de sa seule responsabilité. Il est rappelé
-                    que toute personne procédant à une fausse déclaration pour elle-même ou pour autrui s’expose à des sanctions.
-                    <br>
-                    L’Administrateur ou l’agent s’engage à ne pas mettre en ligne de contenus ou informations contraires aux
-                    dispositions légales et réglementaires en vigueur. Toute contenu contraire à l’utilisation du site ou aux
-                    dispositions légales et réglementaires en vigueur sera supprimé, sans préavis.
-                    <br>
-                    Les partenaires sont responsables des informations reçues des services et, à ce titre, s’engagent à respecter
-                    les obligations inhérentes à leur traitement.
-                </p>
-                
-                <h3>5.3 – L’Utilisateur</h2>
-
-                <p>
-                    Toute information transmise par l’Utilisateur est de sa seule responsabilité. Il est rappelé que toute
-                    personne procédant à une fausse déclaration pour elle-même ou pour autrui s’expose à des sanctions.
-                    <br>
-                    L’Utilisateur s’engage à ne pas mettre en ligne de contenus ou informations contraires aux dispositions
-                    légales et réglementaires en vigueur. Toute contenu contraire à l’utilisation du site ou aux dispositions
-                    légales et réglementaires en vigueur sera supprimé, sans préavis.
-                    <br>
-                    La déclaration en ligne est une déclaration sur l’honneur qui engage l’utilisateur. Celui-ci certifie que
-                    les renseignements qu’il saisit sont exacts.
-                </p>
-
-
-                <h2 id="donnees-personnelles">6 – Protection des données à caractère personnel</h2>
-                
-                <h3>6.1 – Responsable de traitement</h2>
-
-                <p>
-                    Le responsable du traitement de vos données à caractère personnel est :
-                    <br>
-                    La Direction générale de l’aménagement, du logement et de la nature (DGALN)
-                    <br>
-                    La Direction de l’habitat, de l’urbanisme et des paysages (DHUP)
-                    <br>
-                    Pôle Habitat
-                    <br>
-                    1 place Carpeaux, 92800 Puteaux - France
-                </p>
-                
-                <h3>6.2 – Données personnelles traitées</h2>
-
-                <p>
-                    La présente Plateforme traite les données personnelles des utilisateurs suivantes :
-                    <ul>
-                        <li>
-                            Données relatives au signalement du problème d’habitat (nom, prénom, adresse-email,
-                            adresse du logement, taille du logement, désordres signalés, photos)
-                        </li>
-                        <li>
-                            Données de création de compte et relatives au suivi du signalement du problème d’habitat
-                            (nom, prénom, adresse e-mail, suivi du problème d’habitat)
-                        </li>
-                        <li>
-                            Données de connexion (Identifiants de connexion, nature des opérations, date et heure de l’opération) ;
-                        </li>
-                        <li>
-                            Cookies nécessaires au fonctionnement de la plateforme.
-                        </li>
-                    </ul>
-                </p>
-                
-                <h3>6.3 – Finalités des traitements</h2>
-
-                <p>
-                    Le site peut collecter des données à caractère personnel pour mesurer la criticité d’un signalement
-                    concernant un logement. La mesure de cette criticité, établie comme une classe d’étiquette énergie,
-                    permettra d’identifier plus facilement les actions à mettre en œuvre.
-                    <br>
-                    Ses finalités visent à :
-                    <ul>
-                        <li>
-                            signaler et suivre les problèmes liés à son habitat
-                        </li>
-                        <li>
-                            repérer les habitats et immeubles nécessitant des travaux de manière urgente
-                        </li>
-                        <li>
-                            garantir et améliorer la coopération avec les services d’hygiènes et de sécurité
-                        </li>
-                        <li>
-                            proposer un suivi statistique anonymisé des problématiques rencontrés sur le territoire
-                        </li>
-                    </ul>
-                </p>
-                
-                <h3>6.4 – Bases juridiques des traitements de données</h2>
-
-                <p>
-                    <strong>
-                        A – Base juridique du traitement concernant les données à caractère personnel relatives au
-                        signalement du problème d’habitat
-                    </strong>
-                    <br>
-                    Le traitement de données à caractère personnel est nécessaire à l’exécution d’une mission d’intérêt public.
-                    <br><br>
-
-                    <strong>
-                        B – Base juridique du traitement concernant les données de création de compte et relatives au suivi
-                        du signalement du problème d’habitat
-                    </strong>
-                    <br>
-                    Le traitement de données à caractère personnel est nécessaire à l’exécution d’une mission d’intérêt public.
-                    <br><br>
-
-                    <strong>
-                        C – Base juridique du traitement concernant les données de connexion
-                    </strong>
-                    <br>
-                    Le traitement de données à caractère personnel est nécessaire au respect d’une obligation légale à laquelle
-                    le responsable du traitement est soumis.
-                    <br>
-                    Le fondement de cette obligation légale est le décret n°2011-219 du 25 février 2011.
-                    <br><br>
-                </p>
-
-                <h3>6.5 – Durée de conservation des traitements de données</h2>
-
-                <table aria-label="Durée de conservation des traitements de données">
-                    <thead>
-                        <tr>
-                            <th>Données</th>
-                            <th>Durées de conversation</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                Données relatives au signalement du problème d’habitat
-                            </td>
-                            <td>
-                                5 ans à compter de la fin de la prise en charge du problème d’habitat par le partenaire.
-                                <br>
-                                {{ platform.name }} utilise ces données pour détecter des signalements sur une même adresse.
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Données de création de compte et relatives au suivi du problème d’habitat
-                            </td>
-                            <td>
-                                2 ans à compter de la suppression du compte
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Données de connexion
-                            </td>
-                            <td>
-                                1 an
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Cookies
-                            </td>
-                            <td>
-                                13 mois ou jusqu’au retrait du consentement de la personne concernée
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h3>6.6 – Sécurité et confidentialité</h2>
-
-                <p>
-                    Toutes les mesures techniques et organisationnelles de sécurité sont adoptées et mises à jour
-                    pour assurer la confidentialité, l’intégrité et protéger l’accès aux données
-                </p>
-                
-                <h3>6.7 – Droits des personnes concernées</h2>
-
-                <p>
-                    En application de l’article 13 du règlement (UE) n°2016/679 du Parlement européen 
-                    et du Conseil du 27 avril 2016 relatif à la protection des personnes physiques 
-                    à l’égard du traitement des données à caractère personnel et à la libre circulation 
-                    de ces données, vous disposez des droits suivants :
-                    <br>
-                    <ul>
-                        <li>Droit d’information ;</li>
-                        <li>Droit d’accès aux données ;</li>
-                        <li>Droit de rectification ;</li>
-                        <li>Droit de limitation ;</li>
-                        <li>Droit d'opposition</li>
-                    </ul>
-                    <br>
-                    Vous avez également la possibilité de demander la suppression de vos données.
-                    <br><br>
-                    Vous pouvez exercer ces droits en écrivant :
-                    <br>
-                    <ul>
-                        <li>par mail à dpd.daj.sg@developpement-durable.gouv.fr</li>
-                        <li>
-                            par voie postale :<br>
-                            Ministère de la Transition écologique et solidaire<br>
-                            Direction Générale de l'Aménagement, du Logement et de la Nature<br>
-                            Direction de l’habitat, de l’urbanisme et des paysages<br>
-                            Pôle Habitat - Service {{ platform.name }}<br>
-                            1 place Carpeaux, 92800 Puteaux
-                        </li>
-                    </ul>
-                    En raison de l’obligation de sécurité et de confidentialité dans le traitement 
-                    des données à caractère personnel qui incombe au responsable de traitement, 
-                    votre demande ne sera traitée que si vous rapportez la preuve de votre identité.
-                    <br>
-                    Pour vous aider dans votre démarche, vous trouverez ici 
-                    <a href="https://www.cnil.fr/fr/modele/courrier/exercer-son-droit-dacces">https://www.cnil.fr/fr/modele/courrier/exercer-son-droit-dacces</a>, 
-                    un modèle de courrier élaboré par la CNIL.
-                    <br>
-                    Vous avez la possibilité de vous opposer à un traitement de vos données personnelles. 
-                    Pour vous aider dans votre démarche, vous trouverez ici un modèle de courrier élaboré par la Cnil.
-                    <br><br>
-                    <strong>Délais de réponse :</strong><br>
-                    La responsable de traitement s’engage à répondre à votre demande d’accès, 
-                    de rectification ou d’opposition ou toute autre demande complémentaire d’informations 
-                    dans un délai raisonnable qui ne saurait dépasser 1 mois à compter de la réception de votre demande.
-                </p>
-
-                <h3>6.8 – Destinataires</h2>
-
-                <p>
-                    Les données collectées et les demandes, ou dossiers réalisés depuis la Plateforme sont traitées par les
-                    seules personnes juridiquement habilitées à connaître des informations traitées.
-                    <br>
-                    Il s’agit des agents, salariés ou autre personne pouvant représenter la personne morale titulaire d’une
-                    mission de service public qui utilise ou administre le service de la plateforme. 
-                </p>
-
-                <h3>6.9 – Sous-traitants</h2>
-
-                <p>
-                    Certaines des données sont envoyées à des sous-traitants pour réaliser certaines missions.
-                    Le responsable de traitement s’est assuré de la mise en œuvre par ses sous-traitants
-                    de garanties adéquates et du respect de conditions strictes de confidentialité,
-                    d’usage et de protection des données.
-                </p>
-
-                <table aria-label="Liste des sous-traitants des données">
-                    <thead>
-                        <tr>
-                            <th>Partenaire</th>
-                            <th>Traitement réalisé</th>
-                            <th>Adresse</th>
-                            <th>SIRET</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                OVH SAS
-                            </td>
-                            <td>
-                                Hébergement
-                            </td>
-                            <td>
-                                2 Rue Kellermann<br>
-                                59100 Roubaix<br>
-                                France
-                            </td>
-                            <td>
-                                424 761 419 00045
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Scalingo SAS
-                            </td>
-                            <td>
-                                Hébergement
-                            </td>
-                            <td>
-                                3 place de Haguenau<br>
-                                67000 Strasbourg<br>
-                                France
-                            </td>
-                            <td>
-                                808 665 483 00018
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <br>
-
-                <h3 id="gestion-cookies">6.10 – Cookies</h2>
-
-                <p>
-                    En tant qu’éditeur de la présente Plateforme, le responsable de traitement pourra faire usage de cookies.
-                    Certains cookies sont dispensés du recueil préalable de votre consentement dans la mesure où ils sont
-                    strictement nécessaires à la fourniture du service, d’autres sont également dispensés d’un tel recueil
-                    lorsqu’ils respectent les conditions d’exemption du consentement de l’internaute définies par la
-                    recommandation « Cookies » de la Commission nationale informatique et libertés (CNIL).
-                    <br>
-                    <strong>La mesure d’audience (nombre de visites, pages consultées) est réalisée par un outil libre intitulé
-                    Matomo spécifiquement paramétré</strong>, respectant ces conditions.
-                    <br>
-                    Ces cookies permettent d’établir des mesures statistiques de fréquentation et d’utilisation du site pouvant
-                    être utilisées à des fins de suivi et d’amélioration du service :
-                    <ul>
-                        <li>Les données collectées ne sont pas recoupées avec d’autres traitements.</li>
-                        <li>Le cookie déposé sert uniquement à la production de statistiques anonymes.</li>
-                        <li>Le cookie ne permet pas de suivre la navigation de l’internaute sur d’autres sites.</li>
-                    </ul>
-                    Les traceurs ont vocation à être conservés sur le poste informatique de l’Internaute pour une durée allant
-                    jusqu’à 13 mois.
-                </p>
-
-
-                <h2>7 – Mise à jour des conditions d'utilisation</h2>
-
-                <p>
-                    Les termes des présentes conditions d’utilisation peuvent être amendés à tout moment, sans préavis,
-                    en fonction des modifications apportées à la plateforme, de l’évolution de la législation ou pour
-                    tout autre motif jugé nécessaire.
-                    <br>
-                    En cas de modification, et pour pouvoir continuer à exercer les droits d'accès au service qui lui sont
-                    dévolus, l’utilisateur devra valider la nouvelle version des lignes directrices, en cochant la case
-                    prévue à cet effet. Les présentes règles d’utilisation sont accessibles à tout moment par l’utilisateur
-                    sur la plateforme.
-                </p>
-
-                <p></p>
+                    <h3>5.2 – L’Usager</h3>
+                    <p>Toute information transmise par l’Usager est de sa seule responsabilité. Il est rappelé
+                        que toute personne procédant à une fausse déclaration pour elle-même ou pour autrui
+                        s’expose, notamment, aux sanctions prévues à l’article 441-1 du code pénal, prévoyant
+                        des peines pouvant aller jusqu’à trois ans d’emprisonnement et 45 000 euros
+                        d’amende.<br>
+                        L’Usager s'engage à ne pas mettre en ligne de contenus ou informations contraires aux
+                        dispositions légales et réglementaires en vigueur.<br>
+                        L’Usager s’engage à ne pas publier, à quelque endroit que ce soit, de messages racistes,
+                        sexistes, injurieux, insultants ou contraires à l’ordre public.<br>
+                        L’Usager déclarant certifie, lorsqu’il n’est pas l’occupant du logement, avoir obtenu le
+                        consentement de l’occupant à renseigner ses informations personnelles sur la Plateforme.<br>
+                    </p>
+                    <h2>Article 6 – Mise à jour des conditions d'utilisation</h2>
+                    <p>Les termes des présentes conditions d’utilisation peuvent être amendés à tout moment, en fonction
+                        des modifications apportées à la Plateforme, de l’évolution de la législation ou pour tout autre
+                        motif jugé nécessaire. Les présentes conditions générales d’utilisation s’imposent au
+                        public.</p>
             </div>
         </section>
     </main>
