@@ -206,7 +206,7 @@ tools-down: ## [Tools] Shutdown tools containers
 	@bash -l -c '$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) down'
 	@echo -e '\e[1;32mContainers tools stopped\032'
 
-tools-logs: ## Show container-tools logs
+tools-logs: ## [Tools] Show container-tools logs
 	@$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) logs --follow
 
 matomo-disable-ssl: ## Disable ssl use for matomo local instance
