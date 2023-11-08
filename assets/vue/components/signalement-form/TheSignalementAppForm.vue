@@ -160,6 +160,12 @@ export default defineComponent({
       if (requestResponse && requestResponse.uuid) {
         formStore.data.uuidSignalementDraft = requestResponse.uuid
       }
+      if (requestResponse && requestResponse.signalementReference) {
+        formStore.data.signalementReference = requestResponse.signalementReference
+      }
+      if (requestResponse && requestResponse.lienSuivi) {
+        formStore.data.lienSuivi = requestResponse.lienSuivi
+      }
       if (formStore.screenData) {
         this.removeNextScreensIfProfileUpdated()
         const nextScreen = formStore.screenData.find((screen: any) => screen.slug === this.nextSlug)

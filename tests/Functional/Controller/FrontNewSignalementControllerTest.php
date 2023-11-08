@@ -52,10 +52,12 @@ class FrontNewSignalementControllerTest extends WebTestCase
 
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
 
-        $this->assertEquals(
-            ['uuid' => $uuidSignalement],
-            json_decode($client->getResponse()->getContent(), true)
-        );
+        $arrayResponse = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('uuid', $arrayResponse);
+        $this->assertArrayHasKey('signalementReference', $arrayResponse);
+        $this->assertArrayHasKey('lienSuivi', $arrayResponse);
+
+        $this->assertEquals($uuidSignalement, $arrayResponse['uuid']);
 
         $this->assertEmailCount($countEmailSent);
 
