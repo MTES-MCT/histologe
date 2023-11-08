@@ -91,9 +91,15 @@ class HomepageController extends AbstractController
     }
 
     #[Route('/cgu', name: 'front_cgu')]
-    public function cgu(): Response
+    public function cguUsager(): Response
     {
         return $this->render('front/cgu.html.twig');
+    }
+
+    #[Route('/cgu-agents', name: 'front_cgu_agents')]
+    public function cguPro(): Response
+    {
+        return $this->render('front/cgu_agents.html.twig');
     }
 
     #[Route('/politique-de-confidentialite', name: 'politique_de_confidentialite')]
@@ -101,7 +107,6 @@ class HomepageController extends AbstractController
     {
         return $this->render('front/politique_de_confidentialite.html.twig');
     }
-
 
     #[Route('/mentions-legales', name: 'mentions_legales')]
     public function mentionsLegales(): Response
