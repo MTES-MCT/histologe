@@ -125,7 +125,7 @@ class BackSignalementControllerTest extends WebTestCase
         );
     }
 
-    public function testSubmitClotureSignalementWihEmailSentToPartnersAndUsager()
+    public function testAdminSubmitClotureSignalementWithEmailSentToPartners()
     {
         $client = static::createClient();
 
@@ -150,6 +150,7 @@ class BackSignalementControllerTest extends WebTestCase
             [
                 'cloture[motif]' => 'INSALUBRITE',
                 'cloture[suivi]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                'cloture[publicSuivi]' => '0',
                 'cloture[type]' => 'all',
             ]
         );
@@ -160,6 +161,80 @@ class BackSignalementControllerTest extends WebTestCase
         $this->assertEquals(Signalement::STATUS_CLOSED, $signalement->getStatut());
 
         $client->enableProfiler();
-        $this->assertEmailCount(2);
+        $this->assertEmailCount(1);
+    }
+
+    public function testAdminTerritorySubmitClotureSignalementWithEmailSentToPartnersAndUsagers()
+    {
+        $client = static::createClient();
+
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['reference' => '2022-1']);
+        $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
+
+        /** @var UserRepository $userRepository */
+        $userRepository = self::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $client->loginUser($user);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+
+        $crawler = $client->request('GET', $route);
+        $client->submitForm(
+            'Cloturer pour tous les partenaires',
+            [
+                'cloture[motif]' => 'INSALUBRITE',
+                'cloture[suivi]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                'cloture[publicSuivi]' => '1',
+                'cloture[type]' => 'all',
+            ]
+        );
+
+        $this->assertResponseRedirects('/bo/signalements/');
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['reference' => '2022-1']);
+        $this->assertEquals(Signalement::STATUS_CLOSED, $signalement->getStatut());
+
+        $client->enableProfiler();
+        $this->assertEmailCount(3);
+    }
+
+    public function testAdminPartnerSubmitClotureSignalementWithEmailSentToPartners()
+    {
+        $client = static::createClient();
+
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['reference' => '2023-26']);
+        $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
+
+        /** @var UserRepository $userRepository */
+        $userRepository = self::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-partenaire-13-01@histologe.fr']);
+        $client->loginUser($user);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+
+        $crawler = $client->request('GET', $route);
+        $client->submitForm(
+            'Cloturer pour Partenaire 13-01',
+            [
+                'cloture[motif]' => 'INSALUBRITE',
+                'cloture[suivi]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                'cloture[type]' => 'partner',
+            ]
+        );
+
+        $this->assertResponseRedirects('/bo/signalements/');
+
+        $client->enableProfiler();
+        $this->assertEmailCount(1);
     }
 }
