@@ -93,10 +93,12 @@ class HomepageController extends AbstractController
     #[Route('/cgu', name: 'front_cgu')]
     public function cgu(): Response
     {
-        $title = "Conditions Générales d'Utilisation";
+        return $this->render('front/cgu.html.twig');
+    }
 
-        return $this->render('front/cgu.html.twig', [
-            'title' => $title,
-        ]);
+    #[Route('/politique-de-confidentialite', name: 'politique_de_confidentialite')]
+    public function politiqueCconfidentialite()
+    {
+        return $this->render('front/politique_de_confidentialite.html.twig');
     }
 }
