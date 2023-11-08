@@ -16,7 +16,7 @@ final class Version20231107132016 extends AbstractMigration implements Container
 {
     use ContainerAwareTrait;
 
-    public const SUIVI_DESCRIPTION = 'En cas de besoin concernant votre dossier, merci de vous rapprocher de l\'Adil 29 : 02.98.46.37.38. ou par mail : lhi29@adil29.org';
+    public const SUIVI_DESCRIPTION = 'En cas de besoin concernant votre dossier, merci de vous rapprocher de l\'Adil 29 au 02.98.46.37.38 ou par mail à l\'adresse suivante : lhi29@adil29.org.';
     public const TERRITORY_ZIP_FINISTERE = 29;
 
     public function getDescription(): string
