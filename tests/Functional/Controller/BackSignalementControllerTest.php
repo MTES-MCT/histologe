@@ -132,8 +132,7 @@ class BackSignalementControllerTest extends WebTestCase
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = self::getContainer()->get(SignalementRepository::class);
         /** @var Signalement $signalement */
-        $signalement = $signalementRepository->findOneBy(['reference' => '2022-8']);
-        $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
+        $signalement = $signalementRepository->findOneBy(['reference' => '2022-8', 'statut' => Signalement::STATUS_ACTIVE]);
 
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
@@ -171,8 +170,7 @@ class BackSignalementControllerTest extends WebTestCase
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = self::getContainer()->get(SignalementRepository::class);
         /** @var Signalement $signalement */
-        $signalement = $signalementRepository->findOneBy(['reference' => '2022-1']);
-        $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
+        $signalement = $signalementRepository->findOneBy(['reference' => '2022-1', 'statut' => Signalement::STATUS_ACTIVE]);
 
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
@@ -210,8 +208,7 @@ class BackSignalementControllerTest extends WebTestCase
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = self::getContainer()->get(SignalementRepository::class);
         /** @var Signalement $signalement */
-        $signalement = $signalementRepository->findOneBy(['reference' => '2023-26']);
-        $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
+        $signalement = $signalementRepository->findOneBy(['reference' => '2023-26', 'statut' => Signalement::STATUS_ACTIVE]);
 
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
