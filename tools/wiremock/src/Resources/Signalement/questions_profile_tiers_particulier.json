@@ -196,6 +196,20 @@
     "components": {
       "body": [
         {
+          "type": "SignalementFormModal",
+          "label": "En savoir plus",
+          "description": "Les désordres sur le bâtiment concernent :<ul><li>La structure du bâtiment (toit, murs porteurs, les façades, sol)</li><li>Les caves et sous-sol</li><li>Autour du bâtiment</li><li>Pour les immeubles : les parties communes</li></ul><br>Les désordres sur le logement concernent tous les problèmes à l'intérieur du logement (aération, chauffage, moisissure, équipements, etc.).",
+          "slug": "zone_concernee_modal"
+        },
+        {
+          "type": "SignalementFormLink",
+          "label": "En savoir plus",
+          "slug": "zone_concernee_savoir_plus",
+          "customCss": "fr-badge fr-badge--info",
+          "link": "#",
+          "ariaControls": "zone_concernee_modal"
+        },
+        {
           "type": "SignalementFormOnlyChoice",
           "label": "",
           "slug": "zone_concernee_zone",

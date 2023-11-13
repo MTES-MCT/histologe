@@ -6,6 +6,8 @@
       :href="variablesReplacer.replace(link)"
       :target="linktarget"
       @click="handleClick"
+      :aria-controls="ariaControls"
+      data-fr-opened="false"
       >
         {{ label}}
     </a>
@@ -24,6 +26,7 @@ export default defineComponent({
     link: { type: String, default: '' },
     linktarget: { type: String, default: '' },
     customCss: { type: String, default: '' },
+    ariaControls: { type: String, default: '' },
     clickEvent: Function
   },
   methods: {

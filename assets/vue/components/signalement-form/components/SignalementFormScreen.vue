@@ -31,6 +31,7 @@
         :validate="component.validate"
         :disabled="component.disabled"
         :multiple="component.multiple"
+        :ariaControls="component.ariaControls"
         v-model="formStore.data[component.slug]"
         :hasError="formStore.validationErrors[component.slug]  !== undefined"
         :error="formStore.validationErrors[component.slug]"
@@ -104,6 +105,7 @@ import SignalementFormUpload from './SignalementFormUpload.vue'
 import SignalementFormUploadPhotos from './SignalementFormUploadPhotos.vue'
 import SignalementFormWarning from './SignalementFormWarning.vue'
 import SignalementFormYear from './SignalementFormYear.vue'
+import SignalementFormModal from './SignalementFormModal.vue'
 import { variablesReplacer } from './../services/variableReplacer'
 import { componentValidator } from './../services/componentValidator'
 import { findPreviousScreen, findNextScreen } from '../services/disorderScreenNavigator'
@@ -135,7 +137,8 @@ export default defineComponent({
     SignalementFormDisorderCategoryItem,
     SignalementFormDisorderCategoryList,
     SignalementFormDisorderOverview,
-    SignalementFormRoomList
+    SignalementFormRoomList,
+    SignalementFormModal
   },
   props: {
     label: String,
