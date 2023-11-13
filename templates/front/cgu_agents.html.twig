@@ -1,0 +1,202 @@
+{% extends 'base.html.twig' %}
+{% block title %}Conditions d’utilisation du site – Espace PRO{% endblock %}
+
+{% block body %}
+    <main class="fr-container fr-py-5w fr-py-md-10w">
+        <section class="cgu fr-grid-row">
+            <div class="fr-col-12 fr-col-lg-8">
+                <h1>Conditions d’utilisation du site {{ platform.name }} - Espace PRO</h1>
+                <p>
+                    Les présentes conditions générales d’utilisation (dites « CGU ») fixent le cadre juridique de la
+                    Plateforme « {{ platform.name }} » et définissent les conditions d’accès et d’utilisation des services par
+                    l’Utilisateur.
+                </p>
+                <h2>Article 1 – Champ d’application</h2>
+                <p>Le présent document a pour objet d’encadrer l’utilisation de la Plateforme.
+                </p>
+                <p>L’inscription sur la Plateforme peut entraîner l’application de conditions spécifiques, listées dans
+                    les présentes conditions générales d’utilisation. L’inscription est gratuite, réservée à tout
+                    Utilisateur œuvrant à la mise en place de solutions face aux signalements de mal logement et suppose
+                    l’acceptation des présentes conditions générales d’utilisation.</p>
+                <h2>Article 2 – Objet</h2>
+                <p>{{ platform.name }} permet aux habitants de repérer et signaler leurs problèmes de logement et d’accélérer la
+                    mise en place de solutions à ces problèmes de mal logement en mesurant la criticité du signalement
+                    comme une classe d’étiquette énergie.
+                </p>
+                <h2>Article 3 – Définitions</h2>
+                <p>« L’Utilisateur » est toute personne physique ou morale œuvrant à la mise en place de solutions face
+                    aux signalements de mal logement.
+                </p>
+                <p>« L’Administrateur » est toute personne physique habilitée à valider ou refuser un signalement et à
+                    affecter un partenaire à un signalement.
+                </p>
+                <p>« Le Partenaire » est toute personne morale habilitée à prendre en charge un signalement et gérer les
+                    visites.</p>
+                <p>« Le Partenaire » est toute personne morale habilitée à prendre en charge un signalement et gérer les
+                    visites.</p>
+                <p>Les « Services » sont les fonctionnalités offertes par la Plateforme pour répondre à ses finalités.
+                </p>
+                <h2>Article 4 – Fonctionnalités de l’Utilisateur</h2>
+                <h3>4.1 – Connexion au compte de l’Utilisateur</h3>
+                <p>Chaque Utilisateur peut se connecter sur la Plateforme en renseignant son adresse e-mail et son mot
+                    de passe utilisés lors de la création du compte.</p>
+                <p>L’Utilisateur peut notamment activer son compte ou récupérer son mot de passe en renseignant son
+                    adresse e-mail.</p>
+
+                <h3>4.2 – Accès au tableau de bord</h3>
+                <p>Chaque Utilisateur accède à un tableau de bord qui recense :</p>
+                <ul>
+                    <li>Les statistiques des signalements ;</li>
+                    <li>Les nouveaux signalements ;</li>
+                    <li>Les nouveaux suivis ;</li>
+                    <li>Les signalements sans suivis ;</li>
+                    <li>Les suggestions de clôture ;</li>
+                    <li>Les clôtures globales ;</li>
+                    <li>Les clôtures partenaires ;</li>
+                    <li>Les nouveautés non-décence énergétique ;</li>
+                    <li>Les non-décence énergétique en cours.</li>
+                </ul>
+                <p>Le tableau de bord permet notamment un filtrage par département.
+                </p>
+
+                <h3>4.3 – Notifications et signalements</h3>
+                <p>
+                    Chaque Utilisateur est notifié, à la manière d’une messagerie électronique, lorsqu’un signalement
+                    évolue. Les notifications sont consultables sous 30 jours à partir de leur date d’envoi.
+                </p>
+                <p> Chaque Utilisateur peut accéder à une liste des signalements, filtrer et exporter les résultats.</p>
+                <p>Cette liste des signalements recense :</p>
+
+                <ul>
+                    <li>La référence du signalement ;</li>
+                    <li>La date du signalement ;</li>
+                    <li>Les situations suspectées ;</li>
+                    <li>Le nom et prénom de l’occupant ;</li>
+                    <li>L’adresse de l’occupant ;</li>
+                    <li>L’affectation ;</li>
+                    <li>Le dernier suivi ;</li>
+                    <li>Le statut.</li>
+                </ul>
+                <p>L’Utilisateur peut visualiser chaque fiche de signalement pour plus de précisions sur :</p>
+
+                <ul>
+                    <li>La déclaration usager ;</li>
+                    <li>La criticité du signalement ;</li>
+                    <li>Les informations personnelles du déclarant, de l’occupant ;</li>
+                    <li>Les informations sur le logement ;</li>
+                    <li>Les photos et documents ;</li>
+                    <li>La prise en charge partenaire ;</li>
+                    <li>Les suivis ;</li>
+                    <li>Les visites.</li>
+                </ul>
+                <p>Chaque Utilisateur peut consulter les Diagnostic de performance énergétique (DPE), modifier les
+                    informations, ajouter des documents, des photos et un suivi (visible soit par l’usager soit en
+                    interne).
+                </p>
+                <p>Chaque Utilisateur peut consulter les Diagnostic de performance énergétique (DPE), modifier les
+                    informations, ajouter des documents, des photos et un suivi (visible soit par l’usager soit en
+                    interne).
+                </p>
+                <p>L’Utilisateur peut notamment créer un signalement et accéder à des données chiffrées (cartographie et
+                    statistiques).</p>
+                <h2>Article 5 – Fonctionnalités spécifiques de l’Administrateur</h2>
+                <p>L’Administrateur doit valider ou refuser chaque signalement.
+                </p>
+                <p>L’Administrateur est habilité à :</p>
+
+                <ul>
+                    <li>Affecter des partenaires à chaque signalement ;</li>
+                    <li>Ajouter un suivi à chaque signalement ;</li>
+                    <li>Ajouter une visite, modifier la date ou confirmer la visite ;</li>
+                    <li>Ajouter ou supprimer un partenaire de la Plateforme ;</li>
+                    <li>Ajouter ou supprimer un utilisateur dans chaque partenaire de la Plateforme.</li>
+                </ul>
+
+                <p>Pour créer un partenaire, l’Administrateur doit remplir un formulaire qui recense :</p>
+
+                <ul>
+                    <li>Le territoire ;</li>
+                    <li>Le nom du partenaire ;</li>
+                    <li>L’email générique (facultatif) ;</li>
+                    <li>Le type de partenaire ;</li>
+                    <li>Les compétences du partenaire (facultatif) ;</li>
+                    <li>Le ou les codes INSEE.</li>
+                </ul>
+
+                <p>L’Administrateur est notamment habilité pour réactiver les comptes archivés ou sans territoires et/ou
+                    partenaires trouvés.</p>
+
+                <h2>Article 6 – Fonctionnalités spécifiques du Responsable de territoire et du Partenaire</h2>
+                <p>Le Responsable de territoire et le Partenaire sont habilités pour gérer les visites. Ils peuvent
+                    ajouter une visite, modifier la date de la visite et confirmer la visite. </p>
+                <p>Ils reçoivent un mail de la Plateforme après chaque visite pour mettre à jour les informations de la
+                    visite et y ajouter les conclusions dans la partie « Visites ».
+                </p>
+                <p>Le Responsable de territoire est habilité pour affecter les signalements aux agents compétents.
+                </p>
+                <h2>Article 7 – Responsabilités</h2>
+                <h3>7.1 – L’Éditeur de la Plateforme « {{ platform.name }} »</h3>
+                <p>Les sources des informations diffusées sur {{ platform.name }} sont réputées fiables mais la Plateforme ne
+                    garantit pas qu’il soit exempt de défauts, d’erreurs ou d’omissions.
+                    <br>
+                    L’Éditeur s’engage à la sécurisation de la Plateforme, notamment en prenant toutes les mesures
+                    nécessaires permettant de garantir la sécurité et la confidentialité des informations fournies.<br>
+                    <br>
+                    L’Éditeur fournit les moyens nécessaires et raisonnables pour assurer un accès continu à la
+                    Plateforme. Il se réserve la liberté de faire évoluer, de modifier ou de suspendre, sans préavis, la
+                    Plateforme pour des raisons de maintenance ou pour tout autre motif jugé nécessaire sous réserve de
+                    l’article 8.
+                </p>
+                <h3>7.2 – L’Utilisateur</h3>
+                <p>
+                    L'Utilisateur s'assure de garder son mot de passe secret. Toute divulgation du mot de passe, quelle
+                    que soit sa forme, est interdite. Il assume les risques liés à l'utilisation de son adresse e-mail
+                    et mot de passe.<br>
+                    Il s’engage à ne pas commercialiser les données reçues et à ne pas les communiquer à des tiers en
+                    dehors des cas prévus par la loi.<br>
+                    Toute information transmise par l'Utilisateur est de sa seule responsabilité. Il est rappelé que
+                    toute personne procédant à une fausse déclaration pour elle-même ou pour autrui s’expose, notamment,
+                    aux sanctions prévues à l’article 441-1 du code pénal, prévoyant des peines pouvant aller jusqu’à
+                    trois ans d’emprisonnement et 45 000 euros d’amende.<br>
+                    L'Utilisateur s'engage à ne pas mettre en ligne de contenus ou informations contraires aux
+                    dispositions légales et réglementaires en vigueur.<br>
+                    L’Utilisateur s’engage à ne pas publier, à quelque endroit que ce soit, de messages racistes,
+                    sexistes, injurieux, insultants ou contraires à l’ordre public.<br>
+                </p>
+                <h3>7.3 – L’Administrateur</h3>
+                <p>
+                    L’Administrateur s’engage à ne pas commercialiser les données reçues et à ne pas les communiquer à
+                    des tiers en dehors des cas prévus par la loi.
+                    <br>
+                    L'Administrateur s'engage à ne pas mettre en ligne de contenus ou informations contraires aux
+                    dispositions légales et réglementaires en vigueur.<br>
+                    L’Utilisateur s’engage à ne pas publier, à quelque endroit que ce soit, de messages racistes,
+                    sexistes, injurieux, insultants ou contraires à l’ordre public.
+                </p>
+                <h3>7.4 – Le Responsable de territoire</h3>
+                <p>
+                    Le Responsable de territoire s’engage à ne pas commercialiser les données reçues et à ne pas les
+                    communiquer à des tiers en dehors des cas prévus par la loi.<br>
+                    Le Responsable de territoire s'engage à ne pas mettre en ligne de contenus ou informations
+                    contraires aux dispositions légales et réglementaires en vigueur.<br>
+                    Le Responsable de territoire s’engage à ne pas publier, à quelque endroit que ce soit, de messages
+                    racistes, sexistes, injurieux, insultants ou contraires à l’ordre public.<br>
+                </p>
+                <h3>7.5 – Le Partenaire</h3>
+                <p>Le Partenaire s’engage à ne pas commercialiser les données reçues et à ne pas les communiquer à des
+                    tiers en dehors des cas prévus par la loi.<br>
+                    Le Partenaire s'engage à ne pas mettre en ligne de contenus ou informations contraires aux
+                    dispositions légales et réglementaires en vigueur.<br>
+                    Le Partenaire s’engage à ne pas publier, à quelque endroit que ce soit, de messages racistes,
+                    sexistes, injurieux, insultants ou contraires à l’ordre public.<br>
+                </p>
+                <h2>Article 8 – Mise à jour des conditions d'utilisation</h2>
+                <p>Les termes des présentes conditions d’utilisation peuvent être amendés à tout moment, en fonction des
+                    modifications apportées à la Plateforme, de l’évolution de la législation ou pour tout autre motif
+                    jugé nécessaire. Chaque modification donne lieu à une nouvelle version qui est acceptée par les
+                    parties.
+                </p>
+            </div>
+        </section>
+    </main>
+{% endblock %}

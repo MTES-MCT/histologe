@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+{% block title %}Conditions Générales d'Utilisation - Usagers{% endblock %}
+
+{% block body %}
+    <main class="fr-container fr-py-5w fr-py-md-10w">
+        <section class="cgu fr-grid-row">
+            <div class="fr-col-12 fr-col-lg-8">
+                <h1>Conditions d’utilisation du site {{ platform.name }}</h1>
+                <p>
+                    Les présentes conditions générales d’utilisation (dites « CGU ») fixent le cadre juridique de la
+                    Plateforme « {{ platform.name }} » et définissent les conditions d’accès et d’utilisation des
+                    services par l’Usager.
+                </p>
+
+                <h2>Article 1 – Champ d’application</h2>
+                <p>Le présent document a pour objet d’encadrer l’utilisation de la Plateforme.</p>
+                <p>Toute utilisation de la Plateforme est subordonnée au respect intégral des présentes conditions
+                    générales d’utilisation.</p>
+                <h2>Article 2 – Objet</h2>
+                <p>{{ platform.name }} permet aux habitants de repérer et signaler leurs problèmes de logement et d’accélérer la
+                    mise en place de solutions à ces problèmes de mal logement en mesurant la criticité du signalement
+                    comme une classe d’étiquette énergie.
+                </p>
+                <h2>Article 3 – Définitions</h2>
+                <p>« L’Usager » est toute personne physique qui signale sur la Plateforme sa situation de mal logement.
+                </p>
+                <p>« L’Administrateur » est toute personne physique habilitée à valider ou refuser un signalement et à
+                    affecter un partenaire à un signalement.
+                </p>
+                <p>« Le Partenaire » est toute personne morale habilitée à prendre en charge un signalement et gérer les
+                    visites.
+                </p>
+                <p>« Le Responsable de territoire » est toute personne physique qui accède aux signalements de son
+                    territoire, les affecte aux agents habilités et gère les visites.
+                </p>
+                <p>Les « Services » sont les fonctionnalités offertes par la Plateforme pour répondre à ses finalités.
+                </p>
+                <h2>Article 4 – Fonctionnalités</h2>
+
+                <h3>4.1 – Formulaire de signalement</h2>
+                    <p>Chaque Usager peut signaler sa situation de mal logement en plusieurs étapes :</p>
+
+                    <ul>
+                        <li>L’Usager est l’occupant du logement ou l’Usager dépose ce signalement pour le compte de
+                            quelqu’un d’autre ;
+                        </li>
+                        <li>L’Usager sélectionne un ou plusieurs problèmes rencontrés et la gravité ;</li>
+                        <li>L’Usager décrit précisément les problèmes rencontrés dans le logement en ajoutant des photos
+                            et des documents complémentaires ;
+                        </li>
+                        <li>L’Usager fournit des informations sur le logement, le nombre d’occupants, les aides sociales
+                            ;
+                        </li>
+                        <li>L’Usager valide le signalement en prenant connaissance que des services compétents peuvent
+                            programmer une visite du logement (un rappel par mail est envoyé à l’Usager 48 heures avant
+                            la visite) et que les informations déclarées vont être transmises à des Partenaires.
+                        </li>
+                    </ul>
+                    <h3>4.2 – Formulaire de contact</h3>
+                    <p>Chaque Usager peut contacter la Plateforme via un formulaire de contact en cas de questions
+                        ou de précisions. Ce formulaire de contact ne permet pas de déposer un signalement de mal
+                        logement.
+                    </p>
+                    <p>L’Usager renseigne son nom, son adresse e-mail et le contenu de son message dans une zone de
+                        champs libres.
+                    </p>
+
+                    <h2>Article 5 – Responsabilités</h2>
+
+                    <h3>5.1 – L’Éditeur de la Plateforme « {{ platform.name }} »</h3>
+                    <p>
+                        Les sources des informations diffusées sur {{ platform.name }} sont réputées fiables mais la
+                        Plateforme ne garantit pas qu’il soit exempt de défauts, d’erreurs ou d’omissions.<br>
+                        L’Éditeur s’engage à la sécurisation de la Plateforme, notamment en prenant toutes les
+                        mesures nécessaires permettant de garantir la sécurité et la confidentialité des
+                        informations fournies.<br>
+                        L’Éditeur fournit les moyens nécessaires et raisonnables pour assurer un accès continu à la
+                        Plateforme. Il se réserve la liberté de faire évoluer, de modifier ou de suspendre, sans
+                        préavis, la Plateforme pour des raisons de maintenance ou pour tout autre motif jugé
+                        nécessaire.<br>
+                    </p>
+
+                    <h3>5.2 – L’Usager</h3>
+                    <p>Toute information transmise par l’Usager est de sa seule responsabilité. Il est rappelé
+                        que toute personne procédant à une fausse déclaration pour elle-même ou pour autrui
+                        s’expose, notamment, aux sanctions prévues à l’article 441-1 du code pénal, prévoyant
+                        des peines pouvant aller jusqu’à trois ans d’emprisonnement et 45 000 euros
+                        d’amende.<br>
+                        L’Usager s'engage à ne pas mettre en ligne de contenus ou informations contraires aux
+                        dispositions légales et réglementaires en vigueur.<br>
+                        L’Usager s’engage à ne pas publier, à quelque endroit que ce soit, de messages racistes,
+                        sexistes, injurieux, insultants ou contraires à l’ordre public.<br>
+                        L’Usager déclarant certifie, lorsqu’il n’est pas l’occupant du logement, avoir obtenu le
+                        consentement de l’occupant à renseigner ses informations personnelles sur la Plateforme.<br>
+                    </p>
+                    <h2>Article 6 – Mise à jour des conditions d'utilisation</h2>
+                    <p>Les termes des présentes conditions d’utilisation peuvent être amendés à tout moment, en fonction
+                        des modifications apportées à la Plateforme, de l’évolution de la législation ou pour tout autre
+                        motif jugé nécessaire. Les présentes conditions générales d’utilisation s’imposent au
+                        public.</p>
+            </div>
+        </section>
+    </main>
+{% endblock %}
