@@ -88,13 +88,13 @@ class FrontNewSignalementController extends AbstractController
 
         $errors = $validator->validate($signalementDraftRequest);
         if (0 === $errors->count()) {
-            return $this->json([
-                'uuid' => $signalementDraftManager->update(
-                    $signalementDraft,
-                    $signalementDraftRequest,
-                    json_decode($payload, true)
-                ),
-            ]);
+            $result = $signalementDraftManager->update(
+                $signalementDraft,
+                $signalementDraftRequest,
+                json_decode($payload, true)
+            );
+
+            return $this->json($result);
         }
 
         return $this->json('@todo error');

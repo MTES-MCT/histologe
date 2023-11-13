@@ -1,12 +1,10 @@
 <template>
   <div :id="id">
+    <h3>
+      Qu'avez vous pensé de ce formulaire ?
+    </h3>
     <p>
-      Votre signalement est bien enregistré.
-      Vous allez recevoir un email de confirmation avec un lien vers votre page de suivi : <strong>gardez-le précieusement</strong> !
-    </p>
-    <p>
-      Bon à savoir : en fonction du type de problèmes rencontrés, la procédure peut prendre du temps.
-      Nos services font le maximum pour traiter votre demande au plus vite.
+      Cliquez sur le bouton ci-dessous pour donner votre avis.
     </p>
     <p class="fr-text--center">
       <a href="https://jedonnemonavis.numerique.gouv.fr/Demarches/3742?&view-mode=formulaire-avis&nd_source=button&key=743c44c1973b9adfe59223f5ecb7c4b3">

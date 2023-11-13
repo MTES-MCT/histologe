@@ -126,7 +126,7 @@ class SignalementDraftRequest
     private ?string $informationsComplementairesLogementMontantLoyer = null;
     private ?string $informationsComplementairesLogementNombreEtages = null;
     private ?string $informationsComplementairesLogementAnneeConstruction = null;
-    private ?string $validationSignalementOverviewMessageAdministration = null;
+    private ?string $messageAdministration = null;
 
     public function getProfil(): ?string
     {
@@ -1415,18 +1415,18 @@ class SignalementDraftRequest
      *
      * @see Signalement::$details
      */
-    public function getValidationSignalementOverviewMessageAdministration(): ?string
+    public function getMessageAdministration(): ?string
     {
-        if (empty($this->validationSignalementOverviewMessageAdministration)) {
+        if (empty($this->messageAdministration)) {
             return 'N/A';
         }
 
-        return $this->validationSignalementOverviewMessageAdministration;
+        return $this->messageAdministration;
     }
 
-    public function setValidationSignalementOverviewMessageAdministration(?string $validationSignalementOverviewMessageAdministration): self
+    public function setMessageAdministration(?string $messageAdministration): self
     {
-        $this->validationSignalementOverviewMessageAdministration = $validationSignalementOverviewMessageAdministration;
+        $this->messageAdministration = $messageAdministration;
 
         return $this;
     }

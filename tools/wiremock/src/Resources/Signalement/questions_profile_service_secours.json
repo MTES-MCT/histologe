@@ -225,7 +225,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Type et composition du logement",
-    "description": "<p>Nous allons vous poser des questions sur la composition du logement.<p>Toutes les questions sont obligatoires, sauf mention contraire.<p>",
+    "description": "<p>Nous allons vous poser des questions sur la composition du logement.<p><b>Toutes les questions sont obligatoires, sauf mention contraire.</b></p>",
     "slug": "ecran_intermediaire_type_composition",
     "screenCategory": "Type et composition",
     "icon": {
@@ -298,7 +298,7 @@
           "label": "Le logement est-il situé au dernier étage",
           "slug": "type_logement_dernier_etage",
           "conditional": {
-            "show": "formStore.data.type_logement_rdc === 'non'"
+            "show": "formStore.data.type_logement_nature === 'appartement' && formStore.data.type_logement_rdc === 'non'"
           },
           "values": [
             {
@@ -316,7 +316,7 @@
           "label": "Le logement est-il sous les combles, sans fenêtre ?",
           "slug": "type_logement_sous_comble_sans_fenetre",
           "conditional": {
-            "show": "formStore.data.type_logement_dernier_etage === 'oui'"
+            "show": "formStore.data.type_logement_nature === 'appartement' && formStore.data.type_logement_dernier_etage === 'oui'"
           },
           "values": [
             {
@@ -334,7 +334,7 @@
           "label": "Le logement est-il en sous-sol, sans fenêtre ?",
           "slug": "type_logement_sous_sol_sans_fenetre",
           "conditional": {
-            "show": "formStore.data.type_logement_dernier_etage === 'non' && formStore.data.type_logement_rdc === 'non'"
+            "show": "formStore.data.type_logement_nature === 'appartement' && formStore.data.type_logement_dernier_etage === 'non' && formStore.data.type_logement_rdc === 'non'"
           },
           "values": [
             {
@@ -820,23 +820,43 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Merci pour votre signalement",
+    "label": "Votre signalement a bien été enregistré !",
+    "description": "<p>Votre numéro de signalement est le : <b>#{{formStore.data.signalementReference}}</b><br>Il sera pris en charge par l'administration sous <u>7 jours ouvrés</u>.</p><p>Vous pouvez suivre l'avancée de votre dossier ou ajouter des informations en cliquant sur le bouton ci-dessous.</p>",
     "slug": "confirmation_signalement",
     "screenCategory": "Récapitulatif",
     "components": {
       "body": [
         {
+          "type": "SignalementFormInfo",
+          "label": "Le lien vers votre page de suivi a aussi été envoyé par mail. N'oubliez pas de regarder dans vos courriers indésirables (spam) !",
+          "slug": "confirmation_signalement_info"
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "slug": "confirmation_signalement_buttons",
+          "customCss": "button-group-full-size",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormLink",
+                "label": "Accéder à ma page de suivi",
+                "slug": "confirmation_signalement_suivi",
+                "customCss": "fr-btn",
+                "link": "{{formStore.data.lienSuivi}}"
+              },
+              {
+                "type": "SignalementFormLink",
+                "label": "Retourner à l'accueil",
+                "slug": "confirmation_signalement_homepage",
+                "customCss": "fr-btn fr-btn--secondary",
+                "link": "/"
+              }
+            ]
+          }
+        },
+        {
           "type": "SignalementFormConfirmation",
           "slug": "confirmation_signalement_message"
-        }
-      ],
-      "footer": [
-        {
-          "type": "SignalementFormLink",
-          "label": "Retour à l'accueil",
-          "slug": "validation_signalement_homepage",
-          "customCss": "fr-btn",
-          "link": "/"
         }
       ]
     }

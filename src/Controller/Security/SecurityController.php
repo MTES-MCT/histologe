@@ -43,16 +43,16 @@ class SecurityController extends AbstractController
         throw new LogicException('This code should never be reached');
     }
 
-    #[Route('/_up/{filename}', name: 'show_uploaded_file')]
+    #[Route('/_up/{filename}/{uuid?}', name: 'show_uploaded_file')]
     public function showUploadedFile(
         string $filename,
         LoggerInterface $logger,
-        Signalement|null $signalement = null): BinaryFileResponse|RedirectResponse
-    {
+        Signalement|null $signalement = null
+    ): BinaryFileResponse|RedirectResponse {
         $request = Request::createFromGlobals();
         $this->denyAccessUnlessGranted(
             'FILE_VIEW',
-            $this->isCsrfTokenValid('suivi_signalement_ext_file_view', $request->get('t'))
+            null === $this->getUser() ? $this->isCsrfTokenValid('suivi_signalement_ext_file_view', $request->get('t')) : $signalement
         );
 
         $tmpFilepath = $this->getParameter('uploads_tmp_dir').$filename;

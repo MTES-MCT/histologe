@@ -1628,3 +1628,34 @@ signalements:
     situation_occupant: "1"
     territory: "Finistère"
     is_imported: true
+- 
+    uuid: "00000000-0000-0000-2023-000000000026"
+    details: "Absence d’isolation toiture<br><br>Courrier adressé non pas à la mairie mais au bailleur social"
+    is_proprio_averti: 1
+    is_logement_social: 1
+    nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
+    is_allocataire: "CAF"
+    nature_logement: "Appartement"
+    type_logement: "T2"
+    superficie: 40
+    loyer: 500
+    phone_number: 0621127284
+    adresse_occupant: "3 rue Mars"
+    cp_occupant: "13015"
+    ville_occupant: "Marseille"
+    statut: 2
+    reference: "2023-26"
+    geoloc: "{\"lat\":\"43.3426152\",\"lng\":\"5.3711848\"}"
+    score: 100
+    etage_occupant: "A"
+    escalier_occupant: "1"
+    insee_occupant: "13213"
+    territory: "Bouches-du-Rhône"
+    nb_occupants_logement: 5
+    situation_occupant: "1"
+    origine_signalement: "Guichet Unique"
+    type_energie_logement: "Electrique"
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    is_imported: true

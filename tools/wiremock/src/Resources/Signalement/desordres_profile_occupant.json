@@ -4,7 +4,7 @@
     "label": "Les désordres",
     "slug": "ecran_intermediaire_les_desordres",
     "screenCategory": "Désordres",
-    "description": "<p>Vous avez indiqué que votre signalement concerne {{dictionaryStore::formStore.data.zone_concernee_zone}}.</p><p>Sélectionnez le ou les problèmes rencontrés parmi les catégories et répondez aux questions.</p> <p>Vous pourrez aussi ajouter des photos des problèmes.<p><p>Toutes les questions sont obligatoires, sauf mention contraire.</p>",
+    "description": "<p>Vous avez indiqué que votre signalement concerne {{dictionaryStore::formStore.data.zone_concernee_zone}}.</p><p>Sélectionnez le ou les problèmes rencontrés parmi les catégories et répondez aux questions.</p> <p>Vous pourrez aussi ajouter des photos des problèmes.<p><p><b>Toutes les questions sont obligatoires, sauf mention contraire.</b></p>",
     "icon": {
       "src": "/img/form/screens/desordres.svg",
       "alt": ""
@@ -195,7 +195,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Propreté et entretien",
+    "label": "Propreté et entretien dans le bâtiment",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-proprete_entretien.svg",
@@ -266,7 +266,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Eau et évacuation",
+    "label": "Eau et évacuation dans le bâtiment",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-eau_evacuation.svg",
@@ -403,7 +403,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Maintenance et équipement",
+    "label": "Maintenance et équipement dans le bâtiment",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-maintenance_equipement.svg",
@@ -461,7 +461,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Présence de nuisibles",
+    "label": "Présence de nuisibles dans le bâtiment",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-presence_nuisibles.svg",
@@ -568,7 +568,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Sécurité, risque de chute",
+    "label": "Sécurité, risque de chute dans le bâtiment",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-securite_risque_chute.svg",
@@ -773,7 +773,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Risque d'incendie ",
+    "label": "Risque d'incendie dans le bâtiment",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-protection_incendie.svg",
@@ -820,7 +820,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Accessibilité et alentours",
+    "label": "Accessibilité et alentours du bâtiment",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-accessibilite_et_alentours.svg",
@@ -917,7 +917,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Bruit, pollution sonore",
+    "label": "Bruit, pollution sonore dans le bâtiment",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-bruit_pollution_sonore.svg",
@@ -1179,7 +1179,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Eau et évacuation",
+    "label": "Eau et évacuation dans le logement",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-eau_evacuation.svg",
@@ -1234,7 +1234,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Aération et ventilation",
+    "label": "Aération et ventilation dans le logement",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-aeration_ventilation.svg",
@@ -1298,7 +1298,7 @@
                 "type": "SignalementFormInfo",
                 "slug": "desordres_logement_aeration_ventilation_defectueuse_details_info",
                 "conditional": {
-                  "show": "formStore.data.desordres_logement_aeration_ventilation_defectueuse_details_nettoyage !== 'oui'"
+                  "show": "formStore.data.desordres_logement_aeration_ventilation_defectueuse_details_nettoyage === 'non'"
                 },
                 "label": "Pour fonctionner, la ventilation (VMC) a besoin d'entretien ! Vérifiez qu'elle n'est pas bouchée et nettoyez-la correctement tous les 6 mois."
               },
@@ -1335,7 +1335,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Chauffage et isolation",
+    "label": "Chauffage et isolation dans le logement",
     "description": "Quel est le type de chauffage du logement ?",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-chauffage_isolation.svg",
@@ -1548,7 +1548,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Humidité et moisissure",
+    "label": "Humidité et moisissure dans le logement",
     "description": "Dans quelle(s) pièce(s) y a-t-il des traces d'humidité ou de la moisissure ?",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-humidite_moisissure.svg",
@@ -1643,7 +1643,7 @@
               },
               {
                 "type": "SignalementFormInfo",
-                "label": "Conseils : vous pouvez nettoyer la moisissure avec de l'eau de javel ou du vinaigre blanc. Dans tous les cas : protégez vous avec un masque et des gants ! Pour plus d'info, cliquez sur ce lien.",
+                "label": "Conseils : vous pouvez nettoyer la moisissure avec de l'eau de javel ou du vinaigre blanc. Dans tous les cas : protégez vous avec un masque et des gants ! Pour plus d'info, <a href='https://www.auvergne-rhone-alpes.ars.sante.fr/lutter-contre-les-moisissures-dans-le-logement' target='_blank'>cliquez sur ce lien</a>.",
                 "slug": "desordres_logement_humidite_piece_a_vivre_details_moisissure_info",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_humidite_piece_a_vivre_details_moisissure_apres_nettoyage ===  'nsp'"
@@ -1740,7 +1740,7 @@
               },
               {
                 "type": "SignalementFormInfo",
-                "label": "Conseils : vous pouvez nettoyer la moisissure avec de l'eau de javel ou du vinaigre blanc. Dans tous les cas : protégez vous avec un masque et des gants ! Pour plus d'info, cliquez sur ce lien.",
+                "label": "Conseils : vous pouvez nettoyer la moisissure avec de l'eau de javel ou du vinaigre blanc. Dans tous les cas : protégez vous avec un masque et des gants ! Pour plus d'info, <a href='https://www.auvergne-rhone-alpes.ars.sante.fr/lutter-contre-les-moisissures-dans-le-logement' target='_blank'>cliquez sur ce lien</a>.",
                 "slug": "desordres_logement_humidite_cuisine_details_moisissure_info",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_humidite_cuisine_details_moisissure_apres_nettoyage ===  'nsp'"
@@ -1837,7 +1837,7 @@
               },
               {
                 "type": "SignalementFormInfo",
-                "label": "Conseils : vous pouvez nettoyer la moisissure avec de l'eau de javel ou du vinaigre blanc. Dans tous les cas : protégez vous avec un masque et des gants ! Pour plus d'info, cliquez sur ce lien.",
+                "label": "Conseils : vous pouvez nettoyer la moisissure avec de l'eau de javel ou du vinaigre blanc. Dans tous les cas : protégez vous avec un masque et des gants ! Pour plus d'info, <a href='https://www.auvergne-rhone-alpes.ars.sante.fr/lutter-contre-les-moisissures-dans-le-logement' target='_blank'>cliquez sur ce lien</a>.",
                 "slug": "desordres_logement_humidite_salle_de_bain_details_moisissure_info",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_humidite_salle_de_bain_details_moisissure_apres_nettoyage ===  'nsp'"
@@ -1875,7 +1875,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Sécurité",
+    "label": "Sécurité dans le logement",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-securite.svg",
@@ -2037,7 +2037,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Electricité",
+    "label": "Electricité dans le logement",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-electricite.svg",
@@ -2157,7 +2157,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Présence de nuisibles",
+    "label": "Présence de nuisibles dans le logement",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-presence_nuisibles.svg",
@@ -2350,7 +2350,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Bruit, pollution sonore",
+    "label": "Bruit, pollution sonore dans le logement",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-bruit_pollution_sonore.svg",
@@ -2415,7 +2415,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Eclairement, lumière naturelle",
+    "label": "Eclairement, lumière naturelle dans le logement",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-lumiere_naturelle.svg",

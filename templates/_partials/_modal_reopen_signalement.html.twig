@@ -16,24 +16,24 @@
                         </div>
 
                         <div class="fr-modal__content fr-text--left">
-                            <fieldset class="fr-fieldset" id="radio-hint" aria-labelledby="radio-hint-legend radio-hint-messages">
-                                <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id="radio-hint-legend">
+                            <fieldset class="fr-fieldset" id="radio-hint{% if all == '1' %}-all{% endif %}" aria-labelledby="radio-hint-legend{% if all == '1' %}-all{% endif %} radio-hint-messages">
+                                <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id="radio-hint-legend{% if all == '1' %}-all{% endif %}">
                                     Un suivi de ré-ouverture va être créé.
                                     <br>
                                     Souhaitez-vous qu'il soit partagé à l'usager ?
                                 </legend>
                                 <div class="fr-fieldset__element">
                                     <div class="fr-radio-group">
-                                        <input type="radio" id="publicSuivi-1" name="publicSuivi" value="1" checked>
-                                        <label class="fr-label" for="publicSuivi-1">
+                                        <input type="radio" id="publicSuiviReopen-1{% if all == '1' %}-all{% endif %}" name="publicSuivi" value="1" checked>
+                                        <label class="fr-label" for="publicSuiviReopen-1{% if all == '1' %}-all{% endif %}">
                                             Oui
                                         </label>
                                     </div>
                                 </div>
                                 <div class="fr-fieldset__element">
                                     <div class="fr-radio-group">
-                                        <input type="radio" id="publicSuivi-2" name="publicSuivi" value="0">
-                                        <label class="fr-label" for="publicSuivi-2">
+                                        <input type="radio" id="publicSuiviReopen-2{% if all == '1' %}-all{% endif %}" name="publicSuivi" value="0">
+                                        <label class="fr-label" for="publicSuiviReopen-2{% if all == '1' %}-all{% endif %}">
                                             Non
                                         </label>
                                     </div>

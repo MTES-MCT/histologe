@@ -7,7 +7,8 @@ use App\Repository\SignalementRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use App\Service\Signalement\Export\SignalementExportPdf;
+use App\Service\Signalement\Export\SignalementExportPdfGenerator;
+use App\Service\UploadHandlerService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Twig\Environment;
@@ -17,10 +18,11 @@ class PdfExportMessageHandler
 {
     public function __construct(
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
-        private readonly SignalementExportPdf $signalementExportPdf,
+        private readonly SignalementExportPdfGenerator $signalementExportPdfGenerator,
         private readonly Environment $twig,
         private readonly SignalementRepository $signalementRepository,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly UploadHandlerService $uploadHandlerService,
     ) {
     }
 
@@ -40,17 +42,22 @@ class PdfExportMessageHandler
             'situations' => $criticitesFormatted,
         ]);
 
-        $pdfContent = $this->signalementExportPdf->generate(
+        $tmpFilename = $this->signalementExportPdfGenerator->generateToTempFolder(
+            $signalement,
             $htmlContent,
             $this->parameterBag->get('export_options')
         );
+
+        $filename = $this->uploadHandlerService->uploadFromFilename($tmpFilename);
 
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_PDF_EXPORT,
                 to: $pdfExportMessage->getUserEmail(),
                 signalement: $signalement,
-                attachment: ['content' => $pdfContent, 'filename' => $signalement->getReference().'.pdf'],
+                params: [
+                    'filename' => $filename,
+                ]
             )
         );
     }

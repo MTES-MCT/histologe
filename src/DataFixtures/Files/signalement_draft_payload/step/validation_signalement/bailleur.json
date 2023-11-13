@@ -77,7 +77,7 @@
   "signalement_concerne_profil_detail_bailleur_bailleur": "particulier",
   "adresse_logement_complement_adresse_numero_appartement": "114",
   "type_logement_commodites_salle_de_bain_hauteur_plafond": "oui",
-  "validation_signalement_overview_message_administration": "Cordialement",
+  "message_administration": "Cordialement",
   "informations_complementaires_logement_annee_construction": "1988-10-10",
   "type_logement_pieces_a_vivre_piece_{{number}}_superficie": null,
   "informations_complementaires_situation_bailleur_revenu_fiscal": "40000",

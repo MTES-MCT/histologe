@@ -12,9 +12,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SignalementPdfExportMailer extends AbstractNotificationMailer
 {
+    public const FILE_404 = 'blank.pdf';
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_PDF_EXPORT;
     protected ?string $mailerSubject = 'Voici l\'export pdf du signalement !';
-    protected ?string $mailerButtonText = 'Accéder au signalement';
+    protected ?string $mailerButtonText = 'Afficher le PDF';
     protected ?string $mailerTemplate = 'signalement_pdf_export';
 
     public function __construct(
@@ -29,12 +30,16 @@ class SignalementPdfExportMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $signalement = $notificationMail->getSignalement();
-        $attachment = $notificationMail->getAttachment();
 
         return [
             'signalement' => $signalement,
-            'attachContent' => $attachment,
-            'link' => $this->generateLinkSignalementView($signalement->getUuid()),
+            'link' => $this->generateLink(
+                'show_uploaded_file', [
+                    'folder' => '_up',
+                    'filename' => $notificationMail->getParams()['filename'] ?? self::FILE_404,
+                    'uuid' => $signalement->getUuid(),
+                ]
+            ),
         ];
     }
 }

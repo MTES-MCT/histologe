@@ -22,9 +22,9 @@
       </div>
 
       <div v-else-if="formStore.currentScreen" class="fr-container">
-        <div class="fr-grid-row fr-grid-row--gutters">
+        <div :class="['fr-grid-row fr-grid-row--gutters', formStore.currentScreen.slug === 'introduction' ? 'fr-grid-row--center' : '']">
           <div
-            v-if="!formStore.currentScreen.desktopIllustration"
+            v-if="formStore.currentScreen.slug !== 'introduction'"
             class="fr-col-12 fr-col-md-4"
             >
               <SignalementFormBreadCrumbs
@@ -40,15 +40,6 @@
               :customCss="formStore.currentScreen.customCss"
               :changeEvent="saveAndChangeScreenBySlug"
               />
-          </div>
-          <div
-            v-if="formStore.currentScreen.desktopIllustration"
-            class="fr-hidden fr-unhidden-md fr-col-12 fr-col-md-4 desktop-illustration"
-            >
-              <img
-                :src="formStore.currentScreen.desktopIllustration.src"
-                alt=""
-                >
           </div>
         </div>
       </div>
@@ -160,6 +151,12 @@ export default defineComponent({
       if (requestResponse && requestResponse.uuid) {
         formStore.data.uuidSignalementDraft = requestResponse.uuid
       }
+      if (requestResponse && requestResponse.signalementReference) {
+        formStore.data.signalementReference = requestResponse.signalementReference
+      }
+      if (requestResponse && requestResponse.lienSuivi) {
+        formStore.data.lienSuivi = requestResponse.lienSuivi
+      }
       if (formStore.screenData) {
         this.removeNextScreensIfProfileUpdated()
         const nextScreen = formStore.screenData.find((screen: any) => screen.slug === this.nextSlug)
@@ -194,11 +191,11 @@ export default defineComponent({
 </script>
 
 <style>
-  .fr-header, .fr-footer {
+  .remove-mobile-header-footer .fr-header, .remove-mobile-header-footer .fr-footer {
     display: none;
   }
   @media (min-width: 48em) {
-    .fr-header, .fr-footer {
+    .remove-mobile-header-footer .fr-header, .remove-mobile-header-footer .fr-footer {
       display: inherit;
     }
   }

@@ -3,7 +3,7 @@
     <a
       :id="id"
       :class="[ customCss ]"
-      :href="link"
+      :href="variablesReplacer.replace(link)"
       :target="linktarget"
       @click="handleClick"
       >
@@ -14,6 +14,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { variablesReplacer } from './../services/variableReplacer'
 
 export default defineComponent({
   name: 'SignalementFormLink',
@@ -30,6 +31,11 @@ export default defineComponent({
       if (this.clickEvent !== undefined) {
         this.clickEvent(this.id)
       }
+    }
+  },
+  data () {
+    return {
+      variablesReplacer
     }
   }
 })

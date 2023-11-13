@@ -44,7 +44,6 @@ interface FormStore {
     label: string
     description: string
     icon: PictureDescription
-    desktopIllustration: PictureDescription
     components: ZoneComponents
     customCss: string
   } | null
@@ -58,7 +57,9 @@ interface FormStore {
 
 const formStore: FormStore = reactive({
   data: {
-    uuidSignalementDraft: ''
+    uuidSignalementDraft: '',
+    signalementReference: '',
+    lienSuivi: ''
   },
   props: {
     ajaxurl: '',
