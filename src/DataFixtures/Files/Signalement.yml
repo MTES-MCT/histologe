@@ -1628,7 +1628,7 @@ signalements:
     situation_occupant: "1"
     territory: "Finistère"
     is_imported: true
-- 
+  - 
     uuid: "00000000-0000-0000-2023-000000000026"
     details: "Absence d’isolation toiture<br><br>Courrier adressé non pas à la mairie mais au bailleur social"
     is_proprio_averti: 1
