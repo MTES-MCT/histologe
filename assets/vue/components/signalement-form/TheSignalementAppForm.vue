@@ -194,11 +194,11 @@ export default defineComponent({
 </script>
 
 <style>
-  .fr-header, .fr-footer {
+  .remove-mobile-header-footer .fr-header, .remove-mobile-header-footer .fr-footer {
     display: none;
   }
   @media (min-width: 48em) {
-    .fr-header, .fr-footer {
+    .remove-mobile-header-footer .fr-header, .remove-mobile-header-footer .fr-footer {
       display: inherit;
     }
   }
