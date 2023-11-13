@@ -228,9 +228,16 @@ class FrontSignalementController extends AbstractController
             $errors = $validator->validate($signalement);
 
             if (\count($errors) > 0) {
+                $errsMsgList = [];
+                foreach ($errors as $error) {
+                    $errsMsgList[$error->getPropertyPath().'_'.uniqid()] = $error->getMessage();
+                }
+
                 return $this->json(
-                    ['response' => sprintf('Le formulaire comporte des erreurs: %s', $errors)],
-                    Response::HTTP_BAD_REQUEST
+                    [
+                        'response' => 'formErrors',
+                        'errsMsgList' => $errsMsgList,
+                    ],
                 );
             }
 

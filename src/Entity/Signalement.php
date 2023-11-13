@@ -17,6 +17,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: SignalementRepository::class)]
 #[ORM\Index(columns: ['statut'], name: 'idx_signalement_statut')]
@@ -147,6 +148,7 @@ class Signalement
     private ?string $telDeclarantSecondaire;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Email(message: 'L\'adresse email du déclarant n\'est pas valide.')]
     private $mailDeclarant;
 
     #[ORM\Column(type: 'string', length: 200, nullable: true)]
@@ -167,6 +169,7 @@ class Signalement
     private $telOccupant;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Email(message: 'L\'adresse email de l\'occupant n\'est pas valide.')]
     private $mailOccupant;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
@@ -385,6 +388,24 @@ class Signalement
         $this->signalementQualifications = new ArrayCollection();
         $this->interventions = new ArrayCollection();
         $this->files = new ArrayCollection();
+    }
+
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context, mixed $payload): void
+    {
+        // check mails
+        if (!$this->mailDeclarant && !$this->mailOccupant) {
+            $context->buildViolation('Vous devez renseigner au moins une adresse email pour le déclarant ou l\'occupant.')
+                ->atPath('mailDeclarant')
+                ->atPath('mailOccupant')
+                ->addViolation();
+        }
+        if ($this->mailDeclarant && $this->mailOccupant && $this->mailDeclarant === $this->mailOccupant) {
+            $context->buildViolation('les adresses emails du déclarant et de l\'occupant sont identiques (laisser l\'adresse vide si l\'occupant n\'en dispose pas).')
+                ->atPath('mailDeclarant')
+                ->atPath('mailOccupant')
+                ->addViolation();
+        }
     }
 
     public function getId(): ?int
