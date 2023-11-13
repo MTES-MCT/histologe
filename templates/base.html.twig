@@ -89,7 +89,7 @@
     2:'REFUSEE',
     3:'CLOTUREE',
 } %}
-<body>
+<body {% if bodyClass is defined %}class="{{ bodyClass }}"{% endif %}>
 {% if 'back_' not in app.request.get('_route') %}
     {% include "header.html.twig" %}
     {% for label, messages in app.flashes %}
