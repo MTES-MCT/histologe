@@ -93,7 +93,7 @@ class HomepageController extends AbstractController
     #[Route('/cgu', name: 'front_cgu')]
     public function cguUsager(): Response
     {
-        return $this->render('front/cgu.html.twig');
+        return $this->render('front/cgu_usagers.html.twig');
     }
 
     #[Route('/cgu-agents', name: 'front_cgu_agents')]
