@@ -15,7 +15,7 @@ class SecurityControllerTest extends WebTestCase
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
         $client->loginUser($user);
-        $client->request('GET', '/_up/check.png');
+        $client->request('GET', '/_up/check.png/00000000-0000-0000-2022-000000000001');
         /** @var BinaryFileResponse $response */
         $response = $client->getResponse();
         $this->assertTrue($response->isSuccessful());
@@ -30,7 +30,7 @@ class SecurityControllerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
         $client->loginUser($user);
 
-        $client->request('GET', '/_up/file_not_exist.txt');
+        $client->request('GET', '/_up/file_not_exist.txt/00000000-0000-0000-2022-000000000001');
         /** @var BinaryFileResponse $response */
         $response = $client->getResponse();
         $this->assertEquals('image-404.png', $response->getFile()->getFilename());

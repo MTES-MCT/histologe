@@ -32,19 +32,22 @@ class SignalementFileController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        $message = (new PdfExportMessage())
-            ->setSignalementId($signalement->getId())
-            ->setUserEmail($user->getEmail());
+        if ($signalement->getPhotos()->count() < 21) {
+            $message = (new PdfExportMessage())
+                ->setSignalementId($signalement->getId())
+                ->setUserEmail($user->getEmail());
 
-        $messageBus->dispatch($message);
+            $messageBus->dispatch($message);
 
-        $this->addFlash(
-            'success',
-            sprintf(
-                'L\'export pdf vous sera envoyé par email à l\'adresse suivante : %s. N\'oubliez pas de regarder vos courriers indésirables (spam) !',
-                $user->getEmail()
-            )
-        );
+            $this->addFlash('success',
+                sprintf(
+                    'L\'export pdf vous sera envoyé par email à l\'adresse suivante : %s. N\'oubliez pas de regarder vos courriers indésirables (spam) !',
+                    $user->getEmail()
+                )
+            );
+        } else {
+            $this->addFlash('error', 'La fonctionnalité est temporairement désactivée sur ce signalement en raison d\'un trop grand nombre de photos.');
+        }
 
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
     }

@@ -127,7 +127,7 @@ class SlugifyDocumentSignalementCommand extends Command
 
         $command = 'make upload action=image zip='.$this->territory->getZip();
         if (\count($file) > 1) {
-            $this->uploadHandlerService->uploadFromFilename($filename, self::BASE_DIRECTORY_CSV);
+            $this->uploadHandlerService->moveFromBucketTempFolder($filename, self::BASE_DIRECTORY_CSV);
             $io->success(sprintf('%s files has been slugify', $countFileSlugged));
             $io->success(
                 sprintf(
