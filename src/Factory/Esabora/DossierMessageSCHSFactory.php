@@ -64,13 +64,25 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
 
         $commentaire .= '\nPropriétaire averti: '.$signalement->getIsProprioAverti() ? 'OUI' : 'NON';
         $commentaire .= '\nAdultes: '.$signalement->getNbAdultes().' Adultes';
-        $commentaire .= '\n'.$signalement->getNbEnfantsM6() + $signalement->getNbEnfantsP6().' Enfants';
+        $commentaire .= $this->buildNbEnfants($signalement);
 
         foreach ($signalement->getAffectations() as $affectation) {
             $commentaire .= '\n'.$affectation->getPartner()->getNom().' => '.$affectation->getAffectationLabel();
         }
 
         return $commentaire;
+    }
+
+    private function buildNbEnfants(Signalement $signalement)
+    {
+        $suffix = '';
+        if (str_ends_with($signalement->getNbEnfantsM6(), '+') || str_ends_with($signalement->getNbEnfantsP6(), '+')) {
+            $suffix = '+';
+        }
+        $nbEnfants = str_replace('+', '', $signalement->getNbEnfantsM6()) + str_replace('+', '', $signalement->getNbEnfantsP6());
+        $nbEnfants .= $suffix;
+
+        return '\n'.$nbEnfants.' Enfants';
     }
 
     private function buildPiecesJointesObservation(Signalement $signalement): string
