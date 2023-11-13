@@ -50,7 +50,7 @@ class SignalementFileProcessor
                         );
                         $title = $this->filenameGenerator->getTitle();
                     } else {
-                        $filename = $this->uploadHandlerService->uploadFromFilename($file);
+                        $filename = $this->uploadHandlerService->moveFromBucketTempFolder($file);
                         $title = $key;
                         $withTokenGenerated = true;
                     }

@@ -71,7 +71,7 @@ class UploadHandlerService
         return $this;
     }
 
-    public function uploadFromFilename(string $filename, ?string $directory = null): ?string
+    public function moveFromBucketTempFolder(string $filename, ?string $directory = null): ?string
     {
         $filename = null === $directory ? $filename : $directory.$filename;
         $this->logger->info($filename);
@@ -90,6 +90,27 @@ class UploadHandlerService
         } catch (FilesystemException $exception) {
             $this->logger->error($exception->getMessage());
         } catch (\ImagickException $exception) {
+            $this->logger->error($exception->getMessage());
+        }
+
+        return null;
+    }
+
+    public function uploadFromFilename(string $filename): ?string
+    {
+        $this->logger->info($filename);
+        $localTmpFolder = $this->parameterBag->get('uploads_tmp_dir');
+        $tmpFilepath = $localTmpFolder.$filename;
+
+        try {
+            $pathInfo = pathinfo($tmpFilepath);
+            $newFilename = $pathInfo['filename'].'.'.$pathInfo['extension'];
+
+            $fileResource = fopen($tmpFilepath, 'r');
+            $this->fileStorage->writeStream($newFilename, $fileResource);
+
+            return $newFilename;
+        } catch (FilesystemException $exception) {
             $this->logger->error($exception->getMessage());
         }
 
