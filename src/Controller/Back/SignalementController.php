@@ -27,6 +27,7 @@ use App\Repository\SignalementQualificationRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
 use App\Security\Voter\UserVoter;
+use App\Service\FormHelper;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use DateTimeImmutable;
@@ -275,7 +276,12 @@ class SignalementController extends AbstractController
                 return $this->json(['response' => 'success_edited']);
             }
 
-            return $this->json(['response' => $form->getErrors()]);
+            return $this->json(
+                [
+                    'response' => 'formErrors',
+                    'errsMsgList' => FormHelper::getErrorsFromForm($form),
+                ],
+            );
         }
 
         return $this->render('back/signalement/edit.html.twig', [

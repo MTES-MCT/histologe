@@ -717,7 +717,14 @@ forms.forEach((form) => {
                                         event.target.querySelector('[type="submit"]').disabled = false;
                                         event.target.querySelector('[type="submit"]').innerHTML = "Confirmer";
                                         ['fr-icon-checkbox-circle-fill', 'fr-icon-refresh-fill'].map(v => event.target.querySelector('[type="submit"]').classList.toggle(v));
-                                        alert('Oups... Il semblerait que vous ayez passé trop de temps sur cette étape ! Retournez à l\'étape précédente puis continuez le formulaire pour régler le problème. Si cela ne fonctionne pas, veuillez réessayer plus tard.')
+                                        let messageAlert = 'Oups... Il semblerait que vous ayez passé trop de temps sur cette étape ! Retournez à l\'étape précédente puis continuez le formulaire pour régler le problème. Si cela ne fonctionne pas, veuillez réessayer plus tard.';
+                                        if(res.response === "formErrors"){
+                                            messageAlert = "Le formulaire contient des erreurs : \n";
+                                            for (const [key, error] of Object.entries(res.errsMsgList)) {
+                                                messageAlert += "- " + error + "\n";
+                                            }           
+                                        }
+                                        alert(messageAlert);
                                     }
                                 })
                             } else {

@@ -86,10 +86,10 @@ class FrontSignalementControllerTest extends WebTestCase
         $urlPostSignalement = $router->generate('envoi_signalement');
         $client->request('POST', $urlPostSignalement, $payloadSignalement);
 
-        $this->assertEquals(Response::HTTP_BAD_REQUEST, $client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
         $bodyContent = $client->getResponse()->getContent();
         $this->assertStringContainsString(
-            'Le formulaire comporte des erreurs',
+            'formErrors',
             json_decode($bodyContent, true)['response']
         );
     }
