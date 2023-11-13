@@ -175,17 +175,6 @@
           </button>
         </div>
       </div>
-
-      <!-- MESSAGE A L'ADMINISTRATION -->
-      <!-- <br>
-      <h2 class="fr-h4">Message à l'administration (facultatif)</h2>
-      <p>Ce message sera joint à votre signalement.</p>
-      <SignalementFormTextarea
-        :id="idMessageAdministration"
-        description="Votre message ici"
-        @input="updateValue($event)"
-        :modelValue="formStore.data[idMessageAdministration]"
-        /> -->
     </div>
   </div>
 </template>
