@@ -160,3 +160,10 @@ affectations:
     affected_by: "user-38-01@histologe.fr"
     motif_cloture: ""
     territory: "Isère"
+  - 
+    signalement: 2023-26
+    partner: "partenaire-13-01@histologe.fr"
+    statut: 1
+    answered_by: "admin-03@histologe.fr"
+    affected_by: "admin-03@histologe.fr"
+    territory: "Bouches-du-Rhône"
