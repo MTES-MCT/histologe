@@ -1563,6 +1563,72 @@ signalements:
     territory: "Isère"
     is_imported: true
   -
+    uuid: "00000000-0000-0000-2023-000000000024"
+    details: "[Migration][Version20231107132016] Signalement à cloturer Finistère"
+    is_proprio_averti: 1
+    is_logement_social: 0
+    nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
+    is_allocataire: ""
+    nature_logement: "Appartement"
+    type_logement: "T2"
+    superficie: 30
+    loyer: 300
+    phone_number: 0621127286
+    adresse_occupant: "4 Rue Auguste Gache"
+    cp_occupant: "29000"
+    ville_occupant: "Quimper"
+    statut: 2
+    reference: "2023-24"
+    geoloc: "{\"lng\":\"5.731586\", \"lat\":\"45.191496\"}"
+    created_at: "2023-11-04 15:53:00"
+    score: 4
+    etage_occupant: "0"
+    escalier_occupant: ""
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    insee_occupant: "29232"
+    is_rsa: 0
+    type_energie_logement: "Electrique"
+    origine_signalement: ""
+    nb_occupants_logement: 3
+    situation_occupant: "1"
+    territory: "Finistère"
+    is_imported: true
+  -
+    uuid: "00000000-0000-0000-2023-000000000025"
+    details: "[Migration][Version20231107132016] Signalement à cloturer Finistère"
+    is_proprio_averti: 1
+    is_logement_social: 0
+    nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
+    is_allocataire: ""
+    nature_logement: "Appartement"
+    type_logement: "T2"
+    superficie: 30
+    loyer: 300
+    phone_number: 0621127286
+    adresse_occupant: "4 Rue Auguste Gache"
+    cp_occupant: "29100"
+    ville_occupant: "Douarnenez"
+    statut: 2
+    reference: "2023-25"
+    geoloc: "{\"lng\":\"5.731586\", \"lat\":\"45.191496\"}"
+    created_at: "2023-11-04 15:55:01"
+    score: 4
+    etage_occupant: "0"
+    escalier_occupant: ""
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    insee_occupant: "29046"
+    is_rsa: 0
+    type_energie_logement: "Electrique"
+    origine_signalement: ""
+    nb_occupants_logement: 3
+    situation_occupant: "1"
+    territory: "Finistère"
+    is_imported: true
+  - 
     uuid: "00000000-0000-0000-2023-000000000026"
     details: "Absence d’isolation toiture<br><br>Courrier adressé non pas à la mairie mais au bailleur social"
     is_proprio_averti: 1
@@ -1593,4 +1659,3 @@ signalements:
     type_energie_logement: "Electrique"
     mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     is_imported: true
-
