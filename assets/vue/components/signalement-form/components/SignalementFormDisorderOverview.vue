@@ -63,6 +63,23 @@
     <div v-if="formStore.data.categorieDisorders.batiment.length === 0 && formStore.data.categorieDisorders.logement.length === 0">
       Aucun désordre sélectionné
     </div>
+    <!-- MESSAGE A L'ADMINISTRATION -->
+    <div v-if="formStore.currentScreen?.slug === 'desordres_renseignes'">
+      <br>
+      <h3>Précisions sur les désordres (facultatif)</h3>
+      <p>Vous pouvez apporter des précisions sur votre situation.</p>
+      <SignalementFormTextarea
+        :id="idMessageAdministration"
+        description="Votre message ici"
+        @input="updateValue($event)"
+        :modelValue="formStore.data[idMessageAdministration]"
+        />
+    </div>
+    <div v-else-if="formStore.currentScreen?.slug === 'validation_signalement' && formStore.data[idMessageAdministration] !== undefined">
+      <br>
+      <h3 class="fr-h6">Précisions sur les désordres</h3>
+      <p>{{ formStore.data[idMessageAdministration] }}</p>
+    </div>
   </div>
 </template>
 
@@ -71,9 +88,13 @@ import { defineComponent } from 'vue'
 import formStore from './../store'
 import dictionaryStore from './../dictionary-store'
 import { dictionaryManager } from './../services/dictionaryManager'
+import SignalementFormTextarea from './SignalementFormTextarea.vue'
 
 export default defineComponent({
   name: 'SignalementFormDisorderOverview',
+  components: {
+    SignalementFormTextarea
+  },
   props: {
     id: { type: String, default: null },
     icons: { type: Object }
@@ -81,7 +102,8 @@ export default defineComponent({
   data () {
     return {
       formStore,
-      dictionaryStore
+      dictionaryStore,
+      idMessageAdministration: 'message_administration'
     }
   },
   methods: {
@@ -172,6 +194,10 @@ export default defineComponent({
         }
       }
       return label
+    },
+    updateValue (event: Event) {
+      const value = (event.target as HTMLInputElement).value
+      this.formStore.data[this.idMessageAdministration] = value
     }
   }
 })

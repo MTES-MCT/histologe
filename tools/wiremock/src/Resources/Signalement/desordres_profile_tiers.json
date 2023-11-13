@@ -208,7 +208,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Propreté et entretien",
+    "label": "Propreté et entretien dans le bâtiment",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-proprete_entretien.svg",
@@ -279,7 +279,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Eau et évacuation",
+    "label": "Eau et évacuation dans le bâtiment",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-eau_evacuation.svg",
@@ -416,7 +416,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Maintenance et équipement",
+    "label": "Maintenance et équipement dans le bâtiment",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-maintenance_equipement.svg",
@@ -474,7 +474,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Présence de nuisibles",
+    "label": "Présence de nuisibles dans le bâtiment",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-presence_nuisibles.svg",
@@ -581,7 +581,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Sécurité, risque de chute",
+    "label": "Sécurité, risque de chute dans le bâtiment",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-securite_risque_chute.svg",
@@ -786,7 +786,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Risque d'incendie ",
+    "label": "Risque d'incendie dans le bâtiment",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-protection_incendie.svg",
@@ -833,7 +833,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Accessibilité et alentours",
+    "label": "Accessibilité et alentours du bâtiment",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-accessibilite_et_alentours.svg",
@@ -930,7 +930,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Bruit, pollution sonore",
+    "label": "Bruit, pollution sonore dans le bâtiment",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-bruit_pollution_sonore.svg",
@@ -1204,7 +1204,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Eau et évacuation",
+    "label": "Eau et évacuation dans le logement",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-eau_evacuation.svg",
@@ -1259,7 +1259,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Aération et ventilation",
+    "label": "Aération et ventilation dans le logement",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-aeration_ventilation.svg",
@@ -1364,7 +1364,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Chauffage et isolation",
+    "label": "Chauffage et isolation dans le logement",
     "description": "Quel est le type de chauffage du logement ?",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-chauffage_isolation.svg",
@@ -1577,7 +1577,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Humidité et moisissure",
+    "label": "Humidité et moisissure dans le logement",
     "description": "Dans quelle(s) pièce(s) y a-t-il des traces d'humidité ou de la moisissure ?",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-humidite_moisissure.svg",
@@ -1835,7 +1835,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Sécurité",
+    "label": "Sécurité dans le logement",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-securite.svg",
@@ -1997,7 +1997,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Electricité",
+    "label": "Electricité dans le logement",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-electricite.svg",
@@ -2121,7 +2121,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Présence de nuisibles",
+    "label": "Présence de nuisibles dans le logement",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-presence_nuisibles.svg",
@@ -2330,7 +2330,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Bruit, pollution sonore",
+    "label": "Bruit, pollution sonore dans le logement",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-bruit_pollution_sonore.svg",
@@ -2395,7 +2395,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Eclairement, lumière naturelle",
+    "label": "Eclairement, lumière naturelle dans le logement",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-lumiere_naturelle.svg",
@@ -2460,7 +2460,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Propreté et entretien",
+    "label": "Propreté et entretien dans le logement",
     "description": "Sélectionnez la ou les pièces qui présentent un problème de propreté (nombreux déchets, excréments d'animaux, etc.)",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-proprete.svg",

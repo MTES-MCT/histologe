@@ -212,7 +212,7 @@
               "value": "bailleur"
             },
             {
-              "label": "Un service de secours",
+              "label": "Service de secours (pompier, police, gendarmerie)",
               "value": "service_secours"
             }
           ],
