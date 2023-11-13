@@ -157,13 +157,27 @@
   {
     "type": "SignalementFormScreen",
     "slug": "signalement_concerne",
+    "label": "Vous déposez un signalement...",
     "screenCategory": "Adresse et coordonnées",
     "components": {
       "body": [
         {
+          "type": "SignalementFormModal",
+          "label": "En savoir plus",
+          "description": "Vous déposez un signalement pour vous-même lorsque vous avez un problème dans le logement dans lequel vous vivez.<br>Vous déposez un signalement pour quelqu'un d'autre quand vous déposez un signalement pour une autre personne qui rencontre des problèmes dans son logement et qui ne vit pas avec vous.",
+          "slug": "signalement_concerne_modal"
+        },
+        {
+          "type": "SignalementFormLink",
+          "label": "En savoir plus",
+          "slug": "signalement_concerne_savoir_plus",
+          "customCss": "fr-badge fr-badge--info",
+          "link": "#",
+          "ariaControls": "signalement_concerne_modal"
+        },
+        {
           "type": "SignalementFormOnlyChoice",
-          "label": "Vous déposez un signalement...",
-          "customCss": "question-h1",
+          "label": "",
           "slug": "signalement_concerne_profil",
           "values": [
             {
