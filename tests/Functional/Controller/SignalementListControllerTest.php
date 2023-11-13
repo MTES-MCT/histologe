@@ -195,7 +195,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Partner' => ['bo-filters-partners', ['5'], '2 signalement(s)'];
         yield 'Search by Critere' => ['bo-filters-criteres', ['17'], '24 signalement(s)'];
         yield 'Search by Tags' => ['bo-filters-tags', ['3'], '4 signalement(s)'];
-        yield 'Search by Parc public/prive' => ['bo-filters-housetypes', ['1'], '4 signalement(s)'];
+        yield 'Search by Parc public/prive' => ['bo-filters-housetypes', ['1'], '5 signalement(s)'];
         yield 'Search by Relances usagers' => ['bo-filters-relances_usager', ['NO_SUIVI_AFTER_3_RELANCES'], '1 signalement(s)'];
     }
 }

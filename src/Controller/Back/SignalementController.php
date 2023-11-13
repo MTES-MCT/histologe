@@ -92,7 +92,10 @@ class SignalementController extends AbstractController
         if ($clotureForm->isSubmitted() && $clotureForm->isValid()) {
             $params['motif_cloture'] = $clotureForm->get('motif')->getData();
             $params['motif_suivi'] = $clotureForm->getExtraData()['suivi'];
-            $params['suivi_public'] = $clotureForm->getExtraData()['publicSuivi'];
+            $params['suivi_public'] = false;
+            if ($this->isGranted('ROLE_ADMIN_TERRITORY') && isset($clotureForm->getExtraData()['publicSuivi'])) {
+                $params['suivi_public'] = $clotureForm->getExtraData()['publicSuivi'];
+            }
             $params['subject'] = $user?->getPartner()?->getNom();
             $params['closed_for'] = $clotureForm->get('type')->getData();
 
