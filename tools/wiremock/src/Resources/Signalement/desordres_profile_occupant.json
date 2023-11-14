@@ -59,6 +59,7 @@
     },
     "slug": "desordres_batiment",
     "screenCategory": "Désordres",
+    "customCss": "form-screen-body-margin",
     "components": {
       "body": [
         {
@@ -1040,6 +1041,7 @@
     },
     "slug": "desordres_logement",
     "screenCategory": "Désordres",
+    "customCss": "form-screen-body-margin",
     "components": {
       "body": [
         {

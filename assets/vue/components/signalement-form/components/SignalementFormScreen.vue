@@ -280,6 +280,10 @@ export default defineComponent({
       margin-bottom: 7.5rem !important;
     }
 
+    .form-screen-body-margin {
+      margin-bottom: 10rem !important;
+    }
+
     .form-screen-body .icon {
       text-align: center;
     }
