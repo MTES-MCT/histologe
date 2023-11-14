@@ -11,7 +11,7 @@ final class Version20231114155429 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Add new fileds (document type and desordre slug)';
+        return 'Add new fields (document type and desordre slug)';
     }
 
     public function up(Schema $schema): void

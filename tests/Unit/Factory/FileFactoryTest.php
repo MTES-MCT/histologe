@@ -34,8 +34,12 @@ class FileFactoryTest extends TestCase
     /**
      * @dataProvider provideFileItem
      */
-    public function testCreateFromArray(array $dataItem, string $filename, string $fileType, DocumentType $documentType): void
-    {
+    public function testCreateFromArray(
+        array $dataItem,
+        string $filename,
+        string $fileType,
+        DocumentType $documentType
+    ): void {
         $file = (new FileFactory())->createFromFileArray($dataItem);
 
         $this->assertEquals($fileType, $file->getFileType());
