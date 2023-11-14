@@ -49,6 +49,12 @@ class FileFactory
         return $file;
     }
 
+    /**
+     * @param array $file The array representing the file.
+     *                    - 'slug' (string): The slug value.
+     *                    - 'file' (string): The file path.
+     *                    - 'titre' (string): The title of the file.
+     */
     public function createFromFileArray(
         array $file,
         ?Signalement $signalement = null,
