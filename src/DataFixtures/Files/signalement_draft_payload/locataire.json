@@ -6,13 +6,43 @@
   "type_logement_rdc": "non",
   "categorieDisorders": {
     "batiment": [
-      "desordres_batiment_bruit"
+      "desordres_batiment_bruit",
+      "desordres_batiment_proprete"
     ],
     "logement": [
       "desordres_logement_electricite",
       "desordres_logement_nuisibles"
     ]
   },
+  "bail_dpe_dpe_upload": [
+    {
+      "key": "documents",
+      "file": "Capture-d-ecran-dpe-1.png",
+      "titre": "Capture d’écran DPE 1.png"
+    },
+    {
+      "key": "documents",
+      "file": "Capture-d-ecran-dpe-2.png",
+      "titre": "Capture d’écran DPE 2.png"
+    },
+    {
+      "key": "documents",
+      "file": "Capture-d-ecran-dpe-3.png",
+      "titre": "Capture d’écran DPE 3.png"
+    }
+  ],
+  "bail_dpe_bail_upload": [
+    {
+      "key": "documents",
+      "file": "Capture-d-ecran-bail-1.png",
+      "titre": "Capture d’écran BAIL 1.png"
+    },
+    {
+      "key": "documents",
+      "file": "Capture-d-ecran-bail-2.png",
+      "titre": "Capture d’écran BAIL 2.png"
+    }
+  ],
   "zone_concernee_zone": "batiment_logement",
   "type_logement_nature": "appartement",
   "uuidSignalementDraft": "00000000-0000-0000-2023-locataire001",
@@ -106,5 +136,18 @@
   "informations_complementaires_situation_occupants_beneficiaire_rsa": "non",
   "desordres_logement_electricite_manque_prises_details_pieces_cuisine": 1,
   "desordres_logement_electricite_manque_prises_details_pieces_piece_a_vivre": 1,
-  "desordres_logement_electricite_manque_prises_details_pieces_salle_de_bain": 1
+  "desordres_logement_electricite_manque_prises_details_pieces_salle_de_bain": 1,
+  "desordres_batiment_proprete_photos_upload": [
+    {
+      "key": "photos",
+      "file": "Capture-d-ecran-1-desordre.png",
+      "titre": "Capture écran 1.png"
+    },
+    {
+      "key": "photos",
+      "file": "Capture-d-ecran-2-desordre.png",
+      "titre": "Capture écran 2.png"
+    }
+
+  ]
 }

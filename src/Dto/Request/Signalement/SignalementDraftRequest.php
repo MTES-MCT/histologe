@@ -20,6 +20,9 @@ class SignalementDraftRequest
 
     public const PATTERN_PHONE_KEY = '/.*(_tel|_tel_secondaire)$/';
 
+    public const PATTERN_FILE_UPLOAD = '/\w+_upload/';
+    public const FILE_UPLOAD_KEY = 'files';
+
     private ?string $profil = null;
     private ?string $currentStep = null;
     private ?string $adresseLogementAdresse = null;
@@ -127,6 +130,7 @@ class SignalementDraftRequest
     private ?string $informationsComplementairesLogementNombreEtages = null;
     private ?string $informationsComplementairesLogementAnneeConstruction = null;
     private ?string $messageAdministration = null;
+    private ?array $files = null;
 
     public function getProfil(): ?string
     {
@@ -1427,6 +1431,18 @@ class SignalementDraftRequest
     public function setMessageAdministration(?string $messageAdministration): self
     {
         $this->messageAdministration = $messageAdministration;
+
+        return $this;
+    }
+
+    public function getFiles(): ?array
+    {
+        return $this->files;
+    }
+
+    public function setFiles(?array $files): self
+    {
+        $this->files = $files;
 
         return $this;
     }

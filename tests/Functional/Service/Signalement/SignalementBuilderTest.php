@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Service\Signalement;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\SignalementDraft;
+use App\Factory\FileFactory;
 use App\Factory\Signalement\InformationComplementaireFactory;
 use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
@@ -15,8 +16,10 @@ use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementBuilder;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Service\Token\TokenGeneratorInterface;
+use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class SignalementBuilderTest extends KernelTestCase
 {
@@ -39,6 +42,9 @@ class SignalementBuilderTest extends KernelTestCase
         $situationFoyerFactory = static::getContainer()->get(SituationFoyerFactory::class);
         $informationProcedureFactory = static::getContainer()->get(InformationProcedureFactory::class);
         $informationComplementaireFactory = static::getContainer()->get(InformationComplementaireFactory::class);
+        $fileFactory = static::getContainer()->get(FileFactory::class);
+        $uploadHandlerService = static::getContainer()->get(UploadHandlerService::class);
+        $security = static::getContainer()->get(Security::class);
 
         $this->signalementBuilder = new SignalementBuilder(
             $territoryRepository,
@@ -49,7 +55,10 @@ class SignalementBuilderTest extends KernelTestCase
             $typeCompositionLogementFactory,
             $situationFoyerFactory,
             $informationProcedureFactory,
-            $informationComplementaireFactory
+            $informationComplementaireFactory,
+            $fileFactory,
+            $uploadHandlerService,
+            $security
         );
     }
 
@@ -74,8 +83,10 @@ class SignalementBuilderTest extends KernelTestCase
             ->withSituationFoyer()
             ->withProcedure()
             ->withInformationComplementaire()
+            ->withFiles()
             ->build();
 
+        $this->assertCount(7, $signalement->getFiles());
         $this->assertNotEmpty($signalement->getUuid());
         $this->assertNotEmpty($signalement->getReference());
         $this->assertNotEmpty($signalement->getCodeSuivi());
