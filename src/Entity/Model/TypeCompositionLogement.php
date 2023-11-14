@@ -10,23 +10,20 @@ class TypeCompositionLogement
         private ?string $typeLogementDernierEtage = null,
         private ?string $typeLogementSousSolSansFenetre = null,
         private ?string $typeLogementSousCombleSansFenetre = null,
-        private ?array $typeLogementPiecesAVivrePieceSuperficie = null,
-        private ?array $typeLogementPiecesAVivrePieceHauteur = null,
         private ?string $typeLogementCommoditesCuisine = null,
         private ?string $typeLogementCommoditesCuisineCollective = null,
-        private ?string $typeLogementCommoditesCuisineHauteurPlafond = null,
         private ?string $typeLogementCommoditesSalleDeBain = null,
         private ?string $typeLogementCommoditesSalleDeBainCollective = null,
-        private ?string $typeLogementCommoditesSalleDeBainHauteurPlafond = null,
         private ?string $typeLogementCommoditesWc = null,
         private ?string $typeLogementCommoditesWcCollective = null,
-        private ?string $typeLogementCommoditesWcHauteurPlafond = null,
         private ?string $typeLogementCommoditesWcCuisine = null,
         private ?string $compositionLogementPieceUnique = null,
         private ?string $compositionLogementSuperficie = null,
+        private ?string $compositionLogementHauteur = null,
         private ?string $compositionLogementNbPieces = null,
         private ?string $compositionLogementNombrePersonnes = null,
         private ?string $compositionLogementEnfants = null,
+        private ?string $typeLogementCommoditesPieceAVivre9m = null,
         private ?string $bailDpeBail = null,
         private ?string $bailDpeDpe = null,
         private ?string $bailDpeEtatDesLieux = null,
@@ -94,30 +91,6 @@ class TypeCompositionLogement
         return $this;
     }
 
-    public function getTypeLogementPiecesAVivrePieceSuperficie(): ?array
-    {
-        return $this->typeLogementPiecesAVivrePieceSuperficie;
-    }
-
-    public function setTypeLogementPiecesAVivrePieceSuperficie(?array $typeLogementPiecesAVivrePieceSuperficie): self
-    {
-        $this->typeLogementPiecesAVivrePieceSuperficie = $typeLogementPiecesAVivrePieceSuperficie;
-
-        return $this;
-    }
-
-    public function getTypeLogementPiecesAVivrePieceHauteur(): ?array
-    {
-        return $this->typeLogementPiecesAVivrePieceHauteur;
-    }
-
-    public function setTypeLogementPiecesAVivrePieceHauteur(?array $typeLogementPiecesAVivrePieceHauteur): self
-    {
-        $this->typeLogementPiecesAVivrePieceHauteur = $typeLogementPiecesAVivrePieceHauteur;
-
-        return $this;
-    }
-
     public function getTypeLogementCommoditesCuisine(): ?string
     {
         return $this->typeLogementCommoditesCuisine;
@@ -138,18 +111,6 @@ class TypeCompositionLogement
     public function setTypeLogementCommoditesCuisineCollective(?string $typeLogementCommoditesCuisineCollective): self
     {
         $this->typeLogementCommoditesCuisineCollective = $typeLogementCommoditesCuisineCollective;
-
-        return $this;
-    }
-
-    public function getTypeLogementCommoditesCuisineHauteurPlafond(): ?string
-    {
-        return $this->typeLogementCommoditesCuisineHauteurPlafond;
-    }
-
-    public function setTypeLogementCommoditesCuisineHauteurPlafond(?string $typeLogementCommoditesCuisineHauteurPlafond): self
-    {
-        $this->typeLogementCommoditesCuisineHauteurPlafond = $typeLogementCommoditesCuisineHauteurPlafond;
 
         return $this;
     }
@@ -178,18 +139,6 @@ class TypeCompositionLogement
         return $this;
     }
 
-    public function getTypeLogementCommoditesSalleDeBainHauteurPlafond(): ?string
-    {
-        return $this->typeLogementCommoditesSalleDeBainHauteurPlafond;
-    }
-
-    public function setTypeLogementCommoditesSalleDeBainHauteurPlafond(?string $typeLogementCommoditesSalleDeBainHauteurPlafond): self
-    {
-        $this->typeLogementCommoditesSalleDeBainHauteurPlafond = $typeLogementCommoditesSalleDeBainHauteurPlafond;
-
-        return $this;
-    }
-
     public function getTypeLogementCommoditesWc(): ?string
     {
         return $this->typeLogementCommoditesWc;
@@ -210,18 +159,6 @@ class TypeCompositionLogement
     public function setTypeLogementCommoditesWcCollective(?string $typeLogementCommoditesWcCollective): self
     {
         $this->typeLogementCommoditesWcCollective = $typeLogementCommoditesWcCollective;
-
-        return $this;
-    }
-
-    public function getTypeLogementCommoditesWcHauteurPlafond(): ?string
-    {
-        return $this->typeLogementCommoditesWcHauteurPlafond;
-    }
-
-    public function setTypeLogementCommoditesWcHauteurPlafond(?string $typeLogementCommoditesWcHauteurPlafond): self
-    {
-        $this->typeLogementCommoditesWcHauteurPlafond = $typeLogementCommoditesWcHauteurPlafond;
 
         return $this;
     }
@@ -258,6 +195,18 @@ class TypeCompositionLogement
     public function setCompositionLogementSuperficie(?string $compositionLogementSuperficie): self
     {
         $this->compositionLogementSuperficie = $compositionLogementSuperficie;
+
+        return $this;
+    }
+
+    public function getCompositionLogementHauteur(): ?string
+    {
+        return $this->compositionLogementHauteur;
+    }
+
+    public function setCompositionLogementHauteur(?string $compositionLogementHauteur): self
+    {
+        $this->compositionLogementHauteur = $compositionLogementHauteur;
 
         return $this;
     }
@@ -346,6 +295,18 @@ class TypeCompositionLogement
         return $this;
     }
 
+    public function getTypeLogementCommoditesPieceAVivre9m(): ?string
+    {
+        return $this->typeLogementCommoditesPieceAVivre9m;
+    }
+
+    public function setTypeLogementCommoditesPieceAVivre9m(?string $typeLogementCommoditesPieceAVivre9m): self
+    {
+        $this->typeLogementCommoditesPieceAVivre9m = $typeLogementCommoditesPieceAVivre9m;
+
+        return $this;
+    }
+
     public function toArray(): array
     {
         return [
@@ -354,20 +315,17 @@ class TypeCompositionLogement
             'type_logement_dernier_etage' => $this->typeLogementDernierEtage,
             'type_logement_sous_sol_sans_fenetre' => $this->typeLogementSousSolSansFenetre,
             'type_logement_sous_comble_sans_fenetre' => $this->typeLogementSousCombleSansFenetre,
-            'type_logement_pieces_a_vivre_piece_superficie' => $this->typeLogementPiecesAVivrePieceSuperficie,
-            'type_logement_pieces_a_vivre_piece_hauteur' => $this->typeLogementPiecesAVivrePieceHauteur,
+            'type_logement_commodites_piece_a_vivre_9m' => $this->typeLogementCommoditesPieceAVivre9m,
             'type_logement_commodites_cuisine' => $this->typeLogementCommoditesCuisine,
             'type_logement_commodites_cuisine_collective' => $this->typeLogementCommoditesCuisineCollective,
-            'type_logement_commodites_cuisine_hauteur_plafond' => $this->typeLogementCommoditesCuisineHauteurPlafond,
             'type_logement_commodites_salle_de_bain' => $this->typeLogementCommoditesSalleDeBain,
             'type_logement_commodites_salle_de_bain_collective' => $this->typeLogementCommoditesSalleDeBainCollective,
-            'type_logement_commodites_salle_de_bain_hauteur_plafond' => $this->typeLogementCommoditesSalleDeBainHauteurPlafond,
             'type_logement_commodites_wc' => $this->typeLogementCommoditesWc,
             'type_logement_commodites_wc_collective' => $this->typeLogementCommoditesWcCollective,
-            'type_logement_commodites_wc_hauteur_plafond' => $this->typeLogementCommoditesWcHauteurPlafond,
             'type_logement_commodites_wc_cuisine' => $this->typeLogementCommoditesWcCuisine,
             'composition_logement_piece_unique' => $this->compositionLogementPieceUnique,
             'composition_logement_superficie' => $this->compositionLogementSuperficie,
+            'composition_logement_hauteur' => $this->compositionLogementHauteur,
             'composition_logement_nb_pieces' => $this->compositionLogementNbPieces,
             'composition_logement_nombre_personnes' => $this->compositionLogementNombrePersonnes,
             'composition_logement_enfants' => $this->compositionLogementEnfants,
