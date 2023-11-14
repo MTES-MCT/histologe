@@ -90,5 +90,20 @@ services:
     image: redis:7.0-alpine
     container_name: histologe_redis
 
+  histologe_bucket:
+    image: 'minio/minio:latest'
+    container_name: histologe_bucket
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: histologe
+    ports:
+      - 8084:9000
+      - 8900:8900
+    volumes:
+      - minio:/data/minio
+    command: 'minio server /data/minio --console-address ":8900"'
+
 volumes:
   dbdata:
+  minio:
+    driver: local
