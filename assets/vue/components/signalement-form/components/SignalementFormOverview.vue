@@ -273,31 +273,23 @@ export default defineComponent({
         }
       }
       result += this.addLineIfNeeded('composition_logement_superficie', 'Superficie en m² : ')
+      result += this.addLineIfNeeded('composition_logement_hauteur', 'La hauteur jusqu\'au plafond est de 2m (200cm) ou plus ? ')
       result += this.addLineIfNeeded('composition_logement_piece_unique', 'Une seule ou plusieurs pièces ? ')
       if (this.formStore.data.composition_logement_piece_unique === 'plusieurs_pieces') {
         result += this.addLineIfNeeded('composition_logement_nb_pieces', 'Nombre de pièces à vivre : ')
       }
-      for (let i = 1; i <= this.formStore.data.composition_logement_nb_pieces; i++) {
-        result += this.addLineIfNeeded('type_logement_pieces_a_vivre_superficie_piece_' + i, 'Superficie de la pièce ' + i + ' : ')
-        result += this.addLineIfNeeded('type_logement_pieces_a_vivre_hauteur_piece_' + i, 'La hauteur jusqu\'au plafond de la pièce ' + i + ' est de 2,20m (220cm) ou plus ? ')
-      }
+      result += this.addLineIfNeeded('type_logement_commodites_piece_a_vivre_9m', 'Est-ce qu\'au moins une des pièces à vivre (salon, chambre) fait 9m² ou plus ?')
       result += this.addLineIfNeeded('type_logement_commodites_cuisine', 'Cuisine ou coin cuisine ? ')
       if (this.formStore.data.type_logement_commodites_cuisine === 'non') {
         result += this.addLineIfNeeded('type_logement_commodites_cuisine_collective', 'Accès à une cuisine collective ? ')
-      } else {
-        result += this.addLineIfNeeded('type_logement_commodites_cuisine_hauteur_plafond', 'La hauteur jusqu\'au plafond est de 2m (200cm) ou plus ? ')
       }
       result += this.addLineIfNeeded('type_logement_commodites_salle_de_bain', 'Salle de bain, salle d\'eau avec douche ou baignoire ? ')
       if (this.formStore.data.type_logement_commodites_salle_de_bain === 'non') {
         result += this.addLineIfNeeded('type_logement_commodites_salle_de_bain_collective', 'Accès à une salle de bain ou des douches collectives ? ')
-      } else {
-        result += this.addLineIfNeeded('type_logement_commodites_salle_de_bain_hauteur_plafond', 'La hauteur jusqu\'au plafond est de 2m (200cm) ou plus ? ')
       }
       result += this.addLineIfNeeded('type_logement_commodites_wc', 'Toilettes (WC) ? ')
       if (this.formStore.data.type_logement_commodites_wc === 'non') {
         result += this.addLineIfNeeded('type_logement_commodites_wc_collective', 'Accès à des toilettes (WC) collectives ? ')
-      } else {
-        result += this.addLineIfNeeded('type_logement_commodites_wc_hauteur_plafond', 'La hauteur jusqu\'au plafond est de 2m (200cm) ou plus ? ')
       }
       if (this.formStore.data.type_logement_commodites_cuisine === 'oui' && this.formStore.data.type_logement_commodites_wc === 'oui') {
         result += this.addLineIfNeeded('type_logement_commodites_wc_cuisine', 'Toilettes (WC) et cuisine dans la même pièce ? ')
