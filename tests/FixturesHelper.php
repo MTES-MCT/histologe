@@ -370,20 +370,6 @@ trait FixturesHelper
 
     public function getLocataireTypeComposition(bool $transformPiecesAVivre = false): array
     {
-        $piecesAVivre = [
-            'type_logement_pieces_a_vivre_piece_1_hauteur' => 'oui',
-            'type_logement_pieces_a_vivre_piece_2_hauteur' => 'oui',
-            'type_logement_pieces_a_vivre_piece_1_superficie' => '20',
-            'type_logement_pieces_a_vivre_piece_2_superficie' => '15',
-        ];
-
-        if ($transformPiecesAVivre) {
-            $piecesAVivre = [
-                'type_logement_pieces_a_vivre_piece_hauteur' => ['oui', 'oui'],
-                'type_logement_pieces_a_vivre_piece_superficie' => ['20', '15'],
-            ];
-        }
-
         $typeCompostion = [
             'bail_dpe_dpe' => 'oui',
             'bail_dpe_bail' => 'oui',
@@ -396,19 +382,18 @@ trait FixturesHelper
             'composition_logement_enfants' => 'oui',
             'composition_logement_nb_pieces' => '2',
             'composition_logement_superficie' => '45',
+            'composition_logement_hauteur' => 'oui',
             'type_logement_commodites_cuisine' => 'oui',
+            'type_logement_commodites_piece_a_vivre_9m' => 'oui',
             'composition_logement_piece_unique' => 'plusieurs_pieces',
             'type_logement_commodites_wc_cuisine' => 'non',
             'type_logement_sous_sol_sans_fenetre' => 'non',
             'composition_logement_nombre_personnes' => '3',
             'type_logement_commodites_salle_de_bain' => 'oui',
-            'type_logement_commodites_wc_hauteur_plafond' => 'oui',
-            'type_logement_commodites_cuisine_hauteur_plafond' => 'oui',
             'type_logement_commodites_salle_de_bain_collective' => 'oui',
-            'type_logement_commodites_salle_de_bain_hauteur_plafond' => 'oui',
         ];
 
-        return [...$typeCompostion, ...$piecesAVivre];
+        return $typeCompostion;
     }
 
     public function getLocataireSituationFoyer(): array
