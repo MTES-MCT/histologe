@@ -27,7 +27,7 @@
       </HistoDataTable>
     </div>
 
-    <div v-if="sharedState.user.isAdmin" class="fr-col-12 fr-col-lg-6">
+    <div v-if="sharedState.user.isAdmin" class="fr-col-12">
       <HistoDataTable
         :headers=connectionsEsaboraHeaders
         :items=sharedState.esaboraEvents
@@ -66,7 +66,8 @@ export default defineComponent({
         'Dernière synchro',
         'Partenaire',
         'Action',
-        'Statut'
+        'Statut',
+        'Message d\'erreur'
       ]
     }
   },

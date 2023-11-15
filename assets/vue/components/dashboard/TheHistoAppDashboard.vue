@@ -225,7 +225,8 @@ export default defineComponent({
           responseItem.last_event,
           responseItem.nom,
           responseItem.action,
-          responseItem.status
+          responseItem.status,
+          this.handleErrors(responseItem)
         ]
         this.sharedState.esaboraEvents.push(item)
       }
@@ -233,6 +234,17 @@ export default defineComponent({
     handleChangeTerritoire () {
       this.isLoadingRefresh = true
       requests.initKPI(this.handleInitKPI)
+    },
+    handleErrors (responseItem : any) {
+      let errorMessage = JSON.parse(responseItem.response)?.errorReason ?? null
+      if (errorMessage !== null) {
+        errorMessage = JSON.parse(errorMessage).message
+        if (typeof errorMessage === 'object') {
+          errorMessage = JSON.stringify(errorMessage)
+        }
+      }
+
+      return errorMessage
     }
   }
 })
