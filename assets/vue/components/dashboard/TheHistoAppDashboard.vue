@@ -236,14 +236,11 @@ export default defineComponent({
       requests.initKPI(this.handleInitKPI)
     },
     handleErrors (responseItem : any) {
-      let errorMessage = JSON.parse(responseItem.response)?.errorReason ?? null
-      if (errorMessage !== null) {
-        errorMessage = JSON.parse(errorMessage).message
-        if (typeof errorMessage === 'object') {
-          errorMessage = JSON.stringify(errorMessage)
-        }
+      const jsonResponse = JSON.parse(responseItem.response)
+      let errorMessage = jsonResponse?.errorReason ?? jsonResponse?.message ?? null
+      if (errorMessage !== null && typeof errorMessage === 'object') {
+        errorMessage = JSON.stringify(errorMessage)
       }
-
       return errorMessage
     }
   }
