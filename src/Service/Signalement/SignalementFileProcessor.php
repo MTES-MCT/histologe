@@ -91,6 +91,7 @@ class SignalementFileProcessor
                 user: $user,
                 intervention: $intervention,
             );
+            $file->setSize($this->uploadHandlerService->getFileSize($file->getFilename()));
             $signalement->addFile($file);
         }
     }
