@@ -114,16 +114,27 @@ class SignalementFileController extends AbstractController
             $fileType = 'documents' === $type ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO;
 
             $fileCollection = $signalement->getFiles()->filter(
-                function (File $file) use ($fileStorage, $fileType, $filename) {
+                function (File $file) use ($fileType, $filename) {
                     return $fileType === $file->getFileType()
-                        && $filename === $file->getFilename()
-                        && $fileStorage->fileExists($filename);
+                        && $filename === $file->getFilename();
                 }
             );
 
             if (!$fileCollection->isEmpty()) {
                 $file = $fileCollection->current();
-                $fileStorage->delete($file->getFilename());
+                if ($fileStorage->fileExists($file->getFilename())) {
+                    $fileStorage->delete($file->getFilename());
+                }
+                $pathInfo = pathinfo($filename);
+                $resize = $pathInfo['filename'].'_resize.'.$pathInfo['extension'];
+                $thumb = $pathInfo['filename'].'_thumb.'.$pathInfo['extension'];
+                if ($fileStorage->fileExists($resize)) {
+                    $fileStorage->delete($resize);
+                }
+                if ($fileStorage->fileExists($thumb)) {
+                    $fileStorage->delete($thumb);
+                }
+
                 $fileRepository->remove($file, true);
 
                 return $this->json(['response' => 'success']);

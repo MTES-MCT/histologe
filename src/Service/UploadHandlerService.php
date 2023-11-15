@@ -65,10 +65,35 @@ class UploadHandlerService
         }
 
         if (!empty($newFilename) && !empty($titre)) {
-            $this->file = ['file' => $newFilename, 'titre' => $titre];
+            $filePath = $distantFolder.$newFilename;
+            $this->file = ['file' => $newFilename, 'filePath' => $filePath, 'titre' => $titre];
         }
 
         return $this;
+    }
+
+    private function moveFilePath(string $filePath): ?string
+    {
+        try {
+            $pathInfo = pathinfo($filePath);
+            $newFilename = $pathInfo['filename'].'.'.$pathInfo['extension'];
+
+            if ($this->fileStorage->fileExists($newFilename)) {
+                return $newFilename;
+            }
+
+            if ($this->fileStorage->fileExists($filePath)) {
+                $this->fileStorage->move($filePath, $newFilename);
+
+                return $newFilename;
+            }
+        } catch (FilesystemException $exception) {
+            $this->logger->error($exception->getMessage());
+        } catch (\ImagickException $exception) {
+            $this->logger->error($exception->getMessage());
+        }
+
+        return null;
     }
 
     public function moveFromBucketTempFolder(string $filename, ?string $directory = null): ?string
@@ -78,22 +103,17 @@ class UploadHandlerService
         $distantFolder = $this->parameterBag->get('bucket_tmp_dir');
         $tmpFilepath = $distantFolder.$filename;
 
-        try {
-            $tmpFilepath = $this->heicToJpegConverter->convert($tmpFilepath);
+        $this->movePhotoVariants($filename);
 
-            $pathInfo = pathinfo($tmpFilepath);
-            $newFilename = $pathInfo['filename'].'.'.$pathInfo['extension'];
+        return $this->moveFilePath($tmpFilepath);
+    }
 
-            $this->fileStorage->move($tmpFilepath, $newFilename);
-
-            return $newFilename;
-        } catch (FilesystemException $exception) {
-            $this->logger->error($exception->getMessage());
-        } catch (\ImagickException $exception) {
-            $this->logger->error($exception->getMessage());
-        }
-
-        return null;
+    private function movePhotoVariants(string $filename): void
+    {
+        $pathInfo = pathinfo($filename);
+        $distantFolder = $this->parameterBag->get('bucket_tmp_dir');
+        $this->moveFilePath($distantFolder.$pathInfo['filename'].'_resize.'.$pathInfo['extension']);
+        $this->moveFilePath($distantFolder.$pathInfo['filename'].'_thumb.'.$pathInfo['extension']);
     }
 
     public function uploadFromFilename(string $filename): ?string
@@ -170,6 +190,17 @@ class UploadHandlerService
         $resourceFileSyStem = fopen($to, 'w');
         fwrite($resourceFileSyStem, $resourceBucket);
         fclose($resourceFileSyStem);
+    }
+
+    public function getFileSize(string $filename): ?int
+    {
+        $pathInfo = pathinfo($filename);
+        $fileResize = $pathInfo['filename'].'_resize.'.$pathInfo['extension'];
+        if ($this->fileStorage->fileExists($fileResize)) {
+            return $this->fileStorage->fileSize($fileResize);
+        }
+
+        return $this->fileStorage->fileSize($filename);
     }
 
     public function setKey(string $key): ?array

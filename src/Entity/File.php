@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\FileRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FileRepository::class)]
@@ -39,6 +40,9 @@ class File
     #[ORM\ManyToOne(inversedBy: 'files')]
     #[ORM\JoinColumn(nullable: true)]
     private ?Intervention $intervention = null;
+
+    #[ORM\Column(type: Types::BIGINT, nullable: true)]
+    private ?string $size = null;
 
     public function __construct()
     {
@@ -130,6 +134,18 @@ class File
     public function setIntervention(?Intervention $intervention): self
     {
         $this->intervention = $intervention;
+
+        return $this;
+    }
+
+    public function getSize(): ?string
+    {
+        return $this->size;
+    }
+
+    public function setSize(?string $size): static
+    {
+        $this->size = $size;
 
         return $this;
     }
