@@ -87,7 +87,7 @@ class EsaboraSISHService extends AbstractEsaboraService
 
             return new DossierStateSISHResponse(
                 Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
-                    ? $response->toArray()
+                    ? $response->toArray(throw: false)
                     : [],
                 $statusCode
             );
@@ -117,7 +117,7 @@ class EsaboraSISHService extends AbstractEsaboraService
 
             return new DossierVisiteSISHCollectionResponse(
                 Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
-                    ? $response->toArray()
+                    ? $response->toArray(throw: false)
                     : [],
                 $statusCode
             );
@@ -147,7 +147,7 @@ class EsaboraSISHService extends AbstractEsaboraService
 
             return new DossierArreteSISHCollectionResponse(
                 Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
-                    ? $response->toArray()
+                    ? $response->toArray(throw: false)
                     : [],
                 $statusCode
             );
@@ -170,7 +170,7 @@ class EsaboraSISHService extends AbstractEsaboraService
 
             return new DossierPushSISHResponse(
                 Response::HTTP_INTERNAL_SERVER_ERROR >= $statusCode
-                    ? $response->toArray()
+                    ? $response->toArray(throw: false)
                     : [],
                 $statusCode
             );

@@ -56,7 +56,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
 
             return new DossierStateSCHSResponse(
                 Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
-                    ? $response->toArray()
+                    ? $response->toArray(throw: false)
                     : [],
                 $statusCode
             );
