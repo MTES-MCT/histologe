@@ -157,10 +157,7 @@ class SignalementBuilder
             foreach ($files as $key => $fileList) {
                 foreach ($fileList as $fileItem) {
                     $fileItem['slug'] = $key;
-                    $this->signalement->addFile($file = $this->fileFactory->createFromFileArray(
-                        file: $fileItem,
-                        user: $this->security?->getUser()
-                    ));
+                    $this->signalement->addFile($file = $this->fileFactory->createFromFileArray(file: $fileItem));
                     $this->uploadHandlerService->moveFromBucketTempFolder($file->getFilename());
                 }
             }
