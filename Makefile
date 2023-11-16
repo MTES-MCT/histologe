@@ -194,7 +194,7 @@ es-vue-fix: ## Fix vue source code with es-lint --fix
 
 ## Tools
 tools-build: ## [Tools] Install tools (Matomo, ...) local environement
-	@bash -l -c 'make .check .tools -destroy .tools-setup tools-run'
+	@bash -l -c 'make .check .tools-destroy .tools-setup tools-run'
 
 tools-run: ## [Tools] Start tools containers
 	@echo -e '\e[1;32mStart tools containers\032'
