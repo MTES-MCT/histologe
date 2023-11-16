@@ -56,18 +56,18 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
 
     private function buildCommentaire(Signalement $signalement): string
     {
-        $commentaire = 'Points signalés:\n';
+        $commentaire = 'Points signalés:'.\PHP_EOL;
 
         foreach ($signalement->getCriticites() as $criticite) {
-            $commentaire .= '\n'.$criticite->getCritere()->getLabel().' => Etat '.$criticite->getScoreLabel();
+            $commentaire .= \PHP_EOL.$criticite->getCritere()->getLabel().' => Etat '.$criticite->getScoreLabel();
         }
 
-        $commentaire .= '\nPropriétaire averti: '.$signalement->getIsProprioAverti() ? 'OUI' : 'NON';
-        $commentaire .= '\nAdultes: '.$signalement->getNbAdultes().' Adultes';
+        $commentaire .= \PHP_EOL.'Propriétaire averti: '.$signalement->getIsProprioAverti() ? 'OUI' : 'NON';
+        $commentaire .= \PHP_EOL.'Adultes: '.$signalement->getNbAdultes().' Adulte(s)';
         $commentaire .= $this->buildNbEnfants($signalement);
 
         foreach ($signalement->getAffectations() as $affectation) {
-            $commentaire .= '\n'.$affectation->getPartner()->getNom().' => '.$affectation->getAffectationLabel();
+            $commentaire .= \PHP_EOL.$affectation->getPartner()->getNom().' => '.$affectation->getAffectationLabel();
         }
 
         return $commentaire;
@@ -76,13 +76,17 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
     private function buildNbEnfants(Signalement $signalement)
     {
         $suffix = '';
-        if (str_ends_with($signalement->getNbEnfantsM6(), '+') || str_ends_with($signalement->getNbEnfantsP6(), '+')) {
+        if (null !== $signalement->getNbEnfantsM6() && str_ends_with($signalement->getNbEnfantsM6(), '+') ||
+            null !== $signalement->getNbEnfantsP6() && str_ends_with($signalement->getNbEnfantsP6(), '+')
+        ) {
             $suffix = '+';
         }
-        $nbEnfants = str_replace('+', '', $signalement->getNbEnfantsM6()) + str_replace('+', '', $signalement->getNbEnfantsP6());
+        $nbEnfantsM6 = (int) str_replace('+', '', $signalement->getNbEnfantsM6());
+        $nbEnfantsP6 = (int) str_replace('+', '', $signalement->getNbEnfantsP6());
+        $nbEnfants = $nbEnfantsM6 + $nbEnfantsP6;
         $nbEnfants .= $suffix;
 
-        return '\n'.$nbEnfants.' Enfants';
+        return \PHP_EOL.$nbEnfants.' Enfant(s)';
     }
 
     private function buildPiecesJointesObservation(Signalement $signalement): string
