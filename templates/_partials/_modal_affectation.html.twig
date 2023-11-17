@@ -8,7 +8,7 @@
                             <span class="fr-fi-arrow-right-line"></span>
                             Affectation de partenaires
                         </h1>
-                        <button class="fr-link--close fr-link" aria-controls="fr-modal-affectation">Fermer</button>
+                        <button class="fr-btn--close fr-btn" aria-controls="fr-modal-affectation">Fermer</button>
                     </div>
                     <div class="fr-modal__content">
                         <div class="fr-grid-row fr-grid-row--center fr-grid-row--middle fr-h-100 fr-hidden fr-mt-5w"
@@ -75,14 +75,14 @@
                     <div class="fr-modal__footer">
                         <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
                             <li>
-                                <button class="fr-btn" type="submit"
+                                <button class="fr-btn fr-icon-checkbox-line" type="submit"
                                         form="signalement-affectation-form" id="signalement-affectation-form-submit"
                                         formaction="{{ path('back_signalement_toggle_affectation',{uuid:signalement.uuid}) }}">
                                     Affecter partenaire(s)
                                 </button>
                             </li>
                             <li>
-                                <button class="fr-btn fr-btn--secondary"
+                                <button class="fr-btn fr-btn--secondary fr-icon-close-line"
                                         aria-controls="fr-modal-affectation">
                                     Annuler
                                 </button>
