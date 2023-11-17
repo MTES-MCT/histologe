@@ -29,7 +29,7 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
+        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid('signalement_edit_address_'.$signalement->getId(), $request->get('_token'))) {
             /** @var AdresseOccupantRequest $adresseOccupantRequest */
             $adresseOccupantRequest = $serializer->deserialize(
@@ -61,7 +61,7 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
+        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid('signalement_edit_coordonnees_tiers_'.$signalement->getId(), $request->get('_token'))) {
             /** @var CoordonneesTiersRequest $coordonneesTiersRequest */
             $coordonneesTiersRequest = $serializer->deserialize(
@@ -93,7 +93,7 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
+        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid('signalement_edit_coordonnees_foyer_'.$signalement->getId(), $request->get('_token'))) {
             /** @var CoordonneesFoyerRequest $coordonneesFoyerRequest */
             $coordonneesFoyerRequest = $serializer->deserialize(
@@ -125,7 +125,7 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
+        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid('signalement_edit_coordonnees_bailleur_'.$signalement->getId(), $request->get('_token'))) {
             /** @var CoordonneesBailleurRequest $coordonneesBailleurRequest */
             $coordonneesBailleurRequest = $serializer->deserialize(
@@ -157,7 +157,7 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
+        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid('signalement_edit_informations_logement_'.$signalement->getId(), $request->get('_token'))) {
             /** @var InformationsLogementRequest $informationsLogementRequest */
             $informationsLogementRequest = $serializer->deserialize(
@@ -189,7 +189,7 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
+        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid('signalement_edit_situation_foyer_'.$signalement->getId(), $request->get('_token'))) {
             /** @var SituationFoyerRequest $situationFoyerRequest */
             $situationFoyerRequest = $serializer->deserialize(
@@ -221,7 +221,7 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
+        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid('signalement_edit_procedure_demarches_'.$signalement->getId(), $request->get('_token'))) {
             /** @var ProcedureDemarchesRequest $procedureDemarchesRequest */
             $procedureDemarchesRequest = $serializer->deserialize(
