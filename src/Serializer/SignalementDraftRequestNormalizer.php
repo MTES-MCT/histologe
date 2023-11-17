@@ -33,6 +33,8 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
                     'phone_number' => $value,
                 ];
                 $transformedData[$key] = $phone;
+            } elseif (preg_match(SignalementDraftRequest::PATTERN_FILE_UPLOAD, $key, $matches)) {
+                $transformedData[SignalementDraftRequest::FILE_UPLOAD_KEY][$key] = $data[$key];
             } else {
                 $transformedData[$key] = $value;
             }

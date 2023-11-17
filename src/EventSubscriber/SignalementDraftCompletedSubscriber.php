@@ -40,6 +40,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
             ->withSituationFoyer()
             ->withProcedure()
             ->withInformationComplementaire()
+            ->withFiles()
             ->build();
 
         $this->signalementManager->save($signalement);
