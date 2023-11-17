@@ -13,13 +13,6 @@ class SignalementDraftRequest
     public const PREFIX_PROPERTIES_INFORMATION_PROCEDURE = ['info_procedure', 'utilisation_service'];
     public const PREFIX_PROPERTIES_INFORMATION_COMPLEMENTAIRE = ['informations_complementaires'];
 
-    public const PIECES_SUPERFICIE_KEY_PATTERN = '/^type_logement_pieces_a_vivre_piece_(\d+)_superficie$/';
-    public const PIECES_HAUTEUR_KEY_PATTERN = '/^type_logement_pieces_a_vivre_piece_(\d+)_hauteur$/';
-    public const PIECES_SUPERFICIE_KEY = 'type_logement_pieces_a_vivre_piece_superficie';
-    public const PIECES_HAUTEUR_KEY = 'type_logement_pieces_a_vivre_piece_hauteur';
-    public const PATTERN_SUPERFICIE_KEY = 'type_logement_pieces_a_vivre_piece_%d_superficie';
-    public const PATTERN_HAUTEUR_KEY = 'type_logement_pieces_a_vivre_piece_%d_hauteur';
-
     public const PATTERN_PHONE_KEY = '/.*(_tel|_tel_secondaire)$/';
 
     public const PATTERN_FILE_UPLOAD = '/\w+_upload/';
@@ -137,20 +130,17 @@ class SignalementDraftRequest
     private ?string $typeLogementSousCombleSansFenetre = null;
     private ?string $compositionLogementPieceUnique = null;
     private ?string $compositionLogementSuperficie = null;
+    private ?string $compositionLogementHauteur = null;
     private ?string $compositionLogementNbPieces = null;
     private ?string $compositionLogementNombrePersonnes = null;
     private ?string $compositionLogementEnfants = null;
-    private ?array $typeLogementPiecesAVivrePieceSuperficie = null;
-    private ?array $typeLogementPiecesAVivrePieceHauteur = null;
+    private ?string $typeLogementCommoditesPieceAVivre9m = null;
     private ?string $typeLogementCommoditesCuisine = null;
     private ?string $typeLogementCommoditesCuisineCollective = null;
-    private ?string $typeLogementCommoditesCuisineHauteurPlafond = null;
     private ?string $typeLogementCommoditesSalleDeBain = null;
     private ?string $typeLogementCommoditesSalleDeBainCollective = null;
-    private ?string $typeLogementCommoditesSalleDeBainHauteurPlafond = null;
     private ?string $typeLogementCommoditesWc = null;
     private ?string $typeLogementCommoditesWcCollective = null;
-    private ?string $typeLogementCommoditesWcHauteurPlafond = null;
     private ?string $typeLogementCommoditesWcCuisine = null;
     #[Assert\DateTime('Y-m-d')]
     private ?string $bailDpeDateEmmenagement = null;
@@ -826,6 +816,18 @@ class SignalementDraftRequest
         return $this;
     }
 
+    public function getCompositionLogementHauteur(): ?string
+    {
+        return $this->compositionLogementHauteur;
+    }
+
+    public function setCompositionLogementHauteur(?string $compositionLogementHauteur): self
+    {
+        $this->compositionLogementHauteur = $compositionLogementHauteur;
+
+        return $this;
+    }
+
     public function getCompositionLogementNbPieces(): ?string
     {
         return $this->compositionLogementNbPieces;
@@ -862,26 +864,14 @@ class SignalementDraftRequest
         return $this;
     }
 
-    public function getTypeLogementPiecesAVivrePieceSuperficie(): ?array
+    public function getTypeLogementCommoditesPieceAVivre9m(): ?string
     {
-        return $this->typeLogementPiecesAVivrePieceSuperficie;
+        return $this->typeLogementCommoditesPieceAVivre9m;
     }
 
-    public function setTypeLogementPiecesAVivrePieceSuperficie(?array $typeLogementPiecesAVivrePieceSuperficie): self
+    public function setTypeLogementCommoditesPieceAVivre9m(?string $typeLogementCommoditesPieceAVivre9m): self
     {
-        $this->typeLogementPiecesAVivrePieceSuperficie = $typeLogementPiecesAVivrePieceSuperficie;
-
-        return $this;
-    }
-
-    public function getTypeLogementPiecesAVivrePieceHauteur(): ?array
-    {
-        return $this->typeLogementPiecesAVivrePieceHauteur;
-    }
-
-    public function setTypeLogementPiecesAVivrePieceHauteur(?array $typeLogementPiecesAVivrePieceHauteur): self
-    {
-        $this->typeLogementPiecesAVivrePieceHauteur = $typeLogementPiecesAVivrePieceHauteur;
+        $this->typeLogementCommoditesPieceAVivre9m = $typeLogementCommoditesPieceAVivre9m;
 
         return $this;
     }
@@ -906,19 +896,6 @@ class SignalementDraftRequest
     public function setTypeLogementCommoditesCuisineCollective(?string $typeLogementCommoditesCuisineCollective): self
     {
         $this->typeLogementCommoditesCuisineCollective = $typeLogementCommoditesCuisineCollective;
-
-        return $this;
-    }
-
-    public function getTypeLogementCommoditesCuisineHauteurPlafond(): ?string
-    {
-        return $this->typeLogementCommoditesCuisineHauteurPlafond;
-    }
-
-    public function setTypeLogementCommoditesCuisineHauteurPlafond(
-        ?string $typeLogementCommoditesCuisineHauteurPlafond
-    ): self {
-        $this->typeLogementCommoditesCuisineHauteurPlafond = $typeLogementCommoditesCuisineHauteurPlafond;
 
         return $this;
     }
@@ -948,19 +925,6 @@ class SignalementDraftRequest
         return $this;
     }
 
-    public function getTypeLogementCommoditesSalleDeBainHauteurPlafond(): ?string
-    {
-        return $this->typeLogementCommoditesSalleDeBainHauteurPlafond;
-    }
-
-    public function setTypeLogementCommoditesSalleDeBainHauteurPlafond(
-        ?string $typeLogementCommoditesSalleDeBainHauteurPlafond
-    ): self {
-        $this->typeLogementCommoditesSalleDeBainHauteurPlafond = $typeLogementCommoditesSalleDeBainHauteurPlafond;
-
-        return $this;
-    }
-
     public function getTypeLogementCommoditesWc(): ?string
     {
         return $this->typeLogementCommoditesWc;
@@ -981,18 +945,6 @@ class SignalementDraftRequest
     public function setTypeLogementCommoditesWcCollective(?string $typeLogementCommoditesWcCollective): self
     {
         $this->typeLogementCommoditesWcCollective = $typeLogementCommoditesWcCollective;
-
-        return $this;
-    }
-
-    public function getTypeLogementCommoditesWcHauteurPlafond(): ?string
-    {
-        return $this->typeLogementCommoditesWcHauteurPlafond;
-    }
-
-    public function setTypeLogementCommoditesWcHauteurPlafond(?string $typeLogementCommoditesWcHauteurPlafond): self
-    {
-        $this->typeLogementCommoditesWcHauteurPlafond = $typeLogementCommoditesWcHauteurPlafond;
 
         return $this;
     }

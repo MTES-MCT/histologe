@@ -27,6 +27,16 @@
         </div>
         
         <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
+            <strong>Hauteur > 2m :</strong>
+            {% if signalement.typeCompositionLogement and signalement.typeCompositionLogement.compositionLogementHauteur %}
+                {{ signalement.typeCompositionLogement.compositionLogementHauteur ?? 'non' }}
+                {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.compositionLogementHauteur is same as 'non' } %}
+            {% else %}
+                N/C
+            {% endif %}
+        </div>
+        
+        <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
             <strong>Nombre de pièces à vivre :</strong>
             {% if signalement.typeCompositionLogement and signalement.typeCompositionLogement.compositionLogementNbPieces %}
                 {{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
@@ -66,21 +76,14 @@
             </div>
         
         {% endif %}
-        
-        {% if signalement.typeCompositionLogement %}
-            {% for i in 0..signalement.typeCompositionLogement.compositionLogementNbPieces - 1 %}
-                <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
-                    <strong>Pièce à vivre {{ loop.index }} :</strong>
-                    <br>
-                    Superficie : {{ signalement.typeCompositionLogement.typeLogementPiecesAVivrePieceSuperficie[i] ?? '/' }}
-                    {% if signalement.typeCompositionLogement.typeLogementPiecesAVivrePieceHauteur is not same as null %}
-                    <br>
-                    Hauteur > 2,20m : {{ signalement.typeCompositionLogement.typeLogementPiecesAVivrePieceHauteur[i] is same as 'nsp' ? 'Ne sait pas' : signalement.typeCompositionLogement.typeLogementPiecesAVivrePieceHauteur[i] }}
-                    {% endif %}
-                </div>
-            {% endfor %}
-        {% endif %}
 
+        {% if signalement.typeCompositionLogement %}
+            <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
+                <strong>Au moins une des pièces à vivre > 9m² :</strong> {{ signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m is same as 'nsp' ? 'Ne sait pas' : signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m }}
+                {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m is same as 'non' } %}
+            </div>
+        {% endif %}
+        
         <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
             <strong>Cuisine / coin cuisine :</strong>
             {% if signalement.typeCompositionLogement %}
@@ -94,11 +97,6 @@
                         <li>
                             Collective : {{ signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective }}
                             {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective is same as 'non' } %}
-                        </li>
-                    {% else %}
-                        <li>
-                            Hauteur > 2m : {{ signalement.typeCompositionLogement.typeLogementCommoditesCuisineHauteurPlafond is same as 'nsp' ? 'Ne sait pas' : signalement.typeCompositionLogement.typeLogementCommoditesCuisineHauteurPlafond }}
-                            {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesCuisineHauteurPlafond is same as 'non' } %}
                         </li>
                     {% endif %}
                 </ul>
@@ -122,11 +120,6 @@
                             Collective : {{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective }}
                             {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective is same as 'non' } %}
                         </li>
-                    {% else %}
-                        <li>
-                            Hauteur > 2m : {{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainHauteurPlafond is same as 'nsp' ? 'Ne sait pas' : signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainHauteurPlafond }}
-                            {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainHauteurPlafond is same as 'non' } %}
-                        </li>
                     {% endif %}
                 </ul>
 
@@ -148,11 +141,6 @@
                         <li>
                             Collectifs : {{ signalement.typeCompositionLogement.typeLogementCommoditesWcCollective }}
                             {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesWcCollective is same as 'non' } %}
-                        </li>
-                    {% else %}
-                        <li>
-                            Hauteur > 2m : {{ signalement.typeCompositionLogement.typeLogementCommoditesWcHauteurPlafond is same as 'nsp' ? 'Ne sait pas' : signalement.typeCompositionLogement.typeLogementCommoditesWcHauteurPlafond }}
-                            {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesWcHauteurPlafond is same as 'non' } %}
                         </li>
                     {% endif %}
                 </ul>
