@@ -44,8 +44,7 @@
                                 </label>
                                 <input class="fr-input search-address-autocomplete" type="text" id="edit-coordonnees-bailleur-search"
                                     data-fr-adresse-bo-autocomplete="true" data-form-id="form-edit-coordonnees-bailleur"
-                                    data-form-lat="{{ signalement.geoloc.lat }}" data-form-lng="{{ signalement.geoloc.lng }}" 
-                                    {% if is_granted('ROLE_ADMIN') is not same as true %}data-form-limit="{{ signalement.territory.zip }}" {% endif %}>                                        
+                                    data-form-lat="{{ signalement.geoloc.lat }}" data-form-lng="{{ signalement.geoloc.lng }}">                                        
                                 <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france search-address-autocomplete-list">
                                 </div>
                             </div>
