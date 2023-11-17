@@ -91,12 +91,16 @@
 
     <div class="fr-grid-row">
         <div class="fr-col-12">
-            Déposé le : {{ signalement.createdAt|format_datetime(locale='fr') }}
-            {% if signalement.isNotOccupant %}
-                par un tiers déclarant
+            Déposé le : {{ signalement.createdAt|format_datetime(locale='fr') }} 
+            {% if signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').LOCATAIRE or 
+            signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT or
+            signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR %}
+                par le
             {% else %}
-                par l'occupant
+                par un
             {% endif %}
+            {{ signalement.profileDeclarant.label }}
+
             <br>
 
             {% if isAffected and not isAccepted and not isRefused and not needValidation and not isClosed and not isClosedForMe %}
