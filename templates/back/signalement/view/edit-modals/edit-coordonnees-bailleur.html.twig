@@ -5,13 +5,12 @@
                 <form method="POST" id="form-edit-coordonnees-bailleur" enctype="application/json" action="{{ path('back_signalement_edit_coordonnees_bailleur',{uuid:signalement.uuid}) }}">
                     <div class="fr-modal__body">
                         <div class="fr-modal__header">
-                            <button type="button" class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-edit-coordonnees-bailleur">Fermer</button>
+                            <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-edit-coordonnees-bailleur">Fermer</button>
                         </div>
                         <div class="fr-modal__content">
                             <h1 id="fr-modal-title-modal-edit-coordonnees-bailleur" class="fr-modal__title">
                                 Modifier les coordonnées du bailleur
                             </h1>
-
                             <div class="fr-input-group">
                                 <label class="fr-label" for="nom">Nom</label>
                                 <input class="fr-input" type="text" name="nom" value="{{ signalement.nomProprio }}">
@@ -70,13 +69,13 @@
                         <div class="fr-modal__footer">
                             <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
                                 <li>
-                                    <button type="button" class="fr-btn fr-btn--secondary"
+                                    <button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line"
                                             aria-controls="fr-modal-edit-coordonnees-bailleur">
                                         Annuler
                                     </button>
                                 </li>
                                 <li>
-                                    <button class="fr-btn" type="submit">
+                                    <button class="fr-btn fr-icon-checkbox-line" type="submit">
                                         Valider
                                     </button>
                                 </li>
