@@ -194,7 +194,7 @@
     <div class="fr-grid-row fr-grid-row--gutters">
         {% if signalement.isNotOccupant %}
         {% include 'back/signalement/view/edit-modals/edit-coordonnees-tiers.html.twig' %}
-        <div class="fr-col-12 fr-col-md-6 fr-mb-1v">
+        <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
             <div class="fr-p-3v fr-background-alt--grey">
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-9">
@@ -234,7 +234,7 @@
         </div>
         {% endif %}
 
-        <div class="fr-col-12 fr-col-md-6 fr-mb-1v">
+        <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
             {% include 'back/signalement/view/edit-modals/edit-coordonnees-foyer.html.twig' %}
             <div class="fr-p-3v fr-background-alt--grey">
                 <div class="fr-grid-row">
@@ -276,7 +276,7 @@
         </div>
 
         {% if signalement.profileDeclarant and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT %}
-           <div class="fr-col-12 fr-col-md-6 fr-mb-1v">
+           <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
                 {% include 'back/signalement/view/edit-modals/edit-coordonnees-bailleur.html.twig' %}
                 <div class="fr-p-3v fr-background-alt--grey">
                     <div class="fr-grid-row">
@@ -326,7 +326,7 @@
             </div>
         {% endif %}
 
-        <div class="fr-col-12 fr-col-md-6 fr-mb-1v">
+        <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
             {% include 'back/signalement/view/edit-modals/edit-informations-logement.html.twig' %}
             <div class="fr-p-3v fr-background-alt--grey">
                 <div class="fr-grid-row">
@@ -429,7 +429,7 @@
             </div>
         </div>
 
-        <div class="fr-col-12 fr-col-md-6 fr-mb-1v">
+        <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
             {% include 'back/signalement/view/edit-modals/edit-situation-foyer.html.twig' %}
             <div class="fr-p-3v fr-background-alt--grey">
                 <div class="fr-grid-row">
@@ -525,7 +525,7 @@
             </div>
         </div>
 
-        <div class="fr-col-12 fr-col-md-6 fr-mb-1v">
+        <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
             {% include 'back/signalement/view/edit-modals/edit-procedure-demarches.html.twig' %}
             <div class="fr-p-3v fr-background-alt--grey">
                 <div class="fr-grid-row">
