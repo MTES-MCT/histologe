@@ -20,14 +20,14 @@ class DossierStateSCHSResponse implements DossierResponseInterface
         if (!empty($response)) {
             $data = $response['rowList'][0]['columnDataList'] ?? null;
             if (null !== $data) {
-                $this->sasReference = $data[0];
-                $this->sasEtat = $data[1];
-                $this->id = $data[2];
-                $this->numero = $data[3];
-                $this->statutAbrege = $data[4];
-                $this->statut = $data[5];
-                $this->etat = $data[6];
-                $this->dateCloture = $data[7];
+                $this->sasReference = $data[0] ?? null;
+                $this->sasEtat = $data[1] ?? null;
+                $this->id = $data[2] ?? null;
+                $this->numero = $data[3] ?? null;
+                $this->statutAbrege = $data[4] ?? null;
+                $this->statut = $data[5] ?? null;
+                $this->etat = $data[6] ?? null;
+                $this->dateCloture = $data[7] ?? null;
             } else {
                 $this->errorReason = json_encode($response);
             }

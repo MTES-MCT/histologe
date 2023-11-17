@@ -54,7 +54,9 @@ class EsaboraManagerTest extends KernelTestCase
         string $referenceSignalement,
         string $filename,
         string $suiviDescription,
-        int $expectedAffectationStatus
+        int $expectedAffectationStatus,
+        int $suiviStatus,
+        bool $mailSent,
     ): void {
         /** @var Signalement $signalement */
         $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
@@ -93,7 +95,8 @@ class EsaboraManagerTest extends KernelTestCase
         $suivi = $signalement->getSuivis()->last();
         $this->assertStringContainsString($suiviDescription, $suivi->getDescription());
         $this->assertFalse($suivi->getIsPublic());
-        $this->assertEquals(Suivi::TYPE_AUTO, $suivi->getType());
+        $this->assertEquals($suiviStatus, $suivi->getType());
+        $this->assertEmailCount($mailSent ? 1 : 0);
 
         /** @var Affectation $affectationUpdated */
         $affectationUpdated = $signalement->getAffectations()->get(0);
@@ -107,6 +110,8 @@ class EsaboraManagerTest extends KernelTestCase
             'etat_a_traiter.json',
             'remis en attente',
             Affectation::STATUS_WAIT,
+            Suivi::TYPE_TECHNICAL,
+            false, // suivi mail not sent cause suivi techical
         ];
 
         yield EsaboraStatus::ESABORA_ACCEPTED->value => [
@@ -114,6 +119,8 @@ class EsaboraManagerTest extends KernelTestCase
             'etat_importe.json',
             'accepté via Esabora',
             Affectation::STATUS_ACCEPTED,
+            Suivi::TYPE_AUTO,
+            true, // suivi mail sent
         ];
 
         yield EsaboraStatus::ESABORA_CLOSED->value => [
@@ -121,6 +128,8 @@ class EsaboraManagerTest extends KernelTestCase
             'etat_termine.json',
             'cloturé via Esabora',
             Affectation::STATUS_CLOSED,
+            Suivi::TYPE_AUTO,
+            true, // suivi mail sent
         ];
 
         yield EsaboraStatus::ESABORA_REFUSED->value => [
@@ -128,6 +137,8 @@ class EsaboraManagerTest extends KernelTestCase
             'etat_non_importe.json',
             'refusé via Esabora',
             Affectation::STATUS_REFUSED,
+            Suivi::TYPE_AUTO,
+            false, // suivi mail not sent cause signalement closed
         ];
 
         yield EsaboraStatus::ESABORA_REJECTED->value => [
@@ -135,6 +146,8 @@ class EsaboraManagerTest extends KernelTestCase
             '../../sish/ws_etat_dossier_sas/etat_rejete.json',
             'refusé via SI-SH pour motif suivant:',
             Affectation::STATUS_REFUSED,
+            Suivi::TYPE_AUTO,
+            false, // suivi mail not sent cause signalement closed
         ];
     }
 }

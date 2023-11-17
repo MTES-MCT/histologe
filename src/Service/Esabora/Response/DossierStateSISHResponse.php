@@ -25,19 +25,19 @@ class DossierStateSISHResponse implements DossierResponseInterface
         if (!empty($response)) {
             $data = $response['rowList'][0]['columnDataList'] ?? null;
             if (null !== $data) {
-                $this->referenceDossier = $data[0];
-                $this->sasEtat = $data[1];
-                $this->sasDateDecision = $data[2];
-                $this->sasCauseRefus = $data[3];
-                $this->dossId = $data[4];
-                $this->dossNum = $data[5];
-                $this->dossObjet = $data[6];
-                $this->dossDateCloture = $data[7];
-                $this->dossStatutAbr = $data[8];
-                $this->dossStatut = $data[9];
-                $this->dossEtat = $data[10];
-                $this->dossTypeCode = $data[11];
-                $this->dossTypeLib = $data[12];
+                $this->referenceDossier = $data[0] ?? null;
+                $this->sasEtat = $data[1] ?? null;
+                $this->sasDateDecision = $data[2] ?? null;
+                $this->sasCauseRefus = $data[3] ?? null;
+                $this->dossId = $data[4] ?? null;
+                $this->dossNum = $data[5] ?? null;
+                $this->dossObjet = $data[6] ?? null;
+                $this->dossDateCloture = $data[7] ?? null;
+                $this->dossStatutAbr = $data[8] ?? null;
+                $this->dossStatut = $data[9] ?? null;
+                $this->dossEtat = $data[10] ?? null;
+                $this->dossTypeCode = $data[11] ?? null;
+                $this->dossTypeLib = $data[12] ?? null;
             } else {
                 $this->errorReason = json_encode($response);
             }
