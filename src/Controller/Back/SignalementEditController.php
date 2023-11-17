@@ -42,7 +42,7 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromAdresseOccupantRequest($signalement, $adresseOccupantRequest);
-                $this->addFlash('success', 'Adresse du logement mise à jour avec succès !');
+                $this->addFlash('success', 'L\'adresse du logement a bien été modifiée.');
             } else {
                 $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
             }
@@ -74,7 +74,7 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromCoordonneesTiersRequest($signalement, $coordonneesTiersRequest);
-                $this->addFlash('success', 'Coordonnées du tiers déclarant mises à jour avec succès !');
+                $this->addFlash('success', 'Les coordonnées du tiers déclarant ont bien été modifiées.');
             } else {
                 $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
             }
@@ -106,7 +106,7 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromCoordonneesFoyerRequest($signalement, $coordonneesFoyerRequest);
-                $this->addFlash('success', 'Coordonnées du foyer mises à jour avec succès !');
+                $this->addFlash('success', 'Les coordonnées du foyer ont bien été modifiées.');
             } else {
                 $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
             }
@@ -138,7 +138,7 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromCoordonneesBailleurRequest($signalement, $coordonneesBailleurRequest);
-                $this->addFlash('success', 'Coordonnées du bailleur mises à jour avec succès !');
+                $this->addFlash('success', 'Les coordonnées du bailleur ont bien été modifiées.');
             } else {
                 $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
             }
@@ -170,7 +170,7 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromInformationsLogementRequest($signalement, $informationsLogementRequest);
-                $this->addFlash('success', 'Informations du logement mises à jour avec succès !');
+                $this->addFlash('success', 'Les informations du logement ont bien été modifiées.');
             } else {
                 $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
             }
@@ -202,7 +202,7 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromSituationFoyerRequest($signalement, $situationFoyerRequest);
-                $this->addFlash('success', 'Situation du foyer mise à jour avec succès !');
+                $this->addFlash('success', 'La situation du foyer a bien été modifiée.');
             } else {
                 $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
             }
@@ -234,7 +234,7 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromProcedureDemarchesRequest($signalement, $procedureDemarchesRequest);
-                $this->addFlash('success', 'Procédure et démarches mises à jour avec succès !');
+                $this->addFlash('success', 'Les procédures et démarches ont bien été modifiées.');
             } else {
                 $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
             }
