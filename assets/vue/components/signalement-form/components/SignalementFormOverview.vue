@@ -278,7 +278,7 @@ export default defineComponent({
       if (this.formStore.data.composition_logement_piece_unique === 'plusieurs_pieces') {
         result += this.addLineIfNeeded('composition_logement_nb_pieces', 'Nombre de pièces à vivre : ')
       }
-      result += this.addLineIfNeeded('type_logement_commodites_piece_a_vivre_9m', 'Est-ce qu\'au moins une des pièces à vivre (salon, chambre) fait 9m² ou plus ?')
+      result += this.addLineIfNeeded('type_logement_commodites_piece_a_vivre_9m', 'Est-ce qu\'au moins une des pièces à vivre (salon, chambre) fait 9m² ou plus ? ')
       result += this.addLineIfNeeded('type_logement_commodites_cuisine', 'Cuisine ou coin cuisine ? ')
       if (this.formStore.data.type_logement_commodites_cuisine === 'non') {
         result += this.addLineIfNeeded('type_logement_commodites_cuisine_collective', 'Accès à une cuisine collective ? ')

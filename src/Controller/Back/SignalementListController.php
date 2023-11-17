@@ -37,6 +37,7 @@ class SignalementListController extends AbstractController
             return $this->stream('back/table_result.html.twig', [
                 'filters' => $filters,
                 'signalements' => $signalements,
+                'isNewFormEnabled' => $parameterBag->get('feature_new_form'),
             ]);
         }
 
