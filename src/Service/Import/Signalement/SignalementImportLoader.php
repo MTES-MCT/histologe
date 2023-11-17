@@ -6,11 +6,13 @@ use App\Entity\Affectation;
 use App\Entity\Critere;
 use App\Entity\Criticite;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\File;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Manager\AffectationManager;
+use App\Manager\FileManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\TagManager;
@@ -57,6 +59,7 @@ class SignalementImportLoader
         private LoggerInterface $logger,
         private CriticiteCalculator $criticiteCalculator,
         private SignalementQualificationUpdater $signalementQualificationUpdater,
+        private FileManager $fileManager,
     ) {
     }
 
@@ -102,6 +105,9 @@ class SignalementImportLoader
                 foreach ($suiviCollection as $suivi) {
                     $signalement->addSuivi($suivi);
                 }
+
+                $this->loadFiles($signalement, File::INPUT_NAME_PHOTOS, $dataMapped, File::FILE_TYPE_PHOTO);
+                $this->loadFiles($signalement, File::INPUT_NAME_DOCUMENTS, $dataMapped, File::FILE_TYPE_DOCUMENT);
 
                 $this->metadata['count_signalement'] = $countSignalement;
                 if (0 === $countSignalement % self::FLUSH_COUNT) {
@@ -250,5 +256,25 @@ class SignalementImportLoader
         }
 
         return $suiviCollection;
+    }
+
+    private function loadFiles(Signalement $signalement, string $colName, array $dataMapped, string $fileType): void
+    {
+        if (empty($dataMapped[$colName])) {
+            return;
+        }
+
+        $fileList = explode('|', $dataMapped[$colName]);
+        foreach ($fileList as $filename) {
+            $file = $this->fileManager->createOrUpdate(
+                filename: $filename,
+                title: $filename,
+                type: $fileType,
+                signalement: $signalement,
+            );
+            unset($file);
+        }
+
+        $this->fileManager->flush();
     }
 }

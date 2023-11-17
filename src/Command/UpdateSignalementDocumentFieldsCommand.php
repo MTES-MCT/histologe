@@ -67,7 +67,7 @@ class UpdateSignalementDocumentFieldsCommand extends Command
             return Command::FAILURE;
         }
 
-        $fromFile = 'csv/'.SlugifyDocumentSignalementCommand::PREFIX_FILENAME_STORAGE.$zip.'.csv';
+        $fromFile = 'csv/'.SlugifyDocumentSignalementCommand::PREFIX_FILENAME_STORAGE_MAPPING_SLUGGED.$zip.'.csv';
         $toFile = $this->parameterBag->get('uploads_tmp_dir').'mapping_doc_signalement_'.$zip.'.csv';
         if (!$this->fileStorage->fileExists($fromFile)) {
             $io->error('CSV Mapping file '.$fromFile.' does not exist, please execute app:slugify-doc-signalement');
