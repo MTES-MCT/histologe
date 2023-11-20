@@ -46,10 +46,10 @@ class SecurityController extends AbstractController
 
     #[Route('/_up/{filename}/{uuid?}', name: 'show_uploaded_file')]
     public function showUploadedFile(
-        string $filename,
         LoggerInterface $logger,
+        FilesystemOperator $fileStorage,
+        string $filename,
         Signalement|null $signalement = null,
-        FilesystemOperator $fileStorage
     ): BinaryFileResponse|RedirectResponse {
         $request = Request::createFromGlobals();
         $this->denyAccessUnlessGranted(

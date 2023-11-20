@@ -96,10 +96,7 @@ class FrontSignalementController extends AbstractController
             try {
                 foreach ($files as $key => $file) {
                     $res = $uploadHandlerService->toTempFolder($file)->setKey($key);
-                    if (isset($res['error'])) {
-                        return $this->json($res);
-                    }
-                    if (\in_array($file->getMimeType(), ImageManipulationService::IMAGE_MIME_TYPES)) {
+                    if (!isset($res['error']) && \in_array($file->getMimeType(), ImageManipulationService::IMAGE_MIME_TYPES)) {
                         $imageManipulationService->resize($res['filePath']);
                         $imageManipulationService->thumbnail($res['filePath']);
                     }

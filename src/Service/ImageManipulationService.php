@@ -8,6 +8,8 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ImageManipulationService
 {
+    public const SUFFIX_RESIZE = '_resize';
+    public const SUFFIX_THUMB = '_thumb';
     public const IMAGE_MIME_TYPES = [
         'image/jpeg',
         'image/png',
@@ -40,7 +42,7 @@ class ImageManipulationService
             $constraint->upsize();
         });
         $resource = $image->stream()->detach();
-        $this->fileStorage->writeStream($this->getNewPath($path, 'resize'), $resource);
+        $this->fileStorage->writeStream($this->getNewPath($path, self::SUFFIX_RESIZE), $resource);
     }
 
     public function thumbnail($path, $size = self::DEFAULT_SIZE_THUMB)
@@ -48,13 +50,13 @@ class ImageManipulationService
         $image = $this->imageManager->make($this->fileStorage->readStream($path));
         $image->fit($size, $size);
         $resource = $image->stream()->detach();
-        $this->fileStorage->writeStream($this->getNewPath($path, 'thumb'), $resource);
+        $this->fileStorage->writeStream($this->getNewPath($path, self::SUFFIX_THUMB), $resource);
     }
 
     private function getNewPath($path, $suffix)
     {
         $pathInfo = pathinfo($path);
-        $newName = $pathInfo['filename'].'_'.$suffix.'.'.$pathInfo['extension'];
+        $newName = $pathInfo['filename'].$suffix.'.'.$pathInfo['extension'];
         $newPath = $newName;
         if ($this->tmp) {
             $newPath = $this->parameterBag->get('bucket_tmp_dir').$newName;

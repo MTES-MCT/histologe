@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Factory\SuiviFactory;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
+use App\Service\ImageManipulationService;
 use App\Service\Signalement\SignalementFileProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
@@ -126,8 +127,8 @@ class SignalementFileController extends AbstractController
                     $fileStorage->delete($file->getFilename());
                 }
                 $pathInfo = pathinfo($filename);
-                $resize = $pathInfo['filename'].'_resize.'.$pathInfo['extension'];
-                $thumb = $pathInfo['filename'].'_thumb.'.$pathInfo['extension'];
+                $resize = $pathInfo['filename'].ImageManipulationService::SUFFIX_RESIZE.'.'.$pathInfo['extension'];
+                $thumb = $pathInfo['filename'].ImageManipulationService::SUFFIX_THUMB.'.'.$pathInfo['extension'];
                 if ($fileStorage->fileExists($resize)) {
                     $fileStorage->delete($resize);
                 }

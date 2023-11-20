@@ -7,14 +7,11 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20231114163537 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Add field size to file';
     }
 
     public function up(Schema $schema): void

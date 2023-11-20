@@ -112,8 +112,8 @@ class UploadHandlerService
     {
         $pathInfo = pathinfo($filename);
         $distantFolder = $this->parameterBag->get('bucket_tmp_dir');
-        $this->moveFilePath($distantFolder.$pathInfo['filename'].'_resize.'.$pathInfo['extension']);
-        $this->moveFilePath($distantFolder.$pathInfo['filename'].'_thumb.'.$pathInfo['extension']);
+        $this->moveFilePath($distantFolder.$pathInfo['filename'].ImageManipulationService::SUFFIX_RESIZE.'.'.$pathInfo['extension']);
+        $this->moveFilePath($distantFolder.$pathInfo['filename'].ImageManipulationService::SUFFIX_THUMB.'.'.$pathInfo['extension']);
     }
 
     public function uploadFromFilename(string $filename): ?string
@@ -195,7 +195,7 @@ class UploadHandlerService
     public function getFileSize(string $filename): ?int
     {
         $pathInfo = pathinfo($filename);
-        $fileResize = $pathInfo['filename'].'_resize.'.$pathInfo['extension'];
+        $fileResize = $pathInfo['filename'].ImageManipulationService::SUFFIX_RESIZE.'.'.$pathInfo['extension'];
         if ($this->fileStorage->fileExists($fileResize)) {
             return $this->fileStorage->fileSize($fileResize);
         }
