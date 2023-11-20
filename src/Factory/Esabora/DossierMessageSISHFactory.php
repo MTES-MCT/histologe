@@ -159,7 +159,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         }
 
         if (PersonneType::PROPRIETAIRE === $personneType && !empty($signalement->getNomProprio())) {
-            $tel = $signalement->getTelOccupant() ? substr($signalement->getTelOccupant(), 0, 20) : null;
+            $tel = $signalement->getTelProprio() ? substr($signalement->getTelProprio(), 0, 20) : null;
 
             return (new DossierMessageSISHPersonne())
                 ->setType(PersonneType::PROPRIETAIRE->value)
@@ -170,8 +170,8 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         }
 
         if (PersonneType::DECLARANT === $personneType && !empty($signalement->getLienDeclarantOccupant())) {
-            $prenom = $signalement->getPrenomOccupant() ? substr($signalement->getPrenomOccupant(), 0, 30) : null;
-            $tel = $signalement->getTelOccupant() ? substr($signalement->getTelOccupant(), 0, 20) : null;
+            $prenom = $signalement->getPrenomDeclarant() ? substr($signalement->getPrenomDeclarant(), 0, 30) : null;
+            $tel = $signalement->getTelDeclarant() ? substr($signalement->getTelDeclarant(), 0, 20) : null;
             $structure = $signalement->getStructureDeclarant() ? substr($signalement->getStructureDeclarant(), 0, 150) : null;
             $lienOccupant = $signalement->getLienDeclarantOccupant() ? substr($signalement->getLienDeclarantOccupant(), 0, 150) : null;
 

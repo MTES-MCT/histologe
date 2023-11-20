@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\InterfacageType;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Intervention;
+use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\InterventionCreatedEvent;
 use App\Factory\InterventionFactory;
@@ -45,15 +46,21 @@ class EsaboraManager
 
         $description = $this->updateStatusFor($affectation, $adminUser, $dossierResponse);
         if (!empty($description)) {
+            $params = [
+                'domain' => 'esabora',
+                'action' => 'synchronize',
+                'description' => $description,
+                'name_partner' => $affectation->getPartner()->getNom(),
+            ];
+
+            if (EsaboraStatus::ESABORA_WAIT->value === $dossierResponse->getSasEtat()) {
+                $params['type'] = Suivi::TYPE_TECHNICAL;
+            }
+
             $suivi = $this->suiviManager->createSuivi(
                 user: $adminUser,
                 signalement: $signalement,
-                params: [
-                    'domain' => 'esabora',
-                    'action' => 'synchronize',
-                    'description' => $description,
-                    'name_partner' => $affectation->getPartner()->getNom(),
-                ],
+                params: $params,
             );
             $this->suiviManager->save($suivi);
         }

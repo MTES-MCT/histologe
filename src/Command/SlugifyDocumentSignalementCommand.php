@@ -29,9 +29,17 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 )]
 class SlugifyDocumentSignalementCommand extends Command
 {
-    public const PREFIX_FILENAME_STORAGE = 'mapping_doc_signalement_slugged_';
+    public const PREFIX_FILENAME_STORAGE_MAPPING = 'mapping_doc_signalement_';
+    public const PREFIX_FILENAME_STORAGE_MAPPING_SLUGGED = 'mapping_doc_signalement_slugged_';
+    public const PREFIX_FILENAME_STORAGE_SIGNALEMENT = 'signalement_';
+    public const PREFIX_FILENAME_STORAGE_SIGNALEMENT_SLUGGED = 'signalement_slugged_';
     public const BASE_DIRECTORY_CSV = 'csv/';
+    public const IMPORT_SIGNALEMENT_COLUMN_PHOTOS = 'ref des photos';
+    public const IMPORT_SIGNALEMENT_COLUMN_DOCUMENTS = 'ref des documents';
+
     private ?Territory $territory = null;
+    private bool $isMappingFile;
+    private ?string $filename = null;
     private ?string $directoryPath = null;
     private ?string $sourceFile = null;
     private ?string $destinationFile = null;
@@ -54,6 +62,7 @@ class SlugifyDocumentSignalementCommand extends Command
     protected function configure(): void
     {
         $this->addArgument('zip', InputArgument::REQUIRED, 'Territory zip to target');
+        $this->addArgument('mapping', InputArgument::REQUIRED, 'Is it a mapping or a list of signalements');
     }
 
     /**
@@ -78,12 +87,14 @@ class SlugifyDocumentSignalementCommand extends Command
         $tmpDirectory = $this->parameterBag->get('uploads_tmp_dir');
         $this->uploadHandlerService->createTmpFileFromBucket($this->sourceFile, $this->destinationFile);
 
-        if ($this->hasMissingColumnLabel($io)) {
+        if ($this->isMappingFile && $this->hasMissingColumnLabel($io)) {
             return Command::FAILURE;
         }
 
         $rows = $this->csvParser->parseAsDict($this->destinationFile);
-        $filename = self::PREFIX_FILENAME_STORAGE.$this->territory->getZip().'.csv';
+        $filename = $this->isMappingFile
+                        ? self::PREFIX_FILENAME_STORAGE_MAPPING_SLUGGED.$this->territory->getZip().'.csv'
+                        : self::PREFIX_FILENAME_STORAGE_SIGNALEMENT_SLUGGED.$this->territory->getZip().'.csv';
 
         $csvWriter = new CsvWriter(
             $tmpDirectory.$filename,
@@ -91,33 +102,29 @@ class SlugifyDocumentSignalementCommand extends Command
         );
         $countFileSlugged = 0;
         foreach ($rows as $index => $row) {
-            $fileInfo = pathinfo($row[SignalementImportImageHeader::COLUMN_FILENAME]);
-            $extension = $fileInfo['extension'] ?? null;
-            if (null === $extension) {
-                continue;
-            }
-            $filenameSlugged = $this->slugger->slug($fileInfo['filename'])->toString();
-            if (\strlen($filenameSlugged) > 25) {
-                $filenameSlugged = substr($filenameSlugged, 0, 25);
-            }
-            $filenameSlugged = uniqid().'-'.$filenameSlugged.'.'.$extension;
-
-            try {
-                $this->filesystem->rename(
-                    $this->directoryPath.$row[SignalementImportImageHeader::COLUMN_FILENAME],
-                    $this->directoryPath.$filenameSlugged,
-                    true
-                );
-                $csvWriter->writeRow(
-                    [
-                        $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT_ATTACHMENT],
-                        $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT],
-                        $filenameSlugged,
-                    ]
-                );
-                ++$countFileSlugged;
-            } catch (\Throwable $exception) {
-                $this->logger->error(sprintf('N° %s ligne avec %s', $index, $exception->getMessage()));
+            if ($this->isMappingFile) {
+                if (!empty($row[SignalementImportImageHeader::COLUMN_FILENAME])) {
+                    $rowFilename = $row[SignalementImportImageHeader::COLUMN_FILENAME];
+                    if ($this->makeSlugForMappingFile($csvWriter, $rowFilename, $index, $row)) {
+                        ++$countFileSlugged;
+                    }
+                }
+            } else {
+                if (!empty($row[self::IMPORT_SIGNALEMENT_COLUMN_PHOTOS])) {
+                    $row[self::IMPORT_SIGNALEMENT_COLUMN_PHOTOS]
+                        = $this->makeSlugsForSignalementFile(self::IMPORT_SIGNALEMENT_COLUMN_PHOTOS, $index, $row);
+                    $countFileSlugged += \count(explode('|', $row[self::IMPORT_SIGNALEMENT_COLUMN_PHOTOS]));
+                }
+                if (!empty($row[self::IMPORT_SIGNALEMENT_COLUMN_DOCUMENTS])) {
+                    $row[self::IMPORT_SIGNALEMENT_COLUMN_DOCUMENTS]
+                        = $this->makeSlugsForSignalementFile(self::IMPORT_SIGNALEMENT_COLUMN_DOCUMENTS, $index, $row);
+                    $countFileSlugged += \count(explode('|', $row[self::IMPORT_SIGNALEMENT_COLUMN_DOCUMENTS]));
+                }
+                try {
+                    $csvWriter->writeRow($row);
+                } catch (\Throwable $exception) {
+                    $this->logger->error(sprintf('CSV Write - row %s - error: %s', $index, $exception->getMessage()));
+                }
             }
         }
 
@@ -128,7 +135,7 @@ class SlugifyDocumentSignalementCommand extends Command
         $command = 'make upload action=image zip='.$this->territory->getZip();
         if (\count($file) > 1) {
             $this->uploadHandlerService->moveFromBucketTempFolder($filename, self::BASE_DIRECTORY_CSV);
-            $io->success(sprintf('%s files has been slugify', $countFileSlugged));
+            $io->success(sprintf('%s files have been slugified', $countFileSlugged));
             $io->success(
                 sprintf(
                     '%s has been pushed to S3 bucket storage, please send your images to S3 Bucket `%s`',
@@ -137,14 +144,86 @@ class SlugifyDocumentSignalementCommand extends Command
                 )
             );
         } else {
-            $io->warning(sprintf('%s files has been slugify', $countFileSlugged));
-            $io->warning(sprintf('%s is empty, please check if your images has been already slugged', $filename));
+            $io->warning(sprintf('%s files have been slugified', $countFileSlugged));
+            $io->warning(sprintf('%s is empty, please check if your images have been already slugged', $filename));
             $io->warning(sprintf('You should send your images to S3 Bucket with`%s`', $command));
 
             return Command::FAILURE;
         }
 
         return Command::SUCCESS;
+    }
+
+    private function makeSlugForMappingFile(CsvWriter $csvWriter, $filename, int $index, $row): int
+    {
+        $filenameSlugged = !empty($filename) ? $this->getSluggedFile($filename, $index) : null;
+        if (!empty($filenameSlugged)) {
+            try {
+                $csvWriter->writeRow(
+                    [
+                        $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT_ATTACHMENT],
+                        $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT],
+                        $filenameSlugged,
+                    ]
+                );
+
+                return 1;
+            } catch (\Throwable $exception) {
+                $this->logger->error(sprintf('CSV Write - N° %s ligne avec %s', $index, $exception->getMessage()));
+            }
+        }
+
+        return 0;
+    }
+
+    private function makeSlugsForSignalementFile(string $colName, $index, $row): ?string
+    {
+        $fileListSlugged = [];
+        $fileList = explode('|', $row[$colName]);
+        foreach ($fileList as $filename) {
+            $filenameSlugged = !empty($filename) ? $this->getSluggedFile($filename, $index) : null;
+            if (!empty($filenameSlugged)) {
+                $fileListSlugged[] = $filenameSlugged;
+            }
+        }
+
+        $countFileList = \count($fileList);
+        $countFileSlugged = \count($fileListSlugged);
+        if ($countFileList != $countFileSlugged) {
+            $this->logger->error(sprintf('Different count - row %s col %s - %s // %s', $index, $colName, $countFileSlugged, $countFileList));
+
+            return null;
+        }
+
+        return implode('|', $fileListSlugged);
+    }
+
+    private function getSluggedFile(string $filename, int $index): ?string
+    {
+        $fileInfo = pathinfo($filename);
+        $extension = $fileInfo['extension'] ?? null;
+        if (null === $extension) {
+            return null;
+        }
+        $filenameSlugged = $this->slugger->slug($fileInfo['filename'])->toString();
+        if (\strlen($filenameSlugged) > 25) {
+            $filenameSlugged = substr($filenameSlugged, 0, 25);
+        }
+        $filenameSlugged = uniqid().'-'.$filenameSlugged.'.'.$extension;
+
+        try {
+            $this->filesystem->rename(
+                $this->directoryPath.$filename,
+                $this->directoryPath.$filenameSlugged,
+                true
+            );
+
+            return $filenameSlugged;
+        } catch (\Throwable $exception) {
+            $this->logger->error(sprintf('File rename - row %s - error: %s', $index, $exception->getMessage()));
+        }
+
+        return null;
     }
 
     /**
@@ -166,8 +245,13 @@ class SlugifyDocumentSignalementCommand extends Command
             return false;
         }
 
-        $fromFile = 'csv/mapping_doc_signalement_'.$zip.'.csv';
-        $toFile = $this->parameterBag->get('uploads_tmp_dir').'mapping_doc_signalement_'.$zip.'.csv';
+        $this->isMappingFile = '1' == $input->getArgument('mapping');
+        $this->filename = $this->isMappingFile
+                            ? self::PREFIX_FILENAME_STORAGE_MAPPING
+                            : self::PREFIX_FILENAME_STORAGE_SIGNALEMENT;
+
+        $fromFile = 'csv/'.$this->filename.$zip.'.csv';
+        $toFile = $this->parameterBag->get('uploads_tmp_dir').$this->filename.$zip.'.csv';
 
         /** @var Territory $territory */
         $territory = $this->territoryManager->findOneBy(['zip' => $zip]);
@@ -179,7 +263,7 @@ class SlugifyDocumentSignalementCommand extends Command
         if ($this->filesystem->exists($directoryPath)) {
             $countFile = \count(scandir($directoryPath)) - 2; // ignore single dot (.) and double dots (..)
             $question = new ConfirmationQuestion(
-                sprintf('Do you want to slugify %s files from your directory %s ? ', $countFile, $directoryPath),
+                sprintf('Do you want to slugify %s files from your directory %s?', $countFile, $directoryPath),
                 false
             );
             if (!$helper->ask($input, $output, $question)) {

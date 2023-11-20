@@ -41,7 +41,7 @@ final class DossierMessageSCHSHandler
             service: AbstractEsaboraService::TYPE_SERVICE,
             action: AbstractEsaboraService::ACTION_PUSH_DOSSIER,
             message: $this->serializer->serialize($schsDossierMessage, 'json'),
-            response: $response->getContent(),
+            response: $response->getContent(throw: false),
             status: 200 === $response->getStatusCode() ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,
             codeStatus: $response->getStatusCode(),
             signalementId: $schsDossierMessage->getSignalementId(),

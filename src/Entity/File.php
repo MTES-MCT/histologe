@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\DocumentType;
 use App\Repository\FileRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,6 +14,7 @@ class File
     public const FILE_TYPE_PHOTO = 'photo';
     public const INPUT_NAME_PHOTOS = 'photos';
     public const INPUT_NAME_DOCUMENTS = 'documents';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -43,6 +45,12 @@ class File
 
     #[ORM\Column(type: Types::BIGINT, nullable: true)]
     private ?string $size = null;
+
+    #[ORM\Column(type: 'string', enumType: DocumentType::class, nullable: true)]
+    private ?DocumentType $documentType = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $desordreSlug = null;
 
     public function __construct()
     {
@@ -146,6 +154,28 @@ class File
     public function setSize(?string $size): static
     {
         $this->size = $size;
+    }
+  
+    public function getDocumentType(): ?DocumentType
+    {
+        return $this->documentType;
+    }
+
+    public function setDocumentType(DocumentType $documentType): self
+    {
+        $this->documentType = $documentType;
+
+        return $this;
+    }
+
+    public function getDesordreSlug(): ?string
+    {
+        return $this->desordreSlug;
+    }
+
+    public function setDesordreSlug(?string $desordreSlug): self
+    {
+        $this->desordreSlug = $desordreSlug;
 
         return $this;
     }

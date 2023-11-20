@@ -56,7 +56,12 @@
         </div>
 
         <div class="fr-col-7 bloc-suivi-content-row fr-pl-3v">
-            {{ suivi.description|replace({'&t=___TOKEN___':''})|replace({'?t=___TOKEN___':''})|raw }}
+            {{ suivi.description
+                |replace({'&t=___TOKEN___':'/'~signalement.uuid})
+                |replace({'?t=___TOKEN___':'/'~signalement.uuid})
+                |replace({'?folder=_up':'/'~signalement.uuid})
+                |raw
+            }}
         </div>
         <div class="fr-col-2">
             {% if suivi.isPublic %}

@@ -7,6 +7,7 @@ use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
+use App\Factory\FileFactory;
 use App\Factory\Signalement\InformationComplementaireFactory;
 use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
@@ -14,7 +15,9 @@ use App\Factory\Signalement\TypeCompositionLogementFactory;
 use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\Token\TokenGeneratorInterface;
+use App\Service\UploadHandlerService;
 use App\Utils\Json;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class SignalementBuilder
 {
@@ -32,7 +35,10 @@ class SignalementBuilder
         private TypeCompositionLogementFactory $typeCompositionLogementFactory,
         private SituationFoyerFactory $situationFoyerFactory,
         private InformationProcedureFactory $informationProcedureFactory,
-        private InformationComplementaireFactory $informationComplementaireFactory
+        private InformationComplementaireFactory $informationComplementaireFactory,
+        private FileFactory $fileFactory,
+        private UploadHandlerService $uploadHandlerService,
+        private Security $security,
     ) {
     }
 
@@ -141,6 +147,21 @@ class SignalementBuilder
             ->setIsRelogement($this->isDemandeRelogement())
             ->setDateEntree($this->resolveDateEmmenagement())
             ->setIsConstructionAvant1949($this->isConstructionAvant1949($anneeConstruction));
+
+        return $this;
+    }
+
+    public function withFiles(): self
+    {
+        if ($files = $this->signalementDraftRequest->getFiles()) {
+            foreach ($files as $key => $fileList) {
+                foreach ($fileList as $fileItem) {
+                    $fileItem['slug'] = $key;
+                    $this->signalement->addFile($file = $this->fileFactory->createFromFileArray(file: $fileItem));
+                    $this->uploadHandlerService->moveFromBucketTempFolder($file->getFilename());
+                }
+            }
+        }
 
         return $this;
     }
