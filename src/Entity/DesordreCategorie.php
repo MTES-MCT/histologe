@@ -24,9 +24,13 @@ class DesordreCategorie
     #[ORM\OneToMany(mappedBy: 'desordreCategorie', targetEntity: DesordreCritere::class, orphanRemoval: true)]
     private Collection $desordreCriteres;
 
+    #[ORM\ManyToMany(targetEntity: Signalement::class, inversedBy: 'desordreCategories')]
+    private Collection $signalement;
+
     public function __construct()
     {
         $this->desordreCriteres = new ArrayCollection();
+        $this->signalement = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -72,6 +76,30 @@ class DesordreCategorie
                 $desordreCritere->setDesordreCategorie(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Signalement>
+     */
+    public function getSignalement(): Collection
+    {
+        return $this->signalement;
+    }
+
+    public function addSignalement(Signalement $signalement): static
+    {
+        if (!$this->signalement->contains($signalement)) {
+            $this->signalement->add($signalement);
+        }
+
+        return $this;
+    }
+
+    public function removeSignalement(Signalement $signalement): static
+    {
+        $this->signalement->removeElement($signalement);
 
         return $this;
     }
