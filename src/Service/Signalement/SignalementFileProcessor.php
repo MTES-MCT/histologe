@@ -8,7 +8,7 @@ use App\Entity\Signalement;
 use App\Factory\FileFactory;
 use App\Service\Files\FilenameGenerator;
 use App\Service\Files\HeicToJpegConverter;
-use App\Service\ImageManipulationService;
+use App\Service\ImageManipulationHandler;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -25,7 +25,7 @@ class SignalementFileProcessor
         private readonly FilenameGenerator $filenameGenerator,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly FileFactory $fileFactory,
-        private readonly ImageManipulationService $imageManipulationService,
+        private readonly ImageManipulationHandler $imageManipulationHandler,
     ) {
     }
 
@@ -52,10 +52,8 @@ class SignalementFileProcessor
                         );
                         $title = $this->filenameGenerator->getTitle();
 
-                        if (\in_array($file->getMimeType(), ImageManipulationService::IMAGE_MIME_TYPES)) {
-                            $this->imageManipulationService->setTmp(false);
-                            $this->imageManipulationService->resize($filename);
-                            $this->imageManipulationService->thumbnail($filename);
+                        if (\in_array($file->getMimeType(), ImageManipulationHandler::IMAGE_MIME_TYPES)) {
+                            $this->imageManipulationHandler->setUseTmpDir(false)->resize($filename)->thumbnail($filename);
                         }
                     } else {
                         $filename = $this->uploadHandlerService->moveFromBucketTempFolder($file);

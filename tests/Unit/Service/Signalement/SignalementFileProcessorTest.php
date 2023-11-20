@@ -5,7 +5,7 @@ namespace App\Tests\Unit\Service\Signalement;
 use App\Entity\File;
 use App\Factory\FileFactory;
 use App\Service\Files\FilenameGenerator;
-use App\Service\ImageManipulationService;
+use App\Service\ImageManipulationHandler;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
@@ -34,7 +34,7 @@ class SignalementFileProcessorTest extends TestCase
     private MockObject|FilenameGenerator $filenameGenerator;
     private MockObject|UrlGeneratorInterface $urlGenerator;
     private MockObject|FileFactory $fileFactory;
-    private MockObject|ImageManipulationService $imageManipulationService;
+    private MockObject|ImageManipulationHandler $imageManipulationHandler;
 
     protected function setUp(): void
     {
@@ -43,7 +43,7 @@ class SignalementFileProcessorTest extends TestCase
         $this->filenameGenerator = $this->createMock(FilenameGenerator::class);
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $this->fileFactory = $this->createMock(FileFactory::class);
-        $this->imageManipulationService = $this->createMock(ImageManipulationService::class);
+        $this->imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
     }
 
     public function testProcessUsagerDocument(): void
@@ -59,7 +59,7 @@ class SignalementFileProcessorTest extends TestCase
             $this->filenameGenerator,
             $this->urlGenerator,
             $this->fileFactory,
-            $this->imageManipulationService
+            $this->imageManipulationHandler
         );
 
         [$fileList, $descriptionList] = $signalementFileProcessor->process(self::FILE_LIST, 'documents');
@@ -112,7 +112,7 @@ class SignalementFileProcessorTest extends TestCase
             $this->filenameGenerator,
             $this->urlGenerator,
             $this->fileFactory,
-            $this->imageManipulationService
+            $this->imageManipulationHandler
         );
         $signalement = $this->getSignalement();
         [$fileList, $descriptionList] = $signalementFileProcessor->process(self::FILE_LIST, 'photos');

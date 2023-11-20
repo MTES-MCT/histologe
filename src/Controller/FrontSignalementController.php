@@ -22,7 +22,7 @@ use App\Repository\SituationRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\Files\DocumentProvider;
-use App\Service\ImageManipulationService;
+use App\Service\ImageManipulationHandler;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -90,15 +90,14 @@ class FrontSignalementController extends AbstractController
         UploadHandlerService $uploadHandlerService,
         Request $request,
         LoggerInterface $logger,
-        ImageManipulationService $imageManipulationService
+        ImageManipulationHandler $imageManipulationHandler
     ) {
         if (null !== ($files = $request->files->get('signalement'))) {
             try {
                 foreach ($files as $key => $file) {
                     $res = $uploadHandlerService->toTempFolder($file)->setKey($key);
-                    if (!isset($res['error']) && \in_array($file->getMimeType(), ImageManipulationService::IMAGE_MIME_TYPES)) {
-                        $imageManipulationService->resize($res['filePath']);
-                        $imageManipulationService->thumbnail($res['filePath']);
+                    if (!isset($res['error']) && \in_array($file->getMimeType(), ImageManipulationHandler::IMAGE_MIME_TYPES)) {
+                        $imageManipulationHandler->resize($res['filePath'])->thumbnail();
                     }
 
                     return $this->json($res);

@@ -76,7 +76,8 @@ class UploadHandlerService
     {
         try {
             $pathInfo = pathinfo($filePath);
-            $newFilename = $pathInfo['filename'].'.'.$pathInfo['extension'];
+            $ext = \array_key_exists('extension', $pathInfo) ? '.'.$pathInfo['extension'] : '';
+            $newFilename = $pathInfo['filename'].$ext;
 
             if ($this->fileStorage->fileExists($newFilename)) {
                 return $newFilename;
@@ -111,9 +112,10 @@ class UploadHandlerService
     private function movePhotoVariants(string $filename): void
     {
         $pathInfo = pathinfo($filename);
+        $ext = \array_key_exists('extension', $pathInfo) ? '.'.$pathInfo['extension'] : '';
         $distantFolder = $this->parameterBag->get('bucket_tmp_dir');
-        $this->moveFilePath($distantFolder.$pathInfo['filename'].ImageManipulationService::SUFFIX_RESIZE.'.'.$pathInfo['extension']);
-        $this->moveFilePath($distantFolder.$pathInfo['filename'].ImageManipulationService::SUFFIX_THUMB.'.'.$pathInfo['extension']);
+        $this->moveFilePath($distantFolder.$pathInfo['filename'].ImageManipulationHandler::SUFFIX_RESIZE.$ext);
+        $this->moveFilePath($distantFolder.$pathInfo['filename'].ImageManipulationHandler::SUFFIX_THUMB.$ext);
     }
 
     public function uploadFromFilename(string $filename): ?string
@@ -124,7 +126,8 @@ class UploadHandlerService
 
         try {
             $pathInfo = pathinfo($tmpFilepath);
-            $newFilename = $pathInfo['filename'].'.'.$pathInfo['extension'];
+            $ext = \array_key_exists('extension', $pathInfo) ? '.'.$pathInfo['extension'] : '';
+            $newFilename = $pathInfo['filename'].$ext;
 
             $fileResource = fopen($tmpFilepath, 'r');
             $this->fileStorage->writeStream($newFilename, $fileResource);
@@ -152,7 +155,8 @@ class UploadHandlerService
             if ($newTmpFilepath !== $tmpFilepath) {
                 $tmpFilepath = $newTmpFilepath;
                 $pathInfo = pathinfo($tmpFilepath);
-                $newFilename = $pathInfo['filename'].'.'.$pathInfo['extension'];
+                $ext = \array_key_exists('extension', $pathInfo) ? '.'.$pathInfo['extension'] : '';
+                $newFilename = $pathInfo['filename'].$ext;
             }
 
             $fileResource = fopen($tmpFilepath, 'r');
@@ -195,7 +199,8 @@ class UploadHandlerService
     public function getFileSize(string $filename): ?int
     {
         $pathInfo = pathinfo($filename);
-        $fileResize = $pathInfo['filename'].ImageManipulationService::SUFFIX_RESIZE.'.'.$pathInfo['extension'];
+        $ext = \array_key_exists('extension', $pathInfo) ? '.'.$pathInfo['extension'] : '';
+        $fileResize = $pathInfo['filename'].ImageManipulationHandler::SUFFIX_RESIZE.$ext;
         if ($this->fileStorage->fileExists($fileResize)) {
             return $this->fileStorage->fileSize($fileResize);
         }

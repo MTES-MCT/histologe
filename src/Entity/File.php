@@ -151,11 +151,13 @@ class File
         return $this->size;
     }
 
-    public function setSize(?string $size): static
+    public function setSize(?string $size): self
     {
         $this->size = $size;
+
+        return $this;
     }
-  
+
     public function getDocumentType(): ?DocumentType
     {
         return $this->documentType;
