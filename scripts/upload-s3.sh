@@ -12,6 +12,7 @@
 #   option - The type of file to upload (grid, signalement, or image)
 #   zip - The code of the department
 #
+# Example 0: ./scripts/upload-s3.sh desordres
 # Example 1: ./scripts/upload-s3.sh grid 33
 # Example 2: ./scripts/upload-s3.sh signalement 33
 # Example 3: ./scripts/upload-s3.sh image 33
@@ -29,11 +30,16 @@ else
   option=$1
   zip=$2
   debug=${3:null}
-  if [ -z "$zip" ]; then
+  if [ -z "$zip" ] && [ "$option" != "desordres" ]; then
     echo "zip argument is missing: ./scripts/upload-s3.sh [option] [zip]"
     exit 1
   fi
   case "$option" in
+    "desordres")
+      echo "Upload desordres_tables.csv to cloud..."
+      aws s3 cp data/desordres_tables.csv s3://${BUCKET_URL}/csv/ ${debug}
+      aws s3 ls s3://${BUCKET_URL}/csv/desordres_tables.csv
+      ;;
     "grid")
       echo "Upload grille_affectation_$2.csv to cloud..."
       aws s3 cp data/grid-affectation/grille_affectation_${zip}.csv s3://${BUCKET_URL}/csv/ ${debug}
@@ -73,7 +79,7 @@ else
       fi
       ;;
     *)
-      echo "Invalid argument. Please use 'grid' or 'signalement' or 'image' or 'mapping-doc' or 'process-all'"
+      echo "Invalid argument. Please use 'desordres' or 'grid' or 'signalement' or 'image' or 'mapping-doc' or 'process-all'"
       ;;
   esac
 fi

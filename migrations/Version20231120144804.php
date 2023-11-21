@@ -11,7 +11,7 @@ final class Version20231120144804 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Add relation between signalement and desordre';
     }
 
     public function up(Schema $schema): void
@@ -28,6 +28,7 @@ final class Version20231120144804 extends AbstractMigration
         $this->addSql('ALTER TABLE desordre_categorie CHANGE created_at created_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE desordre_critere CHANGE created_at created_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE desordre_precision CHANGE created_at created_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('ALTER TABLE desordre_precision CHANGE coef coef DOUBLE PRECISION NOT NULL');
     }
 
     public function down(Schema $schema): void
@@ -44,5 +45,6 @@ final class Version20231120144804 extends AbstractMigration
         $this->addSql('ALTER TABLE desordre_categorie CHANGE created_at created_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE desordre_critere CHANGE created_at created_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE desordre_precision CHANGE created_at created_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('ALTER TABLE desordre_precision CHANGE coef coef INT NOT NULL');
     }
 }

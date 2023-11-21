@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DesordrePrecisionRepository::class)]
+#[ORM\HasLifecycleCallbacks()]
 class DesordrePrecision
 {
     use TimestampableTrait;
@@ -19,7 +20,7 @@ class DesordrePrecision
     private ?int $id = null;
 
     #[ORM\Column]
-    private ?int $coef = null;
+    private ?float $coef = null;
 
     #[ORM\Column(nullable: true)]
     private ?bool $isDanger = null;
@@ -50,12 +51,12 @@ class DesordrePrecision
         return $this->id;
     }
 
-    public function getCoef(): ?int
+    public function getCoef(): ?float
     {
         return $this->coef;
     }
 
-    public function setCoef(int $coef): static
+    public function setCoef(float $coef): static
     {
         $this->coef = $coef;
 
