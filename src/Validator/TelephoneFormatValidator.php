@@ -20,7 +20,7 @@ class TelephoneFormatValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\TelephoneFormat');
         }
 
-        /** @var App\Validator\TelephoneFormat $constraint */
+        /* @var App\Validator\TelephoneFormat $constraint */
 
         if (null === $value || '' === $value) {
             return;
