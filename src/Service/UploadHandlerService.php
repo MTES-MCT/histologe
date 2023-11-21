@@ -2,8 +2,11 @@
 
 namespace App\Service;
 
+use App\Entity\File;
+use App\Entity\Signalement;
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Exception\File\UnsupportedFileFormatException;
+use App\Repository\FileRepository;
 use App\Service\Files\FilenameGenerator;
 use App\Service\Files\HeicToJpegConverter;
 use League\Flysystem\FilesystemException;
@@ -116,6 +119,40 @@ class UploadHandlerService
         $distantFolder = $this->parameterBag->get('bucket_tmp_dir');
         $this->moveFilePath($distantFolder.$pathInfo['filename'].ImageManipulationHandler::SUFFIX_RESIZE.$ext);
         $this->moveFilePath($distantFolder.$pathInfo['filename'].ImageManipulationHandler::SUFFIX_THUMB.$ext);
+    }
+
+    public function deleteFile(Signalement $signalement, string $type, string $filename, FileRepository $fileRepository)
+    {
+        $fileType = 'documents' === $type ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO;
+
+        $fileCollection = $signalement->getFiles()->filter(
+            function (File $file) use ($fileType, $filename) {
+                return $fileType === $file->getFileType()
+                    && $filename === $file->getFilename();
+            }
+        );
+
+        if (!$fileCollection->isEmpty()) {
+            $file = $fileCollection->current();
+            if ($this->fileStorage->fileExists($file->getFilename())) {
+                $this->fileStorage->delete($file->getFilename());
+            }
+            $pathInfo = pathinfo($filename);
+            $resize = $pathInfo['filename'].ImageManipulationHandler::SUFFIX_RESIZE.'.'.$pathInfo['extension'];
+            $thumb = $pathInfo['filename'].ImageManipulationHandler::SUFFIX_THUMB.'.'.$pathInfo['extension'];
+            if ($this->fileStorage->fileExists($resize)) {
+                $this->fileStorage->delete($resize);
+            }
+            if ($this->fileStorage->fileExists($thumb)) {
+                $this->fileStorage->delete($thumb);
+            }
+
+            $fileRepository->remove($file, true);
+
+            return true;
+        }
+
+        return false;
     }
 
     public function uploadFromFilename(string $filename): ?string

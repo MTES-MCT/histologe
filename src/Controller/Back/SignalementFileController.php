@@ -9,11 +9,10 @@ use App\Entity\User;
 use App\Factory\SuiviFactory;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
-use App\Service\ImageManipulationHandler;
 use App\Service\Signalement\SignalementFileProcessor;
+use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
-use League\Flysystem\FilesystemOperator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -108,36 +107,11 @@ class SignalementFileController extends AbstractController
         string $filename,
         Request $request,
         FileRepository $fileRepository,
-        FilesystemOperator $fileStorage
+        UploadHandlerService $uploadHandlerService,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('FILE_DELETE', $signalement);
         if ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))) {
-            $fileType = 'documents' === $type ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO;
-
-            $fileCollection = $signalement->getFiles()->filter(
-                function (File $file) use ($fileType, $filename) {
-                    return $fileType === $file->getFileType()
-                        && $filename === $file->getFilename();
-                }
-            );
-
-            if (!$fileCollection->isEmpty()) {
-                $file = $fileCollection->current();
-                if ($fileStorage->fileExists($file->getFilename())) {
-                    $fileStorage->delete($file->getFilename());
-                }
-                $pathInfo = pathinfo($filename);
-                $resize = $pathInfo['filename'].ImageManipulationHandler::SUFFIX_RESIZE.'.'.$pathInfo['extension'];
-                $thumb = $pathInfo['filename'].ImageManipulationHandler::SUFFIX_THUMB.'.'.$pathInfo['extension'];
-                if ($fileStorage->fileExists($resize)) {
-                    $fileStorage->delete($resize);
-                }
-                if ($fileStorage->fileExists($thumb)) {
-                    $fileStorage->delete($thumb);
-                }
-
-                $fileRepository->remove($file, true);
-
+            if ($uploadHandlerService->deleteFile($signalement, $type, $filename, $fileRepository)) {
                 return $this->json(['response' => 'success']);
             }
         }

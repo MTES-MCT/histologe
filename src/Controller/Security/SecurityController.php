@@ -68,7 +68,7 @@ class SecurityController extends AbstractController
 
             if ('thumb' == $variant && $fileStorage->fileExists($thumb)) {
                 $filename = $thumb;
-            } elseif ($fileStorage->fileExists($resize)) {
+            } elseif ('resize' == $variant && $fileStorage->fileExists($resize)) {
                 $filename = $resize;
             }
             $tmpFilepath = $this->getParameter('uploads_tmp_dir').$filename;
