@@ -19,7 +19,18 @@ twig:
 when@test:
     twig:
         strict_variables: true
+        globals:
+            matomo:
+                enable: 0 # matomo is useless in test env
 
+when@dev:
+    twig:
+        globals:
+            matomo:
+                url: http://localhost:8083/
+                cdn: http://localhost:8083/matomo.js
+                site_id: 1
+                enable: '%matomo_enable%'
 when@prod:
     twig:
         globals:
@@ -27,3 +38,4 @@ when@prod:
                 url: https://histologe.matomo.cloud/
                 cdn: //cdn.matomo.cloud/histologe.matomo.cloud/matomo.js
                 site_id: 7
+                enable: '%matomo_enable%'

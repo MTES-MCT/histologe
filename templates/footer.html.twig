@@ -12,16 +12,20 @@
                 </div>
                 <ul class="fr-footer__content-list">
                     <li>
-                        <a class="fr-footer__content-link" href="http://legifrance.gouv.fr" rel="noreferrer">legifrance.gouv.fr</a>
+                        <a class="fr-footer__content-link" href="http://legifrance.gouv.fr" target="_blank"
+                           rel="noreferrer noopener">legifrance.gouv.fr</a>
                     </li>
                     <li>
-                        <a class="fr-footer__content-link" href="http://gouvernement.fr" rel="noreferrer">gouvernement.fr</a>
+                        <a class="fr-footer__content-link" href="http://gouvernement.fr" target="_blank"
+                           rel="noreferrer noopener">gouvernement.fr</a>
                     </li>
                     <li>
-                        <a class="fr-footer__content-link" href="http://service-public.fr" rel="noreferrer">service-public.fr</a>
+                        <a class="fr-footer__content-link" href="http://service-public.fr" target="_blank"
+                           rel="noreferrer noopener">service-public.fr</a>
                     </li>
                     <li>
-                        <a class="fr-footer__content-link" href="http://data.gouv.fr" rel="noreferrer">data.gouv.fr</a>
+                        <a class="fr-footer__content-link" href="http://data.gouv.fr" target="_blank"
+                           rel="noreferrer noopener">data.gouv.fr</a>
                     </li>
                 </ul>
             </div>
@@ -30,7 +34,8 @@
             <h4 class="fr-footer__partners-title">Nos partenaires</h4>
             <div class="fr-footer__partners-logos">
                 <div class="fr-footer__partners-main">
-                    <a class="fr-footer__partners-link" href="https://beta.gouv.fr/" target="_blank" rel="noreferrer"
+                    <a class="fr-footer__partners-link" href="https://beta.gouv.fr/" target="_blank"
+                       rel="noreferrer noopener"
                        title="beta.gouv.fr">
                         <img class="fr-footer__logo" style="height: 5.625rem"
                              src="{{ asset('/img/logo-betagouvfr.svg') }}" alt="Logo beta.gouv.fr"/>
@@ -65,8 +70,15 @@
                         confidentialité</a>
                 </li>
                 <li class="fr-footer__bottom-item">
-                    <a class="fr-footer__bottom-link" href="{{ path('politique_de_confidentialite') }}#gestion-cookies">Gestion
-                        des cookies</a>
+                    {% if 'back_' in app.request.get('_route') and app.user is not null and matomo.enable == 1 %}
+                        <button class="fr-footer__bottom-link " data-fr-opened="false" aria-controls="fr-consent-modal"
+                                title="Personnaliser les cookies">Gestion des cookies
+                        </button>
+                    {% else %}
+                        <a class="fr-footer__bottom-link"
+                           href="{{ path('politique_de_confidentialite') }}#gestion-cookies">Gestion
+                            des cookies</a>
+                    {% endif %}
                 </li>
             </ul>
             <div class="fr-footer__bottom-copy">

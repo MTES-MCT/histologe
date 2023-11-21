@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional\Service\Signalement;
+namespace App\Tests\Functional\Service\DataGouv;
 
 use App\Service\DataGouv\AddressService;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;

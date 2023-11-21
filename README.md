@@ -10,7 +10,7 @@ Cette application est déployé chez Scalingo, hébergé par Outscale.
 
 - Staging: [histologe-staging.incubateur.net](https://histologe-staging.incubateur.net)
 
-- Demo: [https://histologe-demo.osc-fr1.scalingo.io](https://histologe-demo.osc-fr1.scalingo.io)
+- Demo: [histologe-demo.osc-fr1.scalingo.io](https://histologe-demo.osc-fr1.scalingo.io)
 
 ## Pré-requis
 
@@ -24,6 +24,12 @@ Composer (optionnel) | [2.4.*](https://getcomposer.org/download/)
 Node (optionnel)| [16.*](https://nodejs.org/en/)
 
 ## Environnement technique
+### Principaux outils utilisés
+* [Le système de design de l'état français](https://www.systeme-de-design.gouv.fr/)
+* [PHP](https://www.php.net/)
+* [Symfony](https://symfony.com/)
+* [Twig](https://twig.symfony.com/)
+* [Vue.js](https://vuejs.org/) / [Typescript](https://www.typescriptlang.org/)
 
 ### Versions des dépendances
 
@@ -31,6 +37,7 @@ Service|Version
 -------|-------
 Nginx | 1.20.2
 PHP | 8.1.x (latest)
+Node.js | 18.x
 MySQL | 5.7.38
 Redis | 7.0.x (latest)
 
@@ -43,6 +50,7 @@ phpMyAdmin | [localhost:8081](http://localhost:8081)
 MailCatcher  | [localhost:1080](http://localhost:1080)
 Wiremock  | [localhost:1082](http://localhost:1082)
 Metabase  | [localhost:3007](http://localhost:3007)
+Matomo  | [localhost:1083](http://localhost:1083)
 
 ### Hôtes des environnements et ports
 
@@ -58,6 +66,7 @@ PhpMyAdmin | histologe_phpmyadmin | **8081**
 Mailcatcher| histologe_mailer     | **1025** et **1080**
 Wiremock| histologe_wiremock   | **8082**
 Metabase| histologe_metabase   | **3007**
+Matomo | histologe_matomo     | **1083**
 Redis| histologe_redis      | /
 
 ## Installation
@@ -132,12 +141,6 @@ $ php bin/console app:add-user ROLE_USER_PARTNER joe.doe.3@histologe.fr John Doe
 ```
 
 Une activation de compte sera nécéssaire
-
-## Accès à Metabase
-
-- Copier le fichier de base de données dans le dossier ```metabase-data/metabase.db/```
-- Login : ```admin@histologe.fr```
-- Mot de passe : ```histologe2023```
 
 ## Documentaton projet
 
