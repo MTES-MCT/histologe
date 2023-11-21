@@ -42,6 +42,9 @@ class ImageManipulationHandler
         return $this;
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function resize(?string $path = null, ?int $max = self::DEFAULT_SIZE_RESIZE): self
     {
         if ($path) {
@@ -58,6 +61,9 @@ class ImageManipulationHandler
         return $this;
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function thumbnail(?string $path = null, ?int $size = self::DEFAULT_SIZE_THUMB): self
     {
         if ($path) {

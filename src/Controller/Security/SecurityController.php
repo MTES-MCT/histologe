@@ -3,6 +3,7 @@
 namespace App\Controller\Security;
 
 use App\Entity\Signalement;
+use App\Service\ImageManipulationHandler;
 use League\Flysystem\FilesystemOperator;
 use LogicException;
 use Psr\Log\LoggerInterface;
@@ -49,27 +50,30 @@ class SecurityController extends AbstractController
         LoggerInterface $logger,
         FilesystemOperator $fileStorage,
         string $filename,
-        Signalement|null $signalement = null,
+        ?Signalement $signalement = null,
     ): BinaryFileResponse|RedirectResponse {
         $request = Request::createFromGlobals();
         $this->denyAccessUnlessGranted(
             'FILE_VIEW',
             null === $this->getUser() ? $this->isCsrfTokenValid('suivi_signalement_ext_file_view', $request->get('t')) : $signalement
         );
-        $variant = $request->query->get('variant');
-
-        $pathInfo = pathinfo($filename);
-        $resize = $pathInfo['filename'].'_resize.'.$pathInfo['extension'];
-        $thumb = $pathInfo['filename'].'_thumb.'.$pathInfo['extension'];
-
-        if ('thumb' == $variant && $fileStorage->fileExists($thumb)) {
-            $filename = $thumb;
-        } elseif ($fileStorage->fileExists($resize)) {
-            $filename = $resize;
-        }
-        $tmpFilepath = $this->getParameter('uploads_tmp_dir').$filename;
-        $bucketFilepath = $this->getParameter('url_bucket').'/'.$filename;
         try {
+            $variant = $request->query->get('variant');
+
+            $pathInfo = pathinfo($filename);
+            $ext = \array_key_exists('extension', $pathInfo) ? '.'.$pathInfo['extension'] : '';
+
+            $resize = $pathInfo['filename'].ImageManipulationHandler::SUFFIX_RESIZE.$ext;
+            $thumb = $pathInfo['filename'].ImageManipulationHandler::SUFFIX_THUMB.$ext;
+
+            if ('thumb' == $variant && $fileStorage->fileExists($thumb)) {
+                $filename = $thumb;
+            } elseif ($fileStorage->fileExists($resize)) {
+                $filename = $resize;
+            }
+            $tmpFilepath = $this->getParameter('uploads_tmp_dir').$filename;
+            $bucketFilepath = $this->getParameter('url_bucket').'/'.$filename;
+
             file_put_contents($tmpFilepath, file_get_contents($bucketFilepath));
             $file = new File($tmpFilepath);
 
