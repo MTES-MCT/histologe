@@ -59,7 +59,7 @@
             {{ suivi.description
                 |replace({'&t=___TOKEN___':'/'~signalement.uuid})
                 |replace({'?t=___TOKEN___':'/'~signalement.uuid})
-                |replace({'?folder=_up':'/'~signalement.uuid})
+                |replace({'?folder=_up':'/'~signalement.uuid~'?variant=resize'})
                 |raw
             }}
         </div>

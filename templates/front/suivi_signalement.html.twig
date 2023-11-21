@@ -114,7 +114,7 @@
                         Photos N°{{ loop.index }}
                     </div>
                     <div class="fr-col-2 fr-text--right">
-                        <a href="{{ asset('_up/'~photo.filename) }}?t={{ csrf_token('suivi_signalement_ext_file_view') }}"
+                        <a href="{{ asset('_up/'~photo.filename~'?variant=resize') }}&t={{ csrf_token('suivi_signalement_ext_file_view') }}"
                            class="fr-btn fr-fi-eye-fill fr-btn--icon-left"
                            title="Afficher la photo"
                            target="_blank"
