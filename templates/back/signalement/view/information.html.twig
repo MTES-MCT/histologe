@@ -565,7 +565,7 @@
                         <strong>Réponse assurance :</strong>
                         {% if signalement.informationProcedure and signalement.informationProcedure.infoProcedureReponseAssurance %}
                             <br>
-                            {{ signalement.informationProcedure.infoProcedureReponseAssurance|raw }}
+                            {{ signalement.informationProcedure.infoProcedureReponseAssurance | nl2br  }}
                         {% else %}
                             N/C
                         {% endif %}
