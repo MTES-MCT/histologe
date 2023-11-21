@@ -59,17 +59,12 @@ class SecurityController extends AbstractController
         );
         try {
             $variant = $request->query->get('variant');
+            $variantNames = ImageManipulationHandler::getVariantNames($filename);
 
-            $pathInfo = pathinfo($filename);
-            $ext = \array_key_exists('extension', $pathInfo) ? '.'.$pathInfo['extension'] : '';
-
-            $resize = $pathInfo['filename'].ImageManipulationHandler::SUFFIX_RESIZE.$ext;
-            $thumb = $pathInfo['filename'].ImageManipulationHandler::SUFFIX_THUMB.$ext;
-
-            if ('thumb' == $variant && $fileStorage->fileExists($thumb)) {
-                $filename = $thumb;
-            } elseif ('resize' == $variant && $fileStorage->fileExists($resize)) {
-                $filename = $resize;
+            if ('thumb' == $variant && $fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_THUMB])) {
+                $filename = $variantNames[ImageManipulationHandler::SUFFIX_THUMB];
+            } elseif ('resize' == $variant && $fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_RESIZE])) {
+                $filename = $variantNames[ImageManipulationHandler::SUFFIX_RESIZE];
             }
             $tmpFilepath = $this->getParameter('uploads_tmp_dir').$filename;
             $bucketFilepath = $this->getParameter('url_bucket').'/'.$filename;

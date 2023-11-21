@@ -89,4 +89,14 @@ class ImageManipulationHandler
 
         return $newPath;
     }
+
+    public static function getVariantNames(string $filename): array
+    {
+        $pathInfo = pathinfo($filename);
+        $ext = \array_key_exists('extension', $pathInfo) ? '.'.$pathInfo['extension'] : '';
+        $resize = $pathInfo['filename'].self::SUFFIX_RESIZE.$ext;
+        $thumb = $pathInfo['filename'].self::SUFFIX_THUMB.$ext;
+
+        return [self::SUFFIX_RESIZE => $resize, self::SUFFIX_THUMB => $thumb];
+    }
 }

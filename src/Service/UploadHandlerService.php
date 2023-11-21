@@ -114,11 +114,10 @@ class UploadHandlerService
 
     private function movePhotoVariants(string $filename): void
     {
-        $pathInfo = pathinfo($filename);
-        $ext = \array_key_exists('extension', $pathInfo) ? '.'.$pathInfo['extension'] : '';
+        $variantNames = ImageManipulationHandler::getVariantNames($filename);
         $distantFolder = $this->parameterBag->get('bucket_tmp_dir');
-        $this->moveFilePath($distantFolder.$pathInfo['filename'].ImageManipulationHandler::SUFFIX_RESIZE.$ext);
-        $this->moveFilePath($distantFolder.$pathInfo['filename'].ImageManipulationHandler::SUFFIX_THUMB.$ext);
+        $this->moveFilePath($distantFolder.$variantNames[ImageManipulationHandler::SUFFIX_RESIZE]);
+        $this->moveFilePath($distantFolder.$variantNames[ImageManipulationHandler::SUFFIX_THUMB]);
     }
 
     public function deleteFile(Signalement $signalement, string $type, string $filename, FileRepository $fileRepository)
@@ -137,14 +136,12 @@ class UploadHandlerService
             if ($this->fileStorage->fileExists($file->getFilename())) {
                 $this->fileStorage->delete($file->getFilename());
             }
-            $pathInfo = pathinfo($filename);
-            $resize = $pathInfo['filename'].ImageManipulationHandler::SUFFIX_RESIZE.'.'.$pathInfo['extension'];
-            $thumb = $pathInfo['filename'].ImageManipulationHandler::SUFFIX_THUMB.'.'.$pathInfo['extension'];
-            if ($this->fileStorage->fileExists($resize)) {
-                $this->fileStorage->delete($resize);
+            $variantNames = ImageManipulationHandler::getVariantNames($filename);
+            if ($this->fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_RESIZE])) {
+                $this->fileStorage->delete($variantNames[ImageManipulationHandler::SUFFIX_RESIZE]);
             }
-            if ($this->fileStorage->fileExists($thumb)) {
-                $this->fileStorage->delete($thumb);
+            if ($this->fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_THUMB])) {
+                $this->fileStorage->delete($variantNames[ImageManipulationHandler::SUFFIX_THUMB]);
             }
 
             $fileRepository->remove($file, true);
@@ -242,7 +239,17 @@ class UploadHandlerService
             return $this->fileStorage->fileSize($fileResize);
         }
 
-        return $this->fileStorage->fileSize($filename);
+        return null;
+    }
+
+    public function hasVariants(string $filename): bool
+    {
+        $variantNames = ImageManipulationHandler::getVariantNames($filename);
+        if ($this->fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_RESIZE]) && $this->fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_THUMB])) {
+            return true;
+        }
+
+        return false;
     }
 
     public function setKey(string $key): ?array

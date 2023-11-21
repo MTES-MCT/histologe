@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\File;
+use App\Entity\Territory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -37,5 +38,19 @@ class FileRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function getPhotosWihoutVariantsForTerritory(Territory $territory)
+    {
+        return $this->createQueryBuilder('f')
+            ->select('f')
+            ->innerJoin('f.signalement', 's')
+            ->where('s.territory = :territory')
+            ->andWhere('f.fileType = :type')
+            ->andWhere('f.variants = false')
+            ->setParameter('territory', $territory)
+            ->setParameter('type', File::FILE_TYPE_PHOTO)
+            ->getQuery()
+            ->getResult();
     }
 }

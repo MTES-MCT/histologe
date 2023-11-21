@@ -52,9 +52,13 @@ class File
     #[ORM\Column(nullable: true)]
     private ?string $desordreSlug = null;
 
+    #[ORM\Column]
+    private ?bool $variants = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->variants = false;
     }
 
     public function getId(): ?int
@@ -178,6 +182,18 @@ class File
     public function setDesordreSlug(?string $desordreSlug): self
     {
         $this->desordreSlug = $desordreSlug;
+
+        return $this;
+    }
+
+    public function isVariants(): ?bool
+    {
+        return $this->variants;
+    }
+
+    public function setVariants(bool $variants): static
+    {
+        $this->variants = $variants;
 
         return $this;
     }
