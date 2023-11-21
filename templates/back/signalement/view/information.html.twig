@@ -29,7 +29,7 @@
         <div class="fr-col-12 fr-col-md-4 fr-mb-1v">
             <strong>Hauteur > 2m :</strong>
             {% if signalement.typeCompositionLogement and signalement.typeCompositionLogement.compositionLogementHauteur %}
-                {{ signalement.typeCompositionLogement.compositionLogementHauteur }}
+                {{ signalement.typeCompositionLogement.compositionLogementHauteur is same as 'nsp' ? 'Ne sait pas' : signalement.typeCompositionLogement.compositionLogementHauteur }}
                 {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.compositionLogementHauteur is same as 'non' } %}
             {% else %}
                 N/C
