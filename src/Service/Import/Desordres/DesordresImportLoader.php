@@ -90,7 +90,9 @@ class DesordresImportLoader
 
     private function createDesordreCritere(array $item, DesordreCategorie $desordreCategorie): DesordreCritere
     {
-        $desordreCritere = $this->desordreCritereManager->findOneBy(['slugCritere' => $item[DesordresImportHeader::CRITERE_SLUG]]);
+        $desordreCritere = $this->desordreCritereManager->findOneBy(
+            ['slugCritere' => $item[DesordresImportHeader::CRITERE_SLUG]]
+        );
         $data = [];
         $data['slugCategorie'] = $item[DesordresImportHeader::CATEGORIE_SLUG];
         $data['labelCategorie'] = $item[DesordresImportHeader::CATEGORIE_LABEL];
@@ -101,9 +103,8 @@ class DesordresImportLoader
         if (null === $desordreCritere) {
             ++$this->metadata['count_desordre_critere_created'];
         }
-        $desordreCritere = $this->desordreCritereManager->createOrUpdate($item[DesordresImportHeader::CRITERE_SLUG], $data);
 
-        return $desordreCritere;
+        return $this->desordreCritereManager->createOrUpdate($item[DesordresImportHeader::CRITERE_SLUG], $data);
     }
 
     private function createDesordrePrecision(array $item, DesordreCritere $desordreCritere): DesordrePrecision
@@ -129,8 +130,7 @@ class DesordresImportLoader
         } else {
             ++$this->metadata['count_desordre_precision_updated'];
         }
-        $desordrePrecision = $this->desordrePrecisionManager->createOrUpdate($slugPrecision, $data);
 
-        return $desordrePrecision;
+        return $this->desordrePrecisionManager->createOrUpdate($slugPrecision, $data);
     }
 }

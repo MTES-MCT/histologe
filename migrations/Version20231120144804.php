@@ -41,19 +41,22 @@ final class Version20231120144804 extends AbstractMigration
         DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB');
 
         $this->addSql('ALTER TABLE desordre_categorie_signalement
-        ADD CONSTRAINT FK_E365880CECF01477 FOREIGN KEY (desordre_categorie_id) REFERENCES desordre_categorie (id) ON DELETE CASCADE');
+        ADD CONSTRAINT FK_E365880CECF01477 FOREIGN KEY (desordre_categorie_id) R
+        EFERENCES desordre_categorie (id) ON DELETE CASCADE');
 
         $this->addSql('ALTER TABLE desordre_categorie_signalement
         ADD CONSTRAINT FK_E365880C65C5E57E FOREIGN KEY (signalement_id) REFERENCES signalement (id) ON DELETE CASCADE');
 
         $this->addSql('ALTER TABLE desordre_critere_signalement
-        ADD CONSTRAINT FK_689D9BA81C3935AB FOREIGN KEY (desordre_critere_id) REFERENCES desordre_critere (id) ON DELETE CASCADE');
+        ADD CONSTRAINT FK_689D9BA81C3935AB FOREIGN KEY (desordre_critere_id)
+        REFERENCES desordre_critere (id) ON DELETE CASCADE');
 
         $this->addSql('ALTER TABLE desordre_critere_signalement
         ADD CONSTRAINT FK_689D9BA865C5E57E FOREIGN KEY (signalement_id) REFERENCES signalement (id) ON DELETE CASCADE');
 
         $this->addSql('ALTER TABLE desordre_precision_signalement
-        ADD CONSTRAINT FK_D390215F9FB07E9C FOREIGN KEY (desordre_precision_id) REFERENCES desordre_precision (id) ON DELETE CASCADE');
+        ADD CONSTRAINT FK_D390215F9FB07E9C FOREIGN KEY (desordre_precision_id)
+        REFERENCES desordre_precision (id) ON DELETE CASCADE');
 
         $this->addSql('ALTER TABLE desordre_precision_signalement
         ADD CONSTRAINT FK_D390215F65C5E57E FOREIGN KEY (signalement_id) REFERENCES signalement (id) ON DELETE CASCADE');
