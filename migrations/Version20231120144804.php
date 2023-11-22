@@ -41,8 +41,8 @@ final class Version20231120144804 extends AbstractMigration
         DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB');
 
         $this->addSql('ALTER TABLE desordre_categorie_signalement
-        ADD CONSTRAINT FK_E365880CECF01477 FOREIGN KEY (desordre_categorie_id) R
-        EFERENCES desordre_categorie (id) ON DELETE CASCADE');
+        ADD CONSTRAINT FK_E365880CECF01477 FOREIGN KEY (desordre_categorie_id)
+        REFERENCES desordre_categorie (id) ON DELETE CASCADE');
 
         $this->addSql('ALTER TABLE desordre_categorie_signalement
         ADD CONSTRAINT FK_E365880C65C5E57E FOREIGN KEY (signalement_id) REFERENCES signalement (id) ON DELETE CASCADE');

@@ -3,7 +3,7 @@
 namespace App\Command;
 
 use App\Service\Import\CsvParser;
-use App\Service\Import\Desordres\DesordresImportLoader;
+use App\Service\Import\Desordres\DesordresTablesLoader;
 use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -24,7 +24,7 @@ class ImportDesordresTablesCommand extends Command
         private ParameterBagInterface $parameterBag,
         private FilesystemOperator $fileStorage,
         private UploadHandlerService $uploadHandlerService,
-        private DesordresImportLoader $desordresImportLoader,
+        private DesordresTablesLoader $desordresTablesLoader,
     ) {
         parent::__construct();
     }
@@ -43,12 +43,12 @@ class ImportDesordresTablesCommand extends Command
 
         $this->uploadHandlerService->createTmpFileFromBucket($fromFile, $toFile);
 
-        $this->desordresImportLoader->load(
+        $this->desordresTablesLoader->load(
             $this->csvParser->parseAsDict($toFile),
             $output
         );
 
-        $metadata = $this->desordresImportLoader->getMetadata();
+        $metadata = $this->desordresTablesLoader->getMetadata();
 
         $io->success(sprintf('%s desordre_categorie have been created', $metadata['count_desordre_categorie_created']));
         $io->success(sprintf('%s desordre_critere have been created', $metadata['count_desordre_critere_created']));

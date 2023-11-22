@@ -2,7 +2,7 @@
 
 namespace App\Service\Import\Desordres;
 
-class DesordresImportHeader
+class DesordresTablesHeader
 {
     public const CATEGORIE_ZONE = 'Zone';
     public const CATEGORIE_LABEL = 'Catégorie';

@@ -14,7 +14,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class DesordresImportLoader
+class DesordresTablesLoader
 {
     private const FLUSH_COUNT = 200;
 
@@ -52,7 +52,7 @@ class DesordresImportLoader
                     $progressBar->advance();
                 }
                 /** @var DesordreCategorie $desordreCategorie */
-                $desordreCategorie = $this->createDesordreCategorie($item[DesordresImportHeader::CATEGORIE_LABEL_BO]);
+                $desordreCategorie = $this->createDesordreCategorie($item[DesordresTablesHeader::CATEGORIE_LABEL_BO]);
 
                 /** @var DesordreCritere $desordreCritere */
                 $desordreCritere = $this->createDesordreCritere($item, $desordreCategorie);
@@ -91,38 +91,38 @@ class DesordresImportLoader
     private function createDesordreCritere(array $item, DesordreCategorie $desordreCategorie): DesordreCritere
     {
         $desordreCritere = $this->desordreCritereManager->findOneBy(
-            ['slugCritere' => $item[DesordresImportHeader::CRITERE_SLUG]]
+            ['slugCritere' => $item[DesordresTablesHeader::CRITERE_SLUG]]
         );
         $data = [];
-        $data['slugCategorie'] = $item[DesordresImportHeader::CATEGORIE_SLUG];
-        $data['labelCategorie'] = $item[DesordresImportHeader::CATEGORIE_LABEL];
-        $data['zoneCategorie'] = $item[DesordresImportHeader::CATEGORIE_ZONE];
-        $data['labelCritere'] = $item[DesordresImportHeader::CRITERE_LABEL] ?? null;
+        $data['slugCategorie'] = $item[DesordresTablesHeader::CATEGORIE_SLUG];
+        $data['labelCategorie'] = $item[DesordresTablesHeader::CATEGORIE_LABEL];
+        $data['zoneCategorie'] = $item[DesordresTablesHeader::CATEGORIE_ZONE];
+        $data['labelCritere'] = $item[DesordresTablesHeader::CRITERE_LABEL] ?? null;
         $data['desordreCategorie'] = $desordreCategorie;
 
         if (null === $desordreCritere) {
             ++$this->metadata['count_desordre_critere_created'];
         }
 
-        return $this->desordreCritereManager->createOrUpdate($item[DesordresImportHeader::CRITERE_SLUG], $data);
+        return $this->desordreCritereManager->createOrUpdate($item[DesordresTablesHeader::CRITERE_SLUG], $data);
     }
 
     private function createDesordrePrecision(array $item, DesordreCritere $desordreCritere): DesordrePrecision
     {
-        $slugPrecision = '' !== $item[DesordresImportHeader::PRECISION_SLUG] ?
-        $item[DesordresImportHeader::PRECISION_SLUG] :
-        $item[DesordresImportHeader::CRITERE_SLUG];
+        $slugPrecision = '' !== $item[DesordresTablesHeader::PRECISION_SLUG] ?
+        $item[DesordresTablesHeader::PRECISION_SLUG] :
+        $item[DesordresTablesHeader::CRITERE_SLUG];
 
         /** @var DesordrePrecision $desordrePrecision */
         $desordrePrecision = $this->desordrePrecisionManager->findOneBy(
             ['desordrePrecisionSlug' => $slugPrecision]
         );
         $data = [];
-        $data['coef'] = $item[DesordresImportHeader::PRECISION_COEFF];
-        $data['danger'] = $item[DesordresImportHeader::PRECISION_DANGER];
-        $data['label'] = $item[DesordresImportHeader::PRECISION_CONDITION].' - '
-        .$item[DesordresImportHeader::PRECISION_PIECE];
-        $data['procedure'] = $item[DesordresImportHeader::PRECISION_PROCEDURES];
+        $data['coef'] = $item[DesordresTablesHeader::PRECISION_COEFF];
+        $data['danger'] = $item[DesordresTablesHeader::PRECISION_DANGER];
+        $data['label'] = $item[DesordresTablesHeader::PRECISION_CONDITION].' - '
+        .$item[DesordresTablesHeader::PRECISION_PIECE];
+        $data['procedure'] = $item[DesordresTablesHeader::PRECISION_PROCEDURES];
         $data['desordreCritere'] = $desordreCritere;
 
         if (null === $desordrePrecision) {
