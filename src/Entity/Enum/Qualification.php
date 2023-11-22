@@ -73,8 +73,6 @@ enum Qualification: string
         $label = trim($label);
         $label = str_contains($label, 'Péril') ? self::MISE_EN_SECURITE_PERIL->label() : $label;
 
-        $key = array_search($label, self::getLabelList());
-
-        return $key;
+        return array_search($label, self::getLabelList());
     }
 }

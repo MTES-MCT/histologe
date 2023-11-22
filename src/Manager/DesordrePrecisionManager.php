@@ -8,8 +8,10 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class DesordrePrecisionManager extends AbstractManager
 {
-    public function __construct(protected ManagerRegistry $managerRegistry, string $entityName = DesordrePrecision::class)
-    {
+    public function __construct(
+        protected ManagerRegistry $managerRegistry,
+        string $entityName = DesordrePrecision::class
+    ) {
         parent::__construct($managerRegistry, $entityName);
     }
 

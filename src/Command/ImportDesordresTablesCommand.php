@@ -45,7 +45,6 @@ class ImportDesordresTablesCommand extends Command
 
         $this->desordresImportLoader->load(
             $this->csvParser->parseAsDict($toFile),
-            $this->csvParser->getHeaders($toFile),
             $output
         );
 
