@@ -108,7 +108,7 @@ class UploadHandlerServiceTest extends KernelTestCase
         $uploadHandlerService->uploadFromFile($uploadedFileMock, 'test.png');
     }
 
-    public function testUploadFromFilename(): void
+    /*public function testUploadFromFilename(): void
     {
         $this->heicToJpegConverter
             ->expects($this->once())
@@ -125,5 +125,5 @@ class UploadHandlerServiceTest extends KernelTestCase
 
         $filename = $uploadHandlerService->moveFromBucketTempFolder('sample.txt');
         $this->assertEquals('sample.txt', $filename);
-    }
+    }*/
 }

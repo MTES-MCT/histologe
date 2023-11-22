@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Enum\DocumentType;
 use App\Repository\FileRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FileRepository::class)]
@@ -41,6 +42,9 @@ class File
     #[ORM\ManyToOne(inversedBy: 'files')]
     #[ORM\JoinColumn(nullable: true)]
     private ?Intervention $intervention = null;
+
+    #[ORM\Column(type: Types::BIGINT, nullable: true)]
+    private ?string $size = null;
 
     #[ORM\Column(type: 'string', enumType: DocumentType::class, nullable: true)]
     private ?DocumentType $documentType = null;
@@ -138,6 +142,18 @@ class File
     public function setIntervention(?Intervention $intervention): self
     {
         $this->intervention = $intervention;
+
+        return $this;
+    }
+
+    public function getSize(): ?string
+    {
+        return $this->size;
+    }
+
+    public function setSize(?string $size): self
+    {
+        $this->size = $size;
 
         return $this;
     }

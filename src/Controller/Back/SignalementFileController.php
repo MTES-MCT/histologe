@@ -10,9 +10,9 @@ use App\Factory\SuiviFactory;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
 use App\Service\Signalement\SignalementFileProcessor;
+use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
-use League\Flysystem\FilesystemOperator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -107,25 +107,11 @@ class SignalementFileController extends AbstractController
         string $filename,
         Request $request,
         FileRepository $fileRepository,
-        FilesystemOperator $fileStorage
+        UploadHandlerService $uploadHandlerService,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('FILE_DELETE', $signalement);
         if ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))) {
-            $fileType = 'documents' === $type ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO;
-
-            $fileCollection = $signalement->getFiles()->filter(
-                function (File $file) use ($fileStorage, $fileType, $filename) {
-                    return $fileType === $file->getFileType()
-                        && $filename === $file->getFilename()
-                        && $fileStorage->fileExists($filename);
-                }
-            );
-
-            if (!$fileCollection->isEmpty()) {
-                $file = $fileCollection->current();
-                $fileStorage->delete($file->getFilename());
-                $fileRepository->remove($file, true);
-
+            if ($uploadHandlerService->deleteFile($signalement, $type, $filename, $fileRepository)) {
                 return $this->json(['response' => 'success']);
             }
         }

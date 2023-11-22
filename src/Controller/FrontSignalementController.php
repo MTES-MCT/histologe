@@ -22,6 +22,7 @@ use App\Repository\SituationRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\Files\DocumentProvider;
+use App\Service\ImageManipulationHandler;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -88,12 +89,18 @@ class FrontSignalementController extends AbstractController
     public function handleUpload(
         UploadHandlerService $uploadHandlerService,
         Request $request,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        ImageManipulationHandler $imageManipulationHandler
     ) {
         if (null !== ($files = $request->files->get('signalement'))) {
             try {
                 foreach ($files as $key => $file) {
-                    return $this->json($uploadHandlerService->toTempFolder($file)->setKey($key));
+                    $res = $uploadHandlerService->toTempFolder($file)->setKey($key);
+                    if (!isset($res['error']) && \in_array($file->getMimeType(), ImageManipulationHandler::IMAGE_MIME_TYPES)) {
+                        $imageManipulationHandler->resize($res['filePath'])->thumbnail();
+                    }
+
+                    return $this->json($res);
                 }
             } catch (\Exception $exception) {
                 $logger->error($exception->getMessage());
@@ -139,12 +146,14 @@ class FrontSignalementController extends AbstractController
                 $dataFiles = $data['files'];
                 foreach ($dataFiles as $key => $files) {
                     foreach ($files as $titre => $file) {
+                        $filename = $uploadHandlerService->moveFromBucketTempFolder($file);
                         $file = $fileFactory->createInstanceFrom(
-                            filename: $uploadHandlerService->moveFromBucketTempFolder($file),
+                            filename: $filename,
                             title: $titre,
-                            type: 'documents' === $key ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO
+                            type: 'documents' === $key ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO,
                         );
                         if (null !== $file) {
+                            $file->setSize($uploadHandlerService->getFileSize($file->getFilename()));
                             $signalement->addFile($file);
                         }
                     }

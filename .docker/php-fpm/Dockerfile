@@ -30,8 +30,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         # Install Redis
         && pecl install redis \
         && docker-php-ext-enable redis \
+        # PHP GD
+        && docker-php-ext-configure gd --with-freetype --with-jpeg \
         # Install others
-        && docker-php-ext-install -j2 bcmath ctype iconv pdo pdo_mysql pdo_sqlite zip xsl\
+        && docker-php-ext-install -j2 bcmath ctype iconv pdo pdo_mysql pdo_sqlite zip xsl gd\
         && docker-php-ext-enable opcache \
         && rm /usr/src/php/ext/*.tgz \
         && curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer  \

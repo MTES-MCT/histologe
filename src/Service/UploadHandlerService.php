@@ -2,8 +2,11 @@
 
 namespace App\Service;
 
+use App\Entity\File;
+use App\Entity\Signalement;
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Exception\File\UnsupportedFileFormatException;
+use App\Repository\FileRepository;
 use App\Service\Files\FilenameGenerator;
 use App\Service\Files\HeicToJpegConverter;
 use League\Flysystem\FilesystemException;
@@ -65,10 +68,36 @@ class UploadHandlerService
         }
 
         if (!empty($newFilename) && !empty($titre)) {
-            $this->file = ['file' => $newFilename, 'titre' => $titre];
+            $filePath = $distantFolder.$newFilename;
+            $this->file = ['file' => $newFilename, 'filePath' => $filePath, 'titre' => $titre];
         }
 
         return $this;
+    }
+
+    private function moveFilePath(string $filePath): ?string
+    {
+        try {
+            $pathInfo = pathinfo($filePath);
+            $ext = \array_key_exists('extension', $pathInfo) ? '.'.$pathInfo['extension'] : '';
+            $newFilename = $pathInfo['filename'].$ext;
+
+            if ($this->fileStorage->fileExists($newFilename)) {
+                return $newFilename;
+            }
+
+            if ($this->fileStorage->fileExists($filePath)) {
+                $this->fileStorage->move($filePath, $newFilename);
+
+                return $newFilename;
+            }
+        } catch (FilesystemException $exception) {
+            $this->logger->error($exception->getMessage());
+        } catch (\ImagickException $exception) {
+            $this->logger->error($exception->getMessage());
+        }
+
+        return null;
     }
 
     public function moveFromBucketTempFolder(string $filename, ?string $directory = null): ?string
@@ -78,22 +107,52 @@ class UploadHandlerService
         $distantFolder = $this->parameterBag->get('bucket_tmp_dir');
         $tmpFilepath = $distantFolder.$filename;
 
-        try {
-            $tmpFilepath = $this->heicToJpegConverter->convert($tmpFilepath);
+        $this->movePhotoVariants($filename);
 
-            $pathInfo = pathinfo($tmpFilepath);
-            $newFilename = $pathInfo['filename'].'.'.$pathInfo['extension'];
+        return $this->moveFilePath($tmpFilepath);
+    }
 
-            $this->fileStorage->move($tmpFilepath, $newFilename);
+    private function movePhotoVariants(string $filename): void
+    {
+        $pathInfo = pathinfo($filename);
+        $ext = \array_key_exists('extension', $pathInfo) ? '.'.$pathInfo['extension'] : '';
+        $distantFolder = $this->parameterBag->get('bucket_tmp_dir');
+        $this->moveFilePath($distantFolder.$pathInfo['filename'].ImageManipulationHandler::SUFFIX_RESIZE.$ext);
+        $this->moveFilePath($distantFolder.$pathInfo['filename'].ImageManipulationHandler::SUFFIX_THUMB.$ext);
+    }
 
-            return $newFilename;
-        } catch (FilesystemException $exception) {
-            $this->logger->error($exception->getMessage());
-        } catch (\ImagickException $exception) {
-            $this->logger->error($exception->getMessage());
+    public function deleteFile(Signalement $signalement, string $type, string $filename, FileRepository $fileRepository)
+    {
+        $fileType = 'documents' === $type ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO;
+
+        $fileCollection = $signalement->getFiles()->filter(
+            function (File $file) use ($fileType, $filename) {
+                return $fileType === $file->getFileType()
+                    && $filename === $file->getFilename();
+            }
+        );
+
+        if (!$fileCollection->isEmpty()) {
+            $file = $fileCollection->current();
+            if ($this->fileStorage->fileExists($file->getFilename())) {
+                $this->fileStorage->delete($file->getFilename());
+            }
+            $pathInfo = pathinfo($filename);
+            $resize = $pathInfo['filename'].ImageManipulationHandler::SUFFIX_RESIZE.'.'.$pathInfo['extension'];
+            $thumb = $pathInfo['filename'].ImageManipulationHandler::SUFFIX_THUMB.'.'.$pathInfo['extension'];
+            if ($this->fileStorage->fileExists($resize)) {
+                $this->fileStorage->delete($resize);
+            }
+            if ($this->fileStorage->fileExists($thumb)) {
+                $this->fileStorage->delete($thumb);
+            }
+
+            $fileRepository->remove($file, true);
+
+            return true;
         }
 
-        return null;
+        return false;
     }
 
     public function uploadFromFilename(string $filename): ?string
@@ -104,7 +163,8 @@ class UploadHandlerService
 
         try {
             $pathInfo = pathinfo($tmpFilepath);
-            $newFilename = $pathInfo['filename'].'.'.$pathInfo['extension'];
+            $ext = \array_key_exists('extension', $pathInfo) ? '.'.$pathInfo['extension'] : '';
+            $newFilename = $pathInfo['filename'].$ext;
 
             $fileResource = fopen($tmpFilepath, 'r');
             $this->fileStorage->writeStream($newFilename, $fileResource);
@@ -132,7 +192,8 @@ class UploadHandlerService
             if ($newTmpFilepath !== $tmpFilepath) {
                 $tmpFilepath = $newTmpFilepath;
                 $pathInfo = pathinfo($tmpFilepath);
-                $newFilename = $pathInfo['filename'].'.'.$pathInfo['extension'];
+                $ext = \array_key_exists('extension', $pathInfo) ? '.'.$pathInfo['extension'] : '';
+                $newFilename = $pathInfo['filename'].$ext;
             }
 
             $fileResource = fopen($tmpFilepath, 'r');
@@ -170,6 +231,18 @@ class UploadHandlerService
         $resourceFileSyStem = fopen($to, 'w');
         fwrite($resourceFileSyStem, $resourceBucket);
         fclose($resourceFileSyStem);
+    }
+
+    public function getFileSize(string $filename): ?int
+    {
+        $pathInfo = pathinfo($filename);
+        $ext = \array_key_exists('extension', $pathInfo) ? '.'.$pathInfo['extension'] : '';
+        $fileResize = $pathInfo['filename'].ImageManipulationHandler::SUFFIX_RESIZE.$ext;
+        if ($this->fileStorage->fileExists($fileResize)) {
+            return $this->fileStorage->fileSize($fileResize);
+        }
+
+        return $this->fileStorage->fileSize($filename);
     }
 
     public function setKey(string $key): ?array

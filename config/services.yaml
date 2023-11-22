@@ -114,6 +114,7 @@ services:
         arguments:
             $normalizers:
                 - '@App\Serializer\SignalementDraftRequestNormalizer'
+    Intervention\Image\ImageManager:
 
 when@test:
     parameters:

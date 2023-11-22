@@ -25,7 +25,6 @@ class FileFactory
             ->setFilename($filename)
             ->setTitle($title)
             ->setFileType($type);
-
         if (null !== $signalement) {
             $file->setSignalement($signalement);
         }
