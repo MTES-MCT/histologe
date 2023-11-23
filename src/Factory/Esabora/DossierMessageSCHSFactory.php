@@ -81,8 +81,9 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
         ) {
             $suffix = '+';
         }
-        $nbEnfantsM6 = ($signalement->getNbEnfantsM6()) ? (int) str_replace('+', '', $signalement->getNbEnfantsM6()) : 0;
-        $nbEnfantsP6 = ($signalement->getNbEnfantsP6()) ? (int) str_replace('+', '', $signalement->getNbEnfantsP6()) : 0;
+
+        $nbEnfantsM6 = (int) str_replace('+', '', $signalement->getNbEnfantsM6() ?? 0);
+        $nbEnfantsP6 = (int) str_replace('+', '', $signalement->getNbEnfantsP6() ?? 0);
         $nbEnfants = $nbEnfantsM6 + $nbEnfantsP6;
         $nbEnfants .= $suffix;
 
