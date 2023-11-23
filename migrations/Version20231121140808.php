@@ -11,16 +11,16 @@ final class Version20231121140808 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'add variants column to file table';
+        return 'add is_variants_generated column to file table';
     }
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE file ADD variants TINYINT(1) NOT NULL');
+        $this->addSql('ALTER TABLE file ADD is_variants_generated TINYINT(1) NOT NULL');
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE file DROP variants');
+        $this->addSql('ALTER TABLE file DROP is_variants_generated');
     }
 }

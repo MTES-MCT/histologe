@@ -47,7 +47,7 @@ class FileRepository extends ServiceEntityRepository
             ->innerJoin('f.signalement', 's')
             ->where('s.territory = :territory')
             ->andWhere('f.fileType = :type')
-            ->andWhere('f.variants = false')
+            ->andWhere('f.isVariantsGenerated = false')
             ->setParameter('territory', $territory)
             ->setParameter('type', File::FILE_TYPE_PHOTO)
             ->getQuery()

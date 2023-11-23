@@ -83,7 +83,7 @@ class CreateSignalementPhotoVariantsCommand extends Command
                 $this->imageManipulationHandler->thumbnail($file->getFilename());
                 $processed = true;
             }
-            $file->setVariants(true);
+            $file->setIsVariantsGenerated(true);
             $this->entityManager->flush();
             if ($processed) {
                 $this->io->success('File '.$this->i.'/'.\count($this->files).' '.$file->getFilename().' ('.$file->getId().') : variants created');

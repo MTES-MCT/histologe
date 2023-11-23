@@ -232,11 +232,14 @@ class UploadHandlerService
 
     public function getFileSize(string $filename): ?int
     {
-        $pathInfo = pathinfo($filename);
-        $ext = \array_key_exists('extension', $pathInfo) ? '.'.$pathInfo['extension'] : '';
-        $fileResize = $pathInfo['filename'].ImageManipulationHandler::SUFFIX_RESIZE.$ext;
-        if ($this->fileStorage->fileExists($fileResize)) {
-            return $this->fileStorage->fileSize($fileResize);
+        try {
+            $variantNames = ImageManipulationHandler::getVariantNames($filename);
+            $fileResize = $variantNames[ImageManipulationHandler::SUFFIX_RESIZE];
+            if ($this->fileStorage->fileExists($fileResize)) {
+                return $this->fileStorage->fileSize($fileResize);
+            }
+        } catch (\Exception $exception) {
+            $this->logger->error($exception->getMessage());
         }
 
         return null;
@@ -244,9 +247,13 @@ class UploadHandlerService
 
     public function hasVariants(string $filename): bool
     {
-        $variantNames = ImageManipulationHandler::getVariantNames($filename);
-        if ($this->fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_RESIZE]) && $this->fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_THUMB])) {
-            return true;
+        try {
+            $variantNames = ImageManipulationHandler::getVariantNames($filename);
+            if ($this->fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_RESIZE]) && $this->fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_THUMB])) {
+                return true;
+            }
+        } catch (\Exception $exception) {
+            $this->logger->error($exception->getMessage());
         }
 
         return false;
