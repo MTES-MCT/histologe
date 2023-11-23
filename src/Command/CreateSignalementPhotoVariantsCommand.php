@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\File;
 use App\Entity\Territory;
+use App\Repository\FileRepository;
 use App\Service\ImageManipulationHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
@@ -52,7 +53,9 @@ class CreateSignalementPhotoVariantsCommand extends Command
 
             return Command::FAILURE;
         }
-        $this->files = $this->entityManager->getRepository(File::class)->getPhotosWihoutVariantsForTerritory($territory);
+        /** @var FileRepository $fileRepository */
+        $fileRepository = $this->entityManager->getRepository(File::class);
+        $this->files = $fileRepository->getPhotosWihoutVariantsForTerritory($territory);
         foreach ($this->files as $file) {
             $this->processFile($file);
             ++$this->i;
