@@ -26,9 +26,17 @@ class TelephoneFormatValidator extends ConstraintValidator
             return;
         }
 
+        $ext = 'FR'; // will be abandonned soon
+        if (\is_array($value)) {
+            $value = $value['phone_number'];
+            if (!empty($value['country_code']) && str_contains($value['country_code'], ':')) {
+                $ext = explode(':', $value['country_code'])[0];
+            }
+        }
+
         try {
             $phoneNumberUtil = PhoneNumberUtil::getInstance();
-            $phoneNumberParsed = $phoneNumberUtil->parse($value, 'FR');
+            $phoneNumberParsed = $phoneNumberUtil->parse($value, $ext);
             $isValid = $phoneNumberUtil->isValidNumber($phoneNumberParsed);
             if (!$isValid) {
                 $this->context->buildViolation($constraint->message)

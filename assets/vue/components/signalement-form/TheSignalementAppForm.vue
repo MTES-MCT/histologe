@@ -120,7 +120,7 @@ export default defineComponent({
         this.isLoadingInit = false
         formStore.screenData = formStore.screenData.concat(requestResponse)
         if (this.nextSlug !== '') {
-          this.changeScreenBySlug('rien') // TODO : que mettre ?
+          this.changeScreenBySlug(undefined) // TODO : que mettre ?
         } else {
           formStore.currentScreen = requestResponse[0]
         }
@@ -148,15 +148,21 @@ export default defineComponent({
     changeScreenBySlug (requestResponse: any) {
       formStore.lastButtonClicked = ''
       // si on reçoit un uuid on l'enregistre pour les mises à jour
-      if (requestResponse && requestResponse.uuid) {
-        formStore.data.uuidSignalementDraft = requestResponse.uuid
+      if (requestResponse) {
+        if (requestResponse.uuid) {
+          formStore.data.uuidSignalementDraft = requestResponse.uuid
+        } else {
+          alert('Erreur d\'enregistrement du brouillon de signalement. Merci de réessayer dans quelques minutes.')
+          return
+        }
+        if (requestResponse.signalementReference) {
+          formStore.data.signalementReference = requestResponse.signalementReference
+        }
+        if (requestResponse.lienSuivi) {
+          formStore.data.lienSuivi = requestResponse.lienSuivi
+        }
       }
-      if (requestResponse && requestResponse.signalementReference) {
-        formStore.data.signalementReference = requestResponse.signalementReference
-      }
-      if (requestResponse && requestResponse.lienSuivi) {
-        formStore.data.lienSuivi = requestResponse.lienSuivi
-      }
+
       if (formStore.screenData) {
         this.removeNextScreensIfProfileUpdated()
         const nextScreen = formStore.screenData.find((screen: any) => screen.slug === this.nextSlug)

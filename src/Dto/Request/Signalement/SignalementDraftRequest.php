@@ -2,7 +2,9 @@
 
 namespace App\Dto\Request\Signalement;
 
-use App\Entity\Signalement;
+use App\Validator as AppAssert;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Email;
 
 class SignalementDraftRequest
 {
@@ -25,16 +27,23 @@ class SignalementDraftRequest
 
     private ?string $profil = null;
     private ?string $currentStep = null;
+    #[Assert\NotBlank(message: 'Merci de saisir une adresse.')]
     private ?string $adresseLogementAdresse = null;
     private ?string $adresseLogementAdresseDetailNumero = null;
+    #[Assert\NotBlank(message: 'Merci de saisir un code postal.')]
     private ?string $adresseLogementAdresseDetailCodePostal = null;
+    #[Assert\NotBlank(message: 'Merci de saisir une ville.')]
     private ?string $adresseLogementAdresseDetailCommune = null;
     private ?string $adresseLogementAdresseDetailInsee = null;
     private ?float $adresseLogementAdresseDetailGeolocLat = null;
     private ?float $adresseLogementAdresseDetailGeolocLng = null;
+    #[Assert\Length(max: 3)]
     private ?string $adresseLogementComplementAdresseEscalier = null;
+    #[Assert\Length(max: 5)]
     private ?string $adresseLogementComplementAdresseEtage = null;
+    #[Assert\Length(max: 30)]
     private ?string $adresseLogementComplementAdresseNumeroAppartement = null;
+    #[Assert\Length(max: 255)]
     private ?string $adresseLogementComplementAdresseAutre = null;
     private ?string $signalementConcerneProfil = null;
     private ?string $signalementConcerneProfilDetailOccupant = null;
@@ -46,15 +55,21 @@ class SignalementDraftRequest
     private ?string $vosCoordonneesTiersNomOrganisme = null;
     private ?string $vosCoordonneesTiersLien = null;
     private ?string $vosCoordonneesTiersNom = null;
+    #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
     private ?string $vosCoordonneesTiersEmail = null;
+    #[AppAssert\TelephoneFormat]
     private ?array $vosCoordonneesTiersTel = null;
+    #[AppAssert\TelephoneFormat]
     private ?array $vosCoordonneesTiersTelSecondaire = null;
     private ?string $vosCoordonneesTiersPrenom = null;
     private ?string $vosCoordonneesOccupantCivilite = null;
     private ?string $vosCoordonneesOccupantNom = null;
     private ?string $vosCoordonneesOccupantPrenom = null;
+    #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
     private ?string $vosCoordonneesOccupantEmail = null;
+    #[AppAssert\TelephoneFormat]
     private ?array $vosCoordonneesOccupantTel = null;
+    #[AppAssert\TelephoneFormat]
     private ?array $vosCoordonneesOccupantTelSecondaire = null;
     private ?string $coordonneesOccupantNom = null;
     private ?string $coordonneesOccupantPrenom = null;
@@ -63,8 +78,11 @@ class SignalementDraftRequest
     private ?array $coordonneesOccupantTelSecondaire = null;
     private ?string $coordonneesBailleurNom = null;
     private ?string $coordonneesBailleurPrenom = null;
+    #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
     private ?string $coordonneesBailleurEmail = null;
+    #[AppAssert\TelephoneFormat]
     private ?array $coordonneesBailleurTel = null;
+    #[AppAssert\TelephoneFormat]
     private ?array $coordonneesBailleurTelSecondaire = null;
     private ?string $coordonneesBailleurAdresse = null;
     private ?string $coordonneesBailleurAdresseDetailNumero = null;
@@ -93,6 +111,7 @@ class SignalementDraftRequest
     private ?string $typeLogementCommoditesWcCollective = null;
     private ?string $typeLogementCommoditesWcHauteurPlafond = null;
     private ?string $typeLogementCommoditesWcCuisine = null;
+    #[Assert\DateTime('Y-m-d')]
     private ?string $bailDpeDateEmmenagement = null;
     private ?string $bailDpeBail = null;
     private ?array $bailDpeBailUpload = null;
@@ -102,6 +121,7 @@ class SignalementDraftRequest
     private ?string $logementSocialDemandeRelogement = null;
     private ?string $logementSocialAllocation = null;
     private ?string $logementSocialAllocationCaisse = null;
+    #[Assert\DateTime('Y-m-d')]
     private ?string $logementSocialDateNaissance = null;
     private ?string $logementSocialMontantAllocation = null;
     private ?string $logementSocialNumeroAllocataire = null;
@@ -117,6 +137,7 @@ class SignalementDraftRequest
     private ?bool $utilisationServiceOkDemandeLogement = null;
     private ?string $informationsComplementairesSituationOccupantsBeneficiaireRsa = null;
     private ?string $informationsComplementairesSituationOccupantsBeneficiaireFsl = null;
+    #[Assert\DateTime('Y-m-d')]
     private ?string $informationsComplementairesSituationOccupantsDateNaissance = null;
     private ?string $informationsComplementairesSituationOccupantsDemandeRelogement = null;
     private ?string $informationsComplementairesSituationOccupantsDateEmmenagement = null;
@@ -125,6 +146,7 @@ class SignalementDraftRequest
     private ?string $informationsComplementairesSituationBailleurBeneficiaireRsa = null;
     private ?string $informationsComplementairesSituationBailleurBeneficiaireFsl = null;
     private ?string $informationsComplementairesSituationBailleurRevenuFiscal = null;
+    #[Assert\DateTime('Y-m-d')]
     private ?string $informationsComplementairesSituationBailleurDateNaissance = null;
     private ?string $informationsComplementairesLogementMontantLoyer = null;
     private ?string $informationsComplementairesLogementNombreEtages = null;
