@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Manager;
 use App\Entity\DesordreCategorie;
 use App\Entity\DesordreCritere;
 use App\Entity\DesordrePrecision;
+use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Enum\Qualification;
 use App\Manager\DesordrePrecisionManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -38,7 +39,7 @@ class DesordrePrecisionManagerTest extends KernelTestCase
         $desordreCritere = new DesordreCritere();
         $desordreCritere->setLabelCategorie('Décoration intérieure');
         $desordreCritere->setSlugCategorie('desordre_logement_decoration');
-        $desordreCritere->setZoneCategorie('Logement');
+        $desordreCritere->setZoneCategorie(DesordreCritereZone::tryFromLabel('Logement'));
         $desordreCritere->setLabelCritere('Décoration intérieure et bon goût');
         $desordreCritere->setSlugCritere('desordre_logement_rideaux_absents');
         $desordreCritere->setDesordreCategorie($desordreCategorie);
@@ -55,7 +56,6 @@ class DesordrePrecisionManagerTest extends KernelTestCase
             ]
         );
 
-        $this->assertInstanceOf(DesordrePrecision::class, $desordrePrecision);
         $this->assertEquals($desordrePrecision->getCoef(), 0.8);
         $this->assertEquals($desordrePrecision->isIsDanger(), true);
         $this->assertEquals($desordrePrecision->getQualification(), [Qualification::MISE_EN_SECURITE_PERIL]);

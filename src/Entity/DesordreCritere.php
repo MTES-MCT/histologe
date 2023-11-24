@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Behaviour\TimestampableTrait;
+use App\Entity\Enum\DesordreCritereZone;
 use App\Repository\DesordreCritereRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -25,8 +26,8 @@ class DesordreCritere
     #[ORM\Column(length: 255)]
     private ?string $labelCategorie = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $zoneCategorie = null;
+    #[ORM\Column(type: 'string', enumType: DesordreCritereZone::class)]
+    private ?DesordreCritereZone $zoneCategorie = null;
 
     #[ORM\Column(length: 255)]
     private ?string $slugCritere = null;
@@ -60,7 +61,7 @@ class DesordreCritere
         return $this->slugCategorie;
     }
 
-    public function setSlugCategorie(string $slugCategorie): static
+    public function setSlugCategorie(string $slugCategorie): self
     {
         $this->slugCategorie = $slugCategorie;
 
@@ -72,19 +73,19 @@ class DesordreCritere
         return $this->labelCategorie;
     }
 
-    public function setLabelCategorie(string $labelCategorie): static
+    public function setLabelCategorie(string $labelCategorie): self
     {
         $this->labelCategorie = $labelCategorie;
 
         return $this;
     }
 
-    public function getZoneCategorie(): ?string
+    public function getZoneCategorie(): ?DesordreCritereZone
     {
         return $this->zoneCategorie;
     }
 
-    public function setZoneCategorie(string $zoneCategorie): static
+    public function setZoneCategorie(DesordreCritereZone $zoneCategorie): self
     {
         $this->zoneCategorie = $zoneCategorie;
 
@@ -96,7 +97,7 @@ class DesordreCritere
         return $this->slugCritere;
     }
 
-    public function setSlugCritere(string $slugCritere): static
+    public function setSlugCritere(string $slugCritere): self
     {
         $this->slugCritere = $slugCritere;
 
@@ -108,7 +109,7 @@ class DesordreCritere
         return $this->labelCritere;
     }
 
-    public function setLabelCritere(string $labelCritere): static
+    public function setLabelCritere(string $labelCritere): self
     {
         $this->labelCritere = $labelCritere;
 
@@ -120,7 +121,7 @@ class DesordreCritere
         return $this->desordreCategorie;
     }
 
-    public function setDesordreCategorie(?DesordreCategorie $desordreCategorie): static
+    public function setDesordreCategorie(?DesordreCategorie $desordreCategorie): self
     {
         $this->desordreCategorie = $desordreCategorie;
 
@@ -135,7 +136,7 @@ class DesordreCritere
         return $this->desordrePrecisions;
     }
 
-    public function addDesordrePrecision(DesordrePrecision $desordrePrecision): static
+    public function addDesordrePrecision(DesordrePrecision $desordrePrecision): self
     {
         if (!$this->desordrePrecisions->contains($desordrePrecision)) {
             $this->desordrePrecisions->add($desordrePrecision);
@@ -145,7 +146,7 @@ class DesordreCritere
         return $this;
     }
 
-    public function removeDesordrePrecision(DesordrePrecision $desordrePrecision): static
+    public function removeDesordrePrecision(DesordrePrecision $desordrePrecision): self
     {
         if ($this->desordrePrecisions->removeElement($desordrePrecision)) {
             // set the owning side to null (unless already changed)
@@ -165,7 +166,7 @@ class DesordreCritere
         return $this->signalement;
     }
 
-    public function addSignalement(Signalement $signalement): static
+    public function addSignalement(Signalement $signalement): self
     {
         if (!$this->signalement->contains($signalement)) {
             $this->signalement->add($signalement);
@@ -174,7 +175,7 @@ class DesordreCritere
         return $this;
     }
 
-    public function removeSignalement(Signalement $signalement): static
+    public function removeSignalement(Signalement $signalement): self
     {
         $this->signalement->removeElement($signalement);
 

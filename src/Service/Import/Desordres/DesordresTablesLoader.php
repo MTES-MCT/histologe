@@ -51,13 +51,10 @@ class DesordresTablesLoader
                 if ($output) {
                     $progressBar->advance();
                 }
-                /** @var DesordreCategorie $desordreCategorie */
                 $desordreCategorie = $this->createDesordreCategorie($item[DesordresTablesHeader::CATEGORIE_LABEL_BO]);
 
-                /** @var DesordreCritere $desordreCritere */
                 $desordreCritere = $this->createDesordreCritere($item, $desordreCategorie);
 
-                /** @var DesordrePrecision $desordrePrecision */
                 $desordrePrecision = $this->createDesordrePrecision($item, $desordreCritere);
             }
             if (0 === $countRow % self::FLUSH_COUNT) {

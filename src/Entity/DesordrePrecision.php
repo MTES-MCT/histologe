@@ -56,7 +56,7 @@ class DesordrePrecision
         return $this->coef;
     }
 
-    public function setCoef(float $coef): static
+    public function setCoef(float $coef): self
     {
         $this->coef = $coef;
 
@@ -68,7 +68,7 @@ class DesordrePrecision
         return $this->isDanger;
     }
 
-    public function setIsDanger(?bool $isDanger): static
+    public function setIsDanger(?bool $isDanger): self
     {
         $this->isDanger = $isDanger;
 
@@ -80,7 +80,7 @@ class DesordrePrecision
         return $this->label;
     }
 
-    public function setLabel(?string $label): static
+    public function setLabel(?string $label): self
     {
         $this->label = $label;
 
@@ -92,7 +92,7 @@ class DesordrePrecision
         return $this->qualification;
     }
 
-    public function setQualification(array $qualification): static
+    public function setQualification(array $qualification): self
     {
         $this->qualification = $qualification;
 
@@ -104,7 +104,7 @@ class DesordrePrecision
         return $this->desordreCritere;
     }
 
-    public function setDesordreCritere(?DesordreCritere $desordreCritere): static
+    public function setDesordreCritere(?DesordreCritere $desordreCritere): self
     {
         $this->desordreCritere = $desordreCritere;
 
@@ -116,7 +116,7 @@ class DesordrePrecision
         return $this->desordrePrecisionSlug;
     }
 
-    public function setDesordrePrecisionSlug(string $desordrePrecisionSlug): static
+    public function setDesordrePrecisionSlug(string $desordrePrecisionSlug): self
     {
         $this->desordrePrecisionSlug = $desordrePrecisionSlug;
 
@@ -131,7 +131,7 @@ class DesordrePrecision
         return $this->signalement;
     }
 
-    public function addSignalement(Signalement $signalement): static
+    public function addSignalement(Signalement $signalement): self
     {
         if (!$this->signalement->contains($signalement)) {
             $this->signalement->add($signalement);
@@ -140,7 +140,7 @@ class DesordrePrecision
         return $this;
     }
 
-    public function removeSignalement(Signalement $signalement): static
+    public function removeSignalement(Signalement $signalement): self
     {
         $this->signalement->removeElement($signalement);
 

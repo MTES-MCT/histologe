@@ -2002,7 +2002,7 @@ class Signalement
         return $this->desordreCategories;
     }
 
-    public function addDesordreCategory(DesordreCategorie $desordreCategory): static
+    public function addDesordreCategory(DesordreCategorie $desordreCategory): self
     {
         if (!$this->desordreCategories->contains($desordreCategory)) {
             $this->desordreCategories->add($desordreCategory);
@@ -2012,7 +2012,7 @@ class Signalement
         return $this;
     }
 
-    public function removeDesordreCategory(DesordreCategorie $desordreCategory): static
+    public function removeDesordreCategory(DesordreCategorie $desordreCategory): self
     {
         if ($this->desordreCategories->removeElement($desordreCategory)) {
             $desordreCategory->removeSignalement($this);
@@ -2029,7 +2029,7 @@ class Signalement
         return $this->desordreCriteres;
     }
 
-    public function addDesordreCritere(DesordreCritere $desordreCritere): static
+    public function addDesordreCritere(DesordreCritere $desordreCritere): self
     {
         if (!$this->desordreCriteres->contains($desordreCritere)) {
             $this->desordreCriteres->add($desordreCritere);
@@ -2039,7 +2039,7 @@ class Signalement
         return $this;
     }
 
-    public function removeDesordreCritere(DesordreCritere $desordreCritere): static
+    public function removeDesordreCritere(DesordreCritere $desordreCritere): self
     {
         if ($this->desordreCriteres->removeElement($desordreCritere)) {
             $desordreCritere->removeSignalement($this);
@@ -2056,7 +2056,7 @@ class Signalement
         return $this->desordrePrecisions;
     }
 
-    public function addDesordrePrecision(DesordrePrecision $desordrePrecision): static
+    public function addDesordrePrecision(DesordrePrecision $desordrePrecision): self
     {
         if (!$this->desordrePrecisions->contains($desordrePrecision)) {
             $this->desordrePrecisions->add($desordrePrecision);
@@ -2066,7 +2066,7 @@ class Signalement
         return $this;
     }
 
-    public function removeDesordrePrecision(DesordrePrecision $desordrePrecision): static
+    public function removeDesordrePrecision(DesordrePrecision $desordrePrecision): self
     {
         if ($this->desordrePrecisions->removeElement($desordrePrecision)) {
             $desordrePrecision->removeSignalement($this);

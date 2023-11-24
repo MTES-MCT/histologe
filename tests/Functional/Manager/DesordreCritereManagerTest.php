@@ -44,7 +44,6 @@ class DesordreCritereManagerTest extends KernelTestCase
             ]
         );
 
-        $this->assertInstanceOf(DesordreCritere::class, $desordreCritere);
         $this->assertEquals($desordreCritere->getSlugCritere(), 'desordre_logement_rideaux_absents');
         $this->assertEquals($desordreCritere->getLabelCritere(), 'Il n\'y a pas de rideaux aux fenêtres');
 

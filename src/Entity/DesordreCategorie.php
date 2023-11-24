@@ -44,7 +44,7 @@ class DesordreCategorie
         return $this->label;
     }
 
-    public function setLabel(string $label): static
+    public function setLabel(string $label): self
     {
         $this->label = $label;
 
@@ -59,7 +59,7 @@ class DesordreCategorie
         return $this->desordreCriteres;
     }
 
-    public function addDesordreCritere(DesordreCritere $desordreCritere): static
+    public function addDesordreCritere(DesordreCritere $desordreCritere): self
     {
         if (!$this->desordreCriteres->contains($desordreCritere)) {
             $this->desordreCriteres->add($desordreCritere);
@@ -69,7 +69,7 @@ class DesordreCategorie
         return $this;
     }
 
-    public function removeDesordreCritere(DesordreCritere $desordreCritere): static
+    public function removeDesordreCritere(DesordreCritere $desordreCritere): self
     {
         if ($this->desordreCriteres->removeElement($desordreCritere)) {
             // set the owning side to null (unless already changed)
@@ -89,7 +89,7 @@ class DesordreCategorie
         return $this->signalement;
     }
 
-    public function addSignalement(Signalement $signalement): static
+    public function addSignalement(Signalement $signalement): self
     {
         if (!$this->signalement->contains($signalement)) {
             $this->signalement->add($signalement);
@@ -98,7 +98,7 @@ class DesordreCategorie
         return $this;
     }
 
-    public function removeSignalement(Signalement $signalement): static
+    public function removeSignalement(Signalement $signalement): self
     {
         $this->signalement->removeElement($signalement);
 

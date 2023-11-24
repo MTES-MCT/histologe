@@ -29,7 +29,6 @@ class DesordreCategorieManagerTest extends KernelTestCase
             'rideaux et moquette'
         );
 
-        $this->assertInstanceOf(DesordreCategorie::class, $desordreCategorie);
         $this->assertEquals($desordreCategorie->getLabel(), 'rideaux et moquette');
     }
 }

@@ -15,6 +15,14 @@ class DesordrePrecisionManager extends AbstractManager
         parent::__construct($managerRegistry, $entityName);
     }
 
+    /**
+     * @param array $data The array representing the DesordrePrecision.
+     *                    - 'label' (string): The title of the DesordrePrecision.
+     *                    - 'desordreCritere' (DesordreCritere): DesordreCritere linked
+     *                    - 'coef' (string): The coef of the DesordrePrecision
+     *                    - 'danger' (string): 'Oui' if is_danger.
+     *                    - 'procedure' (string): The List of Qualification .
+     */
     public function createOrUpdate(string $slug, array $data): DesordrePrecision
     {
         /** @var DesordrePrecision|null $desordrePrecision */
@@ -25,7 +33,7 @@ class DesordrePrecisionManager extends AbstractManager
             $desordrePrecision = (new DesordrePrecision());
         }
 
-        $coef = str_replace(',', '.', $data['coef']);
+        $coef = str_replace(',', '.', $data['coef'] ?? 0);
 
         $qualification = [];
         if (isset($data['procedure'])) {
