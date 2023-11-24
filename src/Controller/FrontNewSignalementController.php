@@ -58,7 +58,11 @@ class FrontNewSignalementController extends AbstractController
             SignalementDraftRequest::class,
             'json'
         );
-        $errors = $validator->validate($signalementDraftRequest);
+        $errors = $validator->validate(
+            $signalementDraftRequest,
+            null,
+            [$signalementDraftRequest->getSignalementConcerneProfil()]
+        );
         if (0 === $errors->count()) {
             return $this->json([
                 'uuid' => $signalementDraftManager->create(
@@ -86,7 +90,11 @@ class FrontNewSignalementController extends AbstractController
             'json'
         );
 
-        $errors = $validator->validate($signalementDraftRequest);
+        $errors = $validator->validate(
+            $signalementDraftRequest,
+            null,
+            [$signalementDraftRequest->getSignalementConcerneProfil()]
+        );
         if (0 === $errors->count()) {
             $result = $signalementDraftManager->update(
                 $signalementDraft,
