@@ -5,7 +5,7 @@ namespace App\Factory\Esabora;
 use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Signalement;
-use App\Messenger\Message\DossierMessageSCHS;
+use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Service\UploadHandlerService;
 use App\Utils\AddressParser;
 use App\Utils\EtageParser;

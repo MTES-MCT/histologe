@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Messenger\Message;
+namespace App\Messenger\Message\Esabora;
 
 use App\Entity\File;
+use App\Messenger\Message\DossierMessageInterface;
 
 final class DossierMessageSCHS implements DossierMessageInterface
 {

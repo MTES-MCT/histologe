@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Messenger\Message;
+namespace App\Messenger\Message\Esabora;
 
 use App\Entity\Enum\SISHDossierType;
 use App\Entity\File;
+use App\Messenger\Message\DossierMessageInterface;
 use App\Service\Esabora\Enum\PersonneType;
 use App\Service\Esabora\Model\DossierMessageSISHPersonne;
 

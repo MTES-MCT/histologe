@@ -3,7 +3,7 @@
 namespace App\Service\Esabora;
 
 use App\Entity\Affectation;
-use App\Messenger\Message\DossierMessageSCHS;
+use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Service\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;

@@ -12,8 +12,8 @@ framework:
         routing:
             # Route your messages to the transports
             # Symfony\Component\Mailer\Messenger\SendEmailMessage: sync
-            App\Messenger\Message\DossierMessageSCHS: async
-            App\Messenger\Message\DossierMessageSISH: async
+            App\Messenger\Message\Esabora\DossierMessageSCHS: async
+            App\Messenger\Message\Esabora\DossierMessageSISH: async
             App\Messenger\Message\PdfExportMessage: async
 
 

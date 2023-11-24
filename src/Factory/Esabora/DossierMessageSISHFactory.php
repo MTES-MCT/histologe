@@ -6,7 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
-use App\Messenger\Message\DossierMessageSISH;
+use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Repository\SuiviRepository;
 use App\Service\DataGouv\AddressService;
 use App\Service\Esabora\AbstractEsaboraService;

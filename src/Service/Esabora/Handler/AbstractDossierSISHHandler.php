@@ -5,7 +5,7 @@ namespace App\Service\Esabora\Handler;
 use App\Entity\JobEvent;
 use App\Entity\Partner;
 use App\Manager\JobEventManager;
-use App\Messenger\Message\DossierMessageSISH;
+use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Repository\PartnerRepository;
 use App\Service\Esabora\AbstractEsaboraService;
 use Symfony\Component\Serializer\SerializerInterface;

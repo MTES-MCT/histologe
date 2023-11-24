@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Messenger\MessageHandler;
+namespace App\Messenger\MessageHandler\Esabora;
 
 use App\Entity\JobEvent;
 use App\Manager\JobEventManager;
-use App\Messenger\Message\DossierMessageSCHS;
+use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Repository\PartnerRepository;
 use App\Service\Esabora\AbstractEsaboraService;
 use App\Service\Esabora\EsaboraSCHSService;

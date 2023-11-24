@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Tests\Unit\Messenger\MessageHandler;
+namespace App\Tests\Unit\Messenger\MessageHandler\Esabora;
 
 use App\Entity\Partner;
 use App\Manager\JobEventManager;
-use App\Messenger\MessageHandler\DossierMessageSCHSHandler;
+use App\Messenger\MessageHandler\Esabora\DossierMessageSCHSHandler;
 use App\Repository\PartnerRepository;
 use App\Service\Esabora\EsaboraSCHSService;
 use App\Tests\FixturesHelper;
