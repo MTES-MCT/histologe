@@ -70,7 +70,10 @@ class DesordrePrecisionManagerTest extends KernelTestCase
                 'desordreCritere' => $desordreCritere,
             ]
         );
-        $this->assertEquals($desordrePrecision->getDesordrePrecisionSlug(), 'desordre_logement_rideaux_absents_a_motif');
+        $this->assertEquals(
+            $desordrePrecision->getDesordrePrecisionSlug(),
+            'desordre_logement_rideaux_absents_a_motif'
+        );
         $this->assertEquals($desordrePrecision->isIsDanger(), false);
     }
 }

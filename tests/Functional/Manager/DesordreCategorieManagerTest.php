@@ -14,7 +14,7 @@ class DesordreCategorieManagerTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        $kernel = self::bootKernel();
+        self::bootKernel();
 
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->desordreCategorieManager = new DesordreCategorieManager(

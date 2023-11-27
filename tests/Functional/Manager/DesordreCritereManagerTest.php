@@ -58,6 +58,9 @@ class DesordreCritereManagerTest extends KernelTestCase
             ]
         );
         $this->assertEquals($desordreCritere->getSlugCritere(), 'desordre_logement_rideaux_absents');
-        $this->assertEquals($desordreCritere->getLabelCritere(), 'Il n\'y a pas de rideaux aux fenêtres ou ils sont moches');
+        $this->assertEquals(
+            $desordreCritere->getLabelCritere(),
+            'Il n\'y a pas de rideaux aux fenêtres ou ils sont moches'
+        );
     }
 }
