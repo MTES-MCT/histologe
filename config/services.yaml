@@ -116,6 +116,30 @@ services:
                 - '@App\Serializer\SignalementDraftRequestNormalizer'
     Intervention\Image\ImageManager:
 
+    App\Service\Signalement\DesordreTraitement\DesordreLogementLumierePasVolets:
+        tags:
+            - { name: 'desordre_traitement', key: 'desordres_logement_lumiere_pas_volets' }
+    
+    App\Service\Signalement\DesordreTraitement\DesordreLogementLumierePasLumiere:
+        tags:
+            - { name: 'desordre_traitement', key: 'desordres_logement_lumiere_pas_lumiere' }
+
+    App\Service\Signalement\DesordreTraitement\DesordreLogementElectriciteManquePrises:
+        tags:
+            - { name: 'desordre_traitement', key: 'desordres_logement_electricite_manque_prises' }
+
+    App\Service\Signalement\DesordreTraitement\DesordreLogementNuisiblesCafards:
+        tags:
+            - { name: 'desordre_traitement', key: 'desordres_logement_nuisibles_cafards' }
+
+    App\Service\Signalement\DesordreTraitement\DesordreLogementNuisiblesPunaises:
+        tags:
+            - { name: 'desordre_traitement', key: 'desordres_logement_nuisibles_punaises' }
+
+    _instanceof:
+        App\Service\Signalement\DesordreTraitement\DesordreTraitementDispatcher:
+            tags: ['desordre_traitement']
+
 when@test:
     parameters:
         uploads_tmp_dir: '%kernel.project_dir%/tmp/'
