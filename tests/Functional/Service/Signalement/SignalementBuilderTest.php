@@ -10,8 +10,13 @@ use App\Factory\Signalement\InformationComplementaireFactory;
 use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
 use App\Factory\Signalement\TypeCompositionLogementFactory;
+use App\Repository\DesordreCategorieRepository;
+use App\Repository\DesordreCritereRepository;
+use App\Repository\DesordrePrecisionRepository;
 use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
+use App\Service\Signalement\DesordreFilterService;
+use App\Service\Signalement\DesordreTraitement\DesordreTraitementDispatcher;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementBuilder;
 use App\Service\Signalement\SignalementInputValueMapper;
@@ -47,6 +52,11 @@ class SignalementBuilderTest extends KernelTestCase
         $uploadHandlerService = static::getContainer()->get(UploadHandlerService::class);
         $security = static::getContainer()->get(Security::class);
         $signalementInputValueMapper = static::getContainer()->get(SignalementInputValueMapper::class);
+        $desordreCategorieRepository = static::getContainer()->get(DesordreCategorieRepository::class);
+        $desordreCritereRepository = static::getContainer()->get(DesordreCritereRepository::class);
+        $desordrePrecisionRepository = static::getContainer()->get(DesordrePrecisionRepository::class);
+        $desordreTraitementDispatcher = static::getContainer()->get(DesordreTraitementDispatcher::class);
+        $desordreFilterService = static::getContainer()->get(DesordreFilterService::class);
 
         $this->signalementBuilder = new SignalementBuilder(
             $territoryRepository,
@@ -61,7 +71,12 @@ class SignalementBuilderTest extends KernelTestCase
             $fileFactory,
             $uploadHandlerService,
             $security,
-            $signalementInputValueMapper
+            $signalementInputValueMapper,
+            $desordreFilterService,
+            $desordreCategorieRepository,
+            $desordreCritereRepository,
+            $desordrePrecisionRepository,
+            $desordreTraitementDispatcher
         );
     }
 

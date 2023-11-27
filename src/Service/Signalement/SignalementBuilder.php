@@ -12,8 +12,12 @@ use App\Factory\Signalement\InformationComplementaireFactory;
 use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
 use App\Factory\Signalement\TypeCompositionLogementFactory;
+use App\Repository\DesordreCategorieRepository;
+use App\Repository\DesordreCritereRepository;
+use App\Repository\DesordrePrecisionRepository;
 use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
+use App\Service\Signalement\DesordreTraitement\DesordreTraitementDispatcher;
 use App\Service\Token\TokenGeneratorInterface;
 use App\Service\UploadHandlerService;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -39,6 +43,11 @@ class SignalementBuilder
         private UploadHandlerService $uploadHandlerService,
         private Security $security,
         private SignalementInputValueMapper $signalementInputValueMapper,
+        private DesordreFilterService $desordreFilterService,
+        private DesordreCategorieRepository $desordreCategorieRepository,
+        private DesordreCritereRepository $desordreCritereRepository,
+        private DesordrePrecisionRepository $desordrePrecisionRepository,
+        private DesordreTraitementDispatcher $desordreTraitementDispatcher,
     ) {
     }
 
@@ -108,8 +117,72 @@ class SignalementBuilder
 
     public function withDesordres(): self
     {
-        // TODO : https://github.com/MTES-MCT/histologe/issues/1665
+        $categoryDisorders = $this->signalementDraftRequest->getCategorieDisorders();
+        if (isset($categoryDisorders) && !empty($categoryDisorders)) {
+            $this->processDesordresByZone('batiment');
+            $this->processDesordresByZone('logement');
+            // TODO : type et composition logement
+        }
+
+        // TODO : https://github.com/MTES-MCT/histologe/issues/1546
+
+        // TODO : https://github.com/MTES-MCT/histologe/issues/1547
+
         return $this;
+    }
+
+    private function processDesordresByZone(string $zone)
+    {
+        $categoryDisorders = $this->signalementDraftRequest->getCategorieDisorders();
+        if (isset($categoryDisorders[$zone]) && !empty($categoryDisorders[$zone])) {
+            foreach ($categoryDisorders[$zone] as $categoryDisorderSlug) {
+                // on récupère dans le draft toutes les infos liées à cette catégorie de désordres
+                $filteredData = $this->desordreFilterService->filterDesordreData(
+                    $this->payload,
+                    $categoryDisorderSlug
+                );
+                // on récupère en base tous les critères de cette catégorie de désordres
+                $criteres = $this->desordreCritereRepository->findBy(['slugCategorie' => $categoryDisorderSlug]);
+
+                // chercher et lier les critères qu'on a dans le signalement
+                $availableCritereSlugs = array_map(fn ($critere) => $critere->getSlugCritere(), $criteres);
+
+                $critereSlugDraft = array_filter($filteredData, function ($value, $slug) use ($availableCritereSlugs) {
+                    if (\in_array($slug, $availableCritereSlugs)) {
+                        if (1 === $value) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }, \ARRAY_FILTER_USE_BOTH);
+
+                $critereToLink = null;
+                foreach ($critereSlugDraft as $slugCritere => $value) {
+                    $critereToLink = $this->desordreCritereRepository->findOneBy(['slugCritere' => $slugCritere]);
+                    $this->signalement->addDesordreCritere($critereToLink);
+                    // on chercher les précisions qu'on peut lier
+                    $precisions = $critereToLink->getDesordrePrecisions();
+                    if (1 === \count($precisions)) {
+                        // TODO : vérifier la valeur
+                        // il n'y en a qu'une, on la lie
+                        $this->signalement->addDesordrePrecision($precisions->first());
+                    } else {
+                        // passe par un service spécifique pour évaluer les précisions à ajouter sur ce critère
+                        $desordrePrecisions = $this->desordreTraitementDispatcher->dispatch($critereToLink, $this->payload);
+                        foreach ($desordrePrecisions as $desordrePrecision) {
+                            $this->signalement->addDesordrePrecision($desordrePrecision);
+                        }
+                    }
+                    // TODO : gérer les fichiers associés s'il y en a
+                }
+
+                if (null !== $critereToLink) {
+                    // lier la catégorie BO idoine
+                    $this->signalement->addDesordreCategory($critereToLink->getDesordreCategorie());
+                }
+            }
+        }
     }
 
     public function withProcedure(): self
