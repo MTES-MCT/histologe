@@ -29,7 +29,7 @@ class DossierMessageSCHSFactoryTest extends TestCase
         );
 
         $this->assertCount(2, $dossierMessage->getPiecesJointes());
-        $this->assertStringContainsString('Doc', $dossierMessage->getPiecesJointesObservation());
+        $this->assertStringContainsString('document.pdf', $dossierMessage->getPiecesJointesObservation());
         $this->assertStringContainsString('Points signalés', $dossierMessage->getDossierCommentaire());
         $this->assertStringContainsString('Etat grave', $dossierMessage->getDossierCommentaire());
         $this->assertStringContainsString('25', $dossierMessage->getNumeroAdresseSignalement());
