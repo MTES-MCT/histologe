@@ -12,7 +12,7 @@
       :data-ajaxurl-get-signalement-draft="sharedProps.ajaxurlGetSignalementDraft"
       :data-ajaxurl-platform-name="sharedProps.platformName"
       >
-      <div v-if="isLoadingInit" class="loading fr-m-10w">
+      <div v-if="isLoadingInit" class="loading fr-m-10w fr-grid-row fr-grid-row--center">
         Initialisation du formulaire...
 
         <div v-if="isErrorInit" class="fr-my-5w">
@@ -152,7 +152,11 @@ export default defineComponent({
         if (requestResponse.uuid) {
           formStore.data.uuidSignalementDraft = requestResponse.uuid
         } else {
-          alert('Erreur d\'enregistrement du brouillon de signalement. Merci de réessayer dans quelques minutes.')
+          let errorMessage = ''
+          for (const index in requestResponse.violations) {
+            errorMessage += requestResponse.violations[index].title + ' '
+          }
+          alert(errorMessage)
           return
         }
         if (requestResponse.signalementReference) {
