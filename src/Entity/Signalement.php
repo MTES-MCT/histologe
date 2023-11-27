@@ -372,6 +372,15 @@ class Signalement
     #[ORM\Column(type: 'information_complementaire', nullable: true)]
     private ?InformationComplementaire $informationComplementaire;
 
+    #[ORM\ManyToMany(targetEntity: DesordreCategorie::class, mappedBy: 'Signalement')]
+    private Collection $desordreCategories;
+
+    #[ORM\ManyToMany(targetEntity: DesordreCritere::class, mappedBy: 'Signalement')]
+    private Collection $desordreCriteres;
+
+    #[ORM\ManyToMany(targetEntity: DesordrePrecision::class, mappedBy: 'signalement')]
+    private Collection $desordrePrecisions;
+
     public function __construct()
     {
         $this->situations = new ArrayCollection();
@@ -388,6 +397,9 @@ class Signalement
         $this->signalementQualifications = new ArrayCollection();
         $this->interventions = new ArrayCollection();
         $this->files = new ArrayCollection();
+        $this->desordreCategories = new ArrayCollection();
+        $this->desordreCriteres = new ArrayCollection();
+        $this->desordrePrecisions = new ArrayCollection();
     }
 
     #[Assert\Callback]
@@ -1978,6 +1990,87 @@ class Signalement
     public function setInformationComplementaire(?InformationComplementaire $informationComplementaire): self
     {
         $this->informationComplementaire = $informationComplementaire;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DesordreCategorie>
+     */
+    public function getDesordreCategories(): Collection
+    {
+        return $this->desordreCategories;
+    }
+
+    public function addDesordreCategory(DesordreCategorie $desordreCategory): self
+    {
+        if (!$this->desordreCategories->contains($desordreCategory)) {
+            $this->desordreCategories->add($desordreCategory);
+            $desordreCategory->addSignalement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDesordreCategory(DesordreCategorie $desordreCategory): self
+    {
+        if ($this->desordreCategories->removeElement($desordreCategory)) {
+            $desordreCategory->removeSignalement($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DesordreCritere>
+     */
+    public function getDesordreCriteres(): Collection
+    {
+        return $this->desordreCriteres;
+    }
+
+    public function addDesordreCritere(DesordreCritere $desordreCritere): self
+    {
+        if (!$this->desordreCriteres->contains($desordreCritere)) {
+            $this->desordreCriteres->add($desordreCritere);
+            $desordreCritere->addSignalement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDesordreCritere(DesordreCritere $desordreCritere): self
+    {
+        if ($this->desordreCriteres->removeElement($desordreCritere)) {
+            $desordreCritere->removeSignalement($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DesordrePrecision>
+     */
+    public function getDesordrePrecisions(): Collection
+    {
+        return $this->desordrePrecisions;
+    }
+
+    public function addDesordrePrecision(DesordrePrecision $desordrePrecision): self
+    {
+        if (!$this->desordrePrecisions->contains($desordrePrecision)) {
+            $this->desordrePrecisions->add($desordrePrecision);
+            $desordrePrecision->addSignalement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDesordrePrecision(DesordrePrecision $desordrePrecision): self
+    {
+        if ($this->desordrePrecisions->removeElement($desordrePrecision)) {
+            $desordrePrecision->removeSignalement($this);
+        }
 
         return $this;
     }

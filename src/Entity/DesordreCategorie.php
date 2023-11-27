@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DesordreCategorieRepository::class)]
+#[ORM\HasLifecycleCallbacks()]
 class DesordreCategorie
 {
     use TimestampableTrait;
@@ -24,9 +25,13 @@ class DesordreCategorie
     #[ORM\OneToMany(mappedBy: 'desordreCategorie', targetEntity: DesordreCritere::class, orphanRemoval: true)]
     private Collection $desordreCriteres;
 
+    #[ORM\ManyToMany(targetEntity: Signalement::class, inversedBy: 'desordreCategories')]
+    private Collection $signalement;
+
     public function __construct()
     {
         $this->desordreCriteres = new ArrayCollection();
+        $this->signalement = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -39,7 +44,7 @@ class DesordreCategorie
         return $this->label;
     }
 
-    public function setLabel(string $label): static
+    public function setLabel(string $label): self
     {
         $this->label = $label;
 
@@ -54,7 +59,7 @@ class DesordreCategorie
         return $this->desordreCriteres;
     }
 
-    public function addDesordreCritere(DesordreCritere $desordreCritere): static
+    public function addDesordreCritere(DesordreCritere $desordreCritere): self
     {
         if (!$this->desordreCriteres->contains($desordreCritere)) {
             $this->desordreCriteres->add($desordreCritere);
@@ -64,7 +69,7 @@ class DesordreCategorie
         return $this;
     }
 
-    public function removeDesordreCritere(DesordreCritere $desordreCritere): static
+    public function removeDesordreCritere(DesordreCritere $desordreCritere): self
     {
         if ($this->desordreCriteres->removeElement($desordreCritere)) {
             // set the owning side to null (unless already changed)
@@ -72,6 +77,30 @@ class DesordreCategorie
                 $desordreCritere->setDesordreCategorie(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Signalement>
+     */
+    public function getSignalement(): Collection
+    {
+        return $this->signalement;
+    }
+
+    public function addSignalement(Signalement $signalement): self
+    {
+        if (!$this->signalement->contains($signalement)) {
+            $this->signalement->add($signalement);
+        }
+
+        return $this;
+    }
+
+    public function removeSignalement(Signalement $signalement): self
+    {
+        $this->signalement->removeElement($signalement);
 
         return $this;
     }
