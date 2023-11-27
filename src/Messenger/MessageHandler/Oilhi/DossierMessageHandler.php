@@ -32,7 +32,7 @@ class DossierMessageHandler
             status: 200 === $response->getStatusCode() ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,
             codeStatus: $response->getStatusCode(),
             signalementId: $dossierMessage->getSignalementId(),
-            partnerId: $dossierMessage->getPartnerId(),
+            partnerId: $partnerId,
             partnerType: $partner?->getType(),
         );
     }
