@@ -1,6 +1,14 @@
 <div class="fr-grid-row fr-mt-3w">
     <div class="fr-col-12 fr-col-md-6">
-        <h3 class="fr-h5">Adresse du logement</h3>
+        {% include 'back/signalement/view/edit-modals/edit-address.html.twig' %}
+        <h3 class="fr-h5">
+            Adresse du logement
+            {% if isNewFormEnabled %}
+            <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-address" class="fr-ml-6v fr-btn--icon-left fr-icon-edit-line">
+                Modifier
+            </a>
+            {% endif %}
+        </h3>
         {{ signalement.adresseOccupant }},
         <br>
         {{ signalement.etageOccupant ? 'étage ' ~ signalement.etageOccupant ~ ',' : '' }}
@@ -11,8 +19,7 @@
         {{ signalement.cpOccupant ~' '~ signalement.villeOccupant|upper }}
         <br>
         {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
-            <a target="_blank" rel="noreferrer"
-                {# latitude and longitude data are inverted for now #}
+            <a target="_blank" rel="noreferrer" class="force-link-color"
                 href="http://www.openstreetmap.org/?mlat={{ signalement.geoloc.lat }}&mlon={{ signalement.geoloc.lng }}#map=18/{{ signalement.geoloc.lat }}/{{ signalement.geoloc.lng }}">
                 Voir sur la carte
             </a>

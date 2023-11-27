@@ -68,7 +68,7 @@
         <td class="fr-text--right fr-ws-nowrap">
             <a href="{{ path('back_signalement_view',{uuid:signalement.uuid}) }}"
                class="fr-btn fr-btn--sm fr-fi-eye-fill"></a>
-            {% if signalement.statut is same as(2) %}
+            {% if not isNewFormEnabled and signalement.statut is same as(2) %}
                 <a href="{{ path('back_signalement_edit',{uuid:signalement.uuid}) }}"
                 class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-edit-fill"></a>
             {% endif %}

@@ -14,6 +14,7 @@ use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementBuilder;
+use App\Service\Signalement\SignalementInputValueMapper;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Service\Token\TokenGeneratorInterface;
 use App\Service\UploadHandlerService;
@@ -45,6 +46,7 @@ class SignalementBuilderTest extends KernelTestCase
         $fileFactory = static::getContainer()->get(FileFactory::class);
         $uploadHandlerService = static::getContainer()->get(UploadHandlerService::class);
         $security = static::getContainer()->get(Security::class);
+        $signalementInputValueMapper = static::getContainer()->get(SignalementInputValueMapper::class);
 
         $this->signalementBuilder = new SignalementBuilder(
             $territoryRepository,
@@ -58,7 +60,8 @@ class SignalementBuilderTest extends KernelTestCase
             $informationComplementaireFactory,
             $fileFactory,
             $uploadHandlerService,
-            $security
+            $security,
+            $signalementInputValueMapper
         );
     }
 

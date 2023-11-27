@@ -39,6 +39,7 @@ class SignalementBuilder
         private FileFactory $fileFactory,
         private UploadHandlerService $uploadHandlerService,
         private Security $security,
+        private SignalementInputValueMapper $signalementInputValueMapper,
     ) {
     }
 
@@ -281,13 +282,18 @@ class SignalementBuilder
         return ProfileDeclarant::BAILLEUR === $this->signalement->getProfileDeclarant();
     }
 
+    private function isTiersPro(): bool
+    {
+        return ProfileDeclarant::TIERS_PRO === $this->signalement->getProfileDeclarant();
+    }
+
     private function evalBoolean(?string $value): ?bool
     {
         if (null === $value) {
             return null;
         }
 
-        return 'oui' === $value;
+        return $this->signalementInputValueMapper->map($value);
     }
 
     private function isConstructionAvant1949(?string $dateConstruction): ?bool
@@ -327,7 +333,9 @@ class SignalementBuilder
     private function resolveIsAllocataire(): ?string
     {
         if ($this->evalBoolean($this->signalementDraftRequest->getLogementSocialAllocation())) {
-            return strtoupper($this->signalementDraftRequest->getLogementSocialAllocationCaisse());
+            return $this->signalementInputValueMapper->map(
+                $this->signalementDraftRequest->getLogementSocialAllocationCaisse()
+            );
         }
 
         return '0';
@@ -335,14 +343,20 @@ class SignalementBuilder
 
     private function resolveTiersLien(): ?string
     {
-        if (ProfileDeclarant::TIERS_PARTICULIER !== $this->signalement->getProfileDeclarant()) {
+        if ($this->isServiceSecours()) {
+            return OccupantLink::SECOURS->name;
+        } elseif ($this->isBailleur()) {
+            return OccupantLink::BAILLEUR->name;
+        } elseif ($this->isTiersPro()) {
+            return OccupantLink::PRO->name;
+        } elseif (ProfileDeclarant::TIERS_PARTICULIER !== $this->signalement->getProfileDeclarant()) {
             return null;
         }
 
         $tiersLien = OccupantLink::from(strtoupper($this->signalementDraftRequest->getVosCoordonneesTiersLien()));
 
-        if (OccupantLink::VOISINAGE === $tiersLien) {
-            return OccupantLink::VOISINAGE->label();
+        if (OccupantLink::VOISIN === $tiersLien) {
+            return OccupantLink::VOISIN->name;
         }
 
         return $tiersLien->value;

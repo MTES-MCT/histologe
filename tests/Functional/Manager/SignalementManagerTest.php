@@ -11,6 +11,7 @@ use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementFactory;
 use App\Manager\SignalementManager;
 use App\Service\Signalement\QualificationStatusService;
+use App\Service\Signalement\SignalementInputValueMapper;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
@@ -35,6 +36,7 @@ class SignalementManagerTest extends KernelTestCase
     private ParameterBagInterface $parameterBag;
     private SignalementManager $signalementManager;
     private CsrfTokenManagerInterface $csrfTokenManager;
+    private SignalementInputValueMapper $signalementInputValueMapper;
 
     protected function setUp(): void
     {
@@ -52,6 +54,7 @@ class SignalementManagerTest extends KernelTestCase
         $this->signalementExportFactory = static::getContainer()->get(SignalementExportFactory::class);
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
         $this->csrfTokenManager = static::getContainer()->get(CsrfTokenManagerInterface::class);
+        $this->signalementInputValueMapper = static::getContainer()->get(SignalementInputValueMapper::class);
 
         $this->signalementManager = new SignalementManager(
             $this->managerRegistry,
@@ -63,6 +66,7 @@ class SignalementManagerTest extends KernelTestCase
             $this->signalementExportFactory,
             $this->parameterBag,
             $this->csrfTokenManager,
+            $this->signalementInputValueMapper,
         );
     }
 

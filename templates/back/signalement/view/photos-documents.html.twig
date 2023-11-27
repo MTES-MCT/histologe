@@ -1,42 +1,47 @@
-<hr class="fr-mt-3w">
+{% if importedBy is not same as 'user' %}
+    <hr class="fr-mt-3w">
 
-<div class="fr-grid-row">
-    <div class="fr-col-9 fr-col-md-6">
-        <h3 class="fr-h5">Photos et documents</h3>
+    <div class="fr-grid-row">
+        <div class="fr-col-9 fr-col-md-6">
+            <h3 class="fr-h5">{{ zonetitle }}</h3>
+        </div>
+        <div class="fr-col-3 fr-col-md-6 fr-text--right">
+            {% if (is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted))
+                and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION')
+                %}
+                <form method="POST" enctype="multipart/form-data" class="inline-form"
+                    action="{{ path('back_signalement_add_file',{uuid:signalement.uuid}) }}">
+                    <label class="fr-btn fr-btn--sm fr-fi-file-fill fr-btn--icon-left"> Ajouter des documents
+                        <input type="file" accept="application/*" name="signalement-add-file[documents][]"
+                            class="fr-hidden fr-input--file-signalement" multiple>
+                    </label>
+                    <input type="hidden" name="_token"
+                        value="{{ csrf_token('signalement_add_file_'~signalement.id) }}">
+                </form>
+                
+                <form method="POST" enctype="multipart/form-data" class="inline-form"
+                    action="{{ path('back_signalement_add_file',{uuid:signalement.uuid}) }}">
+                    <label class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-icon-camera-fill"> Ajouter des
+                        photos
+                        <input type="file" accept="image/*" name="signalement-add-file[photos][]"
+                            class="fr-hidden fr-input--file-signalement" multiple>
+                    </label>
+                    <input type="hidden" name="_token"
+                        value="{{ csrf_token('signalement_add_file_'~signalement.id) }}">
+                </form>
+            {% endif %}
+        </div>
     </div>
-    <div class="fr-col-3 fr-col-md-6 fr-text--right">
-        {% if (is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted))
-            and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION')
-            %}
-            <form method="POST" enctype="multipart/form-data" class="inline-form"
-                action="{{ path('back_signalement_add_file',{uuid:signalement.uuid}) }}">
-                <label class="fr-btn fr-btn--sm fr-fi-file-fill fr-btn--icon-left"> Ajouter des documents
-                    <input type="file" accept="application/*" name="signalement-add-file[documents][]"
-                        class="fr-hidden fr-input--file-signalement" multiple>
-                </label>
-                <input type="hidden" name="_token"
-                    value="{{ csrf_token('signalement_add_file_'~signalement.id) }}">
-            </form>
-            
-            <form method="POST" enctype="multipart/form-data" class="inline-form"
-                action="{{ path('back_signalement_add_file',{uuid:signalement.uuid}) }}">
-                <label class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-icon-camera-fill"> Ajouter des
-                    photos
-                    <input type="file" accept="image/*" name="signalement-add-file[photos][]"
-                        class="fr-hidden fr-input--file-signalement" multiple>
-                </label>
-                <input type="hidden" name="_token"
-                    value="{{ csrf_token('signalement_add_file_'~signalement.id) }}">
-            </form>
-        {% endif %}
-    </div>
-</div>
 
-<div class="fr-alert fr-alert--info fr-alert--sm fr-mb-3v">
-    <p>
-        Pour ajouter plusieurs photos ou documents à la fois, sélectionnez vos fichiers en maintenant la touche CTRL enfoncée.
-    </p>
-</div>
+    <div class="fr-alert fr-alert--info fr-alert--sm fr-mb-3v">
+        <p>
+            Pour ajouter plusieurs photos ou documents à la fois, sélectionnez vos fichiers en maintenant la touche CTRL enfoncée.
+        </p>
+    </div>
+
+{% else %}
+    <h3 class="fr-h6">{{ zonetitle }}</h3>
+{% endif %}
 
 {% if signalement.files|length == 0 %}
     <p class="fr-text--sm">
@@ -45,17 +50,26 @@
 {% endif %}
 
 <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
-    {% for index, photo in signalement.files|filter(photo => photo.fileType == 'photo' and photo.intervention is null) %}
+    {% for index, photo in signalement.files|filter(
+        photo => photo.fileType == 'photo'
+                and photo.intervention is null
+                and (
+                    (importedBy is same as 'user' and photo.uploadedBy is null)
+                    or (importedBy is same as 'partner' and photo.uploadedBy is not null)
+                    or importedBy is same as 'all'
+                )
+        ) %}
         <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
             <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover"
-                 data-user="{{ photo.user.nomComplet ?? 'N/R' }}" data-mail="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}
-"
+                 data-user="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
+                 data-mail="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
                  style="background: url('{{ asset('_up/'~photo.filename~'/'~signalement.uuid~'?variant=thumb') }}')no-repeat center center/cover">
                 <a href="{{ asset('_up/'~photo.filename~'/'~signalement.uuid~'?variant=resize') }}"
                     class="fr-btn fr-btn--sm fr-icon-eye-line img-box" title="Voir la photo"
                     target="_blank" rel="noopener"></a>
-                {% if is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted) %}
-                    {% if photo.user is not defined or (photo.user is not null and photo.user.id is same as(app.user.id)) %}
+                {% if importedBy is not same as 'user'
+                    and (is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted)) %}
+                    {% if photo.uploadedBy is not defined or (photo.uploadedBy is not null and photo.uploadedBy.id is same as(app.user.id)) %}
                         <button title="Supprimer la photo"
                                 data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'photos',filename:photo.filename}) }}"
                                 data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
@@ -66,7 +80,16 @@
         </div>
     {% endfor %}
 </div>
-{% for index, doc in signalement.files|filter(doc => doc.fileType == 'document' and doc.intervention is null) %}
+
+{% for index, doc in signalement.files|filter(
+    doc => doc.fileType == 'document' 
+            and doc.intervention is null
+            and (
+                (importedBy is same as 'user' and doc.uploadedBy is null)
+                or (importedBy is same as 'partner' and doc.uploadedBy is not null)
+                or importedBy is same as 'all'
+            )
+    ) %}
     <div class="fr-grid-row fr-grid-row--middle fr-background-alt--grey fr-rounded fr-p-3v signalement-file-item">
         <div class="fr-col-9">
             <div class="fr-grid-row">
@@ -77,7 +100,7 @@
                     {{ doc.title }}
                 </div>
                 <div class="fr-col-12 fr-col-lg-5">
-                    {{ doc.nomComplet ?? 'N/R' }}
+                    {{ doc.uploadedBy.nomComplet ?? 'N/R' }}
                 </div>
             </div>
         </div>

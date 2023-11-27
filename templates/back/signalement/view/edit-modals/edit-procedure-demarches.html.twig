@@ -1,0 +1,96 @@
+<dialog aria-labelledby="fr-modal-title-modal-edit-procedure-demarches" role="dialog" id="fr-modal-edit-procedure-demarches" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8">
+                <form method="POST" id="form-edit-procedure-demarches" enctype="application/json" action="{{ path('back_signalement_edit_procedure_demarches',{uuid:signalement.uuid}) }}">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button type="button" class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-edit-procedure-demarches">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="fr-modal-title-modal-edit-procedure-demarches" class="fr-modal__title">
+                                Modifier procédure et démarches
+                            </h1>
+
+                            <div class="fr-select-group">
+                                {% set isProprioAverti = 'nsp' %}
+                                {% if signalement.isProprioAverti is null %}
+                                    {% set isProprioAverti = 'nsp' %}
+                                {% elseif signalement.isProprioAverti %}
+                                    {% set isProprioAverti = 'oui' %}
+                                {% else %}
+                                    {% set isProprioAverti = 'non' %}
+                                {% endif %}
+                                <label class="fr-label" for="isProprioAverti">Bailleur averti</label>
+                                <select class="fr-select" name="isProprioAverti">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ isProprioAverti is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ isProprioAverti is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ isProprioAverti is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set infoProcedureAssuranceContactee = 'nsp' %}
+                                {% if signalement.informationProcedure %}
+                                    {% if signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'oui' %}
+                                        {% set infoProcedureAssuranceContactee = 'oui' %}
+                                    {% elseif signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'non' %}
+                                        {% set infoProcedureAssuranceContactee = 'non' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="infoProcedureAssuranceContactee">Contact assurance</label>
+                                <select class="fr-select" name="infoProcedureAssuranceContactee">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ infoProcedureAssuranceContactee is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ infoProcedureAssuranceContactee is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ infoProcedureAssuranceContactee is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="infoProcedureReponseAssurance">Réponse assurance</label>
+                                <input class="fr-input" type="text" name="infoProcedureReponseAssurance" value="{{ signalement.informationProcedure and signalement.informationProcedure.infoProcedureReponseAssurance ? signalement.informationProcedure.infoProcedureReponseAssurance|raw : '' }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                {% set infoProcedureDepartApresTravaux = 'nsp' %}
+                                {% if signalement.informationProcedure %}
+                                    {% if signalement.informationProcedure.infoProcedureDepartApresTravaux is same as 'oui' %}
+                                        {% set infoProcedureDepartApresTravaux = 'oui' %}
+                                    {% elseif signalement.informationProcedure.infoProcedureDepartApresTravaux is same as 'non' %}
+                                        {% set infoProcedureDepartApresTravaux = 'non' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="infoProcedureDepartApresTravaux">Souhaite garder le logement après travaux</label>
+                                <select class="fr-select" name="infoProcedureDepartApresTravaux">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ infoProcedureDepartApresTravaux is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ infoProcedureDepartApresTravaux is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ infoProcedureDepartApresTravaux is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="fr-modal__footer">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <li>
+                                    <button type="button" class="fr-btn fr-btn--secondary"
+                                            aria-controls="fr-modal-edit-procedure-demarches">
+                                        Annuler
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="fr-btn" type="submit">
+                                        Valider
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_procedure_demarches_'~signalement.id) }}">
+                </form>
+            </div>
+        </div>
+    </div>
+</dialog>

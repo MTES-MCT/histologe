@@ -2,10 +2,20 @@
 
 namespace App\Manager;
 
+use App\Dto\Request\Signalement\AdresseOccupantRequest;
+use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
+use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
+use App\Dto\Request\Signalement\CoordonneesTiersRequest;
+use App\Dto\Request\Signalement\InformationsLogementRequest;
+use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\QualificationNDERequest;
+use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Dto\SignalementAffectationListView;
 use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Model\InformationProcedure;
+use App\Entity\Model\SituationFoyer;
+use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
@@ -18,6 +28,7 @@ use App\Factory\SignalementFactory;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Service\Signalement\QualificationStatusService;
+use App\Service\Signalement\SignalementInputValueMapper;
 use DateTimeImmutable;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -39,6 +50,7 @@ class SignalementManager extends AbstractManager
         private SignalementExportFactory $signalementExportFactory,
         private ParameterBagInterface $parameterBag,
         private CsrfTokenManagerInterface $csrfTokenManager,
+        private SignalementInputValueMapper $signalementInputValueMapper,
         string $entityName = Signalement::class
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -266,6 +278,144 @@ class SignalementManager extends AbstractManager
         $signalementQualification->setStatus($this->qualificationStatusService->getNDEStatus($signalementQualification));
 
         $this->save($signalementQualification);
+    }
+
+    public function updateFromAdresseOccupantRequest(Signalement $signalement, AdresseOccupantRequest $adresseOccupantRequest)
+    {
+        $signalement->setAdresseOccupant($adresseOccupantRequest->getAdresse())
+            ->setCpOccupant($adresseOccupantRequest->getCodePostal())
+            ->setVilleOccupant($adresseOccupantRequest->getVille())
+            ->setInseeOccupant($adresseOccupantRequest->getInsee())
+            ->setGeoloc([
+                'lat' => $adresseOccupantRequest->getGeolocLat(),
+                'lng' => $adresseOccupantRequest->getGeolocLng(),
+            ])
+
+            ->setEtageOccupant($adresseOccupantRequest->getEtage())
+            ->setEscalierOccupant($adresseOccupantRequest->getEscalier())
+            ->setNumAppartOccupant($adresseOccupantRequest->getNumAppart())
+            ->setAdresseAutreOccupant($adresseOccupantRequest->getAutre());
+
+        $this->save($signalement);
+    }
+
+    public function updateFromCoordonneesTiersRequest(Signalement $signalement, CoordonneesTiersRequest $coordonneesTiersRequest)
+    {
+        $signalement->setNomDeclarant($coordonneesTiersRequest->getNom())
+            ->setPrenomDeclarant($coordonneesTiersRequest->getPrenom())
+            ->setMailDeclarant($coordonneesTiersRequest->getMail())
+            ->setTelDeclarant($coordonneesTiersRequest->getTelephone())
+            ->setLienDeclarantOccupant($coordonneesTiersRequest->getLien())
+            ->setStructureDeclarant($coordonneesTiersRequest->getStructure());
+
+        $this->save($signalement);
+    }
+
+    public function updateFromCoordonneesFoyerRequest(Signalement $signalement, CoordonneesFoyerRequest $coordonneesFoyerRequest)
+    {
+        $signalement->setNomOccupant($coordonneesFoyerRequest->getNom())
+            ->setPrenomOccupant($coordonneesFoyerRequest->getPrenom())
+            ->setMailOccupant($coordonneesFoyerRequest->getMail())
+            ->setTelOccupant($coordonneesFoyerRequest->getTelephone())
+            ->setTelOccupantBis($coordonneesFoyerRequest->getTelephoneBis());
+
+        $this->save($signalement);
+    }
+
+    public function updateFromCoordonneesBailleurRequest(Signalement $signalement, CoordonneesBailleurRequest $coordonneesBailleurRequest)
+    {
+        $signalement->setNomProprio($coordonneesBailleurRequest->getNom())
+            ->setPrenomProprio($coordonneesBailleurRequest->getPrenom())
+            ->setMailProprio($coordonneesBailleurRequest->getMail())
+            ->setTelProprio($coordonneesBailleurRequest->getTelephone())
+            ->setTelProprioSecondaire($coordonneesBailleurRequest->getTelephoneBis())
+            ->setAdresseProprio($coordonneesBailleurRequest->getAdresse())
+            ->setCodePostalProprio($coordonneesBailleurRequest->getCodePostal())
+            ->setVilleProprio($coordonneesBailleurRequest->getVille());
+
+        $this->save($signalement);
+    }
+
+    public function updateFromInformationsLogementRequest(Signalement $signalement, InformationsLogementRequest $informationsLogementRequest)
+    {
+        $signalement->setNatureLogement($informationsLogementRequest->getType());
+        if (is_numeric($informationsLogementRequest->getNombrePersonnes())) {
+            $signalement->setNbOccupantsLogement($informationsLogementRequest->getNombrePersonnes());
+        }
+
+        $typeCompositionLogement = new TypeCompositionLogement();
+        if (!empty($signalement->getTypeCompositionLogement())) {
+            $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
+        }
+        $typeCompositionLogement
+            ->setCompositionLogementNombrePersonnes($informationsLogementRequest->getNombrePersonnes())
+            ->setCompositionLogementEnfants($informationsLogementRequest->getCompositionLogementEnfants())
+            ->setBailDpeDateEmmenagement($informationsLogementRequest->getBailDpeDateEmmenagement())
+            ->setBailDpeBail($informationsLogementRequest->getBailDpeBail())
+            ->setBailDpeEtatDesLieux($informationsLogementRequest->getBailDpeEtatDesLieux())
+            ->setBailDpeDpe($informationsLogementRequest->getBailDpeDpe());
+        $signalement->setTypeCompositionLogement($typeCompositionLogement);
+
+        $this->save($signalement);
+    }
+
+    public function updateFromSituationFoyerRequest(Signalement $signalement, SituationFoyerRequest $situationFoyerRequest)
+    {
+        $signalement->setIsLogementSocial(
+            $this->signalementInputValueMapper->map(
+                $situationFoyerRequest->getIsLogementSocial()
+            )
+        );
+        $signalement->setIsRelogement(
+            $this->signalementInputValueMapper->map(
+                $situationFoyerRequest->getIsRelogement()
+            )
+        );
+        $signalement->setIsAllocataire(
+            $this->signalementInputValueMapper->map(
+                $situationFoyerRequest->getIsAllocataire()
+            )
+        );
+
+        if (!empty($situationFoyerRequest->getDateNaissanceOccupant())) {
+            $dateNaissance = new \DateTimeImmutable($situationFoyerRequest->getDateNaissanceOccupant());
+            $signalement->setDateNaissanceOccupant($dateNaissance);
+        }
+
+        $signalement->setNumAllocataire($situationFoyerRequest->getNumAllocataire());
+
+        $situationFoyer = new SituationFoyer();
+        if (!empty($signalement->getSituationFoyer())) {
+            $situationFoyer = clone $signalement->getSituationFoyer();
+        }
+        $situationFoyer
+            ->setLogementSocialMontantAllocation($situationFoyerRequest->getLogementSocialMontantAllocation())
+            ->setTravailleurSocialQuitteLogement($situationFoyerRequest->getTravailleurSocialQuitteLogement())
+            ->setTravailleurSocialAccompagnementDeclarant($situationFoyerRequest->getTravailleurSocialAccompagnementDeclarant());
+        $signalement->setSituationFoyer($situationFoyer);
+
+        $this->save($signalement);
+    }
+
+    public function updateFromProcedureDemarchesRequest(Signalement $signalement, ProcedureDemarchesRequest $procedureDemarchesRequest)
+    {
+        $signalement->setIsProprioAverti(
+            $this->signalementInputValueMapper->map(
+                $procedureDemarchesRequest->getIsProprioAverti()
+            )
+        );
+
+        $informationProcedure = new InformationProcedure();
+        if (!empty($signalement->getInformationProcedure())) {
+            $informationProcedure = clone $signalement->getInformationProcedure();
+        }
+        $informationProcedure
+            ->setInfoProcedureAssuranceContactee($procedureDemarchesRequest->getInfoProcedureAssuranceContactee())
+            ->setInfoProcedureReponseAssurance($procedureDemarchesRequest->getInfoProcedureReponseAssurance())
+            ->setInfoProcedureDepartApresTravaux($procedureDemarchesRequest->getInfoProcedureDepartApresTravaux());
+        $signalement->setInformationProcedure($informationProcedure);
+
+        $this->save($signalement);
     }
 
     public function findSignalementAffectationList(User|UserInterface|null $user, array $options): array

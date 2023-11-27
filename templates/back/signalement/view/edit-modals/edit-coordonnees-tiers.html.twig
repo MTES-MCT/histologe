@@ -1,0 +1,75 @@
+<dialog aria-labelledby="fr-modal-title-modal-edit-coordonnees-tiers" role="dialog" id="fr-modal-edit-coordonnees-tiers" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8">
+                <form method="POST" id="form-edit-coordonnees-tiers" enctype="application/json" action="{{ path('back_signalement_edit_coordonnees_tiers',{uuid:signalement.uuid}) }}">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button type="button" class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-edit-coordonnees-tiers">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="fr-modal-title-modal-edit-coordonnees-tiers" class="fr-modal__title">
+                                Modifier les coordonnées du tiers déclarant
+                            </h1>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="nom">Nom</label>
+                                <input class="fr-input" type="text" name="nom" value="{{ signalement.nomDeclarant }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="prenom">Prénom</label>
+                                <input class="fr-input" type="text" name="prenom" value="{{ signalement.prenomDeclarant }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="mail">Courriel</label>
+                                <input class="fr-input" type="text" name="mail" value="{{ signalement.mailDeclarant }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="telephone">Téléphone</label>
+                                <input class="fr-input" type="text" name="telephone" value="{{ signalement.telDeclarantDecoded }}">
+                            </div>
+
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="lien">Lien avec l'occupant</label>
+                                <select class="fr-select" name="lien">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="PROCHE" {{ signalement.lienDeclarantOccupant is same as 'PROCHE' ? 'selected' : '' }}>Proche</option>
+                                    <option value="VOISIN" {{ signalement.lienDeclarantOccupant is same as 'VOISIN' ? 'selected' : '' }}>Voisinage</option>
+                                    <option value="SECOURS" {{ signalement.lienDeclarantOccupant is same as 'SECOURS' ? 'selected' : '' }}>Service de secours</option>
+                                    <option value="BAILLEUR" {{ signalement.lienDeclarantOccupant is same as 'BAILLEUR' ? 'selected' : '' }}>Bailleur</option>
+                                    <option value="PRO" {{ signalement.lienDeclarantOccupant is same as 'PRO' ? 'selected' : '' }}>Professionnel(le)</option>
+                                    <option value="AUTRE" {{ signalement.lienDeclarantOccupant is same as 'AUTRE' ? 'selected' : '' }}>Autre</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="structure">Structure (professionnels ou service de secours)</label>
+                                <input class="fr-input" type="text" name="structure" value="{{ signalement.structureDeclarant }}">
+                            </div>
+                        </div>
+                        
+                        <div class="fr-modal__footer">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <li>
+                                    <button type="button" class="fr-btn fr-btn--secondary"
+                                            aria-controls="fr-modal-edit-coordonnees-tiers">
+                                        Annuler
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="fr-btn" type="submit">
+                                        Valider
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_coordonnees_tiers_'~signalement.id) }}">
+                </form>
+            </div>
+        </div>
+    </div>
+</dialog>
