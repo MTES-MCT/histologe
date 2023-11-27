@@ -21,6 +21,8 @@ class HookZapierService
         private HttpClientInterface $httpClient,
         private LoggerInterface $logger,
         private NormalizerInterface $normalizer,
+        #[Autowire(env: 'ZAPIER_OILHI_TOKEN')]
+        private string $token,
         #[Autowire(env: 'ZAPIER_OILHI_USER_ID')]
         private string $userId,
         #[Autowire(env: 'ZAPIER_OILHI_CREATE_AIRTABLE_RECORD_ZAP_ID')]
@@ -31,6 +33,7 @@ class HookZapierService
     public function pushDossier(DossierMessage $dossierMessage): ResponseInterface|JsonResponse
     {
         $payload = $this->normalizer->normalize($dossierMessage);
+        $payload['token'] = $this->token;
         try {
             return $this->httpClient->request(
                 'POST',
@@ -41,8 +44,11 @@ class HookZapierService
             $this->logger->error($exception->getMessage());
         }
 
-        return (new JsonResponse([
+        $response = [
             'message' => $exception->getMessage(),
-        ]))->setStatusCode(Response::HTTP_SERVICE_UNAVAILABLE);
+            'request' => json_encode($payload),
+        ];
+
+        return (new JsonResponse($response))->setStatusCode(Response::HTTP_SERVICE_UNAVAILABLE);
     }
 }

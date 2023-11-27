@@ -26,7 +26,7 @@ class DossierMessageHandlerTest extends TestCase
     {
         $faker = Factory::create();
         $dossierMessage = $this->getDossierMessageSCHS();
-        $filepath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/schs/ws_import.json';
+        $filepath = __DIR__.'/../../../../../tools/wiremock/src/Resources/Esabora/schs/ws_import.json';
         $mockResponse = new MockResponse(file_get_contents($filepath));
         $mockHttpClient = new MockHttpClient($mockResponse);
         $response = $mockHttpClient->request('POST', $faker->url());

@@ -25,9 +25,9 @@ class HookZapierServiceTest extends TestCase
     {
         $faker = Factory::create();
         $response = [
-            'attempt' => '00000000-0000-0000-0000-5cac94ca475b',
-            'id' => '018c01fd-500e-b8c7-8668-5cac94ca475b',
-            'request_id' => '018c01fd-500e-b8c7-8668-5cac94ca475b',
+            'attempt' => '00000000-0000-0000-0000-000000000001',
+            'id' => '00000000-0000-0000-0000-000000000002',
+            'request_id' => '00000000-0000-0000-0000-000000000003',
             'status' => 'success',
         ];
         $mockResponse = new MockResponse($response);
@@ -38,6 +38,7 @@ class HookZapierServiceTest extends TestCase
             $mockHttpClient,
             $this->logger,
             $normalizer,
+            'ZAPIER_OILHI_TOKEN',
             'USER_ID',
             'ZAP_ID',
         );
