@@ -700,7 +700,7 @@ class Signalement
     {
         $telDecoded = json_decode($this->getTelProprio());
 
-        return $telDecoded ? $telDecoded->phone_number : $this->telProprio;
+        return isset($telDecoded->phone_number) ? $telDecoded->phone_number : $this->telProprio;
     }
 
     public function setTelProprio(?string $telProprio): self
@@ -835,7 +835,7 @@ class Signalement
     {
         $telDecoded = json_decode($this->getTelDeclarant());
 
-        return $telDecoded ? $telDecoded->phone_number : $this->telDeclarant;
+        return isset($telDecoded->phone_number) ? $telDecoded->phone_number : $this->telDeclarant;
     }
 
     public function setTelDeclarant(?string $telDeclarant): self

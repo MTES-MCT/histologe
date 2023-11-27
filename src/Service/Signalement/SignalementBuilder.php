@@ -236,7 +236,7 @@ class SignalementBuilder
                 ->setVilleProprio($this->signalementDraftRequest->getAdresseLogementAdresseDetailCommune())
                 ->setCodePostalProprio($this->signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal())
                 ->setMailProprio($this->signalementDraftRequest->getVosCoordonneesOccupantEmail())
-                ->setNomProprio($this->resolveNomProprioBailleurOccupant())
+                ->setNomProprio($this->signalementDraftRequest->getVosCoordonneesOccupantNom())
                 ->setPrenomProprio($this->signalementDraftRequest->getVosCoordonneesOccupantPrenom())
                 ->setTelProprio(Json::encode($this->signalementDraftRequest->getVosCoordonneesOccupantTel()))
                 ->setTelProprioSecondaire(Json::encode($this->signalementDraftRequest->getVosCoordonneesOccupantTelSecondaire()));
@@ -369,11 +369,5 @@ class SignalementBuilder
         }
 
         return new \DateTimeImmutable($this->signalementDraftRequest->getLogementSocialDateNaissance());
-    }
-
-    private function resolveNomProprioBailleurOccupant(): ?string
-    {
-        return $this->signalementDraftRequest->getVosCoordonneesTiersNomOrganisme()
-        ?? $this->signalementDraftRequest->getVosCoordonneesTiersNom();
     }
 }
