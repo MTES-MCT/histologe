@@ -154,6 +154,7 @@ class FrontSignalementController extends AbstractController
                         );
                         if (null !== $file) {
                             $file->setSize($uploadHandlerService->getFileSize($file->getFilename()));
+                            $file->setIsVariantsGenerated($uploadHandlerService->hasVariants($file->getFilename()));
                             $signalement->addFile($file);
                         }
                     }
