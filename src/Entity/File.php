@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Enum\DocumentType;
 use App\Repository\FileRepository;
+use App\Service\ImageManipulationHandler;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -90,8 +91,15 @@ class File
         return $this;
     }
 
-    public function getFilename(): ?string
+    public function getFilename(?string $variantName = null): ?string
     {
+        if ($this->isVariantsGenerated && $variantName) {
+            $variantNames = ImageManipulationHandler::getVariantNames($this->filename);
+            if (isset($variantNames[$variantName])) {
+                return $variantNames[$variantName];
+            }
+        }
+
         return $this->filename;
     }
 
