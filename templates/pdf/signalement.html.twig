@@ -257,22 +257,21 @@
     {% endif %}
 
     <section>
+        <div class="page">
         {% for index, photo in signalement.files|filter(photo => photo.fileType == 'photo') %}
-            <div class="page" style="padding-top: 25px!important;">
-                <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
+                <div style="page-break-inside: avoid;margin-top: 25px;">
                     <h2>Photo : {{ photo.title }}</h2>
                     <small>Ajouté par {{ photo.username ?? 'N/R' }}</small><br>
                     <small>le {{ photo.date ?? 'N/R' }}</small><br>                    
-                    {% set encodedImage = photo.filename | image64 %}
+                    {% set encodedImage = photo.filename(constant('App\\Service\\ImageManipulationHandler::SUFFIX_RESIZE')) | image64 %}
                     {% if encodedImage is not null %}                    
-                        <img src="{{ photo.filename | image64 }}" style="width:100%" id="{{ photo.filename }}"
-                                alt="{{ photo.title }}"/>
+                        <img src="{{ encodedImage }}" style="max-width:100%" id="{{ photo.filename }}" alt="{{ photo.title }}"/>
                     {% else %}
                         La photo n'existe plus
                     {% endif %}
                 </div>
-            </div>
         {% endfor %}
+        </div>
     </section>
 
 {% endblock %}
