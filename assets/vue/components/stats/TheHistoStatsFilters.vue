@@ -158,10 +158,15 @@ export default defineComponent({
 </script>
 
 <style>
-  .align-right {
+  #histo-stats-filters .fr-container--fluid {
+    overflow: visible;
+  }
+
+  #histo-stats-filters .align-right {
     text-align: right;
   }
-  .fr-fi-refresh-line::before{
+
+  #histo-stats-filters .fr-fi-refresh-line::before{
     margin-right: 5px;
     font-size: 1rem;
     color: var(--blue-france-sun-113-625);
