@@ -65,7 +65,7 @@
             {% if signalement.interventions is empty or intervention.files is empty %}
                 <span class="fr-badge fr-badge--no-icon" title="Non disponible">Non disponible</span>
             {% else %}
-                <a href="{{ asset('_up/'~intervention.files[0].filename) }}"
+                <a href="{{ asset('_up/'~intervention.files[0].filename)~'/' ~ signalement.uuid }}"
                     class="fr-btn fr-btn--sm fr-fi-file-line fr-btn--icon-left"
                    title="Afficher le document"
                    rel="noopener"
