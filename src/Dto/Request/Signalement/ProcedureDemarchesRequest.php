@@ -7,12 +7,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 class ProcedureDemarchesRequest
 {
     public function __construct(
-        #[Assert\NotBlank(['message' => 'Veuillez définir le champ bailleur averti', 'groups' => ['LOCATAIRE']])]
+        #[Assert\NotBlank(['message' => 'Merci d\'indiquer si le bailleur a été averti', 'groups' => ['LOCATAIRE']])]
         private readonly ?string $isProprioAverti = null,
-        #[Assert\NotBlank(['message' => 'Veuillez définir le champ contact assurance', 'groups' => ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR']])]
+        #[Assert\NotBlank(['message' => 'Merci d\'indiquer si l\'assurance a été contacté', 'groups' => ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR']])]
         private readonly ?string $infoProcedureAssuranceContactee = null,
         private readonly ?string $infoProcedureReponseAssurance = null,
-        #[Assert\NotBlank(['message' => 'Veuillez définir le champ garder logement aprés travaux', 'groups' => ['LOCATAIRE', 'BAILLEUR_OCCUPANT']])]
+        #[Assert\NotBlank(['message' => 'Merci d\'indiquer si l\'occupant souhaite garder son logement après travaux ', 'groups' => ['LOCATAIRE', 'BAILLEUR_OCCUPANT']])]
         private readonly ?string $infoProcedureDepartApresTravaux = null,
     ) {
     }

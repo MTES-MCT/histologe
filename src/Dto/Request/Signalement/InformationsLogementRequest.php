@@ -13,7 +13,7 @@ class InformationsLogementRequest
         private readonly ?string $nombrePersonnes = null,
         #[Assert\NotBlank(message: 'Merci de définir le nombre d\'enfants.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR'])]
         private readonly ?string $compositionLogementEnfants = null,
-        #[Assert\NotBlank(message: 'Merci de définit la date d\'arrivée', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
+        #[Assert\NotBlank(message: 'Merci de définir la date d\'arrivée', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
         #[Assert\DateTime('Y-m-d')]
         private readonly ?string $bailDpeDateEmmenagement = null,
         #[Assert\NotBlank(message: 'Merci de définir le bail.', groups: ['LOCATAIRE', 'BAILLEUR'])]

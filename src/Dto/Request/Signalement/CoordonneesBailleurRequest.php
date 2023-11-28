@@ -21,7 +21,7 @@ class CoordonneesBailleurRequest
         private readonly ?string $telephone = null,
         #[AppAssert\TelephoneFormat]
         private readonly ?string $telephoneBis = null,
-        #[Assert\NotBlank(message: 'Merci de saisisr l\'adresse du bailleur', groups: ['BAILLEUR_OCCUPANT'])]
+        #[Assert\NotBlank(message: 'Merci de saisir l\'adresse du bailleur', groups: ['BAILLEUR_OCCUPANT'])]
         private readonly ?string $adresse = null,
         #[Assert\NotBlank(message: 'Merci de saisir le code postal du bailleur', groups: ['BAILLEUR_OCCUPANT'])]
         private readonly ?string $codePostal = null,
