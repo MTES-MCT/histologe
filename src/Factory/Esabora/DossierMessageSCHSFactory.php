@@ -94,7 +94,10 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
     {
         $piecesJointesObservation = '';
         foreach ($signalement->getFiles() as $file) {
-            $piecesJointesObservation .= $file->getTitle().', ';
+            if (!empty($piecesJointesObservation)) {
+                $piecesJointesObservation .= ', ';
+            }
+            $piecesJointesObservation .= $file->getFilename();
         }
 
         return $piecesJointesObservation;
