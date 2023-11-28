@@ -83,7 +83,7 @@ export const requests = {
       requests.doRequestPost(url, formStore.data, functionReturn, undefined)
     } else {
       // TODO : que renvoyer ?
-      functionReturn('no need to save')
+      functionReturn(undefined)
     }
   },
 
