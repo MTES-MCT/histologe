@@ -154,7 +154,7 @@ export default defineComponent({
         } else {
           let errorMessage = ''
           for (const index in requestResponse.violations) {
-            errorMessage += requestResponse.violations[index].title + ' '
+            errorMessage += requestResponse.violations[index].title + '\n'
           }
           alert(errorMessage)
           return
