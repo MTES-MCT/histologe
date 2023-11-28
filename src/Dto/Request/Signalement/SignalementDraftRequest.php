@@ -55,29 +55,29 @@ class SignalementDraftRequest
     private ?string $signalementConcerneLogementSocialAutreTiers = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner le nom de l\'organisme.',
-        groups: ['tiers_pro', 'service_secours']
+        groups: ['TIERS_PRO', 'SERVICE_SECOURS']
     )]
     private ?string $vosCoordonneesTiersNomOrganisme = null;
     private ?string $vosCoordonneesTiersLien = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre nom.',
-        groups: ['tiers_particulier', 'tiers_pro', 'bailleur', 'service_secours']
+        groups: ['TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR', 'SERVICE_SECOURS']
     )]
     private ?string $vosCoordonneesTiersNom = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre prénom.',
-        groups: ['tiers_particulier', 'tiers_pro', 'bailleur', 'service_secours']
+        groups: ['TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR', 'SERVICE_SECOURS']
     )]
     private ?string $vosCoordonneesTiersPrenom = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre adresse e-mail.',
-        groups: ['tiers_particulier', 'tiers_pro', 'bailleur', 'service_secours']
+        groups: ['TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR', 'SERVICE_SECOURS']
     )]
     #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
     private ?string $vosCoordonneesTiersEmail = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre numéro de téléphone.',
-        groups: ['tiers_particulier', 'tiers_pro', 'bailleur', 'service_secours']
+        groups: ['TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR', 'SERVICE_SECOURS']
     )]
     #[AppAssert\TelephoneFormat]
     private ?array $vosCoordonneesTiersTel = null;
@@ -85,28 +85,28 @@ class SignalementDraftRequest
     private ?array $vosCoordonneesTiersTelSecondaire = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre civilité.',
-        groups: ['locataire', 'bailleur_occupant']
+        groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT']
     )]
     private ?string $vosCoordonneesOccupantCivilite = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre nom.',
-        groups: ['locataire', 'bailleur_occupant']
+        groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT']
     )]
     private ?string $vosCoordonneesOccupantNom = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre prénom.',
-        groups: ['locataire', 'bailleur_occupant']
+        groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT']
     )]
     private ?string $vosCoordonneesOccupantPrenom = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre adresse e-mail.',
-        groups: ['locataire', 'bailleur_occupant']
+        groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT']
     )]
     #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
     private ?string $vosCoordonneesOccupantEmail = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre numéro de téléphone.',
-        groups: ['locataire', 'bailleur_occupant']
+        groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT']
     )]
     #[AppAssert\TelephoneFormat]
     private ?array $vosCoordonneesOccupantTel = null;

@@ -61,7 +61,7 @@ class FrontNewSignalementController extends AbstractController
         $errors = $validator->validate(
             $signalementDraftRequest,
             null,
-            [$signalementDraftRequest->getProfil()]
+            ['Default', strtoupper($signalementDraftRequest->getProfil())]
         );
         if (0 === $errors->count()) {
             return $this->json([
@@ -93,7 +93,7 @@ class FrontNewSignalementController extends AbstractController
         $errors = $validator->validate(
             $signalementDraftRequest,
             null,
-            [$signalementDraftRequest->getProfil()]
+            ['Default', strtoupper($signalementDraftRequest->getProfil())]
         );
         if (0 === $errors->count()) {
             $result = $signalementDraftManager->update(
