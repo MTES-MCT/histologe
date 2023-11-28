@@ -20,6 +20,7 @@
   "profil": "bailleur_occupant",
   "vos_coordonnees_occupant_tel_countrycode": "FR:33",
   "vos_coordonnees_occupant_tel_secondaire_countrycode": "FR:33",
+  "vos_coordonnees_occupant_civilite": "mr",
   "vos_coordonnees_occupant_nom": "Mari",
   "vos_coordonnees_occupant_prenom": "Julien",
   "vos_coordonnees_occupant_email": "bailleur_occupant-02@histologe.fr",

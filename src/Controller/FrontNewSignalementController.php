@@ -58,7 +58,11 @@ class FrontNewSignalementController extends AbstractController
             SignalementDraftRequest::class,
             'json'
         );
-        $errors = $validator->validate($signalementDraftRequest);
+        $errors = $validator->validate(
+            $signalementDraftRequest,
+            null,
+            ['Default', strtoupper($signalementDraftRequest->getProfil())]
+        );
         if (0 === $errors->count()) {
             return $this->json([
                 'uuid' => $signalementDraftManager->create(
@@ -68,7 +72,7 @@ class FrontNewSignalementController extends AbstractController
             ]);
         }
 
-        return $this->json('@todo error');
+        return $this->json($errors);
     }
 
     #[Route('/signalement-draft/{uuid}/envoi', name: 'mise_a_jour_nouveau_signalement_draft', methods: 'PUT')]
@@ -86,7 +90,11 @@ class FrontNewSignalementController extends AbstractController
             'json'
         );
 
-        $errors = $validator->validate($signalementDraftRequest);
+        $errors = $validator->validate(
+            $signalementDraftRequest,
+            null,
+            ['Default', strtoupper($signalementDraftRequest->getProfil())]
+        );
         if (0 === $errors->count()) {
             $result = $signalementDraftManager->update(
                 $signalementDraft,
@@ -97,7 +105,7 @@ class FrontNewSignalementController extends AbstractController
             return $this->json($result);
         }
 
-        return $this->json('@todo error');
+        return $this->json($errors);
     }
 
     #[Route('/signalement-draft/{uuid}/informations', name: 'informations_signalement_draft', methods: 'GET')]
