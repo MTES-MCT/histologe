@@ -40,17 +40,18 @@ class FileRepository extends ServiceEntityRepository
         }
     }
 
-    public function getPhotosWihoutVariantsForTerritory(Territory $territory)
+    public function getPhotosWihoutVariants(?Territory $territory = null)
     {
-        return $this->createQueryBuilder('f')
+        $qb = $this->createQueryBuilder('f')
             ->select('f')
             ->innerJoin('f.signalement', 's')
-            ->where('s.territory = :territory')
-            ->andWhere('f.fileType = :type')
+            ->where('f.fileType = :type')
             ->andWhere('f.isVariantsGenerated = false')
-            ->setParameter('territory', $territory)
-            ->setParameter('type', File::FILE_TYPE_PHOTO)
-            ->getQuery()
-            ->getResult();
+            ->setParameter('type', File::FILE_TYPE_PHOTO);
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }

@@ -35,7 +35,7 @@ class CreateSignalementPhotoVariantsCommand extends Command
 
     protected function configure(): void
     {
-        $this->addArgument('territory_zip', InputArgument::REQUIRED, 'Territory zip to target');
+        $this->addArgument('territory_zip', InputArgument::OPTIONAL, 'Territory zip to target');
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output): void
@@ -47,15 +47,18 @@ class CreateSignalementPhotoVariantsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $territoryZip = $input->getArgument('territory_zip');
-        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => $territoryZip]);
-        if (null === $territory) {
-            $this->io->error('Territory does not exists');
+        $territory = null;
+        if ($territoryZip) {
+            $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => $territoryZip]);
+            if (null === $territory) {
+                $this->io->error('Territory does not exists');
 
-            return Command::FAILURE;
+                return Command::FAILURE;
+            }
         }
         /** @var FileRepository $fileRepository */
         $fileRepository = $this->entityManager->getRepository(File::class);
-        $this->files = $fileRepository->getPhotosWihoutVariantsForTerritory($territory);
+        $this->files = $fileRepository->getPhotosWihoutVariants($territory);
         foreach ($this->files as $file) {
             $this->processFile($file);
             ++$this->i;
