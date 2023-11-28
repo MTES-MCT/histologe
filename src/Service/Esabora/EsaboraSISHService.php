@@ -3,7 +3,7 @@
 namespace App\Service\Esabora;
 
 use App\Entity\Affectation;
-use App\Messenger\Message\DossierMessageSISH;
+use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Service\Esabora\Model\DossierMessageSISHPersonne;
 use App\Service\Esabora\Response\DossierArreteSISHCollectionResponse;
 use App\Service\Esabora\Response\DossierPushSISHResponse;

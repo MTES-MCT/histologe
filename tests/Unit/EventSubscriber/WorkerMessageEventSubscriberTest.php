@@ -6,7 +6,7 @@ use App\Entity\Enum\InterfacageType;
 use App\Entity\JobEvent;
 use App\EventSubscriber\WorkerMessageEventSubscriber;
 use App\Manager\JobEventManager;
-use App\Messenger\Message\DossierMessageSCHS;
+use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Repository\PartnerRepository;
 use App\Service\Esabora\AbstractEsaboraService;
 use App\Tests\FixturesHelper;

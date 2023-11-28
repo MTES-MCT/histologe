@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "85419c3f-74e9-43d5-b40b-45da0fab2ebc",
+		"_postman_id": "8f360a5b-acfb-4607-96a0-e6233ba87a99",
 		"name": "histologe",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "1569180"
@@ -291,6 +291,44 @@
 								"signalement-draft",
 								"{{signalement_draft_uuid}}",
 								"informations"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "oilhi",
+			"item": [
+				{
+					"name": "hooks/catch",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"signalementUrl\": \"{{$randomUrl}}\",\n    \"signalementId\": \"{{$randomUUID}}\",\n    \"partnerId\": \"{{$randomUUID}}\",\n    \"token\": \"{{oilhi_token}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://hooks.zapier.com/hooks/catch/{{zapier_user_id}}/{{zapier_zap_id}}/",
+							"protocol": "https",
+							"host": [
+								"hooks",
+								"zapier",
+								"com"
+							],
+							"path": [
+								"hooks",
+								"catch",
+								"{{zapier_user_id}}",
+								"{{zapier_zap_id}}",
+								""
 							]
 						}
 					},

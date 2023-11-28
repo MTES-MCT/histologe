@@ -3,7 +3,7 @@
 namespace App\Service\Esabora\Handler;
 
 use App\Manager\JobEventManager;
-use App\Messenger\Message\DossierMessageSISH;
+use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Repository\PartnerRepository;
 use App\Service\Esabora\AbstractEsaboraService;
 use App\Service\Esabora\EsaboraSISHService;

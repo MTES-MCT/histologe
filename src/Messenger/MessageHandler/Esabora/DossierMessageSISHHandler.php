@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Messenger\MessageHandler;
+namespace App\Messenger\MessageHandler\Esabora;
 
-use App\Messenger\Message\DossierMessageSISH;
+use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Service\Esabora\Handler\DossierSISHHandlerInterface;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
