@@ -57,4 +57,17 @@ class SignalementRepositoryTest extends KernelTestCase
 
         $this->assertEquals('01', $signalement->getTerritory()->getZip());
     }
+
+    public function testFindWithNoGeolocalisation(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        /** @var TerritoryRepository $territoryRepository */
+        $territoryRepository = $this->entityManager->getRepository(Territory::class);
+        $territory = $territoryRepository->findOneBy(['zip' => '13']);
+        $signalements = $signalementRepository->findWithNoGeolocalisation($territory);
+        $this->assertEmpty($signalements);
+        $signalements = $signalementRepository->findWithNoGeolocalisation();
+        $this->assertEmpty($signalements);
+    }
 }

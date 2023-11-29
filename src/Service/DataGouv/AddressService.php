@@ -2,12 +2,13 @@
 
 namespace App\Service\DataGouv;
 
+use App\Service\DataGouv\Response\Address;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class AddressService
 {
-    private $apiUrl = 'https://api-adresse.data.gouv.fr/search/?q=';
+    private const API_URL = 'https://api-adresse.data.gouv.fr/search/?q=';
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
@@ -18,7 +19,7 @@ class AddressService
     public function searchAddress(string $query): ?array
     {
         try {
-            $response = $this->httpClient->request('GET', $this->apiUrl.urlencode($query));
+            $response = $this->httpClient->request('GET', self::API_URL.urlencode($query));
 
             if (200 === $response->getStatusCode()) {
                 return $response->toArray();
@@ -41,5 +42,10 @@ class AddressService
         }
 
         return null;
+    }
+
+    public function getAddress(string $address): Address
+    {
+        return new Address($this->searchAddress($address));
     }
 }
