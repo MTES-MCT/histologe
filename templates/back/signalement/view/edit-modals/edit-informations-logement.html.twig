@@ -5,7 +5,7 @@
                 <form method="POST" id="form-edit-informations-logement" enctype="application/json" action="{{ path('back_signalement_edit_informations_logement',{uuid:signalement.uuid}) }}">
                     <div class="fr-modal__body">
                         <div class="fr-modal__header">
-                            <button type="button" class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-edit-informations-logement">Fermer</button>
+                            <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-edit-informations-logement">Fermer</button>
                         </div>
                         <div class="fr-modal__content">
                             <h1 id="fr-modal-title-modal-edit-informations-logement" class="fr-modal__title">
@@ -132,13 +132,13 @@
                         <div class="fr-modal__footer">
                             <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
                                 <li>
-                                    <button type="button" class="fr-btn fr-btn--secondary"
+                                    <button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line"
                                             aria-controls="fr-modal-edit-informations-logement">
                                         Annuler
                                     </button>
                                 </li>
                                 <li>
-                                    <button class="fr-btn" type="submit">
+                                    <button class="fr-btn  fr-icon-checkbox-line" type="submit">
                                         Valider
                                     </button>
                                 </li>
