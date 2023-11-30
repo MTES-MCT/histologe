@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Signalement;
+use App\Manager\SignalementManager;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\DataGouv\AddressService;
@@ -22,7 +23,7 @@ class UpdateSignalementGeolocalisationCommand extends Command
     public function __construct(
         private AddressService $addressService,
         private TerritoryRepository $territoryRepository,
-        private SignalementRepository $signalementRepository
+        private SignalementManager $signalementManager
     ) {
         parent::__construct();
     }
@@ -42,10 +43,12 @@ class UpdateSignalementGeolocalisationCommand extends Command
         $uuid = $input->getOption('uuid');
 
         if ($uuid) {
-            $signalements = $this->signalementRepository->findBy(['uuid' => $uuid]);
+            $signalements = $this->signalementManager->findBy(['uuid' => $uuid]);
         } else {
             $territory = $this->territoryRepository->findOneBy(['zip' => $zip]);
-            $signalements = $this->signalementRepository->findWithNoGeolocalisation($territory);
+            /** @var SignalementRepository $signalementRepository */
+            $signalementRepository = $this->signalementManager->getRepository();
+            $signalements = $signalementRepository->findWithNoGeolocalisation($territory);
         }
 
         if (empty($signalements)) {
@@ -56,24 +59,10 @@ class UpdateSignalementGeolocalisationCommand extends Command
 
         /** @var Signalement $signalement */
         foreach ($signalements as $signalement) {
-            $street = sprintf('%s %s %s',
-                $signalement->getAdresseOccupant(),
-                $signalement->getCpOccupant(),
-                $signalement->getVilleOccupant()
-            );
-            $address = $this->addressService->getAddress($street);
-            $signalement->setInseeOccupant($address->getInseeCode());
+            $address = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
+            $this->signalementManager->updateAddressOccupantFromAddress($signalement, $address);
+            $this->signalementManager->persist($signalement);
 
-            if (empty($signalement->getCpOccupant())) {
-                $signalement->setCpOccupant($address->getZipCode());
-            }
-            if (empty($signalement->getGeoloc())) {
-                $signalement->setGeoloc([
-                    'lat' => $address->getLatitude(),
-                    'lng' => $address->getLongitude(),
-                ]);
-            }
-            $this->signalementRepository->save($signalement);
             $io->success(sprintf('Signalement %s updated.%sAddress : %sCode insee : %sGPS : [%s, %s]',
                 $signalement->getUuid(),
                 \PHP_EOL,
@@ -83,7 +72,7 @@ class UpdateSignalementGeolocalisationCommand extends Command
                 $address->getLatitude()));
         }
 
-        $this->signalementRepository->save($signalement, true);
+        $this->signalementManager->flush();
 
         return Command::SUCCESS;
     }

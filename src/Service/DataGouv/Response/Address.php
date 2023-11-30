@@ -64,4 +64,12 @@ class Address
     {
         return $this->label;
     }
+
+    public function getGeoloc(): array
+    {
+        return [
+            'lat' => $this->latitude,
+            'lng' => $this->longitude,
+        ];
+    }
 }
