@@ -32,15 +32,19 @@ class SignalementExportFactory
             ? $data['closedAt']->format(self::DATE_FORMAT)
             : null;
 
-        $dateVisite = '-'; // TODO
-        $isOccupantPresentVisite = '-'; // TODO
 
         $motifCloture = $data['motifCloture'] instanceof MotifCloture ? $data['motifCloture']->label() : null;
         $status = SignalementAffectationHelper::getStatusLabelFrom($user, $data);
 
         $geoloc = json_encode($data['geoloc']);
 
-        $statusVisite = $this->getVisiteStatut($data['interventionsStatus']);
+        $interventionExploded = explode(
+            SignalementExport::SEPARATOR_GROUP_CONCAT,
+            $this->getVisiteStatut($data['interventionsStatus'])
+        );
+        $statusVisite = $interventionExploded[0];
+        $dateVisite = $interventionExploded[1];
+        $isOccupantPresentVisite = $interventionExploded[2];
 
         return new SignalementExport(
             reference: $data['reference'],
@@ -83,7 +87,7 @@ class SignalementExportFactory
             structureDeclarant: $data['structureDeclarant'] ?? '-',
             lienDeclarantOccupant: $data['lienDeclarantOccupant'] ?? '-',
             dateVisite: $dateVisite,
-            isOccupantPresentVisite: $isOccupantPresentVisite,
+            isOccupantPresentVisite: $isOccupantPresentVisite ? self::OUI : ($isOccupantPresentVisite === '0' ? self::NON : ''),
             modifiedAt: $modifiedAt,
             closedAt: $closedAt,
             motifCloture: $motifCloture,
@@ -119,7 +123,7 @@ class SignalementExportFactory
     private function getVisiteStatut(?string $interventionStatus): string
     {
         if (null === $interventionStatus) {
-            $statusVisite = VisiteStatus::NON_PLANIFIEE->value;
+            $statusVisite = VisiteStatus::NON_PLANIFIEE->value .SignalementExport::SEPARATOR_GROUP_CONCAT. '' .SignalementExport::SEPARATOR_GROUP_CONCAT;
         } else {
             $interventions = explode(SignalementAffectationListView::SEPARATOR_CONCAT, $interventionStatus);
             foreach ($interventions as $intervention) {
@@ -138,6 +142,8 @@ class SignalementExportFactory
                 } else {
                     $statusVisite = VisiteStatus::TERMINEE->value;
                 }
+                $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT . $interventionExploded[1];
+                $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT . $interventionExploded[2];
             }
         }
 
