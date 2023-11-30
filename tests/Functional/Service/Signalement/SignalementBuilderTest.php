@@ -26,7 +26,7 @@ class SignalementBuilderTest extends KernelTestCase
 {
     use FixturesHelper;
 
-    private const FR_PHONE_COUNTRY_CODE = 'FR:33';
+    private const FR_PHONE_COUNTRY_CODE = '33';
 
     protected SignalementBuilder $signalementBuilder;
 
@@ -96,27 +96,27 @@ class SignalementBuilderTest extends KernelTestCase
         $this->assertEquals('13', $signalement->getTerritory()->getZip());
         $this->assertEquals(ProfileDeclarant::LOCATAIRE, $signalement->getProfileDeclarant());
         $this->assertEquals(
-            json_encode(['country_code' => self::FR_PHONE_COUNTRY_CODE, 'phone_number' => '0644784515']),
+            '+'.self::FR_PHONE_COUNTRY_CODE.'0644784515',
             $signalement->getTelOccupant()
         );
         $this->assertEquals(
-            json_encode(['country_code' => 'KM:269', 'phone_number' => '3621161']),
+            '+269'.'3621161',
             $signalement->getTelOccupantBis()
         );
         $this->assertEquals(
-            json_encode(['country_code' => self::FR_PHONE_COUNTRY_CODE, 'phone_number' => '0644784515']),
+            '+'.self::FR_PHONE_COUNTRY_CODE.'0644784515',
             $signalement->getTelDeclarant()
         );
         $this->assertEquals(
-            json_encode(['country_code' => 'KM:269', 'phone_number' => '3621161']),
+            '+269'.'3621161',
             $signalement->getTelDeclarantSecondaire()
         );
         $this->assertEquals(
-            json_encode(['country_code' => self::FR_PHONE_COUNTRY_CODE, 'phone_number' => '0644784516']),
+            '+'.self::FR_PHONE_COUNTRY_CODE.'0644784516',
             $signalement->getTelProprio()
         );
         $this->assertEquals(
-            json_encode(['country_code' => self::FR_PHONE_COUNTRY_CODE, 'phone_number' => '0644784517']),
+            '+'.self::FR_PHONE_COUNTRY_CODE.'0644784517',
             $signalement->getTelProprioSecondaire()
         );
 

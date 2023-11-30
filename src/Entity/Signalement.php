@@ -15,6 +15,7 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use libphonenumber\PhoneNumberUtil;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -111,7 +112,7 @@ class Signalement
     private $telProprio;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
-    #[Assert\Length(min: 10, max: 15)]
+    #[Assert\Length(min: 0, max: 15)]
     private ?string $telProprioSecondaire;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -710,9 +711,27 @@ class Signalement
 
     public function getTelProprioDecoded(): ?string
     {
-        $telDecoded = json_decode($this->getTelProprio());
+        return $this->getTelGenerique($this->telProprio);
+    }
 
-        return $telDecoded ? $telDecoded->phone_number : $this->telProprio;
+    private function getTelGenerique($tel)
+    {
+        if (!$tel) {
+            return $tel;
+        }
+        $telDecoded = json_decode($tel);
+        $phoneNumberUtil = PhoneNumberUtil::getInstance();
+        if ($telDecoded && isset($telDecoded->phone_number) && isset($telDecoded->country_code)) {
+            $phoneNumberParsed = $phoneNumberUtil->parse($telDecoded->phone_number, substr($telDecoded->country_code, 0, 2));
+        } else {
+            if (str_starts_with('+', $tel)) {
+                $phoneNumberParsed = $phoneNumberUtil->parse($tel);
+            } else {
+                $phoneNumberParsed = $phoneNumberUtil->parse($tel, 'FR');
+            }
+        }
+
+        return '+'.$phoneNumberParsed->getCountryCode().$phoneNumberParsed->getNationalNumber();
     }
 
     public function setTelProprio(?string $telProprio): self
@@ -845,9 +864,7 @@ class Signalement
 
     public function getTelDeclarantDecoded(): ?string
     {
-        $telDecoded = json_decode($this->getTelDeclarant());
-
-        return $telDecoded ? $telDecoded->phone_number : $this->telDeclarant;
+        return $this->getTelGenerique($this->telDeclarant);
     }
 
     public function setTelDeclarant(?string $telDeclarant): self
@@ -926,9 +943,7 @@ class Signalement
 
     public function getTelOccupantDecoded()
     {
-        $telDecoded = json_decode($this->getTelOccupant());
-
-        return $telDecoded ? $telDecoded->phone_number : $this->telOccupant;
+        return $this->getTelGenerique($this->telOccupant);
     }
 
     public function setTelOccupant($telOccupant): self
@@ -1615,9 +1630,7 @@ class Signalement
 
     public function getTelOccupantBisDecoded()
     {
-        $telDecoded = json_decode($this->getTelOccupantBis());
-
-        return $telDecoded ? $telDecoded->phone_number : $this->telOccupantBis;
+        return $this->getTelGenerique($this->telOccupantBis);
     }
 
     public function setTelOccupantBis(?string $telOccupantBis): self
@@ -1945,9 +1958,7 @@ class Signalement
 
     public function getTelProprioSecondaireDecoded()
     {
-        $telDecoded = json_decode($this->getTelProprioSecondaire());
-
-        return $telDecoded ? $telDecoded->phone_number : $this->telProprioSecondaire;
+        return $this->getTelGenerique($this->telProprioSecondaire);
     }
 
     public function setTelProprioSecondaire(?string $telProprioSecondaire): self
@@ -1964,9 +1975,7 @@ class Signalement
 
     public function getTelDeclarantSecondaireDecoded()
     {
-        $telDecoded = json_decode($this->getTelDeclarantSecondaire());
-
-        return $telDecoded ? $telDecoded->phone_number : $this->telDeclarantSecondaire;
+        return $this->getTelGenerique($this->telDeclarantSecondaire);
     }
 
     public function setTelDeclarantSecondaire(?string $telDeclarantSecondaire): self
