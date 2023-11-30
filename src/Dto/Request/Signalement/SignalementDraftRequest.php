@@ -1437,7 +1437,7 @@ class SignalementDraftRequest
     public function getMessageAdministration(): ?string
     {
         if (empty($this->messageAdministration)) {
-            return 'N/A';
+            return 'N/C';
         }
 
         return $this->messageAdministration;

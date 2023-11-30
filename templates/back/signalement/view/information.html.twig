@@ -115,17 +115,17 @@
                             {% endif %}
                         </div>
                         <div class="fr-col-12 fr-col-md-6">
-                            <strong>Nom :</strong> {{ signalement.nomProprio ?? 'N/R' }}
+                            <strong>Nom :</strong> {{ signalement.nomProprio ?? 'N/C' }}
                         </div>
                         <div class="fr-col-12 fr-col-md-6">
-                            <strong>Prénom :</strong> {{ signalement.prenomProprio ?? 'N/R' }}
+                            <strong>Prénom :</strong> {{ signalement.prenomProprio ?? 'N/C' }}
                         </div>
                         <div class="fr-col-12">
                             <strong>Courriel :</strong>
                             {% if signalement.mailProprio %}
                                 <a href="mailto:{{ signalement.mailProprio }}">{{ signalement.mailProprio }}</a>
                             {% else %}
-                                N/R
+                                N/C
                             {% endif %}
                         </div>
                         <div class="fr-col-12 fr-col-md-6">
@@ -133,7 +133,7 @@
                             {% if signalement.telProprio %}
                                 <a href="mailto:{{ signalement.telProprioDecoded }}">{{ signalement.telProprioDecoded }}</a>
                             {% else %}
-                                N/R
+                                N/C
                             {% endif %}
                         </div>
                         <div class="fr-col-12 fr-col-md-6">
@@ -141,11 +141,11 @@
                             {% if signalement.telProprioSecondaire %}
                                 <a href="mailto:{{ signalement.telProprioSecondaireDecoded }}">{{ signalement.telProprioSecondaireDecoded }}</a>
                             {% else %}
-                                N/R
+                                N/C
                             {% endif %}
                         </div>
                         <div class="fr-col-12">
-                            <strong>Adresse :</strong> {{ signalement.adresseProprio ? signalement.adresseProprio ~ ', ' ~ signalement.codePostalProprio ~ ' ' ~ signalement.villeProprio : 'N/R' }}
+                            <strong>Adresse :</strong> {{ signalement.adresseProprio ? signalement.adresseProprio ~ ', ' ~ signalement.codePostalProprio ~ ' ' ~ signalement.villeProprio : 'N/C' }}
                         </div>
                     </div>
                 </div>
