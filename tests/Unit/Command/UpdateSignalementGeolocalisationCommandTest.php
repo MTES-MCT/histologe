@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Command;
 
 use App\Command\UpdateSignalementGeolocalisationCommand;
+use App\Manager\SignalementManager;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\DataGouv\AddressService;
@@ -19,13 +20,13 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
 
     private MockObject|AddressService $addressService;
     private MockObject|TerritoryRepository $territoryRepository;
-    private MockObject|SignalementRepository $signalementRepository;
+    private MockObject|SignalementManager $signalementManager;
 
     protected function setUp(): void
     {
         $this->addressService = $this->createMock(AddressService::class);
         $this->territoryRepository = $this->createMock(TerritoryRepository::class);
-        $this->signalementRepository = $this->createMock(SignalementRepository::class);
+        $this->signalementManager = $this->createMock(SignalementManager::class);
     }
 
     public function testExecuteCommandWithoutArgumentAndOption(): void
@@ -33,8 +34,14 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
         $command = new UpdateSignalementGeolocalisationCommand(
             $this->addressService,
             $this->territoryRepository,
-            $this->signalementRepository
+            $this->signalementManager
         );
+
+        $signalementRepository = $this->createMockSignalementRepository(0);
+        $this->signalementManager
+            ->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($signalementRepository);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
@@ -45,14 +52,22 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
 
     public function testExecuteCommandWithOptionUuid(): void
     {
-        $this->signalementRepository
+        $this->signalementManager
             ->expects($this->once())
             ->method('findBy')
             ->willReturn($this->getSignalementsWithoutGeolocation());
 
-        $this->signalementRepository
-            ->expects($this->atMost(2))
-            ->method('save');
+        $this->signalementManager
+            ->expects($this->once())
+            ->method('updateAddressOccupantFromAddress');
+
+        $this->signalementManager
+            ->expects($this->once())
+            ->method('persist');
+
+        $this->signalementManager
+            ->expects($this->once())
+            ->method('flush');
 
         $result = json_decode(
             file_get_contents(__DIR__.'/../../files/get_api_datagouv_ban_response.json'),
@@ -67,7 +82,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
         $command = new UpdateSignalementGeolocalisationCommand(
             $this->addressService,
             $this->territoryRepository,
-            $this->signalementRepository
+            $this->signalementManager
         );
 
         $this->executeAssertOutputContainsAddress(
@@ -79,14 +94,22 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
 
     public function testExecuteCommandWithArgumentTerritory(): void
     {
-        $this->signalementRepository
+        $this->signalementManager
             ->expects($this->once())
-            ->method('findWithNoGeolocalisation')
-            ->willReturn($this->getSignalementsWithoutGeolocation(2));
+            ->method('getRepository')
+            ->willReturn($this->createMockSignalementRepository(2));
 
-        $this->signalementRepository
-            ->expects($this->atMost(3))
-            ->method('save');
+        $this->signalementManager
+            ->expects($this->atMost(2))
+            ->method('updateAddressOccupantFromAddress');
+
+        $this->signalementManager
+            ->expects($this->atMost(2))
+            ->method('persist');
+
+        $this->signalementManager
+            ->expects($this->once())
+            ->method('flush');
 
         $result = json_decode(
             file_get_contents(__DIR__.'/../../files/get_api_datagouv_ban_response.json'),
@@ -101,7 +124,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
         $command = new UpdateSignalementGeolocalisationCommand(
             $this->addressService,
             $this->territoryRepository,
-            $this->signalementRepository
+            $this->signalementManager
         );
 
         $this->executeAssertOutputContainsAddress(
@@ -113,19 +136,19 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
 
     public function testExecuteCommandWithNoSignalement(): void
     {
-        $this->signalementRepository
+        $this->signalementManager
             ->expects($this->once())
-            ->method('findWithNoGeolocalisation')
-            ->willReturn([]);
+            ->method('getRepository')
+            ->willReturn($this->createMockSignalementRepository(0));
 
-        $this->signalementRepository
+        $this->signalementManager
             ->expects($this->atMost(0))
-            ->method('save');
+            ->method('flush');
 
         $command = new UpdateSignalementGeolocalisationCommand(
             $this->addressService,
             $this->territoryRepository,
-            $this->signalementRepository
+            $this->signalementManager
         );
 
         $commandTester = new CommandTester($command);
@@ -149,5 +172,16 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
         $this->assertStringContainsString($address->getInseeCode(), $output);
         $this->assertStringContainsString($address->getLatitude(), $output);
         $this->assertStringContainsString($address->getLongitude(), $output);
+    }
+
+    private function createMockSignalementRepository(int $countSignalements = 0): MockObject|SignalementRepository
+    {
+        $signalementRepository = $this->createMock(SignalementRepository::class);
+        $signalementRepository
+            ->expects($this->once())
+            ->method('findWithNoGeolocalisation')
+            ->willReturn($countSignalements > 0 ? $this->getSignalementsWithoutGeolocation($countSignalements) : []);
+
+        return $signalementRepository;
     }
 }
