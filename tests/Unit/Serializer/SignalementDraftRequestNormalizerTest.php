@@ -17,10 +17,6 @@ class SignalementDraftRequestNormalizerTest extends TestCase
 
         $data = [
             'profil' => 'locataire',
-            'type_logement_pieces_a_vivre_piece_1_superficie' => 30,
-            'type_logement_pieces_a_vivre_piece_2_superficie' => 15,
-            'type_logement_pieces_a_vivre_piece_1_hauteur' => 'oui',
-            'type_logement_pieces_a_vivre_piece_2_hauteur' => 'non',
             'vos_coordonnees_occupant_tel' => '611121314',
             'vos_coordonnees_occupant_tel_countrycode' => 'FR:33',
         ];
@@ -28,8 +24,6 @@ class SignalementDraftRequestNormalizerTest extends TestCase
         $signalementDraftRequest = (new SignalementDraftRequest())
             ->setProfil('locataire')
             ->setVosCoordonneesOccupantTel('+33611121314')
-            ->setTypeLogementPiecesAVivrePieceSuperficie([30, 15])
-            ->setTypeLogementPiecesAVivrePieceHauteur(['oui', 'non']);
 
         $result = $normalizer->denormalize($data, SignalementDraftRequest::class);
 
@@ -47,16 +41,14 @@ class SignalementDraftRequestNormalizerTest extends TestCase
 
         $payload = [
             'profil' => 'locataire',
-            'type_logement_pieces_a_vivre_piece_superficie' => [30, 15],
-            'type_logement_pieces_a_vivre_piece_hauteur' => ['oui', 'non'],
+            'vos_coordonnees_occupant_tel' => '0611121314',
+            'vos_coordonnees_occupant_tel_countrycode' => 'FR:33',
         ];
 
         $signalementDraft = (new SignalementDraft())->setPayload($payload);
         $result = $serializer->normalize($signalementDraft);
 
-        $this->assertEquals(30, $result['payload']['type_logement_pieces_a_vivre_piece_1_superficie']);
-        $this->assertEquals(15, $result['payload']['type_logement_pieces_a_vivre_piece_2_superficie']);
-        $this->assertEquals('oui', $result['payload']['type_logement_pieces_a_vivre_piece_1_hauteur']);
-        $this->assertEquals('non', $result['payload']['type_logement_pieces_a_vivre_piece_2_hauteur']);
+        $this->assertEquals('0611121314', $result['payload']['vos_coordonnees_occupant_tel']);
+        $this->assertEquals('FR:33', $result['payload']['vos_coordonnees_occupant_tel_countrycode']);
     }
 }

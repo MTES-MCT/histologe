@@ -1001,6 +1001,15 @@ class Signalement
         return $this;
     }
 
+    public function getAddressCompleteOccupant(): ?string
+    {
+        return sprintf('%s %s %s',
+            $this->adresseOccupant,
+            $this->cpOccupant,
+            $this->villeOccupant
+        );
+    }
+
     public function getIsCguAccepted(): ?bool
     {
         return $this->isCguAccepted;

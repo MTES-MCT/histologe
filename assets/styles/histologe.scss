@@ -236,6 +236,10 @@ small {
     padding-inline-start: .25rem;
 }
 
+.fr-lh-2 {
+    line-height: 2rem;
+}
+
 /*COLOR*/
 .fr-background--white {
     background: white;
@@ -617,7 +621,7 @@ a.force-link-color {
     color: var(--text-action-high-blue-france);
 }
 
-h3 a {
+.fr-a-edit {
     font-size: 0.8rem;
     color: #000091;
 }

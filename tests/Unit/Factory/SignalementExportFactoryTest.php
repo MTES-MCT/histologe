@@ -97,8 +97,8 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->natureLogement);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->superficie);
 
-        $this->assertEquals(SignalementExportFactory::NON, $signalementExportFactory->photos);
-        $this->assertEquals(SignalementExportFactory::NON, $signalementExportFactory->documents);
+        $this->assertEquals('-', $signalementExportFactory->photos);
+        $this->assertEquals('-', $signalementExportFactory->documents);
         $this->assertEquals(SignalementExportFactory::OUI, $signalementExportFactory->isProprioAverti);
         $this->assertEquals(SignalementExportFactory::OUI, $signalementExportFactory->isProprioAverti);
         $this->assertEquals(SignalementExportFactory::OUI, $signalementExportFactory->isAllocataire);

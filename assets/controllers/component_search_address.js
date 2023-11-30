@@ -12,25 +12,35 @@ const histoFetchAutocompleteAddress = (e,t) => {
         const idForm = t.getAttribute('data-form-id')
         idFetchAutocompleteAddressTimeout = setTimeout( () => {
             if (t.value.length > 10) {
+                const limit = t.getAttribute('data-form-limit')
                 t.removeEventListener('keyup', searchAddress)
-                fetch(urlHistoFetchAutocompleteAddress + t.value).then((res) => {
+                let query = urlHistoFetchAutocompleteAddress + t.value;
+                if(t.getAttribute('data-form-lat')){
+                    query+='&lat='+t.getAttribute('data-form-lat')
+                }
+                if(t.getAttribute('data-form-lng')){
+                    query+='&lon='+t.getAttribute('data-form-lng')
+                }
+                fetch(query).then((res) => {
                     res.json().then((r) => {
                         e.querySelectorAll('.search-address-autocomplete-list')?.forEach((element) => {
                             element.innerHTML = '';
                             for (let feature of r.features) {
-                                let suggestion = e.createElement('div');
-                                suggestion.classList.add(
-                                    'fr-col-12',
-                                    'fr-p-3v',
-                                    'fr-text-label--blue-france',
-                                    'fr-adresse-suggestion'
-                                );
-                                suggestion.innerHTML = feature.properties.label;
-                                suggestion.addEventListener('click', () => {
-                                    histoRefreshOnSuggestionClicked(idForm, e, feature)
-                                    element.innerHTML = '';
-                                })
-                                element.appendChild(suggestion)
+                                if (limit === null || feature.properties.citycode.startsWith(limit)){
+                                    let suggestion = e.createElement('div');
+                                    suggestion.classList.add(
+                                        'fr-col-12',
+                                        'fr-p-3v',
+                                        'fr-text-label--blue-france',
+                                        'fr-adresse-suggestion'
+                                    );
+                                    suggestion.innerHTML = feature.properties.label;
+                                    suggestion.addEventListener('click', () => {
+                                        histoRefreshOnSuggestionClicked(idForm, e, feature)
+                                        element.innerHTML = '';
+                                    })
+                                    element.appendChild(suggestion)
+                                }
                             }
                         });
                     })

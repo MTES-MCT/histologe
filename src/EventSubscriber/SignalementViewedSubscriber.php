@@ -3,14 +3,20 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Notification;
+use App\Entity\Signalement;
 use App\Event\SignalementViewedEvent;
+use App\Manager\SignalementManager;
+use App\Service\DataGouv\AddressService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class SignalementViewedSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private AddressService $addressService,
+        private SignalementManager $signalementManager,
+    ) {
     }
 
     public static function getSubscribedEvents(): array
@@ -37,6 +43,17 @@ class SignalementViewedSubscriber implements EventSubscriberInterface
             $this->entityManager->persist($notification);
         }
 
+        $this->updateGeolocationDataIfNeeded($signalement);
+
         $this->entityManager->flush();
+    }
+
+    private function updateGeolocationDataIfNeeded(Signalement $signalement): void
+    {
+        if (empty($signalement->getInseeOccupant())) {
+            $address = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
+            $this->signalementManager->updateAddressOccupantFromAddress($signalement, $address);
+            $this->signalementManager->persist($signalement);
+        }
     }
 }

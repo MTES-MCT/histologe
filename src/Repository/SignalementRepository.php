@@ -46,6 +46,15 @@ class SignalementRepository extends ServiceEntityRepository
         parent::__construct($registry, Signalement::class);
     }
 
+    public function save(Signalement $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
     public function findAllWithGeoData(?User $user, array $options, int $offset): array
     {
         $firstResult = $offset;
@@ -454,16 +463,12 @@ class SignalementRepository extends ServiceEntityRepository
             GROUP_CONCAT(DISTINCT situations.label SEPARATOR :group_concat_separator_1) as familleSituation,
             GROUP_CONCAT(DISTINCT criteres.label SEPARATOR :group_concat_separator_1) as desordres,
             GROUP_CONCAT(DISTINCT tags.label SEPARATOR :group_concat_separator_1) as etiquettes,
-            GROUP_CONCAT(DISTINCT CONCAT(i.status, :group_concat_separator_1, i.scheduledAt) SEPARATOR :concat_separator) as interventionsStatus,
-            GROUP_CONCAT(DISTINCT photos.filename SEPARATOR :group_concat_separator_1) as photosName,
-            GROUP_CONCAT(DISTINCT documents.filename SEPARATOR :group_concat_separator_1) as documentsName
+            GROUP_CONCAT(DISTINCT CONCAT(i.status, :group_concat_separator_1, i.scheduledAt) SEPARATOR :concat_separator) as interventionsStatus
             '
         )->leftJoin('s.situations', 'situations')
             ->leftJoin('s.criteres', 'criteres')
             ->leftJoin('s.tags', 'tags')
-            ->leftJoin('s.interventions', 'i', 'WITH', 'i.type LIKE \'VISITE\'')
-            ->leftJoin('s.files', 'photos', 'WITH', 'photos.fileType LIKE \'photo\'')
-            ->leftJoin('s.files', 'documents', 'WITH', 'documents.fileType LIKE \'document\'')
+            ->leftJoin('s.interventions', 'i', 'WITH', 'i.type = \'VISITE\'')
             ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
             ->setParameter('group_concat_separator_1', SignalementExport::SEPARATOR_GROUP_CONCAT);
         // TODO : dateVisite, isOccupantPresentVisite ?
@@ -1015,5 +1020,20 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('ids', $ids)
             ->getQuery()
             ->getResult();
+    }
+
+    public function findWithNoGeolocalisation(?Territory $territory = null): array
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->where('s.inseeOccupant LIKE :insee_occupant OR s.inseeOccupant IS NULL')
+            ->setParameter('insee_occupant', '%#ERROR%');
+
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')
+                ->setParameter('territory', $territory)
+                ->setParameter('territory', $territory);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }

@@ -23,11 +23,7 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
     {
         $transformedData = [];
         foreach ($data as $key => $value) {
-            if (preg_match(SignalementDraftRequest::PIECES_SUPERFICIE_KEY_PATTERN, $key, $matches)) {
-                $transformedData[SignalementDraftRequest::PIECES_SUPERFICIE_KEY][] = $value;
-            } elseif (preg_match(SignalementDraftRequest::PIECES_HAUTEUR_KEY_PATTERN, $key, $matches)) {
-                $transformedData[SignalementDraftRequest::PIECES_HAUTEUR_KEY][] = $value;
-            } elseif (preg_match(SignalementDraftRequest::PATTERN_PHONE_KEY, $key, $matches)) {
+             if (preg_match(SignalementDraftRequest::PATTERN_PHONE_KEY, $key, $matches)) {
                 if (!$value) {
                     continue;
                 }
@@ -61,22 +57,8 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
         /** @var SignalementDraft $signalementDraft */
         $signalementDraft = $object;
 
-        foreach ($payload = $signalementDraft->getPayload() as $key => $value) {
-            if (\in_array(
-                $key,
-                [SignalementDraftRequest::PIECES_HAUTEUR_KEY, SignalementDraftRequest::PIECES_SUPERFICIE_KEY]
-            )) {
-                foreach ($payload[$key] as $index => $valueItem) {
-                    $pieceNumber = $index + 1;
-                    if (SignalementDraftRequest::PIECES_HAUTEUR_KEY === $key) {
-                        $normalizedPayload[sprintf(SignalementDraftRequest::PATTERN_HAUTEUR_KEY, $pieceNumber)] = $valueItem;
-                    } else {
-                        $normalizedPayload[sprintf(SignalementDraftRequest::PATTERN_SUPERFICIE_KEY, $pieceNumber)] = $valueItem;
-                    }
-                }
-            } else {
-                $normalizedPayload[$key] = $value;
-            }
+        foreach ($signalementDraft->getPayload() as $key => $value) {
+            $normalizedPayload[$key] = $value;
         }
         $signalementDraft->setPayload($normalizedPayload);
 

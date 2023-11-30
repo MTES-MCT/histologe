@@ -55,7 +55,8 @@ class UserAccountControllerTest extends WebTestCase
             'password-repeat' => $faker->password(12),
         ]);
 
-        $this->assertSelectorTextContains('.fr-alert.fr-alert--error.fr-alert--sm',
+        $this->assertSelectorTextContains(
+            '.fr-alert.fr-alert--error.fr-alert--sm',
             'Les mots de passe ne correspondent pas.'
         );
     }

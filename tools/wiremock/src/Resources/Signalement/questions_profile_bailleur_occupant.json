@@ -302,14 +302,9 @@
           "slug": "composition_logement_superficie"
         },
         {
-          "type": "SignalementFormCounter",
-          "label": "Combien de personnes vivent dans votre logement ?",
-          "slug": "composition_logement_nombre_personnes"
-        },
-        {
           "type": "SignalementFormOnlyChoice",
-          "label": "Des enfants de moins de 6 ans vivent dans le logement ?",
-          "slug": "composition_logement_enfants",
+          "label": "La hauteur jusqu'au plafond est de 2m (200cm) ou plus ?",
+          "slug": "composition_logement_hauteur",
           "values": [
             {
               "label": "Oui",
@@ -318,6 +313,10 @@
             {
               "label": "Non",
               "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
             }
           ]
         },
@@ -343,79 +342,6 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "composition_logement_next",
-          "action": "goto.save:type_logement_pieces_a_vivre",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
-        }
-      ]
-    }
-  },
-  {
-    "type": "SignalementFormScreen",
-    "label": "Les pièces à vivre",
-    "description": "Vous avez indiqué qu'il y a <strong>{{formStore.data.composition_logement_nb_pieces}} pièces à vivre</strong> (salon, chambre) dans votre logement",
-    "slug": "type_logement_pieces_a_vivre",
-    "screenCategory": "Type et composition",
-    "icon": {
-      "src": "/img/form/PIECES/Picto-salon.svg",
-      "alt": ""
-    },
-    "conditional": {
-      "show": "formStore.data.composition_logement_nombre_pieces === 'plusieurs_pieces'"
-    },
-    "components": {
-      "body": [
-        {
-          "type": "SignalementFormSubscreen",
-          "repeat": {
-            "count": "formStore.data.composition_logement_nb_pieces"
-          },
-          "slug": "type_logement_pieces_a_vivre_piece_{{number}}",
-          "components": {
-            "body": [
-              {
-                "type": "SignalementFormCounter",
-                "label": "Quelle est la superficie de la <strong>pièce {{number}}</strong> (taille en m²) ? (facultatif)",
-                "slug": "type_logement_pieces_a_vivre_piece_{{number}}_superficie",
-                "customCss": "fr-mt-5v",
-                "validate": {
-                  "required": false
-                }
-              },
-              {
-                "type": "SignalementFormOnlyChoice",
-                "label": "La hauteur jusqu'au plafond est de 2,20m (220cm) ou plus ?",
-                "slug": "type_logement_pieces_a_vivre_piece_{{number}}_hauteur",
-                "values": [
-                  {
-                    "label": "Oui",
-                    "value": "oui"
-                  },
-                  {
-                    "label": "Non",
-                    "value": "non"
-                  },
-                  {
-                    "label": "Je ne sais pas",
-                    "value": "nsp"
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      ],
-      "footer": [
-        {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "type_logement_pieces_a_vivre_previous",
-          "action": "goto:composition_logement",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "type_logement_pieces_a_vivre_next",
           "action": "goto.save:type_logement_commodites",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
@@ -429,6 +355,35 @@
     "screenCategory": "Type et composition",
     "components": {
       "body": [
+        {
+          "type": "SignalementFormIcon",
+          "slug": "type_logement_commodites_piece_a_vivre_icon",
+          "icons": [
+            {
+              "src": "/img/form/PIECES/Picto-salon.svg",
+              "alt": ""
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Est-ce qu'au moins une des pièces à vivre (salon, chambre) fait 9m² ou plus ?",
+          "slug": "type_logement_commodites_piece_a_vivre_9m",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ]
+        },
         {
           "type": "SignalementFormIcon",
           "slug": "type_logement_commodites_cuisine_icon",
@@ -473,28 +428,6 @@
           }
         },
         {
-          "type": "SignalementFormOnlyChoice",
-          "label": "La hauteur jusqu'au plafond est de 2m (200cm) ou plus ?",
-          "slug": "type_logement_commodites_cuisine_hauteur_plafond",
-          "values": [
-            {
-              "label": "Oui",
-              "value": "oui"
-            },
-            {
-              "label": "Non",
-              "value": "non"
-            },
-            {
-              "label": "Je ne sais pas",
-              "value": "nsp"
-            }
-          ],
-          "conditional": {
-            "show": "formStore.data.type_logement_commodites_cuisine === 'oui'"
-          }
-        },
-        {
           "type": "SignalementFormIcon",
           "slug": "type_logement_commodites_salle_de_bain_icon",
           "icons": [
@@ -535,28 +468,6 @@
           ],
           "conditional": {
             "show": "formStore.data.type_logement_commodites_salle_de_bain === 'non'"
-          }
-        },
-        {
-          "type": "SignalementFormOnlyChoice",
-          "label": "La hauteur jusqu'au plafond est de 2m (200cm) ou plus ?",
-          "slug": "type_logement_commodites_salle_de_bain_hauteur_plafond",
-          "values": [
-            {
-              "label": "Oui",
-              "value": "oui"
-            },
-            {
-              "label": "Non",
-              "value": "non"
-            },
-            {
-              "label": "Je ne sais pas",
-              "value": "nsp"
-            }
-          ],
-          "conditional": {
-            "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui'"
           }
         },
         {
@@ -604,28 +515,6 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "La hauteur jusqu'au plafond est de 2m (200cm) ou plus ?",
-          "slug": "type_logement_commodites_wc_hauteur_plafond",
-          "values": [
-            {
-              "label": "Oui",
-              "value": "oui"
-            },
-            {
-              "label": "Non",
-              "value": "non"
-            },
-            {
-              "label": "Je ne sais pas",
-              "value": "nsp"
-            }
-          ],
-          "conditional": {
-            "show": "formStore.data.type_logement_commodites_wc === 'oui'"
-          }
-        },
-        {
-          "type": "SignalementFormOnlyChoice",
           "label": "Est-ce que les toilettes (WC) et cuisine sont dans la même pièce ?",
           "slug": "type_logement_commodites_wc_cuisine",
           "values": [
@@ -648,13 +537,59 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "type_logement_commodites_previous",
-          "action": "goto:type_logement_pieces_a_vivre",
+          "action": "goto:composition_logement",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "type_logement_commodites_next",
+          "action": "goto.save:composition_logement_personnes",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "slug": "composition_logement_personnes",
+    "screenCategory": "Type et composition",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormCounter",
+          "label": "Combien de personnes vivent dans votre logement ?",
+          "slug": "composition_logement_nombre_personnes"
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Des enfants de moins de 6 ans vivent dans le logement ?",
+          "slug": "composition_logement_enfants",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ]
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "composition_logement_personnes_previous",
+          "action": "goto:type_logement_commodites",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "composition_logement_personnes_next",
           "action": "goto.save:bail_dpe",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
@@ -717,7 +652,7 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "bail_dpe_previous",
-          "action": "goto:type_logement_commodites",
+          "action": "goto:type_logement_composition",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {

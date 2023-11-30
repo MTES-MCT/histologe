@@ -32,14 +32,14 @@
   "signalement_concerne_profil_detail_tiers": "tiers_pro",
   "adresse_logement_complement_adresse_etage": "3",
   "coordonnees_bailleur_adresse_detail_insee": "13204",
-  "adresse_logement_adresse_detail_geoloc_lat": 5.367932,
-  "adresse_logement_adresse_detail_geoloc_lng": 43.302225,
+  "adresse_logement_adresse_detail_geoloc_lat": 43.302225,
+  "adresse_logement_adresse_detail_geoloc_lng": 5.367932,
   "coordonnees_bailleur_adresse_detail_numero": "Rue albe",
   "adresse_logement_adresse_detail_code_postal": "13002",
   "coordonnees_bailleur_adresse_detail_commune": "Marseille",
   "adresse_logement_complement_adresse_escalier": "",
-  "coordonnees_bailleur_adresse_detail_geoloc_lat": 5.404653,
-  "coordonnees_bailleur_adresse_detail_geoloc_lng": 43.310854,
+  "coordonnees_bailleur_adresse_detail_geoloc_lat": 43.310854,
+  "coordonnees_bailleur_adresse_detail_geoloc_lng": 5.404653,
   "coordonnees_bailleur_adresse_detail_code_postal": "13004",
   "signalement_concerne_logement_social_autre_tiers": "oui"
 }
