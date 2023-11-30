@@ -69,6 +69,7 @@ services:
     working_dir: /app
     volumes:
       - .:/app/
+      - ./.scalingo/nginx/server.location:/etc/nginx/conf.d/server.location
     ports:
       - 8080:80
 
