@@ -27,6 +27,7 @@ use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementFactory;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
+use App\Service\DataGouv\Response\Address;
 use App\Service\Signalement\QualificationStatusService;
 use App\Service\Signalement\SignalementInputValueMapper;
 use DateTimeImmutable;
@@ -164,6 +165,16 @@ class SignalementManager extends AbstractManager
             )
             ->setClosedAt($data['closedAt'])
             ->setIsFondSolidariteLogement((bool) $data['isFondSolidariteLogement']);
+    }
+
+    public function updateAddressOccupantFromAddress(Signalement $signalement, Address $address): void
+    {
+        $signalement->setInseeOccupant($address->getInseeCode());
+        $signalement->setGeoloc($address->getGeoloc());
+
+        if (empty($signalement->getCpOccupant())) {
+            $signalement->setCpOccupant($address->getZipCode());
+        }
     }
 
     public function findAllPartners(Signalement $signalement, bool $addCompetences = false): array

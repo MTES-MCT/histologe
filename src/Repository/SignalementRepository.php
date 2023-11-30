@@ -46,6 +46,15 @@ class SignalementRepository extends ServiceEntityRepository
         parent::__construct($registry, Signalement::class);
     }
 
+    public function save(Signalement $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
     public function findAllWithGeoData(?User $user, array $options, int $offset): array
     {
         $firstResult = $offset;
@@ -1015,5 +1024,20 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('ids', $ids)
             ->getQuery()
             ->getResult();
+    }
+
+    public function findWithNoGeolocalisation(?Territory $territory = null): array
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->where('s.inseeOccupant LIKE :insee_occupant OR s.inseeOccupant IS NULL')
+            ->setParameter('insee_occupant', '%#ERROR%');
+
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')
+                ->setParameter('territory', $territory)
+                ->setParameter('territory', $territory);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }

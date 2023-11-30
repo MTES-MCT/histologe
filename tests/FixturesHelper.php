@@ -65,6 +65,33 @@ trait FixturesHelper
             ->addSuivi($this->getSuiviPartner());
     }
 
+    /**
+     * @return Signalement[]
+     */
+    public function getSignalementsWithoutGeolocation($count = 1): array
+    {
+        $faker = Factory::create('fr_FR');
+
+        $signalements = [];
+        for ($i = 0; $i < $count; ++$i) {
+            $signalements[] = (new Signalement())
+                ->setIsProprioAverti(false)
+                ->setNbAdultes(2)
+                ->setNbEnfantsP6(1)
+                ->setNbEnfantsM6(1)
+                ->setTelOccupant($faker->phoneNumber())
+                ->setAdresseOccupant('25 rue de l\'est')
+                ->setEtageOccupant(2)
+                ->setVilleOccupant('Bourg-en-Bresse')
+                ->setNumAppartOccupant(2)
+                ->setNomOccupant($faker->lastName())
+                ->setPrenomOccupant($faker->firstName())
+                ->addSuivi($this->getSuiviPartner());
+        }
+
+        return $signalements;
+    }
+
     public function getSignalementAffectation(PartnerType $partnerType): Affectation
     {
         $faker = Factory::create('fr_FR');

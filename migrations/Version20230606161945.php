@@ -32,7 +32,7 @@ final class Version20230606161945 extends AbstractMigration
                 )';
 
         $parameters = [
-            'is_synchronised' => true,
+            'is_synchronised' => 1,
             'partner_type' => PartnerType::COMMUNE_SCHS->value,
         ];
         $this->addSql($sql, $parameters);

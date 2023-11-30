@@ -1,0 +1,138 @@
+{
+  "type": "FeatureCollection",
+  "version": "draft",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.245661,
+          46.191693
+        ]
+      },
+      "properties": {
+        "label": "25 rue de l'est 01000 Bourg-en-Bresse",
+        "score": 0.4274354545454545,
+        "housenumber": "25",
+        "id": "01053_1430_00025",
+        "name": "25 rue de l'est",
+        "postcode": "01000",
+        "citycode": "01053",
+        "x": 873169.57,
+        "y": 6568224.11,
+        "city": "Bourg-en-Bresse",
+        "context": "01, Ain, Auvergne-Rhône-Alpes",
+        "type": "housenumber",
+        "importance": 0.65179,
+        "street": "rue de l'est"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.734328,
+          48.567646
+        ]
+      },
+      "properties": {
+        "label": "Rue de l'Ain 67200 Strasbourg",
+        "score": 0.3599235885167464,
+        "id": "67482_0117",
+        "name": "Rue de l'Ain",
+        "postcode": "67200",
+        "citycode": "67482",
+        "x": 1049092.3,
+        "y": 6840182.43,
+        "city": "Strasbourg",
+        "context": "67, Bas-Rhin, Grand Est",
+        "type": "street",
+        "importance": 0.64337,
+        "street": "Rue de l'Ain"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.145109,
+          44.616455
+        ]
+      },
+      "properties": {
+        "label": "25 Rue des Pins Verts 33260 La Teste-de-Buch",
+        "score": 0.33267545454545455,
+        "housenumber": "25",
+        "id": "33529_2446_00025",
+        "name": "25 Rue des Pins Verts",
+        "postcode": "33260",
+        "citycode": "33529",
+        "x": 371282.7,
+        "y": 6399447.95,
+        "city": "La Teste-de-Buch",
+        "context": "33, Gironde, Nouvelle-Aquitaine",
+        "type": "housenumber",
+        "importance": 0.65943,
+        "street": "Rue des Pins Verts"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.948878,
+          49.300932
+        ]
+      },
+      "properties": {
+        "label": "Rue des Aines 08250 Cornay",
+        "score": 0.30685090909090906,
+        "id": "08131_0003",
+        "name": "Rue des Aines",
+        "postcode": "08250",
+        "citycode": "08131",
+        "x": 841762.39,
+        "y": 6913007.71,
+        "city": "Cornay",
+        "context": "08, Ardennes, Grand Est",
+        "type": "street",
+        "importance": 0.22536,
+        "street": "Rue des Aines"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.128293,
+          44.62556
+        ]
+      },
+      "properties": {
+        "label": "25 Rue des Pins Maritimes 33260 La Teste-de-Buch",
+        "score": 0.30266911205073993,
+        "housenumber": "25",
+        "id": "33529_2438_00025",
+        "name": "25 Rue des Pins Maritimes",
+        "postcode": "33260",
+        "citycode": "33529",
+        "x": 372667.89,
+        "y": 6400388.08,
+        "city": "La Teste-de-Buch",
+        "context": "33, Gironde, Nouvelle-Aquitaine",
+        "type": "housenumber",
+        "importance": 0.60843,
+        "street": "Rue des Pins Maritimes"
+      }
+    }
+  ],
+  "attribution": "BAN",
+  "licence": "ETALAB-2.0",
+  "query": "25 rue teste Ain",
+  "limit": 5
+}
