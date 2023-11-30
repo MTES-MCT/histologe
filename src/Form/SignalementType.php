@@ -28,6 +28,12 @@ class SignalementType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $signalement = $builder->getData();
+        $signalement->setTelOccupant($signalement->getTelOccupantDecoded());
+        $signalement->setTelOccupantBis($signalement->getTelOccupantBisDecoded());
+        $signalement->setTelProprio($signalement->getTelProprioDecoded());
+        $signalement->setTelDeclarant($signalement->getTelDeclarantDecoded());
+
         $builder
             ->add('details', TextareaType::class, [
                 'attr' => [
