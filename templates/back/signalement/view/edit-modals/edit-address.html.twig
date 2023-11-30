@@ -22,7 +22,9 @@
                                             <span class="fr-hint-text">Tapez l'adresse et sélectionnez-la dans la liste</span>
                                         </label>
                                         <input class="fr-input search-address-autocomplete" type="text" id="edit-address-search"
-                                            data-fr-adresse-bo-autocomplete="true" data-form-id="form-edit-address">
+                                            data-fr-adresse-bo-autocomplete="true" data-form-id="form-edit-address" 
+                                            data-form-lat="{{ signalement.geoloc.lat }}" data-form-lng="{{ signalement.geoloc.lng }}" 
+                                            {% if is_granted('ROLE_ADMIN') is not same as true %}data-form-limit="{{ signalement.territory.zip }}" {% endif %}>
                                         <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france search-address-autocomplete-list">
                                         </div>
                                     </div>
