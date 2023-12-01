@@ -116,28 +116,69 @@ services:
                 - '@App\Serializer\SignalementDraftRequestNormalizer'
     Intervention\Image\ImageManager:
 
-    App\Service\Signalement\DesordreTraitement\DesordreLogementLumierePasVolets:
+    App\Service\Signalement\DesordreTraitement\DesordreTraitementNuisibles:
         tags:
-            - { name: 'desordre_traitement', key: 'desordres_logement_lumiere_pas_volets' }
-    
-    App\Service\Signalement\DesordreTraitement\DesordreLogementLumierePasLumiere:
+            - { name: 'desordre_traitement', key: 'desordres_logement_nuisibles_cafards' }
+            - { name: 'desordre_traitement', key: 'desordres_logement_nuisibles_punaises' }
+            - { name: 'desordre_traitement', key: 'desordres_logement_nuisibles_rongeurs' }
+            - { name: 'desordre_traitement', key: 'desordres_logement_nuisibles_autres' }
+
+    App\Service\Signalement\DesordreTraitement\DesordreTraitementPieces:
         tags:
+            - { name: 'desordre_traitement', key: 'desordres_logement_aeration_aucune_aeration' }
+            - { name: 'desordre_traitement', key: 'desordres_logement_chauffage_details_fenetres_permeables' }
+            - { name: 'desordre_traitement', key: 'desordres_logement_chauffage_type_aucun' }
+            - { name: 'desordre_traitement', key: 'desordres_logement_chauffage_details_difficultes_chauffage' }
+            - { name: 'desordre_traitement', key: 'desordres_logement_chauffage_details_chauffage_KO' }
+            - { name: 'desordre_traitement', key: 'desordres_logement_chauffage_details_chauffage_dangereux' }
+            - { name: 'desordre_traitement', key: 'desordres_logement_securite_sol_glissant' }
+            - { name: 'desordre_traitement', key: 'desordres_logement_securite_sol_dangereux' }
+            - { name: 'desordre_traitement', key: 'desordres_logement_securite_balcons' }
+            - { name: 'desordre_traitement', key: 'desordres_logement_electricite_installation_dangereuse' }
             - { name: 'desordre_traitement', key: 'desordres_logement_lumiere_pas_lumiere' }
+            - { name: 'desordre_traitement', key: 'desordres_logement_lumiere_pas_volets' }
+            - { name: 'desordre_traitement', key: 'desordres_logement_proprete' }
+
+    App\Service\Signalement\DesordreTraitement\DesordreBatimentSecuriteMursFissures:
+        tags:
+            - { name: 'desordre_traitement', key: 'desordres_batiment_securite_murs_fissures' }
+
+    App\Service\Signalement\DesordreTraitement\DesordreBatimentIsolationDernierEtageToit:
+        tags:
+            - { name: 'desordre_traitement', key: 'desordres_batiment_isolation_dernier_etage_toit' }
+
+    App\Service\Signalement\DesordreTraitement\DesordreBatimentIsolationInfiltrationEau:
+        tags:
+            - { name: 'desordre_traitement', key: 'desordres_batiment_isolation_infiltration_eau' }  
+
+    App\Service\Signalement\DesordreTraitement\DesordreBatimentSecuriteSol:
+        tags:
+            - { name: 'desordre_traitement', key: 'desordres_batiment_securite_sol' }  
+
+    App\Service\Signalement\DesordreTraitement\DesordreBatimentSecuriteEscalier:
+        tags:
+            - { name: 'desordre_traitement', key: 'desordres_batiment_securite_escalier' }  
+
+    App\Service\Signalement\DesordreTraitement\DesordreLogementAerationVentilationDefectueuse:
+        tags:
+            - { name: 'desordre_traitement', key: 'desordres_logement_aeration_ventilation_defectueuse' }  
+
+    App\Service\Signalement\DesordreTraitement\DesordreLogementHumidite:
+        tags:
+            - { name: 'desordre_traitement', key: 'desordres_logement_humidite_piece_a_vivre' }  
+            - { name: 'desordre_traitement', key: 'desordres_logement_humidite_cuisine' }  
+            - { name: 'desordre_traitement', key: 'desordres_logement_humidite_salle_de_bain' }  
+
+    App\Service\Signalement\DesordreTraitement\DesordreLogementSecuritePlomb:
+        tags:
+            - { name: 'desordre_traitement', key: 'desordres_logement_securite_plomb' }  
 
     App\Service\Signalement\DesordreTraitement\DesordreLogementElectriciteManquePrises:
         tags:
             - { name: 'desordre_traitement', key: 'desordres_logement_electricite_manque_prises' }
 
-    App\Service\Signalement\DesordreTraitement\DesordreLogementNuisiblesCafards:
-        tags:
-            - { name: 'desordre_traitement', key: 'desordres_logement_nuisibles_cafards' }
-
-    App\Service\Signalement\DesordreTraitement\DesordreLogementNuisiblesPunaises:
-        tags:
-            - { name: 'desordre_traitement', key: 'desordres_logement_nuisibles_punaises' }
-
     _instanceof:
-        App\Service\Signalement\DesordreTraitement\DesordreTraitementDispatcher:
+        App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor:
             tags: ['desordre_traitement']
 
 when@test:

@@ -5,48 +5,49 @@ namespace App\Service\Signalement\DesordreTraitement;
 use App\Repository\DesordrePrecisionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 
-class DesordreTraitementPieces
+class DesordreTraitementPieces implements DesordreTraitementInterface
 {
     public function __construct(
         private readonly DesordrePrecisionRepository $desordrePrecisionRepository,
     ) {
     }
 
-    public function getPrecisionsPieces(string $slug, array $payload): ArrayCollection
+    public function process(array $payload, string $slug, string $suffixe = ''): ArrayCollection
     {
         $precisions = new ArrayCollection();
 
-        $slugCuisine = $slug.'_cuisine';
-        $slugPieceAVivre = $slug.'_piece_a_vivre';
-        $slugSalleDeBain = $slug.'_salle_de_bain';
-        $slugTout = $slug.'_tout';
-        if (isset($payload[$slug])
-        && 1 === $payload[$slug]) {
+        $slugCuisine = $slug.'_pieces_cuisine';
+        $slugPieceAVivre = $slug.'_pieces_piece_a_vivre';
+        $slugSalleDeBain = $slug.'_pieces_salle_de_bain';
+        $slugTout = $slug.'_pieces_tout';
+        if (isset($payload[$slug]) && 1 === $payload[$slug]) {
             if ('piece_unique' === $payload['composition_logement_piece_unique']
-            || (1 === $payload[$slugCuisine]
-                && 1 === $payload[$slugPieceAVivre]
-                && 1 === $payload[$slugSalleDeBain])
+            || (
+                isset($payload[$slugCuisine]) && 1 === $payload[$slugCuisine]
+                && isset($payload[$slugPieceAVivre]) && 1 === $payload[$slugPieceAVivre]
+                && isset($payload[$slugSalleDeBain]) && 1 === $payload[$slugSalleDeBain]
+            )
             ) {
                 $precision = $this->desordrePrecisionRepository->findOneBy(
-                    ['desordrePrecisionSlug' => $slugTout]
+                    ['desordrePrecisionSlug' => $slugTout.$suffixe]
                 );
                 $precisions->add($precision);
             } else {
-                if (1 === $payload[$slugCuisine]) {
+                if (isset($payload[$slugCuisine]) && 1 === $payload[$slugCuisine]) {
                     $precision = $this->desordrePrecisionRepository->findOneBy(
-                        ['desordrePrecisionSlug' => $slugCuisine]
+                        ['desordrePrecisionSlug' => $slugCuisine.$suffixe]
                     );
                     $precisions->add($precision);
                 }
-                if (1 === $payload[$slugPieceAVivre]) {
+                if (isset($payload[$slugPieceAVivre]) && 1 === $payload[$slugPieceAVivre]) {
                     $precision = $this->desordrePrecisionRepository->findOneBy(
-                        ['desordrePrecisionSlug' => $slugPieceAVivre]
+                        ['desordrePrecisionSlug' => $slugPieceAVivre.$suffixe]
                     );
                     $precisions->add($precision);
                 }
-                if (1 === $payload[$slugSalleDeBain]) {
+                if (isset($payload[$slugSalleDeBain]) && 1 === $payload[$slugSalleDeBain]) {
                     $precision = $this->desordrePrecisionRepository->findOneBy(
-                        ['desordrePrecisionSlug' => $slugSalleDeBain]
+                        ['desordrePrecisionSlug' => $slugSalleDeBain.$suffixe]
                     );
                     $precisions->add($precision);
                 }

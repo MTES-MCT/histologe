@@ -6,7 +6,7 @@ use App\Entity\DesordreCritere;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 
-class DesordreTraitementDispatcher
+class DesordreTraitementProcessor
 {
     private iterable $desordreTraitements;
 
@@ -17,14 +17,16 @@ class DesordreTraitementDispatcher
         $this->desordreTraitements = $desordreTraitements;
     }
 
-    public function dispatch(DesordreCritere $critere, array $payload): ArrayCollection
+    public function process(DesordreCritere $critere, array $payload): ArrayCollection
     {
         $slug = $critere->getSlugCritere();
-        $desordreTraitementsHandlers = $this->desordreTraitements instanceof \Traversable ? iterator_to_array($this->desordreTraitements) : $this->desordreTraitements;
+        $desordreTraitementsHandlers = $this->desordreTraitements instanceof \Traversable ?
+            iterator_to_array($this->desordreTraitements) :
+            $this->desordreTraitements;
 
         $desordreCritereProcessor = $desordreTraitementsHandlers[$slug];
         if ($desordreCritereProcessor) {
-            $desordrePrecisions = $desordreCritereProcessor->process($critere, $payload);
+            $desordrePrecisions = $desordreCritereProcessor->process($payload, $slug);
 
             return $desordrePrecisions;
         }

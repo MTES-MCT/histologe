@@ -15,8 +15,7 @@ use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
-use App\Service\Signalement\DesordreFilterService;
-use App\Service\Signalement\DesordreTraitement\DesordreTraitementDispatcher;
+use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementBuilder;
 use App\Service\Signalement\SignalementInputValueMapper;
@@ -55,8 +54,7 @@ class SignalementBuilderTest extends KernelTestCase
         $desordreCategorieRepository = static::getContainer()->get(DesordreCategorieRepository::class);
         $desordreCritereRepository = static::getContainer()->get(DesordreCritereRepository::class);
         $desordrePrecisionRepository = static::getContainer()->get(DesordrePrecisionRepository::class);
-        $desordreTraitementDispatcher = static::getContainer()->get(DesordreTraitementDispatcher::class);
-        $desordreFilterService = static::getContainer()->get(DesordreFilterService::class);
+        $desordreTraitementProcessor = static::getContainer()->get(DesordreTraitementProcessor::class);
 
         $this->signalementBuilder = new SignalementBuilder(
             $territoryRepository,
@@ -72,11 +70,10 @@ class SignalementBuilderTest extends KernelTestCase
             $uploadHandlerService,
             $security,
             $signalementInputValueMapper,
-            $desordreFilterService,
             $desordreCategorieRepository,
             $desordreCritereRepository,
             $desordrePrecisionRepository,
-            $desordreTraitementDispatcher
+            $desordreTraitementProcessor
         );
     }
 

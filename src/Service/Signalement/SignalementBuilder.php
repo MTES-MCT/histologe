@@ -17,9 +17,11 @@ use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
-use App\Service\Signalement\DesordreTraitement\DesordreTraitementDispatcher;
+use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
 use App\Service\Token\TokenGeneratorInterface;
 use App\Service\UploadHandlerService;
+use App\Utils\DataPropertyArrayFilter;
+use App\Utils\Json;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class SignalementBuilder
@@ -43,11 +45,10 @@ class SignalementBuilder
         private UploadHandlerService $uploadHandlerService,
         private Security $security,
         private SignalementInputValueMapper $signalementInputValueMapper,
-        private DesordreFilterService $desordreFilterService,
         private DesordreCategorieRepository $desordreCategorieRepository,
         private DesordreCritereRepository $desordreCritereRepository,
         private DesordrePrecisionRepository $desordrePrecisionRepository,
-        private DesordreTraitementDispatcher $desordreTraitementDispatcher,
+        private DesordreTraitementProcessor $desordreTraitementProcessor,
     ) {
     }
 
@@ -137,10 +138,11 @@ class SignalementBuilder
         if (isset($categoryDisorders[$zone]) && !empty($categoryDisorders[$zone])) {
             foreach ($categoryDisorders[$zone] as $categoryDisorderSlug) {
                 // on récupère dans le draft toutes les infos liées à cette catégorie de désordres
-                $filteredData = $this->desordreFilterService->filterDesordreData(
+                $filteredData = DataPropertyArrayFilter::filterByPrefix(
                     $this->payload,
-                    $categoryDisorderSlug
+                    [$categoryDisorderSlug]
                 );
+
                 // on récupère en base tous les critères de cette catégorie de désordres
                 $criteres = $this->desordreCritereRepository->findBy(['slugCategorie' => $categoryDisorderSlug]);
 
@@ -169,10 +171,16 @@ class SignalementBuilder
                         $this->signalement->addDesordrePrecision($precisions->first());
                     } else {
                         // passe par un service spécifique pour évaluer les précisions à ajouter sur ce critère
-                        $desordrePrecisions = $this->desordreTraitementDispatcher->dispatch($critereToLink, $this->payload);
-                        foreach ($desordrePrecisions as $desordrePrecision) {
-                            $this->signalement->addDesordrePrecision($desordrePrecision);
+                        $desordrePrecisions = $this->desordreTraitementProcessor->process($critereToLink, $this->payload);
+                        if (!$desordrePrecisions->isEmpty()) {
+                            foreach ($desordrePrecisions as $desordrePrecision) {
+                                if (null !== $desordrePrecision) {
+                                    $this->signalement->addDesordrePrecision($desordrePrecision);
+                                }
+                                // TODO : loguer
+                            }
                         }
+                        // TODO : loguer
                     }
                     // TODO : gérer les fichiers associés s'il y en a
                 }
