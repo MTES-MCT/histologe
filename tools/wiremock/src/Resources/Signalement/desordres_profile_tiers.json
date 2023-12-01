@@ -1359,7 +1359,7 @@
                 "slug": "desordres_logement_aeration_ventilation_defectueuse_details_pieces",
                 "customCss": "signalement-form-roomlist-under-checkbox",
                 "conditional": {
-                  "show": "formStore.data.desordres_logement_aeration_ventilation_defectueuse_details_nettoyage === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+                  "show": "formStore.data.desordres_logement_aeration_ventilation_defectueuse_details_nettoyage === 'oui' && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
                 }
               }
             ]

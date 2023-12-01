@@ -5,7 +5,7 @@ namespace App\Service\Signalement\DesordreTraitement;
 use App\Repository\DesordrePrecisionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 
-class DesordreLogementElectriciteManquePrises implements DesordreTraitementInterface
+class DesordreBatimentSecuriteMursFissures implements DesordreTraitementInterface
 {
     public function __construct(
         private readonly DesordrePrecisionRepository $desordrePrecisionRepository,
@@ -15,12 +15,12 @@ class DesordreLogementElectriciteManquePrises implements DesordreTraitementInter
 
     public function process(array $payload, string $slug): ArrayCollection
     {
+        $precisions = new ArrayCollection();
+
         $precisions = $this->desordreTraitementOuiNon->process(
             $payload,
-            'desordres_logement_electricite_manque_prises_details_multiprises'
+            'desordres_batiment_securite_murs_fissures_details_mur_porteur'
         );
-        // TODO : à voir avec Mathilde, dans l'algo on ne prend pas en compte les pièces
-        // dans lesquels on manque de prises desordres_logement_electricite_manque_prises_details_pieces
 
         return $precisions;
     }
