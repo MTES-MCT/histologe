@@ -13,13 +13,13 @@ class AdresseOccupantRequest
         private readonly ?string $codePostal = null,
         #[Assert\NotBlank(message: 'Merci de saisir une ville.')]
         private readonly ?string $ville = null,
-        #[Assert\Length(max: 5)]
+        #[Assert\Length(max: 5, maxMessage: 'L\'étage ne peut pas dépasser {{ limit }} caractères.')]
         private readonly ?string $etage = null,
-        #[Assert\Length(max: 3)]
+        #[Assert\Length(max: 3, maxMessage: 'L\'escalier ne peut pas dépasser {{ limit }} caractères.')]
         private readonly ?string $escalier = null,
-        #[Assert\Length(max: 30)]
+        #[Assert\Length(max: 30, maxMessage: 'Le numéro d\'appartement ne peut pas dépasser {{ limit }} caractères.')]
         private readonly ?string $numAppart = null,
-        #[Assert\Length(max: 255)]
+        #[Assert\Length(max: 255, maxMessage: 'Le champ Autre ne peut pas dépasser {{ limit }} caractères.')]
         private readonly ?string $autre = null,
         private readonly ?string $geolocLng = null,
         private readonly ?string $geolocLat = null,

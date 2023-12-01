@@ -102,7 +102,11 @@ class SignalementEditController extends AbstractController
                 'json'
             );
 
-            $errorMessage = $this->getErrorMessage($validator, $coordonneesFoyerRequest);
+            $validationGroups = ['Default'];
+            if ($signalement->getProfileDeclarant()) {
+                $validationGroups[] = $signalement->getProfileDeclarant()->value;
+            }
+            $errorMessage = $this->getErrorMessage($validator, $coordonneesFoyerRequest, $validationGroups);
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromCoordonneesFoyerRequest($signalement, $coordonneesFoyerRequest);
@@ -134,7 +138,11 @@ class SignalementEditController extends AbstractController
                 'json'
             );
 
-            $errorMessage = $this->getErrorMessage($validator, $coordonneesBailleurRequest);
+            $validationGroups = ['Default'];
+            if ($signalement->getProfileDeclarant()) {
+                $validationGroups[] = $signalement->getProfileDeclarant()->value;
+            }
+            $errorMessage = $this->getErrorMessage($validator, $coordonneesBailleurRequest, $validationGroups);
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromCoordonneesBailleurRequest($signalement, $coordonneesBailleurRequest);
@@ -166,7 +174,11 @@ class SignalementEditController extends AbstractController
                 'json'
             );
 
-            $errorMessage = $this->getErrorMessage($validator, $informationsLogementRequest);
+            $validationGroups = ['Default'];
+            if ($signalement->getProfileDeclarant()) {
+                $validationGroups[] = $signalement->getProfileDeclarant()->value;
+            }
+            $errorMessage = $this->getErrorMessage($validator, $informationsLogementRequest, $validationGroups);
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromInformationsLogementRequest($signalement, $informationsLogementRequest);
@@ -198,7 +210,11 @@ class SignalementEditController extends AbstractController
                 'json'
             );
 
-            $errorMessage = $this->getErrorMessage($validator, $situationFoyerRequest);
+            $validationGroups = ['Default'];
+            if ($signalement->getProfileDeclarant()) {
+                $validationGroups[] = $signalement->getProfileDeclarant()->value;
+            }
+            $errorMessage = $this->getErrorMessage($validator, $situationFoyerRequest, $validationGroups);
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromSituationFoyerRequest($signalement, $situationFoyerRequest);
@@ -230,7 +246,11 @@ class SignalementEditController extends AbstractController
                 'json'
             );
 
-            $errorMessage = $this->getErrorMessage($validator, $procedureDemarchesRequest);
+            $validationGroups = ['Default'];
+            if ($signalement->getProfileDeclarant()) {
+                $validationGroups[] = $signalement->getProfileDeclarant()->value;
+            }
+            $errorMessage = $this->getErrorMessage($validator, $procedureDemarchesRequest, $validationGroups);
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromProcedureDemarchesRequest($signalement, $procedureDemarchesRequest);
@@ -245,10 +265,10 @@ class SignalementEditController extends AbstractController
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 
-    private function getErrorMessage(ValidatorInterface $validator, $dtoRequest): string
+    private function getErrorMessage(ValidatorInterface $validator, $dtoRequest, ?array $validationGroups = []): string
     {
         $errorMessage = '';
-        $errors = $validator->validate($dtoRequest);
+        $errors = $validator->validate($dtoRequest, null, $validationGroups);
         if (\count($errors) > 0) {
             $errorMessage = '';
             foreach ($errors as $error) {

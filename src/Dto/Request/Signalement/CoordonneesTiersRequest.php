@@ -16,6 +16,7 @@ class CoordonneesTiersRequest
         #[Assert\NotBlank(message: 'Merci de saisir un courriel.')]
         #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
         private readonly ?string $mail = null,
+        #[Assert\NotBlank(message: 'Merci de saisir un numéro de téléphone.')]
         #[AppAssert\TelephoneFormat]
         private readonly ?string $telephone = null,
         private readonly ?string $lien = null,
