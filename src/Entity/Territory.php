@@ -58,6 +58,9 @@ class Territory
     #[Ignore]
     private $authorizedCodesInsee = [];
 
+    #[ORM\Column]
+    private ?bool $isAutoAffectationEnabled = null;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -291,6 +294,18 @@ class Territory
     public function setAuthorizedCodesInsee(?array $authorizedCodesInsee): self
     {
         $this->authorizedCodesInsee = $authorizedCodesInsee;
+
+        return $this;
+    }
+
+    public function isAutoAffectationEnabled(): ?bool
+    {
+        return $this->isAutoAffectationEnabled;
+    }
+
+    public function setIsAutoAffectationEnabled(bool $isAutoAffectationEnabled): static
+    {
+        $this->isAutoAffectationEnabled = $isAutoAffectationEnabled;
 
         return $this;
     }

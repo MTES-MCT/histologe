@@ -9,6 +9,7 @@ use App\Service\Files\DocumentProvider;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\SignalementBuilder;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -19,6 +20,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
         private SignalementManager $signalementManager,
         private NotificationMailerRegistry $notificationMailerRegistry,
         private DocumentProvider $documentProvider,
+        private AutoAssigner $autoAssigner,
     ) {
     }
 
@@ -64,5 +66,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                 )
             );
         }
+
+        $this->autoAssigner->assign($signalement);
     }
 }

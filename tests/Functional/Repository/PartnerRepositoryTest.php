@@ -97,6 +97,18 @@ class PartnerRepositoryTest extends KernelTestCase
         $this->assertCount(1, $partnerMDL);
     }
 
+    public function testFindAutoAssignable(): void
+    {
+        $partners = $this->partnerRepository->findAutoAssignable('01173');
+        $this->assertCount(1, $partners);
+        $partners = $this->partnerRepository->findAutoAssignable('2A247');
+        $this->assertCount(1, $partners);
+        $partners = $this->partnerRepository->findAutoAssignable('13000');
+        $this->assertCount(0, $partners);
+        $partners = $this->partnerRepository->findAutoAssignable('');
+        $this->assertNull($partners);
+    }
+
     public function testGetPartnerPaginator(): void
     {
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '69']);

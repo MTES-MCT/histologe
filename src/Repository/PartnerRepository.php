@@ -99,11 +99,21 @@ class PartnerRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findWithCodeInseeNotNull()
+    public function findAutoAssignable(string $codeInsee): ?array
     {
+        if (empty($codeInsee)) {
+            return null;
+        }
+
         return $this
             ->createQueryBuilder('p')
-            ->where("p.insee NOT LIKE '[\"\"]'")
+            ->leftJoin('p.users', 'u')
+            ->where('p.insee LIKE :codeInsee')
+            ->setParameter('codeInsee', '%'.$codeInsee.'%')
+            ->andWhere('p.type = :partnerType')
+            ->setParameter('partnerType', PartnerType::COMMUNE_SCHS)
+            ->groupBy('p.id')
+            ->having('count(u.id) > 0')
             ->getQuery()
             ->getResult();
     }
