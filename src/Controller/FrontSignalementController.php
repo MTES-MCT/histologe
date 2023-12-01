@@ -225,14 +225,27 @@ class FrontSignalementController extends AbstractController
                     case 'consoYear':
                         $dataConsoYear = $value;
                         break;
-
-                    default:
-                        if ('setSignalement' !== $method) {
-                            if ('' === $value || ' ' === $value) {
-                                $value = null;
-                            }
-                            $signalement->$method($value);
+                    case 'telProprio':
+                    case 'telProprioSecondaire':
+                    case 'telDeclarant':
+                    case 'telDeclarantSecondaire':
+                    case 'telOccupant':
+                        if (!$value) {
+                            break;
                         }
+                        if (!str_starts_with($value, '+') && !str_starts_with($value, '33')) {
+                            $value = '+33'.$value;
+                        }
+                        $signalement->$method($value);
+                        break;
+                    default:
+                        if (\in_array($method, ['setSignalement', 'setUuid', 'setStatus', 'setReference', 'setCodeSuivi'])) {
+                            break;
+                        }
+                        if ('' === $value || ' ' === $value) {
+                            $value = null;
+                        }
+                        $signalement->$method($value);
                 }
             }
             $errors = $validator->validate($signalement);

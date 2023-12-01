@@ -63,6 +63,11 @@ class SignalementEditController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid('signalement_edit_coordonnees_tiers_'.$signalement->getId(), $request->get('_token'))) {
+            
+            if ($request->request->get('telephone') && !str_starts_with($request->request->get('telephone'), '+') && !str_starts_with($request->request->get('telephone'), '33')) {
+                $request->request->set('telephone', '+33'.$request->request->get('telephone'));
+            }
+
             /** @var CoordonneesTiersRequest $coordonneesTiersRequest */
             $coordonneesTiersRequest = $serializer->deserialize(
                 json_encode($request->getPayload()->all()),
@@ -95,6 +100,14 @@ class SignalementEditController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid('signalement_edit_coordonnees_foyer_'.$signalement->getId(), $request->get('_token'))) {
+
+            if ($request->request->get('telephone') && !str_starts_with($request->request->get('telephone'), '+') && !str_starts_with($request->request->get('telephone'), '33')) {
+                $request->request->set('telephone', '+33'.$request->request->get('telephone'));
+            }
+            if ($request->request->get('telephoneBis') && !str_starts_with($request->request->get('telephoneBis'), '+') && !str_starts_with($request->request->get('telephoneBis'), '33')) {
+                $request->request->set('telephoneBis', '+33'.$request->request->get('telephoneBis'));
+            }
+
             /** @var CoordonneesFoyerRequest $coordonneesFoyerRequest */
             $coordonneesFoyerRequest = $serializer->deserialize(
                 json_encode($request->getPayload()->all()),
@@ -127,6 +140,14 @@ class SignalementEditController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid('signalement_edit_coordonnees_bailleur_'.$signalement->getId(), $request->get('_token'))) {
+
+            if ($request->request->get('telephone') && !str_starts_with($request->request->get('telephone'), '+') && !str_starts_with($request->request->get('telephone'), '33')) {
+                $request->request->set('telephone', '+33'.$request->request->get('telephone'));
+            }
+            if ($request->request->get('telephoneBis') && !str_starts_with($request->request->get('telephoneBis'), '+') && !str_starts_with($request->request->get('telephoneBis'), '33')) {
+                $request->request->set('telephoneBis', '+33'.$request->request->get('telephoneBis'));
+            }
+
             /** @var CoordonneesBailleurRequest $coordonneesBailleurRequest */
             $coordonneesBailleurRequest = $serializer->deserialize(
                 json_encode($request->getPayload()->all()),

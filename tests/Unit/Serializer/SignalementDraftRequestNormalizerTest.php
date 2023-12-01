@@ -23,7 +23,7 @@ class SignalementDraftRequestNormalizerTest extends TestCase
 
         $signalementDraftRequest = (new SignalementDraftRequest())
             ->setProfil('locataire')
-            ->setVosCoordonneesOccupantTel('+33611121314')
+            ->setVosCoordonneesOccupantTel('+33611121314');
 
         $result = $normalizer->denormalize($data, SignalementDraftRequest::class);
 

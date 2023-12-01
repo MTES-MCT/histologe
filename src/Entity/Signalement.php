@@ -10,6 +10,7 @@ use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Repository\SignalementRepository;
+use App\Validator as AppAssert;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -108,11 +109,11 @@ class Signalement
     private ?string $villeProprio;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
-    #[Assert\Length(min: 10, max: 15)]
+    #[AppAssert\TelephoneFormat]
     private $telProprio;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
-    #[Assert\Length(min: 0, max: 15)]
+    #[AppAssert\TelephoneFormat]
     private ?string $telProprioSecondaire;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -143,9 +144,11 @@ class Signalement
     private $prenomDeclarant;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
+    #[AppAssert\TelephoneFormat]
     private $telDeclarant;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
+    #[AppAssert\TelephoneFormat]
     private ?string $telDeclarantSecondaire;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -167,6 +170,7 @@ class Signalement
     private $prenomOccupant;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
+    #[AppAssert\TelephoneFormat]
     private $telOccupant;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -328,6 +332,7 @@ class Signalement
     private $closedBy;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
+    #[AppAssert\TelephoneFormat]
     private $telOccupantBis;
 
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'signalement', cascade: ['persist'])]

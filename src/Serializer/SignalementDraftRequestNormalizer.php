@@ -23,7 +23,7 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
     {
         $transformedData = [];
         foreach ($data as $key => $value) {
-             if (preg_match(SignalementDraftRequest::PATTERN_PHONE_KEY, $key, $matches)) {
+            if (preg_match(SignalementDraftRequest::PATTERN_PHONE_KEY, $key, $matches)) {
                 if (!$value) {
                     continue;
                 }

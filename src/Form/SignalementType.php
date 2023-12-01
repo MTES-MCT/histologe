@@ -14,6 +14,8 @@ use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SignalementType extends AbstractType
@@ -35,6 +37,19 @@ class SignalementType extends AbstractType
             $signalement->setTelProprio($signalement->getTelProprioDecoded());
             $signalement->setTelDeclarant($signalement->getTelDeclarantDecoded());
         }
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            $data = $event->getData();
+            foreach (['telProprio', 'telProprioSecondaire', 'telDeclarant', 'telDeclarantSecondaire', 'telOccupant'] as $field) {
+                if (empty($data[$field])) {
+                    continue;
+                }
+                if (!str_starts_with($data[$field], '+') && !str_starts_with($data[$field], '33')) {
+                    $data[$field] = '+33'.$data[$field];
+                    $event->setData($data);
+                }
+            }
+        });
 
         $builder
             ->add('details', TextareaType::class, [
