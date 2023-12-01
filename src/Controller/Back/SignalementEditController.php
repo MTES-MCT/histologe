@@ -63,7 +63,6 @@ class SignalementEditController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid('signalement_edit_coordonnees_tiers_'.$signalement->getId(), $request->get('_token'))) {
-            
             if ($request->request->get('telephone') && !str_starts_with($request->request->get('telephone'), '+') && !str_starts_with($request->request->get('telephone'), '33')) {
                 $request->request->set('telephone', '+33'.$request->request->get('telephone'));
             }
@@ -100,7 +99,6 @@ class SignalementEditController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid('signalement_edit_coordonnees_foyer_'.$signalement->getId(), $request->get('_token'))) {
-
             if ($request->request->get('telephone') && !str_starts_with($request->request->get('telephone'), '+') && !str_starts_with($request->request->get('telephone'), '33')) {
                 $request->request->set('telephone', '+33'.$request->request->get('telephone'));
             }
@@ -140,7 +138,6 @@ class SignalementEditController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid('signalement_edit_coordonnees_bailleur_'.$signalement->getId(), $request->get('_token'))) {
-
             if ($request->request->get('telephone') && !str_starts_with($request->request->get('telephone'), '+') && !str_starts_with($request->request->get('telephone'), '33')) {
                 $request->request->set('telephone', '+33'.$request->request->get('telephone'));
             }
