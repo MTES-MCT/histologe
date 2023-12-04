@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Entity\Enum\PartnerType;
 use App\Entity\Territory;
 use App\Manager\TerritoryManager;
 use App\Service\Import\CsvParser;
@@ -19,6 +20,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsCommand(
     name: 'app:import-grid-affectation',
@@ -37,6 +39,7 @@ class ImportGridAffectationCommand extends Command
         private GridAffectationLoader $gridAffectationLoader,
         private UploadHandlerService $uploadHandlerService,
         private NotificationMailerRegistry $notificationMailerRegistry,
+        private UrlGeneratorInterface $urlGenerator,
     ) {
         parent::__construct();
     }
@@ -53,7 +56,9 @@ class ImportGridAffectationCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Add partners types separated with comma'
-            );
+            )
+            ->addOption('update-version', null, InputOption::VALUE_REQUIRED, 'update version')
+        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -62,24 +67,18 @@ class ImportGridAffectationCommand extends Command
         $territoryZip = $input->getArgument(self::PARAM_TERRITORY_ZIP);
         $fromFile = 'csv/grille_affectation_'.$territoryZip.'.csv';
         $toFile = $this->parameterBag->get('uploads_tmp_dir').'grille.csv';
+        $isModeUpdate = false;
+        $updateVersion = $input->getOption('update-version');
 
         /** @var Territory $territory */
         $territory = $this->territoryManager->findOneBy(['zip' => $territoryZip]);
-        if (null === $territory) {
-            $io->error('Territory does not exist');
 
-            return Command::FAILURE;
+        if ($updateVersion) {
+            $fromFile = 'csv/grille_affectation_'.$territoryZip.'-'.$updateVersion.'.csv';
+            $isModeUpdate = true;
         }
 
-        if ($territory->isIsActive()) {
-            $io->warning('Partner(s) and user(s) from this repository have already been added');
-
-            return Command::FAILURE;
-        }
-
-        if (!$this->fileStorage->fileExists($fromFile)) {
-            $io->error('CSV File does not exist');
-
+        if (!$this->canExecute($io, $isModeUpdate, $fromFile, $territory)) {
             return Command::FAILURE;
         }
 
@@ -88,6 +87,7 @@ class ImportGridAffectationCommand extends Command
         $csvData = $this->csvParser->parseAsDict($toFile);
         $checkErrors = $this->gridAffectationLoader->validate(
             $csvData,
+            $isModeUpdate
         );
 
         if (\count($checkErrors) > 0) {
@@ -110,27 +110,86 @@ class ImportGridAffectationCommand extends Command
         );
 
         $metadata = $this->gridAffectationLoader->getMetadata();
-        $io->success($metadata['nb_partners'].' partner(s) created, '.$metadata['nb_users_created'].' user(s) created, '.$metadata['nb_users_updated'].' user(s) updated');
+        foreach ($metadata['errors'] as $error) {
+            $io->warning($error);
+        }
 
-        $territory->setIsActive(true);
-        $this->territoryManager->save($territory);
-        $io->success($territory->getName().' has been activated');
+        $io->success(sprintf('%d partner(s) created, %d user(s) created',
+            $metadata['nb_partners'],
+            $metadata['nb_users_created']
+        ));
+
+        if (0 === $metadata['nb_partners'] && 0 === $metadata['nb_users_created']) {
+            return Command::FAILURE;
+        }
+
+        if ($isModeUpdate) {
+            $message = 'Bravo, le territoire %s a été mis à jour : %s partenaires, %s utilisateurs ont été crées';
+            $ioSuccessMessage = $territory->getName().' has been updated';
+        } else {
+            $message = 'Bravo, le territoire %s est ouvert: %s partenaires, %s utilisateurs ont été crées';
+            $ioSuccessMessage = $territory->getName().' has been activated';
+            $territory->setIsActive(true);
+            $this->territoryManager->save($territory);
+        }
+
+        $io->success($ioSuccessMessage);
 
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
                 to: $this->parameterBag->get('admin_email'),
                 message: sprintf(
-                    'Félicitation, le territoire %s est ouvert: %s partenaires, %s utilisateurs ont été crées et %s utilisateurs ont été mis à jour',
+                    $message,
                     $territory->getName(),
                     $metadata['nb_partners'],
-                    $metadata['nb_users_created'],
-                    $metadata['nb_users_updated']
+                    $metadata['nb_users_created']
                 ),
                 cronLabel: 'Ouverture de territoire',
             )
         );
 
+        $partnerLink = $this->urlGenerator->generate('back_partner_index', [
+            'territory' => $territory->getId(),
+            'type' => PartnerType::ARS->value, ],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
+        $io->note(
+            sprintf('[Esabora] Merci de saisir les identifiants des nouveaux partenaires %s en cliquant sur le lien %s',
+                PartnerType::ARS->value,
+                $partnerLink
+            )
+        );
+
         return Command::SUCCESS;
+    }
+
+    private function canExecute(
+        SymfonyStyle $io,
+        bool $isModeUpdate,
+        string $fromFile,
+        ?Territory $territory = null
+    ): bool {
+        $canExecute = true;
+
+        if (null === $territory) {
+            $io->error('Territory does not exist');
+
+            $canExecute = false;
+        } elseif (($isModeUpdate && !$territory->isIsActive()) || (!$isModeUpdate && $territory->isIsActive())) {
+            $io->warning($isModeUpdate
+                ? 'The --update option cannot be applied on an inactive territory. Please remove it.'
+                : 'Partner(s) and user(s) from this repository have already been added'
+            );
+
+            $canExecute = false;
+        } elseif (!$this->fileStorage->fileExists($fromFile)) {
+            $io->error('File '.$fromFile.' does not exist');
+
+            $canExecute = false;
+        }
+
+        return $canExecute;
     }
 }

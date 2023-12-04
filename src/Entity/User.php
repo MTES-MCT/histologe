@@ -80,7 +80,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Suivi::class, orphanRemoval: true)]
     private $suivis;
 
-    #[ORM\ManyToOne(targetEntity: Partner::class, inversedBy: 'users')]
+    #[ORM\ManyToOne(targetEntity: Partner::class, inversedBy: 'users', cascade: ['persist'])]
     private $partner;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
