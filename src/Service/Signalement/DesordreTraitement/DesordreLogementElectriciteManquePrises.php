@@ -19,8 +19,6 @@ class DesordreLogementElectriciteManquePrises implements DesordreTraitementInter
             $payload,
             'desordres_logement_electricite_manque_prises_details_multiprises'
         );
-        // TODO : à voir avec Mathilde, dans l'algo on ne prend pas en compte les pièces
-        // dans lesquels on manque de prises desordres_logement_electricite_manque_prises_details_pieces
 
         return $precisions;
     }

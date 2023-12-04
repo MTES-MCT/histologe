@@ -2110,14 +2110,6 @@
                     "value": "nsp"
                   }
                 ]
-              },      
-              {
-                "type": "SignalementFormRoomList",
-                "label": "Dans quelle(s) pièce(s) ?",
-                "slug": "desordres_logement_electricite_manque_prises_details_pieces",
-                "conditional": {
-                  "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
-                }
               }
             ]
           }

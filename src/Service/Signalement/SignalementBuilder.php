@@ -5,6 +5,8 @@ namespace App\Service\Signalement;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Model\SituationFoyer;
+use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Factory\FileFactory;
@@ -122,7 +124,7 @@ class SignalementBuilder
         if (isset($categoryDisorders) && !empty($categoryDisorders)) {
             $this->processDesordresByZone('batiment');
             $this->processDesordresByZone('logement');
-            // TODO : type et composition logement
+            $this->processDesordresTypeComposition();
         }
 
         // TODO : https://github.com/MTES-MCT/histologe/issues/1546
@@ -190,6 +192,158 @@ class SignalementBuilder
                     $this->signalement->addDesordreCategory($critereToLink->getDesordreCategorie());
                 }
             }
+        }
+    }
+
+    private function addDesordreCriterePrecisionBySlugs(string $slugCritere, string $slugPrecision)
+    {
+        $critereToLink = $this->desordreCritereRepository->findOneBy(['slugCritere' => $slugCritere]);
+        if (null !== $critereToLink) {
+            $this->signalement->addDesordreCritere($critereToLink);
+        }
+        $precisionToLink = $this->desordrePrecisionRepository->findOneBy(['desordrePrecisionSlug' => $slugPrecision]);
+        if (null !== $precisionToLink) {
+            $this->signalement->addDesordrePrecision($precisionToLink);
+        }
+    }
+
+    private function processDesordresTypeComposition()
+    {
+        /** @var TypeCompositionLogement $typeCompositionLogement */
+        $typeCompositionLogement = $this->typeCompositionLogementFactory->createFromSignalementDraftPayload($this->payload);
+
+        if ('oui' === $typeCompositionLogement->getTypeLogementSousCombleSansFenetre()) {
+            $this->addDesordreCriterePrecisionBySlugs(
+                'desordres_type_composition_logement_sous_combles',
+                'desordres_type_composition_logement_sous_combles'
+            );
+        }
+
+        if ('oui' === $typeCompositionLogement->getTypeLogementSousSolSansFenetre()) {
+            $this->addDesordreCriterePrecisionBySlugs(
+                'desordres_type_composition_logement_sous_sol',
+                'desordres_type_composition_logement_sous_sol'
+            );
+        }
+
+        if ('piece_unique' === $typeCompositionLogement->getCompositionLogementPieceUnique()) {
+            if ($typeCompositionLogement->getCompositionLogementSuperficie() < 9) {
+                $this->addDesordreCriterePrecisionBySlugs(
+                    'desordres_type_composition_logement_piece_unique',
+                    'desordres_type_composition_logement_piece_unique_superficie'
+                );
+            }
+            if ('oui' !== $typeCompositionLogement->getCompositionLogementHauteur()) {
+                $this->addDesordreCriterePrecisionBySlugs(
+                    'desordres_type_composition_logement_piece_unique',
+                    'desordres_type_composition_logement_piece_unique_hauteur'
+                );
+            }
+        } else {
+            if ('oui' !== $typeCompositionLogement->getTypeLogementCommoditesPieceAVivre9m()) {
+                $this->addDesordreCriterePrecisionBySlugs(
+                    'desordres_type_composition_logement_plusieurs_pieces',
+                    'desordres_type_composition_logement_plusieurs_pieces_aucune_piece_9'
+                );
+            }
+            if ('oui' !== $typeCompositionLogement->getCompositionLogementHauteur()) {
+                $this->addDesordreCriterePrecisionBySlugs(
+                    'desordres_type_composition_logement_plusieurs_pieces',
+                    'desordres_type_composition_logement_plusieurs_pieces_hauteur'
+                );
+            }
+        }
+
+        if ('oui' !== $typeCompositionLogement->getTypeLogementCommoditesCuisine()) {
+            if ('oui' !== $typeCompositionLogement->getTypeLogementCommoditesCuisineCollective()) {
+                $this->addDesordreCriterePrecisionBySlugs(
+                    'desordres_type_composition_logement_cuisine',
+                    'desordres_type_composition_logement_cuisine_collective_non'
+                );
+            } else {
+                $this->addDesordreCriterePrecisionBySlugs(
+                    'desordres_type_composition_logement_cuisine',
+                    'desordres_type_composition_logement_cuisine_collective_oui'
+                );
+            }
+        }
+
+        if ('oui' !== $typeCompositionLogement->getTypeLogementCommoditesSalleDeBain()) {
+            if ('oui' !== $typeCompositionLogement->getTypeLogementCommoditesSalleDeBainCollective()) {
+                $this->addDesordreCriterePrecisionBySlugs(
+                    'desordres_type_composition_logement_douche',
+                    'desordres_type_composition_logement_douche_collective_non'
+                );
+            } else {
+                $this->addDesordreCriterePrecisionBySlugs(
+                    'desordres_type_composition_logement_douche',
+                    'desordres_type_composition_logement_douche_collective_oui'
+                );
+            }
+        }
+
+        if ('oui' !== $typeCompositionLogement->getTypeLogementCommoditesWc()) {
+            if ('oui' !== $typeCompositionLogement->getTypeLogementCommoditesWcCollective()) {
+                $this->addDesordreCriterePrecisionBySlugs(
+                    'desordres_type_composition_logement_wc',
+                    'desordres_type_composition_logement_wc_collectif_non'
+                );
+            } else {
+                $this->addDesordreCriterePrecisionBySlugs(
+                    'desordres_type_composition_logement_wc',
+                    'desordres_type_composition_logement_wc_collectif_oui'
+                );
+            }
+        } else {
+            if ('oui' === $typeCompositionLogement->getTypeLogementCommoditesWcCuisine()) {
+                $this->addDesordreCriterePrecisionBySlugs(
+                    'desordres_type_composition_logement_wc',
+                    'desordres_type_composition_logement_wc_cuisine_ensemble'
+                );
+            }
+        }
+        /** @var SituationFoyer $situationFoyer */
+        $situationFoyer = $this->situationFoyerFactory->createFromSignalementDraftPayload($this->payload);
+
+        $nbOccupants = (int) ($typeCompositionLogement->getCompositionLogementNombrePersonnes());
+        $surroccupation = false;
+        if ('oui' === $situationFoyer->getLogementSocialAllocation()) {
+            $superficie = $typeCompositionLogement->getCompositionLogementSuperficie();
+            if (1 === $nbOccupants && $superficie >= 9) {
+                $surroccupation = true;
+            } elseif (2 === $nbOccupants && $superficie >= 16) {
+                $surroccupation = true;
+            } elseif ($nbOccupants > 2) {
+                $superficieNecessaire = 16 + (($nbOccupants - 2) * 9);
+
+                if ($superficie >= $superficieNecessaire) {
+                    $surroccupation = true;
+                }
+            }
+            if ($surroccupation) {
+                $slugPrecionSurroccupation = 'desordres_type_composition_logement_suroccupation_allocataire';
+            }
+        } else {
+            $nbPieces = $typeCompositionLogement->getCompositionLogementNbPieces();
+            if ($nbPieces < 2 * $nbOccupants) {
+                $surroccupation = true;
+                $slugPrecionSurroccupation = 'desordres_type_composition_logement_suroccupation_non_allocataire';
+            }
+        }
+        if ($surroccupation && isset($slugPrecionSurroccupation)) {
+            $critereToLink = $this->desordreCritereRepository->findOneBy(
+                ['slugCritere' => 'desordres_type_composition_logement_suroccupation']
+            );
+            if (null !== $critereToLink) {
+                $this->signalement->addDesordreCritere($critereToLink);
+            }
+            $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
+                ['desordrePrecisionSlug' => $slugPrecionSurroccupation]
+            );
+            if (null !== $precisionToLink) {
+                $this->signalement->addDesordrePrecision($precisionToLink);
+            }
+            // TODO taguer ces précisions comme "surroccupation" comme on le fait avec "is_danger"
         }
     }
 
