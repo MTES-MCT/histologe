@@ -44,7 +44,14 @@
                     <p id="login-password-error-desc-error" class="fr-error-text fr-hidden fr-col-12">
                         Veuillez saisir votre mot de passe.
                     </p>
-
+                </div>
+                <div class="fr-checkbox-group">
+                    <p>
+                        <input name="_remember_me" id="_remember_me" type="checkbox" >
+                        <label class="fr-label" for="_remember_me">
+                            Se souvenir de moi
+                        </label>
+                    </p>
                 </div>
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
                 <div class="fr-form-group">
