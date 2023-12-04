@@ -28,7 +28,7 @@ class TelephoneFormatValidator extends ConstraintValidator
 
         try {
             $phoneNumberUtil = PhoneNumberUtil::getInstance();
-            $phoneNumberParsed = $phoneNumberUtil->parse($value);
+            $phoneNumberParsed = $phoneNumberUtil->parse($value, 'FR');
             $isValid = $phoneNumberUtil->isValidNumber($phoneNumberParsed);
             if (!$isValid) {
                 $this->context->buildViolation($constraint->message)

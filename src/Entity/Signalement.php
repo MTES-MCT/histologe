@@ -714,12 +714,12 @@ class Signalement
         return $this->telProprio;
     }
 
-    public function getTelProprioDecoded(): ?string
+    public function getTelProprioDecoded(?bool $national = false): ?string
     {
-        return $this->getTelGenerique($this->telProprio);
+        return $this->getTelGenerique($this->telProprio, $national);
     }
 
-    private function getTelGenerique($tel)
+    private function getTelGenerique(?string $tel, bool $national = false)
     {
         if (!$tel) {
             return $tel;
@@ -729,14 +729,13 @@ class Signalement
         if ($telDecoded && isset($telDecoded->phone_number) && isset($telDecoded->country_code)) {
             $phoneNumberParsed = $phoneNumberUtil->parse($telDecoded->phone_number, substr($telDecoded->country_code, 0, 2));
         } else {
-            if (str_starts_with('+', $tel)) {
-                $phoneNumberParsed = $phoneNumberUtil->parse($tel);
-            } else {
-                $phoneNumberParsed = $phoneNumberUtil->parse($tel, 'FR');
-            }
+            $phoneNumberParsed = $phoneNumberUtil->parse($tel, 'FR');
+        }
+        if ($national) {
+            return str_replace(' ', '', $phoneNumberUtil->format($phoneNumberParsed, \libphonenumber\PhoneNumberFormat::NATIONAL));
         }
 
-        return '+'.$phoneNumberParsed->getCountryCode().$phoneNumberParsed->getNationalNumber();
+        return $phoneNumberUtil->format($phoneNumberParsed, \libphonenumber\PhoneNumberFormat::E164);
     }
 
     public function setTelProprio(?string $telProprio): self
@@ -867,9 +866,9 @@ class Signalement
         return $this->telDeclarant;
     }
 
-    public function getTelDeclarantDecoded(): ?string
+    public function getTelDeclarantDecoded(?bool $national = false): ?string
     {
-        return $this->getTelGenerique($this->telDeclarant);
+        return $this->getTelGenerique($this->telDeclarant, $national);
     }
 
     public function setTelDeclarant(?string $telDeclarant): self
@@ -946,9 +945,9 @@ class Signalement
         return $this->telOccupant;
     }
 
-    public function getTelOccupantDecoded()
+    public function getTelOccupantDecoded(?bool $national = false): ?string
     {
-        return $this->getTelGenerique($this->telOccupant);
+        return $this->getTelGenerique($this->telOccupant, $national);
     }
 
     public function setTelOccupant($telOccupant): self
@@ -1642,9 +1641,9 @@ class Signalement
         return $this->telOccupantBis;
     }
 
-    public function getTelOccupantBisDecoded()
+    public function getTelOccupantBisDecoded(?bool $national = false): ?string
     {
-        return $this->getTelGenerique($this->telOccupantBis);
+        return $this->getTelGenerique($this->telOccupantBis, $national);
     }
 
     public function setTelOccupantBis(?string $telOccupantBis): self
@@ -1970,9 +1969,9 @@ class Signalement
         return $this->telProprioSecondaire;
     }
 
-    public function getTelProprioSecondaireDecoded()
+    public function getTelProprioSecondaireDecoded(?bool $national = false): ?string
     {
-        return $this->getTelGenerique($this->telProprioSecondaire);
+        return $this->getTelGenerique($this->telProprioSecondaire, $national);
     }
 
     public function setTelProprioSecondaire(?string $telProprioSecondaire): self
@@ -1987,9 +1986,9 @@ class Signalement
         return $this->telDeclarantSecondaire;
     }
 
-    public function getTelDeclarantSecondaireDecoded()
+    public function getTelDeclarantSecondaireDecoded(?bool $national = false): ?string
     {
-        return $this->getTelGenerique($this->telDeclarantSecondaire);
+        return $this->getTelGenerique($this->telDeclarantSecondaire, $national);
     }
 
     public function setTelDeclarantSecondaire(?string $telDeclarantSecondaire): self
