@@ -48,11 +48,11 @@ class SignalementExport
         public ?string $lienDeclarantOccupant = null,
         public ?string $dateVisite = null,
         public ?string $isOccupantPresentVisite = null,
+        public ?string $interventionStatus = null,
         public ?string $modifiedAt = null,
         public ?string $closedAt = null,
         public ?string $motifCloture = null,
         public ?string $geoloc = null,
-        public ?string $interventionStatus = null,
     ) {
     }
 }

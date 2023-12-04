@@ -70,7 +70,7 @@ class SignalementExportFactoryTest extends TestCase
                 Les murs ont des fissures.|De l'eau s’infiltre dans mon logement.|Il y a des trace ",
             'etiquettes' => null,
             'geoloc' => '{"lat": "43.3426152", "lng": "5.3711848"}',
-            'interventionsStatus' => 'PLANNED|2023-07-13 13:41:15',
+            'interventionsStatus' => 'PLANNED|2023-07-13 13:41:15|1',
         ];
 
         $user = $this->getUserFromRole(User::ROLE_ADMIN);
@@ -84,7 +84,8 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals($dateFormatted, $signalementExportFactory->createdAt);
         $this->assertEquals($dateFormatted, $signalementExportFactory->modifiedAt);
         $this->assertEquals($dateFormatted, $signalementExportFactory->closedAt);
-        // $this->assertEquals($dateFormatted, $signalementExportFactory->dateVisite); TODO : dateVisite
+        $this->assertEquals('2023-07-13 13:41:15', $signalementExportFactory->dateVisite);
+        $this->assertEquals('Oui', $signalementExportFactory->isOccupantPresentVisite);
 
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->telephoneOccupantBis);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->etageOccupant);
@@ -106,7 +107,6 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals(SignalementExportFactory::NON, $signalementExportFactory->isPreavisDepart);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->isRelogement);
         $this->assertEquals(SignalementExportFactory::NON, $signalementExportFactory->isNotOccupant);
-        $this->assertEquals('-', $signalementExportFactory->isOccupantPresentVisite);
         $this->assertEquals(VisiteStatus::CONCLUSION_A_RENSEIGNER->value, $signalementExportFactory->interventionStatus);
     }
 }

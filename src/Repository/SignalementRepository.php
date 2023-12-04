@@ -463,7 +463,10 @@ class SignalementRepository extends ServiceEntityRepository
             GROUP_CONCAT(DISTINCT situations.label SEPARATOR :group_concat_separator_1) as familleSituation,
             GROUP_CONCAT(DISTINCT criteres.label SEPARATOR :group_concat_separator_1) as desordres,
             GROUP_CONCAT(DISTINCT tags.label SEPARATOR :group_concat_separator_1) as etiquettes,
-            GROUP_CONCAT(DISTINCT CONCAT(i.status, :group_concat_separator_1, i.scheduledAt) SEPARATOR :concat_separator) as interventionsStatus
+            GROUP_CONCAT(DISTINCT
+                CONCAT(i.status, :group_concat_separator_1, i.scheduledAt, :group_concat_separator_1, IFNULL(i.occupantPresent, \'\'))
+                SEPARATOR :concat_separator
+            ) as interventionsStatus
             '
         )->leftJoin('s.situations', 'situations')
             ->leftJoin('s.criteres', 'criteres')
@@ -471,7 +474,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->leftJoin('s.interventions', 'i', 'WITH', 'i.type = \'VISITE\'')
             ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
             ->setParameter('group_concat_separator_1', SignalementExport::SEPARATOR_GROUP_CONCAT);
-        // TODO : dateVisite, isOccupantPresentVisite ?
+
         return $qb->getQuery()->toIterable();
     }
 
