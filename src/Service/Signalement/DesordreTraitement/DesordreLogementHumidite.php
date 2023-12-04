@@ -40,7 +40,6 @@ class DesordreLogementHumidite implements DesordreTraitementInterface
             );
             $precisions->add($precisionsDetailMoisissure->first());
         }
-        // TODO : voir avec Mathilde : Dans cette partie on est obligés de choisir pièce à vire, cuisine, salle de bain, on ne peut pas avoir une sorte de "tout le logement"
 
         return $precisions;
     }
