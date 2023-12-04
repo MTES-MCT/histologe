@@ -32,7 +32,6 @@ class Partner
     private $nom;
 
     #[ORM\OneToMany(mappedBy: 'partner', targetEntity: User::class, cascade: ['persist'])]
-    #[Assert\Valid]
     private $users;
 
     #[ORM\Column(type: 'boolean')]

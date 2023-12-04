@@ -29,7 +29,7 @@ class SignalementValidationMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $signalement = $notificationMail->getSignalement();
-        $toRecipient = $signalement->getMailUsagers();
+        $toRecipient = $notificationMail->getTo();
 
         return [
             'signalement' => $signalement,
