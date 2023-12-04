@@ -474,6 +474,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->leftJoin('s.interventions', 'i', 'WITH', 'i.type = \'VISITE\'')
             ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
             ->setParameter('group_concat_separator_1', SignalementExport::SEPARATOR_GROUP_CONCAT);
+
         return $qb->getQuery()->toIterable();
     }
 

@@ -50,11 +50,11 @@ class SignalementExportHeader
             'Lien tiers occupant',
             'Visité le',
             'Occupant présent visite',
+            'Statut de la visite',
             'Dernière MAJ le',
             'Clôturé le',
             'Motif de clôture',
             'Géolocalisation',
-            'Statut de la visite',
         ];
     }
 }

@@ -32,7 +32,6 @@ class SignalementExportFactory
             ? $data['closedAt']->format(self::DATE_FORMAT)
             : null;
 
-
         $motifCloture = $data['motifCloture'] instanceof MotifCloture ? $data['motifCloture']->label() : null;
         $status = SignalementAffectationHelper::getStatusLabelFrom($user, $data);
 
@@ -87,12 +86,12 @@ class SignalementExportFactory
             structureDeclarant: $data['structureDeclarant'] ?? '-',
             lienDeclarantOccupant: $data['lienDeclarantOccupant'] ?? '-',
             dateVisite: $dateVisite,
-            isOccupantPresentVisite: $isOccupantPresentVisite ? self::OUI : ($isOccupantPresentVisite === '0' ? self::NON : ''),
+            isOccupantPresentVisite: $isOccupantPresentVisite ? self::OUI : ('0' === $isOccupantPresentVisite ? self::NON : ''),
+            interventionStatus: $statusVisite,
             modifiedAt: $modifiedAt,
             closedAt: $closedAt,
             motifCloture: $motifCloture,
             geoloc: $geoloc,
-            interventionStatus: $statusVisite,
         );
     }
 
@@ -123,7 +122,7 @@ class SignalementExportFactory
     private function getVisiteStatut(?string $interventionStatus): string
     {
         if (null === $interventionStatus) {
-            $statusVisite = VisiteStatus::NON_PLANIFIEE->value .SignalementExport::SEPARATOR_GROUP_CONCAT. '' .SignalementExport::SEPARATOR_GROUP_CONCAT;
+            $statusVisite = VisiteStatus::NON_PLANIFIEE->value.SignalementExport::SEPARATOR_GROUP_CONCAT.''.SignalementExport::SEPARATOR_GROUP_CONCAT;
         } else {
             $interventions = explode(SignalementAffectationListView::SEPARATOR_CONCAT, $interventionStatus);
             foreach ($interventions as $intervention) {
@@ -142,8 +141,8 @@ class SignalementExportFactory
                 } else {
                     $statusVisite = VisiteStatus::TERMINEE->value;
                 }
-                $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT . $interventionExploded[1];
-                $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT . $interventionExploded[2];
+                $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT.$interventionExploded[1];
+                $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT.$interventionExploded[2];
             }
         }
 
