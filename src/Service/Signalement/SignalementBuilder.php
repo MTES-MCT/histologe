@@ -305,32 +305,32 @@ class SignalementBuilder
         /** @var SituationFoyer $situationFoyer */
         $situationFoyer = $this->situationFoyerFactory->createFromSignalementDraftPayload($this->payload);
 
-        $nbOccupants = (int) ($typeCompositionLogement->getCompositionLogementNombrePersonnes());
-        $surroccupation = false;
+        $nbOccupants = (int) $typeCompositionLogement->getCompositionLogementNombrePersonnes();
+        $suroccupation = false;
         if ('oui' === $situationFoyer->getLogementSocialAllocation()) {
             $superficie = $typeCompositionLogement->getCompositionLogementSuperficie();
             if (1 === $nbOccupants && $superficie >= 9) {
-                $surroccupation = true;
+                $suroccupation = true;
             } elseif (2 === $nbOccupants && $superficie >= 16) {
-                $surroccupation = true;
+                $suroccupation = true;
             } elseif ($nbOccupants > 2) {
                 $superficieNecessaire = 16 + (($nbOccupants - 2) * 9);
 
                 if ($superficie >= $superficieNecessaire) {
-                    $surroccupation = true;
+                    $suroccupation = true;
                 }
             }
-            if ($surroccupation) {
-                $slugPrecionSurroccupation = 'desordres_type_composition_logement_suroccupation_allocataire';
+            if ($suroccupation) {
+                $slugPrecionSuroccupation = 'desordres_type_composition_logement_suroccupation_allocataire';
             }
         } else {
             $nbPieces = $typeCompositionLogement->getCompositionLogementNbPieces();
             if ($nbPieces < 2 * $nbOccupants) {
-                $surroccupation = true;
-                $slugPrecionSurroccupation = 'desordres_type_composition_logement_suroccupation_non_allocataire';
+                $suroccupation = true;
+                $slugPrecionSuroccupation = 'desordres_type_composition_logement_suroccupation_non_allocataire';
             }
         }
-        if ($surroccupation && isset($slugPrecionSurroccupation)) {
+        if ($suroccupation && isset($slugPrecionSuroccupation)) {
             $critereToLink = $this->desordreCritereRepository->findOneBy(
                 ['slugCritere' => 'desordres_type_composition_logement_suroccupation']
             );
@@ -338,12 +338,11 @@ class SignalementBuilder
                 $this->signalement->addDesordreCritere($critereToLink);
             }
             $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
-                ['desordrePrecisionSlug' => $slugPrecionSurroccupation]
+                ['desordrePrecisionSlug' => $slugPrecionSuroccupation]
             );
             if (null !== $precisionToLink) {
                 $this->signalement->addDesordrePrecision($precisionToLink);
             }
-            // TODO taguer ces précisions comme "surroccupation" comme on le fait avec "is_danger"
         }
     }
 
