@@ -29,35 +29,18 @@ class AutoAssignerTest extends KernelTestCase
 
     public function testAutoAssignmentSuccess(): void
     {
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $signalement = $signalementRepository->findOneBy(['reference' => '2023-1']);
-
-        $signalementManager = $this->createMock(SignalementManager::class);
-        $suiviManager = $this->createMock(SuiviManager::class);
-        $suiviFactory = $this->createMock(SuiviFactory::class);
-        $partnerRepository = $this->entityManager->getRepository(Partner::class);
-        $userManager = $this->createMock(UserManager::class);
-        $parameterBag = $this->createMock(ParameterBagInterface::class);
-        $esaboraBus = $this->createMock(EsaboraBus::class);
-        $autoAssigner = new AutoAssigner(
-            $signalementManager,
-            $this->affectationManager,
-            $suiviManager,
-            $suiviFactory,
-            $partnerRepository,
-            $userManager,
-            $parameterBag,
-            $esaboraBus,
-        );
-
-        $autoAssigner->assign($signalement);
-        $this->assertEquals($autoAssigner->getCountAffectations(), 1);
+        $this->testHelper('2023-1', 1);
     }
 
     public function testAutoAssignmentFailed(): void
     {
+        $this->testHelper('2023-2', 0);
+    }
+
+    private function testHelper($reference, $expectedCount)
+    {
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $signalement = $signalementRepository->findOneBy(['reference' => '2023-2']);
+        $signalement = $signalementRepository->findOneBy(['reference' => $reference]);
 
         $signalementManager = $this->createMock(SignalementManager::class);
         $suiviManager = $this->createMock(SuiviManager::class);
@@ -78,6 +61,6 @@ class AutoAssignerTest extends KernelTestCase
         );
 
         $autoAssigner->assign($signalement);
-        $this->assertEquals($autoAssigner->getCountAffectations(), 0);
+        $this->assertEquals($autoAssigner->getCountAffectations(), $expectedCount);
     }
 }
