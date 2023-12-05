@@ -59,7 +59,7 @@ class Territory
     private $authorizedCodesInsee = [];
 
     #[ORM\Column]
-    private ?bool $isAutoAffectationEnabled = null;
+    private ?bool $isAutoAffectationEnabled = false;
 
     public function __construct()
     {
@@ -303,7 +303,7 @@ class Territory
         return $this->isAutoAffectationEnabled;
     }
 
-    public function setIsAutoAffectationEnabled(bool $isAutoAffectationEnabled): static
+    public function setIsAutoAffectationEnabled(bool $isAutoAffectationEnabled): self
     {
         $this->isAutoAffectationEnabled = $isAutoAffectationEnabled;
 

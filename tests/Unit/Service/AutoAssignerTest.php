@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Service;
 
 use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Factory\SuiviFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
@@ -33,6 +34,7 @@ class AutoAssignerTest extends KernelTestCase
 
         $signalementManager = $this->createMock(SignalementManager::class);
         $suiviManager = $this->createMock(SuiviManager::class);
+        $suiviFactory = $this->createMock(SuiviFactory::class);
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
         $userManager = $this->createMock(UserManager::class);
         $parameterBag = $this->createMock(ParameterBagInterface::class);
@@ -41,14 +43,15 @@ class AutoAssignerTest extends KernelTestCase
             $signalementManager,
             $this->affectationManager,
             $suiviManager,
+            $suiviFactory,
             $partnerRepository,
             $userManager,
             $parameterBag,
             $esaboraBus,
         );
-        $affectations = $autoAssigner->assign($signalement);
 
-        $this->assertEquals(\count($affectations), 1);
+        $autoAssigner->assign($signalement);
+        $this->assertEquals($autoAssigner->getCountAffectations(), 1);
     }
 
     public function testAutoAssignmentFailed(): void
@@ -58,6 +61,7 @@ class AutoAssignerTest extends KernelTestCase
 
         $signalementManager = $this->createMock(SignalementManager::class);
         $suiviManager = $this->createMock(SuiviManager::class);
+        $suiviFactory = $this->createMock(SuiviFactory::class);
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
         $userManager = $this->createMock(UserManager::class);
         $parameterBag = $this->createMock(ParameterBagInterface::class);
@@ -66,13 +70,14 @@ class AutoAssignerTest extends KernelTestCase
             $signalementManager,
             $this->affectationManager,
             $suiviManager,
+            $suiviFactory,
             $partnerRepository,
             $userManager,
             $parameterBag,
             $esaboraBus,
         );
-        $affectations = $autoAssigner->assign($signalement);
 
-        $this->assertEquals(\count($affectations), 0);
+        $autoAssigner->assign($signalement);
+        $this->assertEquals($autoAssigner->getCountAffectations(), 0);
     }
 }

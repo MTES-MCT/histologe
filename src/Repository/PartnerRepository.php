@@ -99,7 +99,7 @@ class PartnerRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findAutoAssignable(string $codeInsee): ?array
+    public function findAutoAssignable(string $codeInsee, PartnerType $partnerType): ?array
     {
         if (empty($codeInsee)) {
             return null;
@@ -107,13 +107,11 @@ class PartnerRepository extends ServiceEntityRepository
 
         return $this
             ->createQueryBuilder('p')
-            ->leftJoin('p.users', 'u')
+            ->innerJoin('p.users', 'u')
             ->where('p.insee LIKE :codeInsee')
             ->setParameter('codeInsee', '%'.$codeInsee.'%')
             ->andWhere('p.type = :partnerType')
-            ->setParameter('partnerType', PartnerType::COMMUNE_SCHS)
-            ->groupBy('p.id')
-            ->having('count(u.id) > 0')
+            ->setParameter('partnerType', $partnerType)
             ->getQuery()
             ->getResult();
     }

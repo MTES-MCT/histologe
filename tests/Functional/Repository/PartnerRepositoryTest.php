@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Repository;
 
+use App\Entity\Enum\PartnerType;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
@@ -99,13 +100,13 @@ class PartnerRepositoryTest extends KernelTestCase
 
     public function testFindAutoAssignable(): void
     {
-        $partners = $this->partnerRepository->findAutoAssignable('01173');
+        $partners = $this->partnerRepository->findAutoAssignable('01173', PartnerType::COMMUNE_SCHS);
         $this->assertCount(1, $partners);
-        $partners = $this->partnerRepository->findAutoAssignable('2A247');
+        $partners = $this->partnerRepository->findAutoAssignable('2A247', PartnerType::COMMUNE_SCHS);
         $this->assertCount(1, $partners);
-        $partners = $this->partnerRepository->findAutoAssignable('13000');
+        $partners = $this->partnerRepository->findAutoAssignable('13000', PartnerType::COMMUNE_SCHS);
         $this->assertCount(0, $partners);
-        $partners = $this->partnerRepository->findAutoAssignable('');
+        $partners = $this->partnerRepository->findAutoAssignable('', PartnerType::COMMUNE_SCHS);
         $this->assertNull($partners);
     }
 
