@@ -40,7 +40,6 @@ security:
                 lifetime: 7200
             remember_me:
                 secret: '%kernel.secret%'
-                #always_remember_me: true
                 lifetime: 2592000 # 30 days in seconds
 
             # activate different ways to authenticate
