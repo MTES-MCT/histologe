@@ -107,7 +107,8 @@ class ImportGridAffectationCommand extends Command
         $this->gridAffectationLoader->load(
             $territory,
             $csvData,
-            $ignoreNotifPartnerTypes
+            $ignoreNotifPartnerTypes,
+            $output
         );
 
         $metadata = $this->gridAffectationLoader->getMetadata();
@@ -156,10 +157,10 @@ class ImportGridAffectationCommand extends Command
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
-        $io->note(
+        $io->warning(
             sprintf('[Esabora] Merci de saisir les identifiants des nouveaux partenaires %s en cliquant sur le lien %s',
                 PartnerType::ARS->value,
-                $partnerLink
+                \PHP_EOL.$partnerLink
             )
         );
 

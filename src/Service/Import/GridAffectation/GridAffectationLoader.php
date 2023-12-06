@@ -15,6 +15,8 @@ use App\Manager\UserManager;
 use App\Service\Import\CsvParser;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -169,11 +171,19 @@ class GridAffectationLoader
         return $errors;
     }
 
-    public function load(Territory $territory, array $data, array $ignoreNotifPartnerTypes): void
-    {
+    public function load(
+        Territory $territory,
+        array $data,
+        array $ignoreNotifPartnerTypes,
+        ?OutputInterface $output = null
+    ): void {
         $countUsers = 0;
         $partner = null;
         $newPartnerNames = [];
+        if (null !== $output) {
+            $progressBar = new ProgressBar($output, \count($data));
+            $progressBar->start();
+        }
         foreach ($data as $item) {
             if (\count($item) > 1) {
                 $partnerName = trim($item[GridAffectationHeader::PARTNER_NAME_INSTITUTION]);
@@ -230,9 +240,16 @@ class GridAffectationLoader
                     $this->manager->flush();
                 }
             }
+            if (null !== $output) {
+                $progressBar->advance();
+            }
         }
 
         $this->manager->flush();
+        if (null !== $output) {
+            $progressBar->finish();
+            $progressBar->clear();
+        }
     }
 
     public function getMetadata(): array
