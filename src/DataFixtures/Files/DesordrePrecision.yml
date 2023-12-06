@@ -1,0 +1,1193 @@
+desordre_precision:
+  -
+    desordre_critere_id: 1
+    coef: 1
+    is_danger: 0
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_batiment_proprete_interieur"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 2
+    coef: 3
+    is_danger: 0
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_batiment_proprete_facades"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 3
+    coef: 2
+    is_danger: 0
+    label: " - "
+    qualification: ['RSD', 'INSALUBRITE']
+    desordre_precision_slug: "desordres_batiment_proprete_parties_communes"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 4
+    coef: 3
+    is_danger: 0
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_batiment_proprete_local_poubelles"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 5
+    coef: 3
+    is_danger: 0
+    label: " - "
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_batiment_eau_pas_eau_potable"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 6
+    coef: 3
+    is_danger: 0
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD', 'INSALUBRITE']
+    desordre_precision_slug: "desordres_batiment_eau_evacuation_KO"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 7
+    coef: 2
+    is_danger: 0
+    label: " - "
+    qualification: ['RSD', 'INSALUBRITE', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_batiment_eau_pas_eau_chaude"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 8
+    coef: 2
+    is_danger: 0
+    label: " - "
+    qualification: ['RSD', 'INSALUBRITE']
+    desordre_precision_slug: "desordres_batiment_eau_pas_evacuation_eaux_pluie"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 9
+    coef: 3
+    is_danger: 0
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD', 'INSALUBRITE']
+    desordre_precision_slug: "desordres_batiment_isolation_murs"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 10
+    coef: 2
+    is_danger: 0
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_batiment_isolation_porte_fenetres"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 11
+    coef: 2
+    is_danger: 0
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_batiment_isolation_dernier_etage_toit_sous_toit_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 11
+    coef: 3
+    is_danger: 0
+    label: "Logement = dernier étage OU sous les comblesLogement = maison individuelle - "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_batiment_isolation_dernier_etage_toit_sous_toit_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 12
+    coef: 2
+    is_danger: 0
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_batiment_isolation_infiltration_eau_au_sol_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 12
+    coef: 3
+    is_danger: 0
+    label: "Logement = RDC OU sous-solLogement = maison individuelle - "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_batiment_isolation_infiltration_eau_au_sol_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 13
+    coef: 6
+    is_danger: 0
+    label: " - "
+    qualification: ['RSD', 'INSALUBRITE', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_batiment_maintenance_ascenseur"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 14
+    coef: 1
+    is_danger: 0
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_batiment_maintenance_petites_reparations"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 15
+    coef: 1
+    is_danger: 0
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD', 'INSALUBRITE']
+    desordre_precision_slug: "desordres_batiment_nuisibles_cafards"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 16
+    coef: 1
+    is_danger: 0
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD', 'INSALUBRITE']
+    desordre_precision_slug: "desordres_batiment_nuisibles_rongeurs"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 17
+    coef: 1
+    is_danger: 0
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD', 'INSALUBRITE']
+    desordre_precision_slug: "desordres_batiment_nuisibles_punaises"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 18
+    coef: 1
+    is_danger: 0
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD', 'INSALUBRITE']
+    desordre_precision_slug: "desordres_batiment_nuisibles_autre"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 19
+    coef: 3
+    is_danger: 1
+    label: "Est-ce que le plancher est abîmé et bouge par endroit ? > Oui - "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_batiment_securite_sol_details_plancher_abime"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 19
+    coef: 6
+    is_danger: 1
+    label: "Est-ce que le plancher menace de s'effondrer quand on marche dessus ? > Oui - "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_batiment_securite_sol_details_plancher_effondre"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 20
+    coef: 4
+    is_danger: 1
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_batiment_securite_elements_toit"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 21
+    coef: 6
+    is_danger: 1
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_batiment_securite_toit"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 22
+    coef: 2
+    is_danger: 0
+    label: "L'escalier ou les rambardes bougent mais peuvent encore être utilisées sans danger ? > OUI - "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_batiment_securite_escalier_details_utilisable"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 22
+    coef: 6
+    is_danger: 1
+    label: "L'escalier menace de s'effondrer, c'est dangeureux de l'utiliser ? > OUI - "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_batiment_securite_escalier_details_dangereux"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 23
+    coef: 6
+    is_danger: 1
+    label: "Est-ce que le mur fissuré a l'air d'être un mur porteur (mur qui soutient la structure du bâtiment) ? > OUI - "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_batiment_securite_murs_fissures_details_mur_porteur_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 23
+    coef: 2
+    is_danger: 1
+    label: "Est-ce que le mur fissuré a l'air d'être un mur porteur (mur qui soutient la structure du bâtiment) ? > NON - "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_batiment_securite_murs_fissures_details_mur_porteur_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 24
+    coef: 6
+    is_danger: 1
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_batiment_securite_balcons"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 25
+    coef: 1
+    is_danger: 1
+    label: " - "
+    qualification: ['INSALUBRITE', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_batiment_incendie_porte_coupe_feu"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 26
+    coef: 3
+    is_danger: 1
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_batiment_incendie_odeur_gaz"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 27
+    coef: 1
+    is_danger: 0
+    label: " - "
+    qualification: ['RSD', 'INSALUBRITE']
+    desordre_precision_slug: "desordres_batiment_accessibilite_friche"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 28
+    coef: 1
+    is_danger: 0
+    label: " - "
+    qualification: ['RSD', 'INSALUBRITE']
+    desordre_precision_slug: "desordres_batiment_accessibilite_eclairage"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 29
+    coef: 1
+    is_danger: 0
+    label: " - "
+    qualification: ['RSD']
+    desordre_precision_slug: "desordres_batiment_accessibilite_acces_batiment"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 30
+    coef: 1
+    is_danger: 0
+    label: " - "
+    qualification: ['RSD', 'INSALUBRITE']
+    desordre_precision_slug: "desordres_batiment_bruit_exterieur"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 31
+    coef: 1
+    is_danger: 0
+    label: " - "
+    qualification: ['RSD', 'INSALUBRITE']
+    desordre_precision_slug: "desordres_batiment_bruit_interieur"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 32
+    coef: 24
+    is_danger: 0
+    label: " - "
+    qualification: ['INSALUBRITE']
+    desordre_precision_slug: "desordres_type_composition_logement_sous_combles"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 33
+    coef: 24
+    is_danger: 0
+    label: " - "
+    qualification: ['INSALUBRITE']
+    desordre_precision_slug: "desordres_type_composition_logement_sous_sol"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 34
+    coef: 3
+    is_danger: 0
+    label: "La superficie du logement < 9m² - "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_type_composition_logement_piece_unique_superficie"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 35
+    coef: 3
+    is_danger: 0
+    label: "Aucune pièce à vivre de 9m² ou + - "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_type_composition_logement_plusieurs_pieces_aucune_piece_9"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 34
+    coef: 3
+    is_danger: 0
+    label: "Hauteur sous plafond logement < 2m - "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_type_composition_logement_piece_unique_hauteur"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 35
+    coef: 3
+    is_danger: 0
+    label: "Hauteur sous logement < 2m - "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_type_composition_logement_plusieurs_pieces_hauteur"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 36
+    coef: 0
+    is_danger: 0
+    label: "Avec accès à cuisine collective - "
+    qualification: [null]
+    desordre_precision_slug: "desordres_type_composition_logement_cuisine_collective_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 36
+    coef: 1
+    is_danger: 0
+    label: "Sans accès à cuisine collective - "
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_type_composition_logement_cuisine_collective_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 37
+    coef: 0
+    is_danger: 0
+    label: "Avec accès à douches collectives - "
+    qualification: [null]
+    desordre_precision_slug: "desordres_type_composition_logement_douche_collective_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 37
+    coef: 1
+    is_danger: 0
+    label: "Sans accès à douches collectives - "
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_type_composition_logement_douche_collective_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 38
+    coef: 0
+    is_danger: 0
+    label: "Avec accès à WC collectif - "
+    qualification: [null]
+    desordre_precision_slug: "desordres_type_composition_logement_wc_collectif_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 38
+    coef: 1
+    is_danger: 0
+    label: "Sans accès à WC collectif - "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_type_composition_logement_wc_collectif_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 38
+    coef: 3
+    is_danger: 0
+    label: "WC et cuisine dans la même pièce - "
+    qualification: ['NON_DECENCE', 'RSD', 'INSALUBRITE']
+    desordre_precision_slug: "desordres_type_composition_logement_wc_cuisine_ensemble"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 39
+    coef: 0
+    is_danger: 0
+    label: "2 occupants / pièce de vie - "
+    qualification: ['INSALUBRITE']
+    desordre_precision_slug: "desordres_type_composition_logement_suroccupation_non_allocataire"
+    is_suroccupation: 1
+  -
+    desordre_critere_id: 39
+    coef: 0
+    is_danger: 0
+    label: "1 occupant > = 9m² 2 occupant > = 16m2 pour 2, Chaque occupant supplémentaire -> + 9m² - "
+    qualification: ['INSALUBRITE']
+    desordre_precision_slug: "desordres_type_composition_logement_suroccupation_allocataire"
+    is_suroccupation: 1
+  -
+    desordre_critere_id: 40
+    coef: 3
+    is_danger: 0
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_eau_eau_potable"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 41
+    coef: 3
+    is_danger: 0
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_eau_evacuation"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 42
+    coef: 2
+    is_danger: 0
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_eau_eau_chaude"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 43
+    coef: 6
+    is_danger: 0
+    label: " - Tout le logement"
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_aeration_aucune_aeration_pieces_tout"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 43
+    coef: 2
+    is_danger: 0
+    label: " - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_aeration_aucune_aeration_pieces_piece_a_vivre"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 43
+    coef: 2
+    is_danger: 0
+    label: " - La cuisine / le coin cuisine"
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_aeration_aucune_aeration_pieces_cuisine"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 43
+    coef: 2
+    is_danger: 0
+    label: " - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_aeration_aucune_aeration_pieces_salle_de_bain"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 44
+    coef: 3
+    is_danger: 0
+    label: "Nettoyage ventilation > OUI - Tout le logement"
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_aeration_ventilation_defectueuse_details_pieces_tout_nettoyage_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 44
+    coef: 1
+    is_danger: 0
+    label: "Nettoyage ventilation > OUI - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_aeration_ventilation_defectueuse_details_pieces_piece_a_vivre_nettoyage_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 44
+    coef: 1
+    is_danger: 0
+    label: "Nettoyage ventilation > OUI - La cuisine / le coin cuisine"
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_aeration_ventilation_defectueuse_details_pieces_cuisine_nettoyage_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 44
+    coef: 1
+    is_danger: 0
+    label: "Nettoyage ventilation > OUI - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_aeration_ventilation_defectueuse_details_pieces_salle_de_bain_nettoyage_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 44
+    coef: 1.5
+    is_danger: 0
+    label: "Nettoyage ventilation > NON ou NE SAIS PAS - Tout le logement"
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_aeration_ventilation_defectueuse_details_pieces_tout_nettoyage_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 44
+    coef: 0.5
+    is_danger: 0
+    label: "Nettoyage ventilation > NON ou NE SAIS PAS - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_aeration_ventilation_defectueuse_details_pieces_piece_a_vivre_nettoyage_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 44
+    coef: 0.5
+    is_danger: 0
+    label: "Nettoyage ventilation > NON ou NE SAIS PAS - La cuisine / le coin cuisine"
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_aeration_ventilation_defectueuse_details_pieces_cuisine_nettoyage_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 44
+    coef: 0.5
+    is_danger: 0
+    label: "Nettoyage ventilation > NON ou NE SAIS PAS - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_aeration_ventilation_defectueuse_details_pieces_salle_de_bain_nettoyage_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 45
+    coef: 2
+    is_danger: 0
+    label: " - Tout le logement"
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_logement_chauffage_details_fenetres_permeables_pieces_tout"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 45
+    coef: 0.8
+    is_danger: 0
+    label: " - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_logement_chauffage_details_fenetres_permeables_pieces_piece_a_vivre"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 45
+    coef: 0.8
+    is_danger: 0
+    label: " - La cuisine / le coin cuisine"
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_logement_chauffage_details_fenetres_permeables_pieces_cuisine"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 45
+    coef: 0.4
+    is_danger: 0
+    label: " - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_logement_chauffage_details_fenetres_permeables_pieces_salle_de_bain"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 46
+    coef: 3
+    is_danger: 0
+    label: " - Tout le logement"
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_chauffage_aucun_pieces_tout"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 46
+    coef: 1.5
+    is_danger: 0
+    label: " - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_chauffage_aucun_pieces_piece_a_vivre"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 46
+    coef: 0.5
+    is_danger: 0
+    label: " - La cuisine / le coin cuisine"
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_chauffage_aucun_pieces_cuisine"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 46
+    coef: 1
+    is_danger: 0
+    label: " - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_chauffage_aucun_pieces_salle_de_bain"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 47
+    coef: 1
+    is_danger: 0
+    label: " - Tout le logement"
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_logement_chauffage_details_difficultes_chauffage_pieces_tout"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 47
+    coef: 0.5
+    is_danger: 0
+    label: " - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_logement_chauffage_details_difficultes_chauffage_pieces_piece_a_vivre"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 47
+    coef: 0.25
+    is_danger: 0
+    label: " - La cuisine / le coin cuisine"
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_logement_chauffage_details_difficultes_chauffage_pieces_cuisine"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 47
+    coef: 0.25
+    is_danger: 0
+    label: " - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_logement_chauffage_details_difficultes_chauffage_pieces_salle_de_bain"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 48
+    coef: 2
+    is_danger: 0
+    label: " - Tout le logement"
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_chauffage_details_chauffage_KO_pieces_tout"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 48
+    coef: 1.5
+    is_danger: 0
+    label: " - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_chauffage_details_chauffage_KO_pieces_piece_a_vivre"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 48
+    coef: 0.25
+    is_danger: 0
+    label: " - La cuisine / le coin cuisine"
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_chauffage_details_chauffage_KO_pieces_cuisine"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 48
+    coef: 0.25
+    is_danger: 0
+    label: " - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_chauffage_details_chauffage_KO_pieces_salle_de_bain"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 49
+    coef: 4
+    is_danger: 1
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_chauffage_details_chauffage_dangereux"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 50
+    coef: 1
+    is_danger: 0
+    label: "Machine à laver, un sèche-linge ou un lave vaisselle dans la pièce > OUI - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_humidite_piece_a_vivre_details_machine_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 51
+    coef: 0.5
+    is_danger: 0
+    label: "Machine à laver, un sèche-linge ou un lave vaisselle dans la pièce > OUI - La cuisine / le coin cuisine"
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_humidite_cuisine_details_machine_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 52
+    coef: 0.5
+    is_danger: 0
+    label: "Machine à laver, un sèche-linge ou un lave vaisselle dans la pièce > OUI - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_machine_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 50
+    coef: 2
+    is_danger: 0
+    label: "Machine à laver, un sèche-linge ou un lave vaisselle dans la pièce > NON ou NE SAIS PAS - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_humidite_piece_a_vivre_details_machine_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 51
+    coef: 1
+    is_danger: 0
+    label: "Machine à laver, un sèche-linge ou un lave vaisselle dans la pièce > NON ou NE SAIS PAS - La cuisine / le coin cuisine"
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_humidite_cuisine_details_machine_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 52
+    coef: 1
+    is_danger: 0
+    label: "Machine à laver, un sèche-linge ou un lave vaisselle dans la pièce > NON ou NE SAIS PAS - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_machine_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 50
+    coef: 5
+    is_danger: 1
+    label: "La moisissure revient après nettoyage > OUI - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_humidite_piece_a_vivre_details_moisissure_apres_nettoyage_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 51
+    coef: 1.5
+    is_danger: 0
+    label: "La moisissure revient après nettoyage > OUI - La cuisine / le coin cuisine"
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_humidite_cuisine_details_moisissure_apres_nettoyage_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 52
+    coef: 1.5
+    is_danger: 0
+    label: "La moisissure revient après nettoyage > OUI - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_moisissure_apres_nettoyage_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 50
+    coef: 2
+    is_danger: 0
+    label: "La moisissure revient après nettoyage > NON ou NE SAIS PAS - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_humidite_piece_a_vivre_details_moisissure_apres_nettoyage_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 51
+    coef: 1
+    is_danger: 0
+    label: "La moisissure revient après nettoyage > NON ou NE SAIS PAS - La cuisine / le coin cuisine"
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_humidite_cuisine_details_moisissure_apres_nettoyage_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 52
+    coef: 1
+    is_danger: 0
+    label: "La moisissure revient après nettoyage > NON ou NE SAIS PAS - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_moisissure_apres_nettoyage_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 50
+    coef: 0
+    is_danger: 0
+    label: "Dégâts des eaux ou une fuite > OUI - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['ASSSURANTIEL']
+    desordre_precision_slug: "desordres_logement_humidite_piece_a_vivre_details_fuite_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 51
+    coef: 0
+    is_danger: 0
+    label: "Dégâts des eaux ou une fuite > OUI - La cuisine / le coin cuisine"
+    qualification: ['ASSSURANTIEL']
+    desordre_precision_slug: "desordres_logement_humidite_cuisine_details_fuite_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 52
+    coef: 0
+    is_danger: 0
+    label: "Dégâts des eaux ou une fuite > OUI - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['ASSSURANTIEL']
+    desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_fuite_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 50
+    coef: 0
+    is_danger: 0
+    label: "Dégâts des eaux ou une fuite > NON ou NE SAIS PAS - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['ASSSURANTIEL']
+    desordre_precision_slug: "desordres_logement_humidite_piece_a_vivre_details_fuite_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 51
+    coef: 0
+    is_danger: 0
+    label: "Dégâts des eaux ou une fuite > NON ou NE SAIS PAS - La cuisine / le coin cuisine"
+    qualification: ['ASSSURANTIEL']
+    desordre_precision_slug: "desordres_logement_humidite_cuisine_details_fuite_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 52
+    coef: 0
+    is_danger: 0
+    label: "Dégâts des eaux ou une fuite > NON ou NE SAIS PAS - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['ASSSURANTIEL']
+    desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_fuite_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 53
+    coef: 2
+    is_danger: 1
+    label: " - Tout le logement"
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_securite_sol_glissant_pieces_tout"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 53
+    coef: 1
+    is_danger: 1
+    label: " - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_securite_sol_glissant_pieces_piece_a_vivre"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 53
+    coef: 0.5
+    is_danger: 1
+    label: " - La cuisine / le coin cuisine"
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_securite_sol_glissant_pieces_cuisine"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 53
+    coef: 0.5
+    is_danger: 1
+    label: " - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_securite_sol_glissant_pieces_salle_de_bain"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 54
+    coef: 6
+    is_danger: 1
+    label: " - Tout le logement"
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_securite_sol_dangereux_pieces_tout"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 54
+    coef: 2
+    is_danger: 1
+    label: " - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_securite_sol_dangereux_pieces_piece_a_vivre"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 54
+    coef: 2
+    is_danger: 1
+    label: " - La cuisine / le coin cuisine"
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_securite_sol_dangereux_pieces_cuisine"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 54
+    coef: 2
+    is_danger: 1
+    label: " - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_securite_sol_dangereux_pieces_salle_de_bain"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 55
+    coef: 6
+    is_danger: 1
+    label: " - Tout le logement"
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_securite_balcons_pieces_tout"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 55
+    coef: 4
+    is_danger: 1
+    label: " - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_securite_balcons_pieces_piece_a_vivre"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 55
+    coef: 1
+    is_danger: 1
+    label: " - La cuisine / le coin cuisine"
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_securite_balcons_pieces_cuisine"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 55
+    coef: 1
+    is_danger: 1
+    label: " - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_securite_balcons_pieces_salle_de_bain"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 56
+    coef: 3
+    is_danger: 1
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_securite_gaz"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 57
+    coef: 6
+    is_danger: 1
+    label: "Diagnostic plomb / amiante > OUI - Tout le logement"
+    qualification: ['INSALUBRITE']
+    desordre_precision_slug: "desordres_logement_securite_plomb_pieces_tout_diagnostique_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 57
+    coef: 3
+    is_danger: 1
+    label: "Diagnostic plomb / amiante > OUI - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['RSD', 'INSALUBRITE']
+    desordre_precision_slug: "desordres_logement_securite_plomb_pieces_piece_a_vivre_diagnostique_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 57
+    coef: 2
+    is_danger: 1
+    label: "Diagnostic plomb / amiante > OUI - La cuisine / le coin cuisine"
+    qualification: ['INSALUBRITE']
+    desordre_precision_slug: "desordres_logement_securite_plomb_pieces_cuisine_diagnostique_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 57
+    coef: 1
+    is_danger: 1
+    label: "Diagnostic plomb / amiante > OUI - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['INSALUBRITE']
+    desordre_precision_slug: "desordres_logement_securite_plomb_pieces_salle_de_bain_diagnostique_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 57
+    coef: 4
+    is_danger: 1
+    label: "Diagnostic plomb / amiante > NON ou NE SAIS PAS - Tout le logement"
+    qualification: ['INSALUBRITE']
+    desordre_precision_slug: "desordres_logement_securite_plomb_pieces_tout_diagnostique_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 57
+    coef: 2
+    is_danger: 1
+    label: "Diagnostic plomb / amiante > NON ou NE SAIS PAS - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['INSALUBRITE']
+    desordre_precision_slug: "desordres_logement_securite_plomb_pieces_piece_a_vivre_diagnostique_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 57
+    coef: 1.5
+    is_danger: 1
+    label: "Diagnostic plomb / amiante > NON ou NE SAIS PAS - La cuisine / le coin cuisine"
+    qualification: ['INSALUBRITE']
+    desordre_precision_slug: "desordres_logement_securite_plomb_pieces_cuisine_diagnostique_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 57
+    coef: 0.5
+    is_danger: 1
+    label: "Diagnostic plomb / amiante > NON ou NE SAIS PAS - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['INSALUBRITE']
+    desordre_precision_slug: "desordres_logement_securite_plomb_pieces_salle_de_bain_diagnostique_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 58
+    coef: 3
+    is_danger: 1
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_electricite_pas_electricite"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 59
+    coef: 3
+    is_danger: 1
+    label: " - "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_electricite_pas_compteur"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 60
+    coef: 2.5
+    is_danger: 1
+    label: " - Tout le logement"
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_electricite_installation_dangereuse"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 61
+    coef: 0.5
+    is_danger: 1
+    label: "Brancher multiprises les unes aux autres > OUI - "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_electricite_manque_prises_details_multiprises_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 61
+    coef: 0.25
+    is_danger: 0
+    label: "Brancher multiprises les unes aux autres > NON ou NE SAIS PAS - "
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_electricite_manque_prises_details_multiprise_non"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 62
+    coef: 0
+    is_danger: 0
+    label: "Depuis quand > AVANT emménagement - "
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_logement_nuisibles_cafards_details_date_before_movein"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 62
+    coef: 0
+    is_danger: 0
+    label: "Depuis quand > APRES emménagement ou NE SAIS PAS - "
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_logement_nuisibles_cafards_details_date_after_movein"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 63
+    coef: 0
+    is_danger: 0
+    label: "Depuis quand > AVANT emménagement - "
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_logement_nuisibles_rongeurs_details_date_before_movein"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 63
+    coef: 0
+    is_danger: 0
+    label: "Depuis quand > APRES emménagement ou NE SAIS PAS - "
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_logement_nuisibles_rongeurs_details_date_after_movein"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 64
+    coef: 0
+    is_danger: 0
+    label: "Depuis quand > AVANT emménagement - "
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_logement_nuisibles_punaises_details_date_before_movein"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 64
+    coef: 0
+    is_danger: 0
+    label: "Depuis quand > APRES emménagement ou NE SAIS PAS - "
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_logement_nuisibles_punaises_details_date_after_movein"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 65
+    coef: 0
+    is_danger: 0
+    label: "Depuis quand > AVANT emménagement - "
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_logement_nuisibles_autres_details_date_before_movein"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 65
+    coef: 0
+    is_danger: 0
+    label: "Depuis quand > APRES emménagement ou NE SAIS PAS - "
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_logement_nuisibles_autres_details_date_after_movein"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 66
+    coef: 1
+    is_danger: 0
+    label: " - "
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_logement_bruit_exterieur"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 67
+    coef: 1
+    is_danger: 0
+    label: " - "
+    qualification: ['NON_DECENCE']
+    desordre_precision_slug: "desordres_logement_bruit_voisins"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 68
+    coef: 12
+    is_danger: 0
+    label: " - Tout le logement"
+    qualification: ['NON_DECENCE', 'RSD', 'INSALUBRITE']
+    desordre_precision_slug: "desordres_logement_lumiere_pas_lumiere_pieces_tout"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 68
+    coef: 12
+    is_danger: 0
+    label: " - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['NON_DECENCE', 'RSD', 'INSALUBRITE']
+    desordre_precision_slug: "desordres_logement_lumiere_pas_lumiere_pieces_piece_a_vivre"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 68
+    coef: 0
+    is_danger: 0
+    label: " - La cuisine / le coin cuisine"
+    qualification: ['NON_DECENCE', 'RSD', 'INSALUBRITE']
+    desordre_precision_slug: "desordres_logement_lumiere_pas_lumiere_pieces_cuisine"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 68
+    coef: 0
+    is_danger: 0
+    label: " - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['NON_DECENCE', 'RSD', 'INSALUBRITE']
+    desordre_precision_slug: "desordres_logement_lumiere_pas_lumiere_pieces_salle_de_bain"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 69
+    coef: 3
+    is_danger: 0
+    label: " - Tout le logement"
+    qualification: ['RSD']
+    desordre_precision_slug: "desordres_logement_lumiere_pas_volets_pieces_tout"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 69
+    coef: 3
+    is_danger: 0
+    label: " - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['RSD']
+    desordre_precision_slug: "desordres_logement_lumiere_pas_volets_pieces_piece_a_vivre"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 69
+    coef: 0
+    is_danger: 0
+    label: " - La cuisine / le coin cuisine"
+    qualification: ['RSD']
+    desordre_precision_slug: "desordres_logement_lumiere_pas_volets_pieces_cuisine"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 69
+    coef: 0
+    is_danger: 0
+    label: " - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['RSD']
+    desordre_precision_slug: "desordres_logement_lumiere_pas_volets_pieces_salle_de_bain"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 70
+    coef: 0
+    is_danger: 0
+    label: " - Tout le logement"
+    qualification: ['RSD', 'INSALUBRITE', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_proprete_pieces_tout"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 70
+    coef: 0
+    is_danger: 0
+    label: " - Une ou des pièces à vivre (salon, chambres) "
+    qualification: ['RSD', 'INSALUBRITE', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_proprete_pieces_piece_a_vivre"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 70
+    coef: 0
+    is_danger: 0
+    label: " - La cuisine / le coin cuisine"
+    qualification: ['RSD', 'INSALUBRITE', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_proprete_pieces_cuisine"
+    is_suroccupation: 0
+  -
+    desordre_critere_id: 70
+    coef: 0
+    is_danger: 0
+    label: " - La salle de bain, salle d'eau et / ou les toilettes"
+    qualification: ['RSD', 'INSALUBRITE', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_proprete_pieces_salle_de_bain"
+    is_suroccupation: 0
