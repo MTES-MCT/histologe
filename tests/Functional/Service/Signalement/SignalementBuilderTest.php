@@ -23,6 +23,7 @@ use App\Service\Signalement\ZipcodeProvider;
 use App\Service\Token\TokenGeneratorInterface;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -55,6 +56,7 @@ class SignalementBuilderTest extends KernelTestCase
         $desordreCritereRepository = static::getContainer()->get(DesordreCritereRepository::class);
         $desordrePrecisionRepository = static::getContainer()->get(DesordrePrecisionRepository::class);
         $desordreTraitementProcessor = static::getContainer()->get(DesordreTraitementProcessor::class);
+        $loggerInterface = self::getContainer()->get(LoggerInterface::class);
 
         $this->signalementBuilder = new SignalementBuilder(
             $territoryRepository,
@@ -73,7 +75,8 @@ class SignalementBuilderTest extends KernelTestCase
             $desordreCategorieRepository,
             $desordreCritereRepository,
             $desordrePrecisionRepository,
-            $desordreTraitementProcessor
+            $desordreTraitementProcessor,
+            $loggerInterface
         );
     }
 

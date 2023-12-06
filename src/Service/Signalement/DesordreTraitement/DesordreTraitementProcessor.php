@@ -17,7 +17,7 @@ class DesordreTraitementProcessor
         $this->desordreTraitements = $desordreTraitements;
     }
 
-    public function process(DesordreCritere $critere, array $payload): ArrayCollection
+    public function process(DesordreCritere $critere, array $payload): ArrayCollection|null
     {
         $slug = $critere->getSlugCritere();
         $desordreTraitementsHandlers = $this->desordreTraitements instanceof \Traversable ?
@@ -30,7 +30,7 @@ class DesordreTraitementProcessor
 
             return $desordrePrecisions;
         }
-        // TODO : renvoyer un tableau vide ou une erreur si on ne trouve pas de desordreCritereProcessor lié au slug
-        return new ArrayCollection();
+
+        return null;
     }
 }
