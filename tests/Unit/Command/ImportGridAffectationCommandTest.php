@@ -135,7 +135,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
 
         $commandTester->execute([
             'territory_zip' => '13',
-            '--update-version' => 1,
+            '--file-version' => 1,
         ]);
 
         $output = $commandTester->getDisplay();

@@ -30,6 +30,7 @@ class ImportGridAffectationCommand extends Command
 {
     private const PARAM_TERRITORY_ZIP = 'territory_zip';
     private const PARAM_IGNORE_NOTIFICATION_PARTNER = 'ignore-notification-partners';
+    private const PARAM_FILE_VERSION = 'file-version';
 
     public function __construct(
         private FilesystemOperator $fileStorage,
@@ -57,7 +58,7 @@ class ImportGridAffectationCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'Add partners types separated with comma'
             )
-            ->addOption('update-version', null, InputOption::VALUE_REQUIRED, 'update version')
+            ->addOption(self::PARAM_FILE_VERSION, null, InputOption::VALUE_REQUIRED, 'Grid affectation file version')
         ;
     }
 
@@ -68,13 +69,13 @@ class ImportGridAffectationCommand extends Command
         $fromFile = 'csv/grille_affectation_'.$territoryZip.'.csv';
         $toFile = $this->parameterBag->get('uploads_tmp_dir').'grille.csv';
         $isModeUpdate = false;
-        $updateVersion = $input->getOption('update-version');
+        $fileVersion = $input->getOption(self::PARAM_FILE_VERSION);
 
         /** @var Territory $territory */
         $territory = $this->territoryManager->findOneBy(['zip' => $territoryZip]);
 
-        if ($updateVersion) {
-            $fromFile = 'csv/grille_affectation_'.$territoryZip.'-'.$updateVersion.'.csv';
+        if ($fileVersion) {
+            $fromFile = 'csv/grille_affectation_'.$territoryZip.'-'.$fileVersion.'.csv';
             $isModeUpdate = true;
         }
 
@@ -179,7 +180,7 @@ class ImportGridAffectationCommand extends Command
             $canExecute = false;
         } elseif (($isModeUpdate && !$territory->isIsActive()) || (!$isModeUpdate && $territory->isIsActive())) {
             $io->warning($isModeUpdate
-                ? 'The --update option cannot be applied on an inactive territory. Please remove it.'
+                ? 'The --'.self::PARAM_FILE_VERSION.' option cannot be applied on an inactive territory. Please remove it.'
                 : 'Partner(s) and user(s) from this repository have already been added'
             );
 
