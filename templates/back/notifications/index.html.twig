@@ -57,7 +57,12 @@
                     </td>
                     <td>{{ notification.suivi.signalement.reference }}</td>
                     <td>{{ notification.suivi.createdAt|format_datetime(locale='fr') }}</td>
-                    <td>{{ notification.suivi.description|replace({'&t=___TOKEN___':''})|replace({'?t=___TOKEN___':''})|raw }}</td>
+                    <td>{{ notification.suivi.description
+                        |replace({'&t=___TOKEN___':'/'~notification.signalement.uuid})
+                        |replace({'?t=___TOKEN___':'/'~notification.signalement.uuid})
+                        |replace({'?folder=_up':'/'~notification.signalement.uuid~'?variant=resize'})
+                        |raw }}
+                    </td>
                     <td>{{ notification.suivi.createdBy ? notification.suivi.createdBy.nomComplet : notification.signalement.nomOccupant|upper~' '~notification.signalement.prenomOccupant|capitalize }}</td>
                     <td class="fr-text--right">
                         <a href="{{ path('back_signalement_view',{uuid:notification.suivi.signalement.uuid}) }}#suivis"
