@@ -26,6 +26,7 @@ use App\Service\ImageManipulationHandler;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
@@ -134,7 +135,8 @@ class FrontSignalementController extends AbstractController
         CriticiteCalculator $criticiteCalculator,
         FileFactory $fileFactory,
         LoggerInterface $logger,
-        DocumentProvider $documentProvider
+        DocumentProvider $documentProvider,
+        AutoAssigner $autoAssigner,
     ): Response {
         if ($this->isCsrfTokenValid('new_signalement', $request->request->get('_token'))
             && $data = $request->get('signalement')) {
@@ -310,6 +312,7 @@ class FrontSignalementController extends AbstractController
 
             $entityManager->persist($signalement);
             $entityManager->flush();
+            $autoAssigner->assign($signalement);
 
             $toRecipients = $signalement->getMailUsagers();
             foreach ($toRecipients as $toRecipient) {

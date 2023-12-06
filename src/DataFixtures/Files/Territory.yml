@@ -4,6 +4,7 @@ territories:
     name: "Ain"
     is_active: 1
     bbox: "{\"n\":\"46.519953\",\"e\":\"6.170198\",\"s\":\"45.611093\",\"w\":\"4.728067\"}"
+    is_auto_affectation_enabled: 1
   -
     zip: "02"
     name: "Aisne"
