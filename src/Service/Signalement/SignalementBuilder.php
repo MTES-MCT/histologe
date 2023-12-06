@@ -24,6 +24,7 @@ use App\Service\Token\TokenGeneratorInterface;
 use App\Service\UploadHandlerService;
 use App\Utils\DataPropertyArrayFilter;
 use App\Utils\Json;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class SignalementBuilder
@@ -51,6 +52,7 @@ class SignalementBuilder
         private DesordreCritereRepository $desordreCritereRepository,
         private DesordrePrecisionRepository $desordrePrecisionRepository,
         private DesordreTraitementProcessor $desordreTraitementProcessor,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -168,23 +170,35 @@ class SignalementBuilder
                     // on chercher les précisions qu'on peut lier
                     $precisions = $critereToLink->getDesordrePrecisions();
                     if (1 === \count($precisions)) {
-                        // TODO : vérifier la valeur
-                        // il n'y en a qu'une, on la lie
-                        $this->signalement->addDesordrePrecision($precisions->first());
+                        if (1 === $value) {
+                            // il n'y en a qu'une, on la lie
+                            $this->signalement->addDesordrePrecision($precisions->first());
+                        }
                     } else {
                         // passe par un service spécifique pour évaluer les précisions à ajouter sur ce critère
                         $desordrePrecisions = $this->desordreTraitementProcessor->process($critereToLink, $this->payload);
-                        if (!$desordrePrecisions->isEmpty()) {
+                        if (null !== $desordrePrecisions) {
                             foreach ($desordrePrecisions as $desordrePrecision) {
                                 if (null !== $desordrePrecision) {
                                     $this->signalement->addDesordrePrecision($desordrePrecision);
+                                } else {
+                                    $this->logger->error(
+                                        sprintf(
+                                            '#%s - Le desordreTraitementProcessor a été trouvé, mais aucune précision ne correspond',
+                                            $slugCritere,
+                                        )
+                                    );
                                 }
-                                // TODO : loguer
                             }
+                        } else {
+                            $this->logger->error(
+                                sprintf(
+                                    '#%s - Le desordreTraitementProcessor n\a pas été trouvé',
+                                    $slugCritere,
+                                )
+                            );
                         }
-                        // TODO : loguer
                     }
-                    // TODO : gérer les fichiers associés s'il y en a
                 }
 
                 if (null !== $critereToLink) {
