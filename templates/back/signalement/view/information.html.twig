@@ -31,6 +31,14 @@
                         <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-coordonnees-tiers" class="fr-btn--icon-left fr-icon-edit-line">Modifier</a>
                         {% endif %}
                     </div>
+                    
+                    
+                    {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR  %}
+                        <div class="fr-col-12">
+                            <strong>Type de déclarant :</strong> {{ signalement.profileDeclarant.label }}
+                        </div>
+                    {% endif %}
+
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Nom :</strong> {{ signalement.nomDeclarant }}
                     </div>
@@ -73,7 +81,7 @@
                         {% endif %}
                     </div>
                     
-                    {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT  %}
+                    {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT %}
                         <div class="fr-col-12">
                             <strong>Type de déclarant :</strong> {{ signalement.profileDeclarant.label }}
                         </div>
@@ -101,7 +109,8 @@
             </div>
         </div>
 
-        {% if not signalement.profileDeclarant or signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT %}
+        {% if not signalement.profileDeclarant or (signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT 
+        and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR) %}
            <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
                 {% include 'back/signalement/view/edit-modals/edit-coordonnees-bailleur.html.twig' %}
                 <div class="fr-p-3v fr-background-alt--grey">
