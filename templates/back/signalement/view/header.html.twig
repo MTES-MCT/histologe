@@ -100,7 +100,12 @@
                 {% else %}
                     par un
                 {% endif %}
-                {{ signalement.profileDeclarant.label }}
+                
+                {% if signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR %}
+                    tiers bailleur
+                {% else %}
+                    {{ signalement.profileDeclarant.label|lower }}
+                {% endif %}
             {% else %}
                 {% if signalement.isNotOccupant %}
                     par un tiers déclarant
