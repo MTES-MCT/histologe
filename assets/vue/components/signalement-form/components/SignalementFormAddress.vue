@@ -129,6 +129,7 @@ export default defineComponent({
         this.formStore.data[this.id + '_detail_insee'] = this.suggestions[index].properties.citycode
         this.formStore.data[this.id + '_detail_geoloc_lng'] = this.suggestions[index].geometry.coordinates[0]
         this.formStore.data[this.id + '_detail_geoloc_lat'] = this.suggestions[index].geometry.coordinates[1]
+        requests.checkTerritory(this.suggestions[index].properties.postcode, this.suggestions[index].properties.citycode, this.onTerritoryChecked);
         this.suggestions.length = 0
       }
       const subscreen = document.querySelector('#' + this.idSubscreen)
@@ -145,6 +146,9 @@ export default defineComponent({
       // TODO : que faire si code postal dans département non ouvert ?
       // TODO : répertorier les exclusions de code postal du 69 ?
       // TODO : vérifier si dans territoire expé NDE pour comportement différent ?
+    },
+    onTerritoryChecked (requestResponse: any) {
+      console.log(requestResponse);
     }
   },
   emits: ['update:modelValue']

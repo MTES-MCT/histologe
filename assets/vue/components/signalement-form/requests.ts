@@ -92,6 +92,11 @@ export const requests = {
     requests.doRequestGet(url, functionReturn)
   },
 
+  checkTerritory(postcode: string, citycode: string, functionReturn: Function) {
+    const url = (formStore.props.ajaxurlCheckTerritory as string) + '?cp=' + postcode + '&insee=' + citycode
+    requests.doRequestGet(url, functionReturn)
+  },
+
   uploadFile (formData: FormData, functionReturn: Function, functionProgress: Function) {
     const url = formStore.props.ajaxurlHandleUpload
     const config = {
