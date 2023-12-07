@@ -17,8 +17,8 @@ class DesordreBatimentIsolationInfiltrationEau implements DesordreTraitementInte
         $precisions = new ArrayCollection();
 
         if ('maison' === $payload['type_logement_nature']
-            || 'oui' === $payload['type_logement_sous_sol_sans_fenetre']
-            || 'oui' === $payload['type_logement_rdc']) {
+            || (\array_key_exists('type_logement_sous_sol_sans_fenetre', $payload) && 'oui' === $payload['type_logement_sous_sol_sans_fenetre'])
+            || (\array_key_exists('type_logement_rdc', $payload) && 'oui' === $payload['type_logement_rdc'])) {
             $precision = $this->desordrePrecisionRepository->findOneBy(
                 ['desordrePrecisionSlug' => 'desordres_batiment_isolation_infiltration_eau_au_sol_oui']
             );

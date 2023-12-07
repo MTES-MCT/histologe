@@ -134,7 +134,6 @@ services:
             - { name: 'desordre_traitement', key: 'desordres_logement_securite_sol_glissant' }
             - { name: 'desordre_traitement', key: 'desordres_logement_securite_sol_dangereux' }
             - { name: 'desordre_traitement', key: 'desordres_logement_securite_balcons' }
-            - { name: 'desordre_traitement', key: 'desordres_logement_electricite_installation_dangereuse' }
             - { name: 'desordre_traitement', key: 'desordres_logement_lumiere_pas_lumiere' }
             - { name: 'desordre_traitement', key: 'desordres_logement_lumiere_pas_volets' }
             - { name: 'desordre_traitement', key: 'desordres_logement_proprete' }

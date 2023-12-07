@@ -21,13 +21,13 @@ class DesordreLogementAerationVentilationDefectueuse implements DesordreTraiteme
             if ('oui' === $payload['desordres_logement_aeration_ventilation_defectueuse_details_nettoyage']) {
                 $precisions = $this->desordreTraitementPieces->process(
                     $payload,
-                    'desordres_logement_aeration_ventilation_defectueuse_details_pieces',
+                    'desordres_logement_aeration_ventilation_defectueuse_details',
                     '_nettoyage_oui'
                 );
             } else {
                 $precisions = $this->desordreTraitementPieces->process(
                     $payload,
-                    'desordres_logement_aeration_ventilation_defectueuse_details_pieces',
+                    'desordres_logement_aeration_ventilation_defectueuse_details',
                     '_nettoyage_non'
                 );
             }
