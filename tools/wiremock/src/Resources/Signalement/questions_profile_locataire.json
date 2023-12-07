@@ -1348,7 +1348,8 @@
         },
         {
           "type": "SignalementFormConfirmation",
-          "slug": "confirmation_signalement_message"
+          "slug": "confirmation_signalement_message",
+          "customCss": "fr-mt-5w"
         }
       ]
     }
