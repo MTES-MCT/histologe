@@ -24,11 +24,13 @@ class DesordreTraitementProcessor
             iterator_to_array($this->desordreTraitements) :
             $this->desordreTraitements;
 
-        $desordreCritereProcessor = $desordreTraitementsHandlers[$slug];
-        if ($desordreCritereProcessor) {
-            $desordrePrecisions = $desordreCritereProcessor->process($payload, $slug);
+        if (\array_key_exists($slug, $desordreTraitementsHandlers)) {
+            $desordreCritereProcessor = $desordreTraitementsHandlers[$slug];
+            if ($desordreCritereProcessor) {
+                $desordrePrecisions = $desordreCritereProcessor->process($payload, $slug);
 
-            return $desordrePrecisions;
+                return $desordrePrecisions;
+            }
         }
 
         return null;

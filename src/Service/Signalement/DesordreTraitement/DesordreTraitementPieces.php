@@ -16,11 +16,15 @@ class DesordreTraitementPieces implements DesordreTraitementInterface
     {
         $precisions = new ArrayCollection();
 
+        $pattern = '/^(.*)_details$/';
+
+        $slugSansDetails1 = preg_replace($pattern, '$1', $slug);
+
         $slugCuisine = $slug.'_pieces_cuisine';
         $slugPieceAVivre = $slug.'_pieces_piece_a_vivre';
         $slugSalleDeBain = $slug.'_pieces_salle_de_bain';
         $slugTout = $slug.'_pieces_tout';
-        if (isset($payload[$slug]) && 1 === $payload[$slug]) {
+        if (isset($payload[$slugSansDetails1]) && 1 === $payload[$slugSansDetails1]) {
             if ('piece_unique' === $payload['composition_logement_piece_unique']
             || (
                 isset($payload[$slugCuisine]) && 1 === $payload[$slugCuisine]

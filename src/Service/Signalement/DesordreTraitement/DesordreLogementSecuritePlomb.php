@@ -21,13 +21,13 @@ class DesordreLogementSecuritePlomb implements DesordreTraitementInterface
             if ('oui' === $payload['desordres_logement_securite_plomb_details_diagnostique']) {
                 $precisions = $this->desordreTraitementPieces->process(
                     $payload,
-                    'desordres_logement_securite_plomb_pieces',
+                    'desordres_logement_securite_plomb',
                     '_diagnostique_oui'
                 );
             } else {
                 $precisions = $this->desordreTraitementPieces->process(
                     $payload,
-                    'desordres_logement_securite_plomb_pieces',
+                    'desordres_logement_securite_plomb',
                     '_diagnostique_non'
                 );
             }
