@@ -7,40 +7,29 @@ use PHPUnit\Framework\TestCase;
 
 class PhoneTest extends TestCase
 {
-    public function testFormatWithNullPhone(): void
+    /**
+     * @dataProvider providePhone
+     */
+    public function testFormatPhone(?string $phoneNumber, ?string $phoneFormatted, ?string $phoneNationalFormatted): void
     {
-        $this->assertNull(Phone::format(null));
+        $this->assertEquals($phoneFormatted, Phone::format($phoneNumber));
+        $this->assertEquals($phoneNationalFormatted, Phone::format($phoneNumber, true));
     }
 
-    public function testFormatWithEmptyPhone(): void
+    public function providePhone(): \Generator
     {
-        $this->assertEquals('', Phone::format(''));
-    }
+        yield 'null' => [null, null, null];
 
-    public function testFormatWithInvalidPhone(): void
-    {
-        $this->assertEquals('invalid', Phone::format('invalid'));
-    }
+        yield 'empty string' => ['', '', ''];
 
-    public function testFormatWithValidPhone(): void
-    {
-        $this->assertEquals('+33123456789', Phone::format('123456789'));
-    }
+        yield 'invalid phone number' => ['invalid phone number', 'invalid phone number', 'invalid phone number'];
 
-    public function testFormatWithValidPhoneAndNationalFormat(): void
-    {
-        $this->assertEquals('0123456789', Phone::format('123456789', true));
-    }
+        yield 'phone number without country code' => ['0620212223', '+33620212223', '0620212223'];
 
-    public function testFormatWithJsonPhone(): void
-    {
-        $phoneJson = json_encode(['phone_number' => '123456789', 'country_code' => 'FR']);
-        $this->assertEquals('+33123456789', Phone::format($phoneJson));
-    }
+        yield 'phone number with country code' => ['+33620212223', '+33620212223', '0620212223'];
 
-    public function testFormatWithJsonPhoneAndNationalFormat(): void
-    {
-        $phoneJson = json_encode(['phone_number' => '123456789', 'country_code' => 'FR']);
-        $this->assertEquals('0123456789', Phone::format($phoneJson, true));
+        yield 'phone number with country code and spaces' => ['+33 6 20 21 22 23', '+33620212223', '0620212223'];
+
+        yield 'phone number from foreign country' => ['+49123456789', '+49123456789', '123456789'];
     }
 }
