@@ -330,7 +330,7 @@ class SignalementBuilder
             } elseif ($nbOccupants > 2) {
                 $superficieNecessaire = 16 + (($nbOccupants - 2) * 9);
 
-                if ($superficie >= $superficieNecessaire) {
+                if ($superficie < $superficieNecessaire) {
                     $suroccupation = true;
                 }
             }
