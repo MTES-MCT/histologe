@@ -65,8 +65,9 @@
                                 <label class="fr-label" for="infoProcedureDepartApresTravaux">Souhaite garder le logement après travaux</label>
                                 <select class="fr-select" name="infoProcedureDepartApresTravaux">
                                     <option value="" disabled hidden>Sélectionnez un choix</option>
-                                    <option value="oui" {{ infoProcedureDepartApresTravaux is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ infoProcedureDepartApresTravaux is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    {# Careful : reversed regarding the question in the form #}
+                                    <option value="non" {{ infoProcedureDepartApresTravaux is same as 'non' ? 'selected' : '' }}>Oui</option>
+                                    <option value="oui" {{ infoProcedureDepartApresTravaux is same as 'oui' ? 'selected' : '' }}>Non</option>
                                     <option value="nsp" {{ infoProcedureDepartApresTravaux is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
