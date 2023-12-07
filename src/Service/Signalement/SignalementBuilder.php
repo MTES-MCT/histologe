@@ -16,7 +16,6 @@ use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\Token\TokenGeneratorInterface;
 use App\Service\UploadHandlerService;
-use App\Utils\Json;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class SignalementBuilder
@@ -206,12 +205,12 @@ class SignalementBuilder
                 ->setMailOccupant($this->signalementDraftRequest->getVosCoordonneesOccupantEmail())
                 ->setNomOccupant($this->signalementDraftRequest->getVosCoordonneesOccupantNom())
                 ->setPrenomOccupant($this->signalementDraftRequest->getVosCoordonneesOccupantPrenom())
-                ->setTelOccupant(Json::encode($this->signalementDraftRequest->getVosCoordonneesOccupantTel()))
-                ->setTelOccupantBis(Json::encode($this->signalementDraftRequest->getVosCoordonneesOccupantTelSecondaire()))
+                ->setTelOccupant($this->signalementDraftRequest->getVosCoordonneesOccupantTel())
+                ->setTelOccupantBis($this->signalementDraftRequest->getVosCoordonneesOccupantTelSecondaire())
                 ->setNomDeclarant($this->signalementDraftRequest->getVosCoordonneesOccupantNom())
                 ->setPrenomDeclarant($this->signalementDraftRequest->getVosCoordonneesOccupantPrenom())
-                ->setTelDeclarant(Json::encode($this->signalementDraftRequest->getVosCoordonneesOccupantTel()))
-                ->setTelDeclarantSecondaire(Json::encode($this->signalementDraftRequest->getVosCoordonneesOccupantTelSecondaire()))
+                ->setTelDeclarant($this->signalementDraftRequest->getVosCoordonneesOccupantTel())
+                ->setTelDeclarantSecondaire($this->signalementDraftRequest->getVosCoordonneesOccupantTelSecondaire())
                 ->setMailDeclarant($this->signalementDraftRequest->getVosCoordonneesOccupantEmail());
         } else {
             $this->signalement
@@ -219,14 +218,14 @@ class SignalementBuilder
                 ->setMailOccupant($this->signalementDraftRequest->getCoordonneesOccupantEmail())
                 ->setNomOccupant($this->signalementDraftRequest->getCoordonneesOccupantNom())
                 ->setPrenomOccupant($this->signalementDraftRequest->getCoordonneesOccupantPrenom())
-                ->setTelOccupant(Json::encode($this->signalementDraftRequest->getCoordonneesOccupantTel()))
-                ->setTelOccupantBis(Json::encode($this->signalementDraftRequest->getCoordonneesOccupantTelSecondaire()))
+                ->setTelOccupant($this->signalementDraftRequest->getCoordonneesOccupantTel())
+                ->setTelOccupantBis($this->signalementDraftRequest->getCoordonneesOccupantTelSecondaire())
                 ->setStructureDeclarant($this->signalementDraftRequest->getVosCoordonneesTiersNomOrganisme())
                 ->setLienDeclarantOccupant($this->resolveTiersLien())
                 ->setNomDeclarant($this->signalementDraftRequest->getVosCoordonneesTiersNom())
                 ->setPrenomDeclarant($this->signalementDraftRequest->getVosCoordonneesTiersPrenom())
-                ->setTelDeclarant(Json::encode($this->signalementDraftRequest->getVosCoordonneesTiersTel()))
-                ->setTelDeclarantSecondaire(Json::encode($this->signalementDraftRequest->getVosCoordonneesTiersTelSecondaire()))
+                ->setTelDeclarant($this->signalementDraftRequest->getVosCoordonneesTiersTel())
+                ->setTelDeclarantSecondaire($this->signalementDraftRequest->getVosCoordonneesTiersTelSecondaire())
                 ->setMailDeclarant($this->signalementDraftRequest->getVosCoordonneesTiersEmail());
         }
     }
@@ -241,16 +240,16 @@ class SignalementBuilder
                 ->setMailProprio($this->signalementDraftRequest->getVosCoordonneesOccupantEmail())
                 ->setNomProprio($this->signalementDraftRequest->getVosCoordonneesOccupantNom())
                 ->setPrenomProprio($this->signalementDraftRequest->getVosCoordonneesOccupantPrenom())
-                ->setTelProprio(Json::encode($this->signalementDraftRequest->getVosCoordonneesOccupantTel()))
-                ->setTelProprioSecondaire(Json::encode($this->signalementDraftRequest->getVosCoordonneesOccupantTelSecondaire()));
+                ->setTelProprio($this->signalementDraftRequest->getVosCoordonneesOccupantTel())
+                ->setTelProprioSecondaire($this->signalementDraftRequest->getVosCoordonneesOccupantTelSecondaire());
         } elseif ($this->isBailleur()) {
             $this->signalement
                 ->setStructureDeclarant($this->signalementDraftRequest->getVosCoordonneesTiersNomOrganisme())
                 ->setNomProprio($this->signalementDraftRequest->getVosCoordonneesTiersNom())
                 ->setPrenomProprio($this->signalementDraftRequest->getVosCoordonneesTiersPrenom())
-                ->setTelProprio(Json::encode($this->signalementDraftRequest->getVosCoordonneesTiersTel()))
+                ->setTelProprio($this->signalementDraftRequest->getVosCoordonneesTiersTel())
                 ->setMailProprio($this->signalementDraftRequest->getVosCoordonneesTiersEmail())
-                ->setTelProprioSecondaire(Json::encode($this->signalementDraftRequest->getVosCoordonneesTiersTelSecondaire()));
+                ->setTelProprioSecondaire($this->signalementDraftRequest->getVosCoordonneesTiersTelSecondaire());
         } else {
             $this->signalement
                 ->setAdresseProprio($this->signalementDraftRequest->getCoordonneesBailleurAdresseDetailNumero())
@@ -259,8 +258,8 @@ class SignalementBuilder
                 ->setMailProprio($this->signalementDraftRequest->getCoordonneesBailleurEmail())
                 ->setNomProprio($this->signalementDraftRequest->getCoordonneesBailleurNom())
                 ->setPrenomProprio($this->signalementDraftRequest->getCoordonneesBailleurPrenom())
-                ->setTelProprio(Json::encode($this->signalementDraftRequest->getCoordonneesBailleurTel()))
-                ->setTelProprioSecondaire(Json::encode($this->signalementDraftRequest->getCoordonneesBailleurTelSecondaire()));
+                ->setTelProprio($this->signalementDraftRequest->getCoordonneesBailleurTel())
+                ->setTelProprioSecondaire($this->signalementDraftRequest->getCoordonneesBailleurTelSecondaire());
         }
     }
 

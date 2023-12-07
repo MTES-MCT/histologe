@@ -24,10 +24,17 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
         $transformedData = [];
         foreach ($data as $key => $value) {
             if (preg_match(SignalementDraftRequest::PATTERN_PHONE_KEY, $key, $matches)) {
-                $phone = [
-                    'country_code' => $data[$key.'_countrycode'],
-                    'phone_number' => $value,
-                ];
+                if (!$value) {
+                    continue;
+                }
+                if (!isset($data[$key.'_countrycode'])) {
+                    $data[$key.'_countrycode'] = 'FR:33';
+                }
+                $indicatif = $data[$key.'_countrycode'];
+                if (str_contains($data[$key.'_countrycode'], ':')) {
+                    $indicatif = explode(':', $data[$key.'_countrycode'])[1];
+                }
+                $phone = '+'.$indicatif.$value;
                 $transformedData[$key] = $phone;
             } elseif (preg_match(SignalementDraftRequest::PATTERN_FILE_UPLOAD, $key, $matches)) {
                 $transformedData[SignalementDraftRequest::FILE_UPLOAD_KEY][$key] = $data[$key];

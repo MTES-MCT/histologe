@@ -227,14 +227,14 @@ class FrontSignalementController extends AbstractController
                     case 'consoYear':
                         $dataConsoYear = $value;
                         break;
-
                     default:
-                        if ('setSignalement' !== $method) {
-                            if ('' === $value || ' ' === $value) {
-                                $value = null;
-                            }
-                            $signalement->$method($value);
+                        if (\in_array($method, ['setSignalement', 'setUuid', 'setStatus', 'setReference', 'setCodeSuivi'])) {
+                            break;
                         }
+                        if ('' === $value || ' ' === $value) {
+                            $value = null;
+                        }
+                        $signalement->$method($value);
                 }
             }
             $errors = $validator->validate($signalement);

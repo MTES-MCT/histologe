@@ -73,9 +73,9 @@ class SignalementDraftRequest
         groups: ['TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR', 'SERVICE_SECOURS']
     )]
     #[AppAssert\TelephoneFormat]
-    private ?array $vosCoordonneesTiersTel = null;
+    private ?string $vosCoordonneesTiersTel = null;
     #[AppAssert\TelephoneFormat]
-    private ?array $vosCoordonneesTiersTelSecondaire = null;
+    private ?string $vosCoordonneesTiersTelSecondaire = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre civilité.',
         groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT']
@@ -102,22 +102,24 @@ class SignalementDraftRequest
         groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT']
     )]
     #[AppAssert\TelephoneFormat]
-    private ?array $vosCoordonneesOccupantTel = null;
+    private ?string $vosCoordonneesOccupantTel = null;
     #[AppAssert\TelephoneFormat]
-    private ?array $vosCoordonneesOccupantTelSecondaire = null;
+    private ?string $vosCoordonneesOccupantTelSecondaire = null;
     private ?string $coordonneesOccupantNom = null;
     private ?string $coordonneesOccupantPrenom = null;
     private ?string $coordonneesOccupantEmail = null;
-    private ?array $coordonneesOccupantTel = null;
-    private ?array $coordonneesOccupantTelSecondaire = null;
+    #[AppAssert\TelephoneFormat]
+    private ?string $coordonneesOccupantTel = null;
+    #[AppAssert\TelephoneFormat]
+    private ?string $coordonneesOccupantTelSecondaire = null;
     private ?string $coordonneesBailleurNom = null;
     private ?string $coordonneesBailleurPrenom = null;
     #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
     private ?string $coordonneesBailleurEmail = null;
     #[AppAssert\TelephoneFormat]
-    private ?array $coordonneesBailleurTel = null;
+    private ?string $coordonneesBailleurTel = null;
     #[AppAssert\TelephoneFormat]
-    private ?array $coordonneesBailleurTelSecondaire = null;
+    private ?string $coordonneesBailleurTelSecondaire = null;
     private ?string $coordonneesBailleurAdresse = null;
     private ?string $coordonneesBailleurAdresseDetailNumero = null;
     private ?string $coordonneesBailleurAdresseDetailCodePostal = null;
@@ -479,24 +481,24 @@ class SignalementDraftRequest
         return $this;
     }
 
-    public function getVosCoordonneesOccupantTel(): ?array
+    public function getVosCoordonneesOccupantTel(): ?string
     {
         return $this->vosCoordonneesOccupantTel;
     }
 
-    public function setVosCoordonneesOccupantTel(?array $vosCoordonneesOccupantTel): self
+    public function setVosCoordonneesOccupantTel(?string $vosCoordonneesOccupantTel): self
     {
         $this->vosCoordonneesOccupantTel = $vosCoordonneesOccupantTel;
 
         return $this;
     }
 
-    public function getVosCoordonneesOccupantTelSecondaire(): ?array
+    public function getVosCoordonneesOccupantTelSecondaire(): ?string
     {
         return $this->vosCoordonneesOccupantTelSecondaire;
     }
 
-    public function setVosCoordonneesOccupantTelSecondaire(?array $vosCoordonneesOccupantTelSecondaire): self
+    public function setVosCoordonneesOccupantTelSecondaire(?string $vosCoordonneesOccupantTelSecondaire): self
     {
         $this->vosCoordonneesOccupantTelSecondaire = $vosCoordonneesOccupantTelSecondaire;
 
@@ -539,12 +541,12 @@ class SignalementDraftRequest
         return $this;
     }
 
-    public function getCoordonneesOccupantTel(): ?array
+    public function getCoordonneesOccupantTel(): ?string
     {
         return $this->coordonneesOccupantTel;
     }
 
-    public function setCoordonneesOccupantTel(?array $coordonneesOccupantTel): self
+    public function setCoordonneesOccupantTel(?string $coordonneesOccupantTel): self
     {
         $this->coordonneesOccupantTel = $coordonneesOccupantTel;
 
@@ -587,12 +589,12 @@ class SignalementDraftRequest
         return $this;
     }
 
-    public function getCoordonneesBailleurTel(): ?array
+    public function getCoordonneesBailleurTel(): ?string
     {
         return $this->coordonneesBailleurTel;
     }
 
-    public function setCoordonneesBailleurTel(?array $coordonneesBailleurTel): self
+    public function setCoordonneesBailleurTel(?string $coordonneesBailleurTel): self
     {
         $this->coordonneesBailleurTel = $coordonneesBailleurTel;
 
@@ -696,12 +698,12 @@ class SignalementDraftRequest
         return $this;
     }
 
-    public function getVosCoordonneesTiersTel(): ?array
+    public function getVosCoordonneesTiersTel(): ?string
     {
         return $this->vosCoordonneesTiersTel;
     }
 
-    public function setVosCoordonneesTiersTel(?array $vosCoordonneesTiersTel): self
+    public function setVosCoordonneesTiersTel(?string $vosCoordonneesTiersTel): self
     {
         $this->vosCoordonneesTiersTel = $vosCoordonneesTiersTel;
 
@@ -1393,36 +1395,36 @@ class SignalementDraftRequest
         return $this;
     }
 
-    public function getVosCoordonneesTiersTelSecondaire(): ?array
+    public function getVosCoordonneesTiersTelSecondaire(): ?string
     {
         return $this->vosCoordonneesTiersTelSecondaire;
     }
 
-    public function setVosCoordonneesTiersTelSecondaire(?array $vosCoordonneesTiersTelSecondaire): self
+    public function setVosCoordonneesTiersTelSecondaire(?string $vosCoordonneesTiersTelSecondaire): self
     {
         $this->vosCoordonneesTiersTelSecondaire = $vosCoordonneesTiersTelSecondaire;
 
         return $this;
     }
 
-    public function getCoordonneesOccupantTelSecondaire(): ?array
+    public function getCoordonneesOccupantTelSecondaire(): ?string
     {
         return $this->coordonneesOccupantTelSecondaire;
     }
 
-    public function setCoordonneesOccupantTelSecondaire(?array $coordonneesOccupantTelSecondaire): self
+    public function setCoordonneesOccupantTelSecondaire(?string $coordonneesOccupantTelSecondaire): self
     {
         $this->coordonneesOccupantTelSecondaire = $coordonneesOccupantTelSecondaire;
 
         return $this;
     }
 
-    public function getCoordonneesBailleurTelSecondaire(): ?array
+    public function getCoordonneesBailleurTelSecondaire(): ?string
     {
         return $this->coordonneesBailleurTelSecondaire;
     }
 
-    public function setCoordonneesBailleurTelSecondaire(?array $coordonneesBailleurTelSecondaire): self
+    public function setCoordonneesBailleurTelSecondaire(?string $coordonneesBailleurTelSecondaire): self
     {
         $this->coordonneesBailleurTelSecondaire = $coordonneesBailleurTelSecondaire;
 

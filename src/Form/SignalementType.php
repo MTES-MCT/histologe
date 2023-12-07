@@ -18,6 +18,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SignalementType extends AbstractType
 {
+    private const PATTERN_PHONE_NUMBER = '[+]?[0-9]{9,15}';
+
     public const LINK_CHOICES = [
         'Proche' => 'PROCHE',
         'Professionnel' => 'PROFESSIONNEL',
@@ -28,6 +30,14 @@ class SignalementType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $signalement = $builder->getData();
+        if ($signalement) {
+            $signalement->setTelOccupant($signalement->getTelOccupantDecoded());
+            $signalement->setTelOccupantBis($signalement->getTelOccupantBisDecoded());
+            $signalement->setTelProprio($signalement->getTelProprioDecoded());
+            $signalement->setTelDeclarant($signalement->getTelDeclarantDecoded());
+        }
+
         $builder
             ->add('details', TextareaType::class, [
                 'attr' => [
@@ -303,7 +313,7 @@ class SignalementType extends AbstractType
             ->add('telOccupant', TelType::class, [
                 'attr' => [
                     'class' => 'fr-input',
-                    'pattern' => '[0-9]{10}',
+                    'pattern' => self::PATTERN_PHONE_NUMBER,
                     'minlength' => '10',
                     'maxlength' => '15',
                 ],
@@ -316,7 +326,7 @@ class SignalementType extends AbstractType
             ->add('telOccupantBis', TelType::class, [
                 'attr' => [
                     'class' => 'fr-input',
-                    'pattern' => '[0-9]{10}',
+                    'pattern' => self::PATTERN_PHONE_NUMBER,
                     'minlength' => '10',
                     'maxlength' => '15',
                 ],
@@ -467,7 +477,7 @@ class SignalementType extends AbstractType
                 ],
                 'attr' => [
                     'class' => 'fr-input',
-                    'pattern' => '[0-9]{10}',
+                    'pattern' => self::PATTERN_PHONE_NUMBER,
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
@@ -546,7 +556,7 @@ class SignalementType extends AbstractType
             ->add('telDeclarant', TelType::class, [
                 'attr' => [
                     'class' => 'fr-input',
-                    'pattern' => '[0-9]{10}',
+                    'pattern' => self::PATTERN_PHONE_NUMBER,
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',

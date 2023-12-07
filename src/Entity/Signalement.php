@@ -10,6 +10,8 @@ use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Repository\SignalementRepository;
+use App\Utils\Phone;
+use App\Validator as AppAssert;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -107,11 +109,11 @@ class Signalement
     private ?string $villeProprio;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
-    #[Assert\Length(min: 10, max: 15)]
+    #[AppAssert\TelephoneFormat]
     private $telProprio;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
-    #[Assert\Length(min: 10, max: 15)]
+    #[AppAssert\TelephoneFormat]
     private ?string $telProprioSecondaire;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -142,9 +144,11 @@ class Signalement
     private $prenomDeclarant;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
+    #[AppAssert\TelephoneFormat]
     private $telDeclarant;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
+    #[AppAssert\TelephoneFormat]
     private ?string $telDeclarantSecondaire;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -166,6 +170,7 @@ class Signalement
     private $prenomOccupant;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
+    #[AppAssert\TelephoneFormat]
     private $telOccupant;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -327,6 +332,7 @@ class Signalement
     private $closedBy;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
+    #[AppAssert\TelephoneFormat]
     private $telOccupantBis;
 
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'signalement', cascade: ['persist'])]
@@ -708,11 +714,9 @@ class Signalement
         return $this->telProprio;
     }
 
-    public function getTelProprioDecoded(): ?string
+    public function getTelProprioDecoded(?bool $national = false): ?string
     {
-        $telDecoded = json_decode($this->getTelProprio());
-
-        return isset($telDecoded->phone_number) ? $telDecoded->phone_number : $this->telProprio;
+        return Phone::format($this->telProprio, $national);
     }
 
     public function setTelProprio(?string $telProprio): self
@@ -843,11 +847,9 @@ class Signalement
         return $this->telDeclarant;
     }
 
-    public function getTelDeclarantDecoded(): ?string
+    public function getTelDeclarantDecoded(?bool $national = false): ?string
     {
-        $telDecoded = json_decode($this->getTelDeclarant());
-
-        return isset($telDecoded->phone_number) ? $telDecoded->phone_number : $this->telDeclarant;
+        return Phone::format($this->telDeclarant, $national);
     }
 
     public function setTelDeclarant(?string $telDeclarant): self
@@ -924,11 +926,9 @@ class Signalement
         return $this->telOccupant;
     }
 
-    public function getTelOccupantDecoded()
+    public function getTelOccupantDecoded(?bool $national = false): ?string
     {
-        $telDecoded = json_decode($this->getTelOccupant());
-
-        return $telDecoded ? $telDecoded->phone_number : $this->telOccupant;
+        return Phone::format($this->telOccupant, $national);
     }
 
     public function setTelOccupant($telOccupant): self
@@ -1622,11 +1622,9 @@ class Signalement
         return $this->telOccupantBis;
     }
 
-    public function getTelOccupantBisDecoded()
+    public function getTelOccupantBisDecoded(?bool $national = false): ?string
     {
-        $telDecoded = json_decode($this->getTelOccupantBis());
-
-        return $telDecoded ? $telDecoded->phone_number : $this->telOccupantBis;
+        return Phone::format($this->telOccupantBis, $national);
     }
 
     public function setTelOccupantBis(?string $telOccupantBis): self
@@ -1952,11 +1950,9 @@ class Signalement
         return $this->telProprioSecondaire;
     }
 
-    public function getTelProprioSecondaireDecoded()
+    public function getTelProprioSecondaireDecoded(?bool $national = false): ?string
     {
-        $telDecoded = json_decode($this->getTelProprioSecondaire());
-
-        return $telDecoded ? $telDecoded->phone_number : $this->telProprioSecondaire;
+        return Phone::format($this->telProprioSecondaire, $national);
     }
 
     public function setTelProprioSecondaire(?string $telProprioSecondaire): self
@@ -1971,11 +1967,9 @@ class Signalement
         return $this->telDeclarantSecondaire;
     }
 
-    public function getTelDeclarantSecondaireDecoded()
+    public function getTelDeclarantSecondaireDecoded(?bool $national = false): ?string
     {
-        $telDecoded = json_decode($this->getTelDeclarantSecondaire());
-
-        return $telDecoded ? $telDecoded->phone_number : $this->telDeclarantSecondaire;
+        return Phone::format($this->telDeclarantSecondaire, $national);
     }
 
     public function setTelDeclarantSecondaire(?string $telDeclarantSecondaire): self
