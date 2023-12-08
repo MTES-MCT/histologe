@@ -356,12 +356,23 @@ trait FixturesHelper
             ->setTerritory($this->getTerritory());
     }
 
-    public function getTerritory(): Territory
+    public function getTerritory(
+        string $name = 'Ain',
+        string $zip = '01',
+        int $isActive = 1
+    ): Territory {
+        return (new Territory())
+            ->setName($name)
+            ->setZip($zip)
+            ->setIsActive($isActive);
+    }
+
+    public function getClosedTerritory(): Territory
     {
         return (new Territory())
-            ->setName('Ain')
-            ->setZip('01')
-            ->setIsActive(1);
+            ->setName('Gard')
+            ->setZip('30')
+            ->setIsActive(0);
     }
 
     public function getDocumentFile(): File

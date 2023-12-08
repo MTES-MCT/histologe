@@ -13,11 +13,12 @@
 #   zip - The code of the department
 #
 # Example 0: ./scripts/upload-s3.sh desordres
-# Example 1: ./scripts/upload-s3.sh grid 33
-# Example 2: ./scripts/upload-s3.sh signalement 33
-# Example 3: ./scripts/upload-s3.sh image 33
-# Example 4: ./scripts/upload-s3.sh mapping-doc 33
-# Example 5: ./scripts/upload-s3.sh process-all 33
+# Example 1: ./scripts/upload-s3.sh grid 33 (Ouverture du territoire)
+# Example 2: ./scripts/upload-s3.sh grid 33-1 (Ajout de nouveaux comptes sur un territoire ouvert)
+# Example 3: ./scripts/upload-s3.sh signalement 33
+# Example 4: ./scripts/upload-s3.sh image 33
+# Example 5: ./scripts/upload-s3.sh mapping-doc 33
+# Example 6: ./scripts/upload-s3.sh process-all 33
 #
 # Notice:
 # - File must be executed in local, ignored during the deployment

@@ -15,6 +15,8 @@ use App\Manager\UserManager;
 use App\Service\Import\CsvParser;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -25,8 +27,8 @@ class GridAffectationLoader
 
     private array $metadata = [
         'nb_users_created' => 0,
-        'nb_users_updated' => 0,
         'nb_partners' => 0,
+        'errors' => [],
     ];
 
     public function __construct(
@@ -43,7 +45,7 @@ class GridAffectationLoader
     ) {
     }
 
-    public function validate(array $data): array
+    public function validate(array $data, bool $isModeUpdate = false): array
     {
         $errors = [];
         $mailPartners = [];
@@ -56,51 +58,78 @@ class GridAffectationLoader
             ++$numLine;
             if (\count($item) > 1) {
                 if (empty($item[GridAffectationHeader::PARTNER_NAME_INSTITUTION])) {
-                    $errors[] = 'line '.$numLine.' : Nom de partenaire manquant';
+                    $errors[] = sprintf('line %d : Nom de partenaire manquant', $numLine);
                 }
                 if (!\in_array($item[GridAffectationHeader::PARTNER_TYPE], PartnerType::getLabelList())) {
-                    $errors[] = 'line '.$numLine.' : Type incorrect pour '.$item[GridAffectationHeader::PARTNER_NAME_INSTITUTION].' --> '.$item[GridAffectationHeader::PARTNER_TYPE];
+                    $errors[] = sprintf(
+                        'line %d : Type incorrect pour %s --> %s',
+                        $numLine,
+                        $item[GridAffectationHeader::PARTNER_NAME_INSTITUTION],
+                        $item[GridAffectationHeader::PARTNER_TYPE]
+                    );
                 }
                 // if partner has an email, it should be valid and not existing for another partner
                 $emailPartner = trim($item[GridAffectationHeader::PARTNER_EMAIL]);
                 if (!empty($emailPartner)) {
                     $violations = $this->validator->validate($emailPartner, $emailConstraint);
                     if (\count($violations) > 0) {
-                        $errors[] = 'line '.$numLine.' : Email incorrect pour un partenaire : '.$emailPartner;
+                        $errors[] = sprintf('line %d : Email incorrect pour un partenaire : %s',
+                            $numLine,
+                            $emailPartner
+                        );
                     }
 
-                    /** @var Partner $partnerToCreate */
-                    $partnerToCreate = $this->partnerManager->findOneBy(['email' => $emailPartner]);
-                    if (null !== $partnerToCreate) {
-                        $errors[] = 'line '.$numLine.' : Il existe déjà un partenaire avec cette adresse mail : '
-                        .$emailPartner.' dans le territoire '
-                        .$partnerToCreate->getTerritory()->getName().' avec le nom '.$partnerToCreate->getNom();
+                    if (!$isModeUpdate) {
+                        /** @var Partner $partnerToCreate */
+                        $partnerToCreate = $this->partnerManager->findOneBy(['email' => $emailPartner]);
+                        if (null !== $partnerToCreate) {
+                            $errors[] = sprintf(
+                                'line %d : Partenaire déjà existant avec (%s) dans %s, nom : %s',
+                                $numLine,
+                                $emailPartner,
+                                $partnerToCreate->getTerritory()->getName(),
+                                $partnerToCreate->getNom()
+                            );
+                        }
                     }
+
                     // store partner mail to check duplicates
                     if (!empty($item[GridAffectationHeader::PARTNER_EMAIL])) {
-                        $mailPartners[$item[GridAffectationHeader::PARTNER_NAME_INSTITUTION]] = $item[GridAffectationHeader::PARTNER_EMAIL];
+                        $mailPartners[$item[GridAffectationHeader::PARTNER_NAME_INSTITUTION]] =
+                            $item[GridAffectationHeader::PARTNER_EMAIL];
                     }
                 }
 
                 $emailUser = trim($item[GridAffectationHeader::USER_EMAIL]);
                 if (empty($emailUser) && !empty($item[GridAffectationHeader::USER_ROLE])) {
-                    $errors[] = 'line '.$numLine.' : Email manquant pour '.$item[GridAffectationHeader::USER_FIRSTNAME].' '
-                    .$item[GridAffectationHeader::USER_LASTNAME].', partenaire '.$item[GridAffectationHeader::PARTNER_NAME_INSTITUTION];
+                    $errors[] = sprintf(
+                        'line %d : Email manquant pour %s %s, partenaire %s',
+                        $numLine,
+                        $item[GridAffectationHeader::USER_FIRSTNAME],
+                        $item[GridAffectationHeader::USER_LASTNAME],
+                        $item[GridAffectationHeader::PARTNER_NAME_INSTITUTION]
+                    );
                 } else {
                     // email must be valid and not used by another user of another partner
                     $violations = $this->validator->validate($emailUser, $emailConstraint);
                     if (\count($violations) > 0) {
-                        $errors[] = 'line '.$numLine.' : Email incorrect pour un utilisateur : '.$emailUser;
+                        $errors[] = sprintf('line %d : Email incorrect pour un utilisateur : %s', $numLine, $emailUser);
                     }
 
                     /** @var User $userToCreate */
                     $userToCreate = $this->userManager->findOneBy(['email' => $emailUser]);
-
-                    if (null !== $userToCreate && !\in_array('ROLE_USAGER', $userToCreate->getRoles())) {
-                        $errors[] = 'line '.$numLine.' : Il existe déjà un utilisateur avec cette adresse mail : '
-                        .$emailUser.' dans le territoire '.$userToCreate->getTerritory()->getName()
-                        .' et dans le partenaire '.$userToCreate->getPartner()->getNom()
-                        .' avec le rôle '.$userToCreate->getRoleLabel();
+                    if (!$isModeUpdate
+                        && null !== $userToCreate
+                        && !\in_array('ROLE_USAGER', $userToCreate->getRoles())
+                    ) {
+                        $errors[] = sprintf(
+                            'line %d : Utilisateur déjà existant avec (%s) dans %s, partenaire : %s, rôle : %s',
+                            $numLine,
+                            $emailUser,
+                            $userToCreate->getTerritory()->getName(),
+                            $userToCreate->getPartner()->getNom(),
+                            $userToCreate->getRoleLabel()
+                        );
                     }
                     // store user mail to check duplicates
                     if (!empty($item[GridAffectationHeader::USER_EMAIL])) {
@@ -109,7 +138,12 @@ class GridAffectationLoader
                 }
                 if (!empty($item[GridAffectationHeader::USER_ROLE])
                     && !\in_array($item[GridAffectationHeader::USER_ROLE], array_keys(User::ROLES))) {
-                    $errors[] = 'line '.$numLine.' : Rôle incorrect pour '.$item[GridAffectationHeader::USER_EMAIL].' --> '.$item[GridAffectationHeader::USER_ROLE];
+                    $errors[] = sprintf(
+                        'line %d : Rôle incorrect pour %s --> %s',
+                        $numLine,
+                        $item[GridAffectationHeader::USER_EMAIL],
+                        $item[GridAffectationHeader::USER_ROLE]
+                    );
                 }
             }
         }
@@ -130,18 +164,26 @@ class GridAffectationLoader
         $mails = array_merge($mailPartners, $mailUsers);
         $duplicatesMails = $this->checkIfDuplicates($mails);
         if (\count($duplicatesMails) > 0) {
-            $errors[] = 'Certains utilisateurs ont un mail en commun avec un partenaire '.implode(',', array_keys($duplicatesMails));
+            $errors[] = 'Certains utilisateurs ont un mail en commun avec un partenaire '
+                .implode(',', array_keys($duplicatesMails));
         }
 
         return $errors;
     }
 
-    public function load(Territory $territory, array $data, array $ignoreNotifPartnerTypes): void
-    {
-        // TODO LATER : command should be usable several times (update partners and users)
+    public function load(
+        Territory $territory,
+        array $data,
+        array $ignoreNotifPartnerTypes,
+        ?OutputInterface $output = null
+    ): void {
         $countUsers = 0;
         $partner = null;
         $newPartnerNames = [];
+        if (null !== $output) {
+            $progressBar = new ProgressBar($output, \count($data));
+            $progressBar->start();
+        }
         foreach ($data as $item) {
             if (\count($item) > 1) {
                 $partnerName = trim($item[GridAffectationHeader::PARTNER_NAME_INSTITUTION]);
@@ -151,58 +193,63 @@ class GridAffectationLoader
                     $partner = $this->partnerFactory->createInstanceFrom(
                         territory: $territory,
                         name: $partnerName,
-                        email: !empty($item[GridAffectationHeader::PARTNER_EMAIL]) ? trim($item[GridAffectationHeader::PARTNER_EMAIL]) : null,
+                        email: !empty($item[GridAffectationHeader::PARTNER_EMAIL])
+                            ? trim($item[GridAffectationHeader::PARTNER_EMAIL])
+                            : null,
                         type: $partnerType,
                         insee: $item[GridAffectationHeader::PARTNER_CODE_INSEE]
                     );
-                    $this->partnerManager->save($partner, false);
-                    ++$this->metadata['nb_partners'];
-                    $newPartnerNames[] = $partnerName;
+                    /** @var ConstraintViolationList $errors */
+                    $errors = $this->validator->validate($partner);
+                    if (0 === $errors->count() && !$this->partnerAlreadyExists($partner)) {
+                        $this->partnerManager->save($partner, false);
+                        ++$this->metadata['nb_partners'];
+                        $newPartnerNames[] = $partnerName;
+                    } elseif ($errors->count() > 0) {
+                        $this->metadata['errors'][] = sprintf('%s', (string) $errors);
+                        continue;
+                    }
                 }
 
                 $roleLabel = $item[GridAffectationHeader::USER_ROLE];
                 $email = trim($item[GridAffectationHeader::USER_EMAIL]);
                 if (!empty($roleLabel) && !empty($email)) {
                     ++$countUsers;
-                    /** @var User $userToCreate */
-                    $userToCreate = $this->userManager->findOneBy(['email' => $email]);
-                    if (null !== $userToCreate && \in_array('ROLE_USAGER', $userToCreate->getRoles())) {
-                        $data = [];
-                        $data['nom'] = $userToCreate->getNom();
-                        $data['prenom'] = $userToCreate->getPrenom();
-                        $data['roles'] = \in_array($roleLabel, User::ROLES) ? [$roleLabel] : [User::ROLES[$roleLabel]];
-                        $data['email'] = $userToCreate->getEmail();
-                        $data['isMailingActive'] = true;
-                        $data['territory'] = $territory;
-                        $data['partner'] = $partner;
-                        $data['statut'] = User::STATUS_INACTIVE;
-                        $this->userManager->updateUserFromData($userToCreate, $data);
-                        ++$this->metadata['nb_users_updated'];
-                    } else {
-                        $user = $this->userFactory->createInstanceFrom(
-                            roleLabel: $roleLabel,
-                            territory: $territory,
-                            partner: $partner,
-                            firstname: trim($item[GridAffectationHeader::USER_FIRSTNAME]),
-                            lastname: trim($item[GridAffectationHeader::USER_LASTNAME]),
-                            email: $email,
-                            isActivateAccountNotificationEnabled: !\in_array($partnerType->name, $ignoreNotifPartnerTypes)
-                        );
+                    $user = $this->userFactory->createInstanceFrom(
+                        roleLabel: $roleLabel,
+                        territory: $territory,
+                        partner: $partner,
+                        firstname: trim($item[GridAffectationHeader::USER_FIRSTNAME]),
+                        lastname: trim($item[GridAffectationHeader::USER_LASTNAME]),
+                        email: $email,
+                        isActivateAccountNotificationEnabled: !\in_array($partnerType->name, $ignoreNotifPartnerTypes)
+                    );
 
-                        $this->throwException($user);
+                    /** @var ConstraintViolationList $errors */
+                    $errors = $this->validator->validate($user);
+                    if (0 === $errors->count()) {
                         $this->userManager->save($user, false);
                         ++$this->metadata['nb_users_created'];
-                    }
-
-                    if (0 === $countUsers % self::FLUSH_COUNT) {
-                        $this->logger->info(sprintf('in progress - %s users created or updated', $countUsers));
-                        $this->manager->flush();
+                    } else {
+                        $this->metadata['errors'][] = sprintf('line : %s', (string) $errors);
                     }
                 }
+
+                if (0 === $countUsers % self::FLUSH_COUNT) {
+                    $this->logger->info(sprintf('in progress - %s users created or updated', $countUsers));
+                    $this->manager->flush();
+                }
+            }
+            if (null !== $output) {
+                $progressBar->advance();
             }
         }
 
         $this->manager->flush();
+        if (null !== $output) {
+            $progressBar->finish();
+            $progressBar->clear();
+        }
     }
 
     public function getMetadata(): array
@@ -220,14 +267,17 @@ class GridAffectationLoader
         return $duplicatesEmails;
     }
 
-    private function throwException(User $user): void
+    private function partnerAlreadyExists(Partner $partner): bool
     {
-        /** @var ConstraintViolationList $errors */
-        $errors = $this->validator->validate($user);
-        if (\count($errors) > 0) {
-            foreach ($errors as $error) {
-                throw new \Exception(sprintf('%s (%s)', $error->getMessage(), $user->getEmail()));
-            }
+        $partners = $this->entityManager->getRepository(Partner::class)->findBy([
+            'nom' => $partner->getNom(),
+            'territory' => $partner->getTerritory(),
+        ]);
+
+        if (0 === \count($partners)) {
+            return false;
         }
+
+        return true;
     }
 }
