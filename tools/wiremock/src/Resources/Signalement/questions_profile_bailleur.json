@@ -675,7 +675,7 @@
         {
           "type": "SignalementFormUpload",
           "slug": "bail_dpe_bail_upload",
-          "label": "Ajoutez le bail en cliquant sur le bouton ci-dessous (facultatif)",
+          "label": "Ajouter le bail (facultatif)",
           "conditional": {
             "show": "formStore.data.bail_dpe_bail === 'oui'"
           },
