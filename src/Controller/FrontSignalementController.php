@@ -17,6 +17,7 @@ use App\Factory\SuiviFactory;
 use App\Form\SignalementType;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
+use App\Repository\CommuneRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TerritoryRepository;
@@ -70,19 +71,40 @@ class FrontSignalementController extends AbstractController
     }
 
     #[Route('/checkterritory', name: 'front_signalement_check_territory', methods: ['GET'])]
-    public function checkTerritory(Request $request, PostalCodeHomeChecker $postalCodeHomeChecker): Response
+    public function checkTerritory(Request $request, PostalCodeHomeChecker $postalCodeHomeChecker, CommuneRepository $communeRepository): Response
     {
         $postalCode = $request->get('cp');
         if (empty($postalCode)) {
-            return $this->json(['success' => false, 'message' => 'cp parameter is missing'], Response::HTTP_BAD_REQUEST);
+            return $this->json(['success' => false, 'message' => 'Le paramètre "cp" est manquant', 'label' => 'Erreur']);
         }
 
         $inseeCode = $request->get('insee');
-        if ($postalCodeHomeChecker->isActive($postalCode, $inseeCode)) {
-            return $this->json(['success' => true, 'message' => 'Open territory']);
+        if (!empty($inseeCode)) {
+            $communes = $communeRepository->findBy(['codePostal' => $postalCode, 'codeInsee' => $inseeCode]);
+            if (!\count($communes)) {
+                return $this->json(['success' => false, 'message' => 'Le paramètre code postal et le code insee ne sont pas cohérent', 'label' => 'Erreur']);
+            }
         }
 
-        return $this->json(['success' => false, 'message' => 'Closed territory'], Response::HTTP_BAD_REQUEST);
+        if ($postalCodeHomeChecker->isActive($postalCode, $inseeCode)) {
+            return $this->json(['success' => true]);
+        }
+
+        $messageClosed = '<p>
+        Nous ne pouvons malheureusement pas traiter votre demande.<br>
+        Le service Histologe n\'est pas encore ouvert dans votre commune...
+        Nous faisons tout pour le rendre disponible dès que possible !
+        <br>
+        En attendant, nous vous invitons à contacter gratuitement le service "Info logement indigne" au numéro suivant :
+        </p>
+        <p class="fr-text--center">
+            <a href="tel:+33806706806" class="fr-link">
+                <span class="fr-icon-phone-line"></span>
+                0806 706 806
+            </a>
+        </p>';
+
+        return $this->json(['success' => false, 'message' => $messageClosed, 'label' => 'Avertissement']);
     }
 
     #[Route('/signalement/handle', name: 'handle_upload', methods: 'POST')]

@@ -11,6 +11,7 @@
       :data-ajaxurl-handle-upload="sharedProps.ajaxurlHandleUpload"
       :data-ajaxurl-get-signalement-draft="sharedProps.ajaxurlGetSignalementDraft"
       :data-ajaxurl-platform-name="sharedProps.platformName"
+      :data-ajaxurl-check-territory="sharedProps.ajaxurlCheckTerritory"
       >
       <div v-if="isLoadingInit" class="loading fr-m-10w fr-grid-row fr-grid-row--center">
         Initialisation du formulaire...
@@ -84,6 +85,7 @@ export default defineComponent({
       this.sharedProps.ajaxurlPostSignalementDraft = initElements.dataset.ajaxurlPostSignalementDraft
       this.sharedProps.ajaxurlPutSignalementDraft = initElements.dataset.ajaxurlPutSignalementDraft
       this.sharedProps.ajaxurlHandleUpload = initElements.dataset.ajaxurlHandleUpload
+      this.sharedProps.ajaxurlCheckTerritory = initElements.dataset.ajaxurlCheckTerritory
       if (initElements.dataset.ajaxurlGetSignalementDraft !== undefined) {
         this.sharedProps.ajaxurlGetSignalementDraft = initElements.dataset.ajaxurlGetSignalementDraft
         requests.initWithExistingData(this.handleInitData)

@@ -48,6 +48,13 @@
       :error="formStore.validationErrors[idSubscreen]"
       @update:modelValue="handleSubscreenModelUpdate"
     />
+
+    <SignalementFormModal 
+      v-model="isModalOpen"
+      id="check_territory_modal"
+      :label="modalLabel"
+      :description="modalDescription"
+    />
   </div>
 </template>
 
@@ -60,13 +67,15 @@ import subscreenData from './../address_subscreen.json'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
 import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
+import SignalementFormModal from './SignalementFormModal.vue'
 
 export default defineComponent({
   name: 'SignalementFormAddress',
   components: {
     SignalementFormTextfield,
     SignalementFormButton,
-    SignalementFormSubscreen
+    SignalementFormSubscreen,
+    SignalementFormModal
   },
   props: {
     id: { type: String, default: null },
@@ -91,7 +100,10 @@ export default defineComponent({
       actionShow: 'show:' + this.id + '_detail',
       screens: { body: updatedSubscreenData },
       suggestions: [] as any[],
-      formStore
+      formStore,
+      isModalOpen: false,
+      modalLabel: '',
+      modalDescription: ''
     }
   },
   created () {
@@ -143,12 +155,16 @@ export default defineComponent({
     },
     onAddressFound (requestResponse: any) {
       this.suggestions = requestResponse.features
-      // TODO : que faire si code postal dans département non ouvert ?
-      // TODO : répertorier les exclusions de code postal du 69 ?
-      // TODO : vérifier si dans territoire expé NDE pour comportement différent ?
     },
     onTerritoryChecked (requestResponse: any) {
-      console.log(requestResponse);
+      if(!requestResponse.success) {
+          this.modalLabel = requestResponse.label
+          this.modalDescription = requestResponse.message
+          this.isModalOpen = true
+
+          this.formStore.data[this.id] = ''
+      }
+      // TODO : vérifier si dans territoire expé NDE pour comportement différent ?
     }
   },
   emits: ['update:modelValue']
