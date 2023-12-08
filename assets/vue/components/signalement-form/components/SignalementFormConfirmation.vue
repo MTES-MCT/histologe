@@ -1,5 +1,5 @@
 <template>
-  <div :id="id">
+  <div :id="id" :class="[ customCss ]">
     <h3>
       Qu'avez vous pensé de ce formulaire ?
     </h3>
@@ -20,7 +20,8 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'SignalementFormConfirmation',
   props: {
-    id: { type: String, default: null }
+    id: { type: String, default: null },
+    customCss: { type: String, default: '' }
   }
 })
 </script>
