@@ -355,6 +355,10 @@ class SignalementBuilder
             return null;
         }
 
+        if (empty($this->signalementDraftRequest->getVosCoordonneesTiersLien())) {
+            return null;
+        }
+
         $tiersLien = OccupantLink::from(strtoupper($this->signalementDraftRequest->getVosCoordonneesTiersLien()));
 
         if (OccupantLink::VOISIN === $tiersLien) {
