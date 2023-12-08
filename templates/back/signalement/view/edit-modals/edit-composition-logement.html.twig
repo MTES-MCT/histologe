@@ -1,0 +1,316 @@
+<dialog aria-labelledby="fr-modal-title-modal-edit-composition-logement" role="dialog" id="fr-modal-edit-composition-logement" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8">
+                <form method="POST" id="form-edit-composition-logement" enctype="application/json" action="{{ path('back_signalement_edit_composition_logement',{uuid:signalement.uuid}) }}">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-edit-composition-logement">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="fr-modal-title-modal-edit-composition-logement" class="fr-modal__title">
+                                Modifier la composition du logement
+                            </h1>
+
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="typeCompositionLogement">Logement</label>
+                                <select class="fr-select" name="typeCompositionLogement">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="piece_unique" {{ signalement.typeCompositionLogement and signalement.typeCompositionLogement.compositionLogementPieceUnique is same as 'piece_unique' ? 'selected' : '' }}>Pièce unique</option>
+                                    <option value="plusieurs_pieces" {{ signalement.typeCompositionLogement and signalement.typeCompositionLogement.compositionLogementPieceUnique is same as 'plusieurs_pieces' ? 'selected' : '' }}>Plusieurs pièces</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="superficie">Superficie totale (m²)</label>
+                                <input class="fr-input" type="number" name="superficie" value="{{ signalement.superficie }}">
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set compositionLogementHauteur = 'nsp' %}
+                                {% if signalement.typeCompositionLogement %}
+                                    {% if signalement.typeCompositionLogement.compositionLogementHauteur is same as 'oui' %}
+                                        {% set compositionLogementHauteur = 'oui' %}
+                                    {% elseif signalement.typeCompositionLogement.compositionLogementHauteur is same as 'non' %}
+                                        {% set compositionLogementHauteur = 'non' %}
+                                    {% else %}
+                                        {% set compositionLogementHauteur = 'nsp' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="compositionLogementHauteur">Hauteur > 2m</label>
+                                <select class="fr-select" name="compositionLogementHauteur">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ compositionLogementHauteur is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ compositionLogementHauteur is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ compositionLogementHauteur is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="compositionLogementNbPieces">Nombre de pièces à vivre</label>
+                                <input class="fr-input" type="number" name="compositionLogementNbPieces" value="{{ signalement.typeCompositionLogement.compositionLogementNbPieces ?? 0 }}">
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set typeLogementRdc = 'nsp' %}
+                                {% if signalement.typeCompositionLogement %}
+                                    {% if signalement.typeCompositionLogement.typeLogementRdc is same as 'oui' %}
+                                        {% set typeLogementRdc = 'oui' %}
+                                    {% elseif signalement.typeCompositionLogement.typeLogementRdc is same as 'non' %}
+                                        {% set typeLogementRdc = 'non' %}
+                                    {% else %}
+                                        {% set typeLogementRdc = 'nsp' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="typeLogementRdc">Est au RDC ?</label>
+                                <select class="fr-select" name="typeLogementRdc">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ typeLogementRdc is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ typeLogementRdc is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ typeLogementRdc is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set typeLogementDernierEtage = 'nsp' %}
+                                {% if signalement.typeCompositionLogement %}
+                                    {% if signalement.typeCompositionLogement.typeLogementDernierEtage is same as 'oui' %}
+                                        {% set typeLogementDernierEtage = 'oui' %}
+                                    {% elseif signalement.typeCompositionLogement.typeLogementDernierEtage is same as 'non' %}
+                                        {% set typeLogementDernierEtage = 'non' %}
+                                    {% else %}
+                                        {% set typeLogementDernierEtage = 'nsp' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="typeLogementDernierEtage">Est au dernier étage ?</label>
+                                <select class="fr-select" name="typeLogementDernierEtage">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ typeLogementDernierEtage is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ typeLogementDernierEtage is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ typeLogementDernierEtage is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set typeLogementSousCombleSansFenetre = 'nsp' %}
+                                {% if signalement.typeCompositionLogement %}
+                                    {% if signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre is same as 'oui' %}
+                                        {% set typeLogementSousCombleSansFenetre = 'oui' %}
+                                    {% elseif signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre is same as 'non' %}
+                                        {% set typeLogementSousCombleSansFenetre = 'non' %}
+                                    {% else %}
+                                        {% set typeLogementSousCombleSansFenetre = 'nsp' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="typeLogementSousCombleSansFenetre">Combles sans fenêtres ?</label>
+                                <select class="fr-select" name="typeLogementSousCombleSansFenetre">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ typeLogementSousCombleSansFenetre is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ typeLogementSousCombleSansFenetre is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ typeLogementSousCombleSansFenetre is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set typeLogementSousSolSansFenetre = 'nsp' %}
+                                {% if signalement.typeCompositionLogement %}
+                                    {% if signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'oui' %}
+                                        {% set typeLogementSousSolSansFenetre = 'oui' %}
+                                    {% elseif signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'non' %}
+                                        {% set typeLogementSousSolSansFenetre = 'non' %}
+                                    {% else %}
+                                        {% set typeLogementSousSolSansFenetre = 'nsp' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="typeLogementSousSolSansFenetre">Sous-sol sans fenêtres ?</label>
+                                <select class="fr-select" name="typeLogementSousSolSansFenetre">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ typeLogementSousSolSansFenetre is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ typeLogementSousSolSansFenetre is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ typeLogementSousSolSansFenetre is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set typeLogementCommoditesPieceAVivre9m = 'nsp' %}
+                                {% if signalement.typeCompositionLogement %}
+                                    {% if signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m is same as 'oui' %}
+                                        {% set typeLogementCommoditesPieceAVivre9m = 'oui' %}
+                                    {% elseif signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m is same as 'non' %}
+                                        {% set typeLogementCommoditesPieceAVivre9m = 'non' %}
+                                    {% else %}
+                                        {% set typeLogementCommoditesPieceAVivre9m = 'nsp' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="typeLogementCommoditesPieceAVivre9m">Au moins une des pièces à vivre > 9m² ?</label>
+                                <select class="fr-select" name="typeLogementCommoditesPieceAVivre9m">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ typeLogementCommoditesPieceAVivre9m is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ typeLogementCommoditesPieceAVivre9m is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ typeLogementCommoditesPieceAVivre9m is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set typeLogementCommoditesCuisine = 'nsp' %}
+                                {% if signalement.typeCompositionLogement %}
+                                    {% if signalement.typeCompositionLogement.typeLogementCommoditesCuisine is same as 'oui' %}
+                                        {% set typeLogementCommoditesCuisine = 'oui' %}
+                                    {% elseif signalement.typeCompositionLogement.typeLogementCommoditesCuisine is same as 'non' %}
+                                        {% set typeLogementCommoditesCuisine = 'non' %}
+                                    {% else %}
+                                        {% set typeLogementCommoditesCuisine = 'nsp' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="typeLogementCommoditesCuisine">Cuisine (ou coin cuisine) dans le logement ?</label>
+                                <select class="fr-select" name="typeLogementCommoditesCuisine">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ typeLogementCommoditesCuisine is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ typeLogementCommoditesCuisine is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ typeLogementCommoditesCuisine is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set typeLogementCommoditesCuisineCollective = 'nsp' %}
+                                {% if signalement.typeCompositionLogement %}
+                                    {% if signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective is same as 'oui' %}
+                                        {% set typeLogementCommoditesCuisineCollective = 'oui' %}
+                                    {% elseif signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective is same as 'non' %}
+                                        {% set typeLogementCommoditesCuisineCollective = 'non' %}
+                                    {% else %}
+                                        {% set typeLogementCommoditesCuisineCollective = 'nsp' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="typeLogementCommoditesCuisineCollective">Cuisine (ou coin cuisine) collective ?</label>
+                                <select class="fr-select" name="typeLogementCommoditesCuisineCollective">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ typeLogementCommoditesCuisineCollective is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ typeLogementCommoditesCuisineCollective is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ typeLogementCommoditesCuisineCollective is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set typeLogementCommoditesSalleDeBain = 'nsp' %}
+                                {% if signalement.typeCompositionLogement %}
+                                    {% if signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain is same as 'oui' %}
+                                        {% set typeLogementCommoditesSalleDeBain = 'oui' %}
+                                    {% elseif signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain is same as 'non' %}
+                                        {% set typeLogementCommoditesSalleDeBain = 'non' %}
+                                    {% else %}
+                                        {% set typeLogementCommoditesSalleDeBain = 'nsp' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="typeLogementCommoditesSalleDeBain">SDB (baignoire ou douche) dans le logement ?</label>
+                                <select class="fr-select" name="typeLogementCommoditesSalleDeBain">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ typeLogementCommoditesSalleDeBain is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ typeLogementCommoditesSalleDeBain is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ typeLogementCommoditesSalleDeBain is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set typeLogementCommoditesSalleDeBainCollective = 'nsp' %}
+                                {% if signalement.typeCompositionLogement %}
+                                    {% if signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective is same as 'oui' %}
+                                        {% set typeLogementCommoditesSalleDeBainCollective = 'oui' %}
+                                    {% elseif signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective is same as 'non' %}
+                                        {% set typeLogementCommoditesSalleDeBainCollective = 'non' %}
+                                    {% else %}
+                                        {% set typeLogementCommoditesSalleDeBainCollective = 'nsp' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="typeLogementCommoditesSalleDeBainCollective">SDB (baignoire ou douche) collective ?</label>
+                                <select class="fr-select" name="typeLogementCommoditesSalleDeBainCollective">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ typeLogementCommoditesSalleDeBainCollective is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ typeLogementCommoditesSalleDeBainCollective is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ typeLogementCommoditesSalleDeBainCollective is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set typeLogementCommoditesWc = 'nsp' %}
+                                {% if signalement.typeCompositionLogement %}
+                                    {% if signalement.typeCompositionLogement.typeLogementCommoditesWc is same as 'oui' %}
+                                        {% set typeLogementCommoditesWc = 'oui' %}
+                                    {% elseif signalement.typeCompositionLogement.typeLogementCommoditesWc is same as 'non' %}
+                                        {% set typeLogementCommoditesWc = 'non' %}
+                                    {% else %}
+                                        {% set typeLogementCommoditesWc = 'nsp' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="typeLogementCommoditesWc">WC dans le logement ?</label>
+                                <select class="fr-select" name="typeLogementCommoditesWc">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ typeLogementCommoditesWc is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ typeLogementCommoditesWc is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ typeLogementCommoditesWc is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set typeLogementCommoditesWcCollective = 'nsp' %}
+                                {% if signalement.typeCompositionLogement %}
+                                    {% if signalement.typeCompositionLogement.typeLogementCommoditesWcCollective is same as 'oui' %}
+                                        {% set typeLogementCommoditesWcCollective = 'oui' %}
+                                    {% elseif signalement.typeCompositionLogement.typeLogementCommoditesWcCollective is same as 'non' %}
+                                        {% set typeLogementCommoditesWcCollective = 'non' %}
+                                    {% else %}
+                                        {% set typeLogementCommoditesWcCollective = 'nsp' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="typeLogementCommoditesWcCollective">WC collectifs ?</label>
+                                <select class="fr-select" name="typeLogementCommoditesWcCollective">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ typeLogementCommoditesWcCollective is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ typeLogementCommoditesWcCollective is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ typeLogementCommoditesWcCollective is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set typeLogementCommoditesWcCuisine = 'nsp' %}
+                                {% if signalement.typeCompositionLogement %}
+                                    {% if signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine is same as 'oui' %}
+                                        {% set typeLogementCommoditesWcCuisine = 'oui' %}
+                                    {% elseif signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine is same as 'non' %}
+                                        {% set typeLogementCommoditesWcCuisine = 'non' %}
+                                    {% else %}
+                                        {% set typeLogementCommoditesWcCuisine = 'nsp' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="typeLogementCommoditesWcCuisine">WC collectifs ?</label>
+                                <select class="fr-select" name="typeLogementCommoditesWcCuisine">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ typeLogementCommoditesWcCuisine is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ typeLogementCommoditesWcCuisine is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ typeLogementCommoditesWcCuisine is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="fr-modal__footer">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <li>
+                                    <button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line"
+                                            aria-controls="fr-modal-edit-composition-logement">
+                                        Annuler
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="fr-btn  fr-icon-checkbox-line" type="submit">
+                                        Valider
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_composition_logement_'~signalement.id) }}">
+                </form>
+            </div>
+        </div>
+    </div>
+</dialog>

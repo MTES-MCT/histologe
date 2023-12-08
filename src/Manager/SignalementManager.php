@@ -3,6 +3,7 @@
 namespace App\Manager;
 
 use App\Dto\Request\Signalement\AdresseOccupantRequest;
+use App\Dto\Request\Signalement\CompositionLogementRequest;
 use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
 use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
@@ -365,6 +366,36 @@ class SignalementManager extends AbstractManager
             ->setBailDpeBail($informationsLogementRequest->getBailDpeBail())
             ->setBailDpeEtatDesLieux($informationsLogementRequest->getBailDpeEtatDesLieux())
             ->setBailDpeDpe($informationsLogementRequest->getBailDpeDpe());
+        $signalement->setTypeCompositionLogement($typeCompositionLogement);
+
+        $this->save($signalement);
+    }
+
+    public function updateFromCompositionLogementRequest(Signalement $signalement, CompositionLogementRequest $compositionLogementRequest)
+    {
+        $signalement->setSuperficie($compositionLogementRequest->getSuperficie());
+
+        $typeCompositionLogement = new TypeCompositionLogement();
+        if (!empty($signalement->getTypeCompositionLogement())) {
+            $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
+        }
+        $typeCompositionLogement
+            ->setCompositionLogementPieceUnique($compositionLogementRequest->getTypeCompositionLogement())
+            ->setCompositionLogementSuperficie($compositionLogementRequest->getSuperficie())
+            ->setCompositionLogementHauteur($compositionLogementRequest->getCompositionLogementHauteur())
+            ->setCompositionLogementNbPieces($compositionLogementRequest->getCompositionLogementNbPieces())
+            ->setTypeLogementRdc($compositionLogementRequest->getTypeLogementRdc())
+            ->setTypeLogementDernierEtage($compositionLogementRequest->getTypeLogementDernierEtage())
+            ->setTypeLogementSousCombleSansFenetre($compositionLogementRequest->getTypeLogementSousCombleSansFenetre())
+            ->setTypeLogementSousSolSansFenetre($compositionLogementRequest->getTypeLogementSousSolSansFenetre())
+            ->setTypeLogementCommoditesPieceAVivre9m($compositionLogementRequest->getTypeLogementCommoditesPieceAVivre9m())
+            ->setTypeLogementCommoditesCuisine($compositionLogementRequest->getTypeLogementCommoditesCuisine())
+            ->setTypeLogementCommoditesCuisineCollective($compositionLogementRequest->getTypeLogementCommoditesCuisineCollective())
+            ->setTypeLogementCommoditesSalleDeBain($compositionLogementRequest->getTypeLogementCommoditesSalleDeBain())
+            ->setTypeLogementCommoditesSalleDeBainCollective($compositionLogementRequest->getTypeLogementCommoditesSalleDeBainCollective())
+            ->setTypeLogementCommoditesWc($compositionLogementRequest->getTypeLogementCommoditesWc())
+            ->setTypeLogementCommoditesWcCollective($compositionLogementRequest->getTypeLogementCommoditesWcCollective())
+            ->setTypeLogementCommoditesWcCuisine($compositionLogementRequest->getTypeLogementCommoditesWcCuisine());
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
 
         $this->save($signalement);
