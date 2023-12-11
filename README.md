@@ -145,3 +145,7 @@ Une activation de compte sera nécéssaire
 ## Documentation projet
 
 [Consulter la documentation](https://github.com/MTES-MCT/histologe/wiki)
+
+## Contribuer
+
+[Consulter les instructions de contributions](./CONTRIBUTING.md).
