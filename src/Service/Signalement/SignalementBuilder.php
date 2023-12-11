@@ -118,7 +118,7 @@ class SignalementBuilder
             ->setInformationProcedure($this->informationProcedureFactory->createFromSignalementDraftPayload($this->payload))
             ->setIsProprioAverti($this->evalBoolean($this->signalementDraftRequest->getInfoProcedureBailleurPrevenu()))
             ->setLoyer($this->signalementDraftRequest->getInformationsComplementairesLogementMontantLoyer())
-            ->setNbNiveauxLogement($this->signalementDraftRequest->getInformationsComplementairesLogementNombreEtages())
+            ->setNbNiveauxLogement((int) $this->signalementDraftRequest->getInformationsComplementairesLogementNombreEtages())
             ->setIsFondSolidariteLogement(
                 $this->evalBoolean(
                     $this->signalementDraftRequest->getInformationsComplementairesSituationOccupantsBeneficiaireFsl()
