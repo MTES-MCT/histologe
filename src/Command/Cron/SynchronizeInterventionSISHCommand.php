@@ -57,8 +57,9 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
         $io = new SymfonyStyle($input, $output);
         $uuidSignalement = $input->getArgument('uuid_signalement') ?? null;
         $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora(
-            PartnerType::ARS,
-            $uuidSignalement
+            partnerType: PartnerType::ARS,
+            isSynchronized: true,
+            uuidSignalement: $uuidSignalement
         );
 
         foreach ($affectations as $affectation) {

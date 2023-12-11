@@ -30,6 +30,24 @@ class AffectationRepository extends ServiceEntityRepository
         parent::__construct($registry, Affectation::class);
     }
 
+    public function save(Affectation $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(Affectation $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->remove($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
     public function countByStatusForUser($user, Territory|null $territory, Qualification $qualification = null, array $qualificationStatuses = null)
     {
         $qb = $this->createQueryBuilder('a')
@@ -79,20 +97,31 @@ class AffectationRepository extends ServiceEntityRepository
     /**
      * @return Affectation[]
      */
-    public function findAffectationSubscribedToEsabora(PartnerType $partnerType, ?string $uuidSignalement = null): array
-    {
+    public function findAffectationSubscribedToEsabora(
+        PartnerType $partnerType,
+        ?bool $isSynchronized = true,
+        ?string $uuidSignalement = null,
+        ?Territory $territory = null,
+    ): array {
         $qb = $this->createQueryBuilder('a');
         $qb = $qb->innerJoin('a.partner', 'p')
             ->where('p.esaboraUrl IS NOT NULL AND p.esaboraToken IS NOT NULL AND p.isEsaboraActive = 1')
             ->andWhere('p.type = :partner_type')
-            ->andWhere('a.isSynchronized = :is_synchronized')
-            ->setParameter('partner_type', $partnerType)
-            ->setParameter('is_synchronized', true);
+            ->setParameter('partner_type', $partnerType);
+
+        if (null !== $isSynchronized) {
+            $qb->andWhere('a.isSynchronized = :is_synchronized')
+                ->setParameter('is_synchronized', $isSynchronized);
+        }
 
         if (null !== $uuidSignalement) {
             $qb->innerJoin('a.signalement', 's')
                 ->andWhere('s.uuid LIKE :uuid_signalement')
                 ->setParameter('uuid_signalement', $uuidSignalement);
+        }
+
+        if (null !== $territory) {
+            $qb->andWhere('a.territory = :territory')->setParameter('territory', $territory);
         }
 
         return $qb->getQuery()->getResult();
