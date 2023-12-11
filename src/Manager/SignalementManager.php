@@ -398,6 +398,8 @@ class SignalementManager extends AbstractManager
             ->setTypeLogementCommoditesWcCuisine($compositionLogementRequest->getTypeLogementCommoditesWcCuisine());
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
 
+        // TODO : mise à jour des désordres liés à la composition du logement
+
         $this->save($signalement);
     }
 

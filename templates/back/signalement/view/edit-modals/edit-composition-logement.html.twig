@@ -1,4 +1,4 @@
-<dialog aria-labelledby="fr-modal-title-modal-edit-composition-logement" role="dialog" id="fr-modal-edit-composition-logement" class="fr-modal">
+<dialog aria-labelledby="fr-modal-title-modal-edit-composition-logement" id="fr-modal-edit-composition-logement" class="fr-modal">
     <div class="fr-container fr-container--fluid fr-container-md">
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-8">
@@ -282,7 +282,7 @@
                                         {% set typeLogementCommoditesWcCuisine = 'nsp' %}
                                     {% endif %}
                                 {% endif %}
-                                <label class="fr-label" for="typeLogementCommoditesWcCuisine">WC collectifs ?</label>
+                                <label class="fr-label" for="typeLogementCommoditesWcCuisine">WC et cuisine dans la même pièce ?</label>
                                 <select class="fr-select" name="typeLogementCommoditesWcCuisine">
                                     <option value="" disabled hidden>Sélectionnez un choix</option>
                                     <option value="oui" {{ typeLogementCommoditesWcCuisine is same as 'oui' ? 'selected' : '' }}>Oui</option>
