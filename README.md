@@ -142,6 +142,10 @@ $ php bin/console app:add-user ROLE_USER_PARTNER joe.doe.3@histologe.fr John Doe
 
 Une activation de compte sera nécéssaire
 
-## Documentaton projet
+## Documentation projet
 
 [Consulter la documentation](https://github.com/MTES-MCT/histologe/wiki)
+
+## Contribuer
+
+[Consulter les instructions de contributions](./CONTRIBUTING.md).
