@@ -14,6 +14,7 @@
         :labelInfo="component.labelInfo"
         :labelUpload="component.labelUpload"
         :description="component.description"
+        :placeholder="component.placeholder"
         :action="component.action"
         :link="component.link"
         :linktarget="component.linktarget"

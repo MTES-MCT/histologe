@@ -466,7 +466,7 @@ trait FixturesHelper
         return [
             'informations_complementaires_logement_montant_loyer' => '500',
             'informations_complementaires_logement_nombre_etages' => '5',
-            'informations_complementaires_logement_annee_construction' => '1970-02-10',
+            'informations_complementaires_logement_annee_construction' => '1970',
             'informations_complementaires_situation_occupants_beneficiaire_fsl' => 'non',
             'informations_complementaires_situation_occupants_beneficiaire_rsa' => 'non',
         ];

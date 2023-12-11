@@ -988,7 +988,8 @@ class Signalement
 
     public function getAddressCompleteOccupant(): ?string
     {
-        return sprintf('%s %s %s',
+        return sprintf(
+            '%s %s %s',
             $this->adresseOccupant,
             $this->cpOccupant,
             $this->villeOccupant

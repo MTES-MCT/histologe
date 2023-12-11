@@ -1192,10 +1192,11 @@
                 }
               },
               {
-                "type": "SignalementFormDate",
+                "type": "SignalementFormTextfield",
                 "label": "En quelle année le logement a-t-il été construit ?",
                 "slug": "informations_complementaires_logement_annee_construction",
                 "validate": {
+                  "pattern": "^[0-9]{4}$",
                   "required": false
                 }
               }
