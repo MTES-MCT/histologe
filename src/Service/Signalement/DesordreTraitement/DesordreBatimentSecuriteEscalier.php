@@ -16,17 +16,19 @@ class DesordreBatimentSecuriteEscalier implements DesordreTraitementInterface
     {
         $precisions = new ArrayCollection();
 
-        if (isset($payload['desordres_batiment_securite_escalier_details_utilisable'])
-            && 'oui' === $payload['desordres_batiment_securite_escalier_details_utilisable']) {
+        $slugUtilisable = 'desordres_batiment_securite_escalier_details_utilisable';
+        if (isset($payload[$slugUtilisable])
+            && 'oui' === $payload[$slugUtilisable]) {
             $precision = $this->desordrePrecisionRepository->findOneBy(
-                ['desordrePrecisionSlug' => 'desordres_batiment_securite_escalier_details_utilisable']
+                ['desordrePrecisionSlug' => $slugUtilisable]
             );
             $precisions->add($precision);
         }
-        if (isset($payload['desordres_batiment_securite_escalier_details_dangereux'])
-            && 'oui' === $payload['desordres_batiment_securite_escalier_details_dangereux']) {
+        $slugDangereux = 'desordres_batiment_securite_escalier_details_dangereux';
+        if (isset($payload[$slugDangereux])
+            && 'oui' === $payload[$slugDangereux]) {
             $precision = $this->desordrePrecisionRepository->findOneBy(
-                ['desordrePrecisionSlug' => 'desordres_batiment_securite_escalier_details_dangereux']
+                ['desordrePrecisionSlug' => $slugDangereux]
             );
             $precisions->add($precision);
         }

@@ -16,17 +16,19 @@ class DesordreBatimentSecuriteSol implements DesordreTraitementInterface
     {
         $precisions = new ArrayCollection();
 
-        if (isset($payload['desordres_batiment_securite_sol_details_plancher_abime'])
-            && 'oui' === $payload['desordres_batiment_securite_sol_details_plancher_abime']) {
+        $slugAbime = 'desordres_batiment_securite_sol_details_plancher_abime';
+        if (isset($payload[$slugAbime])
+            && 'oui' === $payload[$slugAbime]) {
             $precision = $this->desordrePrecisionRepository->findOneBy(
-                ['desordrePrecisionSlug' => 'desordres_batiment_securite_sol_details_plancher_abime']
+                ['desordrePrecisionSlug' => $slugAbime]
             );
             $precisions->add($precision);
         }
-        if (isset($payload['desordres_batiment_securite_sol_details_plancher_effondre'])
-            && 'oui' === $payload['desordres_batiment_securite_sol_details_plancher_effondre']) {
+        $slugEffondre = 'desordres_batiment_securite_sol_details_plancher_effondre';
+        if (isset($payload[$slugEffondre])
+            && 'oui' === $payload[$slugEffondre]) {
             $precision = $this->desordrePrecisionRepository->findOneBy(
-                ['desordrePrecisionSlug' => 'desordres_batiment_securite_sol_details_plancher_effondre']
+                ['desordrePrecisionSlug' => $slugEffondre]
             );
             $precisions->add($precision);
         }

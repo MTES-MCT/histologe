@@ -23,7 +23,6 @@ use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
 use App\Service\Token\TokenGeneratorInterface;
 use App\Service\UploadHandlerService;
 use App\Utils\DataPropertyArrayFilter;
-use App\Utils\Json;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -323,9 +322,9 @@ class SignalementBuilder
         $suroccupation = false;
         if ('oui' === $situationFoyer->getLogementSocialAllocation()) {
             $superficie = $typeCompositionLogement->getCompositionLogementSuperficie();
-            if (1 === $nbOccupants && $superficie >= 9) {
+            if (1 === $nbOccupants && $superficie < 9) {
                 $suroccupation = true;
-            } elseif (2 === $nbOccupants && $superficie >= 16) {
+            } elseif (2 === $nbOccupants && $superficie < 16) {
                 $suroccupation = true;
             } elseif ($nbOccupants > 2) {
                 $superficieNecessaire = 16 + (($nbOccupants - 2) * 9);
@@ -339,7 +338,7 @@ class SignalementBuilder
             }
         } else {
             $nbPieces = $typeCompositionLogement->getCompositionLogementNbPieces();
-            if ($nbPieces < 2 * $nbOccupants) {
+            if ($nbPieces < $nbOccupants / 2) {
                 $suroccupation = true;
                 $slugPrecionSuroccupation = 'desordres_type_composition_logement_suroccupation_non_allocataire';
             }
