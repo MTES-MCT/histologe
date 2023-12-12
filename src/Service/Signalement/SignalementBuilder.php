@@ -9,6 +9,8 @@ use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
+use App\Exception\Signalement\DesordreTraitementProcessorNotFound;
+use App\Exception\Signalement\PrecisionNotFound;
 use App\Factory\FileFactory;
 use App\Factory\Signalement\InformationComplementaireFactory;
 use App\Factory\Signalement\InformationProcedureFactory;
@@ -25,7 +27,6 @@ use App\Service\Token\TokenGeneratorInterface;
 use App\Service\UploadHandlerService;
 use App\Specification\Signalement\SuroccupationSpecification;
 use App\Utils\DataPropertyArrayFilter;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class SignalementBuilder
@@ -54,7 +55,6 @@ class SignalementBuilder
         private DesordrePrecisionRepository $desordrePrecisionRepository,
         private DesordreTraitementProcessor $desordreTraitementProcessor,
         private DesordreCritereManager $desordreCritereManager,
-        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -138,6 +138,10 @@ class SignalementBuilder
         return $this;
     }
 
+    /**
+     * @throws PrecisionNotFound
+     * @throws DesordreTraitementProcessorNotFound
+     */
     private function processDesordresByZone(string $zone)
     {
         $categoryDisorders = $this->signalementDraftRequest->getCategorieDisorders();
@@ -175,21 +179,11 @@ class SignalementBuilder
                                 if (null !== $desordrePrecision) {
                                     $this->signalement->addDesordrePrecision($desordrePrecision);
                                 } else {
-                                    $this->logger->error(
-                                        sprintf(
-                                            '#%s - Le desordreTraitementProcessor a été trouvé, mais aucune précision ne correspond',
-                                            $slugCritere,
-                                        )
-                                    );
+                                    throw new PrecisionNotFound($slugCritere);
                                 }
                             }
                         } else {
-                            $this->logger->error(
-                                sprintf(
-                                    '#%s - Le desordreTraitementProcessor n\a pas été trouvé',
-                                    $slugCritere,
-                                )
-                            );
+                            throw new DesordreTraitementProcessorNotFound($slugCritere);
                         }
                     }
                 }
