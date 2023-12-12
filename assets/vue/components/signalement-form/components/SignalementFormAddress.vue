@@ -113,7 +113,7 @@ export default defineComponent({
         clearTimeout(this.idFetchTimeout)
         this.idFetchTimeout = setTimeout(() => {
           if (newValue.length > 10) {
-            requests.validateAddress(newValue, this.onAddressFound)
+            requests.validateAddress(newValue, this.handleAddressFound)
           }
         }, 200)
       }
@@ -141,7 +141,9 @@ export default defineComponent({
         this.formStore.data[this.id + '_detail_insee'] = this.suggestions[index].properties.citycode
         this.formStore.data[this.id + '_detail_geoloc_lng'] = this.suggestions[index].geometry.coordinates[0]
         this.formStore.data[this.id + '_detail_geoloc_lat'] = this.suggestions[index].geometry.coordinates[1]
-        requests.checkTerritory(this.suggestions[index].properties.postcode, this.suggestions[index].properties.citycode, this.onTerritoryChecked);
+        if(this.id == "adresse_logement_adresse"){
+          requests.checkTerritory(this.suggestions[index].properties.postcode, this.suggestions[index].properties.citycode, this.handleTerritoryChecked);
+        }
         this.suggestions.length = 0
       }
       const subscreen = document.querySelector('#' + this.idSubscreen)
@@ -153,10 +155,10 @@ export default defineComponent({
         buttonShow.classList.add('fr-hidden')
       }
     },
-    onAddressFound (requestResponse: any) {
+    handleAddressFound (requestResponse: any) {
       this.suggestions = requestResponse.features
     },
-    onTerritoryChecked (requestResponse: any) {
+    handleTerritoryChecked (requestResponse: any) {
       if(!requestResponse.success) {
           this.modalLabel = requestResponse.label
           this.modalDescription = requestResponse.message

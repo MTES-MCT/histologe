@@ -28,7 +28,7 @@ class SignalementDraftRequest
     private ?string $adresseLogementAdresseDetailCodePostal = null;
     #[Assert\NotBlank(message: 'Merci de saisir une ville.')]
     private ?string $adresseLogementAdresseDetailCommune = null;
-    #[Assert\NotBlank(message: 'Merci de saisir une code INSEE.')]
+    #[Assert\NotBlank(message: 'Merci de saisir un code INSEE.')]
     private ?string $adresseLogementAdresseDetailInsee = null;
     private ?float $adresseLogementAdresseDetailGeolocLat = null;
     private ?float $adresseLogementAdresseDetailGeolocLng = null;

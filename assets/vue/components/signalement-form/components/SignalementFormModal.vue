@@ -33,12 +33,12 @@ export default defineComponent({
     closeModal() {
       this.$emit('update:modelValue', false);
     },
-    onEscapeKey(event: any) {
+    handleEscapeKey(event: any) {
       if (event.key === 'Escape') {
         this.closeModal();
       }
     },
-    onClickOutside(event: any) {
+    handleClickOutside(event: any) {
       const modalDialog = this.$refs.modalDialog as Ref<HTMLElement>;
       if (modalDialog && event.target == modalDialog) {
         this.closeModal();
@@ -46,12 +46,12 @@ export default defineComponent({
     }
   },
   mounted() {
-    document.addEventListener('keyup', this.onEscapeKey);
-    document.addEventListener('click', this.onClickOutside);
+    document.addEventListener('keyup', this.handleEscapeKey);
+    document.addEventListener('click', this.handleClickOutside);
   },
   beforeUnmount() {
-    document.removeEventListener('keyup', this.onEscapeKey);
-    document.removeEventListener('click', this.onClickOutside);
+    document.removeEventListener('keyup', this.handleEscapeKey);
+    document.removeEventListener('click', this.handleClickOutside);
   }
 })
 </script>
