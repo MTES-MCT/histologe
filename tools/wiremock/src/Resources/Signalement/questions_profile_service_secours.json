@@ -404,7 +404,7 @@
         },
         {
           "type": "SignalementFormCounter",
-          "label": "Quelle est la superficie du logement (taille en m²)",
+          "label": "Quelle est la superficie du logement (taille en m²) (facultatif)",
           "slug": "composition_logement_superficie",
           "validate": {
             "required": false

@@ -7,20 +7,26 @@ use Symfony\Component\Validator\Constraints as Assert;
 class CompositionLogementRequest
 {
     public function __construct(
-        #[Assert\NotBlank(['message' => 'Veuillez sélectionner le nombre de pièces du logement'])]
+        #[Assert\NotBlank(['message' => 'Merci de définir si il y a plusieurs pièces dans le logement'])]
         private readonly ?string $typeCompositionLogement = null,
+        #[Assert\NotBlank(message: 'Merci de saisir la superficie du logement.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
         private readonly ?string $superficie = null,
+        #[Assert\NotBlank(message: 'Merci de définir la hauteur du logement.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS'])]
         private readonly ?string $compositionLogementHauteur = null,
         private readonly ?string $compositionLogementNbPieces = null,
         private readonly ?string $typeLogementRdc = null,
         private readonly ?string $typeLogementDernierEtage = null,
         private readonly ?string $typeLogementSousCombleSansFenetre = null,
         private readonly ?string $typeLogementSousSolSansFenetre = null,
+        #[Assert\NotBlank(message: 'Merci de définir si une pièce fait plus de 9m².', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER'])]
         private readonly ?string $typeLogementCommoditesPieceAVivre9m = null,
+        #[Assert\NotBlank(message: 'Merci de définir si il y a une cuisine.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS'])]
         private readonly ?string $typeLogementCommoditesCuisine = null,
         private readonly ?string $typeLogementCommoditesCuisineCollective = null,
+        #[Assert\NotBlank(message: 'Merci de définir si il y a une salle de bain.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS'])]
         private readonly ?string $typeLogementCommoditesSalleDeBain = null,
         private readonly ?string $typeLogementCommoditesSalleDeBainCollective = null,
+        #[Assert\NotBlank(message: 'Merci de définir si il y a des WC.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS'])]
         private readonly ?string $typeLogementCommoditesWc = null,
         private readonly ?string $typeLogementCommoditesWcCollective = null,
         private readonly ?string $typeLogementCommoditesWcCuisine = null,
