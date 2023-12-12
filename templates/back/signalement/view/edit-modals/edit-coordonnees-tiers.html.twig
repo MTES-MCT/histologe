@@ -36,6 +36,7 @@
                                 <label class="fr-label" for="lien">Lien avec l'occupant</label>
                                 <select class="fr-select" name="lien">
                                     <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ signalement.lienDeclarantOccupant is same as '' ? 'selected' : '' }}>N/C</option>
                                     <option value="PROCHE" {{ signalement.lienDeclarantOccupant is same as 'PROCHE' ? 'selected' : '' }}>Proche</option>
                                     <option value="VOISIN" {{ signalement.lienDeclarantOccupant is same as 'VOISIN' ? 'selected' : '' }}>Voisinage</option>
                                     <option value="SECOURS" {{ signalement.lienDeclarantOccupant is same as 'SECOURS' ? 'selected' : '' }}>Service de secours</option>
