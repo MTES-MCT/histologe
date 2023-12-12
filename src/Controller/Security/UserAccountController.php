@@ -30,7 +30,7 @@ class UserAccountController extends AbstractController
         $title = 'Activation de votre compte';
         if ($request->isMethod('POST') && $email = $request->request->get('email')) {
             $user = $userRepository->findOneBy(['email' => $email]);
-            if ($user && User::STATUS_ARCHIVE != $user->getStatut()) {
+            if ($user && User::STATUS_ARCHIVE != $user->getStatut() && !\in_array('ROLE_USAGER', $user->getRoles())) {
                 $notificationMailerRegistry->send(
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_FROM_FO,
@@ -72,7 +72,7 @@ class UserAccountController extends AbstractController
         $title = 'Récupération de votre mot de passe';
         if ($request->isMethod('POST') && $email = $request->request->get('email')) {
             $user = $userRepository->findOneBy(['email' => $email]);
-            if ($user && User::STATUS_ARCHIVE != $user->getStatut()) {
+            if ($user && User::STATUS_ARCHIVE != $user->getStatut() && !\in_array('ROLE_USAGER', $user->getRoles())) {
                 $notificationMailerRegistry->send(
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_LOST_PASSWORD,
