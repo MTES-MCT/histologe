@@ -1013,7 +1013,7 @@ desordre_precision:
     is_danger: 0
     label: "Brancher multiprises les unes aux autres > NON ou NE SAIS PAS - "
     qualification: ['NON_DECENCE', 'RSD']
-    desordre_precision_slug: "desordres_logement_electricite_manque_prises_details_multiprise_non"
+    desordre_precision_slug: "desordres_logement_electricite_manque_prises_details_multiprises_non"
     is_suroccupation: 0
   -
     desordre_critere_slug: "desordres_logement_nuisibles_cafards" 

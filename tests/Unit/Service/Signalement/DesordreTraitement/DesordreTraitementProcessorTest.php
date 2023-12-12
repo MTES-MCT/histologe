@@ -7,7 +7,6 @@ use App\Entity\DesordreCritere;
 use App\Service\Signalement\DesordreTraitement\DesordreLogementHumidite;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementNuisibles;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
-use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 
 class DesordreTraitementProcessorTest extends TestCase
@@ -85,7 +84,7 @@ class DesordreTraitementProcessorTest extends TestCase
             'desordres_logement_humidite' => $desordreLogementHumidite,
         ]);
 
-        /** @var ArrayCollection $precisions */
+        /** @var array $precisions */
         $precisions = $desordreTraitementProcessor->findDesordresPrecisionsBy(
             $desordreCritere,
             $payload
