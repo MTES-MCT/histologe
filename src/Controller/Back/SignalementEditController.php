@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Dto\Request\Signalement\AdresseOccupantRequest;
+use App\Dto\Request\Signalement\CompositionLogementRequest;
 use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
 use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
@@ -183,6 +184,39 @@ class SignalementEditController extends AbstractController
             if (empty($errorMessage)) {
                 $signalementManager->updateFromInformationsLogementRequest($signalement, $informationsLogementRequest);
                 $this->addFlash('success', 'Les informations du logement ont bien été modifiées.');
+            } else {
+                $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
+            }
+        } else {
+            $this->addFlash('error', 'Une erreur est survenue...');
+        }
+
+        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+    }
+
+    #[Route('/{uuid}/edit-composition-logement', name: 'back_signalement_edit_composition_logement', methods: 'POST')]
+    public function editCompositionLogement(
+        Signalement $signalement,
+        Request $request,
+        SignalementManager $signalementManager,
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+    ): Response {
+        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        if ($this->isCsrfTokenValid('signalement_edit_composition_logement_'.$signalement->getId(), $request->get('_token'))) {
+            /** @var CompositionLogementRequest $compositionLogementRequest */
+            $compositionLogementRequest = $serializer->deserialize(
+                json_encode($request->getPayload()->all()),
+                CompositionLogementRequest::class,
+                'json'
+            );
+
+            $validationGroups = ['Default'];
+            $errorMessage = $this->getErrorMessage($validator, $compositionLogementRequest, $validationGroups);
+
+            if (empty($errorMessage)) {
+                $signalementManager->updateFromCompositionLogementRequest($signalement, $compositionLogementRequest);
+                $this->addFlash('success', 'La composition du logement a bien été modifiée.');
             } else {
                 $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
             }

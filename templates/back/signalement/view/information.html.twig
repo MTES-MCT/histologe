@@ -19,7 +19,9 @@
 <div class="fr-container--fluid">
     <div class="fr-grid-row fr-grid-row--gutters">
         {% if signalement.isNotOccupant %}
-        {% include 'back/signalement/view/edit-modals/edit-coordonnees-tiers.html.twig' %}
+            {% if isNewFormEnabled %}
+            {% include 'back/signalement/view/edit-modals/edit-coordonnees-tiers.html.twig' %}
+            {% endif %}
         <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
             <div class="fr-p-3v fr-background-alt--grey">
                 <div class="fr-grid-row">
@@ -69,7 +71,9 @@
         {% endif %}
 
         <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
-            {% include 'back/signalement/view/edit-modals/edit-coordonnees-foyer.html.twig' %}
+            {% if isNewFormEnabled %}
+                {% include 'back/signalement/view/edit-modals/edit-coordonnees-foyer.html.twig' %}
+            {% endif %}
             <div class="fr-p-3v fr-background-alt--grey">
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-9">
@@ -112,7 +116,9 @@
         {% if not signalement.profileDeclarant or (signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT 
         and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR) %}
            <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
-                {% include 'back/signalement/view/edit-modals/edit-coordonnees-bailleur.html.twig' %}
+                {% if isNewFormEnabled %}
+                    {% include 'back/signalement/view/edit-modals/edit-coordonnees-bailleur.html.twig' %}
+                {% endif %}
                 <div class="fr-p-3v fr-background-alt--grey">
                     <div class="fr-grid-row">
                         <div class="fr-col-12 fr-col-md-9">
@@ -162,7 +168,9 @@
         {% endif %}
 
         <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
+            {% if isNewFormEnabled %}
             {% include 'back/signalement/view/edit-modals/edit-informations-logement.html.twig' %}
+            {% endif %}
             <div class="fr-p-3v fr-background-alt--grey">
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-9">
@@ -265,12 +273,18 @@
         </div>
 
         <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
+            {% if isNewFormEnabled %}
+            {% include 'back/signalement/view/edit-modals/edit-composition-logement.html.twig' %}
+            {% endif %}
             <div class="fr-p-3v fr-background-alt--grey">
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-9">
                         <h4 class="fr-h6">Composition du logement</h4>
                     </div>
                     <div class="fr-col-12 fr-col-md-3 fr-text--right">
+                        {% if isNewFormEnabled %}
+                        <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-composition-logement" class="fr-btn--icon-left fr-icon-edit-line">Modifier</a>
+                        {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Logement :</strong>
@@ -430,7 +444,9 @@
         </div>
 
         <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
+            {% if isNewFormEnabled %}
             {% include 'back/signalement/view/edit-modals/edit-situation-foyer.html.twig' %}
+            {% endif %}
             <div class="fr-p-3v fr-background-alt--grey">
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-9">
@@ -526,7 +542,9 @@
         </div>
 
         <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
+            {% if isNewFormEnabled %}
             {% include 'back/signalement/view/edit-modals/edit-procedure-demarches.html.twig' %}
+            {% endif %}
             <div class="fr-p-3v fr-background-alt--grey">
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-col-md-9">
