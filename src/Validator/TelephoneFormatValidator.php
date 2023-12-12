@@ -29,8 +29,8 @@ class TelephoneFormatValidator extends ConstraintValidator
         try {
             $phoneNumberUtil = PhoneNumberUtil::getInstance();
             $phoneNumberParsed = $phoneNumberUtil->parse($value, 'FR');
-            $isValid = $phoneNumberUtil->isValidNumber($phoneNumberParsed);
-            if (!$isValid) {
+            $isPossible = $phoneNumberUtil->isPossibleNumber($phoneNumberParsed);
+            if (!$isPossible) {
                 $this->context->buildViolation($constraint->message)
                     ->setParameter('{{ value }}', $value)
                     ->atPath('telephone')
