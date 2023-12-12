@@ -5,7 +5,6 @@ namespace App\Tests\Functional\Service\Signalement;
 use App\Entity\DesordrePrecision;
 use App\Service\Signalement\DesordreTraitement\DesordreLogementElectriciteManquePrises;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementOuiNon;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -21,7 +20,7 @@ class DesordreLogementElectriciteManquePrisesTest extends KernelTestCase
         $this->desordreTraitementOuiNon = static::getContainer()->get(DesordreTraitementOuiNon::class);
     }
 
-    public function testProcess()
+    public function testFindDesordresPrecisionsBy()
     {
         $desordrePrecisionRepository = $this->entityManager->getRepository(DesordrePrecision::class);
 
@@ -30,8 +29,8 @@ class DesordreLogementElectriciteManquePrisesTest extends KernelTestCase
             true
         );
 
-        /** @var ArrayCollection $precisions */
-        $precisions = (new DesordreLogementElectriciteManquePrises($desordrePrecisionRepository, $this->desordreTraitementOuiNon))->process(
+        /** @var array $precisions */
+        $precisions = (new DesordreLogementElectriciteManquePrises($desordrePrecisionRepository, $this->desordreTraitementOuiNon))->findDesordresPrecisionsBy(
             $payload,
             'desordres_logement_electricite_manque_prises'
         );
@@ -39,7 +38,7 @@ class DesordreLogementElectriciteManquePrisesTest extends KernelTestCase
         $this->assertEquals(1, \count($precisions));
 
         /** @var DesordrePrecision $precision */
-        $precision = $precisions->first();
+        $precision = $precisions[0];
         $this->assertEquals(
             'desordres_logement_electricite_manque_prises_details_multiprises_oui',
             $precision->getDesordrePrecisionSlug()

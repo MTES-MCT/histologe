@@ -4,7 +4,6 @@ namespace App\Tests\Functional\Service\Signalement;
 
 use App\Entity\DesordrePrecision;
 use App\Service\Signalement\DesordreTraitement\DesordreBatimentIsolationDernierEtageToit;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -18,7 +17,7 @@ class DesordreBatimentIsolationDernierEtageToitTest extends KernelTestCase
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
     }
 
-    public function testProcess()
+    public function testFindDesordresPrecisionsBy()
     {
         $desordrePrecisionRepository = $this->entityManager->getRepository(DesordrePrecision::class);
 
@@ -27,8 +26,8 @@ class DesordreBatimentIsolationDernierEtageToitTest extends KernelTestCase
             true
         );
 
-        /** @var ArrayCollection $precisions */
-        $precisions = (new DesordreBatimentIsolationDernierEtageToit($desordrePrecisionRepository))->process(
+        /** @var array $precisions */
+        $precisions = (new DesordreBatimentIsolationDernierEtageToit($desordrePrecisionRepository))->findDesordresPrecisionsBy(
             $payload,
             'desordres_batiment_isolation_dernier_etage_toit'
         );
@@ -36,7 +35,7 @@ class DesordreBatimentIsolationDernierEtageToitTest extends KernelTestCase
         $this->assertEquals(1, \count($precisions));
 
         /** @var DesordrePrecision $precision */
-        $precision = $precisions->first();
+        $precision = $precisions[0];
         $this->assertEquals(
             'desordres_batiment_isolation_dernier_etage_toit_sous_toit_oui',
             $precision->getDesordrePrecisionSlug()

@@ -3,7 +3,6 @@
 namespace App\Service\Signalement\DesordreTraitement;
 
 use App\Repository\DesordrePrecisionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 
 class DesordreBatimentIsolationInfiltrationEau implements DesordreTraitementInterface
 {
@@ -12,9 +11,9 @@ class DesordreBatimentIsolationInfiltrationEau implements DesordreTraitementInte
     ) {
     }
 
-    public function process(array $payload, string $slug): ArrayCollection
+    public function findDesordresPrecisionsBy(array $payload, string $slug): array
     {
-        $precisions = new ArrayCollection();
+        $precisions = [];
 
         if ('maison' === $payload['type_logement_nature']
             || (\array_key_exists('type_logement_sous_sol_sans_fenetre', $payload) && 'oui' === $payload['type_logement_sous_sol_sans_fenetre'])
@@ -27,7 +26,7 @@ class DesordreBatimentIsolationInfiltrationEau implements DesordreTraitementInte
                 ['desordrePrecisionSlug' => 'desordres_batiment_isolation_infiltration_eau_au_sol_non']
             );
         }
-        $precisions->add($precision);
+        $precisions[] = $precision;
 
         return $precisions;
     }

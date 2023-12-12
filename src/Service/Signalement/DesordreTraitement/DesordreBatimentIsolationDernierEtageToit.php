@@ -3,7 +3,6 @@
 namespace App\Service\Signalement\DesordreTraitement;
 
 use App\Repository\DesordrePrecisionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 
 class DesordreBatimentIsolationDernierEtageToit implements DesordreTraitementInterface
 {
@@ -12,9 +11,9 @@ class DesordreBatimentIsolationDernierEtageToit implements DesordreTraitementInt
     ) {
     }
 
-    public function process(array $payload, string $slug): ArrayCollection
+    public function findDesordresPrecisionsBy(array $payload, string $slug): array
     {
-        $precisions = new ArrayCollection();
+        $precisions = [];
 
         if ('maison' === $payload['type_logement_nature']
             || 'oui' === $payload['type_logement_sous_comble_sans_fenetre']
@@ -27,7 +26,7 @@ class DesordreBatimentIsolationDernierEtageToit implements DesordreTraitementInt
                 ['desordrePrecisionSlug' => 'desordres_batiment_isolation_dernier_etage_toit_sous_toit_non']
             );
         }
-        $precisions->add($precision);
+        $precisions[] = $precision;
 
         return $precisions;
     }

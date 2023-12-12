@@ -3,7 +3,6 @@
 namespace App\Service\Signalement\DesordreTraitement;
 
 use App\Repository\DesordrePrecisionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 
 class DesordreLogementSecuritePlomb implements DesordreTraitementInterface
 {
@@ -13,19 +12,19 @@ class DesordreLogementSecuritePlomb implements DesordreTraitementInterface
     ) {
     }
 
-    public function process(array $payload, string $slug): ArrayCollection
+    public function findDesordresPrecisionsBy(array $payload, string $slug): array
     {
-        $precisions = new ArrayCollection();
+        $precisions = [];
 
         if (isset($payload['desordres_logement_securite_plomb_details_diagnostique'])) {
             if ('oui' === $payload['desordres_logement_securite_plomb_details_diagnostique']) {
-                $precisions = $this->desordreTraitementPieces->process(
+                $precisions = $this->desordreTraitementPieces->findDesordresPrecisionsBy(
                     $payload,
                     'desordres_logement_securite_plomb',
                     '_diagnostique_oui'
                 );
             } else {
-                $precisions = $this->desordreTraitementPieces->process(
+                $precisions = $this->desordreTraitementPieces->findDesordresPrecisionsBy(
                     $payload,
                     'desordres_logement_securite_plomb',
                     '_diagnostique_non'

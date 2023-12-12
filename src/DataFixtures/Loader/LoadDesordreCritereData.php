@@ -35,7 +35,7 @@ class LoadDesordreCritereData extends Fixture implements OrderedFixtureInterface
             ->setZoneCategorie(DesordreCritereZone::from($row['zone_categorie']))
             ->setSlugCritere($row['slug_critere'])
             ->setLabelCritere($row['label_critere'])
-            ->setDesordreCategorie($this->desordreCategorieRepository->findOneBy(['id' => $row['desordre_categorie_id']]));
+            ->setDesordreCategorie($this->desordreCategorieRepository->findOneBy(['label' => $row['desordre_categorie_label']]));
 
         $manager->persist($desordreCritere);
     }

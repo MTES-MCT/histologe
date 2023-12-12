@@ -3,7 +3,6 @@
 namespace App\Service\Signalement\DesordreTraitement;
 
 use App\Entity\DesordreCritere;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 
 class DesordreTraitementProcessor
@@ -17,7 +16,7 @@ class DesordreTraitementProcessor
         $this->desordreTraitements = $desordreTraitements;
     }
 
-    public function process(DesordreCritere $critere, array $payload): ArrayCollection|null
+    public function findDesordresPrecisionsBy(DesordreCritere $critere, array $payload): array|null
     {
         $slug = $critere->getSlugCritere();
         $desordreTraitementsHandlers = $this->desordreTraitements instanceof \Traversable ?
@@ -25,9 +24,9 @@ class DesordreTraitementProcessor
             $this->desordreTraitements;
 
         if (\array_key_exists($slug, $desordreTraitementsHandlers)) {
-            $desordreCritereProcessor = $desordreTraitementsHandlers[$slug];
-            if ($desordreCritereProcessor) {
-                $desordrePrecisions = $desordreCritereProcessor->process($payload, $slug);
+            $desordreCritereHandler = $desordreTraitementsHandlers[$slug];
+            if ($desordreCritereHandler) {
+                $desordrePrecisions = $desordreCritereHandler->findDesordresPrecisionsBy($payload, $slug);
 
                 return $desordrePrecisions;
             }

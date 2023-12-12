@@ -5,7 +5,6 @@ namespace App\Tests\Functional\Service\Signalement;
 use App\Entity\DesordrePrecision;
 use App\Service\Signalement\DesordreTraitement\DesordreBatimentSecuriteMursFissures;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementOuiNon;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -21,7 +20,7 @@ class DesordreBatimentSecuriteMursFissuresTest extends KernelTestCase
         $this->desordreTraitementOuiNon = static::getContainer()->get(DesordreTraitementOuiNon::class);
     }
 
-    public function testProcess()
+    public function testFindDesordresPrecisionsBy()
     {
         $desordrePrecisionRepository = $this->entityManager->getRepository(DesordrePrecision::class);
 
@@ -30,8 +29,8 @@ class DesordreBatimentSecuriteMursFissuresTest extends KernelTestCase
             true
         );
 
-        /** @var ArrayCollection $precisions */
-        $precisions = (new DesordreBatimentSecuriteMursFissures($desordrePrecisionRepository, $this->desordreTraitementOuiNon))->process(
+        /** @var array $precisions */
+        $precisions = (new DesordreBatimentSecuriteMursFissures($desordrePrecisionRepository, $this->desordreTraitementOuiNon))->findDesordresPrecisionsBy(
             $payload,
             'desordres_batiment_securite_murs_fissures'
         );
@@ -39,7 +38,7 @@ class DesordreBatimentSecuriteMursFissuresTest extends KernelTestCase
         $this->assertEquals(1, \count($precisions));
 
         /** @var DesordrePrecision $precision */
-        $precision = $precisions->first();
+        $precision = $precisions[0];
         $this->assertEquals(
             'desordres_batiment_securite_murs_fissures_details_mur_porteur_oui',
             $precision->getDesordrePrecisionSlug()

@@ -3,7 +3,6 @@
 namespace App\Service\Signalement\DesordreTraitement;
 
 use App\Repository\DesordrePrecisionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 
 class DesordreLogementElectriciteManquePrises implements DesordreTraitementInterface
 {
@@ -13,9 +12,9 @@ class DesordreLogementElectriciteManquePrises implements DesordreTraitementInter
     ) {
     }
 
-    public function process(array $payload, string $slug): ArrayCollection
+    public function findDesordresPrecisionsBy(array $payload, string $slug): array
     {
-        $precisions = $this->desordreTraitementOuiNon->process(
+        $precisions = $this->desordreTraitementOuiNon->findDesordresPrecisionsBy(
             $payload,
             'desordres_logement_electricite_manque_prises_details_multiprises'
         );

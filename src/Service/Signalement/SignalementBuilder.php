@@ -14,6 +14,7 @@ use App\Factory\Signalement\InformationComplementaireFactory;
 use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
 use App\Factory\Signalement\TypeCompositionLogementFactory;
+use App\Manager\DesordreCritereManager;
 use App\Repository\DesordreCategorieRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
@@ -22,6 +23,7 @@ use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
 use App\Service\Token\TokenGeneratorInterface;
 use App\Service\UploadHandlerService;
+use App\Specification\Signalement\SuroccupationSpecification;
 use App\Utils\DataPropertyArrayFilter;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -51,6 +53,7 @@ class SignalementBuilder
         private DesordreCritereRepository $desordreCritereRepository,
         private DesordrePrecisionRepository $desordrePrecisionRepository,
         private DesordreTraitementProcessor $desordreTraitementProcessor,
+        private DesordreCritereManager $desordreCritereManager,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -138,7 +141,9 @@ class SignalementBuilder
     private function processDesordresByZone(string $zone)
     {
         $categoryDisorders = $this->signalementDraftRequest->getCategorieDisorders();
-        if (isset($categoryDisorders[$zone]) && !empty($categoryDisorders[$zone])) {
+        if (isset($categoryDisorders[$zone])
+        && \is_array($categoryDisorders[$zone])
+        && !empty($categoryDisorders[$zone])) {
             foreach ($categoryDisorders[$zone] as $categoryDisorderSlug) {
                 // on récupère dans le draft toutes les infos liées à cette catégorie de désordres
                 $filteredData = DataPropertyArrayFilter::filterByPrefix(
@@ -146,21 +151,10 @@ class SignalementBuilder
                     [$categoryDisorderSlug]
                 );
 
-                // on récupère en base tous les critères de cette catégorie de désordres
-                $criteres = $this->desordreCritereRepository->findBy(['slugCategorie' => $categoryDisorderSlug]);
+                // on récupère tous les slugs des critères de cette catégorie de désordres
+                $availableCritereSlugs = $this->desordreCritereManager->getCriteresSlugsByCategorie($categoryDisorderSlug);
 
-                // chercher et lier les critères qu'on a dans le signalement
-                $availableCritereSlugs = array_map(fn ($critere) => $critere->getSlugCritere(), $criteres);
-
-                $critereSlugDraft = array_filter($filteredData, function ($value, $slug) use ($availableCritereSlugs) {
-                    if (\in_array($slug, $availableCritereSlugs)) {
-                        if (1 === $value) {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                }, \ARRAY_FILTER_USE_BOTH);
+                $critereSlugDraft = $this->desordreCritereManager->getCriteresSlugsInDraft($filteredData, $availableCritereSlugs);
 
                 $critereToLink = null;
                 foreach ($critereSlugDraft as $slugCritere => $value) {
@@ -175,7 +169,7 @@ class SignalementBuilder
                         }
                     } else {
                         // passe par un service spécifique pour évaluer les précisions à ajouter sur ce critère
-                        $desordrePrecisions = $this->desordreTraitementProcessor->process($critereToLink, $this->payload);
+                        $desordrePrecisions = $this->desordreTraitementProcessor->findDesordresPrecisionsBy($critereToLink, $this->payload);
                         if (null !== $desordrePrecisions) {
                             foreach ($desordrePrecisions as $desordrePrecision) {
                                 if (null !== $desordrePrecision) {
@@ -315,35 +309,11 @@ class SignalementBuilder
                 );
             }
         }
+
         /** @var SituationFoyer $situationFoyer */
         $situationFoyer = $this->situationFoyerFactory->createFromSignalementDraftPayload($this->payload);
-
-        $nbOccupants = (int) $typeCompositionLogement->getCompositionLogementNombrePersonnes();
-        $suroccupation = false;
-        if ('oui' === $situationFoyer->getLogementSocialAllocation()) {
-            $superficie = $typeCompositionLogement->getCompositionLogementSuperficie();
-            if (1 === $nbOccupants && $superficie < 9) {
-                $suroccupation = true;
-            } elseif (2 === $nbOccupants && $superficie < 16) {
-                $suroccupation = true;
-            } elseif ($nbOccupants > 2) {
-                $superficieNecessaire = 16 + (($nbOccupants - 2) * 9);
-
-                if ($superficie < $superficieNecessaire) {
-                    $suroccupation = true;
-                }
-            }
-            if ($suroccupation) {
-                $slugPrecionSuroccupation = 'desordres_type_composition_logement_suroccupation_allocataire';
-            }
-        } else {
-            $nbPieces = $typeCompositionLogement->getCompositionLogementNbPieces();
-            if ($nbPieces < $nbOccupants / 2) {
-                $suroccupation = true;
-                $slugPrecionSuroccupation = 'desordres_type_composition_logement_suroccupation_non_allocataire';
-            }
-        }
-        if ($suroccupation && isset($slugPrecionSuroccupation)) {
+        $suroccupationSpecification = new SuroccupationSpecification();
+        if ($suroccupationSpecification->isSatisfiedBy($situationFoyer, $typeCompositionLogement)) {
             $critereToLink = $this->desordreCritereRepository->findOneBy(
                 ['slugCritere' => 'desordres_type_composition_logement_suroccupation']
             );
@@ -351,7 +321,7 @@ class SignalementBuilder
                 $this->signalement->addDesordreCritere($critereToLink);
             }
             $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
-                ['desordrePrecisionSlug' => $slugPrecionSuroccupation]
+                ['desordrePrecisionSlug' => $suroccupationSpecification->getSlug()]
             );
             if (null !== $precisionToLink) {
                 $this->signalement->addDesordrePrecision($precisionToLink);

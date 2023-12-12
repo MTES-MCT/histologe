@@ -3,7 +3,6 @@
 namespace App\Service\Signalement\DesordreTraitement;
 
 use App\Repository\DesordrePrecisionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 
 class DesordreBatimentSecuriteSol implements DesordreTraitementInterface
 {
@@ -12,9 +11,9 @@ class DesordreBatimentSecuriteSol implements DesordreTraitementInterface
     ) {
     }
 
-    public function process(array $payload, string $slug): ArrayCollection
+    public function findDesordresPrecisionsBy(array $payload, string $slug): array
     {
-        $precisions = new ArrayCollection();
+        $precisions = [];
 
         $slugAbime = 'desordres_batiment_securite_sol_details_plancher_abime';
         if (isset($payload[$slugAbime])
@@ -22,7 +21,7 @@ class DesordreBatimentSecuriteSol implements DesordreTraitementInterface
             $precision = $this->desordrePrecisionRepository->findOneBy(
                 ['desordrePrecisionSlug' => $slugAbime]
             );
-            $precisions->add($precision);
+            $precisions[] = $precision;
         }
         $slugEffondre = 'desordres_batiment_securite_sol_details_plancher_effondre';
         if (isset($payload[$slugEffondre])
@@ -30,7 +29,7 @@ class DesordreBatimentSecuriteSol implements DesordreTraitementInterface
             $precision = $this->desordrePrecisionRepository->findOneBy(
                 ['desordrePrecisionSlug' => $slugEffondre]
             );
-            $precisions->add($precision);
+            $precisions[] = $precision;
         }
 
         return $precisions;

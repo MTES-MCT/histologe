@@ -1,489 +1,489 @@
 desordre_critere:
   -
-    desordre_categorie_id: 1
+    desordre_categorie_label: "Usage / entretien" 
     slug_categorie: "desordres_batiment_proprete"
     label_categorie: "Propreté et entretien"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_proprete_interieur"
     label_critere: "L'intérieur de l'immeuble est sale, jamais nettoyé."
   -
-    desordre_categorie_id: 1
+    desordre_categorie_label: "Usage / entretien" 
     slug_categorie: "desordres_batiment_proprete"
     label_categorie: "Propreté et entretien"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_proprete_facades"
     label_critere: "Les façades extérieures sont très sales ou en mauvais état"
   -
-    desordre_categorie_id: 1
+    desordre_categorie_label: "Usage / entretien" 
     slug_categorie: "desordres_batiment_proprete"
     label_categorie: "Propreté et entretien"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_proprete_parties_communes"
     label_critere: "Les parties communes sont dégradées (déchets qui traînent, matériel cassé, graffitis)"
   -
-    desordre_categorie_id: 1
+    desordre_categorie_label: "Usage / entretien" 
     slug_categorie: "desordres_batiment_proprete"
     label_categorie: "Propreté et entretien"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_proprete_local_poubelles"
     label_critere: "Il n'y a pas de local poubelles ni d'endroit où stocker les déchets"
   -
-    desordre_categorie_id: 2
+    desordre_categorie_label: "Equipements collectifs" 
     slug_categorie: "desordres_batiment_eau"
     label_categorie: "Eau et évacuation"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_eau_pas_eau_potable"
     label_critere: "Il n'y a pas d'eau potable dans l'immeuble"
   -
-    desordre_categorie_id: 2
+    desordre_categorie_label: "Equipements collectifs" 
     slug_categorie: "desordres_batiment_eau"
     label_categorie: "Eau et évacuation"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_eau_evacuation_KO"
     label_critere: "L'évacuation des eaux ne marche pas (mauvaises odeurs, eau stagnante, fuites...)"
   -
-    desordre_categorie_id: 2
+    desordre_categorie_label: "Equipements collectifs" 
     slug_categorie: "desordres_batiment_eau"
     label_categorie: "Eau et évacuation"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_eau_pas_eau_chaude"
     label_critere: "Il n'y a pas d'eau chaude dans l'immeuble"
   -
-    desordre_categorie_id: 3
+    desordre_categorie_label: "Etanchéité / isolation" 
     slug_categorie: "desordres_batiment_eau"
     label_categorie: "Eau et évacuation"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_eau_pas_evacuation_eaux_pluie"
     label_critere: "Quand il pleut, l'eau n'est pas évacuée (pas de gouttière, pas de système d'évacuation...)"
   -
-    desordre_categorie_id: 3
+    desordre_categorie_label: "Etanchéité / isolation" 
     slug_categorie: "desordres_batiment_isolation"
     label_categorie: "Isolation du bâtiment"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_isolation_murs"
     label_critere: "Les murs ne sont pas ou peu isolés"
   -
-    desordre_categorie_id: 3
+    desordre_categorie_label: "Etanchéité / isolation" 
     slug_categorie: "desordres_batiment_isolation"
     label_categorie: "Isolation du bâtiment"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_isolation_porte_fenetres"
     label_critere: "Il manque des portes ou des fenêtres, ou elles sont mal isolées."
   -
-    desordre_categorie_id: 3
+    desordre_categorie_label: "Etanchéité / isolation" 
     slug_categorie: "desordres_batiment_isolation"
     label_categorie: "Isolation du bâtiment"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_isolation_dernier_etage_toit"
     label_critere: "Le dernier étage n'est pas isolé, le toit n'est pas étanche"
   -
-    desordre_categorie_id: 3
+    desordre_categorie_label: "Etanchéité / isolation" 
     slug_categorie: "desordres_batiment_isolation"
     label_categorie: "Isolation du bâtiment"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_isolation_infiltration_eau"
     label_critere: "De l'eau s'infiltre par le sol ou les murs"
   -
-    desordre_categorie_id: 4
+    desordre_categorie_label: "Sécurite risques particuliers" 
     slug_categorie: "desordres_batiment_maintenance"
     label_categorie: "Maintenance et équipement"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_maintenance_ascenseur"
     label_critere: "L'ascenseur est dangereux (les portes s'ouvrent ou se ferment toutes seules, on risque de tomber, il s'arrête entre les étages...)"
   -
-    desordre_categorie_id: 1
+    desordre_categorie_label: "Usage / entretien" 
     slug_categorie: "desordres_batiment_maintenance"
     label_categorie: "Maintenance et équipement"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_maintenance_petites_reparations"
     label_critere: "Les petites réparations ne sont pas faites (changement d'ampoule...)"
   -
-    desordre_categorie_id: 1
+    desordre_categorie_label: "Usage / entretien" 
     slug_categorie: "desordres_batiment_nuisibles"
     label_categorie: "Présence de nuisibles"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_nuisibles_cafards"
     label_critere: "Il y a des cafards ou blattes"
   -
-    desordre_categorie_id: 1
+    desordre_categorie_label: "Usage / entretien" 
     slug_categorie: "desordres_batiment_nuisibles"
     label_categorie: "Présence de nuisibles"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_nuisibles_rongeurs"
     label_critere: "Il y a des rongeurs (rats, souris...) "
   -
-    desordre_categorie_id: 1
+    desordre_categorie_label: "Usage / entretien" 
     slug_categorie: "desordres_batiment_nuisibles"
     label_categorie: "Présence de nuisibles"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_nuisibles_punaises"
     label_critere: "Il y a des punaises de lit "
   -
-    desordre_categorie_id: 1
+    desordre_categorie_label: "Usage / entretien" 
     slug_categorie: "desordres_batiment_nuisibles"
     label_categorie: "Présence de nuisibles"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_nuisibles_autre"
     label_critere: "Il y a un autre type de nuisibles"
   -
-    desordre_categorie_id: 5
+    desordre_categorie_label: "Structure du bâti" 
     slug_categorie: "desordres_batiment_securite"
     label_categorie: "Sécurité, risque de chute"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_securite_sol"
     label_critere: "Le sol bouge, il est instable"
   -
-    desordre_categorie_id: 5
+    desordre_categorie_label: "Structure du bâti" 
     slug_categorie: "desordres_batiment_securite"
     label_categorie: "Sécurité, risque de chute"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_securite_elements_toit"
     label_critere: "Des éléments du toit risquent de tomber (tuyau, tuiles, pierres...)"
   -
-    desordre_categorie_id: 5
+    desordre_categorie_label: "Structure du bâti" 
     slug_categorie: "desordres_batiment_securite"
     label_categorie: "Sécurité, risque de chute"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_securite_toit"
     label_critere: "Le plafond ou le toit risque de s'effondrer et il a de très grosses fissures "
   -
-    desordre_categorie_id: 5
+    desordre_categorie_label: "Structure du bâti" 
     slug_categorie: "desordres_batiment_securite"
     label_categorie: "Sécurité, risque de chute"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_securite_escalier"
     label_critere: "Les escaliers et / ou les rambardes sont dangereuses"
   -
-    desordre_categorie_id: 5
+    desordre_categorie_label: "Structure du bâti" 
     slug_categorie: "desordres_batiment_securite"
     label_categorie: "Sécurité, risque de chute"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_securite_murs_fissures"
     label_critere: "Le bâtiment semble instable. Il y a de grosses fissures dans les murs."
   -
-    desordre_categorie_id: 5
+    desordre_categorie_label: "Structure du bâti" 
     slug_categorie: "desordres_batiment_securite"
     label_categorie: "Sécurité, risque de chute"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_securite_balcons"
     label_critere: "Les balcons et rembardes des fenêtres risquent de tomber."
   -
-    desordre_categorie_id: 4
+    desordre_categorie_label: "Sécurite risques particuliers" 
     slug_categorie: "desordres_batiment_incendie"
     label_categorie: "Risque incendie"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_incendie_porte_coupe_feu"
     label_critere: "Il n'y a pas de portes coupe feu pour les caves, ou pour accéder aux caves."
   -
-    desordre_categorie_id: 4
+    desordre_categorie_label: "Sécurite risques particuliers" 
     slug_categorie: "desordres_batiment_incendie"
     label_categorie: "Risque incendie"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_incendie_odeur_gaz"
     label_critere: "Il y a une forte odeur de gaz"
   -
-    desordre_categorie_id: 6
+    desordre_categorie_label: "Environnement / éclairage" 
     slug_categorie: "desordres_batiment_accessibilite"
     label_categorie: "Accessibilité et alentours"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_accessibilite_friche"
     label_critere: "Le bâtiment est dans une friche, un terrain vague ou abandonné"
   -
-    desordre_categorie_id: 6
+    desordre_categorie_label: "Environnement / éclairage" 
     slug_categorie: "desordres_batiment_accessibilite"
     label_categorie: "Accessibilité et alentours"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_accessibilite_eclairage"
     label_critere: "Il n'y a pas d'éclairage autour du bâtiment, ni à l'entrée ou l'éclairage ne fonctionne pas"
   -
-    desordre_categorie_id: 6
+    desordre_categorie_label: "Environnement / éclairage" 
     slug_categorie: "desordres_batiment_accessibilite"
     label_categorie: "Accessibilité et alentours"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_accessibilite_acces_batiment"
     label_critere: "Il est très difficile d'accéder au bâtiment : les passages sont étroits ou encombrés"
   -
-    desordre_categorie_id: 6
+    desordre_categorie_label: "Environnement / éclairage" 
     slug_categorie: "desordres_batiment_bruit"
     label_categorie: "Bruit, pollution sonore"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_bruit_exterieur"
     label_critere: "L'immeuble est situé à côté de rails de train, d'un aéroport ou d'une usine"
   -
-    desordre_categorie_id: 6
+    desordre_categorie_label: "Environnement / éclairage" 
     slug_categorie: "desordres_batiment_bruit"
     label_categorie: "Bruit, pollution sonore"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_bruit_interieur"
     label_critere: "Il y a beaucoup de bruit à l'intérieur de l'immeuble, même si on ferme les portes et les fenêtres."
   -
-    desordre_categorie_id: 7
+    desordre_categorie_label: "Structure / équipements" 
     slug_categorie: "desordres_type_composition_logement"
     label_categorie: "Type et composition du logement"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_type_composition_logement_sous_combles"
     label_critere: "Le logement sous les combles, sans fenêtre"
   -
-    desordre_categorie_id: 7
+    desordre_categorie_label: "Structure / équipements" 
     slug_categorie: "desordres_type_composition_logement"
     label_categorie: "Type et composition du logement"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_type_composition_logement_sous_sol"
     label_critere: "Le logement en sous-sol, sans fenêtre"
   -
-    desordre_categorie_id: 7
+    desordre_categorie_label: "Structure / équipements" 
     slug_categorie: "desordres_type_composition_logement"
     label_categorie: "Type et composition du logement"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_type_composition_logement_piece_unique"
     label_critere: "Logement est une pièce unique"
   -
-    desordre_categorie_id: 7
+    desordre_categorie_label: "Structure / équipements" 
     slug_categorie: "desordres_type_composition_logement"
     label_categorie: "Type et composition du logement"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_type_composition_logement_plusieurs_pieces"
     label_critere: "Logement de plusieurs pièces"
   -
-    desordre_categorie_id: 7
+    desordre_categorie_label: "Structure / équipements" 
     slug_categorie: "desordres_type_composition_logement"
     label_categorie: "Type et composition du logement"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_type_composition_logement_cuisine"
     label_critere: "Pas de cuisine"
   -
-    desordre_categorie_id: 7
+    desordre_categorie_label: "Structure / équipements" 
     slug_categorie: "desordres_type_composition_logement"
     label_categorie: "Type et composition du logement"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_type_composition_logement_douche"
     label_critere: "Pas de SDB, douche ni baignoire"
   -
-    desordre_categorie_id: 7
+    desordre_categorie_label: "Structure / équipements" 
     slug_categorie: "desordres_type_composition_logement"
     label_categorie: "Type et composition du logement"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_type_composition_logement_wc"
     label_critere: "WC et cuisine dans la même pièce"
   -
-    desordre_categorie_id: 8
+    desordre_categorie_label: "Suroccupation" 
     slug_categorie: "desordres_type_composition_logement"
     label_categorie: "Type et composition du logement"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_type_composition_logement_suroccupation"
     label_critere: "Allocataire - Taille du logement"
   -
-    desordre_categorie_id: 9
+    desordre_categorie_label: "Eau potable / assainissement" 
     slug_categorie: "desordres_logement_eau"
     label_categorie: "Eau et évacuation"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_eau_eau_potable"
     label_critere: "Je n'ai pas d'eau potable dans mon logement"
   -
-    desordre_categorie_id: 9
+    desordre_categorie_label: "Eau potable / assainissement" 
     slug_categorie: "desordres_logement_eau"
     label_categorie: "Eau et évacuation"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_eau_evacuation"
     label_critere: "L'évacuation des eaux ne marche pas (mauvaises odeurs, pas d'évacuation, fuites...)"
   -
-    desordre_categorie_id: 9
+    desordre_categorie_label: "Eau potable / assainissement" 
     slug_categorie: "desordres_logement_eau"
     label_categorie: "Eau et évacuation"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_eau_eau_chaude"
     label_critere: "Je n'ai pas d'eau chaude dans mon logement"
   -
-    desordre_categorie_id: 10
+    desordre_categorie_label: "Aération / humidité" 
     slug_categorie: "desordres_logement_aeration"
     label_categorie: "Aération et ventilation"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_aeration_aucune_aeration"
     label_critere: "Il n'y a pas de fenêtre ni de système de ventilation (VMC...)"
   -
-    desordre_categorie_id: 10
+    desordre_categorie_label: "Aération / humidité"
     slug_categorie: "desordres_logement_aeration"
     label_categorie: "Aération et ventilation"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_aeration_ventilation_defectueuse"
     label_critere: "Le système de ventilation ne fonctionne pas"
   -
-    desordre_categorie_id: 10
+    desordre_categorie_label: "Aération / humidité"
     slug_categorie: "desordres_logement_chauffage"
     label_categorie: "Chauffage et isolation"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_chauffage_details_fenetres_permeables"
     label_critere: "Les fenêtres laissent passer beaucoup d'air ou laissent passer l'eau quand il pleut"
   -
-    desordre_categorie_id: 11
+    desordre_categorie_label: "Chauffage / confort"
     slug_categorie: "desordres_logement_chauffage"
     label_categorie: "Chauffage et isolation"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_chauffage_type_aucun"
     label_critere: "Il n'y a pas de radiateur ni d'autre moyen de chauffage fixe dans mon logement"
   -
-    desordre_categorie_id: 11
+    desordre_categorie_label: "Chauffage / confort"
     slug_categorie: "desordres_logement_chauffage"
     label_categorie: "Chauffage et isolation"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_chauffage_details_difficultes_chauffage"
     label_critere: "J'ai du mal à chauffer mon logement"
   -
-    desordre_categorie_id: 11
+    desordre_categorie_label: "Chauffage / confort"
     slug_categorie: "desordres_logement_chauffage"
     label_categorie: "Chauffage et isolation"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_chauffage_details_chauffage_KO"
     label_critere: "Mon chauffage ne fonctionne pas, je dois utiliser un chauffage d'appoint"
   -
-    desordre_categorie_id: 4
+    desordre_categorie_label: "Sécurite risques particuliers" 
     slug_categorie: "desordres_logement_chauffage"
     label_categorie: "Chauffage et isolation"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_chauffage_details_chauffage_dangereux"
     label_critere: "Les dispositifs de chauffages (chauffe eau, poêle, cheminée, radiateur...) sont dangereux (très mauvais état, tuyaux mal fixés, etc.)"
   -
-    desordre_categorie_id: 10
+    desordre_categorie_label: "Aération / humidité"
     slug_categorie: "desordres_logement_humidite"
     label_categorie: "Humidité et moisissure"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_humidite_piece_a_vivre"
     label_critere: "Mon logement est humide et a des traces de moisissures"
   -
-    desordre_categorie_id: 10
+    desordre_categorie_label: "Aération / humidité"
     slug_categorie: "desordres_logement_humidite"
     label_categorie: "Humidité et moisissure"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_humidite_cuisine"
     label_critere: "Mon logement est humide et a des traces de moisissures"
   -
-    desordre_categorie_id: 10
+    desordre_categorie_label: "Aération / humidité"
     slug_categorie: "desordres_logement_humidite"
     label_categorie: "Humidité et moisissure"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_humidite_salle_de_bain"
     label_critere: "Mon logement est humide et a des traces de moisissures"
   -
-    desordre_categorie_id: 4
+    desordre_categorie_label: "Sécurite risques particuliers" 
     slug_categorie: "desordres_logement_securite"
     label_categorie: "Sécurité"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_securite_sol_glissant"
     label_critere: "Le sol est glissant ou abîmé"
   -
-    desordre_categorie_id: 4
+    desordre_categorie_label: "Sécurite risques particuliers" 
     slug_categorie: "desordres_logement_securite"
     label_categorie: "Sécurité"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_securite_sol_dangereux"
     label_critere: "Le sol risque de s'effondrer : il bouge et est très abîmé"
   -
-    desordre_categorie_id: 4
+    desordre_categorie_label: "Sécurite risques particuliers" 
     slug_categorie: "desordres_logement_securite"
     label_categorie: "Sécurité"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_securite_balcons"
     label_critere: "Les balcons et rambardes des fenêtres risquent de tomber"
   -
-    desordre_categorie_id: 4
+    desordre_categorie_label: "Sécurite risques particuliers" 
     slug_categorie: "desordres_logement_securite"
     label_categorie: "Sécurité"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_securite_gaz"
     label_critere: "Il y a une odeur de gaz ou des fuites de gaz"
   -
-    desordre_categorie_id: 4
+    desordre_categorie_label: "Sécurite risques particuliers" 
     slug_categorie: "desordres_logement_securite"
     label_categorie: "Sécurité"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_securite_plomb"
     label_critere: "Il y a de la peinture au plomb en mauvais état ou des matériaux amiantés en mauvais état"
   -
-    desordre_categorie_id: 7
+    desordre_categorie_label: "Structure / équipements" 
     slug_categorie: "desordres_logement_electricite"
     label_categorie: "Electricité"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_electricite_pas_electricite"
     label_critere: "Il n'y a pas d'électricité dans le logement"
   -
-    desordre_categorie_id: 4
+    desordre_categorie_label: "Sécurite risques particuliers" 
     slug_categorie: "desordres_logement_electricite"
     label_categorie: "Electricité"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_electricite_pas_compteur"
     label_critere: "Il n'y a pas de compteur électrique pour le logement"
   -
-    desordre_categorie_id: 4
+    desordre_categorie_label: "Sécurite risques particuliers" 
     slug_categorie: "desordres_logement_electricite"
     label_categorie: "Electricité"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_electricite_installation_dangereuse"
     label_critere: "L'installation est dangereuse : les fils sont dénudés, les prises ne tiennent pas dans les murs, etc."
   -
-    desordre_categorie_id: 4
+    desordre_categorie_label: "Sécurite risques particuliers" 
     slug_categorie: "desordres_logement_electricite"
     label_categorie: "Electricité"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_electricite_manque_prises"
     label_critere: "Il n'y a pas de prises, ou il en manque"
   -
-    desordre_categorie_id: 1
+    desordre_categorie_label: "Usage / entretien" 
     slug_categorie: "desordres_logement_nuisibles"
     label_categorie: "Présence de nuisibles"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_nuisibles_cafards"
     label_critere: "Il y a des cafards ou blattes"
   -
-    desordre_categorie_id: 1
+    desordre_categorie_label: "Usage / entretien" 
     slug_categorie: "desordres_logement_nuisibles"
     label_categorie: "Présence de nuisibles"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_nuisibles_rongeurs"
     label_critere: "Il y a des rongeurs (rats, souris...) "
   -
-    desordre_categorie_id: 1
+    desordre_categorie_label: "Usage / entretien" 
     slug_categorie: "desordres_logement_nuisibles"
     label_categorie: "Présence de nuisibles"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_nuisibles_punaises"
     label_critere: "Il y a des punaises de lit "
   -
-    desordre_categorie_id: 1
+    desordre_categorie_label: "Usage / entretien" 
     slug_categorie: "desordres_logement_nuisibles"
     label_categorie: "Présence de nuisibles"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_nuisibles_autres"
     label_critere: "Il y a un autre type de nuisibles"
   -
-    desordre_categorie_id: 7
+    desordre_categorie_label: "Structure / équipements" 
     slug_categorie: "desordres_logement_bruit"
     label_categorie: "Bruit, pollution sonore"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_bruit_exterieur"
     label_critere: "J'entends le bruit extérieur, même si je ferme les portes et les fenêtres."
   -
-    desordre_categorie_id: 7
+    desordre_categorie_label: "Structure / équipements" 
     slug_categorie: "desordres_logement_bruit"
     label_categorie: "Bruit, pollution sonore"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_bruit_voisins"
     label_critere: "J'entends mes voisins parler et marcher depuis mon logement, comme s'ils étaient chez moi."
   -
-    desordre_categorie_id: 12
+    desordre_categorie_label: "Eclairage"
     slug_categorie: "desordres_logement_lumiere"
     label_categorie: "Eclairement, lumière naturelle"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_lumiere_pas_lumiere"
     label_critere: "Mon logement n'est pas éclairé par la lumière du jour. Je dois allumer la lumière en plein jour "
   -
-    desordre_categorie_id: 12
+    desordre_categorie_label: "Eclairage"
     slug_categorie: "desordres_logement_lumiere"
     label_categorie: "Eclairement, lumière naturelle"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_lumiere_pas_volets"
     label_critere: "Il n'y a pas de volet, ni de stores aux fenêtres"
   -
-    desordre_categorie_id: 13
+    desordre_categorie_label: "Incurie"
     slug_categorie: "desordres_logement_proprete"
     label_categorie: "Propreté et entretien"
     zone_categorie: "LOGEMENT"

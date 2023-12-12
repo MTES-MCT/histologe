@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 class DesordreTraitementProcessorTest extends TestCase
 {
-    public function testProcess()
+    public function testFindDesordresPrecisionsBy()
     {
         $desordreCategorie = new DesordreCategorie();
         $desordreCategorie->setLabel('test');
@@ -32,21 +32,21 @@ class DesordreTraitementProcessorTest extends TestCase
 
         $desordreTraitementNuisibles
          ->expects($this->once())
-             ->method('process')
+             ->method('findDesordresPrecisionsBy')
              ->with($payload, $desordreCritere->getSlugCritere());
 
         $desordreLogementHumidite = $this->createMock(DesordreLogementHumidite::class);
 
         $desordreLogementHumidite
             ->expects($this->never())
-            ->method('process');
+            ->method('findDesordresPrecisionsBy');
 
-        $widgetLoaderCollection = new DesordreTraitementProcessor([
+        $desordreTraitementProcessor = new DesordreTraitementProcessor([
             'desordres_logement_nuisibles_cafards' => $desordreTraitementNuisibles,
             'desordres_logement_humidite' => $desordreLogementHumidite,
         ]);
 
-        $widgetLoaderCollection->process(
+        $desordreTraitementProcessor->findDesordresPrecisionsBy(
             $desordreCritere,
             $payload
         );
@@ -72,21 +72,21 @@ class DesordreTraitementProcessorTest extends TestCase
 
         $desordreTraitementNuisibles
         ->expects($this->never())
-        ->method('process');
+        ->method('findDesordresPrecisionsBy');
 
         $desordreLogementHumidite = $this->createMock(DesordreLogementHumidite::class);
 
         $desordreLogementHumidite
             ->expects($this->never())
-            ->method('process');
+            ->method('findDesordresPrecisionsBy');
 
-        $widgetLoaderCollection = new DesordreTraitementProcessor([
+        $desordreTraitementProcessor = new DesordreTraitementProcessor([
             'desordres_logement_nuisibles_cafards' => $desordreTraitementNuisibles,
             'desordres_logement_humidite' => $desordreLogementHumidite,
         ]);
 
         /** @var ArrayCollection $precisions */
-        $precisions = $widgetLoaderCollection->process(
+        $precisions = $desordreTraitementProcessor->findDesordresPrecisionsBy(
             $desordreCritere,
             $payload
         );

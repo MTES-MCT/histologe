@@ -3,7 +3,6 @@
 namespace App\Service\Signalement\DesordreTraitement;
 
 use App\Repository\DesordrePrecisionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 
 class DesordreLogementHumidite implements DesordreTraitementInterface
 {
@@ -13,32 +12,32 @@ class DesordreLogementHumidite implements DesordreTraitementInterface
     ) {
     }
 
-    public function process(array $payload, string $slug): ArrayCollection
+    public function findDesordresPrecisionsBy(array $payload, string $slug): array
     {
-        $precisions = new ArrayCollection();
+        $precisions = [];
 
         if (isset($payload[$slug.'_details_machine'])) {
-            $precisionsDetailMachine = $this->desordreTraitementOuiNon->process(
+            $precisionsDetailMachine = $this->desordreTraitementOuiNon->findDesordresPrecisionsBy(
                 $payload,
                 $slug.'_details_machine'
             );
-            $precisions->add($precisionsDetailMachine->first());
+            $precisions[] = $precisionsDetailMachine[0];
         }
 
         if (isset($payload[$slug.'_details_fuite'])) {
-            $precisionsDetailFuite = $this->desordreTraitementOuiNon->process(
+            $precisionsDetailFuite = $this->desordreTraitementOuiNon->findDesordresPrecisionsBy(
                 $payload,
                 $slug.'_details_fuite'
             );
-            $precisions->add($precisionsDetailFuite->first());
+            $precisions[] = $precisionsDetailFuite[0];
         }
 
         if (isset($payload[$slug.'_details_moisissure_apres_nettoyage'])) {
-            $precisionsDetailMoisissure = $this->desordreTraitementOuiNon->process(
+            $precisionsDetailMoisissure = $this->desordreTraitementOuiNon->findDesordresPrecisionsBy(
                 $payload,
                 $slug.'_details_moisissure_apres_nettoyage'
             );
-            $precisions->add($precisionsDetailMoisissure->first());
+            $precisions[] = $precisionsDetailMoisissure[0];
         }
 
         return $precisions;
