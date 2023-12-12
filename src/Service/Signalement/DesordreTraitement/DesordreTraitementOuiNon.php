@@ -3,7 +3,6 @@
 namespace App\Service\Signalement\DesordreTraitement;
 
 use App\Repository\DesordrePrecisionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 
 class DesordreTraitementOuiNon implements DesordreTraitementInterface
 {
@@ -12,9 +11,9 @@ class DesordreTraitementOuiNon implements DesordreTraitementInterface
     ) {
     }
 
-    public function process(array $payload, string $slug): ArrayCollection
+    public function findDesordresPrecisionsBy(array $payload, string $slug): array
     {
-        $precisions = new ArrayCollection();
+        $precisions = [];
 
         if (isset($payload[$slug])) {
             if ('oui' === $payload[$slug]) {
@@ -26,7 +25,7 @@ class DesordreTraitementOuiNon implements DesordreTraitementInterface
                     ['desordrePrecisionSlug' => $slug.'_non']
                 );
             }
-            $precisions->add($precision);
+            $precisions[] = $precision;
         }
 
         return $precisions;

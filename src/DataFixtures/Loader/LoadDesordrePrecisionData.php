@@ -35,7 +35,7 @@ class LoadDesordrePrecisionData extends Fixture implements OrderedFixtureInterfa
             ->setIsSuroccupation($row['is_suroccupation'])
             ->setLabel($row['label'])
             ->setDesordrePrecisionSlug($row['desordre_precision_slug'])
-            ->setDesordreCritere($this->desordreCritereRepository->findOneBy(['id' => $row['desordre_critere_id']]));
+            ->setDesordreCritere($this->desordreCritereRepository->findOneBy(['slugCritere' => $row['desordre_critere_slug']]));
 
         if (isset($row['qualification'])) {
             $qualifications = [];

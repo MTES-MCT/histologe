@@ -3,7 +3,6 @@
 namespace App\Service\Signalement\DesordreTraitement;
 
 use App\Repository\DesordrePrecisionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 
 class DesordreBatimentSecuriteMursFissures implements DesordreTraitementInterface
 {
@@ -13,11 +12,11 @@ class DesordreBatimentSecuriteMursFissures implements DesordreTraitementInterfac
     ) {
     }
 
-    public function process(array $payload, string $slug): ArrayCollection
+    public function findDesordresPrecisionsBy(array $payload, string $slug): array
     {
-        $precisions = new ArrayCollection();
+        $precisions = [];
 
-        $precisions = $this->desordreTraitementOuiNon->process(
+        $precisions = $this->desordreTraitementOuiNon->findDesordresPrecisionsBy(
             $payload,
             'desordres_batiment_securite_murs_fissures_details_mur_porteur'
         );

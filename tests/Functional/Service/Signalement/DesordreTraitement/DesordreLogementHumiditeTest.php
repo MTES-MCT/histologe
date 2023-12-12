@@ -5,7 +5,6 @@ namespace App\Tests\Functional\Service\Signalement;
 use App\Entity\DesordrePrecision;
 use App\Service\Signalement\DesordreTraitement\DesordreLogementHumidite;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementOuiNon;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -21,7 +20,7 @@ class DesordreLogementHumiditeTest extends KernelTestCase
         $this->desordreTraitementOuiNon = static::getContainer()->get(DesordreTraitementOuiNon::class);
     }
 
-    public function testProcess()
+    public function testFindDesordresPrecisionsBy()
     {
         $desordrePrecisionRepository = $this->entityManager->getRepository(DesordrePrecision::class);
 
@@ -30,8 +29,8 @@ class DesordreLogementHumiditeTest extends KernelTestCase
             true
         );
 
-        /** @var ArrayCollection $precisions */
-        $precisions = (new DesordreLogementHumidite($desordrePrecisionRepository, $this->desordreTraitementOuiNon))->process(
+        /** @var array $precisions */
+        $precisions = (new DesordreLogementHumidite($desordrePrecisionRepository, $this->desordreTraitementOuiNon))->findDesordresPrecisionsBy(
             $payload,
             'desordres_logement_humidite_piece_a_vivre'
         );
@@ -39,17 +38,17 @@ class DesordreLogementHumiditeTest extends KernelTestCase
         $this->assertEquals(3, \count($precisions));
 
         /** @var DesordrePrecision $precision */
-        $precision = $precisions->first();
+        $precision = $precisions[0];
         $this->assertEquals(
             'desordres_logement_humidite_piece_a_vivre_details_machine_non',
             $precision->getDesordrePrecisionSlug()
         );
-        $precision = $precisions->next();
+        $precision = $precisions[1];
         $this->assertEquals(
             'desordres_logement_humidite_piece_a_vivre_details_fuite_non',
             $precision->getDesordrePrecisionSlug()
         );
-        $precision = $precisions->next();
+        $precision = $precisions[2];
         $this->assertEquals(
             'desordres_logement_humidite_piece_a_vivre_details_moisissure_apres_nettoyage_oui',
             $precision->getDesordrePrecisionSlug()

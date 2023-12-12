@@ -3,7 +3,6 @@
 namespace App\Service\Signalement\DesordreTraitement;
 
 use App\Repository\DesordrePrecisionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 
 class DesordreLogementAerationVentilationDefectueuse implements DesordreTraitementInterface
 {
@@ -13,19 +12,19 @@ class DesordreLogementAerationVentilationDefectueuse implements DesordreTraiteme
     ) {
     }
 
-    public function process(array $payload, string $slug): ArrayCollection
+    public function findDesordresPrecisionsBy(array $payload, string $slug): array
     {
-        $precisions = new ArrayCollection();
+        $precisions = [];
 
         if (isset($payload['desordres_logement_aeration_ventilation_defectueuse_details_nettoyage'])) {
             if ('oui' === $payload['desordres_logement_aeration_ventilation_defectueuse_details_nettoyage']) {
-                $precisions = $this->desordreTraitementPieces->process(
+                $precisions = $this->desordreTraitementPieces->findDesordresPrecisionsBy(
                     $payload,
                     'desordres_logement_aeration_ventilation_defectueuse_details',
                     '_nettoyage_oui'
                 );
             } else {
-                $precisions = $this->desordreTraitementPieces->process(
+                $precisions = $this->desordreTraitementPieces->findDesordresPrecisionsBy(
                     $payload,
                     'desordres_logement_aeration_ventilation_defectueuse_details',
                     '_nettoyage_non'

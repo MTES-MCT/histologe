@@ -3,7 +3,6 @@
 namespace App\Service\Signalement\DesordreTraitement;
 
 use App\Repository\DesordrePrecisionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 
 class DesordreTraitementNuisibles implements DesordreTraitementInterface
 {
@@ -12,9 +11,9 @@ class DesordreTraitementNuisibles implements DesordreTraitementInterface
     ) {
     }
 
-    public function process(array $payload, string $slug): ArrayCollection
+    public function findDesordresPrecisionsBy(array $payload, string $slug): array
     {
-        $precisions = new ArrayCollection();
+        $precisions = [];
 
         if (isset($payload[$slug.'_details_date'])) {
             if ('before_movein' === $payload[$slug.'_details_date']) {
@@ -26,7 +25,7 @@ class DesordreTraitementNuisibles implements DesordreTraitementInterface
                     ['desordrePrecisionSlug' => $slug.'_details_date_after_movein']
                 );
             }
-            $precisions->add($precision);
+            $precisions[] = $precision;
         }
 
         return $precisions;

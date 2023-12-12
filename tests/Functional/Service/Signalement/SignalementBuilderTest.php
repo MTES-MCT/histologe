@@ -10,6 +10,7 @@ use App\Factory\Signalement\InformationComplementaireFactory;
 use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
 use App\Factory\Signalement\TypeCompositionLogementFactory;
+use App\Manager\DesordreCritereManager;
 use App\Repository\DesordreCategorieRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
@@ -58,6 +59,7 @@ class SignalementBuilderTest extends KernelTestCase
         $this->desordreCritereRepository = static::getContainer()->get(DesordreCritereRepository::class);
         $this->desordrePrecisionRepository = static::getContainer()->get(DesordrePrecisionRepository::class);
         $desordreTraitementProcessor = static::getContainer()->get(DesordreTraitementProcessor::class);
+        $desordreCritereManager = static::getContainer()->get(DesordreCritereManager::class);
         $loggerInterface = self::getContainer()->get(LoggerInterface::class);
 
         $this->signalementBuilder = new SignalementBuilder(
@@ -78,6 +80,7 @@ class SignalementBuilderTest extends KernelTestCase
             $this->desordreCritereRepository,
             $this->desordrePrecisionRepository,
             $desordreTraitementProcessor,
+            $desordreCritereManager,
             $loggerInterface
         );
     }
