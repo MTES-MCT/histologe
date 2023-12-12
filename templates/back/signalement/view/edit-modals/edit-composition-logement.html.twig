@@ -33,8 +33,6 @@
                                         {% set compositionLogementHauteur = 'oui' %}
                                     {% elseif signalement.typeCompositionLogement.compositionLogementHauteur is same as 'non' %}
                                         {% set compositionLogementHauteur = 'non' %}
-                                    {% else %}
-                                        {% set compositionLogementHauteur = 'nsp' %}
                                     {% endif %}
                                 {% endif %}
                                 <label class="fr-label" for="compositionLogementHauteur">Hauteur > 2m</label>
@@ -58,8 +56,6 @@
                                         {% set typeLogementRdc = 'oui' %}
                                     {% elseif signalement.typeCompositionLogement.typeLogementRdc is same as 'non' %}
                                         {% set typeLogementRdc = 'non' %}
-                                    {% else %}
-                                        {% set typeLogementRdc = 'nsp' %}
                                     {% endif %}
                                 {% endif %}
                                 <label class="fr-label" for="typeLogementRdc">Est au RDC ?</label>
@@ -78,8 +74,6 @@
                                         {% set typeLogementDernierEtage = 'oui' %}
                                     {% elseif signalement.typeCompositionLogement.typeLogementDernierEtage is same as 'non' %}
                                         {% set typeLogementDernierEtage = 'non' %}
-                                    {% else %}
-                                        {% set typeLogementDernierEtage = 'nsp' %}
                                     {% endif %}
                                 {% endif %}
                                 <label class="fr-label" for="typeLogementDernierEtage">Est au dernier étage ?</label>
@@ -98,8 +92,6 @@
                                         {% set typeLogementSousCombleSansFenetre = 'oui' %}
                                     {% elseif signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre is same as 'non' %}
                                         {% set typeLogementSousCombleSansFenetre = 'non' %}
-                                    {% else %}
-                                        {% set typeLogementSousCombleSansFenetre = 'nsp' %}
                                     {% endif %}
                                 {% endif %}
                                 <label class="fr-label" for="typeLogementSousCombleSansFenetre">Combles sans fenêtres ?</label>
@@ -118,8 +110,6 @@
                                         {% set typeLogementSousSolSansFenetre = 'oui' %}
                                     {% elseif signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'non' %}
                                         {% set typeLogementSousSolSansFenetre = 'non' %}
-                                    {% else %}
-                                        {% set typeLogementSousSolSansFenetre = 'nsp' %}
                                     {% endif %}
                                 {% endif %}
                                 <label class="fr-label" for="typeLogementSousSolSansFenetre">Sous-sol sans fenêtres ?</label>
@@ -138,8 +128,6 @@
                                         {% set typeLogementCommoditesPieceAVivre9m = 'oui' %}
                                     {% elseif signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m is same as 'non' %}
                                         {% set typeLogementCommoditesPieceAVivre9m = 'non' %}
-                                    {% else %}
-                                        {% set typeLogementCommoditesPieceAVivre9m = 'nsp' %}
                                     {% endif %}
                                 {% endif %}
                                 <label class="fr-label" for="typeLogementCommoditesPieceAVivre9m">Au moins une des pièces à vivre > 9m² ?</label>
@@ -158,8 +146,6 @@
                                         {% set typeLogementCommoditesCuisine = 'oui' %}
                                     {% elseif signalement.typeCompositionLogement.typeLogementCommoditesCuisine is same as 'non' %}
                                         {% set typeLogementCommoditesCuisine = 'non' %}
-                                    {% else %}
-                                        {% set typeLogementCommoditesCuisine = 'nsp' %}
                                     {% endif %}
                                 {% endif %}
                                 <label class="fr-label" for="typeLogementCommoditesCuisine">Cuisine (ou coin cuisine) dans le logement ?</label>
@@ -178,8 +164,6 @@
                                         {% set typeLogementCommoditesCuisineCollective = 'oui' %}
                                     {% elseif signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective is same as 'non' %}
                                         {% set typeLogementCommoditesCuisineCollective = 'non' %}
-                                    {% else %}
-                                        {% set typeLogementCommoditesCuisineCollective = 'nsp' %}
                                     {% endif %}
                                 {% endif %}
                                 <label class="fr-label" for="typeLogementCommoditesCuisineCollective">Cuisine (ou coin cuisine) collective ?</label>
@@ -198,8 +182,6 @@
                                         {% set typeLogementCommoditesSalleDeBain = 'oui' %}
                                     {% elseif signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain is same as 'non' %}
                                         {% set typeLogementCommoditesSalleDeBain = 'non' %}
-                                    {% else %}
-                                        {% set typeLogementCommoditesSalleDeBain = 'nsp' %}
                                     {% endif %}
                                 {% endif %}
                                 <label class="fr-label" for="typeLogementCommoditesSalleDeBain">SDB (baignoire ou douche) dans le logement ?</label>
@@ -218,8 +200,6 @@
                                         {% set typeLogementCommoditesSalleDeBainCollective = 'oui' %}
                                     {% elseif signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective is same as 'non' %}
                                         {% set typeLogementCommoditesSalleDeBainCollective = 'non' %}
-                                    {% else %}
-                                        {% set typeLogementCommoditesSalleDeBainCollective = 'nsp' %}
                                     {% endif %}
                                 {% endif %}
                                 <label class="fr-label" for="typeLogementCommoditesSalleDeBainCollective">SDB (baignoire ou douche) collective ?</label>
@@ -238,8 +218,6 @@
                                         {% set typeLogementCommoditesWc = 'oui' %}
                                     {% elseif signalement.typeCompositionLogement.typeLogementCommoditesWc is same as 'non' %}
                                         {% set typeLogementCommoditesWc = 'non' %}
-                                    {% else %}
-                                        {% set typeLogementCommoditesWc = 'nsp' %}
                                     {% endif %}
                                 {% endif %}
                                 <label class="fr-label" for="typeLogementCommoditesWc">WC dans le logement ?</label>
@@ -258,8 +236,6 @@
                                         {% set typeLogementCommoditesWcCollective = 'oui' %}
                                     {% elseif signalement.typeCompositionLogement.typeLogementCommoditesWcCollective is same as 'non' %}
                                         {% set typeLogementCommoditesWcCollective = 'non' %}
-                                    {% else %}
-                                        {% set typeLogementCommoditesWcCollective = 'nsp' %}
                                     {% endif %}
                                 {% endif %}
                                 <label class="fr-label" for="typeLogementCommoditesWcCollective">WC collectifs ?</label>
@@ -278,8 +254,6 @@
                                         {% set typeLogementCommoditesWcCuisine = 'oui' %}
                                     {% elseif signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine is same as 'non' %}
                                         {% set typeLogementCommoditesWcCuisine = 'non' %}
-                                    {% else %}
-                                        {% set typeLogementCommoditesWcCuisine = 'nsp' %}
                                     {% endif %}
                                 {% endif %}
                                 <label class="fr-label" for="typeLogementCommoditesWcCuisine">WC et cuisine dans la même pièce ?</label>
