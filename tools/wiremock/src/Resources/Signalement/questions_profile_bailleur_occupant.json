@@ -35,12 +35,18 @@
         {
           "type": "SignalementFormTextfield",
           "label": "Nom de famille",
-          "slug": "vos_coordonnees_occupant_nom"
+          "slug": "vos_coordonnees_occupant_nom",
+          "validate": {
+            "maxLength": 50
+          }
         },
         {
           "type": "SignalementFormTextfield",
           "label": "Prénom",
-          "slug": "vos_coordonnees_occupant_prenom"
+          "slug": "vos_coordonnees_occupant_prenom",
+          "validate": {
+            "maxLength": 50
+          }
         },
         {
           "type": "SignalementFormEmailfield",

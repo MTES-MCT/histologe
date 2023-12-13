@@ -10,8 +10,10 @@ class CoordonneesBailleurRequest
 {
     public function __construct(
         #[Assert\NotBlank(message: 'Merci de saisir le nom du bailleur.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO'])]
+        #[Assert\Length(max: 255, maxMessage: 'Le nom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $nom = null,
         #[Assert\NotBlank(message: 'Merci de saisir le prénom du bailleur.', groups: ['BAILLEUR_OCCUPANT', 'BAILLEUR'])]
+        #[Assert\Length(max: 255, maxMessage: 'Le prénom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $prenom = null,
         #[Assert\NotBlank(message: 'Merci de saisir l\'email du bailleur', groups: ['BAILLEUR_OCCUPANT', 'BAILLEUR'])]
         #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]

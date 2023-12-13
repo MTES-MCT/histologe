@@ -10,8 +10,10 @@ class CoordonneesTiersRequest
 {
     public function __construct(
         #[Assert\NotBlank(message: 'Merci de saisir un nom.')]
+        #[Assert\Length(max: 50, maxMessage: 'Le nom ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $nom = null,
         #[Assert\NotBlank(message: 'Merci de saisir un prénom.')]
+        #[Assert\Length(max: 50, maxMessage: 'Le prénom ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $prenom = null,
         #[Assert\NotBlank(message: 'Merci de saisir un courriel.')]
         #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]

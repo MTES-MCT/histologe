@@ -534,7 +534,7 @@ class SignalementType extends AbstractType
             ->add('nomDeclarant', TextType::class, [
                 'attr' => [
                     'class' => 'fr-input',
-                    'maxlength' => '200',
+                    'maxlength' => '50',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
@@ -545,7 +545,7 @@ class SignalementType extends AbstractType
             ->add('prenomDeclarant', TextType::class, [
                 'attr' => [
                     'class' => 'fr-input',
-                    'maxlength' => '200',
+                    'maxlength' => '50',
                 ],
                 'label_attr' => [
                     'class' => 'fr-label',
