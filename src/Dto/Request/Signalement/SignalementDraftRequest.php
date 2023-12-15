@@ -87,13 +87,13 @@ class SignalementDraftRequest
         message: 'Merci de renseigner votre nom.',
         groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT']
     )]
-    #[Assert\Length(max: 50, maxMessage: 'vote nom ne doit pas dépasser {{ limit }} caractères.')]
+    #[Assert\Length(max: 50, maxMessage: 'Votre nom ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $vosCoordonneesOccupantNom = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre prénom.',
         groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT']
     )]
-    #[Assert\Length(max: 50, maxMessage: 'votre prénom ne doit pas dépasser {{ limit }} caractères.')]
+    #[Assert\Length(max: 50, maxMessage: 'Votre prénom ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $vosCoordonneesOccupantPrenom = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre adresse e-mail.',

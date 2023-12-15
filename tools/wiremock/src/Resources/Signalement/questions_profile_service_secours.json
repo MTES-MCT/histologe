@@ -90,7 +90,7 @@
           "slug": "coordonnees_occupant_email",
           "validate": {
             "required": false,
-            "maxLength": 50
+            "maxLength": 255
           }
         },
         {
