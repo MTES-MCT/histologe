@@ -563,6 +563,44 @@
                             N/C
                         {% endif %}
                     </div>
+                    <div class="fr-col-12 fr-col-md-6">
+                        <strong>Bénéficiaire RSA :</strong>
+                        {% if signalement.informationComplementaire %}
+                            {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa is same as 'oui' %}
+                                {{ static_picto_yes|raw }}
+                            {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa is same as 'non' %}
+                                {{ static_picto_no|raw }}
+                            {% else %}
+                                Ne sait pas
+                            {% endif %}
+                        {% else %}
+                            N/C
+                        {% endif %}
+                    </div>
+                    <div class="fr-col-12 fr-col-md-6">
+                        <strong>Bénéficiaire FSL :</strong>
+                        {% if signalement.informationComplementaire %}
+                            {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl is same as 'oui' %}
+                                {{ static_picto_yes|raw }}
+                            {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl is same as 'non' %}
+                                {{ static_picto_no|raw }}
+                            {% else %}
+                                Ne sait pas
+                            {% endif %}
+                        {% else %}
+                            N/C
+                        {% endif %}
+                    </div>
+                    {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT  %}
+                    <div class="fr-col-12 fr-col-md-6">
+                        <strong>Revenu fiscal de référence :</strong>
+                        {% if signalement.informationComplementaire %}
+                            {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurRevenuFiscal ?? 'N/C' }} €
+                        {% else %}
+                            N/C
+                        {% endif %}
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

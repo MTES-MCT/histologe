@@ -121,6 +121,49 @@
                                     <option value="nsp" {{ travailleurSocialAccompagnementDeclarant is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
+
+                            <div class="fr-select-group">
+                                {% set beneficiaireRsa = 'nsp' %}
+                                {% if signalement.informationComplementaire %}
+                                    {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa is same as 'oui' %}
+                                        {% set beneficiaireRsa = 'oui' %}
+                                    {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa is same as 'non' %}
+                                        {% set beneficiaireRsa = 'non' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="beneficiaireRsa">Bénéficiaire RSA</label>
+                                <select class="fr-select" name="beneficiaireRsa">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ beneficiaireRsa is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ beneficiaireRsa is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ beneficiaireRsa is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set beneficiaireFsl = 'nsp' %}
+                                {% if signalement.informationComplementaire %}
+                                    {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl is same as 'oui' %}
+                                        {% set beneficiaireFsl = 'oui' %}
+                                    {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl is same as 'non' %}
+                                        {% set beneficiaireFsl = 'non' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="beneficiaireFsl">Bénéficiaire FSL</label>
+                                <select class="fr-select" name="beneficiaireFsl">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ beneficiaireFsl is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ beneficiaireFsl is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ beneficiaireFsl is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT  %}
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="revenuFiscal">Revenu fiscal de référence</label>
+                                <input class="fr-input" type="text" name="revenuFiscal" value="{{ signalement.informationComplementaire.informationsComplementairesSituationBailleurRevenuFiscal ?? '0' }}">
+                            </div>
+                            {% endif %}
                         </div>
                         
                         <div class="fr-modal__footer">
