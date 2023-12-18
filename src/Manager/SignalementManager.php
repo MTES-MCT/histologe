@@ -346,6 +346,21 @@ class SignalementManager extends AbstractManager
             ->setCodePostalProprio($coordonneesBailleurRequest->getCodePostal())
             ->setVilleProprio($coordonneesBailleurRequest->getVille());
 
+        $informationComplementaire = new InformationComplementaire();
+        if (!empty($signalement->getInformationComplementaire())) {
+            $informationComplementaire = clone $signalement->getInformationComplementaire();
+        }
+        $informationComplementaire
+            ->setInformationsComplementairesSituationBailleurBeneficiaireRsa($coordonneesBailleurRequest->getBeneficiaireRsa())
+            ->setInformationsComplementairesSituationBailleurBeneficiaireFsl($coordonneesBailleurRequest->getBeneficiaireFsl())
+            ->setInformationsComplementairesSituationBailleurRevenuFiscal($coordonneesBailleurRequest->getRevenuFiscal());
+        if ($coordonneesBailleurRequest->getDateNaissance()) {
+            $informationComplementaire->setInformationsComplementairesSituationBailleurDateNaissance(
+                $coordonneesBailleurRequest->getDateNaissance()
+            );
+        }
+        $signalement->setInformationComplementaire($informationComplementaire);
+
         $this->save($signalement);
     }
 

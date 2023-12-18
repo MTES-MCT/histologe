@@ -29,6 +29,11 @@ class CoordonneesBailleurRequest
         private readonly ?string $codePostal = null,
         #[Assert\NotBlank(message: 'Merci de saisir la ville du bailleur', groups: ['BAILLEUR_OCCUPANT'])]
         private readonly ?string $ville = null,
+        private readonly ?string $beneficiaireRsa = null,
+        private readonly ?string $beneficiaireFsl = null,
+        private readonly ?string $revenuFiscal = null,
+        #[Assert\DateTime('Y-m-d')]
+        private readonly ?string $dateNaissance = null,
     ) {
     }
 
@@ -70,5 +75,25 @@ class CoordonneesBailleurRequest
     public function getVille(): ?string
     {
         return $this->ville;
+    }
+
+    public function getBeneficiaireRsa(): ?string
+    {
+        return $this->beneficiaireRsa;
+    }
+
+    public function getBeneficiaireFsl(): ?string
+    {
+        return $this->beneficiaireFsl;
+    }
+
+    public function getRevenuFiscal(): ?string
+    {
+        return $this->revenuFiscal;
+    }
+
+    public function getDateNaissance(): ?string
+    {
+        return $this->dateNaissance;
     }
 }
