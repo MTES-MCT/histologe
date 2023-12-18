@@ -304,7 +304,7 @@ class SignalementBuilder
             return null;
         }
 
-        return new \DateTimeImmutable('01-01-1949') > new \DateTimeImmutable($dateConstruction);
+        return '1949' > $dateConstruction;
     }
 
     private function resolveDateEmmenagement(): ?\DateTimeImmutable

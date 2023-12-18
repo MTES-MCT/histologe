@@ -183,6 +183,7 @@ class SignalementDraftRequest
     private ?string $informationsComplementairesSituationBailleurDateNaissance = null;
     private ?string $informationsComplementairesLogementMontantLoyer = null;
     private ?string $informationsComplementairesLogementNombreEtages = null;
+    #[Assert\DateTime('Y')]
     private ?string $informationsComplementairesLogementAnneeConstruction = null;
     private ?string $messageAdministration = null;
     private ?array $files = null;
