@@ -412,6 +412,14 @@ class SignalementManager extends AbstractManager
 
         // TODO : mise à jour des désordres liés à la composition du logement
 
+        $informationComplementaire = new InformationComplementaire();
+        if (!empty($signalement->getInformationComplementaire())) {
+            $informationComplementaire = clone $signalement->getInformationComplementaire();
+        }
+        $informationComplementaire
+            ->setInformationsComplementairesLogementNombreEtages($compositionLogementRequest->getNombreEtages());
+        $signalement->setInformationComplementaire($informationComplementaire);
+
         $this->save($signalement);
     }
 
