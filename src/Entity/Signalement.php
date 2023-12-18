@@ -53,8 +53,7 @@ class Signalement
     #[ORM\ManyToMany(targetEntity: Criticite::class, inversedBy: 'signalements')]
     private $criticites;
 
-    #[ORM\Column(type: 'text')]
-    #[Assert\NotBlank]
+    #[ORM\Column(type: 'text', nullable: true)]
     private $details;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
