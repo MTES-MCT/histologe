@@ -14,6 +14,7 @@ use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Dto\SignalementAffectationListView;
 use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
@@ -354,6 +355,9 @@ class SignalementManager extends AbstractManager
         if (is_numeric($informationsLogementRequest->getNombrePersonnes())) {
             $signalement->setNbOccupantsLogement($informationsLogementRequest->getNombrePersonnes());
         }
+        if (is_numeric($informationsLogementRequest->getLoyer())) {
+            $signalement->setLoyer($informationsLogementRequest->getLoyer());
+        }
 
         $typeCompositionLogement = new TypeCompositionLogement();
         if (!empty($signalement->getTypeCompositionLogement())) {
@@ -367,6 +371,14 @@ class SignalementManager extends AbstractManager
             ->setBailDpeEtatDesLieux($informationsLogementRequest->getBailDpeEtatDesLieux())
             ->setBailDpeDpe($informationsLogementRequest->getBailDpeDpe());
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
+
+        $informationComplementaire = new InformationComplementaire();
+        if (!empty($signalement->getInformationComplementaire())) {
+            $informationComplementaire = clone $signalement->getInformationComplementaire();
+        }
+        $informationComplementaire
+            ->setInformationsComplementairesSituationOccupantsLoyersPayes($informationsLogementRequest->getLoyersPayes());
+        $signalement->setInformationComplementaire($informationComplementaire);
 
         $this->save($signalement);
     }

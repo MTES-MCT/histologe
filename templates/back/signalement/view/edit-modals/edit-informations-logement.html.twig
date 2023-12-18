@@ -127,6 +127,31 @@
                                     <option value="nsp" {{ bailDpeDpe is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="loyer">Montant du loyer</label>
+                                <input class="fr-input" type="number" name="loyer" value="{{ signalement.loyer }}">
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set loyersPayes = 'nsp' %}
+                                {% if signalement.informationComplementaire %}
+                                    {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes is same as 'oui' %}
+                                        {% set loyersPayes = 'oui' %}
+                                    {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes is same as 'non' %}
+                                        {% set loyersPayes = 'non' %}
+                                    {% else %}
+                                        {% set loyersPayes = 'nsp' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="loyersPayes">Paiement loyers à jour</label>
+                                <select class="fr-select" name="loyersPayes">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ loyersPayes is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ loyersPayes is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ loyersPayes is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
                         </div>
                         
                         <div class="fr-modal__footer">

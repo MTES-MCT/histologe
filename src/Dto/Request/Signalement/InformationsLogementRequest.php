@@ -22,6 +22,8 @@ class InformationsLogementRequest
         private readonly ?string $bailDpeEtatDesLieux = null,
         #[Assert\NotBlank(message: 'Merci de définir le DPE.', groups: ['LOCATAIRE', 'BAILLEUR', 'BAILLEUR_OCCUPANT'])]
         private readonly ?string $bailDpeDpe = null,
+        private readonly ?string $loyer = null,
+        private readonly ?string $loyersPayes = null,
     ) {
     }
 
@@ -58,5 +60,15 @@ class InformationsLogementRequest
     public function getBailDpeDpe(): ?string
     {
         return $this->bailDpeDpe;
+    }
+
+    public function getLoyer(): ?string
+    {
+        return $this->loyer;
+    }
+
+    public function getLoyersPayes(): ?string
+    {
+        return $this->loyersPayes;
     }
 }
