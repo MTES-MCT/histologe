@@ -34,14 +34,18 @@ class LoadSignalementDraft extends Fixture implements OrderedFixtureInterface
             ->setAddressComplete($payload['adresse_logement_adresse'])
             ->setEmailDeclarant($row['email_declarant'])
             ->setCurrentStep($payload['currentStep'])
-            ->setStatus(SignalementDraftStatus::EN_COURS)
             ->setProfileDeclarant(ProfileDeclarant::from($row['profile_declarant']));
+        if (isset($row['status'])) {
+            $signalementDraft->setStatus(SignalementDraftStatus::from($row['status']));
+        } else {
+            $signalementDraft->setStatus(SignalementDraftStatus::EN_COURS);
+        }
 
         $manager->persist($signalementDraft);
     }
 
     public function getOrder(): int
     {
-        return 14;
+        return 11;
     }
 }

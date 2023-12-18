@@ -84,6 +84,6 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
 
     public function getOrder(): int
     {
-        return 13;
+        return 17;
     }
 }

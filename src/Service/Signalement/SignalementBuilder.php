@@ -131,7 +131,8 @@ class SignalementBuilder
             $this->processDesordresTypeComposition();
         }
 
-        // TODO : https://github.com/MTES-MCT/histologe/issues/1546
+        $criticiteCalculator = new CriticiteCalculator();
+        $this->signalement->setScore($criticiteCalculator->calculateFromNewFormulaire($this->signalement));
 
         // TODO : https://github.com/MTES-MCT/histologe/issues/1547
 
