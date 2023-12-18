@@ -14,6 +14,8 @@ use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Dto\SignalementAffectationListView;
 use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProprioType;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
@@ -326,6 +328,11 @@ class SignalementManager extends AbstractManager
 
     public function updateFromCoordonneesFoyerRequest(Signalement $signalement, CoordonneesFoyerRequest $coordonneesFoyerRequest)
     {
+        if (ProfileDeclarant::BAILLEUR_OCCUPANT == $signalement->getProfileDeclarant()) {
+            $signalement
+                ->setTypeProprio($coordonneesFoyerRequest->getTypeProprio() ? ProprioType::from($coordonneesFoyerRequest->getTypeProprio()) : null)
+                ->setStructureDeclarant($coordonneesFoyerRequest->getNomStructure());
+        }
         $signalement
             ->setCiviliteOccupant($coordonneesFoyerRequest->getCivilite())
             ->setNomOccupant($coordonneesFoyerRequest->getNom())
