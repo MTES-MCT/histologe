@@ -481,6 +481,15 @@ class SignalementManager extends AbstractManager
             ->setInfoProcedureDepartApresTravaux($procedureDemarchesRequest->getInfoProcedureDepartApresTravaux());
         $signalement->setInformationProcedure($informationProcedure);
 
+        $informationComplementaire = new InformationComplementaire();
+        if (!empty($signalement->getInformationComplementaire())) {
+            $informationComplementaire = clone $signalement->getInformationComplementaire();
+        }
+        $informationComplementaire
+            ->setInformationsComplementairesSituationOccupantsPreavisDepart($procedureDemarchesRequest->getPreavisDepart())
+            ->setInformationsComplementairesSituationOccupantsDemandeRelogement($procedureDemarchesRequest->getDemandeRelogement());
+        $signalement->setInformationComplementaire($informationComplementaire);
+
         $this->save($signalement);
     }
 

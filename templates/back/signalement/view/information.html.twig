@@ -629,6 +629,34 @@
                             N/C
                         {% endif %}
                     </div>
+                    <div class="fr-col-12">
+                        <strong>Préavis de départ :</strong>
+                        {% if signalement.informationComplementaire %}
+                            {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsPreavisDepart is same as 'oui' %}
+                                {{ static_picto_yes|raw }}
+                            {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsPreavisDepart is same as 'non' %}
+                                {{ static_picto_no|raw }}
+                            {% else %}
+                                Ne sait pas
+                            {% endif %}
+                        {% else %}
+                            N/C
+                        {% endif %}
+                    </div>
+                    <div class="fr-col-12">
+                        <strong>Demande logement social / relogement :</strong>
+                        {% if signalement.informationComplementaire %}
+                            {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsDemandeRelogement is same as 'oui' %}
+                                {{ static_picto_yes|raw }}
+                            {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsDemandeRelogement is same as 'non' %}
+                                {{ static_picto_no|raw }}
+                            {% else %}
+                                Ne sait pas
+                            {% endif %}
+                        {% else %}
+                            N/C
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
