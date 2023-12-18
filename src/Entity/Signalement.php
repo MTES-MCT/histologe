@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProprioType;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
@@ -91,6 +92,9 @@ class Signalement
 
     #[ORM\Column(type: 'date', nullable: true)]
     private $dateEntree;
+
+    #[ORM\Column(type: 'string', nullable: true, enumType: ProprioType::class)]
+    private ?ProprioType $typeProprio = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
@@ -686,6 +690,18 @@ class Signalement
     public function setDateEntree(?DateTimeInterface $dateEntree): self
     {
         $this->dateEntree = $dateEntree;
+
+        return $this;
+    }
+
+    public function getTypeProprio(): ?ProprioType
+    {
+        return $this->typeProprio;
+    }
+
+    public function setTypeProprio(?ProprioType $typeProprio): self
+    {
+        $this->typeProprio = $typeProprio;
 
         return $this;
     }

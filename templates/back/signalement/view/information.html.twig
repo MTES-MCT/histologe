@@ -34,11 +34,18 @@
                         {% endif %}
                     </div>
                     
-                    
                     {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR  %}
                         <div class="fr-col-12">
                             <strong>Type de déclarant :</strong> {{ signalement.profileDeclarant.label }}
                         </div>
+                        <div class="fr-col-12">
+                            <strong>Type de bailleur :</strong> {{ signalement.typeProprio.label }}
+                        </div>
+                        {% if signalement.typeProprio and signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE %}
+                        <div class="fr-col-12">
+                            <strong>Nom de la structure :</strong> {{ signalement.structureDeclarant }}
+                        </div>
+                        {% endif %}
                     {% endif %}
 
                     <div class="fr-col-12 fr-col-md-6">
@@ -89,6 +96,14 @@
                         <div class="fr-col-12">
                             <strong>Type de déclarant :</strong> {{ signalement.profileDeclarant.label }}
                         </div>
+                        <div class="fr-col-12">
+                            <strong>Type de bailleur :</strong> {{ signalement.typeProprio ? signalement.typeProprio.label : 'N/C' }}
+                        </div>
+                        {% if signalement.typeProprio and signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE %}
+                        <div class="fr-col-12">
+                            <strong>Nom de la structure :</strong> {{ signalement.structureDeclarant }}
+                        </div>
+                        {% endif %}
                     {% endif %}
 
                     <div class="fr-col-12 fr-col-md-6">

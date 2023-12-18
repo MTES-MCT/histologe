@@ -85,6 +85,7 @@ class SignalementDraftRequest
         groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT']
     )]
     private ?string $vosCoordonneesOccupantCivilite = null;
+    private ?string $vosCoordonneesOccupantNomOrganisme = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre nom.',
         groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT']
@@ -453,6 +454,18 @@ class SignalementDraftRequest
     public function setVosCoordonneesOccupantCivilite(?string $vosCoordonneesOccupantCivilite): self
     {
         $this->vosCoordonneesOccupantCivilite = $vosCoordonneesOccupantCivilite;
+
+        return $this;
+    }
+
+    public function getVosCoordonneesOccupantNomOrganisme(): ?string
+    {
+        return $this->vosCoordonneesOccupantNomOrganisme;
+    }
+
+    public function setVosCoordonneesOccupantNomOrganisme(?string $vosCoordonneesOccupantNomOrganisme): self
+    {
+        $this->vosCoordonneesOccupantNomOrganisme = $vosCoordonneesOccupantNomOrganisme;
 
         return $this;
     }
