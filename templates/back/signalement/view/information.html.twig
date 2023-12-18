@@ -92,6 +92,9 @@
                     {% endif %}
 
                     <div class="fr-col-12 fr-col-md-6">
+                        <strong>Civilité :</strong> {{ signalement.civiliteOccupant is same as 'mme' ? 'Madame' : signalement.civiliteOccupant is same as 'mr' ? 'Monsieur' : 'N/C' }}
+                    </div>
+                    <div class="fr-col-12 fr-col-md-6">
                         <strong>Nom :</strong> {{ signalement.nomOccupant }}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">

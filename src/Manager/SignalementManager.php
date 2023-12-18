@@ -326,7 +326,9 @@ class SignalementManager extends AbstractManager
 
     public function updateFromCoordonneesFoyerRequest(Signalement $signalement, CoordonneesFoyerRequest $coordonneesFoyerRequest)
     {
-        $signalement->setNomOccupant($coordonneesFoyerRequest->getNom())
+        $signalement
+            ->setCiviliteOccupant($coordonneesFoyerRequest->getCivilite())
+            ->setNomOccupant($coordonneesFoyerRequest->getNom())
             ->setPrenomOccupant($coordonneesFoyerRequest->getPrenom())
             ->setMailOccupant($coordonneesFoyerRequest->getMail())
             ->setTelOccupant($coordonneesFoyerRequest->getTelephone())

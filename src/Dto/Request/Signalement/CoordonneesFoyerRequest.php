@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints\Email;
 class CoordonneesFoyerRequest
 {
     public function __construct(
+        private readonly ?string $civilite = null,
         #[Assert\NotBlank(message: 'Merci de saisir un nom.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
         #[Assert\Length(max: 50, maxMessage: 'Le nom ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $nom = null,
@@ -24,6 +25,11 @@ class CoordonneesFoyerRequest
         #[AppAssert\TelephoneFormat]
         private readonly ?string $telephoneBis = null,
     ) {
+    }
+
+    public function getCivilite(): ?string
+    {
+        return $this->civilite;
     }
 
     public function getNom(): ?string
