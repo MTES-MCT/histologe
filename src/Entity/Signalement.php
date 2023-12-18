@@ -351,6 +351,12 @@ class Signalement
     #[ORM\Column]
     private ?float $score = null;
 
+    #[ORM\Column]
+    private ?float $scoreLogement = null;
+
+    #[ORM\Column]
+    private ?float $scoreBatiment = null;
+
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Intervention::class, orphanRemoval: true)]
     private Collection $interventions;
 
@@ -397,6 +403,8 @@ class Signalement
         $this->uuid = Uuid::v4();
         $this->suivis = new ArrayCollection();
         $this->score = 0;
+        $this->scoreLogement = 0;
+        $this->scoreBatiment = 0;
         $this->affectations = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->isImported = false;
@@ -988,7 +996,8 @@ class Signalement
 
     public function getAddressCompleteOccupant(): ?string
     {
-        return sprintf('%s %s %s',
+        return sprintf(
+            '%s %s %s',
             $this->adresseOccupant,
             $this->cpOccupant,
             $this->villeOccupant
@@ -1778,6 +1787,30 @@ class Signalement
     public function setScore(float $score): self
     {
         $this->score = $score;
+
+        return $this;
+    }
+
+    public function getScoreLogement(): ?float
+    {
+        return $this->scoreLogement;
+    }
+
+    public function setScoreLogement(float $scoreLogement): self
+    {
+        $this->scoreLogement = $scoreLogement;
+
+        return $this;
+    }
+
+    public function getScoreBatiment(): ?float
+    {
+        return $this->scoreBatiment;
+    }
+
+    public function setScoreBatiment(float $scoreBatiment): self
+    {
+        $this->scoreBatiment = $scoreBatiment;
 
         return $this;
     }

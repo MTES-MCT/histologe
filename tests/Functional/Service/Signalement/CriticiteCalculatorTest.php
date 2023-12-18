@@ -20,7 +20,7 @@ class CriticiteCalculatorTest extends KernelTestCase
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
     }
 
-    public function testCalculateBothScoreOnSignalement()
+    public function testCalculateScoreOnOldSignalement()
     {
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $signalement = $signalementRepository->find(1);
@@ -29,5 +29,23 @@ class CriticiteCalculatorTest extends KernelTestCase
         $this->assertIsFloat($newScore);
         $this->assertLessThan(101, $newScore);
         $this->assertEquals(3.16, round($newScore, 2));
+    }
+
+    public function testCalculateFromNewFormulaire()
+    {
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['reference' => '2023-27']);
+
+        $newScore = (new CriticiteCalculator())->calculateFromNewFormulaire($signalement);
+        $this->assertIsFloat($newScore);
+        $this->assertLessThan(101, $newScore);
+        $this->assertEquals(35.19, round($newScore, 2));
+        $this->assertNotNull($signalement->getScoreLogement());
+        $this->assertNotNull($signalement->getScoreBatiment());
+        $this->assertIsFloat($signalement->getScoreLogement());
+        $this->assertIsFloat($signalement->getScoreBatiment());
+        $this->assertEquals(13.99, round($signalement->getScoreLogement(), 2));
+        $this->assertEquals(50, round($signalement->getScoreBatiment(), 2));
     }
 }

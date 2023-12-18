@@ -94,6 +94,6 @@ class LoadCommuneData extends Fixture implements OrderedFixtureInterface
 
     public function getOrder(): int
     {
-        return 12;
+        return 16;
     }
 }

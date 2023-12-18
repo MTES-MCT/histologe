@@ -42,6 +42,6 @@ class LoadDesordreCritereData extends Fixture implements OrderedFixtureInterface
 
     public function getOrder(): int
     {
-        return 16;
+        return 9;
     }
 }

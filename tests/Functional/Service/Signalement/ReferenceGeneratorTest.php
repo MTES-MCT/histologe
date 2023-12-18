@@ -45,7 +45,7 @@ class ReferenceGeneratorTest extends KernelTestCase
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
 
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
-        $territory = $territoryRepository->findOneBy(['zip' => 44]);
+        $territory = $territoryRepository->findOneBy(['zip' => 85]);
 
         $referenceGenerator = new ReferenceGenerator($signalementRepository);
 
