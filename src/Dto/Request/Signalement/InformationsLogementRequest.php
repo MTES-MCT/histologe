@@ -24,6 +24,7 @@ class InformationsLogementRequest
         private readonly ?string $bailDpeDpe = null,
         private readonly ?string $loyer = null,
         private readonly ?string $loyersPayes = null,
+        private readonly ?string $anneeConstruction = null,
     ) {
     }
 
@@ -70,5 +71,10 @@ class InformationsLogementRequest
     public function getLoyersPayes(): ?string
     {
         return $this->loyersPayes;
+    }
+
+    public function getAnneeConstruction(): ?string
+    {
+        return $this->anneeConstruction;
     }
 }

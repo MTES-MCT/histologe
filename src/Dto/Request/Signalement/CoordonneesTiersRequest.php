@@ -32,11 +32,6 @@ class CoordonneesTiersRequest
         return $this->typeProprio;
     }
 
-    public function getNomStructure(): ?string
-    {
-        return $this->nomStructure;
-    }
-
     public function getNom(): ?string
     {
         return $this->nom;

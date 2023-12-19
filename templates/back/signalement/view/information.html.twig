@@ -326,7 +326,7 @@
                         {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
-                        <strong>Montant du loyer :</strong> {{ signalement.loyer ?? 'N/C' }} €
+                        <strong>Montant du loyer :</strong> {{ signalement.loyer ? signalement.loyer ~ ' €' : 'N/C' }}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Paiement loyers à jour :</strong>
@@ -338,6 +338,14 @@
                             {% else %}
                                 Ne sait pas
                             {% endif %}
+                        {% else %}
+                            N/C
+                        {% endif %}
+                    </div>
+                    <div class="fr-col-12 fr-col-md-6">
+                        <strong>Année de construction :</strong>
+                        {% if signalement.informationComplementaire %}
+                            {{ signalement.informationComplementaire.informationsComplementairesLogementAnneeConstruction }}
                         {% else %}
                             N/C
                         {% endif %}
@@ -652,7 +660,7 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Revenu fiscal de référence :</strong>
                         {% if signalement.informationComplementaire %}
-                            {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurRevenuFiscal ?? 'N/C' }} €
+                            {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurRevenuFiscal ? signalement.informationComplementaire.informationsComplementairesSituationBailleurRevenuFiscal ~ ' €' : 'N/C' }}
                         {% else %}
                             N/C
                         {% endif %}

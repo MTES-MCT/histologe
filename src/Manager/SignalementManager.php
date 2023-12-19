@@ -405,7 +405,8 @@ class SignalementManager extends AbstractManager
             $informationComplementaire = clone $signalement->getInformationComplementaire();
         }
         $informationComplementaire
-            ->setInformationsComplementairesSituationOccupantsLoyersPayes($informationsLogementRequest->getLoyersPayes());
+            ->setInformationsComplementairesSituationOccupantsLoyersPayes($informationsLogementRequest->getLoyersPayes())
+            ->setInformationsComplementairesLogementAnneeConstruction($informationsLogementRequest->getAnneeConstruction());
         $signalement->setInformationComplementaire($informationComplementaire);
 
         $this->save($signalement);
