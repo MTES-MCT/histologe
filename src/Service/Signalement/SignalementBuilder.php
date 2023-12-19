@@ -118,7 +118,7 @@ class SignalementBuilder
             ->setInformationProcedure($this->informationProcedureFactory->createFromSignalementDraftPayload($this->payload))
             ->setIsProprioAverti($this->evalBoolean($this->signalementDraftRequest->getInfoProcedureBailleurPrevenu()))
             ->setLoyer($this->signalementDraftRequest->getInformationsComplementairesLogementMontantLoyer())
-            ->setNbNiveauxLogement($this->signalementDraftRequest->getInformationsComplementairesLogementNombreEtages())
+            ->setNbNiveauxLogement((int) $this->signalementDraftRequest->getInformationsComplementairesLogementNombreEtages())
             ->setIsFondSolidariteLogement(
                 $this->evalBoolean(
                     $this->signalementDraftRequest->getInformationsComplementairesSituationOccupantsBeneficiaireFsl()
@@ -304,7 +304,7 @@ class SignalementBuilder
             return null;
         }
 
-        return new \DateTimeImmutable('01-01-1949') > new \DateTimeImmutable($dateConstruction);
+        return '1949' > $dateConstruction;
     }
 
     private function resolveDateEmmenagement(): ?\DateTimeImmutable

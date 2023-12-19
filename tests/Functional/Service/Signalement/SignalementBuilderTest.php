@@ -150,6 +150,7 @@ class SignalementBuilderTest extends KernelTestCase
         $this->assertEquals(3, $signalement->getNbOccupantsLogement());
         $this->assertEquals(45, $signalement->getSuperficie());
         $this->assertEquals(5, $signalement->getNbNiveauxLogement());
+        $this->assertFalse($signalement->getIsConstructionAvant1949());
 
         $this->assertEquals(new \DateTimeImmutable('1970-10-01'), $signalement->getDateNaissanceOccupant());
         $this->assertEquals(new \DateTimeImmutable('2020-10-01'), $signalement->getDateEntree());
@@ -165,5 +166,21 @@ class SignalementBuilderTest extends KernelTestCase
 
         $informationComplementaire = array_filter($signalement->getInformationComplementaire()->toArray());
         $this->assertEquals($this->getLocataireInformationComplementaire(), $informationComplementaire);
+    }
+
+    public function testIsConstructionAvant1949(): void
+    {
+        $this->assertNull($this->invokeMethod($this->signalementBuilder, 'isConstructionAvant1949', [null]));
+        $this->assertTrue($this->invokeMethod($this->signalementBuilder, 'isConstructionAvant1949', ['1867']));
+        $this->assertFalse($this->invokeMethod($this->signalementBuilder, 'isConstructionAvant1949', ['1949']));
+    }
+
+    private function invokeMethod(&$object, $methodName, array $parameters = [])
+    {
+        $reflection = new \ReflectionClass(\get_class($object));
+        $method = $reflection->getMethod($methodName);
+        $method->setAccessible(true);
+
+        return $method->invokeArgs($object, $parameters);
     }
 }
