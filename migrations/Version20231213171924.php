@@ -9,7 +9,7 @@ use Doctrine\Migrations\AbstractMigration;
 
 final class Version20231213171924 extends AbstractMigration
 {
-    private const ROLE_SUPER_AMIN = '%ROLE_ADMIN%';
+    private const ROLE_SUPER_AMIN = '["ROLE_ADMIN"]';
 
     public function getDescription(): string
     {
