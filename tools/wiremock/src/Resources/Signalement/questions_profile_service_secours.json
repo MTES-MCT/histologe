@@ -17,12 +17,18 @@
         {
           "type": "SignalementFormTextfield",
           "label": "Nom de famille",
-          "slug": "vos_coordonnees_tiers_nom"
+          "slug": "vos_coordonnees_tiers_nom",
+          "validate": {
+            "maxLength": 50
+          }
         },
         {
           "type": "SignalementFormTextfield",
           "label": "Prénom",
-          "slug": "vos_coordonnees_tiers_prenom"
+          "slug": "vos_coordonnees_tiers_prenom",
+          "validate": {
+            "maxLength": 50
+          }
         },
         {
           "type": "SignalementFormEmailfield",
@@ -65,7 +71,8 @@
           "label": "Nom de famille (facultatif)",
           "slug": "coordonnees_occupant_nom",
           "validate": {
-            "required": false
+            "required": false,
+            "maxLength": 50
           }
         },
         {
@@ -73,7 +80,8 @@
           "label": "Prénom (facultatif)",
           "slug": "coordonnees_occupant_prenom",
           "validate": {
-            "required": false
+            "required": false,
+            "maxLength": 50
           }
         },
         {
@@ -81,7 +89,8 @@
           "label": "Adresse email (facultatif)",
           "slug": "coordonnees_occupant_email",
           "validate": {
-            "required": false
+            "required": false,
+            "maxLength": 255
           }
         },
         {
@@ -123,7 +132,8 @@
           "label": "Nom de famille ou de l'organisme (facultatif)",
           "slug": "coordonnees_bailleur_nom",
           "validate": {
-            "required": false
+            "required": false,
+            "maxLength": 255
           }
         },
         {
@@ -131,7 +141,8 @@
           "label": "Prénom (facultatif)",
           "slug": "coordonnees_bailleur_prenom",
           "validate": {
-            "required": false
+            "required": false,
+            "maxLength": 255
           }
         },
         {
@@ -139,7 +150,8 @@
           "label": "Adresse email (facultatif)",
           "slug": "coordonnees_bailleur_email",
           "validate": {
-            "required": false
+            "required": false,
+            "maxLength": 255
           }
         },
         {

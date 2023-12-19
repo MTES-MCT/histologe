@@ -58,11 +58,13 @@ class SignalementDraftRequest
         message: 'Merci de renseigner votre nom.',
         groups: ['TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR', 'SERVICE_SECOURS']
     )]
+    #[Assert\Length(max: 50, maxMessage: 'Votre nom en tant que tiers est limité à {{ limit }} caractères.')]
     private ?string $vosCoordonneesTiersNom = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre prénom.',
         groups: ['TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR', 'SERVICE_SECOURS']
     )]
+    #[Assert\Length(max: 50, maxMessage: 'Votre prénom en tant que tiers est limité à {{ limit }} caractères.')]
     private ?string $vosCoordonneesTiersPrenom = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre adresse e-mail.',
@@ -87,11 +89,13 @@ class SignalementDraftRequest
         message: 'Merci de renseigner votre nom.',
         groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT']
     )]
+    #[Assert\Length(max: 50, maxMessage: 'Votre nom en tant qu\'occupant est limité à {{ limit }} caractères.')]
     private ?string $vosCoordonneesOccupantNom = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre prénom.',
         groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT']
     )]
+    #[Assert\Length(max: 50, maxMessage: 'Votre prénom en tant qu\'occupant est limité à {{ limit }} caractères.')]
     private ?string $vosCoordonneesOccupantPrenom = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre adresse e-mail.',
@@ -107,14 +111,18 @@ class SignalementDraftRequest
     private ?string $vosCoordonneesOccupantTel = null;
     #[AppAssert\TelephoneFormat]
     private ?string $vosCoordonneesOccupantTelSecondaire = null;
+    #[Assert\Length(max: 50, maxMessage: 'Le nom de l\'occupant ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesOccupantNom = null;
+    #[Assert\Length(max: 50, maxMessage: 'Le prénom de l\'occupant ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesOccupantPrenom = null;
     private ?string $coordonneesOccupantEmail = null;
     #[AppAssert\TelephoneFormat]
     private ?string $coordonneesOccupantTel = null;
     #[AppAssert\TelephoneFormat]
     private ?string $coordonneesOccupantTelSecondaire = null;
+    #[Assert\Length(max: 255, maxMessage: 'Le nom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesBailleurNom = null;
+    #[Assert\Length(max: 255, maxMessage: 'Le prénom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesBailleurPrenom = null;
     #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
     private ?string $coordonneesBailleurEmail = null;

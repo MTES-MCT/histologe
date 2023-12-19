@@ -10,8 +10,10 @@ class CoordonneesFoyerRequest
 {
     public function __construct(
         #[Assert\NotBlank(message: 'Merci de saisir un nom.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
+        #[Assert\Length(max: 50, maxMessage: 'Le nom ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $nom = null,
         #[Assert\NotBlank(message: 'Merci de saisir un prénom.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
+        #[Assert\Length(max: 50, maxMessage: 'Le prénom ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $prenom = null,
         #[Assert\NotBlank(message: 'Merci de saisir un email', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
         #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]

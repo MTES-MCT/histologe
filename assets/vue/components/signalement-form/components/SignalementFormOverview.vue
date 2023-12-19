@@ -1,5 +1,5 @@
 <template>
-  <div :id="id">
+  <div :id="id" class="text-word-break-all">
     <div>
       <br>
       <h2 class="fr-h4">Récapitulatif</h2>

@@ -94,9 +94,11 @@ class Signalement
     private $dateEntree;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
     private $nomProprio;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $prenomProprio;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -138,9 +140,11 @@ class Signalement
     private $isNotOccupant;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    #[Assert\Length(max: 50)]
     private $nomDeclarant;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    #[Assert\Length(max: 50)]
     private $prenomDeclarant;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
@@ -163,10 +167,12 @@ class Signalement
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 50)]
     private $nomOccupant;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 50)]
     private $prenomOccupant;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
