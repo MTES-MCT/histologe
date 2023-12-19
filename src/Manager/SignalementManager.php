@@ -316,6 +316,10 @@ class SignalementManager extends AbstractManager
 
     public function updateFromCoordonneesTiersRequest(Signalement $signalement, CoordonneesTiersRequest $coordonneesTiersRequest)
     {
+        if (ProfileDeclarant::BAILLEUR == $signalement->getProfileDeclarant()) {
+            $signalement
+                ->setTypeProprio($coordonneesTiersRequest->getTypeProprio() ? ProprioType::from($coordonneesTiersRequest->getTypeProprio()) : null);
+        }
         $signalement->setNomDeclarant($coordonneesTiersRequest->getNom())
             ->setPrenomDeclarant($coordonneesTiersRequest->getPrenom())
             ->setMailDeclarant($coordonneesTiersRequest->getMail())

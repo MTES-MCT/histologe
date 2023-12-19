@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints\Email;
 class CoordonneesTiersRequest
 {
     public function __construct(
+        private readonly ?string $typeProprio = null,
         #[Assert\NotBlank(message: 'Merci de saisir un nom.')]
         #[Assert\Length(max: 50, maxMessage: 'Le nom ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $nom = null,
@@ -24,6 +25,16 @@ class CoordonneesTiersRequest
         private readonly ?string $lien = null,
         private readonly ?string $structure = null,
     ) {
+    }
+
+    public function getTypeProprio(): ?string
+    {
+        return $this->typeProprio;
+    }
+
+    public function getNomStructure(): ?string
+    {
+        return $this->nomStructure;
     }
 
     public function getNom(): ?string
