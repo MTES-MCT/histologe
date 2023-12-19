@@ -82,7 +82,8 @@
           "type": "SignalementFormAddress",
           "label": "Adresse du logement",
           "slug": "adresse_logement_adresse",
-          "description": "Tapez l'adresse puis sélectionnez-la dans la liste"
+          "description": "Tapez l'adresse puis sélectionnez-la dans la liste",
+          "isTerritoryToCheck": true
         },
         {
           "type": "SignalementFormSubscreen",

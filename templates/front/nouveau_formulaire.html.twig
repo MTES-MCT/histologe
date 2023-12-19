@@ -22,6 +22,7 @@
            data-ajaxurl-get-signalement-draft="{{ path('informations_signalement_draft', {uuid: uuid_signalement}) }}"
          {% endif %}
          data-platform-name="{{ platform.name }}"
+         data-ajaxurl-check-territory="{{ path('front_signalement_check_territory') }}"
         ></div>
   </div>
 {% endblock %}

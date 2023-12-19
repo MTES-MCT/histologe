@@ -6,6 +6,7 @@ use App\Validator as AppAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
 
+#[AppAssert\IsTerritoryActive]
 class SignalementDraftRequest
 {
     public const PREFIX_PROPERTIES_TYPE_COMPOSITION = ['type_logement', 'composition_logement', 'bail_dpe'];
@@ -27,6 +28,7 @@ class SignalementDraftRequest
     private ?string $adresseLogementAdresseDetailCodePostal = null;
     #[Assert\NotBlank(message: 'Merci de saisir une ville.')]
     private ?string $adresseLogementAdresseDetailCommune = null;
+    #[Assert\NotBlank(message: 'Merci de saisir un code INSEE.')]
     private ?string $adresseLogementAdresseDetailInsee = null;
     private ?float $adresseLogementAdresseDetailGeolocLat = null;
     private ?float $adresseLogementAdresseDetailGeolocLng = null;

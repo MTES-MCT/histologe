@@ -33,6 +33,7 @@
         :disabled="component.disabled"
         :multiple="component.multiple"
         :ariaControls="component.ariaControls"
+        :isTerritoryToCheck="component.isTerritoryToCheck"
         v-model="formStore.data[component.slug]"
         :hasError="formStore.validationErrors[component.slug]  !== undefined"
         :error="formStore.validationErrors[component.slug]"

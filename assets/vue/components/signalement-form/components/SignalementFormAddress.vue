@@ -48,6 +48,13 @@
       :error="formStore.validationErrors[idSubscreen]"
       @update:modelValue="handleSubscreenModelUpdate"
     />
+
+    <SignalementFormModal 
+      v-model="isModalOpen"
+      id="check_territory_modal"
+      :label="modalLabel"
+      :description="modalDescription"
+    />
   </div>
 </template>
 
@@ -60,13 +67,15 @@ import subscreenData from './../address_subscreen.json'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
 import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
+import SignalementFormModal from './SignalementFormModal.vue'
 
 export default defineComponent({
   name: 'SignalementFormAddress',
   components: {
     SignalementFormTextfield,
     SignalementFormButton,
-    SignalementFormSubscreen
+    SignalementFormSubscreen,
+    SignalementFormModal
   },
   props: {
     id: { type: String, default: null },
@@ -77,6 +86,7 @@ export default defineComponent({
     validate: { type: Object, default: null },
     hasError: { type: Boolean, default: false },
     error: { type: String, default: '' },
+    isTerritoryToCheck: { type: Boolean, default: false },
     clickEvent: Function
   },
   data () {
@@ -91,7 +101,10 @@ export default defineComponent({
       actionShow: 'show:' + this.id + '_detail',
       screens: { body: updatedSubscreenData },
       suggestions: [] as any[],
-      formStore
+      formStore,
+      isModalOpen: false,
+      modalLabel: '',
+      modalDescription: ''
     }
   },
   created () {
@@ -101,7 +114,7 @@ export default defineComponent({
         clearTimeout(this.idFetchTimeout)
         this.idFetchTimeout = setTimeout(() => {
           if (newValue.length > 10) {
-            requests.validateAddress(newValue, this.onAddressFound)
+            requests.validateAddress(newValue, this.handleAddressFound)
           }
         }, 200)
       }
@@ -129,6 +142,9 @@ export default defineComponent({
         this.formStore.data[this.id + '_detail_insee'] = this.suggestions[index].properties.citycode
         this.formStore.data[this.id + '_detail_geoloc_lng'] = this.suggestions[index].geometry.coordinates[0]
         this.formStore.data[this.id + '_detail_geoloc_lat'] = this.suggestions[index].geometry.coordinates[1]
+        if(this.isTerritoryToCheck){
+          requests.checkTerritory(this.suggestions[index].properties.postcode, this.suggestions[index].properties.citycode, this.handleTerritoryChecked);
+        }
         this.suggestions.length = 0
       }
       const subscreen = document.querySelector('#' + this.idSubscreen)
@@ -140,10 +156,17 @@ export default defineComponent({
         buttonShow.classList.add('fr-hidden')
       }
     },
-    onAddressFound (requestResponse: any) {
+    handleAddressFound (requestResponse: any) {
       this.suggestions = requestResponse.features
-      // TODO : que faire si code postal dans département non ouvert ?
-      // TODO : répertorier les exclusions de code postal du 69 ?
+    },
+    handleTerritoryChecked (requestResponse: any) {
+      if(!requestResponse.success) {
+          this.modalLabel = requestResponse.label
+          this.modalDescription = requestResponse.message
+          this.isModalOpen = true
+
+          this.formStore.data[this.id] = ''
+      }
       // TODO : vérifier si dans territoire expé NDE pour comportement différent ?
     }
   },
