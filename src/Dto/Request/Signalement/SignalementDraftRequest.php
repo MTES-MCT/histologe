@@ -62,7 +62,7 @@ class SignalementDraftRequest
         message: 'Merci de renseigner votre prénom.',
         groups: ['TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR', 'SERVICE_SECOURS']
     )]
-    #[Assert\Length(max: 50, maxMessage: 'Votre prénom en tant que tiers est limité {{ limit }} caractères.')]
+    #[Assert\Length(max: 50, maxMessage: 'Votre prénom en tant que tiers est limité à {{ limit }} caractères.')]
     private ?string $vosCoordonneesTiersPrenom = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre adresse e-mail.',
