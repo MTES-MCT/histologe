@@ -246,6 +246,7 @@ class SignalementImportMapper
 
     private function transformToDatetime(string $value): ?\DateTimeImmutable
     {
+        $value = trim($value);
         $date = \DateTimeImmutable::createFromFormat('d/m/y', $value);
         if (false === $date) {
             $date = \DateTimeImmutable::createFromFormat('Y/m/d', $value);
