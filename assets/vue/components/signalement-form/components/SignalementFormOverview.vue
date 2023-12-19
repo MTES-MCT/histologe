@@ -333,6 +333,7 @@ export default defineComponent({
       result += this.addLineIfNeeded('informations_complementaires_logement_annee_construction', 'Année de construction du logement : ')
       result += this.addLineIfNeeded('informations_complementaires_situation_occupants_demande_relogement', 'Demande de relogement ou de logement social : ')
       result += this.addLineIfNeeded('informations_complementaires_situation_occupants_date_emmenagement', 'Date d\'emménagement : ')
+      result += this.addLineIfNeeded('informations_complementaires_situation_bailleur_date_effet_bail', 'Date d\'effet du bail : ')
       result += this.addLineIfNeeded('informations_complementaires_situation_bailleur_beneficiaire_rsa', 'Bénéficiaire RSA : ')
       result += this.addLineIfNeeded('informations_complementaires_situation_bailleur_beneficiaire_fsl', 'Bénéficiaire FSL : ')
       result += this.addLineIfNeeded('informations_complementaires_situation_bailleur_revenu_fiscal', 'Revenu fiscal de référence : ', ' €')
@@ -352,6 +353,7 @@ export default defineComponent({
           this.isFormDataSet('informations_complementaires_logement_annee_construction') ||
           this.isFormDataSet('informations_complementaires_situation_occupants_demande_relogement') ||
           this.isFormDataSet('informations_complementaires_situation_occupants_date_emmenagement') ||
+          this.isFormDataSet('informations_complementaires_situation_bailleur_date_effet_bail') ||
           this.isFormDataSet('informations_complementaires_situation_bailleur_beneficiaire_rsa') ||
           this.isFormDataSet('informations_complementaires_situation_bailleur_beneficiaire_fsl') ||
           this.isFormDataSet('informations_complementaires_situation_bailleur_revenu_fiscal') ||

@@ -15,7 +15,9 @@ class InformationsLogementRequest
         private readonly ?string $compositionLogementEnfants = null,
         #[Assert\NotBlank(message: 'Merci de définir la date d\'arrivée', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
         #[Assert\DateTime('Y-m-d')]
-        private readonly ?string $bailDpeDateEmmenagement = null,
+        private readonly ?string $dateEntree = null,
+        #[Assert\DateTime('Y-m-d')]
+        private readonly ?string $bailleurDateEffetBail = null,
         #[Assert\NotBlank(message: 'Merci de définir le bail.', groups: ['LOCATAIRE', 'BAILLEUR'])]
         private readonly ?string $bailDpeBail = null,
         #[Assert\NotBlank(message: 'Merci de définir l\'état des lieux.', groups: ['LOCATAIRE', 'BAILLEUR'])]
@@ -43,9 +45,14 @@ class InformationsLogementRequest
         return $this->compositionLogementEnfants;
     }
 
-    public function getBailDpeDateEmmenagement(): ?string
+    public function getDateEntree(): ?string
     {
-        return $this->bailDpeDateEmmenagement;
+        return $this->dateEntree;
+    }
+
+    public function getBailleurDateEffetBail(): ?string
+    {
+        return $this->bailleurDateEffetBail;
     }
 
     public function getBailDpeBail(): ?string

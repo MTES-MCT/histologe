@@ -386,6 +386,11 @@ class SignalementManager extends AbstractManager
         if (is_numeric($informationsLogementRequest->getLoyer())) {
             $signalement->setLoyer($informationsLogementRequest->getLoyer());
         }
+        if (!empty($informationsLogementRequest->getDateEntree())) {
+            $signalement->setDateEntree(new \DateTimeImmutable($informationsLogementRequest->getDateEntree()));
+        } else {
+            $signalement->setDateEntree(null);
+        }
 
         $typeCompositionLogement = new TypeCompositionLogement();
         if (!empty($signalement->getTypeCompositionLogement())) {
@@ -394,7 +399,6 @@ class SignalementManager extends AbstractManager
         $typeCompositionLogement
             ->setCompositionLogementNombrePersonnes($informationsLogementRequest->getNombrePersonnes())
             ->setCompositionLogementEnfants($informationsLogementRequest->getCompositionLogementEnfants())
-            ->setBailDpeDateEmmenagement($informationsLogementRequest->getBailDpeDateEmmenagement())
             ->setBailDpeBail($informationsLogementRequest->getBailDpeBail())
             ->setBailDpeEtatDesLieux($informationsLogementRequest->getBailDpeEtatDesLieux())
             ->setBailDpeDpe($informationsLogementRequest->getBailDpeDpe());
@@ -406,7 +410,10 @@ class SignalementManager extends AbstractManager
         }
         $informationComplementaire
             ->setInformationsComplementairesSituationOccupantsLoyersPayes($informationsLogementRequest->getLoyersPayes())
-            ->setInformationsComplementairesLogementAnneeConstruction($informationsLogementRequest->getAnneeConstruction());
+            ->setInformationsComplementairesLogementAnneeConstruction($informationsLogementRequest->getAnneeConstruction())
+            ->setInformationsComplementairesSituationBailleurDateEffetBail(
+                !empty($informationsLogementRequest->getBailleurDateEffetBail()) ? $informationsLogementRequest->getBailleurDateEffetBail() : null
+            );
         $signalement->setInformationComplementaire($informationComplementaire);
 
         $this->save($signalement);

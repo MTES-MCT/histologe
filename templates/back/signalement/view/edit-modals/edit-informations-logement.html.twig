@@ -60,12 +60,21 @@
                             </div>
 
                             <div class="fr-input-group">
-                                {% set bailDpeDateEmmenagement = '' %}
-                                {% if signalement.typeCompositionLogement %}
-                                    {% set bailDpeDateEmmenagement = signalement.typeCompositionLogement.bailDpeDateEmmenagement %}
+                                {% set dateEntree = '' %}
+                                {% if signalement.dateEntree %}
+                                    {% set dateEntree = signalement.dateEntree.format('Y-m-d') %}
                                 {% endif %}
-                                <label class="fr-label" for="bailDpeDateEmmenagement">Date arrivée</label>
-                                <input class="fr-input" type="date" name="bailDpeDateEmmenagement" value="{{ bailDpeDateEmmenagement }}">
+                                <label class="fr-label" for="dateEntree">Date arrivée</label>
+                                <input class="fr-input" type="date" name="dateEntree" value="{{ dateEntree }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                {% set bailleurDateEffetBail = '' %}
+                                {% if signalement.informationComplementaire %}
+                                    {% set bailleurDateEffetBail = signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail %}
+                                {% endif %}
+                                <label class="fr-label" for="bailleurDateEffetBail">Date d'effet du bail</label>
+                                <input class="fr-input" type="date" name="bailleurDateEffetBail" value="{{ bailleurDateEffetBail }}">
                             </div>
 
                             <div class="fr-select-group">

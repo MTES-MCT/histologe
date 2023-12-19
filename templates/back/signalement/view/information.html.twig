@@ -277,8 +277,16 @@
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Date arrivée :</strong>
-                        {% if signalement.typeCompositionLogement %}
-                            {{ signalement.typeCompositionLogement.bailDpeDateEmmenagement }}
+                        {% if signalement.dateEntree %}
+                            {{ signalement.dateEntree.format('d/m/Y') ?? 'N/C' }}
+                        {% else %}
+                            N/C
+                        {% endif %}
+                    </div>
+                    <div class="fr-col-12 fr-col-md-6">
+                        <strong>Date d'effet du bail :</strong>
+                        {% if signalement.informationComplementaire %}
+                            {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail ?? 'N/C' }}
                         {% else %}
                             N/C
                         {% endif %}
