@@ -75,16 +75,10 @@
             {% endif %}
 
             {% if canExportSignalement %}
-                {% if signalement.getPhotos()|length < 21 %}
                     <a href="{{ path('back_signalement_gen_pdf',{uuid:signalement.uuid}) }}"
                        class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-file-pdf-fill ignore-blank-style"
                        title="Exporter le PDF">Exporter le PDF
                     </a>
-                {% else %}
-                    <a href="#" data-user="Exporter le PDF" data-mail="La fonctionnalité est temporairement désactivée sur ce signalement en raison d'un trop grand nombre de photos."
-                       class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-file-pdf-fill ignore-blank-style disabled-link part-infos-hover"
-                       title="Exporter le PDF" >Exporter le PDF</a>
-                {% endif %}
             {% endif %}
         </div>
     </div>
