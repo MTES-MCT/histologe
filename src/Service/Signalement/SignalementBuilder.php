@@ -179,11 +179,11 @@ class SignalementBuilder
                                 if (null !== $desordrePrecision) {
                                     $this->signalement->addDesordrePrecision($desordrePrecision);
                                 } else {
-                                    throw new PrecisionNotFound($slugCritere);
+                                    throw new PrecisionNotFound($slugCritere, $this->signalementDraft->getId());
                                 }
                             }
                         } else {
-                            throw new DesordreTraitementProcessorNotFound($slugCritere);
+                            throw new DesordreTraitementProcessorNotFound($slugCritere, $this->signalementDraft->getId());
                         }
                     }
                 }

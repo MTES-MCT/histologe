@@ -4,10 +4,11 @@ namespace App\Exception\Signalement;
 
 class PrecisionNotFound extends \Exception
 {
-    public function __construct(string $slugCritere)
+    public function __construct(string $slugCritere, int $idDraft)
     {
         parent::__construct(sprintf(
-            '#%s - Le desordreTraitementProcessor a été trouvé, mais aucune précision ne correspond',
+            'SignalementDraft n° %s - #%s - Le desordreTraitementProcessor a été trouvé, mais aucune précision ne correspond',
+            $idDraft,
             $slugCritere,
         ));
     }

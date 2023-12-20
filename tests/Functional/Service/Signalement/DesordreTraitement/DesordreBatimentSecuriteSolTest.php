@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional\Service\Signalement;
+namespace App\Tests\Functional\Service\Signalement\DesordreTraitement;
 
 use App\Entity\DesordrePrecision;
 use App\Service\Signalement\DesordreTraitement\DesordreBatimentSecuriteSol;

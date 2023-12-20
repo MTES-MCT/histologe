@@ -6,6 +6,8 @@ use App\Repository\DesordrePrecisionRepository;
 
 class DesordreTraitementPieces implements DesordreTraitementInterface
 {
+    private const CHECKED_CRITERE_VALUE = 1;
+
     public function __construct(
         private readonly DesordrePrecisionRepository $desordrePrecisionRepository,
     ) {
@@ -23,13 +25,12 @@ class DesordreTraitementPieces implements DesordreTraitementInterface
         $slugPieceAVivre = $slug.'_pieces_piece_a_vivre';
         $slugSalleDeBain = $slug.'_pieces_salle_de_bain';
         $slugTout = $slug.'_pieces_tout';
-        $checkedCritereValue = 1;
-        if (isset($payload[$slugSansDetails1]) && $checkedCritereValue === $payload[$slugSansDetails1]) {
+        if (isset($payload[$slugSansDetails1]) && self::CHECKED_CRITERE_VALUE === $payload[$slugSansDetails1]) {
             if ('piece_unique' === $payload['composition_logement_piece_unique']
             || (
-                isset($payload[$slugCuisine]) && $checkedCritereValue === $payload[$slugCuisine]
-                && isset($payload[$slugPieceAVivre]) && $checkedCritereValue === $payload[$slugPieceAVivre]
-                && isset($payload[$slugSalleDeBain]) && $checkedCritereValue === $payload[$slugSalleDeBain]
+                isset($payload[$slugCuisine]) && self::CHECKED_CRITERE_VALUE === $payload[$slugCuisine]
+                && isset($payload[$slugPieceAVivre]) && self::CHECKED_CRITERE_VALUE === $payload[$slugPieceAVivre]
+                && isset($payload[$slugSalleDeBain]) && self::CHECKED_CRITERE_VALUE === $payload[$slugSalleDeBain]
             )
             ) {
                 $precision = $this->desordrePrecisionRepository->findOneBy(
@@ -37,19 +38,19 @@ class DesordreTraitementPieces implements DesordreTraitementInterface
                 );
                 $precisions[] = $precision;
             } else {
-                if (isset($payload[$slugCuisine]) && $checkedCritereValue === $payload[$slugCuisine]) {
+                if (isset($payload[$slugCuisine]) && self::CHECKED_CRITERE_VALUE === $payload[$slugCuisine]) {
                     $precision = $this->desordrePrecisionRepository->findOneBy(
                         ['desordrePrecisionSlug' => $slugCuisine.$suffixe]
                     );
                     $precisions[] = $precision;
                 }
-                if (isset($payload[$slugPieceAVivre]) && $checkedCritereValue === $payload[$slugPieceAVivre]) {
+                if (isset($payload[$slugPieceAVivre]) && self::CHECKED_CRITERE_VALUE === $payload[$slugPieceAVivre]) {
                     $precision = $this->desordrePrecisionRepository->findOneBy(
                         ['desordrePrecisionSlug' => $slugPieceAVivre.$suffixe]
                     );
                     $precisions[] = $precision;
                 }
-                if (isset($payload[$slugSalleDeBain]) && $checkedCritereValue === $payload[$slugSalleDeBain]) {
+                if (isset($payload[$slugSalleDeBain]) && self::CHECKED_CRITERE_VALUE === $payload[$slugSalleDeBain]) {
                     $precision = $this->desordrePrecisionRepository->findOneBy(
                         ['desordrePrecisionSlug' => $slugSalleDeBain.$suffixe]
                     );
