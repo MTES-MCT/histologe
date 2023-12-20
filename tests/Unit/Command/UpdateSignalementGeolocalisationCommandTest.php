@@ -70,7 +70,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
             ->method('flush');
 
         $result = json_decode(
-            file_get_contents(__DIR__.'/../../files/get_api_datagouv_ban_response.json'),
+            file_get_contents(__DIR__.'/../../files/datagouv/get_api_ban_collection_response.json'),
             true
         );
 
@@ -112,7 +112,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
             ->method('flush');
 
         $result = json_decode(
-            file_get_contents(__DIR__.'/../../files/get_api_datagouv_ban_response.json'),
+            file_get_contents(__DIR__.'/../../files/datagouv/get_api_ban_collection_response.json'),
             true
         );
 

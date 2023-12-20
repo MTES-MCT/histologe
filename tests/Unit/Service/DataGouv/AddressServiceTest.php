@@ -1,19 +1,24 @@
 <?php
 
-namespace App\Tests\Functional\Service\DataGouv;
+namespace App\Tests\Unit\Service\DataGouv;
 
 use App\Service\DataGouv\AddressService;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
 
-class AddressServiceTest extends KernelTestCase
+class AddressServiceTest extends TestCase
 {
-    private ?AddressService $addressService;
+    private AddressService $addressService;
 
     protected function setUp(): void
     {
-        self::bootKernel();
-        $container = static::getContainer();
-        $this->addressService = $container->get(AddressService::class);
+        $mockResponse = new MockResponse(
+            file_get_contents(__DIR__.'/../../../files/datagouv/get_api_ban_item_response.json')
+        );
+        $mockHttpClient = new MockHttpClient($mockResponse);
+        $this->addressService = new AddressService($mockHttpClient, $this->createMock(LoggerInterface::class));
     }
 
     public function testGetCodeInsee(): void
@@ -24,7 +29,7 @@ class AddressServiceTest extends KernelTestCase
 
     public function testSearchAddress(): void
     {
-        $addresses = $this->addressService->searchAddress('2 rue Mars');
+        $addresses = $this->addressService->searchAddress('8 La Bodinière 44850 Saint-Mars du Désert');
         $this->assertIsArray($addresses);
         $this->assertArrayHasKey('features', $addresses);
         $this->assertArrayHasKey('attribution', $addresses);
@@ -33,7 +38,7 @@ class AddressServiceTest extends KernelTestCase
 
     public function testGetAddressResponse(): void
     {
-        $address = $this->addressService->getAddress('2 rue Mars Maisons-Alfort');
+        $address = $this->addressService->getAddress('8 La Bodinière 44850 Saint-Mars du Désert');
 
         $addressComputed = sprintf('%s %s %s', $address->getStreet(), $address->getZipCode(), $address->getCity());
         $this->assertTrue($address->getInseeCode() !== $address->getZipCode());

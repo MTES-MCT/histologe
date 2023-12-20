@@ -1,0 +1,36 @@
+{
+  "type": "FeatureCollection",
+  "version": "draft",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.446559,
+          47.349607
+        ]
+      },
+      "properties": {
+        "label": "8 la bodiniere 44850 Saint-Mars-du-Désert",
+        "score": 0.9530109090909089,
+        "housenumber": "8",
+        "id": "44179_xarfhv_00008",
+        "name": "8 la bodiniere",
+        "postcode": "44850",
+        "citycode": "44179",
+        "x": 364485.73,
+        "y": 6703813.17,
+        "city": "Saint-Mars-du-Désert",
+        "context": "44, Loire-Atlantique, Pays de la Loire",
+        "type": "housenumber",
+        "importance": 0.48312,
+        "street": "la bodiniere"
+      }
+    }
+  ],
+  "attribution": "BAN",
+  "licence": "ETALAB-2.0",
+  "query": "8 La Bodinière 44850 Saint-Mars du Désert",
+  "limit": 5
+}
