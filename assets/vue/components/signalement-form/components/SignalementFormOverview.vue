@@ -250,7 +250,7 @@ export default defineComponent({
       if (this.isFormDataSet('coordonnees_bailleur_prenom')) {
         result += this.formStore.data.coordonnees_bailleur_prenom + ' '
       }
-      result += this.formStore.data.coordonnees_bailleur_nom
+      result += this.formStore.data.coordonnees_bailleur_nom + '<br>'
       result += this.addLineIfNeeded('coordonnees_bailleur_email', 'Adresse email : ')
       result += this.addLineIfNeeded('coordonnees_bailleur_tel', 'Numéro de téléphone : ')
       result += this.addLineIfNeeded('coordonnees_bailleur_tel_secondaire', 'Numéro de téléphone secondaire : ')
