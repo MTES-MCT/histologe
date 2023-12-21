@@ -535,13 +535,13 @@
           "slug": "desordres_batiment_nuisibles_punaises_details",
           "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
-            "show": "formStore.data.desordres_batiment_nuisibles_punaises === 1 && formStore.isTerritoryOpenedOnStopPunaises()" 
+            "show": "formStore.data.desordres_batiment_nuisibles_punaises === 1" 
           },
           "components": {
             "body": [
               {
                 "type": "SignalementFormInfo",
-                "label": "Le saviez-vous ? Sur votre département, le service Stop Punaises vous permet de trouver une entreprise labellisée pour traiter les punaises de lit. <a href='http://stop-punaises.beta.gouv.fr/' target='_blank'>Cliquez ici pour y accéder.</a>",
+                "label": "Le saviez-vous ? Le service Stop Punaises vous permet de trouver une entreprise labellisée pour traiter les punaises de lit. <a href='http://stop-punaises.beta.gouv.fr/' target='_blank'>Cliquez ici pour y accéder.</a>",
                 "slug": "desordres_batiment_nuisibles_punaises_details_info"
               }
             ]
@@ -2247,7 +2247,7 @@
           "slug": "desordres_logement_nuisibles_punaises_details",
           "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
-            "show": "formStore.data.desordres_logement_nuisibles_punaises === 1 && formStore.isTerritoryOpenedOnStopPunaises()" 
+            "show": "formStore.data.desordres_logement_nuisibles_punaises === 1" 
           },
           "components": {
             "body": [
@@ -2272,7 +2272,7 @@
               },
               {
                 "type": "SignalementFormInfo",
-                "label": "Le saviez-vous ? Sur votre département, le service Stop Punaises vous permet de trouver une entreprise labellisée pour traiter les punaises de lit. <a href='http://stop-punaises.beta.gouv.fr/' target='_blank'>Cliquez ici pour y accéder.</a>",
+                "label": "Le saviez-vous ? Le service Stop Punaises vous permet de trouver une entreprise labellisée pour traiter les punaises de lit. <a href='http://stop-punaises.beta.gouv.fr/' target='_blank'>Cliquez ici pour y accéder.</a>",
                 "slug": "desordres_logement_nuisibles_punaises_details_info"
               }
             ]

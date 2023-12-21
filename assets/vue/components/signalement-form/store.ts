@@ -72,8 +72,7 @@ const formStore: FormStore = reactive({
     ajaxurlGetSignalementDraft: '',
     platformName: '',
     urlApiAdress: 'https://api-adresse.data.gouv.fr/search/?q=',
-    ajaxurlCheckTerritory: '',
-
+    ajaxurlCheckTerritory: ''
   },
   screenData: [],
   currentScreen: null,
@@ -94,11 +93,6 @@ const formStore: FormStore = reactive({
   validationErrors: {}, // Les erreurs de validation
   updateData (key: string, value: any) {
     formStore.data[key] = value
-  },
-  isTerritoryOpenedOnStopPunaises (): boolean {
-    console.log(formStore.data.adresse_logement_adresse_detail_insee)
-    // TODO : trouver le meilleur moyen de relier histologe et stop-punaises
-    return true
   },
   shouldShowField (conditional: string) {
     return computed(() => eval(conditional)).value
