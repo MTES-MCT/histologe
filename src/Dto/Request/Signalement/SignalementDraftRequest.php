@@ -136,6 +136,7 @@ class SignalementDraftRequest
     private ?string $coordonneesBailleurAdresseCommune = null;
     private ?string $zoneConcerneeZone = null;
     private ?string $typeLogementNature = null;
+    private ?string $typeLogementNatureAutrePrecision = null;
     private ?string $typeLogementRdc = null;
     private ?string $typeLogementDernierEtage = null;
     private ?string $typeLogementSousSolSansFenetre = null;
@@ -754,6 +755,18 @@ class SignalementDraftRequest
     public function setTypeLogementNature(?string $typeLogementNature): self
     {
         $this->typeLogementNature = $typeLogementNature;
+
+        return $this;
+    }
+
+    public function getTypeLogementNatureAutrePrecision(): ?string
+    {
+        return $this->typeLogementNatureAutrePrecision;
+    }
+
+    public function setTypeLogementNatureAutrePrecision(?string $typeLogementNatureAutrePrecision): self
+    {
+        $this->typeLogementNatureAutrePrecision = $typeLogementNatureAutrePrecision;
 
         return $this;
     }

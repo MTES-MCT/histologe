@@ -271,6 +271,8 @@ export default defineComponent({
             result += this.addLineIfNeeded('type_logement_sous_sol_sans_fenetre', 'En sous-sol et sans fenêtre ? ')
           }
         }
+      } else if (this.formStore.data.type_logement_nature === 'autre') {
+        result += this.addLineIfNeeded('type_logement_nature_autre_precision', 'De type : ')
       }
       result += this.addLineIfNeeded('composition_logement_superficie', 'Superficie en m² : ')
       result += this.addLineIfNeeded('composition_logement_hauteur', 'La hauteur jusqu\'au plafond est de 2m (200cm) ou plus ? ')

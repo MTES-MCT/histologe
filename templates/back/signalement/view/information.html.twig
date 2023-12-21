@@ -184,6 +184,11 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Type :</strong> {{ signalement.natureLogement|capitalize }}
                     </div>
+                    {% if signalement.natureLogement|capitalize is same as 'Autre' and signalement.typeCompositionLogement %}
+                        <div class="fr-col-12">
+                            <strong>Précisions :</strong> {{ signalement.typeCompositionLogement.typeLogementNatureAutrePrecision }}
+                        </div>
+                    {% endif %}
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Nb. personnes :</strong>
                         {% if signalement.typeCompositionLogement %}

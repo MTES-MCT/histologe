@@ -360,6 +360,7 @@ class SignalementManager extends AbstractManager
             $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
         }
         $typeCompositionLogement
+            ->setTypeLogementNatureAutrePrecision($informationsLogementRequest->getTypeLogementNatureAutrePrecision())
             ->setCompositionLogementNombrePersonnes($informationsLogementRequest->getNombrePersonnes())
             ->setCompositionLogementEnfants($informationsLogementRequest->getCompositionLogementEnfants())
             ->setBailDpeDateEmmenagement($informationsLogementRequest->getBailDpeDateEmmenagement())
