@@ -113,4 +113,10 @@ class HomepageController extends AbstractController
     {
         return $this->render('front/mentions_legales.html.twig');
     }
+
+    #[Route('/accessibilite', name: 'front_accessibilite')]
+    public function accessibilite(): Response
+    {
+        return $this->render('front/accessibilite.html.twig');
+    }
 }
