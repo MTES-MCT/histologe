@@ -10,6 +10,7 @@ use Symfony\Component\HttpClient\Response\MockResponse;
 
 class AddressServiceTest extends TestCase
 {
+    private const ADDRESS = '8 La Bodinière 44850 Saint-Mars du Désert';
     private AddressService $addressService;
 
     protected function setUp(): void
@@ -23,13 +24,13 @@ class AddressServiceTest extends TestCase
 
     public function testGetCodeInsee(): void
     {
-        $codeInsee = $this->addressService->getCodeInsee('8 La Bodinière 44850 Saint-Mars du Désert');
+        $codeInsee = $this->addressService->getCodeInsee(self::ADDRESS);
         $this->assertEquals('44179', $codeInsee);
     }
 
     public function testSearchAddress(): void
     {
-        $addresses = $this->addressService->searchAddress('8 La Bodinière 44850 Saint-Mars du Désert');
+        $addresses = $this->addressService->searchAddress(self::ADDRESS);
         $this->assertIsArray($addresses);
         $this->assertArrayHasKey('features', $addresses);
         $this->assertArrayHasKey('attribution', $addresses);
@@ -38,11 +39,11 @@ class AddressServiceTest extends TestCase
 
     public function testGetAddressResponse(): void
     {
-        $address = $this->addressService->getAddress('8 La Bodinière 44850 Saint-Mars du Désert');
+        $address = $this->addressService->getAddress(self::ADDRESS);
 
         $addressComputed = sprintf('%s %s %s', $address->getStreet(), $address->getZipCode(), $address->getCity());
-        $this->assertTrue($address->getInseeCode() !== $address->getZipCode());
-        $this->assertTrue($address->getLabel() === $addressComputed);
+        $this->assertNotSame($address->getInseeCode(), $address->getZipCode());
+        $this->assertSame($address->getLabel(), $addressComputed);
         $this->assertNotEmpty($address->getLongitude());
         $this->assertNotEmpty($address->getLatitude());
         $this->assertArrayHasKey('lat', $address->getGeoloc());
