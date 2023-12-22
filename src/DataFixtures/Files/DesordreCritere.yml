@@ -123,7 +123,7 @@ desordre_critere:
     slug_categorie: "desordres_batiment_nuisibles"
     label_categorie: "Présence de nuisibles"
     zone_categorie: "BATIMENT"
-    slug_critere: "desordres_batiment_nuisibles_autre"
+    slug_critere: "desordres_batiment_nuisibles_autres"
     label_critere: "Il y a un autre type de nuisibles"
   -
     desordre_categorie_label: "Structure du bâti" 
