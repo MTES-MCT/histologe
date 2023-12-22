@@ -4,7 +4,6 @@ namespace App\Service\Signalement;
 
 use App\Entity\Critere;
 use App\Entity\Criticite;
-use App\Entity\DesordrePrecision;
 use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Signalement;
 
@@ -49,14 +48,14 @@ class CriticiteCalculator
     {
         $this->scoreBatiment = 0;
         $this->scoreLogement = 0;
-        $signalement->getDesordrePrecisions()->map(function (DesordrePrecision $desordrePrecision) {
+        foreach ($signalement->getDesordrePrecisions() as $desordrePrecision) {
             if (DesordreCritereZone::BATIMENT === $desordrePrecision->getDesordreCritere()->getZoneCategorie()) {
                 $this->scoreBatiment += $desordrePrecision->getCoef();
             }
             if (DesordreCritereZone::LOGEMENT === $desordrePrecision->getDesordreCritere()->getZoneCategorie()) {
                 $this->scoreLogement += $desordrePrecision->getCoef();
             }
-        });
+        }
 
         $scoreBatiment = ($this->scoreBatiment / self::MAX_NEW_SCORE_BATIMENT) * 100;
         $scoreLogement = ($this->scoreLogement / self::MAX_NEW_SCORE_LOGEMENT) * 100;
