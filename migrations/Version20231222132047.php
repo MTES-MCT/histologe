@@ -62,9 +62,6 @@ final class Version20231222132047 extends AbstractMigration
         $this->addSql('DELETE FROM intervention WHERE signalement_id IN (
         SELECT id FROM signalement WHERE territory_id = :territory_id AND is_imported = :is_imported)', $parameters);
 
-        $this->addSql('DELETE FROM signalement_usager WHERE signalement_id IN (
-        SELECT id FROM signalement WHERE territory_id = :territory_id AND is_imported = :is_imported)', $parameters);
-
         $this->addSql('DELETE FROM tag_signalement WHERE signalement_id IN (
         SELECT id FROM signalement WHERE territory_id = :territory_id AND is_imported = :is_imported)', $parameters);
 
