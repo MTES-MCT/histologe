@@ -70,6 +70,9 @@
                         confidentialité</a>
                 </li>
                 <li class="fr-footer__bottom-item">
+                    <a class="fr-footer__bottom-link" href="{{ path('front_accessibilite') }}">Accessibilité : non-conforme</a>
+                </li>
+                <li class="fr-footer__bottom-item">
                     {% if 'back_' in app.request.get('_route') and app.user is not null and matomo.enable == 1 %}
                         <button class="fr-footer__bottom-link " data-fr-opened="false" aria-controls="fr-consent-modal"
                                 title="Personnaliser les cookies">Gestion des cookies
