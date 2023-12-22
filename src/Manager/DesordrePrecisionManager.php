@@ -21,6 +21,7 @@ class DesordrePrecisionManager extends AbstractManager
      *                    - 'desordreCritere' (DesordreCritere): DesordreCritere linked
      *                    - 'coef' (string): The coef of the DesordrePrecision
      *                    - 'danger' (string): 'Oui' if is_danger.
+     *                    - 'suroccupation' (string): 'Oui' if is_suroccupation.
      *                    - 'procedure' (string): The List of Qualification .
      */
     public function createOrUpdate(string $slug, array $data): DesordrePrecision
@@ -47,6 +48,7 @@ class DesordrePrecisionManager extends AbstractManager
         ->setDesordreCritere($data['desordreCritere'])
         ->setCoef((float) $coef)
         ->setIsDanger('Oui' === $data['danger'])
+        ->setIsSuroccupation('Oui' === $data['suroccupation'])
         ->setDesordrePrecisionSlug($slug)
         ->setQualification($qualification);
 

@@ -197,6 +197,7 @@ class SignalementDraftRequest
     private ?string $informationsComplementairesLogementAnneeConstruction = null;
     private ?string $messageAdministration = null;
     private ?array $files = null;
+    private ?array $categorieDisorders = null;
 
     public function getProfil(): ?string
     {
@@ -1471,6 +1472,18 @@ class SignalementDraftRequest
     public function setFiles(?array $files): self
     {
         $this->files = $files;
+
+        return $this;
+    }
+
+    public function getCategorieDisorders(): ?array
+    {
+        return $this->categorieDisorders;
+    }
+
+    public function setCategorieDisorders(?array $categorieDisorders): self
+    {
+        $this->categorieDisorders = $categorieDisorders;
 
         return $this;
     }

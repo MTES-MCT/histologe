@@ -10,8 +10,13 @@ use App\Factory\Signalement\InformationComplementaireFactory;
 use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
 use App\Factory\Signalement\TypeCompositionLogementFactory;
+use App\Manager\DesordreCritereManager;
+use App\Repository\DesordreCategorieRepository;
+use App\Repository\DesordreCritereRepository;
+use App\Repository\DesordrePrecisionRepository;
 use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
+use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementBuilder;
 use App\Service\Signalement\SignalementInputValueMapper;
@@ -29,6 +34,8 @@ class SignalementBuilderTest extends KernelTestCase
     private const FR_PHONE_COUNTRY_CODE = '33';
 
     protected SignalementBuilder $signalementBuilder;
+    private DesordreCritereRepository $desordreCritereRepository;
+    private DesordrePrecisionRepository $desordrePrecisionRepository;
 
     protected function setUp(): void
     {
@@ -47,6 +54,11 @@ class SignalementBuilderTest extends KernelTestCase
         $uploadHandlerService = static::getContainer()->get(UploadHandlerService::class);
         $security = static::getContainer()->get(Security::class);
         $signalementInputValueMapper = static::getContainer()->get(SignalementInputValueMapper::class);
+        $desordreCategorieRepository = static::getContainer()->get(DesordreCategorieRepository::class);
+        $this->desordreCritereRepository = static::getContainer()->get(DesordreCritereRepository::class);
+        $this->desordrePrecisionRepository = static::getContainer()->get(DesordrePrecisionRepository::class);
+        $desordreTraitementProcessor = static::getContainer()->get(DesordreTraitementProcessor::class);
+        $desordreCritereManager = static::getContainer()->get(DesordreCritereManager::class);
 
         $this->signalementBuilder = new SignalementBuilder(
             $territoryRepository,
@@ -61,7 +73,12 @@ class SignalementBuilderTest extends KernelTestCase
             $fileFactory,
             $uploadHandlerService,
             $security,
-            $signalementInputValueMapper
+            $signalementInputValueMapper,
+            $desordreCategorieRepository,
+            $this->desordreCritereRepository,
+            $this->desordrePrecisionRepository,
+            $desordreTraitementProcessor,
+            $desordreCritereManager,
         );
     }
 
@@ -86,6 +103,7 @@ class SignalementBuilderTest extends KernelTestCase
             ->withSituationFoyer()
             ->withProcedure()
             ->withInformationComplementaire()
+            ->withDesordres()
             ->withFiles()
             ->build();
 
@@ -166,6 +184,72 @@ class SignalementBuilderTest extends KernelTestCase
 
         $informationComplementaire = array_filter($signalement->getInformationComplementaire()->toArray());
         $this->assertEquals($this->getLocataireInformationComplementaire(), $informationComplementaire);
+
+        $this->assertCount(3, $signalement->getDesordreCategories());
+        $this->assertCount(5, $signalement->getDesordreCriteres());
+        $this->assertCount(5, $signalement->getDesordrePrecisions());
+    }
+
+    public function testBuildSignalementAllDesordres(): void
+    {
+        $payload = json_decode(
+            file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire_all_in.json'),
+            true
+        );
+
+        $signalementDraft = (new SignalementDraft())
+            ->setPayload($payload)
+            ->setProfileDeclarant(ProfileDeclarant::LOCATAIRE)
+            ->setStatus(SignalementDraftStatus::EN_COURS)
+            ->setCurrentStep('informations_complementaires')
+            ->setEmailDeclarant($payload['vos_coordonnees_occupant_email']);
+
+        $signalement = $this->signalementBuilder
+            ->createSignalementBuilderFrom($signalementDraft)
+            ->withAdressesCoordonnees()
+            ->withTypeCompositionLogement()
+            ->withSituationFoyer()
+            ->withProcedure()
+            ->withInformationComplementaire()
+            ->withDesordres()
+            ->withFiles()
+            ->build();
+
+        $this->assertCount(10, $signalement->getDesordreCategories());
+        $this->assertCount(57, $signalement->getDesordreCriteres());
+        $this->assertCount(66, $signalement->getDesordrePrecisions());
+
+        $desordreCritere = $this->desordreCritereRepository->findOneBy(
+            ['slugCritere' => 'desordres_type_composition_logement_sous_combles']
+        );
+        $this->assertTrue($signalement->getDesordreCriteres()->contains($desordreCritere));
+
+        $desordreCritere = $this->desordreCritereRepository->findOneBy(
+            ['slugCritere' => 'desordres_type_composition_logement_cuisine']
+        );
+        $this->assertTrue($signalement->getDesordreCriteres()->contains($desordreCritere));
+        $desordrePrecision = $this->desordrePrecisionRepository->findOneBy(
+            ['desordrePrecisionSlug' => 'desordres_type_composition_logement_cuisine_collective_oui']
+        );
+        $this->assertTrue($signalement->getDesordrePrecisions()->contains($desordrePrecision));
+
+        $desordreCritere = $this->desordreCritereRepository->findOneBy(
+            ['slugCritere' => 'desordres_type_composition_logement_douche']
+        );
+        $this->assertTrue($signalement->getDesordreCriteres()->contains($desordreCritere));
+        $desordrePrecision = $this->desordrePrecisionRepository->findOneBy(
+            ['desordrePrecisionSlug' => 'desordres_type_composition_logement_douche_collective_non']
+        );
+        $this->assertTrue($signalement->getDesordrePrecisions()->contains($desordrePrecision));
+
+        $desordreCritere = $this->desordreCritereRepository->findOneBy(
+            ['slugCritere' => 'desordres_type_composition_logement_suroccupation']
+        );
+        $this->assertTrue($signalement->getDesordreCriteres()->contains($desordreCritere));
+        $desordrePrecision = $this->desordrePrecisionRepository->findOneBy(
+            ['desordrePrecisionSlug' => 'desordres_type_composition_logement_suroccupation_allocataire']
+        );
+        $this->assertTrue($signalement->getDesordrePrecisions()->contains($desordrePrecision));
     }
 
     public function testIsConstructionAvant1949(): void

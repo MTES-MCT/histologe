@@ -25,6 +25,9 @@ class DesordrePrecision
     #[ORM\Column(nullable: true)]
     private ?bool $isDanger = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $isSuroccupation = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $label = null;
 
@@ -71,6 +74,18 @@ class DesordrePrecision
     public function setIsDanger(?bool $isDanger): self
     {
         $this->isDanger = $isDanger;
+
+        return $this;
+    }
+
+    public function isIsSuroccupation(): ?bool
+    {
+        return $this->isSuroccupation;
+    }
+
+    public function setIsSuroccupation(?bool $isSuroccupation): self
+    {
+        $this->isSuroccupation = $isSuroccupation;
 
         return $this;
     }

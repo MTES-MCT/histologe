@@ -1,0 +1,27 @@
+desordre_categorie:
+  -
+    label: "Usage / entretien"
+  -
+    label: "Equipements collectifs"
+  -
+    label: "Etanchéité / isolation"
+  -
+    label: "Sécurite risques particuliers"
+  -
+    label: "Structure du bâti"
+  -
+    label: "Environnement / éclairage"
+  -
+    label: "Structure / équipements"
+  -
+    label: "Suroccupation"
+  -
+    label: "Eau potable / assainissement"
+  -
+    label: "Aération / humidité"
+  -
+    label: "Chauffage / confort"
+  -
+    label: "Eclairage"
+  -
+    label: "Incurie"

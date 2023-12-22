@@ -126,6 +126,7 @@ class SignalementController extends AbstractController
             if ($criticite->getIsDanger()) {
                 $isDanger = true;
             }
+            // TODO : quand prise en compte des désordres du nouveau formulaire, il y aura le isSuroccupation à afficher aussi comme isDanger
         }
 
         $canEditSignalement = false;

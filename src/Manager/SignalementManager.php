@@ -438,6 +438,8 @@ class SignalementManager extends AbstractManager
             ->setTravailleurSocialAccompagnementDeclarant($situationFoyerRequest->getTravailleurSocialAccompagnementDeclarant());
         $signalement->setSituationFoyer($situationFoyer);
 
+        // TODO : mise à jour du désordre suroccupation si allocataire change
+
         $this->save($signalement);
     }
 
