@@ -21,6 +21,9 @@ final class Version20231222132047 extends AbstractMigration
         $territory = $this->connection->fetchAssociative('SELECT id FROM territory WHERE zip LIKE :zip', [
             'zip' => self::TERRITORY_ZIP_SARTHE,
         ]);
+
+        $this->skipIf(!$territory, 'Datebase is empty');
+
         $parameters = [
             'territory_id' => $territory['id'],
             'is_imported' => 1,
