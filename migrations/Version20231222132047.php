@@ -41,6 +41,39 @@ final class Version20231222132047 extends AbstractMigration
         $this->addSql('DELETE FROM suivi WHERE signalement_id IN (
         SELECT id FROM signalement WHERE territory_id = :territory_id AND is_imported = :is_imported)', $parameters);
 
+        $this->addSql('DELETE FROM signalement_criticite WHERE signalement_id IN (
+        SELECT id FROM signalement WHERE territory_id = :territory_id AND is_imported = :is_imported)', $parameters);
+
+        $this->addSql('DELETE FROM signalement_critere WHERE signalement_id IN (
+        SELECT id FROM signalement WHERE territory_id = :territory_id AND is_imported = :is_imported)', $parameters);
+
+        $this->addSql('DELETE FROM signalement_situation WHERE signalement_id IN (
+        SELECT id FROM signalement WHERE territory_id = :territory_id AND is_imported = :is_imported)', $parameters);
+
+        $this->addSql('DELETE FROM signalement_usager WHERE signalement_id IN (
+        SELECT id FROM signalement WHERE territory_id = :territory_id AND is_imported = :is_imported)', $parameters);
+
+        $this->addSql('DELETE FROM file WHERE signalement_id IN (
+        SELECT id FROM signalement WHERE territory_id = :territory_id AND is_imported = :is_imported)', $parameters);
+
+        $this->addSql('DELETE FROM job_event WHERE signalement_id IN (
+        SELECT id FROM signalement WHERE territory_id = :territory_id AND is_imported = :is_imported)', $parameters);
+
+        $this->addSql('DELETE FROM intervention WHERE signalement_id IN (
+        SELECT id FROM signalement WHERE territory_id = :territory_id AND is_imported = :is_imported)', $parameters);
+
+        $this->addSql('DELETE FROM tag_signalement WHERE signalement_id IN (
+        SELECT id FROM signalement WHERE territory_id = :territory_id AND is_imported = :is_imported)', $parameters);
+
+        $this->addSql('DELETE FROM desordre_precision_signalement WHERE signalement_id IN (
+        SELECT id FROM signalement WHERE territory_id = :territory_id AND is_imported = :is_imported)', $parameters);
+
+        $this->addSql('DELETE FROM desordre_critere_signalement WHERE signalement_id IN (
+        SELECT id FROM signalement WHERE territory_id = :territory_id AND is_imported = :is_imported)', $parameters);
+
+        $this->addSql('DELETE FROM desordre_categorie_signalement WHERE signalement_id IN (
+        SELECT id FROM signalement WHERE territory_id = :territory_id AND is_imported = :is_imported)', $parameters);
+
         $this->addSql('DELETE FROM signalement WHERE territory_id = :territory_id AND is_imported = :is_imported', $parameters);
     }
 
