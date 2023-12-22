@@ -18,7 +18,7 @@ final class Version20231222094349 extends AbstractMigration
 
     public function addCompetence(string $competenceName, string $typeName)
     {
-        $this->addSql('UPDATE partner SET competence = CONCAT(competence, \',\', \''.$competenceName.'\') WHERE competence IS NOT NULL AND type = \''.$typeName.'\'');
+        $this->addSql('UPDATE partner SET competence = CONCAT(competence, \',\', \''.$competenceName.'\') WHERE competence IS NOT NULL AND competence NOT LIKE \'%'.$competenceName.'%\' AND type = \''.$typeName.'\'');
         $this->addSql('UPDATE partner SET competence = \''.$competenceName.'\' WHERE competence IS NULL AND type = \''.$typeName.'\'');
     }
 
