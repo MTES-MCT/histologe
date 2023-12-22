@@ -278,7 +278,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getNomComplet()
     {
-        return mb_strtoupper($this->nom).' '.ucfirst($this->prenom);
+        return mb_strtoupper($this->nom ?? '').' '.ucfirst($this->prenom ?? '');
     }
 
     public function getStatut(): ?int
