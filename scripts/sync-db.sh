@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-if [ "${APP}" == "histologe" ]; then
+if [ "${APP}" = "histologe" ]; then
     echo "This script cannot run in production."
     exit 1
 fi
