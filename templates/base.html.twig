@@ -64,6 +64,9 @@
                 _paq.push(['setCustomDimension', customDimensionId = 3, customDimensionValue = '{{ app.user.partner.nom }}' ]);
                 _paq.push(['requireConsent']);
             {% endif %}
+            {% if app.request.scheme == 'https' %}
+                _paq.push(['setSecureCookie', true]);
+            {% endif %}
             _paq.push(['trackPageView']);
             _paq.push(['enableLinkTracking']);
             (function() {

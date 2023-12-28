@@ -52,7 +52,14 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
          - { path: ^/bo, roles: ROLE_USER_PARTNER }
-        # - { path: ^/profile, roles: ROLE_USER }
+
+when@prod:
+    security:
+        firewalls:
+            main:
+                remember_me:
+                    secure: true
+                    httponly: true
 
 when@test:
     security:
