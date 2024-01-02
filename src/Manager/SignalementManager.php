@@ -495,7 +495,7 @@ class SignalementManager extends AbstractManager
         $signalement->setSituationFoyer($situationFoyer);
 
         // TODO : mise à jour du désordre suroccupation si allocataire change
-        
+
         $informationComplementaire = new InformationComplementaire();
         if (!empty($signalement->getInformationComplementaire())) {
             $informationComplementaire = clone $signalement->getInformationComplementaire();
