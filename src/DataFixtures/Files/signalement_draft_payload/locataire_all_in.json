@@ -169,7 +169,7 @@
     "desordres_logement_chauffage_details_dpe_conso_finale": null,
     "adresse_logement_complement_adresse_numero_appartement": "4-B3-1",
     "desordres_batiment_securite_escalier_details_dangereux": "oui",
-    "desordres_batiment_securite_sol_details_plancher_abime": "oui",
+    "desordres_batiment_securite_sol_details_plancher_abime": "non",
     "desordres_logement_electricite_installation_dangereuse": 1,
     "desordres_logement_securite_plomb_details_diagnostique": "oui",
     "desordres_logement_securite_plomb_pieces_salle_de_bain": 1,

@@ -32,24 +32,15 @@ class DesordreBatimentSecuriteSolTest extends KernelTestCase
             'desordres_batiment_securite_sol'
         );
 
-        $this->assertEquals(2, \count($precisions));
+        $this->assertEquals(1, \count($precisions));
 
         /** @var DesordrePrecision $precision */
         $precision = $precisions[0];
         $this->assertEquals(
-            'desordres_batiment_securite_sol_details_plancher_abime',
+            'desordres_batiment_securite_sol_details_plancher_effondre',
             $precision->getDesordrePrecisionSlug()
         );
         $this->assertTrue($precision->isIsDanger());
         $this->assertFalse($precision->isIsSuroccupation());
-
-        /** @var DesordrePrecision $precision */
-        $precision2 = $precisions[1];
-        $this->assertEquals(
-            'desordres_batiment_securite_sol_details_plancher_effondre',
-            $precision2->getDesordrePrecisionSlug()
-        );
-        $this->assertTrue($precision2->isIsDanger());
-        $this->assertFalse($precision2->isIsSuroccupation());
     }
 }

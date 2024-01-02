@@ -632,8 +632,8 @@
             "body": [
                 {
                   "type": "SignalementFormOnlyChoice",
-                  "label": "{{dictionaryStore::desordres_batiment_securite_sol_details_plancher_abime}}",
-                  "slug": "desordres_batiment_securite_sol_details_plancher_abime",
+                  "label": "{{dictionaryStore::desordres_batiment_securite_sol_details_plancher_effondre}}",
+                  "slug": "desordres_batiment_securite_sol_details_plancher_effondre",
                   "values": [
                     {
                       "label": "Oui",
@@ -647,8 +647,11 @@
                 },
                 {
                   "type": "SignalementFormOnlyChoice",
-                  "label": "{{dictionaryStore::desordres_batiment_securite_sol_details_plancher_effondre}}",
-                  "slug": "desordres_batiment_securite_sol_details_plancher_effondre",
+                  "label": "{{dictionaryStore::desordres_batiment_securite_sol_details_plancher_abime}}",
+                  "slug": "desordres_batiment_securite_sol_details_plancher_abime",
+                  "conditional": {
+                    "show": "formStore.data.desordres_batiment_securite_sol_details_plancher_effondre === 'non'"
+                  },
                   "values": [
                     {
                       "label": "Oui",
@@ -699,8 +702,8 @@
             "body": [
                 {
                   "type": "SignalementFormOnlyChoice",
-                  "label": "{{dictionaryStore::desordres_batiment_securite_escalier_details_utilisable}}",
-                  "slug": "desordres_batiment_securite_escalier_details_utilisable",
+                  "label": "{{dictionaryStore::desordres_batiment_securite_escalier_details_dangereux}}",
+                  "slug": "desordres_batiment_securite_escalier_details_dangereux",
                   "values": [
                     {
                       "label": "Oui",
@@ -714,8 +717,11 @@
                 },
                 {
                   "type": "SignalementFormOnlyChoice",
-                  "label": "{{dictionaryStore::desordres_batiment_securite_escalier_details_dangereux}}",
-                  "slug": "desordres_batiment_securite_escalier_details_dangereux",
+                  "label": "{{dictionaryStore::desordres_batiment_securite_escalier_details_utilisable}}",
+                  "slug": "desordres_batiment_securite_escalier_details_utilisable",
+                  "conditional": {
+                    "show": "formStore.data.desordres_batiment_securite_escalier_details_dangereux === 'non'"
+                  },
                   "values": [
                     {
                       "label": "Oui",
