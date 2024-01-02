@@ -218,7 +218,7 @@ class SignalementBuilderTest extends KernelTestCase
             ->withFiles()
             ->build();
 
-        $this->assertCount(10, $signalement->getDesordreCategories());
+        $this->assertCount(12, $signalement->getDesordreCategories());
         $this->assertCount(57, $signalement->getDesordreCriteres());
         $this->assertCount(66, $signalement->getDesordrePrecisions());
 

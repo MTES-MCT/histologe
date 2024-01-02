@@ -6,6 +6,8 @@ desordre_categorie:
   -
     label: "Etanchéité / isolation"
   -
+    label: "Bâtiment risques particuliers"
+  -
     label: "Sécurite risques particuliers"
   -
     label: "Structure du bâti"
@@ -25,3 +27,5 @@ desordre_categorie:
     label: "Eclairage"
   -
     label: "Incurie"
+  -
+    label: "Propreté / entretien"
