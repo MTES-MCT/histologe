@@ -9,6 +9,7 @@ class InformationsLogementRequest
     public function __construct(
         #[Assert\NotBlank(message: 'Merci de définir le type de logement.')]
         private readonly ?string $type = null,
+        #[Assert\NotBlank(message: 'Merci de préciser le type de logement autre.', groups: ['TYPE_LOGEMENT_AUTRE'])]
         private readonly ?string $typeLogementNatureAutrePrecision = null,
         #[Assert\NotBlank(message: 'Merci de définir le nombre de personnes.')]
         private readonly ?string $nombrePersonnes = null,
