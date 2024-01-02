@@ -200,7 +200,7 @@ class SignalementController extends AbstractController
             'listConcludeProcedures' => $listConcludeProcedures,
             'partnersCanVisite' => $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement),
             'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
-            'isNewFormEnabled' => !empty($parameterBag->get('feature_new_form')),
+            'isNewFormEnabled' => $parameterBag->get('feature_new_form'),
         ]);
     }
 
@@ -229,7 +229,7 @@ class SignalementController extends AbstractController
 
             return $this->redirectToRoute('back_index');
         }
-        if (!empty($parameterBag->get('feature_new_form'))) {
+        if ($parameterBag->get('feature_new_form')) {
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
         }
         $title = 'Administration - Edition signalement #'.$signalement->getReference();
