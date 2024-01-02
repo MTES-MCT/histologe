@@ -24,6 +24,7 @@ class SignalementQualificationUpdater
         $addRSD = true;
         $existingQualificationInsalubrite = null;
         $existingQualificationDanger = null;
+        $existingQualificationSuroccupation = null;
 
         $listQualifications = $signalement->getSignalementQualifications();
         foreach ($listQualifications as $qualification) {
@@ -39,10 +40,18 @@ class SignalementQualificationUpdater
             if (Qualification::DANGER == $qualification->getQualification()) {
                 $existingQualificationDanger = $qualification;
             }
+            if (Qualification::SUROCCUPATION == $qualification->getQualification()) {
+                $existingQualificationSuroccupation = $qualification;
+            }
         }
 
-        $this->addNonDecenceAndRSDQualification($signalement, $addNonDecence, $addRSD);
-        $this->updateInsalubriteQualification($signalement, $existingQualificationInsalubrite);
+        if (null === $signalement->getCreatedFrom()) {
+            $this->addNonDecenceAndRSDQualification($signalement, $addNonDecence, $addRSD);
+            $this->updateInsalubriteQualification($signalement, $existingQualificationInsalubrite);
+        } else {
+            $this->updateSuroccupationQualification($signalement, $existingQualificationSuroccupation);
+            $this->updatePrecisionsQualifications($signalement);
+        }
         $this->updateDangerQualification($signalement, $existingQualificationDanger);
     }
 
@@ -121,19 +130,122 @@ class SignalementQualificationUpdater
         }
     }
 
+    private function updatePrecisionsQualifications(
+        Signalement $signalement,
+    ): void {
+        $existingQualifications = $signalement->getSignalementQualifications()->toArray();
+        $processedQualifications = [];
+
+        $allQualifications = [];
+        foreach ($signalement->getDesordrePrecisions() as $desordrePrecision) {
+            $allQualifications = array_merge($allQualifications, $desordrePrecision->getQualification());
+        }
+
+        // $existingQualifications = $signalement->getSignalementQualifications()->toArray();
+        foreach ($existingQualifications as $existingQualification) {
+            $qualification = $existingQualification->getQualification();
+
+            if (!$this->isQualificationExistsInAll($allQualifications, $qualification)) {
+                $signalement->removeSignalementQualification($existingQualification);
+            } else {
+                $existingQualification->setStatus(
+                    $statusQualification = $this->calculateQualificationStatus($signalement, $existingQualification)
+                );
+
+                $associatedDesordrePrecisions = $this->getAssociatedDesordrePrecisions($signalement, $qualification);
+                $existingQualification->setCriticites($associatedDesordrePrecisions);
+                $processedQualifications[] = $qualification;
+            }
+        }
+
+        foreach ($allQualifications as $qualificationValue) {
+            $qualification = Qualification::tryFrom($qualificationValue);
+            if (!\in_array($qualification, $processedQualifications, true)) {
+                // $existingQualifications = $signalement->getSignalementQualifications()->toArray();
+                $qualificationExists = $this->isQualificationExistsInSignalement($existingQualifications, $qualification);
+
+                if (!$qualificationExists) {
+                    $statusQualification = $this->calculateQualificationStatus($signalement, $qualification);
+                    $associatedDesordrePrecisions = $this->getAssociatedDesordrePrecisions($signalement, $qualification);
+
+                    $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
+                        $qualification,
+                        $statusQualification,
+                        $associatedDesordrePrecisions
+                    );
+                    $signalement->addSignalementQualification($signalementQualification);
+                    $processedQualifications[] = $qualification;
+                }
+            }
+        }
+    }
+
+    private function calculateQualificationStatus(Signalement $signalement, Qualification $qualification): ?QualificationStatus
+    {
+        switch ($qualification) {
+            case Qualification::NON_DECENCE:
+                $statusQualification = QualificationStatus::NON_DECENCE_CHECK;
+                break;
+            case Qualification::RSD:
+                $statusQualification = QualificationStatus::RSD_CHECK;
+                break;
+            case Qualification::ASSSURANTIEL:
+                $statusQualification = QualificationStatus::ASSURANTIEL_CHECK;
+                break;
+            case Qualification::MISE_EN_SECURITE_PERIL:
+                $statusQualification = QualificationStatus::MISE_EN_SECURITE_PERIL_CHECK;
+                break;
+            case Qualification::INSALUBRITE:
+                $score = $signalement->getScore();
+                $statusQualification = $score >= 30
+                    ? QualificationStatus::INSALUBRITE_CHECK
+                    : QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK;
+                break;
+            default:
+                $statusQualification = null;
+                break;
+        }
+
+        return $statusQualification;
+    }
+
+    private function isQualificationExistsInSignalement(array $qualifications, Qualification $targetQualification): bool
+    {
+        foreach ($qualifications as $qualification) {
+            if ($qualification->getQualification() === $targetQualification) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function isQualificationExistsInAll(array $allQualifications, Qualification $qualification): bool
+    {
+        return \in_array($qualification, $allQualifications);
+    }
+
+    private function getAssociatedDesordrePrecisions(Signalement $signalement, Qualification $qualification): array
+    {
+        $associatedDesordrePrecisions = [];
+
+        foreach ($signalement->getDesordrePrecisions() as $desordrePrecision) {
+            if (\in_array($qualification, $desordrePrecision->getQualification())) {
+                $associatedDesordrePrecisions[] = $desordrePrecision;
+            }
+        }
+
+        return $associatedDesordrePrecisions;
+    }
+
     /**
-     * If one criticité is DANGER, we add DANGER.
+     * If one criticité/precision is DANGER, we add DANGER.
      */
     private function updateDangerQualification(
         Signalement $signalement,
         ?SignalementQualification $existingQualificationDanger
     ): void {
-        $listCriticiteDanger = [];
-        foreach ($signalement->getCriticites() as $criticite) {
-            if ($criticite->getIsDanger()) {
-                $listCriticiteDanger[] = $criticite->getId();
-            }
-        }
+        $listCriticiteDanger = $this->getCriticitesDanger($signalement);
         // If already exists
         if ($existingQualificationDanger) {
             // But should be deleted
@@ -144,10 +256,71 @@ class SignalementQualificationUpdater
         } elseif (!empty($listCriticiteDanger)) {
             $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
                 Qualification::DANGER,
-                QualificationStatus::DANGER_CHECK, $listCriticiteDanger
+                QualificationStatus::DANGER_CHECK,
+                $listCriticiteDanger
             );
             $signalement->addSignalementQualification($signalementQualification);
         }
+    }
+
+    private function getCriticitesDanger(
+        Signalement $signalement,
+    ): array {
+        $listCriticiteDanger = [];
+        if (null === $signalement->getCreatedFrom()) {
+            foreach ($signalement->getCriticites() as $criticite) {
+                if ($criticite->getIsDanger()) {
+                    $listCriticiteDanger[] = $criticite->getId();
+                }
+            }
+        } else {
+            foreach ($signalement->getDesordrePrecisions() as $precision) {
+                if ($precision->isIsDanger()) {
+                    $listCriticiteDanger[] = $precision->getId();
+                }
+            }
+        }
+
+        return $listCriticiteDanger;
+    }
+
+    /**
+     * If one precision is Suroccupation, we add SUROCCUPATION.
+     */
+    private function updateSuroccupationQualification(
+        Signalement $signalement,
+        ?SignalementQualification $existingQualificationSuroccupation
+    ): void {
+        $listPrecisionsSuroccupation = $this->getPrecisionsSuroccupation($signalement);
+        // If already exists
+        if ($existingQualificationSuroccupation) {
+            // But should be deleted
+            if (empty($listPrecisionsSuroccupation)) {
+                $signalement->removeSignalementQualification($existingQualificationSuroccupation);
+            }
+        // If not added yet, but should be added
+        } elseif (!empty($listPrecisionsSuroccupation)) {
+            $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
+                Qualification::SUROCCUPATION,
+                QualificationStatus::SUROCCUPATION_CHECK,
+                $listPrecisionsSuroccupation
+            );
+            $signalement->addSignalementQualification($signalementQualification);
+        }
+    }
+
+    private function getPrecisionsSuroccupation(
+        Signalement $signalement,
+    ): array {
+        $listPrecisionsSuroccupation = [];
+
+        foreach ($signalement->getDesordrePrecisions() as $precision) {
+            if ($precision->isIsSuroccupation()) {
+                $listPrecisionsSuroccupation[] = $precision->getId();
+            }
+        }
+
+        return $listPrecisionsSuroccupation;
     }
 
     public function updateQualificationFromVisiteProcedureList(Signalement $signalement, ?array $procedureTypes): void

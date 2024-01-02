@@ -135,6 +135,7 @@ class SignalementController extends AbstractController
         }
         $canExportSignalement = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY') || $isAffected;
 
+        // TODO : on étend la NDE sur tous les territoires
         $experimentationTerritories = $parameterBag->get('experimentation_territory');
         $isExperimentationTerritory = \array_key_exists($signalement->getTerritory()->getZip(), $experimentationTerritories);
 

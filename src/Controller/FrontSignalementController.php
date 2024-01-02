@@ -308,6 +308,7 @@ class FrontSignalementController extends AbstractController
             // - Territory in experimentation : $isExperimentationTerritory
             // - Criticité is NDE : $hasNDECriticite
             // - dateEntree >= 2023 or dataDateBail >= 2023 or dataDateBail "Je ne sais pas"
+            // TODO : est-ce nécessaire de supprimer cette restriction sur l'ancien formulaire ?
             $experimentationTerritories = $this->getParameter('experimentation_territory');
             $isExperimentationTerritory = \array_key_exists($signalement->getTerritory()->getZip(), $experimentationTerritories);
             if ($isExperimentationTerritory && \count($listNDECriticites) > 0) {

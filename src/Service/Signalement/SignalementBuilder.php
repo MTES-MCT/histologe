@@ -24,6 +24,7 @@ use App\Repository\DesordrePrecisionRepository;
 use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Token\TokenGeneratorInterface;
 use App\Service\UploadHandlerService;
 use App\Specification\Signalement\SuroccupationSpecification;
@@ -57,6 +58,7 @@ class SignalementBuilder
         private DesordreTraitementProcessor $desordreTraitementProcessor,
         private DesordreCritereManager $desordreCritereManager,
         private CriticiteCalculator $criticiteCalculator,
+        private SignalementQualificationUpdater $signalementQualificationUpdater,
     ) {
     }
 
@@ -135,7 +137,7 @@ class SignalementBuilder
 
         $this->signalement->setScore($this->criticiteCalculator->calculateFromNewFormulaire($this->signalement));
 
-        // TODO : https://github.com/MTES-MCT/histologe/issues/1547
+        $this->signalementQualificationUpdater->updateQualificationFromScore($this->signalement);
 
         return $this;
     }
