@@ -359,8 +359,16 @@ class SignalementManager extends AbstractManager
         if (!empty($signalement->getTypeCompositionLogement())) {
             $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
         }
+
+        if ('autre' === $informationsLogementRequest->getType()) {
+            $typeCompositionLogement->setTypeLogementNatureAutrePrecision(
+                $informationsLogementRequest->getTypeLogementNatureAutrePrecision()
+            );
+        } else {
+            $typeCompositionLogement->setTypeLogementNatureAutrePrecision(null);
+        }
+
         $typeCompositionLogement
-            ->setTypeLogementNatureAutrePrecision($informationsLogementRequest->getTypeLogementNatureAutrePrecision())
             ->setCompositionLogementNombrePersonnes($informationsLogementRequest->getNombrePersonnes())
             ->setCompositionLogementEnfants($informationsLogementRequest->getCompositionLogementEnfants())
             ->setBailDpeDateEmmenagement($informationsLogementRequest->getBailDpeDateEmmenagement())
