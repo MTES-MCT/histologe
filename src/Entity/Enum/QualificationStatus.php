@@ -31,19 +31,19 @@ enum QualificationStatus: string
         return [
             'ARCHIVED' => 'archived',
             'DANGER_CHECK' => 'Suspicion Danger occupant',
-            'SUROCCUPATION_CHECK' => 'Suspicion suroccupation',
-            'ASSURANTIEL_CHECK' => 'Suspicion assurantiel',
+            'SUROCCUPATION_CHECK' => 'Suspicion Suroccupation',
+            'ASSURANTIEL_CHECK' => 'Suspicion Assurantiel',
             'INSALUBRITE_CHECK' => 'Suspicion Insalubrité',
             'INSALUBRITE_AVEREE' => 'Insalubrité',
             'INSALUBRITE_MANQUEMENT_CHECK' => 'Suspicion Manquement à la salubrité',
-            'MISE_EN_SECURITE_PERIL_CHECK' => 'Suspicion de mise en sécurité/Péril',
+            'MISE_EN_SECURITE_PERIL_CHECK' => 'Suspicion Mise en sécurité/Péril',
             'MISE_EN_SECURITE_PERIL_AVEREE' => 'Mise en sécurité/Péril',
             'NDE_AVEREE' => 'Non décence énergétique avérée',
             'NDE_OK' => 'Décence énergétique OK',
             'NDE_CHECK' => 'Non décence énergétique à vérifier',
             'NON_DECENCE_CHECK' => 'Suspicion Non décence',
             'NON_DECENCE_AVEREE' => 'Non décence',
-            'RSD_CHECK' => 'Suspicion Non décence/RSD',
+            'RSD_CHECK' => 'Suspicion RSD',
             'RSD_AVEREE' => 'RSD',
         ];
     }

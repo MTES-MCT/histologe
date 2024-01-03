@@ -49,8 +49,8 @@ class SignalementQualificationUpdater
             $this->addNonDecenceAndRSDQualification($signalement, $addNonDecence, $addRSD);
             $this->updateInsalubriteQualification($signalement, $existingQualificationInsalubrite);
         } else {
+            $this->updateSignalementQualificationFromDesordrePrecisions($signalement);
             $this->updateSuroccupationQualification($signalement, $existingQualificationSuroccupation);
-            $this->updatePrecisionsQualifications($signalement);
         }
         $this->updateDangerQualification($signalement, $existingQualificationDanger);
     }
@@ -130,22 +130,30 @@ class SignalementQualificationUpdater
         }
     }
 
-    private function updatePrecisionsQualifications(
+    /**
+     * First remove (or update) old and inappropriate signalement qualification,
+     * then apply DesordrePrecision qualifications to Signalement.
+     */
+    private function updateSignalementQualificationFromDesordrePrecisions(
         Signalement $signalement,
     ): void {
-        $existingQualifications = $signalement->getSignalementQualifications()->toArray();
+        $existingSignalementQualifications = $signalement->getSignalementQualifications()->toArray();
         $processedQualifications = [];
 
-        $allQualifications = [];
+        // concatenate all desordrePrecision qualifications
+        $allDesordrePrecisionsQualifications = [];
         foreach ($signalement->getDesordrePrecisions() as $desordrePrecision) {
-            $allQualifications = array_merge($allQualifications, $desordrePrecision->getQualification());
+            $allDesordrePrecisionsQualifications = array_merge(
+                $allDesordrePrecisionsQualifications,
+                $desordrePrecision->getQualification()
+            );
         }
 
-        // $existingQualifications = $signalement->getSignalementQualifications()->toArray();
-        foreach ($existingQualifications as $existingQualification) {
+        // remove (or update) old and inappropriate signalement qualification
+        foreach ($existingSignalementQualifications as $existingQualification) {
             $qualification = $existingQualification->getQualification();
 
-            if (!$this->isQualificationExistsInAll($allQualifications, $qualification)) {
+            if (!$this->isQualificationExistsInDesordrePrecisions($allDesordrePrecisionsQualifications, $qualification)) {
                 $signalement->removeSignalementQualification($existingQualification);
             } else {
                 $existingQualification->setStatus(
@@ -158,11 +166,14 @@ class SignalementQualificationUpdater
             }
         }
 
-        foreach ($allQualifications as $qualificationValue) {
+        // apply DesordrePrecision qualifications to Signalement
+        foreach ($allDesordrePrecisionsQualifications as $qualificationValue) {
             $qualification = Qualification::tryFrom($qualificationValue);
             if (!\in_array($qualification, $processedQualifications, true)) {
-                // $existingQualifications = $signalement->getSignalementQualifications()->toArray();
-                $qualificationExists = $this->isQualificationExistsInSignalement($existingQualifications, $qualification);
+                $qualificationExists = $this->isQualificationExistsInSignalement(
+                    $existingSignalementQualifications,
+                    $qualification
+                );
 
                 if (!$qualificationExists) {
                     $statusQualification = $this->calculateQualificationStatus($signalement, $qualification);
@@ -180,8 +191,10 @@ class SignalementQualificationUpdater
         }
     }
 
-    private function calculateQualificationStatus(Signalement $signalement, Qualification $qualification): ?QualificationStatus
-    {
+    private function calculateQualificationStatus(
+        Signalement $signalement,
+        Qualification $qualification
+    ): ?QualificationStatus {
         switch ($qualification) {
             case Qualification::NON_DECENCE:
                 $statusQualification = QualificationStatus::NON_DECENCE_CHECK;
@@ -209,6 +222,19 @@ class SignalementQualificationUpdater
         return $statusQualification;
     }
 
+    private function getAssociatedDesordrePrecisions(Signalement $signalement, Qualification $qualification): array
+    {
+        $associatedDesordrePrecisions = [];
+
+        foreach ($signalement->getDesordrePrecisions() as $desordrePrecision) {
+            if (\in_array($qualification->value, $desordrePrecision->getQualification())) {
+                $associatedDesordrePrecisions[] = $desordrePrecision->getId();
+            }
+        }
+
+        return $associatedDesordrePrecisions;
+    }
+
     private function isQualificationExistsInSignalement(array $qualifications, Qualification $targetQualification): bool
     {
         foreach ($qualifications as $qualification) {
@@ -220,22 +246,9 @@ class SignalementQualificationUpdater
         return false;
     }
 
-    private function isQualificationExistsInAll(array $allQualifications, Qualification $qualification): bool
+    private function isQualificationExistsInDesordrePrecisions(array $allQualifications, Qualification $qualification): bool
     {
         return \in_array($qualification, $allQualifications);
-    }
-
-    private function getAssociatedDesordrePrecisions(Signalement $signalement, Qualification $qualification): array
-    {
-        $associatedDesordrePrecisions = [];
-
-        foreach ($signalement->getDesordrePrecisions() as $desordrePrecision) {
-            if (\in_array($qualification, $desordrePrecision->getQualification())) {
-                $associatedDesordrePrecisions[] = $desordrePrecision;
-            }
-        }
-
-        return $associatedDesordrePrecisions;
     }
 
     /**
