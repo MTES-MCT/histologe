@@ -13,7 +13,7 @@ class CriticiteCalculator
     private float $scoreLogement;
     private const MAX_SCORE_BATIMENT = 136;
     private const MAX_SCORE_LOGEMENT = 126;
-    private const MAX_NEW_SCORE_BATIMENT = 80;
+    private const MAX_NEW_SCORE_BATIMENT = 84;
     private const MAX_NEW_SCORE_LOGEMENT = 102;
 
     public function calculate(Signalement $signalement): float|int
