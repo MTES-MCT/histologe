@@ -126,7 +126,6 @@ class SignalementController extends AbstractController
             if ($criticite->getIsDanger()) {
                 $isDanger = true;
             }
-            // TODO : quand prise en compte des désordres du nouveau formulaire, il y aura le isSuroccupation à afficher aussi comme isDanger
         }
 
         $canEditSignalement = false;
@@ -135,17 +134,15 @@ class SignalementController extends AbstractController
         }
         $canExportSignalement = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY') || $isAffected;
 
-        // TODO : on étend la NDE sur tous les territoires
-        $experimentationTerritories = $parameterBag->get('experimentation_territory');
-        $isExperimentationTerritory = \array_key_exists($signalement->getTerritory()->getZip(), $experimentationTerritories);
-
         $signalementQualificationNDE = $signalementQualificationRepository->findOneBy([
             'signalement' => $signalement,
             'qualification' => Qualification::NON_DECENCE_ENERGETIQUE, ]);
         $isSignalementNDEActif = $this->isSignalementNDEActif($signalementQualificationNDE);
-        $signalementQualificationNDECriticites = $signalementQualificationNDE ? $criticiteRepository->findBy(['id' => $signalementQualificationNDE->getCriticites()]) : null;
+        $signalementQualificationNDECriticites =
+        $signalementQualificationNDE ?
+        $criticiteRepository->findBy(['id' => $signalementQualificationNDE->getCriticites()]) : null;
 
-        $partners = $signalementManager->findAllPartners($signalement, $isExperimentationTerritory && $isSignalementNDEActif);
+        $partners = $signalementManager->findAllPartners($signalement, true);
 
         $files = $parameterBag->get('files');
 
@@ -192,7 +189,6 @@ class SignalementController extends AbstractController
             'partners' => $partners,
             'clotureForm' => $clotureForm->createView(),
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
-            'isExperimentationTerritory' => $isExperimentationTerritory,
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
             'files' => $files,
