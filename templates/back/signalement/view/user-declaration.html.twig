@@ -9,15 +9,59 @@
 <div class="fr-grid-row fr-grid-row--gutters fr-mt-5w">
     <div class="fr-col-12 fr-col-md-6">
         <h4>Désordres logement</h4>
-        <div class="fr-background-alt--grey fr-p-3v">
-            TODO
+        <div class="fr-accordions-group">
+            {% for situation,criteres in situations[enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] %}
+                <section class="fr-accordion">
+                    <div class="fr-background-alt--grey fr-p-3v">
+                    <h3 class="fr-accordion__title">
+                        <button class="fr-accordion__btn" aria-expanded="false" aria-controls="logement-collapse-{{ loop.index }}"><strong>{{ situation|capitalize }}</strong></button>
+                    </h3>
+                    <div class="fr-collapse" id="logement-collapse-{{ loop.index }}">
+                        <ul>
+                            {% for critere,criticite in criteres %}
+                                <li>
+                                    {{ critere }}
+                                    <ul class="fr-list fr-list--none">
+                                        <li>
+                                            {{ criticite.label|raw }}
+                                        </li>
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    </div>
+                </section>
+            {% endfor %}
         </div>
     </div>
 
     <div class="fr-col-12 fr-col-md-6">
         <h4>Désordres bâtiment</h4>
-        <div class="fr-background-alt--grey fr-p-3v">
-            TODO
+        <div class="fr-accordions-group">
+            {% for situation,criteres in situations[enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] %}
+                <section class="fr-accordion">
+                    <div class="fr-background-alt--grey fr-p-3v">
+                    <h3 class="fr-accordion__title">
+                        <button class="fr-accordion__btn" aria-expanded="false" aria-controls="batiment-collapse-{{ loop.index }}"><strong>{{ situation|capitalize }}</strong></button>
+                    </h3>
+                    <div class="fr-collapse" id="batiment-collapse-{{ loop.index }}">
+                        <ul>
+                            {% for critere,criticite in criteres %}
+                                <li>
+                                    {{ critere }}
+                                    <ul class="fr-list fr-list--none">
+                                        <li>
+                                            {{ criticite.label|raw }}
+                                        </li>
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    </div>
+                </section>
+            {% endfor %}
         </div>
     </div>
 </div>

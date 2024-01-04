@@ -123,12 +123,21 @@ class SignalementController extends AbstractController
         }
         $isDanger = false;
         $criticitesArranged = [];
-        foreach ($signalement->getCriticites() as $criticite) {
-            $criticitesArranged[
-                $criticite->getCritere()->getSituation()->getLabel()
-            ][$criticite->getCritere()->getLabel()] = $criticite;
-            if ($criticite->getIsDanger()) {
-                $isDanger = true;
+        if (null == $signalement->getCreatedFrom()) {
+            foreach ($signalement->getCriticites() as $criticite) {
+                $criticitesArranged[$criticite->getCritere()->getSituation()->getLabel()][$criticite->getCritere()->getLabel()] = $criticite;
+                if ($criticite->getIsDanger()) {
+                    $isDanger = true;
+                }
+                // TODO : quand prise en compte des désordres du nouveau formulaire, il y aura le isSuroccupation à afficher aussi comme isDanger
+            }
+        } else {
+            foreach ($signalement->getDesordrePrecisions() as $desordrePrecision) {
+                $zone = $desordrePrecision->getDesordreCritere()->getZoneCategorie();
+                $labelCategorieBO = $desordrePrecision->getDesordreCritere()->getDesordreCategorie()->getLabel();
+                $labelCritere = $desordrePrecision->getDesordreCritere()->getLabelCritere();
+                $criticitesArranged[$zone->value][$labelCategorieBO][$labelCritere] = $desordrePrecision;
+                // TODO : quand prise en compte des désordres du nouveau formulaire, il y aura le isSuroccupation à afficher aussi comme isDanger
             }
         }
 
