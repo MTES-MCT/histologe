@@ -191,14 +191,16 @@ class PartnerType extends AbstractType
 
                 $zonesPdlList = explode(',', $form->get('zones_pdl')?->getData());
                 foreach ($zonesPdlList as $zonePdl) {
-                    /** @var Commune $commune */
-                    $commune = $this->communeManager->findOneBy(['codeInsee' => trim($zonePdl)]);
-                    if ($commune && $commune->getTerritory() === $territory) {
-                        $commune->setIsZonePermisLouer(true);
-                    } elseif (null === $commune) {
+                    $communes = $this->communeManager->findBy(['codeInsee' => trim($zonePdl)]);
+                    if (!\count($communes)) {
                         $form->get('zones_pdl')->addError(new FormError('Il n\'existe pas de commune avec le code insee '.trim($zonePdl)));
-                    } elseif ($commune->getTerritory() !== $territory) {
-                        $form->get('zones_pdl')->addError(new FormError('La commune avec le code insee '.trim($zonePdl).' ne fait pas partie du territoire du partenaire'));
+                    }
+                    foreach ($communes as $commune) {
+                        if ($commune->getTerritory() === $territory) {
+                            $commune->setIsZonePermisLouer(true);
+                        } elseif ($commune->getTerritory() !== $territory) {
+                            $form->get('zones_pdl')->addError(new FormError('La commune avec le code insee '.trim($zonePdl).' ne fait pas partie du territoire du partenaire'));
+                        }
                     }
                 }
             }

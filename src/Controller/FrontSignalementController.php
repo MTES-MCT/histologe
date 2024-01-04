@@ -80,6 +80,12 @@ class FrontSignalementController extends AbstractController
         }
 
         $inseeCode = $request->get('insee');
+        if (!empty($inseeCode)) {
+            $commune = $communeRepository->findOneBy(['codePostal' => $postalCode, 'codeInsee' => $inseeCode]);
+            if (!$commune) {
+                return $this->json(['success' => false, 'message' => 'Le paramètre code postal et le code insee ne sont pas cohérent', 'label' => 'Erreur']);
+            }
+        }
         if ($postalCodeHomeChecker->isActive($postalCode, $inseeCode)) {
             return $this->json(['success' => true]);
         }

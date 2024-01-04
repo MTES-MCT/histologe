@@ -29,8 +29,8 @@ class IsTerritoryActiveValidator extends ConstraintValidator
         $postalCode = $obj->getAdresseLogementAdresseDetailCodePostal();
         $inseeCode = $obj->getAdresseLogementAdresseDetailInsee();
         if ($postalCode && $inseeCode) {
-            $communes = $this->em->getRepository(Commune::class)->findBy(['codePostal' => $postalCode, 'codeInsee' => $inseeCode]);
-            if (!\count($communes)) {
+            $commune = $this->em->getRepository(Commune::class)->findOneBy(['codePostal' => $postalCode, 'codeInsee' => $inseeCode]);
+            if (!$commune) {
                 $message = 'Le code postal "'.$postalCode.'" et le code INSEE "'.$inseeCode.'" ne sont pas cohérents.';
                 $this->context
                     ->buildViolation($message)
