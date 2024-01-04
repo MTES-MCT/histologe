@@ -764,7 +764,7 @@ desordre_precision:
     coef: 0
     is_danger: 0
     label: "Dégâts des eaux ou une fuite > OUI - Une ou des pièces à vivre (salon, chambres) "
-    qualification: ['ASSSURANTIEL']
+    qualification: ['ASSURANTIEL']
     desordre_precision_slug: "desordres_logement_humidite_piece_a_vivre_details_fuite_oui"
     is_suroccupation: 0
   -
@@ -772,7 +772,7 @@ desordre_precision:
     coef: 0
     is_danger: 0
     label: "Dégâts des eaux ou une fuite > OUI - La cuisine / le coin cuisine"
-    qualification: ['ASSSURANTIEL']
+    qualification: ['ASSURANTIEL']
     desordre_precision_slug: "desordres_logement_humidite_cuisine_details_fuite_oui"
     is_suroccupation: 0
   -
@@ -780,7 +780,7 @@ desordre_precision:
     coef: 0
     is_danger: 0
     label: "Dégâts des eaux ou une fuite > OUI - La salle de bain, salle d'eau et / ou les toilettes"
-    qualification: ['ASSSURANTIEL']
+    qualification: ['ASSURANTIEL']
     desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_fuite_oui"
     is_suroccupation: 0
   -
@@ -788,7 +788,7 @@ desordre_precision:
     coef: 0
     is_danger: 0
     label: "Dégâts des eaux ou une fuite > NON ou NE SAIS PAS - Une ou des pièces à vivre (salon, chambres) "
-    qualification: ['ASSSURANTIEL']
+    qualification: ['ASSURANTIEL']
     desordre_precision_slug: "desordres_logement_humidite_piece_a_vivre_details_fuite_non"
     is_suroccupation: 0
   -
@@ -796,7 +796,7 @@ desordre_precision:
     coef: 0
     is_danger: 0
     label: "Dégâts des eaux ou une fuite > NON ou NE SAIS PAS - La cuisine / le coin cuisine"
-    qualification: ['ASSSURANTIEL']
+    qualification: ['ASSURANTIEL']
     desordre_precision_slug: "desordres_logement_humidite_cuisine_details_fuite_non"
     is_suroccupation: 0
   -
@@ -804,7 +804,7 @@ desordre_precision:
     coef: 0
     is_danger: 0
     label: "Dégâts des eaux ou une fuite > NON ou NE SAIS PAS - La salle de bain, salle d'eau et / ou les toilettes"
-    qualification: ['ASSSURANTIEL']
+    qualification: ['ASSURANTIEL']
     desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_fuite_non"
     is_suroccupation: 0
   -

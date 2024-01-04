@@ -141,10 +141,10 @@ class SignalementQualificationUpdater
         $processedQualifications = [];
 
         // concatenate all desordrePrecision qualifications
-        $allDesordrePrecisionsQualifications = [];
+        $desordrePrecisionsQualifications = [];
         foreach ($signalement->getDesordrePrecisions() as $desordrePrecision) {
-            $allDesordrePrecisionsQualifications = array_merge(
-                $allDesordrePrecisionsQualifications,
+            $desordrePrecisionsQualifications = array_merge(
+                $desordrePrecisionsQualifications,
                 $desordrePrecision->getQualification()
             );
         }
@@ -153,21 +153,21 @@ class SignalementQualificationUpdater
         foreach ($existingSignalementQualifications as $existingQualification) {
             $qualification = $existingQualification->getQualification();
 
-            if (!$this->isQualificationExistsInDesordrePrecisions($allDesordrePrecisionsQualifications, $qualification)) {
+            if (!$this->isQualificationExistsInDesordrePrecisions($desordrePrecisionsQualifications, $qualification)) {
                 $signalement->removeSignalementQualification($existingQualification);
             } else {
                 $existingQualification->setStatus(
                     $statusQualification = $this->calculateQualificationStatus($signalement, $existingQualification)
                 );
 
-                $associatedDesordrePrecisions = $this->getAssociatedDesordrePrecisions($signalement, $qualification);
-                $existingQualification->setCriticites($associatedDesordrePrecisions);
+                $linkedDesordrePrecisions = $this->getLinkedDesordrePrecisions($signalement, $qualification);
+                $existingQualification->setCriticites($linkedDesordrePrecisions);
                 $processedQualifications[] = $qualification;
             }
         }
 
         // apply DesordrePrecision qualifications to Signalement
-        foreach ($allDesordrePrecisionsQualifications as $qualificationValue) {
+        foreach ($desordrePrecisionsQualifications as $qualificationValue) {
             $qualification = Qualification::tryFrom($qualificationValue);
             if (!\in_array($qualification, $processedQualifications, true)) {
                 $qualificationExists = $this->isQualificationExistsInSignalement(
@@ -177,12 +177,12 @@ class SignalementQualificationUpdater
 
                 if (!$qualificationExists) {
                     $statusQualification = $this->calculateQualificationStatus($signalement, $qualification);
-                    $associatedDesordrePrecisions = $this->getAssociatedDesordrePrecisions($signalement, $qualification);
+                    $linkedDesordrePrecisions = $this->getLinkedDesordrePrecisions($signalement, $qualification);
 
                     $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
                         $qualification,
                         $statusQualification,
-                        $associatedDesordrePrecisions
+                        $linkedDesordrePrecisions
                     );
                     $signalement->addSignalementQualification($signalementQualification);
                     $processedQualifications[] = $qualification;
@@ -202,7 +202,7 @@ class SignalementQualificationUpdater
             case Qualification::RSD:
                 $statusQualification = QualificationStatus::RSD_CHECK;
                 break;
-            case Qualification::ASSSURANTIEL:
+            case Qualification::ASSURANTIEL:
                 $statusQualification = QualificationStatus::ASSURANTIEL_CHECK;
                 break;
             case Qualification::MISE_EN_SECURITE_PERIL:
@@ -222,7 +222,7 @@ class SignalementQualificationUpdater
         return $statusQualification;
     }
 
-    private function getAssociatedDesordrePrecisions(Signalement $signalement, Qualification $qualification): array
+    private function getLinkedDesordrePrecisions(Signalement $signalement, Qualification $qualification): array
     {
         $associatedDesordrePrecisions = [];
 
@@ -246,8 +246,10 @@ class SignalementQualificationUpdater
         return false;
     }
 
-    private function isQualificationExistsInDesordrePrecisions(array $allQualifications, Qualification $qualification): bool
-    {
+    private function isQualificationExistsInDesordrePrecisions(
+        array $allQualifications,
+        Qualification $qualification
+    ): bool {
         return \in_array($qualification, $allQualifications);
     }
 

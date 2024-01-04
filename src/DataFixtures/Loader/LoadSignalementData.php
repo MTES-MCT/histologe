@@ -333,10 +333,18 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
         $signalement->setCreatedFrom($this->signalementDraftRepository->findOneBy(['uuid' => $row['created_from_uuid']]));
         $signalement->setProfileDeclarant(ProfileDeclarant::tryFrom($row['profile_declarant']))
-        ->setTypeCompositionLogement(TypeCompositionLogementFactory::createFromArray(json_decode($row['type_composition_logement'], true)))
-        ->setSituationFoyer(SituationFoyerFactory::createFromArray(json_decode($row['situation_foyer'], true)))
-        ->setInformationProcedure(InformationProcedureFactory::createFromArray(json_decode($row['information_procedure'], true)))
-        ->setInformationComplementaire(InformationComplementaireFactory::createFromArray(json_decode($row['information_complementaire'], true)));
+            ->setTypeCompositionLogement(
+                TypeCompositionLogementFactory::createFromArray(json_decode($row['type_composition_logement'], true))
+            )
+            ->setSituationFoyer(
+                SituationFoyerFactory::createFromArray(json_decode($row['situation_foyer'], true))
+            )
+            ->setInformationProcedure(
+                InformationProcedureFactory::createFromArray(json_decode($row['information_procedure'], true))
+            )
+            ->setInformationComplementaire(
+                InformationComplementaireFactory::createFromArray(json_decode($row['information_complementaire'], true))
+            );
 
         if (isset($row['is_not_occupant'])) {
             $signalement
