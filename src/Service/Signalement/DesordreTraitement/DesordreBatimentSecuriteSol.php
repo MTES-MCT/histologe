@@ -6,6 +6,9 @@ use App\Repository\DesordrePrecisionRepository;
 
 class DesordreBatimentSecuriteSol implements DesordreTraitementInterface
 {
+    private const SLUG_EFFONDRE = 'desordres_batiment_securite_sol_details_plancher_effondre';
+    private const SLUG_ABIME = 'desordres_batiment_securite_sol_details_plancher_abime';
+
     public function __construct(
         private readonly DesordrePrecisionRepository $desordrePrecisionRepository,
     ) {
@@ -15,19 +18,17 @@ class DesordreBatimentSecuriteSol implements DesordreTraitementInterface
     {
         $precisions = [];
 
-        $slugEffondre = 'desordres_batiment_securite_sol_details_plancher_effondre';
-        if (isset($payload[$slugEffondre])) {
-            if ('oui' === $payload[$slugEffondre]) {
+        if (isset($payload[self::SLUG_EFFONDRE])) {
+            if ('oui' === $payload[self::SLUG_EFFONDRE]) {
                 $precision = $this->desordrePrecisionRepository->findOneBy(
-                    ['desordrePrecisionSlug' => $slugEffondre]
+                    ['desordrePrecisionSlug' => self::SLUG_EFFONDRE]
                 );
                 $precisions[] = $precision;
             } else {
-                $slugAbime = 'desordres_batiment_securite_sol_details_plancher_abime';
-                if (isset($payload[$slugAbime])
-                    && 'oui' === $payload[$slugAbime]) {
+                if (isset($payload[self::SLUG_ABIME])
+                    && 'oui' === $payload[self::SLUG_ABIME]) {
                     $precision = $this->desordrePrecisionRepository->findOneBy(
-                        ['desordrePrecisionSlug' => $slugAbime]
+                        ['desordrePrecisionSlug' => self::SLUG_ABIME]
                     );
                     $precisions[] = $precision;
                 }
