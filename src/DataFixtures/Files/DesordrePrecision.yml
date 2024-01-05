@@ -474,7 +474,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_aeration_ventilation_defectueuse" 
     coef: 3
     is_danger: 0
-    label: "<span>Dans : <b>Tout le logement</b></span><br><span class=\"fr-border--left\">Ventilation nettoyée : oui</span>" 
+    label: "<span>Dans : <b>Tout le logement</b></span><br><span class='fr-border--left'>Ventilation nettoyée : oui</span>" 
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_logement_aeration_ventilation_defectueuse_details_pieces_tout_nettoyage_oui"
     is_suroccupation: 0
@@ -482,7 +482,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_aeration_ventilation_defectueuse" 
     coef: 1
     is_danger: 0
-    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class=\"fr-border--left\">Ventilation nettoyée : oui</span>" 
+    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class='fr-border--left'>Ventilation nettoyée : oui</span>" 
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_logement_aeration_ventilation_defectueuse_details_pieces_piece_a_vivre_nettoyage_oui"
     is_suroccupation: 0
@@ -490,7 +490,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_aeration_ventilation_defectueuse" 
     coef: 1
     is_danger: 0
-    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class=\"fr-border--left\">Ventilation nettoyée : oui</span>" 
+    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class='fr-border--left'>Ventilation nettoyée : oui</span>" 
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_logement_aeration_ventilation_defectueuse_details_pieces_cuisine_nettoyage_oui"
     is_suroccupation: 0
@@ -498,7 +498,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_aeration_ventilation_defectueuse" 
     coef: 1
     is_danger: 0
-    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class=\"fr-border--left\">Ventilation nettoyée : oui</span>" 
+    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class='fr-border--left'>Ventilation nettoyée : oui</span>" 
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_logement_aeration_ventilation_defectueuse_details_pieces_salle_de_bain_nettoyage_oui"
     is_suroccupation: 0
@@ -506,7 +506,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_aeration_ventilation_defectueuse" 
     coef: 1.5
     is_danger: 0
-    label: "<span>Dans : <b>Tout le logement</b></span><br><span class=\"fr-border--left\">Ventilation nettoyée : non (ou ne sait pas)</span>" 
+    label: "<span>Dans : <b>Tout le logement</b></span><br><span class='fr-border--left'>Ventilation nettoyée : non (ou ne sait pas)</span>" 
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_logement_aeration_ventilation_defectueuse_details_pieces_tout_nettoyage_non"
     is_suroccupation: 0
@@ -514,7 +514,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_aeration_ventilation_defectueuse" 
     coef: 0.5
     is_danger: 0
-    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class=\"fr-border--left\">Ventilation nettoyée : non (ou ne sait pas)</span>" 
+    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class='fr-border--left'>Ventilation nettoyée : non (ou ne sait pas)</span>" 
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_logement_aeration_ventilation_defectueuse_details_pieces_piece_a_vivre_nettoyage_non"
     is_suroccupation: 0
@@ -522,7 +522,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_aeration_ventilation_defectueuse" 
     coef: 0.5
     is_danger: 0
-    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class=\"fr-border--left\">Ventilation nettoyée : non (ou ne sait pas)</span>" 
+    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class='fr-border--left'>Ventilation nettoyée : non (ou ne sait pas)</span>" 
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_logement_aeration_ventilation_defectueuse_details_pieces_cuisine_nettoyage_non"
     is_suroccupation: 0
@@ -530,7 +530,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_aeration_ventilation_defectueuse" 
     coef: 0.5
     is_danger: 0
-    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class=\"fr-border--left\">Ventilation nettoyée : non (ou ne sait pas)</span>" 
+    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class='fr-border--left'>Ventilation nettoyée : non (ou ne sait pas)</span>" 
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_logement_aeration_ventilation_defectueuse_details_pieces_salle_de_bain_nettoyage_non"
     is_suroccupation: 0
@@ -674,7 +674,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_humidite_piece_a_vivre" 
     coef: 1
     is_danger: 0
-    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class=\"fr-border--left\">Machine à laver, sèche-linge ou lave vaisselle : oui</span>" 
+    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class='fr-border--left'>Machine à laver, sèche-linge ou lave vaisselle : oui</span>" 
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_logement_humidite_piece_a_vivre_details_machine_oui"
     is_suroccupation: 0
@@ -682,7 +682,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_humidite_cuisine" 
     coef: 0.5
     is_danger: 0
-    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class=\"fr-border--left\">Machine à laver, sèche-linge ou lave vaisselle : oui</span>" 
+    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class='fr-border--left'>Machine à laver, sèche-linge ou lave vaisselle : oui</span>" 
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_logement_humidite_cuisine_details_machine_oui"
     is_suroccupation: 0
@@ -690,7 +690,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_humidite_salle_de_bain" 
     coef: 0.5
     is_danger: 0
-    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class=\"fr-border--left\">Machine à laver, sèche-linge ou lave vaisselle : oui</span>" 
+    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class='fr-border--left'>Machine à laver, sèche-linge ou lave vaisselle : oui</span>" 
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_machine_oui"
     is_suroccupation: 0
@@ -698,7 +698,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_humidite_piece_a_vivre" 
     coef: 2
     is_danger: 0
-    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class=\"fr-border--left\">Machine à laver, sèche-linge ou lave vaisselle : non (ou ne sait pas)</span>" 
+    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class='fr-border--left'>Machine à laver, sèche-linge ou lave vaisselle : non (ou ne sait pas)</span>" 
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_logement_humidite_piece_a_vivre_details_machine_non"
     is_suroccupation: 0
@@ -706,7 +706,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_humidite_cuisine" 
     coef: 1
     is_danger: 0
-    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class=\"fr-border--left\">Machine à laver, sèche-linge ou lave vaisselle : non (ou ne sait pas)</span>" 
+    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class='fr-border--left'>Machine à laver, sèche-linge ou lave vaisselle : non (ou ne sait pas)</span>" 
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_logement_humidite_cuisine_details_machine_non"
     is_suroccupation: 0
@@ -714,7 +714,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_humidite_salle_de_bain" 
     coef: 1
     is_danger: 0
-    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class=\"fr-border--left\">Machine à laver, sèche-linge ou lave vaisselle : non (ou ne sait pas)</span>" 
+    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class='fr-border--left'>Machine à laver, sèche-linge ou lave vaisselle : non (ou ne sait pas)</span>" 
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_machine_non"
     is_suroccupation: 0
@@ -722,7 +722,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_humidite_piece_a_vivre" 
     coef: 5
     is_danger: 1
-    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class=\"fr-border--left\">Moisissure revient après nettoyage : oui</span>" 
+    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class='fr-border--left'>Moisissure revient après nettoyage : oui</span>" 
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_logement_humidite_piece_a_vivre_details_moisissure_apres_nettoyage_oui"
     is_suroccupation: 0
@@ -730,7 +730,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_humidite_cuisine" 
     coef: 1.5
     is_danger: 0
-    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class=\"fr-border--left\">Moisissure revient après nettoyage : oui</span>" 
+    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class='fr-border--left'>Moisissure revient après nettoyage : oui</span>" 
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_logement_humidite_cuisine_details_moisissure_apres_nettoyage_oui"
     is_suroccupation: 0
@@ -738,7 +738,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_humidite_salle_de_bain" 
     coef: 1.5
     is_danger: 0
-    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class=\"fr-border--left\">Moisissure revient après nettoyage : oui</span>" 
+    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class='fr-border--left'>Moisissure revient après nettoyage : oui</span>" 
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_moisissure_apres_nettoyage_oui"
     is_suroccupation: 0
@@ -746,7 +746,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_humidite_piece_a_vivre" 
     coef: 2
     is_danger: 0
-    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class=\"fr-border--left\">Moisissure revient après nettoyage : non (ou ne sait pas)</span>" 
+    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class='fr-border--left'>Moisissure revient après nettoyage : non (ou ne sait pas)</span>" 
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_logement_humidite_piece_a_vivre_details_moisissure_apres_nettoyage_non"
     is_suroccupation: 0
@@ -754,7 +754,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_humidite_cuisine" 
     coef: 1
     is_danger: 0
-    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class=\"fr-border--left\">Moisissure revient après nettoyage : non (ou ne sait pas)</span>" 
+    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class='fr-border--left'>Moisissure revient après nettoyage : non (ou ne sait pas)</span>" 
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_logement_humidite_cuisine_details_moisissure_apres_nettoyage_non"
     is_suroccupation: 0
@@ -762,7 +762,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_humidite_salle_de_bain" 
     coef: 1
     is_danger: 0
-    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class=\"fr-border--left\">Moisissure revient après nettoyage : non (ou ne sait pas)</span>" 
+    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class='fr-border--left'>Moisissure revient après nettoyage : non (ou ne sait pas)</span>" 
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_moisissure_apres_nettoyage_non"
     is_suroccupation: 0
@@ -770,7 +770,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_humidite_piece_a_vivre" 
     coef: 0
     is_danger: 0
-    label: " <span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class=\"fr-border--left\">Fuite ou dégat des eaux : oui</span>" 
+    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class='fr-border--left'>Fuite ou dégat des eaux : oui</span>" 
     qualification: ['ASSURANTIEL']
     desordre_precision_slug: "desordres_logement_humidite_piece_a_vivre_details_fuite_oui"
     is_suroccupation: 0
@@ -778,7 +778,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_humidite_cuisine" 
     coef: 0
     is_danger: 0
-    label: " <span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class=\"fr-border--left\">Fuite ou dégat des eaux : oui</span>" 
+    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class='fr-border--left'>Fuite ou dégat des eaux : oui</span>" 
     qualification: ['ASSURANTIEL']
     desordre_precision_slug: "desordres_logement_humidite_cuisine_details_fuite_oui"
     is_suroccupation: 0
@@ -786,7 +786,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_humidite_salle_de_bain" 
     coef: 0
     is_danger: 0
-    label: " <span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class=\"fr-border--left\">Fuite ou dégat des eaux : oui</span>" 
+    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class='fr-border--left'>Fuite ou dégat des eaux : oui</span>" 
     qualification: ['ASSURANTIEL']
     desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_fuite_oui"
     is_suroccupation: 0
@@ -794,7 +794,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_humidite_piece_a_vivre" 
     coef: 0
     is_danger: 0
-    label: " <span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class=\"fr-border--left\">Fuite ou dégat des eaux : non (ou ne sait pas)</span>" 
+    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class='fr-border--left'>Fuite ou dégat des eaux : non (ou ne sait pas)</span>" 
     qualification: ['ASSURANTIEL']
     desordre_precision_slug: "desordres_logement_humidite_piece_a_vivre_details_fuite_non"
     is_suroccupation: 0
@@ -802,7 +802,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_humidite_cuisine" 
     coef: 0
     is_danger: 0
-    label: " <span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class=\"fr-border--left\">Fuite ou dégat des eaux : non (ou ne sait pas)</span>" 
+    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class='fr-border--left'>Fuite ou dégat des eaux : non (ou ne sait pas)</span>" 
     qualification: ['ASSURANTIEL']
     desordre_precision_slug: "desordres_logement_humidite_cuisine_details_fuite_non"
     is_suroccupation: 0
@@ -810,7 +810,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_humidite_salle_de_bain" 
     coef: 0
     is_danger: 0
-    label: " <span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class=\"fr-border--left\">Fuite ou dégat des eaux : non (ou ne sait pas)</span>" 
+    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class='fr-border--left'>Fuite ou dégat des eaux : non (ou ne sait pas)</span>" 
     qualification: ['ASSURANTIEL']
     desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_fuite_non"
     is_suroccupation: 0
@@ -922,7 +922,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 6
     is_danger: 1
-    label: "<span>Dans : <b>Tout le logement</b></span><br><span class=\"fr-border--left\">Diagnostique plomb / amiante disponible : oui</span>" 
+    label: "<span>Dans : <b>Tout le logement</b></span><br><span class='fr-border--left'>Diagnostique plomb / amiante disponible : oui</span>" 
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_tout_diagnostique_oui"
     is_suroccupation: 0
@@ -930,7 +930,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 3
     is_danger: 1
-    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class=\"fr-border--left\">Diagnostique plomb / amiante disponible : oui</span>" 
+    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class='fr-border--left'>Diagnostique plomb / amiante disponible : oui</span>" 
     qualification: ['RSD', 'INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_piece_a_vivre_diagnostique_oui"
     is_suroccupation: 0
@@ -938,7 +938,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 2
     is_danger: 1
-    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class=\"fr-border--left\">Diagnostique plomb / amiante disponible : oui</span>" 
+    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class='fr-border--left'>Diagnostique plomb / amiante disponible : oui</span>" 
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_cuisine_diagnostique_oui"
     is_suroccupation: 0
@@ -946,7 +946,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 1
     is_danger: 1
-    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class=\"fr-border--left\">Diagnostique plomb / amiante disponible : oui</span>" 
+    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class='fr-border--left'>Diagnostique plomb / amiante disponible : oui</span>" 
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_salle_de_bain_diagnostique_oui"
     is_suroccupation: 0
@@ -954,7 +954,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 4
     is_danger: 1
-    label: "<span>Dans : <b>Tout le logement</b></span><br><span class=\"fr-border--left\">Diagnostique plomb / amiante disponible : non (ou ne sait pas)</span>" 
+    label: "<span>Dans : <b>Tout le logement</b></span><br><span class='fr-border--left'>Diagnostique plomb / amiante disponible : non (ou ne sait pas)</span>" 
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_tout_diagnostique_non"
     is_suroccupation: 0
@@ -962,7 +962,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 2
     is_danger: 1
-    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class=\"fr-border--left\">Diagnostique plomb / amiante disponible : non (ou ne sait pas)</span>" 
+    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class='fr-border--left'>Diagnostique plomb / amiante disponible : non (ou ne sait pas)</span>" 
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_piece_a_vivre_diagnostique_non"
     is_suroccupation: 0
@@ -970,7 +970,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 1.5
     is_danger: 1
-    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class=\"fr-border--left\">Diagnostique plomb / amiante disponible : non (ou ne sait pas)</span>" 
+    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class='fr-border--left'>Diagnostique plomb / amiante disponible : non (ou ne sait pas)</span>" 
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_cuisine_diagnostique_non"
     is_suroccupation: 0
@@ -978,7 +978,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 0.5
     is_danger: 1
-    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class=\"fr-border--left\">Diagnostique plomb / amiante disponible : non (ou ne sait pas)</span>" 
+    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class='fr-border--left'>Diagnostique plomb / amiante disponible : non (ou ne sait pas)</span>" 
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_salle_de_bain_diagnostique_non"
     is_suroccupation: 0
