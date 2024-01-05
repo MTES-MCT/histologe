@@ -572,7 +572,8 @@ forms.forEach((form) => {
                             nextTabBtn.disabled = false;
                             setTimeout(() => {nextTabBtn.click()}, 50)
                         } else {
-                           dsfr(document.querySelector('#fr-modal-closed-territory')).modal.disclose();
+                            document.getElementById('fr-modal-closed-territory-content').innerHTML = r.message;
+                            dsfr(document.querySelector('#fr-modal-closed-territory')).modal.disclose();
                         }
                     })
                 } else {
