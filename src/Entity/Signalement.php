@@ -594,6 +594,17 @@ class Signalement
         return $this;
     }
 
+    /**
+     * @deprecated  Cette méthode gère l'addition du nombre de personnes avec les données obsolètes.
+     * Sera supprimé à la prochaine version
+     */
+    public function getNbPersonsDeprecated(): string
+    {
+        return $this->nbAdultes
+                + str_replace('+', '', $this->getNbEnfantsM6())
+                + str_replace('+', '', $this->getNbEnfantsP6());
+    }
+
     public function getIsAllocataire(): ?string
     {
         return $this->isAllocataire;

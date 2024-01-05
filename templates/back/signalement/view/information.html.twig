@@ -190,13 +190,13 @@
                             {{ signalement.nbOccupantsLogement }}
 
                         {% else %}
-                            {{ signalement.nbAdultes ?? 0 + signalement.nbEnfantsP6 ?? 0 + signalement.nbEnfantsM6 ?? 0 }} :
+                            {{ signalement.nbPersonsDeprecated }} :
                             {{ signalement.nbAdultes }} {{ signalement.nbAdultes > 1 ? 'adultes' : 'adulte' }}
                             {% if signalement.nbEnfantsP6 %}
-                                - {{ signalement.nbEnfantsP6 ?? '0' }} {{ signalement.nbEnfantsP6 > 1 ? 'enfants' : 'enfant' }} de plus de 6 ans
+                                - {{ signalement.nbEnfantsP6 ?? '0' }} enfant(s) de plus de 6 ans
                             {% endif %}
                             {% if signalement.nbEnfantsM6 %}
-                                - {{ signalement.nbEnfantsM6 ?? '0' }} {{ signalement.nbEnfantsM6 > 1 ? 'enfants' : 'enfant' }} de moins de 6 ans
+                                - {{ signalement.nbEnfantsM6 ?? '0' }} enfant(s) de moins de 6 ans
                             {% endif %}
                         {% endif %}
                     </div>
