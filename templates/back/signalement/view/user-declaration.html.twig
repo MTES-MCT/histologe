@@ -26,9 +26,21 @@
                                             {{ criticite.label|raw }}
                                         </li>
                                     </ul>
+                                    {% if photos[criticite.desordreCritere.slugCritere] %}
+                                        {# TODO que faire quand on clique sur le bouton ? #}
+                                        <button class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-icon-eye-line">
+                                            Voir les photos du critère
+                                        </button>
+                                    {% endif %}
                                 </li>
                             {% endfor %}
                         </ul>
+                        {% if photos[situation] %}
+                            {# TODO que faire quand on clique sur le bouton ? #}
+                            <button class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-icon-eye-line">
+                                Voir les photos de la catégorie
+                            </button>
+                        {% endif %}
                     </div>
                     </div>
                 </section>
@@ -55,9 +67,21 @@
                                             {{ criticite.label|raw }}
                                         </li>
                                     </ul>
+                                    {% if photos[criticite.desordreCritere.slugCritere] %}
+                                        {# TODO que faire quand on clique sur le bouton ? #}
+                                        <button class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-icon-eye-line">
+                                            Voir les photos du critère
+                                        </button>
+                                    {% endif %}
                                 </li>
                             {% endfor %}
                         </ul>
+                        {% if photos[situation] %}    
+                            {# TODO que faire quand on clique sur le bouton ? #} 
+                            <button class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-icon-eye-line">
+                                Voir les photos de la catégorie
+                            </button>
+                        {% endif %}
                     </div>
                     </div>
                 </section>

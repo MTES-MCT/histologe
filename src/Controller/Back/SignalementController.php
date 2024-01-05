@@ -123,6 +123,7 @@ class SignalementController extends AbstractController
         }
         $isDanger = false;
         $criticitesArranged = [];
+        $photos = [];
         if (null == $signalement->getCreatedFrom()) {
             foreach ($signalement->getCriticites() as $criticite) {
                 $criticitesArranged[$criticite->getCritere()->getSituation()->getLabel()][$criticite->getCritere()->getLabel()] = $criticite;
@@ -137,6 +138,38 @@ class SignalementController extends AbstractController
                 $labelCategorieBO = $desordrePrecision->getDesordreCritere()->getDesordreCategorie()->getLabel();
                 $labelCritere = $desordrePrecision->getDesordreCritere()->getLabelCritere();
                 $criticitesArranged[$zone->value][$labelCategorieBO][$labelCritere] = $desordrePrecision;
+
+                // ajoute les photos liées au critère et à la précision
+                $desordrePrecisionSlug = $desordrePrecision->getDesordrePrecisionSlug();
+                $desordreCritereSlug = $desordrePrecision->getDesordreCritere()->getSlugCritere();
+                if (isset($photos[$desordreCritereSlug])) {
+                    $photos[$desordreCritereSlug] = array_unique(array_merge(
+                        $photos[$desordreCritereSlug],
+                        $signalementManager->getPhotosBySlug($signalement, $desordreCritereSlug)
+                    ), \SORT_REGULAR);
+                    $photos[$desordreCritereSlug] = array_unique(array_merge(
+                        $photos[$desordreCritereSlug],
+                        $signalementManager->getPhotosBySlug($signalement, $desordrePrecisionSlug)
+                    ), \SORT_REGULAR);
+                } else {
+                    $photos[$desordreCritereSlug] = $signalementManager->getPhotosBySlug($signalement, $desordreCritereSlug);
+                    $photos[$desordreCritereSlug] = array_unique(array_merge(
+                        $photos[$desordreCritereSlug],
+                        $signalementManager->getPhotosBySlug($signalement, $desordrePrecisionSlug)
+                    ), \SORT_REGULAR);
+                }
+
+                // ajoute les photos liées à la catégorie BO
+                $desordreCategorielug = $desordrePrecision->getDesordreCritere()->getSlugCategorie();
+                if (isset($photos[$labelCategorieBO])) {
+                    $photos[$labelCategorieBO] = array_unique(array_merge(
+                        $photos[$labelCategorieBO],
+                        $signalementManager->getPhotosBySlug($signalement, $desordreCategorielug)
+                    ), \SORT_REGULAR);
+                } else {
+                    $photos[$labelCategorieBO] = $signalementManager->getPhotosBySlug($signalement, $desordreCategorielug);
+                }
+
                 // TODO : quand prise en compte des désordres du nouveau formulaire, il y aura le isSuroccupation à afficher aussi comme isDanger
             }
         }
@@ -210,6 +243,7 @@ class SignalementController extends AbstractController
             'title' => 'Signalement',
             'createdFromDraft' => $signalement->getCreatedFrom(),
             'situations' => $criticitesArranged,
+            'photos' => $photos,
             'needValidation' => Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut(),
             'canEditSignalement' => $canEditSignalement,
             'canExportSignalement' => $canExportSignalement,
