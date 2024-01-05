@@ -505,7 +505,7 @@ class SignalementManager extends AbstractManager
             ->setInformationsComplementairesSituationOccupantsBeneficiaireFsl($situationFoyerRequest->getBeneficiaireFsl());
         if ($situationFoyerRequest->getRevenuFiscal()) {
             $informationComplementaire
-                ->setInformationsComplementairesSituationBailleurRevenuFiscal($situationFoyerRequest->getRevenuFiscal());
+                ->setInformationsComplementairesSituationOccupantsRevenuFiscal($situationFoyerRequest->getRevenuFiscal());
         }
         $signalement->setInformationComplementaire($informationComplementaire);
 

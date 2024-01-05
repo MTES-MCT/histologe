@@ -161,7 +161,7 @@
                             {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT  %}
                             <div class="fr-input-group">
                                 <label class="fr-label" for="revenuFiscal">Revenu fiscal de référence</label>
-                                <input class="fr-input" type="text" name="revenuFiscal" value="{{ signalement.informationComplementaire.informationsComplementairesSituationBailleurRevenuFiscal ?? '0' }}">
+                                <input class="fr-input" type="text" name="revenuFiscal" value="{{ signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal ?? '0' }}">
                             </div>
                             {% endif %}
                         </div>

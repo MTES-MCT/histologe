@@ -459,7 +459,7 @@
                     {% if signalement.typeCompositionLogement %}
                         <div class="fr-col-12 fr-col-md-6">
                             <strong>Au moins une des pièces à vivre > 9m² :</strong>
-                            {{ signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m is same as 'nsp' ? 'Ne sait pas' : signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m }}
+                            {{ signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m is same as 'nsp' ? 'Ne sait pas' : signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m ?? 'N/C' }}
                             {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m is same as 'non' } %}
                         </div>
                     {% endif %}
@@ -668,7 +668,7 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Revenu fiscal de référence :</strong>
                         {% if signalement.informationComplementaire %}
-                            {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurRevenuFiscal ? signalement.informationComplementaire.informationsComplementairesSituationBailleurRevenuFiscal ~ ' €' : 'N/C' }}
+                            {{ signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal ~ ' €' : 'N/C' }}
                         {% else %}
                             N/C
                         {% endif %}
