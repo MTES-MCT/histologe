@@ -601,8 +601,8 @@ class Signalement
     public function getNbPersonsDeprecated(): string
     {
         return $this->nbAdultes
-                + str_replace('+', '', $this->getNbEnfantsM6())
-                + str_replace('+', '', $this->getNbEnfantsP6());
+                + str_replace('+', '', $this->getNbEnfantsM6() ?? 0)
+                + str_replace('+', '', $this->getNbEnfantsP6() ?? 0);
     }
 
     public function getIsAllocataire(): ?string
