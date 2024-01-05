@@ -73,7 +73,12 @@ class UpdateCommunesCommand extends Command
             }
 
             $zipCode = LoadCommuneData::getZipCodeByCodeCommune($itemCodeCommune);
-            $new = $this->communeFactory->createInstanceFrom(territory: $this->territories[$zipCode], nom: $itemNomCommune, codePostal: $itemCodePostal, codeInsee: $itemCodeCommune);
+            $new = $this->communeFactory->createInstanceFrom(
+                territory: $this->territories[$zipCode],
+                nom: $itemNomCommune,
+                codePostal: $itemCodePostal,
+                codeInsee: $itemCodeCommune
+            );
             $this->entityManager->persist($new);
             ++$nbInsert;
             unset($this->communes[$keyCommune]);
