@@ -78,7 +78,7 @@
     <div v-else-if="formStore.currentScreen?.slug === 'validation_signalement' && formStore.data[idMessageAdministration] !== undefined">
       <br>
       <h3 class="fr-h6">Précisions sur les désordres</h3>
-      <p style="white-space: pre-line;">{{ formStore.data[idMessageAdministration] }}</p>
+      <p class="white-space-pre-line">{{ formStore.data[idMessageAdministration] }}</p>
     </div>
   </div>
 </template>
