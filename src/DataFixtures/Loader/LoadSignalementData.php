@@ -9,6 +9,7 @@ use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\File;
+use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Entity\User;
@@ -135,6 +136,14 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 ->setLienDeclarantOccupant(SignalementType::LINK_CHOICES[array_rand(SignalementType::LINK_CHOICES)]);
         } else {
             $signalement->setIsNotOccupant(0);
+        }
+
+        if (isset($row['nature_logement_autre_precision'])) {
+            $typeCompositionLogement = new TypeCompositionLogement();
+            $typeCompositionLogement->setTypeLogementNatureAutrePrecision(
+                $row['nature_logement_autre_precision']
+            );
+            $signalement->setTypeCompositionLogement($typeCompositionLogement);
         }
 
         if (isset($row['is_imported'])) {
