@@ -152,12 +152,12 @@ desordre_precision:
     desordre_precision_slug: "desordres_batiment_nuisibles_punaises"
     is_suroccupation: 0
   -
-    desordre_critere_slug: "desordres_batiment_nuisibles_autre" 
+    desordre_critere_slug: "desordres_batiment_nuisibles_autres" 
     coef: 1
     is_danger: 0
     label: " - "
     qualification: ['NON_DECENCE', 'RSD', 'INSALUBRITE']
-    desordre_precision_slug: "desordres_batiment_nuisibles_autre"
+    desordre_precision_slug: "desordres_batiment_nuisibles_autres"
     is_suroccupation: 0
   -
     desordre_critere_slug: "desordres_batiment_securite_sol" 

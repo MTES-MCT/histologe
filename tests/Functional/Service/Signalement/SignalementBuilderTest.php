@@ -16,6 +16,7 @@ use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
+use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementBuilder;
@@ -59,6 +60,7 @@ class SignalementBuilderTest extends KernelTestCase
         $this->desordrePrecisionRepository = static::getContainer()->get(DesordrePrecisionRepository::class);
         $desordreTraitementProcessor = static::getContainer()->get(DesordreTraitementProcessor::class);
         $desordreCritereManager = static::getContainer()->get(DesordreCritereManager::class);
+        $criticiteCalculator = static::getContainer()->get(CriticiteCalculator::class);
 
         $this->signalementBuilder = new SignalementBuilder(
             $territoryRepository,
@@ -79,6 +81,7 @@ class SignalementBuilderTest extends KernelTestCase
             $this->desordrePrecisionRepository,
             $desordreTraitementProcessor,
             $desordreCritereManager,
+            $criticiteCalculator
         );
     }
 
@@ -215,9 +218,9 @@ class SignalementBuilderTest extends KernelTestCase
             ->withFiles()
             ->build();
 
-        $this->assertCount(10, $signalement->getDesordreCategories());
+        $this->assertCount(12, $signalement->getDesordreCategories());
         $this->assertCount(57, $signalement->getDesordreCriteres());
-        $this->assertCount(66, $signalement->getDesordrePrecisions());
+        $this->assertCount(65, $signalement->getDesordrePrecisions());
 
         $desordreCritere = $this->desordreCritereRepository->findOneBy(
             ['slugCritere' => 'desordres_type_composition_logement_sous_combles']

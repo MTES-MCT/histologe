@@ -1,0 +1,87 @@
+signalements:
+  -
+    territory: "Loire-Atlantique"
+    uuid: "00000000-0000-0000-2023-000000000027"
+    reference: "2023-27"
+    details: "Ma maison avait l'air bien, mais en fait c'est une véritable passoire."
+    is_proprio_averti: 1
+    is_allocataire: "0"
+    nature_logement: "maison"
+    type_logement: "MAISON"
+    superficie: 67
+    loyer: null
+    date_entree: "2019-12-01"
+    nom_proprio: "HabitatMarsien"
+    is_logement_social: 0
+    nom_occupant: "Mamère"
+    prenom_occupant: "Noëlle"
+    tel_occupant: "+330240556677"
+    phone_number: "+330240556677"
+    mail_occupant: "noelle@yopmail.com"
+    adresse_occupant: "8 Rue de la tourmentinerie"
+    cp_occupant: "44850"
+    ville_occupant: "Saint-Mars-du-Désert"
+    statut: 1
+    geoloc: "{\"lat\": 47.360679, \"lng\": -1.410753}"
+    mode_contact_proprio: "[]"
+    insee_occupant: "44179"
+    code_suivi: "2db341e0d1fd76a6221666f2155328b8e16783d1619ab1343fae7c87b2bc5886"
+    nb_pieces_logement: 5
+    nb_occupants_logement: 4
+    score: 35.194711538462
+    created_from_uuid: '00000000-0000-0000-2023-locataire003'
+    profile_declarant: "LOCATAIRE"
+    civilite_occupant: "mme"
+    type_composition_logement: "{\"bail_dpe_dpe\": \"oui\", \"bail_dpe_bail\": \"oui\", \"type_logement_rdc\": null, \"type_logement_nature\": \"maison\", \"bail_dpe_etat_des_lieux\": \"oui\", \"bail_dpe_date_emmenagement\": \"2019-12-01\", \"type_logement_commodites_wc\": \"oui\", \"type_logement_dernier_etage\": null, \"composition_logement_enfants\": \"oui\", \"composition_logement_hauteur\": \"oui\", \"composition_logement_nb_pieces\": \"5\", \"composition_logement_superficie\": \"67\", \"type_logement_commodites_cuisine\": \"oui\", \"composition_logement_piece_unique\": \"plusieurs_pieces\", \"type_logement_commodites_wc_cuisine\": \"non\", \"type_logement_sous_sol_sans_fenetre\": null, \"composition_logement_nombre_personnes\": \"4\", \"type_logement_commodites_salle_de_bain\": \"oui\", \"type_logement_commodites_wc_collective\": null, \"type_logement_sous_comble_sans_fenetre\": null, \"type_logement_commodites_piece_a_vivre_9m\": \"oui\", \"type_logement_commodites_cuisine_collective\": null, \"type_logement_commodites_salle_de_bain_collective\": null}"
+    situation_foyer: "{\"logement_social_allocation\": \"non\", \"logement_social_date_naissance\": null, \"logement_social_allocation_caisse\": null, \"travailleur_social_accompagnement\": \"non\", \"logement_social_demande_relogement\": \"non\", \"logement_social_montant_allocation\": null, \"logement_social_numero_allocataire\": null, \"travailleur_social_quitte_logement\": \"non\", \"travailleur_social_accompagnement_declarant\": null}"
+    information_procedure: "{\"utilisation_service_ok_visite\": true, \"info_procedure_bailleur_prevenu\": \"oui\", \"info_procedure_reponse_assurance\": null, \"info_procedure_assurance_contactee\": \"non\", \"info_procedure_depart_apres_travaux\": \"oui\", \"utilisation_service_ok_demande_logement\": true, \"utilisation_service_ok_prevenir_bailleur\": true}"
+    information_complementaire: "{\"informations_complementaires_logement_montant_loyer\": null, \"informations_complementaires_logement_nombre_etages\": null, \"informations_complementaires_logement_annee_construction\": null, \"informations_complementaires_situation_bailleur_revenu_fiscal\": null, \"informations_complementaires_situation_occupants_loyers_payes\": null, \"informations_complementaires_situation_bailleur_date_naissance\": null, \"informations_complementaires_situation_occupants_date_naissance\": null, \"informations_complementaires_situation_occupants_preavis_depart\": null, \"informations_complementaires_situation_bailleur_beneficiaire_fsl\": null, \"informations_complementaires_situation_bailleur_beneficiaire_rsa\": null, \"informations_complementaires_situation_occupants_beneficiaire_fsl\": null, \"informations_complementaires_situation_occupants_beneficiaire_rsa\": null, \"informations_complementaires_situation_occupants_date_emmenagement\": null, \"informations_complementaires_situation_occupants_demande_relogement\": null}"
+    score_logement: 13.990384615385
+    score_batiment: 50
+    desordre_categorie:
+      - "Usage / entretien"
+      - "Etanchéité / isolation"
+      - "Sécurite risques particuliers"
+      - "Structure du bâti"
+      - "Aération / humidité"
+      - "Chauffage / confort"
+    desordre_critere:
+      - "desordres_batiment_proprete_interieur"
+      - "desordres_batiment_proprete_facades"
+      - "desordres_batiment_isolation_murs"
+      - "desordres_batiment_isolation_porte_fenetres"
+      - "desordres_batiment_isolation_dernier_etage_toit"
+      - "desordres_batiment_isolation_infiltration_eau"
+      - "desordres_batiment_maintenance_petites_reparations"
+      - "desordres_batiment_securite_elements_toit"
+      - "desordres_batiment_securite_toit"
+      - "desordres_batiment_securite_murs_fissures"
+      - "desordres_batiment_securite_balcons"
+      - "desordres_batiment_incendie_odeur_gaz"
+      - "desordres_logement_aeration_aucune_aeration"
+      - "desordres_logement_chauffage_details_fenetres_permeables"
+      - "desordres_logement_chauffage_details_difficultes_chauffage"
+    desordre_precision:
+      - "desordres_batiment_proprete_interieur"
+      - "desordres_batiment_proprete_facades"
+      - "desordres_batiment_isolation_murs"
+      - "desordres_batiment_isolation_porte_fenetres"
+      - "desordres_batiment_isolation_dernier_etage_toit_sous_toit_oui"
+      - "desordres_batiment_isolation_infiltration_eau_au_sol_oui"
+      - "desordres_batiment_maintenance_petites_reparations"
+      - "desordres_batiment_securite_elements_toit"
+      - "desordres_batiment_securite_toit"
+      - "desordres_batiment_securite_murs_fissures_details_mur_porteur_oui"
+      - "desordres_batiment_securite_balcons"
+      - "desordres_batiment_incendie_odeur_gaz"
+      - "desordres_logement_aeration_aucune_aeration_pieces_salle_de_bain"
+      - "desordres_logement_chauffage_details_fenetres_permeables_pieces_cuisine"
+      - "desordres_logement_chauffage_details_difficultes_chauffage_pieces_piece_a_vivre"
+      - "desordres_logement_chauffage_details_difficultes_chauffage_pieces_cuisine"
+      - "desordres_logement_humidite_piece_a_vivre_details_machine_non"
+      - "desordres_logement_humidite_piece_a_vivre_details_moisissure_apres_nettoyage_oui"
+      - "desordres_logement_humidite_piece_a_vivre_details_fuite_non"
+      - "desordres_logement_securite_sol_dangereux_pieces_piece_a_vivre"
+      - "desordres_logement_securite_balcons_pieces_salle_de_bain"
+      - "desordres_logement_securite_plomb_pieces_salle_de_bain_diagnostique_oui"
+

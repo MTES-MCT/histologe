@@ -55,6 +55,7 @@ class SignalementBuilder
         private DesordrePrecisionRepository $desordrePrecisionRepository,
         private DesordreTraitementProcessor $desordreTraitementProcessor,
         private DesordreCritereManager $desordreCritereManager,
+        private CriticiteCalculator $criticiteCalculator,
     ) {
     }
 
@@ -131,7 +132,7 @@ class SignalementBuilder
             $this->processDesordresTypeComposition();
         }
 
-        // TODO : https://github.com/MTES-MCT/histologe/issues/1546
+        $this->signalement->setScore($this->criticiteCalculator->calculateFromNewFormulaire($this->signalement));
 
         // TODO : https://github.com/MTES-MCT/histologe/issues/1547
 
