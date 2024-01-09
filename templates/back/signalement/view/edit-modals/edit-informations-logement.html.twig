@@ -27,7 +27,7 @@
                                 {% if signalement.typeCompositionLogement %}
                                     {% set nombrePersonnes = signalement.nbOccupantsLogement %}
                                 {% else %}
-                                    {% set nombrePersonnes = signalement.nbAdultes + signalement.nbEnfantsP6 + signalement.nbEnfantsM6 %}
+                                    {% set nombrePersonnes = signalement.nbPersonsDeprecated %}
                                 {% endif %}
                                 <label class="fr-label" for="nombrePersonnes">Nb. personnes</label>
                                 <input class="fr-input" type="number" name="nombrePersonnes" value="{{ nombrePersonnes }}">
