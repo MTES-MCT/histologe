@@ -11,5 +11,8 @@ return function (array $context) {
         $context['APP_ENV'] = 'dev';
         $context['APP_DEBUG'] = true;
     }*/
+
+    $csp = isset($_SERVER['SECURITY_CSP_HEADER_VALUE']) ? $_SERVER['SECURITY_CSP_HEADER_VALUE'] : "";
+    header('Content-Security-Policy: '.$csp);
     return new Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']);
 };
