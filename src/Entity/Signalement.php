@@ -600,7 +600,7 @@ class Signalement
      */
     public function getNbPersonsDeprecated(): string
     {
-        return $this->nbAdultes
+        return str_replace('+', '', $this->nbAdultes ?? 0)
                 + str_replace('+', '', $this->getNbEnfantsM6() ?? 0)
                 + str_replace('+', '', $this->getNbEnfantsP6() ?? 0);
     }
