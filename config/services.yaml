@@ -34,6 +34,7 @@ parameters:
     feature_new_form: '%env(bool:FEATURE_NEW_FORM_ENABLE)%'
     platform_name: 'Histologe'
     matomo_enable: '%env(bool:MATOMO_ENABLE)%'
+    matomo_site_id: '%env(resolve:MATOMO_SITE_ID)%'
 
 services:
     # default configuration for services in *this* file
