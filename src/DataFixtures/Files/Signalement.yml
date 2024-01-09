@@ -1455,6 +1455,54 @@ signalements:
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
       - "le sol ou la base des murs est très humide."
   -
+    uuid: "00000000-0000-0000-2023-000000000120"
+    details: "Signalement ancien sans suivi"
+    is_proprio_averti: 1
+    is_logement_social: 0
+    is_not_occupant: true
+    nb_adultes: "2"
+    nb_enfants_m6: "1"
+    nb_enfants_p6: "2"
+    is_allocataire: ""
+    nature_logement: "Autre"
+    nature_logement_autre_precision: "Roulotte"
+    type_logement: ""
+    superficie: 15
+    loyer: 200
+    phone_number: 0821127286
+    adresse_occupant: "7 Av. Rostand"
+    cp_occupant: "13003"
+    ville_occupant: "Marseille"
+    statut: 2
+    reference: "2023-20"
+    geoloc: "{\"lat\":\"43.3117791\",\"lng\":\"5.3755551\"}"
+    created_at: "2023-01-08 17:06:33"
+    score: 100
+    etage_occupant: "0"
+    escalier_occupant: ""
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    insee_occupant: "13203"
+    is_rsa: 0
+    type_energie_logement: "Electrique"
+    origine_signalement: ""
+    nb_occupants_logement: 3
+    situation_occupant: "1"
+    territory: "Bouches-du-Rhône"
+    tags:
+      - "Urgent"
+    situations:
+      - "la vie commune et le voisinage"
+      - "la sécurité des occupants"
+      - "l'état et propreté du logement"
+    criteres:
+      - "Les déchets sont mal stockés."
+      - "La protection incendie n’est pas adaptée."
+      - "Les sols sont humides."
+    criticites:
+      - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
+      - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
+      - "le sol ou la base des murs est très humide."
+  -
     uuid: "00000000-0000-0000-2023-000000000021"
     details: "Signalement au statut refusé."
     is_proprio_averti: 1

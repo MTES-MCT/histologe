@@ -179,6 +179,9 @@ class SignalementEditController extends AbstractController
             if ($signalement->getProfileDeclarant()) {
                 $validationGroups[] = $signalement->getProfileDeclarant()->value;
             }
+            if ('autre' == $informationsLogementRequest->getType()) {
+                $validationGroups[] = 'TYPE_LOGEMENT_AUTRE';
+            }
             $errorMessage = $this->getErrorMessage($validator, $informationsLogementRequest, $validationGroups);
 
             if (empty($errorMessage)) {

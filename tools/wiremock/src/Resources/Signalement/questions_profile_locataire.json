@@ -247,8 +247,20 @@
             {
               "label": "Une maison seule",
               "value": "maison"
+            },
+            {
+              "label": "Autre",
+              "value": "autre"
             }
           ]
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Précisez le type :",
+          "slug": "type_logement_nature_autre_precision",
+          "conditional": {
+            "show": "formStore.data.type_logement_nature === 'autre'"
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",

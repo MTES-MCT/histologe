@@ -9,6 +9,8 @@ class InformationsLogementRequest
     public function __construct(
         #[Assert\NotBlank(message: 'Merci de définir le type de logement.')]
         private readonly ?string $type = null,
+        #[Assert\NotBlank(message: 'Merci de préciser le type de logement autre.', groups: ['TYPE_LOGEMENT_AUTRE'])]
+        private readonly ?string $typeLogementNatureAutrePrecision = null,
         #[Assert\NotBlank(message: 'Merci de définir le nombre de personnes.')]
         private readonly ?string $nombrePersonnes = null,
         #[Assert\NotBlank(message: 'Merci de définir le nombre d\'enfants.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR'])]
@@ -28,6 +30,11 @@ class InformationsLogementRequest
     public function getType(): ?string
     {
         return $this->type;
+    }
+
+    public function getTypeLogementNatureAutrePrecision(): ?string
+    {
+        return $this->typeLogementNatureAutrePrecision;
     }
 
     public function getNombrePersonnes(): ?string

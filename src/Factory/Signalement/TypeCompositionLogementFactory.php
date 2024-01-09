@@ -27,6 +27,7 @@ class TypeCompositionLogementFactory
     {
         return new TypeCompositionLogement(
             typeLogementNature: $data['type_logement_nature'] ?? null,
+            typeLogementNatureAutrePrecision: $data['type_logement_nature_autre_precision'] ?? null,
             typeLogementRdc: $data['type_logement_rdc'] ?? null,
             typeLogementDernierEtage: $data['type_logement_dernier_etage'] ?? null,
             typeLogementSousSolSansFenetre: $data['type_logement_sous_sol_sans_fenetre'] ?? null,

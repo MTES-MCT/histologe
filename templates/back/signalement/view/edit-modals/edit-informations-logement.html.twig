@@ -23,6 +23,15 @@
                             </div>
 
                             <div class="fr-input-group">
+                                {% set autrePrecision = '' %}
+                                {% if signalement.typeCompositionLogement %}
+                                    {% set autrePrecision = signalement.typeCompositionLogement.typeLogementNatureAutrePrecision %}
+                                {% endif %}
+                                <label class="fr-label" for="typeLogementNatureAutrePrecision">Précision (si autre)</label>
+                                <input class="fr-input" type="text" name="typeLogementNatureAutrePrecision" value="{{ autrePrecision }}" maxlength="50">
+                            </div>
+
+                            <div class="fr-input-group">
                                 {% set nombrePersonnes = 0 %}
                                 {% if signalement.typeCompositionLogement %}
                                     {% set nombrePersonnes = signalement.nbOccupantsLogement %}
