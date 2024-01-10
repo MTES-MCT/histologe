@@ -17,13 +17,18 @@ class InformationsLogementRequest
         private readonly ?string $compositionLogementEnfants = null,
         #[Assert\NotBlank(message: 'Merci de définir la date d\'arrivée', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
         #[Assert\DateTime('Y-m-d')]
-        private readonly ?string $bailDpeDateEmmenagement = null,
+        private readonly ?string $dateEntree = null,
+        #[Assert\DateTime('Y-m-d')]
+        private readonly ?string $bailleurDateEffetBail = null,
         #[Assert\NotBlank(message: 'Merci de définir le bail.', groups: ['LOCATAIRE', 'BAILLEUR'])]
         private readonly ?string $bailDpeBail = null,
         #[Assert\NotBlank(message: 'Merci de définir l\'état des lieux.', groups: ['LOCATAIRE', 'BAILLEUR'])]
         private readonly ?string $bailDpeEtatDesLieux = null,
         #[Assert\NotBlank(message: 'Merci de définir le DPE.', groups: ['LOCATAIRE', 'BAILLEUR', 'BAILLEUR_OCCUPANT'])]
         private readonly ?string $bailDpeDpe = null,
+        private readonly ?string $loyer = null,
+        private readonly ?string $loyersPayes = null,
+        private readonly ?string $anneeConstruction = null,
     ) {
     }
 
@@ -47,9 +52,14 @@ class InformationsLogementRequest
         return $this->compositionLogementEnfants;
     }
 
-    public function getBailDpeDateEmmenagement(): ?string
+    public function getDateEntree(): ?string
     {
-        return $this->bailDpeDateEmmenagement;
+        return $this->dateEntree;
+    }
+
+    public function getBailleurDateEffetBail(): ?string
+    {
+        return $this->bailleurDateEffetBail;
     }
 
     public function getBailDpeBail(): ?string
@@ -65,5 +75,20 @@ class InformationsLogementRequest
     public function getBailDpeDpe(): ?string
     {
         return $this->bailDpeDpe;
+    }
+
+    public function getLoyer(): ?string
+    {
+        return $this->loyer;
+    }
+
+    public function getLoyersPayes(): ?string
+    {
+        return $this->loyersPayes;
+    }
+
+    public function getAnneeConstruction(): ?string
+    {
+        return $this->anneeConstruction;
     }
 }

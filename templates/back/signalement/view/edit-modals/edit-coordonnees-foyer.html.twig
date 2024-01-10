@@ -12,6 +12,32 @@
                                 Modifier les coordonnées du foyer
                             </h1>
 
+                            {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT %}
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="typeProprio">Type</label>
+                                <select class="fr-select" name="typeProprio">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ signalement.typeProprio is same as '' ? 'selected' : '' }}>N/C</option>
+                                    <option value="{{ enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE.name }}" {{ signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE.label }}</option>
+                                    <option value="{{ enum('App\\Entity\\Enum\\ProprioType').PARTICULIER.name }}" {{ signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').PARTICULIER ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\ProprioType').PARTICULIER.label }}</option>
+                                </select>
+                            </div>
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="nomStructure">Nom de la structure</label>
+                                <input class="fr-input" type="text" name="nomStructure" value="{{ signalement.structureDeclarant }}">
+                            </div>
+                            {% endif %}
+
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="civilite">Civilité</label>
+                                <select class="fr-select" name="civilite">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ signalement.civiliteOccupant is same as '' ? 'selected' : '' }}>N/C</option>
+                                    <option value="mme" {{ signalement.civiliteOccupant is same as 'mme' ? 'selected' : '' }}>Madame</option>
+                                    <option value="mr" {{ signalement.civiliteOccupant is same as 'mr' ? 'selected' : '' }}>Monsieur</option>
+                                </select>
+                            </div>
+
                             <div class="fr-input-group">
                                 <label class="fr-label" for="nom">Nom</label>
                                 <input class="fr-input" type="text" name="nom" value="{{ signalement.nomOccupant }}" maxlength="50">

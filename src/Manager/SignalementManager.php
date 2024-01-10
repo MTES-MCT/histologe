@@ -14,6 +14,9 @@ use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Dto\SignalementAffectationListView;
 use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProprioType;
+use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
@@ -313,6 +316,10 @@ class SignalementManager extends AbstractManager
 
     public function updateFromCoordonneesTiersRequest(Signalement $signalement, CoordonneesTiersRequest $coordonneesTiersRequest)
     {
+        if (ProfileDeclarant::BAILLEUR == $signalement->getProfileDeclarant()) {
+            $signalement
+                ->setTypeProprio($coordonneesTiersRequest->getTypeProprio() ? ProprioType::from($coordonneesTiersRequest->getTypeProprio()) : null);
+        }
         $signalement->setNomDeclarant($coordonneesTiersRequest->getNom())
             ->setPrenomDeclarant($coordonneesTiersRequest->getPrenom())
             ->setMailDeclarant($coordonneesTiersRequest->getMail())
@@ -325,7 +332,14 @@ class SignalementManager extends AbstractManager
 
     public function updateFromCoordonneesFoyerRequest(Signalement $signalement, CoordonneesFoyerRequest $coordonneesFoyerRequest)
     {
-        $signalement->setNomOccupant($coordonneesFoyerRequest->getNom())
+        if (ProfileDeclarant::BAILLEUR_OCCUPANT == $signalement->getProfileDeclarant()) {
+            $signalement
+                ->setTypeProprio($coordonneesFoyerRequest->getTypeProprio() ? ProprioType::from($coordonneesFoyerRequest->getTypeProprio()) : null)
+                ->setStructureDeclarant($coordonneesFoyerRequest->getNomStructure());
+        }
+        $signalement
+            ->setCiviliteOccupant($coordonneesFoyerRequest->getCivilite())
+            ->setNomOccupant($coordonneesFoyerRequest->getNom())
             ->setPrenomOccupant($coordonneesFoyerRequest->getPrenom())
             ->setMailOccupant($coordonneesFoyerRequest->getMail())
             ->setTelOccupant($coordonneesFoyerRequest->getTelephone())
@@ -345,6 +359,21 @@ class SignalementManager extends AbstractManager
             ->setCodePostalProprio($coordonneesBailleurRequest->getCodePostal())
             ->setVilleProprio($coordonneesBailleurRequest->getVille());
 
+        $informationComplementaire = new InformationComplementaire();
+        if (!empty($signalement->getInformationComplementaire())) {
+            $informationComplementaire = clone $signalement->getInformationComplementaire();
+        }
+        $informationComplementaire
+            ->setInformationsComplementairesSituationBailleurBeneficiaireRsa($coordonneesBailleurRequest->getBeneficiaireRsa())
+            ->setInformationsComplementairesSituationBailleurBeneficiaireFsl($coordonneesBailleurRequest->getBeneficiaireFsl())
+            ->setInformationsComplementairesSituationBailleurRevenuFiscal($coordonneesBailleurRequest->getRevenuFiscal());
+        if ($coordonneesBailleurRequest->getDateNaissance()) {
+            $informationComplementaire->setInformationsComplementairesSituationBailleurDateNaissance(
+                $coordonneesBailleurRequest->getDateNaissance()
+            );
+        }
+        $signalement->setInformationComplementaire($informationComplementaire);
+
         $this->save($signalement);
     }
 
@@ -353,6 +382,14 @@ class SignalementManager extends AbstractManager
         $signalement->setNatureLogement($informationsLogementRequest->getType());
         if (is_numeric($informationsLogementRequest->getNombrePersonnes())) {
             $signalement->setNbOccupantsLogement($informationsLogementRequest->getNombrePersonnes());
+        }
+        if (is_numeric($informationsLogementRequest->getLoyer())) {
+            $signalement->setLoyer($informationsLogementRequest->getLoyer());
+        }
+        if (!empty($informationsLogementRequest->getDateEntree())) {
+            $signalement->setDateEntree(new \DateTimeImmutable($informationsLogementRequest->getDateEntree()));
+        } else {
+            $signalement->setDateEntree(null);
         }
 
         $typeCompositionLogement = new TypeCompositionLogement();
@@ -371,11 +408,22 @@ class SignalementManager extends AbstractManager
         $typeCompositionLogement
             ->setCompositionLogementNombrePersonnes($informationsLogementRequest->getNombrePersonnes())
             ->setCompositionLogementEnfants($informationsLogementRequest->getCompositionLogementEnfants())
-            ->setBailDpeDateEmmenagement($informationsLogementRequest->getBailDpeDateEmmenagement())
             ->setBailDpeBail($informationsLogementRequest->getBailDpeBail())
             ->setBailDpeEtatDesLieux($informationsLogementRequest->getBailDpeEtatDesLieux())
             ->setBailDpeDpe($informationsLogementRequest->getBailDpeDpe());
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
+
+        $informationComplementaire = new InformationComplementaire();
+        if (!empty($signalement->getInformationComplementaire())) {
+            $informationComplementaire = clone $signalement->getInformationComplementaire();
+        }
+        $informationComplementaire
+            ->setInformationsComplementairesSituationOccupantsLoyersPayes($informationsLogementRequest->getLoyersPayes())
+            ->setInformationsComplementairesLogementAnneeConstruction($informationsLogementRequest->getAnneeConstruction())
+            ->setInformationsComplementairesSituationBailleurDateEffetBail(
+                !empty($informationsLogementRequest->getBailleurDateEffetBail()) ? $informationsLogementRequest->getBailleurDateEffetBail() : null
+            );
+        $signalement->setInformationComplementaire($informationComplementaire);
 
         $this->save($signalement);
     }
@@ -408,6 +456,14 @@ class SignalementManager extends AbstractManager
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
 
         // TODO : mise à jour des désordres liés à la composition du logement
+
+        $informationComplementaire = new InformationComplementaire();
+        if (!empty($signalement->getInformationComplementaire())) {
+            $informationComplementaire = clone $signalement->getInformationComplementaire();
+        }
+        $informationComplementaire
+            ->setInformationsComplementairesLogementNombreEtages($compositionLogementRequest->getNombreEtages());
+        $signalement->setInformationComplementaire($informationComplementaire);
 
         $this->save($signalement);
     }
@@ -449,6 +505,19 @@ class SignalementManager extends AbstractManager
 
         // TODO : mise à jour du désordre suroccupation si allocataire change
 
+        $informationComplementaire = new InformationComplementaire();
+        if (!empty($signalement->getInformationComplementaire())) {
+            $informationComplementaire = clone $signalement->getInformationComplementaire();
+        }
+        $informationComplementaire
+            ->setInformationsComplementairesSituationOccupantsBeneficiaireRsa($situationFoyerRequest->getBeneficiaireRsa())
+            ->setInformationsComplementairesSituationOccupantsBeneficiaireFsl($situationFoyerRequest->getBeneficiaireFsl());
+        if ($situationFoyerRequest->getRevenuFiscal()) {
+            $informationComplementaire
+                ->setInformationsComplementairesSituationOccupantsRevenuFiscal($situationFoyerRequest->getRevenuFiscal());
+        }
+        $signalement->setInformationComplementaire($informationComplementaire);
+
         $this->save($signalement);
     }
 
@@ -469,6 +538,15 @@ class SignalementManager extends AbstractManager
             ->setInfoProcedureReponseAssurance($procedureDemarchesRequest->getInfoProcedureReponseAssurance())
             ->setInfoProcedureDepartApresTravaux($procedureDemarchesRequest->getInfoProcedureDepartApresTravaux());
         $signalement->setInformationProcedure($informationProcedure);
+
+        $informationComplementaire = new InformationComplementaire();
+        if (!empty($signalement->getInformationComplementaire())) {
+            $informationComplementaire = clone $signalement->getInformationComplementaire();
+        }
+        $informationComplementaire
+            ->setInformationsComplementairesSituationOccupantsPreavisDepart($procedureDemarchesRequest->getPreavisDepart())
+            ->setInformationsComplementairesSituationOccupantsDemandeRelogement($procedureDemarchesRequest->getDemandeRelogement());
+        $signalement->setInformationComplementaire($informationComplementaire);
 
         $this->save($signalement);
     }

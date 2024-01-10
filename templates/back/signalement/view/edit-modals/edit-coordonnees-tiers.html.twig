@@ -12,6 +12,18 @@
                                 Modifier les coordonnées du tiers déclarant
                             </h1>
 
+                            {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR %}
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="typeProprio">Type</label>
+                                <select class="fr-select" name="typeProprio">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ signalement.typeProprio is same as '' ? 'selected' : '' }}>N/C</option>
+                                    <option value="{{ enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE.name }}" {{ signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE.label }}</option>
+                                    <option value="{{ enum('App\\Entity\\Enum\\ProprioType').PARTICULIER.name }}" {{ signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').PARTICULIER ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\ProprioType').PARTICULIER.label }}</option>
+                                </select>
+                            </div>
+                            {% endif %}
+
                             <div class="fr-input-group">
                                 <label class="fr-label" for="nom">Nom</label>
                                 <input class="fr-input" type="text" name="nom" value="{{ signalement.nomDeclarant }}" maxlength="50">

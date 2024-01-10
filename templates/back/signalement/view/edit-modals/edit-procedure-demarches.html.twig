@@ -71,6 +71,42 @@
                                     <option value="nsp" {{ infoProcedureDepartApresTravaux is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
+
+                            <div class="fr-select-group">
+                                {% set preavisDepart = 'nsp' %}
+                                {% if signalement.informationComplementaire %}
+                                    {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsPreavisDepart is same as 'oui' %}
+                                        {% set preavisDepart = 'oui' %}
+                                    {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsPreavisDepart is same as 'non' %}
+                                        {% set preavisDepart = 'non' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="preavisDepart">Préavis de départ</label>
+                                <select class="fr-select" name="preavisDepart">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ preavisDepart is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ preavisDepart is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ preavisDepart is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set demandeRelogement = 'nsp' %}
+                                {% if signalement.informationComplementaire %}
+                                    {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsDemandeRelogement is same as 'oui' %}
+                                        {% set demandeRelogement = 'oui' %}
+                                    {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsDemandeRelogement is same as 'non' %}
+                                        {% set demandeRelogement = 'non' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="demandeRelogement">Demande logement social / relogement</label>
+                                <select class="fr-select" name="demandeRelogement">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ demandeRelogement is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ demandeRelogement is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ demandeRelogement is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
                         </div>
                         
                         <div class="fr-modal__footer">

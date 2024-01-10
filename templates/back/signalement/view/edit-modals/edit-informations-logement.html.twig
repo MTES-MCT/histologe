@@ -69,12 +69,21 @@
                             </div>
 
                             <div class="fr-input-group">
-                                {% set bailDpeDateEmmenagement = '' %}
-                                {% if signalement.typeCompositionLogement %}
-                                    {% set bailDpeDateEmmenagement = signalement.typeCompositionLogement.bailDpeDateEmmenagement %}
+                                {% set dateEntree = '' %}
+                                {% if signalement.dateEntree %}
+                                    {% set dateEntree = signalement.dateEntree.format('Y-m-d') %}
                                 {% endif %}
-                                <label class="fr-label" for="bailDpeDateEmmenagement">Date arrivée</label>
-                                <input class="fr-input" type="date" name="bailDpeDateEmmenagement" value="{{ bailDpeDateEmmenagement }}">
+                                <label class="fr-label" for="dateEntree">Date arrivée</label>
+                                <input class="fr-input" type="date" name="dateEntree" value="{{ dateEntree }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                {% set bailleurDateEffetBail = '' %}
+                                {% if signalement.informationComplementaire %}
+                                    {% set bailleurDateEffetBail = signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail %}
+                                {% endif %}
+                                <label class="fr-label" for="bailleurDateEffetBail">Date d'effet du bail</label>
+                                <input class="fr-input" type="date" name="bailleurDateEffetBail" value="{{ bailleurDateEffetBail }}">
                             </div>
 
                             <div class="fr-select-group">
@@ -135,6 +144,40 @@
                                     <option value="non" {{ bailDpeDpe is same as 'non' ? 'selected' : '' }}>Non</option>
                                     <option value="nsp" {{ bailDpeDpe is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="loyer">Montant du loyer</label>
+                                <input class="fr-input" type="number" name="loyer" value="{{ signalement.loyer }}">
+                            </div>
+
+                            <div class="fr-select-group">
+                                {% set loyersPayes = 'nsp' %}
+                                {% if signalement.informationComplementaire %}
+                                    {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes is same as 'oui' %}
+                                        {% set loyersPayes = 'oui' %}
+                                    {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes is same as 'non' %}
+                                        {% set loyersPayes = 'non' %}
+                                    {% else %}
+                                        {% set loyersPayes = 'nsp' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="loyersPayes">Paiement loyers à jour</label>
+                                <select class="fr-select" name="loyersPayes">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="oui" {{ loyersPayes is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ loyersPayes is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ loyersPayes is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-input-group">
+                                {% set anneeConstruction = 0 %}
+                                {% if signalement.informationComplementaire %}
+                                    {% set anneeConstruction = signalement.informationComplementaire.informationsComplementairesLogementAnneeConstruction %}
+                                {% endif %}
+                                <label class="fr-label" for="anneeConstruction">Année de construction</label>
+                                <input class="fr-input" type="number" name="anneeConstruction" value="{{ anneeConstruction }}">
                             </div>
                         </div>
                         

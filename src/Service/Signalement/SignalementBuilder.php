@@ -5,6 +5,7 @@ namespace App\Service\Signalement;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProprioType;
 use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
@@ -446,6 +447,7 @@ class SignalementBuilder
     {
         if ($this->isBailleurOccupant()) {
             $this->signalement
+                ->setStructureDeclarant($this->signalementDraftRequest->getVosCoordonneesOccupantNomOrganisme())
                 ->setAdresseProprio($this->signalementDraftRequest->getAdresseLogementAdresse())
                 ->setVilleProprio($this->signalementDraftRequest->getAdresseLogementAdresseDetailCommune())
                 ->setCodePostalProprio($this->signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal())
@@ -453,7 +455,10 @@ class SignalementBuilder
                 ->setNomProprio($this->signalementDraftRequest->getVosCoordonneesOccupantNom())
                 ->setPrenomProprio($this->signalementDraftRequest->getVosCoordonneesOccupantPrenom())
                 ->setTelProprio($this->signalementDraftRequest->getVosCoordonneesOccupantTel())
-                ->setTelProprioSecondaire($this->signalementDraftRequest->getVosCoordonneesOccupantTelSecondaire());
+                ->setTelProprioSecondaire($this->signalementDraftRequest->getVosCoordonneesOccupantTelSecondaire())
+                ->setTypeProprio(
+                    ProprioType::from(strtoupper($this->signalementDraftRequest->getSignalementConcerneProfilDetailBailleurProprietaire()))
+                );
         } elseif ($this->isBailleur()) {
             $this->signalement
                 ->setStructureDeclarant($this->signalementDraftRequest->getVosCoordonneesTiersNomOrganisme())
@@ -461,7 +466,10 @@ class SignalementBuilder
                 ->setPrenomProprio($this->signalementDraftRequest->getVosCoordonneesTiersPrenom())
                 ->setTelProprio($this->signalementDraftRequest->getVosCoordonneesTiersTel())
                 ->setMailProprio($this->signalementDraftRequest->getVosCoordonneesTiersEmail())
-                ->setTelProprioSecondaire($this->signalementDraftRequest->getVosCoordonneesTiersTelSecondaire());
+                ->setTelProprioSecondaire($this->signalementDraftRequest->getVosCoordonneesTiersTelSecondaire())
+                ->setTypeProprio(
+                    ProprioType::from(strtoupper($this->signalementDraftRequest->getSignalementConcerneProfilDetailBailleurBailleur()))
+                );
         } else {
             $this->signalement
                 ->setAdresseProprio($this->signalementDraftRequest->getCoordonneesBailleurAdresseDetailNumero())

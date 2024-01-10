@@ -1141,7 +1141,7 @@
               {
                 "type": "SignalementFormDate",
                 "label": "Quelle est la date d'effet du bail ?",
-                "slug": "informations_complementaires_situation_occupants_date_emmenagement",
+                "slug": "informations_complementaires_situation_bailleur_date_effet_bail",
                 "validate": {
                   "required": false
                 }

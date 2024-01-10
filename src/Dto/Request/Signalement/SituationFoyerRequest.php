@@ -21,6 +21,9 @@ class SituationFoyerRequest
         private readonly ?string $travailleurSocialQuitteLogement = null,
         #[Assert\NotBlank(['message' => 'Veuillez définir le champ accompagnement par un travailleur social', 'groups' => ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO']])]
         private readonly ?string $travailleurSocialAccompagnementDeclarant = null,
+        private readonly ?string $beneficiaireRsa = null,
+        private readonly ?string $beneficiaireFsl = null,
+        private readonly ?string $revenuFiscal = null,
     ) {
     }
 
@@ -62,5 +65,20 @@ class SituationFoyerRequest
     public function getTravailleurSocialAccompagnementDeclarant(): ?string
     {
         return $this->travailleurSocialAccompagnementDeclarant;
+    }
+
+    public function getBeneficiaireRsa(): ?string
+    {
+        return $this->beneficiaireRsa;
+    }
+
+    public function getBeneficiaireFsl(): ?string
+    {
+        return $this->beneficiaireFsl;
+    }
+
+    public function getRevenuFiscal(): ?string
+    {
+        return $this->revenuFiscal;
     }
 }

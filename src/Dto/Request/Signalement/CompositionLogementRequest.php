@@ -14,6 +14,7 @@ class CompositionLogementRequest
         #[Assert\NotBlank(message: 'Merci de définir la hauteur du logement.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS'])]
         private readonly ?string $compositionLogementHauteur = null,
         private readonly ?string $compositionLogementNbPieces = null,
+        private readonly ?string $nombreEtages = null,
         private readonly ?string $typeLogementRdc = null,
         private readonly ?string $typeLogementDernierEtage = null,
         private readonly ?string $typeLogementSousCombleSansFenetre = null,
@@ -51,6 +52,11 @@ class CompositionLogementRequest
     public function getCompositionLogementNbPieces(): ?string
     {
         return $this->compositionLogementNbPieces;
+    }
+
+    public function getNombreEtages(): ?string
+    {
+        return $this->nombreEtages;
     }
 
     public function getTypeLogementRdc(): ?string
