@@ -4,8 +4,10 @@ namespace App\Entity;
 
 use App\Repository\CommuneRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\UniqueConstraint;
 
 #[ORM\Entity(repositoryClass: CommuneRepository::class)]
+#[UniqueConstraint(name: 'code_postal_code_insee_unique', columns: ['code_postal', 'code_insee'])]
 class Commune
 {
     #[ORM\Id]

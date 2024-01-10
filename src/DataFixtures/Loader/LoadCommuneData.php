@@ -10,42 +10,40 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class LoadCommuneData extends Fixture implements OrderedFixtureInterface
 {
     // File found here: https://www.data.gouv.fr/fr/datasets/codes-postaux/
-    private const COMMUNE_LIST_CSV_PATH = '/../Files/codespostaux.csv';
+    public const COMMUNE_LIST_CSV_PATH = '/src/DataFixtures/Files/codespostaux.csv';
 
-    private const INDEX_CSV_CODE_POSTAL = 0;
-    private const INDEX_CSV_CODE_COMMUNE = 1;
-    private const INDEX_CSV_NOM_COMMUNE = 2;
+    public const INDEX_CSV_CODE_POSTAL = 0;
+    public const INDEX_CSV_CODE_COMMUNE = 1;
+    public const INDEX_CSV_NOM_COMMUNE = 2;
 
     private const FLUSH_COUNT = 1000;
 
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private TerritoryManager $territoryManager,
-        private CommuneFactory $communeFactory,
-        private CommuneManager $communeManager,
-        private CsvParser $csvParser,
+        private readonly ParameterBagInterface $params,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly TerritoryManager $territoryManager,
+        private readonly CommuneFactory $communeFactory,
+        private readonly CommuneManager $communeManager,
+        private readonly CsvParser $csvParser,
     ) {
     }
 
     public function load(ObjectManager $manager): void
     {
         $totalRead = 0;
-        $existingInseeCode = [];
+        $existingCpAndInseeCode = [];
         $territory = null;
 
-        $csvData = $this->csvParser->parse(__DIR__.self::COMMUNE_LIST_CSV_PATH);
+        $csvData = $this->csvParser->parse($this->params->get('kernel.project_dir').self::COMMUNE_LIST_CSV_PATH);
 
         // Start reading
-        foreach ($csvData as $lineNumber => $rowData) {
+        foreach ($csvData as $rowData) {
             ++$totalRead;
-
-            if (0 === $lineNumber) {
-                continue;
-            }
 
             // Not enough data, let's skip
             if (\count($rowData) < 3) {
@@ -53,12 +51,13 @@ class LoadCommuneData extends Fixture implements OrderedFixtureInterface
             }
 
             $itemCodeCommune = $rowData[self::INDEX_CSV_CODE_COMMUNE];
-            if (!empty($existingInseeCode[$itemCodeCommune])) {
-                continue;
-            }
-
             $itemCodePostal = $rowData[self::INDEX_CSV_CODE_POSTAL];
             $itemNomCommune = $rowData[self::INDEX_CSV_NOM_COMMUNE];
+
+            $keyCommune = $itemCodePostal.'-'.$itemCodeCommune;
+            if (!empty($existingCpAndInseeCode[$keyCommune])) {
+                continue;
+            }
 
             $zipCode = self::getZipCodeByCodeCommune($itemCodeCommune);
 
@@ -67,7 +66,7 @@ class LoadCommuneData extends Fixture implements OrderedFixtureInterface
             }
 
             $commune = $this->communeFactory->createInstanceFrom($territory, $itemNomCommune, $itemCodePostal, $itemCodeCommune);
-            $existingInseeCode[$itemCodeCommune] = 1;
+            $existingCpAndInseeCode[$keyCommune] = 1;
 
             if (0 === $totalRead % self::FLUSH_COUNT) {
                 $this->communeManager->save($commune);
