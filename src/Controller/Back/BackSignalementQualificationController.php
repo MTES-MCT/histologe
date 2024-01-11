@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 class BackSignalementQualificationController extends AbstractController
 {
     #[Route(
-        '/{uuid}/qualification/{signalement_qualification}/editer',
+        '/{uuid}/qualification/{signalementQualification}/editer',
         name: 'back_signalement_qualification_editer',
         methods: 'POST'
     )]
