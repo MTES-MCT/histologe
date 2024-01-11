@@ -142,13 +142,13 @@ class SignalementController extends AbstractController
         $isSignalementNDEActif = $this->isSignalementNDEActif($signalementQualificationNDE);
 
         if (null == $signalement->getCreatedFrom()) {
-            $signalementQualificationNDECriticites =
-            $signalementQualificationNDE ?
-            $criticiteRepository->findBy(['id' => $signalementQualificationNDE->getCriticites()]) : null;
+            $signalementQualificationNDECriticites = $signalementQualificationNDE
+                ? $criticiteRepository->findBy(['id' => $signalementQualificationNDE->getCriticites()])
+                : null;
         } else {
-            $signalementQualificationNDECriticites =
-            $signalementQualificationNDE ?
-            $desordrePrecisionsRepository->findBy(['id' => $signalementQualificationNDE->getCriticites()]) : null;
+            $signalementQualificationNDECriticites = $signalementQualificationNDE
+                ? $desordrePrecisionsRepository->findBy(['id' => $signalementQualificationNDE->getCriticites()])
+                : null;
         }
 
         $partners = $signalementManager->findAllPartners($signalement, true);

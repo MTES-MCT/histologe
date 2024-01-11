@@ -138,16 +138,17 @@ class SignalementQualificationUpdater
     private function updateSignalementQualificationFromDesordrePrecisions(
         Signalement $signalement,
     ): void {
+        /**
+         * @var SignalementQualification[] $existingSignalementQualifications
+         */
         $existingSignalementQualifications = $signalement->getSignalementQualifications()->toArray();
-        $processedQualifications = [];
 
         // concatenate all desordrePrecision qualifications
         $desordrePrecisionsQualifications = [];
         foreach ($signalement->getDesordrePrecisions() as $desordrePrecision) {
-            $desordrePrecisionsQualifications = array_merge(
-                $desordrePrecisionsQualifications,
-                $desordrePrecision->getQualification()
-            );
+            foreach ($desordrePrecision->getQualification() as $qualification) {
+                $desordrePrecisionsQualifications[$qualification] = $qualification;
+            }
         }
 
         // remove (or update) old and inappropriate signalement qualification
@@ -158,77 +159,76 @@ class SignalementQualificationUpdater
                 $signalement->removeSignalementQualification($existingQualification);
             } else {
                 $existingQualification->setStatus(
-                    $statusQualification = $this->calculateQualificationStatus($signalement, $existingQualification)
+                    $statusQualification = $this->calculateQualificationStatus($signalement, $qualification, $existingQualification)
                 );
 
                 $linkedDesordrePrecisions = $this->getLinkedDesordrePrecisions($signalement, $qualification);
                 $existingQualification->setCriticites($linkedDesordrePrecisions);
-                $processedQualifications[] = $qualification;
+                unset($desordrePrecisionsQualifications[$qualification->value]);
             }
         }
 
         // apply DesordrePrecision qualifications to Signalement
         foreach ($desordrePrecisionsQualifications as $qualificationValue) {
             $qualification = Qualification::tryFrom($qualificationValue);
-            if (!\in_array($qualification, $processedQualifications, true)) {
-                $qualificationExists = $this->isQualificationExistsInSignalement(
-                    $existingSignalementQualifications,
-                    $qualification
-                );
+            $qualificationExists = $this->isQualificationExistsInSignalement(
+                $existingSignalementQualifications,
+                $qualification
+            );
 
-                if (!$qualificationExists) {
-                    $linkedDesordrePrecisions = $this->getLinkedDesordrePrecisions($signalement, $qualification);
+            if (!$qualificationExists) {
+                $linkedDesordrePrecisions = $this->getLinkedDesordrePrecisions($signalement, $qualification);
 
-                    if (Qualification::NON_DECENCE_ENERGETIQUE === $qualification) {
-                        $dataDateBail = new \DateTimeImmutable($signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement());
-                        if ('oui' === $signalement->getTypeCompositionLogement()->getBailDpeDpe()) {
-                            $dataHasDPE = true;
-                        } elseif ('non' === $signalement->getTypeCompositionLogement()->getBailDpeDpe()) {
-                            $dataHasDPE = false;
-                        } else {
-                            $dataHasDPE = null;
-                        }
-
-                        $isDateBail2023 = $signalement->getDateEntree()->format('Y') >= 2023 || $dataDateBail->format('Y') >= 2023;
-                        if ($isDateBail2023) {
-                            if ('before2023' === $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeAnnee()) {
-                                $dataDateDPE = '1970-01-01';
-                            } else {
-                                $dataDateDPE = '2023-01-02';
-                            }
-
-                            $signalementQualification = $this->signalementQualificationFactory->createNDEInstanceFrom(
-                                signalement: $signalement,
-                                listNDECriticites: $linkedDesordrePrecisions,
-                                dataDateBail: $signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement(),
-                                dataConsoSizeYear: $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeConsoFinale(),
-                                dataConsoYear: $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeConso(),
-                                dataConsoSize: $signalement->getTypeCompositionLogement()->getCompositionLogementSuperficie(),
-                                dataHasDPE: 'oui' === $dataHasDPE,
-                                dataDateDPE: $dataDateDPE,
-                            );
-                            $signalementQualification->setStatus($this->qualificationStatusService->getNDEStatus($signalementQualification));
-                        }
+                if (Qualification::NON_DECENCE_ENERGETIQUE === $qualification) {
+                    $dataDateBail = new \DateTimeImmutable($signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement());
+                    if ('oui' === $signalement->getTypeCompositionLogement()->getBailDpeDpe()) {
+                        $dataHasDPE = true;
+                    } elseif ('non' === $signalement->getTypeCompositionLogement()->getBailDpeDpe()) {
+                        $dataHasDPE = false;
                     } else {
-                        $statusQualification = $this->calculateQualificationStatus($signalement, $qualification);
-                        $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
-                            $qualification,
-                            $statusQualification,
-                            $linkedDesordrePrecisions
+                        $dataHasDPE = null;
+                    }
+
+                    $isDateBail2023 = $signalement->getDateEntree()->format('Y') >= 2023 || $dataDateBail->format('Y') >= 2023;
+                    if ($isDateBail2023) {
+                        if ('before2023' === $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeAnnee()) {
+                            $dataDateDPE = '1970-01-01';
+                        } else {
+                            $dataDateDPE = '2023-01-02';
+                        }
+
+                        $signalementQualification = $this->signalementQualificationFactory->createNDEInstanceFrom(
+                            signalement: $signalement,
+                            listNDECriticites: $linkedDesordrePrecisions,
+                            dataDateBail: $signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement(),
+                            dataConsoSizeYear: $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeConsoFinale(),
+                            dataConsoYear: $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeConso(),
+                            dataConsoSize: $signalement->getTypeCompositionLogement()->getCompositionLogementSuperficie(),
+                            dataHasDPE: 'oui' === $dataHasDPE,
+                            dataDateDPE: $dataDateDPE,
                         );
+                        $signalementQualification->setStatus($this->qualificationStatusService->getNDEStatus($signalementQualification));
                     }
-                    if (isset($signalementQualification)) {
-                        $signalement->addSignalementQualification($signalementQualification);
-                    }
-                    $processedQualifications[] = $qualification;
+                } else {
+                    $statusQualification = $this->calculateQualificationStatus($signalement, $qualification);
+                    $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
+                        $qualification,
+                        $statusQualification,
+                        $linkedDesordrePrecisions
+                    );
                 }
+                if (isset($signalementQualification)) {
+                    $signalement->addSignalementQualification($signalementQualification);
+                }
+                unset($desordrePrecisionsQualifications[$qualification->value]);
             }
         }
     }
 
     private function calculateQualificationStatus(
         Signalement $signalement,
-        Qualification $qualification
+        Qualification $qualification,
+        ?SignalementQualification $signalementQualification = null,
     ): ?QualificationStatus {
         switch ($qualification) {
             case Qualification::NON_DECENCE:
@@ -249,7 +249,9 @@ class SignalementQualificationUpdater
                     ? QualificationStatus::INSALUBRITE_CHECK
                     : QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK;
                 break;
-                // TODO : NDE
+            case Qualification::NON_DECENCE_ENERGETIQUE:
+                $statusQualification = $this->qualificationStatusService->getNDEStatus($signalementQualification);
+                break;
             default:
                 $statusQualification = null;
                 break;
@@ -326,7 +328,7 @@ class SignalementQualificationUpdater
             }
         } else {
             foreach ($signalement->getDesordrePrecisions() as $precision) {
-                if ($precision->isIsDanger()) {
+                if ($precision->getIsDanger()) {
                     $listCriticiteDanger[] = $precision->getId();
                 }
             }
@@ -366,7 +368,7 @@ class SignalementQualificationUpdater
         $listPrecisionsSuroccupation = [];
 
         foreach ($signalement->getDesordrePrecisions() as $precision) {
-            if ($precision->isIsSuroccupation()) {
+            if ($precision->getIsSuroccupation()) {
                 $listPrecisionsSuroccupation[] = $precision->getId();
             }
         }

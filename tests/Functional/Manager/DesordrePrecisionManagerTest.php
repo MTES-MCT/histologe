@@ -58,8 +58,8 @@ class DesordrePrecisionManagerTest extends KernelTestCase
         );
 
         $this->assertEquals($desordrePrecision->getCoef(), 0.8);
-        $this->assertEquals($desordrePrecision->isIsDanger(), true);
-        $this->assertEquals($desordrePrecision->isIsSuroccupation(), false);
+        $this->assertEquals($desordrePrecision->getIsDanger(), true);
+        $this->assertEquals($desordrePrecision->getIsSuroccupation(), false);
         $this->assertEquals($desordrePrecision->getQualification(), [Qualification::MISE_EN_SECURITE_PERIL]);
 
         $desordrePrecision = $this->desordrePrecisionManager->createOrUpdate(
@@ -77,7 +77,7 @@ class DesordrePrecisionManagerTest extends KernelTestCase
             $desordrePrecision->getDesordrePrecisionSlug(),
             'desordre_logement_rideaux_absents_a_motif'
         );
-        $this->assertEquals($desordrePrecision->isIsDanger(), false);
-        $this->assertEquals($desordrePrecision->isIsSuroccupation(), true);
+        $this->assertEquals($desordrePrecision->getIsDanger(), false);
+        $this->assertEquals($desordrePrecision->getIsSuroccupation(), true);
     }
 }

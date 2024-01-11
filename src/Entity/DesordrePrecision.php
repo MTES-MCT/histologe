@@ -66,7 +66,7 @@ class DesordrePrecision
         return $this;
     }
 
-    public function isIsDanger(): ?bool
+    public function getIsDanger(): ?bool
     {
         return $this->isDanger;
     }
@@ -78,7 +78,7 @@ class DesordrePrecision
         return $this;
     }
 
-    public function isIsSuroccupation(): ?bool
+    public function getIsSuroccupation(): ?bool
     {
         return $this->isSuroccupation;
     }

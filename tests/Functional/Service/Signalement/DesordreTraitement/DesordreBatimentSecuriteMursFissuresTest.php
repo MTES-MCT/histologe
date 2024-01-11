@@ -43,7 +43,7 @@ class DesordreBatimentSecuriteMursFissuresTest extends KernelTestCase
             'desordres_batiment_securite_murs_fissures_details_mur_porteur_oui',
             $precision->getDesordrePrecisionSlug()
         );
-        $this->assertTrue($precision->isIsDanger());
-        $this->assertFalse($precision->isIsSuroccupation());
+        $this->assertTrue($precision->getIsDanger());
+        $this->assertFalse($precision->getIsSuroccupation());
     }
 }

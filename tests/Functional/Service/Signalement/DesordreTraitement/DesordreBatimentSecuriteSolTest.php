@@ -40,7 +40,7 @@ class DesordreBatimentSecuriteSolTest extends KernelTestCase
             'desordres_batiment_securite_sol_details_plancher_effondre',
             $precision->getDesordrePrecisionSlug()
         );
-        $this->assertTrue($precision->isIsDanger());
-        $this->assertFalse($precision->isIsSuroccupation());
+        $this->assertTrue($precision->getIsDanger());
+        $this->assertFalse($precision->getIsSuroccupation());
     }
 }

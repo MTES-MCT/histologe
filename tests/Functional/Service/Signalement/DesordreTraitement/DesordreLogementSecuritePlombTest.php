@@ -43,7 +43,7 @@ class DesordreLogementSecuritePlombTest extends KernelTestCase
             'desordres_logement_securite_plomb_pieces_salle_de_bain_diagnostique_oui',
             $precision->getDesordrePrecisionSlug()
         );
-        $this->assertTrue($precision->isIsDanger());
-        $this->assertFalse($precision->isIsSuroccupation());
+        $this->assertTrue($precision->getIsDanger());
+        $this->assertFalse($precision->getIsSuroccupation());
     }
 }
