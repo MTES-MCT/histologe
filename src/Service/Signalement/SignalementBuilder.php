@@ -134,6 +134,15 @@ class SignalementBuilder
             $this->processDesordresByZone('logement');
             $this->processDesordresTypeComposition();
         }
+        // enregistre des données spécifiques dans jsonContent si elles existent (mettre le slug du critère pour affichage)
+        if (isset($this->payload['desordres_logement_nuisibles_autres_details_type_nuisibles'])) {
+            $jsonContent['desordres_logement_nuisibles_autres'] =
+            $this->payload['desordres_logement_nuisibles_autres_details_type_nuisibles'];
+        }
+
+        if (isset($jsonContent)) {
+            $this->signalement->setJsonContent($jsonContent);
+        }
 
         $this->signalement->setScore($this->criticiteCalculator->calculateFromNewFormulaire($this->signalement));
 

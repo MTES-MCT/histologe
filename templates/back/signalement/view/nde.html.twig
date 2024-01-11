@@ -37,7 +37,7 @@
         <ul class="fr-list">
         {% if createdFromDraft %}
             {% for desordrePrecision in signalementQualificationNDECriticite %}
-                <li> {{ desordrePrecision.desordreCritere.labelCritere}} : {{desordrePrecision.label|nl2br}}</li>
+                <li> {{ desordrePrecision.desordreCritere.labelCritere}} : {{desordrePrecision.label|raw}}</li>
             {% endfor %}
         {% else %}
             {% for criticite in signalementQualificationNDECriticite %}
