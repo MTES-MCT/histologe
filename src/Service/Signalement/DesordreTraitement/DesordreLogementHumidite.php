@@ -16,7 +16,7 @@ class DesordreLogementHumidite implements DesordreTraitementInterface
     {
         $precisions = [];
 
-        if (isset($payload[$slug.'_details_machine'])) {
+        if (\array_key_exists($slug.'_details_machine', $payload)) {
             $precisionsDetailMachine = $this->desordreTraitementOuiNon->findDesordresPrecisionsBy(
                 $payload,
                 $slug.'_details_machine'
@@ -24,7 +24,7 @@ class DesordreLogementHumidite implements DesordreTraitementInterface
             $precisions[] = $precisionsDetailMachine[0];
         }
 
-        if (isset($payload[$slug.'_details_fuite'])) {
+        if (\array_key_exists($slug.'_details_fuite', $payload)) {
             $precisionsDetailFuite = $this->desordreTraitementOuiNon->findDesordresPrecisionsBy(
                 $payload,
                 $slug.'_details_fuite'
@@ -32,7 +32,7 @@ class DesordreLogementHumidite implements DesordreTraitementInterface
             $precisions[] = $precisionsDetailFuite[0];
         }
 
-        if (isset($payload[$slug.'_details_moisissure_apres_nettoyage'])) {
+        if (\array_key_exists($slug.'_details_moisissure_apres_nettoyage', $payload)) {
             $precisionsDetailMoisissure = $this->desordreTraitementOuiNon->findDesordresPrecisionsBy(
                 $payload,
                 $slug.'_details_moisissure_apres_nettoyage'

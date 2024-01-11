@@ -18,14 +18,14 @@ class DesordreBatimentSecuriteSol implements DesordreTraitementInterface
     {
         $precisions = [];
 
-        if (isset($payload[self::SLUG_EFFONDRE])) {
+        if (\array_key_exists(self::SLUG_EFFONDRE, $payload)) {
             if ('oui' === $payload[self::SLUG_EFFONDRE]) {
                 $precision = $this->desordrePrecisionRepository->findOneBy(
                     ['desordrePrecisionSlug' => self::SLUG_EFFONDRE]
                 );
                 $precisions[] = $precision;
             } else {
-                if (isset($payload[self::SLUG_ABIME])
+                if (\array_key_exists(self::SLUG_ABIME, $payload)
                     && 'oui' === $payload[self::SLUG_ABIME]) {
                     $precision = $this->desordrePrecisionRepository->findOneBy(
                         ['desordrePrecisionSlug' => self::SLUG_ABIME]

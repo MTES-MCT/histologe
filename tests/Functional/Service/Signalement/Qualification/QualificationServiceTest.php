@@ -496,7 +496,7 @@ class QualificationServiceTest extends KernelTestCase
         ];
 
         $listSlugDesordrePrecision = [
-            'desordres_batiment_isolation_dernier_etage_toit_sous_toit_oui',
+            'desordres_batiment_isolation_dernier_etage_toit_sous_combles',
             'desordres_type_composition_logement_suroccupation_non_allocataire',
         ];
         yield 'score 10 NON_DECENCE, RSD et is_suroccupation' => [

@@ -18,14 +18,14 @@ class DesordreBatimentSecuriteEscalier implements DesordreTraitementInterface
     {
         $precisions = [];
 
-        if (isset($payload[self::SLUG_DANGEREUX])) {
+        if (\array_key_exists(self::SLUG_DANGEREUX, $payload)) {
             if ('oui' === $payload[self::SLUG_DANGEREUX]) {
                 $precision = $this->desordrePrecisionRepository->findOneBy(
                     ['desordrePrecisionSlug' => self::SLUG_DANGEREUX]
                 );
                 $precisions[] = $precision;
             } else {
-                if (isset($payload[self::SLUG_UTILISABLE])
+                if (\array_key_exists(self::SLUG_UTILISABLE, $payload)
                     && 'oui' === $payload[self::SLUG_UTILISABLE]) {
                     $precision = $this->desordrePrecisionRepository->findOneBy(
                         ['desordrePrecisionSlug' => self::SLUG_UTILISABLE]

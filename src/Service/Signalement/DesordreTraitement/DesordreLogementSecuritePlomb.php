@@ -16,7 +16,7 @@ class DesordreLogementSecuritePlomb implements DesordreTraitementInterface
     {
         $precisions = [];
 
-        if (isset($payload['desordres_logement_securite_plomb_details_diagnostique'])) {
+        if (\array_key_exists('desordres_logement_securite_plomb_details_diagnostique', $payload)) {
             if ('oui' === $payload['desordres_logement_securite_plomb_details_diagnostique']) {
                 $precisions = $this->desordreTraitementPieces->findDesordresPrecisionsBy(
                     $payload,
