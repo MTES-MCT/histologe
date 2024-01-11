@@ -74,4 +74,12 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
     {
         return $data instanceof SignalementDraft;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            SignalementDraftRequest::class => true, 
+            TypeCompositionLogement::class => true
+        ];
+    }
 }
