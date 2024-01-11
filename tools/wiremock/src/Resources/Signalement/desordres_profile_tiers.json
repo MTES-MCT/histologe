@@ -1981,7 +1981,7 @@
               {
                 "type": "SignalementFormUpload",
                 "label": "Ajoutez le diagnostic plomb / amiante en cliquant sur le bouton ci-dessous",
-                "slug": "desordres_logement_securite_plomb_details_diagnostique_fichier",
+                "slug": "desordres_logement_securite_plomb_details_diagnostique_upload",
                 "description": "",
                 "validate": {
                   "required": false
