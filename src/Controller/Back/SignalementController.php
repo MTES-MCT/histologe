@@ -21,6 +21,7 @@ use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Repository\AffectationRepository;
 use App\Repository\CriticiteRepository;
+use App\Repository\DesordrePrecisionRepository;
 use App\Repository\InterventionRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Repository\SituationRepository;
@@ -54,6 +55,7 @@ class SignalementController extends AbstractController
         CriticiteRepository $criticiteRepository,
         AffectationRepository $affectationRepository,
         InterventionRepository $interventionRepository,
+        DesordrePrecisionRepository $desordrePrecisionsRepository,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -138,9 +140,16 @@ class SignalementController extends AbstractController
             'signalement' => $signalement,
             'qualification' => Qualification::NON_DECENCE_ENERGETIQUE, ]);
         $isSignalementNDEActif = $this->isSignalementNDEActif($signalementQualificationNDE);
-        $signalementQualificationNDECriticites =
-        $signalementQualificationNDE ?
-        $criticiteRepository->findBy(['id' => $signalementQualificationNDE->getCriticites()]) : null;
+
+        if (null == $signalement->getCreatedFrom()) {
+            $signalementQualificationNDECriticites =
+            $signalementQualificationNDE ?
+            $criticiteRepository->findBy(['id' => $signalementQualificationNDE->getCriticites()]) : null;
+        } else {
+            $signalementQualificationNDECriticites =
+            $signalementQualificationNDE ?
+            $desordrePrecisionsRepository->findBy(['id' => $signalementQualificationNDE->getCriticites()]) : null;
+        }
 
         $partners = $signalementManager->findAllPartners($signalement, true);
 

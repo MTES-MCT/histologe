@@ -15,6 +15,7 @@ class SignalementQualificationUpdater
     public function __construct(
         private readonly SignalementQualificationFactory $signalementQualificationFactory,
         private readonly SignalementManager $signalementManager,
+        private readonly QualificationStatusService $qualificationStatusService,
     ) {
     }
 
@@ -176,15 +177,49 @@ class SignalementQualificationUpdater
                 );
 
                 if (!$qualificationExists) {
-                    $statusQualification = $this->calculateQualificationStatus($signalement, $qualification);
                     $linkedDesordrePrecisions = $this->getLinkedDesordrePrecisions($signalement, $qualification);
 
-                    $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
-                        $qualification,
-                        $statusQualification,
-                        $linkedDesordrePrecisions
-                    );
-                    $signalement->addSignalementQualification($signalementQualification);
+                    if (Qualification::NON_DECENCE_ENERGETIQUE === $qualification) {
+                        $dataDateBail = new \DateTimeImmutable($signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement());
+                        if ('oui' === $signalement->getTypeCompositionLogement()->getBailDpeDpe()) {
+                            $dataHasDPE = true;
+                        } elseif ('non' === $signalement->getTypeCompositionLogement()->getBailDpeDpe()) {
+                            $dataHasDPE = false;
+                        } else {
+                            $dataHasDPE = null;
+                        }
+
+                        $isDateBail2023 = $signalement->getDateEntree()->format('Y') >= 2023 || $dataDateBail->format('Y') >= 2023;
+                        if ($isDateBail2023) {
+                            if ('before2023' === $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeAnnee()) {
+                                $dataDateDPE = '1970-01-01';
+                            } else {
+                                $dataDateDPE = '2023-01-02';
+                            }
+
+                            $signalementQualification = $this->signalementQualificationFactory->createNDEInstanceFrom(
+                                signalement: $signalement,
+                                listNDECriticites: $linkedDesordrePrecisions,
+                                dataDateBail: $signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement(),
+                                dataConsoSizeYear: $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeConsoFinale(),
+                                dataConsoYear: $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeConso(),
+                                dataConsoSize: $signalement->getTypeCompositionLogement()->getCompositionLogementSuperficie(),
+                                dataHasDPE: 'oui' === $dataHasDPE,
+                                dataDateDPE: $dataDateDPE,
+                            );
+                            $signalementQualification->setStatus($this->qualificationStatusService->getNDEStatus($signalementQualification));
+                        }
+                    } else {
+                        $statusQualification = $this->calculateQualificationStatus($signalement, $qualification);
+                        $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
+                            $qualification,
+                            $statusQualification,
+                            $linkedDesordrePrecisions
+                        );
+                    }
+                    if (isset($signalementQualification)) {
+                        $signalement->addSignalementQualification($signalementQualification);
+                    }
                     $processedQualifications[] = $qualification;
                 }
             }
@@ -214,6 +249,7 @@ class SignalementQualificationUpdater
                     ? QualificationStatus::INSALUBRITE_CHECK
                     : QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK;
                 break;
+                // TODO : NDE
             default:
                 $statusQualification = null;
                 break;

@@ -7,7 +7,7 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
-use App\Service\Signalement\QualificationStatusService;
+use App\Service\Signalement\Qualification\QualificationStatusService;
 use DateTimeImmutable;
 
 class SignalementQualificationFactory

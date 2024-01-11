@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional\Service\Signalement;
+namespace App\Tests\Functional\Service\Signalement\Qualification;
 
 use App\Entity\Criticite;
 use App\Entity\DesordrePrecision;
@@ -110,6 +110,7 @@ class QualificationServiceTest extends KernelTestCase
 
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-27']);
+        $signalement->setDateEntree(new \DateTimeImmutable()); // for NDE
         // remove all DesordrePrecision
         foreach ($signalement->getDesordrePrecisions() as $desordrePrecision) {
             $signalement->removeDesordrePrecision($desordrePrecision);
@@ -261,7 +262,6 @@ class QualificationServiceTest extends KernelTestCase
             'desordres_logement_humidite_cuisine_details_moisissure_apres_nettoyage_non',
             'desordres_logement_humidite_cuisine_details_machine_oui',
             'desordres_logement_humidite_piece_a_vivre_details_machine_non',
-            'desordres_logement_chauffage_details_difficultes_chauffage_pieces_piece_a_vivre',
             'desordres_batiment_proprete_local_poubelles',
             'desordres_batiment_isolation_infiltration_eau_au_sol_non',
             'desordres_batiment_maintenance_petites_reparations',
@@ -281,6 +281,16 @@ class QualificationServiceTest extends KernelTestCase
                 QualificationStatus::RSD_CHECK,
                 QualificationStatus::MISE_EN_SECURITE_PERIL_CHECK,
             ],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_logement_chauffage_details_chauffage_KO_pieces_salle_de_bain',
+        ];
+        yield 'NON_DECENCE, RSD, NON_DECENCE_ENERGETIQUE' => [
+            1,
+            $listSlugDesordrePrecision,
+            [Qualification::NON_DECENCE, Qualification::RSD, Qualification::NON_DECENCE_ENERGETIQUE],
+            [QualificationStatus::NON_DECENCE_CHECK, QualificationStatus::RSD_CHECK, QualificationStatus::NDE_CHECK],
         ];
     }
 }

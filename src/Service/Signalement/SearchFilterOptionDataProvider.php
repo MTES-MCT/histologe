@@ -9,6 +9,7 @@ use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
+use App\Service\Signalement\Qualification\QualificationStatusService;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;

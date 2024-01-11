@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Tests\Functional\Service\Signalement;
+namespace App\Tests\Functional\Service\Signalement\Qualification;
 
 use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
-use App\Service\Signalement\QualificationStatusService;
+use App\Service\Signalement\Qualification\QualificationStatusService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;

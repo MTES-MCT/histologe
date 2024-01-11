@@ -7,7 +7,7 @@ use App\Entity\Enum\QualificationStatus;
 use App\Service\Esabora\EsaboraPartnerTypeSubscription;
 use App\Service\Files\ImageBase64Encoder;
 use App\Service\Notification\NotificationCounter;
-use App\Service\Signalement\QualificationStatusService;
+use App\Service\Signalement\Qualification\QualificationStatusService;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;

@@ -532,7 +532,7 @@ desordre_precision:
     coef: 2
     is_danger: 0
     label: " - Tout le logement"
-    qualification: ['NON_DECENCE']
+    qualification: ['NON_DECENCE', 'NON_DECENCE_ENERGETIQUE']
     desordre_precision_slug: "desordres_logement_chauffage_details_fenetres_permeables_pieces_tout"
     is_suroccupation: 0
   -
@@ -540,7 +540,7 @@ desordre_precision:
     coef: 0.8
     is_danger: 0
     label: " - Une ou des pièces à vivre (salon, chambres) "
-    qualification: ['NON_DECENCE']
+    qualification: ['NON_DECENCE', 'NON_DECENCE_ENERGETIQUE']
     desordre_precision_slug: "desordres_logement_chauffage_details_fenetres_permeables_pieces_piece_a_vivre"
     is_suroccupation: 0
   -
@@ -548,7 +548,7 @@ desordre_precision:
     coef: 0.8
     is_danger: 0
     label: " - La cuisine / le coin cuisine"
-    qualification: ['NON_DECENCE']
+    qualification: ['NON_DECENCE', 'NON_DECENCE_ENERGETIQUE']
     desordre_precision_slug: "desordres_logement_chauffage_details_fenetres_permeables_pieces_cuisine"
     is_suroccupation: 0
   -
@@ -556,7 +556,7 @@ desordre_precision:
     coef: 0.4
     is_danger: 0
     label: " - La salle de bain, salle d'eau et / ou les toilettes"
-    qualification: ['NON_DECENCE']
+    qualification: ['NON_DECENCE', 'NON_DECENCE_ENERGETIQUE']
     desordre_precision_slug: "desordres_logement_chauffage_details_fenetres_permeables_pieces_salle_de_bain"
     is_suroccupation: 0
   -
@@ -596,7 +596,7 @@ desordre_precision:
     coef: 1
     is_danger: 0
     label: " - Tout le logement"
-    qualification: ['NON_DECENCE']
+    qualification: ['NON_DECENCE', 'NON_DECENCE_ENERGETIQUE']
     desordre_precision_slug: "desordres_logement_chauffage_details_difficultes_chauffage_pieces_tout"
     is_suroccupation: 0
   -
@@ -604,7 +604,7 @@ desordre_precision:
     coef: 0.5
     is_danger: 0
     label: " - Une ou des pièces à vivre (salon, chambres) "
-    qualification: ['NON_DECENCE']
+    qualification: ['NON_DECENCE', 'NON_DECENCE_ENERGETIQUE']
     desordre_precision_slug: "desordres_logement_chauffage_details_difficultes_chauffage_pieces_piece_a_vivre"
     is_suroccupation: 0
   -
@@ -612,7 +612,7 @@ desordre_precision:
     coef: 0.25
     is_danger: 0
     label: " - La cuisine / le coin cuisine"
-    qualification: ['NON_DECENCE']
+    qualification: ['NON_DECENCE', 'NON_DECENCE_ENERGETIQUE']
     desordre_precision_slug: "desordres_logement_chauffage_details_difficultes_chauffage_pieces_cuisine"
     is_suroccupation: 0
   -
@@ -620,7 +620,7 @@ desordre_precision:
     coef: 0.25
     is_danger: 0
     label: " - La salle de bain, salle d'eau et / ou les toilettes"
-    qualification: ['NON_DECENCE']
+    qualification: ['NON_DECENCE', 'NON_DECENCE_ENERGETIQUE']
     desordre_precision_slug: "desordres_logement_chauffage_details_difficultes_chauffage_pieces_salle_de_bain"
     is_suroccupation: 0
   -
@@ -628,7 +628,7 @@ desordre_precision:
     coef: 2
     is_danger: 0
     label: " - Tout le logement"
-    qualification: ['NON_DECENCE', 'RSD']
+    qualification: ['NON_DECENCE', 'RSD', 'NON_DECENCE_ENERGETIQUE']
     desordre_precision_slug: "desordres_logement_chauffage_details_chauffage_KO_pieces_tout"
     is_suroccupation: 0
   -
@@ -636,7 +636,7 @@ desordre_precision:
     coef: 1.5
     is_danger: 0
     label: " - Une ou des pièces à vivre (salon, chambres) "
-    qualification: ['NON_DECENCE', 'RSD']
+    qualification: ['NON_DECENCE', 'RSD', 'NON_DECENCE_ENERGETIQUE']
     desordre_precision_slug: "desordres_logement_chauffage_details_chauffage_KO_pieces_piece_a_vivre"
     is_suroccupation: 0
   -
@@ -644,7 +644,7 @@ desordre_precision:
     coef: 0.25
     is_danger: 0
     label: " - La cuisine / le coin cuisine"
-    qualification: ['NON_DECENCE', 'RSD']
+    qualification: ['NON_DECENCE', 'RSD', 'NON_DECENCE_ENERGETIQUE']
     desordre_precision_slug: "desordres_logement_chauffage_details_chauffage_KO_pieces_cuisine"
     is_suroccupation: 0
   -
@@ -652,7 +652,7 @@ desordre_precision:
     coef: 0.25
     is_danger: 0
     label: " - La salle de bain, salle d'eau et / ou les toilettes"
-    qualification: ['NON_DECENCE', 'RSD']
+    qualification: ['NON_DECENCE', 'RSD', 'NON_DECENCE_ENERGETIQUE']
     desordre_precision_slug: "desordres_logement_chauffage_details_chauffage_KO_pieces_salle_de_bain"
     is_suroccupation: 0
   -
