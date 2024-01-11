@@ -5,34 +5,36 @@
     </h3>
     <div class="fr-collapse" id="{{ zone }}-collapse-{{ loop.index }}">
         <ul>
-            {% for critere,criticite in criteres %}
+            {% for critere,criticites in criteres %}
                 <li>
                     {{ critere }}
-                    {% if criticite.label is not same as '' %}
-                        <ul class="fr-list fr-list--none">
-                            <li>
-                                {{ criticite.label|raw }}                                
-                                {% if signalement.jsonContent[criticite.desordreCritere.slugCritere] is defined %}
-                                    <br>Commentaire usager : <i>{{ signalement.jsonContent[criticite.desordreCritere.slugCritere] }}</i>
-                                {% endif %}
-                            </li>
-                        </ul>                                            
-                    {% endif %}
-                    {# ajout des photos liées spécifiquement à ce critère ou à cette précision #}
-                    {% if photos[criticite.desordreCritere.slugCritere] is defined %}                        
-                        {% for photo in photos[criticite.desordreCritere.slugCritere] %}
-                            <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
-                                <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover"
-                                    data-user="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
-                                    data-mail="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
-                                    style="background: url('{{ asset('_up/'~photo.filename~'/'~signalement.uuid~'?variant=thumb') }}')no-repeat center center/cover">
-                                    <a href="{{ asset('_up/'~photo.filename~'/'~signalement.uuid~'?variant=resize') }}"
-                                        class="fr-btn fr-btn--sm fr-icon-eye-line img-box" title="Voir la photo"
-                                        target="_blank" rel="noopener"></a>
+                    {% for criticite in criticites %}
+                        {% if criticite.label is not same as '' %}
+                            <ul class="fr-list fr-list--none">
+                                <li>
+                                    {{ criticite.label|raw }}                                
+                                    {% if signalement.jsonContent[criticite.desordreCritere.slugCritere] is defined %}
+                                        <br>Commentaire usager : <i>{{ signalement.jsonContent[criticite.desordreCritere.slugCritere] }}</i>
+                                    {% endif %}
+                                </li>
+                            </ul>                                            
+                        {% endif %}
+                        {# ajout des photos liées spécifiquement à ce critère ou à cette précision #}
+                        {% if photos[criticite.desordreCritere.slugCritere] is defined %}                        
+                            {% for photo in photos[criticite.desordreCritere.slugCritere] %}
+                                <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
+                                    <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover"
+                                        data-user="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
+                                        data-mail="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
+                                        style="background: url('{{ asset('_up/'~photo.filename~'/'~signalement.uuid~'?variant=thumb') }}')no-repeat center center/cover">
+                                        <a href="{{ asset('_up/'~photo.filename~'/'~signalement.uuid~'?variant=resize') }}"
+                                            class="fr-btn fr-btn--sm fr-icon-eye-line img-box" title="Voir la photo"
+                                            target="_blank" rel="noopener"></a>
+                                    </div>
                                 </div>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
                 </li>
             {% endfor %}
         </ul>

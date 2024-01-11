@@ -136,7 +136,7 @@ class SignalementController extends AbstractController
                 $zone = $desordrePrecision->getDesordreCritere()->getZoneCategorie();
                 $labelCategorieBO = $desordrePrecision->getDesordreCritere()->getDesordreCategorie()->getLabel();
                 $labelCritere = $desordrePrecision->getDesordreCritere()->getLabelCritere();
-                $criticitesArranged[$zone->value][$labelCategorieBO][$labelCritere] = $desordrePrecision;
+                $criticitesArranged[$zone->value][$labelCategorieBO][$labelCritere][] = $desordrePrecision;
 
                 // ajoute les photos liées au critère et à la précision
                 $desordrePrecisionSlug = $desordrePrecision->getDesordrePrecisionSlug();
