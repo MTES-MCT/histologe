@@ -19,7 +19,6 @@ framework:
         default_options:
             max_redirects: 10
     
-    #uid
     uid:
         default_uuid_version: 7
         time_based_uuid_version: 7
