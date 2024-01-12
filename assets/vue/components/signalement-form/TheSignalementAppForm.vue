@@ -2,6 +2,7 @@
     <div
       id="app-signalement-form"
       class="signalement-form"
+      :data-csrf="sharedProps.csrf"
       :data-ajaxurl="sharedProps.ajaxurl"
       :data-ajaxurl-dictionary="sharedProps.ajaxurlDictionary"
       :data-ajaxurl-questions="sharedProps.ajaxurlQuestions"
@@ -78,6 +79,7 @@ export default defineComponent({
   created () {
     if (initElements !== null) {
       this.sharedProps.platformName = initElements.dataset.platformName
+      this.sharedProps.csrf = initElements.dataset.csrf
       this.sharedProps.ajaxurl = initElements.dataset.ajaxurl
       this.sharedProps.ajaxurlDictionary = initElements.dataset.ajaxurlDictionary
       this.sharedProps.ajaxurlQuestions = initElements.dataset.ajaxurlQuestions
@@ -157,6 +159,11 @@ export default defineComponent({
           let errorMessage = ''
           for (const index in requestResponse.violations) {
             errorMessage += requestResponse.violations[index].title + '\n'
+          }
+          if (errorMessage === '' && Array.isArray(requestResponse)) {
+            for (const index in requestResponse) {
+              errorMessage += requestResponse[index] + '\n'
+            }
           }
           alert(errorMessage)
           return

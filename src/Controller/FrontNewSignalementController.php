@@ -58,18 +58,23 @@ class FrontNewSignalementController extends AbstractController
             SignalementDraftRequest::class,
             'json'
         );
-        $errors = $validator->validate(
-            $signalementDraftRequest,
-            null,
-            ['Default', strtoupper($signalementDraftRequest->getProfil())]
-        );
-        if (0 === $errors->count()) {
-            return $this->json([
-                'uuid' => $signalementDraftManager->create(
-                    $signalementDraftRequest,
-                    json_decode($payload, true)
-                ),
-            ]);
+
+        if ($this->isCsrfTokenValid('signalement_create', $signalementDraftRequest->getToken())) {
+            $errors = $validator->validate(
+                $signalementDraftRequest,
+                null,
+                ['Default', strtoupper($signalementDraftRequest->getProfil())]
+            );
+            if (0 === $errors->count()) {
+                return $this->json([
+                    'uuid' => $signalementDraftManager->create(
+                        $signalementDraftRequest,
+                        json_decode($payload, true)
+                    ),
+                ]);
+            }
+        } else {
+            $errors[] = 'Erreur lors de la création du signalement. Veuillez recharger la page.';
         }
 
         return $this->json($errors);
@@ -90,19 +95,23 @@ class FrontNewSignalementController extends AbstractController
             'json'
         );
 
-        $errors = $validator->validate(
-            $signalementDraftRequest,
-            null,
-            ['Default', strtoupper($signalementDraftRequest->getProfil())]
-        );
-        if (0 === $errors->count()) {
-            $result = $signalementDraftManager->update(
-                $signalementDraft,
+        if ($this->isCsrfTokenValid('signalement_edit', $signalementDraftRequest->getToken())) {
+            $errors = $validator->validate(
                 $signalementDraftRequest,
-                json_decode($payload, true)
+                null,
+                ['Default', strtoupper($signalementDraftRequest->getProfil())]
             );
+            if (0 === $errors->count()) {
+                $result = $signalementDraftManager->update(
+                    $signalementDraft,
+                    $signalementDraftRequest,
+                    json_decode($payload, true)
+                );
 
-            return $this->json($result);
+                return $this->json($result);
+            }
+        } else {
+            $errors[] = 'Erreur lors de l\'édition du signalement. Veuillez recharger la page.';
         }
 
         return $this->json($errors);

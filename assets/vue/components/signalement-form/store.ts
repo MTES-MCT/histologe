@@ -62,6 +62,7 @@ const formStore: FormStore = reactive({
     lienSuivi: ''
   },
   props: {
+    csrf: '',
     ajaxurl: '',
     ajaxurlDictionary: '',
     ajaxurlQuestions: '',

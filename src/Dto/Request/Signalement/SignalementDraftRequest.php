@@ -19,6 +19,7 @@ class SignalementDraftRequest
     public const PATTERN_FILE_UPLOAD = '/\w+_upload/';
     public const FILE_UPLOAD_KEY = 'files';
 
+    private ?string $token = null;
     private ?string $profil = null;
     private ?string $currentStep = null;
     #[Assert\NotBlank(message: 'Merci de saisir une adresse.')]
@@ -200,6 +201,18 @@ class SignalementDraftRequest
     private ?string $messageAdministration = null;
     private ?array $files = null;
     private ?array $categorieDisorders = null;
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(?string $token): self
+    {
+        $this->token = $token;
+
+        return $this;
+    }
 
     public function getProfil(): ?string
     {

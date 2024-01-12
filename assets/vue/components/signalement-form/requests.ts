@@ -21,6 +21,7 @@ export const requests = {
     } else {
       config = { timeout: 15000 }
     }
+    data['token'] = formStore.props.csrf
     axios
       .post(ajaxUrl, data, config)
       .then(response => {
@@ -33,6 +34,7 @@ export const requests = {
       })
   },
   doRequestPut (ajaxUrl: string, data: any, functionReturn: Function) {
+    data['token'] = formStore.props.csrf
     axios
       .put(ajaxUrl, data, { timeout: 15000 })
       .then(response => {
