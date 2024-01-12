@@ -336,4 +336,13 @@ class Partner
 
         return $this;
     }
+
+    public function getEmailUsers(): array
+    {
+        $emailUsers = $this->users->map(function (User $user) {
+            return User::STATUS_ARCHIVE !== $user->getStatut() ? $user->getEmail() : null;
+        })->toArray();
+
+        return array_filter($emailUsers);
+    }
 }

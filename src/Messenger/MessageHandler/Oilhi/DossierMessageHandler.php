@@ -7,8 +7,10 @@ use App\Manager\JobEventManager;
 use App\Messenger\Message\Oilhi\DossierMessage;
 use App\Repository\PartnerRepository;
 use App\Service\Oilhi\HookZapierService;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Serializer\SerializerInterface;
 
+#[AsMessageHandler]
 class DossierMessageHandler
 {
     public function __construct(
@@ -28,7 +30,7 @@ class DossierMessageHandler
             service: HookZapierService::TYPE_SERVICE,
             action: HookZapierService::ACTION_PUSH_DOSSIER,
             message: $this->serializer->serialize($dossierMessage, 'json'),
-            response: $response->getContent(throw: false),
+            response: 200 === $response->getStatusCode() ? $response->getContent(throw: false) : $response->getContent(),
             status: 200 === $response->getStatusCode() ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,
             codeStatus: $response->getStatusCode(),
             signalementId: $dossierMessage->getSignalementId(),

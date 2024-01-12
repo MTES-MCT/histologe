@@ -71,7 +71,7 @@ class DossierMessageSISHFactoryTest extends TestCase
         $this->assertCount(2, $dossierMessage->getPiecesJointesDocuments());
         $this->assertEquals(PartnerType::ARS->value, $dossierMessage->getPartnerType());
         $this->assertStringContainsString('Etat', $dossierMessage->getSignalementProblemes());
-        $this->assertCount(1, $dossierMessage->getPersonnes());
+        $this->assertCount(2, $dossierMessage->getPersonnes());
         $this->assertEquals('Rue du test', $dossierMessage->getLocalisationAdresse1());
         $this->assertEquals('25', $dossierMessage->getLocalisationNumero());
         $this->assertEquals(5, \strlen($dossierMessage->getLocalisationCodePostal()));

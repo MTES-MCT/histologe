@@ -7,6 +7,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\AffectationAnsweredEvent;
+use App\Factory\Oilhi\DossierMessageFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
@@ -22,6 +23,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/bo/signalements')]
@@ -33,6 +35,8 @@ class AffectationController extends AbstractController
         private PartnerRepository $partnerRepository,
         private EsaboraBus $esaboraBus,
         private EventDispatcherInterface $eventDispatcher,
+        private MessageBusInterface $messageBus,
+        private DossierMessageFactory $dossierMessageFactory
     ) {
     }
 
@@ -62,6 +66,7 @@ class AffectationController extends AbstractController
                     if ($affectation instanceof Affectation) {
                         $this->affectationManager->persist($affectation);
                         $this->dispatchDossierEsabora($affectation);
+                        $this->dispatchDossierOilhi($affectation);
                     }
                 }
                 $this->affectationManager->removeAffectationsFrom($signalement, $postedPartner, $partnersIdToRemove);
@@ -177,6 +182,13 @@ class AffectationController extends AbstractController
             $affectation->setIsSynchronized(true);
             $this->affectationManager->save($affectation);
             $this->esaboraBus->dispatch($affectation);
+        }
+    }
+
+    private function dispatchDossierOilhi(Affectation $affectation): void
+    {
+        if ($this->dossierMessageFactory->supports($affectation)) {
+            $this->messageBus->dispatch($this->dossierMessageFactory->createInstance($affectation));
         }
     }
 }
