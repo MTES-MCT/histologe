@@ -379,7 +379,6 @@ class SignalementManager extends AbstractManager
 
     public function updateFromInformationsLogementRequest(Signalement $signalement, InformationsLogementRequest $informationsLogementRequest)
     {
-        $signalement->setNatureLogement($informationsLogementRequest->getType());
         if (is_numeric($informationsLogementRequest->getNombrePersonnes())) {
             $signalement->setNbOccupantsLogement($informationsLogementRequest->getNombrePersonnes());
         }
@@ -395,14 +394,6 @@ class SignalementManager extends AbstractManager
         $typeCompositionLogement = new TypeCompositionLogement();
         if (!empty($signalement->getTypeCompositionLogement())) {
             $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
-        }
-
-        if ('autre' === $informationsLogementRequest->getType()) {
-            $typeCompositionLogement->setTypeLogementNatureAutrePrecision(
-                $informationsLogementRequest->getTypeLogementNatureAutrePrecision()
-            );
-        } else {
-            $typeCompositionLogement->setTypeLogementNatureAutrePrecision(null);
         }
 
         $typeCompositionLogement
@@ -430,12 +421,22 @@ class SignalementManager extends AbstractManager
 
     public function updateFromCompositionLogementRequest(Signalement $signalement, CompositionLogementRequest $compositionLogementRequest)
     {
+        $signalement->setNatureLogement($compositionLogementRequest->getType());
         $signalement->setSuperficie($compositionLogementRequest->getSuperficie());
 
         $typeCompositionLogement = new TypeCompositionLogement();
         if (!empty($signalement->getTypeCompositionLogement())) {
             $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
         }
+
+        if ('autre' === $compositionLogementRequest->getType()) {
+            $typeCompositionLogement->setTypeLogementNatureAutrePrecision(
+                $compositionLogementRequest->getTypeLogementNatureAutrePrecision()
+            );
+        } else {
+            $typeCompositionLogement->setTypeLogementNatureAutrePrecision(null);
+        }
+
         $typeCompositionLogement
             ->setCompositionLogementPieceUnique($compositionLogementRequest->getTypeCompositionLogement())
             ->setCompositionLogementSuperficie($compositionLogementRequest->getSuperficie())

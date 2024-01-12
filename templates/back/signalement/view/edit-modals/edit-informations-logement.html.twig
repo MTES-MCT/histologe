@@ -12,25 +12,6 @@
                                 Modifier les informations du logement
                             </h1>
 
-                            <div class="fr-select-group">
-                                <label class="fr-label" for="type">Type</label>
-                                <select class="fr-select" name="type">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
-                                    <option value="appartement" {{ signalement.natureLogement is same as 'appartement' ? 'selected' : '' }}>Appartement</option>
-                                    <option value="maison" {{ signalement.natureLogement is same as 'maison' ? 'selected' : '' }}>Maison</option>
-                                    <option value="autre" {{ signalement.natureLogement is same as 'autre' ? 'selected' : '' }}>Autre</option>
-                                </select>
-                            </div>
-
-                            <div class="fr-input-group">
-                                {% set autrePrecision = '' %}
-                                {% if signalement.typeCompositionLogement %}
-                                    {% set autrePrecision = signalement.typeCompositionLogement.typeLogementNatureAutrePrecision %}
-                                {% endif %}
-                                <label class="fr-label" for="typeLogementNatureAutrePrecision">Précision (si autre)</label>
-                                <input class="fr-input" type="text" name="typeLogementNatureAutrePrecision" value="{{ autrePrecision }}" maxlength="50">
-                            </div>
-
                             <div class="fr-input-group">
                                 {% set nombrePersonnes = 0 %}
                                 {% if signalement.typeCompositionLogement %}
