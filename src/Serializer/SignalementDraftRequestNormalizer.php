@@ -78,8 +78,8 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
     public function getSupportedTypes(?string $format): array
     {
         return [
-            SignalementDraftRequest::class => true, 
-            TypeCompositionLogement::class => true
+            SignalementDraftRequest::class => true,
+            TypeCompositionLogement::class => true,
         ];
     }
 }
