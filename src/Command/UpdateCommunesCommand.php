@@ -2,11 +2,11 @@
 
 namespace App\Command;
 
-use App\DataFixtures\Loader\LoadCommuneData;
 use App\Entity\Commune;
 use App\Entity\Territory;
 use App\Factory\CommuneFactory;
 use App\Service\Import\CsvParser;
+use App\Utils\ImportCommune;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -48,7 +48,7 @@ class UpdateCommunesCommand extends Command
         foreach ($list as $territory) {
             $this->territories[$territory->getZip()] = $territory;
         }
-        $this->csvData = $this->csvParser->parse($this->params->get('kernel.project_dir').LoadCommuneData::COMMUNE_LIST_CSV_PATH);
+        $this->csvData = $this->csvParser->parse($this->params->get('kernel.project_dir').ImportCommune::COMMUNE_LIST_CSV_PATH);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -58,9 +58,9 @@ class UpdateCommunesCommand extends Command
         $nbDelete = 0;
 
         foreach ($this->csvData as $rowData) {
-            $itemCodeCommune = $rowData[LoadCommuneData::INDEX_CSV_CODE_COMMUNE];
-            $itemCodePostal = $rowData[LoadCommuneData::INDEX_CSV_CODE_POSTAL];
-            $itemNomCommune = $rowData[LoadCommuneData::INDEX_CSV_NOM_COMMUNE];
+            $itemCodeCommune = $rowData[ImportCommune::INDEX_CSV_CODE_COMMUNE];
+            $itemCodePostal = $rowData[ImportCommune::INDEX_CSV_CODE_POSTAL];
+            $itemNomCommune = $rowData[ImportCommune::INDEX_CSV_NOM_COMMUNE];
 
             $keyCommune = $itemCodePostal.'-'.$itemCodeCommune;
             if (isset($this->communes[$keyCommune])) {
@@ -72,7 +72,7 @@ class UpdateCommunesCommand extends Command
                 continue;
             }
 
-            $zipCode = LoadCommuneData::getZipCodeByCodeCommune($itemCodeCommune);
+            $zipCode = ImportCommune::getZipCodeByCodeCommune($itemCodeCommune);
             $new = $this->communeFactory->createInstanceFrom(
                 territory: $this->territories[$zipCode],
                 nom: $itemNomCommune,
