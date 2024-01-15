@@ -332,7 +332,9 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setIsUsagerAbandonProcedure(0)
             ->setNbPiecesLogement($row['nb_pieces_logement']);
 
-        $signalement->setCreatedFrom($this->signalementDraftRepository->findOneBy(['uuid' => $row['created_from_uuid']]));
+        $signalement->setCreatedFrom(
+            $this->signalementDraftRepository->findOneBy(['uuid' => $row['created_from_uuid']])
+        );
         $signalement->setProfileDeclarant(ProfileDeclarant::tryFrom($row['profile_declarant']))
             ->setTypeCompositionLogement(
                 TypeCompositionLogementFactory::createFromArray(json_decode($row['type_composition_logement'], true))
@@ -420,8 +422,6 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             }
         }
         foreach ($row['desordre_photos'] as $document) {
-            // // TODO : créer l'utilisateur
-            // $user = $this->userRepository->findOneBy(['id' => $document['user']]);
             $file = $this->fileFactory->createInstanceFrom(
                 filename: $document['file'],
                 title: $document['titre'],
