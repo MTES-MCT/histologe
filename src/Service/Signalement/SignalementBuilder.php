@@ -139,6 +139,10 @@ class SignalementBuilder
             $jsonContent['desordres_logement_nuisibles_autres'] =
             $this->payload['desordres_logement_nuisibles_autres_details_type_nuisibles'];
         }
+        if (isset($this->payload['desordres_batiment_nuisibles_autres_details_type_nuisibles'])) {
+            $jsonContent['desordres_batiment_nuisibles_autres'] =
+            $this->payload['desordres_batiment_nuisibles_autres_details_type_nuisibles'];
+        }
 
         if (isset($jsonContent)) {
             $this->signalement->setJsonContent($jsonContent);

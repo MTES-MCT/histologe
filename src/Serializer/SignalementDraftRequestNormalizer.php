@@ -37,7 +37,14 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
                 $phone = '+'.$indicatif.$value;
                 $transformedData[$key] = $phone;
             } elseif (preg_match(SignalementDraftRequest::PATTERN_FILE_UPLOAD, $key, $matches)) {
-                $transformedData[SignalementDraftRequest::FILE_UPLOAD_KEY][$key] = $data[$key];
+                if (str_starts_with($key, 'desordres_')) {
+                    $partToDelete = ['_details_photos_upload', '_photos_upload'];
+                    $keyUpdated = str_replace($partToDelete, '', $key);
+                } else {
+                    $keyUpdated = $key;
+                }
+
+                $transformedData[SignalementDraftRequest::FILE_UPLOAD_KEY][$keyUpdated] = $data[$key];
             } else {
                 $transformedData[$key] = $value;
             }

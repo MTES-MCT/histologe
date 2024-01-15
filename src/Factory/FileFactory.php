@@ -61,8 +61,7 @@ class FileFactory
         ?Intervention $intervention = null,
     ): ?File {
         $documentType = SignalementDocumentTypeMapper::map($file['slug']);
-        $partToDelete = ['_details_photos_upload', '_photos_upload'];
-        $desordreSlug = DocumentType::SITUATION === $documentType ? str_replace($partToDelete, '', $file['slug']) : null;
+        $desordreSlug = DocumentType::SITUATION === $documentType ? $file['slug'] : null;
 
         return $this->createInstanceFrom(
             filename: $file['file'],

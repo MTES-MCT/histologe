@@ -3,6 +3,7 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\Criticite;
+use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\ProfileDeclarant;
@@ -417,6 +418,20 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
                 $signalement->addSignalementQualification($signalementQualification);
             }
+        }
+        foreach ($row['desordre_photos'] as $document) {
+            // // TODO : créer l'utilisateur
+            // $user = $this->userRepository->findOneBy(['id' => $document['user']]);
+            $file = $this->fileFactory->createInstanceFrom(
+                filename: $document['file'],
+                title: $document['titre'],
+                type: File::FILE_TYPE_PHOTO,
+                signalement: $signalement,
+                // user: $user,
+                documentType: DocumentType::SITUATION,
+                desordreSlug: $document['slug']
+            );
+            $manager->persist($file);
         }
 
         $manager->persist($signalement);

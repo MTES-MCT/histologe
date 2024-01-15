@@ -84,6 +84,13 @@ signalements:
       - "desordres_logement_securite_sol_dangereux_pieces_piece_a_vivre"
       - "desordres_logement_securite_balcons_pieces_salle_de_bain"
       - "desordres_logement_securite_plomb_pieces_salle_de_bain_diagnostique_oui"
+    desordre_photos:
+      - file: "Capture-d-ecran-du-2023-06-13-12-58-43-648b2a6b9730f.png"
+        titre: "Capture-d-ecran-du-2023-06-13-12-58-43-648b2a6b9730f.png"
+        slug: "desordres_batiment_proprete_interieur"
+      - file: "Capture-d-ecran-du-2023-06-13-12-58-43-648b2a6b9730f.png"
+        titre: "Capture-d-ecran-du-2023-06-13-12-58-43-648b2a6b9730f.png"
+        slug: "desordres_logement_chauffage_details_fenetres_permeables"
   -
     territory: "Pas-de-Calais"
     uuid: "00000000-0000-0000-2024-000000000002"
