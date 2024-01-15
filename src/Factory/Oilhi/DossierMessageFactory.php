@@ -10,6 +10,7 @@ use App\Entity\DesordreCritere;
 use App\Entity\DesordrePrecision;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\PartnerType;
+use App\Entity\Enum\Qualification;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Situation;
@@ -33,8 +34,10 @@ class DossierMessageFactory
     public function supports(Affectation $affectation): bool
     {
         $partner = $affectation->getPartner();
+        $signalement = $affectation->getSignalement();
 
         return $this->featureEnable
+            && $signalement->hasQualificaton(Qualification::RSD)
             && PartnerType::COMMUNE_SCHS === $partner->getType()
             && \in_array($partner->getTerritory()->getZip(), self::TERRITORY_ZIP_ALLOWED);
     }
