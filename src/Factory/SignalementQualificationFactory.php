@@ -55,7 +55,12 @@ class SignalementQualificationFactory
                 $signalementQualification->setDernierBailAt(new DateTimeImmutable($dataDateBail));
             }
             $dataDateBailToSave = $signalementQualification->getDernierBailAt()?->format('Y-m-d');
-            if (isset($dataDateDPE) && '1970-01-01' === $dataDateDPE && !empty($dataConsoYear) && !empty($dataConsoSize)) {
+            if (
+                isset($dataDateDPE)
+                && '1970-01-01' === $dataDateDPE
+                && !empty($dataConsoYear)
+                && !empty($dataConsoSize)
+            ) {
                 $dataConsoToSave = $dataConsoYear;
             } elseif (!empty($dataConsoSizeYear)) {
                 $dataConsoToSave = $dataConsoSizeYear;
@@ -73,7 +78,12 @@ class SignalementQualificationFactory
         );
         $signalementQualification->setDetails($qualificationNDERequest->getDetails());
         $signalementQualification->setStatus($this->qualificationStatusService->getNDEStatus($signalementQualification));
-        $signalementQualification->setCriticites($listNDECriticites);
+
+        if (null == $signalement->getCreatedFrom()) {
+            $signalementQualification->setCriticites($listNDECriticites);
+        } else {
+            $signalementQualification->setDesordrePrecisionIds($listNDECriticites);
+        }
 
         return $signalementQualification;
     }

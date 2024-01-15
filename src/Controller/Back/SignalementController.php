@@ -124,17 +124,26 @@ class SignalementController extends AbstractController
         $isDanger = false;
         $criticitesArranged = [];
         foreach ($signalement->getCriticites() as $criticite) {
-            $criticitesArranged[$criticite->getCritere()->getSituation()->getLabel()][$criticite->getCritere()->getLabel()] = $criticite;
+            $criticitesArranged[
+                $criticite->getCritere()->getSituation()->getLabel()
+            ][$criticite->getCritere()->getLabel()] = $criticite;
             if ($criticite->getIsDanger()) {
                 $isDanger = true;
             }
         }
 
         $canEditSignalement = false;
-        if (Signalement::STATUS_ACTIVE === $signalement->getStatut() || Signalement::STATUS_NEED_PARTNER_RESPONSE === $signalement->getStatut()) {
-            $canEditSignalement = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY') || $isAccepted;
+        if (
+            Signalement::STATUS_ACTIVE === $signalement->getStatut()
+            || Signalement::STATUS_NEED_PARTNER_RESPONSE === $signalement->getStatut()
+        ) {
+            $canEditSignalement = $this->isGranted('ROLE_ADMIN')
+                || $this->isGranted('ROLE_ADMIN_TERRITORY')
+                || $isAccepted;
         }
-        $canExportSignalement = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY') || $isAffected;
+        $canExportSignalement = $this->isGranted('ROLE_ADMIN')
+            || $this->isGranted('ROLE_ADMIN_TERRITORY')
+            || $isAffected;
 
         $signalementQualificationNDE = $signalementQualificationRepository->findOneBy([
             'signalement' => $signalement,
@@ -147,7 +156,9 @@ class SignalementController extends AbstractController
                 : null;
         } else {
             $signalementQualificationNDECriticites = $signalementQualificationNDE
-                ? $desordrePrecisionsRepository->findBy(['id' => $signalementQualificationNDE->getCriticites()])
+                ? $desordrePrecisionsRepository->findBy(
+                    ['id' => $signalementQualificationNDE->getDesordrePrecisionIds()]
+                )
                 : null;
         }
 
@@ -173,13 +184,18 @@ class SignalementController extends AbstractController
         if (null !== $signalement->getInterventions()) {
             foreach ($signalement->getInterventions() as $intervention) {
                 if (Intervention::STATUS_DONE == $intervention->getStatus()) {
-                    $listConcludeProcedures = array_merge($listConcludeProcedures, $intervention->getConcludeProcedure());
+                    $listConcludeProcedures = array_merge(
+                        $listConcludeProcedures,
+                        $intervention->getConcludeProcedure()
+                    );
                 }
             }
         }
         $listConcludeProcedures = array_unique(array_map(function ($concludeProcedure) {
             return $concludeProcedure->label();
         }, $listConcludeProcedures));
+
+        $partnerVisite = $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement);
 
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
@@ -204,7 +220,7 @@ class SignalementController extends AbstractController
             'canEditNDE' => $canEditNDE,
             'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
             'listConcludeProcedures' => $listConcludeProcedures,
-            'partnersCanVisite' => $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement),
+            'partnersCanVisite' => $partnerVisite,
             'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
             'isNewFormEnabled' => $parameterBag->get('feature_new_form'),
         ]);
