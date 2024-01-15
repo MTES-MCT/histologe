@@ -20,10 +20,12 @@
                             </ul>                                            
                         {% endif %}
                         {# ajout des photos liées spécifiquement à ce critère ou à cette précision #}
-                        {% if photos[criticite.desordreCritere.slugCritere] is defined %}                        
-                            {% for photo in photos[criticite.desordreCritere.slugCritere] %}
-                                {% include 'back/signalement/view/user-declaration-desordre-photo.html.twig' %}   
-                            {% endfor %}
+                        {% if photos[criticite.desordreCritere.slugCritere] is defined %}    
+                            <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">                    
+                                {% for photo in photos[criticite.desordreCritere.slugCritere] %}
+                                    {% include 'back/signalement/view/user-declaration-desordre-photo.html.twig' %}   
+                                {% endfor %}
+                            </div>
                         {% endif %}
                     {% endfor %}
                 </li>
@@ -31,9 +33,11 @@
         </ul>
         {# ajout des photos liées spécifiquement à cette situation #}
         {% if photos[situation] %}
-            {% for photo in photos[situation] %}
-                {% include 'back/signalement/view/user-declaration-desordre-photo.html.twig' %}   
-            {% endfor %}
+            <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">    
+                {% for photo in photos[situation] %}
+                    {% include 'back/signalement/view/user-declaration-desordre-photo.html.twig' %}   
+                {% endfor %}
+            </div>
         {% endif %}
     </div>
     </div>
