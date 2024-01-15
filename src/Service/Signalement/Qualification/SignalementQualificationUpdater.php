@@ -432,8 +432,8 @@ class SignalementQualificationUpdater
             $dataHasDPE = false;
         }
 
-        $isDateBail2023 = $signalement->getDateEntree()->format('Y') >= 2023
-            || $dataDateBail->format('Y') >= 2023;
+        $isDateBail2023 = (null !== $signalement->getDateEntree() && $signalement->getDateEntree()->format('Y') >= 2023)
+            || (null !== $dataDateBail && $dataDateBail->format('Y') >= 2023);
         $anDPE = $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeAnnee();
         if ($isDateBail2023) {
             if ('before2023' === $anDPE) {
