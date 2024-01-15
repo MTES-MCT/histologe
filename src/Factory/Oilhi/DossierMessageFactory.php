@@ -141,14 +141,18 @@ class DossierMessageFactory
             }
 
             if (!$signalement->getDesordrePrecisions()->isEmpty()) {
-                $desordres['precisions'] = implode(
+                $precisions = implode(
                     ', ',
                     $signalement
                         ->getDesordrePrecisions()
+                        ->filter(function (DesordrePrecision $desordrePrecision) {
+                            return ' - ' !== $desordrePrecision->getLabel();
+                        })
                         ->map(function (DesordrePrecision $desordrePrecision) {
                             return $desordrePrecision->getLabel();
                         })->toArray()
                 );
+                $desordres['precisions'] = str_replace('-', '', $precisions);
             }
 
             return $desordres;
