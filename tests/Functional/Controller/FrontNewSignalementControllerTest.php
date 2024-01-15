@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Controller;
 
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\SignalementDraft;
+use App\Tests\SessionHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,17 +12,24 @@ use Symfony\Component\Routing\RouterInterface;
 
 class FrontNewSignalementControllerTest extends WebTestCase
 {
+    use SessionHelper;
+
     public function testPostSignalementDraft(): void
     {
         $client = static::createClient();
 
         /** @var RouterInterface $router */
         $router = $client->getContainer()->get(RouterInterface::class);
-        $urlPutSignalement = $router->generate('envoi_nouveau_signalement_draft');
 
-        $payloadLocataireSignalement = file_get_contents(__DIR__.'../../../files/post_signalement_draft_payload.json');
+        $payloadLocataireSignalement = json_decode(file_get_contents(
+            __DIR__.'../../../files/post_signalement_draft_payload.json'
+        ));
+        $payloadLocataireSignalement->token = $this->generateCsrfToken(
+            $client, 'signalement_create'
+        );
 
-        $client->request('POST', $urlPutSignalement, [], [], [], $payloadLocataireSignalement);
+        $urlPostSignalement = $router->generate('envoi_nouveau_signalement_draft');
+        $client->request('POST', $urlPostSignalement, [], [], [], json_encode($payloadLocataireSignalement));
 
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
         $response = json_decode($client->getResponse()->getContent(), true);
@@ -40,15 +48,19 @@ class FrontNewSignalementControllerTest extends WebTestCase
 
         /** @var RouterInterface $router */
         $router = $client->getContainer()->get(RouterInterface::class);
+
         $urlPutSignalement = $router->generate('mise_a_jour_nouveau_signalement_draft', [
             'uuid' => $uuidSignalement,
         ]);
 
-        $payloadLocataireSignalement = file_get_contents(
+        $payloadLocataireSignalement = json_decode(file_get_contents(
             __DIR__.'../../../../src/DataFixtures/Files/signalement_draft_payload/'.$path
+        ));
+        $payloadLocataireSignalement->token = $this->generateCsrfToken(
+            $client, 'signalement_edit'
         );
 
-        $client->request('PUT', $urlPutSignalement, [], [], [], $payloadLocataireSignalement);
+        $client->request('PUT', $urlPutSignalement, [], [], [], json_encode($payloadLocataireSignalement));
 
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
 
