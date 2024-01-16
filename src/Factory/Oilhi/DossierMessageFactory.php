@@ -66,8 +66,14 @@ class DossierMessageFactory
             ->setCommuneSignalement($signalement->getVilleOccupant())
             ->setCodePostalSignalement($signalement->getCpOccupant())
             ->setTypeDeclarant($typeDeclarant)
-            ->setTelephoneDeclarant($signalement->getIsNotOccupant() ? $signalement->getTelDeclarant() : $signalement->getTelOccupant())
-            ->setCourrielDeclarant($signalement->getIsNotOccupant() ? $signalement->getMailDeclarant() : $signalement->getMailOccupant())
+            ->setTelephoneDeclarant(
+                $signalement->getIsNotOccupant()
+                    ? $signalement->getTelDeclarant()
+                    : $signalement->getTelOccupant())
+            ->setCourrielDeclarant(
+                $signalement->getIsNotOccupant()
+                    ? $signalement->getMailDeclarant()
+                    : $signalement->getMailOccupant())
             ->setNomOccupant($signalement->getNomOccupant())
             ->setPrenomOccupant($signalement->getPrenomOccupant())
             ->setTelephoneOccupant($signalement->getTelOccupant())

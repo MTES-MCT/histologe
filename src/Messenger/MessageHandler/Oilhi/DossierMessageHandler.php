@@ -30,7 +30,9 @@ class DossierMessageHandler
             service: HookZapierService::TYPE_SERVICE,
             action: HookZapierService::ACTION_PUSH_DOSSIER,
             message: $this->serializer->serialize($dossierMessage, 'json'),
-            response: 200 === $response->getStatusCode() ? $response->getContent(throw: false) : $response->getContent(),
+            response: 200 === $response->getStatusCode()
+                ? $response->getContent(throw: false)
+                : $response->getContent(),
             status: 200 === $response->getStatusCode() ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,
             codeStatus: $response->getStatusCode(),
             signalementId: $dossierMessage->getSignalementId(),

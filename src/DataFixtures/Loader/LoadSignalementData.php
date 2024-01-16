@@ -194,7 +194,11 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
         if (isset($row['qualifications'])) {
             foreach ($row['qualifications'] as $qualificationLabel) {
-                $signalementQualification = $this->buildSignalementQualification($signalement, $row, $qualificationLabel);
+                $signalementQualification = $this->buildSignalementQualification(
+                    $signalement,
+                    $row,
+                    $qualificationLabel
+                );
 
                 $manager->persist($signalementQualification);
 
@@ -395,7 +399,11 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
         if (isset($row['qualifications'])) {
             foreach ($row['qualifications'] as $qualificationLabel) {
-                $signalementQualification = $this->buildSignalementQualification($signalement, $row, $qualificationLabel);
+                $signalementQualification = $this->buildSignalementQualification(
+                    $signalement,
+                    $row,
+                    $qualificationLabel
+                );
 
                 $manager->persist($signalementQualification);
 
@@ -406,8 +414,11 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         $manager->persist($signalement);
     }
 
-    private function buildSignalementQualification(Signalement $signalement, array $row, string $qualificationLabel): SignalementQualification
-    {
+    private function buildSignalementQualification(
+        Signalement $signalement,
+        array $row,
+        string $qualificationLabel
+    ): SignalementQualification {
         $faker = Factory::create();
         $signalementQualification = (new SignalementQualification())
             ->setSignalement($signalement)
