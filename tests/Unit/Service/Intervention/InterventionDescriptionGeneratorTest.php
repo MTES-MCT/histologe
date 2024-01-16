@@ -51,7 +51,8 @@ class InterventionDescriptionGeneratorTest extends TestCase
             ->setDetails('Test description')
             ->setType(InterventionType::ARRETE_PREFECTORAL);
 
-        $this->assertEquals('Test description',
+        $this->assertEquals(
+            'Test description',
             InterventionDescriptionGenerator::generate(
                 $intervention,
                 InterventionCreatedEvent::NAME
@@ -69,19 +70,31 @@ class InterventionDescriptionGeneratorTest extends TestCase
 
     public function provideVisiteIntervention(): \Generator
     {
-        yield 'Visite de contrôle' => [
+        yield 'Visite de contrôle dans le passé' => [
             $this->getIntervention(
                 InterventionType::VISITE_CONTROLE,
                 new \DateTimeImmutable('2023-09-01'),
-                Intervention::STATUS_PLANNED
+                Intervention::STATUS_DONE
             ),
-            'Visite de contrôle programmée :',
+            'Visite de contrôle réalisée :',
             '25 rue du test',
             '01/09/2023',
             'ARS',
         ];
 
-        yield 'Visite' => [
+        yield 'Visite dans le passé' => [
+            $this->getIntervention(
+                InterventionType::VISITE,
+                new \DateTimeImmutable('2023-10-01'),
+                Intervention::STATUS_DONE
+            ),
+            'Visite réalisée',
+            '25 rue du test',
+            '01/10/2023',
+            'ARS',
+        ];
+
+        yield 'Visite dans le passé mais au status planned' => [
             $this->getIntervention(
                 InterventionType::VISITE,
                 new \DateTimeImmutable('2023-10-01'),
@@ -90,6 +103,31 @@ class InterventionDescriptionGeneratorTest extends TestCase
             'Visite programmée',
             '25 rue du test',
             '01/10/2023',
+            'ARS',
+        ];
+
+        $dateInFutur = (new \DateTimeImmutable())->add(new \DateInterval('P10D'));
+        yield 'Visite de contrôle dans le futur' => [
+            $this->getIntervention(
+                InterventionType::VISITE_CONTROLE,
+                $dateInFutur,
+                Intervention::STATUS_PLANNED
+            ),
+            'Visite de contrôle programmée :',
+            '25 rue du test',
+            $dateInFutur->format('d/m/Y'),
+            'ARS',
+        ];
+
+        yield 'Visite dans le futur' => [
+            $this->getIntervention(
+                InterventionType::VISITE,
+                $dateInFutur,
+                Intervention::STATUS_PLANNED
+            ),
+            'Visite programmée',
+            '25 rue du test',
+            $dateInFutur->format('d/m/Y'),
             'ARS',
         ];
     }

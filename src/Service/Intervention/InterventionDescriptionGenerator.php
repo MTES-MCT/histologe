@@ -26,14 +26,20 @@ class InterventionDescriptionGenerator
     {
         $labelVisite = strtolower($intervention->getType()->label());
         $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
+        $today = new \DateTimeImmutable();
+        $isInPast = $today > $intervention->getScheduledAt()
+            && Intervention::STATUS_DONE === $intervention->getStatus();
 
         return sprintf(
-            '%s programmée : une %s du logement situé %s est prévue le %s.<br>La %s sera effectuée par %s.',
+            '%s %s : une %s du logement situé %s %s le %s.<br>La %s %s par %s.',
             ucfirst($labelVisite),
+            $isInPast ? 'réalisée' : 'programmée',
             $labelVisite,
             $intervention->getSignalement()->getAdresseOccupant(),
+            $isInPast ? 'a été effectuée' : 'est prévue',
             $intervention->getScheduledAt()->format('d/m/Y'),
             $labelVisite,
+            $isInPast ? 'a été réalisée' : 'sera effectuée',
             $partnerName
         );
     }
