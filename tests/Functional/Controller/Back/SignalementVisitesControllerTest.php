@@ -79,4 +79,38 @@ class SignalementVisitesControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
     }
+
+    public function testAddPastVisiteNotDone(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $this->client->loginUser($user);
+
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000001']);
+
+        $route = $this->router->generate('back_signalement_visite_add', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('GET', $route);
+
+        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 62-01']);
+
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'visite-add' => [
+                    'date' => '2023-01-01',
+                    'time' => '10:00',
+                    'partner' => $partner->getId(),
+                    'visiteDone' => '0',
+                    'occupantPresent' => '0',
+                    'proprietairePresent' => '0',
+                    'notifyUsager' => '0',
+                    'details' => 'Lorem Ipsum',
+                ],
+                '_token' => $this->generateCsrfToken($this->client, 'signalement_add_visit_'.$signalement->getId()),
+            ]
+        );
+
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $this->assertEmailCount(3);
+    }
 }

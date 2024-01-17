@@ -57,6 +57,12 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
                 ->setMotifRefus(MotifRefus::tryFrom($row['motif_refus']));
         }
 
+        if (isset($row['created_at'])) {
+            $affectation
+                ->setCreatedAt($createdAt = (new \DateTimeImmutable())->modify($row['created_at']))
+                ->setAnsweredAt($createdAt);
+        }
+
         $manager->persist($affectation);
     }
 

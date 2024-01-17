@@ -108,11 +108,7 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
 
         $interventionData['date_visite'] = $intervention->getScheduledAt()->format(self::FORMAT_DATE);
         $interventionData['operateur_visite'] = $intervention->getDoneBy() ?? $intervention->getPartner()->getNom();
-        $interventionData['rapport_visite'] = $this->urlGenerator->generate(
-            'show_uploaded_file',
-            ['filename' => $intervention->getFiles()->first()->getFilename()],
-            UrlGeneratorInterface::ABSOLUTE_URL
-        ).'?t='.$this->csrfTokenManager->getToken('suivi_signalement_ext_file_view');
+        $interventionData['rapport_visite'] = $this->getRapportVisite($intervention);
 
         return $interventionData;
     }
@@ -217,5 +213,18 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
         }
 
         return $typeDeclarant;
+    }
+
+    private function getRapportVisite(Intervention $intervention): ?string
+    {
+        if ($intervention->getFiles()->isEmpty()) {
+            return null;
+        }
+
+        return $this->urlGenerator->generate(
+            'show_uploaded_file',
+            ['filename' => $intervention->getFiles()->first()->getFilename()],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        ).'?t='.$this->csrfTokenManager->getToken('suivi_signalement_ext_file_view');
     }
 }

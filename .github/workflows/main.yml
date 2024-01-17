@@ -149,3 +149,4 @@ jobs:
           MAILER_DSN: ${{ secrets.MAILER_DSN_CI }}
           CRON_ENABLE: 1
           MAIL_ENABLE: 1
+          FEATURE_ASK_VISITE_ENABLE: 1
