@@ -23,6 +23,7 @@ use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
+use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -30,7 +31,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class SignalementImportLoader
 {
-    private const FLUSH_COUNT = 200;
+    private const FLUSH_COUNT = 20;
     private const REGEX_DATE_FORMAT_CSV = '/\d{4}\/\d{2}\/\d{2}/';
 
     private const SITUATIONS = [
@@ -44,6 +45,9 @@ class SignalementImportLoader
 
     private array $metadata = [
         'count_signalement' => 0,
+        'partners_not_found' => [],
+        'motif_cloture_not_found' => [],
+        'files_not_found' => [],
     ];
 
     private User|null $userSystem = null;
@@ -60,6 +64,7 @@ class SignalementImportLoader
         private CriticiteCalculator $criticiteCalculator,
         private SignalementQualificationUpdater $signalementQualificationUpdater,
         private FileManager $fileManager,
+        private FilesystemOperator $fileStorage,
     ) {
     }
 
@@ -106,8 +111,8 @@ class SignalementImportLoader
                     $signalement->addSuivi($suivi);
                 }
 
-                $this->loadFiles($signalement, File::INPUT_NAME_PHOTOS, $dataMapped, File::FILE_TYPE_PHOTO);
-                $this->loadFiles($signalement, File::INPUT_NAME_DOCUMENTS, $dataMapped, File::FILE_TYPE_DOCUMENT);
+                $this->loadFiles($signalement, File::INPUT_NAME_PHOTOS, $dataMapped);
+                $this->loadFiles($signalement, File::INPUT_NAME_DOCUMENTS, $dataMapped);
 
                 $this->metadata['count_signalement'] = $countSignalement;
                 if (0 === $countSignalement % self::FLUSH_COUNT) {
@@ -116,6 +121,12 @@ class SignalementImportLoader
                 } else {
                     $this->signalementManager->persist($signalement);
                     unset($signalement);
+                }
+                if ($dataMapped['motifCloture'] && !MotifCloture::tryFrom($dataMapped['motifCloture'])) {
+                    if (!isset($this->metadata['motif_cloture_not_found'][$dataMapped['motifCloture']])) {
+                        $this->metadata['motif_cloture_not_found'][$dataMapped['motifCloture']] = 1;
+                    }
+                    ++$this->metadata['motif_cloture_not_found'][$dataMapped['motifCloture']];
                 }
             }
         }
@@ -145,35 +156,46 @@ class SignalementImportLoader
     {
         $affectationCollection = new ArrayCollection();
         if (isset($dataMapped['partners']) && !empty($dataMapped['partners'])) {
-            $partnersName = explode(',', $dataMapped['partners']);
+            if (str_contains($dataMapped['partners'], ',')) {
+                $partnersName = explode(',', $dataMapped['partners']);
+            } elseif (str_contains($dataMapped['partners'], '|')) {
+                $partnersName = explode('|', $dataMapped['partners']);
+            } else {
+                $partnersName = [$dataMapped['partners']];
+            }
             foreach ($partnersName as $partnerName) {
+                $partnerNameCleaned = preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $partnerName); // remove non printable chars
                 $partner = $this->entityManager->getRepository(Partner::class)->findOneBy([
-                    'nom' => trim($partnerName),
+                    'nom' => $partnerNameCleaned,
                     'territory' => $territory,
                 ]);
-
-                if (null !== $partner) {
-                    $affectation = $this->affectationManager->createAffectationFrom(
-                        $signalement,
-                        $partner,
-                        $partner?->getUsers()?->first()
-                    );
-
-                    if ($affectation instanceof Affectation) {
-                        $affectation
-                            ->setCreatedAt($dataMapped['createdAt'])
-                            ->setAnsweredAt($dataMapped['createdAt']);
-                        if (!empty($dataMapped['motifCloture'])) {
-                            $affectation = $this->affectationManager->closeAffectation(
-                                $affectation,
-                                $this->userSystem,
-                                MotifCloture::tryFrom($dataMapped['motifCloture'])
-                            );
-                        } else {
-                            $affectation->setStatut(Affectation::STATUS_ACCEPTED);
-                        }
-                        $affectationCollection->add($affectation);
+                if (!$partner) {
+                    if (!isset($this->metadata['partners_not_found'][$partnerNameCleaned])) {
+                        $this->metadata['partners_not_found'][$partnerNameCleaned] = 1;
                     }
+                    ++$this->metadata['partners_not_found'][$partnerNameCleaned];
+                    continue;
+                }
+
+                $affectation = $this->affectationManager->createAffectationFrom(
+                    $signalement,
+                    $partner,
+                    $partner?->getUsers()?->first()
+                );
+                if ($affectation instanceof Affectation) {
+                    $affectation
+                        ->setCreatedAt($dataMapped['createdAt'])
+                        ->setAnsweredAt($dataMapped['createdAt']);
+                    if (MotifCloture::tryFrom($dataMapped['motifCloture'])) {
+                        $affectation = $this->affectationManager->closeAffectation(
+                            $affectation,
+                            $this->userSystem,
+                            MotifCloture::tryFrom($dataMapped['motifCloture'])
+                        );
+                    } else {
+                        $affectation->setStatut(Affectation::STATUS_ACCEPTED);
+                    }
+                    $affectationCollection->add($affectation);
                 }
             }
         }
@@ -258,7 +280,7 @@ class SignalementImportLoader
         return $suiviCollection;
     }
 
-    private function loadFiles(Signalement $signalement, string $colName, array $dataMapped, string $fileType): void
+    private function loadFiles(Signalement $signalement, string $colName, array $dataMapped): void
     {
         if (empty($dataMapped[$colName])) {
             return;
@@ -266,15 +288,27 @@ class SignalementImportLoader
 
         $fileList = explode('|', $dataMapped[$colName]);
         foreach ($fileList as $filename) {
+            $exist = $this->entityManager->getRepository(File::class)->findOneBy(['filename' => $filename]);
+            if ($exist) {
+                continue;
+            }
+            if (!$this->fileStorage->fileExists($filename)) {
+                $this->metadata['files_not_found'][$filename] = $filename;
+                continue;
+            }
+            $fileType = File::FILE_TYPE_DOCUMENT;
+            if ('image/jpeg' == $this->fileStorage->mimeType($filename)) {
+                $fileType = File::FILE_TYPE_PHOTO;
+            }
+
             $file = $this->fileManager->createOrUpdate(
                 filename: $filename,
                 title: $filename,
                 type: $fileType,
                 signalement: $signalement,
             );
+            $signalement->addFile($file);
             unset($file);
         }
-
-        $this->fileManager->flush();
     }
 }

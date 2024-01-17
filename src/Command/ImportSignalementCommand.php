@@ -77,7 +77,27 @@ class ImportSignalementCommand extends Command
         );
 
         $metadata = $this->signalementImportLoader->getMetadata();
-
+        if (\count($metadata['files_not_found'])) {
+            $msg = [];
+            foreach ($metadata['files_not_found'] as $fileNotFound) {
+                $msg[] = sprintf('File "%s" not found', $fileNotFound);
+            }
+            $io->warning($msg);
+        }
+        if (\count($metadata['motif_cloture_not_found'])) {
+            $msg = [];
+            foreach ($metadata['motif_cloture_not_found'] as $partnerNotFound => $nbSignalement) {
+                $msg[] = sprintf('MotifCloture "%s" not found on %s signalement(s)', $partnerNotFound, $nbSignalement);
+            }
+            $io->warning($msg);
+        }
+        if (\count($metadata['partners_not_found'])) {
+            $msg = [];
+            foreach ($metadata['partners_not_found'] as $partnerNotFound => $nbSignalement) {
+                $msg[] = sprintf('Partner "%s" not found on %s signalement(s)', $partnerNotFound, $nbSignalement);
+            }
+            $io->warning($msg);
+        }
         $io->success(sprintf('%s signalement(s) have been imported', $metadata['count_signalement']));
 
         return Command::SUCCESS;

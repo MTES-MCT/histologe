@@ -17,6 +17,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\NonUniqueResultException;
 use Faker\Factory;
+use League\Flysystem\FilesystemOperator;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -34,6 +36,7 @@ class SignalementImportLoaderTest extends KernelTestCase
     private CriticiteCalculator $criticiteCalculator;
     private SignalementQualificationUpdater $signalementQualificationUpdater;
     private FileManager $fileManager;
+    private MockObject|FilesystemOperator $filesystemOperator;
 
     protected function setUp(): void
     {
@@ -48,7 +51,7 @@ class SignalementImportLoaderTest extends KernelTestCase
         $this->criticiteCalculator = self::getContainer()->get(CriticiteCalculator::class);
         $this->signalementQualificationUpdater = self::getContainer()->get(SignalementQualificationUpdater::class);
         $this->fileManager = self::getContainer()->get(FileManager::class);
-
+        $this->filesystemOperator = $this->createMock(FilesystemOperator::class);
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
     }
 
@@ -70,6 +73,7 @@ class SignalementImportLoaderTest extends KernelTestCase
             $this->criticiteCalculator,
             $this->signalementQualificationUpdater,
             $this->fileManager,
+            $this->filesystemOperator
         );
 
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '01']);
