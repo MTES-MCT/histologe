@@ -8,7 +8,6 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Repository\SuiviRepository;
-use App\Service\DataGouv\AddressService;
 use App\Service\Esabora\AbstractEsaboraService;
 use App\Service\Esabora\Enum\PersonneType;
 use App\Service\Esabora\Model\DossierMessageSISHPersonne;
@@ -30,15 +29,12 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly ParameterBagInterface $parameterBag,
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly AddressService $addressService,
     ) {
         parent::__construct($this->uploadHandlerService);
     }
 
     public function supports(Affectation $affectation): bool
     {
-        $partner = $affectation->getPartner();
-
         return $this->isEsaboraPartnerActive($affectation)
             && PartnerType::ARS === $affectation->getPartner()->getType();
     }
@@ -70,13 +66,21 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             : null;
 
         $etage = $signalement->getEtageOccupant() ? EtageParser::parse($signalement->getEtageOccupant()) : null;
-        $escalier = $signalement->getEscalierOccupant() ? EscalierParser::parse($signalement->getEscalierOccupant()) : null;
-        $numPorte = $signalement->getNumAppartOccupant() ? substr($signalement->getNumAppartOccupant(), 0, 30) : null;
+        $escalier = $signalement->getEscalierOccupant()
+            ? EscalierParser::parse($signalement->getEscalierOccupant())
+            : null;
+        $numPorte = $signalement->getNumAppartOccupant()
+            ? substr($signalement->getNumAppartOccupant(), 0, 30)
+            : null;
         $villeOccupant = $signalement->getVilleOccupant() ? substr($signalement->getVilleOccupant(), 0, 60) : null;
-        $numeroInvariant = $signalement->getNumeroInvariant() ? substr($signalement->getNumeroInvariant(), 0, 12) : null;
-        $typeEnergieLogement = $signalement->getTypeEnergieLogement() ? substr($signalement->getTypeEnergieLogement(), 0, 30) : null;
-        $codeInsee = $signalement->getInseeOccupant() ?: $this->addressService->getCodeInsee($signalement->getAdresseOccupant().' '.$signalement->getCpOccupant().' '.$signalement->getVilleOccupant());
-        $codeInsee = $codeInsee ? substr($codeInsee, 0, 5) : null;
+        $numeroInvariant = $signalement->getNumeroInvariant()
+            ? substr($signalement->getNumeroInvariant(), 0, 12)
+            : null;
+        $typeEnergieLogement = $signalement->getTypeEnergieLogement()
+            ? substr($signalement->getTypeEnergieLogement(), 0, 30)
+            : null;
+
+        $codeInsee = $signalement->getInseeOccupant() ? substr($signalement->getInseeOccupant(), 0, 5) : null;
 
         return (new DossierMessageSISH())
             ->setUrl($partner->getEsaboraUrl())
@@ -151,7 +155,9 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
     ): ?DossierMessageSISHPersonne {
         if (PersonneType::OCCUPANT === $personneType) {
             $prenom = $signalement->getPrenomOccupant() ? substr($signalement->getPrenomOccupant(), 0, 30) : null;
-            $tel = $signalement->getTelOccupantDecoded(true) ? substr($signalement->getTelOccupantDecoded(true), 0, 20) : null;
+            $tel = $signalement->getTelOccupantDecoded(true)
+                ? substr($signalement->getTelOccupantDecoded(true), 0, 20)
+                : null;
 
             return (new DossierMessageSISHPersonne())
                 ->setType(PersonneType::OCCUPANT->value)
@@ -162,7 +168,9 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         }
 
         if (PersonneType::PROPRIETAIRE === $personneType && !empty($signalement->getNomProprio())) {
-            $tel = $signalement->getTelProprioDecoded(true) ? substr($signalement->getTelProprioDecoded(true), 0, 20) : null;
+            $tel = $signalement->getTelProprioDecoded(true)
+                ? substr($signalement->getTelProprioDecoded(true), 0, 20)
+                : null;
 
             return (new DossierMessageSISHPersonne())
                 ->setType(PersonneType::PROPRIETAIRE->value)
@@ -174,9 +182,15 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
 
         if (PersonneType::DECLARANT === $personneType && !empty($signalement->getLienDeclarantOccupant())) {
             $prenom = $signalement->getPrenomDeclarant() ? substr($signalement->getPrenomDeclarant(), 0, 30) : null;
-            $tel = $signalement->getTelDeclarantDecoded(true) ? substr($signalement->getTelDeclarantDecoded(true), 0, 20) : null;
-            $structure = $signalement->getStructureDeclarant() ? substr($signalement->getStructureDeclarant(), 0, 150) : null;
-            $lienOccupant = $signalement->getLienDeclarantOccupant() ? substr($signalement->getLienDeclarantOccupant(), 0, 150) : null;
+            $tel = $signalement->getTelDeclarantDecoded(true)
+                ? substr($signalement->getTelDeclarantDecoded(true), 0, 20)
+                : null;
+            $structure = $signalement->getStructureDeclarant()
+                ? substr($signalement->getStructureDeclarant(), 0, 150)
+                : null;
+            $lienOccupant = $signalement->getLienDeclarantOccupant()
+                ? substr($signalement->getLienDeclarantOccupant(), 0, 150)
+                : null;
 
             return (new DossierMessageSISHPersonne())
                 ->setType(PersonneType::DECLARANT->value)

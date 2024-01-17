@@ -20,8 +20,6 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
 
     public function supports(Affectation $affectation): bool
     {
-        $partner = $affectation->getPartner();
-
         return $this->isEsaboraPartnerActive($affectation)
             && PartnerType::COMMUNE_SCHS === $affectation->getPartner()->getType();
     }

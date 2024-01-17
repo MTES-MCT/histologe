@@ -77,9 +77,16 @@ class DossierMessageFactoryTest extends KernelTestCase
         $this->assertNotEmpty($dossierMessage->getDesordresCritere());
         $this->assertNotEmpty($dossierMessage->getDesordresPrecision());
 
-        $this->assertMatchesRegularExpression(self::PATTERN_EXPECTED_DATE_FORMAT, $dossierMessage->getDateDepotSignalement());
-        $this->assertMatchesRegularExpression(self::PATTERN_EXPECTED_DATE_FORMAT, $dossierMessage->getDateAffectationSignalement());
-        $this->assertMatchesRegularExpression(self::PATTERN_EXPECTED_DATE_FORMAT, $dossierMessage->getDateVisite());
+        $this->assertMatchesRegularExpression(
+            self::PATTERN_EXPECTED_DATE_FORMAT,
+            $dossierMessage->getDateDepotSignalement());
+        $this->assertMatchesRegularExpression(
+            self::PATTERN_EXPECTED_DATE_FORMAT,
+            $dossierMessage->getDateAffectationSignalement());
+        $this->assertMatchesRegularExpression(
+            self::PATTERN_EXPECTED_DATE_FORMAT,
+            $dossierMessage->getDateVisite()
+        );
 
         $this->assertCount(2, explode(',', $dossierMessage->getCourrielContributeurs()));
     }
