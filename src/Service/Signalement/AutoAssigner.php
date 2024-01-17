@@ -12,7 +12,7 @@ use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
-use App\Messenger\EsaboraBus;
+use App\Messenger\InterconnectionBus;
 use App\Repository\PartnerRepository;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
@@ -28,7 +28,7 @@ class AutoAssigner
         private PartnerRepository $partnerRepository,
         private UserManager $userManager,
         private ParameterBagInterface $parameterBag,
-        private EsaboraBus $esaboraBus,
+        private InterconnectionBus $interconnectionBus,
     ) {
     }
 
@@ -61,14 +61,18 @@ class AutoAssigner
 
                     /** @var Partner $partner */
                     foreach ($partners as $partner) {
-                        $affectation = $this->affectationManager->createAffectationFrom($signalement, $partner, $adminUser);
+                        $affectation = $this->affectationManager->createAffectationFrom(
+                            $signalement,
+                            $partner,
+                            $adminUser
+                        );
                         ++$this->countAffectations;
                         if ($affectation instanceof Affectation) {
                             $this->affectationManager->persist($affectation);
-                            if ($partner->getEsaboraToken() && $partner->getEsaboraUrl() && $partner->isEsaboraActive()) {
+                            if ($partner->canSyncWithEsabora()) {
                                 $affectation->setIsSynchronized(true);
                                 $this->affectationManager->save($affectation, false);
-                                $this->esaboraBus->dispatch($affectation);
+                                $this->interconnectionBus->dispatch($affectation);
                             } else {
                                 $this->affectationManager->save($affectation, false);
                             }

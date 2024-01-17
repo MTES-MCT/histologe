@@ -21,27 +21,28 @@ class Partner
 
     public const DEFAULT_PARTNER = 'Administrateurs Histologe ALL';
     public const MAX_LIST_PAGINATION = 50;
+    public const TERRITORY_ZIP_ALLOWED = [62]; // Should be replaced by CODE_INSEE_ALLOWED
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
-    private $nom;
+    private ?string $nom = null;
 
     #[ORM\OneToMany(mappedBy: 'partner', targetEntity: User::class, cascade: ['persist'])]
-    private $users;
+    private Collection $users;
 
     #[ORM\Column(type: 'boolean')]
-    private $isArchive;
+    private bool $isArchive = false;
 
     #[ORM\Column(type: 'json')]
-    private $insee = [];
+    private array $insee = [];
 
     #[ORM\OneToMany(mappedBy: 'partner', targetEntity: Affectation::class, orphanRemoval: true)]
-    private $affectations;
+    private Collection $affectations;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     #[Assert\Email]
@@ -49,14 +50,14 @@ class Partner
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Url]
-    private $esaboraUrl;
+    private ?string $esaboraUrl = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $esaboraToken;
+    private ?string $esaboraToken = null;
 
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'partners')]
     #[ORM\JoinColumn(nullable: true)]
-    private $territory;
+    private ?Territory $territory = null;
 
     #[ORM\Column(type: 'string', enumType: PartnerType::class, nullable: true)]
     private ?PartnerType $type = null;
@@ -337,12 +338,29 @@ class Partner
         return $this;
     }
 
-    public function getEmailUsers(): array
+    public function getEmailActiveUsers(): array
     {
         $emailUsers = $this->users->map(function (User $user) {
             return User::STATUS_ARCHIVE !== $user->getStatut() ? $user->getEmail() : null;
         })->toArray();
 
         return array_filter($emailUsers);
+    }
+
+    public function canSyncWithEsabora(): bool
+    {
+        return $this->esaboraToken
+            && $this->esaboraUrl
+            && $this->isEsaboraActive;
+    }
+
+    public function canSyncWithOilhi(): bool
+    {
+        return $this->hasCompetence(Qualification::RSD)
+            && PartnerType::COMMUNE_SCHS === $this->type
+            && \in_array(
+                $this->territory->getZip(),
+                self::TERRITORY_ZIP_ALLOWED
+            );
     }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Messenger\Message\Oilhi;
 
-final class DossierMessage
+use App\Messenger\Message\DossierMessageInterface;
+
+final class DossierMessage implements DossierMessageInterface
 {
     private ?string $signalementUrl = null;
     private ?int $signalementId = null;

@@ -3,7 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Enum\PartnerType;
-use App\Messenger\EsaboraBus;
+use App\Messenger\InterconnectionBus;
 use App\Repository\AffectationRepository;
 use App\Repository\TerritoryRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -26,7 +26,7 @@ class PushEsaboraDossierCommand extends Command
     public function __construct(
         private AffectationRepository $affectationRepository,
         private TerritoryRepository $territoryRepository,
-        private EsaboraBus $esaboraBus,
+        private InterconnectionBus $esaboraBus,
         #[Autowire(param: 'kernel.environment')]
         private string $env
     ) {

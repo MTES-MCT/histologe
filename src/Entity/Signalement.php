@@ -1382,7 +1382,7 @@ class Signalement
 
     /**
      * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Utilisez @see setProfileDeclarant() afin de connaitre la situation de l'occupant (LOCATAIRE, BAILLEUR_OCCUPANT)
+     * Utilisez @see getProfileDeclarant() afin de connaitre la situation de l'occupant (LOCATAIRE, BAILLEUR_OCCUPANT)
      */
     public function getSituationOccupant(): ?string
     {
@@ -2198,7 +2198,7 @@ class Signalement
     {
         /** @var SignalementQualification $signalementQualification */
         foreach ($this->signalementQualifications as $signalementQualification) {
-            if ($signalementQualification->getQualification()->name === $qualification->name) {
+            if ($signalementQualification->getQualification() === $qualification) {
                 return true;
             }
         }

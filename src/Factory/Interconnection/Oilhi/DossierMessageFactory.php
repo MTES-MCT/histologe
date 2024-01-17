@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Factory\Oilhi;
+namespace App\Factory\Interconnection\Oilhi;
 
 use App\Entity\Affectation;
 use App\Entity\Critere;
@@ -9,19 +9,19 @@ use App\Entity\DesordreCategorie;
 use App\Entity\DesordreCritere;
 use App\Entity\DesordrePrecision;
 use App\Entity\Enum\OccupantLink;
-use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Situation;
+use App\Factory\Interconnection\DossierMessageFactoryInterface;
 use App\Messenger\Message\Oilhi\DossierMessage;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
-class DossierMessageFactory
+class DossierMessageFactory implements DossierMessageFactoryInterface
 {
-    public const TERRITORY_ZIP_ALLOWED = [62];
+    public const FORMAT_DATE = 'Y-m-d';
 
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
@@ -38,8 +38,7 @@ class DossierMessageFactory
 
         return $this->featureEnable
             && $signalement->hasQualificaton(Qualification::RSD)
-            && PartnerType::COMMUNE_SCHS === $partner->getType()
-            && \in_array($partner->getTerritory()->getZip(), self::TERRITORY_ZIP_ALLOWED);
+            && $partner->canSyncWithOilhi();
     }
 
     public function createInstance(Affectation $affectation): DossierMessage
@@ -58,10 +57,14 @@ class DossierMessageFactory
                 'back_signalement_view',
                 ['uuid' => $uuid],
                 UrlGeneratorInterface::ABSOLUTE_URL))
-            ->setDateDepotSignalement($signalement->getValidatedAt()->format('Y-m-d'))
-            ->setDateAffectationSignalement($affectation->getCreatedAt()->format('Y-m-d'))
+            ->setDateDepotSignalement(
+                null !== $signalement->getValidatedAt()
+                    ? $signalement->getValidatedAt()->format(self::FORMAT_DATE)
+                    : $signalement->getCreatedAt()->format(self::FORMAT_DATE)
+            )
+            ->setDateAffectationSignalement($affectation->getCreatedAt()->format(self::FORMAT_DATE))
             ->setCourrielPartenaire($partner->getEmail())
-            ->setCourrielContributeurs(implode(',', $partner->getEmailUsers()))
+            ->setCourrielContributeurs(implode(',', $partner->getEmailActiveUsers()))
             ->setAdresseSignalement($signalement->getAdresseOccupant())
             ->setCommuneSignalement($signalement->getVilleOccupant())
             ->setCodePostalSignalement($signalement->getCpOccupant())
@@ -103,7 +106,7 @@ class DossierMessageFactory
             return null;
         }
 
-        $interventionData['date_visite'] = $intervention->getScheduledAt()->format('Y-m-d');
+        $interventionData['date_visite'] = $intervention->getScheduledAt()->format(self::FORMAT_DATE);
         $interventionData['operateur_visite'] = $intervention->getDoneBy() ?? $intervention->getPartner()->getNom();
         $interventionData['rapport_visite'] = $this->urlGenerator->generate(
             'show_uploaded_file',
@@ -116,9 +119,9 @@ class DossierMessageFactory
 
     /**
      * @return array Un tableau associatif contenant les libéllés des désordres pour ancien et nouveau formulaire
-     *               - 'categories': Les catégories de désordres.
+     *               - 'categories': Les catégories de désordres/les situations.
      *               - 'criteres': Les critères de désordres.
-     *               - 'precisions': Les précisions sur les désordres.
+     *               - 'precisions': Les précisions sur les désordres/les criticités.
      */
     private function buildDesordresData(Signalement $signalement): array
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Factory\Esabora;
+namespace App\Factory\Interconnection\Esabora;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
@@ -20,7 +20,10 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
 
     public function supports(Affectation $affectation): bool
     {
-        return PartnerType::COMMUNE_SCHS === $affectation->getPartner()->getType();
+        $partner = $affectation->getPartner();
+
+        return $this->isEsaboraPartnerActive($affectation)
+            && PartnerType::COMMUNE_SCHS === $affectation->getPartner()->getType();
     }
 
     public function createInstance(Affectation $affectation): DossierMessageSCHS

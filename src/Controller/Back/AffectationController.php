@@ -7,12 +7,12 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\AffectationAnsweredEvent;
-use App\Factory\Oilhi\DossierMessageFactory;
+use App\Factory\Interconnection\Oilhi\DossierMessageFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
-use App\Messenger\EsaboraBus;
+use App\Messenger\InterconnectionBus;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SuiviRepository;
@@ -23,7 +23,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/bo/signalements')]
@@ -33,9 +32,8 @@ class AffectationController extends AbstractController
         private SignalementManager $signalementManager,
         private AffectationManager $affectationManager,
         private PartnerRepository $partnerRepository,
-        private EsaboraBus $esaboraBus,
+        private InterconnectionBus $interconnectionBus,
         private EventDispatcherInterface $eventDispatcher,
-        private MessageBusInterface $messageBus,
         private DossierMessageFactory $dossierMessageFactory
     ) {
     }
@@ -65,8 +63,7 @@ class AffectationController extends AbstractController
                     );
                     if ($affectation instanceof Affectation) {
                         $this->affectationManager->persist($affectation);
-                        $this->dispatchDossierEsabora($affectation);
-                        $this->dispatchDossierOilhi($affectation);
+                        $this->dispatchDossier($affectation);
                     }
                 }
                 $this->affectationManager->removeAffectationsFrom($signalement, $postedPartner, $partnersIdToRemove);
@@ -175,20 +172,13 @@ class AffectationController extends AbstractController
         }
     }
 
-    private function dispatchDossierEsabora(Affectation $affectation): void
+    private function dispatchDossier(Affectation $affectation): void
     {
         $partner = $affectation->getPartner();
-        if ($partner->getEsaboraToken() && $partner->getEsaboraUrl() && $partner->isEsaboraActive()) {
+        if ($partner->canSyncWithEsabora() || $partner->canSyncWithOilhi()) {
             $affectation->setIsSynchronized(true);
             $this->affectationManager->save($affectation);
-            $this->esaboraBus->dispatch($affectation);
-        }
-    }
-
-    private function dispatchDossierOilhi(Affectation $affectation): void
-    {
-        if ($this->dossierMessageFactory->supports($affectation)) {
-            $this->messageBus->dispatch($this->dossierMessageFactory->createInstance($affectation));
+            $this->interconnectionBus->dispatch($affectation);
         }
     }
 }

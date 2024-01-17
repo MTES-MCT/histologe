@@ -7,6 +7,7 @@ use App\Manager\JobEventManager;
 use App\Messenger\Message\Oilhi\DossierMessage;
 use App\Repository\PartnerRepository;
 use App\Service\Oilhi\HookZapierService;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -26,14 +27,14 @@ class DossierMessageHandler
         $response = $this->hookZapierService->pushDossier($dossierMessage);
         $partner = $this->partnerRepository->find($partnerId = $dossierMessage->getPartnerId());
 
+        $status = Response::HTTP_OK === $response->getStatusCode() ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED;
+
         $this->jobEventManager->createJobEvent(
             service: HookZapierService::TYPE_SERVICE,
             action: HookZapierService::ACTION_PUSH_DOSSIER,
             message: $this->serializer->serialize($dossierMessage, 'json'),
-            response: 200 === $response->getStatusCode()
-                ? $response->getContent(throw: false)
-                : $response->getContent(),
-            status: 200 === $response->getStatusCode() ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,
+            response: $response->getContent(),
+            status: $status,
             codeStatus: $response->getStatusCode(),
             signalementId: $dossierMessage->getSignalementId(),
             partnerId: $partnerId,
