@@ -28,6 +28,9 @@ class DesordrePrecision
     #[ORM\Column(nullable: true)]
     private ?bool $isSuroccupation = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $isInsalubrite = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $label = null;
 
@@ -86,6 +89,18 @@ class DesordrePrecision
     public function setIsSuroccupation(?bool $isSuroccupation): self
     {
         $this->isSuroccupation = $isSuroccupation;
+
+        return $this;
+    }
+
+    public function getIsInsalubrite(): ?bool
+    {
+        return $this->isInsalubrite;
+    }
+
+    public function setIsInsalubrite(?bool $isInsalubrite): self
+    {
+        $this->isInsalubrite = $isInsalubrite;
 
         return $this;
     }

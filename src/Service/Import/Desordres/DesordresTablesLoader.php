@@ -118,6 +118,7 @@ class DesordresTablesLoader
         $data['coef'] = $item[DesordresTablesHeader::PRECISION_COEFF];
         $data['danger'] = $item[DesordresTablesHeader::PRECISION_DANGER];
         $data['suroccupation'] = $item[DesordresTablesHeader::PRECISION_SUROCCUPATION];
+        $data['insalubrite'] = $item[DesordresTablesHeader::PRECISION_INSALUBRITE];
         $data['label'] = $item[DesordresTablesHeader::PRECISION_CONDITION].' - '
         .$item[DesordresTablesHeader::PRECISION_PIECE];
         $data['procedure'] = $item[DesordresTablesHeader::PRECISION_PROCEDURES];

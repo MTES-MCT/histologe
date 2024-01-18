@@ -17,4 +17,5 @@ class DesordresTablesHeader
     public const PRECISION_DANGER = 'Danger';
     public const PRECISION_PROCEDURES = 'Procédures';
     public const PRECISION_SUROCCUPATION = 'Suroccupation';
+    public const PRECISION_INSALUBRITE = 'Insalubrité';
 }
