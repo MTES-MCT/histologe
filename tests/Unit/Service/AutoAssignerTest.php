@@ -9,7 +9,7 @@ use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
-use App\Messenger\EsaboraBus;
+use App\Messenger\InterconnectionBus;
 use App\Service\Signalement\AutoAssigner;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -48,7 +48,7 @@ class AutoAssignerTest extends KernelTestCase
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
         $userManager = $this->createMock(UserManager::class);
         $parameterBag = $this->createMock(ParameterBagInterface::class);
-        $esaboraBus = $this->createMock(EsaboraBus::class);
+        $esaboraBus = $this->createMock(InterconnectionBus::class);
         $autoAssigner = new AutoAssigner(
             $signalementManager,
             $this->affectationManager,

@@ -167,3 +167,10 @@ affectations:
     answered_by: "admin-03@histologe.fr"
     affected_by: "admin-03@histologe.fr"
     territory: "Bouches-du-Rhône"
+  -
+    signalement: 2024-01
+    partner: "partenaire-62-01@histologe.fr"
+    statut: 0
+    answered_by: "admin-01@histologe.fr"
+    affected_by: "admin-01@histologe.fr"
+    territory: "Pas-de-Calais"

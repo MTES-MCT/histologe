@@ -5,7 +5,7 @@ namespace App\Tests\Unit\Command;
 use App\Command\PushEsaboraDossierCommand;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Territory;
-use App\Messenger\EsaboraBus;
+use App\Messenger\InterconnectionBus;
 use App\Repository\AffectationRepository;
 use App\Repository\TerritoryRepository;
 use App\Tests\FixturesHelper;
@@ -21,13 +21,13 @@ class PushEsaboraDossierCommandTest extends TestCase
     private MockObject|AffectationRepository $affectationRepository;
     private MockObject|TerritoryRepository $territoryRepository;
 
-    private MockObject|EsaboraBus $esaboraBus;
+    private MockObject|InterconnectionBus $esaboraBus;
 
     protected function setUp(): void
     {
         $this->affectationRepository = $this->createMock(AffectationRepository::class);
         $this->territoryRepository = $this->createMock(TerritoryRepository::class);
-        $this->esaboraBus = $this->createMock(EsaboraBus::class);
+        $this->esaboraBus = $this->createMock(InterconnectionBus::class);
         parent::setUp();
     }
 

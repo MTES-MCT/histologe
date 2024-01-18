@@ -436,3 +436,16 @@ partners:
     insee: "[\"\"]"
     territory: "Isère"
     type: "DDT_M"
+  -
+    nom: "Partenaire 62-01"
+    email: "partenaire-62-01@histologe.fr"
+    is_archive: 0
+    insee: "[\"\"]"
+    territory: "Pas-de-Calais"
+    type: "COMMUNE_SCHS"
+    competence:
+      - 'ACCOMPAGNEMENT_SOCIAL'
+      - 'ACCOMPAGNEMENT_TRAVAUX'
+      - 'FSL'
+      - 'VISITES'
+      - 'RSD'

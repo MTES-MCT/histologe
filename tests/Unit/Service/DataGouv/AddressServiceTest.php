@@ -22,12 +22,6 @@ class AddressServiceTest extends TestCase
         $this->addressService = new AddressService($mockHttpClient, $this->createMock(LoggerInterface::class));
     }
 
-    public function testGetCodeInsee(): void
-    {
-        $codeInsee = $this->addressService->getCodeInsee(self::ADDRESS);
-        $this->assertEquals('44179', $codeInsee);
-    }
-
     public function testSearchAddress(): void
     {
         $addresses = $this->addressService->searchAddress(self::ADDRESS);

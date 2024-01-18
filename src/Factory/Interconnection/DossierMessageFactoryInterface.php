@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Factory\Esabora;
+namespace App\Factory\Interconnection;
 
 use App\Entity\Affectation;
 use App\Messenger\Message\DossierMessageInterface;

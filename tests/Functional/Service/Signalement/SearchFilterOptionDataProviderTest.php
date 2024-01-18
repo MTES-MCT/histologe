@@ -57,7 +57,6 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
         ];
 
         $actualData = $this->searchFilterOptionDataProvider->getData();
-
         $this->assertSameSize($expectedData['criteres'], $actualData['criteres']);
         $this->assertSameSize($expectedData['territories'], $actualData['territories']);
         $this->assertSameSize($expectedData['partners'], $actualData['partners']);

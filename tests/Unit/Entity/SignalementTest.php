@@ -2,28 +2,40 @@
 
 namespace App\Tests\Unit\Entity;
 
-use App\Entity\Signalement;
+use App\Entity\Enum\Qualification;
+use App\Entity\SignalementQualification;
+use App\Tests\FixturesHelper;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SignalementTest extends KernelTestCase
 {
-    public function testSignalementHasNDE(): void
+    use FixturesHelper;
+
+    public function testSignalementHasRSD(): void
     {
-        self::bootKernel();
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $signalement = $this->getSignalement($this->getTerritory('Pas-de-calais', '62'));
+        $signalement
+            ->addSignalementQualification((new SignalementQualification())->setQualification(
+                Qualification::NON_DECENCE))
+            ->addSignalementQualification((new SignalementQualification())->setQualification(
+                Qualification::RSD))
+            ->addSignalementQualification((new SignalementQualification())->setQualification(
+                Qualification::NON_DECENCE_ENERGETIQUE));
 
-        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2023-8']);
-
-        $this->assertTrue($signalement->hasNDE());
+        $this->assertTrue($signalement->hasQualificaton(Qualification::RSD));
     }
 
-    public function testSignalementHasNotNDE(): void
+    public function testSignalementHasNotRSD(): void
     {
-        self::bootKernel();
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $signalement = $this->getSignalement($this->getTerritory('Pas-de-calais', '62'));
+        $signalement
+            ->addSignalementQualification((new SignalementQualification())->setQualification(
+                Qualification::NON_DECENCE))
+            ->addSignalementQualification((new SignalementQualification())->setQualification(
+                Qualification::NON_DECENCE))
+            ->addSignalementQualification((new SignalementQualification())->setQualification(
+                Qualification::NON_DECENCE_ENERGETIQUE));
 
-        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2023-6']);
-
-        $this->assertFalse($signalement->hasNDE());
+        $this->assertFalse($signalement->hasQualificaton(Qualification::RSD));
     }
 }

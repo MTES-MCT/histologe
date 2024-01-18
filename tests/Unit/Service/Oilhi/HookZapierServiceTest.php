@@ -21,7 +21,7 @@ class HookZapierServiceTest extends TestCase
         $this->logger = $this->createMock(LoggerInterface::class);
     }
 
-    public function testCatch()
+    public function testPushDossierWithSuccess()
     {
         $faker = Factory::create();
         $response = [
