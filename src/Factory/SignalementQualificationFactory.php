@@ -20,13 +20,19 @@ class SignalementQualificationFactory
     public function createInstanceFrom(
         Qualification $qualification,
         QualificationStatus $qualificationStatus,
-        array $listCriticites = [],
+        ?array $listCriticiteIds = null,
+        ?array $listDesordrePrecisionsIds = null,
         bool $isPostVisite = false
     ): SignalementQualification {
         $signalementQualification = new SignalementQualification();
         $signalementQualification->setQualification($qualification);
         $signalementQualification->setStatus($qualificationStatus);
-        $signalementQualification->setCriticites($listCriticites);
+        if (null !== $listCriticiteIds) {
+            $signalementQualification->setCriticites($listCriticiteIds);
+        }
+        if (null !== $listDesordrePrecisionsIds) {
+            $signalementQualification->setDesordrePrecisionIds($listDesordrePrecisionsIds);
+        }
         $signalementQualification->setIsPostVisite($isPostVisite);
 
         return $signalementQualification;
@@ -77,7 +83,9 @@ class SignalementQualificationFactory
             dpe: $dataHasDPEToSave
         );
         $signalementQualification->setDetails($qualificationNDERequest->getDetails());
-        $signalementQualification->setStatus($this->qualificationStatusService->getNDEStatus($signalementQualification));
+        $signalementQualification->setStatus(
+            $this->qualificationStatusService->getNDEStatus($signalementQualification)
+        );
 
         if (null == $signalement->getCreatedFrom()) {
             $signalementQualification->setCriticites($listNDECriticites);

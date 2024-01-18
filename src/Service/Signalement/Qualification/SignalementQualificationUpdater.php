@@ -63,15 +63,15 @@ class SignalementQualificationUpdater
     {
         if ($addNonDecence) {
             $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
-                Qualification::NON_DECENCE,
-                QualificationStatus::NON_DECENCE_CHECK
+                qualification: Qualification::NON_DECENCE,
+                qualificationStatus: QualificationStatus::NON_DECENCE_CHECK
             );
             $signalement->addSignalementQualification($signalementQualification);
         }
         if ($addRSD) {
             $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
-                Qualification::RSD,
-                QualificationStatus::RSD_CHECK
+                qualification: Qualification::RSD,
+                qualificationStatus: QualificationStatus::RSD_CHECK
             );
             $signalement->addSignalementQualification($signalementQualification);
         }
@@ -113,9 +113,9 @@ class SignalementQualificationUpdater
             } elseif ($statusInsalubrite !== $existingQualificationInsalubrite->getStatus()) {
                 $signalement->removeSignalementQualification($existingQualificationInsalubrite);
                 $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
-                    Qualification::INSALUBRITE,
-                    $statusInsalubrite,
-                    $listCriticiteInsalubrite
+                    qualification: Qualification::INSALUBRITE,
+                    qualificationStatus: $statusInsalubrite,
+                    listCriticiteIds: $listCriticiteInsalubrite
                 );
                 $signalement->addSignalementQualification($signalementQualification);
             }
@@ -123,9 +123,9 @@ class SignalementQualificationUpdater
         // If not added yet, but should be added
         } elseif (!empty($statusInsalubrite)) {
             $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
-                Qualification::INSALUBRITE,
-                $statusInsalubrite,
-                $listCriticiteInsalubrite
+                qualification: Qualification::INSALUBRITE,
+                qualificationStatus: $statusInsalubrite,
+                listCriticiteIds: $listCriticiteInsalubrite
             );
             $signalement->addSignalementQualification($signalementQualification);
         }
@@ -188,9 +188,9 @@ class SignalementQualificationUpdater
                 } else {
                     $statusQualification = $this->calculateQualificationStatus($signalement, $qualification);
                     $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
-                        $qualification,
-                        $statusQualification,
-                        $linkedDesordrePrecisions
+                        qualification: $qualification,
+                        qualificationStatus: $statusQualification,
+                        listDesordrePrecisionsIds: $linkedDesordrePrecisions
                     );
                 }
                 if (isset($signalementQualification)) {
@@ -327,11 +327,19 @@ class SignalementQualificationUpdater
             }
         // If not added yet, but should be added
         } elseif (!empty($listCriticiteDanger)) {
-            $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
-                Qualification::DANGER,
-                QualificationStatus::DANGER_CHECK,
-                $listCriticiteDanger
-            );
+            if (null === $signalement->getCreatedFrom()) {
+                $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
+                    qualification: Qualification::DANGER,
+                    qualificationStatus: QualificationStatus::DANGER_CHECK,
+                    listCriticiteIds: $listCriticiteDanger
+                );
+            } else {
+                $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
+                    qualification: Qualification::DANGER,
+                    qualificationStatus: QualificationStatus::DANGER_CHECK,
+                    listDesordrePrecisionsIds: $listCriticiteDanger
+                );
+            }
             $signalement->addSignalementQualification($signalementQualification);
         }
     }
@@ -374,9 +382,9 @@ class SignalementQualificationUpdater
         // If not added yet, but should be added
         } elseif (!empty($listPrecisionsSuroccupation)) {
             $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
-                Qualification::SUROCCUPATION,
-                QualificationStatus::SUROCCUPATION_CHECK,
-                $listPrecisionsSuroccupation
+                qualification: Qualification::SUROCCUPATION,
+                qualificationStatus: QualificationStatus::SUROCCUPATION_CHECK,
+                listDesordrePrecisionsIds: $listPrecisionsSuroccupation
             );
             $signalement->addSignalementQualification($signalementQualification);
         }
