@@ -422,7 +422,7 @@ class SignalementManager extends AbstractManager
     public function updateFromCompositionLogementRequest(Signalement $signalement, CompositionLogementRequest $compositionLogementRequest)
     {
         $signalement->setNatureLogement($compositionLogementRequest->getType());
-        $signalement->setSuperficie($compositionLogementRequest->getSuperficie());
+        $signalement->setSuperficie(!empty($compositionLogementRequest->getSuperficie()) ? $compositionLogementRequest->getSuperficie() : null);
 
         $typeCompositionLogement = new TypeCompositionLogement();
         if (!empty($signalement->getTypeCompositionLogement())) {
