@@ -41,6 +41,8 @@ class LoadDesordrePrecisionData extends Fixture implements OrderedFixtureInterfa
 
         if (isset($row['is_insalubrite'])) {
             $desordrePrecision->setIsInsalubrite($row['is_insalubrite']);
+        } else {
+            $desordrePrecision->setIsInsalubrite(false);
         }
 
         if (isset($row['qualification'])) {

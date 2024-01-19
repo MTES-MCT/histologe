@@ -22,6 +22,7 @@ class DesordrePrecisionManager extends AbstractManager
      *                    - 'coef' (string): The coef of the DesordrePrecision
      *                    - 'danger' (string): 'Oui' if is_danger.
      *                    - 'suroccupation' (string): 'Oui' if is_suroccupation.
+     *                    - 'insalubrite' (string): 'Oui' if is_insalubrite.
      *                    - 'procedure' (string): The List of Qualification .
      */
     public function createOrUpdate(string $slug, array $data): DesordrePrecision

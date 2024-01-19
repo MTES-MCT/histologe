@@ -6,6 +6,7 @@ use App\Entity\Enum\ProcedureType;
 use App\Entity\Signalement;
 use App\Factory\SignalementQualificationFactory;
 use App\Manager\SignalementManager;
+use App\Manager\SignalementQualificationManager;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,6 +27,7 @@ class SignalementQualificationUpdaterTest extends KernelTestCase
         $signalementQualificationFactory = $this->createMock(SignalementQualificationFactory::class);
         $signalementManager = $this->createMock(SignalementManager::class);
         $qualificationStatusService = $this->createMock(QualificationStatusService::class);
+        $signalementQualificationManager = $this->createMock(SignalementQualificationManager::class);
 
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-1']);
@@ -34,7 +36,8 @@ class SignalementQualificationUpdaterTest extends KernelTestCase
         $signalementQualificationUpdater = new SignalementQualificationUpdater(
             $signalementQualificationFactory,
             $signalementManager,
-            $qualificationStatusService
+            $qualificationStatusService,
+            $signalementQualificationManager
         );
         $signalementQualificationUpdater->updateQualificationFromVisiteProcedureList($signalement, $procedureTypes);
 
@@ -46,6 +49,7 @@ class SignalementQualificationUpdaterTest extends KernelTestCase
         $signalementQualificationFactory = $this->createMock(SignalementQualificationFactory::class);
         $signalementManager = $this->createMock(SignalementManager::class);
         $qualificationStatusService = $this->createMock(QualificationStatusService::class);
+        $signalementQualificationManager = $this->createMock(SignalementQualificationManager::class);
 
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-1']);
@@ -54,7 +58,8 @@ class SignalementQualificationUpdaterTest extends KernelTestCase
         $signalementQualificationUpdater = new SignalementQualificationUpdater(
             $signalementQualificationFactory,
             $signalementManager,
-            $qualificationStatusService
+            $qualificationStatusService,
+            $signalementQualificationManager
         );
         $signalementQualificationUpdater->updateQualificationFromVisiteProcedureList($signalement, $procedureTypes);
 

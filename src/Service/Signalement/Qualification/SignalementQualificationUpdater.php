@@ -9,6 +9,7 @@ use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Factory\SignalementQualificationFactory;
 use App\Manager\SignalementManager;
+use App\Manager\SignalementQualificationManager;
 
 class SignalementQualificationUpdater
 {
@@ -16,6 +17,7 @@ class SignalementQualificationUpdater
         private readonly SignalementQualificationFactory $signalementQualificationFactory,
         private readonly SignalementManager $signalementManager,
         private readonly QualificationStatusService $qualificationStatusService,
+        private readonly SignalementQualificationManager $signalementQualificationManager,
     ) {
     }
 
@@ -50,7 +52,8 @@ class SignalementQualificationUpdater
             $this->addNonDecenceAndRSDQualification($signalement, $addNonDecence, $addRSD);
             $this->updateInsalubriteQualification($signalement, $existingQualificationInsalubrite);
         } else {
-            $this->updateSignalementQualificationFromDesordrePrecisions($signalement);
+            $this->deleteSuspicionQualification($signalement);
+            $this->addQualificationsFromScore($signalement);
             $this->updateSuroccupationQualification($signalement, $existingQualificationSuroccupation);
         }
         $this->updateDangerQualification($signalement, $existingQualificationDanger);
@@ -131,74 +134,260 @@ class SignalementQualificationUpdater
         }
     }
 
-    /**
-     * First remove (or update) old and inappropriate signalement qualification,
-     * then apply DesordrePrecision qualifications to Signalement.
-     */
-    private function updateSignalementQualificationFromDesordrePrecisions(
+    private function deleteSuspicionQualification(
         Signalement $signalement,
-    ): void {
+    ) {
         /**
          * @var SignalementQualification[] $existingSignalementQualifications
          */
         $existingSignalementQualifications = $signalement->getSignalementQualifications()->toArray();
+        foreach ($existingSignalementQualifications as $existingSignalementQualification) {
+            if (
+                true !== $existingSignalementQualification->isPostVisite()
+                && QualificationStatus::ARCHIVED !== $existingSignalementQualification->getStatus()
+            ) {
+                $existingSignalementQualification->setStatus(QualificationStatus::ARCHIVED);
+            }
+        }
+    }
+
+    private function addQualificationsFromScore(
+        Signalement $signalement,
+    ) {
+        $score = $signalement->getScore();
 
         // concatenate all desordrePrecision qualifications
+        $isInsalubriteObligatoire = false;
         $desordrePrecisionsQualifications = [];
         foreach ($signalement->getDesordrePrecisions() as $desordrePrecision) {
             foreach ($desordrePrecision->getQualification() as $qualification) {
                 $desordrePrecisionsQualifications[$qualification] = $qualification;
             }
-        }
-
-        // remove (or update) old and inappropriate signalement qualification
-        foreach ($existingSignalementQualifications as $existingQualification) {
-            $qualification = $existingQualification->getQualification();
-
-            if (!$this->isQualificationExistsInDesordrePrecisions($desordrePrecisionsQualifications, $qualification)) {
-                $signalement->removeSignalementQualification($existingQualification);
-            } else {
-                $existingQualification->setStatus(
-                    $statusQualification = $this->calculateQualificationStatus(
-                        $signalement,
-                        $qualification,
-                        $existingQualification
-                    )
-                );
-
-                $linkedDesordrePrecisions = $this->getLinkedDesordrePrecisions($signalement, $qualification);
-                $existingQualification->setCriticites($linkedDesordrePrecisions);
-                unset($desordrePrecisionsQualifications[$qualification->value]);
+            if ($desordrePrecision->getIsInsalubrite()) {
+                $isInsalubriteObligatoire = true;
             }
         }
 
-        // apply DesordrePrecision qualifications to Signalement
-        foreach ($desordrePrecisionsQualifications as $qualificationValue) {
-            $qualification = Qualification::tryFrom($qualificationValue);
-            $qualificationExists = $this->isQualificationExistsInSignalement(
-                $existingSignalementQualifications,
-                $qualification
-            );
-
-            if (!$qualificationExists) {
-                $linkedDesordrePrecisions = $this->getLinkedDesordrePrecisions($signalement, $qualification);
-
-                if (Qualification::NON_DECENCE_ENERGETIQUE === $qualification) {
-                    $signalementQualification = $this->createNDEQualification($signalement, $linkedDesordrePrecisions);
-                } else {
-                    $statusQualification = $this->calculateQualificationStatus($signalement, $qualification);
-                    $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
-                        qualification: $qualification,
-                        qualificationStatus: $statusQualification,
-                        listDesordrePrecisionsIds: $linkedDesordrePrecisions
-                    );
-                }
-                if (isset($signalementQualification)) {
+        foreach ($desordrePrecisionsQualifications as $qualification) {
+            $desordrePrecisionsQualifications[$qualification] = $qualification;
+            if (Qualification::NON_DECENCE_ENERGETIQUE->value === $qualification) {
+                $linkedDesordrePrecisions = $this->getLinkedDesordrePrecisions(
+                    $signalement,
+                    Qualification::tryFrom($qualification)
+                );
+                $signalementQualification = $this->createNDEQualification($signalement, $linkedDesordrePrecisions);
+                if (null !== $signalementQualification) {
                     $signalement->addSignalementQualification($signalementQualification);
                 }
-                unset($desordrePrecisionsQualifications[$qualification->value]);
             }
         }
+
+        if (0 == $score) {
+            $this->addQualificationScore0(
+                $signalement,
+                $desordrePrecisionsQualifications,
+                $isInsalubriteObligatoire
+            );
+        } elseif (0 < $score && $score <= 10) {
+            $this->addQualificationScore1To10(
+                $signalement,
+                $desordrePrecisionsQualifications,
+                $isInsalubriteObligatoire
+            );
+        } elseif (10 < $score && $score <= 30) {
+            $this->addQualificationScore11To30(
+                $signalement,
+                $desordrePrecisionsQualifications,
+                $isInsalubriteObligatoire
+            );
+        } elseif (30 < $score && $score <= 50) {
+            $this->addQualificationScore31To50(
+                $signalement,
+                $desordrePrecisionsQualifications,
+            );
+        } else {
+            $this->addQualificationScore51AndAbove(
+                $signalement,
+                $desordrePrecisionsQualifications,
+            );
+        }
+    }
+
+    private function addOneQualification(
+        Signalement $signalement,
+        Qualification $qualification,
+        QualificationStatus $statusQualification
+    ) {
+        $data = [];
+        $data['listDesordrePrecisionsIds'] = $this->getLinkedDesordrePrecisions($signalement, $qualification);
+
+        $signalementQualification = $this->signalementQualificationManager->createOrUpdate(
+            qualification: $qualification,
+            qualificationStatus: $statusQualification,
+            isPostVisite: false,
+            signalement: $signalement,
+            data: $data
+        );
+        $signalement->addSignalementQualification($signalementQualification);
+    }
+
+    private function addQualificationScore0(
+        Signalement $signalement,
+        array $desordrePrecisionsQualifications,
+        bool $isInsalubriteObligatoire,
+    ) {
+        if (\in_array(Qualification::NON_DECENCE->value, $desordrePrecisionsQualifications)) {
+            $this->addOneQualification(
+                $signalement,
+                Qualification::NON_DECENCE,
+                QualificationStatus::NON_DECENCE_CHECK
+            );
+        }
+        if (\in_array(Qualification::RSD->value, $desordrePrecisionsQualifications)) {
+            $this->addOneQualification(
+                $signalement,
+                Qualification::RSD,
+                QualificationStatus::RSD_CHECK
+            );
+        }
+        if ($isInsalubriteObligatoire) {
+            $this->addOneQualification(
+                $signalement,
+                Qualification::INSALUBRITE,
+                QualificationStatus::INSALUBRITE_CHECK
+            );
+        } else {
+            if (
+                !\in_array(Qualification::NON_DECENCE->value, $desordrePrecisionsQualifications)
+                && !\in_array(Qualification::RSD->value, $desordrePrecisionsQualifications)
+                && \in_array(Qualification::ASSURANTIEL->value, $desordrePrecisionsQualifications)
+            ) {
+                $this->addOneQualification(
+                    $signalement,
+                    Qualification::ASSURANTIEL,
+                    QualificationStatus::ASSURANTIEL_CHECK
+                );
+            }
+        }
+    }
+
+    private function addQualificationScore1To10(
+        Signalement $signalement,
+        array $desordrePrecisionsQualifications,
+        bool $isInsalubriteObligatoire,
+    ) {
+        if (\in_array(Qualification::NON_DECENCE->value, $desordrePrecisionsQualifications)) {
+            $this->addOneQualification(
+                $signalement,
+                Qualification::NON_DECENCE,
+                QualificationStatus::NON_DECENCE_CHECK
+            );
+        }
+        if (\in_array(Qualification::RSD->value, $desordrePrecisionsQualifications)) {
+            $this->addOneQualification(
+                $signalement,
+                Qualification::RSD,
+                QualificationStatus::RSD_CHECK
+            );
+        }
+        if ($isInsalubriteObligatoire) {
+            $this->addOneQualification(
+                $signalement,
+                Qualification::INSALUBRITE,
+                QualificationStatus::INSALUBRITE_CHECK
+            );
+        }
+    }
+
+    private function addQualificationScore11To30(
+        Signalement $signalement,
+        array $desordrePrecisionsQualifications,
+        bool $isInsalubriteObligatoire,
+    ) {
+        if (\in_array(Qualification::NON_DECENCE->value, $desordrePrecisionsQualifications)) {
+            $this->addOneQualification(
+                $signalement,
+                Qualification::NON_DECENCE,
+                QualificationStatus::NON_DECENCE_CHECK
+            );
+        }
+        if (\in_array(Qualification::RSD->value, $desordrePrecisionsQualifications)) {
+            $this->addOneQualification(
+                $signalement,
+                Qualification::RSD,
+                QualificationStatus::RSD_CHECK
+            );
+        }
+        if ($isInsalubriteObligatoire) {
+            $this->addOneQualification(
+                $signalement,
+                Qualification::INSALUBRITE,
+                QualificationStatus::INSALUBRITE_CHECK
+            );
+        } else {
+            $this->addOneQualification(
+                $signalement,
+                Qualification::INSALUBRITE,
+                QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK
+            );
+        }
+    }
+
+    private function addQualificationScore31To50(
+        Signalement $signalement,
+        array $desordrePrecisionsQualifications,
+    ) {
+        if (\in_array(Qualification::NON_DECENCE->value, $desordrePrecisionsQualifications)) {
+            $this->addOneQualification(
+                $signalement,
+                Qualification::NON_DECENCE,
+                QualificationStatus::NON_DECENCE_CHECK
+            );
+        }
+        if (\in_array(Qualification::RSD->value, $desordrePrecisionsQualifications)) {
+            $this->addOneQualification(
+                $signalement,
+                Qualification::RSD,
+                QualificationStatus::RSD_CHECK
+            );
+        }
+        $this->addOneQualification(
+            $signalement,
+            Qualification::INSALUBRITE,
+            QualificationStatus::INSALUBRITE_CHECK
+        );
+    }
+
+    private function addQualificationScore51AndAbove(
+        Signalement $signalement,
+        array $desordrePrecisionsQualifications,
+    ) {
+        if (\in_array(Qualification::NON_DECENCE->value, $desordrePrecisionsQualifications)) {
+            $this->addOneQualification(
+                $signalement,
+                Qualification::NON_DECENCE,
+                QualificationStatus::NON_DECENCE_CHECK
+            );
+        }
+        if (\in_array(Qualification::RSD->value, $desordrePrecisionsQualifications)) {
+            $this->addOneQualification(
+                $signalement,
+                Qualification::RSD,
+                QualificationStatus::RSD_CHECK
+            );
+        }
+        if (\in_array(Qualification::MISE_EN_SECURITE_PERIL->value, $desordrePrecisionsQualifications)) {
+            $this->addOneQualification(
+                $signalement,
+                Qualification::MISE_EN_SECURITE_PERIL,
+                QualificationStatus::MISE_EN_SECURITE_PERIL_CHECK
+            );
+        }
+        $this->addOneQualification(
+            $signalement,
+            Qualification::INSALUBRITE,
+            QualificationStatus::INSALUBRITE_CHECK
+        );
     }
 
     private function createNDEQualification(
@@ -245,41 +434,6 @@ class SignalementQualificationUpdater
         return null;
     }
 
-    private function calculateQualificationStatus(
-        Signalement $signalement,
-        Qualification $qualification,
-        ?SignalementQualification $signalementQualification = null,
-    ): ?QualificationStatus {
-        switch ($qualification) {
-            case Qualification::NON_DECENCE:
-                $statusQualification = QualificationStatus::NON_DECENCE_CHECK;
-                break;
-            case Qualification::RSD:
-                $statusQualification = QualificationStatus::RSD_CHECK;
-                break;
-            case Qualification::ASSURANTIEL:
-                $statusQualification = QualificationStatus::ASSURANTIEL_CHECK;
-                break;
-            case Qualification::MISE_EN_SECURITE_PERIL:
-                $statusQualification = QualificationStatus::MISE_EN_SECURITE_PERIL_CHECK;
-                break;
-            case Qualification::INSALUBRITE:
-                $score = $signalement->getScore();
-                $statusQualification = $score >= 30
-                    ? QualificationStatus::INSALUBRITE_CHECK
-                    : QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK;
-                break;
-            case Qualification::NON_DECENCE_ENERGETIQUE:
-                $statusQualification = $this->qualificationStatusService->getNDEStatus($signalementQualification);
-                break;
-            default:
-                $statusQualification = null;
-                break;
-        }
-
-        return $statusQualification;
-    }
-
     private function getLinkedDesordrePrecisions(Signalement $signalement, Qualification $qualification): array
     {
         $associatedDesordrePrecisions = [];
@@ -291,24 +445,6 @@ class SignalementQualificationUpdater
         }
 
         return $associatedDesordrePrecisions;
-    }
-
-    private function isQualificationExistsInSignalement(array $qualifications, Qualification $targetQualification): bool
-    {
-        foreach ($qualifications as $qualification) {
-            if ($qualification->getQualification() === $targetQualification) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private function isQualificationExistsInDesordrePrecisions(
-        array $allQualifications,
-        Qualification $qualification
-    ): bool {
-        return \in_array($qualification, $allQualifications);
     }
 
     /**

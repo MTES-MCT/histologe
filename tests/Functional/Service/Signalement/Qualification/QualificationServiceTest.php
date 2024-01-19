@@ -145,40 +145,75 @@ class QualificationServiceTest extends KernelTestCase
         ];
 
         $listSlugDesordrePrecision = [
-            'desordres_batiment_proprete_interieur',
+            'desordres_logement_humidite_piece_a_vivre_details_fuite_oui',
         ];
-        yield 'NON_DECENCE, RSD' => [
-            1,
+        yield 'Score 0, ASSURANTIEL' => [
+            0,
+            $listSlugDesordrePrecision,
+            [Qualification::ASSURANTIEL],
+            [QualificationStatus::ASSURANTIEL_CHECK],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_cuisine_collective_oui',
+        ];
+        yield 'Score 0, NON DECENCE' => [
+            0,
+            $listSlugDesordrePrecision,
+            [Qualification::NON_DECENCE],
+            [QualificationStatus::NON_DECENCE_CHECK],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_plusieurs_pieces_aucune_piece_9',
+        ];
+        yield 'Score 0, NON DECENCE et RSD' => [
+            0,
             $listSlugDesordrePrecision,
             [Qualification::NON_DECENCE, Qualification::RSD],
             [QualificationStatus::NON_DECENCE_CHECK, QualificationStatus::RSD_CHECK],
         ];
 
         $listSlugDesordrePrecision = [
-            'desordres_batiment_eau_evacuation_KO',
+            'desordres_batiment_accessibilite_acces_batiment',
         ];
-        yield 'NON_DECENCE, RSD, INSALUBRITE score 10' => [
-            10,
+        yield 'Score 0, RSD' => [
+            0,
             $listSlugDesordrePrecision,
-            [
-                Qualification::NON_DECENCE,
-                Qualification::RSD,
-                Qualification::INSALUBRITE,
-            ],
-            [
-                QualificationStatus::NON_DECENCE_CHECK,
-                QualificationStatus::RSD_CHECK,
-                QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK,
-            ],
+            [Qualification::RSD],
+            [QualificationStatus::RSD_CHECK],
         ];
-        yield 'NON_DECENCE, RSD, INSALUBRITE score 40' => [
-            40,
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_sous_combles',
+            'desordres_batiment_accessibilite_acces_batiment',
+        ];
+        yield 'Score 0, RSD et INSALUBRITE OBLIGATOIRE' => [
+            0,
             $listSlugDesordrePrecision,
-            [
-                Qualification::NON_DECENCE,
-                Qualification::RSD,
-                Qualification::INSALUBRITE,
-            ],
+            [Qualification::RSD, Qualification::INSALUBRITE],
+            [QualificationStatus::RSD_CHECK, QualificationStatus::INSALUBRITE_CHECK],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_sous_combles',
+            'desordres_type_composition_logement_cuisine_collective_oui',
+        ];
+        yield 'Score 0, NON DECENCE et INSALUBRITE OBLIGATOIRE' => [
+            0,
+            $listSlugDesordrePrecision,
+            [Qualification::NON_DECENCE, Qualification::INSALUBRITE],
+            [QualificationStatus::NON_DECENCE_CHECK, QualificationStatus::INSALUBRITE_CHECK],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_sous_combles',
+            'desordres_type_composition_logement_plusieurs_pieces_aucune_piece_9',
+        ];
+        yield 'Score 0, NON DECENCE et RSD et INSALUBRITE OBLIGATOIRE' => [
+            0,
+            $listSlugDesordrePrecision,
+            [Qualification::NON_DECENCE, Qualification::RSD, Qualification::INSALUBRITE],
             [
                 QualificationStatus::NON_DECENCE_CHECK,
                 QualificationStatus::RSD_CHECK,
@@ -187,39 +222,275 @@ class QualificationServiceTest extends KernelTestCase
         ];
 
         $listSlugDesordrePrecision = [
-            'desordres_batiment_isolation_dernier_etage_toit_sous_toit_oui',
+            'desordres_type_composition_logement_cuisine_collective_oui',
         ];
-        yield 'NON_DECENCE, RSD, MISE_EN_SECURITE_PERIL' => [
-            10,
+        yield 'Score entre 0 et 10, NON DECENCE' => [
+            2,
+            $listSlugDesordrePrecision,
+            [Qualification::NON_DECENCE],
+            [QualificationStatus::NON_DECENCE_CHECK],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_plusieurs_pieces_aucune_piece_9',
+        ];
+        yield 'Score entre 0 et 10, NON DECENCE et RSD' => [
+            3,
+            $listSlugDesordrePrecision,
+            [Qualification::NON_DECENCE, Qualification::RSD],
+            [QualificationStatus::NON_DECENCE_CHECK, QualificationStatus::RSD_CHECK],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_batiment_accessibilite_acces_batiment',
+        ];
+        yield 'Score entre 0 et 10, RSD' => [
+            6,
+            $listSlugDesordrePrecision,
+            [Qualification::RSD],
+            [QualificationStatus::RSD_CHECK],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_sous_combles',
+            'desordres_batiment_accessibilite_acces_batiment',
+        ];
+        yield 'Score entre 0 et 10, RSD et INSALUBRITE OBLIGATOIRE' => [
+            7,
+            $listSlugDesordrePrecision,
+            [Qualification::RSD, Qualification::INSALUBRITE],
+            [QualificationStatus::RSD_CHECK, QualificationStatus::INSALUBRITE_CHECK],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_sous_combles',
+            'desordres_type_composition_logement_cuisine_collective_oui',
+        ];
+        yield 'Score entre 0 et 10, NON DECENCE et INSALUBRITE OBLIGATOIRE' => [
+            9,
+            $listSlugDesordrePrecision,
+            [Qualification::NON_DECENCE, Qualification::INSALUBRITE],
+            [QualificationStatus::NON_DECENCE_CHECK, QualificationStatus::INSALUBRITE_CHECK],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_sous_combles',
+            'desordres_type_composition_logement_plusieurs_pieces_aucune_piece_9',
+        ];
+        yield 'Score entre 0 et 10, NON DECENCE et RSD et INSALUBRITE OBLIGATOIRE' => [
+            5,
+            $listSlugDesordrePrecision,
+            [Qualification::NON_DECENCE, Qualification::RSD, Qualification::INSALUBRITE],
+            [
+                QualificationStatus::NON_DECENCE_CHECK,
+                QualificationStatus::RSD_CHECK,
+                QualificationStatus::INSALUBRITE_CHECK,
+            ],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_cuisine_collective_oui',
+        ];
+        yield 'Score entre 10 et 30, NON DECENCE et MANQUEMENT A LA SALUBRITE' => [
+            12,
+            $listSlugDesordrePrecision,
+            [Qualification::NON_DECENCE, Qualification::INSALUBRITE],
+            [QualificationStatus::NON_DECENCE_CHECK, QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_plusieurs_pieces_aucune_piece_9',
+        ];
+        yield 'Score entre 10 et 30, NON DECENCE et RSD et MANQUEMENT A LA SALUBRITE' => [
+            23,
+            $listSlugDesordrePrecision,
+            [Qualification::NON_DECENCE, Qualification::RSD, Qualification::INSALUBRITE],
+            [
+                QualificationStatus::NON_DECENCE_CHECK,
+                QualificationStatus::RSD_CHECK,
+                QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK,
+            ],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_batiment_accessibilite_acces_batiment',
+        ];
+        yield 'Score entre 10 et 30, RSD et MANQUEMENT A LA SALUBRITE' => [
+            26,
+            $listSlugDesordrePrecision,
+            [Qualification::RSD, Qualification::INSALUBRITE],
+            [QualificationStatus::RSD_CHECK, QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_sous_combles',
+            'desordres_batiment_accessibilite_acces_batiment',
+        ];
+        yield 'Score entre 10 et 30, RSD et INSALUBRITE OBLIGATOIRE' => [
+            17,
+            $listSlugDesordrePrecision,
+            [Qualification::RSD, Qualification::INSALUBRITE],
+            [QualificationStatus::RSD_CHECK, QualificationStatus::INSALUBRITE_CHECK],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_sous_combles',
+            'desordres_type_composition_logement_cuisine_collective_oui',
+        ];
+        yield 'Score entre 10 et 30, NON DECENCE et INSALUBRITE OBLIGATOIRE' => [
+            29,
+            $listSlugDesordrePrecision,
+            [Qualification::NON_DECENCE, Qualification::INSALUBRITE],
+            [QualificationStatus::NON_DECENCE_CHECK, QualificationStatus::INSALUBRITE_CHECK],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_sous_combles',
+            'desordres_type_composition_logement_plusieurs_pieces_aucune_piece_9',
+        ];
+        yield 'Score entre 10 et 30, NON DECENCE et RSD et INSALUBRITE OBLIGATOIRE' => [
+            25,
+            $listSlugDesordrePrecision,
+            [Qualification::NON_DECENCE, Qualification::RSD, Qualification::INSALUBRITE],
+            [
+                QualificationStatus::NON_DECENCE_CHECK,
+                QualificationStatus::RSD_CHECK,
+                QualificationStatus::INSALUBRITE_CHECK,
+            ],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_sous_combles',
+            'desordres_batiment_accessibilite_acces_batiment',
+        ];
+        yield 'Score entre 30 et 50, RSD et INSALUBRITE' => [
+            37,
+            $listSlugDesordrePrecision,
+            [Qualification::RSD, Qualification::INSALUBRITE],
+            [QualificationStatus::RSD_CHECK, QualificationStatus::INSALUBRITE_CHECK],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_sous_combles',
+            'desordres_type_composition_logement_cuisine_collective_oui',
+        ];
+        yield 'Score entre 30 et 50, NON DECENCE et INSALUBRITE' => [
+            49,
+            $listSlugDesordrePrecision,
+            [Qualification::NON_DECENCE, Qualification::INSALUBRITE],
+            [QualificationStatus::NON_DECENCE_CHECK, QualificationStatus::INSALUBRITE_CHECK],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_sous_combles',
+            'desordres_type_composition_logement_plusieurs_pieces_aucune_piece_9',
+        ];
+        yield 'Score entre 30 et 50, NON DECENCE et RSD et INSALUBRITE' => [
+            35,
+            $listSlugDesordrePrecision,
+            [Qualification::NON_DECENCE, Qualification::RSD, Qualification::INSALUBRITE],
+            [
+                QualificationStatus::NON_DECENCE_CHECK,
+                QualificationStatus::RSD_CHECK,
+                QualificationStatus::INSALUBRITE_CHECK,
+            ],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_sous_combles',
+            'desordres_batiment_accessibilite_acces_batiment',
+        ];
+        yield 'Score supérieur à 50, RSD et INSALUBRITE' => [
+            57,
+            $listSlugDesordrePrecision,
+            [Qualification::RSD, Qualification::INSALUBRITE],
+            [QualificationStatus::RSD_CHECK, QualificationStatus::INSALUBRITE_CHECK],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_sous_combles',
+            'desordres_type_composition_logement_cuisine_collective_oui',
+        ];
+        yield 'Score supérieur à 50, NON DECENCE et INSALUBRITE' => [
+            69,
+            $listSlugDesordrePrecision,
+            [Qualification::NON_DECENCE, Qualification::INSALUBRITE],
+            [QualificationStatus::NON_DECENCE_CHECK, QualificationStatus::INSALUBRITE_CHECK],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_sous_combles',
+            'desordres_type_composition_logement_plusieurs_pieces_aucune_piece_9',
+        ];
+        yield 'Score supérieur à 50, NON DECENCE et RSD et INSALUBRITE' => [
+            75,
+            $listSlugDesordrePrecision,
+            [Qualification::NON_DECENCE, Qualification::RSD, Qualification::INSALUBRITE],
+            [
+                QualificationStatus::NON_DECENCE_CHECK,
+                QualificationStatus::RSD_CHECK,
+                QualificationStatus::INSALUBRITE_CHECK,
+            ],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_type_composition_logement_sous_combles',
+            'desordres_type_composition_logement_plusieurs_pieces_aucune_piece_9',
+            'desordres_batiment_maintenance_ascenseur',
+        ];
+        yield 'Score supérieur à 50, NON DECENCE et RSD et INSALUBRITE et PERIL' => [
+            75,
             $listSlugDesordrePrecision,
             [
                 Qualification::NON_DECENCE,
                 Qualification::RSD,
                 Qualification::MISE_EN_SECURITE_PERIL,
+                Qualification::INSALUBRITE,
             ],
             [
                 QualificationStatus::NON_DECENCE_CHECK,
                 QualificationStatus::RSD_CHECK,
                 QualificationStatus::MISE_EN_SECURITE_PERIL_CHECK,
+                QualificationStatus::INSALUBRITE_CHECK,
             ],
         ];
 
         $listSlugDesordrePrecision = [
             'desordres_batiment_securite_sol_details_plancher_effondre',
         ];
-        yield 'NON_DECENCE, RSD, MISE_EN_SECURITE_PERIL et is_danger' => [
+        yield 'score 10 NON_DECENCE, RSD et DANGER' => [
             10,
             $listSlugDesordrePrecision,
             [
                 Qualification::NON_DECENCE,
                 Qualification::RSD,
+                Qualification::DANGER,
+            ],
+            [
+                QualificationStatus::NON_DECENCE_CHECK,
+                QualificationStatus::RSD_CHECK,
+                QualificationStatus::DANGER_CHECK,
+            ],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_batiment_securite_sol_details_plancher_effondre',
+        ];
+        yield 'score 80 NON_DECENCE, RSD, MISE_EN_SECURITE_PERIL, INSALUBRITE et DANGER' => [
+            80,
+            $listSlugDesordrePrecision,
+            [
+                Qualification::NON_DECENCE,
+                Qualification::RSD,
                 Qualification::MISE_EN_SECURITE_PERIL,
+                Qualification::INSALUBRITE,
                 Qualification::DANGER,
             ],
             [
                 QualificationStatus::NON_DECENCE_CHECK,
                 QualificationStatus::RSD_CHECK,
                 QualificationStatus::MISE_EN_SECURITE_PERIL_CHECK,
+                QualificationStatus::INSALUBRITE_CHECK,
                 QualificationStatus::DANGER_CHECK,
             ],
         ];
@@ -228,8 +499,48 @@ class QualificationServiceTest extends KernelTestCase
             'desordres_batiment_isolation_dernier_etage_toit_sous_toit_oui',
             'desordres_type_composition_logement_suroccupation_non_allocataire',
         ];
-        yield 'NON_DECENCE, RSD, MISE_EN_SECURITE_PERIL, INSALUBRITE et is_suroccupation' => [
+        yield 'score 10 NON_DECENCE, RSD et is_suroccupation' => [
             10,
+            $listSlugDesordrePrecision,
+            [
+                Qualification::NON_DECENCE,
+                Qualification::RSD,
+                Qualification::SUROCCUPATION,
+            ],
+            [
+                QualificationStatus::NON_DECENCE_CHECK,
+                QualificationStatus::RSD_CHECK,
+                QualificationStatus::SUROCCUPATION_CHECK,
+            ],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_batiment_isolation_dernier_etage_toit_sous_toit_oui',
+            'desordres_type_composition_logement_suroccupation_non_allocataire',
+        ];
+        yield 'score 40 NON_DECENCE, RSD, INSALUBRITE et is_suroccupation' => [
+            40,
+            $listSlugDesordrePrecision,
+            [
+                Qualification::NON_DECENCE,
+                Qualification::RSD,
+                Qualification::INSALUBRITE,
+                Qualification::SUROCCUPATION,
+            ],
+            [
+                QualificationStatus::NON_DECENCE_CHECK,
+                QualificationStatus::RSD_CHECK,
+                QualificationStatus::INSALUBRITE_CHECK,
+                QualificationStatus::SUROCCUPATION_CHECK,
+            ],
+        ];
+
+        $listSlugDesordrePrecision = [
+            'desordres_batiment_isolation_dernier_etage_toit_sous_toit_oui',
+            'desordres_type_composition_logement_suroccupation_non_allocataire',
+        ];
+        yield 'score 60 NON_DECENCE, RSD, MISE_EN_SECURITE_PERIL, INSALUBRITE et is_suroccupation' => [
+            60,
             $listSlugDesordrePrecision,
             [
                 Qualification::NON_DECENCE,
@@ -242,44 +553,8 @@ class QualificationServiceTest extends KernelTestCase
                 QualificationStatus::NON_DECENCE_CHECK,
                 QualificationStatus::RSD_CHECK,
                 QualificationStatus::MISE_EN_SECURITE_PERIL_CHECK,
-                QualificationStatus::INSALUBRITE_MANQUEMENT_CHECK,
+                QualificationStatus::INSALUBRITE_CHECK,
                 QualificationStatus::SUROCCUPATION_CHECK,
-            ],
-        ];
-
-        $listSlugDesordrePrecision = [
-            'desordres_logement_humidite_cuisine_details_fuite_oui',
-        ];
-        yield 'ASSURANTIEL' => [
-            1,
-            $listSlugDesordrePrecision,
-            [Qualification::ASSURANTIEL],
-            [QualificationStatus::ASSURANTIEL_CHECK],
-        ];
-
-        $listSlugDesordrePrecision = [
-            'desordres_batiment_isolation_dernier_etage_toit_sous_toit_oui',
-            'desordres_logement_humidite_cuisine_details_moisissure_apres_nettoyage_non',
-            'desordres_logement_humidite_cuisine_details_machine_oui',
-            'desordres_logement_humidite_piece_a_vivre_details_machine_non',
-            'desordres_batiment_proprete_local_poubelles',
-            'desordres_batiment_isolation_infiltration_eau_au_sol_non',
-            'desordres_batiment_maintenance_petites_reparations',
-            'desordres_batiment_securite_escalier_details_utilisable',
-            'desordres_batiment_accessibilite_acces_batiment',
-        ];
-        yield 'LOT OF DESORDRESPRECISIONS' => [
-            10,
-            $listSlugDesordrePrecision,
-            [
-                Qualification::NON_DECENCE,
-                Qualification::RSD,
-                Qualification::MISE_EN_SECURITE_PERIL,
-            ],
-            [
-                QualificationStatus::NON_DECENCE_CHECK,
-                QualificationStatus::RSD_CHECK,
-                QualificationStatus::MISE_EN_SECURITE_PERIL_CHECK,
             ],
         ];
 
@@ -289,8 +564,16 @@ class QualificationServiceTest extends KernelTestCase
         yield 'NON_DECENCE, RSD, NON_DECENCE_ENERGETIQUE' => [
             1,
             $listSlugDesordrePrecision,
-            [Qualification::NON_DECENCE, Qualification::RSD, Qualification::NON_DECENCE_ENERGETIQUE],
-            [QualificationStatus::NON_DECENCE_CHECK, QualificationStatus::RSD_CHECK, QualificationStatus::NDE_CHECK],
+            [
+                Qualification::NON_DECENCE_ENERGETIQUE,
+                Qualification::NON_DECENCE,
+                Qualification::RSD,
+            ],
+            [
+                QualificationStatus::NDE_CHECK,
+                QualificationStatus::NON_DECENCE_CHECK,
+                QualificationStatus::RSD_CHECK,
+            ],
         ];
     }
 }

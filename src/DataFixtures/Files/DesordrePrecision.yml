@@ -295,6 +295,7 @@ desordre_precision:
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_type_composition_logement_sous_combles"
     is_suroccupation: 0
+    is_insalubrite: 1
   -
     desordre_critere_slug: "desordres_type_composition_logement_sous_sol" 
     coef: 24
@@ -303,6 +304,7 @@ desordre_precision:
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_type_composition_logement_sous_sol"
     is_suroccupation: 0
+    is_insalubrite: 1
   -
     desordre_critere_slug: "desordres_type_composition_logement_piece_unique" 
     coef: 3
@@ -311,6 +313,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_type_composition_logement_piece_unique_superficie"
     is_suroccupation: 0
+    is_insalubrite: 1
   -
     desordre_critere_slug: "desordres_type_composition_logement_plusieurs_pieces" 
     coef: 3
@@ -327,6 +330,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_type_composition_logement_piece_unique_hauteur"
     is_suroccupation: 0
+    is_insalubrite: 1
   -
     desordre_critere_slug: "desordres_type_composition_logement_plusieurs_pieces" 
     coef: 3
@@ -335,12 +339,13 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_type_composition_logement_plusieurs_pieces_hauteur"
     is_suroccupation: 0
+    is_insalubrite: 1
   -
     desordre_critere_slug: "desordres_type_composition_logement_cuisine" 
     coef: 0
     is_danger: 0
     label: "Avec accès à cuisine collective - "
-    qualification: [null]
+    qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_type_composition_logement_cuisine_collective_oui"
     is_suroccupation: 0
   -
@@ -356,7 +361,7 @@ desordre_precision:
     coef: 0
     is_danger: 0
     label: "Avec accès à douches collectives - "
-    qualification: [null]
+    qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_type_composition_logement_douche_collective_oui"
     is_suroccupation: 0
   -
@@ -372,7 +377,7 @@ desordre_precision:
     coef: 0
     is_danger: 0
     label: "Avec accès à WC collectif - "
-    qualification: [null]
+    qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_type_composition_logement_wc_collectif_oui"
     is_suroccupation: 0
   -
@@ -391,6 +396,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD', 'INSALUBRITE']
     desordre_precision_slug: "desordres_type_composition_logement_wc_cuisine_ensemble"
     is_suroccupation: 0
+    is_insalubrite: 1
   -
     desordre_critere_slug: "desordres_type_composition_logement_suroccupation" 
     coef: 0
@@ -439,6 +445,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_logement_aeration_aucune_aeration_pieces_tout"
     is_suroccupation: 0
+    is_insalubrite: 1
   -
     desordre_critere_slug: "desordres_logement_aeration_aucune_aeration" 
     coef: 2
@@ -1103,6 +1110,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD', 'INSALUBRITE']
     desordre_precision_slug: "desordres_logement_lumiere_pas_lumiere_pieces_tout"
     is_suroccupation: 0
+    is_insalubrite: 1
   -
     desordre_critere_slug: "desordres_logement_lumiere_pas_lumiere" 
     coef: 12
