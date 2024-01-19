@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Dto\Request\Signalement\VisiteRequest;
+use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\InterventionCreatedEvent;
@@ -13,6 +14,7 @@ use App\Manager\InterventionManager;
 use App\Repository\InterventionRepository;
 use App\Service\Files\FilenameGenerator;
 use App\Service\UploadHandlerService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -326,6 +328,26 @@ class SignalementVisitesController extends AbstractController
         } else {
             $this->addFlash('error', 'Erreur lors de la conclusion de la visite.');
         }
+
+        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+    }
+
+    #[Route('/{uuid}/visites/{intervention}/delete-rapport', name: 'back_signalement_visite_deleterapport')]
+    public function deleteRapportVisiteFromSignalement(
+        Signalement $signalement,
+        Intervention $intervention,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        UploadHandlerService $uploadHandlerService,
+    ): Response {
+        if (!$this->isCsrfTokenValid('delete_rapport', $request->get('_token')) || $intervention->getSignalement()->getId() !== $signalement->getId() || $intervention->getFiles()->isEmpty()) {
+            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        }
+        $file = $intervention->getFiles()->first();
+        $uploadHandlerService->deleteFileInBucket($file);
+        $entityManager->remove($file);
+        $entityManager->flush();
+        $this->addFlash('success', 'Le rapport de visite a bien été supprimé.');
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
