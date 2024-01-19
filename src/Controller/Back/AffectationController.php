@@ -15,7 +15,7 @@ use App\Manager\UserManager;
 use App\Messenger\InterconnectionBus;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
-use App\Repository\SuiviRepository;
+use App\Specification\Signalement\FirstAffectationAcceptedSpecification;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -103,7 +103,11 @@ class AffectationController extends AbstractController
         return $this->json(['status' => 'denied'], 400);
     }
 
-    #[Route('/{signalement}/{affectation}/{user}/response', name: 'back_signalement_affectation_response', methods: 'POST')]
+    #[Route(
+        '/{signalement}/{affectation}/{user}/response',
+        name: 'back_signalement_affectation_response',
+        methods: 'POST'
+    )]
     public function affectationResponseSignalement(
         SuiviManager $suiviManager,
         UserManager $userManager,
@@ -112,7 +116,7 @@ class AffectationController extends AbstractController
         Affectation $affectation,
         User $user,
         Request $request,
-        SuiviRepository $suiviRepository,
+        FirstAffectationAcceptedSpecification $firstAcceptedAffectationSpecification,
     ): Response {
         $this->denyAccessUnlessGranted('ASSIGN_ANSWER', $affectation);
         if ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), $request->get('_token'))
@@ -122,19 +126,7 @@ class AffectationController extends AbstractController
             $motifRefus = (Affectation::STATUS_REFUSED === $status) ? $response['motifRefus'] : null;
             $affectation = $this->affectationManager->updateAffectation($affectation, $user, $status, $motifRefus);
 
-            $suiviAffectationAccepted = $suiviRepository->findSuiviByDescription(
-                $signalement,
-                '<p>Suite à votre signalement, le ou les partenaires compétents'
-            );
-            $affectationAccepted = $signalement->getAffectations()->filter(function (Affectation $affectation) {
-                return Affectation::STATUS_ACCEPTED === $affectation->getStatut();
-            });
-
-            if (!$signalement->getIsImported()
-                && 1 === $affectationAccepted->count()
-                && Affectation::STATUS_ACCEPTED === $affectation->getStatut()
-                && empty($suiviAffectationAccepted)
-            ) {
+            if ($firstAcceptedAffectationSpecification->isSatisfiedBy($signalement, $affectation)) {
                 $adminEmail = $parameterBag->get('user_system_email');
                 $adminUser = $userManager->findOneBy(['email' => $adminEmail]);
                 $suiviManager->createSuivi(
