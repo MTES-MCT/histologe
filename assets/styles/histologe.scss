@@ -646,3 +646,53 @@ a.force-link-color {
 .bloc-list .fr-grid-row .fr-grid-row .fr-col-12 {
     padding: 0 0.75rem;
 }
+
+div.photos-album {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 2999;
+    padding: 2rem;
+
+    .photos-album-close-button-container {
+        text-align: right;
+    }
+
+    .photos-album-navigation-container {
+        display: flex;
+        height: calc(100% - 4rem);
+
+        > div {
+            height: 100%;
+        }
+
+        div:nth-child(1), div:nth-child(3) {
+            display: flex;
+            align-items: center;
+        }
+
+        div:nth-child(2) {
+            flex: 1;
+
+            .photos-album-image-item {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                text-align: center;
+    
+                div:nth-child(1) {
+                    height: 4rem;
+                }
+                div:nth-child(2) {
+                    flex: 1;
+                }
+                div:nth-child(3) {
+                    height: 4rem;
+                }
+            }
+        }
+    }
+}
