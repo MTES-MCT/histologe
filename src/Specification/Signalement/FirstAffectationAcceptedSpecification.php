@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Repository\SuiviRepository;
+use Doctrine\Common\Collections\Collection;
 
 class FirstAffectationAcceptedSpecification
 {
@@ -30,10 +31,26 @@ class FirstAffectationAcceptedSpecification
                     || Intervention::STATUS_DONE === $intervention->getStatus();
             });
 
+        return $this->canWriteSuiviMessage(
+            $signalement,
+            $affectation,
+            $affectationAccepted,
+            $interventions,
+            $suiviAffectationAccepted
+        );
+    }
+
+    private function canWriteSuiviMessage(
+        Signalement $signalement,
+        Affectation $affectation,
+        Collection $affectationAccepted,
+        Collection $interventions,
+        array $suiviAffectationAccepted
+    ): bool {
         return !$signalement->getIsImported()
-            && 1 === $affectationAccepted->count()
-            && Affectation::STATUS_ACCEPTED === $affectation->getStatut()
-            && empty($suiviAffectationAccepted)
-            && $interventions->isEmpty();
+        && 1 === $affectationAccepted->count()
+        && Affectation::STATUS_ACCEPTED === $affectation->getStatut()
+        && empty($suiviAffectationAccepted)
+        && $interventions->isEmpty();
     }
 }
