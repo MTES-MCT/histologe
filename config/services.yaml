@@ -36,6 +36,7 @@ parameters:
     platform_name: 'Histologe'
     matomo_enable: '%env(bool:MATOMO_ENABLE)%'
     matomo_site_id: '%env(resolve:MATOMO_SITE_ID)%'
+    chatbot_enable: '%env(bool:CHATBOT_ENABLE)%'
 
 services:
     # default configuration for services in *this* file
