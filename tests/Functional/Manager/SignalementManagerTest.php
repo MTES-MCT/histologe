@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Manager;
 
+use App\Dto\Request\Signalement\CompositionLogementRequest;
 use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Signalement;
@@ -177,6 +178,63 @@ class SignalementManagerTest extends KernelTestCase
             $signalementImported?->getModifiedAt()?->getTimestamp(),
             $signalement?->getModifiedAt()?->getTimestamp()
         );
+    }
+
+    public function testUpdateFromEmptyCompositionLogementRequest(): void
+    {
+        $signalement = $this->signalementManager->findOneBy(['reference' => '2023-8']);
+        $emptyCompositionLogementRequest = new CompositionLogementRequest(
+            type: '',
+            typeLogementNatureAutrePrecision: '',
+            typeCompositionLogement: '',
+            superficie: '',
+            compositionLogementHauteur: '',
+            compositionLogementNbPieces: '',
+            nombreEtages: '',
+            typeLogementRdc: '',
+            typeLogementDernierEtage: '',
+            typeLogementSousCombleSansFenetre: '',
+            typeLogementSousSolSansFenetre: '',
+            typeLogementCommoditesPieceAVivre9m: '',
+            typeLogementCommoditesCuisine: '',
+            typeLogementCommoditesCuisineCollective: '',
+            typeLogementCommoditesSalleDeBain: '',
+            typeLogementCommoditesSalleDeBainCollective: '',
+            typeLogementCommoditesWc: '',
+            typeLogementCommoditesWcCollective: '',
+            typeLogementCommoditesWcCuisine: '',
+        );
+
+        $this->signalementManager->updateFromCompositionLogementRequest(
+            $signalement,
+            $emptyCompositionLogementRequest,
+        );
+        $this->assertNull($signalement->getSuperficie());
+
+        $emptyCompositionLogementRequest = new CompositionLogementRequest();
+        $this->signalementManager->updateFromCompositionLogementRequest(
+            $signalement,
+            $emptyCompositionLogementRequest,
+        );
+        $this->assertNull($signalement->getSuperficie());
+
+        $emptyCompositionLogementRequest = new CompositionLogementRequest(
+            superficie: 'neuf',
+        );
+        $this->signalementManager->updateFromCompositionLogementRequest(
+            $signalement,
+            $emptyCompositionLogementRequest,
+        );
+        $this->assertNull($signalement->getSuperficie());
+
+        $emptyCompositionLogementRequest = new CompositionLogementRequest(
+            superficie: '9.9',
+        );
+        $this->signalementManager->updateFromCompositionLogementRequest(
+            $signalement,
+            $emptyCompositionLogementRequest,
+        );
+        $this->assertEquals($signalement->getSuperficie(), 9.9);
     }
 
     private function getSignalementData(string $reference = null): array

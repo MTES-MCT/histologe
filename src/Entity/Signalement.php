@@ -671,8 +671,12 @@ class Signalement
         return $this->superficie;
     }
 
-    public function setSuperficie(?float $superficie): self
+    public function setSuperficie(?string $superficie): self
     {
+        if (empty($superficie) || !\is_numeric($superficie)) {
+            $superficie = null;
+        }
+        
         $this->superficie = $superficie;
 
         return $this;
