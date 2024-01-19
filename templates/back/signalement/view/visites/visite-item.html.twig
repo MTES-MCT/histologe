@@ -63,9 +63,9 @@
         <div class="fr-mb-3v fr-display-inline-flex">
             <strong>Rapport :</strong>
             {% if signalement.interventions is empty or intervention.files is empty %}
-                <span class="fr-badge fr-badge--no-icon" title="Non disponible">Non disponible</span>
+                <span class="fr-badge fr-badge--no-icon" title="Non disponible">Non disponible</span> 
             {% else %}
-            <ul class="fr-btns-group fr-btns-group--inline-sm fr-btns-group--sm">
+            <ul class="fr-btns-group fr-btns-group--inline-sm fr-btns-group--sm fr-ml-0-5v">
                 <li>
                     <a href="{{ asset('_up/'~intervention.files[0].filename)~'/' ~ signalement.uuid }}"
                         class="fr-btn"
