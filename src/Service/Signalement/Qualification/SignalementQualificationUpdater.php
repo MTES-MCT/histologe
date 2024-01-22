@@ -9,7 +9,6 @@ use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Factory\SignalementQualificationFactory;
 use App\Manager\SignalementManager;
-use App\Manager\SignalementQualificationManager;
 
 class SignalementQualificationUpdater
 {
@@ -17,7 +16,6 @@ class SignalementQualificationUpdater
         private readonly SignalementQualificationFactory $signalementQualificationFactory,
         private readonly SignalementManager $signalementManager,
         private readonly QualificationStatusService $qualificationStatusService,
-        private readonly SignalementQualificationManager $signalementQualificationManager,
     ) {
     }
 
