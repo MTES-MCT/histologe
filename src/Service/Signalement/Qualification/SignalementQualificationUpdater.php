@@ -136,7 +136,7 @@ class SignalementQualificationUpdater
 
     private function deleteSuspicionQualification(
         Signalement $signalement,
-    ) {
+    ): void {
         /**
          * @var SignalementQualification[] $existingSignalementQualifications
          */
@@ -153,7 +153,7 @@ class SignalementQualificationUpdater
 
     private function addQualificationsFromScore(
         Signalement $signalement,
-    ) {
+    ): void {
         $score = $signalement->getScore();
 
         // concatenate all desordrePrecision qualifications
@@ -217,7 +217,7 @@ class SignalementQualificationUpdater
         Signalement $signalement,
         Qualification $qualification,
         QualificationStatus $statusQualification
-    ) {
+    ): void {
         $data = [];
         $data['listDesordrePrecisionsIds'] = $this->getLinkedDesordrePrecisions($signalement, $qualification);
 
@@ -235,7 +235,7 @@ class SignalementQualificationUpdater
         Signalement $signalement,
         array $desordrePrecisionsQualifications,
         bool $isInsalubriteObligatoire,
-    ) {
+    ): void {
         if (\in_array(Qualification::NON_DECENCE->value, $desordrePrecisionsQualifications)) {
             $this->addOneQualification(
                 $signalement,
@@ -275,7 +275,7 @@ class SignalementQualificationUpdater
         Signalement $signalement,
         array $desordrePrecisionsQualifications,
         bool $isInsalubriteObligatoire,
-    ) {
+    ): void {
         if (\in_array(Qualification::NON_DECENCE->value, $desordrePrecisionsQualifications)) {
             $this->addOneQualification(
                 $signalement,
@@ -303,7 +303,7 @@ class SignalementQualificationUpdater
         Signalement $signalement,
         array $desordrePrecisionsQualifications,
         bool $isInsalubriteObligatoire,
-    ) {
+    ): void {
         if (\in_array(Qualification::NON_DECENCE->value, $desordrePrecisionsQualifications)) {
             $this->addOneQualification(
                 $signalement,
@@ -336,7 +336,7 @@ class SignalementQualificationUpdater
     private function addQualificationScore31To50(
         Signalement $signalement,
         array $desordrePrecisionsQualifications,
-    ) {
+    ): void {
         if (\in_array(Qualification::NON_DECENCE->value, $desordrePrecisionsQualifications)) {
             $this->addOneQualification(
                 $signalement,
@@ -361,7 +361,7 @@ class SignalementQualificationUpdater
     private function addQualificationScore51AndAbove(
         Signalement $signalement,
         array $desordrePrecisionsQualifications,
-    ) {
+    ): void {
         if (\in_array(Qualification::NON_DECENCE->value, $desordrePrecisionsQualifications)) {
             $this->addOneQualification(
                 $signalement,
