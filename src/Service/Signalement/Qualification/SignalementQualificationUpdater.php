@@ -213,6 +213,27 @@ class SignalementQualificationUpdater
         }
     }
 
+    private function signalementQualificationExistsInSignalement(
+        Qualification $qualification,
+        Signalement $signalement,
+        bool $isPostVisite,
+    ): ?SignalementQualification {
+        /**
+         * @var SignalementQualification[] $existingSignalementQualifications
+         */
+        $existingSignalementQualifications = $signalement->getSignalementQualifications()->toArray();
+        foreach ($existingSignalementQualifications as $existingSignalementQualification) {
+            if (
+                $isPostVisite === $existingSignalementQualification->isPostVisite()
+                && $qualification === $existingSignalementQualification->getQualification()
+            ) {
+                return $existingSignalementQualification;
+            }
+        }
+
+        return null;
+    }
+
     private function addOneQualification(
         Signalement $signalement,
         Qualification $qualification,
@@ -221,13 +242,22 @@ class SignalementQualificationUpdater
         $data = [];
         $data['listDesordrePrecisionsIds'] = $this->getLinkedDesordrePrecisions($signalement, $qualification);
 
-        $signalementQualification = $this->signalementQualificationManager->createOrUpdate(
+        $signalementQualification = $this->signalementQualificationExistsInSignalement(
             qualification: $qualification,
-            qualificationStatus: $statusQualification,
-            isPostVisite: false,
             signalement: $signalement,
-            data: $data
+            isPostVisite: false,
         );
+        if (null === $signalementQualification) {
+            $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
+                qualification: $qualification,
+                qualificationStatus: $statusQualification,
+                isPostVisite: false,
+            );
+        } else {
+            $signalementQualification->setStatus($statusQualification);
+        }
+
+        $signalementQualification->setDesordrePrecisionIds($data['listDesordrePrecisionsIds']);
         $signalement->addSignalementQualification($signalementQualification);
     }
 

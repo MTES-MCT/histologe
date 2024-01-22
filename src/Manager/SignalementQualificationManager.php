@@ -37,6 +37,7 @@ class SignalementQualificationManager extends AbstractManager
         $signalementQualification = $this->getRepository()->findOneBy([
             'qualification' => $qualification,
             'isPostVisite' => $isPostVisite,
+            'signalementId' => $signalement->getId(),
         ]);
 
         if (null === $signalementQualification) {
