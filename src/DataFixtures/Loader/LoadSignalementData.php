@@ -421,17 +421,19 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 $signalement->addSignalementQualification($signalementQualification);
             }
         }
-        foreach ($row['desordre_photos'] as $document) {
-            $file = $this->fileFactory->createInstanceFrom(
-                filename: $document['file'],
-                title: $document['titre'],
-                type: File::FILE_TYPE_PHOTO,
-                signalement: $signalement,
-                // user: $user,
-                documentType: DocumentType::SITUATION,
-                desordreSlug: $document['slug']
-            );
-            $manager->persist($file);
+        if (isset($row['desordre_photos'])) {
+            foreach ($row['desordre_photos'] as $document) {
+                $file = $this->fileFactory->createInstanceFrom(
+                    filename: $document['file'],
+                    title: $document['titre'],
+                    type: File::FILE_TYPE_PHOTO,
+                    signalement: $signalement,
+                    // user: $user,
+                    documentType: DocumentType::SITUATION,
+                    desordreSlug: $document['slug']
+                );
+                $manager->persist($file);
+            }
         }
 
         $manager->persist($signalement);
