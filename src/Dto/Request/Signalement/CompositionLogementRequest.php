@@ -14,6 +14,7 @@ class CompositionLogementRequest
         #[Assert\NotBlank(['message' => 'Merci de définir si il y a plusieurs pièces dans le logement'])]
         private readonly ?string $typeCompositionLogement = null,
         #[Assert\NotBlank(message: 'Merci de saisir la superficie du logement.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
+        #[Assert\Positive(message: 'Merci de saisir une information numérique dans le champs de superficie.')]
         private readonly ?string $superficie = null,
         #[Assert\NotBlank(message: 'Merci de définir la hauteur du logement.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS'])]
         private readonly ?string $compositionLogementHauteur = null,
