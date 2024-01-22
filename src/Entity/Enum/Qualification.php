@@ -8,7 +8,7 @@ enum Qualification: string
     case ACCOMPAGNEMENT_SOCIAL = 'ACCOMPAGNEMENT_SOCIAL';
     case ACCOMPAGNEMENT_TRAVAUX = 'ACCOMPAGNEMENT_TRAVAUX';
     case ARRETES = 'ARRETES';
-    case ASSSURANTIEL = 'ASSSURANTIEL';
+    case ASSURANTIEL = 'ASSURANTIEL';
     case CONCILIATION = 'CONCILIATION';
     case CONSIGNATION_AL = 'CONSIGNATION_AL';
     case DALO = 'DALO';
@@ -23,6 +23,7 @@ enum Qualification: string
     case RSD = 'RSD';
     case VISITES = 'VISITES';
     case DANGER = 'DANGER';
+    case SUROCCUPATION = 'SUROCCUPATION';
 
     public function label(): string
     {
@@ -36,7 +37,7 @@ enum Qualification: string
             'ACCOMPAGNEMENT_SOCIAL' => 'Accompagnement social',
             'ACCOMPAGNEMENT_TRAVAUX' => 'Accompagnement travaux',
             'ARRETES' => 'Arrêtés',
-            'ASSSURANTIEL' => 'Assurantiel',
+            'ASSURANTIEL' => 'Assurantiel',
             'CONCILIATION' => 'Conciliation',
             'CONSIGNATION_AL' => 'Consignation AL',
             'DALO' => 'DALO',
@@ -51,6 +52,7 @@ enum Qualification: string
             'RSD' => 'RSD',
             'VISITES' => 'Visites',
             'DANGER' => 'Danger',
+            'SUROCCUPATION' => 'Suroccupation',
         ];
     }
 

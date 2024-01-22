@@ -32,7 +32,7 @@ use App\Factory\SignalementFactory;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Service\DataGouv\Response\Address;
-use App\Service\Signalement\QualificationStatusService;
+use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\Signalement\SignalementInputValueMapper;
 use DateTimeImmutable;
 use Doctrine\ORM\Tools\Pagination\Paginator;

@@ -29,6 +29,10 @@ class TypeCompositionLogement
         private ?string $bailDpeDpe = null,
         private ?string $bailDpeEtatDesLieux = null,
         private ?string $bailDpeDateEmmenagement = null,
+        private ?string $desordresLogementChauffageDetailsDpeConsoFinale = null,
+        private ?string $desordresLogementChauffageDetailsDpeConso = null,
+        private ?string $desordresLogementChauffageDetailsDpeAnnee = null,
+        private ?string $desordresLogementChauffageDetailsDpeConsoVide = null,
     ) {
     }
 
@@ -320,6 +324,54 @@ class TypeCompositionLogement
         return $this;
     }
 
+    public function getDesordresLogementChauffageDetailsDpeConsoFinale(): ?string
+    {
+        return $this->desordresLogementChauffageDetailsDpeConsoFinale;
+    }
+
+    public function setDesordresLogementChauffageDetailsDpeConsoFinale($desordresLogementChauffageDetailsDpeConsoFinale): self
+    {
+        $this->desordresLogementChauffageDetailsDpeConsoFinale = $desordresLogementChauffageDetailsDpeConsoFinale;
+
+        return $this;
+    }
+
+    public function getDesordresLogementChauffageDetailsDpeConso(): ?string
+    {
+        return $this->desordresLogementChauffageDetailsDpeConso;
+    }
+
+    public function setDesordresLogementChauffageDetailsDpeConso($desordresLogementChauffageDetailsDpeConso): self
+    {
+        $this->desordresLogementChauffageDetailsDpeConso = $desordresLogementChauffageDetailsDpeConso;
+
+        return $this;
+    }
+
+    public function getDesordresLogementChauffageDetailsDpeAnnee(): ?string
+    {
+        return $this->desordresLogementChauffageDetailsDpeAnnee;
+    }
+
+    public function setDesordresLogementChauffageDetailsDpeAnnee($desordresLogementChauffageDetailsDpeAnnee): self
+    {
+        $this->desordresLogementChauffageDetailsDpeAnnee = $desordresLogementChauffageDetailsDpeAnnee;
+
+        return $this;
+    }
+
+    public function getDesordresLogementChauffageDetailsDpeConsoVide(): ?string
+    {
+        return $this->desordresLogementChauffageDetailsDpeConsoVide;
+    }
+
+    public function setDesordresLogementChauffageDetailsDpeConsoVide($desordresLogementChauffageDetailsDpeConsoVide): self
+    {
+        $this->desordresLogementChauffageDetailsDpeConsoVide = $desordresLogementChauffageDetailsDpeConsoVide;
+
+        return $this;
+    }
+
     public function toArray(): array
     {
         return [
@@ -347,6 +399,10 @@ class TypeCompositionLogement
             'bail_dpe_dpe' => $this->bailDpeDpe,
             'bail_dpe_etat_des_lieux' => $this->bailDpeEtatDesLieux,
             'bail_dpe_date_emmenagement' => $this->bailDpeDateEmmenagement,
+            'desordres_logement_chauffage_details_dpe_conso_finale' => $this->desordresLogementChauffageDetailsDpeConsoFinale,
+            'desordres_logement_chauffage_details_dpe_conso' => $this->desordresLogementChauffageDetailsDpeConso,
+            'desordres_logement_chauffage_details_dpe_annee' => $this->desordresLogementChauffageDetailsDpeAnnee,
+            'desordres_logement_chauffage_details_dpe_conso_vide' => $this->desordresLogementChauffageDetailsDpeConsoVide,
         ];
     }
 }

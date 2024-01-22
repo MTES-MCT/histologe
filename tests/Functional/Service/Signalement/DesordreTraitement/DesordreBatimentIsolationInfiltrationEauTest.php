@@ -40,7 +40,7 @@ class DesordreBatimentIsolationInfiltrationEauTest extends KernelTestCase
             'desordres_batiment_isolation_infiltration_eau_au_sol_non',
             $precision->getDesordrePrecisionSlug()
         );
-        $this->assertFalse($precision->isIsDanger());
-        $this->assertFalse($precision->isIsSuroccupation());
+        $this->assertFalse($precision->getIsDanger());
+        $this->assertFalse($precision->getIsSuroccupation());
     }
 }

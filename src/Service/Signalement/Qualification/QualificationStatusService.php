@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Signalement;
+namespace App\Service\Signalement\Qualification;
 
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
@@ -38,9 +38,20 @@ class QualificationStatusService implements RuntimeExtensionInterface
 
         // on a une DPE, on calcule la conso d'énergie en fonction de la date du DPE
         $consoEnergie = $signalementQualification->getDetails()['consommation_energie'];
+
         if (isset($signalementQualification->getDetails()['date_dernier_dpe'])) {
-            $dataDateDPEFormatted = new DateTimeImmutable($signalementQualification->getDetails()['date_dernier_dpe']);
-            if ($dataDateDPEFormatted->format('Y') < '2023'
+            $before2023 = false;
+            if ('before2023' === $signalementQualification->getDetails()['date_dernier_dpe']) {
+                $before2023 = true;
+            } elseif ('post2023' === $signalementQualification->getDetails()['date_dernier_dpe']) {
+                $before2023 = false;
+            } else {
+                $dataDateDPEFormatted = new DateTimeImmutable($signalementQualification->getDetails()['date_dernier_dpe']);
+                if ($dataDateDPEFormatted->format('Y') < '2023') {
+                    $before2023 = true;
+                }
+            }
+            if ($before2023
             && null !== $consoEnergie
             && null !== $signalementQualification->getSignalement()?->getSuperficie()
             && $signalementQualification->getSignalement()?->getSuperficie() > 0) {

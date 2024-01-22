@@ -6,7 +6,7 @@ use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Factory\SignalementQualificationFactory;
-use App\Service\Signalement\QualificationStatusService;
+use App\Service\Signalement\Qualification\QualificationStatusService;
 use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
