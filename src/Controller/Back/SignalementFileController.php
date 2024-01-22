@@ -38,7 +38,8 @@ class SignalementFileController extends AbstractController
 
         $messageBus->dispatch($message);
 
-        $this->addFlash('success',
+        $this->addFlash(
+            'success',
             sprintf(
                 'L\'export pdf vous sera envoyé par email à l\'adresse suivante : %s. N\'oubliez pas de regarder vos courriers indésirables (spam) !',
                 $user->getEmail()
@@ -67,10 +68,16 @@ class SignalementFileController extends AbstractController
 
             if ($signalementFileProcessor->isValid()) {
                 $suivi = $suiviFactory->createInstanceFrom($this->getUser(), $signalement);
+                // TODO : distinguer documents partenaires et documents sur la istuation usager
+                // TODO : afficher la liste des désordres concernés pour l'ajout de photo
+                if (FILE::INPUT_NAME_DOCUMENTS === $inputName) {
+                    $description = 'Un ou plusieurs documents partenaires ont été ajoutés au signalement :';
+                } else {
+                    $description = 'Une ou plusieurs photos ont été ajoutées au signalement :';
+                }
                 $suivi->setDescription(
-                    'Ajout de '
-                    .$inputName
-                    .' au signalement<ul>'
+                    $description
+                    .'<ul>'
                     .implode('', $descriptionList)
                     .'</ul>'
                 );
@@ -104,10 +111,28 @@ class SignalementFileController extends AbstractController
         Request $request,
         FileRepository $fileRepository,
         UploadHandlerService $uploadHandlerService,
+        EntityManagerInterface $entityManager,
+        SuiviFactory $suiviFactory,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('FILE_DELETE', $signalement);
         if ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))) {
             if ($uploadHandlerService->deleteSignalementFile($signalement, $type, $filename, $fileRepository)) {
+                $suivi = $suiviFactory->createInstanceFrom($this->getUser(), $signalement);
+                /** @var User $user */
+                $user = $this->getUser();
+                $description = $user->getNomComplet().' a supprimé le document suivant :';
+                $suivi->setDescription(
+                    $description
+                    .'<ul>'
+                    .$filename
+                    .'</ul>'
+                );
+                $suivi->setType(SUIVI::TYPE_AUTO);
+
+                $entityManager->persist($suivi);
+                $entityManager->persist($signalement);
+                $entityManager->flush();
+
                 return $this->json(['response' => 'success']);
             }
         }
