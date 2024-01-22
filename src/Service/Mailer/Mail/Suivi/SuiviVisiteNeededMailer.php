@@ -45,7 +45,7 @@ class SuiviVisiteNeededMailer extends AbstractNotificationMailer
         $this->mailerSubject = sprintf(
             $this->mailerSubject,
             $signalement->getReference(),
-            $signalement->getNomOccupant()
+            $signalement->getNomOccupant() ?? $signalement->getNomDeclarant()
         );
     }
 }

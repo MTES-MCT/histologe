@@ -43,7 +43,7 @@ class SuiviVisiteAbortedToPartnerMailer extends AbstractNotificationMailer
         $signalement = $notificationMail->getSignalement();
         $this->mailerSubject = sprintf($this->mailerSubject,
             $signalement->getReference(),
-            $signalement->getNomOccupant()
+            $signalement->getNomOccupant() ?? $signalement->getNomDeclarant()
         );
     }
 }
