@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class AssignementNewMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_ASSIGNMENT_NEW;
-    protected ?string $mailerSubject = '[%s] Un nouveau signalement vous attend sur %s.';
+    protected ?string $mailerSubject = '[%s] Un nouveau signalement vous attend.';
     protected ?string $mailerButtonText = 'Accéder au signalement';
     protected ?string $mailerTemplate = 'affectation_email';
 
