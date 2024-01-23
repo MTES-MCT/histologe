@@ -74,11 +74,6 @@
                         target="_blank">Voir le rapport de visite
                     </a>
                 </li>
-                <li>
-                    <a href="{{ path('back_signalement_visite_deleterapport',{uuid:signalement.uuid, intervention:intervention.id}) }}?_token={{ csrf_token('delete_rapport') }}" title="Supprimer le rapport"
-                        class="fr-btn fr-btn--secondary fr-background--white fr-fi-delete-line ">
-                    </a>
-                </li>
             </ul>
             {% endif %}
         </div>
