@@ -16,18 +16,26 @@ class DesordreLogementAerationVentilationDefectueuse implements DesordreTraiteme
     {
         $precisions = [];
 
-        if (isset($payload['desordres_logement_aeration_ventilation_defectueuse_details_nettoyage'])) {
+        if (
+            \array_key_exists('desordres_logement_aeration_ventilation_defectueuse_details_nettoyage', $payload)
+        ) {
             if ('oui' === $payload['desordres_logement_aeration_ventilation_defectueuse_details_nettoyage']) {
                 $precisions = $this->desordreTraitementPieces->findDesordresPrecisionsBy(
                     $payload,
                     'desordres_logement_aeration_ventilation_defectueuse_details',
                     '_nettoyage_oui'
                 );
-            } else {
+            } elseif ('non' === $payload['desordres_logement_aeration_ventilation_defectueuse_details_nettoyage']) {
                 $precisions = $this->desordreTraitementPieces->findDesordresPrecisionsBy(
                     $payload,
                     'desordres_logement_aeration_ventilation_defectueuse_details',
                     '_nettoyage_non'
+                );
+            } else {
+                $precisions = $this->desordreTraitementPieces->findDesordresPrecisionsBy(
+                    $payload,
+                    'desordres_logement_aeration_ventilation_defectueuse_details',
+                    '_nettoyage_nsp'
                 );
             }
         }

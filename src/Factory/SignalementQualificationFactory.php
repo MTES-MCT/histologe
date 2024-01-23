@@ -55,7 +55,7 @@ class SignalementQualificationFactory
         $dataConsoToSave = null;
         $dataDateBailToSave = null;
         if ('Je ne sais pas' !== $dataDateBail) {
-            if ($signalement->getDateEntree()->format('Y') >= 2023) {
+            if (null !== $signalement->getDateEntree() && $signalement->getDateEntree()->format('Y') >= 2023) {
                 $signalementQualification->setDernierBailAt($signalement->getDateEntree());
             } elseif (!empty($dataDateBail)) {
                 $signalementQualification->setDernierBailAt(new DateTimeImmutable($dataDateBail));
@@ -75,7 +75,7 @@ class SignalementQualificationFactory
             $dataHasDPEToSave = ('' === $dataHasDPE) ? null : $dataHasDPE;
         }
         $qualificationNDERequest = new QualificationNDERequest(
-            dateEntree: $signalement->getDateEntree()->format('Y-m-d'),
+            dateEntree: $signalement->getDateEntree() ? $signalement->getDateEntree()->format('Y-m-d') : null,
             dateDernierBail: $dataDateBailToSave,
             dateDernierDPE: isset($dataDateDPE) ? $dataDateDPE : null,
             superficie: !empty($dataConsoSize) ? $dataConsoSize : null,

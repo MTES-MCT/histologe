@@ -18,6 +18,11 @@ html, body {
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+.fr-border--left {
+    border-left: 2px solid var(--border-action-high-blue-france);
+    padding-left: 10px;
+}
+
 .bloc-suivi-content-row p {
     margin: 0;
 }
@@ -226,6 +231,11 @@ small {
 
 .fr-list--hover li:hover {
     background-color: white;
+}
+
+.fr-list--none {
+    list-style: none;  
+    padding-left: inherit;
 }
 
 .fr-list--icon-img {

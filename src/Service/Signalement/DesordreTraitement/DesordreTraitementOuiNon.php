@@ -15,14 +15,18 @@ class DesordreTraitementOuiNon implements DesordreTraitementInterface
     {
         $precisions = [];
 
-        if (isset($payload[$slug])) {
+        if (\array_key_exists($slug, $payload)) {
             if ('oui' === $payload[$slug]) {
                 $precision = $this->desordrePrecisionRepository->findOneBy(
                     ['desordrePrecisionSlug' => $slug.'_oui']
                 );
-            } else {
+            } elseif ('non' === $payload[$slug]) {
                 $precision = $this->desordrePrecisionRepository->findOneBy(
                     ['desordrePrecisionSlug' => $slug.'_non']
+                );
+            } else {
+                $precision = $this->desordrePrecisionRepository->findOneBy(
+                    ['desordrePrecisionSlug' => $slug.'_nsp']
                 );
             }
             $precisions[] = $precision;

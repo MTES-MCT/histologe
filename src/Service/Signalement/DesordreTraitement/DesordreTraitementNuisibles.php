@@ -15,14 +15,18 @@ class DesordreTraitementNuisibles implements DesordreTraitementInterface
     {
         $precisions = [];
 
-        if (isset($payload[$slug.'_details_date'])) {
+        if (\array_key_exists($slug.'_details_date', $payload)) {
             if ('before_movein' === $payload[$slug.'_details_date']) {
                 $precision = $this->desordrePrecisionRepository->findOneBy(
                     ['desordrePrecisionSlug' => $slug.'_details_date_before_movein']
                 );
-            } else {
+            } elseif ('after_movein' === $payload[$slug.'_details_date']) {
                 $precision = $this->desordrePrecisionRepository->findOneBy(
                     ['desordrePrecisionSlug' => $slug.'_details_date_after_movein']
+                );
+            } else {
+                $precision = $this->desordrePrecisionRepository->findOneBy(
+                    ['desordrePrecisionSlug' => $slug.'_details_date_nsp']
                 );
             }
             $precisions[] = $precision;

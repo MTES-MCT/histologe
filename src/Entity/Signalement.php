@@ -673,10 +673,10 @@ class Signalement
 
     public function setSuperficie(?string $superficie): self
     {
-        if (empty($superficie) || !\is_numeric($superficie)) {
+        if (empty($superficie) || !is_numeric($superficie)) {
             $superficie = null;
         }
-        
+
         $this->superficie = $superficie;
 
         return $this;

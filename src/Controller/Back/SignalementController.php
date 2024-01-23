@@ -30,6 +30,7 @@ use App\Security\Voter\UserVoter;
 use App\Service\FormHelper;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
+use App\Service\Signalement\SignalementDesordresProcessor;
 use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -56,6 +57,7 @@ class SignalementController extends AbstractController
         AffectationRepository $affectationRepository,
         InterventionRepository $interventionRepository,
         DesordrePrecisionRepository $desordrePrecisionsRepository,
+        SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -121,16 +123,7 @@ class SignalementController extends AbstractController
 
             return $this->redirectToRoute('back_index');
         }
-        $isDanger = false;
-        $criticitesArranged = [];
-        foreach ($signalement->getCriticites() as $criticite) {
-            $criticitesArranged[
-                $criticite->getCritere()->getSituation()->getLabel()
-            ][$criticite->getCritere()->getLabel()] = $criticite;
-            if ($criticite->getIsDanger()) {
-                $isDanger = true;
-            }
-        }
+        $infoDesordres = $signalementDesordresProcessor->process($signalement);
 
         $canEditSignalement = false;
         if (
@@ -200,7 +193,8 @@ class SignalementController extends AbstractController
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
             'createdFromDraft' => $signalement->getCreatedFrom(),
-            'situations' => $criticitesArranged,
+            'situations' => $infoDesordres['criticitesArranged'],
+            'photos' => $infoDesordres['photos'],
             'needValidation' => Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut(),
             'canEditSignalement' => $canEditSignalement,
             'canExportSignalement' => $canExportSignalement,
@@ -209,7 +203,7 @@ class SignalementController extends AbstractController
             'isClosed' => Signalement::STATUS_CLOSED === $signalement->getStatut(),
             'isClosedForMe' => $isClosedForMe,
             'isRefused' => $isRefused,
-            'isDanger' => $isDanger,
+            'isDanger' => $infoDesordres['isDanger'],
             'signalement' => $signalement,
             'partners' => $partners,
             'clotureForm' => $clotureForm->createView(),

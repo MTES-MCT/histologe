@@ -1,0 +1,44 @@
+<section class="fr-accordion">
+    <div class="fr-background-alt--grey fr-p-3v">
+    <h3 class="fr-accordion__title">
+        <button class="fr-accordion__btn" aria-expanded="false" aria-controls="{{ zone }}-collapse-{{ loop.index }}"><strong>{{ situation|capitalize }}</strong></button>
+    </h3>
+    <div class="fr-collapse" id="{{ zone }}-collapse-{{ loop.index }}">
+        <ul>
+            {% for critere,criticites in criteres %}
+                <li>
+                    {{ critere }}
+                    {% for criticite in criticites %}
+                        {% if criticite.label is not same as '' %}
+                            <ul class="fr-list fr-list--none">
+                                <li>
+                                    {{ criticite.label|raw }}                                
+                                    {% if signalement.jsonContent[criticite.desordreCritere.slugCritere] is defined %}
+                                        <br>Commentaire usager : <i>{{ signalement.jsonContent[criticite.desordreCritere.slugCritere] }}</i>
+                                    {% endif %}
+                                </li>
+                            </ul>                                            
+                        {% endif %}
+                        {# ajout des photos liées spécifiquement à ce critère ou à cette précision #}
+                        {% if photos[criticite.desordreCritere.slugCritere] is defined %}    
+                            <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">                    
+                                {% for photo in photos[criticite.desordreCritere.slugCritere] %}
+                                    {% include 'back/signalement/view/user-declaration-desordre-photo.html.twig' %}   
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </li>
+            {% endfor %}
+        </ul>
+        {# ajout des photos liées spécifiquement à cette situation #}
+        {% if photos[situation] %}
+            <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">    
+                {% for photo in photos[situation] %}
+                    {% include 'back/signalement/view/user-declaration-desordre-photo.html.twig' %}   
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    </div>
+</section>

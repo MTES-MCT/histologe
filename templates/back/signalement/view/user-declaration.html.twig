@@ -9,15 +9,25 @@
 <div class="fr-grid-row fr-grid-row--gutters fr-mt-5w">
     <div class="fr-col-12 fr-col-md-6">
         <h4>Désordres logement</h4>
-        <div class="fr-background-alt--grey fr-p-3v">
-            TODO
+        <div class="fr-accordions-group">
+            {% if situations[enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] is defined %}
+                {% set zone = 'logement' %}
+                {% for situation,criteres in situations[enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] %}
+                    {% include 'back/signalement/view/user-declaration-desordre.html.twig' %}                    
+                {% endfor %}         
+            {% endif %}
         </div>
     </div>
 
     <div class="fr-col-12 fr-col-md-6">
         <h4>Désordres bâtiment</h4>
-        <div class="fr-background-alt--grey fr-p-3v">
-            TODO
+        <div class="fr-accordions-group">
+            {% if situations[enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] is defined %}
+                {% set zone = 'batiment' %}
+                {% for situation,criteres in situations[enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] %}
+                    {% include 'back/signalement/view/user-declaration-desordre.html.twig' %}                    
+                {% endfor %}            
+            {% endif %}
         </div>
     </div>
 </div>

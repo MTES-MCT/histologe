@@ -3,6 +3,7 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\Criticite;
+use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\ProfileDeclarant;
@@ -331,7 +332,9 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setIsUsagerAbandonProcedure(0)
             ->setNbPiecesLogement($row['nb_pieces_logement']);
 
-        $signalement->setCreatedFrom($this->signalementDraftRepository->findOneBy(['uuid' => $row['created_from_uuid']]));
+        $signalement->setCreatedFrom(
+            $this->signalementDraftRepository->findOneBy(['uuid' => $row['created_from_uuid']])
+        );
         $signalement->setProfileDeclarant(ProfileDeclarant::tryFrom($row['profile_declarant']))
             ->setTypeCompositionLogement(
                 TypeCompositionLogementFactory::createFromArray(json_decode($row['type_composition_logement'], true))
@@ -416,6 +419,20 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 $manager->persist($signalementQualification);
 
                 $signalement->addSignalementQualification($signalementQualification);
+            }
+        }
+        if (isset($row['desordre_photos'])) {
+            foreach ($row['desordre_photos'] as $document) {
+                $file = $this->fileFactory->createInstanceFrom(
+                    filename: $document['file'],
+                    title: $document['titre'],
+                    type: File::FILE_TYPE_PHOTO,
+                    signalement: $signalement,
+                    // user: $user,
+                    documentType: DocumentType::SITUATION,
+                    desordreSlug: $document['slug']
+                );
+                $manager->persist($file);
             }
         }
 

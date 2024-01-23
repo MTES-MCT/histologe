@@ -10,7 +10,7 @@ class DesordresTablesHeader
     public const CATEGORIE_LABEL_BO = 'Catégorie score (BO)';
     public const CRITERE_LABEL = 'Critère';
     public const CRITERE_SLUG = 'Slug Critère';
-    public const PRECISION_CONDITION = 'Précision';
+    public const PRECISION_LABEL = 'Précision';
     public const PRECISION_PIECE = 'Pièce';
     public const PRECISION_SLUG = 'Slug précision';
     public const PRECISION_COEFF = 'Coeff';
