@@ -28,7 +28,7 @@ class SignalementQualification
     private array $criticites = [];
 
     #[ORM\Column(nullable: true)]
-    private array $desordrePrecisionIds = [];
+    private ?array $desordrePrecisionIds = [];
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?DateTimeImmutable $dernierBailAt = null;
@@ -89,7 +89,7 @@ class SignalementQualification
         return $this;
     }
 
-    public function getDesordrePrecisionIds(): array
+    public function getDesordrePrecisionIds(): ?array
     {
         return $this->desordrePrecisionIds;
     }
