@@ -50,7 +50,7 @@ class SignalementClosedToOnePartnerMailer extends AbstractNotificationMailer
         $this->mailerSubject = sprintf(
             $this->mailerSubject,
             $signalement->getReference(),
-            $signalement->getNomOccupant() ?? $signalement->getNomDeclarant(),
+            $signalement->getNomOccupantOrDeclarant(),
             $user?->getPartner()->getNom(),
         );
     }
