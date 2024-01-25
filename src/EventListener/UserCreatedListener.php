@@ -7,10 +7,10 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
-use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Events;
 
-#[AsDoctrineListener(event: Events::onFlush)]
+#[AsDoctrineListener(event: Events::postPersist)]
 class UserCreatedListener
 {
     public function __construct(
@@ -18,14 +18,12 @@ class UserCreatedListener
     ) {
     }
 
-    public function onFlush(OnFlushEventArgs $args): void
+    public function postPersist(PostPersistEventArgs $args)
     {
-        $unitOfWork = $args->getObjectManager()->getUnitOfWork();
+        $entity = $args->getObject();
 
-        foreach ($unitOfWork->getScheduledEntityInsertions() as $entity) {
-            if ($entity instanceof User && $entity->isActivateAccountNotificationEnabled()) {
-                $this->sendNotification($entity);
-            }
+        if ($entity instanceof User && $entity->isActivateAccountNotificationEnabled()) {
+            $this->sendNotification($entity);
         }
     }
 

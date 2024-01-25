@@ -35,12 +35,6 @@ class SecurityController extends AbstractController
         return $this->render('security/login.html.twig', ['title' => $title, 'last_username' => $lastUsername, 'error' => $error]);
     }
 
-    #[Route('/oneclickconnect', name: 'login_check')]
-    public function check()
-    {
-        throw new LogicException('This code should never be reached');
-    }
-
     #[Route('/_up/{filename}/{uuid?}', name: 'show_uploaded_file')]
     public function showUploadedFile(
         LoggerInterface $logger,

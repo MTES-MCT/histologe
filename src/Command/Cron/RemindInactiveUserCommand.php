@@ -54,8 +54,7 @@ class RemindInactiveUserCommand extends AbstractCronCommand
         }
 
         foreach ($userList as $userItem) {
-            $user = $this->userManager->loadUserToken($userItem['email']);
-            $this->userManager->save($user);
+            $user = $this->userManager->findOneBy(['email' => $userItem['email']]);
 
             if ($user->isActivateAccountNotificationEnabled()) {
                 $this->notificationMailerRegistry->send(

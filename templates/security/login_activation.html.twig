@@ -6,12 +6,13 @@
     <main class="fr-container fr-py-5w">
         <section class="fr-grid-row fr-grid-row--center">
             <header class="fr-callout bg-light fr-col-12">
-                <p class="fr-callout__title">{{ actionTitle }}</p>
+                <p class="fr-callout__title">{{ title }}</p>
                 <p class="fr-callout__text fr-mb-5v">
                     Entrez votre adresse courriel et laissez-vous guider.
                 </p>
-                <em class="fr-fi-information-line fr-text--light fr-text-label--blue-france fr-icon--sm">Vous recevrez
-                    un mail avec un lien {{ actionText }} votre compte</em>
+                <em class="fr-fi-information-line fr-text--light fr-text-label--blue-france fr-icon--sm">
+                    Vous recevrez un courriel avec un lien vous pemettant de créer votre mot de passe afin d'activer votre compte.
+                </em>
             </header>
             <form action="{{ path('login_activation') }}" class="needs-validation fr-mt-5v fr-col-md-6"
                   name="login-activation-form" method="POST" novalidate="">

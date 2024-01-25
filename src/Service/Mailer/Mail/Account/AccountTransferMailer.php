@@ -3,6 +3,7 @@
 namespace App\Service\Mailer\Mail\Account;
 
 use App\Entity\User;
+use App\Manager\UserManager;
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
@@ -10,7 +11,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
 class AccountTransferMailer extends AbstractNotificationMailer
 {
@@ -23,7 +23,7 @@ class AccountTransferMailer extends AbstractNotificationMailer
         protected ParameterBagInterface $parameterBag,
         protected LoggerInterface $logger,
         protected UrlGeneratorInterface $urlGenerator,
-        private readonly LoginLinkHandlerInterface $loginLinkHandler,
+        private UserManager $userManager
     ) {
         parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator);
     }
@@ -31,12 +31,12 @@ class AccountTransferMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $user = $notificationMail->getUser();
-        $loginLinkDetails = $this->loginLinkHandler->createLoginLink($user);
-        $loginLink = $loginLinkDetails->getUrl();
-
-        $link = User::STATUS_ACTIVE === $user->getStatut() ?
-            $this->urlGenerator->generate('back_dashboard', [], UrlGeneratorInterface::ABSOLUTE_URL) :
-            $loginLink;
+        $this->userManager->loadUserTokenForUser($user);
+        if (User::STATUS_ACTIVE === $user->getStatut()) {
+            $link = $this->generateLink('back_dashboard', []);
+        } else {
+            $link = $this->generateLink('activate_account', ['user' => $user->getId(), 'token' => $user->getToken()]);
+        }
 
         return [
             'btntext' => User::STATUS_ACTIVE === $user->getStatut() ? 'Accéder à mon compte' : 'Activer mon compte',

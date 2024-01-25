@@ -59,14 +59,6 @@ services:
         tags:
             - { name: 'kernel.event_listener', event: 'security.interactive_login' }
 
-    App\EventListener\RequestListener:
-        tags:
-            - { name: 'kernel.event_listener', event: 'kernel.request' }
-#            - { name: 'kernel.event_listener', event: 'kernel.controller', method: onKernelController }
-        arguments:
-            - '@security.untracked_token_storage'
-            - '@Symfony\Component\Routing\Generator\UrlGeneratorInterface'
-
     App\EventListener\ExceptionListener:
         tags:
             - { name: 'kernel.event_listener', event: 'kernel.exception' }
@@ -196,6 +188,6 @@ when@test:
                 $parameterBag: '@Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface'
                 $logger: '@Psr\Log\LoggerInterface'
                 $urlGenerator: '@Symfony\Component\Routing\Generator\UrlGeneratorInterface'
-                $loginLinkHandler: '@security.authenticator.login_link_handler.main'
+                $userManager: '@App\Manager\UserManager'
             tags:
                 - name: 'app.notification_mailer'
