@@ -23,7 +23,8 @@
                                         </label>
                                         <input class="fr-input search-address-autocomplete" type="text" id="edit-address-search"
                                             data-fr-adresse-bo-autocomplete="true" data-form-id="form-edit-address" 
-                                            data-form-lat="{{ signalement.geoloc.lat }}" data-form-lng="{{ signalement.geoloc.lng }}" 
+                                            data-form-lat="{% if signalement.geoloc.lat is defined %}{{ signalement.geoloc.lat }}{% endif %}" 
+                                            data-form-lng="{% if signalement.geoloc.lng is defined %}{{ signalement.geoloc.lng }}{% endif %}" 
                                             {% if is_granted('ROLE_ADMIN') is not same as true %}data-form-limit="{{ signalement.territory.zip }}" {% endif %}>
                                         <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france search-address-autocomplete-list">
                                         </div>
@@ -48,8 +49,8 @@
                                     </div>
 
                                     <input type="hidden" name="insee" value="{{ signalement.inseeOccupant }}">
-                                    <input type="hidden" name="geolocLat" value="{{ signalement.geoloc.lat }}">
-                                    <input type="hidden" name="geolocLng" value="{{ signalement.geoloc.lng }}">
+                                    <input type="hidden" name="geolocLat" value="{% if signalement.geoloc.lat is defined %}{{ signalement.geoloc.lat }}{% endif %}">
+                                    <input type="hidden" name="geolocLng" value="{% if signalement.geoloc.lng is defined %}{{ signalement.geoloc.lng }}{% endif %}">
                                 </div>
                                 <div class="fr-col-12 fr-col-md-6">
                                     <h2 class="fr-h5">Complément d'adresse</h2>
