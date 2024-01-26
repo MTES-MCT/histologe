@@ -31,11 +31,17 @@ use App\Event\SignalementCreatedEvent;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementFactory;
+use App\Repository\DesordreCritereRepository;
+use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Service\DataGouv\Response\Address;
+use App\Service\Signalement\CriticiteCalculator;
+use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogement;
 use App\Service\Signalement\Qualification\QualificationStatusService;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\SignalementInputValueMapper;
+use App\Specification\Signalement\SuroccupationSpecification;
 use DateTimeImmutable;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -47,6 +53,9 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class SignalementManager extends AbstractManager
 {
+    private const BEFORE_2023 = '1970-01-01';
+    private const AFTER_2023 = '2023-01-02';
+
     public function __construct(
         protected ManagerRegistry $managerRegistry,
         private Security $security,
@@ -58,6 +67,11 @@ class SignalementManager extends AbstractManager
         private ParameterBagInterface $parameterBag,
         private CsrfTokenManagerInterface $csrfTokenManager,
         private SignalementInputValueMapper $signalementInputValueMapper,
+        private SuroccupationSpecification $suroccupationSpecification,
+        private CriticiteCalculator $criticiteCalculator,
+        private SignalementQualificationUpdater $signalementQualificationUpdater,
+        private DesordrePrecisionRepository $desordrePrecisionRepository,
+        private DesordreCritereRepository $desordreCritereRepository,
         string $entityName = Signalement::class
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -257,48 +271,58 @@ class SignalementManager extends AbstractManager
     ) {
         $signalement = $signalementQualification->getSignalement();
         // // mise à jour du signalement
-        if ('2023-01-02' === $qualificationNDERequest->getDateEntree()
-        && $signalement->getDateEntree()->format('Y') < '2023'
+        if (self::AFTER_2023 === $qualificationNDERequest->getDateEntree()
+            && $signalement->getDateEntree()->format('Y') < '2023'
         ) {
-            $signalement->setDateEntree(new DateTimeImmutable('2023-01-02'));
+            $signalement->setDateEntree(new DateTimeImmutable(self::AFTER_2023));
         }
 
-        if ('1970-01-01' === $qualificationNDERequest->getDateEntree()
-        && $signalement->getDateEntree()->format('Y') >= '2023'
+        if (self::BEFORE_2023 === $qualificationNDERequest->getDateEntree()
+            && $signalement->getDateEntree()->format('Y') >= '2023'
         ) {
-            $signalement->setDateEntree(new DateTimeImmutable('1970-01-01'));
+            $signalement->setDateEntree(new DateTimeImmutable(self::BEFORE_2023));
         }
 
         if (null !== $qualificationNDERequest->getSuperficie()
-        && $signalement->getSuperficie() !== $qualificationNDERequest->getSuperficie()
+            && $signalement->getSuperficie() !== $qualificationNDERequest->getSuperficie()
         ) {
             $signalement->setSuperficie($qualificationNDERequest->getSuperficie());
         }
         $this->save($signalement);
 
         // // mise à jour du signalementqualification
-        if ('2023-01-02' === $qualificationNDERequest->getDateDernierBail()
-        && (null === $signalementQualification->getDernierBailAt() || $signalementQualification->getDernierBailAt()?->format('Y') < '2023')
+        if (self::AFTER_2023 === $qualificationNDERequest->getDateDernierBail()
+            && (
+                null === $signalementQualification->getDernierBailAt()
+                || $signalementQualification->getDernierBailAt()?->format('Y') < '2023'
+            )
         ) {
-            $signalementQualification->setDernierBailAt(new DateTimeImmutable('2023-01-02'));
+            $signalementQualification->setDernierBailAt(new DateTimeImmutable(self::AFTER_2023));
         }
-        if ('1970-01-01' === $qualificationNDERequest->getDateDernierBail()
-        && (null === $signalementQualification->getDernierBailAt() || $signalementQualification->getDernierBailAt()?->format('Y') >= '2023')
+        if (self::BEFORE_2023 === $qualificationNDERequest->getDateDernierBail()
+            && (
+                null === $signalementQualification->getDernierBailAt()
+                || $signalementQualification->getDernierBailAt()?->format('Y') >= '2023'
+            )
         ) {
-            $signalementQualification->setDernierBailAt(new DateTimeImmutable('1970-01-01'));
+            $signalementQualification->setDernierBailAt(new DateTimeImmutable(self::BEFORE_2023));
         }
 
         $signalementQualification->setDetails($qualificationNDERequest->getDetails());
 
         $this->save($signalementQualification);
 
-        $signalementQualification->setStatus($this->qualificationStatusService->getNDEStatus($signalementQualification));
+        $signalementQualification->setStatus(
+            $this->qualificationStatusService->getNDEStatus($signalementQualification)
+        );
 
         $this->save($signalementQualification);
     }
 
-    public function updateFromAdresseOccupantRequest(Signalement $signalement, AdresseOccupantRequest $adresseOccupantRequest)
-    {
+    public function updateFromAdresseOccupantRequest(
+        Signalement $signalement,
+        AdresseOccupantRequest $adresseOccupantRequest
+    ) {
         $signalement->setAdresseOccupant($adresseOccupantRequest->getAdresse())
             ->setCpOccupant($adresseOccupantRequest->getCodePostal())
             ->setVilleOccupant($adresseOccupantRequest->getVille())
@@ -316,11 +340,17 @@ class SignalementManager extends AbstractManager
         $this->save($signalement);
     }
 
-    public function updateFromCoordonneesTiersRequest(Signalement $signalement, CoordonneesTiersRequest $coordonneesTiersRequest)
-    {
+    public function updateFromCoordonneesTiersRequest(
+        Signalement $signalement,
+        CoordonneesTiersRequest $coordonneesTiersRequest
+    ) {
         if (ProfileDeclarant::BAILLEUR == $signalement->getProfileDeclarant()) {
             $signalement
-                ->setTypeProprio($coordonneesTiersRequest->getTypeProprio() ? ProprioType::from($coordonneesTiersRequest->getTypeProprio()) : null);
+                ->setTypeProprio(
+                    $coordonneesTiersRequest->getTypeProprio()
+                    ? ProprioType::from($coordonneesTiersRequest->getTypeProprio())
+                    : null
+                );
         }
         $signalement->setNomDeclarant($coordonneesTiersRequest->getNom())
             ->setPrenomDeclarant($coordonneesTiersRequest->getPrenom())
@@ -332,11 +362,17 @@ class SignalementManager extends AbstractManager
         $this->save($signalement);
     }
 
-    public function updateFromCoordonneesFoyerRequest(Signalement $signalement, CoordonneesFoyerRequest $coordonneesFoyerRequest)
-    {
+    public function updateFromCoordonneesFoyerRequest(
+        Signalement $signalement,
+        CoordonneesFoyerRequest $coordonneesFoyerRequest
+    ) {
         if (ProfileDeclarant::BAILLEUR_OCCUPANT == $signalement->getProfileDeclarant()) {
             $signalement
-                ->setTypeProprio($coordonneesFoyerRequest->getTypeProprio() ? ProprioType::from($coordonneesFoyerRequest->getTypeProprio()) : null)
+                ->setTypeProprio(
+                    $coordonneesFoyerRequest->getTypeProprio()
+                    ? ProprioType::from($coordonneesFoyerRequest->getTypeProprio())
+                    : null
+                )
                 ->setStructureDeclarant($coordonneesFoyerRequest->getNomStructure());
         }
         $signalement
@@ -350,8 +386,10 @@ class SignalementManager extends AbstractManager
         $this->save($signalement);
     }
 
-    public function updateFromCoordonneesBailleurRequest(Signalement $signalement, CoordonneesBailleurRequest $coordonneesBailleurRequest)
-    {
+    public function updateFromCoordonneesBailleurRequest(
+        Signalement $signalement,
+        CoordonneesBailleurRequest $coordonneesBailleurRequest
+    ) {
         $signalement->setNomProprio($coordonneesBailleurRequest->getNom())
             ->setPrenomProprio($coordonneesBailleurRequest->getPrenom())
             ->setMailProprio($coordonneesBailleurRequest->getMail())
@@ -366,9 +404,15 @@ class SignalementManager extends AbstractManager
             $informationComplementaire = clone $signalement->getInformationComplementaire();
         }
         $informationComplementaire
-            ->setInformationsComplementairesSituationBailleurBeneficiaireRsa($coordonneesBailleurRequest->getBeneficiaireRsa())
-            ->setInformationsComplementairesSituationBailleurBeneficiaireFsl($coordonneesBailleurRequest->getBeneficiaireFsl())
-            ->setInformationsComplementairesSituationBailleurRevenuFiscal($coordonneesBailleurRequest->getRevenuFiscal());
+            ->setInformationsComplementairesSituationBailleurBeneficiaireRsa(
+                $coordonneesBailleurRequest->getBeneficiaireRsa()
+            )
+            ->setInformationsComplementairesSituationBailleurBeneficiaireFsl(
+                $coordonneesBailleurRequest->getBeneficiaireFsl()
+            )
+            ->setInformationsComplementairesSituationBailleurRevenuFiscal(
+                $coordonneesBailleurRequest->getRevenuFiscal()
+            );
         if ($coordonneesBailleurRequest->getDateNaissance()) {
             $informationComplementaire->setInformationsComplementairesSituationBailleurDateNaissance(
                 $coordonneesBailleurRequest->getDateNaissance()
@@ -379,8 +423,10 @@ class SignalementManager extends AbstractManager
         $this->save($signalement);
     }
 
-    public function updateFromInformationsLogementRequest(Signalement $signalement, InformationsLogementRequest $informationsLogementRequest)
-    {
+    public function updateFromInformationsLogementRequest(
+        Signalement $signalement,
+        InformationsLogementRequest $informationsLogementRequest
+    ) {
         if (is_numeric($informationsLogementRequest->getNombrePersonnes())) {
             $signalement->setNbOccupantsLogement($informationsLogementRequest->getNombrePersonnes());
         }
@@ -411,18 +457,80 @@ class SignalementManager extends AbstractManager
             $informationComplementaire = clone $signalement->getInformationComplementaire();
         }
         $informationComplementaire
-            ->setInformationsComplementairesSituationOccupantsLoyersPayes($informationsLogementRequest->getLoyersPayes())
-            ->setInformationsComplementairesLogementAnneeConstruction($informationsLogementRequest->getAnneeConstruction())
+            ->setInformationsComplementairesSituationOccupantsLoyersPayes(
+                $informationsLogementRequest->getLoyersPayes()
+            )
+            ->setInformationsComplementairesLogementAnneeConstruction(
+                $informationsLogementRequest->getAnneeConstruction()
+            )
             ->setInformationsComplementairesSituationBailleurDateEffetBail(
-                !empty($informationsLogementRequest->getBailleurDateEffetBail()) ? $informationsLogementRequest->getBailleurDateEffetBail() : null
+                !empty($informationsLogementRequest->getBailleurDateEffetBail())
+                ? $informationsLogementRequest->getBailleurDateEffetBail()
+                : null
             );
+
         $signalement->setInformationComplementaire($informationComplementaire);
+
+        // si changement de nb de personnes, la suroccupation peut changer
+        $this->checkSuroccupation($signalement);
+        // si changement de suroccupation ou de nb d'enfants, le score peut changer
+        $signalement->setScore($this->criticiteCalculator->calculate($signalement));
+        $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
 
         $this->save($signalement);
     }
 
-    public function updateFromCompositionLogementRequest(Signalement $signalement, CompositionLogementRequest $compositionLogementRequest)
-    {
+    private function checkSuroccupation(
+        Signalement $signalement,
+    ) {
+        $situationFoyer = $signalement->getSituationFoyer();
+        $typeCompositionLogement = $signalement->getTypeCompositionLogement();
+        if ($this->suroccupationSpecification->isSatisfiedBy($situationFoyer, $typeCompositionLogement)) {
+            $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
+                ['desordrePrecisionSlug' => $this->suroccupationSpecification->getSlug()]
+            );
+            if (null !== $precisionToLink
+            && !$signalement->hasDesordrePrecision($precisionToLink)) {
+                $signalement->addDesordrePrecision($precisionToLink);
+                $critereToLink = $precisionToLink->getDesordreCritere();
+                if (null !== $critereToLink
+                    && !$signalement->hasDesordreCritere($critereToLink)) {
+                    $signalement->addDesordreCritere($critereToLink);
+                    $categorieToLink = $critereToLink->getDesordreCategorie();
+                    if (null !== $categorieToLink
+                        && !$signalement->hasDesordreCategorie($categorieToLink)) {
+                        $signalement->addDesordreCategory($categorieToLink);
+                    }
+                }
+            }
+        } else {
+            $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
+                ['desordrePrecisionSlug' => 'desordres_type_composition_logement_suroccupation_allocataire']
+            );
+            if ($signalement->hasDesordrePrecision($precisionToLink)) {
+                $signalement->removeDesordrePrecision($precisionToLink);
+            }
+            $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
+                ['desordrePrecisionSlug' => 'desordres_type_composition_logement_suroccupation_non_allocataire']
+            );
+            if ($signalement->hasDesordrePrecision($precisionToLink)) {
+                $signalement->removeDesordrePrecision($precisionToLink);
+            }
+            $critereToLink = $precisionToLink->getDesordreCritere();
+            if ($signalement->hasDesordreCritere($critereToLink)) {
+                $signalement->removeDesordreCritere($critereToLink);
+            }
+            $categorieToLink = $critereToLink->getDesordreCategorie();
+            if ($signalement->hasDesordreCategorie($categorieToLink)) {
+                $signalement->removeDesordreCategory($categorieToLink);
+            }
+        }
+    }
+
+    public function updateFromCompositionLogementRequest(
+        Signalement $signalement,
+        CompositionLogementRequest $compositionLogementRequest
+    ) {
         $signalement->setNatureLogement($compositionLogementRequest->getType());
         $signalement->setSuperficie($compositionLogementRequest->getSuperficie());
 
@@ -448,17 +556,32 @@ class SignalementManager extends AbstractManager
             ->setTypeLogementDernierEtage($compositionLogementRequest->getTypeLogementDernierEtage())
             ->setTypeLogementSousCombleSansFenetre($compositionLogementRequest->getTypeLogementSousCombleSansFenetre())
             ->setTypeLogementSousSolSansFenetre($compositionLogementRequest->getTypeLogementSousSolSansFenetre())
-            ->setTypeLogementCommoditesPieceAVivre9m($compositionLogementRequest->getTypeLogementCommoditesPieceAVivre9m())
+            ->setTypeLogementCommoditesPieceAVivre9m(
+                $compositionLogementRequest->getTypeLogementCommoditesPieceAVivre9m()
+            )
             ->setTypeLogementCommoditesCuisine($compositionLogementRequest->getTypeLogementCommoditesCuisine())
-            ->setTypeLogementCommoditesCuisineCollective($compositionLogementRequest->getTypeLogementCommoditesCuisineCollective())
+            ->setTypeLogementCommoditesCuisineCollective(
+                $compositionLogementRequest->getTypeLogementCommoditesCuisineCollective()
+            )
             ->setTypeLogementCommoditesSalleDeBain($compositionLogementRequest->getTypeLogementCommoditesSalleDeBain())
-            ->setTypeLogementCommoditesSalleDeBainCollective($compositionLogementRequest->getTypeLogementCommoditesSalleDeBainCollective())
+            ->setTypeLogementCommoditesSalleDeBainCollective(
+                $compositionLogementRequest->getTypeLogementCommoditesSalleDeBainCollective()
+            )
             ->setTypeLogementCommoditesWc($compositionLogementRequest->getTypeLogementCommoditesWc())
-            ->setTypeLogementCommoditesWcCollective($compositionLogementRequest->getTypeLogementCommoditesWcCollective())
+            ->setTypeLogementCommoditesWcCollective(
+                $compositionLogementRequest->getTypeLogementCommoditesWcCollective()
+            )
             ->setTypeLogementCommoditesWcCuisine($compositionLogementRequest->getTypeLogementCommoditesWcCuisine());
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
 
         // TODO : mise à jour des désordres liés à la composition du logement
+
+        $desordreCompositionLogement = new DesordreCompositionLogement(
+            $this->desordrePrecisionRepository,
+            $this->desordreCritereRepository,
+            $signalement
+        );
+        $desordreCompositionLogement->defineDesordresLinkedToComposition($typeCompositionLogement);
 
         $informationComplementaire = new InformationComplementaire();
         if (!empty($signalement->getInformationComplementaire())) {
@@ -468,11 +591,19 @@ class SignalementManager extends AbstractManager
             ->setInformationsComplementairesLogementNombreEtages($compositionLogementRequest->getNombreEtages());
         $signalement->setInformationComplementaire($informationComplementaire);
 
+        // si changement de superficie ou de nb de pièces, la suroccupation peut changer
+        $this->checkSuroccupation($signalement);
+        // si changement de suroccupation ou de désordres "composition", le score et les qualifications peuvent changer
+        $signalement->setScore($this->criticiteCalculator->calculate($signalement));
+        $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
+
         $this->save($signalement);
     }
 
-    public function updateFromSituationFoyerRequest(Signalement $signalement, SituationFoyerRequest $situationFoyerRequest)
-    {
+    public function updateFromSituationFoyerRequest(
+        Signalement $signalement,
+        SituationFoyerRequest $situationFoyerRequest
+    ) {
         $signalement->setIsLogementSocial(
             $this->signalementInputValueMapper->map(
                 $situationFoyerRequest->getIsLogementSocial()
@@ -503,29 +634,42 @@ class SignalementManager extends AbstractManager
         $situationFoyer
             ->setLogementSocialMontantAllocation($situationFoyerRequest->getLogementSocialMontantAllocation())
             ->setTravailleurSocialQuitteLogement($situationFoyerRequest->getTravailleurSocialQuitteLogement())
-            ->setTravailleurSocialAccompagnementDeclarant($situationFoyerRequest->getTravailleurSocialAccompagnementDeclarant());
+            ->setTravailleurSocialAccompagnementDeclarant(
+                $situationFoyerRequest->getTravailleurSocialAccompagnementDeclarant()
+            );
         $signalement->setSituationFoyer($situationFoyer);
-
-        // TODO : mise à jour du désordre suroccupation si allocataire change
 
         $informationComplementaire = new InformationComplementaire();
         if (!empty($signalement->getInformationComplementaire())) {
             $informationComplementaire = clone $signalement->getInformationComplementaire();
         }
         $informationComplementaire
-            ->setInformationsComplementairesSituationOccupantsBeneficiaireRsa($situationFoyerRequest->getBeneficiaireRsa())
-            ->setInformationsComplementairesSituationOccupantsBeneficiaireFsl($situationFoyerRequest->getBeneficiaireFsl());
+            ->setInformationsComplementairesSituationOccupantsBeneficiaireRsa(
+                $situationFoyerRequest->getBeneficiaireRsa()
+            )
+            ->setInformationsComplementairesSituationOccupantsBeneficiaireFsl(
+                $situationFoyerRequest->getBeneficiaireFsl()
+            );
         if ($situationFoyerRequest->getRevenuFiscal()) {
             $informationComplementaire
-                ->setInformationsComplementairesSituationOccupantsRevenuFiscal($situationFoyerRequest->getRevenuFiscal());
+                ->setInformationsComplementairesSituationOccupantsRevenuFiscal(
+                    $situationFoyerRequest->getRevenuFiscal()
+                );
         }
         $signalement->setInformationComplementaire($informationComplementaire);
 
+        // si changement de statut d'allocataire, la suroccupation peut changer
+        $this->checkSuroccupation($signalement);
+        // si changement de suroccupation, le score et les qualifications peuvent changer
+        $signalement->setScore($this->criticiteCalculator->calculate($signalement));
+        $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
         $this->save($signalement);
     }
 
-    public function updateFromProcedureDemarchesRequest(Signalement $signalement, ProcedureDemarchesRequest $procedureDemarchesRequest)
-    {
+    public function updateFromProcedureDemarchesRequest(
+        Signalement $signalement,
+        ProcedureDemarchesRequest $procedureDemarchesRequest
+    ) {
         $signalement->setIsProprioAverti(
             $this->signalementInputValueMapper->map(
                 $procedureDemarchesRequest->getIsProprioAverti()
@@ -547,8 +691,12 @@ class SignalementManager extends AbstractManager
             $informationComplementaire = clone $signalement->getInformationComplementaire();
         }
         $informationComplementaire
-            ->setInformationsComplementairesSituationOccupantsPreavisDepart($procedureDemarchesRequest->getPreavisDepart())
-            ->setInformationsComplementairesSituationOccupantsDemandeRelogement($procedureDemarchesRequest->getDemandeRelogement());
+            ->setInformationsComplementairesSituationOccupantsPreavisDepart(
+                $procedureDemarchesRequest->getPreavisDepart()
+            )
+            ->setInformationsComplementairesSituationOccupantsDemandeRelogement(
+                $procedureDemarchesRequest->getDemandeRelogement()
+            );
         $signalement->setInformationComplementaire($informationComplementaire);
 
         $this->save($signalement);
@@ -583,8 +731,10 @@ class SignalementManager extends AbstractManager
         ];
     }
 
-    public function findSignalementAffectationIterable(User|UserInterface|null $user, ?array $options = null): \Generator
-    {
+    public function findSignalementAffectationIterable(
+        User|UserInterface|null $user,
+        ?array $options = null
+    ): \Generator {
         $options['authorized_codes_insee'] = $this->parameterBag->get('authorized_codes_insee');
 
         /** @var SignalementRepository $signalementRepository */

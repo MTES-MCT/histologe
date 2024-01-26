@@ -8,13 +8,13 @@ use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Factory\SignalementQualificationFactory;
-use App\Manager\SignalementManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 class SignalementQualificationUpdater
 {
     public function __construct(
         private readonly SignalementQualificationFactory $signalementQualificationFactory,
-        private readonly SignalementManager $signalementManager,
+        private readonly EntityManagerInterface $entityManager,
         private readonly QualificationStatusService $qualificationStatusService,
     ) {
     }
@@ -609,7 +609,9 @@ class SignalementQualificationUpdater
                     $signalement->addSignalementQualification($signalementQualification);
                 }
             }
-            $this->signalementManager->save($signalement);
+
+            $this->entityManager->persist($signalement);
+            $this->entityManager->flush();
         }
     }
 }

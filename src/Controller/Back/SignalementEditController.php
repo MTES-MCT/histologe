@@ -22,6 +22,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/bo/signalements')]
 class SignalementEditController extends AbstractController
 {
+    private const INPUT_ERROR_MSG = 'Erreur de saisie : ';
+    private const ERROR_MSG = 'Une erreur est survenue...';
+
     #[Route('/{uuid}/edit-address', name: 'back_signalement_edit_address', methods: 'POST')]
     public function editAddress(
         Signalement $signalement,
@@ -45,10 +48,10 @@ class SignalementEditController extends AbstractController
                 $signalementManager->updateFromAdresseOccupantRequest($signalement, $adresseOccupantRequest);
                 $this->addFlash('success', 'L\'adresse du logement a bien été modifiée.');
             } else {
-                $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
+                $this->addFlash('error', self::INPUT_ERROR_MSG.$errorMessage);
             }
         } else {
-            $this->addFlash('error', 'Une erreur est survenue...');
+            $this->addFlash('error', self::ERROR_MSG);
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
@@ -63,7 +66,10 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
-        if ($this->isCsrfTokenValid('signalement_edit_coordonnees_tiers_'.$signalement->getId(), $request->get('_token'))) {
+        if ($this->isCsrfTokenValid(
+            'signalement_edit_coordonnees_tiers_'.$signalement->getId(),
+            $request->get('_token')
+        )) {
             /** @var CoordonneesTiersRequest $coordonneesTiersRequest */
             $coordonneesTiersRequest = $serializer->deserialize(
                 json_encode($request->getPayload()->all()),
@@ -77,10 +83,10 @@ class SignalementEditController extends AbstractController
                 $signalementManager->updateFromCoordonneesTiersRequest($signalement, $coordonneesTiersRequest);
                 $this->addFlash('success', 'Les coordonnées du tiers déclarant ont bien été modifiées.');
             } else {
-                $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
+                $this->addFlash('error', self::INPUT_ERROR_MSG.$errorMessage);
             }
         } else {
-            $this->addFlash('error', 'Une erreur est survenue...');
+            $this->addFlash('error', self::ERROR_MSG);
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
@@ -95,7 +101,10 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
-        if ($this->isCsrfTokenValid('signalement_edit_coordonnees_foyer_'.$signalement->getId(), $request->get('_token'))) {
+        if ($this->isCsrfTokenValid(
+            'signalement_edit_coordonnees_foyer_'.$signalement->getId(),
+            $request->get('_token')
+        )) {
             /** @var CoordonneesFoyerRequest $coordonneesFoyerRequest */
             $coordonneesFoyerRequest = $serializer->deserialize(
                 json_encode($request->getPayload()->all()),
@@ -113,10 +122,10 @@ class SignalementEditController extends AbstractController
                 $signalementManager->updateFromCoordonneesFoyerRequest($signalement, $coordonneesFoyerRequest);
                 $this->addFlash('success', 'Les coordonnées du foyer ont bien été modifiées.');
             } else {
-                $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
+                $this->addFlash('error', self::INPUT_ERROR_MSG.$errorMessage);
             }
         } else {
-            $this->addFlash('error', 'Une erreur est survenue...');
+            $this->addFlash('error', self::ERROR_MSG);
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
@@ -131,7 +140,10 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
-        if ($this->isCsrfTokenValid('signalement_edit_coordonnees_bailleur_'.$signalement->getId(), $request->get('_token'))) {
+        if ($this->isCsrfTokenValid(
+            'signalement_edit_coordonnees_bailleur_'.$signalement->getId(),
+            $request->get('_token')
+        )) {
             /** @var CoordonneesBailleurRequest $coordonneesBailleurRequest */
             $coordonneesBailleurRequest = $serializer->deserialize(
                 json_encode($request->getPayload()->all()),
@@ -149,10 +161,10 @@ class SignalementEditController extends AbstractController
                 $signalementManager->updateFromCoordonneesBailleurRequest($signalement, $coordonneesBailleurRequest);
                 $this->addFlash('success', 'Les coordonnées du bailleur ont bien été modifiées.');
             } else {
-                $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
+                $this->addFlash('error', self::INPUT_ERROR_MSG.$errorMessage);
             }
         } else {
-            $this->addFlash('error', 'Une erreur est survenue...');
+            $this->addFlash('error', self::ERROR_MSG);
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
@@ -167,7 +179,10 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
-        if ($this->isCsrfTokenValid('signalement_edit_informations_logement_'.$signalement->getId(), $request->get('_token'))) {
+        if ($this->isCsrfTokenValid(
+            'signalement_edit_informations_logement_'.$signalement->getId(),
+            $request->get('_token')
+        )) {
             /** @var InformationsLogementRequest $informationsLogementRequest */
             $informationsLogementRequest = $serializer->deserialize(
                 json_encode($request->getPayload()->all()),
@@ -185,10 +200,10 @@ class SignalementEditController extends AbstractController
                 $signalementManager->updateFromInformationsLogementRequest($signalement, $informationsLogementRequest);
                 $this->addFlash('success', 'Les informations du logement ont bien été modifiées.');
             } else {
-                $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
+                $this->addFlash('error', self::INPUT_ERROR_MSG.$errorMessage);
             }
         } else {
-            $this->addFlash('error', 'Une erreur est survenue...');
+            $this->addFlash('error', self::ERROR_MSG);
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
@@ -203,7 +218,10 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
-        if ($this->isCsrfTokenValid('signalement_edit_composition_logement_'.$signalement->getId(), $request->get('_token'))) {
+        if ($this->isCsrfTokenValid(
+            'signalement_edit_composition_logement_'.$signalement->getId(),
+            $request->get('_token')
+        )) {
             /** @var CompositionLogementRequest $compositionLogementRequest */
             $compositionLogementRequest = $serializer->deserialize(
                 json_encode($request->getPayload()->all()),
@@ -221,10 +239,10 @@ class SignalementEditController extends AbstractController
                 $signalementManager->updateFromCompositionLogementRequest($signalement, $compositionLogementRequest);
                 $this->addFlash('success', 'La composition du logement a bien été modifiée.');
             } else {
-                $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
+                $this->addFlash('error', self::INPUT_ERROR_MSG.$errorMessage);
             }
         } else {
-            $this->addFlash('error', 'Une erreur est survenue...');
+            $this->addFlash('error', self::ERROR_MSG);
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
@@ -239,7 +257,10 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
-        if ($this->isCsrfTokenValid('signalement_edit_situation_foyer_'.$signalement->getId(), $request->get('_token'))) {
+        if ($this->isCsrfTokenValid(
+            'signalement_edit_situation_foyer_'.$signalement->getId(),
+            $request->get('_token')
+        )) {
             /** @var SituationFoyerRequest $situationFoyerRequest */
             $situationFoyerRequest = $serializer->deserialize(
                 json_encode($request->getPayload()->all()),
@@ -257,10 +278,10 @@ class SignalementEditController extends AbstractController
                 $signalementManager->updateFromSituationFoyerRequest($signalement, $situationFoyerRequest);
                 $this->addFlash('success', 'La situation du foyer a bien été modifiée.');
             } else {
-                $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
+                $this->addFlash('error', self::INPUT_ERROR_MSG.$errorMessage);
             }
         } else {
-            $this->addFlash('error', 'Une erreur est survenue...');
+            $this->addFlash('error', self::ERROR_MSG);
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
@@ -275,7 +296,10 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
-        if ($this->isCsrfTokenValid('signalement_edit_procedure_demarches_'.$signalement->getId(), $request->get('_token'))) {
+        if ($this->isCsrfTokenValid(
+            'signalement_edit_procedure_demarches_'.$signalement->getId(),
+            $request->get('_token')
+        )) {
             /** @var ProcedureDemarchesRequest $procedureDemarchesRequest */
             $procedureDemarchesRequest = $serializer->deserialize(
                 json_encode($request->getPayload()->all()),
@@ -293,10 +317,10 @@ class SignalementEditController extends AbstractController
                 $signalementManager->updateFromProcedureDemarchesRequest($signalement, $procedureDemarchesRequest);
                 $this->addFlash('success', 'Les procédures et démarches ont bien été modifiées.');
             } else {
-                $this->addFlash('error', 'Erreur de saisie : '.$errorMessage);
+                $this->addFlash('error', self::INPUT_ERROR_MSG.$errorMessage);
             }
         } else {
-            $this->addFlash('error', 'Une erreur est survenue...');
+            $this->addFlash('error', self::ERROR_MSG);
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);

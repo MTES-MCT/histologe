@@ -3,7 +3,7 @@
 
 <h3 class="fr-text--center fr-text-label--blue-france">Déclaration usager</h3>
 <div class=" fr-text--center">Criticité du signalement : {{ signalement.score|round(2) }} %</div>
-<div class=" fr-text--center">(Score bâtiment : {{ signalement.scoreBatiment|round(2) }} % - Score logement : {{ signalement.scoreLogement|round(2) }} %)</div>
+<div class=" fr-text--center">(Score logement : {{ signalement.scoreLogement|round(2) }} % - Score bâtiment : {{ signalement.scoreBatiment|round(2) }} %)</div>
 <div class=" fr-text--center"><a href="https://documentation.histologe.beta.gouv.fr/partenaires/premiers-pas-sur-histologe/presentation-de-linterface#score-de-criticite-et-prequalification-comment-ca-marche" target="_blank" rel="noreferrer noopener">En savoir plus</a></div>
 
 <div class="fr-grid-row fr-grid-row--gutters fr-mt-5w">
@@ -14,7 +14,9 @@
                 {% set zone = 'logement' %}
                 {% for situation,criteres in situations[enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] %}
                     {% include 'back/signalement/view/user-declaration-desordre.html.twig' %}                    
-                {% endfor %}         
+                {% endfor %}     
+            {% else %}
+               <i>Aucun désordre signalé dans le logement</i>   
             {% endif %}
         </div>
     </div>
@@ -26,7 +28,9 @@
                 {% set zone = 'batiment' %}
                 {% for situation,criteres in situations[enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] %}
                     {% include 'back/signalement/view/user-declaration-desordre.html.twig' %}                    
-                {% endfor %}            
+                {% endfor %}   
+            {% else %}
+               <i>Aucun désordre signalé dans le bâtiment</i>   
             {% endif %}
         </div>
     </div>
