@@ -407,7 +407,6 @@ class SignalementEditController extends AbstractController
         $suivi->setType(SUIVI::TYPE_AUTO);
 
         $this->entityManager->persist($suivi);
-        $this->entityManager->persist($signalement);
         $this->entityManager->flush();
     }
 }
