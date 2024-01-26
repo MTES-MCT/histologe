@@ -485,7 +485,11 @@ class SignalementManager extends AbstractManager
     ) {
         $situationFoyer = $signalement->getSituationFoyer();
         $typeCompositionLogement = $signalement->getTypeCompositionLogement();
-        if ($this->suroccupationSpecification->isSatisfiedBy($situationFoyer, $typeCompositionLogement)) {
+        if (
+            null !== $situationFoyer
+            && null !== $typeCompositionLogement
+            && $this->suroccupationSpecification->isSatisfiedBy($situationFoyer, $typeCompositionLogement
+            )) {
             $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
                 ['desordrePrecisionSlug' => $this->suroccupationSpecification->getSlug()]
             );

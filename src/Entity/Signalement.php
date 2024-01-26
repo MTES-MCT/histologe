@@ -2222,25 +2222,11 @@ class Signalement
 
     public function hasDesordreCritere(DesordreCritere $desordreCritere): bool
     {
-        /** @var DesordreCritere $critere */
-        foreach ($this->desordreCriteres as $critere) {
-            if ($critere === $desordreCritere) {
-                return true;
-            }
-        }
-
-        return false;
+        return \in_array($desordreCritere, $this->desordreCriteres->toArray());
     }
 
     public function hasDesordrePrecision(DesordrePrecision $desordrePrecision): bool
     {
-        /** @var DesordrePrecision $precision */
-        foreach ($this->desordrePrecisions as $precision) {
-            if ($precision === $desordrePrecision) {
-                return true;
-            }
-        }
-
-        return false;
+        return \in_array($desordrePrecision, $this->desordrePrecisions->toArray());
     }
 }
