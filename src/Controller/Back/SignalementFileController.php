@@ -67,13 +67,17 @@ class SignalementFileController extends AbstractController
             list($fileList, $descriptionList) = $signalementFileProcessor->process($files, $inputName);
 
             if ($signalementFileProcessor->isValid()) {
+                $nbFiles = \count($fileList);
+                $description = (string) $nbFiles;
                 $suivi = $suiviFactory->createInstanceFrom($this->getUser(), $signalement);
                 // TODO : distinguer documents partenaires et documents sur la istuation usager
                 // TODO : afficher la liste des désordres concernés pour l'ajout de photo
                 if (FILE::INPUT_NAME_DOCUMENTS === $inputName) {
-                    $description = 'Un ou plusieurs documents partenaires ont été ajoutés au signalement :';
+                    $description .= $nbFiles > 1 ? ' documents partenaires ont été ajoutés au signalement :'
+                    : ' document partenaire a été ajouté au signalement :';
                 } else {
-                    $description = 'Une ou plusieurs photos ont été ajoutées au signalement :';
+                    $description .= $nbFiles > 1 ? ' photos ont été ajoutés au signalement :'
+                    : ' photo a été ajouté au signalement :';
                 }
                 $suivi->setDescription(
                     $description
@@ -130,7 +134,6 @@ class SignalementFileController extends AbstractController
                 $suivi->setType(SUIVI::TYPE_AUTO);
 
                 $entityManager->persist($suivi);
-                $entityManager->persist($signalement);
                 $entityManager->flush();
 
                 return $this->json(['response' => 'success']);
