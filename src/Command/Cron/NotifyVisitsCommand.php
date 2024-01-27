@@ -67,7 +67,10 @@ class NotifyVisitsCommand extends AbstractCronCommand
             );
             $this->suiviManager->save($suivi);
 
-            $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_USAGER);
+            $this->visiteNotifier->notifyUsagers(
+                $intervention,
+                NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_USAGER
+            );
 
             $this->visiteNotifier->notifyAgents(
                 intervention: $intervention,
@@ -165,7 +168,10 @@ class NotifyVisitsCommand extends AbstractCronCommand
         }
 
         $agentToNotify = null;
-        $suivisLinkedToSignalement = $this->suiviRepository->findSuivisByContext($intervention->getSignalement(), Suivi::CONTEXT_INTERVENTION);
+        $suivisLinkedToSignalement = $this->suiviRepository->findSuivisByContext(
+            $intervention->getSignalement(),
+            Suivi::CONTEXT_INTERVENTION
+        );
         foreach ($suivisLinkedToSignalement as $suivi) {
             if ($suivi->getCreatedBy()?->getPartner() == $intervention->getPartner()) {
                 $agentToNotify = $suivi->getCreatedBy();

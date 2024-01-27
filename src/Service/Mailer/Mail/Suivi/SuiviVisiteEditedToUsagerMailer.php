@@ -16,6 +16,7 @@ class SuiviVisiteEditedToUsagerMailer extends AbstractNotificationMailer
     protected ?string $mailerSubject = 'Mise à jour de la conclusion de la visite de votre logement';
     protected ?string $mailerButtonText = 'Accéder à mon signalement';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_edited_email';
+    protected ?string $tagHeader = 'Usager Conclusion Visite Disponible';
 
     public function __construct(
         protected MailerInterface $mailer,

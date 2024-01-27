@@ -16,6 +16,7 @@ class SignalementNewMailer extends AbstractNotificationMailer
     protected ?string $mailerSubject = '[%s] Un nouveau signalement vous attend';
     protected ?string $mailerButtonText = 'Voir le signalement';
     protected ?string $mailerTemplate = 'new_signalement_email';
+    protected ?string $tagHeader = 'Pro Nouveau Signalement';
 
     public function __construct(
         protected MailerInterface $mailer,

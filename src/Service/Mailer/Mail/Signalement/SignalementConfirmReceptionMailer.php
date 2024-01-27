@@ -16,6 +16,7 @@ class SignalementConfirmReceptionMailer extends AbstractNotificationMailer
     protected ?string $mailerSubject = 'Votre signalement a bien été reçu !';
     protected ?string $mailerButtonText = 'Accéder à mon signalement';
     protected ?string $mailerTemplate = 'accuse_reception_email';
+    protected ?string $tagHeader = 'Usager Accusé Reception Signalement';
 
     public function __construct(
         protected MailerInterface $mailer,

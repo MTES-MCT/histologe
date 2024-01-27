@@ -16,6 +16,7 @@ class SuiviVisiteAbortedToUsagerMailer extends AbstractNotificationMailer
     protected ?string $mailerSubject = 'Visite du logement non effectuée';
     protected ?string $mailerButtonText = 'Accéder à mon signalement';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_aborted_email';
+    protected ?string $tagHeader = 'Usager Annulation Visite Prevue';
 
     public function __construct(
         protected MailerInterface $mailer,

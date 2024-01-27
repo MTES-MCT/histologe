@@ -15,6 +15,7 @@ class SignalementRefusalMailer extends AbstractNotificationMailer
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_REFUSAL;
     protected ?string $mailerSubject = 'Votre signalement ne peut pas être traité';
     protected ?string $mailerTemplate = 'refus_signalement_email';
+    protected ?string $tagHeader = 'Usager Refus Signalement';
 
     public function __construct(
         protected MailerInterface $mailer,

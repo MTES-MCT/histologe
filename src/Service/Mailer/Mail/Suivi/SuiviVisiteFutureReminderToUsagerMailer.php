@@ -15,6 +15,7 @@ class SuiviVisiteFutureReminderToUsagerMailer extends AbstractNotificationMailer
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_USAGER;
     protected ?string $mailerButtonText = 'Accéder à mon signalement';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_future_reminder_to_usager_email';
+    protected ?string $tagHeader = 'Usager Rappel Visite Prevue';
 
     public function __construct(
         protected MailerInterface $mailer,
