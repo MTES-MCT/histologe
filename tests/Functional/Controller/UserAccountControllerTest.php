@@ -22,7 +22,7 @@ class UserAccountControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
 
-        $route = $router->generate('activate_account', ['user' => $user->getId(), 'token' => $user->getToken()]);
+        $route = $router->generate('activate_account', ['uuid' => $user->getUuid(), 'token' => $user->getToken()]);
         $client->request('GET', $route);
 
         $password = $faker->password(12);
@@ -47,7 +47,7 @@ class UserAccountControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
 
-        $route = $router->generate('activate_account', ['user' => $user->getId(), 'token' => $user->getToken()]);
+        $route = $router->generate('activate_account', ['uuid' => $user->getUuid(), 'token' => $user->getToken()]);
         $client->request('GET', $route);
 
         $client->submitForm('Confirmer', [

@@ -35,7 +35,7 @@ class AccountTransferMailer extends AbstractNotificationMailer
         if (User::STATUS_ACTIVE === $user->getStatut()) {
             $link = $this->generateLink('back_dashboard', []);
         } else {
-            $link = $this->generateLink('activate_account', ['user' => $user->getId(), 'token' => $user->getToken()]);
+            $link = $this->generateLink('activate_account', ['uuid' => $user->getUuid(), 'token' => $user->getToken()]);
         }
 
         return [

@@ -25,7 +25,6 @@ class UserAccountController extends AbstractController
         UserRepository $userRepository,
         Request $request
     ): Response {
-        $title = 'Activation de votre compte';
         if ($request->isMethod('POST') && $email = $request->request->get('email')) {
             $user = $userRepository->findOneBy(['email' => $email]);
             if ($user && User::STATUS_INACTIVE === $user->getStatut() && !\in_array('ROLE_USAGER', $user->getRoles())) {
@@ -47,11 +46,11 @@ class UserAccountController extends AbstractController
             if ($user && User::STATUS_ACTIVE === $user->getStatut()) {
                 $this->addFlash('error', 'Votre compte est déjà activé, vous pouvez vous connecter');
             } else {
-                $this->addFlash('error', 'Cette adresse ne correspond à aucun compte, verifiez votre saisie');
+                $this->addFlash('error', 'Cette adresse ne correspond à aucun compte, vérifiez votre saisie');
             }
         }
 
-        return $this->render('security/login_activation.html.twig', ['title' => $title]);
+        return $this->render('security/login_activation.html.twig');
     }
 
     #[Route('/mot-de-pass-perdu', name: 'login_mdp_perdu')]
@@ -97,7 +96,7 @@ class UserAccountController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/activation-compte/{user}/{token}', name: 'activate_account', requirements: ['token' => '.+'])]
+    #[Route(path: '/activation-compte/{uuid}/{token}', name: 'activate_account', requirements: ['token' => '.+'])]
     public function resetPassword(
         Request $request,
         UserManager $userManager,

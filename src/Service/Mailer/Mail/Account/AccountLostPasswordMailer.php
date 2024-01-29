@@ -32,7 +32,7 @@ class AccountLostPasswordMailer extends AbstractNotificationMailer
     {
         $user = $notificationMail->getUser();
         $this->userManager->loadUserTokenForUser($user);
-        $link = $this->generateLink('activate_account', ['user' => $user->getId(), 'token' => $user->getToken()]);
+        $link = $this->generateLink('activate_account', ['uuid' => $user->getUuid(), 'token' => $user->getToken()]);
 
         return ['link' => $link];
     }
