@@ -23,7 +23,7 @@ use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
-use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogement;
+use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Token\TokenGeneratorInterface;
@@ -60,6 +60,7 @@ class SignalementBuilder
         private DesordreCritereManager $desordreCritereManager,
         private CriticiteCalculator $criticiteCalculator,
         private SignalementQualificationUpdater $signalementQualificationUpdater,
+        private DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
     ) {
     }
 
@@ -232,12 +233,7 @@ class SignalementBuilder
             $this->payload
         );
 
-        $desordreCompositionLogement = new DesordreCompositionLogement(
-            $this->desordrePrecisionRepository,
-            $this->desordreCritereRepository,
-            $this->signalement
-        );
-        $desordreCompositionLogement->defineDesordresLinkedToComposition($typeCompositionLogement);
+        $this->desordreCompositionLogementLoader->load($this->signalement, $typeCompositionLogement);
 
         /** @var SituationFoyer $situationFoyer */
         $situationFoyer = $this->situationFoyerFactory->createFromSignalementDraftPayload($this->payload);

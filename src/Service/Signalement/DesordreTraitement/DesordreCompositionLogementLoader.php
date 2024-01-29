@@ -8,65 +8,21 @@ use App\Entity\Signalement;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 
-class DesordreCompositionLogement
+class DesordreCompositionLogementLoader
 {
+    private Signalement $signalement;
+
     public function __construct(
         private readonly DesordrePrecisionRepository $desordrePrecisionRepository,
         private readonly DesordreCritereRepository $desordreCritereRepository,
-        private readonly Signalement $signalement,
     ) {
     }
 
-    private function addDesordreCriterePrecisionBySlugs(string $slugCritere, string $slugPrecision): void
-    {
-        $critereToLink = $this->desordreCritereRepository->findOneBy(['slugCritere' => $slugCritere]);
-        if (null !== $critereToLink
-            && !$this->signalement->hasDesordreCritere($critereToLink)) {
-            $this->signalement->addDesordreCritere($critereToLink);
-        }
-        $precisionToLink = $this->desordrePrecisionRepository->findOneBy(['desordrePrecisionSlug' => $slugPrecision]);
-        if (null !== $precisionToLink
-            && !$this->signalement->hasDesordrePrecision($precisionToLink)) {
-            $this->signalement->addDesordrePrecision($precisionToLink);
-        }
-        if (!$this->signalement->hasDesordreCategorie($critereToLink->getDesordreCategorie())) {
-            $this->signalement->addDesordreCategory($critereToLink->getDesordreCategorie());
-        }
-    }
-
-    private function removeDesordreCriterePrecisionBySlugs(string $slugCritere, string $slugPrecision): void
-    {
-        $critereToLink = $this->desordreCritereRepository->findOneBy(['slugCritere' => $slugCritere]);
-        if (null !== $critereToLink
-            && $this->signalement->hasDesordreCritere($critereToLink)) {
-            $this->signalement->removeDesordreCritere($critereToLink);
-        }
-        $precisionToLink = $this->desordrePrecisionRepository->findOneBy(['desordrePrecisionSlug' => $slugPrecision]);
-        if (null !== $precisionToLink
-            && $this->signalement->hasDesordrePrecision($precisionToLink)) {
-            $this->signalement->removeDesordrePrecision($precisionToLink);
-        }
-        if ($this->signalement->hasDesordreCategorie($critereToLink->getDesordreCategorie())
-            && !$this->hasDesordreCritereInCategorie($this->signalement, $critereToLink->getDesordreCategorie())) {
-            $this->signalement->removeDesordreCategory($critereToLink->getDesordreCategorie());
-        }
-    }
-
-    private function hasDesordreCritereInCategorie(Signalement $signalement, DesordreCategorie $desordreCategorie): bool
-    {
-        $hasDesordreCritere = false;
-        foreach ($signalement->getDesordreCriteres() as $critere) {
-            if ($critere->getDesordreCategorie() === $desordreCategorie) {
-                $hasDesordreCritere = true;
-            }
-        }
-
-        return $hasDesordreCritere;
-    }
-
-    public function defineDesordresLinkedToComposition(
-        TypeCompositionLogement $typeCompositionLogement
+    public function load(
+        Signalement $signalement,
+        TypeCompositionLogement $typeCompositionLogement,
     ): void {
+        $this->signalement = $signalement;
         if ('oui' === $typeCompositionLogement->getTypeLogementSousCombleSansFenetre()) {
             $this->addDesordreCriterePrecisionBySlugs(
                 'desordres_type_composition_logement_sous_combles',
@@ -218,5 +174,52 @@ class DesordreCompositionLogement
                 );
             }
         }
+    }
+
+    private function addDesordreCriterePrecisionBySlugs(string $slugCritere, string $slugPrecision): void
+    {
+        $critereToLink = $this->desordreCritereRepository->findOneBy(['slugCritere' => $slugCritere]);
+        if (null !== $critereToLink
+            && !$this->signalement->hasDesordreCritere($critereToLink)) {
+            $this->signalement->addDesordreCritere($critereToLink);
+        }
+        $precisionToLink = $this->desordrePrecisionRepository->findOneBy(['desordrePrecisionSlug' => $slugPrecision]);
+        if (null !== $precisionToLink
+            && !$this->signalement->hasDesordrePrecision($precisionToLink)) {
+            $this->signalement->addDesordrePrecision($precisionToLink);
+        }
+        if (!$this->signalement->hasDesordreCategorie($critereToLink->getDesordreCategorie())) {
+            $this->signalement->addDesordreCategory($critereToLink->getDesordreCategorie());
+        }
+    }
+
+    private function removeDesordreCriterePrecisionBySlugs(string $slugCritere, string $slugPrecision): void
+    {
+        $critereToLink = $this->desordreCritereRepository->findOneBy(['slugCritere' => $slugCritere]);
+        if (null !== $critereToLink
+            && $this->signalement->hasDesordreCritere($critereToLink)) {
+            $this->signalement->removeDesordreCritere($critereToLink);
+        }
+        $precisionToLink = $this->desordrePrecisionRepository->findOneBy(['desordrePrecisionSlug' => $slugPrecision]);
+        if (null !== $precisionToLink
+            && $this->signalement->hasDesordrePrecision($precisionToLink)) {
+            $this->signalement->removeDesordrePrecision($precisionToLink);
+        }
+        if ($this->signalement->hasDesordreCategorie($critereToLink->getDesordreCategorie())
+            && !$this->hasDesordreCritereInCategorie($this->signalement, $critereToLink->getDesordreCategorie())) {
+            $this->signalement->removeDesordreCategory($critereToLink->getDesordreCategorie());
+        }
+    }
+
+    private function hasDesordreCritereInCategorie(Signalement $signalement, DesordreCategorie $desordreCategorie): bool
+    {
+        $hasDesordreCritere = false;
+        foreach ($signalement->getDesordreCriteres() as $critere) {
+            if ($critere->getDesordreCategorie() === $desordreCategorie) {
+                $hasDesordreCritere = true;
+            }
+        }
+
+        return $hasDesordreCritere;
     }
 }

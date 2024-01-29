@@ -6,11 +6,11 @@ use App\Entity\DesordreCritere;
 use App\Entity\DesordrePrecision;
 use App\Entity\Signalement;
 use App\Repository\SignalementRepository;
-use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogement;
+use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class DesordreCompositionLogementTest extends KernelTestCase
+class DesordreCompositionLogementLoaderTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
 
@@ -31,15 +31,15 @@ class DesordreCompositionLogementTest extends KernelTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-27']);
         $nbDesordrePrecision = $signalement->getDesordrePrecisions()->count();
 
-        $desordreCompositionLogement = new DesordreCompositionLogement(
+        $desordreCompositionLogement = new DesordreCompositionLogementLoader(
             $desordrePrecisionRepository,
             $desordreCritereRepository,
-            $signalement);
+        );
 
         $typeCompositionLogement = $signalement->getTypeCompositionLogement();
         $typeCompositionLogement->setTypeLogementSousCombleSansFenetre('oui');
 
-        $desordreCompositionLogement->defineDesordresLinkedToComposition($typeCompositionLogement);
+        $desordreCompositionLogement->load($signalement, $typeCompositionLogement);
         $this->entityManager->persist($signalement);
         $this->entityManager->flush();
 
@@ -59,13 +59,14 @@ class DesordreCompositionLogementTest extends KernelTestCase
 
         $typeCompositionLogement->setTypeLogementSousCombleSansFenetre('non');
 
-        $desordreCompositionLogement->defineDesordresLinkedToComposition($typeCompositionLogement);
+        $desordreCompositionLogement->load($signalement, $typeCompositionLogement);
         $this->entityManager->persist($signalement);
         $this->entityManager->flush();
         $this->assertCount($nbDesordrePrecision, $signalement->getDesordrePrecisions());
         $this->assertFalse($signalement->hasDesordrePrecision($precisionToLink));
         $this->assertFalse($signalement->hasDesordreCritere($precisionToLink->getDesordreCritere()));
         $this->assertFalse($signalement->hasDesordreCategorie(
-            $precisionToLink->getDesordreCritere()->getDesordreCategorie()));
+            $precisionToLink->getDesordreCritere()->getDesordreCategorie()
+        ));
     }
 }

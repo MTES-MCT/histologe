@@ -15,6 +15,7 @@ use App\Manager\SignalementManager;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Service\Signalement\CriticiteCalculator;
+use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\SignalementInputValueMapper;
@@ -49,6 +50,7 @@ class SignalementManagerTest extends KernelTestCase
     private SignalementQualificationUpdater $signalementQualificationUpdater;
     private DesordrePrecisionRepository $desordrePrecisionRepository;
     private DesordreCritereRepository $desordreCritereRepository;
+    private DesordreCompositionLogementLoader $desordreCompositionLogementLoader;
 
     protected function setUp(): void
     {
@@ -72,6 +74,7 @@ class SignalementManagerTest extends KernelTestCase
         $this->signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
         $this->desordrePrecisionRepository = static::getContainer()->get(DesordrePrecisionRepository::class);
         $this->desordreCritereRepository = static::getContainer()->get(DesordreCritereRepository::class);
+        $this->desordreCompositionLogementLoader = static::getContainer()->get(DesordreCompositionLogementLoader::class);
 
         $this->signalementManager = new SignalementManager(
             $this->managerRegistry,
@@ -89,6 +92,7 @@ class SignalementManagerTest extends KernelTestCase
             $this->signalementQualificationUpdater,
             $this->desordrePrecisionRepository,
             $this->desordreCritereRepository,
+            $this->desordreCompositionLogementLoader,
         );
     }
 

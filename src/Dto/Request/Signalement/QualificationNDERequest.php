@@ -4,6 +4,9 @@ namespace App\Dto\Request\Signalement;
 
 class QualificationNDERequest
 {
+    public const RADIO_VALUE_BEFORE_2023 = '1970-01-01';
+    public const RADIO_VALUE_AFTER_2023 = '2023-01-02';
+
     public function __construct(
         private ?string $dateEntree = null,
         private ?string $dateDernierBail = null,
