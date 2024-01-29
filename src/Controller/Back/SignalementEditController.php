@@ -59,7 +59,6 @@ class SignalementEditController extends AbstractController
                 $this->addSuivi(
                     signalement: $signalement,
                     description: 'L\'adresse du logement a été modifiée par ',
-                    isPublic: false,
                 );
                 $this->addFlash('success', 'L\'adresse du logement a bien été modifiée.');
             } else {
@@ -99,7 +98,6 @@ class SignalementEditController extends AbstractController
                 $this->addSuivi(
                     signalement: $signalement,
                     description: 'Les coordonnées du tiers déclarant ont été modifiées par ',
-                    isPublic: false,
                 );
                 $this->addFlash('success', 'Les coordonnées du tiers déclarant ont bien été modifiées.');
             } else {
@@ -143,7 +141,6 @@ class SignalementEditController extends AbstractController
                 $this->addSuivi(
                     signalement: $signalement,
                     description: 'Les coordonnées du foyer ont été modifiées par ',
-                    isPublic: false,
                 );
                 $this->addFlash('success', 'Les coordonnées du foyer ont bien été modifiées.');
             } else {
@@ -187,7 +184,6 @@ class SignalementEditController extends AbstractController
                 $this->addSuivi(
                     signalement: $signalement,
                     description: 'Les coordonnées du bailleur ont été modifiées par ',
-                    isPublic: false,
                 );
                 $this->addFlash('success', 'Les coordonnées du bailleur ont bien été modifiées.');
             } else {
@@ -231,7 +227,6 @@ class SignalementEditController extends AbstractController
                 $this->addSuivi(
                     signalement: $signalement,
                     description: 'Les informations sur le logement ont été modifiées par ',
-                    isPublic: false,
                 );
                 $this->addFlash('success', 'Les informations du logement ont bien été modifiées.');
             } else {
@@ -275,7 +270,6 @@ class SignalementEditController extends AbstractController
                 $this->addSuivi(
                     signalement: $signalement,
                     description: 'La composition du logement a été modifée par ',
-                    isPublic: false,
                 );
                 $this->addFlash('success', 'La composition du logement a bien été modifiée.');
             } else {
@@ -319,7 +313,6 @@ class SignalementEditController extends AbstractController
                 $this->addSuivi(
                     signalement: $signalement,
                     description: 'La situation du foyer a été modifiée par ',
-                    isPublic: false,
                 );
                 $this->addFlash('success', 'La situation du foyer a bien été modifiée.');
             } else {
@@ -363,7 +356,6 @@ class SignalementEditController extends AbstractController
                 $this->addSuivi(
                     signalement: $signalement,
                     description: 'Les procédures et démarches ont été modifiées par ',
-                    isPublic: false,
                 );
                 $this->addFlash('success', 'Les procédures et démarches ont bien été modifiées.');
             } else {
@@ -393,14 +385,12 @@ class SignalementEditController extends AbstractController
     private function addSuivi(
         Signalement $signalement,
         string $description,
-        bool $isPublic,
     ): void {
         /** @var User $user */
         $user = $this->getUser();
         $suivi = $this->suiviFactory->createInstanceFrom(
             user: $user,
             signalement: $signalement,
-            isPublic: $isPublic
         );
 
         $suivi->setDescription($description.$user->getNomComplet());
