@@ -46,9 +46,7 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
         $intervention = (new Intervention())
             ->setSignalement($this->signalementRepository->findOneBy(['reference' => $row['signalement']]))
             ->setPartner($this->partnerRepository->findOneBy(['email' => $row['partner']]))
-            ->setScheduledAt(isset($row['scheduled_at'])
-                ? new \DateTimeImmutable($row['scheduled_at'])
-                : (new \DateTimeImmutable())->modify('+1 month'))
+            ->setScheduledAt($this->getScheduledAt($row))
             ->setType(InterventionType::VISITE)
             ->setDetails($row['details'] ?? null)
             ->setOccupantPresent($row['occupant_present'] ?? null)
@@ -80,6 +78,19 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
         }
 
         $manager->persist($intervention);
+    }
+
+    public function getScheduledAt(array $row): \DateTimeImmutable
+    {
+        if (isset($row['scheduled_at'])) {
+            if (str_contains($row['scheduled_at'], '2 days')) {
+                return (new \DateTimeImmutable())->modify($row['scheduled_at']);
+            }
+
+            return new \DateTimeImmutable($row['scheduled_at']);
+        }
+
+        return (new \DateTimeImmutable())->modify('+1 month');
     }
 
     public function getOrder(): int

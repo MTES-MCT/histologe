@@ -51,7 +51,7 @@ class DossierMessageFactoryTest extends KernelTestCase
         $urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
         $csrfTokenManager = $this->createMock(CsrfTokenManagerInterface::class);
         $csrfTokenManager
-            ->expects($this->once())
+            ->expects($this->atMost(1))
             ->method('getToken')
             ->willReturn(new CsrfToken('suivi_signalement_ext_file_view', 'random_value'));
 

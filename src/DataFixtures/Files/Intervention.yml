@@ -55,3 +55,15 @@ interventions:
     conclude_procedure: [ 'RSD' ]
     occupant_present: 1
     proprietaire_present: 0
+  -
+    signalement: "2024-02"
+    partner: "partenaire-62-01@histologe.fr"
+    user: "user-62-01@histologe.fr"
+    scheduled_at: '+2 days'
+    status: 'PLANNED'
+  -
+    signalement: "2022-6"
+    partner: "partenaire-13-01@histologe.fr"
+    user: "admin-partenaire-13-01@histologe.fr"
+    scheduled_at: '-2 days'
+    status: 'PLANNED'

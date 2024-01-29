@@ -2209,4 +2209,9 @@ class Signalement
 
         return false;
     }
+
+    public function getNomOccupantOrDeclarant(): string
+    {
+        return $this->nomOccupant ?? $this->nomDeclarant;
+    }
 }
