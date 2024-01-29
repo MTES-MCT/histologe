@@ -912,10 +912,41 @@ document?.querySelector('#partner_add_user,#situation_add_critere')?.addEventLis
     container.appendChild(row);
 })
 
+document?.querySelectorAll('.photos-album-btn-close')?.forEach(btn => {
+    btn.addEventListeners('click touchdown', (event) => {
+        document?.querySelectorAll('.photos-album')?.forEach(element => {
+            element.classList?.add('fr-hidden')
+        })
+    })
+})
+document?.querySelectorAll('.photos-album-swipe')?.forEach(btn => {
+    const swipeValue = btn.getAttribute('data-value')
+    let currentIndex = 0
+    let currentLoopLength = 0
+    btn.addEventListeners('click touchdown', (event) => {
+        document?.querySelectorAll('.photos-album-image-item.loop-current')?.forEach(element => {
+            currentIndex = Number(element.getAttribute('data-index'))
+            currentLoopLength = Number(element.getAttribute('data-length'))
+        })
+        currentIndex += Number(swipeValue)
+        if (currentIndex < 1) {
+            currentIndex = currentLoopLength
+        }
+        if (currentIndex > currentLoopLength) {
+            currentIndex = 1
+        }
 
-/*document?.querySelectorAll('[data-tag-add]')?.forEach(addBtn => {
-    addBtn.addEventListener('click', addTagEvent)
-});*/
+        document?.querySelectorAll('.photos-album-image-item.loop-current')?.forEach(element => {
+            element.classList?.remove('loop-current')
+            element.classList?.add('fr-hidden')
+        })
+        document?.querySelectorAll('.photos-album-image-item[data-index="'+currentIndex+'"]')?.forEach(element => {
+            element.classList?.add('loop-current')
+            element.classList?.remove('fr-hidden')
+        })
+    })
+})
+
 document?.querySelectorAll('[data-tag-delete]')?.forEach(delBtn => {
     delBtn.addEventListener('click', deleteTagEvent)
 });

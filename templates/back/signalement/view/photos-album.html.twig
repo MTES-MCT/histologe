@@ -1,47 +1,33 @@
 <div class="photos-album">
     <div class="photos-album-close-button-container">
-        <button class="fr-btn fr-btn--tertiary-no-outline">Fermer</button>
+        <button class="photos-album-btn-close fr-btn fr-btn--tertiary-no-outline">Fermer</button>
     </div>
 
+    {% set loopLength = signalement.files|filter( photo => photo.fileType == 'photo' and photo.intervention is null )|length %}
     <div class="photos-album-navigation-container">
         <div>
-            <button class="fr-btn">&lt;</button>
+            <button class="fr-btn photos-album-swipe" data-value="-1">&lt;</button>
         </div>
         <div>
-            <div class="photos-album-image-item">
+            {% for index, photo in signalement.files|filter( photo => photo.fileType == 'photo' and photo.intervention is null ) %}
+            <div class="photos-album-image-item {{ loop.index > 1 ? 'fr-hidden' : 'loop-current' }}" data-index="{{ loop.index }}" data-length="{{ loopLength }}">
                 <div>
-                    TITRE
+                    Photo de la situation - {{ loop.index }} / {{ loopLength }}
                 </div>
                 <div>
-                    IMG
+                    <img
+                        src="{{ asset('_up/'~photo.filename~'/'~signalement.uuid~'?variant=resize') }}"
+                        alt="Photo ajoutée par : {{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
+                        >
                 </div>
                 <div>
-                    CAPTION
+                    Photo ajoutée par : {{ photo.uploadedBy.nomComplet ?? 'N/R' }}
                 </div>
             </div>
+            {% endfor %}
         </div>
         <div>
-            <button class="fr-btn">&gt;</button>
+            <button class="fr-btn photos-album-swipe" data-value="1">&gt;</button>
         </div>
     </div>
-
-{#
-    <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
-        {% for index, photo in signalement.files|filter(
-            photo => photo.fileType == 'photo'
-                    and photo.intervention is null
-            ) %}
-            <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
-                <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover"
-                    data-user="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
-                    data-mail="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
-                    style="background: url('{{ asset('_up/'~photo.filename~'/'~signalement.uuid~'?variant=thumb') }}')no-repeat center center/cover">
-                    <a href="{{ asset('_up/'~photo.filename~'/'~signalement.uuid~'?variant=resize') }}"
-                        class="fr-btn fr-btn--sm fr-icon-eye-line img-box" title="Voir la photo"
-                        target="_blank" rel="noopener"></a>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-#}
 </div>
