@@ -10,13 +10,13 @@
         <div class="fr-col-12 fr-col-md-8">
           <input
             type="checkbox"
-            :id="id"
+            :id="id + '_input'"
             :name="id"
             v-model="isSelected"
             @change="handleChange"
             @click.stop
             >
-          <label :for="id" class="fr-label" @click.stop>{{ label }}</label>
+          <label :for="id + '_input'" class="fr-label" @click.stop>{{ label }}</label>
         </div>
       </div>
   </div>

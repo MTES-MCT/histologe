@@ -1,12 +1,13 @@
 <template>
 <div :class="['fr-mb-5v fr-upload-group', { 'fr-upload-group--disabled': disabled }]" :id="id">
   <div :class="[ customCss, 'fr-upload-wrap', 'fr-py-3v' ]">
-    <label :for="id" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line">
+    <label :for="id + '_input'" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line">
       {{ label }}
     </label>
     <span class="fr-hint-text">{{ description }}</span>
     <input
       type="file"
+      :id="id + '_input'"
       :name="id"
       class="custom-file-input"
       aria-describedby="text-upload-error-desc-error"

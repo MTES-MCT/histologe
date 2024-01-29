@@ -261,7 +261,7 @@ desordre_precision:
     is_danger: 1
     label: "Mur porteur fissuré : ne sait pas"
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
-    desordre_precision_slug: "desordres_batiment_securite_murs_fissures_details_mur_porteur_non"
+    desordre_precision_slug: "desordres_batiment_securite_murs_fissures_details_mur_porteur_nsp"
     is_suroccupation: 0
   -
     desordre_critere_slug: "desordres_batiment_securite_balcons" 

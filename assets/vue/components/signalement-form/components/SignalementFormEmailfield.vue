@@ -1,12 +1,13 @@
 <template>
   <div :class="['fr-input-group', { 'fr-input-group--disabled': disabled }]" :id="id">
-    <label class='fr-label' :for="id">
+    <label class='fr-label' :for="id + '_input'">
       {{ label }}
       <span class="fr-hint-text">{{ description }}</span>
     </label>
     <div :class="[ customCss, 'fr-input-wrap' ]">
       <input
           type="email"
+          :id="id + '_input'"
           :name="id"
           :value="internalValue"
           :class="[ customCss, 'fr-input' ]"
