@@ -661,6 +661,12 @@ class SignalementManager extends AbstractManager
         if (!empty($signalement->getInformationProcedure())) {
             $informationProcedure = clone $signalement->getInformationProcedure();
         }
+
+        if ($procedureDemarchesRequest->getInfoProcedureAssuranceContactee()
+        !== $informationProcedure->getInfoProcedureAssuranceContactee()) {
+            $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
+        }
+
         $informationProcedure
             ->setInfoProcedureAssuranceContactee($procedureDemarchesRequest->getInfoProcedureAssuranceContactee())
             ->setInfoProcedureReponseAssurance($procedureDemarchesRequest->getInfoProcedureReponseAssurance())

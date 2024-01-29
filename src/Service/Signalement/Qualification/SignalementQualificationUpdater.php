@@ -180,14 +180,8 @@ class SignalementQualificationUpdater
             }
         }
 
-        if (0 == $score) {
-            $this->addQualificationScore0(
-                $signalement,
-                $desordrePrecisionsQualifications,
-                $isInsalubriteObligatoire
-            );
-        } elseif (0 < $score && $score <= 10) {
-            $this->addQualificationScore1To10(
+        if (0 <= $score && $score <= 10) {
+            $this->addQualificationScore0To10(
                 $signalement,
                 $desordrePrecisionsQualifications,
                 $isInsalubriteObligatoire
@@ -259,7 +253,7 @@ class SignalementQualificationUpdater
         $signalement->addSignalementQualification($signalementQualification);
     }
 
-    private function addQualificationScore0(
+    private function addQualificationScore0To10(
         Signalement $signalement,
         array $desordrePrecisionsQualifications,
         bool $isInsalubriteObligatoire,
@@ -284,45 +278,14 @@ class SignalementQualificationUpdater
                 Qualification::INSALUBRITE,
                 QualificationStatus::INSALUBRITE_CHECK
             );
-        } else {
-            if (
-                !\in_array(Qualification::NON_DECENCE->value, $desordrePrecisionsQualifications)
-                && !\in_array(Qualification::RSD->value, $desordrePrecisionsQualifications)
-                && \in_array(Qualification::ASSURANTIEL->value, $desordrePrecisionsQualifications)
-            ) {
-                $this->addOneQualification(
-                    $signalement,
-                    Qualification::ASSURANTIEL,
-                    QualificationStatus::ASSURANTIEL_CHECK
-                );
-            }
         }
-    }
-
-    private function addQualificationScore1To10(
-        Signalement $signalement,
-        array $desordrePrecisionsQualifications,
-        bool $isInsalubriteObligatoire,
-    ): void {
-        if (\in_array(Qualification::NON_DECENCE->value, $desordrePrecisionsQualifications)) {
+        if (\in_array(Qualification::ASSURANTIEL->value, $desordrePrecisionsQualifications)
+        && 'oui' !== $signalement->getInformationProcedure()->getInfoProcedureAssuranceContactee()
+        ) {
             $this->addOneQualification(
                 $signalement,
-                Qualification::NON_DECENCE,
-                QualificationStatus::NON_DECENCE_CHECK
-            );
-        }
-        if (\in_array(Qualification::RSD->value, $desordrePrecisionsQualifications)) {
-            $this->addOneQualification(
-                $signalement,
-                Qualification::RSD,
-                QualificationStatus::RSD_CHECK
-            );
-        }
-        if ($isInsalubriteObligatoire) {
-            $this->addOneQualification(
-                $signalement,
-                Qualification::INSALUBRITE,
-                QualificationStatus::INSALUBRITE_CHECK
+                Qualification::ASSURANTIEL,
+                QualificationStatus::ASSURANTIEL_CHECK
             );
         }
     }
