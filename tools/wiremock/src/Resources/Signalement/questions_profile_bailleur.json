@@ -704,17 +704,6 @@
           }
         },
         {
-          "type": "SignalementFormUpload",
-          "slug": "bail_dpe_dpe_upload",
-          "label": "Ajouter le DPE (facultatif)",
-          "conditional": {
-            "show": "formStore.data.bail_dpe_dpe === 'oui'"
-          },
-          "validate": {
-            "required": false
-          }
-        },
-        {
           "type": "SignalementFormOnlyChoice",
           "slug": "bail_dpe_etat_des_lieux",
           "label": "Avez-vous réalisé un état des lieux à l'entrée des locataires ?",
@@ -739,6 +728,17 @@
           "label": "D'après la loi, un état des lieux du logement doit être réalisé le jour de la remise des clés. C'est important pour faire valoir vos droits ! Plus d'info sur <a href='https://www.service-public.fr/particuliers/vosdroits/F31270' target='_blank' rel='noopener'>le site du service public.</a>",
           "conditional": {
             "show": "formStore.data.bail_dpe_etat_des_lieux === 'non' || formStore.data.bail_dpe_etat_des_lieux === 'nsp'"
+          }
+        },
+        {
+          "type": "SignalementFormUpload",
+          "slug": "bail_dpe_etat_des_lieux_upload",
+          "label": "Ajouter l'état des lieux (facultatif)",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_etat_des_lieux === 'oui'"
+          },
+          "validate": {
+            "required": false
           }
         },
         {

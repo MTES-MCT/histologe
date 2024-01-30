@@ -20,6 +20,10 @@ class SignalementDocumentTypeMapper
             return DocumentType::SITUATION_FOYER_DPE;
         }
 
+        if (str_contains($value, 'dpe_etat_des_lieux')) {
+            return DocumentType::SITUATION_FOYER_ETAT_DES_LIEUX;
+        }
+
         return DocumentType::AUTRE;
     }
 }

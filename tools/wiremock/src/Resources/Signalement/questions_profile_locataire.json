@@ -753,6 +753,17 @@
           }
         },
         {
+          "type": "SignalementFormUpload",
+          "slug": "bail_dpe_etat_des_lieux_upload",
+          "label": "Ajouter l'état des lieux (facultatif)",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_etat_des_lieux === 'oui'"
+          },
+          "validate": {
+            "required": false
+          }
+        },
+        {
           "type": "SignalementFormOnlyChoice",
           "slug": "bail_dpe_dpe",
           "label": "Avez-vous reçu le DPE du logement ? (diagnostic performance énergie)",
