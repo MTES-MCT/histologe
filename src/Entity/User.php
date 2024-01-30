@@ -51,7 +51,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $uuid;
 
     #[ORM\Column(type: 'string', length: 180, unique: false)]
-    #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
+    #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT, groups: ['registration'])]
     #[Assert\NotBlank]
     private $email;
 
@@ -59,10 +59,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $roles = [];
 
     #[ORM\Column(type: 'string', nullable: true)]
-    #[Assert\NotBlank]
-    #[Assert\Length(min: 8, max: 200, minMessage: 'Votre mot de passe doit contenir au moins {{ limit }} caratères')]
-    #[Assert\NotCompromisedPassword(message: 'Ce mot de passe est compromis, veuillez en choisir un autre.')]
-    #[Assert\NotEqualTo(propertyPath: 'email', message: 'Votre mot de passe ne doit pas contenir votre email.')]
+    #[Assert\NotBlank(groups: ['password'])]
+    #[Assert\Length(min: 8, max: 200, minMessage: 'Votre mot de passe doit contenir au moins {{ limit }} caratères', groups: ['password'])]
+    #[Assert\NotCompromisedPassword(message: 'Ce mot de passe est compromis, veuillez en choisir un autre.', groups: ['password'])]
+    #[Assert\NotEqualTo(propertyPath: 'email', message: 'Votre mot de passe ne doit pas contenir votre email.', groups: ['password'])]
     private $password;
 
     #[ORM\Column(length: 255, nullable: true)]

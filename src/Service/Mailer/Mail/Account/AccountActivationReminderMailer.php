@@ -2,6 +2,7 @@
 
 namespace App\Service\Mailer\Mail\Account;
 
+use App\Manager\UserManager;
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
@@ -22,17 +23,17 @@ class AccountActivationReminderMailer extends AbstractNotificationMailer
         protected ParameterBagInterface $parameterBag,
         protected LoggerInterface $logger,
         protected UrlGeneratorInterface $urlGenerator,
+        private readonly UserManager $userManager,
     ) {
         parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator);
     }
 
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
-        $link = $this->generateLink('activate_account', ['token' => $notificationMail?->getUser()?->getToken()]);
+        $user = $notificationMail->getUser();
+        $this->userManager->loadUserTokenForUser($user);
+        $link = $this->generateLink('activate_account', ['uuid' => $user->getUuid(), 'token' => $user->getToken()]);
 
-        return [
-            'link' => $link,
-            'reminder' => true,
-        ];
+        return ['link' => $link, 'reminder' => true];
     }
 }

@@ -49,13 +49,12 @@ class ReinitAdminPasswordsCommand extends Command
         $users = $this->userRepository->findActiveAdmins();
 
         foreach ($users as $user) {
-            $password = $this->hasher->hashPassword($user, $this->tokenGenerator->generateToken());
-
-            $user->setPassword($password)->setStatut(User::STATUS_INACTIVE);
-            $this->userManager->loadUserToken($user->getEmail());
+            /* @var User $user */
+            $user->setPassword('')->setStatut(User::STATUS_INACTIVE);
+            $this->userManager->loadUserTokenForUser($user, false);
 
             /** @var ConstraintViolationList $errors */
-            $errors = $this->validator->validate($user);
+            $errors = $this->validator->validate($user, null, ['Default']);
 
             if (\count($errors) > 0) {
                 $this->io->error((string) $errors);

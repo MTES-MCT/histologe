@@ -7,26 +7,18 @@ use App\Entity\Territory;
 use App\Entity\User;
 use App\Factory\UserFactory;
 use App\Manager\PartnerManager;
-use App\Service\Token\TokenGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserFactoryTest extends KernelTestCase
 {
-    private TokenGeneratorInterface $tokenGenerator;
-    private ParameterBagInterface $parameterBag;
     private ValidatorInterface $validator;
     private PartnerManager $partnerManager;
 
     protected function setUp(): void
     {
         self::bootKernel();
-        /* @var TokenGeneratorInterface tokenGenerator */
-        $this->tokenGenerator = static::getContainer()->get(TokenGeneratorInterface::class);
-        /* @var ParameterBagInterface parameterBag */
-        $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
         /* @var ValidatorInterface validator */
         $this->validator = static::getContainer()->get(ValidatorInterface::class);
         /* @var PartnerManager partnerManager */
@@ -38,7 +30,7 @@ class UserFactoryTest extends KernelTestCase
         $territory = new Territory();
         $partner = new Partner();
 
-        $user = (new UserFactory($this->tokenGenerator, $this->parameterBag))->createInstanceFrom(
+        $user = (new UserFactory())->createInstanceFrom(
             roleLabel: 'Utilisateur',
             territory: $territory,
             partner: $partner,
@@ -62,7 +54,7 @@ class UserFactoryTest extends KernelTestCase
         $territory = new Territory();
         $partner = new Partner();
 
-        $user = (new UserFactory($this->tokenGenerator, $this->parameterBag))->createInstanceFrom(
+        $user = (new UserFactory())->createInstanceFrom(
             partner: null,
             territory: null,
             roleLabel: 'Super Admin',
@@ -95,7 +87,7 @@ class UserFactoryTest extends KernelTestCase
             'isMailingActive' => true,
         ];
 
-        $user = (new UserFactory($this->tokenGenerator, $this->parameterBag))->createInstanceFromArray($partner, $data);
+        $user = (new UserFactory())->createInstanceFromArray($partner, $data);
 
         /** @var ConstraintViolationList $errors */
         $errors = $this->validator->validate($user);

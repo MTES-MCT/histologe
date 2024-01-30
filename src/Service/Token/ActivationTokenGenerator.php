@@ -11,11 +11,11 @@ class ActivationTokenGenerator extends AbstractTokenGenerator
     {
     }
 
-    public function validateToken(string $token): bool|User
+    public function validateToken(User $user, string $token): bool|User
     {
-        $user = $this->userRepository->findOneBy(['token' => $token]);
+        $user = $this->userRepository->findOneBy(['id' => $user->getId(), 'token' => $token]);
 
-        if ($this->canActivateAccount($user)) {
+        if ($this->canActivateAccount($user) || $this->canUpdatePassword($user)) {
             return $user;
         }
 
@@ -27,5 +27,12 @@ class ActivationTokenGenerator extends AbstractTokenGenerator
         return null !== $user
             && new \DateTimeImmutable() < $user->getTokenExpiredAt()
             && User::STATUS_INACTIVE === $user->getStatut();
+    }
+
+    private function canUpdatePassword(?User $user): bool
+    {
+        return null !== $user
+            && new \DateTimeImmutable() < $user->getTokenExpiredAt()
+            && User::STATUS_ACTIVE === $user->getStatut();
     }
 }

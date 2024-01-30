@@ -22,16 +22,16 @@ class UserAccountControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
 
-        $route = $router->generate('activate_account', ['token' => $user->getToken()]);
+        $route = $router->generate('activate_account', ['uuid' => $user->getUuid(), 'token' => $user->getToken()]);
         $client->request('GET', $route);
 
         $password = $faker->password(12);
-        $client->submitForm('Connexion', [
+        $client->submitForm('Confirmer', [
             'password' => $password,
             'password-repeat' => $password,
         ]);
 
-        $this->assertResponseRedirects('/bo/');
+        $this->assertResponseRedirects('/connexion');
     }
 
     public function testActivationUserFormSubmitWithMismatchedPassword(): void
@@ -47,10 +47,10 @@ class UserAccountControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
 
-        $route = $router->generate('activate_account', ['token' => $user->getToken()]);
+        $route = $router->generate('activate_account', ['uuid' => $user->getUuid(), 'token' => $user->getToken()]);
         $client->request('GET', $route);
 
-        $client->submitForm('Connexion', [
+        $client->submitForm('Confirmer', [
             'password' => $faker->password(12),
             'password-repeat' => $faker->password(12),
         ]);

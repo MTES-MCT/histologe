@@ -71,6 +71,9 @@ class UserManager extends AbstractManager
 
     public function transferUserToPartner(User $user, Partner $partner): void
     {
+        if ($user->getPartner() === $partner) {
+            return;
+        }
         $user->setPartner($partner);
         $this->save($user);
 
@@ -98,18 +101,25 @@ class UserManager extends AbstractManager
         return $user;
     }
 
-    public function loadUserToken(string $email): User
+    public function loadUserToken(string $email, bool $flush = true): User
     {
         /** @var User $user */
         $user = $this->findOneBy(['email' => $email]);
         if (null === $user) {
             throw new UserEmailNotFoundException($email);
         }
+
+        return $this->loadUserTokenForUser($user, $flush);
+    }
+
+    public function loadUserTokenForUser(User $user, bool $flush = true): User
+    {
         $user
             ->setToken($this->tokenGenerator->generateToken())
             ->setTokenExpiredAt(
                 (new \DateTimeImmutable())->modify($this->parameterBag->get('token_lifetime'))
             );
+        $this->save($user, $flush);
 
         return $user;
     }
