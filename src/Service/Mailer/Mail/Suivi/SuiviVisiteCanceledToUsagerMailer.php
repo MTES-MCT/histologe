@@ -16,6 +16,7 @@ class SuiviVisiteCanceledToUsagerMailer extends AbstractNotificationMailer
     protected ?string $mailerSubject = 'Annulation de la visite de votre logement';
     protected ?string $mailerButtonText = 'Accéder à mon signalement';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_canceled_email';
+    protected ?string $tagHeader = 'Usager Annulation Visite Prevue';
 
     public function __construct(
         protected MailerInterface $mailer,

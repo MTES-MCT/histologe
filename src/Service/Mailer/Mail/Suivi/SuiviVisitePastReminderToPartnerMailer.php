@@ -16,6 +16,7 @@ class SuiviVisitePastReminderToPartnerMailer extends AbstractNotificationMailer
     protected ?string $mailerSubject = '[%s - %s] Conclusion de visite à renseigner';
     protected ?string $mailerButtonText = 'Accéder au signalement';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_past_reminder_to_partner_email';
+    protected ?string $tagHeader = 'Pro Conclusion Visite A Remplir';
 
     public function __construct(
         protected MailerInterface $mailer,

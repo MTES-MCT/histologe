@@ -16,6 +16,7 @@ class SignalementClosedToUsagerMailer extends AbstractNotificationMailer
     protected ?string $mailerSubject = 'Votre signalement sur %param.platform_name% est terminé.';
     protected ?string $mailerButtonText = 'Accéder à mon signalement';
     protected ?string $mailerTemplate = 'closed_to_usager_signalement_email';
+    protected ?string $tagHeader = 'Usager Cloture Signalement';
 
     public function __construct(
         protected MailerInterface $mailer,

@@ -18,6 +18,7 @@ class SignalementClosedToOnePartnerMailer extends AbstractNotificationMailer
     protected ?string $mailerSubject = '[%s - %s] %s a terminé son intervention';
     protected ?string $mailerButtonText = 'Accéder au signalement';
     protected ?string $mailerTemplate = 'closed_to_partner_signalement_email';
+    protected ?string $tagHeader = 'Pro Cloture Partenaire';
 
     public function __construct(
         protected MailerInterface $mailer,

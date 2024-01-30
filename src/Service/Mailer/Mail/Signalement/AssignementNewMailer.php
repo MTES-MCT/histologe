@@ -16,6 +16,7 @@ class AssignementNewMailer extends AbstractNotificationMailer
     protected ?string $mailerSubject = '[%s] Un nouveau signalement vous attend.';
     protected ?string $mailerButtonText = 'Accéder au signalement';
     protected ?string $mailerTemplate = 'affectation_email';
+    protected ?string $tagHeader = 'Pro Nouvelle affectation';
 
     public function __construct(
         protected MailerInterface $mailer,

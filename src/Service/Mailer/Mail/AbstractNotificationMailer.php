@@ -8,6 +8,7 @@ use App\Service\Mailer\NotificationMailerType;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Mailer\Header\TagHeader;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -18,6 +19,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
     protected ?string $mailerSubject = null;
     protected ?string $mailerButtonText = null;
     protected ?string $mailerTemplate = null;
+    protected ?string $tagHeader = null;
     protected array $mailerParams = [];
 
     public function __construct(
@@ -47,6 +49,10 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
 
         $params = array_merge($params, $notificationMail->getParams(), $this->mailerParams);
         $message = $this->renderMailContentWithParams($params, $territory ?? null);
+
+        if (null !== $this->tagHeader) {
+            $message->getHeaders()->add(new TagHeader($this->tagHeader));
+        }
 
         $territoryName = \Transliterator::create('NFD; [:Nonspacing Mark:] Remove; NFC')
             ->transliterate(

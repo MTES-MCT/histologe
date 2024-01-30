@@ -16,6 +16,7 @@ class SuiviVisiteCreatedToPartnerMailer extends AbstractNotificationMailer
     protected ?string $mailerSubject = '[%s - %s] Visite programmée';
     protected ?string $mailerButtonText = 'Accéder au signalement';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_created_to_partner_email';
+    protected ?string $tagHeader = 'Pro Date Visite Prevue';
 
     public function __construct(
         protected MailerInterface $mailer,

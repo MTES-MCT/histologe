@@ -16,6 +16,7 @@ class SuiviVisiteRescheduledToUsagerMailer extends AbstractNotificationMailer
     protected ?string $mailerSubject = 'Modification de la date de visite de votre logement';
     protected ?string $mailerButtonText = 'Accéder à mon signalement';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_rescheduled_email';
+    protected ?string $tagHeader = 'Usager Modification Date Visite Prevue';
 
     public function __construct(
         protected MailerInterface $mailer,

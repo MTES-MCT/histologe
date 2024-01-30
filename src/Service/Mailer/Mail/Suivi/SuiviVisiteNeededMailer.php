@@ -16,6 +16,7 @@ class SuiviVisiteNeededMailer extends AbstractNotificationMailer
     protected ?string $mailerSubject = '[%s - %s] Date de visite à renseigner';
     protected ?string $mailerButtonText = 'Accéder à mon signalement';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_needed_email';
+    protected ?string $tagHeader = 'Pro Date Visite Manquante';
 
     public function __construct(
         protected MailerInterface $mailer,

@@ -367,9 +367,6 @@
     "sebastian/version": {
         "version": "3.0.2"
     },
-    "sendinblue/api-v3-sdk": {
-        "version": "v8.0.0"
-    },
     "sensio/framework-extra-bundle": {
         "version": "6.2",
         "recipe": {
@@ -414,6 +411,15 @@
     },
     "symfony/asset": {
         "version": "v6.0.1"
+    },
+    "symfony/brevo-mailer": {
+        "version": "6.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "6.4",
+            "ref": "7c1038ceb733175f610a913a885a7c8b552b703a"
+        }
     },
     "symfony/browser-kit": {
         "version": "v6.0.1"
@@ -692,15 +698,6 @@
     },
     "symfony/security-http": {
         "version": "v6.0.2"
-    },
-    "symfony/sendinblue-mailer": {
-        "version": "6.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "5.2",
-            "ref": "ae1cf494ce06b9a4578a8445c610402a1676ee8d"
-        }
     },
     "symfony/serializer": {
         "version": "v6.0.2"

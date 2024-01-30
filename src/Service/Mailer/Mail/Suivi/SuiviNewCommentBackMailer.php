@@ -16,6 +16,7 @@ class SuiviNewCommentBackMailer extends AbstractNotificationMailer
     protected ?string $mailerSubject = '[%s - %s] Nouveau suivi';
     protected ?string $mailerButtonText = 'Accéder au signalement';
     protected ?string $mailerTemplate = 'nouveau_suivi_signalement_back_email';
+    protected ?string $tagHeader = 'Pro Nouveau Suivi Signalement';
 
     public function __construct(
         protected MailerInterface $mailer,

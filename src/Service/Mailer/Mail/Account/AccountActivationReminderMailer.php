@@ -17,6 +17,7 @@ class AccountActivationReminderMailer extends AbstractNotificationMailer
     protected ?string $mailerSubject = 'Activez votre compte sur %param.platform_name%';
     protected ?string $mailerButtonText = 'Activer mon compte';
     protected ?string $mailerTemplate = 'login_link_email';
+    protected ?string $tagHeader = 'Pre Reactivation de Compte';
 
     public function __construct(
         protected MailerInterface $mailer,

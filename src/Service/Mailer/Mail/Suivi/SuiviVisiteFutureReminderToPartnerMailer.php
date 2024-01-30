@@ -16,6 +16,7 @@ class SuiviVisiteFutureReminderToPartnerMailer extends AbstractNotificationMaile
     protected ?string $mailerSubject = '[%s - %s] Rappel : visite programmée';
     protected ?string $mailerButtonText = 'Accéder au signalement';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_future_reminder_to_partner_email';
+    protected ?string $tagHeader = 'Pro Visite Prevue Rappel';
 
     public function __construct(
         protected MailerInterface $mailer,
