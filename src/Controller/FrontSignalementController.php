@@ -161,7 +161,7 @@ class FrontSignalementController extends AbstractController
     /**
      * @throws Exception
      *
-     * @deprecated Cette route est obsolète, elle est remplacé par les routes du
+     * @deprecated Cette route est obsolète, elle est remplacée par les routes du
      * @see \App\Controller\FrontNewSignalementController
      */
     #[Route('/signalement/envoi', name: 'envoi_signalement', methods: 'POST')]
