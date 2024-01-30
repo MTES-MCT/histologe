@@ -1,6 +1,6 @@
 <template>
   <div :class="[ customCss, 'signalement-form-roomlist' ]" :id="id">
-    <label class="fr-label" :for="id">{{ label }}</label>
+    <label class="fr-label" :for="idPieceAVivre+'_check'">{{ label }}</label>
     <div
       id="text-input-error-desc-error"
       class="fr-error-text"

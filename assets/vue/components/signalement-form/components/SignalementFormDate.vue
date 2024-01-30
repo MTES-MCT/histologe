@@ -1,8 +1,9 @@
 <template>
     <div class="fr-input-group" :id="id">
-    <label :class="[ customCss, 'fr-label' ]" :for="id">{{ label }}</label>
+    <label :class="[ customCss, 'fr-label' ]" :for="id + '_input'">{{ label }}</label>
     <input
         type="date"
+        :id="id + '_input'"
         :name="id"
         :value="internalValue"
         :class="[ customCss, 'fr-input' ]"
