@@ -451,6 +451,8 @@ class SignalementQualificationUpdater
             // But should be deleted
             if (empty($listCriticiteDanger)) {
                 $signalement->removeSignalementQualification($existingQualificationDanger);
+            } else {
+                $existingQualificationDanger->setStatus(QualificationStatus::DANGER_CHECK);
             }
         // If not added yet, but should be added
         } elseif (!empty($listCriticiteDanger)) {
@@ -505,6 +507,8 @@ class SignalementQualificationUpdater
             // But should be deleted
             if (empty($listPrecisionsSuroccupation)) {
                 $signalement->removeSignalementQualification($existingQualificationSuroccupation);
+            } else {
+                $existingQualificationSuroccupation->setStatus(QualificationStatus::SUROCCUPATION_CHECK);
             }
         // If not added yet, but should be added
         } elseif (!empty($listPrecisionsSuroccupation)) {

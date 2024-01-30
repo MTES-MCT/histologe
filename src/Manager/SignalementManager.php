@@ -662,10 +662,10 @@ class SignalementManager extends AbstractManager
             $informationProcedure = clone $signalement->getInformationProcedure();
         }
 
-        $AssuranceContacteeUpdated = false;
+        $assuranceContacteeUpdated = false;
         if ($procedureDemarchesRequest->getInfoProcedureAssuranceContactee()
         !== $informationProcedure->getInfoProcedureAssuranceContactee()) {
-            $AssuranceContacteeUpdated = true;
+            $assuranceContacteeUpdated = true;
         }
 
         $informationProcedure
@@ -687,7 +687,7 @@ class SignalementManager extends AbstractManager
             );
         $signalement->setInformationComplementaire($informationComplementaire);
 
-        if ($AssuranceContacteeUpdated) {
+        if ($assuranceContacteeUpdated) {
             $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
         }
 
