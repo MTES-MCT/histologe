@@ -661,6 +661,13 @@ class SignalementManager extends AbstractManager
         if (!empty($signalement->getInformationProcedure())) {
             $informationProcedure = clone $signalement->getInformationProcedure();
         }
+
+        $assuranceContacteeUpdated = false;
+        if ($procedureDemarchesRequest->getInfoProcedureAssuranceContactee()
+        !== $informationProcedure->getInfoProcedureAssuranceContactee()) {
+            $assuranceContacteeUpdated = true;
+        }
+
         $informationProcedure
             ->setInfoProcedureAssuranceContactee($procedureDemarchesRequest->getInfoProcedureAssuranceContactee())
             ->setInfoProcedureReponseAssurance($procedureDemarchesRequest->getInfoProcedureReponseAssurance())
@@ -679,6 +686,10 @@ class SignalementManager extends AbstractManager
                 $procedureDemarchesRequest->getDemandeRelogement()
             );
         $signalement->setInformationComplementaire($informationComplementaire);
+
+        if ($assuranceContacteeUpdated) {
+            $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
+        }
 
         $this->save($signalement);
     }

@@ -915,7 +915,7 @@ desordre_precision:
     coef: 0
     is_danger: 0
     label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class='fr-border--left'>Fuite ou dégat des eaux : non</span>" 
-    qualification: ['ASSURANTIEL']
+    qualification: []
     desordre_precision_slug: "desordres_logement_humidite_piece_a_vivre_details_fuite_non"
     is_suroccupation: 0
   -
@@ -923,7 +923,7 @@ desordre_precision:
     coef: 0
     is_danger: 0
     label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class='fr-border--left'>Fuite ou dégat des eaux : non</span>" 
-    qualification: ['ASSURANTIEL']
+    qualification: []
     desordre_precision_slug: "desordres_logement_humidite_cuisine_details_fuite_non"
     is_suroccupation: 0
   -
@@ -931,7 +931,7 @@ desordre_precision:
     coef: 0
     is_danger: 0
     label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class='fr-border--left'>Fuite ou dégat des eaux : non</span>" 
-    qualification: ['ASSURANTIEL']
+    qualification: []
     desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_fuite_non"
     is_suroccupation: 0
   -
