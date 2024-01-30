@@ -13,6 +13,7 @@ use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
+use App\EventListener\SignalementUpdatedListener;
 use App\Factory\SuiviFactory;
 use App\Manager\SignalementManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,6 +43,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        SignalementUpdatedListener $listener
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid('signalement_edit_address_'.$signalement->getId(), $request->get('_token'))) {
@@ -56,7 +58,8 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromAdresseOccupantRequest($signalement, $adresseOccupantRequest);
-                $this->addSuivi(
+                $this->addSuiviIfNeeded(
+                    listener: $listener,
                     signalement: $signalement,
                     description: 'L\'adresse du logement a été modifiée par ',
                 );
@@ -78,6 +81,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        SignalementUpdatedListener $listener
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid(
@@ -95,7 +99,8 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromCoordonneesTiersRequest($signalement, $coordonneesTiersRequest);
-                $this->addSuivi(
+                $this->addSuiviIfNeeded(
+                    listener: $listener,
                     signalement: $signalement,
                     description: 'Les coordonnées du tiers déclarant ont été modifiées par ',
                 );
@@ -117,6 +122,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        SignalementUpdatedListener $listener
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid(
@@ -138,7 +144,8 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromCoordonneesFoyerRequest($signalement, $coordonneesFoyerRequest);
-                $this->addSuivi(
+                $this->addSuiviIfNeeded(
+                    listener: $listener,
                     signalement: $signalement,
                     description: 'Les coordonnées du foyer ont été modifiées par ',
                 );
@@ -160,6 +167,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        SignalementUpdatedListener $listener
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid(
@@ -181,7 +189,8 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromCoordonneesBailleurRequest($signalement, $coordonneesBailleurRequest);
-                $this->addSuivi(
+                $this->addSuiviIfNeeded(
+                    listener: $listener,
                     signalement: $signalement,
                     description: 'Les coordonnées du bailleur ont été modifiées par ',
                 );
@@ -203,6 +212,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        SignalementUpdatedListener $listener
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid(
@@ -224,7 +234,8 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromInformationsLogementRequest($signalement, $informationsLogementRequest);
-                $this->addSuivi(
+                $this->addSuiviIfNeeded(
+                    listener: $listener,
                     signalement: $signalement,
                     description: 'Les informations sur le logement ont été modifiées par ',
                 );
@@ -246,6 +257,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        SignalementUpdatedListener $listener
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid(
@@ -267,7 +279,8 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromCompositionLogementRequest($signalement, $compositionLogementRequest);
-                $this->addSuivi(
+                $this->addSuiviIfNeeded(
+                    listener: $listener,
                     signalement: $signalement,
                     description: 'La composition du logement a été modifée par ',
                 );
@@ -289,6 +302,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        SignalementUpdatedListener $listener
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid(
@@ -310,7 +324,8 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromSituationFoyerRequest($signalement, $situationFoyerRequest);
-                $this->addSuivi(
+                $this->addSuiviIfNeeded(
+                    listener: $listener,
                     signalement: $signalement,
                     description: 'La situation du foyer a été modifiée par ',
                 );
@@ -332,6 +347,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        SignalementUpdatedListener $listener
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid(
@@ -353,7 +369,8 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromProcedureDemarchesRequest($signalement, $procedureDemarchesRequest);
-                $this->addSuivi(
+                $this->addSuiviIfNeeded(
+                    listener: $listener,
                     signalement: $signalement,
                     description: 'Les procédures et démarches ont été modifiées par ',
                 );
@@ -382,21 +399,24 @@ class SignalementEditController extends AbstractController
         return $errorMessage;
     }
 
-    private function addSuivi(
+    private function addSuiviIfNeeded(
+        SignalementUpdatedListener $listener,
         Signalement $signalement,
         string $description,
     ): void {
-        /** @var User $user */
-        $user = $this->getUser();
-        $suivi = $this->suiviFactory->createInstanceFrom(
-            user: $user,
-            signalement: $signalement,
-        );
+        if ($listener->updateOccurred()) {
+            /** @var User $user */
+            $user = $this->getUser();
+            $suivi = $this->suiviFactory->createInstanceFrom(
+                user: $user,
+                signalement: $signalement,
+            );
 
-        $suivi->setDescription($description.$user->getNomComplet());
-        $suivi->setType(SUIVI::TYPE_AUTO);
+            $suivi->setDescription($description.$user->getNomComplet());
+            $suivi->setType(SUIVI::TYPE_AUTO);
 
-        $this->entityManager->persist($suivi);
-        $this->entityManager->flush();
+            $this->entityManager->persist($suivi);
+            $this->entityManager->flush();
+        }
     }
 }
