@@ -189,7 +189,7 @@ class FrontSignalementController extends AbstractController
     ): Response {
         if ($enableNewFormFeature) {
             $logger->error(
-                'Ce formulaire a été désactivé. Merci de refaire votre saisie.',
+                'La soumission de l\'ancien formulaire est inactif.',
                 ['payload' => $request->request->all()]
             );
 
