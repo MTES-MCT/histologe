@@ -912,6 +912,16 @@ document?.querySelector('#partner_add_user,#situation_add_critere')?.addEventLis
     container.appendChild(row);
 })
 
+document?.querySelectorAll('.open-photo-album')?.forEach(btn => {
+    const swipeIndex = btn.getAttribute('data-index')
+    btn.addEventListeners('click touchdown', (event) => {
+        document?.querySelectorAll('.photos-album')?.forEach(element => {
+            element.classList?.remove('fr-hidden')
+
+            displayPhotoAlbum(swipeIndex)
+        })
+    })
+})
 document?.querySelectorAll('.photos-album-btn-close')?.forEach(btn => {
     btn.addEventListeners('click touchdown', (event) => {
         document?.querySelectorAll('.photos-album')?.forEach(element => {
@@ -936,16 +946,19 @@ document?.querySelectorAll('.photos-album-swipe')?.forEach(btn => {
             currentIndex = 1
         }
 
-        document?.querySelectorAll('.photos-album-image-item.loop-current')?.forEach(element => {
-            element.classList?.remove('loop-current')
-            element.classList?.add('fr-hidden')
-        })
-        document?.querySelectorAll('.photos-album-image-item[data-index="'+currentIndex+'"]')?.forEach(element => {
-            element.classList?.add('loop-current')
-            element.classList?.remove('fr-hidden')
-        })
+        displayPhotoAlbum(currentIndex)
     })
 })
+const displayPhotoAlbum = (index) => {
+    document?.querySelectorAll('.photos-album-image-item.loop-current')?.forEach(element => {
+        element.classList?.remove('loop-current')
+        element.classList?.add('fr-hidden')
+    })
+    document?.querySelectorAll('.photos-album-image-item[data-index="'+index+'"]')?.forEach(element => {
+        element.classList?.add('loop-current')
+        element.classList?.remove('fr-hidden')
+    })
+}
 
 document?.querySelectorAll('[data-tag-delete]')?.forEach(delBtn => {
     delBtn.addEventListener('click', deleteTagEvent)
