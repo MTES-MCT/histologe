@@ -120,7 +120,7 @@ class UploadHandlerService
         $this->moveFilePath($distantFolder.$variantNames[ImageManipulationHandler::SUFFIX_THUMB]);
     }
 
-    public function deleteFile(Signalement $signalement, string $type, string $filename, FileRepository $fileRepository)
+    public function deleteSignalementFile(Signalement $signalement, string $type, string $filename, FileRepository $fileRepository): bool
     {
         $fileType = 'documents' === $type ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO;
 
@@ -133,23 +133,27 @@ class UploadHandlerService
 
         if (!$fileCollection->isEmpty()) {
             $file = $fileCollection->current();
-            if ($this->fileStorage->fileExists($file->getFilename())) {
-                $this->fileStorage->delete($file->getFilename());
-            }
-            $variantNames = ImageManipulationHandler::getVariantNames($filename);
-            if ($this->fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_RESIZE])) {
-                $this->fileStorage->delete($variantNames[ImageManipulationHandler::SUFFIX_RESIZE]);
-            }
-            if ($this->fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_THUMB])) {
-                $this->fileStorage->delete($variantNames[ImageManipulationHandler::SUFFIX_THUMB]);
-            }
-
+            $this->deleteFileInBucket($file);
             $fileRepository->remove($file, true);
 
             return true;
         }
 
         return false;
+    }
+
+    public function deleteFileInBucket(File $file): void
+    {
+        if ($this->fileStorage->fileExists($file->getFilename())) {
+            $this->fileStorage->delete($file->getFilename());
+        }
+        $variantNames = ImageManipulationHandler::getVariantNames($file->getFilename());
+        if ($this->fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_RESIZE])) {
+            $this->fileStorage->delete($variantNames[ImageManipulationHandler::SUFFIX_RESIZE]);
+        }
+        if ($this->fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_THUMB])) {
+            $this->fileStorage->delete($variantNames[ImageManipulationHandler::SUFFIX_THUMB]);
+        }
     }
 
     public function uploadFromFilename(string $filename): ?string

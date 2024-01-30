@@ -104,4 +104,16 @@
     </legend>
     <input type="file" accept="application/*" name="visite-{{ formType }}[rapport]">
 </fieldset>
+{% elseif intervention is defined and intervention.files|length %}
+<fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
+	<ul class="fr-btns-group fr-btns-group--inline-sm fr-btns-group--sm">
+		<li>
+			<a href="{{ asset('_up/'~intervention.files[0].filename)~'/' ~ intervention.signalement.uuid }}" class="fr-btn" title="Afficher le document" rel="noopener" target="_blank">Voir le rapport de visite
+			</a>
+		</li>
+		<li>
+			<a href="{{ path('back_signalement_visite_deleterapport',{uuid:intervention.signalement.uuid, intervention:intervention.id}) }}?_token={{ csrf_token('delete_rapport') }}" title="Supprimer le rapport" class="fr-btn fr-btn--secondary fr-background--white fr-fi-delete-line "></a>
+		</li>
+	</ul>
+</fieldset>
 {% endif %}

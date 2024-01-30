@@ -107,7 +107,7 @@ class SignalementFileController extends AbstractController
     ): JsonResponse {
         $this->denyAccessUnlessGranted('FILE_DELETE', $signalement);
         if ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))) {
-            if ($uploadHandlerService->deleteFile($signalement, $type, $filename, $fileRepository)) {
+            if ($uploadHandlerService->deleteSignalementFile($signalement, $type, $filename, $fileRepository)) {
                 return $this->json(['response' => 'success']);
             }
         }
