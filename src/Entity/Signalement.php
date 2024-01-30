@@ -2214,4 +2214,19 @@ class Signalement
     {
         return $this->nomOccupant ?? $this->nomDeclarant;
     }
+
+    public function hasDesordreCategorie(DesordreCategorie $desordreCategorie): bool
+    {
+        return \in_array($desordreCategorie, $this->desordreCategories->toArray());
+    }
+
+    public function hasDesordreCritere(DesordreCritere $desordreCritere): bool
+    {
+        return \in_array($desordreCritere, $this->desordreCriteres->toArray());
+    }
+
+    public function hasDesordrePrecision(DesordrePrecision $desordrePrecision): bool
+    {
+        return \in_array($desordrePrecision, $this->desordrePrecisions->toArray());
+    }
 }

@@ -5,7 +5,6 @@ namespace App\Tests\Unit\Service\Signalement\Qualification;
 use App\Entity\Enum\ProcedureType;
 use App\Entity\Signalement;
 use App\Factory\SignalementQualificationFactory;
-use App\Manager\SignalementManager;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,7 +23,7 @@ class SignalementQualificationUpdaterTest extends KernelTestCase
     public function testUpdateFromProcedureInsalubrite()
     {
         $signalementQualificationFactory = $this->createMock(SignalementQualificationFactory::class);
-        $signalementManager = $this->createMock(SignalementManager::class);
+        $entityManager = $this->createMock(EntityManagerInterface::class);
         $qualificationStatusService = $this->createMock(QualificationStatusService::class);
 
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
@@ -33,7 +32,7 @@ class SignalementQualificationUpdaterTest extends KernelTestCase
 
         $signalementQualificationUpdater = new SignalementQualificationUpdater(
             $signalementQualificationFactory,
-            $signalementManager,
+            $entityManager,
             $qualificationStatusService,
         );
         $signalementQualificationUpdater->updateQualificationFromVisiteProcedureList($signalement, $procedureTypes);
@@ -44,7 +43,7 @@ class SignalementQualificationUpdaterTest extends KernelTestCase
     public function testUpdateFromProcedureAutre()
     {
         $signalementQualificationFactory = $this->createMock(SignalementQualificationFactory::class);
-        $signalementManager = $this->createMock(SignalementManager::class);
+        $entityManager = $this->createMock(EntityManagerInterface::class);
         $qualificationStatusService = $this->createMock(QualificationStatusService::class);
 
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
@@ -53,7 +52,7 @@ class SignalementQualificationUpdaterTest extends KernelTestCase
 
         $signalementQualificationUpdater = new SignalementQualificationUpdater(
             $signalementQualificationFactory,
-            $signalementManager,
+            $entityManager,
             $qualificationStatusService,
         );
         $signalementQualificationUpdater->updateQualificationFromVisiteProcedureList($signalement, $procedureTypes);

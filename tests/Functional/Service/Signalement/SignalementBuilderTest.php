@@ -17,6 +17,7 @@ use App\Repository\DesordrePrecisionRepository;
 use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\Signalement\CriticiteCalculator;
+use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\ReferenceGenerator;
@@ -63,6 +64,7 @@ class SignalementBuilderTest extends KernelTestCase
         $desordreCritereManager = static::getContainer()->get(DesordreCritereManager::class);
         $criticiteCalculator = static::getContainer()->get(CriticiteCalculator::class);
         $signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
+        $desordreCompositionLogementLoader = static::getContainer()->get(DesordreCompositionLogementLoader::class);
 
         $this->signalementBuilder = new SignalementBuilder(
             $territoryRepository,
@@ -84,7 +86,8 @@ class SignalementBuilderTest extends KernelTestCase
             $desordreTraitementProcessor,
             $desordreCritereManager,
             $criticiteCalculator,
-            $signalementQualificationUpdater
+            $signalementQualificationUpdater,
+            $desordreCompositionLogementLoader
         );
     }
 

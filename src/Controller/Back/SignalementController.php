@@ -3,14 +3,11 @@
 namespace App\Controller\Back;
 
 use App\Entity\Affectation;
-use App\Entity\Critere;
-use App\Entity\Criticite;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
-use App\Entity\Situation;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementClosedEvent;
@@ -165,10 +162,11 @@ class SignalementController extends AbstractController
         $listQualificationStatusesLabelsCheck = [];
         if (null !== $signalement->getSignalementQualifications()) {
             foreach ($signalement->getSignalementQualifications() as $qualification) {
-                if (Qualification::NON_DECENCE_ENERGETIQUE->name !== $qualification->getQualification()->name) {
-                    if (!$qualification->isPostVisite()) {
-                        $listQualificationStatusesLabelsCheck[] = $qualification->getStatus()->label();
-                    }
+                if (
+                    Qualification::NON_DECENCE_ENERGETIQUE !== $qualification->getQualification()
+                    && !$qualification->isPostVisite()
+                ) {
+                    $listQualificationStatusesLabelsCheck[] = $qualification->getStatus()->label();
                 }
             }
         }
@@ -258,28 +256,7 @@ class SignalementController extends AbstractController
                 $signalement->setModifiedBy($this->getUser());
                 $signalement->setModifiedAt(new DateTimeImmutable());
                 $signalement->setScore($criticiteCalculator->calculate($signalement));
-                $data = [];
-                if (\array_key_exists('situation', $form->getExtraData())) {
-                    $data['situation'] = $form->getExtraData()['situation'];
-                }
-                if (isset($data['situation'])) {
-                    foreach ($data['situation'] as $idSituation => $criteres) {
-                        $situation = $doctrine->getManager()->getRepository(Situation::class)->find($idSituation);
-                        $signalement->addSituation($situation);
-                        $data['situation'][$idSituation]['label'] = $situation->getLabel();
-                        foreach ($criteres as $critere) {
-                            foreach ($critere as $idCritere => $criticites) {
-                                $critere = $doctrine->getManager()->getRepository(Critere::class)->find($idCritere);
-                                $signalement->addCritere($critere);
-                                $data['situation'][$idSituation]['critere'][$idCritere]['label'] = $critere->getLabel();
-                                $criticite = $doctrine->getManager()->getRepository(Criticite::class)->find($data['situation'][$idSituation]['critere'][$idCritere]['criticite']);
-                                $signalement->addCriticite($criticite);
-                                $data['situation'][$idSituation]['critere'][$idCritere]['criticite'] = [$criticite->getId() => ['label' => $criticite->getLabel(), 'score' => $criticite->getScore()]];
-                            }
-                        }
-                    }
-                }
-                !empty($data['situation']) && $signalement->setJsonContent($data['situation']);
+
                 $signalementQualificationUpdater->updateQualificationFromScore($signalement);
                 $suivi = new Suivi();
                 $suivi->setCreatedBy($this->getUser());

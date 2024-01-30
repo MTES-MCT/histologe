@@ -12,8 +12,14 @@ use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementFactory;
 use App\Manager\SignalementManager;
+use App\Repository\DesordreCritereRepository;
+use App\Repository\DesordrePrecisionRepository;
+use App\Service\Signalement\CriticiteCalculator;
+use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\Qualification\QualificationStatusService;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\SignalementInputValueMapper;
+use App\Specification\Signalement\SuroccupationSpecification;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
@@ -39,6 +45,12 @@ class SignalementManagerTest extends KernelTestCase
     private SignalementManager $signalementManager;
     private CsrfTokenManagerInterface $csrfTokenManager;
     private SignalementInputValueMapper $signalementInputValueMapper;
+    private SuroccupationSpecification $suroccupationSpecification;
+    private CriticiteCalculator $criticiteCalculator;
+    private SignalementQualificationUpdater $signalementQualificationUpdater;
+    private DesordrePrecisionRepository $desordrePrecisionRepository;
+    private DesordreCritereRepository $desordreCritereRepository;
+    private DesordreCompositionLogementLoader $desordreCompositionLogementLoader;
 
     protected function setUp(): void
     {
@@ -57,6 +69,12 @@ class SignalementManagerTest extends KernelTestCase
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
         $this->csrfTokenManager = static::getContainer()->get(CsrfTokenManagerInterface::class);
         $this->signalementInputValueMapper = static::getContainer()->get(SignalementInputValueMapper::class);
+        $this->suroccupationSpecification = static::getContainer()->get(SuroccupationSpecification::class);
+        $this->criticiteCalculator = static::getContainer()->get(CriticiteCalculator::class);
+        $this->signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
+        $this->desordrePrecisionRepository = static::getContainer()->get(DesordrePrecisionRepository::class);
+        $this->desordreCritereRepository = static::getContainer()->get(DesordreCritereRepository::class);
+        $this->desordreCompositionLogementLoader = static::getContainer()->get(DesordreCompositionLogementLoader::class);
 
         $this->signalementManager = new SignalementManager(
             $this->managerRegistry,
@@ -69,6 +87,12 @@ class SignalementManagerTest extends KernelTestCase
             $this->parameterBag,
             $this->csrfTokenManager,
             $this->signalementInputValueMapper,
+            $this->suroccupationSpecification,
+            $this->criticiteCalculator,
+            $this->signalementQualificationUpdater,
+            $this->desordrePrecisionRepository,
+            $this->desordreCritereRepository,
+            $this->desordreCompositionLogementLoader,
         );
     }
 

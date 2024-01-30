@@ -25,7 +25,7 @@ class SignalementQualification
     private ?Qualification $qualification = null;
 
     #[ORM\Column(nullable: true)]
-    private array $criticites = [];
+    private ?array $criticites = [];
 
     #[ORM\Column(nullable: true)]
     private ?array $desordrePrecisionIds = [];
