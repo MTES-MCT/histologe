@@ -3,11 +3,11 @@
 namespace App\EventListener;
 
 use App\Entity\Signalement;
-use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
-use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
+use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
 
-#[AsDoctrineListener(event: Events::onFlush)]
+#[AsEntityListener(event: Events::postUpdate, method: 'postUpdate', entity: Signalement::class)]
 class SignalementUpdatedListener
 {
     private $updateOccurred = false;
@@ -19,19 +19,14 @@ class SignalementUpdatedListener
         ];
     }
 
-    public function onFlush(OnFlushEventArgs $args): void
+    public function postUpdate(Signalement $signalement, PostUpdateEventArgs $event): void
     {
-        $unitOfWork = $args->getObjectManager()->getUnitOfWork();
+        $unitOfWork = $event->getObjectManager()->getUnitOfWork();
 
-        foreach ($unitOfWork->getScheduledEntityUpdates() as $entity) {
-            $changes = $unitOfWork->getEntityChangeSet($entity);
-
-            if ($entity instanceof Signalement) {
-                foreach ($changes as $key => $change) {
-                    if ($change[0] != $change[1]) {
-                        $this->updateOccurred = true;
-                    }
-                }
+        foreach ($unitOfWork->getEntityChangeSet($signalement) as $change) {
+            if ($change[0] != $change[1]) {
+                $this->updateOccurred = true;
+                break;
             }
         }
     }
