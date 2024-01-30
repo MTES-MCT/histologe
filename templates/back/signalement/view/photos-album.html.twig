@@ -6,11 +6,11 @@
     {% set loopLength = signalement.files|filter( photo => photo.fileType == 'photo' and photo.intervention is null )|length %}
     <div class="photos-album-navigation-container">
         <div>
-            <button class="fr-btn photos-album-swipe" data-value="-1">&lt;</button>
+            <button class="fr-btn photos-album-swipe" data-direction="-1">&lt;</button>
         </div>
         <div>
             {% for index, photo in signalement.files|filter( photo => photo.fileType == 'photo' and photo.intervention is null ) %}
-            <div class="photos-album-image-item {{ loop.index > 1 ? 'fr-hidden' : 'loop-current' }}" data-index="{{ loop.index }}" data-length="{{ loopLength }}">
+            <div class="photos-album-image-item {{ loop.index > 1 ? 'fr-hidden' : 'loop-current' }}" data-id="{{ photo.id }}">
                 <div>
                     Photo de la situation - {{ loop.index }} / {{ loopLength }}
                 </div>
@@ -21,13 +21,19 @@
                         >
                 </div>
                 <div>
-                    Photo ajoutée par : {{ photo.uploadedBy.nomComplet ?? 'N/R' }}
+                    Photo ajoutée par {{ photo.uploadedBy.nomComplet ?? 'l\'usager' }}
                 </div>
             </div>
             {% endfor %}
         </div>
         <div>
-            <button class="fr-btn photos-album-swipe" data-value="1">&gt;</button>
+            <button class="fr-btn photos-album-swipe" data-direction="1">&gt;</button>
         </div>
     </div>
+    <script type="text/javascript">
+        const histoPhotoIds = []
+        {% for index, photo in signalement.files|filter( photo => photo.fileType == 'photo' and photo.intervention is null ) %}
+            histoPhotoIds.push({{photo.id}})
+        {% endfor %}
+    </script>
 </div>

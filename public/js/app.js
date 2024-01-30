@@ -913,12 +913,12 @@ document?.querySelector('#partner_add_user,#situation_add_critere')?.addEventLis
 })
 
 document?.querySelectorAll('.open-photo-album')?.forEach(btn => {
-    const swipeIndex = btn.getAttribute('data-index')
+    const swipeId = btn.getAttribute('data-id')
     btn.addEventListeners('click touchdown', (event) => {
         document?.querySelectorAll('.photos-album')?.forEach(element => {
             element.classList?.remove('fr-hidden')
 
-            displayPhotoAlbum(swipeIndex)
+            displayPhotoAlbum(swipeId)
         })
     })
 })
@@ -930,31 +930,29 @@ document?.querySelectorAll('.photos-album-btn-close')?.forEach(btn => {
     })
 })
 document?.querySelectorAll('.photos-album-swipe')?.forEach(btn => {
-    const swipeValue = btn.getAttribute('data-value')
-    let currentIndex = 0
-    let currentLoopLength = 0
+    const swipeDirection = Number(btn.getAttribute('data-direction'))
+
     btn.addEventListeners('click touchdown', (event) => {
         document?.querySelectorAll('.photos-album-image-item.loop-current')?.forEach(element => {
-            currentIndex = Number(element.getAttribute('data-index'))
-            currentLoopLength = Number(element.getAttribute('data-length'))
+            currentId = Number(element.getAttribute('data-id'))
         })
-        currentIndex += Number(swipeValue)
-        if (currentIndex < 1) {
-            currentIndex = currentLoopLength
+        let newIndex = histoPhotoIds.indexOf(currentId)
+        newIndex += Number(swipeDirection)
+        if (newIndex < 0) {
+            newIndex = histoPhotoIds.length - 1
         }
-        if (currentIndex > currentLoopLength) {
-            currentIndex = 1
+        if (newIndex > histoPhotoIds.length - 1) {
+            newIndex = 0
         }
-
-        displayPhotoAlbum(currentIndex)
+        displayPhotoAlbum(histoPhotoIds[newIndex])
     })
 })
-const displayPhotoAlbum = (index) => {
+const displayPhotoAlbum = (photoId) => {
     document?.querySelectorAll('.photos-album-image-item.loop-current')?.forEach(element => {
         element.classList?.remove('loop-current')
         element.classList?.add('fr-hidden')
     })
-    document?.querySelectorAll('.photos-album-image-item[data-index="'+index+'"]')?.forEach(element => {
+    document?.querySelectorAll('.photos-album-image-item[data-id="'+photoId+'"]')?.forEach(element => {
         element.classList?.add('loop-current')
         element.classList?.remove('fr-hidden')
     })
