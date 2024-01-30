@@ -41,6 +41,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,8 +53,18 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class FrontSignalementController extends AbstractController
 {
     #[Route('/signalement', name: 'front_signalement')]
-    public function index(SituationRepository $situationRepository, Request $request): Response
-    {
+    public function index(
+        SituationRepository $situationRepository,
+        Request $request,
+        #[Autowire(env: 'FEATURE_NEW_FORM_ENABLE')]
+        bool $enableNewFormFeature,
+    ): Response {
+        if ($enableNewFormFeature) {
+            return $this->render('front/nouveau_formulaire.html.twig', [
+                'uuid_signalement' => null,
+            ]);
+        }
+
         $title = 'Signalez vos problèmes de logement';
         $etats = ['Etat moyen', 'Mauvais état', 'Très mauvais état'];
         $etats_classes = ['moyen', 'grave', 'tres-grave'];
@@ -72,18 +83,28 @@ class FrontSignalementController extends AbstractController
     }
 
     #[Route('/checkterritory', name: 'front_signalement_check_territory', methods: ['GET'])]
-    public function checkTerritory(Request $request, PostalCodeHomeChecker $postalCodeHomeChecker, CommuneRepository $communeRepository): Response
-    {
+    public function checkTerritory(
+        Request $request,
+        PostalCodeHomeChecker $postalCodeHomeChecker,
+        CommuneRepository $communeRepository
+    ): Response {
         $postalCode = $request->get('cp');
         if (empty($postalCode)) {
-            return $this->json(['success' => false, 'message' => 'Le paramètre "cp" est manquant', 'label' => 'Erreur']);
+            return $this->json([
+                'success' => false,
+                'message' => 'Le paramètre "cp" est manquant',
+                'label' => 'Erreur',
+            ]);
         }
 
         $inseeCode = $request->get('insee');
         if (!empty($inseeCode)) {
             $commune = $communeRepository->findOneBy(['codePostal' => $postalCode, 'codeInsee' => $inseeCode]);
             if (!$commune) {
-                return $this->json(['success' => false, 'message' => 'Le paramètre code postal et le code insee ne sont pas cohérent', 'label' => 'Erreur']);
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Le paramètre code postal et le code insee ne sont pas cohérent',
+                    'label' => 'Erreur', ]);
             }
         }
         if ($postalCodeHomeChecker->isActive($postalCode, $inseeCode)) {
@@ -118,7 +139,9 @@ class FrontSignalementController extends AbstractController
             try {
                 foreach ($files as $key => $file) {
                     $res = $uploadHandlerService->toTempFolder($file)->setKey($key);
-                    if (!isset($res['error']) && \in_array($file->getMimeType(), ImageManipulationHandler::IMAGE_MIME_TYPES)) {
+                    if (!isset($res['error'])
+                        && \in_array($file->getMimeType(), ImageManipulationHandler::IMAGE_MIME_TYPES)
+                    ) {
                         $imageManipulationHandler->resize($res['filePath'])->thumbnail();
                     }
 
@@ -137,6 +160,9 @@ class FrontSignalementController extends AbstractController
 
     /**
      * @throws Exception
+     *
+     * @deprecated Cette route est obsolète, elle est remplacée par les routes du
+     * @see \App\Controller\FrontNewSignalementController
      */
     #[Route('/signalement/envoi', name: 'envoi_signalement', methods: 'POST')]
     public function envoi(
@@ -158,9 +184,21 @@ class FrontSignalementController extends AbstractController
         LoggerInterface $logger,
         DocumentProvider $documentProvider,
         AutoAssigner $autoAssigner,
+        #[Autowire(env: 'FEATURE_NEW_FORM_ENABLE')]
+        bool $enableNewFormFeature,
     ): Response {
+        if ($enableNewFormFeature) {
+            $logger->error(
+                'La soumission de l\'ancien formulaire est inactif.',
+                ['payload' => $request->request->all()]
+            );
+
+            return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
+        }
+
         if ($this->isCsrfTokenValid('new_signalement', $request->request->get('_token'))
-            && $data = $request->get('signalement')) {
+            && $data = $request->get('signalement')
+        ) {
             $signalement = new Signalement();
             $dataDateBail = $dataHasDPE = $dataDateDPE = $dataConsoSizeYear = $dataConsoSize = $dataConsoYear = null;
             $listNDECriticites = [];
