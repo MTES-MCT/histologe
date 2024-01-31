@@ -35,6 +35,11 @@ when@dev:
                 enable: '%matomo_enable%'
             chatbot:
                 enable: '%chatbot_enable%'
+            maintenance:
+                banner_enable: '%maintenance_banner_enable%'
+                banner_message: '%maintenance_banner_message%'
+                enable: '%maintenance_enable%'
+
 when@prod:
     twig:
         globals:

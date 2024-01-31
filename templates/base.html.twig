@@ -52,7 +52,9 @@
     {% endif %}
 
     {% block stylesheets %}{% endblock %}
-    {% block customscripts %}{% endblock %}
+    {% block customscripts %}
+        {{ encore_entry_script_tags('app') }}
+    {% endblock %}
     {% if matomo is defined and matomo.enable == 1 %}
         <!-- Matomo -->
         <script>
@@ -98,7 +100,9 @@
     2:'REFUSEE',
     3:'CLOTUREE',
 } %}
-<body {% if bodyClass is defined %}class="{{ bodyClass }}"{% endif %}>
+<body {% if bodyClass is defined %}class="{{ bodyClass }}"{% endif %}
+      data-mode-maintenance="{{ maitenance is defined ? maintenance.enable : 0 }}">
+{% include 'maintenance/banner.html.twig' %}
 {% if 'back_' not in app.request.get('_route') %}
     {% include "header.html.twig" %}
     {% for label, messages in app.flashes %}
@@ -123,7 +127,6 @@
 
 <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}"></script>
 <script type="text/javascript" nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}"></script>
-<script type="text/javascript" src={{ asset('js/screencapture.js') }}></script>
 <script src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 <script src="{{ asset('js/const.min.js?v='~''|date('YmdH')) }}"></script>
 <script src="{{ asset('js/app.js?v='~''|date('YmdH')) }}"></script>
