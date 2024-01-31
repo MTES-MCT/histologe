@@ -64,6 +64,18 @@ class FileFactoryTest extends TestCase
             DocumentType::SITUATION_FOYER_DPE,
         ];
 
+        yield 'Etat des lieux document' => [
+            [
+                'key' => 'documents',
+                'file' => 'dummy-filename-dpe.pdf',
+                'titre' => 'dummy-filename-dpe-titre.pdf',
+                'slug' => 'bail_dpe_etat_des_lieux_upload',
+            ],
+            'dummy-filename-dpe.pdf',
+            File::FILE_TYPE_DOCUMENT,
+            DocumentType::SITUATION_FOYER_ETAT_DES_LIEUX,
+        ];
+
         yield 'Bail document' => [
             [
                 'key' => 'photos',
