@@ -18,6 +18,10 @@ class SuroccupationSpecification
         SituationFoyer $situationFoyer,
         TypeCompositionLogement $typeCompositionLogement
     ): bool {
+        if (null === $typeCompositionLogement->getCompositionLogementSuperficie()) {
+            return false;
+        }
+
         return $this->checkSuroccupation(
             $situationFoyer->getLogementSocialAllocation(),
             (int) $typeCompositionLogement->getCompositionLogementNombrePersonnes(),
