@@ -620,7 +620,16 @@ class SignalementManager extends AbstractManager
             ->setTravailleurSocialQuitteLogement($situationFoyerRequest->getTravailleurSocialQuitteLogement())
             ->setTravailleurSocialAccompagnementDeclarant(
                 $situationFoyerRequest->getTravailleurSocialAccompagnementDeclarant()
-            );
+            )
+            ->setLogementSocialAllocationCaisse($situationFoyerRequest->getIsAllocataire());
+
+        if ('non' === $situationFoyerRequest->getIsAllocataire()) {
+            $situationFoyer->setLogementSocialAllocation('non');
+        } elseif ('nsp' === $situationFoyerRequest->getIsAllocataire()) {
+            $situationFoyer->setLogementSocialAllocation(null);
+        } else {
+            $situationFoyer->setLogementSocialAllocation('oui');
+        }
         $signalement->setSituationFoyer($situationFoyer);
 
         $informationComplementaire = new InformationComplementaire();
