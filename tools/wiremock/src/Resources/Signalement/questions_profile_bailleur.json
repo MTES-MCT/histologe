@@ -68,19 +68,17 @@
       "body": [
         {
           "type": "SignalementFormTextfield",
-          "label": "Nom de famille (facultatif)",
+          "label": "Nom de famille",
           "slug": "coordonnees_occupant_nom",
           "validate": {
-            "required": false,
             "maxLength": 50
           }
         },
         {
           "type": "SignalementFormTextfield",
-          "label": "Prénom (facultatif)",
+          "label": "Prénom",
           "slug": "coordonnees_occupant_prenom",
           "validate": {
-            "required": false,
             "maxLength": 50
           }
         },

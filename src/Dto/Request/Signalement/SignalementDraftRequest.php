@@ -50,31 +50,31 @@ class SignalementDraftRequest
     private ?string $signalementConcerneLogementSocialAutreTiers = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner le nom de l\'organisme.',
-        groups: ['TIERS_PRO', 'SERVICE_SECOURS']
+        groups: ['POST_TIERS_PRO', 'POST_SERVICE_SECOURS']
     )]
     private ?string $vosCoordonneesTiersNomOrganisme = null;
     private ?string $vosCoordonneesTiersLien = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre nom.',
-        groups: ['TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR', 'SERVICE_SECOURS']
+        groups: ['POST_TIERS_PARTICULIER', 'POST_TIERS_PRO', 'POST_BAILLEUR', 'POST_SERVICE_SECOURS']
     )]
     #[Assert\Length(max: 50, maxMessage: 'Votre nom en tant que tiers est limité à {{ limit }} caractères.')]
     private ?string $vosCoordonneesTiersNom = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre prénom.',
-        groups: ['TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR', 'SERVICE_SECOURS']
+        groups: ['POST_TIERS_PARTICULIER', 'POST_TIERS_PRO', 'POST_BAILLEUR', 'POST_SERVICE_SECOURS']
     )]
     #[Assert\Length(max: 50, maxMessage: 'Votre prénom en tant que tiers est limité à {{ limit }} caractères.')]
     private ?string $vosCoordonneesTiersPrenom = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre adresse e-mail.',
-        groups: ['TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR', 'SERVICE_SECOURS']
+        groups: ['POST_TIERS_PARTICULIER', 'POST_TIERS_PRO', 'POST_BAILLEUR', 'POST_SERVICE_SECOURS']
     )]
     #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
     private ?string $vosCoordonneesTiersEmail = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre numéro de téléphone.',
-        groups: ['TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR', 'SERVICE_SECOURS']
+        groups: ['POST_TIERS_PARTICULIER', 'POST_TIERS_PRO', 'POST_BAILLEUR', 'POST_SERVICE_SECOURS']
     )]
     #[AppAssert\TelephoneFormat]
     private ?string $vosCoordonneesTiersTel = null;
@@ -82,38 +82,46 @@ class SignalementDraftRequest
     private ?string $vosCoordonneesTiersTelSecondaire = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre civilité.',
-        groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT']
+        groups: ['POST_LOCATAIRE', 'POST_BAILLEUR_OCCUPANT']
     )]
     private ?string $vosCoordonneesOccupantCivilite = null;
     private ?string $vosCoordonneesOccupantNomOrganisme = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre nom.',
-        groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT']
+        groups: ['POST_LOCATAIRE', 'POST_BAILLEUR_OCCUPANT']
     )]
     #[Assert\Length(max: 50, maxMessage: 'Votre nom en tant qu\'occupant est limité à {{ limit }} caractères.')]
     private ?string $vosCoordonneesOccupantNom = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre prénom.',
-        groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT']
+        groups: ['POST_LOCATAIRE', 'POST_BAILLEUR_OCCUPANT']
     )]
     #[Assert\Length(max: 50, maxMessage: 'Votre prénom en tant qu\'occupant est limité à {{ limit }} caractères.')]
     private ?string $vosCoordonneesOccupantPrenom = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre adresse e-mail.',
-        groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT']
+        groups: ['POST_LOCATAIRE', 'POST_BAILLEUR_OCCUPANT']
     )]
     #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
     private ?string $vosCoordonneesOccupantEmail = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre numéro de téléphone.',
-        groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT']
+        groups: ['POST_LOCATAIRE', 'POST_BAILLEUR_OCCUPANT']
     )]
     #[AppAssert\TelephoneFormat]
     private ?string $vosCoordonneesOccupantTel = null;
     #[AppAssert\TelephoneFormat]
     private ?string $vosCoordonneesOccupantTelSecondaire = null;
+    #[Assert\NotBlank(
+        message: 'Merci de renseigner le nom de l\'occupant.',
+        groups: ['PUT_BAILLEUR', 'PUT_TIERS_PARTICULIER', 'PUT_TIERS_PRO']
+    )]
     #[Assert\Length(max: 50, maxMessage: 'Le nom de l\'occupant ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesOccupantNom = null;
+    #[Assert\NotBlank(
+        message: 'Merci de renseigner le prénom de l\'occupant.',
+        groups: ['PUT_BAILLEUR', 'PUT_TIERS_PARTICULIER', 'PUT_TIERS_PRO']
+    )]
     #[Assert\Length(max: 50, maxMessage: 'Le prénom de l\'occupant ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesOccupantPrenom = null;
     private ?string $coordonneesOccupantEmail = null;
@@ -143,11 +151,27 @@ class SignalementDraftRequest
     private ?string $typeLogementSousSolSansFenetre = null;
     private ?string $typeLogementSousCombleSansFenetre = null;
     private ?string $compositionLogementPieceUnique = null;
+    #[Assert\NotBlank(
+        message: 'Merci de définir la superficie.',
+        groups: [
+            'PUT_LOCATAIRE',
+            'PUT_BAILLEUR_OCCUPANT',
+        ]
+    )]
+    #[Assert\Positive(message: 'Merci de saisir une information numérique dans le champs superficie.')]
     private ?string $compositionLogementSuperficie = null;
     private ?string $compositionLogementHauteur = null;
     #[Assert\NotBlank(
         message: 'Merci de définir le nombre de pièce à vivre.',
-        groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS'])]
+        groups: [
+            'PUT_LOCATAIRE',
+            'PUT_BAILLEUR_OCCUPANT',
+            'PUT_BAILLEUR',
+            'PUT_TIERS_PARTICULIER',
+            'PUT_TIERS_PRO',
+            'PUT_SERVICE_SECOURS',
+        ]
+    )]
     #[Assert\Positive(message: 'Merci de saisir une information numérique dans le champs nombre de pièce à vivre.')]
     private ?string $compositionLogementNbPieces = null;
     private ?string $compositionLogementNombrePersonnes = null;
