@@ -28,6 +28,8 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SignalementManagerTest extends KernelTestCase
 {
@@ -260,6 +262,14 @@ class SignalementManagerTest extends KernelTestCase
             $emptyCompositionLogementRequest,
         );
         $this->assertEquals($signalement->getSuperficie(), 9.9);
+
+        /** @var ValidatorInterface $validator */
+        $validator = static::getContainer()->get(ValidatorInterface::class);
+        $errors = $validator->validate($emptyCompositionLogementRequest, null, ['Default', 'LOCATAIRE']);
+        $this->assertCount(8, $errors);
+        /** @var ConstraintViolationList $errors */
+        $errorsAsString = (string) $errors;
+        $this->assertStringContainsString('Merci de définir le nombre de pièce à vivre', $errorsAsString);
     }
 
     public function testGetPhotosBySlug(): void

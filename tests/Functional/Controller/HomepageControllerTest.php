@@ -20,7 +20,7 @@ class HomepageControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertResponseRedirects('/signalement');
+        $this->assertResponseRedirects('/signalement?cp=13002');
     }
 
     public function testSubmitWithEmptyPostcode(): void

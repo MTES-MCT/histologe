@@ -164,4 +164,14 @@ class SuroccupationSpecificationTest extends KernelTestCase
 
         $this->assertFalse($isSuroccupation);
     }
+
+    public function testCheckSurrocupationNotPossibleWithSuperficieEqualNull(): void
+    {
+        $this->typeCompositionLogement->setCompositionLogementSuperficie(null);
+        $isSuroccupation = $this->suroccupationSpecification->isSatisfiedBy(
+            $this->situationFoyer,
+            $this->typeCompositionLogement
+        );
+        $this->assertFalse($isSuroccupation, 'Reproductible case with tiers part., pro et service de secours');
+    }
 }
