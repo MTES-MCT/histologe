@@ -52,7 +52,7 @@ class DesordreCritereManager extends AbstractManager
 
     public function getCriteresSlugsInDraft(array $filteredDataOfDraft, array $availableCritereSlugs): array
     {
-        return array_filter($filteredDataOfDraft, function ($value, $slug) use ($availableCritereSlugs) {
+        $criteresSlugs = array_filter($filteredDataOfDraft, function ($value, $slug) use ($availableCritereSlugs) {
             if (\in_array($slug, $availableCritereSlugs)) {
                 if (1 === $value) {
                     return true;
@@ -61,5 +61,13 @@ class DesordreCritereManager extends AbstractManager
 
             return false;
         }, \ARRAY_FILTER_USE_BOTH);
+
+        // cas particulier pour desordres_logement_chauffage_type_aucun
+        if (isset($filteredDataOfDraft['desordres_logement_chauffage_type'])
+            && 'aucun' === $filteredDataOfDraft['desordres_logement_chauffage_type']) {
+            $criteresSlugs['desordres_logement_chauffage_type_aucun'] = 1;
+        }
+
+        return $criteresSlugs;
     }
 }
