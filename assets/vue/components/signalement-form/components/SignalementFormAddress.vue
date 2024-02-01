@@ -114,7 +114,10 @@ export default defineComponent({
         clearTimeout(this.idFetchTimeout)
         this.idFetchTimeout = setTimeout(() => {
           if (newValue.length > 10) {
-            requests.validateAddress(newValue, this.handleAddressFound)
+            const codePostal = 'adresse_logement_adresse_suggestion' === this.idAddress
+                ? ' ' + this.getCodePostalFromQueryParam()
+                : ''
+            requests.validateAddress(newValue + codePostal, this.handleAddressFound)
           }
         }, 200)
       }
@@ -168,7 +171,12 @@ export default defineComponent({
           this.formStore.data[this.id] = ''
       }
       // TODO : vérifier si dans territoire expé NDE pour comportement différent ?
-    }
+    },
+    getCodePostalFromQueryParam() {
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      return urlParams.get('cp');
+    },
   },
   emits: ['update:modelValue']
 })
