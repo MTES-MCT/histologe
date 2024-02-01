@@ -51,16 +51,6 @@
                             </div>
 
                             <div class="fr-select-group">
-                                {% set preavisDepart = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsPreavisDepart : null %}
-                                <label class="fr-label" for="preavisDepart">Préavis de départ</label>
-                                <select class="fr-select" name="preavisDepart">
-                                    <option value="" {{ preavisDepart not in ['oui', 'non'] ? 'selected' : '' }}></option>
-                                    <option value="oui" {{ preavisDepart is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ preavisDepart is same as 'non' ? 'selected' : '' }}>Non</option>
-                                </select>
-                            </div>
-
-                            <div class="fr-select-group">
                                 {% set demandeRelogement = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsDemandeRelogement : null %}
                                 <label class="fr-label" for="demandeRelogement">Demande logement social / relogement</label>
                                 <select class="fr-select" name="demandeRelogement">

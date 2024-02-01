@@ -33,6 +33,7 @@ class SituationFoyerFactory
             logementSocialMontantAllocation: $data['logement_social_montant_allocation'] ?? null,
             logementSocialNumeroAllocataire: $data['logement_social_numero_allocataire'] ?? null,
             travailleurSocialQuitteLogement: $data['travailleur_social_quitte_logement'] ?? null,
+            travailleurSocialPreavisDepart: $data['travailleur_social_preavis_depart'] ?? null,
             travailleurSocialAccompagnement: $data['travailleur_social_accompagnement'] ?? null,
             travailleurSocialAccompagnementDeclarant: $data['travailleur_social_accompagnement_declarant'] ?? null
         );

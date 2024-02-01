@@ -614,6 +614,7 @@ class SignalementManager extends AbstractManager
         $situationFoyer
             ->setLogementSocialMontantAllocation($situationFoyerRequest->getLogementSocialMontantAllocation())
             ->setTravailleurSocialQuitteLogement($situationFoyerRequest->getTravailleurSocialQuitteLogement())
+            ->setTravailleurSocialPreavisDepart($situationFoyerRequest->getTravailleurSocialPreavisDepart())
             ->setTravailleurSocialAccompagnementDeclarant(
                 $situationFoyerRequest->getTravailleurSocialAccompagnementDeclarant()
             )
@@ -680,9 +681,6 @@ class SignalementManager extends AbstractManager
             $informationComplementaire = clone $signalement->getInformationComplementaire();
         }
         $informationComplementaire
-            ->setInformationsComplementairesSituationOccupantsPreavisDepart(
-                $procedureDemarchesRequest->getPreavisDepart()
-            )
             ->setInformationsComplementairesSituationOccupantsDemandeRelogement(
                 $procedureDemarchesRequest->getDemandeRelogement()
             );

@@ -67,6 +67,7 @@
   "logement_social_date_naissance": "1978-03-11",
   "logement_social_numero_allocataire": "123456",
   "travailleur_social_quitte_logement": "oui",
+  "travailleur_social_preavis_depart": "oui",
   "travailleur_social_accompagnement": "oui",
   "categorieDisorders": {
     "batiment": [],

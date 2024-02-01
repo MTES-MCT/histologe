@@ -299,11 +299,6 @@ class SignalementBuilder
             ->setAnneeConstruction(
                 $this->signalementDraftRequest->getInformationsComplementairesLogementAnneeConstruction()
             )
-            ->setIsPreavisDepart(
-                $this->evalBoolean(
-                    $this->signalementDraftRequest->getInformationsComplementairesSituationOccupantsPreavisDepart()
-                )
-            )
             ->setIsRelogement($this->isDemandeRelogement())
             ->setDateEntree($this->resolveDateEmmenagement())
             ->setIsConstructionAvant1949($this->isConstructionAvant1949($anneeConstruction));

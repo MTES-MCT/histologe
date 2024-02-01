@@ -574,6 +574,18 @@
                         {% endif %}
                     </div>
                     <div class="fr-col-12">
+                        <strong>Préavis de départ :</strong>
+                        {% if signalement.situationFoyer %}
+                            {% if signalement.situationFoyer.travailleurSocialPreavisDepart is same as 'oui' %}
+                                {{ static_picto_yes|raw }}
+                            {% elseif signalement.situationFoyer.travailleurSocialPreavisDepart is same as 'non' %}
+                                {{ static_picto_no|raw }}
+                            {% else %}
+                                {{signalement.situationFoyer.travailleurSocialPreavisDepart(false)}}
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="fr-col-12">
                         <strong>Accompagnement par un ou une travailleuse sociale :</strong>
                         {% if signalement.situationFoyer %}
                             {% if signalement.situationFoyer.travailleurSocialAccompagnementDeclarant is same as '1' %}

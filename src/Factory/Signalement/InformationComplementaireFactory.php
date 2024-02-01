@@ -33,7 +33,6 @@ class InformationComplementaireFactory
             informationsComplementairesSituationOccupantsDemandeRelogement: $data['informations_complementaires_situation_occupants_demande_relogement'] ?? null,
             informationsComplementairesSituationOccupantsDateEmmenagement: $data['informations_complementaires_situation_occupants_date_emmenagement'] ?? null,
             informationsComplementairesSituationOccupantsLoyersPayes: $data['informations_complementaires_situation_occupants_loyers_payes'] ?? null,
-            informationsComplementairesSituationOccupantsPreavisDepart: $data['informations_complementaires_situation_occupants_preavis_depart'] ?? null,
             informationsComplementairesSituationBailleurDateEffetBail: $data['informations_complementaires_situation_bailleur_date_effet_bail'] ?? null,
             informationsComplementairesSituationBailleurBeneficiaireRsa: $data['informations_complementaires_situation_bailleur_beneficiaire_rsa'] ?? null,
             informationsComplementairesSituationBailleurBeneficiaireFsl: $data['informations_complementaires_situation_bailleur_beneficiaire_fsl'] ?? null,

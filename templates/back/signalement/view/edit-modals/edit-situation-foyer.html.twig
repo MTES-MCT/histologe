@@ -75,6 +75,17 @@
                             </div>
 
                             <div class="fr-select-group">
+                                {% set travailleurSocialPreavisDepart = signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialPreavisDepart : null %}
+                                <label class="fr-label" for="travailleurSocialPreavisDepart">Préavis de départ</label>
+                                <select class="fr-select" name="travailleurSocialPreavisDepart">
+                                    <option value="" {{ travailleurSocialPreavisDepart not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                                    <option value="oui" {{ travailleurSocialPreavisDepart is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ travailleurSocialPreavisDepart is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ travailleurSocialPreavisDepart is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-select-group">
                                 {% set travailleurSocialAccompagnementDeclarant = signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialAccompagnementDeclarant : null %}
                                 <label class="fr-label" for="travailleurSocialAccompagnementDeclarant">Accompagnement par un ou une travailleuse sociale</label>
                                 <select class="fr-select" name="travailleurSocialAccompagnementDeclarant">
