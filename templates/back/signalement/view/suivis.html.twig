@@ -5,22 +5,20 @@
         <h3 class="fr-h5">Suivis</h3>
     </div>
     <div class="fr-col-3 fr-col-md-6 fr-text--right">
+        {% if 
+                (is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted))
+                and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION')
+                and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
+                and not isClosedForMe
+                %}
         <button class="fr-btn fr-btn--icon-left fr-icon-quote-line" data-fr-opened="false"
                 aria-controls="fr-modal-add-suivi">
             Ajouter un suivi
         </button>
+        {% include '_partials/signalement/add_suivi.html.twig' %}
+        {% endif %}
     </div>
 </div>
-
-
-{% if 
-        (is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted))
-        and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION')
-        and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
-        and not isClosedForMe
-        %}
-    {% include '_partials/signalement/add_suivi.html.twig' %}
-{% endif %}
 
 {% for suivi in signalement.suivis|reverse %}
     <div class="fr-grid-row fr-grid-row--middle fr-background-alt--blue-france fr-p-3v fr-mb-3v suivi-item {% if loop.index > 3 %}fr-hidden{% endif %}">
