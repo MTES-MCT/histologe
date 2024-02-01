@@ -162,7 +162,7 @@ class SignalementDraftRequest
     private ?string $compositionLogementSuperficie = null;
     private ?string $compositionLogementHauteur = null;
     #[Assert\NotBlank(
-        message: 'Merci de définir le nombre de pièce à vivre.',
+        message: 'Merci de définir le nombre de pièces à vivre.',
         groups: [
             'PUT_LOCATAIRE',
             'PUT_BAILLEUR_OCCUPANT',
@@ -172,7 +172,7 @@ class SignalementDraftRequest
             'PUT_SERVICE_SECOURS',
         ]
     )]
-    #[Assert\Positive(message: 'Merci de saisir une information numérique dans le champs nombre de pièce à vivre.')]
+    #[Assert\Positive(message: 'Merci de saisir une information numérique dans le champs nombre de pièces à vivre.')]
     private ?string $compositionLogementNbPieces = null;
     private ?string $compositionLogementNombrePersonnes = null;
     private ?string $compositionLogementEnfants = null;

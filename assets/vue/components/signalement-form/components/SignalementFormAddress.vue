@@ -170,12 +170,11 @@ export default defineComponent({
 
           this.formStore.data[this.id] = ''
       }
-      // TODO : vérifier si dans territoire expé NDE pour comportement différent ?
     },
     getCodePostalFromQueryParam() {
       const queryString = window.location.search;
       const urlParams = new URLSearchParams(queryString);
-      return urlParams.get('cp');
+      return urlParams.get('cp') || '';
     },
   },
   emits: ['update:modelValue']
