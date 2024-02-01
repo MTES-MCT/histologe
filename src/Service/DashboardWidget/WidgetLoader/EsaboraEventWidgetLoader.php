@@ -29,10 +29,9 @@ class EsaboraEventWidgetLoader extends AbstractWidgetLoader
             $widget->getTerritory()
         );
         foreach ($data as $key => $event) {
+            $data[$key]['response'] = null;
             if (JobEvent::STATUS_FAILED === $event['status']) {
                 $data[$key]['response'] = $this->normalizeErrorMessage($event);
-            } elseif (JobEvent::STATUS_SUCCESS === $event['status']) {
-                $data[$key]['response'] = null;
             }
         }
         $widget->setData($data);
