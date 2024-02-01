@@ -1,0 +1,14 @@
+{% if maintenance is defined and maintenance.banner_enable == 1 %}
+    <div id="maintenance-banner" class="fr-notice fr-notice--info fr-hidden">
+        <div class="fr-container">
+            <div class="fr-notice__body">
+                <p class="fr-notice__title">{{ maintenance.banner_message }}</p>
+                {% if false == maintenance.enable %}
+                    <button class="fr-btn--close fr-btn" title="Masquer le message">
+                        Masquer le message
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endif %}

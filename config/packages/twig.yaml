@@ -11,6 +11,10 @@ twig:
         gitbook:
             documentation: https://documentation.histologe.beta.gouv.fr
             faq: https://faq.histologe.beta.gouv.fr
+        maintenance:
+            banner_enable: '%maintenance_banner_enable%'
+            banner_message: '%maintenance_banner_message%'
+            enable: '%maintenance_enable%'
     date:
         timezone: 'Europe/Paris'
     paths:
@@ -35,6 +39,7 @@ when@dev:
                 enable: '%matomo_enable%'
             chatbot:
                 enable: '%chatbot_enable%'
+
 when@prod:
     twig:
         globals:

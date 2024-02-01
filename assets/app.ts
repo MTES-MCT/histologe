@@ -26,4 +26,5 @@ import './controllers/form_partner';
 import './controllers/form_visite';
 import './controllers/view_signalement';
 import './controllers/cookie_banner';
+import './controllers/maintenance_banner';
 

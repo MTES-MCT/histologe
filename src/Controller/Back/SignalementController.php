@@ -162,10 +162,7 @@ class SignalementController extends AbstractController
         $listQualificationStatusesLabelsCheck = [];
         if (null !== $signalement->getSignalementQualifications()) {
             foreach ($signalement->getSignalementQualifications() as $qualification) {
-                if (
-                    Qualification::NON_DECENCE_ENERGETIQUE !== $qualification->getQualification()
-                    && !$qualification->isPostVisite()
-                ) {
+                if (!$qualification->isPostVisite()) {
                     $listQualificationStatusesLabelsCheck[] = $qualification->getStatus()->label();
                 }
             }

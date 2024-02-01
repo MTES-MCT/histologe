@@ -269,13 +269,13 @@ class SignalementManager extends AbstractManager
         $signalement = $signalementQualification->getSignalement();
         // // mise à jour du signalement
         if (QualificationNDERequest::RADIO_VALUE_AFTER_2023 === $qualificationNDERequest->getDateEntree()
-            && $signalement->getDateEntree()->format('Y') < '2023'
+            && ($signalement->getDateEntree()->format('Y') < '2023' || null === $signalement->getDateEntree())
         ) {
             $signalement->setDateEntree(new \DateTimeImmutable(QualificationNDERequest::RADIO_VALUE_AFTER_2023));
         }
 
         if (QualificationNDERequest::RADIO_VALUE_BEFORE_2023 === $qualificationNDERequest->getDateEntree()
-            && $signalement->getDateEntree()->format('Y') >= '2023'
+            && ($signalement->getDateEntree()->format('Y') >= '2023' || null === $signalement->getDateEntree())
         ) {
             $signalement->setDateEntree(new \DateTimeImmutable(QualificationNDERequest::RADIO_VALUE_BEFORE_2023));
         }
@@ -620,7 +620,16 @@ class SignalementManager extends AbstractManager
             ->setTravailleurSocialQuitteLogement($situationFoyerRequest->getTravailleurSocialQuitteLogement())
             ->setTravailleurSocialAccompagnementDeclarant(
                 $situationFoyerRequest->getTravailleurSocialAccompagnementDeclarant()
-            );
+            )
+            ->setLogementSocialAllocationCaisse($situationFoyerRequest->getIsAllocataire());
+
+        if ('non' === $situationFoyerRequest->getIsAllocataire()) {
+            $situationFoyer->setLogementSocialAllocation('non');
+        } elseif ('nsp' === $situationFoyerRequest->getIsAllocataire()) {
+            $situationFoyer->setLogementSocialAllocation(null);
+        } else {
+            $situationFoyer->setLogementSocialAllocation('oui');
+        }
         $signalement->setSituationFoyer($situationFoyer);
 
         $informationComplementaire = new InformationComplementaire();
