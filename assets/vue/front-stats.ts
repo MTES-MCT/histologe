@@ -3,4 +3,7 @@ import TheHistoAppFrontStats from './components/front-stats/TheHistoAppFrontStat
 import '@vuepic/vue-datepicker/dist/main.css'
 
 const app = createApp(TheHistoAppFrontStats)
-app.mount('#app-front-stats')
+const appStatsComponent = document.getElementById('app-front-stats')
+if (null !== appStatsComponent) {
+    app.mount('#app-front-stats')
+}
