@@ -138,7 +138,8 @@ class SignalementBuilder
             $this->processDesordresByZone('logement');
             $this->processDesordresTypeComposition();
         }
-        // enregistre des données spécifiques dans jsonContent si elles existent (slug du critère pour affichage)
+        // enregistre des données spécifiques dans jsonContent si elles existent
+        // (slug du critère ou de la catégorie pour affichage)
         if (isset($this->payload['desordres_logement_nuisibles_autres_details_type_nuisibles'])) {
             $jsonContent['desordres_logement_nuisibles_autres'] =
             $this->payload['desordres_logement_nuisibles_autres_details_type_nuisibles'];
@@ -146,6 +147,17 @@ class SignalementBuilder
         if (isset($this->payload['desordres_batiment_nuisibles_autres_details_type_nuisibles'])) {
             $jsonContent['desordres_batiment_nuisibles_autres'] =
             $this->payload['desordres_batiment_nuisibles_autres_details_type_nuisibles'];
+        }
+        if (isset($this->payload['desordres_logement_chauffage_type'])) {
+            if ('electrique' === $this->payload['desordres_logement_chauffage_type']) {
+                $jsonContent['desordres_logement_chauffage'] = 'Chauffage électrique';
+            } elseif ('gaz' === $this->payload['desordres_logement_chauffage_type']) {
+                $jsonContent['desordres_logement_chauffage'] = 'Chauffage au gaz, bois, éthanol ou fioul';
+            } elseif ('aucun' === $this->payload['desordres_logement_chauffage_type']) {
+                $jsonContent['desordres_logement_chauffage'] = 'Aucun radiateur ou moyen de chauffage fixe';
+            } else {
+                $jsonContent['desordres_logement_chauffage'] = 'Type de chauffage inconnu';
+            }
         }
 
         if (isset($jsonContent)) {
