@@ -269,7 +269,7 @@ class SignalementManagerTest extends KernelTestCase
         $this->assertCount(8, $errors);
         /** @var ConstraintViolationList $errors */
         $errorsAsString = (string) $errors;
-        $this->assertStringContainsString('Merci de définir le nombre de pièce à vivre', $errorsAsString);
+        $this->assertStringContainsString('Merci de définir le nombre de pièces à vivre', $errorsAsString);
     }
 
     public function testGetPhotosBySlug(): void

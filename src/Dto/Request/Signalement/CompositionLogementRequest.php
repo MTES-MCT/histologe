@@ -18,8 +18,8 @@ class CompositionLogementRequest
         private readonly ?string $superficie = null,
         #[Assert\NotBlank(message: 'Merci de définir la hauteur du logement.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS'])]
         private readonly ?string $compositionLogementHauteur = null,
-        #[Assert\NotBlank(message: 'Merci de définir le nombre de pièce à vivre.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS'])]
-        #[Assert\Positive(message: 'Merci de saisir une information numérique dans le champs nombre de pièce à vivre.')]
+        #[Assert\NotBlank(message: 'Merci de définir le nombre de pièces à vivre.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS'])]
+        #[Assert\Positive(message: 'Merci de saisir une information numérique dans le champs nombre de pièces à vivre.')]
         private readonly ?string $compositionLogementNbPieces = null,
         private readonly ?string $nombreEtages = null,
         private readonly ?string $typeLogementRdc = null,
