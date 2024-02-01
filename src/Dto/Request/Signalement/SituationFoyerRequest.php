@@ -7,7 +7,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 class SituationFoyerRequest
 {
     public function __construct(
-        #[Assert\NotBlank(['message' => 'Veuillez définir le champ logement social'])]
         private readonly ?string $isLogementSocial = null,
         #[Assert\NotBlank(['message' => 'Veuillez définir le champ demande relogement', 'groups' => ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO']])]
         private readonly ?string $isRelogement = null,

@@ -32,11 +32,12 @@
                             </div>
 
                             <div class="fr-select-group">
+                                {% set compositionLogementPieceUnique = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.compositionLogementPieceUnique : null %}
                                 <label class="fr-label" for="typeCompositionLogement">Logement</label>
                                 <select class="fr-select" name="typeCompositionLogement">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
-                                    <option value="piece_unique" {{ signalement.typeCompositionLogement and signalement.typeCompositionLogement.compositionLogementPieceUnique is same as 'piece_unique' ? 'selected' : '' }}>Pièce unique</option>
-                                    <option value="plusieurs_pieces" {{ signalement.typeCompositionLogement and signalement.typeCompositionLogement.compositionLogementPieceUnique is same as 'plusieurs_pieces' ? 'selected' : '' }}>Plusieurs pièces</option>
+                                    <option value="" {{ compositionLogementPieceUnique not in ['piece_unique', 'plusieurs_pieces'] ? 'selected' : '' }}></option>
+                                    <option value="piece_unique" {{ compositionLogementPieceUnique is same as 'piece_unique' ? 'selected' : '' }}>Pièce unique</option>
+                                    <option value="plusieurs_pieces" {{ compositionLogementPieceUnique is same as 'plusieurs_pieces' ? 'selected' : '' }}>Plusieurs pièces</option>
                                 </select>
                             </div>
 
@@ -46,17 +47,10 @@
                             </div>
 
                             <div class="fr-select-group">
-                                {% set compositionLogementHauteur = 'nsp' %}
-                                {% if signalement.typeCompositionLogement %}
-                                    {% if signalement.typeCompositionLogement.compositionLogementHauteur is same as 'oui' %}
-                                        {% set compositionLogementHauteur = 'oui' %}
-                                    {% elseif signalement.typeCompositionLogement.compositionLogementHauteur is same as 'non' %}
-                                        {% set compositionLogementHauteur = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set compositionLogementHauteur = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.compositionLogementHauteur : null %}
                                 <label class="fr-label" for="compositionLogementHauteur">Hauteur > 2m</label>
                                 <select class="fr-select" name="compositionLogementHauteur">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ compositionLogementHauteur not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ compositionLogementHauteur is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ compositionLogementHauteur is same as 'non' ? 'selected' : '' }}>Non</option>
                                     <option value="nsp" {{ compositionLogementHauteur is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
@@ -74,89 +68,50 @@
                             </div>
 
                             <div class="fr-select-group">
-                                {% set typeLogementRdc = 'nsp' %}
-                                {% if signalement.typeCompositionLogement %}
-                                    {% if signalement.typeCompositionLogement.typeLogementRdc is same as 'oui' %}
-                                        {% set typeLogementRdc = 'oui' %}
-                                    {% elseif signalement.typeCompositionLogement.typeLogementRdc is same as 'non' %}
-                                        {% set typeLogementRdc = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set typeLogementRdc = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementRdc : null %}
                                 <label class="fr-label" for="typeLogementRdc">Est au RDC ?</label>
                                 <select class="fr-select" name="typeLogementRdc">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ typeLogementRdc not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ typeLogementRdc is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ typeLogementRdc is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ typeLogementRdc is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 
                             <div class="fr-select-group">
-                                {% set typeLogementDernierEtage = 'nsp' %}
-                                {% if signalement.typeCompositionLogement %}
-                                    {% if signalement.typeCompositionLogement.typeLogementDernierEtage is same as 'oui' %}
-                                        {% set typeLogementDernierEtage = 'oui' %}
-                                    {% elseif signalement.typeCompositionLogement.typeLogementDernierEtage is same as 'non' %}
-                                        {% set typeLogementDernierEtage = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set typeLogementDernierEtage = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementDernierEtage : null %}
                                 <label class="fr-label" for="typeLogementDernierEtage">Est au dernier étage ?</label>
                                 <select class="fr-select" name="typeLogementDernierEtage">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ typeLogementDernierEtage not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ typeLogementDernierEtage is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ typeLogementDernierEtage is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ typeLogementDernierEtage is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 
                             <div class="fr-select-group">
-                                {% set typeLogementSousCombleSansFenetre = 'nsp' %}
-                                {% if signalement.typeCompositionLogement %}
-                                    {% if signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre is same as 'oui' %}
-                                        {% set typeLogementSousCombleSansFenetre = 'oui' %}
-                                    {% elseif signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre is same as 'non' %}
-                                        {% set typeLogementSousCombleSansFenetre = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set typeLogementSousCombleSansFenetre = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre : null %}
                                 <label class="fr-label" for="typeLogementSousCombleSansFenetre">Combles sans fenêtres ?</label>
                                 <select class="fr-select" name="typeLogementSousCombleSansFenetre">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ typeLogementSousCombleSansFenetre not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ typeLogementSousCombleSansFenetre is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ typeLogementSousCombleSansFenetre is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ typeLogementSousCombleSansFenetre is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 
                             <div class="fr-select-group">
-                                {% set typeLogementSousSolSansFenetre = 'nsp' %}
-                                {% if signalement.typeCompositionLogement %}
-                                    {% if signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'oui' %}
-                                        {% set typeLogementSousSolSansFenetre = 'oui' %}
-                                    {% elseif signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'non' %}
-                                        {% set typeLogementSousSolSansFenetre = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set typeLogementSousSolSansFenetre = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementSousSolSansFenetre : null %}
                                 <label class="fr-label" for="typeLogementSousSolSansFenetre">Sous-sol sans fenêtres ?</label>
                                 <select class="fr-select" name="typeLogementSousSolSansFenetre">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ typeLogementSousSolSansFenetre not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ typeLogementSousSolSansFenetre is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ typeLogementSousSolSansFenetre is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ typeLogementSousSolSansFenetre is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 
                             <div class="fr-select-group">
-                                {% set typeLogementCommoditesPieceAVivre9m = 'nsp' %}
-                                {% if signalement.typeCompositionLogement %}
-                                    {% if signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m is same as 'oui' %}
-                                        {% set typeLogementCommoditesPieceAVivre9m = 'oui' %}
-                                    {% elseif signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m is same as 'non' %}
-                                        {% set typeLogementCommoditesPieceAVivre9m = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set typeLogementCommoditesPieceAVivre9m = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m : null %}
                                 <label class="fr-label" for="typeLogementCommoditesPieceAVivre9m">Au moins une des pièces à vivre > 9m² ?</label>
                                 <select class="fr-select" name="typeLogementCommoditesPieceAVivre9m">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ typeLogementCommoditesPieceAVivre9m not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ typeLogementCommoditesPieceAVivre9m is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ typeLogementCommoditesPieceAVivre9m is same as 'non' ? 'selected' : '' }}>Non</option>
                                     <option value="nsp" {{ typeLogementCommoditesPieceAVivre9m is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
@@ -164,128 +119,72 @@
                             </div>
 
                             <div class="fr-select-group">
-                                {% set typeLogementCommoditesCuisine = 'nsp' %}
-                                {% if signalement.typeCompositionLogement %}
-                                    {% if signalement.typeCompositionLogement.typeLogementCommoditesCuisine is same as 'oui' %}
-                                        {% set typeLogementCommoditesCuisine = 'oui' %}
-                                    {% elseif signalement.typeCompositionLogement.typeLogementCommoditesCuisine is same as 'non' %}
-                                        {% set typeLogementCommoditesCuisine = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set typeLogementCommoditesCuisine = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesCuisine : null %}
                                 <label class="fr-label" for="typeLogementCommoditesCuisine">Cuisine (ou coin cuisine) dans le logement ?</label>
                                 <select class="fr-select" name="typeLogementCommoditesCuisine">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ typeLogementCommoditesCuisine not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ typeLogementCommoditesCuisine is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ typeLogementCommoditesCuisine is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ typeLogementCommoditesCuisine is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 
                             <div class="fr-select-group">
-                                {% set typeLogementCommoditesCuisineCollective = 'nsp' %}
-                                {% if signalement.typeCompositionLogement %}
-                                    {% if signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective is same as 'oui' %}
-                                        {% set typeLogementCommoditesCuisineCollective = 'oui' %}
-                                    {% elseif signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective is same as 'non' %}
-                                        {% set typeLogementCommoditesCuisineCollective = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set typeLogementCommoditesCuisineCollective = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective : null %}
                                 <label class="fr-label" for="typeLogementCommoditesCuisineCollective">Cuisine (ou coin cuisine) collective ?</label>
                                 <select class="fr-select" name="typeLogementCommoditesCuisineCollective">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ typeLogementCommoditesCuisineCollective not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ typeLogementCommoditesCuisineCollective is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ typeLogementCommoditesCuisineCollective is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ typeLogementCommoditesCuisineCollective is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 
                             <div class="fr-select-group">
-                                {% set typeLogementCommoditesSalleDeBain = 'nsp' %}
-                                {% if signalement.typeCompositionLogement %}
-                                    {% if signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain is same as 'oui' %}
-                                        {% set typeLogementCommoditesSalleDeBain = 'oui' %}
-                                    {% elseif signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain is same as 'non' %}
-                                        {% set typeLogementCommoditesSalleDeBain = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set typeLogementCommoditesSalleDeBain = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain : null %}
                                 <label class="fr-label" for="typeLogementCommoditesSalleDeBain">SDB (baignoire ou douche) dans le logement ?</label>
                                 <select class="fr-select" name="typeLogementCommoditesSalleDeBain">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ typeLogementCommoditesSalleDeBain not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ typeLogementCommoditesSalleDeBain is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ typeLogementCommoditesSalleDeBain is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ typeLogementCommoditesSalleDeBain is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 
                             <div class="fr-select-group">
-                                {% set typeLogementCommoditesSalleDeBainCollective = 'nsp' %}
-                                {% if signalement.typeCompositionLogement %}
-                                    {% if signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective is same as 'oui' %}
-                                        {% set typeLogementCommoditesSalleDeBainCollective = 'oui' %}
-                                    {% elseif signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective is same as 'non' %}
-                                        {% set typeLogementCommoditesSalleDeBainCollective = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set typeLogementCommoditesSalleDeBainCollective = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective : null %}
                                 <label class="fr-label" for="typeLogementCommoditesSalleDeBainCollective">SDB (baignoire ou douche) collective ?</label>
                                 <select class="fr-select" name="typeLogementCommoditesSalleDeBainCollective">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ typeLogementCommoditesSalleDeBainCollective not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ typeLogementCommoditesSalleDeBainCollective is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ typeLogementCommoditesSalleDeBainCollective is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ typeLogementCommoditesSalleDeBainCollective is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 
                             <div class="fr-select-group">
-                                {% set typeLogementCommoditesWc = 'nsp' %}
-                                {% if signalement.typeCompositionLogement %}
-                                    {% if signalement.typeCompositionLogement.typeLogementCommoditesWc is same as 'oui' %}
-                                        {% set typeLogementCommoditesWc = 'oui' %}
-                                    {% elseif signalement.typeCompositionLogement.typeLogementCommoditesWc is same as 'non' %}
-                                        {% set typeLogementCommoditesWc = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set typeLogementCommoditesWc = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesWc : null %}
                                 <label class="fr-label" for="typeLogementCommoditesWc">WC dans le logement ?</label>
                                 <select class="fr-select" name="typeLogementCommoditesWc">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ typeLogementCommoditesWc not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ typeLogementCommoditesWc is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ typeLogementCommoditesWc is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ typeLogementCommoditesWc is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 
                             <div class="fr-select-group">
-                                {% set typeLogementCommoditesWcCollective = 'nsp' %}
-                                {% if signalement.typeCompositionLogement %}
-                                    {% if signalement.typeCompositionLogement.typeLogementCommoditesWcCollective is same as 'oui' %}
-                                        {% set typeLogementCommoditesWcCollective = 'oui' %}
-                                    {% elseif signalement.typeCompositionLogement.typeLogementCommoditesWcCollective is same as 'non' %}
-                                        {% set typeLogementCommoditesWcCollective = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set typeLogementCommoditesWcCollective = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesWcCollective : null %}
                                 <label class="fr-label" for="typeLogementCommoditesWcCollective">WC collectifs ?</label>
                                 <select class="fr-select" name="typeLogementCommoditesWcCollective">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ typeLogementCommoditesWcCollective not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ typeLogementCommoditesWcCollective is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ typeLogementCommoditesWcCollective is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ typeLogementCommoditesWcCollective is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 
                             <div class="fr-select-group">
-                                {% set typeLogementCommoditesWcCuisine = 'nsp' %}
-                                {% if signalement.typeCompositionLogement %}
-                                    {% if signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine is same as 'oui' %}
-                                        {% set typeLogementCommoditesWcCuisine = 'oui' %}
-                                    {% elseif signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine is same as 'non' %}
-                                        {% set typeLogementCommoditesWcCuisine = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set typeLogementCommoditesWcCuisine = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine : null %}
                                 <label class="fr-label" for="typeLogementCommoditesWcCuisine">WC et cuisine dans la même pièce ?</label>
                                 <select class="fr-select" name="typeLogementCommoditesWcCuisine">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ typeLogementCommoditesWcCuisine not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ typeLogementCommoditesWcCuisine is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ typeLogementCommoditesWcCuisine is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ typeLogementCommoditesWcCuisine is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
                         </div>

@@ -2057,8 +2057,16 @@ class Signalement
         return $this;
     }
 
-    public function getCiviliteOccupant(): ?string
+    public function getCiviliteOccupant(bool $raw = true): ?string
     {
+        if (!$raw) {
+            return match ($this->civiliteOccupant) {
+                'mme' => 'Madame',
+                'mr' => 'Monsieur',
+                default => $this->civiliteOccupant
+            };
+        }
+
         return $this->civiliteOccupant;
     }
 

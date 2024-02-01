@@ -24,16 +24,10 @@
                             </div>
 
                             <div class="fr-select-group">
-                                {% set compositionLogementEnfants = 'nsp' %}
+                                {% set compositionLogementEnfants = null %}
                                 {% if signalement.typeCompositionLogement %}
-                                    {% if signalement.typeCompositionLogement.compositionLogementEnfants is same as 'oui' %}
-                                        {% set compositionLogementEnfants = 'oui' %}
-                                    {% elseif signalement.typeCompositionLogement.compositionLogementEnfants is same as 'non' %}
-                                        {% set compositionLogementEnfants = 'non' %}
-                                    {% else %}
-                                        {% set compositionLogementEnfants = 'nsp' %}
-                                    {% endif %}
-                                {% else %}
+                                    {% set compositionLogementEnfants = signalement.typeCompositionLogement.compositionLogementEnfants %}
+                                {% elseif signalement.nbEnfantsM6 is not null %}
                                     {% if signalement.nbEnfantsM6 > 0 %}
                                         {% set compositionLogementEnfants = 'oui' %}
                                     {% else %}
@@ -42,10 +36,9 @@
                                 {% endif %}
                                 <label class="fr-label" for="compositionLogementEnfants">Enfants -6 ans</label>
                                 <select class="fr-select" name="compositionLogementEnfants">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ compositionLogementEnfants not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ compositionLogementEnfants is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ compositionLogementEnfants is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ compositionLogementEnfants is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 
@@ -68,19 +61,10 @@
                             </div>
 
                             <div class="fr-select-group">
-                                {% set bailDpeBail = 'nsp' %}
-                                {% if signalement.typeCompositionLogement %}
-                                    {% if signalement.typeCompositionLogement.bailDpeBail is same as 'oui' %}
-                                        {% set bailDpeBail = 'oui' %}
-                                    {% elseif signalement.typeCompositionLogement.bailDpeBail is same as 'non' %}
-                                        {% set bailDpeBail = 'non' %}
-                                    {% else %}
-                                        {% set bailDpeBail = 'nsp' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set bailDpeBail = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeBail : null %}
                                 <label class="fr-label" for="bailDpeBail">Bail</label>
                                 <select class="fr-select" name="bailDpeBail">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ bailDpeBail not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ bailDpeBail is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ bailDpeBail is same as 'non' ? 'selected' : '' }}>Non</option>
                                     <option value="nsp" {{ bailDpeBail is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
@@ -88,19 +72,10 @@
                             </div>
 
                             <div class="fr-select-group">
-                                {% set bailDpeEtatDesLieux = 'nsp' %}
-                                {% if signalement.typeCompositionLogement %}
-                                    {% if signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'oui' %}
-                                        {% set bailDpeEtatDesLieux = 'oui' %}
-                                    {% elseif signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'non' %}
-                                        {% set bailDpeEtatDesLieux = 'non' %}
-                                    {% else %}
-                                        {% set bailDpeEtatDesLieux = 'nsp' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set bailDpeEtatDesLieux = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeEtatDesLieux : null %}
                                 <label class="fr-label" for="bailDpeEtatDesLieux">Etat des lieux</label>
                                 <select class="fr-select" name="bailDpeEtatDesLieux">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ bailDpeEtatDesLieux not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ bailDpeEtatDesLieux is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ bailDpeEtatDesLieux is same as 'non' ? 'selected' : '' }}>Non</option>
                                     <option value="nsp" {{ bailDpeEtatDesLieux is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
@@ -108,19 +83,10 @@
                             </div>
 
                             <div class="fr-select-group">
-                                {% set bailDpeDpe = 'nsp' %}
-                                {% if signalement.typeCompositionLogement %}
-                                    {% if signalement.typeCompositionLogement.bailDpeDpe is same as 'oui' %}
-                                        {% set bailDpeDpe = 'oui' %}
-                                    {% elseif signalement.typeCompositionLogement.bailDpeDpe is same as 'non' %}
-                                        {% set bailDpeDpe = 'non' %}
-                                    {% else %}
-                                        {% set bailDpeDpe = 'nsp' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set bailDpeDpe = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeDpe : null %}
                                 <label class="fr-label" for="bailDpeDpe">DPE</label>
                                 <select class="fr-select" name="bailDpeDpe">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ bailDpeEtatDesLieux not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ bailDpeDpe is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ bailDpeDpe is same as 'non' ? 'selected' : '' }}>Non</option>
                                     <option value="nsp" {{ bailDpeDpe is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
@@ -133,22 +99,12 @@
                             </div>
 
                             <div class="fr-select-group">
-                                {% set loyersPayes = 'nsp' %}
-                                {% if signalement.informationComplementaire %}
-                                    {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes is same as 'oui' %}
-                                        {% set loyersPayes = 'oui' %}
-                                    {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes is same as 'non' %}
-                                        {% set loyersPayes = 'non' %}
-                                    {% else %}
-                                        {% set loyersPayes = 'nsp' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set loyersPayes = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes : null %}
                                 <label class="fr-label" for="loyersPayes">Paiement loyers à jour</label>
                                 <select class="fr-select" name="loyersPayes">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ loyersPayes not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ loyersPayes is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ loyersPayes is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ loyersPayes is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 

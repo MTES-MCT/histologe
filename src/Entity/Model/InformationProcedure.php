@@ -27,9 +27,9 @@ class InformationProcedure
         return $this;
     }
 
-    public function getInfoProcedureAssuranceContactee(): ?string
+    public function getInfoProcedureAssuranceContactee(bool $raw = true): ?string
     {
-        return $this->infoProcedureAssuranceContactee;
+        return (!$raw && 'pas_assurance_logement' === $this->infoProcedureAssuranceContactee) ? 'Pas d\'assurance logement' : $this->infoProcedureAssuranceContactee;
     }
 
     public function setInfoProcedureAssuranceContactee(?string $infoProcedureAssuranceContactee): self
@@ -39,9 +39,9 @@ class InformationProcedure
         return $this;
     }
 
-    public function getInfoProcedureDepartApresTravaux(): ?string
+    public function getInfoProcedureDepartApresTravaux(bool $raw = true): ?string
     {
-        return $this->infoProcedureDepartApresTravaux;
+        return (!$raw && 'nsp' === $this->infoProcedureDepartApresTravaux) ? 'Ne sait pas' : $this->infoProcedureDepartApresTravaux;
     }
 
     public function setInfoProcedureDepartApresTravaux(?string $infoProcedureDepartApresTravaux): self

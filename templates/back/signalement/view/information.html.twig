@@ -39,7 +39,7 @@
                             <strong>Type de déclarant :</strong> {{ signalement.profileDeclarant.label }}
                         </div>
                         <div class="fr-col-12">
-                            <strong>Type de bailleur :</strong> {{ signalement.typeProprio ? signalement.typeProprio.label : 'N/C' }}
+                            <strong>Type de bailleur :</strong> {{ signalement.typeProprio ? signalement.typeProprio.label}}
                         </div>
                         {% if signalement.typeProprio and signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE %}
                         <div class="fr-col-12">
@@ -102,7 +102,7 @@
                     {% endif %}
 
                     <div class="fr-col-12 fr-col-md-6">
-                        <strong>Civilité :</strong> {{ signalement.civiliteOccupant is same as 'mme' ? 'Madame' : signalement.civiliteOccupant is same as 'mr' ? 'Monsieur' : 'N/C' }}
+                        <strong>Civilité :</strong> {{signalement.civiliteOccupant(false)}}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Nom :</strong> {{ signalement.nomOccupant }}
@@ -143,37 +143,31 @@
                             {% endif %}
                         </div>
                         <div class="fr-col-12 fr-col-md-6">
-                            <strong>Nom :</strong> {{ signalement.nomProprio ?? 'N/C' }}
+                            <strong>Nom :</strong> {{ signalement.nomProprio}}
                         </div>
                         <div class="fr-col-12 fr-col-md-6">
-                            <strong>Prénom :</strong> {{ signalement.prenomProprio ?? 'N/C' }}
+                            <strong>Prénom :</strong> {{ signalement.prenomProprio}}
                         </div>
                         <div class="fr-col-12">
                             <strong>Courriel :</strong>
                             {% if signalement.mailProprio %}
                                 <a href="mailto:{{ signalement.mailProprio }}">{{ signalement.mailProprio }}</a>
-                            {% else %}
-                                N/C
                             {% endif %}
                         </div>
                         <div class="fr-col-12 fr-col-md-6">
                             <strong>Tél. :</strong>
                             {% if signalement.telProprio %}
                                 <a href="mailto:{{ signalement.telProprioDecoded }}">{{ signalement.telProprioDecoded }}</a>
-                            {% else %}
-                                N/C
                             {% endif %}
                         </div>
                         <div class="fr-col-12 fr-col-md-6">
                             <strong>Tél. sec. :</strong>
                             {% if signalement.telProprioSecondaire %}
                                 <a href="mailto:{{ signalement.telProprioSecondaireDecoded }}">{{ signalement.telProprioSecondaireDecoded }}</a>
-                            {% else %}
-                                N/C
                             {% endif %}
                         </div>
                         <div class="fr-col-12">
-                            <strong>Adresse :</strong> {{ signalement.adresseProprio ? signalement.adresseProprio ~ ', ' ~ signalement.codePostalProprio ~ ' ' ~ signalement.villeProprio : 'N/C' }}
+                            <strong>Adresse :</strong> {{ signalement.adresseProprio ? signalement.adresseProprio ~ ', ' ~ signalement.codePostalProprio ~ ' ' ~ signalement.villeProprio}}
                         </div>
                         <div class="fr-col-12 fr-col-md-6">
                             <strong>Bénéficiaire RSA :</strong>
@@ -183,10 +177,8 @@
                                 {% elseif signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireRsa is same as 'non' %}
                                     {{ static_picto_no|raw }}
                                 {% else %}
-                                    Ne sait pas
+                                    {{signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireRsa}}
                                 {% endif %}
-                            {% else %}
-                                N/C
                             {% endif %}
                         </div>
                         <div class="fr-col-12 fr-col-md-6">
@@ -197,26 +189,20 @@
                                 {% elseif signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireFsl is same as 'non' %}
                                     {{ static_picto_no|raw }}
                                 {% else %}
-                                    Ne sait pas
+                                    {{signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireFsl}}
                                 {% endif %}
-                            {% else %}
-                                N/C
                             {% endif %}
                         </div>
                         <div class="fr-col-12 fr-col-md-6">
                             <strong>Revenu fiscal de référence :</strong>
                             {% if signalement.informationComplementaire %}
-                                {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurRevenuFiscal ?? 'N/C' }} €
-                            {% else %}
-                                N/C
+                                {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurRevenuFiscal }} €
                             {% endif %}
                         </div>
                         <div class="fr-col-12 fr-col-md-6">
                             <strong>Date de naissance :</strong>
                             {% if signalement.informationComplementaire %}
-                                {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateNaissance ?? 'N/C' }}
-                            {% else %}
-                                N/C
+                                {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateNaissance}}
                             {% endif %}
                         </div>
                     </div>
@@ -262,7 +248,7 @@
                             {% elseif signalement.typeCompositionLogement.compositionLogementEnfants is same as 'non' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
-                                Ne sait pas
+                                {{signalement.typeCompositionLogement.compositionLogementEnfants}}
                             {% endif %}
                         {% else %}
                             {% if signalement.nbEnfantsM6 > 0 %}
@@ -275,17 +261,13 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Date arrivée :</strong>
                         {% if signalement.dateEntree %}
-                            {{ signalement.dateEntree.format('d/m/Y') ?? 'N/C' }}
-                        {% else %}
-                            N/C
+                            {{ signalement.dateEntree.format('d/m/Y')}}
                         {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Date d'effet du bail :</strong>
                         {% if signalement.informationComplementaire %}
-                            {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail ?? 'N/C' }}
-                        {% else %}
-                            N/C
+                            {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail}}
                         {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
@@ -296,10 +278,8 @@
                             {% elseif signalement.typeCompositionLogement.bailDpeBail is same as 'non' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
-                                Ne sait pas
+                                {{signalement.typeCompositionLogement.bailDpeBail(false)}}
                             {% endif %}
-                        {% else %}
-                            N/C
                         {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
@@ -310,10 +290,8 @@
                             {% elseif signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'non' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
-                                Ne sait pas
+                                {{signalement.typeCompositionLogement.bailDpeEtatDesLieux(false)}}
                             {% endif %}
-                        {% else %}
-                            N/C
                         {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
@@ -324,14 +302,12 @@
                             {% elseif signalement.typeCompositionLogement.bailDpeDpe is same as 'non' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
-                                Ne sait pas
+                                {{signalement.typeCompositionLogement.bailDpeDpe(false)}}
                             {% endif %}
-                        {% else %}
-                            N/C
                         {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
-                        <strong>Montant du loyer :</strong> {{ signalement.loyer ? signalement.loyer ~ ' €' : 'N/C' }}
+                        <strong>Montant du loyer :</strong> {{ signalement.loyer ? signalement.loyer ~ ' €'}}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Paiement loyers à jour :</strong>
@@ -341,18 +317,14 @@
                             {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes is same as 'non' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
-                                Ne sait pas
+                                {{signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes}}
                             {% endif %}
-                        {% else %}
-                            N/C
                         {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Année de construction :</strong>
                         {% if signalement.informationComplementaire %}
                             {{ signalement.informationComplementaire.informationsComplementairesLogementAnneeConstruction }}
-                        {% else %}
-                            N/C
                         {% endif %}
                     </div>
                 </div>
@@ -384,9 +356,7 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Logement :</strong>
                         {% if signalement.typeCompositionLogement %}
-                            {{ signalement.typeCompositionLogement.compositionLogementPieceUnique is same as 'piece_unique' ? 'Pièce unique' : 'Plusieurs pièces' }}
-                        {% else %}
-                            N/C
+                            {{ signalement.typeCompositionLogement.compositionLogementPieceUnique(false) }}
                         {% endif %}
                     </div>
                     
@@ -394,68 +364,56 @@
                         <strong>Superficie totale :</strong>
                         {% if signalement.superficie %}
                             {{ signalement.superficie }} m²
-                        {% else %}
-                            N/C
                         {% endif %}
                     </div>
 
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Hauteur > 2m :</strong>
-                        {% if signalement.typeCompositionLogement and signalement.typeCompositionLogement.compositionLogementHauteur %}
-                            {{ signalement.typeCompositionLogement.compositionLogementHauteur is same as 'nsp' ? 'Ne sait pas' : signalement.typeCompositionLogement.compositionLogementHauteur }}
+                        {% if signalement.typeCompositionLogement %}
+                            {{ signalement.typeCompositionLogement.compositionLogementHauteur(false) }}
                             {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.compositionLogementHauteur is same as 'non' } %}
-                        {% else %}
-                            N/C
                         {% endif %}
                     </div>
         
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Nombre de pièces à vivre :</strong>
-                        {% if signalement.typeCompositionLogement and signalement.typeCompositionLogement.compositionLogementNbPieces %}
+                        {% if signalement.typeCompositionLogement %}
                             {{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
-                        {% else %}
-                            N/C
                         {% endif %}
                     </div>
         
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Nombre d'étages :</strong>
                         {% if signalement.informationComplementaire %}
-                            {{ signalement.informationComplementaire.informationsComplementairesLogementNombreEtages ?? 'N/C' }}
-                        {% else %}
-                            N/C
+                            {{ signalement.informationComplementaire.informationsComplementairesLogementNombreEtages}}
                         {% endif %}
                     </div>
 
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>RDC :</strong>
-                        {% if signalement.typeCompositionLogement %}
-                            {{ signalement.typeCompositionLogement.typeLogementRdc ?? 'non' }}
-                        {% else %}
-                            N/C
+                        {% if signalement.typeCompositionLogement %}               
+                            {{ signalement.typeCompositionLogement.typeLogementRdc }}
                         {% endif %}
                     </div>
 
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Dernier étage :</strong>
                         {% if signalement.typeCompositionLogement %}
-                            {{ signalement.typeCompositionLogement.typeLogementDernierEtage ?? 'non' }}
-                        {% else %}
-                            N/C
+                            {{ signalement.typeCompositionLogement.typeLogementDernierEtage }}
                         {% endif %}
                     </div>
 
                     {% if signalement.typeCompositionLogement and signalement.typeCompositionLogement.typeLogementDernierEtage is same as 'oui' %}
                         <div class="fr-col-12 fr-col-md-6">
                             <strong>Combles sans fenêtres :</strong>
-                            {{ signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre ?? 'non' }}
+                            {{ signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre}}
                             {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre is same as 'oui' } %}
                         </div>
                 
                     {% elseif signalement.typeCompositionLogement and signalement.typeCompositionLogement.typeLogementRdc is not same as 'oui' and signalement.typeCompositionLogement.typeLogementDernierEtage is not same as 'oui' %}
                         <div class="fr-col-12 fr-col-md-6">
                             <strong>Sous-sol sans fenêtres :</strong>
-                            {{ signalement.typeCompositionLogement.typeLogementSousSolSansFenetre ?? 'non' }}
+                            {{ signalement.typeCompositionLogement.typeLogementSousSolSansFenetre}}
                             {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'oui' } %}
                         </div>
                     
@@ -464,7 +422,7 @@
                     {% if signalement.typeCompositionLogement %}
                         <div class="fr-col-12 fr-col-md-6">
                             <strong>Au moins une des pièces à vivre > 9m² :</strong>
-                            {{ signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m is same as 'nsp' ? 'Ne sait pas' : signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m ?? 'N/C' }}
+                            {{ signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m(false)}}
                             {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m is same as 'non' } %}
                         </div>
                     {% endif %}
@@ -485,9 +443,6 @@
                                     </li>
                                 {% endif %}
                             </ul>
-
-                        {% else %}
-                            N/C
                         {% endif %}
                     </div>
                     
@@ -497,7 +452,7 @@
                             <br>
                             <ul>
                                 <li>
-                                    Dans le logement : {{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain }}
+                                    Dans le logement : {{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain}}
                                     {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain is same as 'non' } %}
                                 </li>
                                 {% if signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain is same as 'non' %}
@@ -507,9 +462,6 @@
                                     </li>
                                 {% endif %}
                             </ul>
-
-                        {% else %}
-                            N/C
                         {% endif %}
                     </div>
 
@@ -529,9 +481,6 @@
                                     </li>
                                 {% endif %}
                             </ul>
-
-                        {% else %}
-                            N/C
                         {% endif %}
                     </div>
 
@@ -564,7 +513,7 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Logement social :</strong>
                         {% if signalement.isLogementSocial is null %}
-                            Ne sait pas
+                            
                         {% elseif signalement.isLogementSocial %}
                             {{ static_picto_yes|raw }}
                         {% else %}
@@ -574,7 +523,7 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Demande relogement :</strong>
                         {% if signalement.isRelogement is null %}
-                            Ne sait pas
+                            
                         {% elseif signalement.isRelogement %}
                             {{ static_picto_yes|raw }}
                         {% else %}
@@ -584,11 +533,11 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Allocataire :</strong>
                         {% if signalement.isAllocataire is null %}
-                            Ne sait pas
+                             
+                        {% elseif signalement.isAllocataire in ['Non', 0] %}
+                             {{ static_picto_no|raw }}
                         {% elseif signalement.isAllocataire %}
                             <p class="fr-badge fr-badge--info fr-badge--no-icon">{{ signalement.isAllocataire }}</p>
-                        {% else %}
-                            {{ static_picto_no|raw }}
                         {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
@@ -596,7 +545,7 @@
                         {% if (signalement.dateNaissanceOccupant) %}
                             {{ signalement.dateNaissanceOccupant.format('d/m/Y') }}
                         {% else %}
-                            {{ signalement.naissanceOccupants ?? 'N/C' }}
+                            {{ signalement.naissanceOccupants}}
                         {% endif %}
                     </div>
                     {% if signalement.isAllocataire %}
@@ -608,8 +557,6 @@
                             <strong>Montant allocation :</strong>
                             {% if signalement.situationFoyer and signalement.situationFoyer.logementSocialMontantAllocation %}
                                 {{ signalement.situationFoyer.logementSocialMontantAllocation }} €
-                            {% else %}
-                                N/C
                             {% endif %}
                         </div>
                     {% endif %}
@@ -621,10 +568,8 @@
                             {% elseif signalement.situationFoyer.travailleurSocialQuitteLogement is same as 'non' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
-                                Ne sait pas
+                                {{signalement.situationFoyer.travailleurSocialQuitteLogement(false)}}
                             {% endif %}
-                        {% else %}
-                            N/C
                         {% endif %}
                     </div>
                     <div class="fr-col-12">
@@ -635,10 +580,8 @@
                             {% elseif signalement.situationFoyer.travailleurSocialAccompagnementDeclarant is same as 'non' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
-                                Ne sait pas
+                                {{signalement.situationFoyer.travailleurSocialAccompagnementDeclarant(false)}}
                             {% endif %}
-                        {% else %}
-                            N/C
                         {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
@@ -649,10 +592,8 @@
                             {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa is same as 'non' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
-                                Ne sait pas
+                                {{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa}}
                             {% endif %}
-                        {% else %}
-                            N/C
                         {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
@@ -663,19 +604,15 @@
                             {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl is same as 'non' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
-                                Ne sait pas
+                                {{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl}}
                             {% endif %}
-                        {% else %}
-                            N/C
                         {% endif %}
                     </div>
                     {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT  %}
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Revenu fiscal de référence :</strong>
                         {% if signalement.informationComplementaire %}
-                            {{ signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal ~ ' €' : 'N/C' }}
-                        {% else %}
-                            N/C
+                            {{ signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal ~ ' €'}}
                         {% endif %}
                     </div>
                     {% endif %}
@@ -700,7 +637,7 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Bailleur averti :</strong>
                         {% if signalement.isProprioAverti is null %}
-                            Ne sait pas
+                            
                         {% elseif signalement.isProprioAverti %}
                             {{ static_picto_yes|raw }}
                         {% else %}
@@ -715,10 +652,8 @@
                             {% elseif signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'non' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
-                                Ne sait pas
+                                {{signalement.informationProcedure.infoProcedureAssuranceContactee(false)}}
                             {% endif %}
-                        {% else %}
-                            N/C
                         {% endif %}
                     </div>
                     <div class="fr-col-12">
@@ -726,8 +661,6 @@
                         {% if signalement.informationProcedure and signalement.informationProcedure.infoProcedureReponseAssurance %}
                             <br>
                             {{ signalement.informationProcedure.infoProcedureReponseAssurance | nl2br  }}
-                        {% else %}
-                            N/C
                         {% endif %}
                     </div>
                     <div class="fr-col-12">
@@ -739,10 +672,8 @@
                             {% elseif signalement.informationProcedure.infoProcedureDepartApresTravaux is same as 'non' %}
                                 {{ static_picto_yes|raw }}
                             {% else %}
-                                Ne sait pas
+                                {{signalement.informationProcedure.infoProcedureDepartApresTravaux(false)}}
                             {% endif %}
-                        {% else %}
-                            N/C
                         {% endif %}
                     </div>
                     <div class="fr-col-12">
@@ -753,10 +684,8 @@
                             {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsPreavisDepart is same as 'non' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
-                                Ne sait pas
+                                {{signalement.informationComplementaire.informationsComplementairesSituationOccupantsPreavisDepart}}
                             {% endif %}
-                        {% else %}
-                            N/C
                         {% endif %}
                     </div>
                     <div class="fr-col-12">
@@ -767,10 +696,8 @@
                             {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsDemandeRelogement is same as 'non' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
-                                Ne sait pas
+                                {{signalement.informationComplementaire.informationsComplementairesSituationOccupantsDemandeRelogement}}
                             {% endif %}
-                        {% else %}
-                            N/C
                         {% endif %}
                     </div>
                 </div>
