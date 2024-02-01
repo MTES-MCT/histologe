@@ -12,13 +12,6 @@ class SignalementUpdatedListener
 {
     private $updateOccurred = false;
 
-    public function getSubscribedEvents(): array
-    {
-        return [
-            Events::onFlush,
-        ];
-    }
-
     public function postUpdate(Signalement $signalement, PostUpdateEventArgs $event): void
     {
         $unitOfWork = $event->getObjectManager()->getUnitOfWork();
