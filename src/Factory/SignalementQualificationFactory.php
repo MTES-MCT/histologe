@@ -56,7 +56,7 @@ class SignalementQualificationFactory
         $dataDateBailToSave = null;
         if ('Je ne sais pas' !== $dataDateBail) {
             if (null !== $signalement->getDateEntree() && $signalement->getDateEntree()->format('Y') >= 2023) {
-                $signalementQualification->setDernierBailAt($signalement->getDateEntree());
+                $signalementQualification->setDernierBailAt(new DateTimeImmutable($signalement->getDateEntree()->format('Y-m-d')));
             } elseif (!empty($dataDateBail)) {
                 $signalementQualification->setDernierBailAt(new DateTimeImmutable($dataDateBail));
             }
