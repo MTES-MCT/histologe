@@ -644,7 +644,7 @@ desordre_precision:
     is_danger: 0
     label: "<span>Dans : <b>Tout le logement</b></span>"
     qualification: ['NON_DECENCE', 'RSD']
-    desordre_precision_slug: "desordres_logement_chauffage_aucun_pieces_tout"
+    desordre_precision_slug: "desordres_logement_chauffage_type_aucun_pieces_tout"
     is_suroccupation: 0
   -
     desordre_critere_slug: "desordres_logement_chauffage_type_aucun" 
@@ -652,7 +652,7 @@ desordre_precision:
     is_danger: 0
     label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span>"
     qualification: ['NON_DECENCE', 'RSD']
-    desordre_precision_slug: "desordres_logement_chauffage_aucun_pieces_piece_a_vivre"
+    desordre_precision_slug: "desordres_logement_chauffage_type_aucun_pieces_piece_a_vivre"
     is_suroccupation: 0
   -
     desordre_critere_slug: "desordres_logement_chauffage_type_aucun" 
@@ -660,7 +660,7 @@ desordre_precision:
     is_danger: 0
     label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span>"
     qualification: ['NON_DECENCE', 'RSD']
-    desordre_precision_slug: "desordres_logement_chauffage_aucun_pieces_cuisine"
+    desordre_precision_slug: "desordres_logement_chauffage_type_aucun_pieces_cuisine"
     is_suroccupation: 0
   -
     desordre_critere_slug: "desordres_logement_chauffage_type_aucun" 
@@ -668,7 +668,7 @@ desordre_precision:
     is_danger: 0
     label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span>"
     qualification: ['NON_DECENCE', 'RSD']
-    desordre_precision_slug: "desordres_logement_chauffage_aucun_pieces_salle_de_bain"
+    desordre_precision_slug: "desordres_logement_chauffage_type_aucun_pieces_salle_de_bain"
     is_suroccupation: 0
   -
     desordre_critere_slug: "desordres_logement_chauffage_details_difficultes_chauffage" 

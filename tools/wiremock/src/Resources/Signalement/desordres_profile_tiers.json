@@ -1428,7 +1428,7 @@
         {
           "type": "SignalementFormRoomList",
           "label": "Dans quelle(s) pièce(s) ?",
-          "slug": "desordres_logement_chauffage_aucun_pieces",
+          "slug": "desordres_logement_chauffage_type_aucun_pieces",
           "customCss": "signalement-form-roomlist-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_chauffage_type === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
