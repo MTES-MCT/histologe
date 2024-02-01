@@ -264,7 +264,7 @@ desordre_critere:
     label_categorie: "Type et composition du logement"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_type_composition_logement_wc"
-    label_critere: "Le logement n'a pas de WC ou WC et cuisine dans la même pièce"
+    label_critere: "Problème de structure / équipement"
   -
     desordre_categorie_label: "Suroccupation" 
     slug_categorie: "desordres_type_composition_logement"
