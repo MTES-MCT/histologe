@@ -3,6 +3,7 @@
 namespace App\Service\Signalement;
 
 use App\Dto\Request\Signalement\SignalementDraftRequest;
+use App\Entity\Enum\ChauffageType;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
@@ -149,15 +150,8 @@ class SignalementBuilder
             $this->payload['desordres_batiment_nuisibles_autres_details_type_nuisibles'];
         }
         if (isset($this->payload['desordres_logement_chauffage_type'])) {
-            if ('electrique' === $this->payload['desordres_logement_chauffage_type']) {
-                $jsonContent['desordres_logement_chauffage'] = 'Chauffage électrique';
-            } elseif ('gaz' === $this->payload['desordres_logement_chauffage_type']) {
-                $jsonContent['desordres_logement_chauffage'] = 'Chauffage au gaz, bois, éthanol ou fioul';
-            } elseif ('aucun' === $this->payload['desordres_logement_chauffage_type']) {
-                $jsonContent['desordres_logement_chauffage'] = 'Aucun radiateur ou moyen de chauffage fixe';
-            } else {
-                $jsonContent['desordres_logement_chauffage'] = 'Type de chauffage inconnu';
-            }
+            $chauffageType = ChauffageType::tryFrom(strtoupper($this->payload['desordres_logement_chauffage_type']));
+            $jsonContent['desordres_logement_chauffage'] = $chauffageType->label();
         }
 
         if (isset($jsonContent)) {
