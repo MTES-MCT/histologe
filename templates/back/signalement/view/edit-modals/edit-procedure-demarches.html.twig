@@ -54,7 +54,7 @@
                                 {% set preavisDepart = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsPreavisDepart : null %}
                                 <label class="fr-label" for="preavisDepart">Préavis de départ</label>
                                 <select class="fr-select" name="preavisDepart">
-                                    <option value="" {{ preavisDepart not in ['oui', 'non', 'pas_assurance_logement'] ? 'selected' : '' }}></option>
+                                    <option value="" {{ preavisDepart not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ preavisDepart is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ preavisDepart is same as 'non' ? 'selected' : '' }}>Non</option>
                                 </select>

@@ -36,10 +36,10 @@
                                 {% set isAllocataire = signalement.isAllocataire %}
                                 <label class="fr-label" for="isAllocataire">Allocataire</label>
                                 <select class="fr-select" name="isAllocataire">
-                                    <option value="caf" {{ isAllocataire not in ['Oui', 1, 'CAF', 'caf', 'MSA', 'msa', 'Non', 0] ? 'selected' : '' }}></option>
-                                    <option value="caf" {{ isAllocataire in ['Oui', 1] ? 'selected' : '' }}>Oui</option>
+                                    <option value="" {{ isAllocataire not in ['Oui', 1, 'CAF', 'caf', 'MSA', 'msa', 'Non', 0] ? 'selected' : '' }}></option>
                                     <option value="caf" {{ isAllocataire in ['CAF', 'caf'] ? 'selected' : '' }}>CAF</option>
                                     <option value="msa" {{ isAllocataire in ['MSA', 'msa'] ? 'selected' : '' }}>MSA</option>
+                                    <option value="Oui" {{ isAllocataire in ['Oui', 1] ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ isAllocataire in ['Non', 0] ? 'selected' : '' }}>Non</option>
                                 </select>
                             </div>
