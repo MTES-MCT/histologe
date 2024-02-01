@@ -9,6 +9,8 @@
     or qualificationStatusLabel is same as 'Suspicion Manquement à la salubrité'
     or qualificationStatusLabel is same as 'Suspicion Non décence/RSD'
     or qualificationStatusLabel is same as 'Suspicion RSD'
+    or qualificationStatusLabel is same as 'Non décence énergétique à vérifier'
+    or qualificationStatusLabel is same as 'Non décence énergétique avérée'
     or qualificationStatusLabel is same as 'Non décence'
     or qualificationStatusLabel is same as 'RSD' %}
 
@@ -26,5 +28,5 @@
     {% if inlist %}
         <br>
     {% endif %}
-    <small class="fr-badge {% if inlist %}fr-badge--sm{% endif %} fr-badge--{{ typeBadge }} fr-badge--no-icon fr-mb-1v">{{ qualificationStatusLabel|replace({'Suspicion ': ''}) }}</small>
+    <small class="fr-badge {% if inlist %}fr-badge--sm{% endif %} fr-badge--{{ typeBadge }} fr-badge--no-icon fr-mb-1v">{{ qualificationStatusLabel|replace({'Suspicion ': '', ' à vérifier': '', ' avérée': ''}) }}</small>
 {% endif %}
