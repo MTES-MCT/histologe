@@ -101,7 +101,7 @@
     3:'CLOTUREE',
 } %}
 <body {% if bodyClass is defined %}class="{{ bodyClass }}"{% endif %}
-      data-mode-maintenance="{{ maitenance is defined ? maintenance.enable : 0 }}">
+      data-mode-maintenance="{{ maintenance.enable }}">
 {% include 'maintenance/banner.html.twig' %}
 {% if 'back_' not in app.request.get('_route') %}
     {% include "header.html.twig" %}
