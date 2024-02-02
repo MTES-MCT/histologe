@@ -298,7 +298,7 @@ class TypeCompositionLogement
 
     public function getBailDpeEtatDesLieux(bool $raw = true): ?string
     {
-        return (!$raw && 'nsp' === $this->bailDpeBail) ? 'Ne sait pas' : $this->bailDpeBail;
+        return (!$raw && 'nsp' === $this->bailDpeEtatDesLieux) ? 'Ne sait pas' : $this->bailDpeEtatDesLieux;
     }
 
     public function setBailDpeEtatDesLieux(?string $bailDpeEtatDesLieux): self
