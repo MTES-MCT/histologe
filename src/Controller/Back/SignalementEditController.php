@@ -11,7 +11,12 @@ use App\Dto\Request\Signalement\InformationsLogementRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Entity\Signalement;
+use App\Entity\Suivi;
+use App\Entity\User;
+use App\EventListener\SignalementUpdatedListener;
+use App\Factory\SuiviFactory;
 use App\Manager\SignalementManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,6 +30,12 @@ class SignalementEditController extends AbstractController
     private const INPUT_ERROR_MSG = 'Erreur de saisie : ';
     private const ERROR_MSG = 'Une erreur est survenue...';
 
+    public function __construct(
+        private SuiviFactory $suiviFactory,
+        private EntityManagerInterface $entityManager,
+    ) {
+    }
+
     #[Route('/{uuid}/edit-address', name: 'back_signalement_edit_address', methods: 'POST')]
     public function editAddress(
         Signalement $signalement,
@@ -32,6 +43,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        SignalementUpdatedListener $listener
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid('signalement_edit_address_'.$signalement->getId(), $request->get('_token'))) {
@@ -46,6 +58,11 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromAdresseOccupantRequest($signalement, $adresseOccupantRequest);
+                $this->addSuiviIfNeeded(
+                    listener: $listener,
+                    signalement: $signalement,
+                    description: 'L\'adresse du logement a été modifiée par ',
+                );
                 $this->addFlash('success', 'L\'adresse du logement a bien été modifiée.');
             } else {
                 $this->addFlash('error', self::INPUT_ERROR_MSG.$errorMessage);
@@ -64,6 +81,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        SignalementUpdatedListener $listener
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid(
@@ -81,6 +99,11 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromCoordonneesTiersRequest($signalement, $coordonneesTiersRequest);
+                $this->addSuiviIfNeeded(
+                    listener: $listener,
+                    signalement: $signalement,
+                    description: 'Les coordonnées du tiers déclarant ont été modifiées par ',
+                );
                 $this->addFlash('success', 'Les coordonnées du tiers déclarant ont bien été modifiées.');
             } else {
                 $this->addFlash('error', self::INPUT_ERROR_MSG.$errorMessage);
@@ -99,6 +122,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        SignalementUpdatedListener $listener
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid(
@@ -120,6 +144,11 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromCoordonneesFoyerRequest($signalement, $coordonneesFoyerRequest);
+                $this->addSuiviIfNeeded(
+                    listener: $listener,
+                    signalement: $signalement,
+                    description: 'Les coordonnées du foyer ont été modifiées par ',
+                );
                 $this->addFlash('success', 'Les coordonnées du foyer ont bien été modifiées.');
             } else {
                 $this->addFlash('error', self::INPUT_ERROR_MSG.$errorMessage);
@@ -138,6 +167,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        SignalementUpdatedListener $listener
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid(
@@ -159,6 +189,11 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromCoordonneesBailleurRequest($signalement, $coordonneesBailleurRequest);
+                $this->addSuiviIfNeeded(
+                    listener: $listener,
+                    signalement: $signalement,
+                    description: 'Les coordonnées du bailleur ont été modifiées par ',
+                );
                 $this->addFlash('success', 'Les coordonnées du bailleur ont bien été modifiées.');
             } else {
                 $this->addFlash('error', self::INPUT_ERROR_MSG.$errorMessage);
@@ -177,6 +212,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        SignalementUpdatedListener $listener
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid(
@@ -198,6 +234,11 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromInformationsLogementRequest($signalement, $informationsLogementRequest);
+                $this->addSuiviIfNeeded(
+                    listener: $listener,
+                    signalement: $signalement,
+                    description: 'Les informations sur le logement ont été modifiées par ',
+                );
                 $this->addFlash('success', 'Les informations du logement ont bien été modifiées.');
             } else {
                 $this->addFlash('error', self::INPUT_ERROR_MSG.$errorMessage);
@@ -216,6 +257,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        SignalementUpdatedListener $listener
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid(
@@ -237,6 +279,11 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromCompositionLogementRequest($signalement, $compositionLogementRequest);
+                $this->addSuiviIfNeeded(
+                    listener: $listener,
+                    signalement: $signalement,
+                    description: 'La composition du logement a été modifée par ',
+                );
                 $this->addFlash('success', 'La composition du logement a bien été modifiée.');
             } else {
                 $this->addFlash('error', self::INPUT_ERROR_MSG.$errorMessage);
@@ -255,6 +302,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        SignalementUpdatedListener $listener
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid(
@@ -276,6 +324,11 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromSituationFoyerRequest($signalement, $situationFoyerRequest);
+                $this->addSuiviIfNeeded(
+                    listener: $listener,
+                    signalement: $signalement,
+                    description: 'La situation du foyer a été modifiée par ',
+                );
                 $this->addFlash('success', 'La situation du foyer a bien été modifiée.');
             } else {
                 $this->addFlash('error', self::INPUT_ERROR_MSG.$errorMessage);
@@ -294,6 +347,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        SignalementUpdatedListener $listener
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid(
@@ -315,6 +369,11 @@ class SignalementEditController extends AbstractController
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromProcedureDemarchesRequest($signalement, $procedureDemarchesRequest);
+                $this->addSuiviIfNeeded(
+                    listener: $listener,
+                    signalement: $signalement,
+                    description: 'Les procédures et démarches ont été modifiées par ',
+                );
                 $this->addFlash('success', 'Les procédures et démarches ont bien été modifiées.');
             } else {
                 $this->addFlash('error', self::INPUT_ERROR_MSG.$errorMessage);
@@ -338,5 +397,26 @@ class SignalementEditController extends AbstractController
         }
 
         return $errorMessage;
+    }
+
+    private function addSuiviIfNeeded(
+        SignalementUpdatedListener $listener,
+        Signalement $signalement,
+        string $description,
+    ): void {
+        if ($listener->updateOccurred()) {
+            /** @var User $user */
+            $user = $this->getUser();
+            $suivi = $this->suiviFactory->createInstanceFrom(
+                user: $user,
+                signalement: $signalement,
+            );
+
+            $suivi->setDescription($description.$user->getNomComplet());
+            $suivi->setType(SUIVI::TYPE_AUTO);
+
+            $this->entityManager->persist($suivi);
+            $this->entityManager->flush();
+        }
     }
 }
