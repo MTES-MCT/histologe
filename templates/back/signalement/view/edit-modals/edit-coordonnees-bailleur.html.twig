@@ -80,7 +80,7 @@
                                 <label class="fr-label" for="beneficiaireFsl">Bénéficiaire FSL</label>
                                 <select class="fr-select" name="beneficiaireFsl">
                                     <option value="" {{ bailleurBeneficiaireFsl not in ['oui', 'non'] ? 'selected' : '' }}></option>
-                                    <option value="oui" {{ bailleurBeneficiaireFsl is same as 'nsp' ? 'selected' : '' }}>Oui</option>
+                                    <option value="oui" {{ bailleurBeneficiaireFsl is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ bailleurBeneficiaireFsl is same as 'non' ? 'selected' : '' }}>Non</option>
                                 </select>
                             </div>
