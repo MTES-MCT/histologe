@@ -3,6 +3,7 @@
 namespace App\Service\Signalement;
 
 use App\Dto\Request\Signalement\SignalementDraftRequest;
+use App\Entity\Enum\ChauffageType;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
@@ -138,7 +139,8 @@ class SignalementBuilder
             $this->processDesordresByZone('logement');
             $this->processDesordresTypeComposition();
         }
-        // enregistre des données spécifiques dans jsonContent si elles existent (slug du critère pour affichage)
+        // enregistre des données spécifiques dans jsonContent si elles existent
+        // (slug du critère ou de la catégorie pour affichage)
         if (isset($this->payload['desordres_logement_nuisibles_autres_details_type_nuisibles'])) {
             $jsonContent['desordres_logement_nuisibles_autres'] =
             $this->payload['desordres_logement_nuisibles_autres_details_type_nuisibles'];
@@ -146,6 +148,10 @@ class SignalementBuilder
         if (isset($this->payload['desordres_batiment_nuisibles_autres_details_type_nuisibles'])) {
             $jsonContent['desordres_batiment_nuisibles_autres'] =
             $this->payload['desordres_batiment_nuisibles_autres_details_type_nuisibles'];
+        }
+        if (isset($this->payload['desordres_logement_chauffage_type'])) {
+            $chauffageType = ChauffageType::tryFrom(strtoupper($this->payload['desordres_logement_chauffage_type']));
+            $jsonContent['desordres_logement_chauffage'] = $chauffageType->label();
         }
 
         if (isset($jsonContent)) {
