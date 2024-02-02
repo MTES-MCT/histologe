@@ -16,6 +16,7 @@ use App\Entity\User;
 use App\EventListener\SignalementUpdatedListener;
 use App\Factory\SuiviFactory;
 use App\Manager\SignalementManager;
+use App\Serializer\SignalementDraftRequestSerializer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -255,7 +256,7 @@ class SignalementEditController extends AbstractController
         Signalement $signalement,
         Request $request,
         SignalementManager $signalementManager,
-        SerializerInterface $serializer,
+        SignalementDraftRequestSerializer $serializer,
         ValidatorInterface $validator,
         SignalementUpdatedListener $listener
     ): Response {
@@ -275,6 +276,10 @@ class SignalementEditController extends AbstractController
             if ('autre' == $compositionLogementRequest->getType()) {
                 $validationGroups[] = 'TYPE_LOGEMENT_AUTRE';
             }
+            if ($signalement->getProfileDeclarant()) {
+                $validationGroups[] = $signalement->getProfileDeclarant()->value;
+            }
+
             $errorMessage = $this->getErrorMessage($validator, $compositionLogementRequest, $validationGroups);
 
             if (empty($errorMessage)) {
