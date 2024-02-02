@@ -8,8 +8,10 @@ class SituationFoyerRequest
 {
     public function __construct(
         private readonly ?string $isLogementSocial = null,
-        #[Assert\NotBlank(['message' => 'Veuillez définir le champ demande relogement', 'groups' => ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO']])]
+        #[Assert\NotBlank(['message' => 'Veuillez définir le champ demande relogement', 'groups' => ['LOCATAIRE', 'BAILLEUR_OCCUPANT']])]
         private readonly ?string $isRelogement = null,
+        #[Assert\NotBlank(['message' => 'Veuillez définir le champ demande relogement', 'groups' => ['TIERS_PARTICULIER', 'TIERS_PRO']])]
+        private readonly ?string $demandeRelogement = null,
         #[Assert\NotBlank(['message' => 'Veuillez définir le champ allocataire', 'groups' => ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO']])]
         private readonly ?string $isAllocataire = null,
         #[Assert\DateTime('Y-m-d')]
@@ -35,6 +37,11 @@ class SituationFoyerRequest
     public function getIsRelogement(): ?string
     {
         return $this->isRelogement;
+    }
+
+    public function getDemandeRelogement(): ?string
+    {
+        return $this->demandeRelogement;
     }
 
     public function getIsAllocataire(): ?string

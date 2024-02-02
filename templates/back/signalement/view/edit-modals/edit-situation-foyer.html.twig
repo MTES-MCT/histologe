@@ -23,12 +23,11 @@
                             </div>
 
                             <div class="fr-select-group">
-                                {% set isRelogement = signalement.isRelogement %}
                                 <label class="fr-label" for="isRelogement">Demande relogement</label>
                                 <select class="fr-select" name="isRelogement">
-                                    <option value="" {{ isRelogement is null ? 'selected' : '' }}></option>
-                                    <option value="oui" {{ isRelogement is same as true ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ isRelogement is same as false ? 'selected' : '' }}>Non</option>
+                                    <option value=""></option>
+                                    <option value="oui" {{ signalement.isRelogement is same as true ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ signalement.isRelogement is same as false ? 'selected' : '' }}>Non</option>
                                 </select>
                             </div>
 

@@ -598,7 +598,11 @@ class SignalementManager extends AbstractManager
                 $situationFoyerRequest->getIsRelogement()
             )
         );
-        $signalement->setIsAllocataire($situationFoyerRequest->getIsAllocataire());
+        $signalement->setIsAllocataire(
+            $this->signalementInputValueMapper->map(
+                $situationFoyerRequest->getIsAllocataire()
+            )
+        );
 
         if (!empty($situationFoyerRequest->getDateNaissanceOccupant())) {
             $dateNaissance = new \DateTimeImmutable($situationFoyerRequest->getDateNaissanceOccupant());
@@ -648,6 +652,12 @@ class SignalementManager extends AbstractManager
             ->setInformationsComplementairesSituationOccupantsBeneficiaireFsl(
                 $situationFoyerRequest->getBeneficiaireFsl()
             );
+        if ($signalement->getIsNotOccupant()) {
+            $informationComplementaire
+                ->setInformationsComplementairesSituationOccupantsDemandeRelogement(
+                    $situationFoyerRequest->getDemandeRelogement()
+                );
+        }
         if ($situationFoyerRequest->getRevenuFiscal()) {
             $informationComplementaire
                 ->setInformationsComplementairesSituationOccupantsRevenuFiscal(
@@ -688,10 +698,6 @@ class SignalementManager extends AbstractManager
         if (!empty($signalement->getInformationComplementaire())) {
             $informationComplementaire = clone $signalement->getInformationComplementaire();
         }
-        $informationComplementaire
-            ->setInformationsComplementairesSituationOccupantsDemandeRelogement(
-                $procedureDemarchesRequest->getDemandeRelogement()
-            );
         $signalement->setInformationComplementaire($informationComplementaire);
 
         if ($assuranceContacteeUpdated) {
