@@ -48,7 +48,9 @@ class DesordreCompositionLogementLoader
         }
 
         if ('piece_unique' === $typeCompositionLogement->getCompositionLogementPieceUnique()) {
-            if ($typeCompositionLogement->getCompositionLogementSuperficie() < 9) {
+            if (null !== $typeCompositionLogement->getCompositionLogementSuperficie()
+                && $typeCompositionLogement->getCompositionLogementSuperficie() < 9
+            ) {
                 $this->addDesordreCriterePrecisionBySlugs(
                     'desordres_type_composition_logement_piece_unique',
                     'desordres_type_composition_logement_piece_unique_superficie'
@@ -205,7 +207,8 @@ class DesordreCompositionLogementLoader
             && $this->signalement->hasDesordrePrecision($precisionToLink)) {
             $this->signalement->removeDesordrePrecision($precisionToLink);
         }
-        if ($this->signalement->hasDesordreCategorie($critereToLink->getDesordreCategorie())
+
+        if (null !== $critereToLink && $this->signalement->hasDesordreCategorie($critereToLink->getDesordreCategorie())
             && !$this->hasDesordreCritereInCategorie($this->signalement, $critereToLink->getDesordreCategorie())) {
             $this->signalement->removeDesordreCategory($critereToLink->getDesordreCategorie());
         }
