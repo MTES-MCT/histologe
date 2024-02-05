@@ -16,9 +16,9 @@
                                 {% set isProprioAverti = signalement.isProprioAverti %}
                                 <label class="fr-label" for="isProprioAverti">Bailleur averti</label>
                                 <select class="fr-select" name="isProprioAverti">
-                                    <option value="" {{ isProprioAverti not in ['oui', 'non'] ? 'selected' : '' }}></option>
-                                    <option value="oui" {{ isProprioAverti is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ isProprioAverti is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="" {{ isProprioAverti is same as null ? 'selected' : '' }}></option>
+                                    <option value="1" {{ isProprioAverti is same as true ? 'selected' : '' }}>Oui</option>
+                                    <option value="0" {{ isProprioAverti is same as false ? 'selected' : '' }}>Non</option>
                                 </select>
                             </div>
 

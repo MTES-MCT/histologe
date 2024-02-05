@@ -598,11 +598,7 @@ class SignalementManager extends AbstractManager
                 $situationFoyerRequest->getIsRelogement()
             )
         );
-        $signalement->setIsAllocataire(
-            $this->signalementInputValueMapper->map(
-                $situationFoyerRequest->getIsAllocataire()
-            )
-        );
+        $signalement->setIsAllocataire($situationFoyerRequest->getIsAllocataire());
 
         if (!empty($situationFoyerRequest->getDateNaissanceOccupant())) {
             $dateNaissance = new \DateTimeImmutable($situationFoyerRequest->getDateNaissanceOccupant());
@@ -660,11 +656,7 @@ class SignalementManager extends AbstractManager
         Signalement $signalement,
         ProcedureDemarchesRequest $procedureDemarchesRequest
     ) {
-        $signalement->setIsProprioAverti(
-            $this->signalementInputValueMapper->map(
-                $procedureDemarchesRequest->getIsProprioAverti()
-            )
-        );
+        $signalement->setIsProprioAverti('' === $procedureDemarchesRequest->getIsProprioAverti() ? null : $procedureDemarchesRequest->getIsProprioAverti());
 
         $informationProcedure = new InformationProcedure();
         if (!empty($signalement->getInformationProcedure())) {

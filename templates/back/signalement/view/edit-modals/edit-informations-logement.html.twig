@@ -86,7 +86,7 @@
                                 {% set bailDpeDpe = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeDpe : null %}
                                 <label class="fr-label" for="bailDpeDpe">DPE</label>
                                 <select class="fr-select" name="bailDpeDpe">
-                                    <option value="" {{ bailDpeEtatDesLieux not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                                    <option value="" {{ bailDpeDpe not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ bailDpeDpe is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ bailDpeDpe is same as 'non' ? 'selected' : '' }}>Non</option>
                                     <option value="nsp" {{ bailDpeDpe is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>

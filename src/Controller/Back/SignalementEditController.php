@@ -226,10 +226,7 @@ class SignalementEditController extends AbstractController
                 'json'
             );
 
-            $validationGroups = ['Default'];
-            if ($signalement->getProfileDeclarant()) {
-                $validationGroups[] = $signalement->getProfileDeclarant()->value;
-            }
+            $validationGroups = ['Default', 'EDIT'];
             $errorMessage = $this->getErrorMessage($validator, $informationsLogementRequest, $validationGroups);
 
             if (empty($errorMessage)) {
@@ -316,10 +313,7 @@ class SignalementEditController extends AbstractController
                 'json'
             );
 
-            $validationGroups = ['Default'];
-            if ($signalement->getProfileDeclarant()) {
-                $validationGroups[] = $signalement->getProfileDeclarant()->value;
-            }
+            $validationGroups = ['Default', 'EDIT'];
             $errorMessage = $this->getErrorMessage($validator, $situationFoyerRequest, $validationGroups);
 
             if (empty($errorMessage)) {
@@ -361,10 +355,7 @@ class SignalementEditController extends AbstractController
                 'json'
             );
 
-            $validationGroups = ['Default'];
-            if ($signalement->getProfileDeclarant()) {
-                $validationGroups[] = $signalement->getProfileDeclarant()->value;
-            }
+            $validationGroups = ['Default', 'EDIT'];
             $errorMessage = $this->getErrorMessage($validator, $procedureDemarchesRequest, $validationGroups);
 
             if (empty($errorMessage)) {

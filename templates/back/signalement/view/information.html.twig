@@ -513,7 +513,7 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Logement social :</strong>
                         {% if signalement.isLogementSocial is null %}
-                            
+                            Ne sait pas
                         {% elseif signalement.isLogementSocial %}
                             {{ static_picto_yes|raw }}
                         {% else %}
@@ -532,9 +532,10 @@
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Allocataire :</strong>
-                        {% if signalement.isAllocataire is null %}
-                             
-                        {% elseif signalement.isAllocataire in ['Non', 0] %}
+                        {% if signalement.isAllocataire in [null, ''] %}
+                        {% elseif signalement.isAllocataire in ['Oui', '1'] %}
+                             {{ static_picto_yes|raw }}
+                        {% elseif signalement.isAllocataire in ['Non', '0',] %}
                              {{ static_picto_no|raw }}
                         {% elseif signalement.isAllocataire %}
                             <p class="fr-badge fr-badge--info fr-badge--no-icon">{{ signalement.isAllocataire }}</p>
@@ -575,9 +576,9 @@
                     <div class="fr-col-12">
                         <strong>Accompagnement par un ou une travailleuse sociale :</strong>
                         {% if signalement.situationFoyer %}
-                            {% if signalement.situationFoyer.travailleurSocialAccompagnementDeclarant is same as 'oui' %}
+                            {% if signalement.situationFoyer.travailleurSocialAccompagnementDeclarant is same as '1' %}
                                 {{ static_picto_yes|raw }}
-                            {% elseif signalement.situationFoyer.travailleurSocialAccompagnementDeclarant is same as 'non' %}
+                            {% elseif signalement.situationFoyer.travailleurSocialAccompagnementDeclarant is same as '0' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
                                 {{signalement.situationFoyer.travailleurSocialAccompagnementDeclarant(false)}}
@@ -637,7 +638,6 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Bailleur averti :</strong>
                         {% if signalement.isProprioAverti is null %}
-                            
                         {% elseif signalement.isProprioAverti %}
                             {{ static_picto_yes|raw }}
                         {% else %}

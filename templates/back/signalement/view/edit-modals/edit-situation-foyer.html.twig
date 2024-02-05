@@ -16,7 +16,7 @@
                                 {% set isLogementSocial = signalement.isLogementSocial %}
                                 <label class="fr-label" for="isLogementSocial">Logement social</label>
                                 <select class="fr-select" name="isLogementSocial">
-                                    <option value="" {{ isLogementSocial is null ? 'selected' : '' }}></option>
+                                    <option value="nsp" {{ isLogementSocial is null ? 'selected' : '' }}>Je ne sais pas</option>
                                     <option value="oui" {{ isLogementSocial is same as true ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ isLogementSocial is same as false ? 'selected' : '' }}>Non</option>
                                 </select>
@@ -36,11 +36,11 @@
                                 {% set isAllocataire = signalement.isAllocataire %}
                                 <label class="fr-label" for="isAllocataire">Allocataire</label>
                                 <select class="fr-select" name="isAllocataire">
-                                    <option value="" {{ isAllocataire not in ['Oui', 1, 'CAF', 'caf', 'MSA', 'msa', 'Non', 0] ? 'selected' : '' }}></option>
-                                    <option value="caf" {{ isAllocataire in ['CAF', 'caf'] ? 'selected' : '' }}>CAF</option>
-                                    <option value="msa" {{ isAllocataire in ['MSA', 'msa'] ? 'selected' : '' }}>MSA</option>
-                                    <option value="Oui" {{ isAllocataire in ['Oui', 1] ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ isAllocataire in ['Non', 0] ? 'selected' : '' }}>Non</option>
+                                    <option value="" {{isAllocataire in [null, ''] ? 'selected' : '' }}></option>
+                                    <option value="CAF" {{ isAllocataire is same as 'CAF' ? 'selected' : '' }}>CAF</option>
+                                    <option value="MSA" {{ isAllocataire is same as 'MSA' ? 'selected' : '' }}>MSA</option>
+                                    <option value="1" {{ isAllocataire in ['Oui', '1'] ? 'selected' : '' }}>Oui</option>
+                                    <option value="0" {{ isAllocataire in ['Non', '0'] ? 'selected' : '' }}>Non</option>
                                 </select>
                             </div>
 
@@ -78,10 +78,9 @@
                                 {% set travailleurSocialAccompagnementDeclarant = signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialAccompagnementDeclarant : null %}
                                 <label class="fr-label" for="travailleurSocialAccompagnementDeclarant">Accompagnement par un ou une travailleuse sociale</label>
                                 <select class="fr-select" name="travailleurSocialAccompagnementDeclarant">
-                                    <option value="" {{ travailleurSocialAccompagnementDeclarant not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
-                                    <option value="oui" {{ travailleurSocialAccompagnementDeclarant is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ travailleurSocialAccompagnementDeclarant is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ travailleurSocialAccompagnementDeclarant is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                    <option value="" {{ travailleurSocialAccompagnementDeclarant not in ['1', '0'] ? 'selected' : '' }}></option>
+                                    <option value="1" {{ travailleurSocialAccompagnementDeclarant is same as '1' ? 'selected' : '' }}>Oui</option>
+                                    <option value="0" {{ travailleurSocialAccompagnementDeclarant is same as '0' ? 'selected' : '' }}>Non</option>
                                 </select>
                             </div>
 
