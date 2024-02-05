@@ -456,7 +456,6 @@ trait FixturesHelper
             'logement_social_montant_allocation' => '300',
             'logement_social_numero_allocataire' => '12345678',
             'travailleur_social_quitte_logement' => 'non',
-            'travailleur_social_preavis_depart' => 'non',
         ];
     }
 
