@@ -18,7 +18,7 @@ class Suivi
 
     public const DEFAULT_PERIOD_INACTIVITY = 30;
     public const DEFAULT_PERIOD_RELANCE = 45;
-    public const LIMIT_DAILY_RELANCES = 400;
+    public const LIMIT_DAILY_RELANCES = 200;
 
     public const DESCRIPTION_MOTIF_CLOTURE_ALL = 'Le signalement a été cloturé pour tous';
     public const DESCRIPTION_MOTIF_CLOTURE_PARTNER = 'Le signalement a été cloturé pour';
