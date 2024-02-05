@@ -76,6 +76,13 @@
 
                             <div class="fr-select-group">
                                 {% set travailleurSocialPreavisDepart = signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialPreavisDepart : null %}
+                                {% if travailleurSocialPreavisDepart is same as null %}
+                                    {% if signalement.isPreavisDepart is same as true %}
+                                        {% set travailleurSocialPreavisDepart = 'oui' %}
+                                    {% elseif signalement.isPreavisDepart is same as false %}
+                                        {% set travailleurSocialPreavisDepart = 'non' %}
+                                    {% endif %}
+                                {% endif %}
                                 <label class="fr-label" for="travailleurSocialPreavisDepart">Préavis de départ</label>
                                 <select class="fr-select" name="travailleurSocialPreavisDepart">
                                     <option value="" {{ travailleurSocialPreavisDepart not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>

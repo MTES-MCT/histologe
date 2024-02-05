@@ -123,6 +123,9 @@ class SignalementBuilder
         $this->signalement
             ->setSituationFoyer($this->situationFoyerFactory->createFromSignalementDraftPayload($this->payload))
             ->setIsRelogement($this->evalBoolean($this->signalementDraftRequest->getLogementSocialDemandeRelogement()))
+            ->setIsPreavisDepart(
+                $this->evalBoolean($this->signalementDraftRequest->getTravailleurSocialPreavisDepart())
+            )
             ->setIsAllocataire($this->resolveIsAllocataire())
             ->setNumAllocataire($this->signalementDraftRequest->getLogementSocialNumeroAllocataire())
             ->setMontantAllocation($this->signalementDraftRequest->getLogementSocialMontantAllocation())

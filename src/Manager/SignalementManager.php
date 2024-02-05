@@ -620,6 +620,14 @@ class SignalementManager extends AbstractManager
             )
             ->setLogementSocialAllocationCaisse($situationFoyerRequest->getIsAllocataire());
 
+        if ('non' === $situationFoyerRequest->getTravailleurSocialPreavisDepart()) {
+            $signalement->setIsPreavisDepart(false);
+        } elseif ('oui' === $situationFoyerRequest->getIsAllocataire()) {
+            $signalement->setIsPreavisDepart(true);
+        } else {
+            $signalement->setIsPreavisDepart(null);
+        }
+
         if ('non' === $situationFoyerRequest->getIsAllocataire()) {
             $situationFoyer->setLogementSocialAllocation('non');
         } elseif ('nsp' === $situationFoyerRequest->getIsAllocataire()) {

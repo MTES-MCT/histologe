@@ -199,6 +199,7 @@ class SignalementDraftRequest
     private ?string $logementSocialMontantAllocation = null;
     private ?string $logementSocialNumeroAllocataire = null;
     private ?string $travailleurSocialQuitteLogement = null;
+    private ?string $travailleurSocialPreavisDepart = null;
     private ?string $travailleurSocialAccompagnement = null;
     private ?string $travailleurSocialAccompagnementDeclarant = null;
     private ?string $infoProcedureBailleurPrevenu = null;
@@ -1180,6 +1181,18 @@ class SignalementDraftRequest
     public function setTravailleurSocialQuitteLogement(?string $travailleurSocialQuitteLogement): self
     {
         $this->travailleurSocialQuitteLogement = $travailleurSocialQuitteLogement;
+
+        return $this;
+    }
+
+    public function getTravailleurSocialPreavisDepart(): ?string
+    {
+        return $this->travailleurSocialPreavisDepart;
+    }
+
+    public function setTravailleurSocialPreavisDepart(?string $travailleurSocialPreavisDepart): self
+    {
+        $this->travailleurSocialPreavisDepart = $travailleurSocialPreavisDepart;
 
         return $this;
     }

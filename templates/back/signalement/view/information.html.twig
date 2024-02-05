@@ -583,6 +583,14 @@
                             {% else %}
                                 {{signalement.situationFoyer.travailleurSocialPreavisDepart(false)}}
                             {% endif %}
+                        {% else %}
+                            {% if signalement.isPreavisDepart is same as true %}
+                                {{ static_picto_yes|raw }}
+                            {% elseif signalement.isPreavisDepart is same as false %}
+                                {{ static_picto_no|raw }}
+                            {% else %}
+                                Ne sait pas
+                            {% endif %}
                         {% endif %}
                     </div>
                     <div class="fr-col-12">

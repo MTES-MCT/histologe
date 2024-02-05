@@ -95,7 +95,6 @@
   "logement_social_montant_allocation": "300",
   "logement_social_numero_allocataire": "12345678",
   "travailleur_social_quitte_logement": "non",
-  "travailleur_social_preavis_depart": "non",
   "adresse_logement_adresse_suggestion": "33 rue des phoceen",
   "info_procedure_depart_apres_travaux": "oui",
   "type_logement_commodites_wc_cuisine": "non",
