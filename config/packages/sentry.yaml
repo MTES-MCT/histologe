@@ -1,9 +1,21 @@
 when@prod:
     sentry:
-        dsn: '%env(SENTRY_DSN)%'
+        dsn: '%env(resolve:SENTRY_DSN)%'
         register_error_listener: false # Disables the ErrorListener to avoid duplicated log in sentry
         options:
-          environment: '%kernel.environment%'
+          environment: '%env(resolve:SENTRY_ENVIRONMENT)%' # prod|staging
+          # Specify a fixed sample rate:
+          traces_sample_rate: '%env(float:SENTRY_TRACES_SAMPLE_RATE)%' # Between 0 and 1
+        tracing:
+          enabled: true
+          dbal: # DB queries
+            enabled: true
+          cache: # cache pools
+            enabled: true
+          twig: # templating engine
+            enabled: true
+          http_client: # Symfony HTTP client
+            enabled: true
 
     monolog:
       handlers:
