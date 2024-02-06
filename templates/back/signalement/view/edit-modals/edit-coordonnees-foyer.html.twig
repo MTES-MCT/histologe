@@ -31,8 +31,7 @@
                             <div class="fr-select-group">
                                 <label class="fr-label" for="civilite">Civilité</label>
                                 <select class="fr-select" name="civilite">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
-                                    <option value="" {{ signalement.civiliteOccupant is same as '' ? 'selected' : '' }}>N/C</option>
+                                    <option value="" {{ signalement.civiliteOccupant not in ['mme', 'mr'] ? 'selected' : '' }}></option>
                                     <option value="mme" {{ signalement.civiliteOccupant is same as 'mme' ? 'selected' : '' }}>Madame</option>
                                     <option value="mr" {{ signalement.civiliteOccupant is same as 'mr' ? 'selected' : '' }}>Monsieur</option>
                                 </select>

@@ -89,9 +89,9 @@ class SituationFoyer
         return $this;
     }
 
-    public function getTravailleurSocialQuitteLogement(): ?string
+    public function getTravailleurSocialQuitteLogement(bool $raw = true): ?string
     {
-        return $this->travailleurSocialQuitteLogement;
+        return (!$raw && 'nsp' === $this->travailleurSocialQuitteLogement) ? 'Ne sait pas' : $this->travailleurSocialQuitteLogement;
     }
 
     public function setTravailleurSocialQuitteLogement(?string $travailleurSocialQuitteLogement): self
@@ -113,9 +113,9 @@ class SituationFoyer
         return $this;
     }
 
-    public function getTravailleurSocialAccompagnementDeclarant(): ?string
+    public function getTravailleurSocialAccompagnementDeclarant(bool $raw = true): ?string
     {
-        return $this->travailleurSocialAccompagnementDeclarant;
+        return (!$raw && 'nsp' === $this->travailleurSocialAccompagnementDeclarant) ? 'Ne sait pas' : $this->travailleurSocialAccompagnementDeclarant;
     }
 
     public function setTravailleurSocialAccompagnementDeclarant(?string $travailleurSocialAccompagnementDeclarant): self

@@ -13,57 +13,34 @@
                             </h1>
 
                             <div class="fr-select-group">
-                                {% set isLogementSocial = 'nsp' %}
-                                {% if signalement.isLogementSocial is null %}
-                                    {% set isLogementSocial = 'nsp' %}
-                                {% elseif signalement.isLogementSocial %}
-                                    {% set isLogementSocial = 'oui' %}
-                                {% else %}
-                                    {% set isLogementSocial = 'non' %}
-                                {% endif %}
+                                {% set isLogementSocial = signalement.isLogementSocial %}
                                 <label class="fr-label" for="isLogementSocial">Logement social</label>
                                 <select class="fr-select" name="isLogementSocial">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
-                                    <option value="oui" {{ isLogementSocial is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ isLogementSocial is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ isLogementSocial is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                    <option value="nsp" {{ isLogementSocial is null ? 'selected' : '' }}>Je ne sais pas</option>
+                                    <option value="oui" {{ isLogementSocial is same as true ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ isLogementSocial is same as false ? 'selected' : '' }}>Non</option>
                                 </select>
                             </div>
 
                             <div class="fr-select-group">
-                                {% set isRelogement = 'nsp' %}
-                                {% if signalement.isRelogement is null %}
-                                    {% set isRelogement = 'nsp' %}
-                                {% elseif signalement.isRelogement %}
-                                    {% set isRelogement = 'oui' %}
-                                {% else %}
-                                    {% set isRelogement = 'non' %}
-                                {% endif %}
+                                {% set isRelogement = signalement.isRelogement %}
                                 <label class="fr-label" for="isRelogement">Demande relogement</label>
                                 <select class="fr-select" name="isRelogement">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
-                                    <option value="oui" {{ isRelogement is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ isRelogement is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ isRelogement is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                    <option value="" {{ isRelogement is null ? 'selected' : '' }}></option>
+                                    <option value="oui" {{ isRelogement is same as true ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ isRelogement is same as false ? 'selected' : '' }}>Non</option>
                                 </select>
                             </div>
 
                             <div class="fr-select-group">
-                                {% set isAllocataire = 'nsp' %}
-                                {% if signalement.isAllocataire is null %}
-                                    {% set isAllocataire = 'nsp' %}
-                                {% elseif signalement.isAllocataire %}
-                                    {% set isAllocataire = signalement.isAllocataire %}
-                                {% else %}
-                                    {% set isAllocataire = 'non' %}
-                                {% endif %}
+                                {% set isAllocataire = signalement.isAllocataire %}
                                 <label class="fr-label" for="isAllocataire">Allocataire</label>
                                 <select class="fr-select" name="isAllocataire">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
-                                    <option value="caf" {{ isAllocataire is same as 'caf' ? 'selected' : '' }}>CAF</option>
-                                    <option value="msa" {{ isAllocataire is same as 'msa' ? 'selected' : '' }}>MSA</option>
-                                    <option value="non" {{ isAllocataire is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ isAllocataire is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                    <option value="" {{isAllocataire in [null, ''] ? 'selected' : '' }}></option>
+                                    <option value="CAF" {{ isAllocataire is same as 'CAF' ? 'selected' : '' }}>CAF</option>
+                                    <option value="MSA" {{ isAllocataire is same as 'MSA' ? 'selected' : '' }}>MSA</option>
+                                    <option value="1" {{ isAllocataire in ['Oui', '1'] ? 'selected' : '' }}>Oui</option>
+                                    <option value="0" {{ isAllocataire in ['Non', '0'] ? 'selected' : '' }}>Non</option>
                                 </select>
                             </div>
 
@@ -87,17 +64,10 @@
                             </div>
 
                             <div class="fr-select-group">
-                                {% set travailleurSocialQuitteLogement = 'nsp' %}
-                                {% if signalement.situationFoyer %}
-                                    {% if signalement.situationFoyer.travailleurSocialQuitteLogement is same as 'oui' %}
-                                        {% set travailleurSocialQuitteLogement = 'oui' %}
-                                    {% elseif signalement.situationFoyer.travailleurSocialQuitteLogement is same as 'non' %}
-                                        {% set travailleurSocialQuitteLogement = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set travailleurSocialQuitteLogement = signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialQuitteLogement : null %}
                                 <label class="fr-label" for="travailleurSocialQuitteLogement">Souhaite quitter le logement</label>
                                 <select class="fr-select" name="travailleurSocialQuitteLogement">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ travailleurSocialQuitteLogement not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ travailleurSocialQuitteLogement is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ travailleurSocialQuitteLogement is same as 'non' ? 'selected' : '' }}>Non</option>
                                     <option value="nsp" {{ travailleurSocialQuitteLogement is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
@@ -105,56 +75,32 @@
                             </div>
 
                             <div class="fr-select-group">
-                                {% set travailleurSocialAccompagnementDeclarant = 'nsp' %}
-                                {% if signalement.situationFoyer %}
-                                    {% if signalement.situationFoyer.travailleurSocialAccompagnementDeclarant is same as 'oui' %}
-                                        {% set travailleurSocialAccompagnementDeclarant = 'oui' %}
-                                    {% elseif signalement.situationFoyer.travailleurSocialAccompagnementDeclarant is same as 'non' %}
-                                        {% set travailleurSocialAccompagnementDeclarant = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set travailleurSocialAccompagnementDeclarant = signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialAccompagnementDeclarant : null %}
                                 <label class="fr-label" for="travailleurSocialAccompagnementDeclarant">Accompagnement par un ou une travailleuse sociale</label>
                                 <select class="fr-select" name="travailleurSocialAccompagnementDeclarant">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
-                                    <option value="oui" {{ travailleurSocialAccompagnementDeclarant is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ travailleurSocialAccompagnementDeclarant is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ travailleurSocialAccompagnementDeclarant is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                    <option value="" {{ travailleurSocialAccompagnementDeclarant not in ['1', '0'] ? 'selected' : '' }}></option>
+                                    <option value="1" {{ travailleurSocialAccompagnementDeclarant is same as '1' ? 'selected' : '' }}>Oui</option>
+                                    <option value="0" {{ travailleurSocialAccompagnementDeclarant is same as '0' ? 'selected' : '' }}>Non</option>
                                 </select>
                             </div>
 
                             <div class="fr-select-group">
-                                {% set beneficiaireRsa = 'nsp' %}
-                                {% if signalement.informationComplementaire %}
-                                    {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa is same as 'oui' %}
-                                        {% set beneficiaireRsa = 'oui' %}
-                                    {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa is same as 'non' %}
-                                        {% set beneficiaireRsa = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set beneficiaireRsa = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa : null %}
                                 <label class="fr-label" for="beneficiaireRsa">Bénéficiaire RSA</label>
                                 <select class="fr-select" name="beneficiaireRsa">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ beneficiaireRsa not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ beneficiaireRsa is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ beneficiaireRsa is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ beneficiaireRsa is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 
                             <div class="fr-select-group">
-                                {% set beneficiaireFsl = 'nsp' %}
-                                {% if signalement.informationComplementaire %}
-                                    {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl is same as 'oui' %}
-                                        {% set beneficiaireFsl = 'oui' %}
-                                    {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl is same as 'non' %}
-                                        {% set beneficiaireFsl = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set beneficiaireFsl = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl : null %}
                                 <label class="fr-label" for="beneficiaireFsl">Bénéficiaire FSL</label>
                                 <select class="fr-select" name="beneficiaireFsl">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ beneficiaireFsl not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ beneficiaireFsl is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ beneficiaireFsl is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ beneficiaireFsl is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 

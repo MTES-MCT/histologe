@@ -192,8 +192,16 @@ class TypeCompositionLogement
         return $this;
     }
 
-    public function getCompositionLogementPieceUnique(): ?string
+    public function getCompositionLogementPieceUnique(bool $raw = true): ?string
     {
+        if (!$raw) {
+            return match ($this->compositionLogementPieceUnique) {
+                'piece_unique' => 'Pièce unique',
+                'plusieurs_pieces' => 'Plusieurs pièces',
+                default => $this->compositionLogementPieceUnique
+            };
+        }
+
         return $this->compositionLogementPieceUnique;
     }
 
@@ -216,9 +224,9 @@ class TypeCompositionLogement
         return $this;
     }
 
-    public function getCompositionLogementHauteur(): ?string
+    public function getCompositionLogementHauteur(bool $raw = true): ?string
     {
-        return $this->compositionLogementHauteur;
+        return (!$raw && 'nsp' === $this->compositionLogementHauteur) ? 'Ne sait pas' : $this->compositionLogementHauteur;
     }
 
     public function setCompositionLogementHauteur(?string $compositionLogementHauteur): self
@@ -264,9 +272,9 @@ class TypeCompositionLogement
         return $this;
     }
 
-    public function getBailDpeBail(): ?string
+    public function getBailDpeBail(bool $raw = true): ?string
     {
-        return $this->bailDpeBail;
+        return (!$raw && 'nsp' === $this->bailDpeBail) ? 'Ne sait pas' : $this->bailDpeBail;
     }
 
     public function setBailDpeBail(?string $bailDpeBail): self
@@ -276,9 +284,9 @@ class TypeCompositionLogement
         return $this;
     }
 
-    public function getBailDpeDpe(): ?string
+    public function getBailDpeDpe(bool $raw = true): ?string
     {
-        return $this->bailDpeDpe;
+        return (!$raw && 'nsp' === $this->bailDpeDpe) ? 'Ne sait pas' : $this->bailDpeDpe;
     }
 
     public function setBailDpeDpe(?string $bailDpeDpe): self
@@ -288,9 +296,9 @@ class TypeCompositionLogement
         return $this;
     }
 
-    public function getBailDpeEtatDesLieux(): ?string
+    public function getBailDpeEtatDesLieux(bool $raw = true): ?string
     {
-        return $this->bailDpeEtatDesLieux;
+        return (!$raw && 'nsp' === $this->bailDpeEtatDesLieux) ? 'Ne sait pas' : $this->bailDpeEtatDesLieux;
     }
 
     public function setBailDpeEtatDesLieux(?string $bailDpeEtatDesLieux): self
@@ -312,9 +320,9 @@ class TypeCompositionLogement
         return $this;
     }
 
-    public function getTypeLogementCommoditesPieceAVivre9m(): ?string
+    public function getTypeLogementCommoditesPieceAVivre9m(bool $raw = true): ?string
     {
-        return $this->typeLogementCommoditesPieceAVivre9m;
+        return (!$raw && 'nsp' === $this->typeLogementCommoditesPieceAVivre9m) ? 'Ne sait pas' : $this->typeLogementCommoditesPieceAVivre9m;
     }
 
     public function setTypeLogementCommoditesPieceAVivre9m(?string $typeLogementCommoditesPieceAVivre9m): self

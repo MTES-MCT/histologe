@@ -11,7 +11,6 @@ class CompositionLogementRequest
         private readonly ?string $type = null,
         #[Assert\NotBlank(message: 'Merci de préciser le type de logement autre.', groups: ['TYPE_LOGEMENT_AUTRE'])]
         private readonly ?string $typeLogementNatureAutrePrecision = null,
-        #[Assert\NotBlank(['message' => 'Merci de définir si il y a plusieurs pièces dans le logement'])]
         private readonly ?string $typeCompositionLogement = null,
         #[Assert\NotBlank(message: 'Merci de saisir la superficie du logement.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
         #[Assert\Positive(message: 'Merci de saisir une information numérique dans le champs de superficie.')]

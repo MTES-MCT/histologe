@@ -13,38 +13,23 @@
                             </h1>
 
                             <div class="fr-select-group">
-                                {% set isProprioAverti = 'nsp' %}
-                                {% if signalement.isProprioAverti is null %}
-                                    {% set isProprioAverti = 'nsp' %}
-                                {% elseif signalement.isProprioAverti %}
-                                    {% set isProprioAverti = 'oui' %}
-                                {% else %}
-                                    {% set isProprioAverti = 'non' %}
-                                {% endif %}
+                                {% set isProprioAverti = signalement.isProprioAverti %}
                                 <label class="fr-label" for="isProprioAverti">Bailleur averti</label>
                                 <select class="fr-select" name="isProprioAverti">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
-                                    <option value="oui" {{ isProprioAverti is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ isProprioAverti is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ isProprioAverti is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                    <option value="" {{ isProprioAverti is same as null ? 'selected' : '' }}></option>
+                                    <option value="1" {{ isProprioAverti is same as true ? 'selected' : '' }}>Oui</option>
+                                    <option value="0" {{ isProprioAverti is same as false ? 'selected' : '' }}>Non</option>
                                 </select>
                             </div>
 
                             <div class="fr-select-group">
-                                {% set infoProcedureAssuranceContactee = 'nsp' %}
-                                {% if signalement.informationProcedure %}
-                                    {% if signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'oui' %}
-                                        {% set infoProcedureAssuranceContactee = 'oui' %}
-                                    {% elseif signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'non' %}
-                                        {% set infoProcedureAssuranceContactee = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set infoProcedureAssuranceContactee = signalement.informationProcedure ? signalement.informationProcedure.infoProcedureAssuranceContactee : null %}
                                 <label class="fr-label" for="infoProcedureAssuranceContactee">Contact assurance</label>
                                 <select class="fr-select" name="infoProcedureAssuranceContactee">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ infoProcedureAssuranceContactee not in ['oui', 'non', 'pas_assurance_logement'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ infoProcedureAssuranceContactee is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ infoProcedureAssuranceContactee is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ infoProcedureAssuranceContactee is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                    <option value="pas_assurance_logement" {{ infoProcedureAssuranceContactee is same as 'pas_assurance_logement' ? 'selected' : '' }}>Pas d'assurance logement</option>
                                 </select>
                             </div>
 
@@ -54,18 +39,11 @@
                             </div>
 
                             <div class="fr-input-group">
-                                {% set infoProcedureDepartApresTravaux = 'nsp' %}
-                                {% if signalement.informationProcedure %}
-                                    {% if signalement.informationProcedure.infoProcedureDepartApresTravaux is same as 'oui' %}
-                                        {% set infoProcedureDepartApresTravaux = 'oui' %}
-                                    {% elseif signalement.informationProcedure.infoProcedureDepartApresTravaux is same as 'non' %}
-                                        {% set infoProcedureDepartApresTravaux = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set infoProcedureDepartApresTravaux = signalement.informationProcedure ? signalement.informationProcedure.infoProcedureDepartApresTravaux : null %}
                                 <label class="fr-label" for="infoProcedureDepartApresTravaux">Souhaite garder le logement après travaux</label>
                                 <select class="fr-select" name="infoProcedureDepartApresTravaux">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
                                     {# Careful : reversed regarding the question in the form #}
+                                    <option value="" {{ infoProcedureDepartApresTravaux not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
                                     <option value="non" {{ infoProcedureDepartApresTravaux is same as 'non' ? 'selected' : '' }}>Oui</option>
                                     <option value="oui" {{ infoProcedureDepartApresTravaux is same as 'oui' ? 'selected' : '' }}>Non</option>
                                     <option value="nsp" {{ infoProcedureDepartApresTravaux is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
@@ -73,38 +51,22 @@
                             </div>
 
                             <div class="fr-select-group">
-                                {% set preavisDepart = 'nsp' %}
-                                {% if signalement.informationComplementaire %}
-                                    {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsPreavisDepart is same as 'oui' %}
-                                        {% set preavisDepart = 'oui' %}
-                                    {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsPreavisDepart is same as 'non' %}
-                                        {% set preavisDepart = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set preavisDepart = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsPreavisDepart : null %}
                                 <label class="fr-label" for="preavisDepart">Préavis de départ</label>
                                 <select class="fr-select" name="preavisDepart">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ preavisDepart not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ preavisDepart is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ preavisDepart is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ preavisDepart is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 
                             <div class="fr-select-group">
-                                {% set demandeRelogement = 'nsp' %}
-                                {% if signalement.informationComplementaire %}
-                                    {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsDemandeRelogement is same as 'oui' %}
-                                        {% set demandeRelogement = 'oui' %}
-                                    {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsDemandeRelogement is same as 'non' %}
-                                        {% set demandeRelogement = 'non' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set demandeRelogement = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsDemandeRelogement : null %}
                                 <label class="fr-label" for="demandeRelogement">Demande logement social / relogement</label>
                                 <select class="fr-select" name="demandeRelogement">
-                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ demandeRelogement not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ demandeRelogement is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ demandeRelogement is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ demandeRelogement is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
                         </div>
