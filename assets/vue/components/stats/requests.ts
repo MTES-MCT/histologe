@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { store } from './store'
+import * as Sentry from "@sentry/browser";
 
 export const requests = {
   filter (functionReturn: Function) {
@@ -29,13 +30,11 @@ export const requests = {
       .post(store.props.ajaxurl, data, { timeout: 15000 })
       .then(response => {
         const responseData = response.data
-        console.log('then')
-        console.log(responseData)
         functionReturn(responseData)
       })
       .catch(error => {
-        console.log('error.toJSON')
-        console.log(error)
+        console.error(error)
+        Sentry.captureException(new Error(error))
         functionReturn('error')
       })
   }

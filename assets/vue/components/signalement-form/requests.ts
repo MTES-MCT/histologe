@@ -1,25 +1,27 @@
 import axios from 'axios'
 import formStore from './store'
+import * as Sentry from "@sentry/browser";
+import { AXIOS_TIMEOUT } from '../../../controllers/environment'
 
 export const requests = {
-  // TODO : voir avec Emilien pour ne plus gérer via des callbacks mais faire de l'async pour rendre le code plus lisible
   doRequestGet (ajaxUrl: string, functionReturn: Function) {
     axios
-      .get(ajaxUrl, { timeout: 15000 })
+      .get(ajaxUrl, { timeout: AXIOS_TIMEOUT })
       .then(response => {
         const responseData = response.data
         functionReturn(responseData)
       })
       .catch(error => {
-        console.log(error)
+        console.error(error)
+        Sentry.captureException(new Error(error))
         functionReturn('error')
       })
   },
   doRequestPost (ajaxUrl: string, data: any, functionReturn: Function, config: any) {
     if (config !== undefined) {
-      config.timeout = 15000
+      config.timeout = AXIOS_TIMEOUT
     } else {
-      config = { timeout: 15000 }
+      config = { timeout: AXIOS_TIMEOUT }
     }
     axios
       .post(ajaxUrl, data, config)
@@ -28,19 +30,21 @@ export const requests = {
         functionReturn(responseData)
       })
       .catch(error => {
-        console.log(error)
+        console.error(error)
+        Sentry.captureException(new Error(error))
         functionReturn(error)
       })
   },
   doRequestPut (ajaxUrl: string, data: any, functionReturn: Function) {
     axios
-      .put(ajaxUrl, data, { timeout: 15000 })
+      .put(ajaxUrl, data, { timeout: AXIOS_TIMEOUT })
       .then(response => {
         const responseData = response.data
         functionReturn(responseData)
       })
       .catch(error => {
-        console.log(error)
+        console.error(error)
+        Sentry.captureException(new Error(error))
         functionReturn('error')
       })
   },
