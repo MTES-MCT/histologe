@@ -594,7 +594,7 @@ class FrontSignalementController extends AbstractController
                     if (!empty($descriptionList)) {
                         $description .= '<br>Ajout de pièces au signalement<ul>'
                             .implode('', $descriptionList).'</ul>';
-                        $signalementFileProcessor->addFilesToSignalement($fileList, $signalement); // TODO
+                        $signalementFileProcessor->addFilesToSignalement($fileList, $signalement);
                     }
                 }
 

@@ -64,7 +64,6 @@ class SignalementFileController extends AbstractController
             $inputName = isset($files[File::INPUT_NAME_DOCUMENTS])
                 ? File::INPUT_NAME_DOCUMENTS
                 : File::INPUT_NAME_PHOTOS;
-            // TODO : récupérer le document type depuis la requête en fonction de l'endroit d'appel de cette route
             $documentType = DocumentType::tryFrom($request->get('document_type'));
             list($fileList, $descriptionList) = $signalementFileProcessor->process($files, $inputName, $documentType);
 
