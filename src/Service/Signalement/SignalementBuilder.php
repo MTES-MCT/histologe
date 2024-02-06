@@ -122,7 +122,6 @@ class SignalementBuilder
     {
         $this->signalement
             ->setSituationFoyer($this->situationFoyerFactory->createFromSignalementDraftPayload($this->payload))
-            ->setIsRelogement($this->evalBoolean($this->signalementDraftRequest->getLogementSocialDemandeRelogement()))
             ->setIsPreavisDepart(
                 $this->evalBoolean($this->signalementDraftRequest->getTravailleurSocialPreavisDepart())
             )
@@ -497,7 +496,8 @@ class SignalementBuilder
 
     private function isDemandeRelogement(): ?bool
     {
-        if (ProfileDeclarant::LOCATAIRE === $this->signalementDraft->getProfileDeclarant()) {
+        if (ProfileDeclarant::LOCATAIRE === $this->signalementDraft->getProfileDeclarant()
+            || ProfileDeclarant::BAILLEUR_OCCUPANT === $this->signalementDraft->getProfileDeclarant()) {
             return $this->evalBoolean($this->signalementDraftRequest->getLogementSocialDemandeRelogement());
         }
 

@@ -520,33 +520,14 @@
                             {{ static_picto_no|raw }}
                         {% endif %}
                     </div>
-                    {% if signalement.isNotOccupant %}
                     <div class="fr-col-12">
                         <strong>Demande logement social / relogement :</strong>
-                        {% if signalement.informationComplementaire %}
-                            {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsDemandeRelogement is same as 'oui' %}
-                                {{ static_picto_yes|raw }}
-                            {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsDemandeRelogement is same as 'non' %}
-                                {{ static_picto_no|raw }}
-                            {% else %}
-                                Ne sait pas
-                            {% endif %}
-                        {% else %}
-                            N/C
-                        {% endif %}
-                    </div>
-                    {% else %}
-                    <div class="fr-col-12 fr-col-md-6">
-                        <strong>Demande relogement :</strong>
-                        {% if signalement.isRelogement is null %}
-                            
-                        {% elseif signalement.isRelogement %}
+                        {% if signalement.isRelogement is same as true %}
                             {{ static_picto_yes|raw }}
-                        {% else %}
+                        {% elseif signalement.isRelogement is same as false %}
                             {{ static_picto_no|raw }}
                         {% endif %}
                     </div>
-                    {% endif %}
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Allocataire :</strong>
                         {% if signalement.isAllocataire in [null, ''] %}

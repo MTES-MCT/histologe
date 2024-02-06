@@ -588,28 +588,28 @@ class SignalementManager extends AbstractManager
         Signalement $signalement,
         SituationFoyerRequest $situationFoyerRequest
     ) {
-        $signalement->setIsLogementSocial(
-            $this->signalementInputValueMapper->map(
-                $situationFoyerRequest->getIsLogementSocial()
+        $signalement
+            ->setIsLogementSocial(
+                $this->signalementInputValueMapper->map(
+                    $situationFoyerRequest->getIsLogementSocial()
+                )
             )
-        );
-        $signalement->setIsRelogement(
-            $this->signalementInputValueMapper->map(
-                $situationFoyerRequest->getIsRelogement()
+            ->setIsRelogement(
+                $this->signalementInputValueMapper->map(
+                    $situationFoyerRequest->getIsRelogement()
+                )
             )
-        );
-        $signalement->setIsAllocataire(
-            $this->signalementInputValueMapper->map(
-                $situationFoyerRequest->getIsAllocataire()
+            ->setIsAllocataire(
+                $this->signalementInputValueMapper->map(
+                    $situationFoyerRequest->getIsAllocataire()
+                )
             )
-        );
+            ->setNumAllocataire($situationFoyerRequest->getNumAllocataire());
 
         if (!empty($situationFoyerRequest->getDateNaissanceOccupant())) {
             $dateNaissance = new \DateTimeImmutable($situationFoyerRequest->getDateNaissanceOccupant());
             $signalement->setDateNaissanceOccupant($dateNaissance);
         }
-
-        $signalement->setNumAllocataire($situationFoyerRequest->getNumAllocataire());
 
         $situationFoyer = new SituationFoyer();
         if (!empty($signalement->getSituationFoyer())) {
@@ -639,6 +639,12 @@ class SignalementManager extends AbstractManager
         } else {
             $situationFoyer->setLogementSocialAllocation('oui');
         }
+        if (!$signalement->getIsNotOccupant()) {
+            $situationFoyer
+                ->setLogementSocialDemandeRelogement(
+                    $situationFoyerRequest->getIsRelogement()
+                );
+        }
         $signalement->setSituationFoyer($situationFoyer);
 
         $informationComplementaire = new InformationComplementaire();
@@ -655,7 +661,7 @@ class SignalementManager extends AbstractManager
         if ($signalement->getIsNotOccupant()) {
             $informationComplementaire
                 ->setInformationsComplementairesSituationOccupantsDemandeRelogement(
-                    $situationFoyerRequest->getDemandeRelogement()
+                    $situationFoyerRequest->getIsRelogement()
                 );
         }
         if ($situationFoyerRequest->getRevenuFiscal()) {
