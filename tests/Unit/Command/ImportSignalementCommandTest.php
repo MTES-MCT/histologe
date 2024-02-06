@@ -57,6 +57,9 @@ class ImportSignalementCommandTest extends KernelTestCase
             ->method('getMetaData')
             ->willReturn([
                 'count_signalement' => 1,
+                'partners_not_found' => [],
+                'motif_cloture_not_found' => [],
+                'files_not_found' => [],
             ]);
 
         $csvParser = $this->createMock(CsvParser::class);

@@ -2198,6 +2198,11 @@ class Signalement
         return $this;
     }
 
+    public function __toString(): string
+    {
+        return $this->reference;
+    }
+
     public function hasQualificaton(Qualification $qualification): bool
     {
         /** @var SignalementQualification $signalementQualification */

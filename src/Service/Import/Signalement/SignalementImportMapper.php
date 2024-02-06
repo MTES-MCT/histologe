@@ -134,6 +134,9 @@ class SignalementImportMapper
                 $fieldValue = trim($fieldValue, '"');
                 switch ($fieldColumn) {
                     case 'reference':
+                        if (preg_match('/20\d{2}-\d{4}/', $fieldValue)) {
+                            break;
+                        }
                         $result = preg_split('/[-|\/]/', $fieldValue);
                         if (\count($result) > 1) {
                             list($index, $year) = $result;
@@ -156,12 +159,22 @@ class SignalementImportMapper
                     case 'isLogementSocial':
                     case 'isPreavisDepart':
                     case 'isRelogement':
-                    case 'isNotOccupant':
                     case 'isFondSolidariteLogement':
                     case 'isBailEnCours':
                     case 'isRefusIntervention':
                     case 'isCguAccepted':
                         $fieldValue = 'NSP' !== $data[$fileColumn] ? 'O' === $fieldValue : null;
+                        break;
+                    case 'isNotOccupant':
+                        if ('O' == $fieldValue) {
+                            $fieldValue = false;
+                            break;
+                        }
+                        if ('N' == $fieldValue) {
+                            $fieldValue = true;
+                            break;
+                        }
+                        $fieldValue = null;
                         break;
                     case 'createdAt':
                     case 'modifiedAt':
@@ -190,9 +203,30 @@ class SignalementImportMapper
                         $fieldValue = $this->transformToSignalementStatus($fieldValue);
                         break;
                     case 'motifCloture':
-                        $fieldValue = mb_strtoupper($fieldValue);
-                        // TODO  : faire un mapping ?
-                        $fieldValue = \array_key_exists($fieldValue, MotifCloture::getLabelList()) ? $fieldValue : null;
+                        if (!$fieldValue) {
+                            break;
+                        }
+                        if ('Abandon de procédure' == $fieldValue) {
+                            $fieldValue = 'ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE';
+                            break;
+                        }
+                        if ('Responsabilité de l\'occupant' == $fieldValue) {
+                            $fieldValue = 'RESPONSABILITE_DE_L_OCCUPANT';
+                            break;
+                        }
+                        if ('Logement décent - Pas d\'infraction' == $fieldValue) {
+                            $fieldValue = 'LOGEMENT_DECENT';
+                            break;
+                        }
+                        $listMotifs = MotifCloture::getLabelList();
+                        if (\in_array($fieldValue, $listMotifs)) {
+                            $fieldValue = array_search($fieldValue, $listMotifs);
+                            break;
+                        }
+                        if (isset($listMotifs[mb_strtoupper($fieldValue)])) {
+                            $fieldValue = mb_strtoupper($fieldValue);
+                            break;
+                        }
                         break;
                     case self::SITUATION_SECURITE_OCCUPANT:
                     case self::SITUATION_ETAT_PROPRETE_LOGEMENT:
@@ -209,6 +243,10 @@ class SignalementImportMapper
                         if (9 === \strlen($fieldValue)) {
                             $fieldValue = str_pad($fieldValue, 10, '0', \STR_PAD_LEFT);
                         }
+                        break;
+                    case 'nomDeclarant':
+                    case 'nomOccupant':
+                        $fieldValue = mb_strimwidth($fieldValue, 0, 50);
                         break;
                     default:
                 }
