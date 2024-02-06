@@ -18,6 +18,7 @@ use App\Manager\SuiviManager;
 use App\Manager\TagManager;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
+use App\Service\ImageManipulationHandler;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -164,7 +165,7 @@ class SignalementImportLoader
                 $partnersName = [$dataMapped['partners']];
             }
             foreach ($partnersName as $partnerName) {
-                $partnerNameCleaned = preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $partnerName); // remove non printable chars
+                $partnerNameCleaned = trim(preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $partnerName)); // remove non printable chars
                 $partner = $this->entityManager->getRepository(Partner::class)->findOneBy([
                     'nom' => $partnerNameCleaned,
                     'territory' => $territory,
@@ -297,7 +298,7 @@ class SignalementImportLoader
                 continue;
             }
             $fileType = File::FILE_TYPE_DOCUMENT;
-            if ('image/jpeg' == $this->fileStorage->mimeType($filename)) {
+            if (in_array($this->fileStorage->mimeType($filename), ImageManipulationHandler::IMAGE_MIME_TYPES)) {
                 $fileType = File::FILE_TYPE_PHOTO;
             }
 
