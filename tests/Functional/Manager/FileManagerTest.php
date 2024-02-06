@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Manager;
 
+use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Factory\FileFactory;
@@ -31,5 +32,33 @@ class FileManagerTest extends KernelTestCase
         $this->assertEquals('Blank', $file->getTitle());
         $this->assertEquals('document', $file->getFileType());
         $this->assertEquals($signalement->getReference(), $file->getSignalement()->getReference());
+        $this->assertEquals(DocumentType::AUTRE, $file->getDocumentType());
+    }
+
+    public function testCreatePhotoVisite(): void
+    {
+        $fileFactory = static::getContainer()->get(FileFactory::class);
+        /** @var ManagerRegistry $managerRegistry */
+        $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
+        $fileManager = new FileManager($fileFactory, $managerRegistry);
+
+        $signalementRepository = $managerRegistry->getRepository(Signalement::class);
+
+        $desc = 'une photo de la cave plein de moisissure';
+        $file = $fileManager->createOrUpdate(
+            filename: 'blank.jpg',
+            title: 'Blank',
+            type: File::FILE_TYPE_PHOTO,
+            signalement: $signalement = $signalementRepository->findOneBy(['reference' => '2023-12']),
+            description: $desc,
+            documentType: DocumentType::VISITE
+        );
+
+        $this->assertEquals('blank.jpg', $file->getFilename());
+        $this->assertEquals('Blank', $file->getTitle());
+        $this->assertEquals('photo', $file->getFileType());
+        $this->assertEquals($signalement->getReference(), $file->getSignalement()->getReference());
+        $this->assertEquals($desc, $file->getDescription());
+        $this->assertEquals(DocumentType::VISITE, $file->getDocumentType());
     }
 }

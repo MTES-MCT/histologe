@@ -17,6 +17,8 @@
                     </label>
                     <input type="hidden" name="_token"
                         value="{{ csrf_token('signalement_add_file_'~signalement.id) }}">
+                    <input type="hidden" name="document_type"
+                        value="{{ enum('App\\Entity\\Enum\\DocumentType').AUTRE.name }}">
                 </form>
                 
                 <form method="POST" enctype="multipart/form-data" class="inline-form"
@@ -28,6 +30,8 @@
                     </label>
                     <input type="hidden" name="_token"
                         value="{{ csrf_token('signalement_add_file_'~signalement.id) }}">
+                    <input type="hidden" name="document_type"
+                        value="{{ enum('App\\Entity\\Enum\\DocumentType').VISITE.name }}">
                 </form>
             {% endif %}
         </div>

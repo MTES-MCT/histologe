@@ -20,6 +20,7 @@ class FileFactory
         ?Intervention $intervention = null,
         ?DocumentType $documentType = null,
         ?string $desordreSlug = null,
+        ?string $description = null,
     ): ?File {
         $file = (new File())
             ->setFilename($filename)
@@ -39,10 +40,16 @@ class FileFactory
 
         if (null !== $documentType) {
             $file->setDocumentType($documentType);
+        } else {
+            $file->setDocumentType(DocumentType::AUTRE);
         }
 
         if (null !== $desordreSlug) {
             $file->setDesordreSlug($desordreSlug);
+        }
+
+        if (null !== $description) {
+            $file->setDescription($description);
         }
 
         return $file;
@@ -53,6 +60,7 @@ class FileFactory
      *                    - 'slug' (string): The slug value.
      *                    - 'file' (string): The file path.
      *                    - 'titre' (string): The title of the file.
+     *                    - 'description' (string): The description of the file.
      */
     public function createFromFileArray(
         array $file,
@@ -62,6 +70,7 @@ class FileFactory
     ): ?File {
         $documentType = SignalementDocumentTypeMapper::map($file['slug']);
         $desordreSlug = DocumentType::SITUATION === $documentType ? $file['slug'] : null;
+        $fileDescription = $file['description'] ?? null;
 
         return $this->createInstanceFrom(
             filename: $file['file'],
@@ -73,7 +82,8 @@ class FileFactory
             user: $user,
             intervention: $intervention,
             documentType: SignalementDocumentTypeMapper::map($file['slug']),
-            desordreSlug: $desordreSlug
+            desordreSlug: $desordreSlug,
+            description: $fileDescription,
         );
     }
 }

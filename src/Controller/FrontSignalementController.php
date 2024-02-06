@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Critere;
 use App\Entity\Criticite;
+use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\Qualification;
 use App\Entity\File;
 use App\Entity\Signalement;
@@ -216,6 +217,7 @@ class FrontSignalementController extends AbstractController
                             filename: $filename,
                             title: $titre,
                             type: 'documents' === $key ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO,
+                            documentType: DocumentType::AUTRE
                         );
                         if (null !== $file) {
                             $file->setSize($uploadHandlerService->getFileSize($file->getFilename()));
@@ -579,7 +581,11 @@ class FrontSignalementController extends AbstractController
                     if (isset($data['files'])) {
                         $dataFiles = $data['files'];
                         foreach ($dataFiles as $inputName => $files) {
-                            list($files, $descriptions) = $signalementFileProcessor->process($dataFiles, $inputName);
+                            list($files, $descriptions) = $signalementFileProcessor->process(
+                                $dataFiles,
+                                $inputName,
+                                DocumentType::AUTRE
+                            );
                             $fileList = [...$fileList, ...$files];
                             $descriptionList = [...$descriptionList, ...$descriptions];
                         }
@@ -588,7 +594,7 @@ class FrontSignalementController extends AbstractController
                     if (!empty($descriptionList)) {
                         $description .= '<br>Ajout de pièces au signalement<ul>'
                             .implode('', $descriptionList).'</ul>';
-                        $signalementFileProcessor->addFilesToSignalement($fileList, $signalement);
+                        $signalementFileProcessor->addFilesToSignalement($fileList, $signalement); // TODO
                     }
                 }
 
@@ -605,7 +611,10 @@ class FrontSignalementController extends AbstractController
         }
 
         if (!empty($email)) {
-            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi(), 'from' => $email]);
+            return $this->redirectToRoute(
+                'front_suivi_signalement',
+                ['code' => $signalement->getCodeSuivi(), 'from' => $email]
+            );
         }
 
         return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);

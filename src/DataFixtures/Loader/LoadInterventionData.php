@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures\Loader;
 
+use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProcedureType;
 use App\Entity\File;
@@ -71,7 +72,8 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
                         : File::FILE_TYPE_PHOTO,
                     intervention: $intervention,
                     signalement: $intervention->getSignalement(),
-                    user: $user
+                    user: $user,
+                    documentType: DocumentType::VISITE
                 );
                 $manager->persist($file);
             }
