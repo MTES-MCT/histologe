@@ -40,7 +40,7 @@ class DesordreBatimentSecuriteEscalierTest extends KernelTestCase
             'desordres_batiment_securite_escalier_details_dangereux',
             $precision->getDesordrePrecisionSlug()
         );
-        $this->assertTrue($precision->isIsDanger());
-        $this->assertFalse($precision->isIsSuroccupation());
+        $this->assertTrue($precision->getIsDanger());
+        $this->assertFalse($precision->getIsSuroccupation());
     }
 }

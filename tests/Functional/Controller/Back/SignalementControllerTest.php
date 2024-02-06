@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional\Controller;
+namespace App\Tests\Functional\Controller\Back;
 
 use App\Entity\Signalement;
 use App\Repository\SignalementRepository;
@@ -9,7 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
-class BackSignalementControllerTest extends WebTestCase
+class SignalementControllerTest extends WebTestCase
 {
     protected function setUp(): void
     {
@@ -19,7 +19,7 @@ class BackSignalementControllerTest extends WebTestCase
     /**
      * @dataProvider provideRoutesEdit
      */
-    public function testSignalementEditionSuccessfullyDisplay(string $route, Signalement $signalement)
+    public function testSignalementEditionSuccessfullyDisplay(string $route, Signalement $signalement): void
     {
         $client = static::createClient();
         /** @var UserRepository $userRepository */
@@ -61,7 +61,7 @@ class BackSignalementControllerTest extends WebTestCase
     /**
      * @dataProvider provideRoutes
      */
-    public function testSignalementSuccessfullyDisplay(string $route, Signalement $signalement)
+    public function testSignalementSuccessfullyDisplay(string $route, Signalement $signalement): void
     {
         $client = static::createClient();
         /** @var UserRepository $userRepository */
@@ -99,7 +99,7 @@ class BackSignalementControllerTest extends WebTestCase
         }
     }
 
-    public function testSignalementNDESuccessfullyDisplay()
+    public function testSignalementNDESuccessfullyDisplay(): void
     {
         $client = static::createClient();
         /** @var UserRepository $userRepository */
@@ -125,14 +125,17 @@ class BackSignalementControllerTest extends WebTestCase
         );
     }
 
-    public function testAdminSubmitClotureSignalementWithEmailSentToPartners()
+    public function testAdminSubmitClotureSignalementWithEmailSentToPartners(): void
     {
         $client = static::createClient();
 
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = self::getContainer()->get(SignalementRepository::class);
         /** @var Signalement $signalement */
-        $signalement = $signalementRepository->findOneBy(['reference' => '2022-8', 'statut' => Signalement::STATUS_ACTIVE]);
+        $signalement = $signalementRepository->findOneBy([
+            'reference' => '2022-8',
+            'statut' => Signalement::STATUS_ACTIVE,
+        ]);
 
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
@@ -143,7 +146,7 @@ class BackSignalementControllerTest extends WebTestCase
         $router = self::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
 
-        $crawler = $client->request('GET', $route);
+        $client->request('GET', $route);
         $client->submitForm(
             'Cloturer pour tous les partenaires',
             [
@@ -163,14 +166,17 @@ class BackSignalementControllerTest extends WebTestCase
         $this->assertEmailCount(1);
     }
 
-    public function testAdminTerritorySubmitClotureSignalementWithEmailSentToPartnersAndUsagers()
+    public function testAdminTerritorySubmitClotureSignalementWithEmailSentToPartnersAndUsagers(): void
     {
         $client = static::createClient();
 
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = self::getContainer()->get(SignalementRepository::class);
         /** @var Signalement $signalement */
-        $signalement = $signalementRepository->findOneBy(['reference' => '2022-1', 'statut' => Signalement::STATUS_ACTIVE]);
+        $signalement = $signalementRepository->findOneBy([
+            'reference' => '2022-1',
+            'statut' => Signalement::STATUS_ACTIVE,
+        ]);
 
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
@@ -181,7 +187,7 @@ class BackSignalementControllerTest extends WebTestCase
         $router = self::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
 
-        $crawler = $client->request('GET', $route);
+        $client->request('GET', $route);
         $client->submitForm(
             'Cloturer pour tous les partenaires',
             [
@@ -201,14 +207,17 @@ class BackSignalementControllerTest extends WebTestCase
         $this->assertEmailCount(3);
     }
 
-    public function testAdminPartnerSubmitClotureSignalementWithEmailSentToPartners()
+    public function testAdminPartnerSubmitClotureSignalementWithEmailSentToPartners(): void
     {
         $client = static::createClient();
 
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = self::getContainer()->get(SignalementRepository::class);
         /** @var Signalement $signalement */
-        $signalement = $signalementRepository->findOneBy(['reference' => '2023-26', 'statut' => Signalement::STATUS_ACTIVE]);
+        $signalement = $signalementRepository->findOneBy([
+            'reference' => '2023-26',
+            'statut' => Signalement::STATUS_ACTIVE,
+        ]);
 
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
@@ -219,7 +228,7 @@ class BackSignalementControllerTest extends WebTestCase
         $router = self::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
 
-        $crawler = $client->request('GET', $route);
+        $client->request('GET', $route);
         $client->submitForm(
             'Cloturer pour Partenaire 13-01',
             [
@@ -233,5 +242,45 @@ class BackSignalementControllerTest extends WebTestCase
 
         $client->enableProfiler();
         $this->assertEmailCount(1);
+    }
+
+    public function testUserPartnerSubmitClotureSignalementWithEmailSentToPartners(): void
+    {
+        $client = static::createClient();
+
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy([
+            'reference' => '2022-10',
+            'statut' => Signalement::STATUS_ACTIVE,
+        ]);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = self::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
+        $client->loginUser($user);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+
+        $client->request('GET', $route);
+        $client->submitForm(
+            'Cloturer pour Partenaire 13-02',
+            [
+                'cloture[motif]' => 'RSD',
+                'cloture[suivi]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                'cloture[type]' => 'partner',
+            ]
+        );
+
+        $this->assertResponseRedirects('/bo/signalements/');
+
+        $client->enableProfiler();
+        $this->assertEmailCount(2);
+
+        $this->assertEmailSubjectContains($this->getMailerMessages()[0], 'Nouveau suivi');
+        $this->assertEmailSubjectContains($this->getMailerMessages()[1], 'a terminé son intervention');
     }
 }

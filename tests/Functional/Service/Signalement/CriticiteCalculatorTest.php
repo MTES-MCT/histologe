@@ -37,7 +37,7 @@ class CriticiteCalculatorTest extends KernelTestCase
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-27']);
 
-        $newScore = (new CriticiteCalculator())->calculateFromNewFormulaire($signalement);
+        $newScore = (new CriticiteCalculator())->calculate($signalement);
         $this->assertIsFloat($newScore);
         $this->assertLessThan(101, $newScore);
         $this->assertEquals(34.04, round($newScore, 2));

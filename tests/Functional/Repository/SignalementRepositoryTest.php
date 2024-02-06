@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Repository;
 
+use App\Entity\Enum\Qualification;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
@@ -69,5 +70,35 @@ class SignalementRepositoryTest extends KernelTestCase
         $this->assertEmpty($signalements);
         $signalements = $signalementRepository->findWithNoGeolocalisation();
         $this->assertEmpty($signalements);
+    }
+
+    public function testSignalementHasNDE(): void
+    {
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2023-8']);
+
+        $this->assertTrue($signalement->hasNDE());
+    }
+
+    public function testSignalementHasNotNDE(): void
+    {
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2023-6']);
+
+        $this->assertFalse($signalement->hasNDE());
+    }
+
+    public function testSignalementHasRSD(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2024-01']);
+
+        $this->assertTrue($signalement->hasQualificaton(Qualification::RSD));
+    }
+
+    public function testSignalementHasNotRSD(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2024-02']);
+
+        $this->assertTrue($signalement->hasQualificaton(Qualification::RSD));
     }
 }

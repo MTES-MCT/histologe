@@ -7,7 +7,7 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
-use App\Service\Signalement\QualificationStatusService;
+use App\Service\Signalement\Qualification\QualificationStatusService;
 use DateTimeImmutable;
 
 class SignalementQualificationFactory
@@ -20,13 +20,19 @@ class SignalementQualificationFactory
     public function createInstanceFrom(
         Qualification $qualification,
         QualificationStatus $qualificationStatus,
-        array $listCriticites = [],
+        ?array $listCriticiteIds = null,
+        ?array $listDesordrePrecisionsIds = null,
         bool $isPostVisite = false
     ): SignalementQualification {
         $signalementQualification = new SignalementQualification();
         $signalementQualification->setQualification($qualification);
         $signalementQualification->setStatus($qualificationStatus);
-        $signalementQualification->setCriticites($listCriticites);
+        if (null !== $listCriticiteIds) {
+            $signalementQualification->setCriticites($listCriticiteIds);
+        }
+        if (null !== $listDesordrePrecisionsIds) {
+            $signalementQualification->setDesordrePrecisionIds($listDesordrePrecisionsIds);
+        }
         $signalementQualification->setIsPostVisite($isPostVisite);
 
         return $signalementQualification;
@@ -49,13 +55,18 @@ class SignalementQualificationFactory
         $dataConsoToSave = null;
         $dataDateBailToSave = null;
         if ('Je ne sais pas' !== $dataDateBail) {
-            if ($signalement->getDateEntree()->format('Y') >= 2023) {
-                $signalementQualification->setDernierBailAt($signalement->getDateEntree());
+            if (null !== $signalement->getDateEntree() && $signalement->getDateEntree()->format('Y') >= 2023) {
+                $signalementQualification->setDernierBailAt(new DateTimeImmutable($signalement->getDateEntree()->format('Y-m-d')));
             } elseif (!empty($dataDateBail)) {
                 $signalementQualification->setDernierBailAt(new DateTimeImmutable($dataDateBail));
             }
             $dataDateBailToSave = $signalementQualification->getDernierBailAt()?->format('Y-m-d');
-            if (isset($dataDateDPE) && '1970-01-01' === $dataDateDPE && !empty($dataConsoYear) && !empty($dataConsoSize)) {
+            if (
+                isset($dataDateDPE)
+                && '1970-01-01' === $dataDateDPE
+                && !empty($dataConsoYear)
+                && !empty($dataConsoSize)
+            ) {
                 $dataConsoToSave = $dataConsoYear;
             } elseif (!empty($dataConsoSizeYear)) {
                 $dataConsoToSave = $dataConsoSizeYear;
@@ -64,7 +75,7 @@ class SignalementQualificationFactory
             $dataHasDPEToSave = ('' === $dataHasDPE) ? null : $dataHasDPE;
         }
         $qualificationNDERequest = new QualificationNDERequest(
-            dateEntree: $signalement->getDateEntree()->format('Y-m-d'),
+            dateEntree: $signalement->getDateEntree() ? $signalement->getDateEntree()->format('Y-m-d') : null,
             dateDernierBail: $dataDateBailToSave,
             dateDernierDPE: isset($dataDateDPE) ? $dataDateDPE : null,
             superficie: !empty($dataConsoSize) ? $dataConsoSize : null,
@@ -72,8 +83,15 @@ class SignalementQualificationFactory
             dpe: $dataHasDPEToSave
         );
         $signalementQualification->setDetails($qualificationNDERequest->getDetails());
-        $signalementQualification->setStatus($this->qualificationStatusService->getNDEStatus($signalementQualification));
-        $signalementQualification->setCriticites($listNDECriticites);
+        $signalementQualification->setStatus(
+            $this->qualificationStatusService->getNDEStatus($signalementQualification)
+        );
+
+        if (null == $signalement->getCreatedFrom()) {
+            $signalementQualification->setCriticites($listNDECriticites);
+        } else {
+            $signalementQualification->setDesordrePrecisionIds($listNDECriticites);
+        }
 
         return $signalementQualification;
     }

@@ -5,8 +5,8 @@ namespace App\Command;
 use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
 use App\Entity\JobEvent;
-use App\Factory\Esabora\DossierMessageSISHFactory;
-use App\Messenger\EsaboraBus;
+use App\Factory\Interconnection\Esabora\DossierMessageSISHFactory;
+use App\Messenger\InterconnectionBus;
 use App\Repository\AffectationRepository;
 use App\Repository\JobEventRepository;
 use App\Repository\SignalementRepository;
@@ -35,7 +35,7 @@ class PushFailedEsaboraDossierCommand extends Command
         private readonly SignalementRepository $signalementRepository,
         private readonly EsaboraSISHService $esaboraSISHService,
         private readonly DossierAdresseServiceHandler $dossierAdresseServiceHandler,
-        private readonly EsaboraBus $esaboraBus,
+        private readonly InterconnectionBus $esaboraBus,
     ) {
         parent::__construct();
     }

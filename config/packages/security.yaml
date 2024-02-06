@@ -31,13 +31,6 @@ security:
                 path: app_logout
                 # where to redirect after logout
                 # target: app_any_route
-            login_link:
-                check_route: login_check
-                signature_properties: [id, email]
-                default_target_path: login_creation_pass
-                failure_path: login_activation_fail
-                max_uses: 3
-                lifetime: 7200
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: 2592000 # 30 days in seconds

@@ -31,7 +31,7 @@
                             </div>
                         </div>
                         <form method="POST" name="signalement-edit-nde" id="signalement-edit-nde-form" enctype="application/json"
-                        action="{{ path('back_signalement_qualification_editer',{uuid:signalement.uuid, signalement_qualification:signalementQualificationNDE.id}) }}">
+                        action="{{ path('back_signalement_qualification_editer',{uuid:signalement.uuid, signalementQualification:signalementQualificationNDE.id}) }}">
                             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-my-3w"
                                 id="signalement-edit-nde-form-row">
                                 <div class="fr-col-6">
@@ -77,7 +77,7 @@
                                             </div>
                                             <div class="fr-radio-group">
                                                 <input type="radio" id="signalement-edit-nde-dpe-2" name="dpe" value='null' {% if signalementQualificationNDE.details and signalementQualificationNDE.details.DPE is null %}checked{% endif %}>
-                                                <label class="fr-label" for="signalement-edit-nde-dpe-2">Ne sais pas
+                                                <label class="fr-label" for="signalement-edit-nde-dpe-2">Ne sait pas
                                                 </label>
                                             </div>
                                         </div>

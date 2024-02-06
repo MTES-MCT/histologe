@@ -1399,7 +1399,7 @@
         {
           "type": "SignalementFormRoomList",
           "label": "Dans quelle(s) pièce(s) ?",
-          "slug": "desordres_logement_chauffage_aucun_pieces",
+          "slug": "desordres_logement_chauffage_type_aucun_pieces",
           "customCss": "signalement-form-roomlist-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_chauffage_type === 'aucun' && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
@@ -2021,7 +2021,7 @@
               {
                 "type": "SignalementFormUpload",
                 "label": "Ajoutez le diagnostic plomb / amiante en cliquant sur le bouton ci-dessous",
-                "slug": "desordres_logement_securite_plomb_details_diagnostique_fichier",
+                "slug": "desordres_logement_securite_plomb_details_diagnostique_upload",
                 "description": "",
                 "validate": {
                   "required": false

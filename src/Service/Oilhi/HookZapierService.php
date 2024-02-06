@@ -34,11 +34,18 @@ class HookZapierService
     {
         $payload = $this->normalizer->normalize($dossierMessage);
         $payload['token'] = $this->token;
+        $options = [
+            'headers' => [
+                'Content-Type: application/json',
+            ],
+            'body' => json_encode($payload),
+        ];
+
         try {
             return $this->httpClient->request(
                 'POST',
                 self::ZAPIER_HOOK_URL.'/'.$this->userId.'/'.$this->zapId,
-                $payload
+                $options
             );
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());

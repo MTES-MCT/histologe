@@ -18,6 +18,9 @@ class CriticiteCalculator
 
     public function calculate(Signalement $signalement): float|int
     {
+        if (null !== $signalement->getCreatedFrom()) {
+            return $this->calculateFromNewFormulaire($signalement);
+        }
         $this->scoreBatiment = 0;
         $this->scoreLogement = 0;
         $signalement->getCriticites()->map(function (Criticite $criticite) {
@@ -44,7 +47,7 @@ class CriticiteCalculator
         return $score;
     }
 
-    public function calculateFromNewFormulaire(Signalement $signalement): float|int
+    private function calculateFromNewFormulaire(Signalement $signalement): float|int
     {
         $this->scoreBatiment = 0;
         $this->scoreLogement = 0;

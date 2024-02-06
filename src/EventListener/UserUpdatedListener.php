@@ -6,18 +6,14 @@ use App\Entity\User;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsDoctrineListener(event: Events::onFlush)]
 class UserUpdatedListener
 {
     public function __construct(
-        private ParameterBagInterface $parameterBag,
-        private TokenGeneratorInterface $tokenGenerator,
         private NotificationMailerRegistry $notificationMailerRegistry
     ) {
     }
@@ -37,12 +33,7 @@ class UserUpdatedListener
             $changes = $unitOfWork->getEntityChangeSet($entity);
 
             if ($entity instanceof User && $this->shouldChangePassword($changes)) {
-                $entity->setPassword($this->tokenGenerator->generateToken())
-                ->setToken($this->tokenGenerator->generateToken())
-                ->setTokenExpiredAt(
-                    (new \DateTimeImmutable())->modify($this->parameterBag->get('token_lifetime'))
-                );
-
+                $entity->setPassword('');
                 $this->sendNotification($entity);
             }
         }

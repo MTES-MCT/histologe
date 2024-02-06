@@ -13,8 +13,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class SuiviVisiteFutureReminderToPartnerMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_PARTNER;
+    protected ?string $mailerSubject = '[%s - %s] Rappel : visite programmée';
     protected ?string $mailerButtonText = 'Accéder au signalement';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_future_reminder_to_partner_email';
+    protected ?string $tagHeader = 'Pro Visite Prevue Rappel';
 
     public function __construct(
         protected MailerInterface $mailer,
@@ -39,6 +41,11 @@ class SuiviVisiteFutureReminderToPartnerMailer extends AbstractNotificationMaile
 
     public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
     {
-        $this->mailerSubject = sprintf('#%s Rappel : visite du logement prévue', $notificationMail->getSignalement()->getReference());
+        $signalement = $notificationMail->getSignalement();
+        $this->mailerSubject = sprintf(
+            $this->mailerSubject,
+            $signalement->getReference(),
+            $signalement->getNomOccupantOrDeclarant()
+        );
     }
 }

@@ -33,3 +33,37 @@ interventions:
     user: "user-69-05@histologe.fr"
     partner: "partenaire-05-69@histologe.fr"
     status: 'PLANNED'
+  -
+    signalement: "2024-01"
+    partner: "partenaire-62-01@histologe.fr"
+    user: "user-62-01@histologe.fr"
+    scheduled_at: '2023-07-01 10:00:00'
+    status: 'DONE'
+    documents: [ 'blank-64969c273a28a.jpg' ]
+    details: "<p>dossier envoyé pour manquement sanitaire</p>"
+    conclude_procedure: [ 'RSD']
+    occupant_present: 1
+    proprietaire_present: 0
+  -
+    signalement: "2024-02"
+    partner: "partenaire-62-01@histologe.fr"
+    user: "user-62-01@histologe.fr"
+    scheduled_at: '2023-07-01 10:00:00'
+    status: 'DONE'
+    documents: [ 'blank-64969c273a28a.jpg' ]
+    details: "<p>dossier envoyé pour manquement sanitaire</p>"
+    conclude_procedure: [ 'RSD' ]
+    occupant_present: 1
+    proprietaire_present: 0
+  -
+    signalement: "2024-02"
+    partner: "partenaire-62-01@histologe.fr"
+    user: "user-62-01@histologe.fr"
+    scheduled_at: '+2 days'
+    status: 'PLANNED'
+  -
+    signalement: "2022-6"
+    partner: "partenaire-13-01@histologe.fr"
+    user: "admin-partenaire-13-01@histologe.fr"
+    scheduled_at: '-2 days'
+    status: 'PLANNED'

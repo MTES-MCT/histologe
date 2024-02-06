@@ -47,6 +47,8 @@ class JobEventRepository extends ServiceEntityRepository
             ->groupBy('p.id, p.nom, s.reference, j.action, j.status, j.codeStatus, j.response')
             ->orderBy('last_event', 'DESC');
 
+        $qb->setMaxResults(1000);
+
         return $qb->getQuery()->getArrayResult();
     }
 

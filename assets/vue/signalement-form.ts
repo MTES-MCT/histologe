@@ -3,4 +3,7 @@ import TheSignalementAppForm from './components/signalement-form/TheSignalementA
 // import '@vuepic/vue-datepicker/dist/main.css'
 
 const app = createApp(TheSignalementAppForm)
-app.mount('#app-signalement-form')
+const dashboardComponent = document.getElementById('app-signalement-form')
+if (null !== dashboardComponent) {
+    app.mount('#app-signalement-form')
+}

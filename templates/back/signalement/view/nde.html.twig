@@ -35,9 +35,15 @@
     <div class="fr-grid-row">
         <strong>Désordre(s) concerné(s) :</strong> 
         <ul class="fr-list">
+        {% if createdFromDraft %}
+            {% for desordrePrecision in signalementQualificationNDECriticite %}
+                <li> {{ desordrePrecision.desordreCritere.labelCritere}} : {{desordrePrecision.label|raw}}</li>
+            {% endfor %}
+        {% else %}
             {% for criticite in signalementQualificationNDECriticite %}
                 <li> {{ criticite.critere.label}} - Etat {{criticite.scoreLabel}} : {{criticite.label}}</li>
             {% endfor %}
+        {% endif %}
         </ul>
     </div>
     <div class="fr-grid-row">

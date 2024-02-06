@@ -15,8 +15,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class SignalementClosedToOnePartnerMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_PARTNER;
+    protected ?string $mailerSubject = '[%s - %s] %s a terminé son intervention';
     protected ?string $mailerButtonText = 'Accéder au signalement';
     protected ?string $mailerTemplate = 'closed_to_partner_signalement_email';
+    protected ?string $tagHeader = 'Pro Cloture Partenaire';
 
     public function __construct(
         protected MailerInterface $mailer,
@@ -45,10 +47,12 @@ class SignalementClosedToOnePartnerMailer extends AbstractNotificationMailer
     {
         /** @var User $user */
         $user = $this->security->getUser();
+        $signalement = $notificationMail->getSignalement();
         $this->mailerSubject = sprintf(
-            '%s a terminé son intervention sur #%s',
+            $this->mailerSubject,
+            $signalement->getReference(),
+            $signalement->getNomOccupantOrDeclarant(),
             $user?->getPartner()->getNom(),
-            $notificationMail?->getSignalement()->getReference()
         );
     }
 }

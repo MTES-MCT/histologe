@@ -7,6 +7,7 @@ use App\Entity\Critere;
 use App\Entity\Criticite;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\PartnerType;
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Partner;
@@ -25,7 +26,6 @@ use App\Service\Esabora\Response\DossierPushSISHResponse;
 use App\Service\Esabora\Response\DossierVisiteSISHCollectionResponse;
 use App\Utils\Enum\ExtensionAdresse;
 use Faker\Factory;
-use Faker\Provider\Address;
 
 trait FixturesHelper
 {
@@ -45,7 +45,7 @@ trait FixturesHelper
             );
     }
 
-    public function getSignalement(): Signalement
+    public function getSignalement(?Territory $territory = null): Signalement
     {
         $faker = Factory::create('fr_FR');
 
@@ -57,11 +57,22 @@ trait FixturesHelper
             ->setTelOccupant($faker->phoneNumber())
             ->setAdresseOccupant('25 rue du test')
             ->setEtageOccupant(2)
-            ->setVilleOccupant($faker->city())
-            ->setCpOccupant(Address::postcode())
+            ->setVilleOccupant('Calais')
+            ->setCpOccupant('62100')
             ->setNumAppartOccupant(2)
             ->setNomOccupant($faker->lastName())
             ->setPrenomOccupant($faker->firstName())
+            ->setTelOccupant($faker->phoneNumber())
+            ->setMailOccupant($faker->email())
+            ->setNomProprio($faker->lastName())
+            ->setPrenomProprio($faker->firstName())
+            ->setAdresseProprio('27 rue de la république')
+            ->setCodePostalProprio('13002')
+            ->setVilleProprio('Marseille')
+            ->setTerritory($territory)
+            ->setInseeOccupant('62193')
+            ->setProfileDeclarant(ProfileDeclarant::LOCATAIRE)
+            ->setValidatedAt(new \DateTimeImmutable())
             ->addSuivi($this->getSuiviPartner());
     }
 

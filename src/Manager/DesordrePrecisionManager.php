@@ -22,6 +22,7 @@ class DesordrePrecisionManager extends AbstractManager
      *                    - 'coef' (string): The coef of the DesordrePrecision
      *                    - 'danger' (string): 'Oui' if is_danger.
      *                    - 'suroccupation' (string): 'Oui' if is_suroccupation.
+     *                    - 'insalubrite' (string): 'Oui' if is_insalubrite.
      *                    - 'procedure' (string): The List of Qualification .
      */
     public function createOrUpdate(string $slug, array $data): DesordrePrecision
@@ -40,17 +41,27 @@ class DesordrePrecisionManager extends AbstractManager
         if (isset($data['procedure'])) {
             $procedure = explode(',', $data['procedure']);
             foreach ($procedure as $qualificationLabel) {
-                $qualification[] = Qualification::tryFromLabel($qualificationLabel);
+                if ('' !== trim($qualificationLabel)) {
+                    $qualification[] = Qualification::tryFromLabel(trim($qualificationLabel));
+                }
             }
         }
 
         $desordrePrecision->setLabel($data['label'])
         ->setDesordreCritere($data['desordreCritere'])
         ->setCoef((float) $coef)
-        ->setIsDanger('Oui' === $data['danger'])
-        ->setIsSuroccupation('Oui' === $data['suroccupation'])
         ->setDesordrePrecisionSlug($slug)
         ->setQualification($qualification);
+
+        if (isset($data['danger'])) {
+            $desordrePrecision->setIsDanger('Oui' === $data['danger']);
+        }
+        if (isset($data['suroccupation'])) {
+            $desordrePrecision->setIsSuroccupation('Oui' === $data['suroccupation']);
+        }
+        if (isset($data['insalubrite'])) {
+            $desordrePrecision->setIsInsalubrite('Oui' === $data['insalubrite']);
+        }
 
         $this->save($desordrePrecision);
 

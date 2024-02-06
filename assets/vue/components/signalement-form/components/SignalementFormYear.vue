@@ -1,7 +1,8 @@
 <template>
   <div class="fr-input-group" :id="id">
-    <label :class="[ customCss, 'fr-label' ]" :for="id">{{ label }}</label>
+    <label :class="[ customCss, 'fr-label' ]" :for="id + '_input'">{{ label }}</label>
     <input
+      :id="id + '_input'"
       :name="id"
       :placeholder="placeholder"
       type="number"

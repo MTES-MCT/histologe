@@ -7,7 +7,7 @@ use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
-use App\Service\Signalement\QualificationStatusService;
+use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -57,7 +57,6 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
         ];
 
         $actualData = $this->searchFilterOptionDataProvider->getData();
-
         $this->assertSameSize($expectedData['criteres'], $actualData['criteres']);
         $this->assertSameSize($expectedData['territories'], $actualData['territories']);
         $this->assertSameSize($expectedData['partners'], $actualData['partners']);

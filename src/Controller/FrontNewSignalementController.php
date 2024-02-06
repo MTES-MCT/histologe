@@ -14,28 +14,19 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('/nouveau-formulaire')]
 class FrontNewSignalementController extends AbstractController
 {
-    #[Route('/signalement', name: 'front_nouveau_formulaire')]
+    #[Route('/nouveau-formulaire/signalement', name: 'front_nouveau_formulaire')]
     public function index(ParameterBagInterface $parameterBag): Response
     {
-        if (!$parameterBag->get('feature_new_form')) {
-            return $this->redirectToRoute('front_signalement');
-        }
-
-        return $this->render('front/nouveau_formulaire.html.twig', [
-            'uuid_signalement' => null,
-        ]);
+        return $this->redirectToRoute('front_signalement');
     }
 
-    #[Route('/signalement/{uuid}', name: 'front_nouveau_formulaire_edit')]
+    #[Route('/signalement-draft/{uuid}', name: 'front_nouveau_formulaire_edit', methods: 'GET')]
     public function edit(
         SignalementDraft $signalementDraft,
         ParameterBagInterface $parameterBag
     ): Response {
-        // TODO : sécurité ?
-
         if (!$parameterBag->get('feature_new_form')) {
             return $this->redirectToRoute('front_signalement');
         }
@@ -61,7 +52,7 @@ class FrontNewSignalementController extends AbstractController
         $errors = $validator->validate(
             $signalementDraftRequest,
             null,
-            ['Default', strtoupper($signalementDraftRequest->getProfil())]
+            ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())]
         );
         if (0 === $errors->count()) {
             return $this->json([
@@ -89,12 +80,11 @@ class FrontNewSignalementController extends AbstractController
             SignalementDraftRequest::class,
             'json'
         );
-
-        $errors = $validator->validate(
-            $signalementDraftRequest,
-            null,
-            ['Default', strtoupper($signalementDraftRequest->getProfil())]
-        );
+        $groupValidation = ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())];
+        if ('validation_signalement' === $signalementDraftRequest->getCurrentStep()) {
+            $groupValidation[] = 'PUT_'.strtoupper($signalementDraftRequest->getProfil());
+        }
+        $errors = $validator->validate($signalementDraftRequest, null, $groupValidation);
         if (0 === $errors->count()) {
             $result = $signalementDraftManager->update(
                 $signalementDraft,

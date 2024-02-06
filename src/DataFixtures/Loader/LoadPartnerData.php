@@ -52,7 +52,15 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
         }
 
         if (isset($row['competence'])) {
-            $partner->setCompetence([Qualification::tryFrom($row['competence'])]);
+            $competences = [];
+            if (\is_array($row['competence'])) {
+                foreach ($row['competence'] as $competence) {
+                    $competences[] = Qualification::tryFrom($competence);
+                }
+            } else {
+                $competences[] = Qualification::tryFrom($row['competence']);
+            }
+            $partner->setCompetence($competences);
         }
 
         $manager->persist($partner);

@@ -2,6 +2,7 @@
 
 namespace App\Serializer;
 
+use App\Dto\Request\Signalement\CompositionLogementRequest;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\SignalementDraft;
@@ -37,9 +38,16 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
                 $phone = '+'.$indicatif.$value;
                 $transformedData[$key] = $phone;
             } elseif (preg_match(SignalementDraftRequest::PATTERN_FILE_UPLOAD, $key, $matches)) {
-                $transformedData[SignalementDraftRequest::FILE_UPLOAD_KEY][$key] = $data[$key];
+                if (str_starts_with($key, 'desordres_')) {
+                    $partToDelete = ['_details_photos_upload', '_photos_upload'];
+                    $keyUpdated = str_replace($partToDelete, '', $key);
+                } else {
+                    $keyUpdated = $key;
+                }
+
+                $transformedData[SignalementDraftRequest::FILE_UPLOAD_KEY][$keyUpdated] = $data[$key];
             } else {
-                $transformedData[$key] = $value;
+                $transformedData[$key] = !empty($value) ? $value : null;
             }
         }
 
@@ -73,5 +81,14 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
     public function supportsNormalization(mixed $data, string $format = null, array $context = []): bool
     {
         return $data instanceof SignalementDraft;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            SignalementDraftRequest::class => true,
+            TypeCompositionLogement::class => true,
+            CompositionLogementRequest::class => true,
+        ];
     }
 }

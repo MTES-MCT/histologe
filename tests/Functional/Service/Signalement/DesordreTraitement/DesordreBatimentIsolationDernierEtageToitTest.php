@@ -37,10 +37,10 @@ class DesordreBatimentIsolationDernierEtageToitTest extends KernelTestCase
         /** @var DesordrePrecision $precision */
         $precision = $precisions[0];
         $this->assertEquals(
-            'desordres_batiment_isolation_dernier_etage_toit_sous_toit_oui',
+            'desordres_batiment_isolation_dernier_etage_toit_sous_combles',
             $precision->getDesordrePrecisionSlug()
         );
-        $this->assertFalse($precision->isIsDanger());
-        $this->assertFalse($precision->isIsSuroccupation());
+        $this->assertFalse($precision->getIsDanger());
+        $this->assertFalse($precision->getIsSuroccupation());
     }
 }

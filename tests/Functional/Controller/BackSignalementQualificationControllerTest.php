@@ -36,7 +36,7 @@ class BackSignalementQualificationControllerTest extends WebTestCase
         $router = self::getContainer()->get(RouterInterface::class);
         $route = $router->generate(
             'back_signalement_qualification_editer',
-            ['uuid' => $signalement->getUuid(), 'signalement_qualification' => $signalementQualification->getId()]
+            ['uuid' => $signalement->getUuid(), 'signalementQualification' => $signalementQualification->getId()]
         );
 
         $routeSignalementView = $router->generate(
@@ -101,7 +101,7 @@ class BackSignalementQualificationControllerTest extends WebTestCase
         $router = self::getContainer()->get(RouterInterface::class);
         $route = $router->generate(
             'back_signalement_qualification_editer',
-            ['uuid' => $signalement->getUuid(), 'signalement_qualification' => $signalementQualification->getId()]
+            ['uuid' => $signalement->getUuid(), 'signalementQualification' => $signalementQualification->getId()]
         );
 
         $routeSignalementView = $router->generate(
@@ -167,7 +167,7 @@ class BackSignalementQualificationControllerTest extends WebTestCase
         $router = self::getContainer()->get(RouterInterface::class);
         $route = $router->generate(
             'back_signalement_qualification_editer',
-            ['uuid' => $signalement->getUuid(), 'signalement_qualification' => $signalementQualification->getId()]
+            ['uuid' => $signalement->getUuid(), 'signalementQualification' => $signalementQualification->getId()]
         );
 
         $routeSignalementView = $router->generate(
@@ -234,7 +234,7 @@ class BackSignalementQualificationControllerTest extends WebTestCase
         $router = self::getContainer()->get(RouterInterface::class);
         $route = $router->generate(
             'back_signalement_qualification_editer',
-            ['uuid' => $signalement->getUuid(), 'signalement_qualification' => $signalementQualification->getId()]
+            ['uuid' => $signalement->getUuid(), 'signalementQualification' => $signalementQualification->getId()]
         );
 
         $routeSignalementView = $router->generate(

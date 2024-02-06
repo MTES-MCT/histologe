@@ -4,7 +4,7 @@ namespace App\Tests\Unit\Factory\Esabora;
 
 use App\Entity\Enum\PartnerType;
 use App\Entity\Signalement;
-use App\Factory\Esabora\DossierMessageSCHSFactory;
+use App\Factory\Interconnection\Esabora\DossierMessageSCHSFactory;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\TestCase;

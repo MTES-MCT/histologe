@@ -6,6 +6,7 @@ use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
+use App\Entity\Enum\Qualification;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
@@ -393,10 +394,10 @@ class Signalement
     #[ORM\Column(type: 'information_complementaire', nullable: true)]
     private ?InformationComplementaire $informationComplementaire;
 
-    #[ORM\ManyToMany(targetEntity: DesordreCategorie::class, mappedBy: 'Signalement')]
+    #[ORM\ManyToMany(targetEntity: DesordreCategorie::class, mappedBy: 'signalement')]
     private Collection $desordreCategories;
 
-    #[ORM\ManyToMany(targetEntity: DesordreCritere::class, mappedBy: 'Signalement')]
+    #[ORM\ManyToMany(targetEntity: DesordreCritere::class, mappedBy: 'signalement')]
     private Collection $desordreCriteres;
 
     #[ORM\ManyToMany(targetEntity: DesordrePrecision::class, mappedBy: 'signalement')]
@@ -670,8 +671,12 @@ class Signalement
         return $this->superficie;
     }
 
-    public function setSuperficie(?float $superficie): self
+    public function setSuperficie(?string $superficie): self
     {
+        if (empty($superficie) || !is_numeric($superficie)) {
+            $superficie = null;
+        }
+
         $this->superficie = $superficie;
 
         return $this;
@@ -1379,11 +1384,19 @@ class Signalement
         return $this;
     }
 
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+     * Utilisez @see getProfileDeclarant() afin de connaitre la situation de l'occupant (LOCATAIRE, BAILLEUR_OCCUPANT)
+     */
     public function getSituationOccupant(): ?string
     {
         return $this->situationOccupant;
     }
 
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
+     * Utilisez @see setProfileDeclarant() afin d'affecter la situation de l'occupant (LOCATAIRE, BAILLEUR_OCCUPANT)
+     */
     public function setSituationOccupant(?string $situationOccupant): self
     {
         $this->situationOccupant = $situationOccupant;
@@ -2185,8 +2198,41 @@ class Signalement
         return $this;
     }
 
+
     public function __toString(): string
     {
         return $this->reference;
+    }
+
+    public function hasQualificaton(Qualification $qualification): bool
+    {
+        /** @var SignalementQualification $signalementQualification */
+        foreach ($this->signalementQualifications as $signalementQualification) {
+            if ($signalementQualification->getQualification() === $qualification) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getNomOccupantOrDeclarant(): string
+    {
+        return $this->nomOccupant ?? $this->nomDeclarant;
+    }
+
+    public function hasDesordreCategorie(DesordreCategorie $desordreCategorie): bool
+    {
+        return \in_array($desordreCategorie, $this->desordreCategories->toArray());
+    }
+
+    public function hasDesordreCritere(DesordreCritere $desordreCritere): bool
+    {
+        return \in_array($desordreCritere, $this->desordreCriteres->toArray());
+    }
+
+    public function hasDesordrePrecision(DesordrePrecision $desordrePrecision): bool
+    {
+        return \in_array($desordrePrecision, $this->desordrePrecisions->toArray());
     }
 }

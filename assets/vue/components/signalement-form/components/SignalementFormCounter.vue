@@ -1,10 +1,11 @@
 <template>
     <div class="fr-input-group" :id="id">
-    <label :class="[ customCss, 'fr-label' ]" :for="id" v-html="variablesReplacer.replace(label)"></label>
+    <label :class="[ customCss, 'fr-label' ]" :for="id + '_input'" v-html="variablesReplacer.replace(label)"></label>
     <input
         type="number"
         pattern="[0-9]*"
         inputmode="numeric"
+        :id="id + '_input'"
         :name="id"
         :value="internalValue"
         :class="[ customCss, 'fr-input' ]"

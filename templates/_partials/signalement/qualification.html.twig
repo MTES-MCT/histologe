@@ -2,14 +2,22 @@
     or qualificationStatusLabel is same as 'Mise en sécurité/Péril'
     or qualificationStatusLabel is same as 'Suspicion Insalubrité'
     or qualificationStatusLabel is same as 'Insalubrité'
+    or qualificationStatusLabel is same as 'Suspicion Non décence'
+    or qualificationStatusLabel is same as 'Suspicion Mise en sécurité/Péril'
+    or qualificationStatusLabel is same as 'Suspicion Suroccupation'
+    or qualificationStatusLabel is same as 'Suspicion Assurantiel'
     or qualificationStatusLabel is same as 'Suspicion Manquement à la salubrité'
     or qualificationStatusLabel is same as 'Suspicion Non décence/RSD'
+    or qualificationStatusLabel is same as 'Suspicion RSD'
+    or qualificationStatusLabel is same as 'Non décence énergétique à vérifier'
+    or qualificationStatusLabel is same as 'Non décence énergétique avérée'
     or qualificationStatusLabel is same as 'Non décence'
     or qualificationStatusLabel is same as 'RSD' %}
 
     {% set typeBadge = 'info' %}
     {% if qualificationStatusLabel is same as 'Suspicion Danger occupant'
-        or qualificationStatusLabel is same as 'Mise en sécurité/Péril' %}
+        or qualificationStatusLabel is same as 'Mise en sécurité/Péril' 
+        or qualificationStatusLabel is same as 'Suspicion Mise en sécurité/Péril' %}
         {% set typeBadge = 'error' %}
     {% elseif qualificationStatusLabel is same as 'Suspicion Insalubrité'
         or qualificationStatusLabel is same as 'Insalubrité'
@@ -20,5 +28,5 @@
     {% if inlist %}
         <br>
     {% endif %}
-    <small class="fr-badge {% if inlist %}fr-badge--sm{% endif %} fr-badge--{{ typeBadge }} fr-badge--no-icon fr-mb-1v">{{ qualificationStatusLabel|replace({'Suspicion ': ''}) }}</small>
+    <small class="fr-badge {% if inlist %}fr-badge--sm{% endif %} fr-badge--{{ typeBadge }} fr-badge--no-icon fr-mb-1v">{{ qualificationStatusLabel|replace({'Suspicion ': '', ' à vérifier': '', ' avérée': ''}) }}</small>
 {% endif %}

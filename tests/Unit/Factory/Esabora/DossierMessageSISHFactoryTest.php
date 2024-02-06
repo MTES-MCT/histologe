@@ -3,9 +3,8 @@
 namespace App\Tests\Unit\Factory\Esabora;
 
 use App\Entity\Enum\PartnerType;
-use App\Factory\Esabora\DossierMessageSISHFactory;
+use App\Factory\Interconnection\Esabora\DossierMessageSISHFactory;
 use App\Repository\SuiviRepository;
-use App\Service\DataGouv\AddressService;
 use App\Service\Esabora\AbstractEsaboraService;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
@@ -48,18 +47,11 @@ class DossierMessageSISHFactoryTest extends TestCase
             ->with('back_signalement_view')
             ->willReturn('/bo/signalements/00000000-0000-0000-2022-000000000001');
 
-        $addressService = $this->createMock(AddressService::class);
-        $addressService
-            ->expects($this->once())
-            ->method('getCodeInsee')
-            ->willReturn($signalement->getInseeOccupant());
-
         $dossierMessageFactory = new DossierMessageSISHFactory(
             $suiviRepositoryMock,
             $uploadHandlerServiceMock,
             $parameterBagMock,
             $urlGeneratorMock,
-            $addressService
         );
 
         $signalement->setNumAppartOccupant('à gauche de l\'entrée principale, appart 11');
@@ -71,7 +63,7 @@ class DossierMessageSISHFactoryTest extends TestCase
         $this->assertCount(2, $dossierMessage->getPiecesJointesDocuments());
         $this->assertEquals(PartnerType::ARS->value, $dossierMessage->getPartnerType());
         $this->assertStringContainsString('Etat', $dossierMessage->getSignalementProblemes());
-        $this->assertCount(1, $dossierMessage->getPersonnes());
+        $this->assertCount(2, $dossierMessage->getPersonnes());
         $this->assertEquals('Rue du test', $dossierMessage->getLocalisationAdresse1());
         $this->assertEquals('25', $dossierMessage->getLocalisationNumero());
         $this->assertEquals(5, \strlen($dossierMessage->getLocalisationCodePostal()));

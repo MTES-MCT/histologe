@@ -2,6 +2,7 @@
 
 namespace App\Service\Mailer\Mail\Account;
 
+use App\Manager\UserManager;
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
@@ -9,7 +10,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
 class AccountActivationFoMailer extends AbstractNotificationMailer
 {
@@ -23,15 +23,17 @@ class AccountActivationFoMailer extends AbstractNotificationMailer
         protected ParameterBagInterface $parameterBag,
         protected LoggerInterface $logger,
         protected UrlGeneratorInterface $urlGenerator,
-        private readonly LoginLinkHandlerInterface $loginLinkHandler,
+        private readonly UserManager $userManager,
     ) {
         parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator);
     }
 
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
-        $loginLinkDetails = $this->loginLinkHandler->createLoginLink($notificationMail->getUser());
+        $user = $notificationMail->getUser();
+        $this->userManager->loadUserTokenForUser($user);
+        $link = $this->generateLink('activate_account', ['uuid' => $user->getUuid(), 'token' => $user->getToken()]);
 
-        return ['link' => $loginLinkDetails?->getUrl()];
+        return ['link' => $link];
     }
 }

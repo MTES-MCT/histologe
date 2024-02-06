@@ -8,7 +8,7 @@ use App\Service\Mailer\NotificationMailerType;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\Header\TagHeader;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -19,6 +19,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
     protected ?string $mailerSubject = null;
     protected ?string $mailerButtonText = null;
     protected ?string $mailerTemplate = null;
+    protected ?string $tagHeader = null;
     protected array $mailerParams = [];
 
     public function __construct(
@@ -49,6 +50,10 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         $params = array_merge($params, $notificationMail->getParams(), $this->mailerParams);
         $message = $this->renderMailContentWithParams($params, $territory ?? null);
 
+        if (null !== $this->tagHeader) {
+            $message->getHeaders()->add(new TagHeader($this->tagHeader));
+        }
+
         $territoryName = \Transliterator::create('NFD; [:Nonspacing Mark:] Remove; NFC')
             ->transliterate(
                 (!empty($territory) && null !== $territory->getName())
@@ -57,7 +62,11 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
             );
 
         foreach ($notificationMail->getEmails() as $email) {
-            $email && $message->addTo($email);
+            try {
+                $email && $message->addTo($email);
+            } catch (\Exception $e) {
+                $this->logger->error(sprintf('[%s] %s', $notificationMail->getType()->name, $e->getMessage()));
+            }
         }
 
         $message->from(
@@ -77,7 +86,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
             $this->mailer->send($message);
 
             return true;
-        } catch (TransportExceptionInterface $exception) {
+        } catch (\Exception $exception) {
             $this->logger->error(sprintf('[%s] %s', $notificationMail->getType()->name, $exception->getMessage()));
         }
 

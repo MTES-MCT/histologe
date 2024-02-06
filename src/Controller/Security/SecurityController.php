@@ -20,9 +20,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    /**
-     * @Route("/connexion", name="app_login")
-     */
+    #[Route('/connexion', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         $title = 'Connexion';
@@ -35,14 +33,6 @@ class SecurityController extends AbstractController
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.html.twig', ['title' => $title, 'last_username' => $lastUsername, 'error' => $error]);
-    }
-
-    /**
-     * @Route("/oneclickconnect", name="login_check")
-     */
-    public function check()
-    {
-        throw new LogicException('This code should never be reached');
     }
 
     #[Route('/_up/{filename}/{uuid?}', name: 'show_uploaded_file')]
@@ -82,9 +72,7 @@ class SecurityController extends AbstractController
         );
     }
 
-    /**
-     * @Route("/logout", name="app_logout")
-     */
+    #[Route('/logout', name: 'app_logout')]
     public function logout(): void
     {
         throw new LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');

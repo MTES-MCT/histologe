@@ -3,11 +3,11 @@
 namespace App\Messenger;
 
 use App\Entity\Affectation;
-use App\Factory\Esabora\DossierMessageFactoryInterface;
+use App\Factory\Interconnection\DossierMessageFactoryInterface;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class EsaboraBus
+class InterconnectionBus
 {
     private iterable $dossierMessageFactories;
 
@@ -23,8 +23,7 @@ class EsaboraBus
         /** @var DossierMessageFactoryInterface $dossierMessageFactory */
         foreach ($this->dossierMessageFactories as $dossierMessageFactory) {
             if ($dossierMessageFactory->supports($affectation)) {
-                $dossierMessage = $dossierMessageFactory->createInstance($affectation);
-                $this->messageBus->dispatch($dossierMessage);
+                $this->messageBus->dispatch($dossierMessageFactory->createInstance($affectation));
             }
         }
     }

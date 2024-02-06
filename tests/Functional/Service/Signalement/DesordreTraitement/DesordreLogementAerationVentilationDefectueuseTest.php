@@ -43,7 +43,7 @@ class DesordreLogementAerationVentilationDefectueuseTest extends KernelTestCase
             'desordres_logement_aeration_ventilation_defectueuse_details_pieces_salle_de_bain_nettoyage_oui',
             $precision->getDesordrePrecisionSlug()
         );
-        $this->assertFalse($precision->isIsDanger());
-        $this->assertFalse($precision->isIsSuroccupation());
+        $this->assertFalse($precision->getIsDanger());
+        $this->assertFalse($precision->getIsSuroccupation());
     }
 }

@@ -16,6 +16,7 @@ class SignalementValidationMailer extends AbstractNotificationMailer
     protected ?string $mailerSubject = 'Votre signalement est validé !';
     protected ?string $mailerButtonText = 'Suivre mon signalement';
     protected ?string $mailerTemplate = 'validation_signalement_email';
+    protected ?string $tagHeader = 'Usager Validation Signalement';
 
     public function __construct(
     protected MailerInterface $mailer,

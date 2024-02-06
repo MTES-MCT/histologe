@@ -1,6 +1,13 @@
 .docker
 docker-compose.yml
+docker-compose.tools.yml
 .github
 cypress
 cypress.config.js
 scripts/upload-s3.sh
+.env.sample
+grumphp.yml
+Makefile
+.php-cs-fixer.dist.php
+phpstan.neon
+phpunit.xml.dist

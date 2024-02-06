@@ -197,7 +197,7 @@ class AddUserCommand extends Command
         $user->setPassword($password)->setStatut(User::STATUS_ACTIVE);
 
         /** @var ConstraintViolationList $errors */
-        $errors = $this->validator->validate($user);
+        $errors = $this->validator->validate($user, null, ['Default', 'password']);
 
         if (\count($errors) > 0) {
             $this->io->error((string) $errors);

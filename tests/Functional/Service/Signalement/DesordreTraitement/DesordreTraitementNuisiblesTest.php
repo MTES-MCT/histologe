@@ -40,7 +40,7 @@ class DesordreTraitementNuisiblesTest extends KernelTestCase
             'desordres_logement_nuisibles_cafards_details_date_after_movein',
             $precision->getDesordrePrecisionSlug()
         );
-        $this->assertFalse($precision->isIsDanger());
-        $this->assertFalse($precision->isIsSuroccupation());
+        $this->assertFalse($precision->getIsDanger());
+        $this->assertFalse($precision->getIsSuroccupation());
     }
 }

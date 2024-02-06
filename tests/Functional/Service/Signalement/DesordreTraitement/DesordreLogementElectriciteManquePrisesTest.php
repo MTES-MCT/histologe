@@ -43,7 +43,7 @@ class DesordreLogementElectriciteManquePrisesTest extends KernelTestCase
             'desordres_logement_electricite_manque_prises_details_multiprises_oui',
             $precision->getDesordrePrecisionSlug()
         );
-        $this->assertTrue($precision->isIsDanger());
-        $this->assertFalse($precision->isIsSuroccupation());
+        $this->assertTrue($precision->getIsDanger());
+        $this->assertFalse($precision->getIsSuroccupation());
     }
 }

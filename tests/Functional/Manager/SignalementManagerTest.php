@@ -2,7 +2,9 @@
 
 namespace App\Tests\Functional\Manager;
 
+use App\Dto\Request\Signalement\CompositionLogementRequest;
 use App\Entity\Affectation;
+use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Signalement;
 use App\Entity\Territory;
@@ -10,8 +12,14 @@ use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementFactory;
 use App\Manager\SignalementManager;
-use App\Service\Signalement\QualificationStatusService;
+use App\Repository\DesordreCritereRepository;
+use App\Repository\DesordrePrecisionRepository;
+use App\Service\Signalement\CriticiteCalculator;
+use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
+use App\Service\Signalement\Qualification\QualificationStatusService;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\SignalementInputValueMapper;
+use App\Specification\Signalement\SuroccupationSpecification;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
@@ -20,6 +28,8 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SignalementManagerTest extends KernelTestCase
 {
@@ -37,6 +47,12 @@ class SignalementManagerTest extends KernelTestCase
     private SignalementManager $signalementManager;
     private CsrfTokenManagerInterface $csrfTokenManager;
     private SignalementInputValueMapper $signalementInputValueMapper;
+    private SuroccupationSpecification $suroccupationSpecification;
+    private CriticiteCalculator $criticiteCalculator;
+    private SignalementQualificationUpdater $signalementQualificationUpdater;
+    private DesordrePrecisionRepository $desordrePrecisionRepository;
+    private DesordreCritereRepository $desordreCritereRepository;
+    private DesordreCompositionLogementLoader $desordreCompositionLogementLoader;
 
     protected function setUp(): void
     {
@@ -55,6 +71,12 @@ class SignalementManagerTest extends KernelTestCase
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
         $this->csrfTokenManager = static::getContainer()->get(CsrfTokenManagerInterface::class);
         $this->signalementInputValueMapper = static::getContainer()->get(SignalementInputValueMapper::class);
+        $this->suroccupationSpecification = static::getContainer()->get(SuroccupationSpecification::class);
+        $this->criticiteCalculator = static::getContainer()->get(CriticiteCalculator::class);
+        $this->signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
+        $this->desordrePrecisionRepository = static::getContainer()->get(DesordrePrecisionRepository::class);
+        $this->desordreCritereRepository = static::getContainer()->get(DesordreCritereRepository::class);
+        $this->desordreCompositionLogementLoader = static::getContainer()->get(DesordreCompositionLogementLoader::class);
 
         $this->signalementManager = new SignalementManager(
             $this->managerRegistry,
@@ -67,6 +89,12 @@ class SignalementManagerTest extends KernelTestCase
             $this->parameterBag,
             $this->csrfTokenManager,
             $this->signalementInputValueMapper,
+            $this->suroccupationSpecification,
+            $this->criticiteCalculator,
+            $this->signalementQualificationUpdater,
+            $this->desordrePrecisionRepository,
+            $this->desordreCritereRepository,
+            $this->desordreCompositionLogementLoader,
         );
     }
 
@@ -177,6 +205,87 @@ class SignalementManagerTest extends KernelTestCase
             $signalementImported?->getModifiedAt()?->getTimestamp(),
             $signalement?->getModifiedAt()?->getTimestamp()
         );
+    }
+
+    public function testUpdateFromEmptyCompositionLogementRequest(): void
+    {
+        $signalement = $this->signalementManager->findOneBy(['reference' => '2023-8']);
+        $emptyCompositionLogementRequest = new CompositionLogementRequest(
+            type: '',
+            typeLogementNatureAutrePrecision: '',
+            typeCompositionLogement: '',
+            superficie: '',
+            compositionLogementHauteur: '',
+            compositionLogementNbPieces: '',
+            nombreEtages: '',
+            typeLogementRdc: '',
+            typeLogementDernierEtage: '',
+            typeLogementSousCombleSansFenetre: '',
+            typeLogementSousSolSansFenetre: '',
+            typeLogementCommoditesPieceAVivre9m: '',
+            typeLogementCommoditesCuisine: '',
+            typeLogementCommoditesCuisineCollective: '',
+            typeLogementCommoditesSalleDeBain: '',
+            typeLogementCommoditesSalleDeBainCollective: '',
+            typeLogementCommoditesWc: '',
+            typeLogementCommoditesWcCollective: '',
+            typeLogementCommoditesWcCuisine: '',
+        );
+
+        $this->signalementManager->updateFromCompositionLogementRequest(
+            $signalement,
+            $emptyCompositionLogementRequest,
+        );
+        $this->assertNull($signalement->getSuperficie());
+
+        $emptyCompositionLogementRequest = new CompositionLogementRequest();
+        $this->signalementManager->updateFromCompositionLogementRequest(
+            $signalement,
+            $emptyCompositionLogementRequest,
+        );
+        $this->assertNull($signalement->getSuperficie());
+
+        $emptyCompositionLogementRequest = new CompositionLogementRequest(
+            superficie: 'neuf',
+        );
+        $this->signalementManager->updateFromCompositionLogementRequest(
+            $signalement,
+            $emptyCompositionLogementRequest,
+        );
+        $this->assertNull($signalement->getSuperficie());
+
+        $emptyCompositionLogementRequest = new CompositionLogementRequest(
+            superficie: '9.9',
+        );
+        $this->signalementManager->updateFromCompositionLogementRequest(
+            $signalement,
+            $emptyCompositionLogementRequest,
+        );
+        $this->assertEquals($signalement->getSuperficie(), 9.9);
+
+        /** @var ValidatorInterface $validator */
+        $validator = static::getContainer()->get(ValidatorInterface::class);
+        $errors = $validator->validate($emptyCompositionLogementRequest, null, ['Default', 'LOCATAIRE']);
+        $this->assertCount(8, $errors);
+        /** @var ConstraintViolationList $errors */
+        $errorsAsString = (string) $errors;
+        $this->assertStringContainsString('Merci de définir le nombre de pièces à vivre', $errorsAsString);
+    }
+
+    public function testGetPhotosBySlug(): void
+    {
+        $signalement = $this->signalementManager->findOneBy(['reference' => '2023-27']);
+
+        $desordrePrecisionSlug = 'desordres_batiment_proprete_interieur';
+        $photos = $this->signalementManager->getPhotosBySlug($signalement, $desordrePrecisionSlug);
+        $this->assertCount(1, $photos);
+        $firstKey = array_keys($photos)[0];
+        $this->assertEquals(DocumentType::SITUATION, $photos[$firstKey]->getDocumentType());
+        $this->assertEquals('Capture-d-ecran-du-2023-06-13-12-58-43-648b2a6b9730f.png', $photos[$firstKey]->getTitle());
+
+        $desordrePrecisionSlug = 'desordres_batiment_isolation_murs';
+        $photos = $this->signalementManager->getPhotosBySlug($signalement, $desordrePrecisionSlug);
+        $this->assertCount(0, $photos);
     }
 
     private function getSignalementData(string $reference = null): array

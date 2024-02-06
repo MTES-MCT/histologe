@@ -3,6 +3,7 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\Criticite;
+use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\ProfileDeclarant;
@@ -88,12 +89,10 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setNbEnfantsM6($row['nb_enfants_m6'])
             ->setNbEnfantsP6($row['nb_enfants_p6'])
             ->setMailOccupant($faker->email())
-            ->setEtageOccupant($row['etage_occupant'])
             ->setNumAppartOccupant($faker->randomNumber(3))
             ->setNatureLogement($row['nature_logement'])
-            ->setTypeLogement($row['type_logement'])
+            ->setTypeLogement($row['type_logement'] ?? null)
             ->setSuperficie($row['superficie'])
-            ->setLoyer($row['loyer'])
             ->setDetails($row['details'])
             ->setIsProprioAverti($row['is_proprio_averti'])
             ->setModeContactProprio(json_decode($row['mode_contact_proprio'], true))
@@ -116,9 +115,9 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setIsRsa(false)
             ->setCodeSuivi($row['code_suivi'] ?? $faker->uuid())
             ->setUuid($row['uuid'])
-            ->setSituationOccupant($row['situation_occupant'])
+            ->setSituationOccupant($row['situation_occupant'] ?? null)
             ->setValidatedAt(Signalement::STATUS_ACTIVE === $row['statut'] ? new \DateTimeImmutable() : null)
-            ->setOrigineSignalement($row['origine_signalement'])
+            ->setOrigineSignalement($row['origine_signalement'] ?? null)
             ->setCreatedAt(
                 isset($row['created_at'])
                     ? new \DateTimeImmutable($row['created_at'])
@@ -196,26 +195,11 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
         if (isset($row['qualifications'])) {
             foreach ($row['qualifications'] as $qualificationLabel) {
-                $signalementQualification = (new SignalementQualification())
-                ->setSignalement($signalement)
-                ->setQualification(Qualification::from($qualificationLabel))
-                ->setDernierBailAt(
-                    isset($row['date_entree'])
-                        ? new \DateTimeImmutable($row['date_entree'])
-                        : new \DateTimeImmutable()
-                )
-                ->setCriticites($signalement->getCriticites()->map(function (Criticite $criticite) {
-                    return $criticite->getId();
-                })->toArray());
-                if (Qualification::NON_DECENCE_ENERGETIQUE->name == $qualificationLabel) {
-                    $qualificationDetails = [];
-                    $qualificationDetails['consommation_energie'] = $faker->numberBetween(450, 700);
-                    $qualificationDetails['DPE'] = 1;
-                    $qualificationDetails['date_dernier_dpe'] = $faker->dateTimeThisYear()->format('Y-m-d');
-                    $signalementQualification
-                    ->setStatus(QualificationStatus::NDE_AVEREE)
-                    ->setDetails($qualificationDetails);
-                }
+                $signalementQualification = $this->buildSignalementQualification(
+                    $signalement,
+                    $row,
+                    $qualificationLabel
+                );
 
                 $manager->persist($signalementQualification);
 
@@ -348,12 +332,22 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setIsUsagerAbandonProcedure(0)
             ->setNbPiecesLogement($row['nb_pieces_logement']);
 
-        $signalement->setCreatedFrom($this->signalementDraftRepository->findOneBy(['uuid' => $row['created_from_uuid']]));
+        $signalement->setCreatedFrom(
+            $this->signalementDraftRepository->findOneBy(['uuid' => $row['created_from_uuid']])
+        );
         $signalement->setProfileDeclarant(ProfileDeclarant::tryFrom($row['profile_declarant']))
-        ->setTypeCompositionLogement(TypeCompositionLogementFactory::createFromArray(json_decode($row['type_composition_logement'], true)))
-        ->setSituationFoyer(SituationFoyerFactory::createFromArray(json_decode($row['situation_foyer'], true)))
-        ->setInformationProcedure(InformationProcedureFactory::createFromArray(json_decode($row['information_procedure'], true)))
-        ->setInformationComplementaire(InformationComplementaireFactory::createFromArray(json_decode($row['information_complementaire'], true)));
+            ->setTypeCompositionLogement(
+                TypeCompositionLogementFactory::createFromArray(json_decode($row['type_composition_logement'], true))
+            )
+            ->setSituationFoyer(
+                SituationFoyerFactory::createFromArray(json_decode($row['situation_foyer'], true))
+            )
+            ->setInformationProcedure(
+                InformationProcedureFactory::createFromArray(json_decode($row['information_procedure'], true))
+            )
+            ->setInformationComplementaire(
+                InformationComplementaireFactory::createFromArray(json_decode($row['information_complementaire'], true))
+            );
 
         if (isset($row['is_not_occupant'])) {
             $signalement
@@ -414,7 +408,73 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             }
         }
 
+        if (isset($row['qualifications'])) {
+            foreach ($row['qualifications'] as $qualificationLabel) {
+                $signalementQualification = $this->buildSignalementQualification(
+                    $signalement,
+                    $row,
+                    $qualificationLabel
+                );
+
+                $manager->persist($signalementQualification);
+
+                $signalement->addSignalementQualification($signalementQualification);
+            }
+        }
+        if (isset($row['desordre_photos'])) {
+            foreach ($row['desordre_photos'] as $document) {
+                $file = $this->fileFactory->createInstanceFrom(
+                    filename: $document['file'],
+                    title: $document['titre'],
+                    type: File::FILE_TYPE_PHOTO,
+                    signalement: $signalement,
+                    // user: $user,
+                    documentType: DocumentType::SITUATION,
+                    desordreSlug: $document['slug']
+                );
+                $manager->persist($file);
+            }
+        }
+
         $manager->persist($signalement);
+    }
+
+    private function buildSignalementQualification(
+        Signalement $signalement,
+        array $row,
+        string $qualificationLabel
+    ): SignalementQualification {
+        $faker = Factory::create();
+        $signalementQualification = (new SignalementQualification())
+            ->setSignalement($signalement)
+            ->setQualification(Qualification::from($qualificationLabel))
+            ->setDernierBailAt(
+                isset($row['date_entree'])
+                    ? new \DateTimeImmutable($row['date_entree'])
+                    : new \DateTimeImmutable()
+            )
+            ->setCriticites($signalement->getCriticites()->map(function (Criticite $criticite) {
+                return $criticite->getId();
+            })->toArray());
+        if (Qualification::NON_DECENCE_ENERGETIQUE->name == $qualificationLabel) {
+            $qualificationDetails = [];
+            $qualificationDetails['consommation_energie'] = $faker->numberBetween(450, 700);
+            $qualificationDetails['DPE'] = 1;
+            $qualificationDetails['date_dernier_dpe'] = $faker->dateTimeThisYear()->format('Y-m-d');
+            $signalementQualification
+                ->setStatus(QualificationStatus::NDE_AVEREE)
+                ->setDetails($qualificationDetails);
+        }
+
+        if (Qualification::RSD->name === $qualificationLabel) {
+            $signalementQualification->setStatus(QualificationStatus::RSD_CHECK);
+        }
+
+        if (Qualification::NON_DECENCE->name === $qualificationLabel) {
+            $signalementQualification->setStatus(QualificationStatus::NON_DECENCE_CHECK);
+        }
+
+        return $signalementQualification;
     }
 
     public function getOrder(): int

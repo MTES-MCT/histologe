@@ -3,14 +3,11 @@
 namespace App\Controller\Back;
 
 use App\Entity\Affectation;
-use App\Entity\Critere;
-use App\Entity\Criticite;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
-use App\Entity\Situation;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementClosedEvent;
@@ -21,6 +18,7 @@ use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Repository\AffectationRepository;
 use App\Repository\CriticiteRepository;
+use App\Repository\DesordrePrecisionRepository;
 use App\Repository\InterventionRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Repository\SituationRepository;
@@ -29,6 +27,7 @@ use App\Security\Voter\UserVoter;
 use App\Service\FormHelper;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
+use App\Service\Signalement\SignalementDesordresProcessor;
 use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -54,6 +53,8 @@ class SignalementController extends AbstractController
         CriticiteRepository $criticiteRepository,
         AffectationRepository $affectationRepository,
         InterventionRepository $interventionRepository,
+        DesordrePrecisionRepository $desordrePrecisionsRepository,
+        SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -119,32 +120,39 @@ class SignalementController extends AbstractController
 
             return $this->redirectToRoute('back_index');
         }
-        $isDanger = false;
-        $criticitesArranged = [];
-        foreach ($signalement->getCriticites() as $criticite) {
-            $criticitesArranged[$criticite->getCritere()->getSituation()->getLabel()][$criticite->getCritere()->getLabel()] = $criticite;
-            if ($criticite->getIsDanger()) {
-                $isDanger = true;
-            }
-            // TODO : quand prise en compte des désordres du nouveau formulaire, il y aura le isSuroccupation à afficher aussi comme isDanger
-        }
+        $infoDesordres = $signalementDesordresProcessor->process($signalement);
 
         $canEditSignalement = false;
-        if (Signalement::STATUS_ACTIVE === $signalement->getStatut() || Signalement::STATUS_NEED_PARTNER_RESPONSE === $signalement->getStatut()) {
-            $canEditSignalement = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY') || $isAccepted;
+        if (
+            Signalement::STATUS_ACTIVE === $signalement->getStatut()
+            || Signalement::STATUS_NEED_PARTNER_RESPONSE === $signalement->getStatut()
+        ) {
+            $canEditSignalement = $this->isGranted('ROLE_ADMIN')
+                || $this->isGranted('ROLE_ADMIN_TERRITORY')
+                || $isAccepted;
         }
-        $canExportSignalement = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY') || $isAffected;
-
-        $experimentationTerritories = $parameterBag->get('experimentation_territory');
-        $isExperimentationTerritory = \array_key_exists($signalement->getTerritory()->getZip(), $experimentationTerritories);
+        $canExportSignalement = $this->isGranted('ROLE_ADMIN')
+            || $this->isGranted('ROLE_ADMIN_TERRITORY')
+            || $isAffected;
 
         $signalementQualificationNDE = $signalementQualificationRepository->findOneBy([
             'signalement' => $signalement,
             'qualification' => Qualification::NON_DECENCE_ENERGETIQUE, ]);
         $isSignalementNDEActif = $this->isSignalementNDEActif($signalementQualificationNDE);
-        $signalementQualificationNDECriticites = $signalementQualificationNDE ? $criticiteRepository->findBy(['id' => $signalementQualificationNDE->getCriticites()]) : null;
 
-        $partners = $signalementManager->findAllPartners($signalement, $isExperimentationTerritory && $isSignalementNDEActif);
+        if (null == $signalement->getCreatedFrom()) {
+            $signalementQualificationNDECriticites = $signalementQualificationNDE
+                ? $criticiteRepository->findBy(['id' => $signalementQualificationNDE->getCriticites()])
+                : null;
+        } else {
+            $signalementQualificationNDECriticites = $signalementQualificationNDE
+                ? $desordrePrecisionsRepository->findBy(
+                    ['id' => $signalementQualificationNDE->getDesordrePrecisionIds()]
+                )
+                : null;
+        }
+
+        $partners = $signalementManager->findAllPartners($signalement, true);
 
         $files = $parameterBag->get('files');
 
@@ -154,10 +162,8 @@ class SignalementController extends AbstractController
         $listQualificationStatusesLabelsCheck = [];
         if (null !== $signalement->getSignalementQualifications()) {
             foreach ($signalement->getSignalementQualifications() as $qualification) {
-                if (Qualification::NON_DECENCE_ENERGETIQUE->name !== $qualification->getQualification()->name) {
-                    if (!$qualification->isPostVisite()) {
-                        $listQualificationStatusesLabelsCheck[] = $qualification->getStatus()->label();
-                    }
+                if (!$qualification->isPostVisite()) {
+                    $listQualificationStatusesLabelsCheck[] = $qualification->getStatus()->label();
                 }
             }
         }
@@ -166,7 +172,10 @@ class SignalementController extends AbstractController
         if (null !== $signalement->getInterventions()) {
             foreach ($signalement->getInterventions() as $intervention) {
                 if (Intervention::STATUS_DONE == $intervention->getStatus()) {
-                    $listConcludeProcedures = array_merge($listConcludeProcedures, $intervention->getConcludeProcedure());
+                    $listConcludeProcedures = array_merge(
+                        $listConcludeProcedures,
+                        $intervention->getConcludeProcedure()
+                    );
                 }
             }
         }
@@ -174,10 +183,13 @@ class SignalementController extends AbstractController
             return $concludeProcedure->label();
         }, $listConcludeProcedures));
 
+        $partnerVisite = $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement);
+
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
             'createdFromDraft' => $signalement->getCreatedFrom(),
-            'situations' => $criticitesArranged,
+            'situations' => $infoDesordres['criticitesArranged'],
+            'photos' => $infoDesordres['photos'],
             'needValidation' => Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut(),
             'canEditSignalement' => $canEditSignalement,
             'canExportSignalement' => $canExportSignalement,
@@ -186,19 +198,18 @@ class SignalementController extends AbstractController
             'isClosed' => Signalement::STATUS_CLOSED === $signalement->getStatut(),
             'isClosedForMe' => $isClosedForMe,
             'isRefused' => $isRefused,
-            'isDanger' => $isDanger,
+            'isDanger' => $infoDesordres['isDanger'],
             'signalement' => $signalement,
             'partners' => $partners,
             'clotureForm' => $clotureForm->createView(),
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
-            'isExperimentationTerritory' => $isExperimentationTerritory,
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
             'files' => $files,
             'canEditNDE' => $canEditNDE,
             'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
             'listConcludeProcedures' => $listConcludeProcedures,
-            'partnersCanVisite' => $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement),
+            'partnersCanVisite' => $partnerVisite,
             'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
             'isNewFormEnabled' => $parameterBag->get('feature_new_form'),
         ]);
@@ -242,28 +253,7 @@ class SignalementController extends AbstractController
                 $signalement->setModifiedBy($this->getUser());
                 $signalement->setModifiedAt(new DateTimeImmutable());
                 $signalement->setScore($criticiteCalculator->calculate($signalement));
-                $data = [];
-                if (\array_key_exists('situation', $form->getExtraData())) {
-                    $data['situation'] = $form->getExtraData()['situation'];
-                }
-                if (isset($data['situation'])) {
-                    foreach ($data['situation'] as $idSituation => $criteres) {
-                        $situation = $doctrine->getManager()->getRepository(Situation::class)->find($idSituation);
-                        $signalement->addSituation($situation);
-                        $data['situation'][$idSituation]['label'] = $situation->getLabel();
-                        foreach ($criteres as $critere) {
-                            foreach ($critere as $idCritere => $criticites) {
-                                $critere = $doctrine->getManager()->getRepository(Critere::class)->find($idCritere);
-                                $signalement->addCritere($critere);
-                                $data['situation'][$idSituation]['critere'][$idCritere]['label'] = $critere->getLabel();
-                                $criticite = $doctrine->getManager()->getRepository(Criticite::class)->find($data['situation'][$idSituation]['critere'][$idCritere]['criticite']);
-                                $signalement->addCriticite($criticite);
-                                $data['situation'][$idSituation]['critere'][$idCritere]['criticite'] = [$criticite->getId() => ['label' => $criticite->getLabel(), 'score' => $criticite->getScore()]];
-                            }
-                        }
-                    }
-                }
-                !empty($data['situation']) && $signalement->setJsonContent($data['situation']);
+
                 $signalementQualificationUpdater->updateQualificationFromScore($signalement);
                 $suivi = new Suivi();
                 $suivi->setCreatedBy($this->getUser());

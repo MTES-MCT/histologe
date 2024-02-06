@@ -16,10 +16,10 @@
     </div>
 </div>
 
-<div class="fr-container--fluid text-word-break-all">
+<div class="bloc-list fr-container--fluid text-word-break-all">
     <div class="fr-grid-row fr-grid-row--gutters">
         {% if signalement.isNotOccupant %}
-            {% if isNewFormEnabled %}
+            {% if isNewFormEnabled and canEditSignalement %}
             {% include 'back/signalement/view/edit-modals/edit-coordonnees-tiers.html.twig' %}
             {% endif %}
         <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
@@ -29,7 +29,7 @@
                         <h4 class="fr-h6">Coordonnées du tiers déclarant</h4>
                     </div>
                     <div class="fr-col-12 fr-col-md-3 fr-text--right">
-                        {% if isNewFormEnabled %}
+                        {% if isNewFormEnabled and canEditSignalement %}
                         <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-coordonnees-tiers" class="fr-btn--icon-left fr-icon-edit-line">Modifier</a>
                         {% endif %}
                     </div>
@@ -73,7 +73,7 @@
         {% endif %}
 
         <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
-            {% if isNewFormEnabled %}
+            {% if isNewFormEnabled and canEditSignalement %}
                 {% include 'back/signalement/view/edit-modals/edit-coordonnees-foyer.html.twig' %}
             {% endif %}
             <div class="fr-p-3v fr-background-alt--grey">
@@ -82,7 +82,7 @@
                         <h4 class="fr-h6">Coordonnées du foyer</h4>
                     </div>
                     <div class="fr-col-12 fr-col-md-3 fr-text--right">
-                        {% if isNewFormEnabled %}
+                        {% if isNewFormEnabled and canEditSignalement %}
                         <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-coordonnees-foyer" class="fr-btn--icon-left fr-icon-edit-line">Modifier</a>
                         {% endif %}
                     </div>
@@ -129,7 +129,7 @@
         {% if not signalement.profileDeclarant or (signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT 
         and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR) %}
            <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
-                {% if isNewFormEnabled %}
+                {% if isNewFormEnabled and canEditSignalement %}
                     {% include 'back/signalement/view/edit-modals/edit-coordonnees-bailleur.html.twig' %}
                 {% endif %}
                 <div class="fr-p-3v fr-background-alt--grey">
@@ -138,7 +138,7 @@
                             <h4 class="fr-h6">Informations sur le bailleur</h4>
                         </div>
                         <div class="fr-col-12 fr-col-md-3 fr-text--right">
-                            {% if isNewFormEnabled %}
+                            {% if isNewFormEnabled and canEditSignalement %}
                             <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-coordonnees-bailleur" class="fr-btn--icon-left fr-icon-edit-line">Modifier</a>
                             {% endif %}
                         </div>
@@ -225,7 +225,7 @@
         {% endif %}
 
         <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
-            {% if isNewFormEnabled %}
+            {% if isNewFormEnabled and canEditSignalement %}
             {% include 'back/signalement/view/edit-modals/edit-informations-logement.html.twig' %}
             {% endif %}
             <div class="fr-p-3v fr-background-alt--grey">
@@ -234,18 +234,10 @@
                         <h4 class="fr-h6">Informations sur le logement</h4>
                     </div>
                     <div class="fr-col-12 fr-col-md-3 fr-text--right">
-                        {% if isNewFormEnabled %}
+                        {% if isNewFormEnabled and canEditSignalement %}
                         <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-informations-logement" class="fr-btn--icon-left fr-icon-edit-line">Modifier</a>
                         {% endif %}
                     </div>
-                    <div class="fr-col-12 fr-col-md-6">
-                        <strong>Type :</strong> {{ signalement.natureLogement|capitalize }}
-                    </div>
-                    {% if signalement.natureLogement|capitalize is same as 'Autre' and signalement.typeCompositionLogement %}
-                        <div class="fr-col-12">
-                            <strong>Précisions :</strong> {{ signalement.typeCompositionLogement.typeLogementNatureAutrePrecision }}
-                        </div>
-                    {% endif %}
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Nb. personnes :</strong>
                         {% if signalement.typeCompositionLogement %}
@@ -291,7 +283,7 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Date d'effet du bail :</strong>
                         {% if signalement.informationComplementaire %}
-                            {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail ?? 'N/C' }}
+                            {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail ? signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail|date("d/m/Y") : 'N/C' }}
                         {% else %}
                             N/C
                         {% endif %}
@@ -368,7 +360,7 @@
         </div>
 
         <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
-            {% if isNewFormEnabled %}
+            {% if isNewFormEnabled and canEditSignalement %}
             {% include 'back/signalement/view/edit-modals/edit-composition-logement.html.twig' %}
             {% endif %}
             <div class="fr-p-3v fr-background-alt--grey">
@@ -377,10 +369,18 @@
                         <h4 class="fr-h6">Composition du logement</h4>
                     </div>
                     <div class="fr-col-12 fr-col-md-3 fr-text--right">
-                        {% if isNewFormEnabled %}
+                        {% if isNewFormEnabled and canEditSignalement %}
                         <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-composition-logement" class="fr-btn--icon-left fr-icon-edit-line">Modifier</a>
                         {% endif %}
                     </div>
+                    <div class="fr-col-12 fr-col-md-6">
+                        <strong>Type :</strong> {{ signalement.natureLogement|capitalize }}
+                    </div>
+                    {% if signalement.natureLogement|capitalize is same as 'Autre' and signalement.typeCompositionLogement %}
+                        <div class="fr-col-12">
+                            <strong>Précisions :</strong> {{ signalement.typeCompositionLogement.typeLogementNatureAutrePrecision }}
+                        </div>
+                    {% endif %}
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Logement :</strong>
                         {% if signalement.typeCompositionLogement %}
@@ -548,7 +548,7 @@
         </div>
 
         <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
-            {% if isNewFormEnabled %}
+            {% if isNewFormEnabled and canEditSignalement %}
             {% include 'back/signalement/view/edit-modals/edit-situation-foyer.html.twig' %}
             {% endif %}
             <div class="fr-p-3v fr-background-alt--grey">
@@ -557,7 +557,7 @@
                         <h4 class="fr-h6">Situation du foyer</h4>
                     </div>
                     <div class="fr-col-12 fr-col-md-3 fr-text--right">
-                        {% if isNewFormEnabled %}
+                        {% if isNewFormEnabled and canEditSignalement %}
                         <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-situation-foyer" class="fr-btn--icon-left fr-icon-edit-line">Modifier</a>
                         {% endif %}
                     </div>
@@ -684,7 +684,7 @@
         </div>
 
         <div class="fr-col-12 fr-col-md-6 fr-mb-1v fr-lh-2">
-            {% if isNewFormEnabled %}
+            {% if isNewFormEnabled and canEditSignalement %}
             {% include 'back/signalement/view/edit-modals/edit-procedure-demarches.html.twig' %}
             {% endif %}
             <div class="fr-p-3v fr-background-alt--grey">
@@ -693,7 +693,7 @@
                         <h4 class="fr-h6">Procédure et démarches</h4>
                     </div>
                     <div class="fr-col-12 fr-col-md-3 fr-text--right">
-                        {% if isNewFormEnabled %}
+                        {% if isNewFormEnabled and canEditSignalement %}
                         <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-procedure-demarches" class="fr-btn--icon-left fr-icon-edit-line">Modifier</a>
                         {% endif %}
                     </div>

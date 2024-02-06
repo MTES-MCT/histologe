@@ -42,7 +42,7 @@ class HomepageController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $inputPostalCode = $form->get('postalcode')->getData();
             if ($postalCodeHomeChecker->isActive($inputPostalCode)) {
-                return $this->redirectToRoute('front_signalement');
+                return $this->redirectToRoute('front_signalement', ['cp' => $inputPostalCode]);
             }
             $displayModal = $inputPostalCode;
         }
