@@ -139,7 +139,7 @@ class FrontSignalementController extends AbstractController
             try {
                 foreach ($files as $key => $file) {
                     $res = $uploadHandlerService->toTempFolder($file);
-                    if (isset($res['error'])) {
+                    if (\is_array($res) && isset($res['error'])) {
                         throw new \Exception($res['error']);
                     }
                     $res = $uploadHandlerService->setKey($key);
@@ -204,11 +204,13 @@ class FrontSignalementController extends AbstractController
             $signalement = new Signalement();
             $dataDateBail = $dataHasDPE = $dataDateDPE = $dataConsoSizeYear = $dataConsoSize = $dataConsoYear = null;
             $listNDECriticites = [];
-
             if (isset($data['files'])) {
                 $dataFiles = $data['files'];
                 foreach ($dataFiles as $key => $files) {
                     foreach ($files as $titre => $file) {
+                        if (\is_array($file)) {
+                            continue;
+                        }
                         $filename = $uploadHandlerService->moveFromBucketTempFolder($file);
                         $file = $fileFactory->createInstanceFrom(
                             filename: $filename,

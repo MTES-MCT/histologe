@@ -57,6 +57,7 @@ class UploadHandlerService
             $fileResource = fopen($file->getPathname(), 'r');
             $this->fileStorage->writeStream($distantFolder.$newFilename, $fileResource);
             fclose($fileResource);
+            // throw new FileException('Erreur lors du téléversement.');
         } catch (FileException $e) {
             $this->logger->error($e->getMessage());
 
