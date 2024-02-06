@@ -298,7 +298,7 @@ class SignalementImportLoader
                 continue;
             }
             $fileType = File::FILE_TYPE_DOCUMENT;
-            if (in_array($this->fileStorage->mimeType($filename), ImageManipulationHandler::IMAGE_MIME_TYPES)) {
+            if (\in_array($this->fileStorage->mimeType($filename), ImageManipulationHandler::IMAGE_MIME_TYPES)) {
                 $fileType = File::FILE_TYPE_PHOTO;
             }
 
