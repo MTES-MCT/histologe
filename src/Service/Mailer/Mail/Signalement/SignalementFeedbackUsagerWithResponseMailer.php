@@ -10,12 +10,14 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class SignalementFeedbackUsagerMailer extends AbstractNotificationMailer
+class SignalementFeedbackUsagerWithResponseMailer extends AbstractNotificationMailer
 {
-    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER;
+    protected ?NotificationMailerType $mailerType =
+        NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER_WITH_RESPONSE;
     protected ?string $mailerSubject = '%param.platform_name% : faites le point sur votre problème de logement !';
     protected ?string $mailerButtonText = 'Mettre à jour ma situation';
     protected ?string $mailerTemplate = 'demande_feedback_usager_email';
+    protected ?string $tagHeader = 'Usager relance apres reponse';
 
     public function __construct(
         protected MailerInterface $mailer,
