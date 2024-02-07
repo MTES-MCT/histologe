@@ -968,27 +968,29 @@ document?.querySelector('form[name="login-creation-mdp-form"]')?.querySelectorAl
         let repeat = document?.querySelector('form[name="login-creation-mdp-form"] #login-password-repeat').value;
         let pwdMatchError = document?.querySelector('form[name="login-creation-mdp-form"] #password-match-error');
         let submitBtn = document?.querySelector('form[name="login-creation-mdp-form"] #submitter');
-        submitBtn.addEventListener('click', (e) => {
-            e.preventDefault()
-        })
+        document?.querySelector('form[name="login-creation-mdp-form"] .fr-input-group-password').classList.remove('fr-input-group--error')
+        document?.querySelector('form[name="login-creation-mdp-form"] .fr-input-group-password-repeat').classList.remove('fr-input-group--error')
+        pwdMatchError.classList.add('fr-hidden')
         if (pass !== repeat) {
-            document?.querySelector('form[name="login-creation-mdp-form"]').querySelectorAll('.fr-input-group').forEach(iptGroup => {
-                iptGroup.classList.add('fr-input-group--error')
-                iptGroup.querySelector('.fr-input').classList.add('fr-input--error')
-            })
+            document?.querySelector('form[name="login-creation-mdp-form"] .fr-input-group-password').classList.add('fr-input-group--error')
+            document?.querySelector('form[name="login-creation-mdp-form"] .fr-input-group-password-repeat').classList.add('fr-input-group--error')
             submitBtn.disabled = true;
             pwdMatchError.classList.remove('fr-hidden')
         } else {
-            document?.querySelector('form[name="login-creation-mdp-form"]').querySelectorAll('.fr-input-group--error,.fr-input--error').forEach(iptError => {
-                ['fr-input-group--error', 'fr-input--error'].map(c => {
-                    iptError.classList.remove(c)
-                });
-            })
-            pwdMatchError.classList.add('fr-hidden');
+            //TODO : ajouter tous les controle de contraintes de mot de passe
+            //
             submitBtn.disabled = false;
         }
     })
 })
+document?.querySelector('form[name="login-creation-mdp-form"]')?.addEventListener('submit', (event) => {
+    //TODO : check constraints
+
+    let modalCgu = document.getElementById("fr-modal-cgu-bo");
+    dsfr(modalCgu).modal.conceal();
+})
+
+
 document.querySelector('#modal-dpe-opener')?.addEventListener('click', (event) => {
     let urlDpe = event.target.getAttribute('data-dpe-url');
     fetch(urlDpe).then(r => {
