@@ -963,31 +963,15 @@ document?.querySelectorAll('.fr-password-toggle')?.forEach(pwdToggle => {
     })
 })
 document?.querySelector('form[name="login-creation-mdp-form"]')?.querySelectorAll('[name^="password"]').forEach(pwd => {
-    pwd.addEventListener('input', () => {
-        let pass = document?.querySelector('form[name="login-creation-mdp-form"] #login-password').value;
-        let repeat = document?.querySelector('form[name="login-creation-mdp-form"] #login-password-repeat').value;
-        let pwdMatchError = document?.querySelector('form[name="login-creation-mdp-form"] #password-match-error');
-        let submitBtn = document?.querySelector('form[name="login-creation-mdp-form"] #submitter');
-        document?.querySelector('form[name="login-creation-mdp-form"] .fr-input-group-password').classList.remove('fr-input-group--error')
-        document?.querySelector('form[name="login-creation-mdp-form"] .fr-input-group-password-repeat').classList.remove('fr-input-group--error')
-        pwdMatchError.classList.add('fr-hidden')
-        if (pass !== repeat) {
-            document?.querySelector('form[name="login-creation-mdp-form"] .fr-input-group-password').classList.add('fr-input-group--error')
-            document?.querySelector('form[name="login-creation-mdp-form"] .fr-input-group-password-repeat').classList.add('fr-input-group--error')
-            submitBtn.disabled = true;
-            pwdMatchError.classList.remove('fr-hidden')
-        } else {
-            //TODO : ajouter tous les controle de contraintes de mot de passe
-            //
-            submitBtn.disabled = false;
-        }
-    })
+    pwd.addEventListener('input', canSubmitFormReinitPassword)
 })
 document?.querySelector('form[name="login-creation-mdp-form"]')?.addEventListener('submit', (event) => {
-    //TODO : check constraints
-
+    event.preventDefault();
     let modalCgu = document.getElementById("fr-modal-cgu-bo");
     dsfr(modalCgu).modal.conceal();
+    if(canSubmitFormReinitPassword()){
+        event.target.submit();
+    }
 })
 
 
@@ -1020,6 +1004,57 @@ document.querySelector('#modal-dpe-opener')?.addEventListener('click', (event) =
         })
     })
 })
+
+function canSubmitFormReinitPassword() {
+    let pass = document?.querySelector('form[name="login-creation-mdp-form"] #login-password').value;
+    let repeat = document?.querySelector('form[name="login-creation-mdp-form"] #login-password-repeat').value;
+    let pwdMatchError = document?.querySelector('form[name="login-creation-mdp-form"] #password-match-error');
+    let submitBtn = document?.querySelector('form[name="login-creation-mdp-form"] #submitter');
+    let canSubmit = true;
+    document?.querySelector('form[name="login-creation-mdp-form"] .fr-input-group-password').classList.remove('fr-input-group--error')
+    document?.querySelector('form[name="login-creation-mdp-form"] .fr-input-group-password-repeat').classList.remove('fr-input-group--error')
+    document?.querySelectorAll('form[name="login-creation-mdp-form"] .password-input-messages').forEach((el) => {
+        el.classList.remove('fr-message--error');
+        el.classList.add('fr-message--info');
+    });
+    pwdMatchError.classList.add('fr-hidden')
+    submitBtn.disabled = false;
+    if (pass !== repeat) {
+        canSubmit = false;
+        pwdMatchError.classList.remove('fr-hidden')
+    }
+    if (pass.length < 8) {
+        document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-length').classList.remove('fr-message--info')
+        document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-length').classList.add('fr-message--error')
+        canSubmit = false;
+    }
+    if (!/[A-Z]/.test(pass)) {
+        document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-maj').classList.remove('fr-message--info')
+        document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-maj').classList.add('fr-message--error')
+        canSubmit = false;
+    }
+    if(!/[a-z]/.test(pass)){
+        document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-min').classList.remove('fr-message--info')
+        document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-min').classList.add('fr-message--error')
+        canSubmit = false;
+    }
+    if(!/[0-9]/.test(pass)){
+        document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-nb').classList.remove('fr-message--info')
+        document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-nb').classList.add('fr-message--error')
+        canSubmit = false;
+    }
+    if(!/[!@#$%^&*(),.?":{}|<>]/.test(pass)){
+        document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-special').classList.remove('fr-message--info')
+        document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-special').classList.add('fr-message--error')
+        canSubmit = false;
+    }
+    if(!canSubmit){
+        document?.querySelector('form[name="login-creation-mdp-form"] .fr-input-group-password').classList.remove('fr-input-group--error')
+        document?.querySelector('form[name="login-creation-mdp-form"] .fr-input-group-password-repeat').classList.add('fr-input-group--error')
+        submitBtn.disabled = true;
+    }
+    return canSubmit;
+}
 
 const refetchAddress = (form) => {
     // If the code postal is manually edited, we reinit the insee/geoloc and fetch the first result
