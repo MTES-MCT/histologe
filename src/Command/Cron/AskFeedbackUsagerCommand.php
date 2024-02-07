@@ -117,6 +117,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
         $nbSignalements = $this->sendMailToUsagers(
             $input,
             $signalementsIds,
+            NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER_WITHOUT_RESPONSE
         );
         if (!$input->getOption('debug')) {
             $this->io->success(sprintf(
@@ -136,6 +137,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
         $nbSignalements = $this->sendMailToUsagers(
             $input,
             $signalementsIds,
+            NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER_WITH_RESPONSE
         );
         if (!$input->getOption('debug')) {
             $this->io->success(sprintf(
@@ -150,7 +152,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
     protected function sendMailToUsagers(
         InputInterface $input,
         array $signalementsIds,
-        NotificationMailerType $notificationMailerType = NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER
+        NotificationMailerType $notificationMailerType
     ): int {
         $totalRead = 0;
         $signalements = $this->signalementRepository->findAllByIds($signalementsIds);
