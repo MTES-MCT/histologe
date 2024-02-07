@@ -152,7 +152,7 @@ class SignalementController extends AbstractController
                 : null;
         }
 
-        $partners = $signalementManager->findAllPartners($signalement, true);
+        $partners = $signalementManager->findAllPartners($signalement);
 
         $files = $parameterBag->get('files');
 
