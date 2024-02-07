@@ -6,11 +6,11 @@ use App\Entity\User;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
-use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
+use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
 
-#[AsDoctrineListener(event: Events::onFlush)]
+#[AsEntityListener(event: Events::postUpdate, method: 'postUpdate', entity: User::class)]
 class UserUpdatedListener
 {
     public function __construct(
@@ -18,24 +18,14 @@ class UserUpdatedListener
     ) {
     }
 
-    public function getSubscribedEvents(): array
+    public function postUpdate(User $user, PostUpdateEventArgs $event): void
     {
-        return [
-            Events::onFlush,
-        ];
-    }
+        $unitOfWork = $event->getObjectManager()->getUnitOfWork();
+        $changes = $unitOfWork->getEntityChangeSet($user);
 
-    public function onFlush(OnFlushEventArgs $args): void
-    {
-        $unitOfWork = $args->getObjectManager()->getUnitOfWork();
-
-        foreach ($unitOfWork->getScheduledEntityUpdates() as $entity) {
-            $changes = $unitOfWork->getEntityChangeSet($entity);
-
-            if ($entity instanceof User && $this->shouldChangePassword($changes)) {
-                $entity->setPassword('');
-                $this->sendNotification($entity);
-            }
+        if ($this->shouldChangePassword($changes)) {
+            $user->setPassword('');
+            $this->sendNotification($user);
         }
     }
 
