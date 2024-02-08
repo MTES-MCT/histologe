@@ -520,13 +520,11 @@
                             {{ static_picto_no|raw }}
                         {% endif %}
                     </div>
-                    <div class="fr-col-12 fr-col-md-6">
-                        <strong>Demande relogement :</strong>
-                        {% if signalement.isRelogement is null %}
-                            
-                        {% elseif signalement.isRelogement %}
+                    <div class="fr-col-12">
+                        <strong>Demande logement social / relogement :</strong>
+                        {% if signalement.isRelogement is same as true %}
                             {{ static_picto_yes|raw }}
-                        {% else %}
+                        {% elseif signalement.isRelogement is same as false %}
                             {{ static_picto_no|raw }}
                         {% endif %}
                     </div>
@@ -691,18 +689,6 @@
                                 {{ static_picto_yes|raw }}
                             {% else %}
                                 {{signalement.informationProcedure.infoProcedureDepartApresTravaux(false)}}
-                            {% endif %}
-                        {% endif %}
-                    </div>
-                    <div class="fr-col-12">
-                        <strong>Demande logement social / relogement :</strong>
-                        {% if signalement.informationComplementaire %}
-                            {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsDemandeRelogement is same as 'oui' %}
-                                {{ static_picto_yes|raw }}
-                            {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsDemandeRelogement is same as 'non' %}
-                                {{ static_picto_no|raw }}
-                            {% else %}
-                                {{signalement.informationComplementaire.informationsComplementairesSituationOccupantsDemandeRelogement}}
                             {% endif %}
                         {% endif %}
                     </div>

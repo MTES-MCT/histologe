@@ -15,7 +15,6 @@ class ProcedureDemarchesRequest
         #[Assert\NotBlank(['message' => 'Merci d\'indiquer si l\'occupant souhaite garder son logement après travaux ', 'groups' => ['LOCATAIRE', 'BAILLEUR_OCCUPANT']])]
         private readonly ?string $infoProcedureDepartApresTravaux = null,
         private readonly ?string $preavisDepart = null,
-        private readonly ?string $demandeRelogement = null,
     ) {
     }
 
@@ -42,10 +41,5 @@ class ProcedureDemarchesRequest
     public function getPreavisDepart(): ?string
     {
         return $this->preavisDepart;
-    }
-
-    public function getDemandeRelogement(): ?string
-    {
-        return $this->demandeRelogement;
     }
 }

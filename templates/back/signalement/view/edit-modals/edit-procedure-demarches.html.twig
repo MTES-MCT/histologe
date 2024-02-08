@@ -49,16 +49,6 @@
                                     <option value="nsp" {{ infoProcedureDepartApresTravaux is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
-
-                            <div class="fr-select-group">
-                                {% set demandeRelogement = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsDemandeRelogement : null %}
-                                <label class="fr-label" for="demandeRelogement">Demande logement social / relogement</label>
-                                <select class="fr-select" name="demandeRelogement">
-                                    <option value="" {{ demandeRelogement not in ['oui', 'non'] ? 'selected' : '' }}></option>
-                                    <option value="oui" {{ demandeRelogement is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ demandeRelogement is same as 'non' ? 'selected' : '' }}>Non</option>
-                                </select>
-                            </div>
                         </div>
                         
                         <div class="fr-modal__footer">
