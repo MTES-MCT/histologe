@@ -1056,7 +1056,7 @@ function canSubmitFormReinitPassword() {
         document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-nb').classList.remove('fr-message--info')
         document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-nb').classList.add('fr-message--valid')
     }
-    if(!/[!@#$%^&*(),.?":{}|<>]/.test(pass)){
+    if(!/[^a-zA-Z0-9]/.test(pass)){
         document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-special').classList.remove('fr-message--info')
         document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-special').classList.add('fr-message--error')
         canSubmit = false;
@@ -1065,7 +1065,7 @@ function canSubmitFormReinitPassword() {
         document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-special').classList.add('fr-message--valid')
     }
     if(!canSubmit){
-        document?.querySelector('form[name="login-creation-mdp-form"] .fr-input-group-password').classList.remove('fr-input-group--error')
+        document?.querySelector('form[name="login-creation-mdp-form"] .fr-input-group-password').classList.add('fr-input-group--error')
         document?.querySelector('form[name="login-creation-mdp-form"] .fr-input-group-password-repeat').classList.add('fr-input-group--error')
         submitBtn.disabled = true;
     }
