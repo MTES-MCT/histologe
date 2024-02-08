@@ -912,10 +912,6 @@ document?.querySelector('#partner_add_user,#situation_add_critere')?.addEventLis
     container.appendChild(row);
 })
 
-
-/*document?.querySelectorAll('[data-tag-add]')?.forEach(addBtn => {
-    addBtn.addEventListener('click', addTagEvent)
-});*/
 document?.querySelectorAll('[data-tag-delete]')?.forEach(delBtn => {
     delBtn.addEventListener('click', deleteTagEvent)
 });

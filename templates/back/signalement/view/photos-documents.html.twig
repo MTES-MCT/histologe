@@ -64,9 +64,7 @@
                  data-user="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
                  data-mail="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
                  style="background: url('{{ asset('_up/'~photo.filename~'/'~signalement.uuid~'?variant=thumb') }}')no-repeat center center/cover">
-                <a href="{{ asset('_up/'~photo.filename~'/'~signalement.uuid~'?variant=resize') }}"
-                    class="fr-btn fr-btn--sm fr-icon-eye-line img-box" title="Voir la photo"
-                    target="_blank" rel="noopener"></a>
+                <button class="fr-btn fr-btn--sm fr-icon-eye-line open-photo-album" data-id={{ photo.id }} title="Voir la photo"></button>
                 {% if importedBy is not same as 'user'
                     and (is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted)) %}
                     {% if photo.uploadedBy is not defined or (photo.uploadedBy is not null and photo.uploadedBy.id is same as(app.user.id)) %}

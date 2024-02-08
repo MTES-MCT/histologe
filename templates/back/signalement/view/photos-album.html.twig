@@ -1,0 +1,56 @@
+<div class="photos-album fr-hidden">
+    <div class="photos-album-close-button-container">
+        <button class="photos-album-btn-close fr-btn">Fermer</button>
+    </div>
+
+    {% set loopLength = signalement.files|filter( photo => photo.fileType == 'photo' and photo.intervention is null )|length %}
+    <div class="photos-album-navigation-container">
+        <div>
+            <button class="fr-btn photos-album-swipe" data-direction="-1">&lt;</button>
+        </div>
+        <div>
+            {% for index, photo in signalement.files|filter( photo => photo.fileType == 'photo' and photo.intervention is null ) %}
+            <div class="photos-album-image-item {{ loop.index > 1 ? 'fr-hidden' : 'loop-current' }}" data-id="{{ photo.id }}">
+                <div>
+                    Photo de la situation - {{ loop.index }} / {{ loopLength }}
+                </div>
+                <div>
+                    <img
+                        src="{{ asset('_up/'~photo.filename~'/'~signalement.uuid~'?variant=resize') }}"
+                        alt="Photo ajoutée par : {{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
+                        >
+                </div>
+                <div>
+                    {% if photo.documentType is not same as null
+                        and photo.documentType is not same as enum('App\\Entity\\Enum\\DocumentType').AUTRE %}
+
+                        {% if photo.documentType is same as enum('App\\Entity\\Enum\\DocumentType').SITUATION
+                                and photo.desordreSlug is not same as null %}
+                            {% for key, photoList in photos %}
+                                {% for desordrePhoto in photoList %}
+                                    {% if desordrePhoto.id is same as photo.id %}
+                                        {{ key }}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        {% else %}
+                            {{ photo.documentType.label() }}
+                        {% endif %}
+                        <br>
+                    {% endif %}
+                    Photo ajoutée par {{ photo.uploadedBy.nomComplet ?? 'l\'usager' }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div>
+            <button class="fr-btn photos-album-swipe" data-direction="1">&gt;</button>
+        </div>
+    </div>
+    <script type="text/javascript">
+        const histoPhotoIds = []
+        {% for index, photo in signalement.files|filter( photo => photo.fileType == 'photo' and photo.intervention is null ) %}
+            histoPhotoIds.push({{photo.id}})
+        {% endfor %}
+    </script>
+</div>
