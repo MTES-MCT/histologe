@@ -614,10 +614,19 @@ class SignalementManager extends AbstractManager
         $situationFoyer
             ->setLogementSocialMontantAllocation($situationFoyerRequest->getLogementSocialMontantAllocation())
             ->setTravailleurSocialQuitteLogement($situationFoyerRequest->getTravailleurSocialQuitteLogement())
+            ->setTravailleurSocialPreavisDepart($situationFoyerRequest->getTravailleurSocialPreavisDepart())
             ->setTravailleurSocialAccompagnementDeclarant(
                 $situationFoyerRequest->getTravailleurSocialAccompagnementDeclarant()
             )
             ->setLogementSocialAllocationCaisse($situationFoyerRequest->getIsAllocataire());
+
+        if ('non' === $situationFoyerRequest->getTravailleurSocialPreavisDepart()) {
+            $signalement->setIsPreavisDepart(false);
+        } elseif ('oui' === $situationFoyerRequest->getIsAllocataire()) {
+            $signalement->setIsPreavisDepart(true);
+        } else {
+            $signalement->setIsPreavisDepart(null);
+        }
 
         if ('non' === $situationFoyerRequest->getIsAllocataire()) {
             $situationFoyer->setLogementSocialAllocation('non');
@@ -680,9 +689,6 @@ class SignalementManager extends AbstractManager
             $informationComplementaire = clone $signalement->getInformationComplementaire();
         }
         $informationComplementaire
-            ->setInformationsComplementairesSituationOccupantsPreavisDepart(
-                $procedureDemarchesRequest->getPreavisDepart()
-            )
             ->setInformationsComplementairesSituationOccupantsDemandeRelogement(
                 $procedureDemarchesRequest->getDemandeRelogement()
             );

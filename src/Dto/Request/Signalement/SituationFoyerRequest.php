@@ -18,6 +18,7 @@ class SituationFoyerRequest
         private readonly ?string $logementSocialMontantAllocation = null,
         #[Assert\NotBlank(['message' => 'Veuillez définir le champ souhaite quitter le logement', 'groups' => ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO']])]
         private readonly ?string $travailleurSocialQuitteLogement = null,
+        private readonly ?string $travailleurSocialPreavisDepart = null,
         #[Assert\NotBlank(['message' => 'Veuillez définir le champ accompagnement par un travailleur social', 'groups' => ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO']])]
         private readonly ?string $travailleurSocialAccompagnementDeclarant = null,
         private readonly ?string $beneficiaireRsa = null,
@@ -59,6 +60,11 @@ class SituationFoyerRequest
     public function getTravailleurSocialQuitteLogement(): ?string
     {
         return $this->travailleurSocialQuitteLogement;
+    }
+
+    public function getTravailleurSocialPreavisDepart(): ?string
+    {
+        return $this->travailleurSocialPreavisDepart;
     }
 
     public function getTravailleurSocialAccompagnementDeclarant(): ?string

@@ -329,7 +329,6 @@ export default defineComponent({
       result += this.addLineIfNeeded('informations_complementaires_situation_occupants_revenu_fiscal', 'Revenu fiscal de référence : ', ' €')
       result += this.addLineIfNeeded('informations_complementaires_situation_occupants_date_naissance', 'Date de naissance : ')
       result += this.addLineIfNeeded('informations_complementaires_situation_occupants_loyers_payes', 'Paiement des loyers à jour : ')
-      result += this.addLineIfNeeded('informations_complementaires_situation_occupants_preavis_depart', 'Préavis de départ : ')
       result += this.addLineIfNeeded('informations_complementaires_logement_montant_loyer', 'Montant du loyer sans les charges : ', ' €')
       result += this.addLineIfNeeded('informations_complementaires_logement_nombre_etages', 'Nombre d\'étages du logement : ')
       result += this.addLineIfNeeded('informations_complementaires_logement_annee_construction', 'Année de construction du logement : ')
@@ -349,7 +348,6 @@ export default defineComponent({
           this.isFormDataSet('informations_complementaires_situation_occupants_revenu_fiscal') ||
           this.isFormDataSet('informations_complementaires_situation_occupants_date_naissance') ||
           this.isFormDataSet('informations_complementaires_situation_occupants_loyers_payes') ||
-          this.isFormDataSet('informations_complementaires_situation_occupants_preavis_depart') ||
           this.isFormDataSet('informations_complementaires_logement_montant_loyer') ||
           this.isFormDataSet('informations_complementaires_logement_nombre_etages') ||
           this.isFormDataSet('informations_complementaires_logement_annee_construction') ||

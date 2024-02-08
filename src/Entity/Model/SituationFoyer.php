@@ -12,6 +12,7 @@ class SituationFoyer
         private ?string $logementSocialMontantAllocation = null,
         private ?string $logementSocialNumeroAllocataire = null,
         private ?string $travailleurSocialQuitteLogement = null,
+        private ?string $travailleurSocialPreavisDepart = null,
         private ?string $travailleurSocialAccompagnement = null,
         private ?string $travailleurSocialAccompagnementDeclarant = null
     ) {
@@ -101,6 +102,18 @@ class SituationFoyer
         return $this;
     }
 
+    public function getTravailleurSocialPreavisDepart(bool $raw = true): ?string
+    {
+        return (!$raw && 'nsp' === $this->travailleurSocialPreavisDepart) ? 'Ne sait pas' : $this->travailleurSocialPreavisDepart;
+    }
+
+    public function setTravailleurSocialPreavisDepart(?string $travailleurSocialPreavisDepart): self
+    {
+        $this->travailleurSocialPreavisDepart = $travailleurSocialPreavisDepart;
+
+        return $this;
+    }
+
     public function getTravailleurSocialAccompagnement(): ?string
     {
         return $this->travailleurSocialAccompagnement;
@@ -135,6 +148,7 @@ class SituationFoyer
             'logement_social_montant_allocation' => $this->logementSocialMontantAllocation,
             'logement_social_numero_allocataire' => $this->logementSocialNumeroAllocataire,
             'travailleur_social_quitte_logement' => $this->travailleurSocialQuitteLogement,
+            'travailleur_social_preavis_depart' => $this->travailleurSocialPreavisDepart,
             'travailleur_social_accompagnement' => $this->travailleurSocialAccompagnement,
             'travailleur_social_accompagnement_declarant' => $this->travailleurSocialAccompagnementDeclarant,
         ];

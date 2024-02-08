@@ -984,6 +984,24 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
+          "slug": "travailleur_social_preavis_depart",
+          "label": "Avez-vous déposé un préavis de départ ?",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ],
+          "conditional": {
+            "show": "formStore.data.travailleur_social_quitte_logement === 'oui'"
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
           "slug": "travailleur_social_accompagnement",
           "label": "Est-ce qu'un travailleur ou une travailleuse sociale vous accompagne ?",
           "values": [

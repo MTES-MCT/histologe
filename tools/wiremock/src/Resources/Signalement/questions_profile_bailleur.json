@@ -948,6 +948,28 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
+          "slug": "travailleur_social_preavis_depart",
+          "label": "Est-ce que le foyer a déposé un préavis de départ ?",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ],
+          "conditional": {
+            "show": "formStore.data.travailleur_social_quitte_logement === 'oui'"
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
           "slug": "travailleur_social_accompagnement",
           "label": "Est-ce que le foyer bénéficie d'un accompagnement par un ou une travailleuse sociale ?",
           "values": [
@@ -1169,24 +1191,6 @@
                 "validate": {
                   "required": false
                 }
-              },
-              {
-                "type": "SignalementFormOnlyChoice",
-                "label": "Est-ce qu'un préavis de départ a été déposé pour le logement ? ",
-                "slug": "informations_complementaires_situation_occupants_preavis_depart",
-                "validate": {
-                  "required": false
-                },
-                "values": [
-                  {
-                    "label": "Oui",
-                    "value": "oui"
-                  },
-                  {
-                    "label": "Non",
-                    "value": "non"
-                  }
-                ]
               }
             ]
           }

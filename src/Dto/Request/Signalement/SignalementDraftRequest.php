@@ -199,6 +199,7 @@ class SignalementDraftRequest
     private ?string $logementSocialMontantAllocation = null;
     private ?string $logementSocialNumeroAllocataire = null;
     private ?string $travailleurSocialQuitteLogement = null;
+    private ?string $travailleurSocialPreavisDepart = null;
     private ?string $travailleurSocialAccompagnement = null;
     private ?string $travailleurSocialAccompagnementDeclarant = null;
     private ?string $infoProcedureBailleurPrevenu = null;
@@ -215,7 +216,6 @@ class SignalementDraftRequest
     private ?string $informationsComplementairesSituationOccupantsDemandeRelogement = null;
     private ?string $informationsComplementairesSituationOccupantsDateEmmenagement = null;
     private ?string $informationsComplementairesSituationOccupantsLoyersPayes = null;
-    private ?string $informationsComplementairesSituationOccupantsPreavisDepart = null;
     private ?string $informationsComplementairesSituationBailleurBeneficiaireRsa = null;
     private ?string $informationsComplementairesSituationBailleurBeneficiaireFsl = null;
     private ?string $informationsComplementairesSituationBailleurRevenuFiscal = null;
@@ -1185,6 +1185,18 @@ class SignalementDraftRequest
         return $this;
     }
 
+    public function getTravailleurSocialPreavisDepart(): ?string
+    {
+        return $this->travailleurSocialPreavisDepart;
+    }
+
+    public function setTravailleurSocialPreavisDepart(?string $travailleurSocialPreavisDepart): self
+    {
+        $this->travailleurSocialPreavisDepart = $travailleurSocialPreavisDepart;
+
+        return $this;
+    }
+
     public function getTravailleurSocialAccompagnement(): ?string
     {
         return $this->travailleurSocialAccompagnement;
@@ -1366,18 +1378,6 @@ class SignalementDraftRequest
     public function setInformationsComplementairesSituationOccupantsLoyersPayes(?string $informationsComplementairesSituationOccupantsLoyersPayes): self
     {
         $this->informationsComplementairesSituationOccupantsLoyersPayes = $informationsComplementairesSituationOccupantsLoyersPayes;
-
-        return $this;
-    }
-
-    public function getInformationsComplementairesSituationOccupantsPreavisDepart(): ?string
-    {
-        return $this->informationsComplementairesSituationOccupantsPreavisDepart;
-    }
-
-    public function setInformationsComplementairesSituationOccupantsPreavisDepart(?string $informationsComplementairesSituationOccupantsPreavisDepart): self
-    {
-        $this->informationsComplementairesSituationOccupantsPreavisDepart = $informationsComplementairesSituationOccupantsPreavisDepart;
 
         return $this;
     }
