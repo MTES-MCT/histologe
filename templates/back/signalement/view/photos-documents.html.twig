@@ -69,6 +69,23 @@
                  data-mail="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
                  style="background: url('{{ asset('_up/'~photo.filename~'/'~signalement.uuid~'?variant=thumb') }}')no-repeat center center/cover">
                 <button class="fr-btn fr-btn--sm fr-icon-eye-line open-photo-album" data-id={{ photo.id }} title="Voir la photo"></button>
+                {% if isNewFormEnabled and canEditSignalement %}
+                    {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
+                    {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
+                    <a href="#" class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
+                        id="file_edit_{{ photo.id }}" 
+                        aria-controls="fr-modal-edit-file"
+                        data-fr-opened="false" 
+                        data-filename="{{ photo.filename }}" 
+                        data-type="photos" 
+                        data-fileid="{{ photo.id}}" 
+                        data-documentType="{{ photo.documentType.name }}" 
+                        data-createdAt="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
+                        data-partner="{{ photo.uploadedBy.partner.nom ?? '' }}"
+                        data-user="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
+                        data-document-types="{{ DocumentType.getPhotosList() | json_encode }}"
+                    ></a>
+                {% endif %}
                 {% if (importedBy is not same as 'user' and (photo.uploadedBy is not null and photo.isPartnerFile)) 
                     and (canEditSignalement) 
                     and (is_granted('ROLE_ADMIN_TERRITORY') or is_granted('ROLE_ADMIN') or photo.uploadedBy.id is same as(app.user.id)) %}
@@ -94,21 +111,41 @@
     <div class="fr-grid-row fr-grid-row--middle fr-background-alt--grey fr-rounded fr-p-3v signalement-file-item">
         <div class="fr-col-9">
             <div class="fr-grid-row">
-                <div class="fr-col-12 fr-col-lg-2">
+                <div class="fr-col-12 fr-col-lg-1">
                     {{ doc.createdAt is defined ? doc.createdAt|date('d.m.Y') : 'N/R' }}
+                </div>
+                <div class="fr-col-12 fr-col-lg-1">
+                    <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ doc.documentType.name }}</span>
+                </div>
+                <div class="fr-col-12 fr-col-lg-5">
+                    {{ doc.uploadedBy.partner.nom ?? '' }} - {{ doc.uploadedBy.nomComplet ?? 'N/R' }}
                 </div>
                 <div class="fr-col-12 fr-col-lg-5">
                     {{ doc.title }}
-                </div>
-                <div class="fr-col-12 fr-col-lg-5">
-                    {{ doc.uploadedBy.nomComplet ?? 'N/R' }}
                 </div>
             </div>
         </div>
         <div class="fr-col-3 fr-text--right">
             <a href="{{ asset('_up/'~doc.filename~'/'~signalement.uuid) }}"
                 class="fr-btn fr-btn--sm fr-icon-eye-fill img-box" title="Afficher le document"
-                target="_blank" rel="noopener"></a>
+                target="_blank" rel="noopener"></a>           
+                {% if isNewFormEnabled and canEditSignalement %}
+                    {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
+                    {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
+                    <a href="#" class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
+                        id="file_edit_{{ doc.id }}" 
+                        aria-controls="fr-modal-edit-file"
+                        data-fr-opened="false" 
+                        data-filename="{{ doc.filename }}" 
+                        data-type="document" 
+                        data-fileid="{{ doc.id}}" 
+                        data-documentType="{{ doc.documentType.name }}" 
+                        data-createdAt="{{ doc.createdAt is defined ? doc.createdAt|date('d.m.Y') : 'N/R' }}"
+                        data-partner="{{ doc.uploadedBy.partner.nom ?? '' }}"
+                        data-user="{{ doc.uploadedBy.nomComplet ?? 'N/R' }}"
+                        data-document-types="{{ DocumentType.getDocumentsList() | json_encode }}"
+                    ></a>
+                {% endif %}
             {% if (importedBy is not same as 'user' and (doc.uploadedBy is not null and doc.isPartnerFile)) 
                 and (canEditSignalement) 
                 and (is_granted('ROLE_ADMIN_TERRITORY') or is_granted('ROLE_ADMIN') or doc.uploadedBy.id is same as(app.user.id)) %}
