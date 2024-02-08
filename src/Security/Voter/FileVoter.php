@@ -14,10 +14,11 @@ class FileVoter extends Voter
     public const DELETE = 'FILE_DELETE';
     public const VIEW = 'FILE_VIEW';
     public const CREATE = 'FILE_CREATE';
+    public const EDIT = 'FILE_EDIT';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::DELETE, self::VIEW, self::CREATE])
+        return \in_array($attribute, [self::DELETE, self::VIEW, self::CREATE, self::EDIT])
             && ($subject instanceof Signalement || 'boolean' === \gettype($subject));
     }
 
@@ -40,8 +41,14 @@ class FileVoter extends Voter
             self::DELETE => $this->canDelete($subject, $user),
             self::VIEW => $this->canView($subject, $user),
             self::CREATE => $this->canCreate($subject, $user),
+            self::EDIT => $this->canEdit($subject, $user),
             default => false,
         };
+    }
+
+    private function canEdit(Signalement $signalement, User $user): bool
+    {
+        return $this->canCreate($signalement, $user);
     }
 
     private function canDelete(Signalement $signalement, User $user): bool
@@ -51,9 +58,12 @@ class FileVoter extends Voter
 
     private function canCreate(Signalement $signalement, User $user): bool
     {
-        return Signalement::STATUS_ACTIVE === $signalement->getStatut() && $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
-            return $affectation->getPartner()->getId() === $user->getPartner()->getId();
-        })->count() > 0;
+        return Signalement::STATUS_ACTIVE === $signalement->getStatut()
+            && $signalement->getAffectations()->filter(
+                function (Affectation $affectation) use ($user) {
+                    return $affectation->getPartner()->getId() === $user->getPartner()->getId();
+                }
+            )->count() > 0;
     }
 
     private function canView(bool|Signalement $subject, ?User $user = null): bool

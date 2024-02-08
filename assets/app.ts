@@ -40,3 +40,5 @@ import './controllers/view_signalement';
 import './controllers/cookie_banner';
 import './controllers/maintenance_banner';
 import './controllers/activate_account/activate_account';
+import './controllers/form_file';
+
