@@ -144,4 +144,43 @@ class SignalementFileController extends AbstractController
 
         return $this->json(['response' => 'error'], 400);
     }
+
+    /**
+     * @throws FilesystemException
+     */
+    #[Route('/{uuid}/file/edit', name: 'back_signalement_edit_file')]
+    public function editFileSignalement(
+        Signalement $signalement,
+        string $type,
+        string $filename,
+        Request $request,
+        FileRepository $fileRepository,
+        UploadHandlerService $uploadHandlerService,
+        EntityManagerInterface $entityManager,
+        SuiviFactory $suiviFactory,
+    ): JsonResponse {
+        $this->denyAccessUnlessGranted('FILE_EDIT', $signalement);
+        if ($this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), $request->get('_token'))) {
+            // if ($uploadHandlerService->deleteSignalementFile($signalement, $type, $filename, $fileRepository)) {
+            //     $suivi = $suiviFactory->createInstanceFrom($this->getUser(), $signalement);
+            //     /** @var User $user */
+            //     $user = $this->getUser();
+            //     $description = $user->getNomComplet().' a supprimé le document suivant :';
+            //     $suivi->setDescription(
+            //         $description
+            //         .'<ul>'
+            //         .$filename
+            //         .'</ul>'
+            //     );
+            //     $suivi->setType(SUIVI::TYPE_AUTO);
+
+            //     $entityManager->persist($suivi);
+            //     $entityManager->flush();
+
+            //     return $this->json(['response' => 'success']);
+            // }
+        }
+
+        return $this->json(['response' => 'error'], 400);
+    }
 }
