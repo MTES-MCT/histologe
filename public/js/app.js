@@ -1013,8 +1013,8 @@ function canSubmitFormReinitPassword() {
     let canSubmit = true;
     document?.querySelector('form[name="login-creation-mdp-form"] .fr-input-group-password').classList.remove('fr-input-group--error')
     document?.querySelector('form[name="login-creation-mdp-form"] .fr-input-group-password-repeat').classList.remove('fr-input-group--error')
-    document?.querySelectorAll('form[name="login-creation-mdp-form"] .password-input-messages').forEach((el) => {
-        el.classList.remove('fr-message--error');
+    document?.querySelectorAll('form[name="login-creation-mdp-form"] #password-input-messages .message-password').forEach((el) => {
+        el.classList.remove('fr-message--error', 'fr-message--valid');
         el.classList.add('fr-message--info');
     });
     pwdMatchError.classList.add('fr-hidden')
@@ -1023,30 +1023,46 @@ function canSubmitFormReinitPassword() {
         canSubmit = false;
         pwdMatchError.classList.remove('fr-hidden')
     }
+    console.log(pass);
     if (pass.length < 8) {
         document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-length').classList.remove('fr-message--info')
         document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-length').classList.add('fr-message--error')
         canSubmit = false;
+    }else{
+        document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-length').classList.remove('fr-message--info')
+        document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-length').classList.add('fr-message--valid')
     }
     if (!/[A-Z]/.test(pass)) {
         document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-maj').classList.remove('fr-message--info')
         document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-maj').classList.add('fr-message--error')
         canSubmit = false;
+    }else{
+        document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-maj').classList.remove('fr-message--info')
+        document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-maj').classList.add('fr-message--valid')
     }
     if(!/[a-z]/.test(pass)){
         document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-min').classList.remove('fr-message--info')
         document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-min').classList.add('fr-message--error')
         canSubmit = false;
+    }else{
+        document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-min').classList.remove('fr-message--info')
+        document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-min').classList.add('fr-message--valid')
     }
     if(!/[0-9]/.test(pass)){
         document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-nb').classList.remove('fr-message--info')
         document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-nb').classList.add('fr-message--error')
         canSubmit = false;
+    }else{
+        document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-nb').classList.remove('fr-message--info')
+        document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-nb').classList.add('fr-message--valid')
     }
     if(!/[!@#$%^&*(),.?":{}|<>]/.test(pass)){
         document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-special').classList.remove('fr-message--info')
         document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-special').classList.add('fr-message--error')
         canSubmit = false;
+    }else{
+        document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-special').classList.remove('fr-message--info')
+        document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-special').classList.add('fr-message--valid')
     }
     if(!canSubmit){
         document?.querySelector('form[name="login-creation-mdp-form"] .fr-input-group-password').classList.remove('fr-input-group--error')
