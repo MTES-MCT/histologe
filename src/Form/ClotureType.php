@@ -26,7 +26,7 @@ class ClotureType extends AbstractType
                 'attr' => [
                     'class' => 'fr-select',
                 ],
-                'help' => 'Choisissez un motif de cloture parmis la liste ci-dessous.',
+                'help' => 'Choisissez un motif de cloture parmi la liste ci-dessous.',
                 'help_attr' => [
                     'class' => 'fr-hint-text',
                 ],
