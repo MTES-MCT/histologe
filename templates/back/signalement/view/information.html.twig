@@ -575,22 +575,20 @@
                     </div>
                     <div class="fr-col-12">
                         <strong>Préavis de départ :</strong>
-                        {% if signalement.situationFoyer %}
-                            {% if signalement.situationFoyer.travailleurSocialPreavisDepart is same as 'oui' %}
-                                {{ static_picto_yes|raw }}
-                            {% elseif signalement.situationFoyer.travailleurSocialPreavisDepart is same as 'non' %}
-                                {{ static_picto_no|raw }}
-                            {% else %}
-                                {{signalement.situationFoyer.travailleurSocialPreavisDepart(false)}}
-                            {% endif %}
-                        {% else %}
+                        {% set travailleurSocialPreavisDepart = signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialPreavisDepart : null %}
+                        {% if travailleurSocialPreavisDepart is same as null %}
                             {% if signalement.isPreavisDepart is same as true %}
-                                {{ static_picto_yes|raw }}
+                                {% set travailleurSocialPreavisDepart = 'oui' %}
                             {% elseif signalement.isPreavisDepart is same as false %}
-                                {{ static_picto_no|raw }}
-                            {% else %}
-                                Ne sait pas
+                                {% set travailleurSocialPreavisDepart = 'non' %}
                             {% endif %}
+                        {% endif %}
+                        {% if travailleurSocialPreavisDepart is same as 'oui' %}
+                            {{ static_picto_yes|raw }}
+                        {% elseif travailleurSocialPreavisDepart is same as 'non' %}
+                            {{ static_picto_no|raw }}
+                        {% elseif travailleurSocialPreavisDepart is same as 'nsp' %}
+                            Ne sait pas
                         {% endif %}
                     </div>
                     <div class="fr-col-12">
@@ -693,18 +691,6 @@
                                 {{ static_picto_yes|raw }}
                             {% else %}
                                 {{signalement.informationProcedure.infoProcedureDepartApresTravaux(false)}}
-                            {% endif %}
-                        {% endif %}
-                    </div>
-                    <div class="fr-col-12">
-                        <strong>Préavis de départ :</strong>
-                        {% if signalement.informationComplementaire %}
-                            {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsPreavisDepart is same as 'oui' %}
-                                {{ static_picto_yes|raw }}
-                            {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsPreavisDepart is same as 'non' %}
-                                {{ static_picto_no|raw }}
-                            {% else %}
-                                {{signalement.informationComplementaire.informationsComplementairesSituationOccupantsPreavisDepart}}
                             {% endif %}
                         {% endif %}
                     </div>
