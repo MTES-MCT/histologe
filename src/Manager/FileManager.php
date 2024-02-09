@@ -56,4 +56,16 @@ class FileManager extends AbstractManager
 
         return $file;
     }
+
+    public function updateSignalementFilesUser(
+        Signalement $signalement,
+        User $user,
+    ) {
+        foreach ($signalement->getFiles() as $file) {
+            if (null === $file->getUploadedBy()) {
+                $file->setUploadedBy($user);
+                $this->save($file);
+            }
+        }
+    }
 }

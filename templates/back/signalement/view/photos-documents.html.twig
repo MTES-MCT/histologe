@@ -31,7 +31,7 @@
                     <input type="hidden" name="_token"
                         value="{{ csrf_token('signalement_add_file_'~signalement.id) }}">
                     <input type="hidden" name="document_type"
-                        value="{{ enum('App\\Entity\\Enum\\DocumentType').VISITE.name }}">
+                        value="{{ enum('App\\Entity\\Enum\\DocumentType').AUTRE.name }}">
                 </form>
             {% endif %}
         </div>
@@ -58,8 +58,8 @@
         photo => photo.fileType == 'photo'
                 and photo.intervention is null
                 and (
-                    (importedBy is same as 'user' and photo.uploadedBy is null)
-                    or (importedBy is same as 'partner' and photo.uploadedBy is not null)
+                    (importedBy is same as 'user' and (photo.uploadedBy is null or photo.isUsagerFile ))
+                    or (importedBy is same as 'partner' and (photo.uploadedBy is not null and photo.isPartnerFile))
                     or importedBy is same as 'all'
                 )
         ) %}
@@ -87,8 +87,8 @@
     doc => doc.fileType == 'document' 
             and doc.intervention is null
             and (
-                (importedBy is same as 'user' and doc.uploadedBy is null)
-                or (importedBy is same as 'partner' and doc.uploadedBy is not null)
+                (importedBy is same as 'user' and (doc.uploadedBy is null or doc.isUsagerFile ))
+                or (importedBy is same as 'partner' and (doc.uploadedBy is not null and doc.isPartnerFile))
                 or importedBy is same as 'all'
             )
     ) %}

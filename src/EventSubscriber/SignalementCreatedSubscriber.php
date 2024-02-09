@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Event\SignalementCreatedEvent;
+use App\Manager\FileManager;
 use App\Manager\UserManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -10,6 +11,7 @@ class SignalementCreatedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private UserManager $userManager,
+        private FileManager $fileManager,
     ) {
     }
 
@@ -24,7 +26,14 @@ class SignalementCreatedSubscriber implements EventSubscriberInterface
     {
         $signalement = $event->getSignalement();
 
-        $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::OCCUPANT);
-        $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::DECLARANT);
+        $userOccupant = $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::OCCUPANT);
+        $userDeclarant = $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::DECLARANT);
+
+        if ($signalement->getIsNotOccupant()) {
+            $user = $userDeclarant;
+        } else {
+            $user = $userOccupant;
+        }
+        $this->fileManager->updateSignalementFilesUser($signalement, $user);
     }
 }
