@@ -79,11 +79,11 @@ function canSubmitFormReinitPassword() {
         messageSpecial.classList.add('fr-message--valid')
     }
     if(!canSubmit){
-        groupInputPasswordRepeat.classList.add('fr-input-group--error')
+        groupInputPassword.classList.add('fr-input-group--error')
         groupInputPasswordRepeat.classList.add('fr-input-group--error')
         submitBtn.disabled = true;
     }else{
-        groupInputPasswordRepeat.classList.remove('fr-input-group--error')
+        groupInputPassword.classList.remove('fr-input-group--error')
         groupInputPasswordRepeat.classList.remove('fr-input-group--error')
     }
     return canSubmit;
