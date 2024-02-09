@@ -11,6 +11,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UploadHandlerServiceTest extends KernelTestCase
@@ -106,6 +107,34 @@ class UploadHandlerServiceTest extends KernelTestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Le fichier dépasse 10 MB');
         $uploadHandlerService->uploadFromFile($uploadedFileMock, 'test.png');
+    }
+
+    public function testUploadToTempFolderThrowException(): void
+    {
+        $uploadFile = new UploadedFile(
+            $this->projectDir.$this->fixturesPath.$this->targetFilename.$this->extension,
+            $this->targetFilename,
+            'image/png',
+            null,
+            true
+        );
+
+        $this->filesystemOperator
+        ->expects($this->once())
+        ->method('writeStream')
+        ->willThrowException(new FileException());
+
+        $uploadHandlerService = new UploadHandlerService(
+            $this->filesystemOperator,
+            $this->parameterBag,
+            $this->logger,
+            $this->heicToJpegConverter,
+            $this->filenameGenerator,
+        );
+
+        $uploadHandler = $uploadHandlerService->toTempFolder($uploadFile);
+        $this->assertIsArray($uploadHandler);
+        $this->assertArrayHasKey('error', $uploadHandler);
     }
 
     /*public function testUploadFromFilename(): void
