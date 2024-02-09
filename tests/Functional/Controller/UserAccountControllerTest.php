@@ -25,7 +25,7 @@ class UserAccountControllerTest extends WebTestCase
         $route = $router->generate('activate_account', ['uuid' => $user->getUuid(), 'token' => $user->getToken()]);
         $client->request('GET', $route);
 
-        $password = $faker->password(12);
+        $password = $faker->password(12).'Aa1@';
         $client->submitForm('Confirmer', [
             'password' => $password,
             'password-repeat' => $password,
@@ -59,5 +59,43 @@ class UserAccountControllerTest extends WebTestCase
             '.fr-alert.fr-alert--error.fr-alert--sm',
             'Les mots de passe ne correspondent pas.'
         );
+    }
+
+    /**
+     * @dataProvider provideInvalidPassword
+     */
+    public function testActivationUserFormSubmitWithInvalidPassword(string $expectedResult, string $password): void
+    {
+        $client = static::createClient();
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'user-01-02@histologe.fr']);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+
+        $route = $router->generate('activate_account', ['uuid' => $user->getUuid(), 'token' => $user->getToken()]);
+        $client->request('GET', $route);
+
+        $client->submitForm('Confirmer', [
+            'password' => $password,
+            'password-repeat' => $password,
+        ]);
+
+        $this->assertSelectorTextContains(
+            '.fr-alert.fr-alert--error.fr-alert--sm',
+            $expectedResult
+        );
+    }
+
+    public function provideInvalidPassword(): \Generator
+    {
+        yield 'blank' => ['Cette valeur ne doit pas être vide', ''];
+        yield 'short' => ['Le mot de passe doit contenir au moins 8 caratères', 'short'];
+        yield 'no_uppercase' => ['Le mot de passe doit contenir au moins une lettre majuscule', 'nouppercase'];
+        yield 'no_lowercase' => ['Le mot de passe doit contenir au moins une lettre minuscule', 'NOLOWERCASE'];
+        yield 'no_digit' => ['Le mot de passe doit contenir au moins un chiffre', 'NoDigitNoDigit'];
+        yield 'no_special' => ['Le mot de passe doit contenir au moins un caractère spécial', 'NoSpecial'];
     }
 }
