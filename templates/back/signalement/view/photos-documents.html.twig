@@ -69,7 +69,9 @@
                  data-mail="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
                  style="background: url('{{ asset('_up/'~photo.filename~'/'~signalement.uuid~'?variant=thumb') }}')no-repeat center center/cover">
                 <button class="fr-btn fr-btn--sm fr-icon-eye-line open-photo-album" data-id={{ photo.id }} title="Voir la photo"></button>
-                {% if isNewFormEnabled and canEditSignalement %}
+                {% if canEditSignalement 
+                    and isNewFormEnabled and isDocumentsEnabled 
+                    and (is_granted('ROLE_ADMIN_TERRITORY') or is_granted('ROLE_ADMIN') or photo.uploadedBy.id is same as(app.user.id)) %}
                     {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
                     {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
                     <a href="#" class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
@@ -115,7 +117,7 @@
                     {{ doc.createdAt is defined ? doc.createdAt|date('d.m.Y') : 'N/R' }}
                 </div>
                 <div class="fr-col-12 fr-col-lg-1">
-                    <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ doc.documentType.name }}</span>
+                    <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ doc.documentType.label() }}</span>
                 </div>
                 <div class="fr-col-12 fr-col-lg-5">
                     {{ doc.uploadedBy.partner.nom ?? '' }} - {{ doc.uploadedBy.nomComplet ?? 'N/R' }}
@@ -129,7 +131,9 @@
             <a href="{{ asset('_up/'~doc.filename~'/'~signalement.uuid) }}"
                 class="fr-btn fr-btn--sm fr-icon-eye-fill img-box" title="Afficher le document"
                 target="_blank" rel="noopener"></a>           
-                {% if isNewFormEnabled and canEditSignalement %}
+                {% if canEditSignalement
+                    and isNewFormEnabled and isDocumentsEnabled 
+                    and (is_granted('ROLE_ADMIN_TERRITORY') or is_granted('ROLE_ADMIN') or doc.uploadedBy.id is same as(app.user.id)) %}
                     {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
                     {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
                     <a href="#" class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
