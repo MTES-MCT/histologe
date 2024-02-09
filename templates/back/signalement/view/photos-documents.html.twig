@@ -69,14 +69,13 @@
                  data-mail="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
                  style="background: url('{{ asset('_up/'~photo.filename~'/'~signalement.uuid~'?variant=thumb') }}')no-repeat center center/cover">
                 <button class="fr-btn fr-btn--sm fr-icon-eye-line open-photo-album" data-id={{ photo.id }} title="Voir la photo"></button>
-                {% if importedBy is not same as 'user'
-                    and (is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted)) %}
-                    {% if photo.uploadedBy is not defined or (photo.uploadedBy is not null and photo.uploadedBy.id is same as(app.user.id)) %}
-                        <button title="Supprimer la photo"
-                                data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'photos',filename:photo.filename}) }}"
-                                data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
-                                class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line signalement-file-delete"></button>
-                    {% endif %}
+                {% if (importedBy is not same as 'user' and (photo.uploadedBy is not null and photo.isPartnerFile)) 
+                    and (canEditSignalement) 
+                    and (is_granted('ROLE_ADMIN_TERRITORY') or is_granted('ROLE_ADMIN') or photo.uploadedBy.id is same as(app.user.id)) %}
+                    <button title="Supprimer la photo"
+                        data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'photos',filename:photo.filename}) }}"
+                        data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
+                        class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line signalement-file-delete"></button>
                 {% endif %}
             </div>
         </div>
@@ -110,10 +109,10 @@
             <a href="{{ asset('_up/'~doc.filename~'/'~signalement.uuid) }}"
                 class="fr-btn fr-btn--sm fr-icon-eye-fill img-box" title="Afficher le document"
                 target="_blank" rel="noopener"></a>
-            {% if (is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted))
-                and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION')
-                %}
-            <button title="Supprimer le document"
+            {% if (importedBy is not same as 'user' and (doc.uploadedBy is not null and doc.isPartnerFile)) 
+                and (canEditSignalement) 
+                and (is_granted('ROLE_ADMIN_TERRITORY') or is_granted('ROLE_ADMIN') or doc.uploadedBy.id is same as(app.user.id)) %}
+                <button title="Supprimer le document"
                     data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'documents',filename:doc.filename}) }}"
                     data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
                     class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line signalement-file-delete"></button>
