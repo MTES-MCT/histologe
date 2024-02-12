@@ -117,7 +117,7 @@ class SignalementFileProcessorTest extends TestCase
         $signalement = $this->getSignalement();
         [$fileList, $descriptionList] = $signalementFileProcessor->process(self::FILE_LIST, 'photos');
         $this->assertNotEmpty($descriptionList);
-        $signalementFileProcessor->addFilesToSignalement($fileList, $signalement);
+        $signalementFileProcessor->addFilesToSignalement($fileList, $signalement); // TODO
         $this->assertNotNull($signalement->getFiles());
     }
 }

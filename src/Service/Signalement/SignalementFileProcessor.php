@@ -2,6 +2,7 @@
 
 namespace App\Service\Signalement;
 
+use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
@@ -29,8 +30,11 @@ class SignalementFileProcessor
     ) {
     }
 
-    public function process(array $files, string $inputName): array
-    {
+    public function process(
+        array $files,
+        string $inputName,
+        ?DocumentType $documentType = DocumentType::AUTRE
+    ): array {
         $fileList = $descriptionList = [];
         $withTokenGenerated = false;
         foreach ($files[$inputName] as $key => $file) {
@@ -67,7 +71,7 @@ class SignalementFileProcessor
                 }
                 if (!empty($filename)) {
                     $descriptionList[] = $this->generateListItemDescription($filename, $title, $withTokenGenerated);
-                    $fileList[] = $this->createFileItem($filename, $title, $inputName);
+                    $fileList[] = $this->createFileItem($filename, $title, $inputName, $documentType);
                 }
             }
         }
@@ -88,6 +92,7 @@ class SignalementFileProcessor
                 type: $fileItem['type'],
                 user: $user,
                 intervention: $intervention,
+                documentType: $fileItem['documentType'],
             );
             $file->setSize($this->uploadHandlerService->getFileSize($file->getFilename()));
             $file->setIsVariantsGenerated($this->uploadHandlerService->hasVariants($file->getFilename()));
@@ -114,7 +119,8 @@ class SignalementFileProcessor
 
         $fileUrl = $this->urlGenerator->generate(
             'show_uploaded_file',
-            ['folder' => '_up', 'filename' => $filename])
+            ['folder' => '_up', 'filename' => $filename]
+        )
             .$queryTokenUrl;
 
         return '<li><a class="fr-link" target="_blank" href="'
@@ -124,13 +130,18 @@ class SignalementFileProcessor
             .'</a></li>';
     }
 
-    private function createFileItem(string $filename, string $title, string $inputName): array
-    {
+    private function createFileItem(
+        string $filename,
+        string $title,
+        string $inputName,
+        DocumentType $documentType
+    ): array {
         return [
             'file' => $filename,
             'title' => $title,
             'date' => new \DateTimeImmutable(),
             'type' => 'documents' === $inputName ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO,
+            'documentType' => $documentType,
         ];
     }
 }

@@ -250,7 +250,8 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                     ? File::FILE_TYPE_DOCUMENT
                     : File::FILE_TYPE_PHOTO,
                 signalement: $signalement,
-                user: $user
+                user: $user,
+                documentType: DocumentType::AUTRE
             );
             $manager->persist($file);
         }
@@ -264,7 +265,8 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                     title: 'Blank.pdf',
                     type: File::FILE_TYPE_PHOTO,
                     signalement: $signalement,
-                    user: $user
+                    user: $user,
+                    documentType: DocumentType::AUTRE
                 );
                 $manager->persist($file);
                 ++$countMorePhoto;

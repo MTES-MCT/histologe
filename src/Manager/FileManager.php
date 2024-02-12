@@ -2,6 +2,7 @@
 
 namespace App\Manager;
 
+use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -25,22 +26,46 @@ class FileManager extends AbstractManager
         string $type = null,
         ?Signalement $signalement = null,
         ?User $user = null,
-        bool $flush = false
+        bool $flush = false,
+        ?DocumentType $documentType = null,
+        ?string $description = null
     ): File {
         /** @var FileRepository $fileRepository */
         $fileRepository = $this->getRepository();
         $file = $fileRepository->findOneBy(['filename' => $filename]);
         if (null === $file) {
-            $file = $this->fileFactory->createInstanceFrom($filename, $title, $type, $signalement, $user);
+            $file = $this->fileFactory->createInstanceFrom(
+                filename: $filename,
+                title: $title,
+                type: $type,
+                signalement: $signalement,
+                user: $user,
+                documentType: $documentType,
+                description: $description
+            );
         }
 
         $file
             ->setTitle($title)
             ->setFileType($type)
-            ->setSignalement($signalement);
+            ->setSignalement($signalement)
+            ->setDocumentType($documentType ?? DocumentType::AUTRE)
+            ->setDescription($description);
 
         $this->save($file, $flush);
 
         return $file;
+    }
+
+    public function updateSignalementFilesUser(
+        Signalement $signalement,
+        User $user,
+    ) {
+        foreach ($signalement->getFiles() as $file) {
+            if (null === $file->getUploadedBy()) {
+                $file->setUploadedBy($user);
+                $this->save($file);
+            }
+        }
     }
 }

@@ -29,6 +29,7 @@ class FileFactoryTest extends TestCase
         $this->assertInstanceOf(Signalement::class, $file->getSignalement());
         $this->assertInstanceOf(User::class, $file->getUploadedBy());
         $this->assertInstanceOf(\DateTimeImmutable::class, $file->getCreatedAt());
+        $this->assertEquals(DocumentType::AUTRE, $file->getDocumentType());
     }
 
     /**

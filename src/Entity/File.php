@@ -56,6 +56,9 @@ class File
     #[ORM\Column]
     private ?bool $isVariantsGenerated = null;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $description;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -77,6 +80,19 @@ class File
         $this->uploadedBy = $uploadedBy;
 
         return $this;
+    }
+
+    public function isUsagerFile(): ?bool
+    {
+        return !$this->isPartnerFile();
+    }
+
+    public function isPartnerFile(): ?bool
+    {
+        return $this->uploadedBy->isSuperAdmin()
+        || $this->uploadedBy->isTerritoryAdmin()
+        || $this->uploadedBy->isPartnerAdmin()
+        || $this->uploadedBy->isUserPartner();
     }
 
     public function getSignalement(): ?Signalement
@@ -202,6 +218,18 @@ class File
     public function setIsVariantsGenerated(bool $isVariantsGenerated): self
     {
         $this->isVariantsGenerated = $isVariantsGenerated;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
 
         return $this;
     }

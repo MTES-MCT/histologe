@@ -356,16 +356,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isPartnerAdmin(): bool
-    {
-        return \in_array('ROLE_ADMIN_PARTNER', $this->getRoles());
-    }
-
-    public function isUserPartner(): bool
-    {
-        return \in_array(self::ROLE_USER_PARTNER, $this->getRoles());
-    }
-
     /**
      * @see UserInterface
      */
@@ -395,12 +385,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function isSuperAdmin(): bool
     {
-        return \in_array('ROLE_ADMIN', $this->roles);
+        return \in_array(self::ROLE_ADMIN, $this->roles);
     }
 
     public function isTerritoryAdmin(): bool
     {
-        return \in_array('ROLE_ADMIN_TERRITORY', $this->roles);
+        return \in_array(self::ROLE_ADMIN_TERRITORY, $this->roles);
+    }
+
+    public function isPartnerAdmin(): bool
+    {
+        return \in_array(self::ROLE_ADMIN_PARTNER, $this->getRoles());
+    }
+
+    public function isUserPartner(): bool
+    {
+        return \in_array(self::ROLE_USER_PARTNER, $this->getRoles());
     }
 
     public function getTerritory(): ?Territory

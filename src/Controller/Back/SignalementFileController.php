@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -63,8 +64,9 @@ class SignalementFileController extends AbstractController
             $inputName = isset($files[File::INPUT_NAME_DOCUMENTS])
                 ? File::INPUT_NAME_DOCUMENTS
                 : File::INPUT_NAME_PHOTOS;
-
-            list($fileList, $descriptionList) = $signalementFileProcessor->process($files, $inputName);
+            // $documentType = DocumentType::tryFrom($request->get('document_type')) ?? DocumentType::AUTRE;
+            $documentType = DocumentType::AUTRE;
+            list($fileList, $descriptionList) = $signalementFileProcessor->process($files, $inputName, $documentType);
 
             if ($signalementFileProcessor->isValid()) {
                 $nbFiles = \count($fileList);

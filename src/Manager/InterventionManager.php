@@ -3,6 +3,7 @@
 namespace App\Manager;
 
 use App\Dto\Request\Signalement\VisiteRequest;
+use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProcedureType;
 use App\Entity\Enum\Qualification;
@@ -208,6 +209,7 @@ class InterventionManager extends AbstractManager
         /** @var User $user */
         $user = $this->security->getUser();
 
+        // TODO : quand la modale sera fait, le documentType pourra être différent
         return $this->fileFactory->createInstanceFrom(
             filename: $document,
             title: $document,
@@ -215,7 +217,8 @@ class InterventionManager extends AbstractManager
                 ? File::FILE_TYPE_DOCUMENT
                 : File::FILE_TYPE_PHOTO,
             signalement: $intervention->getSignalement(),
-            user: $user
+            user: $user,
+            documentType: DocumentType::VISITE
         );
     }
 }
