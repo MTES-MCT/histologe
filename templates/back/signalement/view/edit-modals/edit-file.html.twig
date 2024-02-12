@@ -9,19 +9,22 @@
                         </div>
                         <div class="fr-modal__content">
                             <h1 id="fr-modal-title-modal-edit-file" class="fr-modal__title">
-                                Editer  <span class="fr-modal-file-edit_type"></span>
+                                Editer  <span class="fr-modal-file-edit-type"></span>
                             </h1>
 
-                            <b><span class="fr-modal-file-edit_filename"></span></b>
+                            <b><span class="fr-modal-file-edit-filename"></span></b>
                             <br>
-                            <span class="fr-modal-file-edit_infos"></span>
-
+                            <span class="fr-modal-file-edit-infos"></span>
 
                             <div class="fr-select-group">
                                  <select class="fr-select" name="documentType" id="document-type-select">
                                 </select>
-                            </div>
+                            </div>                            
 
+                            <div class="fr-select-group">
+                                 <select class="fr-select fr-hidden" name="desordreSlug" id="desordre-slug-select">
+                                </select>
+                            </div>
                         </div>
                         
                         <div class="fr-modal__footer">
@@ -33,7 +36,8 @@
                                     </button>
                                 </li>
                                 <li>
-                                    <button class="fr-btn  fr-icon-checkbox-line" type="submit">
+                                    <button class="fr-btn  fr-icon-checkbox-line" type="submit" form="form-edit-file"
+                                        id="form-edit-file-submit">
                                         Valider
                                     </button>
                                 </li>
@@ -41,7 +45,7 @@
                         </div>
                     </div>
                     <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_file_'~signalement.id) }}">
-                    <input type="hidden" name="file_id" id="file_edit_fileid">
+                    <input type="hidden" name="file_id" id="file-edit-fileid">
                 </form>
             </div>
         </div>
