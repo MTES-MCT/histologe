@@ -84,15 +84,15 @@ class File
 
     public function isUsagerFile(): ?bool
     {
-        return !$this->uploadedBy->isSuperAdmin()
-        && !$this->uploadedBy->isTerritoryAdmin()
-        && !$this->uploadedBy->isPartnerAdmin()
-        && !$this->uploadedBy->isUserPartner();
+        return !$this->isPartnerFile();
     }
 
     public function isPartnerFile(): ?bool
     {
-        return !$this->isUsagerFile();
+        return $this->uploadedBy->isSuperAdmin()
+        || $this->uploadedBy->isTerritoryAdmin()
+        || $this->uploadedBy->isPartnerAdmin()
+        || $this->uploadedBy->isUserPartner();
     }
 
     public function getSignalement(): ?Signalement
