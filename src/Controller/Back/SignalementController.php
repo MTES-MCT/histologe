@@ -190,6 +190,7 @@ class SignalementController extends AbstractController
             'createdFromDraft' => $signalement->getCreatedFrom(),
             'situations' => $infoDesordres['criticitesArranged'],
             'photos' => $infoDesordres['photos'],
+            'precisions' => $infoDesordres['precisions'],
             'needValidation' => Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut(),
             'canEditSignalement' => $canEditSignalement,
             'canExportSignalement' => $canExportSignalement,

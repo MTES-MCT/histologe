@@ -167,8 +167,20 @@ class SignalementFileController extends AbstractController
                 $documentType = DocumentType::tryFrom($request->get('documentType'));
                 if (null !== $documentType) {
                     $file->setDocumentType($documentType);
+                    if (DocumentType::SITUATION === $documentType) {
+                        $desordreSlug = $request->get('desordreSlug');
+                        if ($desordreSlug !== $file->getDesordreSlug()) {
+                            $file->setDesordreSlug($desordreSlug);
+                        }
+                    } else {
+                        if (null !== $file->getDesordreSlug()) {
+                            $file->setDesordreSlug(null);
+                        }
+                    }
+
                     $entityManager->persist($file);
                     $entityManager->flush();
+
                     if ('document' === $file->getFileType()) {
                         $this->addFlash('success', 'Le document a bien été modifié.');
                     } else {

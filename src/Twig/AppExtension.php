@@ -20,6 +20,7 @@ class AppExtension extends AbstractExtension
             new TwigFilter('status_to_css', [$this, 'getCssFromStatus']),
             new TwigFilter('signalement_lien_declarant_occupant', [$this, 'getLabelLienDeclarantOccupant']),
             new TwigFilter('image64', [ImageBase64Encoder::class, 'encode']),
+            new TwigFilter('truncate_filename', [$this, 'getTruncatedFilename']),
         ];
     }
 
@@ -47,6 +48,21 @@ class AppExtension extends AbstractExtension
         }
 
         return '';
+    }
+
+    public function getTruncatedFilename(string $fileName, int $maxCharacters = 50): string
+    {
+        if (\strlen($fileName) > $maxCharacters) {
+            $extensionLength = \strlen(pathinfo($fileName, \PATHINFO_EXTENSION));
+            $fileNameLength = $maxCharacters - 4 - $extensionLength;
+            $truncatedFileName = substr($fileName, 0, $fileNameLength);
+            $truncatedFileName .= '....';
+            $truncatedFileName .= pathinfo($fileName, \PATHINFO_EXTENSION);
+
+            return $truncatedFileName;
+        }
+
+        return $fileName;
     }
 
     public function getFunctions(): array
