@@ -79,13 +79,15 @@
                         aria-controls="fr-modal-edit-file"
                         data-fr-opened="false" 
                         data-filename="{{ photo.filename }}" 
-                        data-type="photos" 
-                        data-fileid="{{ photo.id}}" 
+                        data-type="photo" 
+                        data-file-id="{{ photo.id}}" 
                         data-documentType="{{ photo.documentType.name }}" 
+                        data-documentType-list="{{ DocumentType.getPhotosList() | json_encode }}"
                         data-createdAt="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
-                        data-partner="{{ photo.uploadedBy.partner.nom ?? '' }}"
-                        data-user="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
-                        data-document-types="{{ DocumentType.getPhotosList() | json_encode }}"
+                        data-partner-name="{{ photo.uploadedBy.partner ? photo.uploadedBy.partner.nom ~ ' - ' : '' }}"
+                        data-user-name="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
+                        data-desordreSlug="{{ photo.desordreSlug}}"
+                        data-signalement-desordres="{{ precisions | json_encode }}"
                     ></a>
                 {% endif %}
                 {% if (importedBy is not same as 'user' and (photo.uploadedBy is not null and photo.isPartnerFile)) 
@@ -116,14 +118,14 @@
                 <div class="fr-col-12 fr-col-lg-1">
                     {{ doc.createdAt is defined ? doc.createdAt|date('d.m.Y') : 'N/R' }}
                 </div>
-                <div class="fr-col-12 fr-col-lg-1">
+                <div class="fr-col-12 fr-col-lg-2">
                     <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ doc.documentType.label() }}</span>
                 </div>
                 <div class="fr-col-12 fr-col-lg-5">
-                    {{ doc.uploadedBy.partner.nom ?? '' }} - {{ doc.uploadedBy.nomComplet ?? 'N/R' }}
+                    {{ doc.uploadedBy.partner ? doc.uploadedBy.partner.nom ~ ' - ' : '' }}{{ doc.uploadedBy.nomComplet ?? 'N/R' }}
                 </div>
-                <div class="fr-col-12 fr-col-lg-5">
-                    {{ doc.title }}
+                <div class="fr-col-12 fr-col-lg-4">
+                    <i>{{ doc.title|truncate_filename(45) }}</i>
                 </div>
             </div>
         </div>
@@ -142,12 +144,12 @@
                         data-fr-opened="false" 
                         data-filename="{{ doc.filename }}" 
                         data-type="document" 
-                        data-fileid="{{ doc.id}}" 
+                        data-file-id="{{ doc.id}}" 
                         data-documentType="{{ doc.documentType.name }}" 
+                        data-documentType-list="{{ DocumentType.getDocumentsList() | json_encode }}"
                         data-createdAt="{{ doc.createdAt is defined ? doc.createdAt|date('d.m.Y') : 'N/R' }}"
-                        data-partner="{{ doc.uploadedBy.partner.nom ?? '' }}"
-                        data-user="{{ doc.uploadedBy.nomComplet ?? 'N/R' }}"
-                        data-document-types="{{ DocumentType.getDocumentsList() | json_encode }}"
+                        data-partner-name="{{ doc.uploadedBy.partner ? doc.uploadedBy.partner.nom ~ ' - ' : '' }}"
+                        data-user-name="{{ doc.uploadedBy.nomComplet ?? 'N/R' }}"
                     ></a>
                 {% endif %}
             {% if (importedBy is not same as 'user' and (doc.uploadedBy is not null and doc.isPartnerFile)) 
