@@ -949,42 +949,7 @@ document?.querySelectorAll('[data-delete]')?.forEach(actionBtn => {
         }
     })
 });
-document?.querySelectorAll('.fr-password-toggle')?.forEach(pwdToggle => {
-    pwdToggle.addEventListeners('click touchdown', (event) => {
-        ['fr-fi-eye-off-fill', 'fr-fi-eye-fill'].map(c => {
-            event.target.classList.toggle(c);
-        })
-        let pwd = event.target.parentElement.querySelector('[name^="password"]');
-        "text" !== pwd.type ? pwd.type = "text" : pwd.type = "password";
-    })
-})
-document?.querySelector('form[name="login-creation-mdp-form"]')?.querySelectorAll('[name^="password"]').forEach(pwd => {
-    pwd.addEventListener('input', () => {
-        let pass = document?.querySelector('form[name="login-creation-mdp-form"] #login-password').value;
-        let repeat = document?.querySelector('form[name="login-creation-mdp-form"] #login-password-repeat').value;
-        let pwdMatchError = document?.querySelector('form[name="login-creation-mdp-form"] #password-match-error');
-        let submitBtn = document?.querySelector('form[name="login-creation-mdp-form"] #submitter');
-        submitBtn.addEventListener('click', (e) => {
-            e.preventDefault()
-        })
-        if (pass !== repeat) {
-            document?.querySelector('form[name="login-creation-mdp-form"]').querySelectorAll('.fr-input-group').forEach(iptGroup => {
-                iptGroup.classList.add('fr-input-group--error')
-                iptGroup.querySelector('.fr-input').classList.add('fr-input--error')
-            })
-            submitBtn.disabled = true;
-            pwdMatchError.classList.remove('fr-hidden')
-        } else {
-            document?.querySelector('form[name="login-creation-mdp-form"]').querySelectorAll('.fr-input-group--error,.fr-input--error').forEach(iptError => {
-                ['fr-input-group--error', 'fr-input--error'].map(c => {
-                    iptError.classList.remove(c)
-                });
-            })
-            pwdMatchError.classList.add('fr-hidden');
-            submitBtn.disabled = false;
-        }
-    })
-})
+
 document.querySelector('#modal-dpe-opener')?.addEventListener('click', (event) => {
     let urlDpe = event.target.getAttribute('data-dpe-url');
     fetch(urlDpe).then(r => {

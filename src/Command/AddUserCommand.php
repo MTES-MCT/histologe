@@ -192,9 +192,7 @@ class AddUserCommand extends Command
             );
         }
 
-        $password = $this->hasher->hashPassword($user, 'histologe');
-
-        $user->setPassword($password)->setStatut(User::STATUS_ACTIVE);
+        $user->setPassword('histologe-HI1')->setStatut(User::STATUS_ACTIVE);
 
         /** @var ConstraintViolationList $errors */
         $errors = $this->validator->validate($user, null, ['Default', 'password']);
@@ -204,6 +202,9 @@ class AddUserCommand extends Command
 
             return Command::FAILURE;
         }
+
+        $password = $this->hasher->hashPassword($user, $user->getPassword());
+        $user->setPassword($password);
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
