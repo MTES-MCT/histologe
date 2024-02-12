@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { store } from './store'
-import * as Sentry from "@sentry/browser";
+import * as Sentry from '@sentry/browser'
 
 export const requests = {
   /**

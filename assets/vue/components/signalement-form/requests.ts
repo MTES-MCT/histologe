@@ -1,6 +1,6 @@
 import axios from 'axios'
 import formStore from './store'
-import * as Sentry from "@sentry/browser";
+import * as Sentry from '@sentry/browser'
 import { AXIOS_TIMEOUT } from '../../../controllers/environment'
 
 export const requests = {
