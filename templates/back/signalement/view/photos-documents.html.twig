@@ -84,7 +84,7 @@
                         data-documentType="{{ photo.documentType.name }}" 
                         data-documentType-list="{{ DocumentType.getPhotosList() | json_encode }}"
                         data-createdAt="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
-                        data-partner-name="{{ photo.uploadedBy.partner ? photo.uploadedBy.partner.nom ~ ' - ' : '' }}"
+                        data-partner-name="{{ photo.uploadedBy and photo.uploadedBy.partner ? photo.uploadedBy.partner.nom ~ ' - ' : '' }}"
                         data-user-name="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
                         data-desordreSlug="{{ photo.desordreSlug}}"
                         data-signalement-desordres="{{ precisions | json_encode }}"
@@ -122,7 +122,7 @@
                     <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ doc.documentType.label() }}</span>
                 </div>
                 <div class="fr-col-12 fr-col-lg-5">
-                    {{ doc.uploadedBy.partner ? doc.uploadedBy.partner.nom ~ ' - ' : '' }}{{ doc.uploadedBy.nomComplet ?? 'N/R' }}
+                    {{ doc.uploadedBy and doc.uploadedBy.partner ? doc.uploadedBy.partner.nom ~ ' - ' : '' }}{{ doc.uploadedBy.nomComplet ?? 'N/R' }}
                 </div>
                 <div class="fr-col-12 fr-col-lg-4">
                     <i>{{ doc.title|truncate_filename(45) }}</i>
@@ -148,7 +148,7 @@
                         data-documentType="{{ doc.documentType.name }}" 
                         data-documentType-list="{{ DocumentType.getDocumentsList() | json_encode }}"
                         data-createdAt="{{ doc.createdAt is defined ? doc.createdAt|date('d.m.Y') : 'N/R' }}"
-                        data-partner-name="{{ doc.uploadedBy.partner ? doc.uploadedBy.partner.nom ~ ' - ' : '' }}"
+                        data-partner-name="{{ doc.uploadedBy and doc.uploadedBy.partner ? doc.uploadedBy.partner.nom ~ ' - ' : '' }}"
                         data-user-name="{{ doc.uploadedBy.nomComplet ?? 'N/R' }}"
                     ></a>
                 {% endif %}
