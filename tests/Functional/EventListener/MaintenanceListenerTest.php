@@ -13,14 +13,26 @@ class MaintenanceListenerTest extends WebTestCase
         self::ensureKernelShutdown();
     }
 
-    public function testMaintenanceRedirect()
+    /**
+     * @dataProvider provideRoutes
+     */
+    public function testMaintenanceRedirect(string $routeName, array $parameters = [])
     {
         $client = static::createClient();
         $_ENV['MAINTENANCE_ENABLE'] = '1';
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
-        $client->request('GET', $generatorUrl->generate('front_signalement'));
+        $client->request('GET', $generatorUrl->generate($routeName, $parameters));
         $this->assertTrue($client->getResponse()->isRedirect());
+    }
+
+    public function provideRoutes(): \Generator
+    {
+        yield 'Lock dépot signalement' => ['front_signalement'];
+        yield 'Lock demande activation' => ['login_activation'];
+        yield 'Lock Mot de passe perdu' => ['login_mdp_perdu'];
+        yield 'Lock Mise à jour mot de passe' => ['activate_account', ['uuid' => '123456778', 'token' => '000000000']];
+        yield 'Fiche signalement' => ['front_suivi_signalement', ['code' => '123456778']];
     }
 
     public function testNonMaintenanceRequest()
