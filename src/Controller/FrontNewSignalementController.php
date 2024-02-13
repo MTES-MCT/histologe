@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\SignalementDraft;
+use App\Factory\SignalementDraftFactory;
 use App\Manager\SignalementDraftManager;
 use App\Serializer\SignalementDraftRequestSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -55,6 +56,50 @@ class FrontNewSignalementController extends AbstractController
             ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())]
         );
         if (0 === $errors->count()) {
+            return $this->json([
+                'uuid' => $signalementDraftManager->create(
+                    $signalementDraftRequest,
+                    json_decode($payload, true)
+                ),
+            ]);
+        }
+
+        return $this->json($errors);
+    }
+
+    #[Route('/signalement-draft/check', name: 'check_signalement_draft_existe', methods: 'POST')]
+    public function checkSignalementDraftExists(
+        Request $request,
+        SignalementDraftRequestSerializer $serializer,
+        SignalementDraftManager $signalementDraftManager,
+        ValidatorInterface $validator,
+        SignalementDraftFactory $signalementDraftFactory,
+    ): Response {
+        /** @var SignalementDraftRequest $signalementDraftRequest */
+        $signalementDraftRequest = $serializer->deserialize(
+            $payload = $request->getContent(),
+            SignalementDraftRequest::class,
+            'json'
+        );
+        $errors = $validator->validate(
+            $signalementDraftRequest,
+            null,
+            ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())]
+        );
+        if (0 === $errors->count()) {
+            $dataToHash = $signalementDraftFactory->getEmailDeclarant($signalementDraftRequest);
+            $dataToHash .= $signalementDraftRequest->getAdresseLogementAdresse();
+            $hash = hash('sha256', $dataToHash);
+
+            $existingSignalementDraft = $signalementDraftManager->findOneBy(['identificationHash' => $hash]);
+            if (null !== $existingSignalementDraft) {
+                // TODO que retourne t-on ?
+                return $this->json([
+                    'uuid' => $existingSignalementDraft->getUuid(),
+                ]);
+            }
+
+            // TODO que retourne t-on ?
             return $this->json([
                 'uuid' => $signalementDraftManager->create(
                     $signalementDraftRequest,

@@ -12,6 +12,7 @@
       :data-ajaxurl-get-signalement-draft="sharedProps.ajaxurlGetSignalementDraft"
       :data-ajaxurl-platform-name="sharedProps.platformName"
       :data-ajaxurl-check-territory="sharedProps.ajaxurlCheckTerritory"
+      :data-ajaxurl-check-signalement-draft-exists="sharedProps.ajaxurlCheckSignalementDraftExists"
       >
       <div v-if="isLoadingInit" class="loading fr-m-10w fr-grid-row fr-grid-row--center">
         Initialisation du formulaire...
@@ -86,6 +87,7 @@ export default defineComponent({
       this.sharedProps.ajaxurlPutSignalementDraft = initElements.dataset.ajaxurlPutSignalementDraft
       this.sharedProps.ajaxurlHandleUpload = initElements.dataset.ajaxurlHandleUpload
       this.sharedProps.ajaxurlCheckTerritory = initElements.dataset.ajaxurlCheckTerritory
+      this.sharedProps.ajaxurlCheckSignalementDraftExists = initElements.dataset.ajaxurlCheckSignalementDraftExists
       if (initElements.dataset.ajaxurlGetSignalementDraft !== undefined) {
         this.sharedProps.ajaxurlGetSignalementDraft = initElements.dataset.ajaxurlGetSignalementDraft
         requests.initWithExistingData(this.handleInitData)
@@ -153,6 +155,7 @@ export default defineComponent({
       if (requestResponse) {
         if (requestResponse.uuid) {
           formStore.data.uuidSignalementDraft = requestResponse.uuid
+        // TODO : identifier si c'est lee premier enregistrement, et afficher modale si besoin
         } else {
           let errorMessage = ''
           for (const index in requestResponse.violations) {
