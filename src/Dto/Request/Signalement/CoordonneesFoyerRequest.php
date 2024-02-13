@@ -6,22 +6,35 @@ use App\Validator as AppAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
 
-class CoordonneesFoyerRequest
+class CoordonneesFoyerRequest implements RequestInterface
 {
     public function __construct(
         private readonly ?string $typeProprio = null,
+        #[Assert\When(
+            expression: 'this.getTypeProprio() == "ORGANISME_SOCIETE"',
+            constraints: [
+                new Assert\NotBlank(message: 'Merci de saisir un nom de structure.'),
+            ],
+        )]
         private readonly ?string $nomStructure = null,
+        #[Assert\NotBlank(message: 'Merci de selectionner une civilité.', groups: ['LOCATAIRE'])]
         private readonly ?string $civilite = null,
-        #[Assert\NotBlank(message: 'Merci de saisir un nom.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
+        #[Assert\NotBlank(
+            message: 'Merci de saisir un nom.',
+            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR'])]
         #[Assert\Length(max: 50, maxMessage: 'Le nom ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $nom = null,
-        #[Assert\NotBlank(message: 'Merci de saisir un prénom.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
+        #[Assert\NotBlank(
+            message: 'Merci de saisir un prénom.',
+            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR'])]
         #[Assert\Length(max: 50, maxMessage: 'Le prénom ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $prenom = null,
-        #[Assert\NotBlank(message: 'Merci de saisir un email', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
+        #[Assert\NotBlank(message: 'Merci de saisir un email.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
         #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
         private readonly ?string $mail = null,
-        #[Assert\NotBlank(message: 'Merci de saisir un numéro de téléphone', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
+        #[Assert\NotBlank(
+            message: 'Merci de saisir un numéro de téléphone.',
+            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
         #[AppAssert\TelephoneFormat]
         private readonly ?string $telephone = null,
         #[AppAssert\TelephoneFormat]

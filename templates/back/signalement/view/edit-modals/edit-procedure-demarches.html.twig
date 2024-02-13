@@ -11,11 +11,11 @@
                             <h1 id="fr-modal-title-modal-edit-procedure-demarches" class="fr-modal__title">
                                 Modifier procédure et démarches
                             </h1>
-
+                            <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
                             <div class="fr-select-group">
                                 {% set isProprioAverti = signalement.isProprioAverti %}
                                 <label class="fr-label" for="isProprioAverti">Bailleur averti</label>
-                                <select class="fr-select" name="isProprioAverti">
+                                <select class="fr-select" id="isProprioAverti" name="isProprioAverti">
                                     <option value="" {{ isProprioAverti is same as null ? 'selected' : '' }}></option>
                                     <option value="1" {{ isProprioAverti is same as true ? 'selected' : '' }}>Oui</option>
                                     <option value="0" {{ isProprioAverti is same as false ? 'selected' : '' }}>Non</option>
@@ -25,7 +25,7 @@
                             <div class="fr-select-group">
                                 {% set infoProcedureAssuranceContactee = signalement.informationProcedure ? signalement.informationProcedure.infoProcedureAssuranceContactee : null %}
                                 <label class="fr-label" for="infoProcedureAssuranceContactee">Contact assurance</label>
-                                <select class="fr-select" name="infoProcedureAssuranceContactee">
+                                <select class="fr-select" id="infoProcedureAssuranceContactee" name="infoProcedureAssuranceContactee">
                                     <option value="" {{ infoProcedureAssuranceContactee not in ['oui', 'non', 'pas_assurance_logement'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ infoProcedureAssuranceContactee is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ infoProcedureAssuranceContactee is same as 'non' ? 'selected' : '' }}>Non</option>
@@ -34,14 +34,14 @@
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="infoProcedureReponseAssurance">Réponse assurance</label>
+                                <label class="fr-label" for="infoProcedureReponseAssurance">Réponse assurance (si assurance contactée)</label>
                                 <textarea class="fr-input fr-input--no-resize" name="infoProcedureReponseAssurance">{{ signalement.informationProcedure and signalement.informationProcedure.infoProcedureReponseAssurance ? signalement.informationProcedure.infoProcedureReponseAssurance : '' }}</textarea>
                             </div>
 
                             <div class="fr-input-group">
                                 {% set infoProcedureDepartApresTravaux = signalement.informationProcedure ? signalement.informationProcedure.infoProcedureDepartApresTravaux : null %}
                                 <label class="fr-label" for="infoProcedureDepartApresTravaux">Souhaite garder le logement après travaux</label>
-                                <select class="fr-select" name="infoProcedureDepartApresTravaux">
+                                <select class="fr-select" id="infoProcedureDepartApresTravaux" name="infoProcedureDepartApresTravaux">
                                     {# Careful : reversed regarding the question in the form #}
                                     <option value="" {{ infoProcedureDepartApresTravaux not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
                                     <option value="non" {{ infoProcedureDepartApresTravaux is same as 'non' ? 'selected' : '' }}>Oui</option>

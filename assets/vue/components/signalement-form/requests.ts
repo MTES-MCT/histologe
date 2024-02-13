@@ -40,16 +40,16 @@ export const requests = {
       timeout: 0 // TODO: va nécéssiter d'apporter quelques retouches sur l'UX
     })
     axiosInstance
-        .post(ajaxUrl, data, config)
-        .then(response => {
-          const responseData = response.data
-          functionReturn(responseData)
-        })
-        .catch(error => {
-          console.error(error)
-          Sentry.captureException(new Error('Something wrong happened with the upload.'))
-          functionReturn(error)
-        })
+      .post(ajaxUrl, data, config)
+      .then(response => {
+        const responseData = response.data
+        functionReturn(responseData)
+      })
+      .catch(error => {
+        console.error(error)
+        Sentry.captureException(new Error('Something wrong happened with the upload.'))
+        functionReturn(error)
+      })
   },
   doRequestPut (ajaxUrl: string, data: any, functionReturn: Function) {
     axios

@@ -69,6 +69,7 @@ class SignalementManager extends AbstractManager
         private DesordrePrecisionRepository $desordrePrecisionRepository,
         private DesordreCritereRepository $desordreCritereRepository,
         private DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
+        private SuiviManager $suiviManager,
         string $entityName = Signalement::class
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -339,6 +340,11 @@ class SignalementManager extends AbstractManager
             ->setAdresseAutreOccupant($adresseOccupantRequest->getAutre());
 
         $this->save($signalement);
+
+        $this->suiviManager->addSuiviIfNeeded(
+            signalement: $signalement,
+            description: 'L\'adresse du logement a été modifiée par '
+        );
     }
 
     public function updateFromCoordonneesTiersRequest(
@@ -361,6 +367,10 @@ class SignalementManager extends AbstractManager
             ->setStructureDeclarant($coordonneesTiersRequest->getStructure());
 
         $this->save($signalement);
+        $this->suiviManager->addSuiviIfNeeded(
+            signalement: $signalement,
+            description: 'Les coordonnées du tiers déclarant ont été modifiées par ',
+        );
     }
 
     public function updateFromCoordonneesFoyerRequest(
@@ -385,6 +395,10 @@ class SignalementManager extends AbstractManager
             ->setTelOccupantBis($coordonneesFoyerRequest->getTelephoneBis());
 
         $this->save($signalement);
+        $this->suiviManager->addSuiviIfNeeded(
+            signalement: $signalement,
+            description: 'Les coordonnées du foyer ont été modifiées par ',
+        );
     }
 
     public function updateFromCoordonneesBailleurRequest(
@@ -422,6 +436,10 @@ class SignalementManager extends AbstractManager
         $signalement->setInformationComplementaire($informationComplementaire);
 
         $this->save($signalement);
+        $this->suiviManager->addSuiviIfNeeded(
+            signalement: $signalement,
+            description: 'Les coordonnées du bailleur ont été modifiées par ',
+        );
     }
 
     public function updateFromInformationsLogementRequest(
@@ -476,6 +494,10 @@ class SignalementManager extends AbstractManager
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
 
         $this->save($signalement);
+        $this->suiviManager->addSuiviIfNeeded(
+            signalement: $signalement,
+            description: 'Les informations sur le logement ont été modifiées par ',
+        );
     }
 
     private function updateDesordresAndScoreWithSuroccupationChanges(
@@ -582,6 +604,10 @@ class SignalementManager extends AbstractManager
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
 
         $this->save($signalement);
+        $this->suiviManager->addSuiviIfNeeded(
+            signalement: $signalement,
+            description: 'La composition du logement a été modifée par ',
+        );
     }
 
     public function updateFromSituationFoyerRequest(
@@ -671,6 +697,10 @@ class SignalementManager extends AbstractManager
         $this->updateDesordresAndScoreWithSuroccupationChanges($signalement);
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
         $this->save($signalement);
+        $this->suiviManager->addSuiviIfNeeded(
+            signalement: $signalement,
+            description: 'La situation du foyer a été modifiée par ',
+        );
     }
 
     public function updateFromProcedureDemarchesRequest(
@@ -707,6 +737,10 @@ class SignalementManager extends AbstractManager
         }
 
         $this->save($signalement);
+        $this->suiviManager->addSuiviIfNeeded(
+            signalement: $signalement,
+            description: 'Les procédures et démarches ont été modifiées par ',
+        );
     }
 
     public function findSignalementAffectationList(User|UserInterface|null $user, array $options): array

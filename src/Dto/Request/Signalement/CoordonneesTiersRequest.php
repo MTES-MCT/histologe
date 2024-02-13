@@ -6,7 +6,7 @@ use App\Validator as AppAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
 
-class CoordonneesTiersRequest
+class CoordonneesTiersRequest implements RequestInterface
 {
     public function __construct(
         private readonly ?string $typeProprio = null,
@@ -23,6 +23,12 @@ class CoordonneesTiersRequest
         #[AppAssert\TelephoneFormat]
         private readonly ?string $telephone = null,
         private readonly ?string $lien = null,
+        #[Assert\When(
+            expression: 'this.getLien() == "PRO" || this.getLien() == "SECOURS"',
+            constraints: [
+                new Assert\NotBlank(message: 'Merci de saisir un nom de structure.'),
+            ],
+        )]
         private readonly ?string $structure = null,
     ) {
     }

@@ -4,14 +4,16 @@ namespace App\Dto\Request\Signalement;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class InformationsLogementRequest
+class InformationsLogementRequest implements RequestInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'Merci de définir le nombre de personnes.')]
         private readonly ?string $nombrePersonnes = null,
-        #[Assert\NotBlank(message: 'Merci de définir le nombre d\'enfants.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR'])]
+        #[Assert\NotBlank(
+            message: 'Merci de définir le nombre d\'enfants.',
+            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR'])]
         private readonly ?string $compositionLogementEnfants = null,
-        #[Assert\NotBlank(message: 'Merci de définir la date d\'arrivée', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
+        #[Assert\NotBlank(message: 'Merci de définir la date d\'arrivée.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
         #[Assert\DateTime('Y-m-d')]
         private readonly ?string $dateEntree = null,
         #[Assert\DateTime('Y-m-d')]

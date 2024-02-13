@@ -258,7 +258,7 @@ class Signalement
     private $codeSuivi;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $lienDeclarantOccupant;
+    private ?string $lienDeclarantOccupant = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
     private $isConsentementTiers;
@@ -1978,7 +1978,19 @@ class Signalement
 
     public function getProfileDeclarant(): ?ProfileDeclarant
     {
-        return $this->profileDeclarant;
+        if (null !== $this->createdFrom) {
+            return $this->profileDeclarant;
+        }
+
+        if (false === $this->isNotOccupant) {
+            return ProfileDeclarant::LOCATAIRE;
+        }
+
+        if (\in_array($this->lienDeclarantOccupant, ['PROFESSIONNEL', 'pro', 'assistante sociale', 'curatrice'])) {
+            return ProfileDeclarant::TIERS_PRO;
+        }
+
+        return ProfileDeclarant::TIERS_PARTICULIER;
     }
 
     public function setProfileDeclarant(?ProfileDeclarant $profileDeclarant): self

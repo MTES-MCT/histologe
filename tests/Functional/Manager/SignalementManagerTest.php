@@ -8,10 +8,12 @@ use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Entity\User;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementFactory;
 use App\Manager\SignalementManager;
+use App\Manager\SuiviManager;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Service\Signalement\CriticiteCalculator;
@@ -23,7 +25,7 @@ use App\Specification\Signalement\SuroccupationSpecification;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -31,7 +33,7 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class SignalementManagerTest extends KernelTestCase
+class SignalementManagerTest extends WebTestCase
 {
     public const TERRITORY_13 = 13;
 
@@ -53,11 +55,12 @@ class SignalementManagerTest extends KernelTestCase
     private DesordrePrecisionRepository $desordrePrecisionRepository;
     private DesordreCritereRepository $desordreCritereRepository;
     private DesordreCompositionLogementLoader $desordreCompositionLogementLoader;
+    private SuiviManager $suiviManager;
 
     protected function setUp(): void
     {
-        $kernel = self::bootKernel();
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        $client = static::createClient();
+        $this->entityManager = static::getContainer()->get('doctrine')->getManager();
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->security = static::getContainer()->get('security.helper');
         $this->signalementFactory = static::getContainer()->get(SignalementFactory::class);
@@ -77,6 +80,7 @@ class SignalementManagerTest extends KernelTestCase
         $this->desordrePrecisionRepository = static::getContainer()->get(DesordrePrecisionRepository::class);
         $this->desordreCritereRepository = static::getContainer()->get(DesordreCritereRepository::class);
         $this->desordreCompositionLogementLoader = static::getContainer()->get(DesordreCompositionLogementLoader::class);
+        $this->suiviManager = static::getContainer()->get(SuiviManager::class);
 
         $this->signalementManager = new SignalementManager(
             $this->managerRegistry,
@@ -95,7 +99,10 @@ class SignalementManagerTest extends KernelTestCase
             $this->desordrePrecisionRepository,
             $this->desordreCritereRepository,
             $this->desordreCompositionLogementLoader,
+            $this->suiviManager,
         );
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $client->loginUser($user);
     }
 
     public function testFindAllPartnersAffectedAndNotAffectedBySignalementLocalization()
@@ -266,7 +273,7 @@ class SignalementManagerTest extends KernelTestCase
         /** @var ValidatorInterface $validator */
         $validator = static::getContainer()->get(ValidatorInterface::class);
         $errors = $validator->validate($emptyCompositionLogementRequest, null, ['Default', 'LOCATAIRE']);
-        $this->assertCount(7, $errors);
+        $this->assertCount(10, $errors);
         /** @var ConstraintViolationList $errors */
         $errorsAsString = (string) $errors;
         $this->assertStringContainsString('Merci de définir le nombre de pièces à vivre', $errorsAsString);
