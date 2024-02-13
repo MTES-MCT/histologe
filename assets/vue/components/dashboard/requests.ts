@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { store } from './store'
+import * as Sentry from '@sentry/browser'
 
 export const requests = {
   doRequest (ajaxUrl: string, functionReturn: Function) {
@@ -10,7 +11,8 @@ export const requests = {
         functionReturn(responseData)
       })
       .catch(error => {
-        console.log(error)
+        console.error(error)
+        Sentry.captureException(new Error(error))
         functionReturn('error')
       })
   },
