@@ -885,7 +885,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "La prodécure",
+    "label": "La procédure",
     "description": "<p>Vous avez presque terminé ! <br>Répondez aux dernières questions puis envoyez votre signalement.</p><p><b>Toutes les questions sont obligatoires, sauf mention contraire.</b></p>",
     "slug": "ecran_intermediaire_procedure",
     "screenCategory": "Procédure",
