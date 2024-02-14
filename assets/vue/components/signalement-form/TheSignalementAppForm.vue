@@ -158,7 +158,11 @@ export default defineComponent({
           for (const index in requestResponse.violations) {
             errorMessage += requestResponse.violations[index].title + '\n'
           }
-          alert(errorMessage)
+          if (errorMessage.length > 0) {
+            alert(errorMessage)
+          } else {
+            alert("Oups... Une erreur est survenue. Nous nous excusons pour ce désagrément, nos équipes ont été prévenues. Veuillez réessayer ultérieurement ou soumettre un nouveau formulaire. Merci de votre compréhension.")
+          }
           return
         }
         if (requestResponse.signalementReference) {
