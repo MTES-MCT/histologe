@@ -86,8 +86,8 @@
                         data-createdAt="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
                         data-partner-name="{{ photo.uploadedBy and photo.uploadedBy.partner ? photo.uploadedBy.partner.nom ~ ' - ' : '' }}"
                         data-user-name="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
-                        data-desordreSlug="{{ photo.desordreSlug}}"
-                        data-signalement-desordres="{{ precisions | json_encode }}"
+                        data-desordreSlug="{{ photo.desordreSlug }}"
+                        data-signalement-desordres="{{ criteres | json_encode }}"
                     ></a>
                 {% endif %}
                 {% if (importedBy is not same as 'user' and (photo.uploadedBy is not null and photo.isPartnerFile)) 
