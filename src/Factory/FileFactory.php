@@ -7,6 +7,7 @@ use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Service\ImageManipulationHandler;
 use App\Service\Signalement\SignalementDocumentTypeMapper;
 
 class FileFactory
@@ -75,9 +76,7 @@ class FileFactory
         return $this->createInstanceFrom(
             filename: $file['file'],
             title: $file['titre'],
-            type: 'pdf' === pathinfo($file['file'], \PATHINFO_EXTENSION)
-                ? File::FILE_TYPE_DOCUMENT
-                : File::FILE_TYPE_PHOTO,
+            type: $this->getFileType($file),
             signalement: $signalement,
             user: $user,
             intervention: $intervention,
@@ -85,5 +84,19 @@ class FileFactory
             desordreSlug: $desordreSlug,
             description: $fileDescription,
         );
+    }
+
+    private function getFileType(array $file)
+    {
+        if ('photos' === $file['key']
+            && \in_array(
+                strtolower(pathinfo($file['file'], \PATHINFO_EXTENSION)),
+                ImageManipulationHandler::IMAGE_EXTENSION
+            )
+        ) {
+            return File::FILE_TYPE_PHOTO;
+        }
+
+        return File::FILE_TYPE_DOCUMENT;
     }
 }

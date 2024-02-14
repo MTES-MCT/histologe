@@ -65,6 +65,18 @@ class FileFactoryTest extends TestCase
             DocumentType::SITUATION_FOYER_DPE,
         ];
 
+        yield 'DPE photo' => [
+            [
+                'key' => 'photos',
+                'file' => 'dummy-filename-dpe.PNG',
+                'titre' => 'dummy-filename-dpe-titre.PNG',
+                'slug' => 'bail_dpe_dpe_upload',
+            ],
+            'dummy-filename-dpe.PNG',
+            File::FILE_TYPE_PHOTO,
+            DocumentType::SITUATION_FOYER_DPE,
+        ];
+
         yield 'Etat des lieux document' => [
             [
                 'key' => 'documents',
@@ -79,6 +91,18 @@ class FileFactoryTest extends TestCase
 
         yield 'Bail document' => [
             [
+                'key' => 'documents',
+                'file' => 'dummy-filename-bail.png',
+                'titre' => 'dummy-filename-bail-titre.png',
+                'slug' => 'bail_dpe_bail_upload',
+            ],
+            'dummy-filename-bail.png',
+            File::FILE_TYPE_DOCUMENT,
+            DocumentType::SITUATION_FOYER_BAIL,
+        ];
+
+        yield 'Bail photo' => [
+            [
                 'key' => 'photos',
                 'file' => 'dummy-filename-bail.png',
                 'titre' => 'dummy-filename-bail-titre.png',
@@ -92,6 +116,18 @@ class FileFactoryTest extends TestCase
         yield 'Désordre document' => [
             [
                 'key' => 'documents',
+                'file' => 'dummy-filename-desordre.pdf',
+                'titre' => 'dummy-filename-desordre-titre.pdf',
+                'slug' => 'desordres_batiment_isolation_photos_upload',
+            ],
+            'dummy-filename-desordre.pdf',
+            File::FILE_TYPE_DOCUMENT,
+            DocumentType::SITUATION,
+        ];
+
+        yield 'Désordre photos pdf' => [
+            [
+                'key' => 'photos',
                 'file' => 'dummy-filename-desordre.pdf',
                 'titre' => 'dummy-filename-desordre-titre.pdf',
                 'slug' => 'desordres_batiment_isolation_photos_upload',

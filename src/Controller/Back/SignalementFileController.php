@@ -10,6 +10,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Factory\SuiviFactory;
+use App\Manager\FileManager;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
 use App\Service\Signalement\SignalementFileProcessor;
@@ -121,10 +122,14 @@ class SignalementFileController extends AbstractController
         UploadHandlerService $uploadHandlerService,
         EntityManagerInterface $entityManager,
         SuiviFactory $suiviFactory,
+        FileManager $fileManager,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('FILE_DELETE', $signalement);
-        if ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))) {
-            if ($uploadHandlerService->deleteSignalementFile($signalement, $type, $filename, $fileRepository)) {
+        $file = $fileManager->getFileFromSignalement($signalement, $type, $filename);
+        $this->denyAccessUnlessGranted('FILE_DELETE', $file);
+        if (null !== $file
+            && $this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))
+        ) {
+            if ($uploadHandlerService->deleteSignalementFile($file, $fileRepository)) {
                 $suivi = $suiviFactory->createInstanceFrom($this->getUser(), $signalement);
                 /** @var User $user */
                 $user = $this->getUser();
@@ -157,7 +162,6 @@ class SignalementFileController extends AbstractController
         FileRepository $fileRepository,
         EntityManagerInterface $entityManager,
     ): RedirectResponse {
-        $this->denyAccessUnlessGranted('FILE_EDIT', $signalement);
         if ($this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), $request->get('_token'))) {
             $file = $fileRepository->findOneBy(
                 [
@@ -166,6 +170,7 @@ class SignalementFileController extends AbstractController
                 ]
             );
             if (null !== $file) {
+                $this->denyAccessUnlessGranted('FILE_EDIT', $file);
                 $documentType = DocumentType::tryFrom($request->get('documentType'));
                 if (null !== $documentType) {
                     $file->setDocumentType($documentType);
