@@ -2,6 +2,8 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\DesordreCritere;
+use App\Entity\DesordrePrecision;
 use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\Signalement;
@@ -169,7 +171,16 @@ class SignalementFileController extends AbstractController
                     $file->setDocumentType($documentType);
                     if (DocumentType::SITUATION === $documentType) {
                         $desordreSlug = $request->get('desordreSlug');
-                        if ($desordreSlug !== $file->getDesordreSlug()) {
+                        $desordreCritereSlugs = $signalement->getDesordreCriteres()->map(
+                            fn (DesordreCritere $desordreCritere) => $desordreCritere->getSlugCritere()
+                        )->toArray();
+                        $desordrePrecisionSlugs = $signalement->getDesordrePrecisions()->map(
+                            fn (DesordrePrecision $desordrePrecision) => $desordrePrecision->getDesordrePrecisionSlug()
+                        )->toArray();
+
+                        if (\in_array($desordreSlug, $desordreCritereSlugs)
+                            || \in_array($desordreSlug, $desordrePrecisionSlugs)
+                        ) {
                             $file->setDesordreSlug($desordreSlug);
                         }
                     } else {
