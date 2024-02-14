@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Entity\File;
-use App\Entity\Signalement;
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Exception\File\UnsupportedFileFormatException;
 use App\Repository\FileRepository;
@@ -120,26 +119,12 @@ class UploadHandlerService
         $this->moveFilePath($distantFolder.$variantNames[ImageManipulationHandler::SUFFIX_THUMB]);
     }
 
-    public function deleteSignalementFile(Signalement $signalement, string $type, string $filename, FileRepository $fileRepository): bool
+    public function deleteSignalementFile(File $file, FileRepository $fileRepository): bool
     {
-        $fileType = 'documents' === $type ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO;
+        $this->deleteFileInBucket($file);
+        $fileRepository->remove($file, true);
 
-        $fileCollection = $signalement->getFiles()->filter(
-            function (File $file) use ($fileType, $filename) {
-                return $fileType === $file->getFileType()
-                    && $filename === $file->getFilename();
-            }
-        );
-
-        if (!$fileCollection->isEmpty()) {
-            $file = $fileCollection->current();
-            $this->deleteFileInBucket($file);
-            $fileRepository->remove($file, true);
-
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     public function deleteFileInBucket(File $file): void
