@@ -27,6 +27,7 @@ function histoUpdateDesordreSelect(target, selectedDocumentType) {
 
 document.querySelectorAll('.btn-signalement-file-edit').forEach(swbtn => {
   swbtn.addEventListener('click', evt => {
+    evt.preventDefault()
     const target = evt.target
 
     if ( target.getAttribute('data-type') === 'photo') {
