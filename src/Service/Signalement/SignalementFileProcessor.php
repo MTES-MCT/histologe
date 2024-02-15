@@ -19,6 +19,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class SignalementFileProcessor
 {
     private array $errors = [];
+    private File $lastFile;
 
     public function __construct(
         private readonly UploadHandlerService $uploadHandlerService,
@@ -97,6 +98,7 @@ class SignalementFileProcessor
             $file->setSize($this->uploadHandlerService->getFileSize($file->getFilename()));
             $file->setIsVariantsGenerated($this->uploadHandlerService->hasVariants($file->getFilename()));
             $signalement->addFile($file);
+            $this->lastFile = $file;
         }
     }
 
@@ -143,5 +145,10 @@ class SignalementFileProcessor
             'type' => 'documents' === $inputName ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO,
             'documentType' => $documentType,
         ];
+    }
+
+    public function getLastFile(): File
+    {
+        return $this->lastFile;
     }
 }

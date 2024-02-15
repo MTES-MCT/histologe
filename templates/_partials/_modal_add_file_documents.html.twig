@@ -7,7 +7,15 @@
                         <button class="fr-btn--close fr-btn" aria-controls="fr-modal-add-file-documents">Fermer</button>
                     </div>
                     <div class="fr-modal__content">
-                        <h1 id="fr-modal-add-file-documents-title" class="fr-modal__title">
+                        <h1 
+                            id="fr-modal-add-file-documents-title" 
+                            class="fr-modal__title"
+                            data-has-changes="false"
+                            data-add-file-route="{{ path('back_signalement_add_file',{uuid:signalement.uuid}) }}"
+                            data-add-file-token="{{ csrf_token('signalement_add_file_'~signalement.id) }}"
+                            data-edit-file-route="{{ path('back_signalement_edit_file',{uuid:signalement.uuid}) }}"
+                            data-edit-file-token="{{ csrf_token('signalement_edit_file_'~signalement.id) }}"
+                            >
                             Ajouter des documents partnaires
                         </h1>
                         <div>
@@ -29,6 +37,15 @@
                         </div>
                         <div class="modal-upload-list-section">
                             <div class="modal-upload-list"></div>
+                        </div>
+                        <div style="display:none">
+                            {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
+                            <select class="fr-select select-type" data-file-id="" id="select-type-document-to-clone">
+                                <option value="">Sélectionner un type</option>
+                                {% for key, value in DocumentType.getDocumentsList() %}
+                                    <option value="{{ key }}">{{ value }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
                     <div class="fr-modal__footer">

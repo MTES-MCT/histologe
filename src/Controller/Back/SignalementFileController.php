@@ -19,7 +19,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -60,51 +59,63 @@ class SignalementFileController extends AbstractController
         EntityManagerInterface $entityManager,
         SuiviFactory $suiviFactory,
         SignalementFileProcessor $signalementFileProcessor,
-    ): RedirectResponse {
+    ): Response {
         $this->denyAccessUnlessGranted('FILE_CREATE', $signalement);
-        if ($this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token'))
-            && $files = $request->files->get('signalement-add-file')) {
-            $inputName = isset($files[File::INPUT_NAME_DOCUMENTS])
-                ? File::INPUT_NAME_DOCUMENTS
-                : File::INPUT_NAME_PHOTOS;
-            // $documentType = DocumentType::tryFrom($request->get('document_type')) ?? DocumentType::AUTRE;
-            $documentType = DocumentType::AUTRE;
-            list($fileList, $descriptionList) = $signalementFileProcessor->process($files, $inputName, $documentType);
-
-            if ($signalementFileProcessor->isValid()) {
-                $nbFiles = \count($fileList);
-                $description = (string) $nbFiles;
-                $suivi = $suiviFactory->createInstanceFrom($this->getUser(), $signalement);
-                // TODO : distinguer documents partenaires et documents sur la istuation usager
-                // TODO : afficher la liste des désordres concernés pour l'ajout de photo
-                if (FILE::INPUT_NAME_DOCUMENTS === $inputName) {
-                    $description .= $nbFiles > 1 ? ' documents partenaires ont été ajoutés au signalement :'
-                    : ' document partenaire a été ajouté au signalement :';
-                } else {
-                    $description .= $nbFiles > 1 ? ' photos ont été ajoutés au signalement :'
-                    : ' photo a été ajouté au signalement :';
-                }
-                $suivi->setDescription(
-                    $description
-                    .'<ul>'
-                    .implode('', $descriptionList)
-                    .'</ul>'
-                );
-                $suivi->setType(SUIVI::TYPE_AUTO);
-                $signalementFileProcessor->addFilesToSignalement($fileList, $signalement, $this->getUser());
-
-                $entityManager->persist($suivi);
-                $entityManager->persist($signalement);
-                $entityManager->flush();
-                $this->addFlash('success', 'Envoi de '.ucfirst($inputName).' effectué avec succès !');
-            } else {
-                foreach ($signalementFileProcessor->getErrors() as $errorMessage) {
-                    $this->addFlash('error', $errorMessage);
-                }
+        if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
+            if ($request->isXmlHttpRequest()) {
+                return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant'], 400);
             }
-        } else {
             $this->addFlash('error', 'Une erreur est survenu lors du téléchargement');
+
+            return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
         }
+        $inputName = isset($files[File::INPUT_NAME_DOCUMENTS])
+            ? File::INPUT_NAME_DOCUMENTS
+            : File::INPUT_NAME_PHOTOS;
+        // $documentType = DocumentType::tryFrom($request->get('document_type')) ?? DocumentType::AUTRE;
+        $documentType = DocumentType::AUTRE;
+        list($fileList, $descriptionList) = $signalementFileProcessor->process($files, $inputName, $documentType);
+
+        if (!$signalementFileProcessor->isValid()) {
+            $errorMessages = '';
+            foreach ($signalementFileProcessor->getErrors() as $errorMessage) {
+                $errorMessages .= $errorMessage.'<br>';
+            }
+            if ($request->isXmlHttpRequest()) {
+                return $this->json(['response' => $errorMessages], 400);
+            }
+            $this->addFlash('error error-raw', $errorMessages);
+
+            return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
+        }
+        $nbFiles = \count($fileList);
+        $description = (string) $nbFiles;
+        $suivi = $suiviFactory->createInstanceFrom($this->getUser(), $signalement);
+        // TODO : distinguer documents partenaires et documents sur la istuation usager
+        // TODO : afficher la liste des désordres concernés pour l'ajout de photo
+        if (FILE::INPUT_NAME_DOCUMENTS === $inputName) {
+            $description .= $nbFiles > 1 ? ' documents partenaires ont été ajoutés au signalement :'
+            : ' document partenaire a été ajouté au signalement :';
+        } else {
+            $description .= $nbFiles > 1 ? ' photos ont été ajoutés au signalement :'
+            : ' photo a été ajouté au signalement :';
+        }
+        $suivi->setDescription(
+            $description
+            .'<ul>'
+            .implode('', $descriptionList)
+            .'</ul>'
+        );
+        $suivi->setType(SUIVI::TYPE_AUTO);
+        $signalementFileProcessor->addFilesToSignalement($fileList, $signalement, $this->getUser());
+
+        $entityManager->persist($suivi);
+        $entityManager->persist($signalement);
+        $entityManager->flush();
+        if ($request->isXmlHttpRequest()) {
+            return $this->json(['response' => $signalementFileProcessor->getLastFile()->getId()]);
+        }
+        $this->addFlash('success', 'Envoi de '.ucfirst($inputName).' effectué avec succès !');
 
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
     }
@@ -161,55 +172,69 @@ class SignalementFileController extends AbstractController
         Request $request,
         FileRepository $fileRepository,
         EntityManagerInterface $entityManager,
-    ): RedirectResponse {
-        if ($this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), $request->get('_token'))) {
-            $file = $fileRepository->findOneBy(
-                [
-                    'id' => $request->get('file_id'),
-                    'signalement' => $signalement,
-                ]
-            );
-            if (null !== $file) {
-                $this->denyAccessUnlessGranted('FILE_EDIT', $file);
-                $documentType = DocumentType::tryFrom($request->get('documentType'));
-                if (null !== $documentType) {
-                    $file->setDocumentType($documentType);
-                    if (DocumentType::SITUATION === $documentType) {
-                        $desordreSlug = $request->get('desordreSlug');
-                        $desordreCritereSlugs = $signalement->getDesordreCriteres()->map(
-                            fn (DesordreCritere $desordreCritere) => $desordreCritere->getSlugCritere()
-                        )->toArray();
-                        $desordrePrecisionSlugs = $signalement->getDesordrePrecisions()->map(
-                            fn (DesordrePrecision $desordrePrecision) => $desordrePrecision->getDesordrePrecisionSlug()
-                        )->toArray();
+    ): Response {
+        if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), $request->get('_token'))) {
+            if ($request->isXmlHttpRequest()) {
+                return $this->json(['response' => 'Token CSRF invalide'], 400);
+            }
+            $this->addFlash('error', 'Une erreur est survenue lors de la modification...');
 
-                        if (\in_array($desordreSlug, $desordreCritereSlugs)
-                            || \in_array($desordreSlug, $desordrePrecisionSlugs)
-                        ) {
-                            $file->setDesordreSlug($desordreSlug);
-                        }
-                    } else {
-                        if (null !== $file->getDesordreSlug()) {
-                            $file->setDesordreSlug(null);
-                        }
-                    }
+            return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
+        }
+        $file = $fileRepository->findOneBy(
+            [
+                'id' => $request->get('file_id'),
+                'signalement' => $signalement,
+            ]
+        );
+        if (null === $file) {
+            if ($request->isXmlHttpRequest()) {
+                return $this->json(['response' => 'Document introuvable'], 400);
+            }
+            $this->addFlash('error', 'Ce fichier n\'existe plus');
 
-                    $entityManager->persist($file);
-                    $entityManager->flush();
+            return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
+        }
+        $this->denyAccessUnlessGranted('FILE_EDIT', $file);
+        $documentType = DocumentType::tryFrom($request->get('documentType'));
+        if (null === $documentType) {
+            if ($request->isXmlHttpRequest()) {
+                return $this->json(['response' => 'Type de document invalide'], 400);
+            }
+            $this->addFlash('error', 'Mauvais type de fichier');
 
-                    if ('document' === $file->getFileType()) {
-                        $this->addFlash('success', 'Le document a bien été modifié.');
-                    } else {
-                        $this->addFlash('success', 'La photo a bien été modifiée.');
-                    }
-                } else {
-                    $this->addFlash('error', 'Mauvais type de fichier');
-                }
-            } else {
-                $this->addFlash('error', 'Ce fichier n\'existe plus');
+            return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
+        }
+        $file->setDocumentType($documentType);
+        if (DocumentType::SITUATION === $documentType) {
+            $desordreSlug = $request->get('desordreSlug');
+            $desordreCritereSlugs = $signalement->getDesordreCriteres()->map(
+                fn (DesordreCritere $desordreCritere) => $desordreCritere->getSlugCritere()
+            )->toArray();
+            $desordrePrecisionSlugs = $signalement->getDesordrePrecisions()->map(
+                fn (DesordrePrecision $desordrePrecision) => $desordrePrecision->getDesordrePrecisionSlug()
+            )->toArray();
+
+            if (\in_array($desordreSlug, $desordreCritereSlugs)
+                || \in_array($desordreSlug, $desordrePrecisionSlugs)
+            ) {
+                $file->setDesordreSlug($desordreSlug);
             }
         } else {
-            $this->addFlash('error', 'Une erreur est survenue lors de la modification...');
+            if (null !== $file->getDesordreSlug()) {
+                $file->setDesordreSlug(null);
+            }
+        }
+
+        $entityManager->persist($file);
+        $entityManager->flush();
+        if ($request->isXmlHttpRequest()) {
+            return $this->json(['response' => 'success']);
+        }
+        if ('document' === $file->getFileType()) {
+            $this->addFlash('success', 'Le document a bien été modifié.');
+        } else {
+            $this->addFlash('success', 'La photo a bien été modifiée.');
         }
 
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));

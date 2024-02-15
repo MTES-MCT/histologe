@@ -18,7 +18,7 @@
     {% if canEditNDE %}
         {% include '_partials/_modal_edit_nde.html.twig' %}        
     {% endif %}
-    {% if (is_granted('FILE_CREATE', signalement)) %}
+    {% if (is_granted('FILE_CREATE', signalement) and isDocumentsEnabled) %}
         {% include '_partials/_modal_add_file_documents.html.twig' %}
     {% endif %}
     <section id="signalement-{{ signalement.id }}-content"
