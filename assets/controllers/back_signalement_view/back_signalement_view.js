@@ -40,26 +40,35 @@ dropArea.ondrop = (e) => {
 }
 
 function uploadFile(file){
-    var li = document.createElement('li')
-    li.innerHTML = `
-        <div class="col">
+    var div = document.createElement('div')
+    div.classList.add('fr-grid-row', 'fr-grid-row--gutters', 'fr-grid-row--middle', 'fr-mb-2w')
+    div.innerHTML = `
+        <div class="fr-col-8">
             <div class="file-name">
                 <div class="name">${file.name}</div>
-                <span>0%</span>
             </div>
             <div class="file-progress">
                 <span></span>
             </div>
+            <div class="file-size">
+                <div class="size">${(file.size/(1024*1024)).toFixed(2)} MB</div>
+                <span>0%</span>
+            </div>
+        </div>
+        <div class="fr-col-4">
+            <select class="fr-select fr-grid-row--gutters">
+                <option value="">Sélectionner un type</option>
+            </select>
         </div>
     `
-    listContainer.prepend(li)
+    listContainer.prepend(div)
     var http = new XMLHttpRequest()
     var data = new FormData()
     data.append('file', file)
     http.upload.onprogress = (e) => {
         var percent_complete = (e.loaded / e.total)*100
-        li.querySelectorAll('span')[0].innerHTML = Math.round(percent_complete) + '%'
-        li.querySelectorAll('span')[1].style.width = percent_complete + '%'
+        div.querySelectorAll('span')[0].style.width = percent_complete + '%'
+        div.querySelectorAll('span')[1].innerHTML = Math.round(percent_complete) + '%'
     }
     http.open('POST', 'sender.php', true)
     http.send(data)
