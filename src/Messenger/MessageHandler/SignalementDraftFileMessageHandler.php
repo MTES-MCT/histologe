@@ -27,49 +27,40 @@ class SignalementDraftFileMessageHandler
 
     public function __invoke(SignalementDraftFileMessage $signalementDraftFileMessage): void
     {
-        try {
-            $this->logger->info('Start handling SignalementDraftFileMessage', [
-                'signalementDraftId' => $signalementDraftFileMessage->getSignalementDraftId(),
-                'signalementId' => $signalementDraftFileMessage->getSignalementId(),
-            ]);
+        $this->logger->info('Start handling SignalementDraftFileMessage', [
+            'signalementDraftId' => $signalementDraftFileMessage->getSignalementDraftId(),
+            'signalementId' => $signalementDraftFileMessage->getSignalementId(),
+        ]);
 
-            $signalementDraft = $this->signalementDraftRepository->find(
-                $signalementDraftFileMessage->getSignalementDraftId()
-            );
+        $signalementDraft = $this->signalementDraftRepository->find(
+            $signalementDraftFileMessage->getSignalementDraftId()
+        );
 
-            /** @var SignalementDraftRequest $signalementDraftRequest */
-            $signalementDraftRequest = $this->signalementDraftRequestSerializer->denormalize(
-                $signalementDraft->getPayload(),
-                SignalementDraftRequest::class
-            );
+        /** @var SignalementDraftRequest $signalementDraftRequest */
+        $signalementDraftRequest = $this->signalementDraftRequestSerializer->denormalize(
+            $signalementDraft->getPayload(),
+            SignalementDraftRequest::class
+        );
 
-            $signalement = $this->signalementRepository->find($signalementDraftFileMessage->getSignalementId());
+        $signalement = $this->signalementRepository->find($signalementDraftFileMessage->getSignalementId());
 
-            if ($files = $signalementDraftRequest->getFiles()) {
-                foreach ($files as $key => $fileList) {
-                    foreach ($fileList as $fileItem) {
-                        $fileItem['slug'] = $key;
-                        $file = $this->fileFactory->createFromFileArray(file: $fileItem);
-                        $this->uploadHandlerService->moveFromBucketTempFolder($file->getFilename());
-                        $file->setSize($this->uploadHandlerService->getFileSize($file->getFilename()));
-                        $file->setIsVariantsGenerated($this->uploadHandlerService->hasVariants($file->getFilename()));
-                        $signalement->addFile($file);
-                    }
+        if ($files = $signalementDraftRequest->getFiles()) {
+            foreach ($files as $key => $fileList) {
+                foreach ($fileList as $fileItem) {
+                    $fileItem['slug'] = $key;
+                    $file = $this->fileFactory->createFromFileArray(file: $fileItem);
+                    $this->uploadHandlerService->moveFromBucketTempFolder($file->getFilename());
+                    $file->setSize($this->uploadHandlerService->getFileSize($file->getFilename()));
+                    $file->setIsVariantsGenerated($this->uploadHandlerService->hasVariants($file->getFilename()));
+                    $signalement->addFile($file);
                 }
-                $this->signalementRepository->save($signalement, true);
             }
-
-            $this->logger->info('SignalementDraftFileMessage handled successfully', [
-                'signalementId' => $signalementDraftFileMessage->getSignalementId(),
-                'nbFiles' => \count($signalementDraftRequest->getFiles()),
-            ]);
-        } catch (\Throwable $exception) {
-            \Sentry\captureException($exception);
-            $this->logger->error('Error handling SignalementDraftFileMessage', [
-                'signalementId' => $signalementDraftFileMessage->getSignalementId(),
-                'error_message' => $exception->getMessage(),
-                'error_trace' => $exception->getTraceAsString(),
-            ]);
+            $this->signalementRepository->save($signalement, true);
         }
+
+        $this->logger->info('SignalementDraftFileMessage handled successfully', [
+            'signalementId' => $signalementDraftFileMessage->getSignalementId(),
+            'nbFiles' => \count($signalementDraftRequest->getFiles()),
+        ]);
     }
 }
