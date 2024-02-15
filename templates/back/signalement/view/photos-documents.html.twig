@@ -6,32 +6,17 @@
             <h3 class="fr-h5">{{ zonetitle }}</h3>
         </div>
         <div class="fr-col-3 fr-col-md-6 fr-text--right">
-            {% if (is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted))
-                and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION')
-                %}
-                <form method="POST" enctype="multipart/form-data" class="inline-form"
-                    action="{{ path('back_signalement_add_file',{uuid:signalement.uuid}) }}">
-                    <label class="fr-btn fr-btn--sm fr-fi-file-fill fr-btn--icon-left"> Ajouter des documents
-                        <input type="file" accept="application/*" name="signalement-add-file[documents][]"
-                            class="fr-hidden fr-input--file-signalement" multiple>
-                    </label>
-                    <input type="hidden" name="_token"
-                        value="{{ csrf_token('signalement_add_file_'~signalement.id) }}">
-                    <input type="hidden" name="document_type"
-                        value="{{ enum('App\\Entity\\Enum\\DocumentType').AUTRE.name }}">
-                </form>
+            {% if (is_granted('FILE_CREATE', signalement)) %}
+                <button class="fr-btn fr-btn--sm fr-fi-file-fill fr-btn--icon-left" data-fr-opened="false" aria-controls="fr-modal-add-file-documents">
+                    Ajouter des documents
+                </button>
                 
-                <form method="POST" enctype="multipart/form-data" class="inline-form"
-                    action="{{ path('back_signalement_add_file',{uuid:signalement.uuid}) }}">
-                    <label class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-icon-camera-fill"> Ajouter des
-                        photos
-                        <input type="file" accept="image/*" name="signalement-add-file[photos][]"
-                            class="fr-hidden fr-input--file-signalement" multiple>
+                <form method="POST" enctype="multipart/form-data" class="inline-form" action="{{ path('back_signalement_add_file',{uuid:signalement.uuid}) }}">
+                    <label class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-icon-camera-fill"> Ajouter des photos
+                        <input type="file" accept="image/*" name="signalement-add-file[photos][]" class="fr-hidden fr-input--file-signalement" multiple>
                     </label>
-                    <input type="hidden" name="_token"
-                        value="{{ csrf_token('signalement_add_file_'~signalement.id) }}">
-                    <input type="hidden" name="document_type"
-                        value="{{ enum('App\\Entity\\Enum\\DocumentType').AUTRE.name }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('signalement_add_file_'~signalement.id) }}">
+                    <input type="hidden" name="document_type" value="{{ enum('App\\Entity\\Enum\\DocumentType').AUTRE.name }}">
                 </form>
             {% endif %}
         </div>
