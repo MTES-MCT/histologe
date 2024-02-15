@@ -1,23 +1,25 @@
-<div class="fr-grid-row fr-mt-3v">
-    <div class="fr-col-10 fr-col-md-11" id="tags_active_container">
-        {% set visible = 'fr-hidden' %}
-        {% for tag in signalement.tags %}
-            <span class="fr-badge fr-badge--blue-ecume fr-badge--icon-close-line fr-icon-close-line fr-mr-1v" data-value="{{ tag.id }}"
-                data-tag-delete="{{ path('back_signalement_switch_value',{uuid:signalement.uuid}) }}"
-                data-token="{{ csrf_token('signalement_switch_value_'~signalement.uuid) }}"
-                data-remove-url="{{ path('back_tag_delete',{id:tag.id}) }}?_token={{ csrf_token('signalement_delete_tag') }}">{{ tag.label }}&nbsp;&nbsp;<span
-                        class="fr-fi-delete-line fr-icon--sm fr-mt-2v fr-text-label--red-marianne tag--deleter fr-hidden"></span></span>
-        {% else %}
-            {% set visible = '' %}
-        {% endfor %}
-        <em class="fr-text-default--warning fr-fi-close-line fr-icon--xs {{ visible }}">
-            <small>Aucune étiquette attribuée à ce signalement.</small>
-        </em>
+{% if canEditSignalement %}
+    <div class="fr-grid-row fr-mt-3v">
+        <div class="fr-col-10 fr-col-md-11" id="tags_active_container">
+            {% set visible = 'fr-hidden' %}
+            {% for tag in signalement.tags %}
+                <span class="fr-badge fr-badge--blue-ecume fr-badge--icon-close-line fr-icon-close-line fr-mr-1v" data-value="{{ tag.id }}"
+                    data-tag-delete="{{ path('back_signalement_switch_value',{uuid:signalement.uuid}) }}"
+                    data-token="{{ csrf_token('signalement_switch_value_'~signalement.uuid) }}"
+                    data-remove-url="{{ path('back_tag_delete',{id:tag.id}) }}?_token={{ csrf_token('signalement_delete_tag') }}">{{ tag.label }}&nbsp;&nbsp;<span
+                            class="fr-fi-delete-line fr-icon--sm fr-mt-2v fr-text-label--red-marianne tag--deleter fr-hidden"></span></span>
+            {% else %}
+                {% set visible = '' %}
+            {% endfor %}
+            <em class="fr-text-default--warning fr-fi-close-line fr-icon--xs {{ visible }}">
+                <small>Aucune étiquette attribuée à ce signalement.</small>
+            </em>
+        </div>
+        <div class="fr-col-2 fr-col-md-1 fr-text--right">
+            <button class="fr-btn fr-fi-filter-line" id="tags_select_tooltip_btn"></button>
+        </div>
     </div>
-    <div class="fr-col-2 fr-col-md-1 fr-text--right">
-        <button class="fr-btn fr-fi-filter-line" id="tags_select_tooltip_btn"></button>
-    </div>
-</div>
+{% endif %}
 
 <template id="tags_tooltip_template">
     <div class="fr-grid-row fr-grid-row--middle fr-background-alt--grey fr-p-3v fr-rounded fr-text--left fr-my-1v">
