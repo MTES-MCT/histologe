@@ -710,3 +710,19 @@ div.photos-album {
         }
     }
 }
+.modal-upload-upload-container{
+    text-align: center;
+}
+.modal-upload-upload-container input{
+    display: none;
+}
+.modal-upload-drop-section {
+    border: 1px dashed #929292;
+    font-size: 1.4rem;
+    padding: 4rem 0rem;
+    margin: 1rem 0;
+}
+.modal-upload-drop-section.drag-over-effect {
+    border: 3px;
+    color: #929292;
+}   
