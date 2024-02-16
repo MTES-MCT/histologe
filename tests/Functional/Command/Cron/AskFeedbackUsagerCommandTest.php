@@ -23,7 +23,7 @@ class AskFeedbackUsagerCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('7 signalement(s) for which a request for feedback will be sent', $output);
+        $this->assertStringContainsString('8 signalement(s) for which a request for feedback will be sent', $output);
         $this->assertEmailCount(0);
     }
 
@@ -43,7 +43,7 @@ class AskFeedbackUsagerCommandTest extends KernelTestCase
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('1 signalement(s) for which the two last suivis are technicals ', $output);
         $this->assertStringContainsString('1 signalement(s) for which the last suivi is technical', $output);
-        $this->assertStringContainsString('5 signalement(s) without suivi public', $output);
-        $this->assertEmailCount(10); // with cron notification email (9+1)
+        $this->assertStringContainsString('6 signalement(s) without suivi public', $output);
+        $this->assertEmailCount(11); // with cron notification email (9+1)
     }
 }
