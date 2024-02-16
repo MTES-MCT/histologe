@@ -113,10 +113,8 @@ class SignalementBuilderTest extends KernelTestCase
             ->withProcedure()
             ->withInformationComplementaire()
             ->withDesordres()
-            ->withFiles()
             ->build();
 
-        $this->assertCount(7, $signalement->getFiles());
         $this->assertNotEmpty($signalement->getUuid());
         $this->assertNotEmpty($signalement->getReference());
         $this->assertNotEmpty($signalement->getCodeSuivi());
@@ -221,7 +219,6 @@ class SignalementBuilderTest extends KernelTestCase
             ->withProcedure()
             ->withInformationComplementaire()
             ->withDesordres()
-            ->withFiles()
             ->build();
 
         $this->assertCount(12, $signalement->getDesordreCategories());

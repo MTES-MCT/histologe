@@ -308,24 +308,6 @@ class SignalementBuilder
         return $this;
     }
 
-    public function withFiles(): self
-    {
-        if ($files = $this->signalementDraftRequest->getFiles()) {
-            foreach ($files as $key => $fileList) {
-                foreach ($fileList as $fileItem) {
-                    $fileItem['slug'] = $key;
-                    $file = $this->fileFactory->createFromFileArray(file: $fileItem);
-                    $this->uploadHandlerService->moveFromBucketTempFolder($file->getFilename());
-                    $file->setSize($this->uploadHandlerService->getFileSize($file->getFilename()));
-                    $file->setIsVariantsGenerated($this->uploadHandlerService->hasVariants($file->getFilename()));
-                    $this->signalement->addFile($file);
-                }
-            }
-        }
-
-        return $this;
-    }
-
     public function build(): Signalement
     {
         return $this->signalement;

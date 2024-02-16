@@ -3,8 +3,11 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Signalement;
+use App\Entity\SignalementDraft;
 use App\Event\SignalementDraftCompletedEvent;
 use App\Manager\SignalementManager;
+use App\Messenger\Message\SignalementDraftFileMessage;
 use App\Service\Files\DocumentProvider;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -12,6 +15,7 @@ use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\SignalementBuilder;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
 {
@@ -21,6 +25,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
         private NotificationMailerRegistry $notificationMailerRegistry,
         private DocumentProvider $documentProvider,
         private AutoAssigner $autoAssigner,
+        private MessageBusInterface $messageBus,
     ) {
     }
 
@@ -42,12 +47,17 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
             ->withSituationFoyer()
             ->withProcedure()
             ->withInformationComplementaire()
-            ->withFiles()
             ->withDesordres()
             ->build();
 
         $this->signalementManager->save($signalement);
+        $this->sendNotifications($signalementDraft, $signalement);
+        $this->processFiles($signalementDraft, $signalement);
+        $this->autoAssigner->assign($signalement);
+    }
 
+    private function sendNotifications(SignalementDraft $signalementDraft, Signalement $signalement): void
+    {
         if (ProfileDeclarant::LOCATAIRE === $signalement->getProfileDeclarant()
             || ProfileDeclarant::BAILLEUR_OCCUPANT === $signalementDraft->getProfileDeclarant()
         ) {
@@ -67,7 +77,13 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                 )
             );
         }
+    }
 
-        $this->autoAssigner->assign($signalement);
+    private function processFiles(SignalementDraft $signalementDraft, Signalement $signalement): void
+    {
+        $this->messageBus->dispatch(new SignalementDraftFileMessage(
+            $signalementDraft->getId(),
+            $signalement->getId()
+        ));
     }
 }
