@@ -8,6 +8,10 @@ class SignalementDocumentTypeMapper
 {
     public static function map(string $value): DocumentType
     {
+        if (str_starts_with($value, 'desordres_logement_securite_plomb_details_diagnostique')) {
+            return DocumentType::SITUATION_DIAGNOSTIC_PLOMB_AMIANTE;
+        }
+
         if (str_starts_with($value, 'desordres_')) {
             return DocumentType::SITUATION;
         }

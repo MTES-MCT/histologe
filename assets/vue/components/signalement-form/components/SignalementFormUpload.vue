@@ -77,7 +77,8 @@ export default defineComponent({
     customCss: { type: String, default: '' },
     validate: { type: Object, default: null },
     disabled: { type: Boolean, default: false },
-    multiple: { type: Boolean, default: false }
+    multiple: { type: Boolean, default: false },
+    type: { type: String, default: 'documents' }
   },
   data () {
     return {
@@ -148,7 +149,7 @@ export default defineComponent({
           for (let i = 0; i < fileInput.files.length; i++) {
             const file = fileInput.files[i]
             const formData = new FormData()
-            formData.append('signalement[documents]', file)
+            formData.append('signalement[' + this.type + ']', file)
             requests.uploadFile(formData, this.onFileUploaded, this.onFileProgress)
           }
         }

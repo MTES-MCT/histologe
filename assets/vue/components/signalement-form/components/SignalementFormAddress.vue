@@ -49,7 +49,7 @@
       @update:modelValue="handleSubscreenModelUpdate"
     />
 
-    <SignalementFormModal 
+    <SignalementFormModal
       v-model="isModalOpen"
       id="check_territory_modal"
       :label="modalLabel"
@@ -114,9 +114,9 @@ export default defineComponent({
         clearTimeout(this.idFetchTimeout)
         this.idFetchTimeout = setTimeout(() => {
           if (newValue.length > 10) {
-            const codePostal = 'adresse_logement_adresse_suggestion' === this.idAddress
-                ? ' ' + this.getCodePostalFromQueryParam()
-                : ''
+            const codePostal = this.idAddress === 'adresse_logement_adresse_suggestion'
+              ? ' ' + this.getCodePostalFromQueryParam()
+              : ''
             requests.validateAddress(newValue + codePostal, this.handleAddressFound)
           }
         }, 200)
@@ -145,8 +145,8 @@ export default defineComponent({
         this.formStore.data[this.id + '_detail_insee'] = this.suggestions[index].properties.citycode
         this.formStore.data[this.id + '_detail_geoloc_lng'] = this.suggestions[index].geometry.coordinates[0]
         this.formStore.data[this.id + '_detail_geoloc_lat'] = this.suggestions[index].geometry.coordinates[1]
-        if(this.isTerritoryToCheck){
-          requests.checkTerritory(this.suggestions[index].properties.postcode, this.suggestions[index].properties.citycode, this.handleTerritoryChecked);
+        if (this.isTerritoryToCheck) {
+          requests.checkTerritory(this.suggestions[index].properties.postcode, this.suggestions[index].properties.citycode, this.handleTerritoryChecked)
         }
         this.suggestions.length = 0
       }
@@ -163,19 +163,19 @@ export default defineComponent({
       this.suggestions = requestResponse.features
     },
     handleTerritoryChecked (requestResponse: any) {
-      if(!requestResponse.success) {
-          this.modalLabel = requestResponse.label
-          this.modalDescription = requestResponse.message
-          this.isModalOpen = true
+      if (!requestResponse.success) {
+        this.modalLabel = requestResponse.label
+        this.modalDescription = requestResponse.message
+        this.isModalOpen = true
 
-          this.formStore.data[this.id] = ''
+        this.formStore.data[this.id] = ''
       }
     },
-    getCodePostalFromQueryParam() {
-      const queryString = window.location.search;
-      const urlParams = new URLSearchParams(queryString);
-      return urlParams.get('cp') || '';
-    },
+    getCodePostalFromQueryParam () {
+      const queryString = window.location.search
+      const urlParams = new URLSearchParams(queryString)
+      return urlParams.get('cp') || ''
+    }
   },
   emits: ['update:modelValue']
 })

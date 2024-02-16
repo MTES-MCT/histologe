@@ -12,13 +12,13 @@ export const requests = {
     axios
       .get(ajaxUrl, { timeout: 15000 })
       .then(response => {
-          const responseData = response.data
-          functionReturn(responseData)
+        const responseData = response.data
+        functionReturn(responseData)
       })
       .catch(error => {
-          console.error(error)
-          Sentry.captureException(new Error(error))
-          functionReturn('error')
+        console.error(error)
+        Sentry.captureException(new Error(error))
+        functionReturn('error')
       })
   }
 }
