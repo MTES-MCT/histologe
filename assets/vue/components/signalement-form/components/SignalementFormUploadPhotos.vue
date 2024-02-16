@@ -11,6 +11,7 @@
       :label="labelUpload"
       v-model="formStore.data[id + '_upload']"
       :multiple="true"
+      type="photos"
       />
   </div>
 </template>
