@@ -35,6 +35,22 @@ export const requests = {
         functionReturn(error)
       })
   },
+  doRequestPostUpload (ajaxUrl: string, data: any, functionReturn: Function, config: any) {
+    const axiosInstance = axios.create({
+      timeout: 120000
+    })
+    axiosInstance
+        .post(ajaxUrl, data, config)
+        .then(response => {
+          const responseData = response.data
+          functionReturn(responseData)
+        })
+        .catch(error => {
+          console.error(error)
+          Sentry.captureException(new Error('The file upload timed out.'))
+          functionReturn(error)
+        })
+  },
   doRequestPut (ajaxUrl: string, data: any, functionReturn: Function) {
     axios
       .put(ajaxUrl, data, { timeout: AXIOS_TIMEOUT })
@@ -110,6 +126,6 @@ export const requests = {
         functionProgress(progress)
       }
     }
-    requests.doRequestPost(url, formData, functionReturn, config)
+    requests.doRequestPostUpload(url, formData, functionReturn, config)
   }
 }
