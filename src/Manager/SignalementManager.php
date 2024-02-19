@@ -599,11 +599,7 @@ class SignalementManager extends AbstractManager
                     $situationFoyerRequest->getIsRelogement()
                 )
             )
-            ->setIsAllocataire(
-                $this->signalementInputValueMapper->map(
-                    $situationFoyerRequest->getIsAllocataire()
-                )
-            )
+            ->setIsAllocataire($situationFoyerRequest->getIsAllocataire())
             ->setNumAllocataire($situationFoyerRequest->getNumAllocataire());
 
         if (!empty($situationFoyerRequest->getDateNaissanceOccupant())) {
