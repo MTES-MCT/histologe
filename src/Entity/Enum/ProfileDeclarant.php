@@ -20,7 +20,7 @@ enum ProfileDeclarant: string
     {
         return [
             'LOCATAIRE' => 'Locataire',
-            'BAILLEUR_OCCUPANT' => 'Bailleur occupant',
+            'BAILLEUR_OCCUPANT' => 'Propriétaire occupant',
             'TIERS_PARTICULIER' => 'Tiers particulier',
             'TIERS_PRO' => 'Tiers professionnel',
             'SERVICE_SECOURS' => 'Service de secours',
