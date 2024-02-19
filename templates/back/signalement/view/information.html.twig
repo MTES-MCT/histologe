@@ -531,9 +531,9 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Allocataire :</strong>
                         {% if signalement.isAllocataire in [null, ''] %}
-                        {% elseif signalement.isAllocataire in ['Oui', '1'] %}
+                        {% elseif signalement.isAllocataire in ['oui', '1'] %}
                              {{ static_picto_yes|raw }}
-                        {% elseif signalement.isAllocataire in ['Non', '0',] %}
+                        {% elseif signalement.isAllocataire in ['non', '0'] %}
                              {{ static_picto_no|raw }}
                         {% elseif signalement.isAllocataire %}
                             <p class="fr-badge fr-badge--info fr-badge--no-icon">{{ signalement.isAllocataire }}</p>
@@ -547,7 +547,7 @@
                             {{ signalement.naissanceOccupants}}
                         {% endif %}
                     </div>
-                    {% if signalement.isAllocataire %}
+                    {% if signalement.isAllocataire and signalement.isAllocataire not in ['non', '0'] %}
                         <div class="fr-col-12 fr-col-md-6">
                             <strong>N° allocataire :</strong>
                             {{ signalement.numAllocataire }}
