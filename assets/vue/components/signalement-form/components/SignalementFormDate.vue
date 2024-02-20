@@ -1,6 +1,7 @@
 <template>
     <div class="fr-input-group" :id="id">
     <label :class="[ customCss, 'fr-label' ]" :for="id + '_input'">{{ label }}</label>
+    <span v-if="hint !== ''" class="fr-hint-text">{{ hint }}</span>
     <input
         type="date"
         :id="id + '_input'"
@@ -28,6 +29,7 @@ export default defineComponent({
   props: {
     id: { type: String, default: null },
     label: { type: String, default: null },
+    hint: { type: String, default: null },
     modelValue: { type: String, default: null },
     customCss: { type: String, default: '' },
     hasError: { type: Boolean, default: false },
