@@ -48,11 +48,6 @@ const popupTemplate = (options) => {
                         <div class="fr-col-4 fr-mt-1v fr-mb-0 fr-text--center">`;
     TEMPLATE += `<span class="fr-badge fr-badge--info fr-m-0">${parseInt(options.score).toFixed(2)}%</span></div>`;
     TEMPLATE += `<div class="fr-p-3v fr-rounded fr-background-alt--blue-france fr-col-12">${options.details}</div>`;
-    TEMPLATE += `<ul class="fr-mt-5v">`;
-    options.criteres.forEach(critere => {
-        TEMPLATE += `<li class="">${critere}</li>`
-    })
-    TEMPLATE += `</ul></div>`;
 
     return TEMPLATE;
 }
@@ -70,11 +65,6 @@ async function getMarkers(offset) {
         if (res.signalements) {
             res.signalements.forEach(signalement => {
                 if (!isNaN(parseFloat(signalement.geoloc?.lng)) && !isNaN(parseFloat(signalement.geoloc?.lat))) {
-                    let crit = [];
-                    if (null !== signalement.desordres){
-                        crit = signalement.desordres.split('|');
-                    }
-                    
                     marker = L.marker([signalement.geoloc.lat, signalement.geoloc.lng], {
                         id: signalement.id,
                         status: signalement.statut,
@@ -85,7 +75,6 @@ async function getMarkers(offset) {
                         score: signalement.score,
                         name: signalement.nomOccupant ? signalement.nomOccupant.toUpperCase() : '' +' '+ signalement.prenomOccupant,
                         url: `/bo/signalements/${signalement.uuid}`,
-                        criteres: crit,
                         details: `${signalement.details}`
                     })
                     markers.addLayer(marker);
