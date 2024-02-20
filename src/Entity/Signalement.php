@@ -2242,4 +2242,40 @@ class Signalement
     {
         return \in_array($desordrePrecision, $this->desordrePrecisions->toArray());
     }
+
+    public function getDesordreLabel(string $desordreSlug): string
+    {
+        /** @var DesordrePrecision $desordrePrecision */
+        $desordrePrecision = $this->getDesordrePrecisions()->filter(function ($desordrePrecision) use ($desordreSlug) {
+            return $desordrePrecision->getDesordrePrecisionSlug() == $desordreSlug;
+        })->first();
+
+        if ($desordrePrecision) {
+            if ('' !== $desordrePrecision->getLabel()) {
+                return $desordrePrecision->getLabel();
+            }
+
+            return $desordrePrecision->getDesordreCritere()->getLabelCritere();
+        }
+
+        /** @var DesordreCritere $desordreCritere */
+        $desordreCritere = $this->getDesordreCriteres()->filter(function ($desordreCritere) use ($desordreSlug) {
+            return $desordreCritere->getSlugCritere() == $desordreSlug;
+        })->first();
+
+        if ($desordreCritere) {
+            return $desordreCritere->getLabelCritere();
+        }
+
+        /** @var DesordreCritere $desordreCritere */
+        $desordreCritere = $this->getDesordreCriteres()->filter(function ($desordreCategorie) use ($desordreSlug) {
+            return $desordreCategorie->getSlugCategorie() == $desordreSlug;
+        })->first();
+
+        if ($desordreCritere) {
+            return $desordreCritere->getDesordreCategorie()->getLabel();
+        }
+
+        return $desordreSlug;
+    }
 }
