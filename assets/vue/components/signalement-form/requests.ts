@@ -37,7 +37,7 @@ export const requests = {
   },
   doRequestPostUpload (ajaxUrl: string, data: any, functionReturn: Function, config: any) {
     const axiosInstance = axios.create({
-      timeout: 120000
+      timeout: 0 // TODO: va nécéssiter d'apporter quelques retouches sur l'UX
     })
     axiosInstance
         .post(ajaxUrl, data, config)
@@ -47,7 +47,7 @@ export const requests = {
         })
         .catch(error => {
           console.error(error)
-          Sentry.captureException(new Error('The file upload timed out.'))
+          Sentry.captureException(new Error('Something wrong happened with the upload.'))
           functionReturn(error)
         })
   },
