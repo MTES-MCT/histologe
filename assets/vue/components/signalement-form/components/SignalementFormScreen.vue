@@ -17,6 +17,7 @@
         v-bind:key="component.slug"
         :id="component.slug"
         :label="component.label"
+        :hint="component.hint"
         :labelInfo="component.labelInfo"
         :labelUpload="component.labelUpload"
         :description="component.description"
