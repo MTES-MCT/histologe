@@ -201,37 +201,7 @@
                 <h4>Désordres logement</h4>
                 {% if situations[enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] is defined %}
                     {% for situation,criteres in situations[enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] %}
-                        {% if criteres %}
-                            {% set firstCritere = criteres|first %}
-                            {% if firstCritere is defined %}
-                                {% set firstPrecision = firstCritere|first %}
-                                {% if firstPrecision is defined %}
-                                    {% if signalement.jsonContent[firstPrecision.desordreCritere.slugCategorie] is defined %}
-                                        <h5>{{ signalement.jsonContent[firstPrecision.desordreCritere.slugCategorie] }}</h5>
-                                    {% endif %}
-                                {% endif %}
-                            {% endif %}
-                            
-                            <ul>
-                                {% for critere,precisions in criteres %}
-                                    <li>
-                                        {{ critere }}     
-                                        {% for precision in precisions %}
-                                            {% if precision.label is not same as '' %}
-                                                <ul class="fr-list fr-list--none">
-                                                    <li>
-                                                        {{ precision.label|raw }}
-                                                        {% if signalement.jsonContent[precision.desordreCritere.slugCritere] is defined %}
-                                                            <br>Commentaire usager : <i>{{ signalement.jsonContent[precision.desordreCritere.slugCritere] }}</i>
-                                                        {% endif %}
-                                                    </li>
-                                                </ul>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
+                        {% include 'pdf/partial_desordre.html.twig' %}   
                     {% endfor %}
                 {% else %}
                     <i>Aucun désordre signalé dans le logement</i>
@@ -241,37 +211,7 @@
                 <h4>Désordres bâtiment</h4>
                 {% if situations[enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] is defined %}
                     {% for situation,criteres in situations[enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] %}
-                        {% if criteres %}
-                            {% set firstCritere = criteres|first %}
-                            {% if firstCritere is defined %}
-                                {% set firstPrecision = firstCritere|first %}
-                                {% if firstPrecision is defined %}
-                                    {% if signalement.jsonContent[firstPrecision.desordreCritere.slugCategorie] is defined %}
-                                        <h5>{{ signalement.jsonContent[firstPrecision.desordreCritere.slugCategorie] }}</h5>
-                                    {% endif %}
-                                {% endif %}
-                            {% endif %}
-
-                            <ul>
-                                {% for critere,precisions in criteres %}
-                                    <li>
-                                        {{ critere }}
-                                        {% for precision in precisions %}
-                                            {% if precision.label is not same as '' %}
-                                                <ul class="fr-list fr-list--none">
-                                                    <li>
-                                                        {{ precision.label|raw }}
-                                                        {% if signalement.jsonContent[precision.desordreCritere.slugCritere] is defined %}
-                                                            <br>Commentaire usager : <i>{{ signalement.jsonContent[precision.desordreCritere.slugCritere] }}</i>
-                                                        {% endif %}
-                                                    </li>
-                                                </ul>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
+                        {% include 'pdf/partial_desordre.html.twig' %}   
                     {% endfor %}
                 {% else %}
                     <i>Aucun désordre signalé dans le bâtiment</i>
