@@ -8,6 +8,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\Export\SignalementExportPdfGenerator;
+use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\UploadHandlerService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -23,23 +24,18 @@ class PdfExportMessageHandler
         private readonly SignalementRepository $signalementRepository,
         private readonly ParameterBagInterface $parameterBag,
         private readonly UploadHandlerService $uploadHandlerService,
+        private readonly SignalementDesordresProcessor $signalementDesordresProcessor,
     ) {
     }
 
     public function __invoke(PdfExportMessage $pdfExportMessage): void
     {
-        $criticitesFormatted = [];
         $signalement = $this->signalementRepository->find($pdfExportMessage->getSignalementId());
-
-        foreach ($signalement->getCriticites() as $criticite) {
-            $situationLabel = $criticite->getCritere()->getSituation()->getLabel();
-            $critereLabel = $criticite->getCritere()->getLabel();
-            $criticitesFormatted[$situationLabel][$critereLabel] = $criticite;
-        }
+        $infoDesordres = $this->signalementDesordresProcessor->process($signalement);
 
         $htmlContent = $this->twig->render('pdf/signalement.html.twig', [
             'signalement' => $signalement,
-            'situations' => $criticitesFormatted,
+            'situations' => $infoDesordres['criticitesArranged'],
         ]);
 
         $tmpFilename = $this->signalementExportPdfGenerator->generateToTempFolder(
