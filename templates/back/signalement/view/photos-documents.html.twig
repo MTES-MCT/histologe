@@ -68,12 +68,18 @@
                  data-user="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
                  data-mail="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
                  style="background: url('{{ asset('_up/'~photo.filename~'/'~signalement.uuid~'?variant=thumb') }}')no-repeat center center/cover">
-                <button class="fr-btn fr-btn--sm fr-icon-eye-line open-photo-album" data-id={{ photo.id }} title="Voir la photo"></button>
+                <button 
+                    class="fr-btn fr-btn--sm fr-icon-eye-line open-photo-album" 
+                    data-id={{ photo.id }} 
+                    title="Voir la photo {{ photo.filename }}"
+                ></button>
                 {% if is_granted('FILE_EDIT', photo) %}
                     {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
                     {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
-                    <a href="#" class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
+                    <button 
+                        class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
                         id="file_edit_{{ photo.id }}" 
+                        title="Editer la photo {{ photo.filename }}"
                         aria-controls="fr-modal-edit-file"
                         data-fr-opened="false" 
                         data-filename="{{ photo.filename }}" 
@@ -87,13 +93,15 @@
                         data-user-name="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
                         data-desordreSlug="{{ photo.desordreSlug }}"
                         data-signalement-desordres="{{ criteres | json_encode }}"
-                    ></a>
+                    ></button>
                 {% endif %}
                 {% if is_granted('FILE_DELETE', photo) %}
-                    <button title="Supprimer la photo"
+                    <button 
+                        title="Supprimer la photo {{ photo.filename }}"
                         data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'photos',filename:photo.filename}) }}"
                         data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
-                        class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line signalement-file-delete"></button>
+                        class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line signalement-file-delete"
+                    ></button>
                 {% endif %}
             </div>
         </div>
@@ -128,13 +136,14 @@
         </div>
         <div class="fr-col-3 fr-text--right">
             <a href="{{ asset('_up/'~doc.filename~'/'~signalement.uuid) }}"
-                class="fr-btn fr-btn--sm fr-icon-eye-fill img-box" title="Afficher le document"
+                class="fr-btn fr-btn--sm fr-icon-eye-fill img-box" title="Afficher le document {{ doc.filename }}"
                 target="_blank" rel="noopener"></a>           
                {% if is_granted('FILE_EDIT', doc) %}
                     {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
                     {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
-                    <a href="#" class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
+                    <button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
                         id="file_edit_{{ doc.id }}" 
+                        title="Editer le document {{ doc.filename }}"
                         aria-controls="fr-modal-edit-file"
                         data-fr-opened="false" 
                         data-filename="{{ doc.filename }}" 
@@ -145,10 +154,10 @@
                         data-createdAt="{{ doc.createdAt is defined ? doc.createdAt|date('d.m.Y') : 'N/R' }}"
                         data-partner-name="{{ doc.uploadedBy and doc.uploadedBy.partner ? doc.uploadedBy.partner.nom ~ ' - ' : '' }}"
                         data-user-name="{{ doc.uploadedBy.nomComplet ?? 'N/R' }}"
-                    ></a>
+                    ></button>
                 {% endif %}       
             {% if is_granted('FILE_DELETE', doc) %}
-                <button title="Supprimer le document"
+                <button title="Supprimer le document {{ doc.filename }}"
                     data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'documents',filename:doc.filename}) }}"
                     data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
                     class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line signalement-file-delete"></button>
