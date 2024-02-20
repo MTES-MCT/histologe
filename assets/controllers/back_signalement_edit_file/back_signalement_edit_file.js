@@ -25,6 +25,23 @@ function histoUpdateDesordreSelect(target, selectedDocumentType) {
   }
 }
 
+function histoCreateMiniatureImage(target) {
+  histoDeleteMiniatureImage()
+  const filename = target.getAttribute('data-filename')
+  const uuidSignalement = target.getAttribute('data-signalement-uuid')
+  const url = window.location.origin + '/_up/' + filename +'/'  + uuidSignalement + '?variant=thumb'
+  const modalFileEditType = document.querySelector('#fr-modal-edit-file-miniature');
+  const newDiv = '<div id="fr-modal-edit-file-miniature-image" class="fr-col-6 fr-col-offset-3 fr-col-md-2 fr-col-offset-md-5 fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center" style="background: url(\'' + url + '\') no-repeat center center/cover;"></div>';
+  modalFileEditType.insertAdjacentHTML('afterbegin', newDiv);
+}
+function histoDeleteMiniatureImage() {
+  const parentElement = document.querySelector('#fr-modal-edit-file-miniature');
+  const addedDiv = document.querySelector('#fr-modal-edit-file-miniature-image');
+  if (addedDiv) {
+      parentElement.removeChild(addedDiv);
+  }
+}
+
 document.querySelectorAll('.btn-signalement-file-edit').forEach(swbtn => {
   swbtn.addEventListener('click', evt => {
     evt.preventDefault()
@@ -32,8 +49,10 @@ document.querySelectorAll('.btn-signalement-file-edit').forEach(swbtn => {
 
     if ( target.getAttribute('data-type') === 'photo') {
       document.querySelector('.fr-modal-file-edit-type').innerHTML = ' la photo'
+      histoCreateMiniatureImage(target)
     } else {
       document.querySelector('.fr-modal-file-edit-type').innerHTML = ' le document'
+      histoDeleteMiniatureImage()
     }
     document.querySelector('.fr-modal-file-edit-filename').innerHTML = target.getAttribute('data-filename')
     document.querySelector('.fr-modal-file-edit-infos').innerHTML = 'Ajouté le '+target.getAttribute('data-createdAt')
