@@ -79,6 +79,7 @@
                         data-filename="{{ photo.filename }}" 
                         data-type="photo" 
                         data-file-id="{{ photo.id}}" 
+                        data-signalement-uuid="{{ signalement.uuid}}" 
                         data-documentType="{{ photo.documentType.name }}" 
                         data-documentType-list="{{ DocumentType.getPhotosList() | json_encode }}"
                         data-createdAt="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
