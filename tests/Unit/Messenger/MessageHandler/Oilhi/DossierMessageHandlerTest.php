@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Messenger\MessageHandler\Oilhi;
 
 use App\Entity\Partner;
+use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
 use App\Messenger\Message\Oilhi\DossierMessage;
 use App\Messenger\MessageHandler\Oilhi\DossierMessageHandler;
@@ -61,11 +62,18 @@ class DossierMessageHandlerTest extends TestCase
             ->with($dossierMessage->getPartnerId())
             ->willReturn(new Partner());
 
+        $affectationManagerMock = $this->createMock(AffectationManager::class);
+        $affectationManagerMock
+            ->expects($this->once())
+            ->method('flagAsSynchronized')
+            ->with($dossierMessage);
+
         $dossierMessageHandler = new DossierMessageHandler(
             $serializerMock,
             $jobEventManagerMock,
             $hookZapierServiceMock,
             $partnerRepositoryMock,
+            $affectationManagerMock
         );
 
         $dossierMessageHandler($dossierMessage);

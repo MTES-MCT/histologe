@@ -3,6 +3,7 @@
 namespace App\Messenger\MessageHandler\Oilhi;
 
 use App\Entity\JobEvent;
+use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
 use App\Messenger\Message\Oilhi\DossierMessage;
 use App\Repository\PartnerRepository;
@@ -19,6 +20,7 @@ class DossierMessageHandler
         private JobEventManager $jobEventManager,
         private HookZapierService $hookZapierService,
         private PartnerRepository $partnerRepository,
+        private AffectationManager $affectationManager,
     ) {
     }
 
@@ -40,5 +42,9 @@ class DossierMessageHandler
             partnerId: $partnerId,
             partnerType: $partner?->getType(),
         );
+
+        if (JobEvent::STATUS_SUCCESS === $status) {
+            $this->affectationManager->flagAsSynchronized($dossierMessage);
+        }
     }
 }
