@@ -87,16 +87,12 @@ class PushEsaboraDossierCommand extends Command
 
         foreach ($affectations as $affectation) {
             $this->esaboraBus->dispatch($affectation);
-            $affectation->setIsSynchronized(true);
-            $this->affectationRepository->save($affectation);
             $io->success(sprintf(
                 '[%s] Dossier %s pushed to esabora',
                 $affectation->getPartner()->getType()->value,
                 $affectation->getSignalement()->getUuid()
             ));
         }
-
-        $this->affectationRepository->save($affectation, true);
 
         return Command::SUCCESS;
     }
