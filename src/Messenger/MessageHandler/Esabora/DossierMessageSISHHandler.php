@@ -28,8 +28,9 @@ final class DossierMessageSISHHandler
         /** @var DossierSISHHandlerInterface $dossierSISHHandler */
         foreach ($this->dossierSISHHandlers as $dossierSISHHandler) {
             $dossierSISHHandler->handle($dossierMessageSISH);
+            if ($dossierSISHHandler->canFlagAsSynchronized()) {
+                $this->affectationManager->flagAsSynchronized($dossierMessageSISH);
+            }
         }
-
-        $this->affectationManager->flagAsSynchronized($dossierMessageSISH);
     }
 }

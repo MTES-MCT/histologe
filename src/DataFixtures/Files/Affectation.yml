@@ -182,13 +182,6 @@ affectations:
     affected_by: "admin-01@histologe.fr"
     territory: "Pas-de-Calais"
   -
-    signalement: 2024-01
-    partner: "partenaire-62-01@histologe.fr"
-    statut: 0
-    answered_by: "admin-01@histologe.fr"
-    affected_by: "admin-01@histologe.fr"
-    territory: "Pas-de-Calais"
-  -
     signalement: 2023-20
     partner: "partenaire-13-01@histologe.fr"
     statut: 1
