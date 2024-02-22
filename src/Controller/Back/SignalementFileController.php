@@ -172,69 +172,55 @@ class SignalementFileController extends AbstractController
         Request $request,
         FileRepository $fileRepository,
         EntityManagerInterface $entityManager,
-    ): Response {
-        if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), $request->get('_token'))) {
-            if ($request->isXmlHttpRequest()) {
-                return $this->json(['response' => 'Token CSRF invalide'], 400);
+    ): RedirectResponse {
+        if ($this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), $request->get('_token'))) {
+            $file = $fileRepository->findOneBy(
+                [
+                    'id' => $request->get('file_id'),
+                    'signalement' => $signalement,
+                ]
+            );
+            if (null !== $file) {
+                $this->denyAccessUnlessGranted('FILE_EDIT', $file);
+                $documentType = DocumentType::tryFrom($request->get('documentType'));
+                if (null !== $documentType) {
+                    $file->setDocumentType($documentType);
+                    if (DocumentType::SITUATION === $documentType) {
+                        $desordreSlug = $request->get('desordreSlug');
+                        $desordreCritereSlugs = $signalement->getDesordreCriteres()->map(
+                            fn (DesordreCritere $desordreCritere) => $desordreCritere->getSlugCritere()
+                        )->toArray();
+                        $desordrePrecisionSlugs = $signalement->getDesordrePrecisions()->map(
+                            fn (DesordrePrecision $desordrePrecision) => $desordrePrecision->getDesordrePrecisionSlug()
+                        )->toArray();
+
+                        if (\in_array($desordreSlug, $desordreCritereSlugs)
+                            || \in_array($desordreSlug, $desordrePrecisionSlugs)
+                        ) {
+                            $file->setDesordreSlug($desordreSlug);
+                        }
+                    } else {
+                        if (null !== $file->getDesordreSlug()) {
+                            $file->setDesordreSlug(null);
+                        }
+                    }
+
+                    $entityManager->persist($file);
+                    $entityManager->flush();
+
+                    if ('document' === $file->getFileType()) {
+                        $this->addFlash('success', 'Le document a bien été modifié.');
+                    } else {
+                        $this->addFlash('success', 'La photo a bien été modifiée.');
+                    }
+                } else {
+                    $this->addFlash('error', 'Mauvais type de fichier');
+                }
+            } else {
+                $this->addFlash('error', 'Ce fichier n\'existe plus');
             }
+        } else {
             $this->addFlash('error', 'Une erreur est survenue lors de la modification...');
-
-            return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
-        }
-        $file = $fileRepository->findOneBy(
-            [
-                'id' => $request->get('file_id'),
-                'signalement' => $signalement,
-            ]
-        );
-        if (null === $file) {
-            if ($request->isXmlHttpRequest()) {
-                return $this->json(['response' => 'Document introuvable'], 400);
-            }
-            $this->addFlash('error', 'Ce fichier n\'existe plus');
-
-            return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
-        }
-        $this->denyAccessUnlessGranted('FILE_EDIT', $file);
-        $documentType = DocumentType::tryFrom($request->get('documentType'));
-        if (null === $documentType) {
-            if ($request->isXmlHttpRequest()) {
-                return $this->json(['response' => 'Type de document invalide'], 400);
-            }
-            $this->addFlash('error', 'Mauvais type de fichier');
-
-            return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
-        }
-        $file->setDocumentType($documentType);
-        if (DocumentType::SITUATION === $documentType) {
-            $desordreSlug = $request->get('desordreSlug');
-            $desordreCritereSlugs = $signalement->getDesordreCriteres()->map(
-                fn (DesordreCritere $desordreCritere) => $desordreCritere->getSlugCritere()
-            )->toArray();
-            $desordrePrecisionSlugs = $signalement->getDesordrePrecisions()->map(
-                fn (DesordrePrecision $desordrePrecision) => $desordrePrecision->getDesordrePrecisionSlug()
-            )->toArray();
-
-            if (\in_array($desordreSlug, $desordreCritereSlugs)
-                || \in_array($desordreSlug, $desordrePrecisionSlugs)
-            ) {
-                $file->setDesordreSlug($desordreSlug);
-            }
-        } else {
-            if (null !== $file->getDesordreSlug()) {
-                $file->setDesordreSlug(null);
-            }
-        }
-
-        $entityManager->persist($file);
-        $entityManager->flush();
-        if ($request->isXmlHttpRequest()) {
-            return $this->json(['response' => 'success']);
-        }
-        if ('document' === $file->getFileType()) {
-            $this->addFlash('success', 'Le document a bien été modifié.');
-        } else {
-            $this->addFlash('success', 'La photo a bien été modifiée.');
         }
 
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));

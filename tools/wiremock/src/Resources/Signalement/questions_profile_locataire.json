@@ -1087,6 +1087,14 @@
           ]
         },
         {
+          "type": "SignalementFormInfo",
+          "label": "Avant de déposer un signalement, il est recommandé de prévenir votre bailleur. Vous pourrez le faire grâce au modèle de courrier que nous vous enverrons par email dès la fin de votre signalement.",
+          "slug": "info_procedure_bailleur_prevenu_info",
+          "conditional": {
+            "show": "formStore.data.info_procedure_bailleur_prevenu ===  'non'"
+          }
+        },
+        {
           "type": "SignalementFormOnlyChoice",
           "label": "Avez-vous contacté votre assurance logement ?",
           "slug": "info_procedure_assurance_contactee",

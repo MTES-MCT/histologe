@@ -226,7 +226,7 @@ class SignalementDraftRequest
     #[Assert\DateTime('Y')]
     private ?string $informationsComplementairesLogementAnneeConstruction = null;
     private ?string $messageAdministration = null;
-    private ?array $files = null;
+    private array $files = [];
     private ?array $categorieDisorders = null;
 
     public function getProfil(): ?string

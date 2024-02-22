@@ -6,6 +6,12 @@ framework:
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
             async: '%env(MESSENGER_TRANSPORT_DSN)%'
+            async_priority_high:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                failure_transport: failed_high_priority
+                options:
+                    queue_name: high
+            failed_high_priority: 'doctrine://default?queue_name=failed_high_priority'
             failed: 'doctrine://default?queue_name=failed'
             sync: 'sync://'
 
@@ -15,7 +21,9 @@ framework:
             App\Messenger\Message\Esabora\DossierMessageSCHS: async
             App\Messenger\Message\Esabora\DossierMessageSISH: async
             App\Messenger\Message\Oilhi\DossierMessage: async
-            App\Messenger\Message\PdfExportMessage: async
+            App\Messenger\Message\PdfExportMessage: async_priority_high
+            App\Messenger\Message\SignalementDraftFileMessage: async_priority_high
+
 
 
 when@test:
@@ -25,3 +33,4 @@ when@test:
                 # replace with your transport name here (e.g., my_transport: 'in-memory://')
                 # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
                 async: 'in-memory://'
+                async_priority_high: 'in-memory://'
