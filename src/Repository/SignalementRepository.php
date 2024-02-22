@@ -466,7 +466,9 @@ class SignalementRepository extends ServiceEntityRepository
             GROUP_CONCAT(DISTINCT
                 CONCAT(i.status, :group_concat_separator_1, i.scheduledAt, :group_concat_separator_1, IFNULL(i.occupantPresent, \'\'))
                 SEPARATOR :concat_separator
-            ) as interventionsStatus
+            ) as interventionsStatus,
+            GROUP_CONCAT(DISTINCT i.concludeProcedure SEPARATOR :group_concat_separator_1) as interventionConcludeProcedure,
+            GROUP_CONCAT(DISTINCT i.details SEPARATOR :group_concat_separator_1) as interventionDetails
             '
         )->leftJoin('s.situations', 'situations')
             ->leftJoin('s.criteres', 'criteres')

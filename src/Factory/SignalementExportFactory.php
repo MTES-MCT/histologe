@@ -88,6 +88,8 @@ class SignalementExportFactory
             dateVisite: $dateVisite,
             isOccupantPresentVisite: $isOccupantPresentVisite ? self::OUI : ('0' === $isOccupantPresentVisite ? self::NON : ''),
             interventionStatus: $statusVisite,
+            interventionConcludeProcedure: $data['interventionConcludeProcedure'] ?? '-',
+            interventionDetails: !empty($data['interventionDetails']) ? strip_tags($data['interventionDetails']) : '-',
             modifiedAt: $modifiedAt,
             closedAt: $closedAt,
             motifCloture: $motifCloture,

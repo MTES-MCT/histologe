@@ -49,6 +49,8 @@ class SignalementExport
         public ?string $dateVisite = null,
         public ?string $isOccupantPresentVisite = null,
         public ?string $interventionStatus = null,
+        public ?string $interventionConcludeProcedure = null,
+        public ?string $interventionDetails = null,
         public ?string $modifiedAt = null,
         public ?string $closedAt = null,
         public ?string $motifCloture = null,
