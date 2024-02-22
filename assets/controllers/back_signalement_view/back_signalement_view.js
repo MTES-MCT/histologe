@@ -6,7 +6,8 @@ if(modalUploadFiles){
     const fileSelectorInput = document.querySelector('.modal-upload-files-selector-input')
     const addFileRoute = modalUploadFiles.dataset.addFileRoute
     const addFileToken = modalUploadFiles.dataset.addFileToken
-    const selectTypeToClone = document.querySelector('#select-type-document-to-clone')
+    const selectTypeToClone = document.querySelector('#select-type-to-clone')
+    const selectDesordreToClone = document.querySelector('#select-desordre-to-clone')
     const editFileRoute = modalUploadFiles.dataset.editFileRoute
     const editFileToken = modalUploadFiles.dataset.editFileToken
 
@@ -48,24 +49,7 @@ if(modalUploadFiles){
     function uploadFile(file){
         let div = document.createElement('div')
         div.classList.add('fr-grid-row', 'fr-grid-row--gutters', 'fr-grid-row--middle', 'fr-mb-2w')
-        div.innerHTML = `
-            <div class="fr-col-8">
-                <div class="file-name">
-                    <div class="name">${file.name}</div>
-                </div>
-                <div class="file-progress">
-                    <span></span>
-                </div>
-                <div class="file-size">
-                    <div class="size">${(file.size/(1024*1024)).toFixed(2)} MB</div>
-                    <span>0%</span>
-                </div>
-            </div>
-            <div class="fr-col-4 select-container">           
-            </div>
-            <div class="fr-col-12 file-error">
-            </div>
-        `
+        div.innerHTML = initInnerHtml(file)
         listContainer.prepend(div)
         let http = new XMLHttpRequest()
         let data = new FormData()
@@ -85,11 +69,16 @@ if(modalUploadFiles){
                 let response = JSON.parse(this.response)
                 if (this.status == 200) {
                     modalUploadFiles.dataset.hasChanges = true
-                    let clone = selectTypeToClone.cloneNode(true)
-                    clone.id = 'select-type-document-'+response.response
+                    if(modalUploadFiles.dataset.fileType == 'photo'){
+                        var clone = selectDesordreToClone.cloneNode(true)
+                        clone.id = 'select-desordre-'+response.response
+                    }else{
+                        var clone = selectTypeToClone.cloneNode(true)
+                        clone.id = 'select-type-'+response.response
+                    }
                     clone.dataset.fileId = response.response
-                    div.querySelector('.select-container').appendChild(clone)
-                    addEventListenerSelectType(clone)          
+                    div.querySelector('.select-container').appendChild(clone) 
+                    addEventListenerSelectTypeDesordre(clone)
                 } else {
                     div.querySelector('.file-error').innerHTML = '<div class="fr-alert fr-alert--error fr-alert--sm">'+response.response+'</div>'
                 }
@@ -100,13 +89,49 @@ if(modalUploadFiles){
         http.send(data)
     }
 
-    function addEventListenerSelectType(select){
+    function initInnerHtml(file){
+        var innerHTML;
+        if(modalUploadFiles.dataset.fileType == 'photo'){
+            innerHTML = `
+            <div class="fr-col-2">
+                <img class="fr-content-media__img" src="${URL.createObjectURL(file)}">
+            </div>
+            <div class="fr-col-6">`
+        }else{
+            innerHTML = `<div class="fr-col-8">`
+        }
+        innerHTML += `
+            <div class="file-name">
+                <div class="name">${file.name}</div>
+            </div>
+            <div class="file-progress">
+                <span></span>
+            </div>
+            <div class="file-size">
+                <div class="size">${(file.size/(1024*1024)).toFixed(2)} MB</div>
+                <span>0%</span>
+            </div>
+        </div>
+        <div class="fr-col-4 select-container">           
+        </div>
+        <div class="fr-col-12 file-error">
+        </div>
+        `
+        return innerHTML
+    }
+
+    function addEventListenerSelectTypeDesordre(select){
         select.addEventListener('change', function(){
             let selectField = this
             let http = new XMLHttpRequest()
             let data = new FormData()
             data.append('file_id', selectField.dataset.fileId)
-            data.append('documentType', selectField.value)
+            if(modalUploadFiles.dataset.fileType == 'photo'){
+                data.append('documentType', 'SITUATION')
+                data.append('desordreSlug', selectField.value)
+            }else{
+                data.append('documentType', selectField.value)
+            }
             data.append('_token', editFileToken)
             http.onreadystatechange = function() {
                 if (this.readyState == XMLHttpRequest.DONE) {

@@ -57,9 +57,15 @@
                         </div>
                         <div style="display:none">
                             {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
-                            <select class="fr-select select-type" data-file-id="" id="select-type-document-to-clone">
+                            <select class="fr-select select-type" data-file-id="" id="select-type-to-clone">
                                 <option value="">Sélectionner un type</option>
                                 {% for key, value in DocumentType.getDocumentsList() %}
+                                    <option value="{{ key }}">{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                            <select class="fr-select select-desordre" data-file-id="" id="select-desordre-to-clone">
+                                <option value="">Sélectionner un désordre</option>
+                                {% for key, value in criteres %}
                                     <option value="{{ key }}">{{ value }}</option>
                                 {% endfor %}
                             </select>
