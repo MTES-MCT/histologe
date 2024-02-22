@@ -36,7 +36,8 @@ class FileVoter extends Voter
             return false;
         }
         if (self::DELETE !== $attribute &&
-            ($user->isSuperAdmin() || ($user->isTerritoryAdmin() && $this->isOnUserTerritory($subject, $user)))
+            self::EDIT !== $attribute &&
+            $this->isAdminOrRTonHisTerritory($subject, $user)
         ) {
             return true;
         }
@@ -50,12 +51,27 @@ class FileVoter extends Voter
         };
     }
 
+    private function canCreate(Signalement $signalement, User $user): bool
+    {
+        return Signalement::STATUS_ACTIVE === $signalement->getStatut()
+            && $this->checkSignalementPermission($signalement, $user);
+    }
+
+    private function canView(bool|Signalement $subject, ?User $user = null): bool
+    {
+        return $subject instanceof Signalement ? $this->checkSignalementPermission($subject, $user) : $subject;
+    }
+
     private function canEdit(File $file, User $user): bool
     {
         return $this->canCreate($file->getSignalement(), $user)
             && $this->parameterBag->get('feature_new_form')
             && $this->parameterBag->get('feature_documents_enable')
-            && $this->isFileUploadedByUser($file, $user);
+            && (
+                $this->isFileUploadedByUser($file, $user)
+                ||
+                $this->isAdminOrRTonHisTerritory($file, $user)
+            );
     }
 
     private function canDelete(File $file, User $user): bool
@@ -70,12 +86,7 @@ class FileVoter extends Voter
 
     private function isPartnerFileDeletableByAdmin(File $file, User $user): bool
     {
-        return $file->isPartnerFile() &&
-            (
-                $user->isSuperAdmin() ||
-                ($user->isTerritoryAdmin() && $this->isOnUserTerritory($file, $user))
-            )
-        ;
+        return $file->isPartnerFile() && $this->isAdminOrRTonHisTerritory($file, $user);
     }
 
     private function isFileUploadedByUser(File $file, User $user): bool
@@ -83,15 +94,10 @@ class FileVoter extends Voter
         return null !== $file->getUploadedBy() && $file->getUploadedBy() === $user;
     }
 
-    private function canCreate(Signalement $signalement, User $user): bool
+    private function isAdminOrRTonHisTerritory(File|Signalement $subject, User $user): bool
     {
-        return Signalement::STATUS_ACTIVE === $signalement->getStatut()
-            && $this->checkSignalementPermission($signalement, $user);
-    }
-
-    private function canView(bool|Signalement $subject, ?User $user = null): bool
-    {
-        return $subject instanceof Signalement ? $this->checkSignalementPermission($subject, $user) : $subject;
+        return $user->isSuperAdmin() ||
+        ($user->isTerritoryAdmin() && $this->isOnUserTerritory($subject, $user));
     }
 
     private function checkSignalementPermission(Signalement $signalement, ?User $user = null): bool
@@ -99,7 +105,7 @@ class FileVoter extends Voter
         if (null === $user) {
             return false;
         }
-        if ($user->isSuperAdmin() || ($user->isTerritoryAdmin() && $this->isOnUserTerritory($signalement, $user))) {
+        if ($this->isAdminOrRTonHisTerritory($signalement, $user)) {
             return true;
         }
 

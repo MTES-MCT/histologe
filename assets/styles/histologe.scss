@@ -30,7 +30,6 @@ img.huechange { filter: hue-rotate(120deg); }
 .signalement-invalid::before {
     content: '';
     position: absolute;
-    z-index: 1000;
     line-height: 100vh;
     top: 0;
     left: 0;

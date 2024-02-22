@@ -4,6 +4,6 @@ import TheSignalementAppForm from './components/signalement-form/TheSignalementA
 
 const app = createApp(TheSignalementAppForm)
 const dashboardComponent = document.getElementById('app-signalement-form')
-if (null !== dashboardComponent) {
-    app.mount('#app-signalement-form')
+if (dashboardComponent !== null) {
+  app.mount('#app-signalement-form')
 }

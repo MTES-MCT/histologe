@@ -12,6 +12,7 @@ use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * @method Suivi|null find($id, $lockMode = null, $lockVersion = null)
@@ -21,8 +22,11 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SuiviRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        #[Autowire(env: 'LIMIT_DAILY_RELANCES_BY_REQUEST')]
+        private int $limitDailyRelancesByRequest
+        ) {
         parent::__construct($registry, Suivi::class);
     }
 
@@ -199,7 +203,6 @@ class SuiviRepository extends ServiceEntityRepository
 
     public function findSignalementsLastSuiviPublic(
         int $period = Suivi::DEFAULT_PERIOD_RELANCE,
-        int $limit = Suivi::LIMIT_DAILY_RELANCES,
     ): array {
         $connection = $this->getEntityManager()->getConnection();
 
@@ -226,7 +229,7 @@ class SuiviRepository extends ServiceEntityRepository
         GROUP BY s.id
         HAVING DATEDIFF(NOW(), IFNULL(last_posted_at, s.created_at)) > :day_period
         ORDER BY last_posted_at
-        LIMIT '.$limit;
+        LIMIT '.$this->limitDailyRelancesByRequest;
 
         $statement = $connection->prepare($sql);
 
@@ -235,7 +238,6 @@ class SuiviRepository extends ServiceEntityRepository
 
     public function findSignalementsLastSuiviTechnical(
         int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
-        int $limit = Suivi::LIMIT_DAILY_RELANCES,
     ): array {
         $connection = $this->getEntityManager()->getConnection();
 
@@ -261,8 +263,7 @@ class SuiviRepository extends ServiceEntityRepository
                 AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
                 AND s.is_imported != 1
                 AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)
-                LIMIT '.$limit;
-
+                LIMIT '.$this->limitDailyRelancesByRequest;
         $statement = $connection->prepare($sql);
 
         return $statement->executeQuery($parameters)->fetchFirstColumn();
@@ -283,7 +284,7 @@ class SuiviRepository extends ServiceEntityRepository
         ];
 
         $sql = $this->getSignalementsLastSuivisTechnicalsQuery(excludeUsagerAbandonProcedure: true, dayPeriod: $period);
-
+        $sql .= ' LIMIT '.$this->limitDailyRelancesByRequest;
         $statement = $connection->prepare($sql);
 
         return $statement->executeQuery($parameters)->fetchFirstColumn();

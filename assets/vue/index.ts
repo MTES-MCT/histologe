@@ -4,6 +4,6 @@ import '@vuepic/vue-datepicker/dist/main.css'
 
 const app = createApp(TheHistoAppStats)
 const statsComponent = document.getElementById('app-stats')
-if (null !== statsComponent) {
-    app.mount('#app-stats')
+if (statsComponent !== null) {
+  app.mount('#app-stats')
 }
