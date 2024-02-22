@@ -10,5 +10,7 @@ interface DossierSISHHandlerInterface
 {
     public function handle(DossierMessageSISH $dossierMessageSISH): void;
 
+    public function canFlagAsSynchronized(): bool;
+
     public static function getPriority(): int;
 }

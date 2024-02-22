@@ -2,6 +2,7 @@
 
 namespace App\Messenger\MessageHandler\Esabora;
 
+use App\Manager\AffectationManager;
 use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Service\Esabora\Handler\DossierSISHHandlerInterface;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
@@ -16,7 +17,8 @@ final class DossierMessageSISHHandler
         #[TaggedIterator(
             'app.dossier_sish_handler',
             defaultPriorityMethod: 'getPriority'
-        )] iterable $dossierSISHHandlers
+        )] iterable $dossierSISHHandlers,
+        private AffectationManager $affectationManager
     ) {
         $this->dossierSISHHandlers = $dossierSISHHandlers;
     }
@@ -26,6 +28,9 @@ final class DossierMessageSISHHandler
         /** @var DossierSISHHandlerInterface $dossierSISHHandler */
         foreach ($this->dossierSISHHandlers as $dossierSISHHandler) {
             $dossierSISHHandler->handle($dossierMessageSISH);
+            if ($dossierSISHHandler->canFlagAsSynchronized()) {
+                $this->affectationManager->flagAsSynchronized($dossierMessageSISH);
+            }
         }
     }
 }

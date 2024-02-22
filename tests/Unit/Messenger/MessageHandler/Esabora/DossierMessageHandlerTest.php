@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Messenger\MessageHandler\Esabora;
 
 use App\Entity\Partner;
+use App\Manager\AffectationManager;
 use App\Manager\JobEventManager;
 use App\Messenger\MessageHandler\Esabora\DossierMessageSCHSHandler;
 use App\Repository\PartnerRepository;
@@ -53,11 +54,18 @@ class DossierMessageHandlerTest extends TestCase
             ->with($dossierMessage->getPartnerId())
             ->willReturn(new Partner());
 
+        $affectationManagerMock = $this->createMock(AffectationManager::class);
+        $affectationManagerMock
+            ->expects($this->once())
+            ->method('flagAsSynchronized')
+            ->with($dossierMessage);
+
         $dossierMessageHandler = new DossierMessageSCHSHandler(
             $esaboraServiceMock,
             $jobEventManagerMock,
             $serializerMock,
             $partnerRepositoryMock,
+            $affectationManagerMock
         );
 
         $dossierMessageHandler($dossierMessage);

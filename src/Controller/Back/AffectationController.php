@@ -168,8 +168,6 @@ class AffectationController extends AbstractController
     {
         $partner = $affectation->getPartner();
         if ($partner->canSyncWithEsabora() || $partner->canSyncWithOilhi()) {
-            $affectation->setIsSynchronized(true);
-            $this->affectationManager->save($affectation);
             $this->interconnectionBus->dispatch($affectation);
         }
     }
