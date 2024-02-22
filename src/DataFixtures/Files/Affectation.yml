@@ -196,3 +196,21 @@ affectations:
     affected_by: "admin-01@histologe.fr"
     territory: "Bouches-du-Rhône"
     created_at: '-15 days'
+  -
+    signalement: 2024-04
+    partner: "partenaire-13-05@histologe.fr"
+    statut: 3
+    answered_by: ""
+    affected_by: "admin-territoire-13-01@histologe.fr"
+    motif_cloture: ""
+    territory: "Bouches-du-Rhône"
+    is_synchronized: true
+  -
+    signalement: 2024-04
+    partner: "partenaire-13-06@histologe.fr"
+    statut: 1
+    answered_by: ""
+    affected_by: "admin-territoire-13-01@histologe.fr"
+    motif_cloture: ""
+    territory: "Bouches-du-Rhône"
+    is_synchronized: true

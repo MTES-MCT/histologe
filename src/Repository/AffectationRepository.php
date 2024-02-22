@@ -104,8 +104,12 @@ class AffectationRepository extends ServiceEntityRepository
         ?Territory $territory = null,
     ): array {
         $qb = $this->createQueryBuilder('a');
-        $qb = $qb->innerJoin('a.partner', 'p')
+        $qb = $qb
+            ->innerJoin('a.partner', 'p')
+            ->innerJoin('a.signalement', 's')
             ->where('p.esaboraUrl IS NOT NULL AND p.esaboraToken IS NOT NULL AND p.isEsaboraActive = 1')
+            ->andWhere('s.statut != :signalement_statut')
+            ->setParameter('signalement_statut', Signalement::STATUS_ARCHIVED)
             ->andWhere('p.type = :partner_type')
             ->setParameter('partner_type', $partnerType);
 
