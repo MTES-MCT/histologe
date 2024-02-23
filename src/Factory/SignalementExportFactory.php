@@ -42,8 +42,8 @@ class SignalementExportFactory
             $this->getVisiteStatut($data['interventionsStatus'])
         );
         $statusVisite = $interventionExploded[0];
-        $dateVisite = $interventionExploded[1] ?? '';
-        $isOccupantPresentVisite = $interventionExploded[2] ?? '';
+        $dateVisite = !empty($interventionExploded[1]) ? $interventionExploded[1] : '';
+        $isOccupantPresentVisite = !empty($interventionExploded[2]) ? $interventionExploded[2] : '';
 
         return new SignalementExport(
             reference: $data['reference'],
@@ -143,8 +143,18 @@ class SignalementExportFactory
                 } else {
                     $statusVisite = VisiteStatus::TERMINEE->value;
                 }
-                $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT.$interventionExploded[1] ?? '';
-                $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT.$interventionExploded[2] ?? '';
+
+                if (!empty($interventionExploded[1])) {
+                    $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT.$interventionExploded[1];
+                } else {
+                    $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT;
+                }
+
+                if (!empty($interventionExploded[2])) {
+                    $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT.$interventionExploded[2];
+                } else {
+                    $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT;
+                }
             }
         }
 
