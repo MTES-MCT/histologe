@@ -59,8 +59,16 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
     {
         $commentaire = 'Points signalés:'.\PHP_EOL;
 
-        foreach ($signalement->getCriticites() as $criticite) {
-            $commentaire .= \PHP_EOL.$criticite->getCritere()->getLabel().' => Etat '.$criticite->getScoreLabel();
+        if ($signalement->getCreatedFrom()) {
+            if (!$signalement->getDesordreCriteres()->isEmpty()) {
+                foreach ($signalement->getDesordreCriteres() as $desordreCritere) {
+                    $commentaire .= \PHP_EOL.$desordreCritere->getLabelCritere();
+                }
+            }
+        } else {
+            foreach ($signalement->getCriticites() as $criticite) {
+                $commentaire .= \PHP_EOL.$criticite->getCritere()->getLabel().' => Etat '.$criticite->getScoreLabel();
+            }
         }
 
         $commentaire .= \PHP_EOL.'Propriétaire averti: '.$signalement->getIsProprioAverti() ? 'OUI' : 'NON';

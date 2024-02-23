@@ -208,6 +208,17 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
     private function buildProblemes(Signalement $signalement): ?string
     {
         $commentaire = null;
+
+        if ($signalement->getCreatedFrom()) {
+            if (!$signalement->getDesordreCriteres()->isEmpty()) {
+                foreach ($signalement->getDesordreCriteres() as $desordreCritere) {
+                    $commentaire .= \PHP_EOL.$desordreCritere->getLabelCritere();
+                }
+            }
+
+            return $commentaire;
+        }
+
         foreach ($signalement->getCriticites() as $criticite) {
             $commentaire .= $criticite->getCritere()->getLabel().' => Etat '.$criticite->getScoreLabel().\PHP_EOL;
         }
