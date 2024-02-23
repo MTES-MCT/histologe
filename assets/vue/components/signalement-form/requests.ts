@@ -40,16 +40,16 @@ export const requests = {
       timeout: 0 // TODO: va nécéssiter d'apporter quelques retouches sur l'UX
     })
     axiosInstance
-        .post(ajaxUrl, data, config)
-        .then(response => {
-          const responseData = response.data
-          functionReturn(responseData)
-        })
-        .catch(error => {
-          console.error(error)
-          Sentry.captureException(new Error('Something wrong happened with the upload.'))
-          functionReturn(error)
-        })
+      .post(ajaxUrl, data, config)
+      .then(response => {
+        const responseData = response.data
+        functionReturn(responseData)
+      })
+      .catch(error => {
+        console.error(error)
+        Sentry.captureException(new Error('Something wrong happened with the upload.'))
+        functionReturn(error)
+      })
   },
   doRequestPut (ajaxUrl: string, data: any, functionReturn: Function) {
     axios
@@ -100,6 +100,20 @@ export const requests = {
             formStore.data.vos_coordonnees_tiers_email !== undefined)
     ) { // TODO : vérifier la condition (notamment en fonction des profils)
       const url = formStore.props.ajaxurlPostSignalementDraft
+      requests.doRequestPost(url, formStore.data, functionReturn, undefined)
+    } else {
+      // TODO : que renvoyer ?
+      functionReturn(undefined)
+    }
+  },
+
+  checkIfExistingDraft (functionReturn: Function) {
+    console.log('checkIfExistingDraft')
+    const url = formStore.props.ajaxurlCheckSignalementDraftExists
+    if (formStore.data.adresse_logement_adresse !== undefined &&
+      (formStore.data.vos_coordonnees_occupant_email !== undefined ||
+        formStore.data.vos_coordonnees_tiers_email !== undefined)
+    ) {
       requests.doRequestPost(url, formStore.data, functionReturn, undefined)
     } else {
       // TODO : que renvoyer ?

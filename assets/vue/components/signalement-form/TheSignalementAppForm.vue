@@ -44,6 +44,7 @@
               />
           </div>
         </div>
+        <SignalementFormModalContinueFromDraft/>
       </div>
     </div>
 </template>
@@ -56,13 +57,15 @@ import { requests } from './requests'
 import { profileUpdater } from './services/profileUpdater'
 import SignalementFormScreen from './components/SignalementFormScreen.vue'
 import SignalementFormBreadCrumbs from './components/SignalementFormBreadCrumbs.vue'
+import SignalementFormModalContinueFromDraft from './components/SignalementFormModalContinueFromDraft.vue'
 const initElements:any = document.querySelector('#app-signalement-form')
 
 export default defineComponent({
   name: 'TheSignalementAppForm',
   components: {
     SignalementFormScreen,
-    SignalementFormBreadCrumbs
+    SignalementFormBreadCrumbs,
+    SignalementFormModalContinueFromDraft
   },
   data () {
     return {
@@ -133,7 +136,43 @@ export default defineComponent({
     saveAndChangeScreenBySlug (slug:string, isSaveAndCheck:boolean) {
       this.nextSlug = slug
       if (isSaveAndCheck) {
-        requests.saveSignalementDraft(this.changeScreenBySlug)
+        console.log(formStore.data.uuidSignalementDraft)
+        if (formStore.data.uuidSignalementDraft === '') {
+          requests.checkIfExistingDraft(this.showDraftModalOrNot)
+        } else {
+          requests.saveSignalementDraft(this.changeScreenBySlug)
+        }
+      } else {
+        this.changeScreenBySlug(undefined)
+      }
+    },
+    showDraftModalOrNot (requestResponse: any) {
+      console.log('showDraftModalOrNot')
+      console.log(requestResponse)
+      if (requestResponse) {
+        console.log(requestResponse.already_exists)
+        if (requestResponse.already_exists === true) {
+          console.log('il y a déjà un draft, je dois afficher la modale')
+          // TODO : simuler le clic sur le bouton
+          const link = document.getElementById('fr-modal-continue-draft-button')
+          // Vérifiez si l'élément lien existe
+          if (link) {
+            // Simulez un clic sur le lien
+            link.click()
+          } else {
+            console.error('L\'élément lien n\'a pas été trouvé.')
+          }
+          // this.showDraftModal = true
+          // const modalElement = document.getElementById('fr-modal-continue-draftv')
+          // if (modalElement && modalElement.classList.contains('fr-modal') && window.dsfr(modalElement) && ('modal' in window.dsfr(modalElement))) {
+          //   console.log('isEnabled', window.dsfr(modalElement).modal.isEnabled, window.dsfr(modalElement).modal)
+          //   window.dsfr(modalElement).modal.disclose()
+          // }
+        } else {
+          console.log('iln y en avait pas, on a récupéré l\'uuid')
+          console.log(requestResponse.uuid)
+          this.changeScreenBySlug(requestResponse)
+        }
       } else {
         this.changeScreenBySlug(undefined)
       }
@@ -155,7 +194,6 @@ export default defineComponent({
       if (requestResponse) {
         if (requestResponse.uuid) {
           formStore.data.uuidSignalementDraft = requestResponse.uuid
-        // TODO : identifier si c'est lee premier enregistrement, et afficher modale si besoin
         } else {
           let errorMessage = ''
           for (const index in requestResponse.violations) {

@@ -93,14 +93,16 @@ class FrontNewSignalementController extends AbstractController
 
             $existingSignalementDraft = $signalementDraftManager->findOneBy(['identificationHash' => $hash]);
             if (null !== $existingSignalementDraft) {
-                // TODO que retourne t-on ?
                 return $this->json([
+                    'already_exists' => true,
                     'uuid' => $existingSignalementDraft->getUuid(),
+                    'created_at' => $existingSignalementDraft->getCreatedAt(),
+                    'updated_at' => $existingSignalementDraft->getUpdatedAt(),
                 ]);
             }
 
-            // TODO que retourne t-on ?
             return $this->json([
+                'already_exists' => false,
                 'uuid' => $signalementDraftManager->create(
                     $signalementDraftRequest,
                     json_decode($payload, true)
