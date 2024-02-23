@@ -51,6 +51,8 @@ class SignalementExportHeader
             'Visité le',
             'Occupant présent visite',
             'Statut de la visite',
+            'Conclusion de la visite',
+            'Commentaire de la visite',
             'Dernière MAJ le',
             'Clôturé le',
             'Motif de clôture',

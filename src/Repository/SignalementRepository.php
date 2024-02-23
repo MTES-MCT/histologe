@@ -460,16 +460,22 @@ class SignalementRepository extends ServiceEntityRepository
             s.closedAt,
             s.motifCloture,
             s.geoloc,
-            GROUP_CONCAT(DISTINCT situations.label SEPARATOR :group_concat_separator_1) as familleSituation,
-            GROUP_CONCAT(DISTINCT criteres.label SEPARATOR :group_concat_separator_1) as desordres,
+            GROUP_CONCAT(DISTINCT situations.label SEPARATOR :group_concat_separator_1) as oldSituations,
+            GROUP_CONCAT(DISTINCT criteres.label SEPARATOR :group_concat_separator_1) as oldCriteres,
+            GROUP_CONCAT(DISTINCT desordreCategories.label SEPARATOR :group_concat_separator_1) as listDesordreCategories,
+            GROUP_CONCAT(DISTINCT desordreCriteres.labelCritere SEPARATOR :group_concat_separator_1) as listDesordreCriteres,
             GROUP_CONCAT(DISTINCT tags.label SEPARATOR :group_concat_separator_1) as etiquettes,
             GROUP_CONCAT(DISTINCT
                 CONCAT(i.status, :group_concat_separator_1, i.scheduledAt, :group_concat_separator_1, IFNULL(i.occupantPresent, \'\'))
                 SEPARATOR :concat_separator
-            ) as interventionsStatus
+            ) as interventionsStatus,
+            GROUP_CONCAT(DISTINCT i.concludeProcedure SEPARATOR :group_concat_separator_1) as interventionConcludeProcedure,
+            GROUP_CONCAT(DISTINCT i.details SEPARATOR :group_concat_separator_1) as interventionDetails
             '
         )->leftJoin('s.situations', 'situations')
             ->leftJoin('s.criteres', 'criteres')
+            ->leftJoin('s.desordreCategories', 'desordreCategories')
+            ->leftJoin('s.desordreCriteres', 'desordreCriteres')
             ->leftJoin('s.tags', 'tags')
             ->leftJoin('s.interventions', 'i', 'WITH', 'i.type = \'VISITE\'')
             ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
