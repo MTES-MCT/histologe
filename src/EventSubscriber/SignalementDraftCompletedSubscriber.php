@@ -2,7 +2,6 @@
 
 namespace App\EventSubscriber;
 
-use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Event\SignalementDraftCompletedEvent;
@@ -51,21 +50,14 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
             ->build();
 
         $this->signalementManager->save($signalement);
-        $this->sendNotifications($signalementDraft, $signalement);
+        $this->sendNotifications($signalement);
         $this->processFiles($signalementDraft, $signalement);
         $this->autoAssigner->assign($signalement);
     }
 
-    private function sendNotifications(SignalementDraft $signalementDraft, Signalement $signalement): void
+    private function sendNotifications(Signalement $signalement): void
     {
-        if (ProfileDeclarant::LOCATAIRE === $signalement->getProfileDeclarant()
-            || ProfileDeclarant::BAILLEUR_OCCUPANT === $signalementDraft->getProfileDeclarant()
-        ) {
-            $toRecipients = [$signalement->getMailDeclarant()];
-        } else {
-            $toRecipients = $signalement->getMailUsagers();
-        }
-
+        $toRecipients = $signalement->getMailUsagers();
         foreach ($toRecipients as $toRecipient) {
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
