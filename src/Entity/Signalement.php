@@ -923,7 +923,7 @@ class Signalement
             $usagers[] = $this->getMailOccupant();
         }
 
-        if (!empty($this->getMailDeclarant())) {
+        if (!empty($this->getMailDeclarant() && !\in_array($this->getMailDeclarant(), $usagers))) {
             $usagers[] = $this->getMailDeclarant();
         }
 

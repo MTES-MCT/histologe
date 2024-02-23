@@ -81,17 +81,15 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
     private function sendMailToUsager(Signalement $signalement): void
     {
         $toRecipients = $signalement->getMailUsagers();
-        if (!empty($toRecipients)) {
-            foreach ($toRecipients as $toRecipient) {
-                $this->notificationMailerRegistry->send(
-                    new NotificationMail(
-                        type: NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_USAGER,
-                        to: [$toRecipient],
-                        territory: $signalement->getTerritory(),
-                        signalement: $signalement
-                    )
-                );
-            }
+        foreach ($toRecipients as $toRecipient) {
+            $this->notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_USAGER,
+                    to: [$toRecipient],
+                    territory: $signalement->getTerritory(),
+                    signalement: $signalement
+                )
+            );
         }
     }
 
