@@ -214,9 +214,9 @@ class SignalementFileController extends AbstractController
             $desordrePrecisionSlugs = $signalement->getDesordrePrecisions()->map(
                 fn (DesordrePrecision $desordrePrecision) => $desordrePrecision->getDesordrePrecisionSlug()
             )->toArray();
-            if(!$desordreSlug){
+            if (!$desordreSlug) {
                 $file->setDesordreSlug(null);
-            }elseif (\in_array($desordreSlug, $desordreCritereSlugs)
+            } elseif (\in_array($desordreSlug, $desordreCritereSlugs)
                 || \in_array($desordreSlug, $desordrePrecisionSlugs)
             ) {
                 $file->setDesordreSlug($desordreSlug);
