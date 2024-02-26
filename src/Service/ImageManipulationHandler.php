@@ -15,6 +15,12 @@ class ImageManipulationHandler
         'image/png',
         'image/gif',
     ];
+    public const IMAGE_EXTENSION = [
+        'jpeg',
+        'jpg',
+        'png',
+        'gif',
+    ];
 
     private const DEFAULT_SIZE_RESIZE = 1000;
     private const DEFAULT_SIZE_THUMB = 400;
@@ -25,7 +31,7 @@ class ImageManipulationHandler
         private readonly ParameterBagInterface $parameterBag,
         private readonly FilesystemOperator $fileStorage,
         private readonly ImageManager $imageManager
-        ) {
+    ) {
     }
 
     public function setUseTmpDir(bool $tmp): self

@@ -190,6 +190,7 @@ class SignalementController extends AbstractController
             'createdFromDraft' => $signalement->getCreatedFrom(),
             'situations' => $infoDesordres['criticitesArranged'],
             'photos' => $infoDesordres['photos'],
+            'criteres' => $infoDesordres['criteres'],
             'needValidation' => Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut(),
             'canEditSignalement' => $canEditSignalement,
             'canExportSignalement' => $canExportSignalement,
@@ -212,6 +213,7 @@ class SignalementController extends AbstractController
             'partnersCanVisite' => $partnerVisite,
             'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
             'isNewFormEnabled' => $parameterBag->get('feature_new_form'),
+            'isDocumentsEnabled' => $parameterBag->get('feature_documents_enable'),
         ]);
     }
 

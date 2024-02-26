@@ -30,28 +30,28 @@ export default defineComponent({
     modelValue: Boolean
   },
   methods: {
-    closeModal() {
-      this.$emit('update:modelValue', false);
+    closeModal () {
+      this.$emit('update:modelValue', false)
     },
-    handleEscapeKey(event: any) {
+    handleEscapeKey (event: any) {
       if (event.key === 'Escape') {
-        this.closeModal();
+        this.closeModal()
       }
     },
-    handleClickOutside(event: any) {
-      const modalDialog = this.$refs.modalDialog as Ref<HTMLElement>;
-      if (modalDialog && event.target == modalDialog) {
-        this.closeModal();
+    handleClickOutside (event: any) {
+      const modalDialog = this.$refs.modalDialog as Ref<HTMLElement>
+      if (modalDialog && event.target === modalDialog) {
+        this.closeModal()
       }
     }
   },
-  mounted() {
-    document.addEventListener('keyup', this.handleEscapeKey);
-    document.addEventListener('click', this.handleClickOutside);
+  mounted () {
+    document.addEventListener('keyup', this.handleEscapeKey)
+    document.addEventListener('click', this.handleClickOutside)
   },
-  beforeUnmount() {
-    document.removeEventListener('keyup', this.handleEscapeKey);
-    document.removeEventListener('click', this.handleClickOutside);
+  beforeUnmount () {
+    document.removeEventListener('keyup', this.handleEscapeKey)
+    document.removeEventListener('click', this.handleClickOutside)
   }
 })
 </script>

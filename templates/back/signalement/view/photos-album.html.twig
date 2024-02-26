@@ -23,16 +23,9 @@
                 <div>
                     {% if photo.documentType is not same as null
                         and photo.documentType is not same as enum('App\\Entity\\Enum\\DocumentType').AUTRE %}
-
                         {% if photo.documentType is same as enum('App\\Entity\\Enum\\DocumentType').SITUATION
                                 and photo.desordreSlug is not same as null %}
-                            {% for key, photoList in photos %}
-                                {% for desordrePhoto in photoList %}
-                                    {% if desordrePhoto.id is same as photo.id %}
-                                        {{ key }}
-                                    {% endif %}
-                                {% endfor %}
-                            {% endfor %}
+                            {{ signalement.getDesordreLabel(photo.desordreSlug) }}
                         {% else %}
                             {{ photo.documentType.label() }}
                         {% endif %}

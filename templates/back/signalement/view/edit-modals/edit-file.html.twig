@@ -1,0 +1,58 @@
+<dialog aria-labelledby="fr-modal-title-modal-edit-file" role="dialog" id="fr-modal-edit-file" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md  fr-text--left">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8">
+                <form method="POST" id="form-edit-file" enctype="application/json" action="{{ path('back_signalement_edit_file',{uuid:signalement.uuid}) }}">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-edit-file">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="fr-modal-title-modal-edit-file" class="fr-modal__title">
+                                Editer  <span class="fr-modal-file-edit-type"></span>
+                            </h1>
+
+                            <div class="fr-text--center fr-grid-row fr-grid-row--center">
+                                <div id="fr-modal-edit-file-miniature" class="fr-col-12 fr-rounded signalement-file-item fr-mb-1w"></div>
+                                <div class="fr-col-12 fr-mb-2w">
+                                    <b><span class="fr-modal-file-edit-filename"></span></b>
+                                    <br>
+                                    <span class="fr-modal-file-edit-infos"></span>             
+                                </div>               
+                            </div>
+
+                            <div class="fr-select-group">
+                                 <select class="fr-select" name="documentType" id="document-type-select">
+                                </select>
+                            </div>                            
+
+                            <div class="fr-select-group">
+                                 <select class="fr-select fr-hidden" name="desordreSlug" id="desordre-slug-select">
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="fr-modal__footer">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <li>
+                                    <button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line"
+                                            aria-controls="fr-modal-edit-file">
+                                        Annuler
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="fr-btn  fr-icon-checkbox-line" type="submit" form="form-edit-file"
+                                        id="form-edit-file-submit">
+                                        Valider
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_file_'~signalement.id) }}">
+                    <input type="hidden" name="file_id" id="file-edit-fileid">
+                </form>
+            </div>
+        </div>
+    </div>
+</dialog>

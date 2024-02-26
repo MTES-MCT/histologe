@@ -89,10 +89,11 @@ class File
 
     public function isPartnerFile(): ?bool
     {
-        return $this->uploadedBy->isSuperAdmin()
+        return null !== $this->uploadedBy
+        && ($this->uploadedBy->isSuperAdmin()
         || $this->uploadedBy->isTerritoryAdmin()
         || $this->uploadedBy->isPartnerAdmin()
-        || $this->uploadedBy->isUserPartner();
+        || $this->uploadedBy->isUserPartner());
     }
 
     public function getSignalement(): ?Signalement

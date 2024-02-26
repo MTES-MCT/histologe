@@ -18,6 +18,7 @@ class SignalementDesordresProcessor
         $isDanger = false;
         $criticitesArranged = [];
         $photos = [];
+        $criteres = [];
         if (null == $signalement->getCreatedFrom()) {
             foreach ($signalement->getCriticites() as $criticite) {
                 $situationLabel = $criticite->getCritere()->getSituation()->getLabel();
@@ -42,6 +43,8 @@ class SignalementDesordresProcessor
                 $this->addPhotoBySlug($photos, $signalement, $desordreCritereSlug, $desordrePrecisionSlug);
                 $this->addPhotoBySlug($photos, $signalement, $desordreCritereSlug, $desordreCritereSlug);
                 $this->addPhotoBySlug($photos, $signalement, $labelCategorieBO, $desordreCategorieSlug);
+
+                $criteres[$desordreCritereSlug] = $labelCritere;
             }
         }
 
@@ -49,6 +52,7 @@ class SignalementDesordresProcessor
             'criticitesArranged' => $criticitesArranged,
             'photos' => $photos,
             'isDanger' => $isDanger,
+            'criteres' => $criteres,
         ];
     }
 

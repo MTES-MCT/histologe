@@ -2,12 +2,15 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\DesordreCritere;
+use App\Entity\DesordrePrecision;
 use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Factory\SuiviFactory;
+use App\Manager\FileManager;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
 use App\Service\Signalement\SignalementFileProcessor;
@@ -119,10 +122,14 @@ class SignalementFileController extends AbstractController
         UploadHandlerService $uploadHandlerService,
         EntityManagerInterface $entityManager,
         SuiviFactory $suiviFactory,
+        FileManager $fileManager,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('FILE_DELETE', $signalement);
-        if ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))) {
-            if ($uploadHandlerService->deleteSignalementFile($signalement, $type, $filename, $fileRepository)) {
+        $file = $fileManager->getFileFromSignalement($signalement, $type, $filename);
+        $this->denyAccessUnlessGranted('FILE_DELETE', $file);
+        if (null !== $file
+            && $this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))
+        ) {
+            if ($uploadHandlerService->deleteSignalementFile($file, $fileRepository)) {
                 $suivi = $suiviFactory->createInstanceFrom($this->getUser(), $signalement);
                 /** @var User $user */
                 $user = $this->getUser();
@@ -143,5 +150,68 @@ class SignalementFileController extends AbstractController
         }
 
         return $this->json(['response' => 'error'], 400);
+    }
+
+    /**
+     * @throws FilesystemException
+     */
+    #[Route('/{uuid}/file/edit', name: 'back_signalement_edit_file')]
+    public function editFileSignalement(
+        Signalement $signalement,
+        Request $request,
+        FileRepository $fileRepository,
+        EntityManagerInterface $entityManager,
+    ): RedirectResponse {
+        if ($this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), $request->get('_token'))) {
+            $file = $fileRepository->findOneBy(
+                [
+                    'id' => $request->get('file_id'),
+                    'signalement' => $signalement,
+                ]
+            );
+            if (null !== $file) {
+                $this->denyAccessUnlessGranted('FILE_EDIT', $file);
+                $documentType = DocumentType::tryFrom($request->get('documentType'));
+                if (null !== $documentType) {
+                    $file->setDocumentType($documentType);
+                    if (DocumentType::SITUATION === $documentType) {
+                        $desordreSlug = $request->get('desordreSlug');
+                        $desordreCritereSlugs = $signalement->getDesordreCriteres()->map(
+                            fn (DesordreCritere $desordreCritere) => $desordreCritere->getSlugCritere()
+                        )->toArray();
+                        $desordrePrecisionSlugs = $signalement->getDesordrePrecisions()->map(
+                            fn (DesordrePrecision $desordrePrecision) => $desordrePrecision->getDesordrePrecisionSlug()
+                        )->toArray();
+
+                        if (\in_array($desordreSlug, $desordreCritereSlugs)
+                            || \in_array($desordreSlug, $desordrePrecisionSlugs)
+                        ) {
+                            $file->setDesordreSlug($desordreSlug);
+                        }
+                    } else {
+                        if (null !== $file->getDesordreSlug()) {
+                            $file->setDesordreSlug(null);
+                        }
+                    }
+
+                    $entityManager->persist($file);
+                    $entityManager->flush();
+
+                    if ('document' === $file->getFileType()) {
+                        $this->addFlash('success', 'Le document a bien été modifié.');
+                    } else {
+                        $this->addFlash('success', 'La photo a bien été modifiée.');
+                    }
+                } else {
+                    $this->addFlash('error', 'Mauvais type de fichier');
+                }
+            } else {
+                $this->addFlash('error', 'Ce fichier n\'existe plus');
+            }
+        } else {
+            $this->addFlash('error', 'Une erreur est survenue lors de la modification...');
+        }
+
+        return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
     }
 }

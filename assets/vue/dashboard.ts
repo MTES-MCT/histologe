@@ -3,6 +3,6 @@ import TheHistoAppDashboard from './components/dashboard/TheHistoAppDashboard.vu
 
 const app = createApp(TheHistoAppDashboard)
 const appDashbordComponent = document.getElementById('app-dashboard')
-if (null !== appDashbordComponent) {
-    app.mount('#app-dashboard')
+if (appDashbordComponent !== null) {
+  app.mount('#app-dashboard')
 }
