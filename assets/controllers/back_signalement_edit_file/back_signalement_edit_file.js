@@ -1,8 +1,9 @@
 function histoUpdateDesordreSelect(target, selectedDocumentType) {
   let desordreSelectBox = document.querySelector('#desordre-slug-select');
-  if ('SITUATION' === selectedDocumentType ){
+  let desordres = JSON.parse(target.getAttribute('data-signalement-desordres'))
+  if ('SITUATION' === selectedDocumentType 
+    && Object.keys(desordres).length > 0){
     const selectedDesordreSlug = target.getAttribute('data-desordreSlug')
-    let desordres = JSON.parse(target.getAttribute('data-signalement-desordres'))
     desordreSelectBox.innerHTML = '';
     let option = new Option('Sélectionnez le désordre associé', '');
     if ('' === selectedDesordreSlug) {
