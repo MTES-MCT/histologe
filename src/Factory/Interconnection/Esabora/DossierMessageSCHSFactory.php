@@ -34,7 +34,7 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
             ? substr($signalement->getNumAppartOccupant(), 0, 5)
             : null;
         $nomUsager = !empty($signalement->getNomOccupant()) ? $signalement->getNomOccupant() : null;
-        $prenomUsager = !empty($signalement->getNomOccupant())
+        $prenomUsager = !empty($signalement->getPrenomOccupant())
             ? substr($signalement->getPrenomOccupant(), 0, 25)
             : null;
 
