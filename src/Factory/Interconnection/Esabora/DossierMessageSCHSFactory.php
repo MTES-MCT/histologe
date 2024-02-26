@@ -31,7 +31,7 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
         $address = AddressParser::parse($signalement->getAdresseOccupant());
         $etage = $signalement->getEtageOccupant() ? EtageParser::parse($signalement->getEtageOccupant()) : null;
         $numeroAppartement = !empty($signalement->getNumAppartOccupant())
-            ? substr($signalement->getNumAppartOccupant(), 0, 6)
+            ? substr($signalement->getNumAppartOccupant(), 0, 5)
             : null;
         $nomUsager = !empty($signalement->getNomOccupant()) ? $signalement->getNomOccupant() : null;
         $prenomUsager = !empty($signalement->getNomOccupant())
