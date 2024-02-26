@@ -30,6 +30,13 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
         $partner = $affectation->getPartner();
         $address = AddressParser::parse($signalement->getAdresseOccupant());
         $etage = $signalement->getEtageOccupant() ? EtageParser::parse($signalement->getEtageOccupant()) : null;
+        $numeroAppartement = !empty($signalement->getNumAppartOccupant())
+            ? substr($signalement->getNumAppartOccupant(), 0, 5)
+            : null;
+        $nomUsager = !empty($signalement->getNomOccupant()) ? $signalement->getNomOccupant() : null;
+        $prenomUsager = !empty($signalement->getPrenomOccupant())
+            ? substr($signalement->getPrenomOccupant(), 0, 25)
+            : null;
 
         return (new DossierMessageSCHS())
             ->setUrl($partner->getEsaboraUrl())
@@ -37,15 +44,15 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
             ->setPartnerId($partner->getId())
             ->setSignalementId($signalement->getId())
             ->setReference($signalement->getUuid())
-            ->setNomUsager($signalement->getNomOccupant())
-            ->setPrenomUsager($signalement->getPrenomOccupant())
+            ->setNomUsager($nomUsager)
+            ->setPrenomUsager($prenomUsager)
             ->setMailUsager($signalement->getMailOccupant())
             ->setTelephoneUsager($signalement->getTelOccupantDecoded(true))
             ->setAdresseSignalement($address['street'])
             ->setCodepostaleSignalement($signalement->getCpOccupant())
             ->setVilleSignalement($signalement->getVilleOccupant())
             ->setEtageSignalement($etage)
-            ->setNumeroAppartementSignalement($signalement->getNumAppartOccupant())
+            ->setNumeroAppartementSignalement($numeroAppartement)
             ->setNumeroAdresseSignalement($address['number'])
             ->setLatitudeSignalement($signalement->getGeoloc()['lat'] ?? 0)
             ->setLongitudeSignalement($signalement->getGeoloc()['lng'] ?? 0)
