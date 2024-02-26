@@ -33,6 +33,10 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
         $numeroAppartement = !empty($signalement->getNumAppartOccupant())
             ? substr($signalement->getNumAppartOccupant(), 0, 6)
             : null;
+        $nomUsager = !empty($signalement->getNomOccupant()) ? $signalement->getNomOccupant() : null;
+        $prenomUsager = !empty($signalement->getNomOccupant())
+            ? substr($signalement->getPrenomOccupant(), 0, 25)
+            : null;
 
         return (new DossierMessageSCHS())
             ->setUrl($partner->getEsaboraUrl())
@@ -40,8 +44,8 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
             ->setPartnerId($partner->getId())
             ->setSignalementId($signalement->getId())
             ->setReference($signalement->getUuid())
-            ->setNomUsager($signalement->getNomOccupant())
-            ->setPrenomUsager(substr($signalement->getPrenomOccupant(), 0, 25))
+            ->setNomUsager($nomUsager)
+            ->setPrenomUsager($prenomUsager)
             ->setMailUsager($signalement->getMailOccupant())
             ->setTelephoneUsager($signalement->getTelOccupantDecoded(true))
             ->setAdresseSignalement($address['street'])
