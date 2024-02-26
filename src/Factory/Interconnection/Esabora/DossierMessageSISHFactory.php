@@ -212,7 +212,10 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         if ($signalement->getCreatedFrom()) {
             if (!$signalement->getDesordreCriteres()->isEmpty()) {
                 foreach ($signalement->getDesordreCriteres() as $desordreCritere) {
-                    $commentaire .= \PHP_EOL.$desordreCritere->getLabelCritere();
+                    if (!empty($commentaire)) {
+                        $commentaire .= \PHP_EOL;
+                    }
+                    $commentaire .= $desordreCritere->getLabelCritere();
                 }
             }
 
