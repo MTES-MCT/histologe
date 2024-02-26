@@ -4,6 +4,7 @@ namespace App\Security\Voter;
 
 use App\Entity\Enum\Qualification;
 use App\Entity\User;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -19,7 +20,10 @@ class UserVoter extends Voter
     public const CHECKMAIL = 'USER_CHECKMAIL';
     public const SEE_NDE = 'USER_SEE_NDE';
 
-    public function __construct(private ParameterBagInterface $parameterBag)
+    public function __construct(
+        private Security $security,
+        private ParameterBagInterface $parameterBag
+        )
     {
     }
 
@@ -36,7 +40,7 @@ class UserVoter extends Voter
         if (!$user instanceof UserInterface) {
             return false;
         }
-        if ($user->isSuperAdmin()) {
+        if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
 
@@ -68,11 +72,8 @@ class UserVoter extends Voter
 
     private function canEdit(User $subject, User $user): bool
     {
-        if ($this->canDelete($subject, $user)) {
-            return true;
-        }
-
-        return $subject->getId() === $user->getId();
+        return $this->security->isGranted('ROLE_ADMIN_PARTNER') && $user->getTerritory() === $subject->getPartner()->getTerritory();
+        //TODO check si tout le monde a un territoir et un partenaire (ce n'est pas le cas mais voir comment gérer les regles)
     }
 
     private function canTransfer(User $subject, User $user): bool

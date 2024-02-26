@@ -365,39 +365,42 @@ class PartnerController extends AbstractController
         UserRepository $userRepository,
         PartnerRepository $partnerRepository,
     ): Response {
-        $this->denyAccessUnlessGranted('USER_EDIT', $this->getUser());
-        if (
-            $this->isCsrfTokenValid('partner_user_edit', $request->request->get('_token'))
-            && $userId = $request->request->get('user_id')
-        ) {
-            /** @var User $user */
-            $user = $userManager->find((int) $userId);
-            $data = $request->get('user_edit');
-            if ($data['email'] != $user->getEmail()) {
-                $userExist = $userRepository->findOneBy(['email' => $data['email']]);
-                if ($userExist && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
-                    $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail.');
+        $userId = $request->request->get('user_id');
+        /** @var User $user */
+        if (!$userId || !$user = $userManager->find((int) $userId || !$user->getPartner())) {
+            $this->addFlash('error', 'Utilisateur introuvable.');
 
-                    return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
-                }
-                $partnerExist = $partnerRepository->findOneBy(['email' => $data['email']]);
-                if ($partnerExist) {
-                    $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
-
-                    return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
-                }
-            }
-            $user = $userManager->updateUserFromData($user, $data);
-            $partnerId = $user->getPartner()->getId();
-
-            $message = 'L\'utilisateur a bien été modifié.';
-            $this->addFlash('success', $message);
-
-            return $this->redirectToRoute('back_partner_view', ['id' => $partnerId], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_NOT_FOUND);
         }
-        $this->addFlash('error', 'Une erreur est survenue lors de l\'édition de l\'utilisateur.');
+        if (!$this->isCsrfTokenValid('partner_user_edit', $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token invalide.');
 
-        return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_UNAUTHORIZED);
+        }
+        $this->denyAccessUnlessGranted('USER_EDIT', $user);
+
+        $data = $request->get('user_edit');
+        if ($data['email'] != $user->getEmail()) {
+            $userExist = $userRepository->findOneBy(['email' => $data['email']]);
+            if ($userExist && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
+                $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail.');
+
+                return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+            }
+            $partnerExist = $partnerRepository->findOneBy(['email' => $data['email']]);
+            if ($partnerExist) {
+                $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
+
+                return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+            }
+        }
+        $user = $userManager->updateUserFromData($user, $data);
+        $partnerId = $user->getPartner()->getId();
+
+        $message = 'L\'utilisateur a bien été modifié.';
+        $this->addFlash('success', $message);
+
+        return $this->redirectToRoute('back_partner_view', ['id' => $partnerId], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/transfererutilisateur', name: 'back_partner_user_transfer', methods: ['POST'])]
