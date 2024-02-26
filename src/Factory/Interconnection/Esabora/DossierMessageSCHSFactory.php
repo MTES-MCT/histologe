@@ -60,20 +60,23 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
         $commentaire = 'Points signalés:'.\PHP_EOL;
 
         if ($signalement->getCreatedFrom()) {
-            if (!$signalement->getDesordreCriteres()->isEmpty()) {
-                foreach ($signalement->getDesordreCriteres() as $desordreCritere) {
-                    $commentaire .= \PHP_EOL.$desordreCritere->getLabelCritere();
-                }
-            }
+            $commentaire .= $this->buildDesordresCreatedFrom($signalement);
         } else {
             foreach ($signalement->getCriticites() as $criticite) {
                 $commentaire .= \PHP_EOL.$criticite->getCritere()->getLabel().' => Etat '.$criticite->getScoreLabel();
             }
         }
 
-        $commentaire .= \PHP_EOL.'Propriétaire averti: '.$signalement->getIsProprioAverti() ? 'OUI' : 'NON';
-        $commentaire .= \PHP_EOL.'Adultes: '.$signalement->getNbAdultes().' Adulte(s)';
-        $commentaire .= $this->buildNbEnfants($signalement);
+        $commentaire .= \PHP_EOL.'Propriétaire averti : ';
+        $commentaire .= $signalement->getIsProprioAverti() ? 'OUI' : 'NON';
+
+        if ($signalement->getCreatedFrom()) {
+            $commentaire .= \PHP_EOL.'Nb personnes : '.$signalement->getTypeCompositionLogement()->getCompositionLogementNombrePersonnes();
+            $commentaire .= \PHP_EOL.'Enfants moins de 6 ans : '.$signalement->getTypeCompositionLogement()->getCompositionLogementEnfants();
+        } else {
+            $commentaire .= \PHP_EOL.'Adultes : '.$signalement->getNbAdultes().' Adulte(s)';
+            $commentaire .= $this->buildNbEnfants($signalement);
+        }
 
         foreach ($signalement->getAffectations() as $affectation) {
             $commentaire .= \PHP_EOL.$affectation->getPartner()->getNom().' => '.$affectation->getAffectationLabel();
