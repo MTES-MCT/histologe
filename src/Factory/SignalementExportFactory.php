@@ -42,8 +42,8 @@ class SignalementExportFactory
             $this->getVisiteStatut($data['interventionsStatus'])
         );
         $statusVisite = $interventionExploded[0];
-        $dateVisite = $interventionExploded[1];
-        $isOccupantPresentVisite = $interventionExploded[2];
+        $dateVisite = !empty($interventionExploded[1]) ? $interventionExploded[1] : '';
+        $isOccupantPresentVisite = !empty($interventionExploded[2]) ? $interventionExploded[2] : '';
 
         return new SignalementExport(
             reference: $data['reference'],
@@ -64,8 +64,8 @@ class SignalementExportFactory
             escalierOccupant: $data['escalierOccupant'] ?? self::NON_RENSEIGNE,
             numAppartOccupant: $data['numAppartOccupant'] ?? self::NON_RENSEIGNE,
             adresseAutreOccupant: $data['adresseAutreOccupant'] ?? self::NON_RENSEIGNE,
-            situations: $data['familleSituation'] ?? null,
-            desordres: $data['desordres'] ?? null,
+            situations: $data['listDesordreCategories'] ?? $data['oldSituations'] ?? null,
+            desordres: $data['listDesordreCriteres'] ?? $data['oldCriteres'] ?? null,
             etiquettes: $data['etiquettes'] ?? null,
             photos: '-',
             documents: '-',
@@ -88,6 +88,8 @@ class SignalementExportFactory
             dateVisite: $dateVisite,
             isOccupantPresentVisite: $isOccupantPresentVisite ? self::OUI : ('0' === $isOccupantPresentVisite ? self::NON : ''),
             interventionStatus: $statusVisite,
+            interventionConcludeProcedure: $data['interventionConcludeProcedure'] ?? '-',
+            interventionDetails: !empty($data['interventionDetails']) ? strip_tags($data['interventionDetails']) : '-',
             modifiedAt: $modifiedAt,
             closedAt: $closedAt,
             motifCloture: $motifCloture,
@@ -141,8 +143,18 @@ class SignalementExportFactory
                 } else {
                     $statusVisite = VisiteStatus::TERMINEE->value;
                 }
-                $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT.$interventionExploded[1];
-                $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT.$interventionExploded[2];
+
+                if (!empty($interventionExploded[1])) {
+                    $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT.$interventionExploded[1];
+                } else {
+                    $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT;
+                }
+
+                if (!empty($interventionExploded[2])) {
+                    $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT.$interventionExploded[2];
+                } else {
+                    $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT;
+                }
             }
         }
 

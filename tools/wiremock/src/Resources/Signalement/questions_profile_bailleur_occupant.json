@@ -624,6 +624,7 @@
         {
           "type": "SignalementFormDate",
           "label": "A quelle date avez-vous emménagé dans le logement ?",
+          "hint": "Si vous ne connaissez pas la date exacte, sélectionnez un jour du mois d'emménagement",
           "slug": "bail_dpe_date_emmenagement"
         },
         {

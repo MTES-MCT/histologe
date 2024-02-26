@@ -8,6 +8,7 @@ use App\Entity\Enum\MotifRefus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Messenger\Message\DossierMessageInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 
@@ -103,5 +104,16 @@ class AffectationManager extends Manager
                 );
             }
         }
+    }
+
+    public function flagAsSynchronized(DossierMessageInterface $dossierMessage): void
+    {
+        /** @var Affectation $affectation */
+        $affectation = $this->getRepository()->findOneBy([
+            'partner' => $dossierMessage->getPartnerId(),
+            'signalement' => $dossierMessage->getSignalementId(),
+        ]);
+        $affectation->setIsSynchronized(true);
+        $this->save($affectation);
     }
 }

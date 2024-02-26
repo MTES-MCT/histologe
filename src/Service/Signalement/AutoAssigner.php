@@ -70,12 +70,9 @@ class AutoAssigner
                         if ($affectation instanceof Affectation) {
                             $this->affectationManager->persist($affectation);
                             if ($partner->canSyncWithEsabora()) {
-                                $affectation->setIsSynchronized(true);
-                                $this->affectationManager->save($affectation, false);
                                 $this->interconnectionBus->dispatch($affectation);
-                            } else {
-                                $this->affectationManager->save($affectation, false);
                             }
+                            $this->affectationManager->save($affectation, false);
                         }
                     }
                     $this->affectationManager->flush();

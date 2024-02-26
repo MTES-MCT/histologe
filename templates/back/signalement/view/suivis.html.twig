@@ -34,9 +34,9 @@
                      data-mail="{{ suivi.createdBy.email }}">
                 {{
                     'ROLE_USAGER' in suivi.createdBy.roles
-                        ? (suivi.createdBy.email is same as signalement.mailDeclarant
-                            ? 'DECLARANT'
-                            : 'OCCUPANT'
+                        ? (suivi.createdBy.email is same as signalement.mailOccupant
+                            ? 'OCCUPANT'
+                            : 'DECLARANT'
                         )
                         : (suivi.createdBy.partner
                             ? (suivi.createdBy.partner.isArchive or ('ROLE_ADMIN' not in suivi.createdBy.roles and suivi.createdBy.partner.territory is not same as(signalement.territory))
