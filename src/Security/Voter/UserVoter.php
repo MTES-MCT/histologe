@@ -15,7 +15,6 @@ class UserVoter extends Voter
     public const EDIT = 'USER_EDIT';
     public const TRANSFER = 'USER_TRANSFER';
     public const DELETE = 'USER_DELETE';
-    public const CHECKMAIL = 'USER_CHECKMAIL';
     public const SEE_NDE = 'USER_SEE_NDE';
 
     public function __construct(
@@ -26,7 +25,7 @@ class UserVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::CHECKMAIL, self::EDIT, self::TRANSFER, self::DELETE, self::SEE_NDE])
+        return \in_array($attribute, [self::EDIT, self::TRANSFER, self::DELETE, self::SEE_NDE])
             && $subject instanceof User;
     }
 
@@ -45,7 +44,6 @@ class UserVoter extends Voter
         }
 
         return match ($attribute) {
-            self::CHECKMAIL => $this->canCheckMail(),
             self::EDIT => $this->canEdit($subject, $user),
             self::TRANSFER => $this->canTransfer($subject, $user),
             self::DELETE => $this->canDelete($subject, $user),
@@ -91,11 +89,6 @@ class UserVoter extends Voter
     private function canTransfer(User $subject, User $user): bool
     {
         return $this->canFullManage($subject, $user);
-    }
-
-    private function canCheckMail()
-    {
-        return $this->security->isGranted('ROLE_ADMIN_PARTNER');
     }
 
     public function canSeeNde(User $user): bool

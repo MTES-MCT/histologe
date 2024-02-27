@@ -510,11 +510,11 @@ class PartnerController extends AbstractController
     }
 
     #[Route('/checkmail', name: 'back_partner_check_user_email', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN_PARTNER')]
     public function checkMail(
         Request $request,
         UserRepository $userRepository
     ): Response {
-        $this->denyAccessUnlessGranted('USER_CHECKMAIL', $this->getUser());
         if ($this->isCsrfTokenValid('partner_checkmail', $request->request->get('_token'))) {
             $userExist = $userRepository->findOneBy(['email' => $request->get('email')]);
             if ($userExist && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
