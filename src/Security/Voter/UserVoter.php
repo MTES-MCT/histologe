@@ -56,7 +56,7 @@ class UserVoter extends Voter
 
     private function canDelete(User $subject, User $user): bool
     {
-        return $this->canManage($subject, $user);
+        return $this->canFullManage($subject, $user);
     }
 
     private function canEdit(User $subject, User $user): bool
@@ -76,7 +76,7 @@ class UserVoter extends Voter
         return $this->security->isGranted('ROLE_ADMIN_PARTNER') && $user->getTerritory() === $subject->getPartner()->getTerritory();
     }
 
-    private function canTransfer(User $subject, User $user): bool
+    private function canFullManage(User $subject, User $user): bool
     {
         if (!$user->getTerritory()) {
             return false;
@@ -86,6 +86,11 @@ class UserVoter extends Voter
         }
 
         return $this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getTerritory() === $subject->getPartner()->getTerritory();
+    }
+
+    private function canTransfer(User $subject, User $user): bool
+    {
+        return $this->canFullManage($subject, $user);
     }
 
     private function canCheckMail()

@@ -247,7 +247,7 @@ class PartnerControllerTest extends WebTestCase
 
     public function testDeleteUserAccount(): void
     {
-        $user = $this->userRepository->findOneBy(['email' => 'user-974-01@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
         $userId = $user->getId();
 
         $this->client->request('POST', $this->router->generate('back_partner_user_delete'), [

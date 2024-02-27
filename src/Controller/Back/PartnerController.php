@@ -481,33 +481,32 @@ class PartnerController extends AbstractController
         UserManager $userManager,
         NotificationMailerRegistry $notificationMailerRegistry
     ): Response {
-        $this->denyAccessUnlessGranted('USER_DELETE', $this->getUser());
-        if (
-            $this->isCsrfTokenValid('partner_user_delete', $request->request->get('_token'))
-            && $userId = $request->request->get('user_id')
-        ) {
-            /** @var User $user */
-            $user = $userManager->find($userId);
-            $user->setStatut(User::STATUS_ARCHIVE);
-            $userManager->save($user);
-            $notificationMailerRegistry->send(
-                new NotificationMail(
-                    type: NotificationMailerType::TYPE_ACCOUNT_DELETE,
-                    to: $user->getEmail(),
-                    territory: $user->getTerritory()
-                )
-            );
-            $this->addFlash('success', 'L\'utilisateur a bien été supprimé.');
+        $userId = $request->request->get('user_id');
+        if (!$this->isCsrfTokenValid('partner_user_delete', $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token invalide.');
 
-            return $this->redirectToRoute(
-                'back_partner_view',
-                ['id' => $user->getPartner()->getId()],
-                Response::HTTP_SEE_OTHER
-            );
+            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
         }
-        $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
+        /** @var User $user */
+        $user = $userManager->find($userId);
+        $this->denyAccessUnlessGranted('USER_DELETE', $user);
 
-        return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+        $user->setStatut(User::STATUS_ARCHIVE);
+        $userManager->save($user);
+        $notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_ACCOUNT_DELETE,
+                to: $user->getEmail(),
+                territory: $user->getTerritory()
+            )
+        );
+        $this->addFlash('success', 'L\'utilisateur a bien été supprimé.');
+
+        return $this->redirectToRoute(
+            'back_partner_view',
+            ['id' => $user->getPartner()->getId()],
+            Response::HTTP_SEE_OTHER
+        );
     }
 
     #[Route('/checkmail', name: 'back_partner_check_user_email', methods: ['POST'])]
