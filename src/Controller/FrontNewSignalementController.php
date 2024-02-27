@@ -8,6 +8,9 @@ use App\Entity\SignalementDraft;
 use App\Factory\SignalementDraftFactory;
 use App\Manager\SignalementDraftManager;
 use App\Serializer\SignalementDraftRequestSerializer;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,6 +41,7 @@ class FrontNewSignalementController extends AbstractController
     }
 
     #[Route('/signalement-draft/envoi', name: 'envoi_nouveau_signalement_draft', methods: 'POST')]
+    // TODO : encore nécessaire ????
     public function sendSignalementDraft(
         Request $request,
         SignalementDraftRequestSerializer $serializer,
@@ -91,6 +95,7 @@ class FrontNewSignalementController extends AbstractController
             $dataToHash .= $signalementDraftRequest->getAdresseLogementAdresse();
             $hash = hash('sha256', $dataToHash);
 
+            // TODO : vérifier qu'il ne soit pas au statut ARCHIVE
             $existingSignalementDraft = $signalementDraftManager->findOneBy(['identificationHash' => $hash]);
             if (null !== $existingSignalementDraft) {
                 return $this->json([
@@ -154,5 +159,26 @@ class FrontNewSignalementController extends AbstractController
                 ? $signalementDraft :
                 null,
         ]);
+    }
+
+    #[Route('/signalement-draft/{uuid}/send_mail', name: 'send_mail_continue_from_draft')]
+    public function sendMailContinueFromDraft(
+        NotificationMailerRegistry $notificationMailerRegistry,
+        SignalementDraft $signalementDraft,
+        Request $request
+    ): Response {
+        if ($request->isMethod('POST') && $signalementDraft) {
+            $notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_CONTINUE_FROM_DRAFT,
+                    to: $signalementDraft->getEmailDeclarant(),
+                    signalementDraft: $signalementDraft,
+                )
+            );
+
+            return $this->json(['success' => true]);
+        }
+
+        return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
     }
 }

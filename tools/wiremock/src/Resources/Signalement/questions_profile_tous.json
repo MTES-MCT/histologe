@@ -342,5 +342,32 @@
         }
       ]
     }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "description": "<p>Un email a été envoyé à votre adresse. Cliquez sur le lien pour reprendre votre signalement !</p>",
+    "slug": "draft_mail",
+    "screenCategory": "Adresse et coordonnées",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormSubscreen",
+          "slug": "draft_mail_buttons",
+          "customCss": "button-group-full-size",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormLink",
+                "label": "Retourner à l'accueil",
+                "slug": "draft_mail_homepage",
+                "customCss": "fr-btn fr-btn--secondary",
+                "link": "/"
+              }
+            ]
+          }
+        }
+      ]
+    }
   }
 ]
